@@ -122,29 +122,59 @@ export default function LoginPage() {
       await resetAttempts(email);
       navigate('/dashboard');
     } catch (err) {
-      // Narrowing defensivo: o erro pode vir de fontes distintas (SDK, edge function, rede)
+      // Narrowing defensivo: o erro pode vir de fontes distintas (SDK, edge function, rede).
+      // O `code` do erro (definido em AuthContext) é o que decide a mensagem — antes,
+      // QUALQUER exceção que não fosse rede/bloqueio virava "Email ou senha inválidos",
+      // escondendo falhas de infraestrutura, configuração e de sessão.
       const errObj: Record<string, unknown> =
         err && typeof err === 'object' ? (err as Record<string, unknown>) : {};
-      if (errObj.code === 'mfa_required') {
+      const code = typeof errObj.code === 'string' ? errObj.code : '';
+      const msg = typeof errObj.message === 'string' ? errObj.message : undefined;
+
+      if (code === 'mfa_required') {
         // MFA enrolled — show TOTP challenge without recording a failed attempt
         setMfaPending({ factorId: typeof errObj.factorId === 'string' ? errObj.factorId : '' });
         return;
       }
-      const msg = typeof errObj.message === 'string' ? errObj.message : undefined;
-      if (errObj.code === 'NETWORK_ERROR') {
-        // Servidor de autenticação inalcançável (rede/CORS/função fora do ar):
-        // mostrar a causa real e não contabilizar como tentativa de senha errada.
-        setError(msg ?? 'Não foi possível contatar o servidor de autenticação.');
-      } else if (msg && msg.includes('bloqueada')) {
-        // Bloqueio decidido pelo servidor (auth-login): reflete na UI em vez de
-        // tratar como mais uma falha de senha.
-        applyServerLock(email, 0);
-        setError(msg);
-      } else {
-        await recordFailedAttempt(email);
-        setError('Email ou senha inválidos.');
-      }
 
+      switch (code) {
+        case 'ACCOUNT_LOCKED':
+          // Bloqueio decidido pelo servidor (auth-login): reflete na UI em vez de
+          // tratar como mais uma falha de senha.
+          applyServerLock(email, 0);
+          setError(msg ?? 'Conta temporariamente bloqueada por excesso de tentativas.');
+          break;
+        case 'RATE_LIMIT_EXCEEDED':
+          // Limitação por IP/e-mail: aplica espera sem incrementar o contador de senha.
+          applyServerLock(email, 0);
+          setError(msg ?? 'Muitas tentativas em pouco tempo. Aguarde alguns minutos.');
+          break;
+        case 'EMAIL_NOT_CONFIRMED':
+          setError(msg ?? 'Confirme seu e-mail antes de entrar.');
+          break;
+        case 'SESSION_ERROR':
+          setError(msg ?? 'Login aceito, mas não foi possível iniciar a sessão. Tente novamente.');
+          break;
+        case 'VALIDATION_ERROR':
+          setError(msg ?? 'Dados de login inválidos.');
+          break;
+        case 'NETWORK_ERROR':
+        case 'AUTH_BACKEND_ERROR':
+        case 'INTERNAL_SERVER_ERROR':
+          // Servidor de autenticação inalcançável/mal configurado (rede/CORS/projeto
+          // removido): mostra a causa real e NÃO contabiliza como senha errada.
+          setError(msg ?? 'Não foi possível contatar o servidor de autenticação.');
+          break;
+        case 'INVALID_CREDENTIALS':
+          // Único caso que realmente significa senha/e-mail incorretos.
+          await recordFailedAttempt(email);
+          setError('Email ou senha inválidos.');
+          break;
+        default:
+          // Erro sem código reconhecido: exibe a mensagem do servidor sem inflar o
+          // contador de tentativas (o servidor já é a autoridade do lockout).
+          setError(msg ?? 'Não foi possível concluir o login. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }

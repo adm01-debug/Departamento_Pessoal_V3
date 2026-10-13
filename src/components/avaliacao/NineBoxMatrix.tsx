@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LayoutGrid, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { MotionCard, entradaCard } from './entradaCards';
 
 const GRID_LABELS: Record<string, string> = {
   '1-3': 'Enigma', '2-3': 'Alto Potencial', '3-3': 'Estrela',
@@ -43,7 +44,7 @@ export function NineBoxMatrix({ data }: { data: any[] }) {
   }, [data]);
 
   return (
-    <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
+    <MotionCard {...entradaCard(0)} className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
       <CardHeader className="bg-muted/30 pb-3">
         <div className="flex items-center justify-between">
           <div>
@@ -131,6 +132,6 @@ export function NineBoxMatrix({ data }: { data: any[] }) {
            </div>
         </div>
       </CardContent>
-    </Card>
+    </MotionCard>
   );
 }

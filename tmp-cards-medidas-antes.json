@@ -1,0 +1,123 @@
+{
+  "viewport": 1586,
+  "grade": {
+    "w": 1282,
+    "h": 225,
+    "top": 485.3,
+    "bottom": 710.3
+  },
+  "cards": [
+    {
+      "titulo": "Feedbacks por StatusVer feedba",
+      "card": {
+        "w": 416.7,
+        "h": 225,
+        "top": 485.3,
+        "bottom": 710.3
+      },
+      "header": {
+        "w": 414.7,
+        "h": 40,
+        "top": 486.3,
+        "bottom": 526.3
+      },
+      "content": {
+        "w": 414.7,
+        "h": 183,
+        "top": 526.3,
+        "bottom": 709.3
+      },
+      "donut": {
+        "w": 120,
+        "h": 120,
+        "top": 557.8,
+        "bottom": 677.8
+      },
+      "linhas": 0,
+      "alturasLinhas": [],
+      "espacoLivreTopo": null,
+      "espacoLivreBase": null,
+      "pai": {
+        "w": 1282,
+        "h": 225,
+        "top": 485.3,
+        "bottom": 710.3
+      }
+    },
+    {
+      "titulo": "Distribuição das NotasVer feed",
+      "card": {
+        "w": 416.7,
+        "h": 225,
+        "top": 485.3,
+        "bottom": 710.3
+      },
+      "header": {
+        "w": 414.7,
+        "h": 40,
+        "top": 486.3,
+        "bottom": 526.3
+      },
+      "content": {
+        "w": 414.7,
+        "h": 183,
+        "top": 526.3,
+        "bottom": 709.3
+      },
+      "donut": null,
+      "linhas": 0,
+      "alturasLinhas": [],
+      "espacoLivreTopo": null,
+      "espacoLivreBase": null,
+      "pai": {
+        "w": 1282,
+        "h": 225,
+        "top": 485.3,
+        "bottom": 710.3
+      }
+    },
+    {
+      "titulo": "Metas do Ciclo (Top 5)Ver toda",
+      "card": {
+        "w": 416.7,
+        "h": 225,
+        "top": 485.3,
+        "bottom": 710.3
+      },
+      "header": {
+        "w": 414.7,
+        "h": 40,
+        "top": 486.3,
+        "bottom": 526.3
+      },
+      "content": {
+        "w": 414.7,
+        "h": 183,
+        "top": 526.3,
+        "bottom": 709.3
+      },
+      "donut": {
+        "w": 18,
+        "h": 18,
+        "top": 554,
+        "bottom": 572
+      },
+      "linhas": 5,
+      "alturasLinhas": [
+        27.5,
+        27.5,
+        18,
+        27.5,
+        27.5
+      ],
+      "espacoLivreTopo": 23,
+      "espacoLivreBase": 8,
+      "pai": {
+        "w": 1282,
+        "h": 225,
+        "top": 485.3,
+        "bottom": 710.3
+      }
+    }
+  ]
+}

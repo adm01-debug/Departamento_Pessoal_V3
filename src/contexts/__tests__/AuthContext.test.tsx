@@ -78,6 +78,10 @@ describe('useAuth', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
+      text: async () => JSON.stringify({
+        success: true,
+        session: { access_token: 'at', refresh_token: 'rt' },
+      }),
       json: async () => ({
         success: true,
         session: { access_token: 'at', refresh_token: 'rt' },
@@ -134,6 +138,7 @@ describe('useAuth', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
       status: 401,
+      text: async () => JSON.stringify({ success: false, error: 'Credenciais inválidas.' }),
       json: async () => ({ success: false, error: 'Credenciais inválidas.' }),
     }));
     const { result } = renderHook(() => useAuth(), { wrapper });
@@ -147,12 +152,74 @@ describe('useAuth', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
       ok: false,
       status: 429,
+      text: async () => JSON.stringify({ success: false, code: 'ACCOUNT_LOCKED', error: 'Conta bloqueada por 15 minutos.' }),
       json: async () => ({ success: false, code: 'ACCOUNT_LOCKED', error: 'Conta bloqueada por 15 minutos.' }),
     }));
     const { result } = renderHook(() => useAuth(), { wrapper });
     await expect(
       act(async () => { await result.current.signIn('bad@test.com', 'wrong'); })
     ).rejects.toThrow('Conta bloqueada por 15 minutos.');
+  });
+
+  it('signIn classifica proxy/infra fora do ar como AUTH_BACKEND_ERROR (não credencial inválida)', async () => {
+    // Alvo do proxy inacessível (ex.: projeto Supabase removido): o dev server
+    // responde HTML 502 — antes isso virava "Email ou senha inválidos".
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      text: async () => '<html>Bad Gateway</html>',
+      json: async () => { throw new Error('not json'); },
+    }));
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    let capturado: unknown;
+    await act(async () => {
+      try { await result.current.signIn('user@test.com', 'pass123'); } catch (e) { capturado = e; }
+    });
+    expect((capturado as { code?: string }).code).toBe('AUTH_BACKEND_ERROR');
+    expect(mockSetSession).not.toHaveBeenCalled();
+  });
+
+  it('signIn interpreta erro aninhado (createErrorResponse) sem "[object Object]"', async () => {
+    // Formato do _shared/contract.ts: { error: { code, message } } — antes gerava
+    // new Error({...}) => "[object Object]" e a tela mascarava como credencial inválida.
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      text: async () => JSON.stringify({ error: { code: 'INTERNAL_SERVER_ERROR', message: 'Erro interno' } }),
+      json: async () => ({ error: { code: 'INTERNAL_SERVER_ERROR', message: 'Erro interno' } }),
+    }));
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    let capturado: unknown;
+    await act(async () => {
+      try { await result.current.signIn('user@test.com', 'pass123'); } catch (e) { capturado = e; }
+    });
+    expect((capturado as { code?: string }).code).toBe('AUTH_BACKEND_ERROR');
+    expect(String((capturado as Error).message)).not.toContain('[object Object]');
+  });
+
+  it('signIn propaga limitação de tentativas (RATE_LIMIT_EXCEEDED) sem tratá-la como senha errada', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      text: async () => JSON.stringify({ success: false, code: 'RATE_LIMIT_EXCEEDED', error: 'Rate limit excedido' }),
+      json: async () => ({ success: false, code: 'RATE_LIMIT_EXCEEDED', error: 'Rate limit excedido' }),
+    }));
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    let capturado: unknown;
+    await act(async () => {
+      try { await result.current.signIn('user@test.com', 'pass123'); } catch (e) { capturado = e; }
+    });
+    expect((capturado as { code?: string }).code).toBe('RATE_LIMIT_EXCEEDED');
+  });
+
+  it('signIn reporta falha ao criar a sessão como SESSION_ERROR', async () => {
+    mockSetSession.mockResolvedValue({ data: { session: null }, error: { message: 'invalid token' } });
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    let capturado: unknown;
+    await act(async () => {
+      try { await result.current.signIn('user@test.com', 'pass123'); } catch (e) { capturado = e; }
+    });
+    expect((capturado as { code?: string }).code).toBe('SESSION_ERROR');
   });
 
   it('signIn exige MFA quando o nextLevel é aal2', async () => {

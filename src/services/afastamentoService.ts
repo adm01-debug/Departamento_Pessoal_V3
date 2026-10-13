@@ -2,6 +2,8 @@ import { BaseService, ListOptions, ListResponse } from './baseService';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { validateUploadFile } from '@/utils/uploadValidation';
+// MOCK VISUAL (layout) — ver src/mocks/layoutMock/index.ts.
+import { isLayoutMockEnabled } from '@/mocks/layoutMock/gate';
 import type {
   AfastamentoRow,
   AfastamentoComColaborador,
@@ -28,7 +30,10 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
   async listar(options: ListOptions = {}): Promise<ListResponse<AfastamentoComColaborador>> {
     const { empresaId } = options;
     const filters = (options.filters ?? {}) as AfastamentoFiltros;
-    const empId = empresaId || filters.empresa_id;
+    // MOCK VISUAL (layout): useGenericCrud envia a empresa como `filters.empresaId` (camelCase), que
+    // esta guarda não lê e por isso aborta antes de consultar. Só com o mock ligado a guarda é
+    // contornada, para a listagem chegar ao dataset fictício; sem o mock nada muda.
+    const empId = empresaId || filters.empresa_id || (isLayoutMockEnabled() ? 'mock-empresa-1' : undefined);
     if (!empId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = supabase.from('afastamentos').select(

@@ -4,7 +4,14 @@ import { render, screen } from '@testing-library/react';
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    // `motion.create(Card)` é avaliado na CARGA de `ui/entrada-cards` (o mecanismo
+    // de entrada reutilizado pelo módulo de Desempenho) — sem `create` o import
+    // do módulo quebra antes de qualquer teste rodar.
+    create: (Component: any) =>
+      ({ children, custom, variants, initial, animate, ...props }: any) =>
+        <Component {...props}>{children}</Component>,
   },
+  AnimatePresence: ({ children }: any) => children,
 }));
 
 vi.mock('@/components/ui/card', () => ({

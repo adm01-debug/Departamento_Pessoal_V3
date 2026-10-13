@@ -7,13 +7,14 @@ import { EmptyList } from '@/components/ui/empty-state';
 import { TableSkeleton } from '@/components/ui/module-skeleton';
 import { FeriasKPIs, FeriasTable, FeriasDashboard, FeriasInsights, FeriasAlertasPagamentoCard, FeriasReconciliacaoCard, FeriasReconciliacaoHistoricoCard } from '@/components/ferias';
 import { FeriasColetivasTab } from '@/components/ferias/FeriasColetivasTab';
+import { AppPagination } from '@/components/ui/app-pagination';
 import { FeriasRelatorioDialog } from '@/components/ferias/FeriasRelatorioDialog';
 import { useFerias } from '@/hooks/useFerias';
 import { feriasService } from '@/services';
 import { useFeriasAprovacao } from '@/hooks/useFeriasAprovacao';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
-import { Calendar, Calculator, Loader2, List, CalendarDays, History, LayoutDashboard, FileDown, RefreshCw, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Calendar, Calculator, Loader2, List, CalendarDays, History, LayoutDashboard, FileDown, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -272,87 +273,20 @@ export default function FeriasPage() {
                   onCancelar={(id) => cancelar(id)}
                 />
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
-                <p className="text-xs text-muted-foreground order-2 sm:order-1">
-                  Mostrando <span className="font-medium text-foreground">{(page - 1) * limit + 1}</span> a <span className="font-medium text-foreground">{Math.min(page * limit, totalCount)}</span> de <span className="font-medium text-foreground">{totalCount}</span> solicitações
-                </p>
-                <div className="flex items-center gap-2 order-1 sm:order-2">
-                  <div className="flex items-center gap-1">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-8 w-8 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
-                      onClick={() => setPage(1)}
-                      disabled={page === 1}
-                      title="Primeira página"
-                    >
-                      <ChevronsLeft className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-8 rounded-lg gap-1 px-3 hover:bg-primary/5 hover:text-primary transition-colors font-body"
-                      onClick={() => setPage(p => Math.max(1, p - 1))}
-                      disabled={page === 1}
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      Anterior
-                    </Button>
-                    
-                    <div className="flex items-center gap-1 mx-2">
-                      {(() => {
-                        const totalPages = Math.ceil(totalCount / limit);
-                        const pages = [];
-                        let startPage = Math.max(1, page - 2);
-                        const endPage = Math.min(totalPages, startPage + 4);
-                        
-                        if (endPage - startPage < 4) {
-                          startPage = Math.max(1, endPage - 4);
-                        }
-
-                        for (let i = startPage; i <= endPage; i++) {
-                          pages.push(
-                            <Button
-                              key={i}
-                              variant={page === i ? "default" : "outline"}
-                              size="sm"
-                              className={`h-8 w-8 p-0 rounded-lg transition-all font-body ${
-                                page === i 
-                                  ? 'shadow-md shadow-primary/20 bg-gradient-to-r from-primary-glow to-primary border-none text-white' 
-                                  : 'hover:bg-primary/5 hover:text-primary'
-                              }`}
-                              onClick={() => setPage(i)}
-                            >
-                              {i}
-                            </Button>
-                          );
-                        }
-                        return pages;
-                      })()}
-                    </div>
-
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-8 rounded-lg gap-1 px-3 hover:bg-primary/5 hover:text-primary transition-colors font-body"
-                      onClick={() => setPage(p => p + 1)}
-                      disabled={page * limit >= totalCount}
-                    >
-                      Próxima
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-8 w-8 p-0 rounded-lg hover:bg-primary/5 hover:text-primary transition-colors"
-                      onClick={() => setPage(Math.ceil(totalCount / limit))}
-                      disabled={page * limit >= totalCount}
-                      title="Última página"
-                    >
-                      <ChevronsRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+              <div className="mt-4 px-2">
+                <AppPagination
+                  page={page}
+                  total={totalCount}
+                  pageSize={limit}
+                  onPageChange={setPage}
+                  label={
+                    <>
+                      Mostrando <span className="font-medium text-foreground">{(page - 1) * limit + 1}</span> a{' '}
+                      <span className="font-medium text-foreground">{Math.min(page * limit, totalCount)}</span> de{' '}
+                      <span className="font-medium text-foreground">{totalCount}</span> solicitações
+                    </>
+                  }
+                />
               </div>
             </>
           )}

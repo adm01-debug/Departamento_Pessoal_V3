@@ -117,6 +117,16 @@ export function useGenericCrud<T>({
     }
   }, [query]);
 
+  /**
+   * Troca de "linhas por página": reinicia a paginação na primeira página, como
+   * a busca/filtros já fazem — sem isso, sair de 10 por página na página 4 para
+   * 50 por página deixaria o usuário numa página que não existe mais.
+   */
+  const alterarPageSize = useCallback((tamanho: number) => {
+    setPageSize(tamanho);
+    setPage(1);
+  }, []);
+
   return {
     items: query.data?.data || [],
     total: query.data?.total || 0,
@@ -126,7 +136,7 @@ export function useGenericCrud<T>({
     page,
     setPage,
     pageSize,
-    setPageSize,
+    setPageSize: alterarPageSize,
     search,
     setSearch,
     criar: criarMutation.mutateAsync,

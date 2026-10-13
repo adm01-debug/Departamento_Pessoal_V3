@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { History, Calendar, Tag, Target, MessageSquare } from 'lucide-react';
@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
+import { MotionCard, entradaCard } from './entradaCards';
 // MOCK VISUAL — ver src/mocks/desempenhoMock.ts.
 import { getMockDesempenhoAudit } from '@/mocks/desempenhoMock';
 
@@ -37,7 +38,7 @@ export function PerformanceAuditTimeline() {
   };
 
   return (
-    <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
+    <MotionCard {...entradaCard(0)} className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
       <CardHeader className="bg-muted/30 pb-3">
         <CardTitle className="text-sm font-display flex items-center gap-2">
           <History className="h-4 w-4 text-primary" /> Trilha de Desempenho & OKRs
@@ -87,6 +88,6 @@ export function PerformanceAuditTimeline() {
           </div>
         </ScrollArea>
       </CardContent>
-    </Card>
+    </MotionCard>
   );
 }

@@ -36,13 +36,12 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { AppPagination } from '@/components/ui/app-pagination';
 import {
   Activity,
   ArrowUpDown,
   Calculator,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Copy,
   Database,
@@ -1323,73 +1322,25 @@ export default function AuditoriaPage() {
 
                   {/* 5. PAGINAÇÃO — só no frontend, sobre a lista já filtrada/ordenada */}
                   {!isLoading && ordenados.length > 0 && (
-                    <div className="flex flex-col gap-3 border-t border-border/40 p-3 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="text-[11.5px] text-muted-foreground">
-                        Mostrando <span className="font-medium text-foreground">{inicioRange + 1}</span>–
-                        <span className="font-medium text-foreground">{fimRange}</span> de{' '}
-                        <span className="font-medium text-foreground">{ordenados.length}</span> registros
-                      </p>
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label="Página anterior"
-                            disabled={paginaAtual <= 1}
-                            onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                            className="h-8 w-8 rounded-lg border-border/40"
-                          >
-                            <ChevronLeft className="h-4 w-4" />
-                          </Button>
-                          {paginasVisiveis(paginaAtual, totalPaginas).map((item, i) =>
-                            item === '...' ? (
-                              <span key={`ellipsis-${i}`} className="px-1 text-[11px] text-muted-foreground">
-                                …
-                              </span>
-                            ) : (
-                              <Button
-                                key={item}
-                                variant={item === paginaAtual ? 'default' : 'outline'}
-                                size="icon"
-                                aria-label={`Página ${item}`}
-                                aria-current={item === paginaAtual ? 'page' : undefined}
-                                onClick={() => setPagina(item)}
-                                className={cn(
-                                  'h-8 w-8 rounded-lg text-[12px]',
-                                  item === paginaAtual ? 'border-transparent' : 'border-border/40'
-                                )}
-                              >
-                                {item}
-                              </Button>
-                            )
-                          )}
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            aria-label="Próxima página"
-                            disabled={paginaAtual >= totalPaginas}
-                            onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                            className="h-8 w-8 rounded-lg border-border/40"
-                          >
-                            <ChevronRight className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <Select value={String(porPagina)} onValueChange={(v) => setPorPagina(Number(v))}>
-                          <SelectTrigger
-                            aria-label="Registros por página"
-                            className="h-8 w-[132px] rounded-lg border-border/40 text-[12px]"
-                          >
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {TAMANHOS_PAGINA.map((t) => (
-                              <SelectItem key={t} value={String(t)}>
-                                {t} por página
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="border-t border-border/40 px-4 py-1.5">
+                      <AppPagination
+                        page={paginaAtual}
+                        total={ordenados.length}
+                        pageSize={porPagina}
+                        pageSizeOptions={TAMANHOS_PAGINA}
+                        onPageChange={setPagina}
+                        onPageSizeChange={(n) => {
+                          setPorPagina(n);
+                          setPagina(1);
+                        }}
+                        label={
+                          <>
+                            Mostrando <span className="font-medium text-foreground">{inicioRange + 1}</span>–
+                            <span className="font-medium text-foreground">{fimRange}</span> de{' '}
+                            <span className="font-medium text-foreground">{ordenados.length}</span> registros
+                          </>
+                        }
+                      />
                     </div>
                   )}
                 </div>
@@ -1571,17 +1522,6 @@ export default function AuditoriaPage() {
  * Janela de páginas exibidas na paginação: primeira, atual−1..atual+1, última e
  * elipses entre os vãos. Sem números inventados — só as páginas que existem.
  */
-function paginasVisiveis(atual: number, total: number): (number | '...')[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const paginas: (number | '...')[] = [1];
-  const inicio = Math.max(2, atual - 1);
-  const fim = Math.min(total - 1, atual + 1);
-  if (inicio > 2) paginas.push('...');
-  for (let p = inicio; p <= fim; p += 1) paginas.push(p);
-  if (fim < total - 1) paginas.push('...');
-  paginas.push(total);
-  return paginas;
-}
 
 /** Renderiza um bloco JSON (payload do log) — preservado do fluxo atual. */
 function renderJson(json: unknown) {

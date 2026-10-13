@@ -11,6 +11,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { safeErrorMessage } from "@/utils/safeError";
 import { mockOr, getMockUserEmpresas } from "@/mocks/colaboradoresMock";
+// MOCK VISUAL (layout) — ver src/mocks/layoutMock/index.ts.
+import { isLayoutMockEnabled } from "@/mocks/layoutMock/gate";
 
 import type { RegimeTributario } from "@/constants/regimes";
 
@@ -155,7 +157,7 @@ export function useEmpresas(): UseEmpresasReturn {
       // esconde empresas de verdade. Sem isso, VITE_COLABORADORES_MOCK fica
       // inalcançável: toda a área de Colaboradores exige empresa_id.
       if (real.length === 0) {
-        const mock = mockOr(getMockUserEmpresas());
+        const mock = mockOr(getMockUserEmpresas()) ?? (isLayoutMockEnabled() ? getMockUserEmpresas() : undefined);
         if (mock) return mock as unknown as (UserEmpresa & { empresa: Empresa })[];
       }
       return real;

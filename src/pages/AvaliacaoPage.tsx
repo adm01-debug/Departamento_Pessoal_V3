@@ -2,10 +2,12 @@ import { PageTitle } from '@/components/PageTitle';
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent } from '@/components/ui/card';
+import { CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { avaliacaoService } from '@/services/avaliacaoService';
 import { colaboradorService } from '@/services';
@@ -17,9 +19,11 @@ import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
 import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
-import { Progress } from '@/components/ui/progress';
+import { EntradaPresenca, MotionCard, entradaCard } from '@/components/avaliacao/entradaCards';
+import { BarraProgresso } from '@/components/avaliacao/barraProgresso';
+import { useMovimentoReduzido } from '@/lib/motionMode';
 import { cn } from '@/lib/utils';
-import { formatarPeriodo } from '@/components/avaliacao/desempenhoComum';
+import { formatarPeriodo, gradienteProgresso, limitarPercentual } from '@/components/avaliacao/desempenhoComum';
 // MOCK VISUAL — ver src/mocks/desempenhoMock.ts.
 import {
   bloquearEscritaDesempenho,
@@ -46,14 +50,21 @@ const ABAS = [
 ] as const;
 
 /**
- * Pele do trigger da TabList. Sobre a base do `ui/tabs.tsx` (que já pinta a aba
- * ativa com `bg-background` + texto de primeiro plano) acrescenta:
+ * Pele do trigger da TabList. Como o botão deixa de vir do `ui/tabs.tsx` (que
+ * pintava a aba ativa com `bg-background` + `shadow-xs` de forma INSTANTÂNEA),
+ * a string traz aqui a mesma base neutra — `inline-flex`, centralização,
+ * `font-medium`, foco (`ring`) — acrescida do layout do módulo:
  *   • `h-8` — cabe no box de 34px do strip de 44px sem gerar rolagem;
- *   • a LINHA INFERIOR lime da aba ativa, via `::after` com fade de 200ms
- *     (transição de opacidade — nenhuma animação global, nenhum movimento).
+ *   • `lg:w-full` — cada aba ocupa 1/6 do grid;
+ *   • `group` + `data-[state=active]` — os filhos (`CLASSE_ABA_ICONE` e
+ *     `CLASSE_ABA_TEXTO`) reagem à seleção.
+ * NÃO há mais `::after` (a linha lime) nem fundo no estado ativo: quem pinta a
+ * aba selecionada é o indicador deslizante do `ui/animated-tabs` — o MESMO de
+ * Admissões. Manter o sublinhado estático aqui somaria um segundo indicador
+ * "saltando" enquanto a pílula desliza.
  */
 const CLASSE_ABA =
-  'group relative h-8 shrink-0 gap-1.5 rounded-lg px-2.5 text-xs transition-colors lg:w-full after:absolute after:inset-x-3 after:bottom-0 after:h-[2px] after:rounded-full after:bg-primary after:opacity-0 after:transition-opacity after:duration-200 data-[state=active]:after:opacity-100';
+  'group relative inline-flex h-8 shrink-0 items-center justify-center whitespace-nowrap gap-1.5 rounded-lg px-2.5 text-xs font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset disabled:pointer-events-none disabled:opacity-50 lg:w-full';
 const CLASSE_ABA_ICONE =
   'h-3.5 w-3.5 shrink-0 text-muted-foreground transition-colors group-data-[state=active]:text-primary';
 const CLASSE_ABA_TEXTO =
@@ -62,6 +73,9 @@ const CLASSE_ABA_TEXTO =
 export default function AvaliacaoPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
+  // Movimento reduzido (fonte única do app) — repassado às barras de progresso
+  // do módulo, que assim nascem já cheias quando a preferência está ligada.
+  const reduzirMovimento = useMovimentoReduzido();
   const [tab, setTab] = useState('ciclos');
   // Ciclo em destaque no painel; `undefined` = usuário ainda não escolheu
   // (o padrão passa a ser o ciclo ativo detectado nos dados reais).
@@ -181,6 +195,9 @@ export default function AvaliacaoPage() {
         icon={<Target className="h-5 w-5 text-primary-foreground" />}
         gradient="from-primary to-primary-glow"
       >
+        {/* Presença de entrada: devolve o keyframe `hidden` a todo card do módulo
+            (o `<AnimatePresence initial={false}>` do PageTransition o suprime). */}
+        <EntradaPresenca>
         <Tabs value={tab} onValueChange={setTab} className="space-y-5">
           {/* Faixa de navegação compacta + seletor de ciclo + ação principal.
               Os TRÊS controles compartilham a MESMA altura externa (`h-11` = 44px)
@@ -188,23 +205,47 @@ export default function AvaliacaoPage() {
               difere: a TabList flexiona, o seletor e a ação ficam no tamanho do
               próprio conteúdo. */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-            {/* TabList: no desktop vira um GRID de 6 colunas iguais e SEM
-                `overflow` — a barra vertical vinha do `overflow-x-auto` (que
-                força `overflow-y: auto`) somado a 1px de estouro do box interno
-                (`h-9` de trigger + `p-1` + borda > `h-11`). Com 6 colunas
-                proporcionais o conteúdo cabe e `lg:overflow-visible` devolve o
-                eixo vertical ao normal. Os triggers usam `h-8` para caberem no
-                box de 34px do strip de 44px (44 − 2×borda − 2×`p-1`) sem
-                estourar. Abaixo de `lg` a faixa continua rolável na horizontal
-                (o conteúdo não cabe), sem rolagem vertical. */}
-            <TabsList className="h-11 w-full justify-start gap-1 overflow-x-auto rounded-xl border border-border/30 bg-card/50 p-1 lg:grid lg:min-w-0 lg:flex-1 lg:grid-cols-6 lg:overflow-visible">
-              {ABAS.map(({ valor, rotulo, icone: Icone }) => (
-                <TabsTrigger key={valor} value={valor} className={CLASSE_ABA}>
-                  <Icone className={CLASSE_ABA_ICONE} />
-                  <span className={CLASSE_ABA_TEXTO}>{rotulo}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            {/* TabList — mecanismo de seleção IDÊNTICO ao de Admissões:
+                `AnimatedTabsList` (ui/animated-tabs → `TabsHighlight mode="parent"`)
+                mantém UM único indicador persistente, medido no trigger ativo e
+                movido pela mola `ANIMATED_TABS_SPRING` (stiffness 220 / damping 24
+                / mass 0.7) — nunca desmonta entre trocas, então a interpolação é
+                sempre real e não há piscada.
+
+                `highlightClassName` repete a MESMA pele do indicador de Admissões
+                (`rounded-lg bg-background shadow-xs`) e os triggers ficam
+                transparentes: quem pinta a aba ativa é o indicador, nunca o botão.
+
+                O LAYOUT não muda — as classes de antes foram só redistribuídas:
+                as de caixa (borda/fundo/`p-1`/`h-11`/rolagem) vão no container e
+                as de trilha (`flex`/`grid` de 6 colunas/`gap`/`items-center`) na
+                lista interna. No desktop o grid de 6 colunas iguais + `h-8` dos
+                botões continua igual; abaixo de `lg` a faixa rola na horizontal. */}
+            {/* ⚠️ O wrapper abaixo é o ITEM FLEX da linha — e existe por um
+                detalhe do `AnimatedTabsList` (componente compartilhado, não
+                alterado): ele renderiza um `div` por fora das classes de
+                `containerClassName`, então o `lg:flex-1`/`lg:min-w-0` que estão
+                lá dentro não alcançam o item flex. Sem este wrapper, a faixa de
+                abas fica com a largura do próprio conteúdo e a linha sobra
+                vazia à direita do botão "Novo Ciclo". Com ele, quem flexiona é
+                o item flex de verdade e o botão encosta na borda direita da
+                área útil (a mesma dos cards abaixo). */}
+            <div className="min-w-0 lg:flex-1">
+              <AnimatedTabsList
+                value={tab}
+                onValueChange={setTab}
+                containerClassName="h-11 w-full rounded-xl border border-border/30 bg-card/50 p-1 overflow-x-auto lg:min-w-0 lg:flex-1 lg:overflow-visible"
+                highlightClassName="rounded-lg bg-background shadow-xs"
+                listClassName="flex h-full w-full items-center justify-start gap-1 text-muted-foreground lg:grid lg:grid-cols-6"
+              >
+                {ABAS.map(({ valor, rotulo, icone: Icone }) => (
+                  <AnimatedTabsTrigger key={valor} value={valor} className={CLASSE_ABA}>
+                    <Icone className={CLASSE_ABA_ICONE} />
+                    <span className={CLASSE_ABA_TEXTO}>{rotulo}</span>
+                  </AnimatedTabsTrigger>
+                ))}
+              </AnimatedTabsList>
+            </div>
 
             <div className="flex items-center gap-3 lg:shrink-0">
               <Select value={cicloSelecionado?.id ?? ''} onValueChange={setCicloSelecionadoId}>
@@ -245,13 +286,6 @@ export default function AvaliacaoPage() {
 
           <TabsContent value="ciclos" className="space-y-5">
             <PerformanceDashboard
-              stats={{
-                ciclos: ciclos.length,
-                metas: metas.length,
-                feedbacks: feedbacks.length,
-                pdis: pdis.length,
-                competencias: competencias.length,
-              }}
               feedbacks={feedbacks}
               metas={metas}
               pdis={pdis}
@@ -266,53 +300,72 @@ export default function AvaliacaoPage() {
               onSelecionar={(c: any) => setCicloSelecionadoId(c.id)}
               onExcluir={(c: any) => excluirCiclo.mutate(c)}
               excluindo={excluirCiclo.isPending}
+              indice={5}
             />
           </TabsContent>
 
           <TabsContent value="metas" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {metas.map((m: any) => (
-                <Card
-                  key={m.id}
-                  className="border-border/30 hover:shadow-md transition-shadow rounded-2xl overflow-hidden"
-                >
-                  <div className="h-1 bg-primary/20" />
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wide">
-                        {m.tipo}
-                      </Badge>
-                      <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
-                        <Calendar className="h-3 w-3" /> {new Date(m.data_limite).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
-                    <h3 className="font-display font-medium text-sm mb-2">{m.titulo}</h3>
-                    <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{m.descricao}</p>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-[10px] font-medium">
-                        <span>Progresso</span>
-                        <span>{Math.round((m.valor_atual / m.valor_objetivo) * 100)}%</span>
+              {metas.map((m: any, i: number) => {
+                // Mesmo percentual exibido na tela (atual ÷ objetivo), normalizado
+                // para a barra: `limitarPercentual` ignora objetivo ausente/zerado e
+                // trava em 0–100, exatamente como o `Progress` fazia.
+                const pctMeta = limitarPercentual((m.valor_atual / m.valor_objetivo) * 100);
+                return (
+                  <MotionCard
+                    key={m.id}
+                    {...entradaCard(i)}
+                    className="border-border/30 hover:shadow-md transition-shadow rounded-2xl overflow-hidden"
+                  >
+                    <div className="h-1 bg-primary/20" />
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wide">
+                          {m.tipo}
+                        </Badge>
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
+                          <Calendar className="h-3 w-3" /> {new Date(m.data_limite).toLocaleDateString('pt-BR')}
+                        </span>
                       </div>
-                      <Progress value={(m.valor_atual / m.valor_objetivo) * 100} className="h-1.5" />
-                    </div>
+                      <h3 className="font-display font-medium text-sm mb-2">{m.titulo}</h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{m.descricao}</p>
 
-                    <div className="mt-4 pt-4 border-t border-border/10 flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
-                        {m.colaborador?.nome_completo?.charAt(0)}
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-[10px] font-medium">
+                          <span>Progresso</span>
+                          <span>{Math.round((m.valor_atual / m.valor_objetivo) * 100)}%</span>
+                        </div>
+                        {/* Barra com a MESMA animação/degradê das demais barras da
+                            área (padrão "Amplitude de Liderança"). */}
+                        <BarraProgresso
+                          percentual={pctMeta}
+                          indice={i}
+                          cor={gradienteProgresso(pctMeta)}
+                          reduzirMovimento={reduzirMovimento}
+                          trilhoClassName="h-1.5 w-full bg-secondary"
+                        />
                       </div>
-                      <span className="text-[10px] font-medium text-muted-foreground">
-                        {m.colaborador?.nome_completo}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+
+                      <div className="mt-4 pt-4 border-t border-border/10 flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
+                          {m.colaborador?.nome_completo?.charAt(0)}
+                        </div>
+                        <span className="text-[10px] font-medium text-muted-foreground">
+                          {m.colaborador?.nome_completo}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </MotionCard>
+                );
+              })}
             </div>
           </TabsContent>
 
           <TabsContent value="feedbacks" className="space-y-6">
-            <div className="rounded-2xl border border-border/30 overflow-hidden bg-card">
+            <motion.div
+              {...entradaCard(0)}
+              className="rounded-2xl border border-border/30 overflow-hidden bg-card"
+            >
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/30">
@@ -346,13 +399,13 @@ export default function AvaliacaoPage() {
                   ))}
                 </TableBody>
               </Table>
-            </div>
+            </motion.div>
           </TabsContent>
 
           <TabsContent value="pdis" className="space-y-6">
             <div className="grid gap-4">
-              {pdis.map((p: any) => (
-                <Card key={p.id} className="border-border/30 hover:border-primary/20 transition-all rounded-2xl">
+              {pdis.map((p: any, i: number) => (
+                <MotionCard key={p.id} {...entradaCard(i)} className="border-border/30 hover:border-primary/20 transition-all rounded-2xl">
                   <CardContent className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="p-2 rounded-xl bg-success/10 text-success">
@@ -388,7 +441,7 @@ export default function AvaliacaoPage() {
                       </Badge>
                     </div>
                   </CardContent>
-                </Card>
+                </MotionCard>
               ))}
             </div>
           </TabsContent>
@@ -401,6 +454,7 @@ export default function AvaliacaoPage() {
             <PerformanceAuditTimeline />
           </TabsContent>
         </Tabs>
+        </EntradaPresenca>
       </PageLayout>
     </>
   );

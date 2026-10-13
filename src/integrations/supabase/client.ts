@@ -44,6 +44,16 @@ const functionsAwareFetch: typeof fetch = (input, init) => {
   return fetch(input, init);
 };
 
+// MOCK VISUAL (layout) — ver src/mocks/layoutMock/index.ts. Só existe em dev com
+// VITE_LAYOUT_MOCK=true; em produção/teste a condição é falsa e o import dinâmico
+// é removido do bundle. Nas oito rotas de Tempo & Ausências, leituras vêm do
+// dataset fictício e escritas são bloqueadas antes de sair do navegador.
+const layoutMockLigado =
+  import.meta.env.DEV && import.meta.env.MODE !== 'test' && import.meta.env.VITE_LAYOUT_MOCK === 'true';
+const clientFetch: typeof fetch = layoutMockLigado
+  ? (input, init) => import('@/mocks/layoutMock').then((m) => m.layoutMockFetch(input, init, functionsAwareFetch))
+  : functionsAwareFetch;
+
 export const supabaseBase = createClient<Database>(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY,
@@ -54,7 +64,7 @@ export const supabaseBase = createClient<Database>(
       autoRefreshToken: true,
       detectSessionInUrl: true,
       flowType: 'pkce'},
-    global: { fetch: functionsAwareFetch }
+    global: { fetch: clientFetch }
   }
 );
 

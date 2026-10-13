@@ -18,6 +18,7 @@ export default function CargosPage() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     refetch,
@@ -54,6 +55,7 @@ export default function CargosPage() {
       pageSize={pageSize}
       search={search}
       onPageChange={handlePageChange}
+      onPageSizeChange={setPageSize}
       onSearchChange={handleSearchChange}
       onRefetch={refetch}
       isRefreshing={isRefreshing}

@@ -111,13 +111,52 @@ export function formatarData(data: unknown): string {
   return new Date(String(data)).toLocaleDateString('pt-BR');
 }
 
-/** Cor semântica da barra de progresso (verde sucesso → âmbar → vermelho). */
+/**
+ * Cor semântica da barra de progresso (verde sucesso → âmbar → vermelho).
+ *
+ * É a versão SÓLIDA da escala. Hoje nenhuma barra do módulo a consome — todas
+ * passaram a usar o degradê de `gradienteProgresso` (o acabamento aprovado em
+ * "Amplitude de Liderança"); a função permanece exportada porque segue sendo a
+ * escala semântica do módulo para qualquer superfície que precise de cor cheia.
+ */
 export function corProgresso(percentual: number | null): string {
   if (percentual === null) return 'bg-muted-foreground/40';
   if (percentual >= 80) return 'bg-success';
   if (percentual >= 50) return 'bg-primary';
   if (percentual >= 30) return 'bg-warning';
   return 'bg-destructive-vivid';
+}
+
+/**
+ * Degradê horizontal do preenchimento das barras (cor inicial mais profunda →
+ * cor final mais luminosa), usando EXATAMENTE as classes aprovadas em
+ * "Amplitude de Liderança" (DashboardExecutivoPage):
+ *
+ *   `bg-gradient-to-r from-success to-primary`   → verde → verde-lima
+ *   `bg-gradient-to-r from-warning/60 to-warning` → âmbar profundo → âmbar
+ *
+ * As faixas intermediárias apenas repetem o mesmo acabamento (par
+ * "cor/60 → cor") mantendo a cor semântica já usada por `corProgresso`, para
+ * que a leitura verde → lime → âmbar → vermelho continue idêntica.
+ */
+const DEGRADE_ALTO = 'bg-gradient-to-r from-success to-primary';
+const DEGRADE_MEDIO = 'bg-gradient-to-r from-primary/70 to-primary';
+const DEGRADE_BAIXO = 'bg-gradient-to-r from-warning/60 to-warning';
+const DEGRADE_CRITICO = 'bg-gradient-to-r from-destructive/60 to-destructive-vivid';
+
+/**
+ * Mesmo mapa semântico de `corProgresso`, porém em degradê. É o acabamento
+ * usado por TODAS as barras horizontais de progresso de Gestão de Desempenho
+ * (`CicloAtivoPanel`, `AnaliticosDesempenho`, `TodosCiclosTable` e a grade de
+ * metas da página), sempre em conjunto com `BarraProgresso` — que aplica a
+ * animação do card "Amplitude de Liderança".
+ */
+export function gradienteProgresso(percentual: number | null): string {
+  if (percentual === null) return 'bg-muted-foreground/40';
+  if (percentual >= 80) return DEGRADE_ALTO;
+  if (percentual >= 50) return DEGRADE_MEDIO;
+  if (percentual >= 30) return DEGRADE_BAIXO;
+  return DEGRADE_CRITICO;
 }
 
 /** Cor semântica (texto) para o percentual exibido ao lado da barra. */

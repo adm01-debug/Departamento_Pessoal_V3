@@ -1,0 +1,27 @@
+{
+  "alerta": {
+    "top": 415,
+    "bottom": 469,
+    "height": 55,
+    "left": 280,
+    "right": 1576
+  },
+  "analiticos": {
+    "top": 485,
+    "bottom": 734,
+    "height": 249,
+    "left": 280,
+    "right": 1576
+  },
+  "gapAlertaAnaliticos": 16,
+  "chipsResiduais": [
+    {
+      "texto": "Feedbacks",
+      "cls": "flex flex-col items-center gap-2 text-center"
+    },
+    {
+      "texto": "Feedbacks",
+      "cls": "text-[11px] leading-tight text-muted-foreground"
+    }
+  ]
+}

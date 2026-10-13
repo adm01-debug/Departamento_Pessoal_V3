@@ -32,8 +32,6 @@ import {
 import {
   ArrowUpDown,
   Calculator,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Eye,
   LayoutGrid,
@@ -48,6 +46,7 @@ import { cn } from '@/lib/utils';
 import { StatusBadge, TipoBadge } from './DesligamentoStatusBadge';
 import { DesligamentoFilters } from './DesligamentoFilters';
 import { MotionCard, entradaCard, EntradaPresenca } from './entradaCards';
+import { AppPagination } from '@/components/ui/app-pagination';
 import { ETAPA_BADGE, ETAPA_LABELS, STATUS_LABELS } from './desligamentosComum';
 import {
   DIA_MS,
@@ -158,28 +157,11 @@ function ProximaAcaoCell({ d, hojeMs }: { d: DesligamentoLike; hojeMs: number })
 
 /* ─── Paginação ───────────────────────────────────────────────────────────── */
 
-function janelaPaginas(atual: number, total: number): (number | 'gap')[] {
-  const saida: (number | 'gap')[] = [];
-  const adicionar = new Set<number>();
-  for (let p = 1; p <= total; p++) {
-    if (p === 1 || p === total || Math.abs(p - atual) <= 1) adicionar.add(p);
-  }
-  const ordenado = [...adicionar].sort((a, b) => a - b);
-  let anterior = 0;
-  ordenado.forEach((p) => {
-    if (p - anterior > 1) saida.push('gap');
-    saida.push(p);
-    anterior = p;
-  });
-  return saida;
-}
-
 function Paginacao({
   inicio,
   fim,
   total,
   pagina,
-  totalPaginas,
   porPagina,
   opcoesPorPagina,
   onPagina,
@@ -189,83 +171,28 @@ function Paginacao({
   fim: number;
   total: number;
   pagina: number;
-  totalPaginas: number;
   porPagina: number;
   opcoesPorPagina: readonly number[];
   onPagina: (p: number) => void;
   onPorPagina: (p: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-border/30 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs text-muted-foreground">
-        Mostrando <span className="font-semibold text-foreground">{inicio}</span>–
-        <span className="font-semibold text-foreground">{fim}</span> de{' '}
-        <span className="font-semibold text-foreground">{total}</span> registros
-      </p>
-
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={() => onPagina(pagina - 1)}
-            disabled={pagina <= 1}
-            aria-label="Página anterior"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-
-          {janelaPaginas(pagina, totalPaginas).map((item, indice) =>
-            item === 'gap' ? (
-              <span key={`gap-${indice}`} className="px-1 text-xs text-muted-foreground">
-                …
-              </span>
-            ) : (
-              <Button
-                key={item}
-                variant={item === pagina ? 'default' : 'ghost'}
-                size="icon"
-                className="h-8 w-8 rounded-lg text-xs"
-                onClick={() => onPagina(item)}
-                aria-label={`Página ${item}`}
-                aria-current={item === pagina ? 'page' : undefined}
-              >
-                {item}
-              </Button>
-            )
-          )}
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={() => onPagina(pagina + 1)}
-            disabled={pagina >= totalPaginas}
-            aria-label="Próxima página"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="hidden text-xs text-muted-foreground sm:inline">Itens por página</span>
-          <div className="flex items-center gap-1">
-            {opcoesPorPagina.map((n) => (
-              <Button
-                key={n}
-                variant={n === porPagina ? 'default' : 'ghost'}
-                size="sm"
-                className="h-8 w-9 rounded-lg text-xs"
-                onClick={() => onPorPagina(n)}
-                aria-label={`${n} por página`}
-              >
-                {n}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="border-t border-border/30 px-4 py-1.5">
+      <AppPagination
+        page={pagina}
+        total={total}
+        pageSize={porPagina}
+        pageSizeOptions={opcoesPorPagina}
+        onPageChange={onPagina}
+        onPageSizeChange={onPorPagina}
+        label={
+          <>
+            Mostrando <span className="font-semibold text-foreground">{inicio}</span>–
+            <span className="font-semibold text-foreground">{fim}</span> de{' '}
+            <span className="font-semibold text-foreground">{total}</span> registros
+          </>
+        }
+      />
     </div>
   );
 }
@@ -910,7 +837,6 @@ export function GestaoDesligamentos({
               fim={Math.min(inicioIdx + porPagina, ordenados.length)}
               total={ordenados.length}
               pagina={paginaAtual}
-              totalPaginas={totalPaginas}
               porPagina={porPagina}
               opcoesPorPagina={opcoesPorPagina}
               onPagina={setPagina}

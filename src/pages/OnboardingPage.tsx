@@ -46,13 +46,12 @@ import {
   SlidersHorizontal,
   RotateCcw,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   ArrowUpDown,
   ArrowLeft,
   Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { AppPagination } from '@/components/ui/app-pagination';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
 import { Card } from '@/components/ui/card';
@@ -1020,51 +1019,22 @@ export default function OnboardingPage() {
                       variants={cardVariants}
                       initial="hidden"
                       animate="visible"
-                      className="flex flex-wrap items-center justify-between gap-3 pt-1"
+                      className="pt-1"
                     >
-                      <p className="text-[11px] text-muted-foreground" data-testid="onboarding-contador">
-                        Exibindo {(paginaAtual - 1) * ITENS_POR_PAGINA + 1}–
-                        {(paginaAtual - 1) * ITENS_POR_PAGINA + listaExibida.length} de {listaOrdenada.length}{' '}
-                        colaborador
-                        {listaOrdenada.length === 1 ? '' : 'es'}
-                      </p>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 rounded-xl"
-                          disabled={paginaAtual <= 1}
-                          onClick={() => setPagina(Math.max(1, paginaAtual - 1))}
-                          aria-label="Página anterior"
-                        >
-                          <ChevronLeft className="h-3.5 w-3.5" />
-                        </Button>
-                        {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((numero) => (
-                          <Button
-                            key={numero}
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setPagina(numero)}
-                            aria-current={numero === paginaAtual ? 'page' : undefined}
-                            className={cn(
-                              'h-8 w-8 rounded-xl text-xs tabular-nums',
-                              numero === paginaAtual && 'border-primary/60 text-primary'
-                            )}
-                          >
-                            {numero}
-                          </Button>
-                        ))}
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 rounded-xl"
-                          disabled={paginaAtual >= totalPaginas}
-                          onClick={() => setPagina(Math.min(totalPaginas, paginaAtual + 1))}
-                          aria-label="Próxima página"
-                        >
-                          <ChevronRight className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
+                      <AppPagination
+                        page={paginaAtual}
+                        total={listaOrdenada.length}
+                        pageSize={ITENS_POR_PAGINA}
+                        onPageChange={setPagina}
+                        label={
+                          <span data-testid="onboarding-contador">
+                            Exibindo {(paginaAtual - 1) * ITENS_POR_PAGINA + 1}–
+                            {(paginaAtual - 1) * ITENS_POR_PAGINA + listaExibida.length} de {listaOrdenada.length}{' '}
+                            colaborador
+                            {listaOrdenada.length === 1 ? '' : 'es'}
+                          </span>
+                        }
+                      />
                     </motion.div>
                   </AnimatePresence>
                 )}

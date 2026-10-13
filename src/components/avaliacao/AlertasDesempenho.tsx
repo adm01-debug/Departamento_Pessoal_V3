@@ -1,5 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { entradaCard } from './entradaCards';
 
 /**
  * ============================================================================
@@ -17,6 +19,8 @@ interface AlertasDesempenhoProps {
   feedbacksPendentes: number;
   pdisAtrasados: number;
   onNavigate?: (tab: string) => void;
+  /** Posição na cascata de entrada (mesma régua do Dashboard Executivo). */
+  indice?: number;
 }
 
 export function AlertasDesempenho({
@@ -24,6 +28,7 @@ export function AlertasDesempenho({
   feedbacksPendentes,
   pdisAtrasados,
   onNavigate,
+  indice = 1,
 }: AlertasDesempenhoProps) {
   const total = metasAtrasadas + feedbacksPendentes + pdisAtrasados;
   if (total === 0) return null;
@@ -44,7 +49,10 @@ export function AlertasDesempenho({
         : 'pdis';
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-destructive-vivid/30 bg-destructive-vivid/10 px-4 py-2.5">
+    <motion.div
+      {...entradaCard(indice)}
+      className="flex items-center gap-3 rounded-xl border border-destructive-vivid/30 bg-destructive-vivid/10 px-4 py-2.5"
+    >
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-destructive-vivid/15 text-destructive-vivid">
         <AlertTriangle className="h-4 w-4" />
       </span>
@@ -63,6 +71,6 @@ export function AlertasDesempenho({
         Ver pendências
         <ArrowRight className="h-3.5 w-3.5" />
       </Button>
-    </div>
+    </motion.div>
   );
 }

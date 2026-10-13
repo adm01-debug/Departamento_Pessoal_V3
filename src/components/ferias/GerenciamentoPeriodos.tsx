@@ -15,6 +15,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// MOCK DE LAYOUT — ver src/mocks/feriasPeriodosAquisitivosMock.ts. Ligado só em
+// dev (constante local `ATIVAR_MOCK`); com ele desligado, a tela usa 100% a
+// fonte real. Não grava nada no Supabase.
+import {
+  USE_MOCK_PERIODOS_AQUISITIVOS,
+  MOCK_FERIAS_COLABORADORES,
+  getMockPeriodosAquisitivos,
+} from '@/mocks/feriasPeriodosAquisitivosMock';
 interface GerenciamentoPeriodosProps {
   colaboradorId?: string;
 }
@@ -22,7 +30,11 @@ interface GerenciamentoPeriodosProps {
 export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: GerenciamentoPeriodosProps) {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
-  const [selectedColabId, setSelectedColabId] = useState(initialColaboradorId || '');
+  // MOCK DE LAYOUT — quando ligado, a tela mostra dados fictícios e não toca o banco.
+  const mockAtivo = USE_MOCK_PERIODOS_AQUISITIVOS;
+  const [selectedColabId, setSelectedColabId] = useState(
+    initialColaboradorId || (mockAtivo ? (MOCK_FERIAS_COLABORADORES[0]?.id ?? '') : '')
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPeriodo, setEditingPeriodo] = useState<{ id: string; [key: string]: unknown } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,15 +46,21 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
     numero_periodo: '1'
   });
 
-  const { data: colaboradores } = useQuery({
+  const { data: colaboradoresReais } = useQuery({
     queryKey: ['colaboradores-ferias', empresaAtual?.id],
     queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id});
+    enabled: !mockAtivo && !!empresaAtual?.id});
 
-  const { data: periodos, isLoading } = useQuery({
+  const { data: periodosReais, isLoading: carregandoPeriodos } = useQuery({
     queryKey: ['periodos-aquisitivos', selectedColabId, empresaAtual?.id],
     queryFn: () => feriasService.listPeriodosAquisitivos(selectedColabId, empresaAtual!.id),
-    enabled: !!selectedColabId && !!empresaAtual?.id});
+    enabled: !mockAtivo && !!selectedColabId && !!empresaAtual?.id});
+
+  // MOCK DE LAYOUT — com a flag ligada, as consultas acima ficam desabilitadas
+  // e a lista abaixo substitui os dados reais (sem tocar o Supabase).
+  const colaboradores = mockAtivo ? MOCK_FERIAS_COLABORADORES : colaboradoresReais;
+  const periodos = mockAtivo ? getMockPeriodosAquisitivos(selectedColabId) : periodosReais;
+  const isLoading = mockAtivo ? false : carregandoPeriodos;
 
   const createMutation = useMutation({
     mutationFn: (data: any) => feriasService.criarPeriodoAquisitivo(data),
@@ -68,6 +86,12 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
     }});
 
   const handleSave = () => {
+    // MOCK DE LAYOUT — não grava: apenas fecha o diálogo.
+    if (mockAtivo) {
+      toast.info('Modo demonstração: alterações não são salvas.');
+      setIsDialogOpen(false);
+      return;
+    }
     const data = {
       ...form,
       colaborador_id: selectedColabId,
@@ -245,7 +269,11 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
                           variant="ghost"
                           size="icon"
                           aria-label="Excluir"
-                          onClick={() => deleteMutation.mutate(p.id)}
+                          onClick={() =>
+                            mockAtivo
+                              ? toast.info('Modo demonstração: exclusão desabilitada.')
+                              : deleteMutation.mutate(p.id)
+                          }
                           className="h-8 w-8 text-destructive"
                         >
                           <Trash2 className="h-3.5 w-3.5" />

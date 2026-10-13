@@ -7,13 +7,14 @@ import {
   AlertCircle, UserPlus, UserMinus, Briefcase,
   CheckCircle2, Calendar, ChevronRight,
   ShieldCheck, Clock, Search, X,
-  Check, Eye, Forward, MoreHorizontal, History, XCircle, ChevronLeft, MapPin, Shield,
+  Check, Eye, Forward, MoreHorizontal, History, XCircle, MapPin, Shield,
   Download, ListChecks, CheckCircle, AlertOctagon, Bell, ExternalLink, FileJson,
   Layers, Database, Target, Zap, Scale
 } from 'lucide-react';
 import { MiniSparkline } from './MiniSparkline';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedNumber } from './AnimatedNumber';
+import { AppPagination } from '@/components/ui/app-pagination';
 import { BarChartWidget } from './BarChartWidget';
 import { DonutChart } from './DonutChart';
 import { Badge } from '@/components/ui/badge';
@@ -1113,44 +1114,21 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                   ))}
                 </AnimatePresence>
 
-                {/* Pagination Controls */}
+                {/* Pagination Controls — padrão único do sistema */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between mt-6 p-4 bg-muted/20 rounded-2xl border border-border/10">
-                    <p className="text-xs text-muted-foreground">
-                      Mostrando {Math.min(filteredPendencias.length, (page - 1) * itemsPerPage + 1)}-{Math.min(filteredPendencias.length, page * itemsPerPage)} de {filteredPendencias.length}
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={page === 1}
-                        onClick={() => setPage(p => Math.max(1, p - 1))}
-                        className="h-9 w-9 p-0 rounded-lg"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <div className="flex items-center gap-1 px-2">
-                        {Array.from({ length: totalPages }).map((_, i) => (
-                          <button
-                            key={i}
-                            onClick={() => setPage(i + 1)}
-                            className={cn(
-                              "w-2 h-2 rounded-full transition-all",
-                              page === i + 1 ? "bg-primary w-4" : "bg-primary/20 hover:bg-primary/40"
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        disabled={page === totalPages}
-                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                        className="h-9 w-9 p-0 rounded-lg"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="mt-6 rounded-2xl border border-border/10 bg-muted/20 px-4 py-1.5">
+                    <AppPagination
+                      page={page}
+                      total={filteredPendencias.length}
+                      pageSize={itemsPerPage}
+                      onPageChange={setPage}
+                      label={
+                        <>
+                          Mostrando {Math.min(filteredPendencias.length, (page - 1) * itemsPerPage + 1)}-
+                          {Math.min(filteredPendencias.length, page * itemsPerPage)} de {filteredPendencias.length}
+                        </>
+                      }
+                    />
                   </div>
                 )}
               </div>

@@ -135,6 +135,12 @@ const opcoesAbertas = (conteudo: HTMLElement) =>
     .getAllByRole('option')
     .map((o) => o.textContent);
 
+/** Navega até a página N pelas setas do padrão único (`AppPagination` não tem
+ *  mais uma fileira de números: só ‹ página-atual ›). */
+const irParaPagina = (n: number) => {
+  for (let i = 1; i < n; i += 1) fireEvent.click(screen.getByLabelText('Próxima página'));
+};
+
 /** A grade da visão Cards: o ÚNICO nó da tela com `xl:grid-cols-3` (os KPIs do
  *  topo usam `xl:grid-cols-4`). Selecionar por essa classe é a forma estável de
  *  achar o container dos cards sem depender do wrapper da animação. */
@@ -415,12 +421,12 @@ describe('GestaoCandidatos', () => {
     const { container } = montar({ admissoes: MUITOS });
 
     expect(faixaExibida(container)).toBe('Exibindo 1–10 de 40 candidatos');
-    expect(seletorPorPagina()).toHaveTextContent('10 por página');
+    expect(seletorPorPagina()).toHaveTextContent('10');
 
     const conteudo = abrirSelect(seletorPorPagina() as HTMLElement);
     expect(conteudo).not.toBeNull();
     // Nada mudou na Tabela: as MESMAS três opções de sempre.
-    expect(opcoesAbertas(conteudo!)).toEqual(['10 por página', '20 por página', '50 por página']);
+    expect(opcoesAbertas(conteudo!)).toEqual(['10', '20', '50']);
   });
 
   it('modo Cards pagina de 12 em 12 (grade cheia) e o seletor vira 12/24/36', () => {
@@ -430,36 +436,38 @@ describe('GestaoCandidatos', () => {
     // 1ª página CHEIA: 12 cards = 4 linhas completas de 3 no desktop.
     expect(faixaExibida(container)).toBe('Exibindo 1–12 de 40 candidatos');
     expect(gradeCards(container)!.children).toHaveLength(12);
-    expect(seletorPorPagina()).toHaveTextContent('12 por página');
-    // 40 itens ÷ 12 = 4 páginas (12 + 12 + 12 + 4).
-    expect(screen.getAllByLabelText(/^Página \d+$/).map((b) => b.textContent)).toEqual(['1', '2', '3', '4']);
+    expect(seletorPorPagina()).toHaveTextContent('12');
+    // 40 itens ÷ 12 = 4 páginas (12 + 12 + 12 + 4): a última traz só os 4 restantes.
+    irParaPagina(4);
+    expect(faixaExibida(container)).toBe('Exibindo 37–40 de 40 candidatos');
+    expect(screen.getByLabelText('Próxima página')).toBeDisabled();
 
     const conteudo = abrirSelect(seletorPorPagina() as HTMLElement);
     expect(conteudo).not.toBeNull();
     // O seletor reflete o modo: só quantidades múltiplas de 3.
-    expect(opcoesAbertas(conteudo!)).toEqual(['12 por página', '24 por página', '36 por página']);
+    expect(opcoesAbertas(conteudo!)).toEqual(['12', '24', '36']);
   });
 
   it('alternar Tabela↔Cards volta à 1ª página e adota o tamanho do modo', () => {
     const { container } = montar({ admissoes: MUITOS });
 
     // Tabela, pág. 3 (10 por página) …
-    fireEvent.click(screen.getByLabelText('Página 3'));
+    irParaPagina(3);
     expect(faixaExibida(container)).toBe('Exibindo 21–30 de 40 candidatos');
 
     // … e ao entrar em Cards o modo passa a 12 por página E volta à 1ª página
     // (seguir na "pág. 3 da Tabela" seria uma página inválida com 12 itens).
     fireEvent.click(screen.getByRole('button', { name: /Cards/ }));
     expect(faixaExibida(container)).toBe('Exibindo 1–12 de 40 candidatos');
-    expect(seletorPorPagina()).toHaveTextContent('12 por página');
+    expect(seletorPorPagina()).toHaveTextContent('12');
     expect(gradeCards(container)!.children).toHaveLength(12);
 
     // Da pág. 3 dos Cards de volta para a Tabela: 1ª página + 10 por página.
-    fireEvent.click(screen.getByLabelText('Página 3'));
+    irParaPagina(3);
     expect(faixaExibida(container)).toBe('Exibindo 25–36 de 40 candidatos');
     fireEvent.click(screen.getByRole('button', { name: /Tabela/ }));
     expect(faixaExibida(container)).toBe('Exibindo 1–10 de 40 candidatos');
-    expect(seletorPorPagina()).toHaveTextContent('10 por página');
+    expect(seletorPorPagina()).toHaveTextContent('10');
     expect(gradeCards(container)).toBeNull();
   });
 

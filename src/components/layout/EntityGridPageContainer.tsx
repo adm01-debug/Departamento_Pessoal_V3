@@ -32,6 +32,10 @@ interface EntityGridPageContainerProps<T> {
   onPageChange: (page: number) => void;
   onSearchChange: (search: string) => void;
   onRefetch: () => void;
+  /** Troca de "linhas por página" (opcional: sem ele o seletor não aparece). */
+  onPageSizeChange?: (pageSize: number) => void;
+  /** Opções do seletor de linhas por página. */
+  pageSizeOptions?: readonly number[];
   onAdd?: () => void;
   addLabel?: string;
   
@@ -63,6 +67,8 @@ export function EntityGridPageContainer<T extends { id: string | number }>({
   pageSize,
   search,
   onPageChange,
+  onPageSizeChange,
+  pageSizeOptions,
   onSearchChange,
   onRefetch,
   searchPlaceholder,
@@ -134,6 +140,9 @@ export function EntityGridPageContainer<T extends { id: string | number }>({
               totalItems={total}
               pageSize={pageSize}
               onPageChange={onPageChange}
+              onPageSizeChange={onPageSizeChange}
+              pageSizeOptions={pageSizeOptions}
+              isLoading={isFetching}
             />
           </div>
         )}

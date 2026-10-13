@@ -4,7 +4,19 @@ import { render, screen } from '@testing-library/react';
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    span: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
+    // `motion.create(Card)` é avaliado na CARGA de `ui/entrada-cards` (o mecanismo
+    // de entrada reutilizado pelo módulo de Desempenho) — sem `create` o import
+    // do módulo quebra antes de qualquer teste rodar.
+    create: (Component: any) =>
+      ({ children, custom, variants, initial, animate, ...rest }: any) =>
+        <Component {...rest}>{children}</Component>,
   },
+  AnimatePresence: ({ children }: any) => children,
+  // Consumidos pelo card "Feedbacks por Status" (revelação do donut) e pelo
+  // `AnimatedNumber` do percentual central.
+  useInView: () => true,
+  useReducedMotion: () => false,
 }));
 
 vi.mock('recharts', () => ({
@@ -23,57 +35,30 @@ vi.mock('recharts', () => ({
 
 import { PerformanceDashboard } from '../avaliacao/PerformanceDashboard';
 
-const STATS = {
-  ciclos: 3,
-  metas: 12,
-  feedbacks: 45,
-  pdis: 8,
-  competencias: 6,
-};
-
 const FEEDBACKS = [
-  { id: '1', nota_geral: 4.5 },
-  { id: '2', nota_geral: 3.0 },
+  { id: '1', nota_geral: 4.5, status: 'concluido' },
+  { id: '2', nota_geral: 3.0, status: 'pendente' },
 ];
 
-const METAS = [
-  { id: 'm1', titulo: 'Aumentar Vendas', valor_objetivo: 100, valor_atual: 75 },
-];
+const METAS = [{ id: 'm1', titulo: 'Aumentar Vendas', valor_objetivo: 100, valor_atual: 75 }];
 
 describe('PerformanceDashboard', () => {
-  it('renders Ciclos KPI label', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={FEEDBACKS} metas={METAS} />);
-    expect(screen.getByText('Ciclos')).toBeInTheDocument();
+  it('renders the three analytics panels', () => {
+    render(<PerformanceDashboard feedbacks={FEEDBACKS} metas={METAS} />);
+    expect(screen.getByText('Feedbacks por Status')).toBeInTheDocument();
+    expect(screen.getByText('Distribuição das Notas')).toBeInTheDocument();
+    expect(screen.getByText('Metas do Ciclo (Top 5)')).toBeInTheDocument();
   });
 
-  it('renders Metas KPI label', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={FEEDBACKS} metas={METAS} />);
-    expect(screen.getByText('Metas')).toBeInTheDocument();
-  });
-
-  it('renders Feedbacks KPI label', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={FEEDBACKS} metas={METAS} />);
-    expect(screen.getByText('Feedbacks')).toBeInTheDocument();
-  });
-
-  it('renders PDIs KPI label', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={FEEDBACKS} metas={METAS} />);
-    expect(screen.getByText('PDIs')).toBeInTheDocument();
-  });
-
-  it('renders Competências KPI label', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={FEEDBACKS} metas={METAS} />);
-    expect(screen.getByText('Competências')).toBeInTheDocument();
-  });
-
-  it('shows stats values', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={FEEDBACKS} metas={METAS} />);
-    expect(screen.getByText('3')).toBeInTheDocument();
-    expect(screen.getByText('45')).toBeInTheDocument();
+  it('no longer renders the five-indicator strip', () => {
+    render(<PerformanceDashboard feedbacks={FEEDBACKS} metas={METAS} />);
+    ['Ciclos', 'PDIs', 'Competências'].forEach((rotulo) => {
+      expect(screen.queryByText(rotulo)).not.toBeInTheDocument();
+    });
   });
 
   it('renders without crash when feedbacks and metas are empty', () => {
-    render(<PerformanceDashboard stats={STATS} feedbacks={[]} metas={[]} />);
-    expect(screen.getByText('Ciclos')).toBeInTheDocument();
+    render(<PerformanceDashboard feedbacks={[]} metas={[]} />);
+    expect(screen.getByText('Feedbacks por Status')).toBeInTheDocument();
   });
 });

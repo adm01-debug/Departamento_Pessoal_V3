@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { ColaboradorFilters } from '@/components/colaboradores/ColaboradorFilters';
 import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
 import { ColaboradorTable } from '@/components/colaboradores/ColaboradorTable';
-import { ColaboradorPagination } from '@/components/colaboradores/ColaboradorPagination';
+import { AppPagination } from '@/components/ui/app-pagination';
 import { ColaboradorDirectoryGrid } from '@/components/colaboradores/ColaboradorDirectoryGrid';
 import { ColaboradorViewMode } from '@/components/colaboradores/ColaboradorViewSwitcher';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -315,12 +315,24 @@ export default function ColaboradoresPage() {
             ) : (
               <ColaboradorTable items={itemsExibidos} isFetching={isFetching} passagensPorId={passagensPorId} />
             )}
-            <ColaboradorPagination
+            <AppPagination
               page={page}
               pageSize={pageSize}
               total={totalExibido}
               onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
+              label={
+                totalExibido === 0 ? (
+                  '0 colaboradores'
+                ) : (
+                  <>
+                    <span className="font-semibold text-foreground">
+                      {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalExibido)}
+                    </span>{' '}
+                    de <span className="font-semibold text-foreground">{totalExibido}</span> colaboradores
+                  </>
+                )
+              }
             />
           </div>
         )}

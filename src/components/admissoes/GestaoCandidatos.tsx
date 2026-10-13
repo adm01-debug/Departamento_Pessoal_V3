@@ -32,8 +32,6 @@ import {
   Calendar,
   CheckCircle,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   CircleDollarSign,
   Clock,
   Eye,
@@ -77,6 +75,7 @@ import { MetricCard, cardVariants } from '@/components/dashboard/MetricCard';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatDate } from '@/utils/format';
 import { ETAPA_BADGE } from './admissoesComum';
+import { AppPagination } from '@/components/ui/app-pagination';
 import {
   DIA_MS,
   dataValida,
@@ -1075,27 +1074,11 @@ function CardsCandidatos({
 
 /* ─── Paginação ──────────────────────────────────────────────────────────── */
 
-/** Janela de números de página com marcador de omissão (`gap`). */
-function janelaPaginas(atual: number, total: number): (number | 'gap')[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const alvo = new Set<number>([1, total, atual - 1, atual, atual + 1]);
-  const ordenado = [...alvo].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
-  const saida: (number | 'gap')[] = [];
-  let anterior = 0;
-  ordenado.forEach((pagina) => {
-    if (pagina - anterior > 1) saida.push('gap');
-    saida.push(pagina);
-    anterior = pagina;
-  });
-  return saida;
-}
-
 function Paginacao({
   inicio,
   fim,
   total,
   pagina,
-  totalPaginas,
   porPagina,
   opcoesPorPagina,
   onPagina,
@@ -1105,7 +1088,6 @@ function Paginacao({
   fim: number;
   total: number;
   pagina: number;
-  totalPaginas: number;
   porPagina: number;
   /** Opções do seletor — mudam com o modo (Tabela 10/20/50, Cards 12/24/36). */
   opcoesPorPagina: readonly number[];
@@ -1113,71 +1095,23 @@ function Paginacao({
   onPorPagina: (porPagina: number) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-border/30 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-xs text-muted-foreground">
-        Exibindo <span className="font-semibold text-foreground">{inicio}</span>–
-        <span className="font-semibold text-foreground">{fim}</span> de{' '}
-        <span className="font-semibold text-foreground">{total}</span> candidatos
-      </p>
-
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={() => onPagina(pagina - 1)}
-            disabled={pagina <= 1}
-            aria-label="Página anterior"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-
-          {janelaPaginas(pagina, totalPaginas).map((item, indice) =>
-            item === 'gap' ? (
-              <span key={`gap-${indice}`} className="px-1 text-xs text-muted-foreground">
-                …
-              </span>
-            ) : (
-              <Button
-                key={item}
-                variant={item === pagina ? 'default' : 'ghost'}
-                size="icon"
-                className="h-8 w-8 rounded-lg text-xs"
-                onClick={() => onPagina(item)}
-                aria-label={`Página ${item}`}
-                aria-current={item === pagina ? 'page' : undefined}
-              >
-                {item}
-              </Button>
-            )
-          )}
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-lg"
-            onClick={() => onPagina(pagina + 1)}
-            disabled={pagina >= totalPaginas}
-            aria-label="Próxima página"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        <Select value={String(porPagina)} onValueChange={(v) => onPorPagina(Number(v))}>
-          <SelectTrigger className="h-8 w-[128px] rounded-lg border-border/40 text-xs">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {opcoesPorPagina.map((n) => (
-              <SelectItem key={n} value={String(n)}>
-                {n} por página
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="border-t border-border/30 px-4 py-1.5">
+      <AppPagination
+        page={pagina}
+        total={total}
+        pageSize={porPagina}
+        pageSizeOptions={opcoesPorPagina}
+        onPageChange={onPagina}
+        onPageSizeChange={onPorPagina}
+        linhasPorPaginaLabel="Linhas por página"
+        label={
+          <>
+            Exibindo <span className="font-semibold text-foreground">{inicio}</span>–
+            <span className="font-semibold text-foreground">{fim}</span> de{' '}
+            <span className="font-semibold text-foreground">{total}</span> candidatos
+          </>
+        }
+      />
     </div>
   );
 }
@@ -1866,7 +1800,6 @@ export function GestaoCandidatos({
               fim={Math.min(inicioIdx + porPagina, ordenados.length)}
               total={ordenados.length}
               pagina={paginaAtual}
-              totalPaginas={totalPaginas}
               porPagina={porPagina}
               opcoesPorPagina={POR_PAGINA_POR_MODO[visualizacao]}
               onPagina={setPagina}

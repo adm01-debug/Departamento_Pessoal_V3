@@ -21,6 +21,7 @@ export default function DepartamentosPage() {
     page, 
     setPage, 
     pageSize, 
+    setPageSize,
     search, 
     setSearch,
     refetch,
@@ -60,6 +61,7 @@ export default function DepartamentosPage() {
         pageSize={pageSize}
         search={search}
         onPageChange={handlePageChange}
+      onPageSizeChange={setPageSize}
         onSearchChange={handleSearchChange}
         onRefetch={refetch}
         isRefreshing={isRefreshing}

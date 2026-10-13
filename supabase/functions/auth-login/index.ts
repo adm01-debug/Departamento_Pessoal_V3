@@ -19,7 +19,7 @@ import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
 
 const BodySchema = z.object({
-  email: z.string().email().max(254).toLowerCase(),
+  email: z.string().trim().email().max(254).toLowerCase(),
   password: z.string().min(1).max(128),
 });
 
@@ -52,6 +52,23 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   const ip = getClientIP(req);
+
+  // Guard de configuração: sem URL/chave de serviço, `createClient` lançaria
+  // fora do try (500 opaco) ou o login seria reportado como "credenciais
+  // inválidas". Falhar explicitamente como erro de CONFIGURAÇÃO, nunca como
+  // senha errada.
+  if (!SUPABASE_URL || !SERVICE_KEY) {
+    console.error(
+      '[auth-login] configuração ausente: SUPABASE_URL e/ou SUPABASE_SERVICE_ROLE_KEY não definidos no projeto.',
+    );
+    return createErrorResponse(
+      'Servidor de autenticação mal configurado',
+      500,
+      'AUTH_MISCONFIGURED',
+      undefined,
+      req,
+    );
+  }
 
   // Admin client (service-role) for lockout checks and attempt recording.
   const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
@@ -108,6 +125,20 @@ serve(async (req: Request): Promise<Response> => {
     // de auth corretamente dentro do runtime das edge functions (o fetch direto
     // para SUPABASE_URL/auth/v1 estava travando até o timeout, derrubando 100%
     // dos logins com 500 "Erro interno").
+    // Sem chave anônima o signInWithPassword devolve "Invalid API key", que antes
+    // era convertido em INVALID_CREDENTIALS. Isso é falha de CONFIGURAÇÃO.
+    if (!ANON_KEY) {
+      console.error('[auth-login] SUPABASE_ANON_KEY/SUPABASE_PUBLISHABLE_KEY ausente — login impossível.');
+      await captureException(new Error('auth-login misconfigured: anon key ausente'), { function: 'auth-login' });
+      return createErrorResponse(
+        'Servidor de autenticação mal configurado',
+        500,
+        'AUTH_MISCONFIGURED',
+        undefined,
+        req,
+      );
+    }
+
     const authClient = createClient(SUPABASE_URL, ANON_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
@@ -116,24 +147,84 @@ serve(async (req: Request): Promise<Response> => {
       password,
     });
     const success = !authErr && !!authData?.session?.access_token;
-    const errorMessage = authErr?.message ?? 'Credenciais inválidas';
 
+    // Classificação da falha do Supabase Auth. Só "credenciais inválidas" é, de
+    // fato, senha/e-mail errados — os demais casos (rate limit, e-mail não
+    // confirmado, conta desativada, erro interno do Auth) NÃO devem ser
+    // reportados como INVALID_CREDENTIALS nem incrementar o contador de lockout.
+    let failureCode = 'INVALID_CREDENTIALS';
+    let failureMessage = 'Credenciais inválidas';
+    let failureStatus = 401;
+    let contabilizaFalha = false;
+
+    if (!success) {
+      const authErrCode = (authErr as { code?: string } | null)?.code ?? '';
+      const authErrStatus = (authErr as { status?: number } | null)?.status ?? 0;
+      const authErrMessage = authErr?.message ?? '';
+
+      if (
+        authErrCode === 'invalid_credentials' ||
+        /invalid login credentials/i.test(authErrMessage)
+      ) {
+        failureCode = 'INVALID_CREDENTIALS';
+        failureMessage = 'Credenciais inválidas';
+        failureStatus = 401;
+        contabilizaFalha = true;
+      } else if (authErrCode === 'email_not_confirmed' || /email not confirmed/i.test(authErrMessage)) {
+        failureCode = 'EMAIL_NOT_CONFIRMED';
+        failureMessage = 'É necessário confirmar o e-mail antes de entrar.';
+        failureStatus = 403;
+      } else if (authErrCode === 'user_banned' || /banned/i.test(authErrMessage)) {
+        failureCode = 'USER_BANNED';
+        failureMessage = 'Esta conta está desativada. Contate o administrador.';
+        failureStatus = 403;
+      } else if (
+        authErrCode === 'over_request_rate_limit' ||
+        authErrCode === 'over_email_send_rate_limit' ||
+        authErrStatus === 429
+      ) {
+        failureCode = 'RATE_LIMIT_EXCEEDED';
+        failureMessage = 'Muitas tentativas em pouco tempo. Aguarde alguns minutos.';
+        failureStatus = 429;
+      } else {
+        // Erro interno do Supabase Auth / configuração incorreta (ex.: "Invalid API key").
+        // Não expõe detalhes internos e NÃO conta como tentativa de senha errada.
+        console.error(
+          '[auth-login] Supabase Auth falhou:',
+          authErrCode || authErrStatus,
+          authErrMessage,
+        );
+        await captureException(
+          new Error(`signInWithPassword falhou: ${authErrMessage}`),
+          { function: 'auth-login' },
+        );
+        failureCode = 'AUTH_UPSTREAM_ERROR';
+        failureMessage = 'Servidor de autenticação indisponível. Tente novamente em instantes.';
+        failureStatus = 502;
+      }
+    }
 
     // 6. Record attempt (fire-and-forget).
-    // PostgrestBuilder é "thenable" mas NÃO é Promise: não possui .catch().
-    // O .catch() anterior lançava TypeError e derrubava todo login com 500.
-    void admin
-      .rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
-      .then(
-        ({ error }) =>
-          error && console.warn('[auth-login] record_login_attempt falhou:', error.message),
-        (e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message),
-      );
+    // Só registra quando o resultado é significativo para o lockout: sucesso
+    // (zera contadores) ou senha realmente errada. Falhas de infraestrutura/
+    // configuração NÃO entram no contador — do contrário um erro do Auth
+    // bloquearia contas legítimas.
+    if (success || contabilizaFalha) {
+      // PostgrestBuilder é "thenable" mas NÃO é Promise: não possui .catch().
+      // O .catch() anterior lançava TypeError e derrubava todo login com 500.
+      void admin
+        .rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
+        .then(
+          ({ error }) =>
+            error && console.warn('[auth-login] record_login_attempt falhou:', error.message),
+          (e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message),
+        );
+    }
 
     if (!success) {
       return new Response(
-        JSON.stringify({ success: false, error: errorMessage, code: 'INVALID_CREDENTIALS' }),
-        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
+        JSON.stringify({ success: false, error: failureMessage, code: failureCode }),
+        { status: failureStatus, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       );
     }
 

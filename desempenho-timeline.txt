@@ -1,0 +1,237 @@
+{
+  "cardBox": {
+    "top": 226,
+    "bottom": 399,
+    "height": 173,
+    "left": 280,
+    "right": 1576,
+    "width": 1296
+  },
+  "badge": {
+    "box": {
+      "top": 249,
+      "bottom": 272,
+      "height": 23,
+      "left": 305,
+      "right": 423,
+      "width": 118
+    },
+    "bg": "rgb(24, 180, 81)",
+    "color": "rgb(12, 12, 18)"
+  },
+  "labels": [
+    {
+      "texto": "Planejamento",
+      "box": {
+        "top": 321,
+        "bottom": 335,
+        "height": 14,
+        "left": 697,
+        "right": 769,
+        "width": 72
+      }
+    },
+    {
+      "texto": "Avaliações",
+      "box": {
+        "top": 321,
+        "bottom": 335,
+        "height": 14,
+        "left": 796,
+        "right": 852,
+        "width": 56
+      }
+    },
+    {
+      "texto": "Feedbacks",
+      "box": {
+        "top": 321,
+        "bottom": 335,
+        "height": 14,
+        "left": 886,
+        "right": 945,
+        "width": 59
+      }
+    },
+    {
+      "texto": "Calibração",
+      "box": {
+        "top": 321,
+        "bottom": 335,
+        "height": 14,
+        "left": 979,
+        "right": 1036,
+        "width": 57
+      }
+    },
+    {
+      "texto": "Encerramento",
+      "box": {
+        "top": 321,
+        "bottom": 335,
+        "height": 14,
+        "left": 1062,
+        "right": 1136,
+        "width": 74
+      }
+    }
+  ],
+  "marcadores": [
+    {
+      "box": {
+        "top": 289,
+        "bottom": 313,
+        "height": 24,
+        "left": 722,
+        "right": 744,
+        "width": 22
+      },
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "0px rgb(26, 38, 56)",
+      "cls": "flex h-6 items-center justify-center"
+    },
+    {
+      "box": {
+        "top": 290,
+        "bottom": 312,
+        "height": 22,
+        "left": 722,
+        "right": 744,
+        "width": 22
+      },
+      "bg": "rgb(18, 29, 43)",
+      "border": "2px oklab(0.666215 0.0000303388 0.0000133514 / 0.4)",
+      "cls": "flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-muted-foreground/40 bg-card"
+    },
+    {
+      "box": {
+        "top": 289,
+        "bottom": 313,
+        "height": 24,
+        "left": 813,
+        "right": 835,
+        "width": 22
+      },
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "0px rgb(26, 38, 56)",
+      "cls": "flex h-6 items-center justify-center"
+    },
+    {
+      "box": {
+        "top": 290,
+        "bottom": 312,
+        "height": 22,
+        "left": 813,
+        "right": 835,
+        "width": 22
+      },
+      "bg": "rgb(18, 29, 43)",
+      "border": "2px oklab(0.666215 0.0000303388 0.0000133514 / 0.4)",
+      "cls": "flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-muted-foreground/40 bg-card"
+    },
+    {
+      "box": {
+        "top": 289,
+        "bottom": 313,
+        "height": 24,
+        "left": 905,
+        "right": 927,
+        "width": 22
+      },
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "0px rgb(26, 38, 56)",
+      "cls": "flex h-6 items-center justify-center"
+    },
+    {
+      "box": {
+        "top": 290,
+        "bottom": 312,
+        "height": 22,
+        "left": 905,
+        "right": 927,
+        "width": 22
+      },
+      "bg": "rgb(18, 29, 43)",
+      "border": "2px oklab(0.666215 0.0000303388 0.0000133514 / 0.4)",
+      "cls": "flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-muted-foreground/40 bg-card"
+    },
+    {
+      "box": {
+        "top": 289,
+        "bottom": 313,
+        "height": 24,
+        "left": 997,
+        "right": 1019,
+        "width": 22
+      },
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "0px rgb(26, 38, 56)",
+      "cls": "flex h-6 items-center justify-center"
+    },
+    {
+      "box": {
+        "top": 290,
+        "bottom": 312,
+        "height": 22,
+        "left": 997,
+        "right": 1019,
+        "width": 22
+      },
+      "bg": "rgb(18, 29, 43)",
+      "border": "2px oklab(0.666215 0.0000303388 0.0000133514 / 0.4)",
+      "cls": "flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-muted-foreground/40 bg-card"
+    },
+    {
+      "box": {
+        "top": 289,
+        "bottom": 313,
+        "height": 24,
+        "left": 1088,
+        "right": 1110,
+        "width": 22
+      },
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "0px rgb(26, 38, 56)",
+      "cls": "flex h-6 items-center justify-center"
+    },
+    {
+      "box": {
+        "top": 290,
+        "bottom": 312,
+        "height": 22,
+        "left": 1088,
+        "right": 1110,
+        "width": 22
+      },
+      "bg": "rgb(18, 29, 43)",
+      "border": "2px oklab(0.666215 0.0000303388 0.0000133514 / 0.4)",
+      "cls": "flex h-[22px] w-[22px] items-center justify-center rounded-full border-2 border-muted-foreground/40 bg-card"
+    }
+  ],
+  "linhas": [
+    {
+      "box": {
+        "top": 300,
+        "bottom": 302,
+        "height": 2,
+        "left": 687,
+        "right": 1145,
+        "width": 458
+      },
+      "bg": "rgba(0, 0, 0, 0)",
+      "cls": "pointer-events-none absolute inset-x-0 top-3 h-[2px] -translate-y-1/2"
+    },
+    {
+      "box": {
+        "top": 300,
+        "bottom": 302,
+        "height": 2,
+        "left": 733,
+        "right": 1099,
+        "width": 367
+      },
+      "bg": "rgb(26, 38, 56)",
+      "cls": "absolute h-full rounded-full bg-border"
+    }
+  ]
+}

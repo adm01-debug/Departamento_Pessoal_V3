@@ -1,0 +1,171 @@
+{
+  "viewport": 1586,
+  "grade": {
+    "w": 1282,
+    "h": 228,
+    "top": 485.3,
+    "bottom": 713.3
+  },
+  "cards": [
+    {
+      "titulo": "Feedbacks por StatusVer feedba",
+      "card": {
+        "w": 416.7,
+        "h": 228,
+        "top": 485.3,
+        "bottom": 713.3
+      },
+      "header": {
+        "w": 414.7,
+        "h": 40,
+        "top": 486.3,
+        "bottom": 526.3
+      },
+      "content": {
+        "w": 414.7,
+        "h": 186,
+        "top": 526.3,
+        "bottom": 712.3
+      },
+      "donut": {
+        "w": 140,
+        "h": 140,
+        "top": 549.3,
+        "bottom": 689.3
+      },
+      "linhas": 7,
+      "alturasLinhas": [
+        140,
+        16,
+        16,
+        16,
+        16,
+        16,
+        16
+      ],
+      "alturaLinhasReais": [],
+      "blocoLinhasAltura": null,
+      "espacoAbaixoDoBloco": null,
+      "espacoLivreTopo": 23,
+      "espacoLivreBase": 59.5,
+      "estouros": 1,
+      "exemplosEstouro": [
+        {
+          "tag": "div",
+          "cls": "",
+          "texto": ""
+        }
+      ],
+      "pai": {
+        "w": 1282,
+        "h": 228,
+        "top": 485.3,
+        "bottom": 713.3
+      }
+    },
+    {
+      "titulo": "Distribuição das NotasVer feed",
+      "card": {
+        "w": 416.7,
+        "h": 228,
+        "top": 485.3,
+        "bottom": 713.3
+      },
+      "header": {
+        "w": 414.7,
+        "h": 40,
+        "top": 486.3,
+        "bottom": 526.3
+      },
+      "content": {
+        "w": 414.7,
+        "h": 186,
+        "top": 526.3,
+        "bottom": 712.3
+      },
+      "donut": null,
+      "linhas": 5,
+      "alturasLinhas": [
+        16.5,
+        16.5,
+        16.5,
+        16.5,
+        16.5
+      ],
+      "alturaLinhasReais": [
+        26,
+        26,
+        26,
+        26,
+        26
+      ],
+      "blocoLinhasAltura": 142,
+      "espacoAbaixoDoBloco": 23,
+      "espacoLivreTopo": 25.7,
+      "espacoLivreBase": 27.8,
+      "estouros": 0,
+      "exemplosEstouro": [],
+      "pai": {
+        "w": 1282,
+        "h": 228,
+        "top": 485.3,
+        "bottom": 713.3
+      }
+    },
+    {
+      "titulo": "Metas do Ciclo (Top 5)Ver toda",
+      "card": {
+        "w": 416.7,
+        "h": 228,
+        "top": 485.3,
+        "bottom": 713.3
+      },
+      "header": {
+        "w": 414.7,
+        "h": 40,
+        "top": 486.3,
+        "bottom": 526.3
+      },
+      "content": {
+        "w": 414.7,
+        "h": 186,
+        "top": 526.3,
+        "bottom": 712.3
+      },
+      "donut": null,
+      "linhas": 11,
+      "alturasLinhas": [
+        17,
+        25.3,
+        16.5,
+        16,
+        16.5,
+        16,
+        16.5,
+        25.3,
+        16.5,
+        16,
+        16.5
+      ],
+      "alturaLinhasReais": [
+        27,
+        27,
+        27,
+        27,
+        27
+      ],
+      "blocoLinhasAltura": 151,
+      "espacoAbaixoDoBloco": 10,
+      "espacoLivreTopo": 8,
+      "espacoLivreBase": 15.3,
+      "estouros": 0,
+      "exemplosEstouro": [],
+      "pai": {
+        "w": 1282,
+        "h": 228,
+        "top": 485.3,
+        "bottom": 713.3
+      }
+    }
+  ]
+}

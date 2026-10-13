@@ -37,6 +37,7 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { loggerService } from '@/services/loggerService';
+import { AppPagination } from '@/components/ui/app-pagination';
 
 type EventoContrato = {
   id: string;
@@ -167,7 +168,6 @@ export default function ContratosGeradosPage() {
   const PAGE_SIZE = 25;
   // Página reinicia sempre que os filtros mudam (estado derivado, sem efeito).
   const [pagina, setPagina] = useSyncedState(`${status}|${busca}|${periodo}`, () => 1);
-  const totalPaginas = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE));
   const paginados = useMemo(
     () => filtrados.slice((pagina - 1) * PAGE_SIZE, pagina * PAGE_SIZE),
     [filtrados, pagina],
@@ -453,32 +453,19 @@ export default function ContratosGeradosPage() {
             </div>
           )}
           {!loading && filtrados.length > PAGE_SIZE && (
-            <div className="flex items-center justify-between mt-4 text-xs">
-              <span className="text-muted-foreground">
-                Mostrando {(pagina - 1) * PAGE_SIZE + 1}–
-                {Math.min(pagina * PAGE_SIZE, filtrados.length)} de {filtrados.length}
-              </span>
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={pagina === 1}
-                  onClick={() => setPagina((p) => Math.max(1, p - 1))}
-                >
-                  Anterior
-                </Button>
-                <span className="px-3 py-1 rounded-md border bg-muted/30">
-                  {pagina} / {totalPaginas}
-                </span>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  disabled={pagina >= totalPaginas}
-                  onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
-                >
-                  Próxima
-                </Button>
-              </div>
+            <div className="mt-4">
+              <AppPagination
+                page={pagina}
+                total={filtrados.length}
+                pageSize={PAGE_SIZE}
+                onPageChange={setPagina}
+                label={
+                  <>
+                    Mostrando {(pagina - 1) * PAGE_SIZE + 1}–{Math.min(pagina * PAGE_SIZE, filtrados.length)} de{' '}
+                    {filtrados.length}
+                  </>
+                }
+              />
             </div>
           )}
         </CardContent>

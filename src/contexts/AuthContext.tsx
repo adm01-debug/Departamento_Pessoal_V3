@@ -116,6 +116,46 @@ function buildUser(
   };
 }
 
+/** Resposta da edge function `auth-login` (supertipo dos dois formatos de erro do contrato). */
+interface EdgeLoginResponse {
+  success?: boolean;
+  code?: string;
+  error?: string | { code?: string; message?: string };
+  locked_until?: string;
+  session?: { access_token?: string; refresh_token?: string };
+}
+
+/** Erro do fluxo de autenticação com `code` estável para a UI decidir a mensagem. */
+type AuthFlowError = Error & { code: string; status?: number };
+
+function criarErroAuth(message: string, code: string, status?: number): AuthFlowError {
+  const err = new Error(message) as AuthFlowError;
+  err.code = code;
+  if (status !== undefined) err.status = status;
+  return err;
+}
+
+/**
+ * Normaliza o corpo de erro da edge function. Convivem dois formatos:
+ *  - `{ success:false, code, error: <string> }` (respostas do próprio auth-login)
+ *  - `{ error: { code, message } }` (createErrorResponse de `_shared/contract.ts`)
+ * Antes, o segundo formato virava `new Error(<objeto>)` → "[object Object]", que a
+ * tela mascarava como "Email ou senha inválidos".
+ */
+function normalizarErroEdge(
+  body: EdgeLoginResponse,
+  status: number,
+): { code: string; message: string } {
+  const aninhado =
+    typeof body.error === 'object' && body.error !== null ? body.error : undefined;
+  const code = body.code ?? aninhado?.code ?? '';
+  const rawMessage =
+    (typeof body.error === 'string' ? body.error : undefined) ?? aninhado?.message;
+  const fallback =
+    status >= 500 ? 'Servidor de autenticação indisponível.' : 'Credenciais inválidas.';
+  return { code, message: rawMessage?.trim() ? rawMessage : fallback };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -242,6 +282,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error('VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias');
       }
 
+      // Normaliza o e-mail: um espaço acidental vira `VALIDATION_ERROR` (400) no
+      // schema da edge function, que antes era exibido como "Email ou senha
+      // inválidos". Trim é seguro e não altera o e-mail legítimo.
+      const emailNormalizado = email.trim();
+
       // `functionUrl` resolve para o proxy do dev server em desenvolvimento
       // (same-origin, sem CORS) e para a URL absoluta do projeto em produção.
       let res: Response;
@@ -249,7 +294,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         res = await fetch(functionUrl('auth-login'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', apikey: ANON_KEY },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email: emailNormalizado, password }),
         });
       } catch (networkErr) {
         // Falha de rede/CORS — NÃO é credencial inválida. Reportar como tal
@@ -257,38 +302,104 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // servidor inalcançável (e que a tentativa entre no contador de
         // brute-force).
         loggerService.error('Auth endpoint unreachable', { email }, networkErr as Error);
-        const netErr = new Error(
-          'Não foi possível contatar o servidor de autenticação. Verifique sua conexão e tente novamente.'
+        throw criarErroAuth(
+          'Não foi possível contatar o servidor de autenticação. Verifique sua conexão e tente novamente.',
+          'NETWORK_ERROR',
         );
-        (netErr as Error & { code: string }).code = 'NETWORK_ERROR';
-        throw netErr;
       }
 
-      const body = (await res.json().catch(() => ({}))) as {
-        success?: boolean;
-        code?: string;
-        error?: string;
-        locked_until?: string;
-        session?: { access_token: string; refresh_token: string };
-      };
+      // Lemos o corpo como TEXTO antes de tentar JSON: quando o alvo do proxy está
+      // fora do ar (projeto Supabase removido/inacessível), o dev server responde
+      // HTML/502 e `res.json()` estourava silenciosamente — o `.catch(() => ({}))`
+      // transformava qualquer falha de infraestrutura em `{ success: undefined }`,
+      // exibida como "Email ou senha inválidos".
+      const rawBody = await res.text().catch(() => '');
+      let body: EdgeLoginResponse = {};
+      let corpoEhJson = false;
+      try {
+        body = rawBody ? (JSON.parse(rawBody) as EdgeLoginResponse) : {};
+        corpoEhJson = true;
+      } catch {
+        corpoEhJson = false;
+      }
 
-      if (!res.ok || !body.success) {
-        const code = body.code ?? '';
-        if (code === 'ACCOUNT_LOCKED' || res.status === 429) {
-          const msg = body.error ?? 'Conta temporariamente bloqueada por excesso de tentativas.';
-          loggerService.warn('Login blocked - account locked or rate limited', { email, code });
-          throw new Error(msg);
+      const { code, message } = normalizarErroEdge(body, res.status);
+      const success = res.ok && body.success === true;
+
+      if (!success) {
+        const codigo =
+          code || (corpoEhJson ? 'INVALID_CREDENTIALS' : 'AUTH_BACKEND_ERROR');
+        const status = res.status;
+
+        if (codigo === 'ACCOUNT_LOCKED') {
+          // Bloqueio de conta decidido pelo servidor: a UI reflete a espera e NÃO
+          // conta como mais uma senha errada.
+          loggerService.warn('Login blocked - account locked', { email, code: codigo });
+          throw criarErroAuth(
+            message || 'Conta temporariamente bloqueada por excesso de tentativas.',
+            'ACCOUNT_LOCKED',
+            status,
+          );
         }
-        throw new Error(body.error ?? 'Credenciais inválidas.');
+        if (codigo === 'RATE_LIMIT_EXCEEDED' || status === 429) {
+          // Limitação por IP/e-mail (não é senha errada).
+          loggerService.warn('Login blocked - rate limited', { email, code: codigo });
+          throw criarErroAuth(
+            message || 'Muitas tentativas em pouco tempo. Aguarde alguns minutos.',
+            'RATE_LIMIT_EXCEEDED',
+            status,
+          );
+        }
+        if (codigo === 'EMAIL_NOT_CONFIRMED') {
+          throw criarErroAuth(message || 'Confirme seu e-mail antes de entrar.', codigo, status);
+        }
+        if (codigo === 'VALIDATION_ERROR') {
+          throw criarErroAuth('Dados de login inválidos.', codigo, status);
+        }
+        if (codigo === 'INVALID_CREDENTIALS') {
+          throw criarErroAuth(message || 'Credenciais inválidas.', codigo, status);
+        }
+        if (codigo === 'AUTH_BACKEND_ERROR' || !corpoEhJson || status >= 500) {
+          // Infraestrutura, proxy ou configuração do projeto Supabase — NUNCA
+          // credencial inválida. Mensagem orientada a causa real, sem detalhes internos.
+          loggerService.error(
+            'Auth backend unavailable or misconfigured',
+            { email, status },
+            new Error(message),
+          );
+          throw criarErroAuth(
+            'Não foi possível contatar o servidor de autenticação. Verifique se o projeto Supabase configurado está ativo e tente novamente.',
+            'AUTH_BACKEND_ERROR',
+            status,
+          );
+        }
+        // Código desconhecido porém legítimo do backend: repassa sem contar como senha errada.
+        throw criarErroAuth(message, codigo, status);
       }
 
       // Hydrate the Supabase client session from the token returned by the edge function.
-      const session = body.session!;
+      const session = body.session;
+      if (!session?.access_token || !session?.refresh_token) {
+        loggerService.error('Auth success response missing session tokens', { email });
+        throw criarErroAuth(
+          'Login aceito, mas a sessão não pôde ser criada. Tente novamente.',
+          'SESSION_ERROR',
+          res.status,
+        );
+      }
       const { error: sessionErr } = await supabase.auth.setSession({
         access_token: session.access_token,
         refresh_token: session.refresh_token,
       });
-      if (sessionErr) throw sessionErr;
+      if (sessionErr) {
+        // Falha ao criar a sessão (ex.: token inválido/relógio) — distinta de senha errada.
+        loggerService.error('Session creation failed', { email }, sessionErr as unknown as Error);
+        throw criarErroAuth(
+          'Login aceito, mas não foi possível iniciar a sessão. Tente novamente.',
+          'SESSION_ERROR',
+          res.status,
+        );
+      }
 
       // Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)
       const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();

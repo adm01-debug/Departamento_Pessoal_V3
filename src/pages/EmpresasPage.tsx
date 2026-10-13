@@ -19,6 +19,7 @@ export default function EmpresasPage() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     refetch,
@@ -53,6 +54,7 @@ export default function EmpresasPage() {
       pageSize={pageSize}
       search={search}
       onPageChange={handlePageChange}
+      onPageSizeChange={setPageSize}
       onSearchChange={handleSearchChange}
       onRefetch={refetch}
       isRefreshing={isRefreshing}

@@ -20,6 +20,7 @@ export default function LocaisTrabalhoPage() {
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     criar, 
@@ -65,6 +66,7 @@ export default function LocaisTrabalhoPage() {
       pageSize={pageSize}
       search={search}
       onPageChange={handlePageChange}
+      onPageSizeChange={setPageSize}
       onSearchChange={handleSearchChange}
       onRefetch={refetch}
       actions={
