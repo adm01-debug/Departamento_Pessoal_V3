@@ -61,36 +61,52 @@ GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO authenticated, service_role;
 -- O corpo já correlaciona com o tenant (pertence_a_empresa), então
 -- authenticated fica — mas anon não tem sessão e não deve nem
 -- invocar. (AdminAgendamentoExamesPage chama logada.)
-REVOKE EXECUTE ON FUNCTION
-  public.clinicas_proximas(uuid, numeric, numeric, text, numeric, integer)
-  FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION
-  public.clinicas_proximas(uuid, numeric, numeric, text, numeric, integer)
-  TO authenticated, service_role;
+-- Os REVOKE/GRANT abaixo são guardados por to_regprocedure: o
+-- replay do Supabase Preview pode não ter as funções (drift de
+-- ledger) e um REVOKE sobre fn inexistente aborta a migration.
+DO $$
+BEGIN
+  IF to_regprocedure('public.clinicas_proximas(uuid,numeric,numeric,text,numeric,integer)') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.clinicas_proximas(uuid, numeric, numeric, text, numeric, integer) FROM PUBLIC, anon';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.clinicas_proximas(uuid, numeric, numeric, text, numeric, integer) TO authenticated, service_role';
+  END IF;
+END $$;
 
 -- check_ciencia_rate_limit: helper interno de rate-limit chamado
 -- por outras funções definer (o EXECUTE do caller externo não é
 -- necessário — a chamada aninhada resolve como o OWNER da fn).
-REVOKE EXECUTE ON FUNCTION
-  public.check_ciencia_rate_limit(text, text, integer, integer)
-  FROM PUBLIC, anon, authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.check_ciencia_rate_limit(text,text,integer,integer)') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.check_ciencia_rate_limit(text, text, integer, integer) FROM PUBLIC, anon, authenticated';
+  END IF;
+END $$;
 
 -- enforce_report_schedule_authorship / pgaudit_*: funções de
 -- trigger/event-trigger — ninguém as invoca diretamente.
-REVOKE ALL ON FUNCTION public.enforce_report_schedule_authorship()
-  FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.pgaudit_ddl_command_end()
-  FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.pgaudit_sql_drop()
-  FROM PUBLIC, anon, authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.enforce_report_schedule_authorship()') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION public.enforce_report_schedule_authorship() FROM PUBLIC, anon, authenticated';
+  END IF;
+  IF to_regprocedure('public.pgaudit_ddl_command_end()') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION public.pgaudit_ddl_command_end() FROM PUBLIC, anon, authenticated';
+  END IF;
+  IF to_regprocedure('public.pgaudit_sql_drop()') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION public.pgaudit_sql_drop() FROM PUBLIC, anon, authenticated';
+  END IF;
+END $$;
 
 -- rls_tenant_or_admin: predicado de policies (authenticated).
 -- A migration 20260719100000 já revogava de anon — produção
 -- perdeu esse revogação no drift de ledger.
-REVOKE EXECUTE ON FUNCTION public.rls_tenant_or_admin(uuid)
-  FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.rls_tenant_or_admin(uuid)
-  TO authenticated, service_role;
+DO $$
+BEGIN
+  IF to_regprocedure('public.rls_tenant_or_admin(uuid)') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.rls_tenant_or_admin(uuid) FROM PUBLIC, anon';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.rls_tenant_or_admin(uuid) TO authenticated, service_role';
+  END IF;
+END $$;
 
 -- ------------------------------------------------------------
 -- 3) Policies driftadas — estado final das correções antigas
