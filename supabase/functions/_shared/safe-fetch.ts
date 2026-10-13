@@ -111,6 +111,19 @@ export async function safeFetch(
     controller.abort();
   }, effectiveTimeout);
 
+  // Consome o body DENTRO do try: o fetch resolve com os headers, então um
+  // body devagar ficaria fora do timeout se devolvêssemos a resposta crua —
+  // e abortar o signal no finally matava o res.text()/json() do caller.
+  const bufferBody = async (res: Response): Promise<Response> => {
+    const body = await res.arrayBuffer();
+    // 204/205/304 proíbem body — Response() rejeita se passarmos o buffer.
+    return new Response([204, 205, 304].includes(res.status) ? null : body, {
+      status: res.status,
+      statusText: res.statusText,
+      headers: res.headers,
+    });
+  };
+
   try {
     if (tag && SSRF_GUARDED_TAGS.has(tag)) {
       // E50-37: destino vem de configuração gravada por admin — valida o
@@ -133,7 +146,7 @@ export async function safeFetch(
           currentUrl = nextUrl;
           continue;
         }
-        return res;
+        return await bufferBody(res);
       }
       throw new UnsafeUrlError(url, 'excesso de redirects');
     }
@@ -141,7 +154,7 @@ export async function safeFetch(
       ...fetchOptions,
       signal: controller.signal,
     });
-    return res;
+    return await bufferBody(res);
   } catch (err) {
     if (err instanceof UnsafeUrlError) throw err;
     if (err instanceof Error && err.name === 'AbortError') {
@@ -154,8 +167,6 @@ export async function safeFetch(
     throw new FetchNetworkError(url, tag, err);
   } finally {
     clearTimeout(timer);
-    // Garante que o signal está limpio para não vazar estado
-    controller.abort();
   }
 }
 

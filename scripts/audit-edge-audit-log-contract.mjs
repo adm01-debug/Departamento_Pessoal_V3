@@ -58,7 +58,7 @@ const allowedActions = new Set([
 // v_payroll_audit and similar reports, but no Edge Function may write them —
 // the AST scan below still checks writer values against `allowedActions`
 // only, never this set.
-const legacyReadOnlyActions = new Set(['CLOSE', 'REOPEN', 'BACKUP_RUN']);
+const legacyReadOnlyActions = new Set(['CLOSE', 'REOPEN', 'BACKUP_RUN', 'AUTO_PURGE']);
 const failures = [];
 let checked = 0;
 
