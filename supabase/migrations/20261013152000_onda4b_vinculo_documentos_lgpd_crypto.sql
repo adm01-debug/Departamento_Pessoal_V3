@@ -424,10 +424,14 @@ END $$;
 
 DO $$
 BEGIN
+  -- Assinatura real no canônico (diag 13/10): create_secret(text,text,text,uuid)
+  -- — o 4º arg (new_key_id) é OBRIGATÓRIO; a versão de 3 args dava
+  -- undefined_function e a chave nunca era criada.
   PERFORM vault.create_secret(
     encode(gen_random_bytes(32), 'hex'),
     'dados_bancarios_key',
-    'Chave AES-256 para criptografia de dados bancários. NÃO COMMITAR em código.'
+    'Chave AES-256 para criptografia de dados bancários. NÃO COMMITAR em código.',
+    NULL
   )
   WHERE NOT EXISTS (
     SELECT 1 FROM vault.secrets WHERE name = 'dados_bancarios_key'
@@ -447,12 +451,13 @@ DECLARE
 BEGIN
   IF plaintext IS NULL THEN RETURN NULL; END IF;
 
+  -- O Vault do canônico NÃO tem a função vault.decrypt_secret — a leitura é
+  -- pela view vault.decrypted_secrets (diag 13/10).
   BEGIN
-    SELECT decrypted_secret INTO secret_key
-    FROM vault.decrypt_secret((
-      SELECT id FROM vault.secrets WHERE name = 'dados_bancarios_key'
-    ))
-    LIMIT 1;
+    SELECT ds.decrypted_secret INTO secret_key
+      FROM vault.decrypted_secrets ds
+     WHERE ds.name = 'dados_bancarios_key'
+     LIMIT 1;
   EXCEPTION WHEN undefined_table OR undefined_function OR object_not_in_prerequisite_state THEN
     secret_key := NULL;
   END;
@@ -481,11 +486,10 @@ BEGIN
   IF ciphertext IS NULL THEN RETURN NULL; END IF;
 
   BEGIN
-    SELECT decrypted_secret INTO secret_key
-    FROM vault.decrypt_secret((
-      SELECT id FROM vault.secrets WHERE name = 'dados_bancarios_key'
-    ))
-    LIMIT 1;
+    SELECT ds.decrypted_secret INTO secret_key
+      FROM vault.decrypted_secrets ds
+     WHERE ds.name = 'dados_bancarios_key'
+     LIMIT 1;
   EXCEPTION WHEN undefined_table OR undefined_function OR object_not_in_prerequisite_state THEN
     secret_key := NULL;
   END;
