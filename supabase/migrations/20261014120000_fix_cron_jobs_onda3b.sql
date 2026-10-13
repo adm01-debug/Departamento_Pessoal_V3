@@ -215,6 +215,78 @@ ALTER TABLE public.audit_log ADD CONSTRAINT audit_log_acao_check CHECK (
 );
 
 -- ---------------------------------------------------------------------------
+-- 5b) Reconcilia o purge mensal com a trilha append-only: audit_log tem
+--     triggers canônicas que bloqueiam UPDATE/DELETE — assim que houver linhas
+--     com >365d, o DELETE do purge falha (hoje falha só no INSERT porque ainda
+--     não há linhas elegíveis). A trilha honra um GUC de sessão que só o
+--     _purge_audit_log_internal liga; quem não tiver DELETE na tabela não
+--     ganha nada com o GUC.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.audit_log_append_only()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  IF current_setting('app.audit_log_purge', true) = 'on' THEN
+    RETURN OLD;
+  END IF;
+  RAISE EXCEPTION 'Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %.', TG_TABLE_NAME
+    USING ERRCODE = 'insufficient_privilege';
+END;
+$$;
+
+-- audit_log tem DUAS funções de guarda empilhadas (audit_log_append_only e
+-- prevent_audit_log_modification, de migrations diferentes) — ambas precisam
+-- honrar o mesmo GUC.
+CREATE OR REPLACE FUNCTION public.prevent_audit_log_modification()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF current_setting('app.audit_log_purge', true) = 'on' THEN
+    RETURN OLD;
+  END IF;
+  RAISE EXCEPTION 'audit_log records are immutable — UPDATE and DELETE are prohibited';
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public._purge_audit_log_internal(_dias integer DEFAULT 365)
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  _deleted integer;
+BEGIN
+  IF _dias < 30 THEN
+    RAISE EXCEPTION 'Retenção mínima de 30 dias';
+  END IF;
+
+  -- Bypass restrito: só esta sessão, só esta transação (is_local = true).
+  PERFORM set_config('app.audit_log_purge', 'on', true);
+
+  WITH del AS (
+    DELETE FROM public.audit_log
+    WHERE created_at < now() - (_dias || ' days')::interval
+    RETURNING 1
+  )
+  SELECT count(*) INTO _deleted FROM del;
+
+  -- Registra a execução no próprio audit_log para observabilidade
+  INSERT INTO public.audit_log (tabela, registro_id, acao, user_id, dados_novos)
+  VALUES ('audit_log', gen_random_uuid(), 'AUTO_PURGE', NULL,
+          jsonb_build_object('deleted', _deleted, 'retention_days', _dias, 'at', now()));
+
+  RETURN _deleted;
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public._purge_audit_log_internal(integer) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public._purge_audit_log_internal(integer) TO service_role;
+
+-- ---------------------------------------------------------------------------
 -- 6) Jobs duplicados/órfãos: desagenda (H-AGD-02).
 -- ---------------------------------------------------------------------------
 DO $$
@@ -269,7 +341,8 @@ DECLARE
     ['notificar-ferias-pagamento-d5', '0 11 * * 1-5', 'SELECT public.notificar_ferias_pagamento_d5();'],
     ['purgar_ferias_reconciliacao_logs_diario', '15 7 * * *', 'SELECT public.purgar_ferias_reconciliacao_logs_antigos();'],
     -- Comando corrigido: lgpd_fila_limpeza usa (tabela, registro_id, dry_run)
-    ['lgpd-retention-dry-run', '0 3 * * *', 'INSERT INTO public.lgpd_fila_limpeza (tabela, registro_id, dry_run, created_at) SELECT ''colaboradores'', c.id, true, now() FROM public.colaboradores c WHERE c.status_contrato = ''desligado'' AND c.data_desligamento IS NOT NULL AND c.data_desligamento < (now() - interval ''5 years'') AND NOT EXISTS (SELECT 1 FROM public.lgpd_fila_limpeza f WHERE f.tabela = ''colaboradores'' AND f.registro_id = c.id AND f.executado = false)']
+    -- e colaboradores usa coluna status (status_contrato nunca existiu).
+    ['lgpd-retention-dry-run', '0 3 * * *', 'INSERT INTO public.lgpd_fila_limpeza (tabela, registro_id, dry_run, created_at) SELECT ''colaboradores'', c.id, true, now() FROM public.colaboradores c WHERE c.status = ''desligado'' AND c.data_desligamento IS NOT NULL AND c.data_desligamento < (now() - interval ''5 years'') AND NOT EXISTS (SELECT 1 FROM public.lgpd_fila_limpeza f WHERE f.tabela = ''colaboradores'' AND f.registro_id = c.id AND f.executado = false)']
   ];
   v_job text[];
 BEGIN
