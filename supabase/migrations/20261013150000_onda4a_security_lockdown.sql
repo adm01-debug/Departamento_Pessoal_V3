@@ -110,54 +110,28 @@ CREATE POLICY "taxas_cambio_authenticated_select"
   ON public.taxas_cambio FOR SELECT TO authenticated
   USING (true);
 
--- periodos_ponto: produção manteve "Authenticated can read
--- periodos_ponto" (qual=true — qualquer logado lê períodos de
--- TODAS as empresas) em vez da policy tenant que 20260810000000
--- criou. Reaplicação defensiva (mesma checagem de coluna).
--- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
-DROP POLICY IF EXISTS "Authenticated can read periodos_ponto" ON public.periodos_ponto;
--- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
-DROP POLICY IF EXISTS "periodos_ponto_tenant_all" ON public.periodos_ponto;
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns
-             WHERE table_schema='public' AND table_name='periodos_ponto' AND column_name='colaborador_id') THEN
-    EXECUTE $pol$
-      CREATE POLICY "periodos_ponto_tenant_all" ON public.periodos_ponto
-        FOR ALL TO authenticated
-        USING (
-          EXISTS (
-            SELECT 1 FROM public.colaboradores c
-            WHERE c.id = periodos_ponto.colaborador_id
-              AND c.empresa_id = public.get_auth_empresa_id()
-          )
-        )
-        WITH CHECK (
-          EXISTS (
-            SELECT 1 FROM public.colaboradores c
-            WHERE c.id = periodos_ponto.colaborador_id
-              AND c.empresa_id = public.get_auth_empresa_id()
-          )
-        )
-    $pol$;
-  ELSIF EXISTS (SELECT 1 FROM information_schema.columns
-                WHERE table_schema='public' AND table_name='periodos_ponto' AND column_name='empresa_id') THEN
-    EXECUTE $pol$
-      CREATE POLICY "periodos_ponto_tenant_all" ON public.periodos_ponto
-        FOR ALL TO authenticated
-        USING (empresa_id = public.get_auth_empresa_id())
-        WITH CHECK (empresa_id = public.get_auth_empresa_id())
-    $pol$;
-  ELSE
-    RAISE EXCEPTION 'periodos_ponto sem colaborador_id/empresa_id — schema inesperado, abortando por segurança';
-  END IF;
-END $$;
+-- periodos_ponto: tabela system-level (competencia/datas/status,
+-- SEM coluna de tenant por desenho — canonical_schema.sql).
+-- A leitura por qualquer autenticado é o estado pretendido:
+-- competências são calendário global, sem dado por empresa —
+-- é o que baseline e produção já têm ("Authenticated can read").
+-- O risco real é a policy permissiva legada "auth_periodos_ponto"
+-- (FOR ALL: abriria INSERT/UPDATE/DELETE a qualquer logado,
+-- ofuscando as policies admin-only). Não existe hoje em prod,
+-- mas removemos defensivamente — se alguém a recriar, este
+-- DROP documentado registra a intenção.
+-- audit-migration-style: allow-silent-drop remove policy permissiva legada FOR ALL; leitura autenticada e writes admin-only já são o estado canônico
+DROP POLICY IF EXISTS "auth_periodos_ponto" ON public.periodos_ponto;
 
 -- provisao_auditoria: "Gestores podem ver auditoria de provisão"
 -- com USING(true) vazava a trilha de auditoria de provisões
 -- (valores anteriores/novos de folha) para qualquer autenticado.
--- 20260728201706 já tinha a versão por papel; produção nunca a
--- recebeu.
+-- A versão por papel de 20260728201706 ainda vazava cross-empresa:
+-- has_role é papel GLOBAL, então um gestor da empresa A lia a
+-- trilha da empresa B. Escopo correto: admin global OU
+-- (rh|gestor E a provisão auditada pertence a uma empresa do
+-- usuário — resolvido via provisoes_mensais.empresa_id, já que
+-- provisao_auditoria não tem coluna de tenant).
 -- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
 DROP POLICY IF EXISTS "Gestores podem ver auditoria de provisão" ON public.provisao_auditoria;
 -- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
@@ -165,7 +139,60 @@ DROP POLICY IF EXISTS "Auditoria de provisao para perfis internos" ON public.pro
 CREATE POLICY "Auditoria de provisao para perfis internos"
   ON public.provisao_auditoria FOR SELECT TO authenticated
   USING (
-    public.has_role(auth.uid(), 'admin'::app_role)
-    OR public.has_role(auth.uid(), 'rh'::app_role)
-    OR public.has_role(auth.uid(), 'gestor'::app_role)
+    public.is_admin(auth.uid())
+    OR (
+      (
+        public.has_role(auth.uid(), 'rh'::app_role)
+        OR public.has_role(auth.uid(), 'gestor'::app_role)
+      )
+      AND EXISTS (
+        SELECT 1
+        FROM public.provisoes_mensais pm
+        WHERE pm.id = provisao_auditoria.provisao_id
+          AND pm.empresa_id IN (
+            SELECT public.get_user_empresas(auth.uid())
+          )
+      )
+    )
   );
+
+-- ------------------------------------------------------------
+-- 4) get_user_scope_empresas: preservar semântica original
+--    Com is_admin auto-escopado, is_admin(_user_id) do ALVO
+--    passaria a ser sempre falso quando um admin consulta o
+--    escopo de OUTRO admin — a fn devolveria só os vínculos
+--    explícitos em vez de todas as empresas ativas.
+--    O caller já foi autorizado no guard acima (self OU admin);
+--    o papel do alvo passa a ser avaliado por leitura interna
+--    direta (a fn é SECDEF), sem reabrir a enumeração pública.
+-- ------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_user_scope_empresas(_user_id uuid)
+RETURNS SETOF uuid
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog, public, pg_temp
+AS $function$
+DECLARE
+  actor uuid := auth.uid();
+  service_request boolean := COALESCE(auth.jwt() ->> 'role', '') = 'service_role';
+BEGIN
+  IF _user_id IS NULL OR (
+    NOT service_request
+    AND (actor IS NULL OR (actor <> _user_id AND NOT public.is_admin(actor)))
+  ) THEN
+    RAISE EXCEPTION 'user scope outside caller authorization' USING ERRCODE = '42501';
+  END IF;
+
+  RETURN QUERY
+  SELECT e.id FROM public.empresas AS e
+  WHERE e.ativa IS TRUE AND EXISTS (
+    SELECT 1 FROM public.user_roles ur
+    WHERE ur.user_id = _user_id AND ur.role = 'admin'
+  )
+  UNION
+  SELECT ue.empresa_id FROM public.user_empresas AS ue WHERE ue.user_id = _user_id;
+END
+$function$;
+REVOKE ALL ON FUNCTION public.get_user_scope_empresas(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_user_scope_empresas(uuid) TO authenticated, service_role;
