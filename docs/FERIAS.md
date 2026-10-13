@@ -2,15 +2,15 @@
 
 ## Regras Legais Implementadas no Banco
 
-| Artigo CLT | Regra | Implementação |
-|---|---|---|
-| **Art. 130** | Proporcionalidade por faltas (0-5→30, 6-14→24, 15-23→18, 24-32→12, >32→0) | `fn calcular_dias_direito_ferias(int)` + trigger `trg_periodos_aquisitivos_recalc_dias` |
-| **Art. 133** | Perda do direito (>32 faltas ou afastamento >30d) | Colunas `perdeu_direito` / `motivo_perda` + trigger automático |
-| **Art. 134 §1º** | Fracionamento: máx 3, um ≥14, demais ≥5 | `fn validar_split_ferias(...)` + trigger `trg_ferias_validar_split` (erro `FERIAS_SPLIT_INVALIDO`) |
-| **Art. 134 §3º** | Não iniciar em DSR/feriado nem 2 dias antes | `fn eh_dia_valido_inicio_ferias(empresa, data)` + trigger `trg_ferias_validar_inicio` (erro `FERIAS_INICIO_INVALIDO`) |
-| **Art. 137** | Dobra por vencimento do concessivo | Colunas `em_dobra` + `data_limite_concessao` + trigger + view `v_ferias_alertas_criticos` |
-| **Art. 143** | Abono pecuniário limitado a 10 dias | Schema Zod + limite duplo no motor de cálculo |
-| **Art. 145** | Pagamento até 2 dias úteis antes | Detectado em `v_ferias_alertas_criticos` (severidade `PAGAMENTO_ATRASADO_ART_145`) |
+| Artigo CLT       | Regra                                                                     | Implementação                                                                                                         |
+| ---------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Art. 130**     | Proporcionalidade por faltas (0-5→30, 6-14→24, 15-23→18, 24-32→12, >32→0) | `fn calcular_dias_direito_ferias(int)` + trigger `trg_periodos_aquisitivos_recalc_dias`                               |
+| **Art. 133**     | Perda do direito (>32 faltas ou afastamento >30d)                         | Colunas `perdeu_direito` / `motivo_perda` + trigger automático                                                        |
+| **Art. 134 §1º** | Fracionamento: máx 3, um ≥14, demais ≥5                                   | `fn validar_split_ferias(...)` + trigger `trg_ferias_validar_split` (erro `FERIAS_SPLIT_INVALIDO`)                    |
+| **Art. 134 §3º** | Não iniciar em DSR/feriado nem 2 dias antes                               | `fn eh_dia_valido_inicio_ferias(empresa, data)` + trigger `trg_ferias_validar_inicio` (erro `FERIAS_INICIO_INVALIDO`) |
+| **Art. 137**     | Dobra por vencimento do concessivo                                        | Colunas `em_dobra` + `data_limite_concessao` + trigger + view `v_ferias_alertas_criticos`                             |
+| **Art. 143**     | Abono pecuniário limitado a 10 dias                                       | Schema Zod + limite duplo no motor de cálculo                                                                         |
+| **Art. 145**     | Pagamento até 2 dias úteis antes                                          | Detectado em `v_ferias_alertas_criticos` (severidade `PAGAMENTO_ATRASADO_ART_145`)                                    |
 
 ## Cálculo (motor canônico `src/calculators/beneficios.ts`)
 
@@ -64,10 +64,10 @@ Traduzir via `safeErrorMessage`:
 
 ## Cron Jobs
 
-| Nome | Schedule | Função |
-|---|---|---|
-| `ferias-recalcular-dobra-diario` | `15 3 * * *` | `fn_recalcular_dobra_e_alertas()` |
-| `ferias-atualizar-status-diario` | `30 3 * * *` | `fn_update_ferias_status_by_date()` |
+| Nome                             | Schedule     | Função                                                                                                    |
+| -------------------------------- | ------------ | --------------------------------------------------------------------------------------------------------- |
+| `ferias-recalcular-dobra-diario` | `15 3 * * *` | `fn_recalcular_dobra_e_alertas()`                                                                         |
+| `ferias-atualizar-status-diario` | `30 3 * * *` | `fn_atualizar_status_ferias_diario()` (wrapper — `fn_update_ferias_status_by_date` é trigger, não rotina) |
 
 ## Pendências para próxima onda
 

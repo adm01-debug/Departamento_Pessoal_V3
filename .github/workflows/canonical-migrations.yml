@@ -197,6 +197,14 @@ jobs:
               WHERE n.nspname = 'public' AND p.proname = 'fn_atualizar_status_ferias_diario'
                 AND p.prosrc LIKE '%status = ''aprovada''%data_fim%'
             ),
+            'cron_jobs_ok', (
+              SELECT count(*) FROM cron.job
+              WHERE jobname IN ('ferias-atualizar-status-diario','lgpd-fila-drenagem-daily')
+            ),
+            'ferias_job_uses_wrapper', EXISTS (
+              SELECT 1 FROM cron.job WHERE jobname = 'ferias-atualizar-status-diario'
+                AND command LIKE '%fn_atualizar_status_ferias_diario%'
+            ),
             'holerite_sync_trigger_ok', EXISTS (
               SELECT 1 FROM pg_trigger
               WHERE tgname = 'trg_sync_holerite_folha_item'
@@ -252,6 +260,8 @@ jobs:
               Number(r.ledger_count) === 2 &&
               Number(r.cron_fix_fns_ok) === 4 &&
               r.ferias_daily_no_direct_concluida === true &&
+              Number(r.cron_jobs_ok) === 2 &&
+              r.ferias_job_uses_wrapper === true &&
               r.holerite_sync_trigger_ok === true &&
               r.notify_fn_fixed === true &&
               r.self_read_requires_closed === true &&
