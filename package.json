@@ -156,7 +156,7 @@
     "globals": "17.13.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",
-    "msw": "^2.1.5",
+    "msw": "^3.0.3",
     "postcss": "^8.5.28",
     "prettier": "3.9.9",
     "tailwindcss": "^4.3.0",
