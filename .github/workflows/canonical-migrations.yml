@@ -326,6 +326,21 @@ jobs:
               SELECT 1 FROM pg_policies
               WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
                 AND policyname = 'taxas_cambio_authenticated_select'
+            ),
+            'auditoria_no_permissive', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'provisao_auditoria'
+                AND (qual IS NULL OR qual = 'true')
+            ),
+            'taxas_no_permissive', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
+                AND (qual IS NULL OR qual = 'true')
+            ),
+            'periodos_no_for_all', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'periodos_ponto'
+                AND policyname = 'auth_periodos_ponto'
             )
           );
           SQL
@@ -365,7 +380,10 @@ jobs:
               r.auditoria_empresa_col === true &&
               r.auditoria_tenant_trigger === true &&
               r.auditoria_policy_scoped === true &&
-              r.taxas_policy_auth === true;
+              r.taxas_policy_auth === true &&
+              r.auditoria_no_permissive === true &&
+              r.taxas_no_permissive === true &&
+              r.periodos_no_for_all === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
