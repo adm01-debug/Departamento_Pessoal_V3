@@ -75,6 +75,10 @@ const ALLOWLIST = new Map([
   ['contrato_preview_url_por_token', 'Preview do PDF pelo signatário; valida token.'],
   ['contrato_verificar_autenticidade', 'Portal público de verificação por hash.'],
   ['contrato_verificar_autenticidade_v2', 'Portal público de verificação por hash.'],
+  [
+    'admissao_assinar_contrato',
+    'Portal de admissão por link; valida token via _admissao_token_row e IP não-forjável por role.',
+  ],
   ['get_admissao_por_token', 'Formulário de admissão acessado por link antes de haver conta.'],
   [
     'admissao_salvar_dados',
