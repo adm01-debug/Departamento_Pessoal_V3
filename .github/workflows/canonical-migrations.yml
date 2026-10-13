@@ -124,8 +124,7 @@ jobs:
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
           for migration in \
-            20261012120000_holerites_espelho_folha_itens.sql \
-            20261013140000_ferias_status_daily_transitions.sql
+            20261014120000_fix_cron_jobs_onda3b.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -183,7 +182,52 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000')
+            ),
+            'notificacoes_chk_wide', EXISTS (
+              SELECT 1 FROM pg_constraint
+              WHERE conname = 'chk_notificacoes_tipo'
+                AND pg_get_constraintdef(oid) LIKE '%ferias_pagamento_d5%'
+            ),
+            'logs_sistema_unlocked', NOT EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgrelid = 'public.logs_sistema'::regclass AND NOT tgisinternal
+                AND tgname IN ('trg_logs_sistema_no_delete','trg_logs_sistema_no_update')
+            ),
+            'elr_uses_created_at', NOT EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'enforce_log_retention'
+                AND p.prosrc LIKE '%attempted_at%'
+            ),
+            'd5_fn_uses_contexto', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'notificar_ferias_pagamento_d5'
+                AND p.prosrc LIKE '%nivel, mensagem, contexto%'
+            ),
+            'auto_purge_allowed', EXISTS (
+              SELECT 1 FROM pg_constraint
+              WHERE conname = 'audit_log_acao_check'
+                AND pg_get_constraintdef(oid) LIKE '%AUTO_PURGE%'
+            ),
+            'onda3b_jobs_ok', (
+              SELECT count(*) FROM cron.job WHERE jobname IN (
+                'audit_log_monthly_purge','cleanup-ciencia-rate-limits',
+                'cleanup-logs-sistema-daily','dp-health-snapshot',
+                'dp-log-rotation-check','dp-partition-monthly',
+                'dp-retention-anonymize-90d','dp-retention-delete-730d',
+                'ferias-recalcular-dobra-diario','gerar-alertas-preditivos-ia-daily',
+                'lovable-audit-retention-daily','lovable-log-retention',
+                'notificar-ferias-pagamento-d5','purgar_ferias_reconciliacao_logs_diario',
+                'lgpd-retention-dry-run'
+              )
+            ),
+            'onda3b_dupes_gone', NOT EXISTS (
+              SELECT 1 FROM cron.job WHERE jobname IN (
+                'update-despesa-updated-at-daily','check-idempotency-anomalies-hourly',
+                'cleanup-old-logs-weekly','purge-idempotency-keys-daily',
+                'lovable-ia-provisao-alertas','gerar-alertas-ia-diario',
+                'ia-provisao-alertas-diario'
+              )
             ),
             'cron_fix_fns_ok', (
               SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -257,7 +301,14 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 2 &&
+              Number(r.ledger_count) === 3 &&
+              r.notificacoes_chk_wide === true &&
+              r.logs_sistema_unlocked === true &&
+              r.elr_uses_created_at === true &&
+              r.d5_fn_uses_contexto === true &&
+              r.auto_purge_allowed === true &&
+              Number(r.onda3b_jobs_ok) === 15 &&
+              r.onda3b_dupes_gone === true &&
               Number(r.cron_fix_fns_ok) === 4 &&
               r.ferias_daily_no_direct_concluida === true &&
               Number(r.cron_jobs_ok) === 2 &&

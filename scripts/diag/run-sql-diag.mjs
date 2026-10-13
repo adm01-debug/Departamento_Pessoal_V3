@@ -52,6 +52,9 @@ function stripSqlComments(input) {
         else if (input.slice(i, i + 2) === '*/') { depth--; i += 2; }
         else i++;
       }
+      // Postgres trata comentário como whitespace — sem isso 'SELECT/*x*/1'
+      // viraria 'SELECT1' e uma query válida seria rejeitada.
+      out += ' ';
       continue;
     }
     if (c === "'") {
