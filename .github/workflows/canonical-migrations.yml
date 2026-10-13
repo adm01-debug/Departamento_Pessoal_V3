@@ -335,7 +335,7 @@ jobs:
             'taxas_no_permissive', NOT EXISTS (
               SELECT 1 FROM pg_policies
               WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
-                AND (qual IS NULL OR qual = 'true')
+                AND NOT (roles = '{authenticated}'::name[] AND cmd = 'SELECT')
             ),
             'periodos_no_for_all', NOT EXISTS (
               SELECT 1 FROM pg_policies
