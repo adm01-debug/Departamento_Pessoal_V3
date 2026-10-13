@@ -154,8 +154,10 @@ export async function safeFetch(
     throw new FetchNetworkError(url, tag, err);
   } finally {
     clearTimeout(timer);
-    // Garante que o signal está limpio para não vazar estado
-    controller.abort();
+    // NÃO dar controller.abort() aqui: a resposta pode ter sido entregue com o
+    // body ainda em streaming — abortar o signal mata res.text()/json() no
+    // caller e transforma envio aceito em "falha". O controller é coletado
+    // com a função; quem precisa de cancelamento usa o timeout (timer).
   }
 }
 
