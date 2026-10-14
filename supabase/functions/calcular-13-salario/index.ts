@@ -139,7 +139,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // Avos proporcionais
-    const [anoRef, mesRef] = d.competencia.split('-').map(Number);
+    const [anoRef] = d.competencia.split('-').map(Number);
     const adm = new Date(d.data_admissao + 'T00:00:00Z');
     const anoAdm = adm.getUTCFullYear();
     const mesAdm = adm.getUTCMonth() + 1;

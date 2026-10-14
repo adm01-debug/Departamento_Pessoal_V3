@@ -1,0 +1,36 @@
+{
+  "_comment": "Inventário dos labels usados por workflows automatizados. Atualizar aqui ao criar/renomear.",
+  "labels": [
+    {
+      "name": "ci-main",
+      "color": "d73a4a",
+      "description": "Issue aberta automaticamente por falha de CI em push na main (rls-live)",
+      "used_by": ["ci.yml (rls-live job)"]
+    },
+    {
+      "name": "e2e-main",
+      "color": "e11d48",
+      "description": "Issue aberta automaticamente por falha de E2E autenticado em push na main",
+      "used_by": ["e2e.yml (playwright job)"]
+    },
+    {
+      "name": "healthcheck",
+      "color": "f97316",
+      "description": "Issue aberta automaticamente por falha no healthcheck de produção",
+      "used_by": ["healthcheck.yml"]
+    },
+    {
+      "name": "canonical",
+      "color": "7c3aed",
+      "description": "Issue aberta automaticamente por falha em workflows canônicos",
+      "used_by": ["canonical-probes.yml", "canonical-migrations.yml"]
+    },
+    {
+      "name": "ci",
+      "color": "0075ca",
+      "description": "Label genérico para PRs de CI — usado pelo Dependabot (grupo actions). NÃO usar em issues automatizadas; usar ci-main para evitar conflito.",
+      "used_by": ["dependabot.yml (grupo actions)"]
+    }
+  ],
+  "_note": "D22: o label 'ci' era usado por rls-live (conflito com Dependabot). Corrigido para 'ci-main' em 14/10/2026."
+}

@@ -270,7 +270,6 @@ serve(async (req: Request): Promise<Response> => {
           (faltasRecentes[f.colaborador_id as string] ?? 0) + 1;
       }
 
-      const seisMesesAtras = new Date(hoje.getTime() - 180 * 24 * 60 * 60 * 1000);
       for (const colab of colaboradores) {
         const admissao = new Date(colab.data_admissao);
         const diasAdmitido = (hoje.getTime() - admissao.getTime()) / (24 * 60 * 60 * 1000);

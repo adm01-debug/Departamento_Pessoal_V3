@@ -57,12 +57,6 @@ function json(body: unknown, status = 200): Response {
 }
 
 
-function jsonError(status: number, code: string, message: string) {
-  return new Response(JSON.stringify({ success: false, error: message, code }), {
-    status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return json({ success: false, error: 'Method not allowed' }, 405);

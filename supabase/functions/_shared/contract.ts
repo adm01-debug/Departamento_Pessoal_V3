@@ -50,7 +50,6 @@ function isOriginAllowed(origin: string): boolean {
   try {
     const url = new URL(origin);
     if (url.protocol !== "https:" && url.protocol !== "http:") return false;
-    const host = url.hostname;
     return (
       ALLOWED_ORIGINS.includes(origin) ||
       IS_LOCAL_DEV && isLocalhostOrigin(origin)
