@@ -47,7 +47,7 @@
     "graph:rebuild": "graphify update . --force",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:lighthouse": "npm run build && npx -y @lhci/cli@0.14.0 autorun",
+    "test:lighthouse": "npm run build && ./node_modules/.bin/lhci autorun",
     "audit:bundle": "node scripts/check-bundle-budget.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:migrations": "bash scripts/tests/migrations-plano100.sh",
@@ -132,6 +132,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@lhci/cli": "0.14.0",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.64.0",
     "@sentry/vite-plugin": "5.4.1",

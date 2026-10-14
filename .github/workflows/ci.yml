@@ -29,7 +29,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Type Check (src)
@@ -50,7 +50,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Lint
@@ -103,7 +103,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Unit Tests
@@ -153,7 +153,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Smoke RLS/RPC contra o canônico
@@ -186,7 +186,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Build
@@ -198,7 +198,7 @@ jobs:
       - name: Lighthouse CI (rotas públicas)
         # Rotas autenticadas redirecionam para /login sem credenciais — o
         # audit cobre /login e /verificar-contrato, as páginas públicas.
-        run: npx -y @lhci/cli@0.14.0 autorun
+        run: ./node_modules/.bin/lhci autorun
 
   edge-functions:
     name: Edge Functions (deno check)
@@ -233,7 +233,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Contrato físico dos eventos de auditoria Edge
@@ -256,6 +256,10 @@ jobs:
           node scripts/tests/rebaseline-artifact.test.mjs
           node scripts/tests/validate-canonical-db-url.test.mjs
           node scripts/tests/workflows-contract.test.mjs
+      - name: Paridade bun.lock ↔ package.json (D1)
+        # W02: garante que bun install --frozen-lockfile não quebre no CI.
+        # Detecta o caso Dependabot: atualiza package-lock.json mas não bun.lock.
+        run: bash scripts/tests/lockfile-parity.test.sh
 
   p0-database-migrations:
     name: P0 database migration simulations
@@ -324,7 +328,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Instalar cliente psql
         run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
       - name: Regressão fail-closed dos auditores
