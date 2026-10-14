@@ -2,9 +2,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
-import { CardContent } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
@@ -18,9 +16,10 @@ import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
 import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
-import { EntradaPresenca, MotionCard, entradaCard } from '@/components/avaliacao/entradaCards';
+import { EntradaPresenca } from '@/components/avaliacao/entradaCards';
 import { FeedbacksTab } from '@/components/avaliacao/FeedbacksTab';
 import { MetasOKRsTab } from '@/components/avaliacao/MetasOKRsTab';
+import { PdiTab } from '@/components/avaliacao/PdiTab';
 import { cn } from '@/lib/utils';
 import { formatarPeriodo } from '@/components/avaliacao/desempenhoComum';
 // MOCK VISUAL — ver src/mocks/desempenhoMock.ts.
@@ -346,53 +345,12 @@ export default function AvaliacaoPage() {
             </TabsContent>
 
             <TabsContent value="pdis" className="space-y-6">
-              <div className="grid gap-4">
-                {pdis.map((p: any, i: number) => (
-                  <MotionCard
-                    key={p.id}
-                    {...entradaCard(i)}
-                    className="border-border/30 hover:border-primary/20 transition-all rounded-2xl"
-                  >
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="p-2 rounded-xl bg-success/10 text-success">
-                          <TrendingUp className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-sm">{p.titulo}</h4>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[10px] text-muted-foreground uppercase font-medium">
-                              {p.competencia_foco}
-                            </span>
-                            <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                            <span className="text-[10px] text-muted-foreground font-medium">
-                              {p.colaborador?.nome_completo}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right">
-                          <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">Prazo</p>
-                          <p className="text-xs font-mono font-medium">
-                            {new Date(p.prazo).toLocaleDateString('pt-BR')}
-                          </p>
-                        </div>
-                        <Badge
-                          className={cn(
-                            'text-[10px] font-medium uppercase',
-                            p.status === 'concluido'
-                              ? 'bg-success/10 text-success border-success/20'
-                              : 'bg-warning/10 text-warning border-warning/20'
-                          )}
-                        >
-                          {p.status.replace('_', ' ')}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </MotionCard>
-                ))}
-              </div>
+              {/* Aba redesenhada: banner "Foco agora" → busca/filtros/ordenação →
+                pílulas de status → cards analíticos → paginação compacta. Toda a
+                lógica é client-side sobre `pdis` (a MESMA consulta que a página
+                já fazia); a lista de colaboradores que a página já carrega
+                resolve cargo/departamento/foto do dono do plano. */}
+              <PdiTab pdis={pdis} colaboradores={colaboradores} />
             </TabsContent>
 
             <TabsContent value="ninebox" className="space-y-6">
