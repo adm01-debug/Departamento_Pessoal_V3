@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 29/09/2026
+> Última atualização: 14/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -67,7 +67,7 @@
 │   │   └── BRIDGE_PERFORMANCE.md # 10 gaps do bridge
 │   └── ...
 ├── .github/
-│   ├── workflows/                # GitHub Actions (10 workflows)
+│   ├── workflows/                # GitHub Actions (11 workflows)
 │   │   ├── ci.yml                # CI principal (typecheck+lint+test+edge+security+migrations+db)
 │   │   ├── deploy.yml            # Deploy preview (Vercel via integração Git)
 │   │   ├── security.yml          # CodeQL + npm audit
@@ -308,6 +308,50 @@ POST-only gateway (32KB file, 729 lines)
 └── MCP Departamento Pessoal V3 somente leitura — sem supabase_auth_create_user
 ```
 
+### Sessão 6 — 14/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (plano 100 etapas — Wave 0 autônoma)
+
+#### O que foi feito:
+
+```
+🔧 W01 — bun.lock regenerado com Bun 1.4.2 (lockfileVersion:3)
+│   D1: Dependabot PRs #216/#217/#218 (13/10) atualizaram package-lock.json
+│   mas não bun.lock → bun install --frozen-lockfile falhava no CI.
+│   Solução: bun.lock regenerado; bun-version 1.3.14 → 1.4.2 em e2e.yml e
+│   deploy.yml (CI e local agora idênticos).
+
+📌 W35 — Comentários # v4 → # v7 em canonical-probes.yml e canonical-sql-diag.yml
+│   SHA 820762... (actions/setup-node) era v7 mas comentado como v4.
+│   Cria infra/github/action-pins.json: tabela offline SHA→versão (8 actions)
+│   usada pelo contrato W97 para validação sem rede.
+
+🔧 W53 — ratchet-lint-warnings.mjs: patch automático de lint:ci --max-warnings
+│   ao atualizar o budget, mantendo budget e package.json sempre em sincronia.
+
+⚙️ W54 — Contrato de auditoria Edge movido de typecheck → security-config
+│   typecheck fica puro (sem npm install); security-config já tem npm install.
+
+🧹 W82 — 9 variáveis/imports não-usados removidos em 9 arquivos Edge/src
+│   Fix CodeQL #187 (js/comparison-between-incompatible-types em safeError.ts).
+│   8 alertas js/unused-local-variable fechados na raiz.
+
+📝 W95 — ci.yml: comentário D26 explica format:check:changed em push na main.
+
+🔖 W96 — ci.yml: label ci → ci-main no job rls-live (D22).
+│   Cria infra/github/labels.json: inventário de 5 labels de workflow.
+
+✅ W97 — workflows-contract.test.mjs: 6 novos contratos (checks 6-11)
+│   Regex de var sensível narrowed (só $VAR, não string literal).
+│   npx -y → WARN pendente W40; node-version → WARN pendente W38.
+│   11/11 workflows passam, 0 falhas.
+
+🧪 W98 — scripts/tests/lockfile-parity.test.sh criado
+│   Detecta regressão D1: bun install --frozen-lockfile + paridade de pacotes.
+
+📚 W94 — CLAUDE.md: 11 workflows (era 10), sessão 6, gaps e métricas atualizados.
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -315,35 +359,40 @@ POST-only gateway (32KB file, 729 lines)
 ### Status dos Workflows
 
 ```
-CI (ci.yml)              → 7 jobs, todos com timeout, trigger master removido ✅
+CI (ci.yml)              → 7 jobs, todos com timeout; label ci-main (D22 fix) ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
-Deploy (deploy.yml)      → Vercel (integração Git), permissions adicionado ✅
-E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.3.14 fixado ✅
+Deploy (deploy.yml)      → Vercel (integração Git), bun-version: 1.4.2 ✅
+E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.4.2 ✅
 SonarCloud               → ✅ Automatic Analysis (GitHub App) — job CI removido (PR #162)
 Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
+canonical-sql-diag.yml   → novo (diagnóstico SQL) — 11 workflows no total ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
 Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
 Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
+Contract test            → 11/11 workflows, 0 falhas (W97 — 11 contratos) ✅
 ```
 
-### Métricas (29/09/2026)
+### Métricas (14/10/2026)
 
 | Indicador              | Valor                                                                                  |
 | ---------------------- | -------------------------------------------------------------------------------------- |
-| Open PRs               | 7 dependabot                                                                           |
+| Open PRs               | Wave 0 em review (claude/happy-cori-3z9h7f)                                            |
 | TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                       |
 | Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                |
 | Cobertura              | ✅ v8 configurada                                                                      |
 | Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                              |
 | Branch delete          | ✅ delete_branch_on_merge=true                                                         |
 | Ruleset                | ✅ 21934736 — 7 required checks — baseline em infra/github/                            |
-| Workflows com timeout  | ✅ 100% (12 jobs adicionados na sessão 2)                                              |
-| supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA (E66 — sessão 2)                                   |
+| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                |
+| supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA; action-pins.json para validação offline           |
+| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35               |
 | Branch protection      | ✅ Ativo via API (sessão 3) — PRs obrigatórias                                         |
 | E2E secrets            | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl |
-| bun-version            | ✅ Fixado em 1.3.14 no e2e.yml (sessão 4) — lockfile estável                           |
+| bun.lock               | ✅ lockfileVersion:3 (Bun 1.4.2) — frozen-lockfile verde (W01, sessão 6)               |
 | fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                   |
+| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                           |
+| contract test          | ✅ 11/11 workflows, 0 falhas (W97 — 11 contratos ativos)                               |
 
 ---
 
@@ -378,34 +427,32 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Críticos
 
-| Gap                         | Impacto                        | Solução                        |
-| --------------------------- | ------------------------------ | ------------------------------ |
-| CI não roda em repo privado | Pipeline não executa           | Settings → Actions → Allow     |
-| Branch protection inativo   | Push direto p/ main sem review | Settings → Branches → Add rule |
+_Nenhum crítico bloqueante no momento._
 
 ### Médios
 
-| Gap                             | Impacto                                                    | Solução                                                                             |
-| ------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `bun.lock` — bun-version pinado | Risco de lockfile divergir resolvido em e2e.yml (sessão 4) | Cron sync-bun-lock cobre cenários restantes                                         |
-| Usuários E2E inexistentes       | E2E autenticado falha em produção                          | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
-| Deploy Netlify sem secrets      | Preview não deploya                                        | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID                                              |
+| Gap                       | Impacto                              | Solução                                                                             |
+| ------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| Usuários E2E inexistentes | E2E autenticado falha em produção    | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
+| npx -y no Lighthouse step | Supply chain — pendente W40          | Migrar `npx -y @lhci/cli@0.14.0` para dependência lockada (W40)                     |
+| node-version: literal     | Deriva de versão Node — pendente W38 | Migrar para `node-version-file: .nvmrc` (W38)                                       |
 
 ### Baixos
 
-| Gap                                | Impacto           | Solução           |
-| ---------------------------------- | ----------------- | ----------------- |
-| `noUnusedLocals:true` pode alertar | Warnings no build | Aceitar ou limpar |
+| Gap                                | Impacto              | Solução                          |
+| ---------------------------------- | -------------------- | -------------------------------- |
+| `--no-lock` em canonical-sql-diag  | Bypassa deno.lock    | Resolver após W36 corrigir lock  |
+| `noUnusedLocals:true` pode alertar | Warnings no build    | Aceitar ou limpar                |
+| CodeQL unused-local (99 restantes) | Ruído no painel GHAS | Fechar em batch via W82 contínuo |
 
 ---
 
 ## 🚀 Próximos Passos Recomendados
 
-### Imediatos (settings do GitHub)
+### Imediatos (ação manual obrigatória)
 
-1. **Settings → Actions → General → Allow GitHub Actions** ✅ Habilita CI
-2. **Settings → Branches → Add rule → main** ✅ Protege branch
-3. **Adicionar secrets**: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID
+1. **Criar usuários E2E** em frjbfeamybqsejlvmqbl.supabase.co/auth: `admin@teste.local / Admin@2026!` e `user@teste.local / User@2026!`
+2. **Merge PR** `claude/happy-cori-3z9h7f` (Wave 0 — W01/W35/W53/W54/W82/W95/W96/W97/W98/W94)
 
 ### Curto Prazo
 

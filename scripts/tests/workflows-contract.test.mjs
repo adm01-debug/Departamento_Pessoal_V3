@@ -1,12 +1,18 @@
 /**
- * E96 — Contrato dos workflows GitHub Actions.
- * Roda em security-config (via scripts/audit-edge-syntax.mjs ou similar).
+ * E96/W97 — Contrato dos workflows GitHub Actions.
+ * Roda em security-config.
  * Valida invariantes que, se violados, causam falhas silenciosas ou custos ocultos.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 const WORKFLOWS_DIR = resolve(import.meta.dirname, '../../.github/workflows');
+const ROOT = resolve(import.meta.dirname, '../..');
+const ACTION_PINS_PATH = join(ROOT, 'infra/github/action-pins.json');
+const actionPins = existsSync(ACTION_PINS_PATH)
+  ? JSON.parse(readFileSync(ACTION_PINS_PATH, 'utf-8')).pins ?? {}
+  : {};
+const denoLockExists = existsSync(join(ROOT, 'deno.lock'));
 
 const files = readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.yml') || f.endsWith('.yaml'));
 
@@ -109,6 +115,68 @@ for (const file of files) {
     fail(`${file}: sem bloco permissions: de nível top (E44)`);
   } else {
     pass(`permissions: presente`);
+  }
+
+  // 6. Comentário # vX coerente com o SHA (W35/W97a) — modo offline via action-pins.json
+  if (Object.keys(actionPins).length > 0) {
+    const versionCommentRe = /uses:\s+[^\s@]+@([0-9a-f]{40})\s+#\s+(\S+)/g;
+    let mismatches = [];
+    for (const m of raw.matchAll(versionCommentRe)) {
+      const sha = m[1];
+      const comment = m[2];
+      if (actionPins[sha] && actionPins[sha].version !== comment) {
+        mismatches.push(`SHA ${sha.slice(0,8)}… comentado como '${comment}', esperado '${actionPins[sha].version}'`);
+      }
+    }
+    if (mismatches.length > 0) {
+      for (const m of mismatches) fail(`${file}: comentário de versão incorreto: ${m} (D6/W35)`);
+    } else {
+      pass(`comentários de versão coerentes com action-pins.json`);
+    }
+  }
+
+  // 7. --no-lock proibido quando deno.lock existe (W97b/D6) — AVISO até W36 corrigir
+  if (denoLockExists && raw.includes('--no-lock')) {
+    const noLockLines = lines
+      .map((l, i) => ({ line: l, n: i + 1 }))
+      .filter(({ line }) => line.includes('--no-lock'));
+    for (const { line, n } of noLockLines) {
+      console.warn(`  WARN: ${file}:${n}: --no-lock usado apesar de deno.lock existir (D6/W97b, pendente W36): "${line.trim()}"`);
+    }
+  }
+
+  // 8. continue-on-error: exige comentário # contrato: … (W97d)
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s+continue-on-error:\s*true/.test(line)) {
+      const prevLine = lines[i - 1] ?? '';
+      if (!prevLine.includes('# contrato:')) {
+        fail(`${file}:${i + 1}: continue-on-error: true sem comentário '# contrato: …' (W97d): "${line.trim()}"`);
+      }
+    }
+  }
+
+  // 9. Proibir echo/cat da expansão de variáveis sensíveis em run: (W97e/D4)
+  // Só flagra expansão real ($VAR ou ${VAR}), não literais string em mensagens de erro.
+  const sensitiveVarRe = /\b(echo|cat|printf)\b[^#\n]*\$\{?(SUPABASE_DB_URL|DIAG_QUERY)\}?/;
+  for (let i = 0; i < lines.length; i++) {
+    if (sensitiveVarRe.test(lines[i])) {
+      fail(`${file}:${i + 1}: possível vazamento de dados sensíveis em log (W97e/D4): "${lines[i].trim()}"`);
+    }
+  }
+
+  // 10. npx -y em run: — AVISO até W40 migrar Lighthouse para lock (W97f/D12)
+  for (let i = 0; i < lines.length; i++) {
+    if (/\bnpx\s+-y\b/.test(lines[i]) || /\bnpx\s+--yes\b/.test(lines[i])) {
+      console.warn(`  WARN: ${file}:${i + 1}: npx -y baixa código remoto sem lock (W97f/D12, pendente W40): "${lines[i].trim()}"`);
+    }
+  }
+
+  // 11. node-version: literal — AVISO até W38 migrar para node-version-file (W97g/D6)
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s+node-version:\s+'?\d/.test(lines[i])) {
+      console.warn(`  WARN: ${file}:${i + 1}: node-version: literal, preferir node-version-file: .nvmrc (W97g/D6, pendente W38): "${lines[i].trim()}"`);
+    }
   }
 
   // 5. concurrency: presente em workflows com pull_request trigger

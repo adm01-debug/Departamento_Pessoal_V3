@@ -32,12 +32,6 @@ jobs:
           node-version: '22'
       - name: Install
         run: npm install --no-audit --no-fund
-      - name: Contrato físico dos eventos de auditoria Edge
-        # O analisador usa a API AST do TypeScript instalada acima. Mantê-lo
-        # neste job evita um falso negativo no gate estático sem dependências.
-        run: |
-          npm run audit:edge-audit-log
-          node scripts/tests/audit-edge-audit-log-contract.test.mjs
       - name: Type Check (src)
         run: npm run typecheck
       - name: Type Check (tests)
@@ -91,6 +85,9 @@ jobs:
       - name: Lint Edge Functions
         run: npm run lint:edge
       - name: Format changed source files
+        # D26: Em push na main, GITHUB_BASE_REF é vazio → diff é vazio →
+        # nenhum arquivo é verificado (gate sempre passa). Comportamento
+        # intencional: o formato foi validado no PR que gerou o push.
         run: npm run format:check:changed
 
   test:
@@ -167,13 +164,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TITLE="🔴 Smoke RLS live falhou na main ($(date -u +%F\ %H:%M) UTC)"
-          EXISTING=$(gh issue list --label ci --state open --json number --jq '.[0].number' || true)
+          EXISTING=$(gh issue list --label ci-main --state open --json number --jq '.[0].number' || true)
           BODY=$(printf 'O smoke de permissões/RLS contra o banco canônico falhou em push na main.\n\nRun: %s/%s/actions/runs/%s' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
-          gh label create ci --force >/dev/null 2>&1 || true
+          gh label create ci-main --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
             gh issue comment "$EXISTING" --body "$BODY"
           else
-            gh issue create --title "$TITLE" --body "$BODY" --label ci
+            gh issue create --title "$TITLE" --body "$BODY" --label ci-main
           fi
 
   lighthouse:
@@ -237,6 +234,14 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Contrato físico dos eventos de auditoria Edge
+        # Análise AST estática (não precisa de banco nem secrets). Movido
+        # de typecheck para cá para manter typecheck puro.
+        run: |
+          npm run audit:edge-audit-log
+          node scripts/tests/audit-edge-audit-log-contract.test.mjs
       - name: Gate de configuração de segurança
         # E-077: verify_jwt deny-by-default, CORS sem wildcard, security
         # headers, ausência de segredos hardcoded e SW sem cache de PII.

@@ -12,6 +12,7 @@
 import { ESLint } from 'eslint';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { createRequire } from 'node:module';
 
 const root = resolve(import.meta.dirname, '..');
 const budgetPath = resolve(root, 'scripts/.eslint-warnings-budget.json');
@@ -71,6 +72,17 @@ if (totalCurrent > totalBudget) {
 if (write) {
   await writeFile(budgetPath, JSON.stringify(newBudget, null, 2) + '\n');
   console.log(`\nBaseline atualizado: ${budgetPath}`);
+  // Manter package.json#scripts.lint:ci --max-warnings em sincronia com _total
+  const pkgPath = resolve(root, 'package.json');
+  const pkgRaw = await readFile(pkgPath, 'utf-8');
+  const newPkg = pkgRaw.replace(
+    /("lint:ci":\s*"eslint[^"]*--max-warnings=)\d+/,
+    `$1${totalCurrent}`,
+  );
+  if (newPkg !== pkgRaw) {
+    await writeFile(pkgPath, newPkg);
+    console.log(`package.json lint:ci --max-warnings atualizado para ${totalCurrent}`);
+  }
 }
 
 if (failures > 0) {

@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
-import { safeFetchWithRetry, FetchTimeoutError, FetchNetworkError } from '../_shared/safe-fetch.ts';
+import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
 
 const SYSTEM_PROMPT = `Voce e um assistente especialista em Departamento Pessoal brasileiro. Seu nome e "Assistente DP".
 

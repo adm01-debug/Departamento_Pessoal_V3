@@ -30,7 +30,7 @@ const USER_FRIENDLY_MESSAGES: Record<string, string> = {
 function extractMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === 'string') return error;
-  if (typeof error === 'object' && error !== null) {
+  if (error !== null && typeof error === 'object') {
     const candidate = error as Record<string, unknown>;
     for (const key of ['message', 'error_description', 'error', 'details', 'hint'] as const) {
       const value = candidate[key];

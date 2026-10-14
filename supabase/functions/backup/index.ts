@@ -15,12 +15,6 @@ const TABLES = [
   'asos', 'admissoes', 'cargos', 'departamentos', 'jornadas',
 ];
 
-function jsonError(status: number, code: string, message: string) {
-  return new Response(JSON.stringify({ success: false, error: message, code }), {
-    status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  });
-}
-
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
 
