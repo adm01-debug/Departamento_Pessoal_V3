@@ -14,7 +14,7 @@ import { Target, Users, TrendingUp, LayoutGrid, History, BarChart2, Calendar } f
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
 import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
-import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
+import { NineBoxTab } from '@/components/avaliacao/NineBoxTab';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { EntradaPresenca } from '@/components/avaliacao/entradaCards';
 import { FeedbacksTab } from '@/components/avaliacao/FeedbacksTab';
@@ -354,7 +354,19 @@ export default function AvaliacaoPage() {
             </TabsContent>
 
             <TabsContent value="ninebox" className="space-y-6">
-              <NineBoxMatrix data={feedbacks} />
+              {/* Aba redesenhada: KPIs → banner "Foco agora" → busca/filtros →
+                matriz 3×3 + coluna lateral de widgets. Toda a lógica é
+                client-side sobre as listas que a página já carrega
+                (`feedbacks`, `ciclos`, `colaboradores`, `pdis`) — nenhuma
+                consulta nova e nenhuma mudança na regra de classificação. */}
+              <NineBoxTab
+                feedbacks={feedbacks}
+                ciclos={ciclos}
+                cicloId={cicloSelecionado?.id ?? ''}
+                onCicloId={setCicloSelecionadoId}
+                colaboradores={colaboradores}
+                pdis={pdis}
+              />
             </TabsContent>
 
             <TabsContent value="auditoria" className="space-y-6">
