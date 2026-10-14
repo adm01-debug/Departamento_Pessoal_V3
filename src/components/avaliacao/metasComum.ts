@@ -118,12 +118,81 @@ export const ROTULO_SITUACAO: Record<SituacaoMeta, string> = {
   concluida: 'Concluída',
 };
 
-/** Pele do badge de situação (cores semânticas do Design System). */
+/**
+ * ── ETIQUETAS DO CARD (tipo + situação) ─────────────────────────────────────
+ * Geometria e tipografia ÚNICAS das duas etiquetas do card. Ficam aqui (e não
+ * no `MetaCard`) porque tipo e situação são o MESMO componente visual em papéis
+ * diferentes: assim compartilham altura, padding horizontal, raio, peso
+ * tipográfico e o espaçamento ícone↔texto, e uma terceira etiqueta que venha a
+ * existir na aba nasce alinhada só por reusar esta base.
+ *
+ * `min-w-0` (sem `shrink-0`) deixa o rótulo do tipo truncar se o valor livre da
+ * coluna for longo; a situação (palavra curta e fixa) trava com `shrink-0` no
+ * call-site.
+ */
+export const ETIQUETA_BASE =
+  'inline-flex h-6 min-w-0 items-center gap-1.5 rounded-md border px-2 text-[10px] font-medium uppercase tracking-wide';
+
+/**
+ * Tom NEUTRO (cinza do sistema): etiqueta sem categoria conhecida — é o tom do
+ * tipo vazio/desconhecido (rótulo "Meta") e o tom RESERVADO para um status
+ * `rascunho`. Hoje `SituacaoMeta` só produz emdia/risco/atrasada/concluida, ou
+ * seja: nenhuma etiqueta de rascunho existe e nenhuma regra nova é criada aqui
+ * (um status `rascunho` continua caindo em "Em dia"/"Em risco" pela derivação).
+ */
+export const CLASSE_NEUTRA = 'border-border/60 bg-muted/40 text-muted-foreground';
+
+/**
+ * Pele por TIPO de meta — DISCRETA de propósito (fundo a 10 %, borda a 25 %,
+ * texto na cor cheia + ícone na MESMA cor). O destaque do cabeçalho é da
+ * etiqueta de SITUAÇÃO, um degrau acima em intensidade (fundo a 20 %, borda a
+ * 45 %) — é o que faz as duas serem lidas em papéis diferentes num relance.
+ *
+ * Cada tom é um token JÁ EXISTENTE do tema (nenhuma cor nova, nenhum token
+ * novo, nenhum utilitário global novo):
+ *   • individual → `--info`     (azul/ciano);
+ *   • equipe     → `--chart-4`  (roxo);
+ *   • empresa    → `--chart-2`  (teal / verde-azulado);
+ *   • okr        → `--primary`  (lime da marca).
+ *
+ * `--chart-2`/`--chart-4` não estão registrados como utilitários no
+ * `tailwind.config.js`, então entram por valor arbitrário — exatamente o padrão
+ * que `AssistenteIAPage.tsx` já usa para roxo (`--chart-4`) e teal (`--chart-2`).
+ */
+export const CLASSE_TIPO: Record<string, string> = {
+  individual: 'border-info/25 bg-info/10 text-info',
+  equipe: 'border-[hsl(var(--chart-4)/0.25)] bg-[hsl(var(--chart-4)/0.10)] text-[hsl(var(--chart-4))]',
+  empresa: 'border-[hsl(var(--chart-2)/0.25)] bg-[hsl(var(--chart-2)/0.10)] text-[hsl(var(--chart-2))]',
+  okr: 'border-primary/25 bg-primary/10 text-primary',
+};
+
+/**
+ * Tom do TIPO a partir do valor REAL de `metas_okrs.tipo` (texto livre).
+ * Compostos como "okr - equipe" caem em OKR — a MESMA regra do ícone e do
+ * rótulo (`rotuloTipo`), para os três nunca discordarem. Sem valor utilizável
+ * (ou valor desconhecido), cai no neutro.
+ */
+export function tomTipo(tipo: unknown): string {
+  const t = texto(tipo);
+  if (!t) return CLASSE_NEUTRA;
+  if (t.includes('okr')) return CLASSE_TIPO.okr;
+  return CLASSE_TIPO[t] ?? CLASSE_NEUTRA;
+}
+
+/**
+ * Pele do badge de SITUAÇÃO (o elemento de maior destaque do cabeçalho).
+ *
+ * `concluida` usa `--info` (azul) e NÃO o verde de `emdia`: as duas situações
+ * aparecem na mesma posição do card, então precisam de famílias de cor
+ * diferentes. É também o tom que os filtros rápidos já usam para "Concluídas"
+ * (`PELE_FILTRO.concluida`), deixando o chip da barra e o badge do card na
+ * mesma cor pela primeira vez.
+ */
 export const CLASSE_SITUACAO: Record<SituacaoMeta, string> = {
-  emdia: 'border-success/25 bg-success/10 text-success',
-  concluida: 'border-success/25 bg-success/10 text-success',
-  risco: 'border-warning/25 bg-warning/10 text-warning',
-  atrasada: 'border-destructive-vivid/25 bg-destructive-vivid/10 text-destructive-vivid',
+  emdia: 'border-success/45 bg-success/20 text-success',
+  concluida: 'border-info/45 bg-info/20 text-info',
+  risco: 'border-warning/45 bg-warning/20 text-warning',
+  atrasada: 'border-destructive-vivid/45 bg-destructive-vivid/20 text-destructive-vivid',
 };
 
 /** Cor do traço do donut (via `stroke: currentColor`). */
@@ -142,13 +211,66 @@ export const TINTA_PRAZO: Record<SituacaoMeta, string> = {
   atrasada: 'text-destructive-vivid',
 };
 
-/** Tinta do contador dentro de cada pílula de status. */
-export const TINTA_FILTRO: Record<FiltroStatus, string> = {
-  todas: 'bg-muted/60 text-muted-foreground',
-  emdia: 'bg-success/15 text-success',
-  risco: 'bg-warning/15 text-warning',
-  atrasada: 'bg-destructive-vivid/15 text-destructive-vivid',
-  concluida: 'bg-success/15 text-success',
+/**
+ * PELE SEMÂNTICA das pílulas de status (chip + badge numérica), por estado.
+ *
+ * Cada status usa UMA família de cor do Design System — a mesma dos tokens de
+ * situação do card (`CLASSE_SITUACAO`/`COR_DONUT`):
+ *   • todas     → `primary` (lime)             — destaque da própria barra;
+ *   • emdia     → `success` (verde);
+ *   • risco     → `warning` (âmbar);
+ *   • atrasada  → `destructive-vivid` (vermelho);
+ *   • concluida → `info` (azul)                — escolhido NO LUGAR do verde
+ *     para separar visualmente de "Em dia" (no card da meta ambos caem em
+ *     `success`); para paridade estrita com o card, basta trocar `info` por
+ *     `success` aqui — é o único ponto de verdade dessas cores.
+ *
+ * INATIVO: mantém o fundo escuro do sistema com leve tint + borda e texto na
+ * cor do status. ATIVO: mesma família, com intensidade maior (fundo, borda,
+ * texto e badge) — mais contraste sem estourar a saturação do tema dark.
+ */
+export interface PeleFiltroStatus {
+  /** Fundo/borda/texto do chip INATIVO. */
+  chip: string;
+  /** Fundo/borda/texto do chip ATIVO. */
+  chipAtivo: string;
+  /** Badge numérica INATIVA. */
+  badge: string;
+  /** Badge numérica ATIVA. */
+  badgeAtivo: string;
+}
+
+export const PELE_FILTRO: Record<FiltroStatus, PeleFiltroStatus> = {
+  todas: {
+    chip: 'border-primary/25 bg-primary/5 text-primary/80 hover:border-primary/45 hover:bg-primary/10 hover:text-primary',
+    chipAtivo: 'border-primary/60 bg-primary/15 text-primary',
+    badge: 'bg-primary/10 text-primary/80',
+    badgeAtivo: 'bg-primary/20 text-primary',
+  },
+  emdia: {
+    chip: 'border-success/25 bg-success/5 text-success/80 hover:border-success/45 hover:bg-success/10 hover:text-success',
+    chipAtivo: 'border-success/60 bg-success/15 text-success',
+    badge: 'bg-success/10 text-success/80',
+    badgeAtivo: 'bg-success/20 text-success',
+  },
+  risco: {
+    chip: 'border-warning/25 bg-warning/5 text-warning/80 hover:border-warning/45 hover:bg-warning/10 hover:text-warning',
+    chipAtivo: 'border-warning/60 bg-warning/15 text-warning',
+    badge: 'bg-warning/10 text-warning/80',
+    badgeAtivo: 'bg-warning/20 text-warning',
+  },
+  atrasada: {
+    chip: 'border-destructive-vivid/25 bg-destructive-vivid/5 text-destructive-vivid/80 hover:border-destructive-vivid/45 hover:bg-destructive-vivid/10 hover:text-destructive-vivid',
+    chipAtivo: 'border-destructive-vivid/60 bg-destructive-vivid/15 text-destructive-vivid',
+    badge: 'bg-destructive-vivid/10 text-destructive-vivid/80',
+    badgeAtivo: 'bg-destructive-vivid/20 text-destructive-vivid',
+  },
+  concluida: {
+    chip: 'border-info/25 bg-info/5 text-info/80 hover:border-info/45 hover:bg-info/10 hover:text-info',
+    chipAtivo: 'border-info/60 bg-info/15 text-info',
+    badge: 'bg-info/10 text-info/80',
+    badgeAtivo: 'bg-info/20 text-info',
+  },
 };
 
 /** Pílulas da barra de filtros rápidos, na ordem da referência. */

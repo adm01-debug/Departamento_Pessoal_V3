@@ -24,10 +24,12 @@ import { ProgressoDonut } from './ProgressoDonut';
 import {
   CLASSE_SITUACAO,
   COR_DONUT,
+  ETIQUETA_BASE,
   ROTULO_SITUACAO,
   TINTA_PRAZO,
   descricaoPrazo,
   rotuloTipo,
+  tomTipo,
   type MetaDerivada,
 } from './metasComum';
 
@@ -116,21 +118,20 @@ export function MetaCard({
     >
       {/* ── Região A: cabeçalho — [ícone + tipo] · situação · menu ───────── */}
       <div className="flex items-center gap-2">
-        {/* Superfície ÚNICA do tipo: o ícone vive dentro da própria pílula. */}
-        <span className="inline-flex h-6 min-w-0 shrink items-center gap-1.5 rounded-md border border-border/60 bg-muted/40 px-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+        {/* Superfície ÚNICA do tipo: o ícone vive dentro da própria pílula e
+            herda a cor do texto. Etiqueta DISCRETA — a cor vem de `tomTipo`,
+            derivada do valor REAL da coluna `tipo` (compostos como
+            "okr - equipe" caem no lime de OKR). O destaque do cabeçalho fica
+            com o badge de situação, logo à direita. */}
+        <span className={cn(ETIQUETA_BASE, 'shrink', tomTipo(meta?.tipo))}>
           <Icone className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{rotuloTipo(meta?.tipo)}</span>
         </span>
 
         <div className="ml-auto flex shrink-0 items-center gap-1">
-          <Badge
-            variant="outline"
-            size="sm"
-            className={cn(
-              'h-5 rounded-md border px-2 text-[10px] font-medium uppercase tracking-wide',
-              CLASSE_SITUACAO[situacao]
-            )}
-          >
+          {/* Mesma base geométrica da etiqueta de tipo, um degrau acima em
+              intensidade de cor: o status é a informação que precisa saltar. */}
+          <Badge variant="outline" size="sm" className={cn(ETIQUETA_BASE, 'shrink-0', CLASSE_SITUACAO[situacao])}>
             {ROTULO_SITUACAO[situacao]}
           </Badge>
           {(podeAbrirCiclo || podeFiltrar) && (

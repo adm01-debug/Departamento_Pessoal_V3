@@ -42,10 +42,11 @@ const PERIMETRO = 2 * Math.PI * RAIO;
 const ANIM_MS = 1400;
 /**
  * Espessura do anel (px — o viewBox é renderizado 1:1).
- * 7/35 = 0,20 acompanha a proporção anterior (5/26 ≈ 0,19): o anel cresce junto
- * com o diâmetro, sem ficar exageradamente grosso.
+ * 8/35 ≈ 0,23: mais encorpado que a versão anterior (7/35 = 0,20) para ganhar
+ * presença no card, ainda longe de um anel grosso — a borda externa fica em
+ * 35 + 4 = 39 px, dentro dos 42 px disponíveis (nenhum corte no quadro).
  */
-const ESPESSURA = 7;
+const ESPESSURA = 8;
 
 interface ProgressoDonutProps {
   /** Percentual final (0–100). */
@@ -118,11 +119,15 @@ export function ProgressoDonut({ percentual, cor, reduzirMovimento = false }: Pr
           className={cn('stroke-current transition-[stroke] duration-300', cor)}
         />
       </svg>
+      {/* Miolo: número e rótulo menores, com respiro real entre os dois.
+          O bloco (17 px + 6 px + 9 px = 32 px) é centralizado no quadro de 84 px
+          e cabe folgado no vão interno do anel (2 × (35 − 4) = 62 px), então o
+          texto nunca toca o traço. */}
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-        <span className={cn('font-display text-[19px] font-medium leading-none tabular-nums', cor)}>
+        <span className={cn('font-display text-[17px] font-medium leading-none tabular-nums', cor)}>
           {Math.round(atual)}%
         </span>
-        <span className="mt-0.5 text-[10px] leading-none text-muted-foreground">progresso</span>
+        <span className="mt-1.5 text-[9px] leading-none text-muted-foreground">progresso</span>
       </div>
     </div>
   );

@@ -3,13 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { SearchInput } from '@/components/ui/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SlidersHorizontal } from 'lucide-react';
+import { FilterX, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { entradaCard } from './entradaCards';
 import {
   FILTROS_STATUS,
   ORDEM_OPCOES,
-  TINTA_FILTRO,
+  PELE_FILTRO,
   rotuloTipo,
   type ContagemMetas,
   type CriterioOrdem,
@@ -25,8 +25,17 @@ import {
  * valores REALMENTE presentes nos registros (tipos, responsáveis e ciclos) —
  * nenhuma opção fixa copiada da referência.
  *
- * · linha 1 → busca + Tipo + Responsável + "Mais filtros" (ciclo) + "Ordenar por";
+ * · linha 1 → busca + Tipo + Responsável + "Mais filtros" (ciclo) +
+ *   "Limpar filtros" (aparece só com filtro ativo) + "Ordenar por";
  * · linha 2 → pílulas de status com o contador derivado das metas em tela.
+ *
+ * "LIMPAR FILTROS": botão CONTEXTUAL — só existe quando algum filtro está
+ * diferente do padrão. A visibilidade é DERIVADA dos próprios props
+ * (`temFiltroAtivo`), sem estado espelho nem prop extra: busca não vazia,
+ * Tipo/Responsável/Ciclo escolhidos ou categoria rápida fora de "Todas".
+ * A ORDENAÇÃO não conta como filtro (ela ordena, não recorta a lista) e por
+ * isso não acende o botão. A ação em si é a `onLimpar` da aba, que restaura
+ * todos os critérios e volta para a 1ª página.
  *
  * Alturas uniformes (`h-9`, o padrão dos `Input`/`SelectTrigger` do Design
  * System) para não haver desalinhamento entre campo, select e botão.
@@ -81,6 +90,14 @@ export function MetasFiltros({
   filtrosAtivos,
   onLimpar,
 }: MetasFiltrosProps) {
+  /**
+   * Existe filtro fora do padrão? Derivado SOMENTE dos props já recebidos —
+   * nenhum estado novo/espelho. `ordem` fica de fora de propósito: ordenar não
+   * recorta a lista, então não é filtro ativo.
+   */
+  const temFiltroAtivo =
+    busca.trim() !== '' || tipo !== '' || responsavel !== '' || cicloId !== '' || status !== 'todas';
+
   return (
     <motion.div {...entradaCard(indice)} className="space-y-2">
       {/* ── Linha 1: busca + filtros + ordenação ─────────────────────────── */}
@@ -158,16 +175,24 @@ export function MetasFiltros({
                 </SelectContent>
               </Select>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-full justify-center text-xs text-muted-foreground"
-              onClick={onLimpar}
-            >
-              Limpar filtros
-            </Button>
           </PopoverContent>
         </Popover>
+
+        {/* "Limpar filtros" — CONTEXTUAL: só existe com filtro ativo, na mesma
+            linha e imediatamente à direita de "Mais filtros". Verde-lima oficial
+            (`--primary`) translúcido, mesma altura (`h-9`) dos vizinhos. */}
+        {temFiltroAtivo && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onLimpar}
+            className="h-9 shrink-0 gap-1.5 rounded-lg border-primary/40 bg-primary/10 px-2.5 text-[13px] font-normal text-primary transition-colors duration-200 hover:border-primary/60 hover:bg-primary/20 hover:text-primary"
+          >
+            <FilterX className="h-3.5 w-3.5" />
+            Limpar filtros
+          </Button>
+        )}
 
         {/* Ordenação — critérios suportados pelos campos reais. */}
         <div className="ml-auto flex items-center gap-2">
@@ -191,6 +216,11 @@ export function MetasFiltros({
       <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filtrar por situação">
         {FILTROS_STATUS.map((f) => {
           const ativo = status === f.valor;
+          // Pele semântica vinda do ponto único (`metasComum.PELE_FILTRO`):
+          // cada status mantém a MESMA família de cor em texto, borda, fundo e
+          // badge — inativo com tint sutil sobre o dark, ativo com mais
+          // contraste. Geometria (altura, padding, tipografia) inalterada.
+          const pele = PELE_FILTRO[f.valor];
           return (
             <button
               key={f.valor}
@@ -199,13 +229,16 @@ export function MetasFiltros({
               onClick={() => onStatus(f.valor)}
               className={cn(
                 'inline-flex h-7 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] font-medium transition-colors',
-                ativo
-                  ? 'border-primary/50 bg-primary/10 text-foreground'
-                  : 'border-border/30 bg-card/40 text-muted-foreground hover:bg-accent/40 hover:text-foreground'
+                ativo ? pele.chipAtivo : pele.chip
               )}
             >
               {f.rotulo}
-              <span className={cn('rounded-md px-1.5 py-0.5 text-[10px] tabular-nums', TINTA_FILTRO[f.valor])}>
+              <span
+                className={cn(
+                  'rounded-md px-1.5 py-0.5 text-[10px] tabular-nums',
+                  ativo ? pele.badgeAtivo : pele.badge
+                )}
+              >
                 {contagem[f.valor]}
               </span>
             </button>
