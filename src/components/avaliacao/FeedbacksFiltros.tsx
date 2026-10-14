@@ -1,0 +1,304 @@
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { SearchInput } from '@/components/ui/search-input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Check, FilterX, SlidersHorizontal } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { entradaCard } from './entradaCards';
+import {
+  ORDEM_FEEDBACK_OPCOES,
+  ROTULO_TIPO_FEEDBACK,
+  SEGMENTOS,
+  type ContagemSegmentos,
+  type CriterioOrdemFeedback,
+  type SegmentoFeedback,
+  type TipoFeedback,
+} from './feedbacksComum';
+
+/**
+ * ============================================================================
+ * BUSCA, FILTROS, SEGMENTAÇÃO E ORDENAÇÃO — aba "Feedbacks".
+ *
+ * Tudo aqui é client-side sobre a lista JÁ carregada pela `AvaliacaoPage`
+ * (nenhuma consulta nova). Os selects são montados a partir dos valores
+ * REALMENTE presentes nos registros (tipos e avaliadores) — nenhuma opção fixa
+ * copiada da referência.
+ *
+ * · linha 1 → busca + Tipo + Avaliador + "Mais filtros" (pendentes) +
+ *   "Limpar filtros" (só com filtro ativo) + "Ordenar por";
+ * · linha 2 → chips de segmentação, cada um com o contador derivado do dado.
+ *
+ * GEOMETRIA: alturas uniformes (`h-9`) para campo, selects e botões da linha 1
+ * (mesma régua de `MetasFiltros`) e chips de `h-7` na linha 2.
+ * ============================================================================
+ */
+
+/** Sentinela dos selects: Radix não aceita `value=""` em `SelectItem`. */
+const TODOS = '__todos';
+
+/**
+ * IDENTIDADE CROMÁTICA PERMANENTE dos quatro chips de categoria.
+ *
+ * Regra: cada chip carrega a SUA família de cor nos DOIS estados — o inativo
+ * nunca cai em cinza (`text-muted-foreground`/`bg-card`), só fica um degrau
+ * abaixo do ativo. A diferença entre ativo e inativo é apenas de INTENSIDADE
+ * (fundo, borda e contador), nunca de matiz.
+ *
+ * Tokens oficiais do Design System, um por categoria:
+ *   • todos        → `--primary`   (verde-lima da marca);
+ *   • gestor       → `--success`   (verde);
+ *   • par (Pares)  → `--info`      (azul-ciano);
+ *   • auto         → `--chart-4`   (violeta do tema).
+ *
+ * `--chart-4` não é utilitário registrado no `tailwind.config.js`, então entra
+ * por valor arbitrário — o MESMO padrão já usado em `AssistenteIAPage` e no
+ * restante do módulo de Desempenho. Nenhum token novo, nenhum CSS global.
+ *
+ * As classes são literais (nada de interpolação) para o scanner do Tailwind
+ * gerar todo o CSS — inclusive os degraus só usados no hover.
+ */
+interface PeleChip {
+  /** Estado INATIVO: fundo ~10 %, borda ~25 %, texto/contador na cor. */
+  inativo: string;
+  /** Estado ATIVO: mesma cor, com fundo ~20 % e borda ~60 %. */
+  ativo: string;
+  /** Cor cheia do indicador circular. */
+  ponto: string;
+  /** Fundo do contador no estado inativo. */
+  contador: string;
+  /** Fundo do contador no estado ativo. */
+  contadorAtivo: string;
+}
+
+const PELE_CHIP: Record<SegmentoFeedback, PeleChip> = {
+  todos: {
+    inativo: 'border-primary/25 bg-primary/10 text-primary hover:border-primary/45 hover:bg-primary/[0.16]',
+    ativo: 'border-primary/60 bg-primary/20 text-primary',
+    ponto: 'bg-primary',
+    contador: 'bg-primary/10',
+    contadorAtivo: 'bg-primary/25',
+  },
+  gestor: {
+    inativo: 'border-success/25 bg-success/10 text-success hover:border-success/45 hover:bg-success/[0.16]',
+    ativo: 'border-success/60 bg-success/20 text-success',
+    ponto: 'bg-success',
+    contador: 'bg-success/10',
+    contadorAtivo: 'bg-success/25',
+  },
+  par: {
+    inativo: 'border-info/25 bg-info/10 text-info hover:border-info/45 hover:bg-info/[0.16]',
+    ativo: 'border-info/60 bg-info/20 text-info',
+    ponto: 'bg-info',
+    contador: 'bg-info/10',
+    contadorAtivo: 'bg-info/25',
+  },
+  auto: {
+    inativo:
+      'border-[hsl(var(--chart-4)/0.25)] bg-[hsl(var(--chart-4)/0.10)] text-[hsl(var(--chart-4))] hover:border-[hsl(var(--chart-4)/0.45)] hover:bg-[hsl(var(--chart-4)/0.16)]',
+    ativo:
+      'border-[hsl(var(--chart-4)/0.60)] bg-[hsl(var(--chart-4)/0.20)] text-[hsl(var(--chart-4))]',
+    ponto: 'bg-[hsl(var(--chart-4))]',
+    contador: 'bg-[hsl(var(--chart-4)/0.10)]',
+    contadorAtivo: 'bg-[hsl(var(--chart-4)/0.25)]',
+  },
+};
+
+interface FeedbacksFiltrosProps {
+  /** Posição na cascata de entrada (mesma régua do Dashboard Executivo). */
+  indice?: number;
+  busca: string;
+  onBusca: (valor: string) => void;
+  /** Tipo selecionado (`''` = todos). */
+  tipo: string;
+  onTipo: (valor: string) => void;
+  /** Tipos realmente presentes na lista. */
+  tipos: TipoFeedback[];
+  avaliador: string;
+  onAvaliador: (valor: string) => void;
+  avaliadores: string[];
+  somentePendentes: boolean;
+  onSomentePendentes: (valor: boolean) => void;
+  ordem: CriterioOrdemFeedback;
+  onOrdem: (valor: CriterioOrdemFeedback) => void;
+  segmento: SegmentoFeedback;
+  onSegmento: (valor: SegmentoFeedback) => void;
+  contagem: ContagemSegmentos;
+  /** Quantidade de filtros ativos além da busca (badge de "Mais filtros"). */
+  filtrosAtivos: number;
+  onLimpar: () => void;
+}
+
+export function FeedbacksFiltros({
+  indice = 1,
+  busca,
+  onBusca,
+  tipo,
+  onTipo,
+  tipos,
+  avaliador,
+  onAvaliador,
+  avaliadores,
+  somentePendentes,
+  onSomentePendentes,
+  ordem,
+  onOrdem,
+  segmento,
+  onSegmento,
+  contagem,
+  filtrosAtivos,
+  onLimpar,
+}: FeedbacksFiltrosProps) {
+  /**
+   * Existe filtro fora do padrão? Derivado SOMENTE dos props — a ORDENAÇÃO e o
+   * chip de segmentação não entram (ordenar não recorta a lista e a segmentação
+   * tem a própria linha de chips).
+   */
+  const temFiltroAtivo = busca.trim() !== '' || tipo !== '' || avaliador !== '' || somentePendentes;
+
+  return (
+    <motion.div {...entradaCard(indice)} className="space-y-2">
+      {/* ── Linha 1: busca + filtros + ordenação ─────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-2">
+        <SearchInput
+          value={busca}
+          onChange={onBusca}
+          placeholder="Buscar por colaborador, avaliador ou palavra-chave..."
+          className="min-w-[220px] flex-1"
+        />
+
+        <Select value={tipo || TODOS} onValueChange={(v) => onTipo(v === TODOS ? '' : v)}>
+          <SelectTrigger aria-label="Tipo" className="h-9 w-full rounded-lg sm:w-[160px]">
+            <SelectValue placeholder="Tipo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={TODOS}>Todos os tipos</SelectItem>
+            {tipos.map((t) => (
+              <SelectItem key={t} value={t}>
+                {ROTULO_TIPO_FEEDBACK[t]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={avaliador || TODOS} onValueChange={(v) => onAvaliador(v === TODOS ? '' : v)}>
+          <SelectTrigger aria-label="Avaliador" className="h-9 w-full rounded-lg sm:w-[190px]">
+            <SelectValue placeholder="Avaliador" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={TODOS}>Todos os avaliadores</SelectItem>
+            {avaliadores.map((a) => (
+              <SelectItem key={a} value={a}>
+                {a}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* "Mais filtros" — hoje só o recorte de PENDENTES (campo real de
+            `feedbacks_360.status`). O badge conta os filtros ativos além da busca. */}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 shrink-0 gap-1.5 rounded-lg border-border/40 px-2.5 text-[13px] font-normal text-muted-foreground hover:text-foreground"
+            >
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Mais filtros
+              {filtrosAtivos > 0 && (
+                <span className="rounded-md bg-primary/15 px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-primary">
+                  {filtrosAtivos}
+                </span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-64 space-y-2 p-3">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Situação</p>
+            <button
+              type="button"
+              aria-pressed={somentePendentes}
+              onClick={() => onSomentePendentes(!somentePendentes)}
+              className={cn(
+                'flex w-full items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-left text-[13px] transition-colors',
+                somentePendentes
+                  ? 'border-warning/50 bg-warning/10 text-warning'
+                  : 'border-border/40 text-muted-foreground hover:bg-accent/40 hover:text-foreground'
+              )}
+            >
+              Somente pendentes
+              {somentePendentes && <Check className="h-3.5 w-3.5 shrink-0" />}
+            </button>
+          </PopoverContent>
+        </Popover>
+
+        {/* Contextual: mesma pele das demais ações primárias do módulo. */}
+        {temFiltroAtivo && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onLimpar}
+            className="h-9 shrink-0 gap-1.5 rounded-lg border-primary/40 bg-primary/10 px-2.5 text-[13px] font-normal text-primary transition-colors duration-200 hover:border-primary/60 hover:bg-primary/20 hover:text-primary"
+          >
+            <FilterX className="h-3.5 w-3.5" />
+            Limpar filtros
+          </Button>
+        )}
+
+        {/* Ordenação — critérios suportados pelos campos reais. */}
+        <div className="ml-auto flex items-center gap-2">
+          <span className="hidden whitespace-nowrap text-xs text-muted-foreground sm:inline">Ordenar por</span>
+          <Select value={ordem} onValueChange={(v) => onOrdem(v as CriterioOrdemFeedback)}>
+            <SelectTrigger aria-label="Ordenar por" className="h-9 w-full rounded-lg sm:w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ORDEM_FEEDBACK_OPCOES.map((o) => (
+                <SelectItem key={o.valor} value={o.valor}>
+                  {o.rotulo}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* ── Linha 2: chips de segmentação com contador ───────────────────── */}
+      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Segmentar por tipo de feedback">
+        {SEGMENTOS.map((s) => {
+          const ativo = segmento === s.valor;
+          const pele = PELE_CHIP[s.valor];
+          return (
+            <button
+              key={s.valor}
+              type="button"
+              aria-pressed={ativo}
+              onClick={() => onSegmento(s.valor)}
+              className={cn(
+                // Geometria, tipografia e raio idênticos aos de antes — só a COR
+                // mudou: cada chip mantém a sua nos dois estados (o inativo nunca
+                // fica cinza), com o ativo um degrau acima em intensidade.
+                'inline-flex h-7 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] font-medium transition-colors duration-200',
+                ativo ? pele.ativo : pele.inativo
+              )}
+            >
+              {/* Indicador circular: SEMPRE na cor da categoria (inclusive com 0). */}
+              <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', pele.ponto)} />
+              {s.rotulo}
+              {/* Contador: herda a cor do texto do chip e ganha o fundo da família. */}
+              <span
+                className={cn(
+                  'rounded-md px-1.5 py-0.5 text-[10px] tabular-nums',
+                  ativo ? pele.contadorAtivo : pele.contador
+                )}
+              >
+                {contagem[s.valor]}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}

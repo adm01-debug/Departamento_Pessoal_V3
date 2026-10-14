@@ -8,18 +8,18 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { avaliacaoService } from '@/services/avaliacaoService';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
+import { Target, Users, TrendingUp, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
 import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { EntradaPresenca, MotionCard, entradaCard } from '@/components/avaliacao/entradaCards';
+import { FeedbacksTab } from '@/components/avaliacao/FeedbacksTab';
 import { MetasOKRsTab } from '@/components/avaliacao/MetasOKRsTab';
 import { cn } from '@/lib/utils';
 import { formatarPeriodo } from '@/components/avaliacao/desempenhoComum';
@@ -138,6 +138,17 @@ export default function AvaliacaoPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['metas_okrs'] });
       toast.success('Meta criada!');
+    },
+  });
+
+  const criarFeedback = useMutation({
+    mutationFn: (d: any) => {
+      if (bloquearEscritaDesempenho('Criar feedback')) return Promise.reject(new Error('mock'));
+      return avaliacaoService.criarFeedback({ ...d, empresa_id: empresaAtual?.id });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
+      toast.success('Feedback registrado!');
     },
   });
 
@@ -318,41 +329,20 @@ export default function AvaliacaoPage() {
             </TabsContent>
 
             <TabsContent value="feedbacks" className="space-y-6">
-              <motion.div {...entradaCard(0)} className="rounded-2xl border border-border/30 overflow-hidden bg-card">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/30">
-                      <TableHead className="font-display font-semibold text-xs">Avaliado</TableHead>
-                      <TableHead className="font-display font-semibold text-xs">Avaliador</TableHead>
-                      <TableHead className="font-display font-semibold text-xs">Tipo</TableHead>
-                      <TableHead className="font-display font-semibold text-xs text-center">Nota</TableHead>
-                      <TableHead className="font-display font-semibold text-xs">Data</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {feedbacks.map((f: any) => (
-                      <TableRow key={f.id} className="hover:bg-accent/10 transition-colors">
-                        <TableCell className="font-medium text-sm">{f.avaliado?.nome_completo}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{f.avaliador?.nome_completo}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-[10px] uppercase font-medium">
-                            {f.tipo}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <Star className="h-3 w-3 text-warning fill-warning" />
-                            <span className="font-medium text-sm">{f.nota_geral}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-[10px] text-muted-foreground font-mono">
-                          {new Date(f.created_at).toLocaleDateString('pt-BR')}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </motion.div>
+              {/* Aba redesenhada: banner "Foco agora" → busca/filtros → chips de
+                segmentação → timeline de cards agrupados por mês + coluna de
+                widgets. Toda a lógica é client-side sobre `feedbacks` (a MESMA
+                consulta que a página já fazia) e a criação usa a mutation
+                `criarFeedback` acima. */}
+              <FeedbacksTab
+                feedbacks={feedbacks}
+                ciclos={ciclos}
+                ciclo={cicloSelecionado}
+                colaboradores={colaboradores}
+                pdis={pdis}
+                onCriarFeedback={(dados) => criarFeedback.mutate(dados)}
+                salvandoFeedback={criarFeedback.isPending}
+              />
             </TabsContent>
 
             <TabsContent value="pdis" className="space-y-6">
