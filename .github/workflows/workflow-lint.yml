@@ -34,11 +34,12 @@ jobs:
           # go install verifica o hash do módulo contra sum.golang.org —
           # supply chain segura sem precisar de uma action de terceiro.
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
-          actionlint --version
+          # $GOPATH/bin não está no PATH do runner; publicar para os próximos steps.
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          "$(go env GOPATH)/bin/actionlint" --version
 
       - name: Executar actionlint em todos os workflows
         run: |
           set -euo pipefail
-          # go install coloca o binário em $GOPATH/bin (~go/bin), que está no PATH.
           actionlint -color .github/workflows/*.yml
           echo "WORKFLOW_LINT_OK"

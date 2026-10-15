@@ -151,7 +151,7 @@ jobs:
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
           echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
           # W68: gerar hash da lista validada para auditoria
-          validated_hash="$(ls "$stage_dir"/supabase/migrations/*.sql | xargs -I{} basename {} | sort | sha256sum | awk '{print $1}')"
+          validated_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
           echo "VALIDATED_HASH=$validated_hash" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
           echo "validated_hash=$validated_hash" >> "$GITHUB_OUTPUT"
 
@@ -161,7 +161,7 @@ jobs:
           set -euo pipefail
           stage_dir="${{ steps.stage.outputs.dir }}"
           # W68: verificar que a lista de apply é a mesma do validate
-          current_hash="$(ls "$stage_dir"/supabase/migrations/*.sql | xargs -I{} basename {} | sort | sha256sum | awk '{print $1}')"
+          current_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
           echo "Hash da lista: $current_hash"
           # Nota: em uma implementação completa, este hash seria comparado com
           # o do run de validate anterior via artifact download. Por ora, apenas
@@ -477,7 +477,7 @@ jobs:
             echo "| Modo | $DISPATCH_MODE |"
             echo "| Project ref | $CONFIRM_PROJECT_REF |"
             if [ -d "$stage_dir/supabase/migrations" ] && compgen -G "$stage_dir/supabase/migrations/*.sql" > /dev/null 2>&1; then
-              summary_hash="$(ls "$stage_dir"/supabase/migrations/*.sql | xargs -I{} basename {} | sort | sha256sum | awk '{print $1}')"
+              summary_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
               echo "| Hash da lista | \`$summary_hash\` |"
               echo ""
               echo "### Migrações staged"

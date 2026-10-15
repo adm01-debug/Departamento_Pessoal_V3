@@ -135,7 +135,7 @@ jobs:
           if [ -f coverage/coverage-summary.json ]; then
             node -e '
               const s = require("./coverage/coverage-summary.json").total;
-              const row = (k) => `| ${k} | ${s[k].pct}% (${s[k].covered}/${s[k].total}) |`;
+              const row = (k) => "| " + k + " | " + s[k].pct + "% (" + s[k].covered + "/" + s[k].total + ") |";
               console.log("| Métrica | Cobertura |\n|---|---|");
               ["lines","statements","functions","branches"].forEach(k => console.log(row(k)));
             ' >> "$GITHUB_STEP_SUMMARY"
@@ -289,11 +289,13 @@ jobs:
       - name: Resumo dos contratos (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
-          echo "## security-config" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| workflows-contract | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| lockfile-single | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## security-config"
+            echo "| Script | Status |"
+            echo "|--------|--------|"
+            echo "| workflows-contract | ${{ job.status }} |"
+            echo "| lockfile-single | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
     name: P0 database migration simulations
@@ -321,10 +323,12 @@ jobs:
       - name: Resumo das migrações P0/P1 (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
-          echo "## p0-database-migrations" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| p0-migrations | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## p0-database-migrations"
+            echo "| Script | Status |"
+            echo "|--------|--------|"
+            echo "| p0-migrations | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
@@ -346,8 +350,10 @@ jobs:
       - name: Resumo da integridade estática (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
-          echo "## db-integrity (estático)" >> "$GITHUB_STEP_SUMMARY"
-          echo "| db-audit-contract | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## db-integrity (estático)"
+            echo "| db-audit-contract | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   db-integrity-live:
     name: Integridade do banco canônico (live)
@@ -426,10 +432,12 @@ jobs:
       - name: Resumo da integridade do banco (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
-          echo "## db-integrity-live" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| db-integrity-live | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## db-integrity-live"
+            echo "| Script | Status |"
+            echo "|--------|--------|"
+            echo "| db-integrity-live | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   npm-audit:
     name: npm audit (produção, sem devDeps)

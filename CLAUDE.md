@@ -439,7 +439,7 @@ Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
 canonical-migrations.yml → ledger dinâmico W69 + sidecars .verify.sql ✅
 canonical-sql-diag.yml   → novo (diagnóstico SQL) — 12 workflows no total ✅
-workflow-lint.yml        → actionlint no PATH (W86 bug fix) ✅
+workflow-lint.yml        → actionlint via $GOPATH/bin publicado em $GITHUB_PATH + shellcheck limpo ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
 Branch ruleset           → 9 required checks (W12), baseline em infra/github/ ✅
 Aprovação de PR (W14)    → 0 aprovações; code owner só em caminhos sensíveis (.github/CODEOWNERS) ✅
@@ -473,7 +473,7 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 | CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                |
 | contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                    |
 | bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                   |
-| actionlint path        | ✅ ./actionlint → actionlint corrigido (W86); CI workflow-lint funcional                    |
+| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows               |
 | ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)              |
 | live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)                |
 | canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)               |
