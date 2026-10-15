@@ -32,7 +32,7 @@ import { PontoGeoAnalytics } from './PontoGeoAnalytics';
 import { toast } from 'sonner';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
+import { todayLocalISO } from '@/utils/dateLocal';
 
 export function GestaoRegistrosPonto() {
   const { empresaAtual } = useEmpresas();

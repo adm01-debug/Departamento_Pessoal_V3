@@ -47,7 +47,6 @@ import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { DocumentoTimeline } from '@/components/documents/DocumentoTimeline';
 import { DocumentoPreview } from '@/components/documents/DocumentoPreview';
 import { useSearchParams } from 'react-router-dom';
-import { Documento } from '@/types';
 import type { DocumentoListItem } from '@/services/documentoService';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = [

@@ -70,7 +70,7 @@ export default function FinanceiroBancarioPage() {
   const [remessas, setRemessas] = useState<Remessa[]>([]);
   const [pixLotes, setPixLotes] = useState<PixLote[]>([]);
   const [folhas, setFolhas] = useState<FolhaResumo[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [processingRetorno, setProcessingRetorno] = useState(false);
   const [selectedFolha, setSelectedFolha] = useState('');

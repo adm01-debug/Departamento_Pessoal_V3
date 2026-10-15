@@ -222,9 +222,6 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
       'O provedor confirmou a entrega dos alertas.'
     );
   };
-  const hoje = new Date();
-  const hora = hoje.getHours();
-
   if (isLoading) return <CardSkeleton className="h-64" />;
 
   if (error) {
@@ -249,6 +246,8 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
   }
 
   if (!data) return null;
+
+  const hoje = new Date();
 
   const hasContent =
     data.aniversariantes.length > 0 ||

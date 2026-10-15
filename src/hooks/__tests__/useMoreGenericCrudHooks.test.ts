@@ -123,7 +123,7 @@ describe('useWebhookLogs', () => {
   });
 
   it('is disabled when no webhookId', () => {
-    const { result } = renderHook(() => useWebhookLogs(''), { wrapper });
+    renderHook(() => useWebhookLogs(''), { wrapper });
     expect(mockListarLogs).not.toHaveBeenCalled();
   });
 

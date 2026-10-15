@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { avaliacaoService } from '@/services/avaliacaoService';
 import { useEmpresas } from '@/hooks';
-import { toast } from 'sonner';
 import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
@@ -57,8 +56,6 @@ export default function AvaliacaoPage() {
     queryFn: () => avaliacaoService.listarCompetencias(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
-
-  const isLoading = loadCiclos || loadMetas || loadFeedbacks || loadPDIs || loadComp;
 
   return (
     <>

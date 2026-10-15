@@ -90,7 +90,6 @@ describe('useEmpresas', () => {
       error: null,
     });
 
-    let callCount = 0;
     mockFrom.mockImplementation((table: string) => {
       if (table === 'user_empresas') return userEmpresasChain;
       if (table === 'empresas') return empresasChain;

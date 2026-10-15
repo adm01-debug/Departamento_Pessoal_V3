@@ -48,7 +48,7 @@ export default function DesligamentosPage() {
   const [selectedDesligamento, setSelectedDesligamento] = useState<DesligamentoComColaborador | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [showNovo, setShowNovo] = useState(false);
-  const [showChart, setShowChart] = useState(true);
+  const [showChart] = useState(true);
 
   const filtered = useMemo(() => {
     return (desligamentos || []).filter((d) => {
