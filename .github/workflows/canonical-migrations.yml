@@ -60,14 +60,20 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Gate de branch para apply
+      - name: Gate de branch para apply/verify
         # E15/D4: DDL em produção só pode partir de código mergeado em main.
         # Antes, `apply` era disparado de branches de feature — o DDL aplicado
         # não correspondia a nenhum commit integrado.
-        if: inputs.mode == 'apply'
+        #
+        # Codex review (P1, PR #242): mode=verify roda o conteúdo de um
+        # .verify.sql direto do ref do checkout contra o canônico — sem este
+        # gate, um dispatch numa branch de feature executaria SQL não
+        # revisado (e potencialmente mutante, apesar do contrato ser
+        # read-only) em produção. Mesmo gate do apply.
+        if: inputs.mode == 'apply' || inputs.mode == 'verify'
         run: |
           test "$GITHUB_REF" = 'refs/heads/main' || {
-            echo '::error::mode=apply só pode ser disparado a partir da branch main.'
+            echo "::error::mode=$DISPATCH_MODE só pode ser disparado a partir da branch main."
             exit 1
           }
 
@@ -675,6 +681,13 @@ jobs:
         # diretamente do checkout (sem stage/apply/ledger) — só leitura, mesmo
         # contrato de saída do loop em "Verificar objetos e ledger": cada
         # linha não-vazia precisa ser literalmente 'ok'.
+        #
+        # Codex review (P1, PR #242): além do gate de branch (main-only,
+        # acima), a sessão psql entra em default_transaction_read_only
+        # antes de rodar o arquivo — um sidecar que violasse o contrato
+        # (INSERT/UPDATE/DELETE/DDL em vez de só SELECT) falha com erro de
+        # Postgres em vez de mutar o canônico, mesmo que tenha sido mergeado
+        # em main.
         if: inputs.mode == 'verify'
         run: |
           set -euo pipefail
@@ -689,7 +702,7 @@ jobs:
               continue
             fi
             echo "Sidecar: $sidecar"
-            sidecar_output="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
+            sidecar_output="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -c 'SET default_transaction_read_only = on;' -f "$sidecar")" || {
               echo "::error::Sidecar falhou (erro de execução): $sidecar"
               verify_errors=$((verify_errors + 1))
               continue

@@ -30,14 +30,24 @@ SELECT CASE WHEN to_regprocedure('public.encrypt_dados_bancarios(text)') IS NOT 
              AND to_regprocedure('public.decrypt_dados_bancarios(text)') IS NOT NULL
             THEN 'ok' ELSE 'fail: encrypt_dados_bancarios/decrypt_dados_bancarios ausentes' END;
 
--- 3. Triggers de criptografia automática existem e estão habilitados
---    (tgenabled = 'D' é o único estado "desabilitado").
+-- 3. Triggers de criptografia automática existem, estão habilitados
+--    (tgenabled = 'D' é o único estado "desabilitado") e vinculados à
+--    tabela E função certas — tgname não é único no catálogo (é escopado
+--    por relação), então um trigger homônimo em outra tabela, ou ligado
+--    à função errada, não pode passar por esta checagem (Codex review,
+--    PR #242).
 SELECT CASE WHEN (
   SELECT count(*) FROM pg_trigger t
-   WHERE t.tgname IN ('trg_contas_bancarias_encrypt','trg_pix_itens_encrypt')
-     AND NOT t.tgisinternal
+  JOIN pg_class c ON c.oid = t.tgrelid
+  JOIN pg_namespace n ON n.oid = c.relnamespace
+  JOIN pg_proc p ON p.oid = t.tgfoid
+   WHERE NOT t.tgisinternal
      AND t.tgenabled <> 'D'
-) = 2 THEN 'ok' ELSE 'fail: trigger(s) de criptografia ausente(s) ou desabilitado(s)' END;
+     AND (n.nspname, c.relname, t.tgname, p.proname) IN (
+       ('public','contas_bancarias','trg_contas_bancarias_encrypt','encrypt_contas_bancarias_fields'),
+       ('public','pix_itens','trg_pix_itens_encrypt','encrypt_pix_itens_fields')
+     )
+) = 2 THEN 'ok' ELSE 'fail: trigger(s) de criptografia ausente(s), desabilitado(s) ou vinculado(s) à tabela/função errada' END;
 
 -- 4. View de leitura descriptografada (contas_bancarias_decrypted) existe.
 SELECT CASE WHEN to_regclass('public.contas_bancarias_decrypted') IS NOT NULL
@@ -56,10 +66,12 @@ SELECT CASE WHEN NOT EXISTS (
    WHERE chave_pix IS NOT NULL AND chave_pix_encrypted IS NULL
 ) THEN 'ok' ELSE 'fail: backfill incompleto — linha com dado em claro sem cópia cifrada' END;
 
--- 6. Chave do Vault configurada e função operante (causa raiz do run
---    38428460909): a função lança EXCEPTION quando a chave não está
---    configurada (ver migration), então uma chamada real que não falhe e
---    não retorne NULL prova que a chave existe e funciona. Sem efeito
---    colateral: não grava em nenhuma tabela, apenas retorna o texto cifrado.
-SELECT CASE WHEN public.encrypt_dados_bancarios('w80_verify_probe') IS NOT NULL
-            THEN 'ok' ELSE 'fail: encrypt_dados_bancarios retornou NULL (chave do Vault ausente?)' END;
+-- 6. Chave do Vault configurada e round-trip completo operante (causa raiz
+--    do run 38428460909): a função lança EXCEPTION quando a chave não está
+--    configurada (ver migration). Testa encrypt+decrypt juntos (Codex
+--    review, PR #242) — testar só o encrypt provava a chave mas não que
+--    decrypt_dados_bancarios de fato devolve o valor original (cast, corpo
+--    ou lookup de chave quebrados no decrypt passariam batido). Sem efeito
+--    colateral: nenhuma das duas funções grava em tabela.
+SELECT CASE WHEN public.decrypt_dados_bancarios(public.encrypt_dados_bancarios('w80_verify_probe')) = 'w80_verify_probe'
+            THEN 'ok' ELSE 'fail: decrypt_dados_bancarios(encrypt_dados_bancarios(...)) não devolveu o valor original (chave do Vault ausente/incorreta?)' END;
