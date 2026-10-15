@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           bin_dir="$RUNNER_TEMP/actionlint"
           mkdir -p "$bin_dir"
-          curl -sSfL -o "$bin_dir/actionlint.tgz" \
+          curl --proto '=https' --tlsv1.2 -sSfL -o "$bin_dir/actionlint.tgz" \
             https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz
           echo "$ACTIONLINT_SHA256  $bin_dir/actionlint.tgz" | sha256sum -c -
           tar -xzf "$bin_dir/actionlint.tgz" -C "$bin_dir" actionlint
