@@ -59,7 +59,7 @@ jobs:
           set -euo pipefail
           errors=0
           while IFS= read -r fn; do
-            if ! deno check --no-lock --node-modules-dir=false "$fn"; then
+            if ! deno check --node-modules-dir=false "$fn"; then
               echo "::error file=$fn::Edge Function falhou no deno check"
               errors=$((errors + 1))
             fi
