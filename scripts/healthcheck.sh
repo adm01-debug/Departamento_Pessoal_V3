@@ -32,7 +32,7 @@ FAILURES=0
 check() {
   local name="$1" url="$2" expect="${3:-200}" use_apikey="${4:-0}"
   local code
-  if [ "$use_apikey" = "1" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+  if [[ "$use_apikey" = "1" ]] && [[ -n "$SUPABASE_PUBLISHABLE_KEY" ]]; then
     code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" \
       -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
       -H "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
@@ -41,8 +41,8 @@ check() {
     code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" "$url" 2>/dev/null)
   fi
   # curl falho já emite 000 via -w; só garantir string vazia nunca vaze
-  [ -z "$code" ] && code="000"
-  if [ "$code" = "$expect" ]; then
+  [[ -z "$code" ]] && code="000"
+  if [[ "$code" = "$expect" ]]; then
     echo "✅ $name → HTTP $code"
   else
     echo "❌ $name → HTTP $code (esperado $expect) — $url"
@@ -61,24 +61,24 @@ check() {
 check_build_sha() {
   local url="$1" expected="$2" body found
   body=$(curl -sS --max-time "$TIMEOUT" "$url" 2>/dev/null)
-  if [ -z "$body" ]; then
+  if [[ -z "$body" ]]; then
     echo "⚠️  build-sha → não foi possível ler o body de $url (ver check 'web app' acima)"
     return 0
   fi
   found=$(printf '%s' "$body" | grep -o '<meta[^>]*name="build-sha"[^>]*content="[^"]*"' | head -1 | sed -E 's/.*content="([^"]*)".*/\1/')
-  if [ -z "$found" ]; then
+  if [[ -z "$found" ]]; then
     echo "⚠️  build-sha → meta tag ausente em $url (esperado até o 1º deploy pós-W91; não bloqueante)"
     return 0
   fi
-  if [ -z "$expected" ]; then
+  if [[ -z "$expected" ]]; then
     echo "⚠️  build-sha → meta tag presente ($found) mas nenhum SHA esperado foi informado (GITHUB_SHA/EXPECTED_BUILD_SHA vazio) — pulando comparação"
     return 0
   fi
   # Prefixo também conta como match (SHA curto vs completo).
-  if [ "$found" = "$expected" ] || [ "${expected#"$found"}" != "$expected" ] || [ "${found#"$expected"}" != "$found" ]; then
+  if [[ "$found" = "$expected" ]] || [[ "${expected#"$found"}" != "$expected" ]] || [[ "${found#"$expected"}" != "$found" ]]; then
     echo "✅ build-sha → $found (deploy corresponde ao commit esperado)"
   else
-    if [ "$REQUIRE_BUILD_SHA" = "1" ]; then
+    if [[ "$REQUIRE_BUILD_SHA" = "1" ]]; then
       echo "❌ build-sha → $found (esperado $expected) — deploy desatualizado em $url"
       FAILURES=$((FAILURES + 1))
     else
@@ -104,12 +104,12 @@ check_login() {
     -H "Content-Type: application/json" \
     --data-binary @- \
     "$url" 2>/dev/null)
-  [ -z "$code" ] && code="000"
-  if [ "$code" = "200" ]; then
+  [[ -z "$code" ]] && code="000"
+  if [[ "$code" = "200" ]]; then
     echo "✅ login (E2E não-admin) → HTTP $code"
     return 0
   fi
-  if [ "$REQUIRE_LOGIN" = "1" ]; then
+  if [[ "$REQUIRE_LOGIN" = "1" ]]; then
     echo "❌ login (E2E não-admin) → HTTP $code (esperado 200) — $url"
     FAILURES=$((FAILURES + 1))
   else
@@ -118,15 +118,15 @@ check_login() {
 }
 
 echo "== Healthcheck $(date -u +%FT%TZ) =="
-[ -n "$APP_URL" ] && echo "App: $APP_URL" || echo "App: (APP_URL não definida — pulando check do frontend)"
-[ -n "$SUPABASE_URL" ] && echo "Supabase: $SUPABASE_URL" || echo "Supabase: (SUPABASE_URL não definida — pulando checks de backend)"
+[[ -n "$APP_URL" ]] && echo "App: $APP_URL" || echo "App: (APP_URL não definida — pulando check do frontend)"
+[[ -n "$SUPABASE_URL" ]] && echo "Supabase: $SUPABASE_URL" || echo "Supabase: (SUPABASE_URL não definida — pulando checks de backend)"
 
-if [ "$REQUIRE_APP" = "1" ] && [ -z "$APP_URL" ]; then
+if [[ "$REQUIRE_APP" = "1" ]] && [[ -z "$APP_URL" ]]; then
   echo "❌ frontend obrigatório, mas APP_URL não está configurada"
   FAILURES=$((FAILURES + 1))
 fi
 
-if [ "$REQUIRE_BACKEND" = "1" ] && { [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; }; then
+if [[ "$REQUIRE_BACKEND" = "1" ]] && { [[ -z "$SUPABASE_URL" ]] || [[ -z "$SUPABASE_PUBLISHABLE_KEY" ]]; }; then
   echo "❌ backend obrigatório, mas SUPABASE_URL/chave pública não estão configuradas"
   FAILURES=$((FAILURES + 1))
 fi
@@ -134,20 +134,20 @@ fi
 # W91b: login obrigatório só é cobrado se REQUIRE_LOGIN=1 pedir credenciais
 # que não existem — a tentativa de login em si segue não-bloqueante por
 # padrão (ver check_login).
-if [ "$REQUIRE_LOGIN" = "1" ] && { [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ] || [ -z "$E2E_NON_ADMIN_EMAIL" ] || [ -z "$E2E_NON_ADMIN_PASSWORD" ]; }; then
+if [[ "$REQUIRE_LOGIN" = "1" ]] && { [[ -z "$SUPABASE_URL" ]] || [[ -z "$SUPABASE_PUBLISHABLE_KEY" ]] || [[ -z "$E2E_NON_ADMIN_EMAIL" ]] || [[ -z "$E2E_NON_ADMIN_PASSWORD" ]]; }; then
   echo "❌ login obrigatório (REQUIRE_LOGIN=1), mas SUPABASE_URL/chave/credenciais E2E não-admin não estão configuradas"
   FAILURES=$((FAILURES + 1))
 fi
 
 # 1. App web responde (quando uma hospedagem canônica estiver configurada)
-if [ -n "$APP_URL" ]; then
+if [[ -n "$APP_URL" ]]; then
   check "web app" "${APP_URL%/}/"
   # W91a: build-sha — ver comentário na definição de check_build_sha.
   check_build_sha "${APP_URL%/}/" "$EXPECTED_BUILD_SHA"
 fi
 
 # 2. Backend Supabase (se configurado)
-if [ -n "$SUPABASE_URL" ]; then
+if [[ -n "$SUPABASE_URL" ]]; then
   # Edge healthcheck é pública por decisão documentada (E-029, config.toml)
   check "edge healthcheck" "$SUPABASE_URL/functions/v1/healthcheck" "200" "1"
   # Auth settings endpoint responde (público por natureza)
@@ -159,7 +159,7 @@ if [ -n "$SUPABASE_URL" ]; then
   check "bridge metrics" "$SUPABASE_URL/functions/v1/metrics" "200" "1"
 
   # W91b: login da identidade E2E não-admin (não bloqueante salvo REQUIRE_LOGIN=1)
-  if [ -n "$SUPABASE_PUBLISHABLE_KEY" ] && [ -n "$E2E_NON_ADMIN_EMAIL" ] && [ -n "$E2E_NON_ADMIN_PASSWORD" ]; then
+  if [[ -n "$SUPABASE_PUBLISHABLE_KEY" ]] && [[ -n "$E2E_NON_ADMIN_EMAIL" ]] && [[ -n "$E2E_NON_ADMIN_PASSWORD" ]]; then
     check_login "$E2E_NON_ADMIN_EMAIL" "$E2E_NON_ADMIN_PASSWORD" "$SUPABASE_URL/auth/v1/token?grant_type=password"
   else
     echo "⚠️  login (E2E não-admin): E2E_NON_ADMIN_EMAIL/PASSWORD não definidas — pulando"
@@ -167,4 +167,4 @@ if [ -n "$SUPABASE_URL" ]; then
 fi
 
 echo "== Resultado: $FAILURES falha(s) =="
-[ "$FAILURES" -eq 0 ]
+[[ "$FAILURES" -eq 0 ]]

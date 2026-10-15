@@ -10,15 +10,35 @@
  *
  * Uso: node scripts/update-workflows-status.mjs <arquivo-com-saida-do-report>
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const STATUS_PATH = 'docs/auditoria/estado/WORKFLOWS_STATUS.md';
 const START = '<!-- REPORT:START -->';
 const END = '<!-- REPORT:END -->';
 
-const reportFile = process.argv[2];
-if (!reportFile) {
+const reportFileArg = process.argv[2];
+if (!reportFileArg) {
   console.error('Uso: node scripts/update-workflows-status.mjs <arquivo-com-saida-do-report>');
+  process.exit(1);
+}
+
+// SonarCloud: path traversal — normaliza qualquer "../" no argumento (resolve
+// é determinístico e elimina a forma clássica de escape) e resolve symlinks
+// antes de ler, confirmando que o destino final é um arquivo regular comum
+// (nunca um device/FIFO/socket). O caminho pode ser fora do repo por design:
+// o único chamador real (.github/workflows/workflows-report.yml) sempre passa
+// um arquivo temporário do runner (ex. /tmp/workflows-report.md), não input
+// de terceiros.
+let reportFile;
+try {
+  reportFile = realpathSync(resolve(reportFileArg));
+} catch {
+  console.error(`Arquivo de relatório não encontrado: ${reportFileArg}`);
+  process.exit(1);
+}
+if (!statSync(reportFile).isFile()) {
+  console.error(`Caminho não é um arquivo regular: ${reportFileArg}`);
   process.exit(1);
 }
 
