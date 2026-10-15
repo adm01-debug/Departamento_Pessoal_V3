@@ -236,11 +236,15 @@ jobs:
           persist-credentials: false
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
-          # W37: Supabase Edge Runtime roda release compatível com Deno 2.1 em
-          # todas as regiões desde 15/08/2025 (changelog supabase.com/changelog/
-          # 37941). v2.x flutuante arriscava pular para uma major incompatível
-          # com o runtime de produção sem ninguém notar. Revisado em 15/10/2026.
-          deno-version: v2.1.x
+          # W37 (tentativa revertida, 15/10/2026): pinar em v2.1.x quebrou o
+          # type-check real (TS2315 "Type 'Uint8Array' is not generic" em
+          # supabase/functions/criptografia/index.ts:61 — lib TS mais antiga
+          # que o v2.x flutuante vinha resolvendo). "Edge Runtime compatível
+          # com Deno 2.1" (changelog supabase.com/changelog/37941) não
+          # significa a CLI exata 2.1.x -- confirmado pelo CI vermelho real.
+          # Mantido v2.x até existir uma forma de validar o pin antes de
+          # aplicar (ex.: Deno local neste runner).
+          deno-version: v2.x
       - name: Type-check de todas as Edge Functions (gate bloqueante)
         # E40: fonte única — scripts/typecheck-edge.sh checa o bridge com zero
         # tolerância e depois faz o loop em todas as funções, listando todo o
@@ -363,11 +367,23 @@ jobs:
 
   db-integrity-live:
     name: Integridade do banco canônico (live)
-    # W15/W25: roda em push na main, dispatch E PRs internos (não forks).
-    # • Fork/Dependabot: parte estática já rodou em db-integrity; aqui o job
-    #   verifica o acesso e, sem DATABASE_URL, emite aviso + sucesso explícito.
+    # W15/W23/W24/W25: roda em push na main, dispatch E PRs internos (não forks).
+    # • Fork: pull_request de fork nunca recebe secrets do repositório — GitHub
+    #   trata esse caso automaticamente (DATABASE_URL vem vazia).
+    # • Dependabot: mesmo sendo PR same-repo (não fork), o GitHub também retém
+    #   secrets de PRs abertas por Dependabot por padrão — DATABASE_URL vem
+    #   vazia aqui também, tratado como caso esperado (não erro).
     # • PR interno sem DATABASE_URL: falha fechada — credencial deve existir.
-    # • O environment production protege o secret; forks nunca o recebem.
+    # • W24: usa SUPABASE_DB_URL_READONLY (role ci_auditor, só catálogo) em vez
+    #   do admin — os 7 scripts deste job são introspecção pura (search_path,
+    #   policies, triggers, função SECURITY DEFINER, hints de relacionamento),
+    #   nunca leem linha de tabela de negócio nem gravam nada. Secret de
+    #   repositório comum (sem `environment:`): a primeira tentativa usava
+    #   `environment: production`, que bloqueia o job INTEIRO (0 steps) em
+    #   qualquer branch != main por deployment_branch_policy — quebrava este
+    #   job em toda PR interna, não só nesta (achado real em CI, run
+    #   38759559111/job 116507412690). Least-privilege torna o gate
+    #   desnecessário: nenhum destes scripts precisa de admin em nenhum evento.
     if: >-
       (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       github.event_name == 'workflow_dispatch' ||
@@ -375,9 +391,8 @@ jobs:
        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: production
     env:
-      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL_READONLY }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -387,7 +402,7 @@ jobs:
           node-version-file: .nvmrc
       - name: Verificar disponibilidade do alvo canônico
         id: db-access
-        # W15: Dependabot não recebe secrets do environment production — não é erro.
+        # W15: fork/Dependabot não recebem secrets de repositório — não é erro.
         # PR interno sem DATABASE_URL é erro: a credencial deve ter sido configurada.
         # github.actor passado via env para não violar D20 (sem ${{ }} em run:).
         env:
