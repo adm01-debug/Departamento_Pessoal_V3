@@ -10,8 +10,7 @@
  *
  * Uso: node scripts/update-workflows-status.mjs <arquivo-com-saida-do-report>
  */
-import { readFileSync, realpathSync, statSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from 'node:fs';
 
 const STATUS_PATH = 'docs/auditoria/estado/WORKFLOWS_STATUS.md';
 const START = '<!-- REPORT:START -->';
@@ -23,26 +22,30 @@ if (!reportFileArg) {
   process.exit(1);
 }
 
-// SonarCloud: path traversal — normaliza qualquer "../" no argumento (resolve
-// é determinístico e elimina a forma clássica de escape) e resolve symlinks
-// antes de ler, confirmando que o destino final é um arquivo regular comum
-// (nunca um device/FIFO/socket). O caminho pode ser fora do repo por design:
-// o único chamador real (.github/workflows/workflows-report.yml) sempre passa
-// um arquivo temporário do runner (ex. /tmp/workflows-report.md), não input
-// de terceiros.
-let reportFile;
+// SonarCloud (path traversal) + CodeQL (TOCTOU/file-system race): abre o
+// arquivo uma única vez e valida o MESMO descritor (fstat) antes de ler
+// dele, em vez de checar o path (stat/realpath) e só depois abrir — essa
+// segunda forma deixa uma janela em que o arquivo apontado pelo path
+// poderia ser substituído entre o check e o uso (symlink race). O caminho
+// pode ser fora do repo por design: o único chamador real
+// (.github/workflows/workflows-report.yml) sempre passa um arquivo
+// temporário do runner (ex. /tmp/workflows-report.md), não input de
+// terceiros.
+let reportFd;
 try {
-  reportFile = realpathSync(resolve(reportFileArg));
+  reportFd = openSync(reportFileArg, 'r');
 } catch {
   console.error(`Arquivo de relatório não encontrado: ${reportFileArg}`);
   process.exit(1);
 }
-if (!statSync(reportFile).isFile()) {
+if (!fstatSync(reportFd).isFile()) {
+  closeSync(reportFd);
   console.error(`Caminho não é um arquivo regular: ${reportFileArg}`);
   process.exit(1);
 }
 
-const report = readFileSync(reportFile, 'utf-8').trim();
+const report = readFileSync(reportFd, 'utf-8').trim();
+closeSync(reportFd);
 const status = readFileSync(STATUS_PATH, 'utf-8');
 
 const startIdx = status.indexOf(START);

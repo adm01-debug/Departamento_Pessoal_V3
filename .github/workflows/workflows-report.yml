@@ -30,6 +30,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      actions: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -54,22 +55,32 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Criar branch, comitar e abrir PR
+      - name: Criar/atualizar branch e abrir PR (se ainda não houver um aberto)
         if: steps.diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          BRANCH="chore/workflows-report-$(date -u +%Y%m%d%H%M%S)"
+          # Branch estável (não mais um nome com timestamp): evita que uma
+          # PR de relatório anterior, ainda aberta, fique esquecida enquanto
+          # cada run cria e abre outra concorrente. O branch é sempre
+          # recriado a partir do main atual (checkout -B local) e enviado
+          # com --force — ele é de uso exclusivo deste workflow (nenhum
+          # humano trabalha nele), então reescrever seu conteúdo a cada run
+          # é seguro e é exatamente o comportamento desejado: a PR aberta é
+          # atualizada no lugar em vez de ganhar uma concorrente.
+          BRANCH="chore/workflows-report"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
+          git checkout -B "$BRANCH"
           git add docs/auditoria/estado/WORKFLOWS_STATUS.md
           git commit -m "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92)"
-          git push origin "$BRANCH"
-          gh pr create \
-            --title "docs: atualizar WORKFLOWS_STATUS.md (relatório automático)" \
-            --body "Atualização automática gerada por \`workflows-report.yml\` a partir de \`scripts/report-workflows.mjs\` (mediana/P95 de duração dos últimos 50 runs por workflow)." \
-            --base main \
-            --head "$BRANCH" \
-            --label documentation
+          git push --force origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null)" ]; then
+            gh pr create \
+              --title "docs: atualizar WORKFLOWS_STATUS.md (relatório automático)" \
+              --body "Atualização automática gerada por \`workflows-report.yml\` a partir de \`scripts/report-workflows.mjs\` (mediana/P95 de duração dos últimos 50 runs por workflow)." \
+              --base main \
+              --head "$BRANCH" \
+              --label documentation
+          fi
