@@ -48,8 +48,18 @@ GRANT SELECT ON cron.job TO ci_auditor;
 GRANT USAGE ON SCHEMA extensions TO ci_auditor;
 GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO ci_auditor;
 
--- Garantia explícita: NUNCA conceder acesso ao schema public a este role.
--- Se uma migration futura rodar "GRANT ... ON ALL TABLES IN SCHEMA public
--- TO PUBLIC" (erro comum), este REVOKE idempotente neutraliza o vazamento
--- para ci_auditor especificamente, sem depender de ninguém lembrar a regra.
+-- Garantia explícita: NUNCA conceder USAGE/CREATE no schema public a este
+-- role diretamente. Se uma migration futura rodar "GRANT ... ON ALL TABLES
+-- IN SCHEMA public TO PUBLIC" (erro comum), este REVOKE idempotente
+-- neutraliza o vazamento do GRANT direcionado a ci_auditor, sem depender de
+-- ninguém lembrar a regra.
+--
+-- Codex review (P1, PR #238): este REVOKE NÃO cobre privilégios concedidos
+-- ao pseudo-role PUBLIC (ex.: EXECUTE em funções SECURITY DEFINER, que o
+-- Postgres concede a PUBLIC por padrão em toda CREATE FUNCTION) -- PUBLIC
+-- se aplica a todo role por definição, e REVOKE direcionado a um role
+-- específico nunca revoga o que foi concedido a PUBLIC. Esse gap real foi
+-- corrigido à parte na migration 20261015170000_ci_auditor_revoke_public_secdef.sql
+-- (lista estática das funções que estavam expostas); ver o cabeçalho dela
+-- para o detalhamento e a limitação residual conhecida.
 REVOKE ALL ON SCHEMA public FROM ci_auditor;

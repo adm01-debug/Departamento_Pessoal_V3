@@ -59,6 +59,11 @@
  * Por isso este script:
  *   - Exige SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (só para localizar os
  *     usuários via Admin API — NUNCA para inserir nas tabelas de negócio).
+ *   - Exige também SUPABASE_ANON_KEY (ou VITE_SUPABASE_PUBLISHABLE_KEY,
+ *     mesma nomenclatura usada em e2e.yml) — Codex review (P2, PR #238):
+ *     o client autenticado precisa de uma publishable/anon key de verdade
+ *     para o login por password grant; sem ela `createClient` falha antes
+ *     de autenticar ou inserir qualquer coisa.
  *   - Exige um JWT de sessão real (login com e-mail/senha do próprio usuário
  *     admin E2E) para os INSERTs de negócio, para que RLS seja aplicado de
  *     verdade (nunca `service_role` nas tabelas empresas/colaboradores/folha).
@@ -68,7 +73,7 @@
  *     abaixo antes de criar; re-rodar não duplica.
  *
  * Uso (depois que W58 estiver decidido e um humano autorizar explicitamente):
- *   SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... \
+ *   SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... SUPABASE_ANON_KEY=... \
  *   E2E_USER_EMAIL=admin@teste.local E2E_USER_PASSWORD=... \
  *   E2E_NON_ADMIN_EMAIL=user@teste.local E2E_NON_ADMIN_PASSWORD=... \
  *   E2E_SEED_CONFIRM_PRODUCTION_WRITE=eu-entendo-e-autorizo \
@@ -91,6 +96,12 @@ const required = [
   'E2E_NON_ADMIN_PASSWORD',
 ];
 const missing = required.filter((k) => !process.env[k]);
+// Codex review (P2, PR #238): SUPABASE_ANON_KEY não estava no `required` nem
+// no exemplo de uso, mas signInAs() precisa de uma publishable/anon key real
+// — sem ela createClient recebe string vazia e o login falha antes de
+// qualquer INSERT. Aceita o nome usado por e2e.yml como alternativa.
+const anonKey = process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+if (!anonKey) missing.push('SUPABASE_ANON_KEY (ou VITE_SUPABASE_PUBLISHABLE_KEY)');
 if (missing.length) {
   console.error(`❌ Variáveis ausentes: ${missing.join(', ')}`);
   process.exit(1);
@@ -134,7 +145,7 @@ async function findUserByEmail(email) {
  * passem pelas mesmas políticas de RLS que um admin da aplicação teria —
  * nunca usamos a service_role key para escrever em empresas/colaboradores/folha. */
 async function signInAs(email, password) {
-  const client = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY ?? '', {
+  const client = createClient(process.env.SUPABASE_URL, anonKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data, error } = await client.auth.signInWithPassword({ email, password });

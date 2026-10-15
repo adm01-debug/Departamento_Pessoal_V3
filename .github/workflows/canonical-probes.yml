@@ -93,9 +93,9 @@ jobs:
         run: |
           set -euo pipefail
           TITLE="🔴 Canonical probes falharam (RV-01/02/03/04)"
-          EXISTING=$(gh issue list --label canonical --state open --json number --limit 1 --jq '.[0].number' || true)
+          EXISTING=$(gh issue list --label canonical-probes --state open --json number --limit 1 --jq '.[0].number' || true)
           BODY=$(printf 'Os probes de segurança do canônico (RV-01/02/03/04 + views de PII) falharam.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s\n\nResumo pass/fail por probe (sem dados de linha) no "Summary" do run acima.\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
-          gh label create canonical --force >/dev/null 2>&1 || true
+          gh label create canonical-probes --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
             ISSUE_CREATED=$(gh issue view "$EXISTING" --json createdAt --jq '.createdAt')
             ISSUE_EPOCH=$(date -d "$ISSUE_CREATED" +%s 2>/dev/null || echo 0)
@@ -108,7 +108,7 @@ jobs:
             fi
             gh issue comment "$EXISTING" --body "$COMMENT"
           else
-            gh issue create --title "$TITLE" --body "$BODY" --label canonical
+            gh issue create --title "$TITLE" --body "$BODY" --label canonical-probes
           fi
 
       - name: Fechar issue ao recuperar
@@ -117,7 +117,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          EXISTING=$(gh issue list --label canonical --state open --json number --limit 1 --jq '.[0].number' || true)
+          EXISTING=$(gh issue list --label canonical-probes --state open --json number --limit 1 --jq '.[0].number' || true)
           if [ -n "$EXISTING" ]; then
             gh issue close "$EXISTING" --comment "Canonical probes voltaram a passar (RV-01/02/03/04). Commit: $GITHUB_SHA | Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           fi

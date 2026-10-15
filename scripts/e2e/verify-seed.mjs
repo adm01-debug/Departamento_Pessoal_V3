@@ -71,27 +71,37 @@ async function main() {
   if (!adminRole) failures.push(`${adminEmail} não tem role em user_roles.`);
   if (!nonAdminRole) failures.push(`${nonAdminEmail} não tem role em user_roles.`);
 
+  // Codex review (P2, PR #238): cada usuário pode ter VÁRIAS linhas em
+  // user_empresas (uma migration do schema vincula todo admin a toda
+  // empresa). `.find()` pegava a primeira linha sem nenhuma ordenação —
+  // podia reportar "empresas diferentes" mesmo quando os dois de fato
+  // compartilham a empresa do seed, ou contar colaboradores/folha de uma
+  // empresa real não relacionada. Calculamos a INTERSEÇÃO dos dois
+  // conjuntos de empresa_id e usamos essa empresa compartilhada.
   const { data: vinculos, error: vincErr } = await admin
     .from('user_empresas')
     .select('user_id, empresa_id')
     .in('user_id', [adminUser.id, nonAdminUser.id]);
   if (vincErr) throw vincErr;
-  const adminVinculo = vinculos.find((v) => v.user_id === adminUser.id);
-  const nonAdminVinculo = vinculos.find((v) => v.user_id === nonAdminUser.id);
-  if (!adminVinculo) failures.push(`${adminEmail} não tem vínculo em user_empresas.`);
-  if (!nonAdminVinculo) failures.push(`${nonAdminEmail} não tem vínculo em user_empresas.`);
-  if (
-    adminVinculo &&
-    nonAdminVinculo &&
-    adminVinculo.empresa_id !== nonAdminVinculo.empresa_id
-  ) {
+  const adminEmpresaIds = new Set(
+    vinculos.filter((v) => v.user_id === adminUser.id).map((v) => v.empresa_id),
+  );
+  const nonAdminEmpresaIds = new Set(
+    vinculos.filter((v) => v.user_id === nonAdminUser.id).map((v) => v.empresa_id),
+  );
+  if (adminEmpresaIds.size === 0) failures.push(`${adminEmail} não tem vínculo em user_empresas.`);
+  if (nonAdminEmpresaIds.size === 0) {
+    failures.push(`${nonAdminEmail} não tem vínculo em user_empresas.`);
+  }
+  const sharedEmpresaIds = [...adminEmpresaIds].filter((id) => nonAdminEmpresaIds.has(id));
+  if (adminEmpresaIds.size > 0 && nonAdminEmpresaIds.size > 0 && sharedEmpresaIds.length === 0) {
     failures.push(
-      `${adminEmail} e ${nonAdminEmail} estão vinculados a empresas DIFERENTES ` +
-        `(${adminVinculo.empresa_id} vs ${nonAdminVinculo.empresa_id}).`,
+      `${adminEmail} e ${nonAdminEmail} não compartilham NENHUMA empresa ` +
+        `(${[...adminEmpresaIds].join(', ')} vs ${[...nonAdminEmpresaIds].join(', ')}).`,
     );
   }
 
-  const empresaId = adminVinculo?.empresa_id;
+  const empresaId = sharedEmpresaIds[0];
   if (empresaId) {
     const { count: colabCount, error: colabErr } = await admin
       .from('colaboradores')

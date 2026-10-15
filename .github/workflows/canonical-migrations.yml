@@ -622,16 +622,34 @@ jobs:
           # W69: executar sidecars .verify.sql para cada migração do lote.
           # Crie supabase/migrations/<versão>_<nome>.verify.sql com SELECTs
           # que retornam 'ok' para verificar objetos criados pela migration.
+          #
+          # Codex review (P2, PR #238): um sidecar que segue o contrato
+          # documentado (SELECT retornando um valor, não uma exceção) sempre
+          # fazia o `psql` sair com código 0 -- a query em si é válida mesmo
+          # quando o valor retornado é 'f'/'fail'/qualquer coisa diferente de
+          # 'ok'. O `|| { ... }` só pegava erro de processo/SQL, nunca um
+          # assert que falhou dentro do próprio SELECT -- ou seja, um sidecar
+          # escrito exatamente como o comentário acima instrui nunca
+          # reprovava o apply. Agora capturamos a saída (-t -A: tuplas sem
+          # formatação) e exigimos que toda linha não-vazia seja literalmente
+          # 'ok'; qualquer outro valor conta como falha do sidecar.
           sidecar_errors=0
           for migration in "$stage_dir"/supabase/migrations/*.sql; do
             filename="$(basename "$migration")"
             sidecar="supabase/migrations/${filename%.sql}.verify.sql"
             if [ -f "$sidecar" ]; then
               echo "Sidecar: $sidecar"
-              psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -f "$sidecar" || {
-                echo "::error::Sidecar falhou: $sidecar"
+              sidecar_output="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
+                echo "::error::Sidecar falhou (erro de execução): $sidecar"
                 sidecar_errors=$((sidecar_errors + 1))
+                continue
               }
+              bad_lines="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' | grep -vx 'ok' || true)"
+              if [ -n "$bad_lines" ]; then
+                echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
+                printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+                sidecar_errors=$((sidecar_errors + 1))
+              fi
             fi
           done
           test "$sidecar_errors" -eq 0

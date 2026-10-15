@@ -172,9 +172,21 @@ jobs:
             SOURCE="input"
             echo "::notice::W75 — escopo veio do input 'functions' (dispatch manual)."
           else
+            # Codex review (P1, PR #238): `gh run list` sem filtro de evento
+            # aceitava um dispatch manual com `functions` restrito a um
+            # subconjunto como "último deploy verde" -- esse run só publicou
+            # as funções escolhidas pelo operador, não necessariamente tudo
+            # que havia mudado até aquele SHA. Usar esse SHA como baseline
+            # faria todo diff futuro esquecer permanentemente as funções que
+            # ficaram de fora do retry manual. Push em main nunca tem input
+            # `functions` (evento sem inputs) -- sempre passa pela mesma
+            # lógica de diff recursivo deste bloco, então é sempre uma
+            # baseline confiável. `--event push` exclui todo workflow_dispatch
+            # (inclusive um auto-detect legítimo) para manter a regra simples
+            # e sem exceção a auditar.
             LAST_GREEN_SHA="$(gh run list -R "$GITHUB_REPOSITORY" \
               --workflow canonical-edge-functions.yml \
-              --branch main --status success --limit 1 \
+              --branch main --status success --event push --limit 1 \
               --json headSha --jq '.[0].headSha' 2>/dev/null || true)"
             if [ -z "$LAST_GREEN_SHA" ] || ! git cat-file -e "${LAST_GREEN_SHA}^{commit}" 2>/dev/null; then
               echo "::notice::W75 — nenhum deploy anterior bem-sucedido encontrado (ou SHA fora do histórico clonado); publicando o inventário completo por segurança."
@@ -184,7 +196,19 @@ jobs:
               FN_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/functions \
                 | awk -F/ 'NF>=2{print $2}' | LC_ALL=C sort -u)"
               CONFIG_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/config.toml)"
-              if [ -n "$CONFIG_DIFF" ]; then
+              # Codex review (P1, PR #238): "_shared" não é uma função (sem
+              # index.ts próprio) -- é código importado pelas funções reais
+              # (ver supabase/functions/_shared/**). Se aparecesse como alvo
+              # literal, o deploy falharia (slug inexistente) ou, pior,
+              # "funcionaria" sem publicar nenhum consumidor real que mudou
+              # de comportamento. Sem analisar imports (fora de escopo),
+              # qualquer mudança em _shared/** força o inventário completo —
+              # mesma estratégia de segurança já usada para config.toml.
+              if printf '%s\n' "$FN_DIFF" | grep -qx '_shared'; then
+                echo "::notice::W75 — supabase/functions/_shared/** mudou desde $LAST_GREEN_SHA; publicando o inventário completo (código compartilhado não tem um grafo de consumidores derivável aqui)."
+                TARGETS="$ALL_SLUGS"
+                SOURCE="shared-changed"
+              elif [ -n "$CONFIG_DIFF" ]; then
                 echo "::notice::W75 — supabase/config.toml mudou desde $LAST_GREEN_SHA; publicando o inventário completo (não há como derivar o subconjunto afetado por uma mudança de config)."
                 TARGETS="$ALL_SLUGS"
                 SOURCE="config-toml-changed"
@@ -325,16 +349,16 @@ jobs:
           # Mesmo padrão de dedup por label de healthcheck.yml/post-deploy-smoke.yml:
           # título estável, dedup via --label (não o título), 1 issue por vez.
           TITLE="🔴 Deploy/smoke de Edge Functions (canônico) falhou"
-          EXISTING=$(gh issue list --label canonical --state open --json number --limit 1 --jq '.[0].number' || true)
+          EXISTING=$(gh issue list --label canonical-deploy --state open --json number --limit 1 --jq '.[0].number' || true)
           ROLLBACK_SHA="${LAST_GREEN_SHA:-desconhecido — ver o último run verde em Actions > canonical-edge-functions.yml}"
           BODY=$(printf 'O deploy/smoke de Edge Functions no canônico falhou.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s\n\nRollback: dispare manualmente este workflow (workflow_dispatch) com:\n  - ref: %s  (último deploy bem-sucedido conhecido)\n  - confirm_project_ref: frjbfeamybqsejlvmqbl\n  - functions: (deixe vazio — redeployar esse SHA republica automaticamente o inventário correspondente a ele)\n\nVerificar runbooks: infra/runbooks/CANONICAL_WORKFLOWS.md e infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$ROLLBACK_SHA")
           # Garante a label antes de criar — sem ela, `gh issue create --label`
           # falharia e a issue nasceria sem label, quebrando o dedup na próxima falha.
-          gh label create canonical --force >/dev/null 2>&1 || true
+          gh label create canonical-deploy --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
             gh issue comment "$EXISTING" --body "$BODY"
           else
-            gh issue create --title "$TITLE" --body "$BODY" --label canonical
+            gh issue create --title "$TITLE" --body "$BODY" --label canonical-deploy
           fi
 
       - name: Deploy/smoke recuperou → fechar issue de rollback (W76)
@@ -343,7 +367,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          EXISTING=$(gh issue list --label canonical --state open --json number --limit 1 --jq '.[0].number' || true)
+          EXISTING=$(gh issue list --label canonical-deploy --state open --json number --limit 1 --jq '.[0].number' || true)
           if [ -n "$EXISTING" ]; then
             gh issue close "$EXISTING" --comment "Deploy/smoke de Edge Functions (canônico) voltou ao verde. Commit: $GITHUB_SHA | Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           fi
