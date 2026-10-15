@@ -359,9 +359,16 @@ jobs:
 
   db-integrity-live:
     name: Integridade do banco canônico (live)
-    # W25: único job do ci.yml com acesso ao banco de produção. O environment
-    # production restringe as branches que recebem o segredo.
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    # W15/W25: roda em push na main, dispatch E PRs internos (não forks).
+    # • Fork/Dependabot: parte estática já rodou em db-integrity; aqui o job
+    #   verifica o acesso e, sem DATABASE_URL, emite aviso + sucesso explícito.
+    # • PR interno sem DATABASE_URL: falha fechada — credencial deve existir.
+    # • O environment production protege o secret; forks nunca o recebem.
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: production
@@ -374,29 +381,43 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
-      - name: Instalar cliente psql
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
-      - name: Exigir alvo canônico de auditoria
-        # Não exibir nem testar a URL em shell com tracing. A presença é
-        # suficiente; os scripts seguintes abrem a conexão read-only usada
-        # pelos seus próprios SELECTs de catálogo.
+      - name: Verificar disponibilidade do alvo canônico
+        id: db-access
+        # W15: Dependabot não recebe secrets do environment production — não é erro.
+        # PR interno sem DATABASE_URL é erro: a credencial deve ter sido configurada.
+        # github.actor passado via env para não violar D20 (sem ${{ }} em run:).
+        env:
+          ACTOR: ${{ github.actor }}
         run: |
           if [ -z "${DATABASE_URL}" ]; then
-            echo "::error::SUPABASE_DB_URL ausente. O gate de integridade não pode aprovar sem auditar o banco canônico."
-            exit 1
+            if [ "${ACTOR}" = "dependabot[bot]" ]; then
+              echo "::notice::Auditor role indisponível para este ator — alvo canônico não disponível para Dependabot."
+              echo "skip_live=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::SUPABASE_DB_URL ausente. O gate de integridade não pode aprovar sem auditar o banco canônico."
+              exit 1
+            fi
+          else
+            echo "skip_live=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Instalar cliente psql
+        if: steps.db-access.outputs.skip_live != 'true'
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
       - name: Auditar search_path das funções
+        if: steps.db-access.outputs.skip_live != 'true'
         # Detecta funções que chamam rotinas de extensão (pgcrypto, pg_net, ...)
         # sem o schema da extensão no search_path fixado. Esse defeito NÃO é
         # acusado na criação da função — só explode em produção, na primeira
         # gravação selada por hash.
         run: node scripts/audit-db-search-path.mjs
       - name: Smoke test dos selos de integridade
+        if: steps.db-access.outputs.skip_live != 'true'
         # Verifica que todo gatilho enforce_*_hash está acoplado, é BEFORE
         # INSERT/UPDATE e consegue resolver digest() sob seu próprio
         # search_path. Não grava dados de negócio.
         run: node scripts/smoke-hash-triggers.mjs
       - name: Regressão de RLS sobre PII
+        if: steps.db-access.outputs.skip_live != 'true'
         # Reprova o build quando uma política sobre tabela com dado pessoal
         # (CPF, PIS, salário, conta bancária, endereço, biometria...) não
         # correlaciona com auth.uid() nem com o vínculo de empresa, ou quando
@@ -404,6 +425,7 @@ jobs:
         # predicados sem reclamar — a exposição só aparece em produção.
         run: node scripts/audit-rls-pii.mjs
       - name: Menor privilégio em RLS (papel no caminho de escrita)
+        if: steps.db-access.outputs.skip_live != 'true'
         # Complementa o gate acima. Isolar por empresa aprova ali, mas em tabela
         # sensível não basta: com `FOR ALL` + só `empresa_id`, o estagiário e o
         # RH ficam indistinguíveis dentro do mesmo tenant — contracheque, conta
@@ -411,6 +433,7 @@ jobs:
         # qualquer autenticado. Escrita nessas tabelas exige papel explícito.
         run: node scripts/audit-rls-least-privilege.mjs
       - name: Política permissiva irrestrita em tabela multi-tenant
+        if: steps.db-access.outputs.skip_live != 'true'
         # Políticas PERMISSIVAS se combinam por OU: basta UMA liberar para o
         # acesso ser concedido. `rubricas_folha` já tinha a política correta
         # (catálogo global OU pertence à empresa) e mesmo assim vazava as
@@ -419,6 +442,7 @@ jobs:
         # viver. Os gates acima não pegam o caso: rubrica de folha não é PII.
         run: node scripts/audit-rls-tenant-open.mjs
       - name: Autorização em funções SECURITY DEFINER
+        if: steps.db-access.outputs.skip_live != 'true'
         # SECURITY DEFINER atravessa o RLS: se a função é executável por
         # anon/authenticated e confia em identificadores vindos do chamador,
         # ela anula o isolamento multi-tenant sem que nenhuma política esteja
@@ -426,6 +450,7 @@ jobs:
         # funções que delegam a checagem a um helper.
         run: node scripts/audit-secdef-authz.mjs
       - name: Integridade das dicas de relacionamento (PostgREST)
+        if: steps.db-access.outputs.skip_live != 'true'
         # `.select('*, tabela!constraint(...)')` amarra o código a um nome de
         # constraint que nada valida: typecheck e testes com mock passam, e a
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
