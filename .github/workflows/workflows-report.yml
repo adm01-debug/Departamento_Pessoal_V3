@@ -44,7 +44,7 @@ jobs:
         run: node scripts/report-workflows.mjs > /tmp/workflows-report.md
 
       - name: Atualizar WORKFLOWS_STATUS.md
-        run: node scripts/update-workflows-status.mjs /tmp/workflows-report.md
+        run: node scripts/update-workflows-status.mjs
 
       - name: Verificar se o conteúdo mudou
         id: diff

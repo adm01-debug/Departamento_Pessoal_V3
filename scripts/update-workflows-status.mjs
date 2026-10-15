@@ -8,56 +8,29 @@
  * manter a tabela de duração/P95 atualizada sem reescrever o resto do
  * documento (contexto, histórico de limpeza de artifacts, próximos passos).
  *
- * Uso: node scripts/update-workflows-status.mjs <arquivo-com-saida-do-report>
+ * SonarCloud sinalizava "Path Traversal via faulty LLM-supplied CLI
+ * arguments" quando o caminho do relatório vinha de process.argv — mas o
+ * único chamador real (workflows-report.yml) sempre gera e lê exatamente
+ * /tmp/workflows-report.md, nunca um caminho variável. Em vez de sanitizar
+ * um argumento que não precisa existir, o caminho agora é fixo: elimina a
+ * fonte do taint (não há mais input externo chegando ao sink de arquivo).
  */
-import { closeSync, fstatSync, openSync, readFileSync, readlinkSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
+import { readFileSync, writeFileSync } from 'node:fs';
 
+const REPORT_PATH = '/tmp/workflows-report.md';
 const STATUS_PATH = 'docs/auditoria/estado/WORKFLOWS_STATUS.md';
 const START = '<!-- REPORT:START -->';
 const END = '<!-- REPORT:END -->';
 
-// SonarCloud (path traversal): o sink só pode ler de dentro do diretório
-// temporário do runner ou do próprio checkout — nunca de um path arbitrário
-// do sistema. É o único chamador real
-// (.github/workflows/workflows-report.yml), que sempre passa um arquivo em
-// /tmp (ex. /tmp/workflows-report.md).
-const ALLOWED_ROOTS = [tmpdir(), resolve('.')];
-
-const reportFileArg = process.argv[2];
-if (!reportFileArg) {
-  console.error('Uso: node scripts/update-workflows-status.mjs <arquivo-com-saida-do-report>');
-  process.exit(1);
-}
-
-// CodeQL (TOCTOU/file-system race): abre o arquivo uma única vez e valida o
-// MESMO descritor (fstat + /proc/self/fd, só Linux — único ambiente onde
-// este script roda, actions/runner-images ubuntu-latest) antes de ler dele,
-// em vez de checar o path (stat/realpath) e só depois abrir — essa segunda
-// forma deixa uma janela em que o arquivo apontado pelo path poderia ser
-// substituído entre o check e o uso (symlink race).
-let reportFd;
+let report;
 try {
-  reportFd = openSync(reportFileArg, 'r');
+  report = readFileSync(REPORT_PATH, 'utf-8').trim();
 } catch {
-  console.error(`Arquivo de relatório não encontrado: ${reportFileArg}`);
+  console.error(
+    `Arquivo de relatório não encontrado: ${REPORT_PATH} (rode "node scripts/report-workflows.mjs > ${REPORT_PATH}" antes).`
+  );
   process.exit(1);
 }
-if (!fstatSync(reportFd).isFile()) {
-  closeSync(reportFd);
-  console.error(`Caminho não é um arquivo regular: ${reportFileArg}`);
-  process.exit(1);
-}
-const resolvedPath = readlinkSync(`/proc/self/fd/${reportFd}`);
-if (!ALLOWED_ROOTS.some((root) => resolvedPath === root || resolvedPath.startsWith(root + '/'))) {
-  closeSync(reportFd);
-  console.error(`Caminho fora dos diretórios permitidos (tmp ou projeto): ${reportFileArg}`);
-  process.exit(1);
-}
-
-const report = readFileSync(reportFd, 'utf-8').trim();
-closeSync(reportFd);
 const status = readFileSync(STATUS_PATH, 'utf-8');
 
 const startIdx = status.indexOf(START);
