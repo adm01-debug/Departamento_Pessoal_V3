@@ -1,5 +1,8 @@
 version: 2
 updates:
+  # W10: Após merge de PR do Dependabot (npm), regenerar bun.lock localmente
+  # com: bun install && git add bun.lock && git commit
+  # Isso garante paridade entre package-lock.json e bun.lock (D1).
   # ─── npm ────────────────────────────────────────────────────────────────────
   - package-ecosystem: npm
     directory: /
@@ -8,7 +11,9 @@ updates:
       day: monday
       time: "09:00"
       timezone: America/Sao_Paulo
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
+    cooldown:
+      default: "7d"
     labels:
       - dependencies
       - javascript
