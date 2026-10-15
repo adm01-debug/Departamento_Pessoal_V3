@@ -36,7 +36,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Install
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Type Check (src)
         run: npm run typecheck
       - name: Type Check (tests)
@@ -59,7 +59,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Install
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Lint
         run: npm run lint:ci
       - name: Orçamento de `any` por diretório (E51-025)
@@ -114,7 +114,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Install
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Unit Tests
         # E41: sem RUN_LIVE_RLS_TESTS aqui — o smoke contra o banco canônico
         # vive no job `rls-live` (push main, não bloqueante), para o teste
@@ -166,7 +166,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Install
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Smoke RLS/RPC contra o canônico
         run: npx vitest run src/tests/rpc-permissions.test.ts
       - name: Abrir issue em caso de falha na main
@@ -214,7 +214,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Install
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Build
         run: npm run build
       - name: Orçamento de bundle
@@ -263,7 +263,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
       - name: Install
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Contrato físico dos eventos de auditoria Edge
         # Análise AST estática (não precisa de banco nem secrets). Movido
         # de typecheck para cá para manter typecheck puro.

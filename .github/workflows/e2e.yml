@@ -51,7 +51,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Cache Playwright browsers
         id: playwright-public-cache
@@ -151,7 +151,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       # Cache dos binários do Chromium (~90% redução no download)
       - name: Cache Playwright browsers
