@@ -1,9 +1,9 @@
 # Revisão da Implementação — Plano 100 Workflows
 
 **Data:** 15/10/2026
-**Wave:** 0 (PR #231, merged 14/10) + Wave 1 (em andamento)
+**Wave:** 0 (PR #231, merged 14/10) + Wave 1 (concluída) + Wave 2 (15/10)
 **Branch:** `claude/happy-cori-3z9h7f`
-**Score estimado:** 4.5/10 (era 3/10)
+**Score estimado:** 5.5/10 (era 4.5/10 pós Wave 1)
 
 ## Wave 0 — Concluído (PR #231, merged 14/10/2026)
 
@@ -47,6 +47,22 @@
 | W84    | dependency-review-action em PRs (high severity + copyleft)                  | commit 5b61cc2          |
 | W88    | CodeQL: build-mode none; schedule quinta 06:47 UTC                          | commit 1976e66          |
 
+## Wave 2 — Concluído (branch claude/happy-cori-3z9h7f, 15/10/2026)
+
+| Código  | Descrição                                                                                   | Evidência      |
+| ------- | ------------------------------------------------------------------------------------------- | -------------- |
+| W86-fix | workflow-lint.yml: `./actionlint` → `actionlint` (PATH) — bug que causava command not found | commit 78dd009 |
+| W87     | deploy.yml: publicar dist/ artifact (v7, 7d) + gate de auditoria de bundle                  | commit 78dd009 |
+| W69     | canonical-migrations.yml: ledger dinâmico (sem hardcode) + runner de sidecars .verify.sql   | commit 78dd009 |
+| W94     | CLAUDE.md: sessão 7 registrada, métricas atualizadas (12/12 workflows)                      | commit 6a3cf89 |
+
+**Impacto Wave 2:**
+
+- workflow-lint.yml agora executa actionlint de fato (era no-op silencioso)
+- deploy.yml bloqueia merge se bundle ultrapassar orçamento (js_total 12250KB, chunk 2000KB, css 220KB)
+- canonical-migrations.yml não vai quebrar em futuras ondas com versões diferentes
+- Contract test sobe para 12/12 (detectou e validou fix do W86)
+
 ## Decisões Pendentes do Owner
 
 | Código | Decisão necessária                                               |
@@ -60,13 +76,24 @@
 | W63 💰 | Mailosaur (contratar ou remover specs de reset de senha)         |
 | W93 💰 | Notificação N8N/WhatsApp para main vermelha                      |
 
-## Score Atual: 4.5/10
+## Score Atual: 5.5/10
 
-**O que falta para 10/10:**
+**O que falta para 10/10 (autônomo):**
 
 - P0: W11→W12→W13 (ruleset update via API), W15 (db-integrity fail-closed), W18 (check identifiers)
 - P0 PII: W27→W28 (canonical-sql-diag PII protection), W25→W26 (secrets em environment)
 - Supply chain: W23→W24 (role ci_auditor), W33→W34 (SHA pinning policy)
-- CI cost: W45→W47 (sharding Postgres), W52→W87 (build.yml)
-- E2E: W58 (decisão) → W59→W60→W62
-- Canonical: W67→W68→W69→W70→W71→W73→W75→W76
+- CI cost: W45→W47 (sharding Postgres), W52 (build cache)
+- Canonical: W67→W68→W70→W71→W73→W75→W76
+- E2E bloqueado por decisão do owner (W58)
+
+**Conquistado (Waves 0+1+2):**
+
+- W01 bun.lock, W02 lockfile gate, W09 dedup, W10 docs, W17 audit TODO,
+  W31 apps inventory, W35 SHA comments, W36 --no-lock, W38 node-version-file,
+  W40 lhci devDep, W41 pg-client pin, W42 dependabot limits, W45 npm cache,
+  W49 concurrency SHA, W51 STEP_SUMMARY, W53 ratchet, W54 edge contract,
+  W61 dispatch e2e, W65 timeout, W69 ledger dinâmico+sidecars, W77 concurrency,
+  W79 runbook, W81 security-extended, W82 CodeQL unused, W83 audit gate,
+  W84 dependency-review, W86 actionlint fix, W87 bundle audit, W88 CodeQL schedule,
+  W94 docs, W95 comment, W96 label, W97 contracts, W98 lockfile parity
