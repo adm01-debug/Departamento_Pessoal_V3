@@ -4,11 +4,23 @@
  * Bloco F). Cria 1 empresa sintética, vincula as 2 identidades E2E já provisionadas
  * (`scripts/provision-e2e-users.mjs`), cria 2-3 colaboradores e 1 folha aberta.
  *
- * ⚠️  NÃO HABILITADO EM CI. NÃO EXECUTE SEM LER ISTO ATÉ O FIM. ⚠️
- * ============================================================================
- * Este arquivo foi escrito como parte da investigação de W59/W60, mas a
- * investigação encontrou dois problemas que o agente que o escreveu considerou
- * bloqueantes para EXECUTAR (não para escrever o código):
+ * ✅ W58 DECIDIDO E SEED JÁ APLICADO (15/10/2026) — o dono confirmou que os
+ * dados hoje no banco canônico (incluindo "TIME PROMO BRINDES LTDA") são
+ * fake/mock, criados só para validar design — não são PII real de produção.
+ * Isso remove o bloqueio do item 2 abaixo. O seed foi aplicado via Supabase MCP
+ * (mesmas operações que este script faria, sem as chaves SUPABASE_SERVICE_ROLE_KEY/
+ * ANON_KEY que não estavam disponíveis neste ambiente): empresa sintética
+ * `61e7d382-549f-4b17-afa4-4578ebc919f3` (CNPJ 00000000000191), admin@teste.local
+ * → role admin + vínculo, user@teste.local → role user + vínculo, 2
+ * colaboradores e 1 folha aberta (competência 2026-10). Verificado via a mesma
+ * query que `verify-seed.mjs` faz. Este script continua idempotente e pode ser
+ * executado normalmente a partir de agora quando as credenciais estiverem
+ * disponíveis (ex.: localmente, ou se for ligado a um step de CI que as tenha).
+ *
+ * Histórico da investigação original (W59/W60), mantido por contexto — o item
+ * 1 (ausência de RPC) continua válido e é a razão de este script fazer INSERT
+ * direto nas 3 tabelas; o item 2 (empresa "real") foi a premissa que o dono
+ * corrigiu acima:
  *
  * 1. NÃO EXISTE RPC para criar `empresas`, `colaboradores` ou `folhas_pagamento`
  *    do zero. `supabase_db_list_functions` (schema public) não lista nenhuma
@@ -28,23 +40,21 @@
  *    faria pela UI. Isso é uma DECISÃO DELIBERADA, documentada aqui para review
  *    humana — não uma correção ou um bypass escondido.
  *
- * 2. O banco canônico conectado via MCP nesta sessão tem APENAS 1 empresa, e é
- *    uma empresa REAL de produção ("TIME PROMO BRINDES LTDA", CNPJ real,
- *    13 colaboradores reais com CPF/salário, 4 folhas, contas_bancarias).
- *    As credenciais `admin@teste.local` / `user@teste.local` (as que o e2e.yml
- *    usa hoje) NÃO têm nenhuma role em `user_roles` nem vínculo em
- *    `user_empresas` — ou seja, o "seed" realmente não existe, confirmando a
- *    premissa da tarefa. Existe, à parte, um outro par de identidades
- *    (`adm01+dpv3-e2e-admin@promobrindes.com.br` /
- *    `adm01+dpv3-e2e-user@promobrindes.com.br`) já vinculado à EMPRESA REAL —
- *    um risco pré-existente (não causado por este script) que também está
- *    documentado no relatório final para o humano decidir o que fazer.
- *    Rodar este seed SEM qualquer resguardo apontaria `admin@teste.local` para
- *    a mesma empresa real, OU exigiria criar uma 2ª empresa dentro do banco de
- *    produção (via o INSERT direto do item 1). Qual das duas é aceitável é
- *    exatamente a decisão **W58 "onde o E2E autenticado escreve"**, marcada 💰
- *    (decisão só do dono) no plano — ainda não tomada. Este script não deve
- *    rodar contra produção antes de W58 ser resolvida.
+ * 2. [HISTÓRICO — premissa corrigida, ver nota ✅ no topo] O banco canônico
+ *    conectado via MCP tinha apenas 1 empresa antes do seed, e o agente desta
+ *    investigação a presumiu real ("TIME PROMO BRINDES LTDA", CNPJ, 13
+ *    colaboradores com CPF/salário, 4 folhas) por não ter confirmação do
+ *    contrário. O dono esclareceu que todo esse conteúdo é fake/mock para
+ *    validação de design — nenhuma linha é PII real. As credenciais
+ *    `admin@teste.local` / `user@teste.local` não tinham role nem vínculo
+ *    antes do seed, confirmando que ele nunca tinha sido aplicado. Existe,
+ *    à parte, um outro par de identidades (`adm01+dpv3-e2e-admin@promobrindes.com.br` /
+ *    `adm01+dpv3-e2e-user@promobrindes.com.br`) já vinculado à mesma empresa —
+ *    como os dados são mock, o dono decidiu não tratar isso como risco e não
+ *    tocar nessas contas. A decisão W58 ("onde o E2E autenticado escreve") foi
+ *    portanto: continuar escrevendo neste banco canônico, agora com uma
+ *    empresa sintética própria (criada pelo seed) em vez de reaproveitar a
+ *    empresa mock existente.
  *
  * Por isso este script:
  *   - Exige SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY (só para localizar os

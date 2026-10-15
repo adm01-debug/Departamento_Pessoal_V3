@@ -43,8 +43,6 @@ concurrency:
 
 permissions:
   contents: read
-  actions: read # W75: gh run list para achar o último deploy bem-sucedido
-  issues: write # W76: abrir/atualizar/fechar issue de rollback no smoke pós-deploy
 
 jobs:
   dry-run:
@@ -106,6 +104,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: production
+    permissions:
+      contents: read
+      actions: read # W75: gh run list para achar o último deploy bem-sucedido
+      issues: write # W76: abrir/atualizar/fechar issue de rollback no smoke pós-deploy
     env:
       CANONICAL_REF: frjbfeamybqsejlvmqbl
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
@@ -283,10 +285,10 @@ jobs:
           echo "Chamada autenticada read-only ao external-db-bridge"
           test -n "$SUPABASE_URL" || { echo '::error::SUPABASE_URL ausente para o smoke do bridge.'; exit 1; }
           test -n "$SUPABASE_PUBLISHABLE_KEY" || { echo '::error::chave pública ausente para o smoke do bridge.'; exit 1; }
-          test -n "$E2E_USER_EMAIL" && test -n "$E2E_USER_PASSWORD" || {
+          if ! { test -n "$E2E_USER_EMAIL" && test -n "$E2E_USER_PASSWORD"; }; then
             echo '::error::credenciais E2E ausentes para autenticar o smoke do bridge.'
             exit 1
-          }
+          fi
 
           LOGIN_PAYLOAD="$(jq -nc --arg email "$E2E_USER_EMAIL" --arg password "$E2E_USER_PASSWORD" '{email:$email,password:$password}')"
           TOKEN_JSON="$(curl -sS --max-time 10 -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \

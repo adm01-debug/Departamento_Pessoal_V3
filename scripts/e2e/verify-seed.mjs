@@ -3,11 +3,16 @@
  * Gate de verificação fail-closed para o seed do E2E autenticado (W59/W60,
  * docs/auditoria/PLANO_100_WORKFLOWS_2026-10-14.md Bloco F).
  *
- * Diferente de `scripts/e2e/seed.mjs` (que ainda NÃO deve ser executado contra
- * produção — ver cabeçalho dele), este script é SOMENTE LEITURA: confere se o
- * estado esperado pelo seed já existe e falha (exit 1) se não existir, em vez
- * de inventar dados. Pode ser ligado no job `playwright` (authenticated) hoje,
- * antes mesmo de W58 ser decidido — ele nunca escreve nada.
+ * Diferente de `scripts/e2e/seed.mjs` (que grava dados), este script é
+ * SOMENTE LEITURA: confere se o estado esperado pelo seed já existe e falha
+ * (exit 1) se não existir, em vez de inventar dados. Pode ser ligado no job
+ * `playwright` (authenticated) a qualquer momento — nunca escreve nada.
+ *
+ * W58 foi decidido (15/10/2026, ver cabeçalho de seed.mjs) e o seed já foi
+ * aplicado contra o canônico: admin@teste.local/user@teste.local vinculados
+ * à empresa sintética `61e7d382-549f-4b17-afa4-4578ebc919f3`, com 2
+ * colaboradores e 1 folha aberta. Rodar este script agora deve reportar
+ * sucesso.
  *
  * Verifica:
  *   1. admin@teste.local / user@teste.local existem no GoTrue.
@@ -120,8 +125,8 @@ function report() {
     console.error('❌ Seed do E2E autenticado incompleto ou ausente:');
     for (const f of failures) console.error(`   - ${f}`);
     console.error(
-      '\nEste gate falha fechado por design (não cria dados). Ver scripts/e2e/seed.mjs ' +
-        'para o script de seed e o motivo pelo qual ainda não foi executado contra produção.',
+      '\nEste gate falha fechado por design (não cria dados). Rode scripts/e2e/seed.mjs ' +
+        '(idempotente) para aplicar/reaplicar o seed, ou veja o cabeçalho dele para o histórico.',
     );
     process.exit(1);
   }

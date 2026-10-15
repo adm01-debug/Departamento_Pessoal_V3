@@ -13,7 +13,7 @@
 # Uso: bash scripts/tests/run-shard.sh N/TOTAL   (ex.: 1/3, 2/3, 3/3)
 set -euo pipefail
 
-if [ "$#" -ne 1 ]; then
+if [[ "$#" -ne 1 ]]; then
   echo "uso: $0 N/TOTAL (ex.: 1/3)" >&2
   exit 1
 fi
@@ -34,7 +34,7 @@ if ! [[ "$SHARD" =~ ^[0-9]+$ ]] || ! [[ "$TOTAL" =~ ^[0-9]+$ ]]; then
   echo "argumento inválido: '$ARG' — N e TOTAL devem ser inteiros" >&2
   exit 1
 fi
-if [ "$TOTAL" -lt 1 ] || [ "$SHARD" -lt 1 ] || [ "$SHARD" -gt "$TOTAL" ]; then
+if [[ "$TOTAL" -lt 1 ]] || [[ "$SHARD" -lt 1 ]] || [[ "$SHARD" -gt "$TOTAL" ]]; then
   echo "argumento inválido: '$ARG' — esperado 1 <= N <= TOTAL" >&2
   exit 1
 fi
@@ -46,14 +46,14 @@ cd "$REPO_ROOT"
 # (D27) e mantém a distribuição por shard determinística entre PRs.
 mapfile -t ALL_SCRIPTS < <(find scripts/tests -name 'migrations-p*.sh' | sort)
 
-if [ "${#ALL_SCRIPTS[@]}" -eq 0 ]; then
+if [[ "${#ALL_SCRIPTS[@]}" -eq 0 ]]; then
   echo "nenhum script migrations-p*.sh encontrado em scripts/tests" >&2
   exit 1
 fi
 
 SHARD_SCRIPTS=()
 for i in "${!ALL_SCRIPTS[@]}"; do
-  if [ "$(( i % TOTAL ))" -eq "$(( SHARD - 1 ))" ]; then
+  if [[ "$(( i % TOTAL ))" -eq "$(( SHARD - 1 ))" ]]; then
     SHARD_SCRIPTS+=("${ALL_SCRIPTS[$i]}")
   fi
 done
@@ -63,7 +63,7 @@ for script in "${SHARD_SCRIPTS[@]}"; do
   echo "    - $script"
 done
 
-if [ "${#SHARD_SCRIPTS[@]}" -eq 0 ]; then
+if [[ "${#SHARD_SCRIPTS[@]}" -eq 0 ]]; then
   echo "nenhum script atribuído a este shard (TOTAL maior que o nº de scripts?) — nada a rodar"
   exit 0
 fi

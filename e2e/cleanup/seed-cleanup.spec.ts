@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 
 /**
@@ -23,10 +23,11 @@ import { createClient } from '@supabase/supabase-js';
  *   - Se a empresa sintética não existir (seed nunca rodou, ou já foi
  *     limpa), o teste passa sem fazer nada — não é um erro.
  *
- * Pré-requisito para isto rodar de verdade em CI: a decisão W58 (onde o E2E
- * autenticado escreve) e a execução autorizada de scripts/e2e/seed.mjs. Até
- * lá, este spec roda, não encontra a empresa sintética (porque ela não
- * existe em produção ainda) e termina como no-op — não é destrutivo.
+ * W58 foi decidido e scripts/e2e/seed.mjs já foi aplicado contra o canônico
+ * (15/10/2026) — a empresa sintética (CNPJ 00000000000191) existe. Este spec
+ * agora encontra o seed de verdade e limpa colaboradores/folha a cada run do
+ * E2E autenticado; se a empresa sintética algum dia não existir (seed ainda
+ * não aplicado nesse ambiente), o teste continua um no-op seguro.
  */
 
 const SEED_EMPRESA_CNPJ = '00000000000191';
@@ -64,10 +65,13 @@ test.describe('Cleanup do seed E2E (W60 — executa antes do logout)', () => {
     }
 
     const seedEmpresaId = empresa.id;
+    expect(seedEmpresaId).toBeTruthy();
 
     // Ordem: itens dependentes antes dos pais, sempre filtrado por empresa_id.
-    await client.from('folhas_pagamento').delete().eq('empresa_id', seedEmpresaId);
-    await client.from('colaboradores').delete().eq('empresa_id', seedEmpresaId);
+    const { error: folhasErr } = await client.from('folhas_pagamento').delete().eq('empresa_id', seedEmpresaId);
+    const { error: colaboradoresErr } = await client.from('colaboradores').delete().eq('empresa_id', seedEmpresaId);
+    expect(folhasErr, 'delete de folhas_pagamento da empresa sintética não deve falhar').toBeNull();
+    expect(colaboradoresErr, 'delete de colaboradores da empresa sintética não deve falhar').toBeNull();
 
     await client.auth.signOut({ scope: 'local' });
   });
