@@ -33,7 +33,7 @@ vi.mock('@/components/ui/select', () => ({
   ),
 }));
 
-import { useASOs, useCriarASO } from '@/hooks/useColaboradorDetalhes';
+import { useASOs } from '@/hooks/useColaboradorDetalhes';
 import { ASOTab } from '../colaborador-detalhes/ASOTab';
 
 const MOCK_ASOS = [

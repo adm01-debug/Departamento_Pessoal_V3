@@ -9,7 +9,7 @@ import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 
 export function FolhaAuditTimeline({ competencia }: { competencia: string }) {
-  const { data: logs = [], isLoading } = useQuery({
+  const { data: logs = [] } = useQuery({
     queryKey: ['folha-audit-logs', competencia],
     queryFn: async () => {
       const { data, error } = await supabase

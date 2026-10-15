@@ -20,7 +20,6 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from '@/hooks';
-import type { UiRecord } from '@/types/uiRecord';
 import {
   Dialog,
   DialogContent,

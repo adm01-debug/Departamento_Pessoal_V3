@@ -26,7 +26,6 @@ import { cn } from '@/lib/utils';
 import { formatDate, formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
 import { ESocialEventViewer } from '@/components/esocial/ESocialEventViewer';
-import type { Tables } from '@/integrations/supabase/database.types';
 import type { ESocialEvento, ESocialConfig } from '@/services/esocialService';
 
 type AdicionarCertificadoPayload = Parameters<typeof import('@/services/esocialService').adicionarCertificado>[0];

@@ -2,9 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Sun,
-  Moon,
-  Sunset,
   Gift,
   Calendar,
   AlertTriangle,
@@ -227,9 +224,6 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
   };
   const hoje = new Date();
   const hora = hoje.getHours();
-
-  const TimeIcon = hora < 12 ? Sun : hora < 18 ? Sunset : Moon;
-  const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
 
   if (isLoading) return <CardSkeleton className="h-64" />;
 

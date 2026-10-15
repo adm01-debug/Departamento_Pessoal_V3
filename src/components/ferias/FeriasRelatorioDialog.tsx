@@ -21,7 +21,7 @@ export function FeriasRelatorioDialog({ stats, data, filters }: FeriasRelatorioD
   const { empresaAtual } = useEmpresas();
   const [periodo, setPeriodo] = useState('6_meses');
   const [loading, setLoading] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
+  const [, setPreviewOpen] = useState(false);
 
   const getFilteredData = () => {
     const now = new Date();

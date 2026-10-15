@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useFolhaAuditoria } from '@/hooks/useFolhaAuditoria';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { safeHref } from '@/utils/safeUrl';
 
@@ -72,11 +71,9 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [rubricasValidadas, setRubricasValidadas] = useState(false);
   const [currentFolhaId, setCurrentFolhaId] = useState<string | null>(null);
   const [resultadoCalculo, setResultadoCalculo] = useState<CalculoResultado | null>(null);
-  const { registrarLog } = useFolhaAuditoria(currentFolhaId || undefined);
-  const { executarCalculo, executarCalculoLote, isCalculando, progressoLote } = useCalculoFolha();
+  const { executarCalculoLote, progressoLote } = useCalculoFolha();
   const queryClient = useQueryClient();
 
   // Queries for validation

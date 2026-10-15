@@ -14,11 +14,7 @@ import { Building2, Check, ChevronDown, Layers, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useGrupo } from '@/hooks/useGrupo';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -28,22 +24,11 @@ interface EmpresaSwitcherProps {
 }
 
 export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
-  const {
-    empresaAtual,
-    empresaAtualId,
-    modo,
-    isConsolidado,
-    setModo,
-    trocarEmpresa,
-    temMultiplasEmpresas,
-  } = useEmpresas();
+  const { empresaAtual, empresaAtualId, isConsolidado, setModo, trocarEmpresa, temMultiplasEmpresas } = useEmpresas();
   const { empresas, coresPorEmpresa, regimePorEmpresa, totalAtivas } = useGrupo();
   const [open, setOpen] = useState(false);
 
-  const empresasVisiveis = useMemo(
-    () => empresas.filter((e) => e.ativa),
-    [empresas],
-  );
+  const empresasVisiveis = useMemo(() => empresas.filter((e) => e.ativa), [empresas]);
 
   const labelPrincipal = isConsolidado
     ? 'Grupo Consolidado'
@@ -51,7 +36,7 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
 
   const labelSecundario = isConsolidado
     ? `${totalAtivas} empresa${totalAtivas !== 1 ? 's' : ''} ativa${totalAtivas !== 1 ? 's' : ''}`
-    : empresaAtual?.cnpj ?? '—';
+    : (empresaAtual?.cnpj ?? '—');
 
   const IconePrincipal = isConsolidado ? Layers : Building2;
 
@@ -87,7 +72,7 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
             className={cn(
               'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all',
               'bg-sidebar-accent/60 hover:bg-sidebar-accent border border-sidebar-border/40',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
             )}
             aria-haspopup="dialog"
             aria-expanded={open}
@@ -105,27 +90,19 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
                 style={{
                   color: isConsolidado
                     ? 'hsl(var(--primary))'
-                    : coresPorEmpresa[empresaAtualId ?? ''] ?? 'hsl(var(--primary))',
+                    : (coresPorEmpresa[empresaAtualId ?? ''] ?? 'hsl(var(--primary))'),
                 }}
               />
             </div>
             <div className="flex-1 min-w-0 text-left">
-              <p className="text-sm font-medium truncate text-sidebar-foreground">
-                {labelPrincipal}
-              </p>
-              <p className="text-[11px] text-muted-foreground truncate">
-                {labelSecundario}
-              </p>
+              <p className="text-sm font-medium truncate text-sidebar-foreground">{labelPrincipal}</p>
+              <p className="text-[11px] text-muted-foreground truncate">{labelSecundario}</p>
             </div>
             <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
           </button>
         </PopoverTrigger>
 
-        <PopoverContent
-          align="start"
-          sideOffset={8}
-          className="w-[320px] p-0 overflow-hidden"
-        >
+        <PopoverContent align="start" sideOffset={8} className="w-[320px] p-0 overflow-hidden">
           {/* Toggle modo */}
           <div className="p-2 bg-muted/40 border-b">
             <div
@@ -142,7 +119,7 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
                   'flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium transition-all',
                   isConsolidado
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground',
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 <Layers className="h-3.5 w-3.5" />
@@ -162,7 +139,7 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
                   'flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-md text-xs font-medium transition-all',
                   !isConsolidado
                     ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground',
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 <Building2 className="h-3.5 w-3.5" />
@@ -204,7 +181,7 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
                     className={cn(
                       'w-full flex items-center gap-2.5 px-2 py-2 rounded-md text-left transition-colors',
                       'hover:bg-accent focus-visible:outline-none focus-visible:bg-accent',
-                      ativa && 'bg-accent',
+                      ativa && 'bg-accent'
                     )}
                   >
                     <span
@@ -213,12 +190,8 @@ export function EmpresaSwitcher({ collapsed = false }: EmpresaSwitcherProps) {
                       aria-hidden
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {e.nome_fantasia ?? e.razao_social}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        {e.cnpj ?? 'Sem CNPJ'}
-                      </p>
+                      <p className="text-sm font-medium truncate">{e.nome_fantasia ?? e.razao_social}</p>
+                      <p className="text-[11px] text-muted-foreground truncate">{e.cnpj ?? 'Sem CNPJ'}</p>
                     </div>
                     <Badge
                       variant="outline"

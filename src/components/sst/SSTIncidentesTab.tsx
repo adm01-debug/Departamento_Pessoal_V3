@@ -15,7 +15,7 @@ import { formatDateLocalISO } from '@/utils/dateLocal';
 export function SSTIncidentesTab() {
   const { empresaAtual } = useEmpresa();
 
-  const { data: incidentes = [], isLoading } = useQuery({
+  const { data: incidentes = [] } = useQuery({
     queryKey: ['sst_incidentes', empresaAtual?.id],
     enabled: !!empresaAtual?.id,
     queryFn: async () => {

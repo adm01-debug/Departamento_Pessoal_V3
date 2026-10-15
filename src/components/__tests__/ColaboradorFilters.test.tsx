@@ -10,16 +10,6 @@ const DEFAULT_FILTERS = {
   cargo: 'all',
 };
 
-const DEPARTAMENTOS = [
-  { id: '1', nome: 'TI' },
-  { id: '2', nome: 'RH' },
-];
-
-const CARGOS = [
-  { id: '1', nome: 'Desenvolvedor' },
-  { id: '2', nome: 'Analista' },
-];
-
 describe('ColaboradorFilters', () => {
   it('renders search input', () => {
     render(

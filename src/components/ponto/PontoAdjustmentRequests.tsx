@@ -83,7 +83,7 @@ export function PontoAdjustmentRequests() {
     enabled: !!empresaAtual?.id,
   });
 
-  const { data: requestAuditLogs = [], isLoading: isLoadingAudit } = useQuery({
+  const { data: requestAuditLogs = [] } = useQuery({
     queryKey: ['trilha-auditoria-ponto', selectedRequest?.id],
     queryFn: async () => {
       if (!selectedRequest?.id) return [];
