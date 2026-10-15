@@ -24,7 +24,7 @@ jobs:
       - name: Smoke — app, edge healthcheck, auth e bridge
         env:
           FALLBACK_APP_URL: ${{ vars.APP_URL || 'https://departamento-pessoal-v3.vercel.app' }}
-          DEPLOYMENT_URL: ${{ github.event.deployment_status.target_url }}
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
           SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
           REQUIRE_APP: '1'

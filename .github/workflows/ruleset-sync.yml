@@ -33,4 +33,4 @@ jobs:
       - name: Comparar ruleset vivo com o baseline
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/audit-required-checks.mjs
+        run: node scripts/audit-required-checks.mjs --full

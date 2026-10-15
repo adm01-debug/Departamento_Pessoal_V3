@@ -5,13 +5,8 @@ on:
     branches: [main]
   push:
     branches: [main]
-  # W61: permite rodar o E2E manualmente contra um ref específico (sempre no projeto canônico).
+  # W61: E2E manual na branch escolhida no dispatch (sempre no projeto canônico).
   workflow_dispatch:
-    inputs:
-      ref:
-        description: Git ref (branch/tag/SHA) para checkout
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -202,7 +197,7 @@ jobs:
       # `e2e-main` (deduplicada) e a fecha automaticamente ao voltar a verde —
       # antes, runs vermelhos em série passavam sem ninguém ser avisado (D5).
       - name: Abrir issue em caso de falha na main
-        if: failure()
+        if: failure() && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -217,7 +212,7 @@ jobs:
           fi
 
       - name: Fechar issue ao recuperar
-        if: success()
+        if: success() && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

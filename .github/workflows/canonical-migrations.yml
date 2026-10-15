@@ -158,7 +158,7 @@ jobs:
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
           echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
           # W68: gerar hash da lista validada para auditoria
-          validated_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
+          validated_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
           echo "VALIDATED_HASH=$validated_hash" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
           echo "validated_hash=$validated_hash" >> "$GITHUB_OUTPUT"
 
@@ -170,7 +170,7 @@ jobs:
           set -euo pipefail
           stage_dir="$MIGRATIONS_STAGE"
           # W68: verificar que a lista de apply é a mesma do validate
-          current_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
+          current_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
           echo "Hash da lista: $current_hash"
           if [ -z "$VALIDATED_HASH" ] || [ "$current_hash" != "$VALIDATED_HASH" ]; then
             echo '::error::apply exige validated_hash igual ao hash da mesma lista no run de validate.'
@@ -490,7 +490,7 @@ jobs:
             echo "| Modo | $DISPATCH_MODE |"
             echo "| Project ref | $CONFIRM_PROJECT_REF |"
             if [ -d "$stage_dir/supabase/migrations" ] && compgen -G "$stage_dir/supabase/migrations/*.sql" > /dev/null 2>&1; then
-              summary_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
+              summary_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
               echo "| Hash da lista | \`$summary_hash\` |"
               echo ""
               echo "### Migrações staged"
