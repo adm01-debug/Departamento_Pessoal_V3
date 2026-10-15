@@ -85,17 +85,19 @@
 
 ## Decisões do Owner — Resolvidas
 
-| Código | Decisão                                                                                                       |
-| ------ | ------------------------------------------------------------------------------------------------------------- |
-| W03 ✅ | **npm único.** bun.lock removido; `npm ci` em CI/E2E/deploy/Docker; gate `lockfile-single` em security-config |
+| Código | Decisão                                                                                                                   |
+| ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| W03 ✅ | **npm único.** bun.lock removido; `npm ci` em CI/E2E/deploy/Docker; gate `lockfile-single` em security-config             |
+| W14 🟡 | **0 aprovações + code owner em caminhos sensíveis.** Ruleset aplicado; CODEOWNERS estreito pendente de liberação do owner |
 
 **W03 — evidência:** `package-lock.json` estava sem `@lhci/cli` e ~260 dependências transitivas (só no `bun.lock`) — drift D1 ativo. Regenerado; `npm ci` limpo (966 pacotes); typecheck, lint:ci, build e bundle budget verdes. Dockerfiles corrigidos de `node:26` para `node:22` (alinhado a `engines` + `engine-strict`) e passaram a usar o lockfile. Pós-merge: remover `oven-sh/*` da allowlist de actions (W34) — não é mais usado.
+
+**W14 — evidência:** com 1 aprovação obrigatória, stale-dismiss e proibição de auto-aprovação, todo PR (agentes, Dependabot, owner) dependia do bypass do owner. Ruleset 21934736 aplicado via API: `required_approving_review_count: 0`, `require_code_owner_review: true`. Mantidos: conversas resolvidas, linear history, squash/rebase, force-push/deleção bloqueados. **Pendente:** o CODEOWNERS atual tem `* @adm01-debug`, então o efeito ainda é aprovação do owner em todo PR (igual a antes). A versão estreita (sem `*`; owner só em `.github/`, `infra/`, `supabase/migrations/`, `supabase/config.toml`, `external-db-bridge/`, `functions/_shared/`, Dockerfiles, `docker-compose.prod.yml`, `nginx.conf`, `vercel.json`, `.npmrc`) foi preparada, mas o commit foi barrado pela política de segurança do agente e aguarda o owner commitá-la ou liberar a ação.
 
 ## Decisões Pendentes do Owner
 
 | Código | Decisão necessária                                               |
 | ------ | ---------------------------------------------------------------- |
-| W14 💰 | Modelo de aprovação (required_approving_review_count)            |
 | W21 💰 | Tornar repositório privado?                                      |
 | W32 💰 | Aprovação humana obrigatória para PRs de agentes (Devin, Claude) |
 | W50 💰 | Auto-merge Dependabot patch/minor                                |
