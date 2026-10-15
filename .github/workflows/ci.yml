@@ -236,7 +236,11 @@ jobs:
           persist-credentials: false
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
-          deno-version: v2.x
+          # W37: Supabase Edge Runtime roda release compatível com Deno 2.1 em
+          # todas as regiões desde 15/08/2025 (changelog supabase.com/changelog/
+          # 37941). v2.x flutuante arriscava pular para uma major incompatível
+          # com o runtime de produção sem ninguém notar. Revisado em 15/10/2026.
+          deno-version: v2.1.x
       - name: Type-check de todas as Edge Functions (gate bloqueante)
         # E40: fonte única — scripts/typecheck-edge.sh checa o bridge com zero
         # tolerância e depois faz o loop em todas as funções, listando todo o
