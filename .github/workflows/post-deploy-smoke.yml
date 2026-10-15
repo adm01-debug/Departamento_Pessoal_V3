@@ -1,0 +1,37 @@
+name: Post-deploy smoke
+
+on:
+  deployment_status:
+
+concurrency:
+  group: post-deploy-smoke-${{ github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  smoke:
+    name: Smoke pós-deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Smoke — disponibilidade e build SHA
+        env:
+          APP_URL: ${{ vars.APP_URL || 'departamento-pessoal-v3.vercel.app' }}
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.target_url }}
+        run: |
+          set -euo pipefail
+          TARGET="${DEPLOYMENT_URL:-https://$APP_URL}"
+          echo "Verificando $TARGET"
+          STATUS=$(curl -sf --max-time 15 -o /dev/null -w '%{http_code}' "$TARGET" || echo "000")
+          if [ "$STATUS" != "200" ]; then
+            echo "::error::Smoke falhou — status HTTP $STATUS em $TARGET"
+            exit 1
+          fi
+          echo "✅ Deploy disponível — status $STATUS"

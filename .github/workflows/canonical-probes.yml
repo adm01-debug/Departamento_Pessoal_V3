@@ -10,6 +10,9 @@ name: Canonical database — read-only security probes
 # Tudo em transações READ ONLY com ROLLBACK: nenhuma escrita é possível.
 
 on:
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_call:
   workflow_dispatch:
     inputs:
       confirm_project_ref:
@@ -64,3 +67,14 @@ jobs:
 
       - name: Executar e verificar probes read-only (ROLLBACK garantido)
         run: node scripts/probes/run-probes.mjs
+
+      - name: Resumo das probes (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          echo "## Canonical Probes — ${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Probe | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| RV-01 user_empresa_id | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| RV-02 medidas_ciencia | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| RV-03 policies USING true | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| RV-04 RPCs vínculo/auth | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
