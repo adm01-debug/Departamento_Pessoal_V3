@@ -37,6 +37,17 @@ GRANT USAGE ON SCHEMA information_schema TO ci_auditor;
 GRANT USAGE ON SCHEMA cron TO ci_auditor;
 GRANT SELECT ON cron.job TO ci_auditor;
 
+-- smoke-hash-triggers.mjs (db-integrity-live) prova que digest() resolve sob
+-- o mesmo search_path fixado em cada trigger SECURITY DEFINER -- isso exige
+-- EXECUTE de verdade, não só leitura de catálogo. `extensions` só contém
+-- pg_stat_statements/uuid-ossp/pgcrypto (utilitários sem acesso a dados de
+-- negócio) -- EXECUTE em todas as funções do schema é apropriado ao escopo
+-- do role (achado em CI real: sem este GRANT, 13 triggers de hash reportavam
+-- falso-positivo "digest() não resolve", porque o role que falhava era o
+-- auditor, não a função de produção).
+GRANT USAGE ON SCHEMA extensions TO ci_auditor;
+GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO ci_auditor;
+
 -- Garantia explícita: NUNCA conceder acesso ao schema public a este role.
 -- Se uma migration futura rodar "GRANT ... ON ALL TABLES IN SCHEMA public
 -- TO PUBLIC" (erro comum), este REVOKE idempotente neutraliza o vazamento
