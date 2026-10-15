@@ -18,7 +18,7 @@ on:
         type: string
 
 concurrency:
-  group: canonical-database-probes
+  group: canonical-database
   cancel-in-progress: false
 
 permissions:
@@ -55,7 +55,7 @@ jobs:
       - name: Instalar cliente PostgreSQL
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client
+          sudo apt-get install -y -qq postgresql-client-17
 
       - name: Instalar Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
