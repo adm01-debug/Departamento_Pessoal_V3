@@ -39,5 +39,6 @@ jobs:
       - name: Executar actionlint em todos os workflows
         run: |
           set -euo pipefail
-          ./actionlint -color .github/workflows/*.yml
+          # go install coloca o binário em $GOPATH/bin (~go/bin), que está no PATH.
+          actionlint -color .github/workflows/*.yml
           echo "WORKFLOW_LINT_OK"
