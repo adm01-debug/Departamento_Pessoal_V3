@@ -67,17 +67,19 @@
 │   │   └── BRIDGE_PERFORMANCE.md # 10 gaps do bridge
 │   └── ...
 ├── .github/
-│   ├── workflows/                # GitHub Actions (11 workflows)
-│   │   ├── ci.yml                # CI principal (typecheck+lint+test+edge+security+migrations+db)
-│   │   ├── deploy.yml            # Deploy preview (Vercel via integração Git)
-│   │   ├── security.yml          # CodeQL + npm audit
-│   │   ├── e2e.yml               # Playwright E2E (public PR + authenticated main)
+│   ├── workflows/                # GitHub Actions (12 workflows)
+│   │   ├── ci.yml                # CI principal (12 jobs: typecheck, lint, testes, edge, segurança, migrations, banco, audit)
+│   │   ├── deploy.yml            # Build + bundle budget (deploy pela integração Git da Vercel)
+│   │   ├── security.yml          # CodeQL + npm audit de produção
+│   │   ├── e2e.yml               # Playwright E2E (público em PR + autenticado na main)
 │   │   ├── healthcheck.yml       # Healthcheck agendado a cada 6h
-│   │   ├── canonical-probes.yml  # Probes RV-01/02/03/04 no canônico
-│   │   ├── canonical-migrations.yml # Migrations no canônico (workflow_dispatch)
+│   │   ├── post-deploy-smoke.yml # healthcheck.sh após deploy de produção
+│   │   ├── canonical-probes.yml  # Probes RV-01/02/03/04 no canônico (diário)
+│   │   ├── canonical-migrations.yml # Migrations no canônico (validate/apply com hash)
 │   │   ├── canonical-edge-functions.yml # Deploy Edge Functions no canônico
-│   │   ├── db-tests.yml          # Testes PostgreSQL 17 isolados
-│   │   └── branch-protection.yml # CONGELADO — ver E01; não executar
+│   │   ├── canonical-sql-diag.yml # Diagnóstico SQL read-only no canônico
+│   │   ├── ruleset-sync.yml      # Compara ruleset vivo × baseline (semanal)
+│   │   └── workflow-lint.yml     # actionlint + shellcheck nos workflows
 │   └── dependabot.yml            # Dependabot: npm+docker+github-actions (semanal)
 ├── config/                       # Config filters
 ├── docker/                       # Dockerfiles auxiliares
@@ -89,18 +91,20 @@
 
 ### Pipelines CI/CD
 
-| Workflow                         | Gatilho                            | Ações                                                                                       |
-| -------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------- |
-| **ci.yml**                       | push/PR/workflow_dispatch          | typecheck, lint, test:coverage, deno check, security-config, migrations P0/P1, db-integrity |
-| **deploy.yml**                   | PR / workflow_dispatch             | Valida build (Vercel deploy via integração Git)                                             |
-| **security.yml**                 | push/PR/schedule/workflow_dispatch | CodeQL + npm audit                                                                          |
-| **e2e.yml**                      | push/PR                            | Playwright público (PR) + autenticado (main only)                                           |
-| **healthcheck.yml**              | schedule (*/6h)                    | Healthcheck de produção + abre issue se falhar                                              |
-| **canonical-probes.yml**         | workflow_dispatch                  | Probes RV-01–04 no canônico                                                                 |
-| **canonical-migrations.yml**     | workflow_dispatch                  | Migrations no canônico (dry-run ou apply)                                                   |
-| **canonical-edge-functions.yml** | workflow_dispatch                  | Deploy Edge Functions no canônico                                                           |
-| **db-tests.yml**                 | push/PR                            | Testes de migrations em Postgres 17 descartável                                             |
-| **branch-protection.yml**        | CONGELADO (if: false)              | E01 — não executar até E04+E07                                                              |
+| Workflow                         | Gatilho                                | Ações                                                                                                                                  |
+| -------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **ci.yml**                       | push/PR/workflow_dispatch              | 12 jobs: typecheck, lint, testes, edge, security-config, migrations P0, db-integrity (+live), npm audit, dependency-review, Lighthouse |
+| **deploy.yml**                   | PR / workflow_dispatch                 | Build + bundle budget (deploy pela integração Git da Vercel)                                                                           |
+| **security.yml**                 | push/PR/schedule/workflow_dispatch     | CodeQL + npm audit de produção                                                                                                         |
+| **e2e.yml**                      | push/PR/workflow_dispatch              | Playwright público (PR) + autenticado (main e dispatch)                                                                                |
+| **healthcheck.yml**              | schedule (*/6h)/workflow_dispatch      | Healthcheck de produção + abre issue se falhar                                                                                         |
+| **post-deploy-smoke.yml**        | deployment_status                      | `scripts/healthcheck.sh` contra o deploy de produção                                                                                   |
+| **canonical-probes.yml**         | schedule/workflow_call/dispatch        | Probes RV-01–04 no canônico                                                                                                            |
+| **canonical-migrations.yml**     | workflow_dispatch                      | Migrations no canônico (validate; apply exige validated_hash)                                                                          |
+| **canonical-edge-functions.yml** | push (functions, config.toml)/dispatch | Deploy Edge Functions no canônico                                                                                                      |
+| **canonical-sql-diag.yml**       | workflow_dispatch                      | Diagnóstico SQL read-only no canônico                                                                                                  |
+| **ruleset-sync.yml**             | schedule/workflow_dispatch             | Compara o ruleset vivo com `infra/github/ruleset-main.json` (`--full`)                                                                 |
+| **workflow-lint.yml**            | PR (.github/**)/workflow_dispatch      | actionlint + shellcheck                                                                                                                |
 
 **Regras do merge (E09 — via API 27/09/2026):** squash-only, delete branch on merge, allow update branch.
 
@@ -429,7 +433,7 @@ POST-only gateway (32KB file, 729 lines)
 ### Status dos Workflows
 
 ```
-CI (ci.yml)              → 7 jobs, todos com timeout; label ci-main (D22 fix) ✅
+CI (ci.yml)              → 12 jobs, todos com timeout; label ci-main (D22 fix) ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
 Deploy (deploy.yml)      → Vercel (integração Git), npm ci, dist artifact + bundle audit ✅
 E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, npm ci ✅
