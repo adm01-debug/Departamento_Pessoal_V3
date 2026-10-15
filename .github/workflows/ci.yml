@@ -8,7 +8,10 @@ on:
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # W49: Para PRs, cancela runs mais antigos (mesmo ref). Para pushes na main,
+  # cada SHA recebe grupo próprio (sem cancelamento entre pushes distintos) —
+  # evita ocultar falha de um commit ao chegar o seguinte.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'push' && github.sha || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 defaults:
@@ -29,9 +32,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Type Check (src)
         run: npm run typecheck
       - name: Type Check (tests)
@@ -50,9 +55,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Lint
         run: npm run lint:ci
       - name: Orçamento de `any` por diretório (E51-025)
@@ -103,9 +110,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Unit Tests
         # E41: sem RUN_LIVE_RLS_TESTS aqui — o smoke contra o banco canônico
         # vive no job `rls-live` (push main, não bloqueante), para o teste
@@ -126,7 +135,7 @@ jobs:
           if [ -f coverage/coverage-summary.json ]; then
             node -e '
               const s = require("./coverage/coverage-summary.json").total;
-              const row = (k) => `| ${k} | ${s[k].pct}% (${s[k].covered}/${s[k].total}) |`;
+              const row = (k) => "| " + k + " | " + s[k].pct + "% (" + s[k].covered + "/" + s[k].total + ") |";
               console.log("| Métrica | Cobertura |\n|---|---|");
               ["lines","statements","functions","branches"].forEach(k => console.log(row(k)));
             ' >> "$GITHUB_STEP_SUMMARY"
@@ -153,9 +162,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Smoke RLS/RPC contra o canônico
         run: npx vitest run src/tests/rpc-permissions.test.ts
       - name: Abrir issue em caso de falha na main
@@ -163,12 +174,25 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TITLE="🔴 Smoke RLS live falhou na main ($(date -u +%F\ %H:%M) UTC)"
-          EXISTING=$(gh issue list --label ci-main --state open --json number --jq '.[0].number' || true)
-          BODY=$(printf 'O smoke de permissões/RLS contra o banco canônico falhou em push na main.\n\nRun: %s/%s/actions/runs/%s' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          # W09: título estável sem timestamp — dedup via --label, não título.
+          TITLE="🔴 Smoke RLS live falhou na main"
+          # W09: --limit 1 evita overhead e race condition em runs paralelas.
+          EXISTING=$(gh issue list --label ci-main --state open --json number --limit 1 --jq '.[0].number' || true)
+          # W09: $GITHUB_SHA para rastreabilidade por commit.
+          BODY=$(printf 'O smoke de permissões/RLS contra o banco canônico falhou em push na main.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
           gh label create ci-main --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" --body "$BODY"
+            # W09: stale check — issue aberta há ≥7 dias recebe aviso de reincidência.
+            ISSUE_CREATED=$(gh issue view "$EXISTING" --json createdAt --jq '.createdAt')
+            ISSUE_EPOCH=$(date -d "$ISSUE_CREATED" +%s 2>/dev/null || echo 0)
+            NOW_EPOCH=$(date +%s)
+            DAYS_OLD=$(( (NOW_EPOCH - ISSUE_EPOCH) / 86400 ))
+            if [ "$DAYS_OLD" -ge 7 ]; then
+              COMMENT=$(printf '⚠️ Still failing — issue aberta há %d dias.\n\n%s' "$DAYS_OLD" "$BODY")
+            else
+              COMMENT="$BODY"
+            fi
+            gh issue comment "$EXISTING" --body "$COMMENT"
           else
             gh issue create --title "$TITLE" --body "$BODY" --label ci-main
           fi
@@ -186,9 +210,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Build
         run: npm run build
       - name: Orçamento de bundle
@@ -198,7 +224,7 @@ jobs:
       - name: Lighthouse CI (rotas públicas)
         # Rotas autenticadas redirecionam para /login sem credenciais — o
         # audit cobre /login e /verificar-contrato, as páginas públicas.
-        run: npx -y @lhci/cli@0.14.0 autorun
+        run: ./node_modules/.bin/lhci autorun
 
   edge-functions:
     name: Edge Functions (deno check)
@@ -233,9 +259,11 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - name: Install
-        run: npm install --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Contrato físico dos eventos de auditoria Edge
         # Análise AST estática (não precisa de banco nem secrets). Movido
         # de typecheck para cá para manter typecheck puro.
@@ -246,6 +274,8 @@ jobs:
         # E-077: verify_jwt deny-by-default, CORS sem wildcard, security
         # headers, ausência de segredos hardcoded e SW sem cache de PII.
         # Estático (não precisa de DATABASE_URL) — roda em todo PR.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           node scripts/audit-security-config.mjs
           node scripts/audit-required-checks.mjs
@@ -256,6 +286,18 @@ jobs:
           node scripts/tests/rebaseline-artifact.test.mjs
           node scripts/tests/validate-canonical-db-url.test.mjs
           node scripts/tests/workflows-contract.test.mjs
+      - name: Lockfile único npm (W03)
+        run: bash scripts/tests/lockfile-single.test.sh
+      - name: Resumo dos contratos (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          {
+            echo "## security-config"
+            echo "| Script | Status |"
+            echo "|--------|--------|"
+            echo "| workflows-contract | ${{ job.status }} |"
+            echo "| lockfile-single | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
     name: P0 database migration simulations
@@ -270,52 +312,59 @@ jobs:
         with:
           persist-credentials: false
       - name: Simular a migração em PostgreSQL descartável
-        # Cada teste sobe PostgreSQL descartável. Eles exercitam o defeito que
-        # só aparece em runtime, reaplicação idempotente e pré-condições que
-        # devem falhar fechadas em caso de drift.
+        # W46: descoberta automática — elimina lista hardcoded (D27). Cobre
+        # migrations-p0-*, migrations-p1-* e migrations-plano100.sh. Novos
+        # scripts adicionados a scripts/tests/ são incluídos automaticamente
+        # sem alteração no workflow. W52: absorve db-tests.yml (deletado).
         run: |
-          bash scripts/tests/migrations-p0-hash-search-path.sh
-          bash scripts/tests/migrations-p0-auth-lockout.sh
-          bash scripts/tests/migrations-p0-view-acl.sh
-          bash scripts/tests/migrations-p0-secdef-search-path.sh
-          bash scripts/tests/migrations-p1-function-search-path.sh
-          bash scripts/tests/migrations-p0-pgcrypto-routine-search-path.sh
-          bash scripts/tests/migrations-p0-atomic-rate-limit.sh
-          bash scripts/tests/migrations-p0-payroll-upsert.sh
-          bash scripts/tests/migrations-p0-bridge-membership.sh
-          bash scripts/tests/migrations-p0-identity-rls-authz.sh
-          bash scripts/tests/migrations-p0-token-table-acl.sh
-          bash scripts/tests/migrations-p0-report-schedule-claims.sh
-          bash scripts/tests/migrations-p1-atomic-provisions.sh
-          bash scripts/tests/migrations-p1-report-schedule-authorship.sh
-          bash scripts/tests/migrations-p1-scoped-audit-trail.sh
-          bash scripts/tests/migrations-p1-backup-storage-bucket.sh
-          bash scripts/tests/migrations-p1-internal-notification-recipients.sh
-          bash scripts/tests/migrations-p1-pcs-contract.sh
-          bash scripts/tests/migrations-p1-security-cron-contract.sh
-          bash scripts/tests/migrations-p1-admission-esocial-claim.sh
-          bash scripts/tests/migrations-p1-payroll-audit-read-contract.sh
-          bash scripts/tests/migrations-p1-audit-action-contract.sh
-          bash scripts/tests/migrations-p1-idempotency-monitoring-contract.sh
-          bash scripts/tests/migrations-p1-company-payroll-tax-contract.sh
-          bash scripts/tests/migrations-p1-tenant-telemetry-contract.sh
-          bash scripts/tests/migrations-p1-report-dispatch-idempotency.sh
-          bash scripts/tests/migrations-p0-holerite-espelho.sh
+          # W46: descoberta automática — elimina lista hardcoded (D27)
+          for script in $(find scripts/tests -name 'migrations-p*.sh' | sort); do
+            echo "▶ $script"
+            bash "$script"
+          done
+      - name: Resumo das migrações P0/P1 (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          {
+            echo "## p0-database-migrations"
+            echo "| Script | Status |"
+            echo "|--------|--------|"
+            echo "| p0-migrations | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
-    # E50-46: antes rodava só fora de PR — uma regressão de RLS/PII só era
-    # detectada DEPOIS do merge em main. Agora roda em PR também, mas só
-    # quando o PR é do próprio repositório (não fork) e não é Dependabot —
-    # forks já não recebem secrets do GitHub por padrão (a checagem abaixo
-    # de DATABASE_URL ausente cobre esse caso), e não faz sentido dar a um
-    # bot de dependências acesso à URL administrativa do banco canônico.
-    if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
+    # W25: check obrigatório de PR, só estático e sem segredo. As auditorias
+    # leem o catálogo de produção, que um PR não altera (migrations só entram
+    # via canonical-migrations), então rodá-las no PR expunha a credencial sem
+    # validar nada do PR. A parte com banco roda em db-integrity-live.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+      - name: Regressão fail-closed dos auditores
+        run: npm run test:db-audit-contract
+      - name: Resumo da integridade estática (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          {
+            echo "## db-integrity (estático)"
+            echo "| db-audit-contract | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  db-integrity-live:
+    name: Integridade do banco canônico (live)
+    # W25: único job do ci.yml com acesso ao banco de produção. O environment
+    # production restringe as branches que recebem o segredo.
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Este é deliberadamente um gate de banco canônico, não uma análise
-    # estática. Sem uma conexão de auditoria, um "verde" não é evidência de
-    # RLS, grants, funções ou triggers reais.
+    environment: production
     env:
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
@@ -324,11 +373,9 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version-file: .nvmrc
       - name: Instalar cliente psql
         run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
-      - name: Regressão fail-closed dos auditores
-        run: npm run test:db-audit-contract
       - name: Exigir alvo canônico de auditoria
         # Não exibir nem testar a URL em shell com tracing. A presença é
         # suficiente; os scripts seguintes abrem a conexão read-only usada
@@ -384,3 +431,55 @@ jobs:
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
         # duplicadas, que reintroduzem a ambiguidade de relacionamento.
         run: node scripts/audit-embed-hints.mjs
+      - name: Resumo da integridade do banco (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          {
+            echo "## db-integrity-live"
+            echo "| Script | Status |"
+            echo "|--------|--------|"
+            echo "| db-integrity-live | ${{ job.status }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  npm-audit:
+    name: npm audit (produção, sem devDeps)
+    # W83: gate bloqueante — impede merge se houver vulnerabilidade high/critical
+    # em dependências de produção (--omit=dev).
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install (sem scripts)
+        run: npm ci --ignore-scripts
+      - name: Audit produção (bloqueante)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Audit dev deps (informativo)
+        # W83: informativo — não quebra o CI, mas mostra vulnerabilidades em devDeps
+        # contrato: continue-on-error usado para fins informativos; não oculta vulns prod
+        continue-on-error: true
+        run: npm audit --audit-level=critical
+
+  dependency-review:
+    name: Revisão de dependências (PR)
+    # W84: bloqueia PRs que introduzem vulnerabilidades high/critical ou
+    # licenças copyleft nas dependências.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@4081bf99e2866ebe428fc0477b69eb4fcda7220a # v4.6.0
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0

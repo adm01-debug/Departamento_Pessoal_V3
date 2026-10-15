@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { FeriasWorkflowStepper } from '../ferias/FeriasWorkflowStepper';
 
 describe('FeriasWorkflowStepper', () => {
@@ -22,17 +22,13 @@ describe('FeriasWorkflowStepper', () => {
   });
 
   it('applies success class when step is approved', () => {
-    const { container } = render(
-      <FeriasWorkflowStepper solicitacao={{ status_aprovacao_gestor: 'aprovado' }} />
-    );
+    const { container } = render(<FeriasWorkflowStepper solicitacao={{ status_aprovacao_gestor: 'aprovado' }} />);
     const successEl = container.querySelector('.text-success');
     expect(successEl).not.toBeNull();
   });
 
   it('applies destructive class when step is rejected', () => {
-    const { container } = render(
-      <FeriasWorkflowStepper solicitacao={{ status_aprovacao_gestor: 'rejeitado' }} />
-    );
+    const { container } = render(<FeriasWorkflowStepper solicitacao={{ status_aprovacao_gestor: 'rejeitado' }} />);
     const destructiveEl = container.querySelector('.text-destructive');
     expect(destructiveEl).not.toBeNull();
   });

@@ -1,6 +1,5 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { EmptyList } from '@/components/ui/empty-state';
@@ -69,8 +68,6 @@ export default function FeriasPage() {
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [calcForm, setCalcForm] = useState({ salario: '', diasFerias: '30', diasAbono: '0' });
   const [calcResult, setCalcResult] = useState<UiRecord | null>(null);
-  const queryClient = useQueryClient();
-
   const { ferias, totalCount, isLoading, isFetching, error, refetch } = useFerias({
     page,
     limit,

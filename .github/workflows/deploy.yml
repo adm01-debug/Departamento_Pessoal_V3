@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build-preview:
-    name: Build & Preview
+    name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -28,8 +28,8 @@ jobs:
       - name: Validate build configuration
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           missing=()
           for name in \
@@ -46,18 +46,37 @@ jobs:
             exit 1
           fi
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          bun-version: 1.4.2
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Build
-        run: bun run build
+        run: npm run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Publicar artefato dist/
+        # W87: salva o bundle como artifact para reuso (Lighthouse, auditoria).
+        # Sem este upload, cada job downstream rebuild do zero.
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+
+      - name: Auditoria de bundle
+        # W87: verifica orçamento contra scripts/.bundle-budget.json.
+        # Falha bloqueia merge para evitar regressão de tamanho silenciosa.
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+        run: node scripts/check-bundle-budget.mjs
 
       - name: Vercel preview handoff
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository

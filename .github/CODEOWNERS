@@ -1,17 +1,23 @@
-# Default
-* @adm01-debug
+# W14: o ruleset exige 0 aprovações e revisão de code owner. Só os caminhos
+# abaixo exigem aprovação do owner; o resto entra com os 9 checks verdes.
+# Sem regra "*": arquivo sem dono não exige revisão humana.
 
-# CI/CD
-.github/workflows/ @adm01-debug
+# Governança de CI/CD, proteção de branch e supply chain
+/.github/ @adm01-debug
+/infra/ @adm01-debug
 
-# Deploy
-Dockerfile @adm01-debug
-nginx.conf @adm01-debug
+# Banco de produção: schema, RLS e configuração das Edge Functions
+/supabase/migrations/ @adm01-debug
+/supabase/config.toml @adm01-debug
 
-# Core
-src/ @adm01-debug
-supabase/ @adm01-debug
-scripts/ @adm01-debug
+# Gateway de dados e código de segurança compartilhado das Edge Functions
+/supabase/functions/external-db-bridge/ @adm01-debug
+/supabase/functions/_shared/ @adm01-debug
 
-# Docs
-*.md @adm01-debug
+# Runtime e headers de produção (CSP, HSTS) e config do npm
+/Dockerfile @adm01-debug
+/Dockerfile.prod @adm01-debug
+/docker-compose.prod.yml @adm01-debug
+/nginx.conf @adm01-debug
+/vercel.json @adm01-debug
+/.npmrc @adm01-debug

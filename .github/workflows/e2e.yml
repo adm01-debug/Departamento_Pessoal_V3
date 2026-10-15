@@ -5,6 +5,8 @@ on:
     branches: [main]
   push:
     branches: [main]
+  # W61: E2E manual na branch escolhida no dispatch (sempre no projeto canônico).
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -42,41 +44,34 @@ jobs:
           test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo '::error::Repository variable VITE_SUPABASE_PUBLISHABLE_KEY is missing'; exit 1; }
           test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Public E2E target is not canonical'; exit 1; }
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          bun-version: 1.4.2
-
-      - name: Cache Bun install
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Cache Playwright browsers
         id: playwright-public-cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
         if: steps.playwright-public-cache.outputs.cache-hit != 'true'
-        run: bunx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Install Playwright system deps
         if: steps.playwright-public-cache.outputs.cache-hit == 'true'
-        run: bunx playwright install-deps chromium
+        run: ./node_modules/.bin/playwright install-deps chromium
 
       - name: Run public Playwright E2E
-        run: bun run test:e2e:public
+        run: npm run test:e2e:public
 
       - name: Upload public Playwright report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -93,9 +88,17 @@ jobs:
     # As quatro identidades são sintéticas, mas ainda concedem escrita no
     # projeto canônico. Não expor suas credenciais a código de pull request.
     # O gate autenticado roda no SHA já integrado em main.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # W65: workflow_dispatch também roda este job (credentials disponíveis).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # W65: timeout reduzido de 30 para 20 min (suite atual termina em ~12 min).
+    # Sharding (matrix: shard [1,2]) foi avaliado mas descartado: auth state
+    # (e2e/.auth/user.json, user-mobile.json, user-non-admin.json) é escrito
+    # por setup projects e lido por specs dependentes — cada shard teria que
+    # rodar setup independentemente e compartilhar os artefatos de auth entre
+    # shards (upload/download), o que complica a orquestração sem ganho real
+    # num suite de ~12 min. Reavaliar quando o suite ultrapassar 20 min.
+    timeout-minutes: 20
     permissions:
       contents: read
       issues: write
@@ -141,22 +144,14 @@ jobs:
           fi
           test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Authenticated E2E target is not canonical'; exit 1; }
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          bun-version: 1.4.2
-
-      # Cache dependências do Bun (~50% redução no install)
-      - name: Cache Bun install
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-bun-
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       # Cache dos binários do Chromium (~90% redução no download)
       - name: Cache Playwright browsers
@@ -164,21 +159,21 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: bunx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       # Se o browser estava em cache, ainda precisa instalar as libs de sistema
       - name: Install Playwright system deps
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: bunx playwright install-deps chromium
+        run: ./node_modules/.bin/playwright install-deps chromium
 
       - name: Run Playwright E2E
-        run: bun run test:e2e
+        run: npm run test:e2e
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -202,7 +197,7 @@ jobs:
       # `e2e-main` (deduplicada) e a fecha automaticamente ao voltar a verde —
       # antes, runs vermelhos em série passavam sem ninguém ser avisado (D5).
       - name: Abrir issue em caso de falha na main
-        if: failure()
+        if: failure() && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -217,7 +212,7 @@ jobs:
           fi
 
       - name: Fechar issue ao recuperar
-        if: success()
+        if: success() && github.event_name == 'push'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

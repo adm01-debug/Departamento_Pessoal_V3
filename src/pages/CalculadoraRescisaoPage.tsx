@@ -146,7 +146,7 @@ export default function CalculadoraRescisaoPage() {
     setSaving(true);
     try {
       // 1. Save to History
-      const { data: historico, error: histError } = await supabase
+      const { error: histError } = await supabase
         .from('historico_rescisoes')
         .insert(
           validateTablePayload(

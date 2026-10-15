@@ -1,6 +1,6 @@
 import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   TrendingUp,
@@ -29,12 +29,9 @@ import { AnimatedNumber } from './AnimatedNumber';
 import { BarChartWidget } from './BarChartWidget';
 import { DonutChart } from './DonutChart';
 import { CardSkeleton } from '@/components/ui/module-skeleton';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useMemo, useEffect } from 'react';
-import { usePendencias, type Pendencia } from '@/hooks/usePendencias';
+import { usePendencias } from '@/hooks/usePendencias';
 import { usePontoMelhorado, type SolicitacaoAjuste } from '@/hooks/usePontoMelhorado';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import type { Portaria671Solicitacao } from '@/services/exportService';
@@ -99,29 +96,7 @@ export function AnalyticsSection({
   isEmptySystem,
   empresaId,
 }: AnalyticsSectionProps) {
-  const { data: passivoAll } = useQuery({
-    queryKey: ['passivo-summary', empresaId],
-    enabled: !!empresaId,
-    queryFn: async () => {
-      // Get pro-rated liabilities from RPC or simplified calc
-      const { data, error } = await supabase.from('colaboradores').select('id').eq('empresa_id', empresaId!).limit(1);
-      if (error) return null;
-      return data;
-    },
-    staleTime: 10 * 60 * 1000,
-  });
-
-  const passivoTrend = [
-    { label: 'Jan', value: 45000 },
-    { label: 'Fev', value: 52000 },
-    { label: 'Mar', value: 48000 },
-    { label: 'Abr', value: 61000 },
-    { label: 'Mai', value: 58000 },
-  ];
-
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');

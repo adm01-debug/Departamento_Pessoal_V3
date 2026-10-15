@@ -111,7 +111,7 @@ export default defineConfig({
     // A Edge Function restringe Origin. O proxy Vite aplica a origem de
     // desenvolvimento permitida; sem esta variável o E2E local faria fetch
     // direto e transformaria uma resposta válida em erro de CORS.
-    command: 'VITE_DEV_PORT=4173 VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 bun run dev',
+    command: 'VITE_DEV_PORT=4173 VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 npm run dev',
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

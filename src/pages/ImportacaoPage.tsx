@@ -20,7 +20,7 @@ export default function ImportacaoPage() {
   const pii = usePiiMask();
   const fileRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<'upload' | 'preview' | 'importing' | 'done'>('upload');
-  const { rows, progress, isImporting, processarArquivo, importar, setRows } = useImportacaoColaboradores();
+  const { rows, progress, processarArquivo, importar, setRows } = useImportacaoColaboradores();
 
   const [importResult, setImportResult] = useState({ success: 0, errors: 0, duplicates: 0 });
 

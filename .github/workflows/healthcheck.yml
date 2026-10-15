@@ -37,16 +37,32 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TITLE="🔴 Healthcheck falhou ($(date -u +%F\ %H:%M) UTC)"
-          EXISTING=$(gh issue list --label healthcheck --state open --json number --jq '.[0].number' || true)
+          # W09: título estável (sem data) — dedup usa --label, não o título.
+          # A data/hora fica no link do run no body.
+          TITLE="🔴 Healthcheck falhou"
+          # W09: --limit 1 garante no máximo 1 resultado mesmo em race condition
+          # entre execuções paralelas; jq .[0] sozinho não elimina o overhead.
+          EXISTING=$(gh issue list --label healthcheck --state open --json number --limit 1 --jq '.[0].number' || true)
           # E79: printf — a versão anterior escrevia `\n` literal no corpo.
-          BODY=$(printf 'O healthcheck agendado falhou.\n\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          # W09: $GITHUB_SHA adicionado para rastreabilidade por commit.
+          BODY=$(printf 'O healthcheck agendado falhou.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
           # Garante a label antes de criar — se `gh issue create --label` falha
           # por label ausente, a issue era criada sem label e a deduplicação
           # quebrava na rodada seguinte (D12).
           gh label create healthcheck --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" --body "$BODY"
+            # W09: stale check — se a issue tem 7+ dias, prefixar o comentário
+            # com aviso de reincidência para aumentar visibilidade.
+            ISSUE_CREATED=$(gh issue view "$EXISTING" --json createdAt --jq '.createdAt')
+            ISSUE_EPOCH=$(date -d "$ISSUE_CREATED" +%s 2>/dev/null || echo 0)
+            NOW_EPOCH=$(date +%s)
+            DAYS_OLD=$(( (NOW_EPOCH - ISSUE_EPOCH) / 86400 ))
+            if [ "$DAYS_OLD" -ge 7 ]; then
+              COMMENT=$(printf '⚠️ Still failing — issue aberta há %d dias.\n\n%s' "$DAYS_OLD" "$BODY")
+            else
+              COMMENT="$BODY"
+            fi
+            gh issue comment "$EXISTING" --body "$COMMENT"
           else
             gh issue create --title "$TITLE" --body "$BODY" --label healthcheck
           fi
@@ -57,7 +73,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          EXISTING=$(gh issue list --label healthcheck --state open --json number --jq '.[0].number' || true)
+          # W09: --limit 1 garante no máximo 1 resultado.
+          EXISTING=$(gh issue list --label healthcheck --state open --json number --limit 1 --jq '.[0].number' || true)
           if [ -n "$EXISTING" ]; then
-            gh issue close "$EXISTING" --comment "Healthcheck voltou ao verde. Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            # W09: $GITHUB_SHA adicionado para rastreabilidade.
+            gh issue close "$EXISTING" --comment "Healthcheck voltou ao verde. Commit: $GITHUB_SHA | Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           fi

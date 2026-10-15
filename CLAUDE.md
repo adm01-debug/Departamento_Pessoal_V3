@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 14/10/2026
+> Última atualização: 15/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -35,7 +35,7 @@
 | **Linguagem** | TypeScript (strict)                         | 6.0.3  |
 | **Framework** | React                                       | 19.2.8 |
 | **Build**     | Vite                                        | 8.1.4  |
-| **Bundler**   | Bun                                         | 1.3.14 |
+| **Pacotes**   | npm (único — `package-lock.json`, W03)      | 10.x   |
 | **Testes**    | Vitest                                      | 4.1.10 |
 | **E2E**       | Playwright                                  | 1.61.1 |
 | **Estilos**   | Tailwind CSS                                | 4.3.3  |
@@ -352,6 +352,76 @@ POST-only gateway (32KB file, 729 lines)
 📚 W94 — CLAUDE.md: 11 workflows (era 10), sessão 6, gaps e métricas atualizados.
 ```
 
+### Sessão 7 — 15/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 2 — W69/W86/W87)
+
+#### O que foi feito:
+
+```
+🔧 W86-fix — workflow-lint.yml: corrigir ./actionlint → actionlint (PATH)
+│   go install coloca o binário em ~/go/bin (no PATH), não em ./
+│   O ./ causava "command not found" em todo run do workflow.
+
+📦 W87 — deploy.yml: artefato dist/ + auditoria de bundle
+│   Publicar dist/ como artifact (upload-artifact v7, retention 7 dias)
+│   após o build para reuso downstream (Lighthouse, auditoria).
+│   Executar node scripts/check-bundle-budget.mjs para bloquear merge
+│   se orçamento de bundle for excedido.
+│   SHA 043fb46d já presente em action-pins.json → contrato check-6 passa.
+
+🔑 W69 — canonical-migrations.yml: ledger genérico + sidecars .verify.sql
+│   Substituiu ledger_count hardcoded (6 versões fixas de ondas 3b/4) por
+│   verificação dinâmica: itera os arquivos do stage, monta lista de versões,
+│   confirma count no supabase_migrations.schema_migrations.
+│   Adiciona runner de sidecars: se existir <versão>.verify.sql no repo,
+│   executa via psql após as invariantes acumuladas.
+│   Marcadores: CANONICAL_LEDGER_OK, CANONICAL_SCHEMA_INVARIANTS_OK,
+│   CANONICAL_SCOPED_MIGRATIONS_OK.
+
+✅ Contratos: 12/12 workflows, 0 falhas (W97 — detectou workflow-lint.yml fix).
+
+📚 W94 — CLAUDE.md: sessão 7, métricas e status atualizados.
+```
+
+### Sessão 8 — 15/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 3 — API + scripts)
+
+#### O que foi feito:
+
+```
+⚙️ W12 — Ruleset 21934736 atualizado via API: 7 → 9 required checks
+│   Adicionados: "Playwright público (PR)" e "Build"
+│   infra/github/ruleset-main.json atualizado para refletir os 9 checks
+
+⚙️ W13 — Proteção clássica de branch removida via API
+│   Resolve conflito histórico D2 (ruleset + classic protection coexistindo)
+│   Ruleset é agora a única fonte de proteção do branch main
+
+⚙️ W33 — sha_pinning_required=true via PUT /repos/…/actions/permissions
+│   Todas as GitHub Actions do repo precisam de SHA pin — supply chain hardened
+
+⚙️ W34 — allowed_actions=selected via API (fix 409 race condition)
+│   github_owned=true, verified=true
+│   patterns: denoland/*, oven-sh/*, ossf/*, SonarSource/*, supabase/*
+
+🔍 W17 — audit-required-checks.mjs: comparação live com GITHUB_TOKEN
+│   Quando GITHUB_TOKEN disponível: busca ruleset 21934736 via API e compara
+│   com baseline; falha se houver divergência (checks só no baseline ou só no live)
+│   Quando sem token: usa apenas baseline offline (comportamento anterior)
+
+🔧 W30 — validate-canonical-db-url.mjs + audit-canonical-project.mjs
+│   CANONICAL_PROJECT_REF / CANONICAL_REF agora leem process.env.CANONICAL_SUPABASE_REF
+│   com fallback para 'frjbfeamybqsejlvmqbl' — permite sobrescrever em staging
+
+❌ W85 — secret_scanning_non_provider_patterns + validity_checks
+│   GHAS requerido — não disponível no plano atual (public free repo)
+│   API retornou 200 mas campos permanecem "disabled"
+
+📚 W94 — CLAUDE.md: sessão 8, métricas e score atualizados (6.5/10)
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -361,50 +431,64 @@ POST-only gateway (32KB file, 729 lines)
 ```
 CI (ci.yml)              → 7 jobs, todos com timeout; label ci-main (D22 fix) ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
-Deploy (deploy.yml)      → Vercel (integração Git), bun-version: 1.4.2 ✅
-E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.4.2 ✅
+Deploy (deploy.yml)      → Vercel (integração Git), npm ci, dist artifact + bundle audit ✅
+E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, npm ci ✅
+Pacotes (W03)            → npm único; bun.lock removido; gate lockfile-single em security-config ✅
 SonarCloud               → ✅ Automatic Analysis (GitHub App) — job CI removido (PR #162)
 Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
-canonical-sql-diag.yml   → novo (diagnóstico SQL) — 11 workflows no total ✅
+canonical-migrations.yml → ledger dinâmico W69 + sidecars .verify.sql ✅
+canonical-sql-diag.yml   → novo (diagnóstico SQL) — 12 workflows no total ✅
+workflow-lint.yml        → actionlint via $GOPATH/bin publicado em $GITHUB_PATH + shellcheck limpo ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
-Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
-Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
-Contract test            → 11/11 workflows, 0 falhas (W97 — 11 contratos) ✅
+Branch ruleset           → 9 required checks (W12), baseline em infra/github/ ✅
+Aprovação de PR (W14)    → 0 aprovações; code owner só em caminhos sensíveis (.github/CODEOWNERS) ✅
+Branch protection (main) → clássica removida (W13); ruleset único; sha_pinning (W33) ✅
+Actions allowlist        → selected (W34): github_owned + verified + 5 patterns ✅
+audit-required-checks    → W17 live API check quando GITHUB_TOKEN disponível ✅
+scripts canonicais       → W30 CANONICAL_SUPABASE_REF env var com fallback ✅
+Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
 ```
 
-### Métricas (14/10/2026)
+### Métricas (15/10/2026)
 
-| Indicador              | Valor                                                                                  |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| Open PRs               | Wave 0 em review (claude/happy-cori-3z9h7f)                                            |
-| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                       |
-| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                |
-| Cobertura              | ✅ v8 configurada                                                                      |
-| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                              |
-| Branch delete          | ✅ delete_branch_on_merge=true                                                         |
-| Ruleset                | ✅ 21934736 — 7 required checks — baseline em infra/github/                            |
-| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                |
-| supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA; action-pins.json para validação offline           |
-| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35               |
-| Branch protection      | ✅ Ativo via API (sessão 3) — PRs obrigatórias                                         |
-| E2E secrets            | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl |
-| bun.lock               | ✅ lockfileVersion:3 (Bun 1.4.2) — frozen-lockfile verde (W01, sessão 6)               |
-| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                   |
-| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                           |
-| contract test          | ✅ 11/11 workflows, 0 falhas (W97 — 11 contratos ativos)                               |
+| Indicador              | Valor                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| Open PRs               | Wave 0+2 em review (claude/happy-cori-3z9h7f)                                               |
+| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                            |
+| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                     |
+| Cobertura              | ✅ v8 configurada                                                                           |
+| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                   |
+| Branch delete          | ✅ delete_branch_on_merge=true                                                              |
+| Ruleset                | ✅ 21934736 — 9 required checks (W12) — baseline em infra/github/                           |
+| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`        |
+| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                     |
+| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                               |
+| Actions allowlist      | ✅ selected (W34): github_owned + verified + denoland, oven-sh, ossf, SonarSource, supabase |
+| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                     |
+| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                    |
+| E2E secrets            | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl      |
+| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido            |
+| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                        |
+| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                |
+| contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                    |
+| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                   |
+| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows               |
+| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)              |
+| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)                |
+| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)               |
 
 ---
 
 ## 🔧 Decisões Técnicas
 
-### Por que Bun + Node fallback?
+### W03 — npm como gerenciador único (15/10/2026)
 
-O `oven-sh/setup-bun@v2` action não funciona em repositórios privados do GitHub (restrição de actions de terceiros). Solução: fallback para `actions/setup-node@v4` com Node.js 22.
+Bun foi removido. `package-lock.json` é o único lockfile e **todo** install (CI, E2E, deploy, Docker) usa `npm ci`.
 
-### Por que npm install em vez de npm ci?
+Motivo: dois lockfiles divergiam continuamente (D1). Na migração, `package-lock.json` estava sem `@lhci/cli` e ~260 dependências transitivas que só existiam no `bun.lock` — os jobs npm rodavam `npm install` sobre um lock incompleto. `package.json` já declarava `packageManager: npm@10.x`, Dependabot/`npm audit`/dependency-review já operavam sobre o lock npm, e Bun só aparecia em `e2e.yml`/`deploy.yml`.
 
-O projeto usa `bun.lock` como lockfile, não `package-lock.json`. `npm ci` requer lockfile. `npm install` funciona sem.
+Guardas: `scripts/tests/lockfile-single.test.sh` (security-config) reprova `bun.lock`/`yarn.lock`/`pnpm-lock.yaml`, `packageManager` ≠ npm e qualquer uso de Bun em workflow; `npm ci` reprova drift package.json ↔ lock. **Não reintroduzir Bun.** Imagens Docker seguem `engines.node` (22); Dependabot ignora majors de `node`.
 
 ### TypeScript strict — estado real (28/07/2026)
 
@@ -475,19 +559,19 @@ _Nenhum crítico bloqueante no momento._
 
 ```bash
 # Desenvolvimento
-bun dev                    # Servidor dev
-bun run build              # Build produção
-bun run ci:verify          # Typecheck + lint + format
-bun run test               # Testes unitários
-bun run test:e2e           # Testes E2E
+npm run dev                # Servidor dev
+npm run build              # Build produção
+npm run ci:verify          # Typecheck + lint + format
+npm run test               # Testes unitários
+npm run test:e2e           # Testes E2E
 
 # TypeScript
-bunx tsc --noEmit          # Typecheck (root config)
+npx tsc --noEmit          # Typecheck (root config)
 
 # Dependências
-bun install                # Instalar/atualizar
-bun outdated               # Verificar versões
-bun pm ls                  # Listar pacotes
+npm ci                     # Instalar/atualizar
+npm outdated               # Verificar versões
+npm ls                     # Listar pacotes
 
 # Git
 git fetch --prune          # Limpar branches remotas órfãs

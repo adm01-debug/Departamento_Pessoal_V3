@@ -161,7 +161,7 @@ describe('useBatidasPonto', () => {
   });
 
   it('is disabled and returns empty when no colaboradorId', () => {
-    const { result } = renderHook(() => useBatidasPonto(''), { wrapper });
+    renderHook(() => useBatidasPonto(''), { wrapper });
     expect(mockListarBatidas).not.toHaveBeenCalled();
   });
 
@@ -229,7 +229,7 @@ describe('useFaltasColaborador', () => {
   });
 
   it('is disabled when no colaboradorId', () => {
-    const { result } = renderHook(() => useFaltasColaborador(''), { wrapper });
+    renderHook(() => useFaltasColaborador(''), { wrapper });
     expect(mockListarFaltasColaborador).not.toHaveBeenCalled();
   });
 });

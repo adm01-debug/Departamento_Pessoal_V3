@@ -32,7 +32,7 @@ Substituir apenas a linha `project_id = "…"` pelo valor antigo
 ### 4. Rebuild / redeploy do front-end (2 min)
 
 - No Lovable, publique novamente (frontend precisa de build).
-- Locally: `bun install --frozen-lockfile && bun run build`.
+- Locally: `npm ci && npm run build`.
 
 ### 5. Verificação (1 min)
 
@@ -52,6 +52,6 @@ Substituir apenas a linha `project_id = "…"` pelo valor antigo
 
 ## Após o rollback
 
-Documente a causa em `docs/CUTOVER_VALIDACAO.md` (seção *Postmortem*) e
+Documente a causa em `docs/CUTOVER_VALIDACAO.md` (seção _Postmortem_) e
 crie plano de correção antes de tentar cutover novamente. A janela ideal
 para re-tentativa é fora de horário comercial (< 10 req/s).

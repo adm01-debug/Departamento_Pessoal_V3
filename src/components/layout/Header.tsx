@@ -19,7 +19,7 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuClick, user, className }: HeaderProps) {
-  const { isAdmin } = useAuth();
+  useAuth();
   const { empresaAtual, userEmpresas, temMultiplasEmpresas, trocarEmpresa } = useEmpresas();
   const { latency, status } = useSystemHealth();
   const handleSearchClick = () => {
@@ -27,16 +27,25 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
   };
 
   return (
-    <header role="banner" className={cn(
-      'flex items-center justify-between h-14 px-4 lg:px-6',
-      'border-b border-border/40 bg-background/80 backdrop-blur-xl',
-      className
-    )}>
+    <header
+      role="banner"
+      className={cn(
+        'flex items-center justify-between h-14 px-4 lg:px-6',
+        'border-b border-border/40 bg-background/80 backdrop-blur-xl',
+        className
+      )}
+    >
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={onMenuClick} className="lg:hidden hover:bg-accent/50 rounded-lg" aria-label="Abrir menu">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onMenuClick}
+          className="lg:hidden hover:bg-accent/50 rounded-lg"
+          aria-label="Abrir menu"
+        >
           <Menu className="h-5 w-5" />
         </Button>
-        
+
         {/* Navigation Control */}
         <div className="flex items-center gap-2">
           <BackButton />
@@ -60,12 +69,16 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
 
       <div className="flex items-center gap-3">
         {/* Sync Status Badge */}
-        <div className={cn(
-          "hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider",
-          status === 'online' ? "bg-success/5 border-success/20 text-success" :
-          status === 'slow' ? "bg-warning/5 border-warning/20 text-warning" :
-          "bg-destructive/5 border-destructive/20 text-destructive"
-        )}>
+        <div
+          className={cn(
+            'hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider',
+            status === 'online'
+              ? 'bg-success/5 border-success/20 text-success'
+              : status === 'slow'
+                ? 'bg-warning/5 border-warning/20 text-warning'
+                : 'bg-destructive/5 border-destructive/20 text-destructive'
+          )}
+        >
           <Cloud className="h-3 w-3" />
           {status === 'online' ? 'DB Conectado' : status === 'slow' ? 'Latência Alta' : 'DB Offline'}
           {latency !== null && (
@@ -79,7 +92,7 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
         <div className="flex items-center gap-1.5">
           {/* Company badge in header (mobile-visible) */}
           <div className="lg:hidden">
-            <EmpresaSelector 
+            <EmpresaSelector
               collapsed={false}
               empresaAtual={empresaAtual}
               userEmpresas={userEmpresas}

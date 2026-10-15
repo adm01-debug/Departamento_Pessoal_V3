@@ -30,7 +30,7 @@ export default function EmpresaFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { success, error: notifyError } = useNotification();
+  const { success } = useNotification();
   const { handleServerError } = useServerValidation<EmpresaSchemaInput>();
   const [activeTab, setActiveTab] = useState('geral');
   const isEditing = !!id;

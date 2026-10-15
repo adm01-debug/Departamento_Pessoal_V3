@@ -74,7 +74,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
   const [selectedCid, setSelectedCid] = useState<CidItem | null>(initialData?.cid ?? null);
   const [historicoRecente, setHistoricoRecente] = useState<HistoricoItem[]>([]);
 
-  const [isVerificandoHistorico, setIsVerificandoHistorico] = useState(false);
+  const [, setIsVerificandoHistorico] = useState(false);
 
   const {
     register,

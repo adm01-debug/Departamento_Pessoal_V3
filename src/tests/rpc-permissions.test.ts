@@ -7,7 +7,7 @@
  *  - RPCs sensíveis (has_role, get_user_scope_empresas) ficam bloqueadas para anon.
  *  - Tabelas multi-tenant não retornam linhas para usuário não autenticado.
  *
- * Rode com: bunx vitest run src/tests/rpc-permissions.test.ts
+ * Rode com: npx vitest run src/tests/rpc-permissions.test.ts
  */
 import { describe, it, expect } from 'vitest';
 import { createClient } from '@supabase/supabase-js';

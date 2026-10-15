@@ -197,7 +197,7 @@ describe('useCentrosCusto', () => {
   });
 
   it('is disabled when no empresaId', () => {
-    const { result } = renderHook(() => useCentrosCusto(undefined), { wrapper });
+    renderHook(() => useCentrosCusto(undefined), { wrapper });
     expect(mockListarCentrosCusto).not.toHaveBeenCalled();
   });
 
@@ -232,7 +232,7 @@ describe('useContasBancarias', () => {
   });
 
   it('is disabled when no colaboradorId', () => {
-    const { result } = renderHook(() => useContasBancarias(''), { wrapper });
+    renderHook(() => useContasBancarias(''), { wrapper });
     expect(mockListarContasBancarias).not.toHaveBeenCalled();
   });
 

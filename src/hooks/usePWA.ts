@@ -17,7 +17,10 @@ export function usePWA() {
 
   // Verifica se já está instalado apenas no mount
   useOnMount(() => {
-    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as { standalone?: boolean }).standalone) {
+    if (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as { standalone?: boolean }).standalone
+    ) {
       setIsInstalled(true);
     }
   });
@@ -47,7 +50,7 @@ export function usePWA() {
   const installApp = async () => {
     if (!installPrompt) return;
     await installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
+    await installPrompt.userChoice;
     setInstallPrompt(null);
     setIsInstallable(false);
   };

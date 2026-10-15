@@ -67,7 +67,7 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
   const [uploadedDocs, setUploadedDocs] = useState<
     Record<string, { name: string; status: 'uploading' | 'success' | 'error'; result?: OCRResult }>
   >({});
-  const { processDocument, isProcessing: isOCRProcessing } = useDocumentOCR();
+  const { processDocument } = useDocumentOCR();
 
   const { data: tokenData, isLoading } = useQuery({
     queryKey: ['contratacao-token', token],

@@ -68,7 +68,7 @@ export default function DashboardExecutivoPage() {
   const { empresaAtualId } = useEmpresas();
   const [periodo, setPeriodo] = useState('6');
   const { data, isLoading, refetch } = useExecutiveKPIs(empresaAtualId ?? undefined, periodo);
-  const { data: strategic, isLoading: isStrategicLoading } = useStrategicFinancials(empresaAtualId ?? undefined);
+  const { data: strategic } = useStrategicFinancials(empresaAtualId ?? undefined);
 
   // Subscribe to real-time updates for KPIs
   useRealTimeSubscription('colaboradores', ['executive-kpis', empresaAtualId, periodo], empresaAtualId ?? undefined);

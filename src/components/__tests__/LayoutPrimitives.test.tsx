@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Home } from 'lucide-react';
 import { PageContainer } from '../layout/PageContainer';
 import { NavItem } from '../layout/NavItem';
 import { Flex } from '../layout/Flex';
@@ -10,27 +9,47 @@ import { Footer } from '../layout/Footer';
 
 describe('PageContainer', () => {
   it('renders children', () => {
-    render(<PageContainer><span>Page Content</span></PageContainer>);
+    render(
+      <PageContainer>
+        <span>Page Content</span>
+      </PageContainer>
+    );
     expect(screen.getByText('Page Content')).toBeInTheDocument();
   });
 
   it('renders title when provided', () => {
-    render(<PageContainer title="Colaboradores"><div /></PageContainer>);
+    render(
+      <PageContainer title="Colaboradores">
+        <div />
+      </PageContainer>
+    );
     expect(screen.getByText('Colaboradores')).toBeInTheDocument();
   });
 
   it('renders description when provided', () => {
-    render(<PageContainer title="Folha" description="Gestão mensal"><div /></PageContainer>);
+    render(
+      <PageContainer title="Folha" description="Gestão mensal">
+        <div />
+      </PageContainer>
+    );
     expect(screen.getByText('Gestão mensal')).toBeInTheDocument();
   });
 
   it('does not render description header when no title', () => {
-    render(<PageContainer><span>hello</span></PageContainer>);
+    render(
+      <PageContainer>
+        <span>hello</span>
+      </PageContainer>
+    );
     expect(screen.queryByRole('heading')).toBeNull();
   });
 
   it('renders actions slot', () => {
-    render(<PageContainer title="Cargos" actions={<button>Novo</button>}><div /></PageContainer>);
+    render(
+      <PageContainer title="Cargos" actions={<button>Novo</button>}>
+        <div />
+      </PageContainer>
+    );
     expect(screen.getByText('Novo')).toBeInTheDocument();
   });
 });
@@ -67,7 +86,12 @@ describe('NavItem', () => {
 
 describe('Flex', () => {
   it('renders children', () => {
-    render(<Flex><span>A</span><span>B</span></Flex>);
+    render(
+      <Flex>
+        <span>A</span>
+        <span>B</span>
+      </Flex>
+    );
     expect(screen.getByText('A')).toBeInTheDocument();
     expect(screen.getByText('B')).toBeInTheDocument();
   });
@@ -75,7 +99,12 @@ describe('Flex', () => {
 
 describe('Stack', () => {
   it('renders children', () => {
-    render(<Stack><span>First</span><span>Second</span></Stack>);
+    render(
+      <Stack>
+        <span>First</span>
+        <span>Second</span>
+      </Stack>
+    );
     expect(screen.getByText('First')).toBeInTheDocument();
     expect(screen.getByText('Second')).toBeInTheDocument();
   });

@@ -47,21 +47,6 @@ export function detectLocale(): Locale {
   return DEFAULT_LOCALE;
 }
 
-function mergeDeep(base: Record<string, unknown>, override: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = { ...base };
-  for (const [key, value] of Object.entries(override)) {
-    if (
-      value && typeof value === 'object' && !Array.isArray(value) &&
-      base[key] && typeof base[key] === 'object' && !Array.isArray(base[key])
-    ) {
-      result[key] = mergeDeep(base[key] as Record<string, unknown>, value as Record<string, unknown>);
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
-}
-
 // ── Translation data ────────────────────────────────────────────
 
 type TranslationTree = Record<string, unknown>;
@@ -144,7 +129,7 @@ const ptBR: TranslationTree = {
     afastado: 'Afastado',
     desligado: 'Desligado',
     feriasVencendo: 'Férias Vencendo',
-   asoVencido: 'ASO Vencido',
+    asoVencido: 'ASO Vencido',
     contratoExperiencia: 'Contrato de Experiência',
   },
   esocial: {
@@ -403,15 +388,12 @@ function interpolate(template: string, vars: Record<string, unknown>): string {
 function pluralize(key: string, vars: Record<string, unknown>, locale: Locale): string {
   const count = Number(vars.count ?? 0);
   const pluralMap: Record<Locale, (n: number) => 'zero' | 'one' | 'other'> = {
-    'pt-BR': (n) => n === 1 ? 'one' : 'other',
+    'pt-BR': (n) => (n === 1 ? 'one' : 'other'),
     'en-US': (n) => (n === 1 ? 'one' : 'other'),
     'es-ES': (n) => (n === 1 ? 'one' : 'other'),
   };
   const pluralKey = (pluralMap[locale] ?? pluralMap['pt-BR'])(count);
-  const translation = getNestedValue(
-    TRANSLATIONS[locale] ?? TRANSLATIONS[DEFAULT_LOCALE],
-    `${key}.${pluralKey}`
-  );
+  const translation = getNestedValue(TRANSLATIONS[locale] ?? TRANSLATIONS[DEFAULT_LOCALE], `${key}.${pluralKey}`);
   return translation ? interpolate(translation, vars) : key;
 }
 
@@ -472,8 +454,7 @@ class I18n {
   }
 
   formatRelativeTime(value: number, unit: Intl.RelativeTimeFormatUnit): string {
-    return new Intl.RelativeTimeFormat(this._locale, { numeric: 'auto' })
-      .format(value, unit);
+    return new Intl.RelativeTimeFormat(this._locale, { numeric: 'auto' }).format(value, unit);
   }
 }
 

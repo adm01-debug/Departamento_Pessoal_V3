@@ -32,7 +32,7 @@ import { PontoGeoAnalytics } from './PontoGeoAnalytics';
 import { toast } from 'sonner';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
+import { todayLocalISO } from '@/utils/dateLocal';
 
 export function GestaoRegistrosPonto() {
   const { empresaAtual } = useEmpresas();
@@ -41,8 +41,6 @@ export function GestaoRegistrosPonto() {
   const [filtroFim, setFiltroFim] = useState(todayLocalISO());
   const [tipoExcecao, setTipoExcecao] = useState('todas');
   const [busca, setBusca] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-
   const { data: registros = [], isLoading } = useQuery({
     queryKey: ['gestao-registros-ponto', empresaAtual?.id, filtroData, filtroFim],
     queryFn: async () => {
@@ -105,12 +103,6 @@ export function GestaoRegistrosPonto() {
 
     return buscaMatch;
   });
-
-  const mudarDia = (offset: number) => {
-    const d = new Date(filtroData + 'T12:00:00');
-    d.setDate(d.getDate() + offset);
-    setFiltroData(formatDateLocalISO(d));
-  };
 
   const exportData = (format: 'csv' | 'pdf') => {
     if (filtrados.length === 0) {

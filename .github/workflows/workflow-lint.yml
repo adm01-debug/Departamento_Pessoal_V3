@@ -1,0 +1,50 @@
+name: Workflow lint (actionlint)
+
+# W86: valida sintaxe e segurança de todos os workflows GitHub Actions.
+# Roda em PRs que tocam .github/** e em workflow_dispatch.
+# Usa rhysd/actionlint para detectar erros de sintaxe, contextos inválidos,
+# expressões mal formadas e problemas de shell dentro dos run: blocks.
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: Lint de workflows (actionlint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Instalar actionlint v1.7.7
+        env:
+          # SHA-256 publicado em actionlint_1.7.7_checksums.txt da release oficial.
+          ACTIONLINT_SHA256: 023070a287cd8cccd71515fedc843f1985bf96c436b7effaecce67290e7e0757
+        run: |
+          set -euo pipefail
+          bin_dir="$RUNNER_TEMP/actionlint"
+          mkdir -p "$bin_dir"
+          curl --proto '=https' --tlsv1.2 -sSfL -o "$bin_dir/actionlint.tgz" \
+            https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz
+          echo "$ACTIONLINT_SHA256  $bin_dir/actionlint.tgz" | sha256sum -c -
+          tar -xzf "$bin_dir/actionlint.tgz" -C "$bin_dir" actionlint
+          echo "$bin_dir" >> "$GITHUB_PATH"
+          "$bin_dir/actionlint" --version
+
+      - name: Executar actionlint em todos os workflows
+        run: |
+          set -euo pipefail
+          actionlint -color .github/workflows/*.yml
+          echo "WORKFLOW_LINT_OK"

@@ -10,7 +10,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const CANONICAL_REF = 'frjbfeamybqsejlvmqbl';
+const CANONICAL_REF = process.env.CANONICAL_SUPABASE_REF ?? 'frjbfeamybqsejlvmqbl';
 const LEGACY_REF = 'ciziytrrjjotlsjzshnm';
 const canonicalUrl = `https://${CANONICAL_REF}.supabase.co`;
 

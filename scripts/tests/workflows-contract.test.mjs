@@ -165,17 +165,17 @@ for (const file of files) {
     }
   }
 
-  // 10. npx -y em run: — AVISO até W40 migrar Lighthouse para lock (W97f/D12)
+  // 10. npx -y em run: proibido (W40 concluído — @lhci/cli está no lock) (W97f/D12)
   for (let i = 0; i < lines.length; i++) {
     if (/\bnpx\s+-y\b/.test(lines[i]) || /\bnpx\s+--yes\b/.test(lines[i])) {
-      console.warn(`  WARN: ${file}:${i + 1}: npx -y baixa código remoto sem lock (W97f/D12, pendente W40): "${lines[i].trim()}"`);
+      fail(`${file}:${i + 1}: npx -y baixa código remoto sem lock (W97f/D12): "${lines[i].trim()}"`);
     }
   }
 
-  // 11. node-version: literal — AVISO até W38 migrar para node-version-file (W97g/D6)
+  // 11. node-version: literal proibido (W38 concluído — todos usam node-version-file) (W97g/D6)
   for (let i = 0; i < lines.length; i++) {
     if (/^\s+node-version:\s+'?\d/.test(lines[i])) {
-      console.warn(`  WARN: ${file}:${i + 1}: node-version: literal, preferir node-version-file: .nvmrc (W97g/D6, pendente W38): "${lines[i].trim()}"`);
+      fail(`${file}:${i + 1}: node-version: literal, usar node-version-file: .nvmrc (W97g/D6): "${lines[i].trim()}"`);
     }
   }
 

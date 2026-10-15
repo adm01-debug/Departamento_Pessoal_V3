@@ -13,9 +13,17 @@ on:
         description: Digite o project ref canônico para evitar alvo acidental
         required: true
         type: string
+      migration_files:
+        description: 'Arquivos de migração (um por linha, ex: 20261013150000_onda4a.sql)'
+        required: true
+        type: string
+      validated_hash:
+        description: 'Obrigatório em apply: hash exibido no resumo do run de validate da mesma lista'
+        required: false
+        type: string
 
 concurrency:
-  group: canonical-database-migrations
+  group: canonical-database
   cancel-in-progress: false
 
 permissions:
@@ -30,9 +38,11 @@ jobs:
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       CANONICAL_REF: frjbfeamybqsejlvmqbl
-      # workflow_dispatch input is untrusted. Expose it as data instead of
-      # interpolating it into the shell program below.
+      # workflow_dispatch inputs are untrusted. Expose them as data instead of
+      # interpolating them into shell programs below.
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
+      MIGRATION_FILES: ${{ inputs.migration_files }}
+      VALIDATED_HASH: ${{ inputs.validated_hash }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -116,27 +126,29 @@ jobs:
           stage_dir="$(mktemp -d)"
           mkdir -p "$stage_dir/supabase/migrations"
           cp supabase/config.toml "$stage_dir/supabase/config.toml"
-          # NOTE: this list is intentionally replaced on every scoped batch,
-          # not accumulated. Previous batches (up to
-          # 20261011200000_check_constraints_operacional) are already applied and recorded
-          # in supabase_migrations.schema_migrations; re-listing it here would
-          # re-run non-idempotent CREATE POLICY statements and fail with
-          # "policy already exists". Each dispatch of this workflow targets
-          # only the NEW migrations for that batch.
-          for migration in \
-            20261013150000_onda4a_security_lockdown.sql \
-            20261013151000_onda4a_auditoria_fn_revoke.sql \
-            20261013152000_onda4b_vinculo_documentos_lgpd_crypto.sql
-          do
+          # W67: list is driven by the migration_files workflow_dispatch input.
+          # Each dispatch targets only NEW migrations for that batch — do NOT
+          # re-list already-applied migrations (non-idempotent CREATE POLICY
+          # statements would fail with "policy already exists").
+          while IFS= read -r migration; do
+            migration="$(echo "$migration" | tr -d '[:space:]')"
+            [ -z "$migration" ] && continue
+            test -f "supabase/migrations/$migration" || {
+              echo "::error::Migration não encontrada: supabase/migrations/$migration"
+              exit 1
+            }
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
-          done
+          done <<< "$MIGRATION_FILES"
           echo "dir=$stage_dir" >> "$GITHUB_OUTPUT"
 
       - name: Simular todas as mudanças no schema real e reverter
+        id: validate-dry-run
         if: inputs.mode == 'validate'
+        env:
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
-          stage_dir="${{ steps.stage.outputs.dir }}"
+          stage_dir="$MIGRATIONS_STAGE"
           {
             echo 'BEGIN;'
             for migration in "$stage_dir"/supabase/migrations/*.sql; do
@@ -145,12 +157,25 @@ jobs:
             echo 'ROLLBACK;'
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
           echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
+          # W68: gerar hash da lista validada para auditoria
+          validated_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
+          echo "VALIDATED_HASH=$validated_hash" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo "validated_hash=$validated_hash" >> "$GITHUB_OUTPUT"
 
       - name: Aplicar a lista fechada e registrar no ledger
         if: inputs.mode == 'apply'
+        env:
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
-          stage_dir="${{ steps.stage.outputs.dir }}"
+          stage_dir="$MIGRATIONS_STAGE"
+          # W68: verificar que a lista de apply é a mesma do validate
+          current_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
+          echo "Hash da lista: $current_hash"
+          if [ -z "$VALIDATED_HASH" ] || [ "$current_hash" != "$VALIDATED_HASH" ]; then
+            echo '::error::apply exige validated_hash igual ao hash da mesma lista no run de validate.'
+            exit 1
+          fi
           # Execute the same closed list validated above and record only those
           # versions. This deliberately avoids `db push --include-all` and
           # `migration repair`, which are unsafe while the historical local
@@ -163,29 +188,41 @@ jobs:
               name="${filename#*_}"
               name="${name%.sql}"
               printf '\\i %s\n' "$migration"
-              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[]::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name"
+              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY['W68-hash:%s']::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name" "$current_hash"
             done
             echo 'COMMIT;'
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
 
       - name: Verificar objetos e ledger
         if: inputs.mode == 'apply'
+        env:
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
-          # Verifica no ledger as versões DESTE lote (uma por migration da
-          # lista fechada acima — conferidas pelo ledger_count no assert final)
-          # + os objetos/invariantes que cada migration cria (antes conferia
-          # só a versão do lote anterior, que podia não existir e falhar após
-          # um COMMIT bem-sucedido).
-          # legacy_rls_missing conta tabelas legacy EXISTENTES sem RLS — a
-          # versão anterior esperava === 4, que falha quando a tabela não
-          # existe no canônico (to_regclass NULL faz o DO da migration pular).
+          stage_dir="$MIGRATIONS_STAGE"
+
+          # W69: verificação genérica do ledger — não hardcoded por lote.
+          # Calcula versões do stage e confirma que todas entraram no ledger.
+          version_list=""
+          staged_count=0
+          for migration in "$stage_dir"/supabase/migrations/*.sql; do
+            filename="$(basename "$migration")"
+            version="${filename%%_*}"
+            version_list="${version_list:+${version_list},}'${version}'"
+            staged_count=$((staged_count + 1))
+          done
+          ledger_found="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At \
+            -c "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version IN ($version_list)")"
+          test "$ledger_found" -eq "$staged_count" || {
+            echo "::error::Ledger incompleto: ${ledger_found}/${staged_count} versões do lote."
+            exit 1
+          }
+          echo "CANONICAL_LEDGER_OK staged=$staged_count ledger=$ledger_found"
+
+          # Invariantes de schema acumulados (ondas anteriores).
+          # legacy_rls_missing conta tabelas legacy EXISTENTES sem RLS.
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'ledger_count', (
-              SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000')
-            ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
               WHERE conname = 'chk_notificacoes_tipo'
@@ -375,7 +412,6 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 6 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -419,4 +455,52 @@ jobs:
               r.periodos_no_for_all === true;
             if (!ok) process.exit(1);
           ' "$result"
+          echo 'CANONICAL_SCHEMA_INVARIANTS_OK'
+
+          # W69: executar sidecars .verify.sql para cada migração do lote.
+          # Crie supabase/migrations/<versão>_<nome>.verify.sql com SELECTs
+          # que retornam 'ok' para verificar objetos criados pela migration.
+          sidecar_errors=0
+          for migration in "$stage_dir"/supabase/migrations/*.sql; do
+            filename="$(basename "$migration")"
+            sidecar="supabase/migrations/${filename%.sql}.verify.sql"
+            if [ -f "$sidecar" ]; then
+              echo "Sidecar: $sidecar"
+              psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -f "$sidecar" || {
+                echo "::error::Sidecar falhou: $sidecar"
+                sidecar_errors=$((sidecar_errors + 1))
+              }
+            fi
+          done
+          test "$sidecar_errors" -eq 0
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
+
+      - name: Resumo das migrações (GITHUB_STEP_SUMMARY)
+        if: always()
+        env:
+          DISPATCH_MODE: ${{ inputs.mode }}
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
+        run: |
+          stage_dir="$MIGRATIONS_STAGE"
+          {
+            echo "## Resumo de migrações canônicas"
+            echo ""
+            echo "| Campo | Valor |"
+            echo "|-------|-------|"
+            echo "| Modo | $DISPATCH_MODE |"
+            echo "| Project ref | $CONFIRM_PROJECT_REF |"
+            if [ -d "$stage_dir/supabase/migrations" ] && compgen -G "$stage_dir/supabase/migrations/*.sql" > /dev/null 2>&1; then
+              summary_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
+              echo "| Hash da lista | \`$summary_hash\` |"
+              echo ""
+              echo "### Migrações staged"
+              echo ""
+              echo "| Arquivo |"
+              echo "|---------|"
+              for f in "$stage_dir"/supabase/migrations/*.sql; do
+                echo "| \`$(basename "$f")\` |"
+              done
+            else
+              echo "| Migrações staged | nenhuma / stage não disponível |"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true

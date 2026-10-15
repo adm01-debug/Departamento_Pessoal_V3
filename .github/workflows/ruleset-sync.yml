@@ -1,0 +1,36 @@
+name: Ruleset sync
+# W16 — substitui branch-protection.yml (E01, congelado desde 27/09/2026).
+# Verifica se o ruleset vivo (21934736) bate com infra/github/ruleset-main.json
+# e se todo check obrigatório tem job. Não aplica nada: mudanças no ruleset
+# são feitas pelo owner (UI ou API) e refletidas no baseline via PR.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '41 7 * * 1'
+
+concurrency:
+  group: ruleset-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    name: Verificar ruleset main
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Comparar ruleset vivo com o baseline
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/audit-required-checks.mjs --full

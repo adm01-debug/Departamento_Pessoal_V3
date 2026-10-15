@@ -43,7 +43,6 @@ export const supabaseBase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLIS
 // Para reads: sem retry (reads são idempotent por natureza).
 
 const RETRY_DELAYS_MS = [1_000, 5_000, 25_000];
-const RETRYABLE_STATUS_CODES = new Set([429, 502, 503, 504]);
 
 async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
@@ -171,7 +170,7 @@ const callBridge = async <T = unknown>(
 
   try {
     // P3-061: retry com backoff para writes; idempotency key auto-injetada.
-    const { res, idempotencyKey } = await fetchWithRetry(
+    const { res } = await fetchWithRetry(
       `${FUNCTIONS_BASE}/external-db-bridge`,
       {
         method: 'POST',
@@ -406,11 +405,6 @@ interface SupabaseProxyTarget {
   rpc: (fn: string, params: Record<string, unknown>) => Promise<BridgeResponse<unknown>>;
   [key: string]: unknown;
 }
-
-const proxyTarget: SupabaseProxyTarget = {
-  from: (table: string) => createQueryBuilder(table),
-  rpc: (fn: string, params: Record<string, unknown>) => callBridge('rpc', fn, { params }),
-};
 
 const dbBridgeProxy: ProxyHandler<SupabaseProxyTarget> = {
   get(target, prop, receiver) {

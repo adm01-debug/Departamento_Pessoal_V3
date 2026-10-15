@@ -1,0 +1,34 @@
+name: Post-deploy smoke
+
+on:
+  deployment_status:
+
+concurrency:
+  group: post-deploy-smoke-${{ github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  smoke:
+    name: Smoke pós-deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Smoke — app, edge healthcheck, auth e bridge
+        env:
+          FALLBACK_APP_URL: ${{ vars.APP_URL || 'https://departamento-pessoal-v3.vercel.app' }}
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          REQUIRE_APP: '1'
+          REQUIRE_BACKEND: '1'
+        run: |
+          set -euo pipefail
+          APP_URL="${DEPLOYMENT_URL:-$FALLBACK_APP_URL}" bash scripts/healthcheck.sh

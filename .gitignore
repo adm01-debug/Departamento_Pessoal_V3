@@ -1,6 +1,11 @@
 # V15-373
 node_modules
 dist
+# W03: npm é o gerenciador único — package-lock.json é o único lockfile
+bun.lock
+bun.lockb
+yarn.lock
+pnpm-lock.yaml
 .env
 .env.local
 *.log
