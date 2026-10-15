@@ -30,6 +30,12 @@
       "color": "0075ca",
       "description": "Label genérico para PRs de CI — usado pelo Dependabot (grupo actions). NÃO usar em issues automatizadas; usar ci-main para evitar conflito.",
       "used_by": ["dependabot.yml (grupo actions)"]
+    },
+    {
+      "name": "post-deploy-smoke",
+      "color": "b91c1c",
+      "description": "Issue aberta automaticamente por falha no smoke pós-deploy (healthcheck + Playwright público contra o deployment real)",
+      "used_by": ["post-deploy-smoke.yml (W64)"]
     }
   ],
   "_note": "D22: o label 'ci' era usado por rls-live (conflito com Dependabot). Corrigido para 'ci-main' em 14/10/2026."
