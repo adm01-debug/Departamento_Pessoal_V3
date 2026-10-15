@@ -37,9 +37,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: denoland/setup-deno@e4831cb7f16ea8a030b21f86011cbaf44e7c6a06 # v1.1.4
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
-          deno-version: '1.46.3' # Supabase Edge Runtime — revisão: 2026-10-15
+          deno-version: v2.x
 
       - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
         with:
