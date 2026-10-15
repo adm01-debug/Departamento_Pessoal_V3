@@ -5,14 +5,9 @@ on:
     branches: [main]
   push:
     branches: [main]
-  # W61: permite triggering manual para rodar E2E contra um ref ou projeto específico.
+  # W61: permite rodar o E2E manualmente contra um ref específico (sempre no projeto canônico).
   workflow_dispatch:
     inputs:
-      project:
-        description: Supabase project ref (default canonical)
-        required: false
-        type: string
-        default: frjbfeamybqsejlvmqbl
       ref:
         description: Git ref (branch/tag/SHA) para checkout
         required: false

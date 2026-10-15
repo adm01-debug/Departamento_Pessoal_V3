@@ -17,6 +17,10 @@ on:
         description: 'Arquivos de migração (um por linha, ex: 20261013150000_onda4a.sql)'
         required: true
         type: string
+      validated_hash:
+        description: 'Obrigatório em apply: hash exibido no resumo do run de validate da mesma lista'
+        required: false
+        type: string
 
 concurrency:
   group: canonical-database
@@ -38,6 +42,7 @@ jobs:
       # interpolating them into shell programs below.
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
       MIGRATION_FILES: ${{ inputs.migration_files }}
+      VALIDATED_HASH: ${{ inputs.validated_hash }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -70,7 +75,7 @@ jobs:
       - name: Instalar cliente PostgreSQL
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client-17
+          sudo apt-get install -y -qq postgresql-client
 
       - name: Confirmar conexão e pré-condições canônicas
         run: |
@@ -167,9 +172,10 @@ jobs:
           # W68: verificar que a lista de apply é a mesma do validate
           current_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
           echo "Hash da lista: $current_hash"
-          # Nota: em uma implementação completa, este hash seria comparado com
-          # o do run de validate anterior via artifact download. Por ora, apenas
-          # registramos o hash como auditoria imutável no ledger.
+          if [ -z "$VALIDATED_HASH" ] || [ "$current_hash" != "$VALIDATED_HASH" ]; then
+            echo '::error::apply exige validated_hash igual ao hash da mesma lista no run de validate.'
+            exit 1
+          fi
           # Execute the same closed list validated above and record only those
           # versions. This deliberately avoids `db push --include-all` and
           # `migration repair`, which are unsafe while the historical local

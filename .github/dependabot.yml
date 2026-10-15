@@ -10,7 +10,7 @@ updates:
       timezone: America/Sao_Paulo
     open-pull-requests-limit: 5
     cooldown:
-      default: '7d'
+      default-days: 7
     labels:
       - dependencies
       - javascript

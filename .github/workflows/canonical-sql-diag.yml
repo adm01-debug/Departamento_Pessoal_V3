@@ -58,7 +58,7 @@ jobs:
       - name: Instalar cliente PostgreSQL
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client-17
+          sudo apt-get install -y -qq postgresql-client
 
       - name: Instalar Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -67,6 +67,7 @@ jobs:
 
       - name: Executar consulta read-only (ROLLBACK garantido)
         run: |
+          set -o pipefail
           # W27: limitar saída para reduzir risco de PII em logs de CI
           node scripts/diag/run-sql-diag.mjs 2>&1 | head -n 50
 

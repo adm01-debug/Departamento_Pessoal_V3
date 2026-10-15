@@ -1,16 +1,13 @@
 name: Ruleset sync
 # W16 — substitui branch-protection.yml (E01, congelado desde 27/09/2026).
-# Modo diff: lê baseline e exibe; modo apply: exige reviewer no environment production.
+# Verifica se o ruleset vivo (21934736) bate com infra/github/ruleset-main.json
+# e se todo check obrigatório tem job. Não aplica nada: mudanças no ruleset
+# são feitas pelo owner (UI ou API) e refletidas no baseline via PR.
 
 on:
   workflow_dispatch:
-    inputs:
-      mode:
-        description: 'diff = mostra diferenças sem aplicar; apply = aplica (requer production)'
-        required: false
-        type: choice
-        options: [diff, apply]
-        default: diff
+  schedule:
+    - cron: '41 7 * * 1'
 
 concurrency:
   group: ruleset-sync
@@ -21,30 +18,19 @@ permissions:
 
 jobs:
   sync:
-    name: Sincronizar ruleset main
+    name: Verificar ruleset main
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: ${{ inputs.mode == 'apply' && 'production' || '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
-      - name: Diff ruleset vs arquivo baseline
-        env:
-          MODE: ${{ inputs.mode }}
-        run: |
-          set -euo pipefail
-          echo "Modo: ${MODE}"
-          echo "Baseline: infra/github/ruleset-main.json"
-          cat infra/github/ruleset-main.json
-          echo ""
-          echo "Para aplicar o ruleset via API, use modo 'apply' (requer reviewer no environment production)."
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
 
-      - name: Aplicar ruleset (somente modo apply)
-        if: inputs.mode == 'apply'
+      - name: Comparar ruleset vivo com o baseline
         env:
-          MODE: ${{ inputs.mode }}
-        run: |
-          set -euo pipefail
-          echo "::notice::Aplicação manual via gh API — use: gh api --method PUT repos/adm01-debug/Departamento_Pessoal_V3/rulesets/21934736 --input infra/github/ruleset-main.json"
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/audit-required-checks.mjs
