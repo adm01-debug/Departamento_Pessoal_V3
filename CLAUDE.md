@@ -426,6 +426,75 @@ POST-only gateway (32KB file, 729 lines)
 📚 W94 — CLAUDE.md: sessão 8, métricas e score atualizados (6.5/10)
 ```
 
+### Sessão 9 — 15/10/2026 (Claude Sonnet 5)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 6 — PR #238 squash-merged, commit `56a24a104`; consolidação W99/W100)
+
+#### O que foi feito:
+
+```
+🔒 CORREÇÕES DA REVISÃO DO CODEX NA PR #238 (5 achados P1/P2)
+├── scripts/audit-rls-pii.mjs: information_schema.columns (sempre vazia p/
+│   ci_auditor) → pg_attribute/pg_class/pg_namespace (catálogo puro);
+│   gate de PII/RLS deixava de checar qualquer policy (D3)
+├── e2e.yml: guard de dispatch autenticado agora exige github.ref ==
+│   refs/heads/main além de inputs.ref (seletor nativo de branch burlava o
+│   guard antigo); checkout do público usa ref: inputs.ref || github.sha
+├── playwright.config.ts: webServer.reuseExistingServer também true quando
+│   baseURL != local (post-deploy-smoke.yml sempre quebrava sem isso)
+└── ci.yml (job changes): checkout fetch-depth:0 antes do dorny/paths-filter
+    (sem ele, push/dispatch derrubava em cascata o check "Edge Functions")
+
+🔐 SEGURANÇA — REVOKE EXECUTE...FROM PUBLIC (6 achados adicionais)
+├── Migration nova 20261015170000_ci_auditor_revoke_public_secdef.sql:
+│   16 funções SECURITY DEFINER de negócio (admissao_salvar_dados etc.)
+│   eram executáveis por ci_auditor via GRANT implícito a PUBLIC,
+│   contornando RLS. Revogado + GRANT explícito restaurado para
+│   anon/authenticated/service_role. Validado ao vivo (0 regressão)
+├── canonical-edge-functions.yml: fix _shared (força inventário completo);
+│   baseline de "último deploy verde" agora filtra --event push
+├── canonical-migrations.yml: sidecars .verify.sql agora exigem literalmente
+│   'ok' na saída (psql -t -A), não só exit 0
+├── scripts/e2e/verify-seed.mjs: interseção real de empresa_id (era .find()
+│   sem ordenação)
+└── Labels de incidente canonical → canonical-probes / canonical-deploy
+    (infra/github/labels.json)
+
+🛡️ FAIL-CLOSED E FIXTURES (4 achados adicionais)
+├── canonical-edge-functions.yml: TARGETS = interseção FN_DIFF × ALL_SLUGS
+│   do filesystem (slug removido/renomeado não aborta mais o deploy)
+├── scripts/e2e/ensure-fixtures.mjs (novo): recria colaboradores/folha da
+│   empresa sintética antes do Playwright autenticado, sem precisar de
+│   SUPABASE_SERVICE_ROLE_KEY
+├── scripts/db/derive-pending-migrations.mjs: fail-closed (exit 1) quando
+│   pending_count > 20 — "fora do ledger" ≠ "seguro aplicar" (aponta para
+│   RECONCILIACAO_DRIFT_MIGRATIONS.md)
+└── ci.yml: padrão edge: do paths-filter agora inclui o próprio ci.yml
+
+🏗️ BLOCO G CANÔNICOS — fechado nesta wave (W47, W58–W60, W67/W68/W70, W71, W75/W76)
+├── W47: p0-database-migrations paralelizado em 3 shards (run-shard.sh)
+├── W58/W59/W60: seed de empresa+colaboradores+folha aplicado AO VIVO na
+│   empresa sintética do canônico (CNPJ 00000000000191) — dono confirmou
+│   dados mock/fake para validação de design; cleanup via
+│   e2e/cleanup/seed-cleanup.spec.ts
+├── W67/W68/W70: canonical-migrations.yml — lista derivada do ledger (sem
+│   hardcode), apply via artifact de hash do validate, ledger com
+│   statements reais
+├── W71: canonical-probes.yml — issue automática em falha/recuperação com
+│   label dedicado + resumo estruturado sem PII
+└── W75/W76: canonical-edge-functions.yml — deploy incremental com dry-run
+    em PR + smoke pós-deploy com rollback
+
+✅ W99/W100 — Sanity check + consolidação da documentação
+│   workflows-contract.test.mjs: 13/13 · audit-required-checks.mjs: 10/10 ·
+│   audit-canonical-project.mjs: ok · actionlint: limpo · YAML dos 13
+│   workflows: parseado sem erro · CODEOWNERS confirmado sem "*" (W19 ok,
+│   desbloqueia W50 — aguardando decisão do dono para habilitar auto-merge)
+
+📚 W94 — CLAUDE.md + REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS: Wave 6
+registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
+```
+
 ---
 
 ## ✅ Estado Atual
