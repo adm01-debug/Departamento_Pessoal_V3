@@ -373,13 +373,22 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
-    name: P0 database migration simulations
+    name: P0 database migration simulations (shard ${{ matrix.shard }}/3)
     # W45: não é required check — skip simples quando nada em
     # supabase/migrations/** ou scripts/tests/** mudou.
+    # W47: paralelizado em 3 shards via strategy.matrix — cada shard roda num
+    # runner próprio, com seu próprio Postgres descartável (nenhum estado
+    # compartilhado entre shards). Distribuição round-robin determinística em
+    # scripts/tests/run-shard.sh, sobre a mesma descoberta automática (find |
+    # sort) que o job usava antes de virar matrix — nenhuma lista hardcoded.
     needs: changes
     if: >-
       github.event_name != 'pull_request' ||
       needs.changes.outputs.migrations == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     # Os scripts de simulação SQL não fazem chamadas à API do GitHub. Mantém o
@@ -390,25 +399,21 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - name: Simular a migração em PostgreSQL descartável
-        # W46: descoberta automática — elimina lista hardcoded (D27). Cobre
-        # migrations-p0-*, migrations-p1-* e migrations-plano100.sh. Novos
-        # scripts adicionados a scripts/tests/ são incluídos automaticamente
-        # sem alteração no workflow. W52: absorve db-tests.yml (deletado).
-        run: |
-          # W46: descoberta automática — elimina lista hardcoded (D27)
-          for script in $(find scripts/tests -name 'migrations-p*.sh' | sort); do
-            echo "▶ $script"
-            bash "$script"
-          done
-      - name: Resumo das migrações P0/P1 (GITHUB_STEP_SUMMARY)
+      - name: Simular a migração em PostgreSQL descartável (shard ${{ matrix.shard }}/3)
+        # W47: scripts/tests/run-shard.sh descobre migrations-p0-*,
+        # migrations-p1-* e migrations-plano100.sh do mesmo jeito que o loop
+        # original (find | sort) e roda só o subconjunto deste shard. Novos
+        # scripts adicionados a scripts/tests/ entram automaticamente, sem
+        # alteração no workflow. W52: absorve db-tests.yml (deletado).
+        run: bash scripts/tests/run-shard.sh ${{ matrix.shard }}/3
+      - name: Resumo do shard (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
           {
-            echo "## p0-database-migrations"
-            echo "| Script | Status |"
-            echo "|--------|--------|"
-            echo "| p0-migrations | ${{ job.status }} |"
+            echo "## p0-database-migrations — shard ${{ matrix.shard }}/3"
+            echo "| Shard | Status |"
+            echo "|-------|--------|"
+            echo "| ${{ matrix.shard }}/3 | ${{ job.status }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
   db-integrity:
