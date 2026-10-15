@@ -139,9 +139,11 @@ jobs:
       - name: Simular todas as mudanças no schema real e reverter
         id: validate-dry-run
         if: inputs.mode == 'validate'
+        env:
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
-          stage_dir="${{ steps.stage.outputs.dir }}"
+          stage_dir="$MIGRATIONS_STAGE"
           {
             echo 'BEGIN;'
             for migration in "$stage_dir"/supabase/migrations/*.sql; do
@@ -157,9 +159,11 @@ jobs:
 
       - name: Aplicar a lista fechada e registrar no ledger
         if: inputs.mode == 'apply'
+        env:
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
-          stage_dir="${{ steps.stage.outputs.dir }}"
+          stage_dir="$MIGRATIONS_STAGE"
           # W68: verificar que a lista de apply é a mesma do validate
           current_hash="$(find "$stage_dir/supabase/migrations" -maxdepth 1 -name '*.sql' -printf '%f\n' | sort | sha256sum | awk '{print $1}')"
           echo "Hash da lista: $current_hash"
@@ -185,9 +189,11 @@ jobs:
 
       - name: Verificar objetos e ledger
         if: inputs.mode == 'apply'
+        env:
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
-          stage_dir="${{ steps.stage.outputs.dir }}"
+          stage_dir="$MIGRATIONS_STAGE"
 
           # W69: verificação genérica do ledger — não hardcoded por lote.
           # Calcula versões do stage e confirma que todas entraram no ledger.
@@ -467,8 +473,9 @@ jobs:
         if: always()
         env:
           DISPATCH_MODE: ${{ inputs.mode }}
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
-          stage_dir="${{ steps.stage.outputs.dir }}"
+          stage_dir="$MIGRATIONS_STAGE"
           {
             echo "## Resumo de migrações canônicas"
             echo ""
