@@ -12,6 +12,7 @@
     "45a513f8c64c0bc8e0e3dfe572b5c95be85f6359": { "action": "supabase/setup-cli", "version": "v3.0.1" },
     "4081bf99e2866ebe428fc0477b69eb4fcda7220a": { "action": "actions/dependency-review-action", "version": "v4.6.0" },
     "fa7117db83c52d787ae5a89f350999701505d78e": { "action": "ossf/scorecard-action", "version": "v2.5.0" },
-    "4d101475d8b20a2381f78447822ac1eab6504dd8": { "action": "actions/attest-build-provenance", "version": "v4.2.2" }
+    "4d101475d8b20a2381f78447822ac1eab6504dd8": { "action": "actions/attest-build-provenance", "version": "v4.2.2" },
+    "ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d": { "action": "dorny/paths-filter", "version": "v4.0.3" }
   }
 }
