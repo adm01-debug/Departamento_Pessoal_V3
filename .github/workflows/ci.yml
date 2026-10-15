@@ -310,37 +310,16 @@ jobs:
         with:
           persist-credentials: false
       - name: Simular a migração em PostgreSQL descartável
-        # Cada teste sobe PostgreSQL descartável. Eles exercitam o defeito que
-        # só aparece em runtime, reaplicação idempotente e pré-condições que
-        # devem falhar fechadas em caso de drift.
+        # W46: descoberta automática — elimina lista hardcoded (D27). Cobre
+        # migrations-p0-*, migrations-p1-* e migrations-plano100.sh. Novos
+        # scripts adicionados a scripts/tests/ são incluídos automaticamente
+        # sem alteração no workflow. W52: absorve db-tests.yml (deletado).
         run: |
-          bash scripts/tests/migrations-p0-hash-search-path.sh
-          bash scripts/tests/migrations-p0-auth-lockout.sh
-          bash scripts/tests/migrations-p0-view-acl.sh
-          bash scripts/tests/migrations-p0-secdef-search-path.sh
-          bash scripts/tests/migrations-p1-function-search-path.sh
-          bash scripts/tests/migrations-p0-pgcrypto-routine-search-path.sh
-          bash scripts/tests/migrations-p0-atomic-rate-limit.sh
-          bash scripts/tests/migrations-p0-payroll-upsert.sh
-          bash scripts/tests/migrations-p0-bridge-membership.sh
-          bash scripts/tests/migrations-p0-identity-rls-authz.sh
-          bash scripts/tests/migrations-p0-token-table-acl.sh
-          bash scripts/tests/migrations-p0-report-schedule-claims.sh
-          bash scripts/tests/migrations-p1-atomic-provisions.sh
-          bash scripts/tests/migrations-p1-report-schedule-authorship.sh
-          bash scripts/tests/migrations-p1-scoped-audit-trail.sh
-          bash scripts/tests/migrations-p1-backup-storage-bucket.sh
-          bash scripts/tests/migrations-p1-internal-notification-recipients.sh
-          bash scripts/tests/migrations-p1-pcs-contract.sh
-          bash scripts/tests/migrations-p1-security-cron-contract.sh
-          bash scripts/tests/migrations-p1-admission-esocial-claim.sh
-          bash scripts/tests/migrations-p1-payroll-audit-read-contract.sh
-          bash scripts/tests/migrations-p1-audit-action-contract.sh
-          bash scripts/tests/migrations-p1-idempotency-monitoring-contract.sh
-          bash scripts/tests/migrations-p1-company-payroll-tax-contract.sh
-          bash scripts/tests/migrations-p1-tenant-telemetry-contract.sh
-          bash scripts/tests/migrations-p1-report-dispatch-idempotency.sh
-          bash scripts/tests/migrations-p0-holerite-espelho.sh
+          # W46: descoberta automática — elimina lista hardcoded (D27)
+          for script in $(find scripts/tests -name 'migrations-p*.sh' | sort); do
+            echo "▶ $script"
+            bash "$script"
+          done
       - name: Resumo das migrações P0/P1 (GITHUB_STEP_SUMMARY)
         if: always()
         run: |

@@ -229,7 +229,7 @@ describe('useFaltasColaborador', () => {
   });
 
   it('is disabled when no colaboradorId', () => {
-    const { result } = renderHook(() => useFaltasColaborador(''), { wrapper });
+    renderHook(() => useFaltasColaborador(''), { wrapper });
     expect(mockListarFaltasColaborador).not.toHaveBeenCalled();
   });
 });
