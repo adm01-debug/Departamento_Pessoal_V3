@@ -1,9 +1,9 @@
 # Revisão da Implementação — Plano 100 Workflows
 
 **Data:** 15/10/2026
-**Wave:** 0 (PR #231, merged 14/10) + Wave 1 (concluída) + Wave 2 (15/10)
+**Wave:** 0 (PR #231, merged 14/10) + Wave 1 (concluída) + Wave 2 (15/10) + Wave 3 (15/10)
 **Branch:** `claude/happy-cori-3z9h7f`
-**Score estimado:** 5.5/10 (era 4.5/10 pós Wave 1)
+**Score estimado:** 6.5/10 (era 5.5/10 pós Wave 2)
 
 ## Wave 0 — Concluído (PR #231, merged 14/10/2026)
 
@@ -63,6 +63,26 @@
 - canonical-migrations.yml não vai quebrar em futuras ondas com versões diferentes
 - Contract test sobe para 12/12 (detectou e validou fix do W86)
 
+## Wave 3 — Concluído (branch claude/happy-cori-3z9h7f, 15/10/2026)
+
+| Código | Descrição                                                                                                               | Evidência    |
+| ------ | ----------------------------------------------------------------------------------------------------------------------- | ------------ |
+| W12    | Ruleset 21934736: 7 → 9 required checks via API (adicionados "Playwright público (PR)" e "Build")                       | API call     |
+| W13    | Proteção clássica de branch removida via API — ruleset é agora a única fonte de proteção (fix D2)                       | API call     |
+| W33    | sha_pinning_required=true via API — todas as actions precisam de SHA pin                                                | API call     |
+| W34    | allowed_actions=selected via API — allowlist (github_owned + verified + denoland, oven-sh, ossf, SonarSource, supabase) | API call     |
+| W17    | audit-required-checks.mjs: comparação live via GITHUB_TOKEN + detecção de divergência baseline↔ruleset vivo             | scripts edit |
+| W30    | validate-canonical-db-url.mjs + audit-canonical-project.mjs: CANONICAL_SUPABASE_REF env var com fallback                | scripts edit |
+
+**Impacto Wave 3:**
+
+- Ruleset forçado com SHA pinning — supply chain hardened
+- Allowlist de actions: GitHub owned + verified + 5 trusted vendors (sem ações arbitrárias de terceiros)
+- Proteção clássica removida — elimina conflito histórico (D2) com ruleset
+- audit-required-checks.mjs agora valida divergência ao vivo quando GITHUB_TOKEN disponível
+- Scripts de auditoria canonicalizados: aceitam var de ambiente para project ref (W30)
+- W85 ❌: secret_scanning_non_provider_patterns + validity_checks requerem GHAS — não disponível no plano atual
+
 ## Decisões Pendentes do Owner
 
 | Código | Decisão necessária                                               |
@@ -76,21 +96,24 @@
 | W63 💰 | Mailosaur (contratar ou remover specs de reset de senha)         |
 | W93 💰 | Notificação N8N/WhatsApp para main vermelha                      |
 
-## Score Atual: 5.5/10
+## Score Atual: 6.5/10
 
 **O que falta para 10/10 (autônomo):**
 
-- P0: W11→W12→W13 (ruleset update via API), W15 (db-integrity fail-closed), W18 (check identifiers)
-- P0 PII: W27→W28 (canonical-sql-diag PII protection), W25→W26 (secrets em environment)
-- Supply chain: W23→W24 (role ci_auditor), W33→W34 (SHA pinning policy)
-- CI cost: W45→W47 (sharding Postgres), W52 (build cache)
+- P0: W15 (db-integrity fail-closed), W18 (check identifiers)
+- P0 PII: W25→W26 (SUPABASE_DB_URL para environment Production)
+- Supply chain: W23→W24 (role ci_auditor DDL)
+- CI cost: W45→W47 (sharding Postgres)
 - Canonical: W67→W68→W70→W71→W73→W75→W76
 - E2E bloqueado por decisão do owner (W58)
+- W85 bloqueado por GHAS (plano pago)
 
-**Conquistado (Waves 0+1+2):**
+**Conquistado (Waves 0+1+2+3):**
 
-- W01 bun.lock, W02 lockfile gate, W09 dedup, W10 docs, W17 audit TODO,
-  W31 apps inventory, W35 SHA comments, W36 --no-lock, W38 node-version-file,
+- W01 bun.lock, W02 lockfile gate, W09 dedup, W10 docs, W12 ruleset API,
+  W13 classic prot removida, W17 live audit, W30 canonical env var,
+  W31 apps inventory, W33 SHA pinning policy, W34 actions allowlist,
+  W35 SHA comments, W36 --no-lock, W38 node-version-file,
   W40 lhci devDep, W41 pg-client pin, W42 dependabot limits, W45 npm cache,
   W49 concurrency SHA, W51 STEP_SUMMARY, W53 ratchet, W54 edge contract,
   W61 dispatch e2e, W65 timeout, W69 ledger dinâmico+sidecars, W77 concurrency,

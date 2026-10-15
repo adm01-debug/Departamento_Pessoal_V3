@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 
-export const CANONICAL_PROJECT_REF = 'frjbfeamybqsejlvmqbl';
+export const CANONICAL_PROJECT_REF = process.env.CANONICAL_SUPABASE_REF ?? 'frjbfeamybqsejlvmqbl';
 
 export function validateCanonicalDbUrl(raw) {
   if (!raw || typeof raw !== 'string') throw new Error('SUPABASE_DB_URL ausente');
