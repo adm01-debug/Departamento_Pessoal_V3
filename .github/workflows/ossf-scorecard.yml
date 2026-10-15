@@ -10,7 +10,12 @@ on:
     - cron: '15 7 * * 2' # terça 07:15 UTC — fora dos horários do Dependabot (seg/ter/qua 09:00) e do CodeQL (qui 06:47 UTC)
   workflow_dispatch:
 
-permissions: read-all
+# SonarCloud (C Security Rating, PR #238): "read-all" é amplo demais mesmo
+# como default top-level -- o job abaixo já declara as permissões mínimas
+# específicas que precisa (security-events/id-token/contents/actions), então
+# o default aqui só precisa cobrir "nada declarado" com o mínimo seguro.
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}

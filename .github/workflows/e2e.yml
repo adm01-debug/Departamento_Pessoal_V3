@@ -216,7 +216,7 @@ jobs:
           PROJECT_INPUT: ${{ inputs.project }}
         run: |
           if [ -n "${PROJECT_INPUT}" ] && [ "${PROJECT_INPUT}" != "all" ]; then
-            npx playwright test --project="${PROJECT_INPUT}"
+            ./node_modules/.bin/playwright test --project="${PROJECT_INPUT}"
           else
             npm run test:e2e
           fi
