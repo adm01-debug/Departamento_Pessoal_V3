@@ -67,17 +67,19 @@
 │   │   └── BRIDGE_PERFORMANCE.md # 10 gaps do bridge
 │   └── ...
 ├── .github/
-│   ├── workflows/                # GitHub Actions (11 workflows)
-│   │   ├── ci.yml                # CI principal (typecheck+lint+test+edge+security+migrations+db)
-│   │   ├── deploy.yml            # Deploy preview (Vercel via integração Git)
-│   │   ├── security.yml          # CodeQL + npm audit
-│   │   ├── e2e.yml               # Playwright E2E (public PR + authenticated main)
+│   ├── workflows/                # GitHub Actions (12 workflows)
+│   │   ├── ci.yml                # CI principal (12 jobs: typecheck, lint, testes, edge, segurança, migrations, banco, audit)
+│   │   ├── deploy.yml            # Build + bundle budget (deploy pela integração Git da Vercel)
+│   │   ├── security.yml          # CodeQL + npm audit de produção
+│   │   ├── e2e.yml               # Playwright E2E (público em PR + autenticado na main)
 │   │   ├── healthcheck.yml       # Healthcheck agendado a cada 6h
-│   │   ├── canonical-probes.yml  # Probes RV-01/02/03/04 no canônico
-│   │   ├── canonical-migrations.yml # Migrations no canônico (workflow_dispatch)
+│   │   ├── post-deploy-smoke.yml # healthcheck.sh após deploy de produção
+│   │   ├── canonical-probes.yml  # Probes RV-01/02/03/04 no canônico (diário)
+│   │   ├── canonical-migrations.yml # Migrations no canônico (validate/apply com hash)
 │   │   ├── canonical-edge-functions.yml # Deploy Edge Functions no canônico
-│   │   ├── db-tests.yml          # Testes PostgreSQL 17 isolados
-│   │   └── branch-protection.yml # CONGELADO — ver E01; não executar
+│   │   ├── canonical-sql-diag.yml # Diagnóstico SQL read-only no canônico
+│   │   ├── ruleset-sync.yml      # Compara ruleset vivo × baseline (semanal)
+│   │   └── workflow-lint.yml     # actionlint + shellcheck nos workflows
 │   └── dependabot.yml            # Dependabot: npm+docker+github-actions (semanal)
 ├── config/                       # Config filters
 ├── docker/                       # Dockerfiles auxiliares
@@ -89,22 +91,24 @@
 
 ### Pipelines CI/CD
 
-| Workflow                         | Gatilho                            | Ações                                                                                       |
-| -------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------- |
-| **ci.yml**                       | push/PR/workflow_dispatch          | typecheck, lint, test:coverage, deno check, security-config, migrations P0/P1, db-integrity |
-| **deploy.yml**                   | PR / workflow_dispatch             | Valida build (Vercel deploy via integração Git)                                             |
-| **security.yml**                 | push/PR/schedule/workflow_dispatch | CodeQL + npm audit                                                                          |
-| **e2e.yml**                      | push/PR                            | Playwright público (PR) + autenticado (main only)                                           |
-| **healthcheck.yml**              | schedule (*/6h)                    | Healthcheck de produção + abre issue se falhar                                              |
-| **canonical-probes.yml**         | workflow_dispatch                  | Probes RV-01–04 no canônico                                                                 |
-| **canonical-migrations.yml**     | workflow_dispatch                  | Migrations no canônico (dry-run ou apply)                                                   |
-| **canonical-edge-functions.yml** | workflow_dispatch                  | Deploy Edge Functions no canônico                                                           |
-| **db-tests.yml**                 | push/PR                            | Testes de migrations em Postgres 17 descartável                                             |
-| **branch-protection.yml**        | CONGELADO (if: false)              | E01 — não executar até E04+E07                                                              |
+| Workflow                         | Gatilho                                | Ações                                                                                                                                  |
+| -------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **ci.yml**                       | push/PR/workflow_dispatch              | 12 jobs: typecheck, lint, testes, edge, security-config, migrations P0, db-integrity (+live), npm audit, dependency-review, Lighthouse |
+| **deploy.yml**                   | PR / workflow_dispatch                 | Build + bundle budget (deploy pela integração Git da Vercel)                                                                           |
+| **security.yml**                 | push/PR/schedule/workflow_dispatch     | CodeQL + npm audit de produção                                                                                                         |
+| **e2e.yml**                      | push/PR/workflow_dispatch              | Playwright público (PR) + autenticado (main e dispatch)                                                                                |
+| **healthcheck.yml**              | schedule (*/6h)/workflow_dispatch      | Healthcheck de produção + abre issue se falhar                                                                                         |
+| **post-deploy-smoke.yml**        | deployment_status                      | `scripts/healthcheck.sh` contra o deploy de produção                                                                                   |
+| **canonical-probes.yml**         | schedule/workflow_call/dispatch        | Probes RV-01–04 no canônico                                                                                                            |
+| **canonical-migrations.yml**     | workflow_dispatch                      | Migrations no canônico (validate; apply exige validated_hash)                                                                          |
+| **canonical-edge-functions.yml** | push (functions, config.toml)/dispatch | Deploy Edge Functions no canônico                                                                                                      |
+| **canonical-sql-diag.yml**       | workflow_dispatch                      | Diagnóstico SQL read-only no canônico                                                                                                  |
+| **ruleset-sync.yml**             | schedule/workflow_dispatch             | Compara o ruleset vivo com `infra/github/ruleset-main.json` (`--full`)                                                                 |
+| **workflow-lint.yml**            | PR (.github/**)/workflow_dispatch      | actionlint + shellcheck                                                                                                                |
 
 **Regras do merge (E09 — via API 27/09/2026):** squash-only, delete branch on merge, allow update branch.
 
-**Ruleset main (ID 21934736):** 7 required_status_checks — baseline em `infra/github/ruleset-main.json`.
+**Ruleset main (ID 21934736):** 10 required_status_checks, 0 aprovações + code owner em caminhos sensíveis — baseline em `infra/github/ruleset-main.json` (validado por `ruleset-sync`).
 
 ### Segurança do Bridge (external-db-bridge)
 
@@ -429,7 +433,7 @@ POST-only gateway (32KB file, 729 lines)
 ### Status dos Workflows
 
 ```
-CI (ci.yml)              → 7 jobs, todos com timeout; label ci-main (D22 fix) ✅
+CI (ci.yml)              → 12 jobs, todos com timeout; label ci-main (D22 fix) ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
 Deploy (deploy.yml)      → Vercel (integração Git), npm ci, dist artifact + bundle audit ✅
 E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, npm ci ✅
@@ -441,10 +445,10 @@ canonical-migrations.yml → ledger dinâmico W69 + sidecars .verify.sql ✅
 canonical-sql-diag.yml   → novo (diagnóstico SQL) — 12 workflows no total ✅
 workflow-lint.yml        → actionlint via $GOPATH/bin publicado em $GITHUB_PATH + shellcheck limpo ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
-Branch ruleset           → 9 required checks (W12), baseline em infra/github/ ✅
+Branch ruleset           → 10 required checks (inclui Revisão de dependências), baseline em infra/github/ ✅
 Aprovação de PR (W14)    → 0 aprovações; code owner só em caminhos sensíveis (.github/CODEOWNERS) ✅
 Branch protection (main) → clássica removida (W13); ruleset único; sha_pinning (W33) ✅
-Actions allowlist        → selected (W34): github_owned + verified + 5 patterns ✅
+Actions allowlist        → selected: github_owned + verified + denoland/*, supabase/* ✅
 audit-required-checks    → W17 live API check quando GITHUB_TOKEN disponível ✅
 scripts canonicais       → W30 CANONICAL_SUPABASE_REF env var com fallback ✅
 Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
@@ -452,31 +456,31 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 
 ### Métricas (15/10/2026)
 
-| Indicador              | Valor                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------- |
-| Open PRs               | Wave 0+2 em review (claude/happy-cori-3z9h7f)                                               |
-| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                            |
-| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                     |
-| Cobertura              | ✅ v8 configurada                                                                           |
-| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                   |
-| Branch delete          | ✅ delete_branch_on_merge=true                                                              |
-| Ruleset                | ✅ 21934736 — 9 required checks (W12) — baseline em infra/github/                           |
-| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`        |
-| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                     |
-| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                               |
-| Actions allowlist      | ✅ selected (W34): github_owned + verified + denoland, oven-sh, ossf, SonarSource, supabase |
-| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                     |
-| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                    |
-| E2E secrets            | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl      |
-| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido            |
-| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                        |
-| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                |
-| contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                    |
-| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                   |
-| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows               |
-| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)              |
-| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)                |
-| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)               |
+| Indicador              | Valor                                                                                    |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner mergeadas na main (PR #233, 15/10/2026)                 |
+| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                         |
+| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                  |
+| Cobertura              | ✅ v8 configurada                                                                        |
+| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                |
+| Branch delete          | ✅ delete_branch_on_merge=true                                                           |
+| Ruleset                | ✅ 21934736 — 10 required checks — baseline em infra/github/                             |
+| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`     |
+| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                  |
+| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                            |
+| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\* (sem oven-sh/ossf/Sonar) |
+| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                  |
+| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                 |
+| E2E secrets            | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)  |
+| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido         |
+| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                     |
+| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                             |
+| contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                 |
+| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                |
+| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows            |
+| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)           |
+| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)             |
+| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)            |
 
 ---
 
@@ -515,19 +519,17 @@ _Nenhum crítico bloqueante no momento._
 
 ### Médios
 
-| Gap                       | Impacto                              | Solução                                                                             |
-| ------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
-| Usuários E2E inexistentes | E2E autenticado falha em produção    | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
-| npx -y no Lighthouse step | Supply chain — pendente W40          | Migrar `npx -y @lhci/cli@0.14.0` para dependência lockada (W40)                     |
-| node-version: literal     | Deriva de versão Node — pendente W38 | Migrar para `node-version-file: .nvmrc` (W38)                                       |
+| Gap                     | Impacto                                     | Solução                                                                            |
+| ----------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| SUPABASE_DB_URL no repo | Workflows de qualquer branch leem o segredo | Owner: copiar para o environment Production e apagar o secret do repositório (W25) |
 
 ### Baixos
 
-| Gap                                | Impacto              | Solução                          |
-| ---------------------------------- | -------------------- | -------------------------------- |
-| `--no-lock` em canonical-sql-diag  | Bypassa deno.lock    | Resolver após W36 corrigir lock  |
-| `noUnusedLocals:true` pode alertar | Warnings no build    | Aceitar ou limpar                |
-| CodeQL unused-local (99 restantes) | Ruído no painel GHAS | Fechar em batch via W82 contínuo |
+| Gap                                  | Impacto              | Solução                          |
+| ------------------------------------ | -------------------- | -------------------------------- |
+| `--no-lock` no `deno test` do ci.yml | Bypassa deno.lock    | Resolver após W36 corrigir lock  |
+| `noUnusedLocals:true` pode alertar   | Warnings no build    | Aceitar ou limpar                |
+| CodeQL unused-local (99 restantes)   | Ruído no painel GHAS | Fechar em batch via W82 contínuo |
 
 ---
 
@@ -535,16 +537,14 @@ _Nenhum crítico bloqueante no momento._
 
 ### Imediatos (ação manual obrigatória)
 
-1. **Criar usuários E2E** em frjbfeamybqsejlvmqbl.supabase.co/auth: `admin@teste.local / Admin@2026!` e `user@teste.local / User@2026!`
-2. **Merge PR** `claude/happy-cori-3z9h7f` (Wave 0 — W01/W35/W53/W54/W82/W95/W96/W97/W98/W94)
+1. **W25:** mover `SUPABASE_DB_URL` para o environment Production e apagar o secret do repositório (o valor não é legível via API).
 
 ### Curto Prazo
 
-1. Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth (admin@teste.local + user@teste.local)
-2. Revisar Bridge runbook (`infra/runbooks/BRIDGE_PERFORMANCE.md`)
-3. Adicionar query timeout no external-db-bridge (AbortController)
-4. Implementar keyset pagination para tabelas >100K registros
-5. Adicionar Content Security Policy headers no nginx
+1. Revisar Bridge runbook (`infra/runbooks/BRIDGE_PERFORMANCE.md`)
+2. Adicionar query timeout no external-db-bridge (AbortController)
+3. Implementar keyset pagination para tabelas >100K registros
+4. Adicionar Content Security Policy headers no nginx
 
 ### Médio Prazo
 
