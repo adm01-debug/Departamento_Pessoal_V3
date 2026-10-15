@@ -1,9 +1,16 @@
 name: Canonical Supabase — Edge Functions
 
 on:
+  # W75: auto-deploy ao fazer merge em main quando funções mudam
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
   workflow_dispatch:
     inputs:
       confirm_project_ref:
+        # W76: obrigatório no dispatch manual para evitar alvo acidental;
+        # no push em main o input é ignorado pelo GitHub Actions (não existe).
         description: Digite o project ref canônico para evitar alvo acidental
         required: true
         type: string
@@ -41,10 +48,14 @@ jobs:
       - name: Validar alvo e autorização sem revelar segredo
         run: |
           set -euo pipefail
-          test "$CONFIRM_PROJECT_REF" = "$CANONICAL_REF" || {
-            echo '::error::Project ref de confirmação não corresponde ao canônico.'
-            exit 1
-          }
+          # W76: no push em main a branch protegida já é a garantia; no
+          # workflow_dispatch o operador confirma o ref manualmente.
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            test "$CONFIRM_PROJECT_REF" = "$CANONICAL_REF" || {
+              echo '::error::Project ref de confirmação não corresponde ao canônico.'
+              exit 1
+            }
+          fi
           test -n "$SUPABASE_ACCESS_TOKEN" || {
             echo '::error::SUPABASE_ACCESS_TOKEN ausente no environment production.'
             exit 1

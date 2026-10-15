@@ -1,0 +1,43 @@
+name: Workflow lint (actionlint)
+
+# W86: valida sintaxe e segurança de todos os workflows GitHub Actions.
+# Roda em PRs que tocam .github/** e em workflow_dispatch.
+# Usa rhysd/actionlint para detectar erros de sintaxe, contextos inválidos,
+# expressões mal formadas e problemas de shell dentro dos run: blocks.
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    name: Lint de workflows (actionlint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Instalar actionlint v1.7.7
+        run: |
+          set -euo pipefail
+          # go install verifica o hash do módulo contra sum.golang.org —
+          # supply chain segura sem precisar de uma action de terceiro.
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+          actionlint --version
+
+      - name: Executar actionlint em todos os workflows
+        run: |
+          set -euo pipefail
+          ./actionlint -color .github/workflows/*.yml
+          echo "WORKFLOW_LINT_OK"
