@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 14/10/2026
+> Última atualização: 15/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -352,6 +352,38 @@ POST-only gateway (32KB file, 729 lines)
 📚 W94 — CLAUDE.md: 11 workflows (era 10), sessão 6, gaps e métricas atualizados.
 ```
 
+### Sessão 7 — 15/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 2 — W69/W86/W87)
+
+#### O que foi feito:
+
+```
+🔧 W86-fix — workflow-lint.yml: corrigir ./actionlint → actionlint (PATH)
+│   go install coloca o binário em ~/go/bin (no PATH), não em ./
+│   O ./ causava "command not found" em todo run do workflow.
+
+📦 W87 — deploy.yml: artefato dist/ + auditoria de bundle
+│   Publicar dist/ como artifact (upload-artifact v7, retention 7 dias)
+│   após o build para reuso downstream (Lighthouse, auditoria).
+│   Executar node scripts/check-bundle-budget.mjs para bloquear merge
+│   se orçamento de bundle for excedido.
+│   SHA 043fb46d já presente em action-pins.json → contrato check-6 passa.
+
+🔑 W69 — canonical-migrations.yml: ledger genérico + sidecars .verify.sql
+│   Substituiu ledger_count hardcoded (6 versões fixas de ondas 3b/4) por
+│   verificação dinâmica: itera os arquivos do stage, monta lista de versões,
+│   confirma count no supabase_migrations.schema_migrations.
+│   Adiciona runner de sidecars: se existir <versão>.verify.sql no repo,
+│   executa via psql após as invariantes acumuladas.
+│   Marcadores: CANONICAL_LEDGER_OK, CANONICAL_SCHEMA_INVARIANTS_OK,
+│   CANONICAL_SCOPED_MIGRATIONS_OK.
+
+✅ Contratos: 12/12 workflows, 0 falhas (W97 — detectou workflow-lint.yml fix).
+
+📚 W94 — CLAUDE.md: sessão 7, métricas e status atualizados.
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -361,23 +393,25 @@ POST-only gateway (32KB file, 729 lines)
 ```
 CI (ci.yml)              → 7 jobs, todos com timeout; label ci-main (D22 fix) ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
-Deploy (deploy.yml)      → Vercel (integração Git), bun-version: 1.4.2 ✅
+Deploy (deploy.yml)      → Vercel (integração Git), bun-version: 1.4.2, dist artifact + bundle audit ✅
 E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.4.2 ✅
 SonarCloud               → ✅ Automatic Analysis (GitHub App) — job CI removido (PR #162)
 Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
-canonical-sql-diag.yml   → novo (diagnóstico SQL) — 11 workflows no total ✅
+canonical-migrations.yml → ledger dinâmico W69 + sidecars .verify.sql ✅
+canonical-sql-diag.yml   → novo (diagnóstico SQL) — 12 workflows no total ✅
+workflow-lint.yml        → actionlint no PATH (W86 bug fix) ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
 Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
 Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
-Contract test            → 11/11 workflows, 0 falhas (W97 — 11 contratos) ✅
+Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
 ```
 
-### Métricas (14/10/2026)
+### Métricas (15/10/2026)
 
 | Indicador              | Valor                                                                                  |
 | ---------------------- | -------------------------------------------------------------------------------------- |
-| Open PRs               | Wave 0 em review (claude/happy-cori-3z9h7f)                                            |
+| Open PRs               | Wave 0+2 em review (claude/happy-cori-3z9h7f)                                          |
 | TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                       |
 | Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                |
 | Cobertura              | ✅ v8 configurada                                                                      |
@@ -392,7 +426,10 @@ Contract test            → 11/11 workflows, 0 falhas (W97 — 11 contratos) �
 | bun.lock               | ✅ lockfileVersion:3 (Bun 1.4.2) — frozen-lockfile verde (W01, sessão 6)               |
 | fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                   |
 | CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                           |
-| contract test          | ✅ 11/11 workflows, 0 falhas (W97 — 11 contratos ativos)                               |
+| contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                               |
+| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json              |
+| actionlint path        | ✅ ./actionlint → actionlint corrigido (W86); CI workflow-lint funcional               |
+| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)         |
 
 ---
 
