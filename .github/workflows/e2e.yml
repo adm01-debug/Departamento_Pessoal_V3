@@ -31,7 +31,12 @@ concurrency:
 jobs:
   playwright-public:
     name: Playwright público (PR)
-    if: github.event_name == 'pull_request'
+    # Codex review (P2, PR #238): workflow_dispatch com project=public/all
+    # agora realmente roda a suíte pública — antes o input era decorativo.
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.project == 'public' || inputs.project == 'all'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -100,7 +105,11 @@ jobs:
     # projeto canônico. Não expor suas credenciais a código de pull request.
     # O gate autenticado roda no SHA já integrado em main.
     # W65: workflow_dispatch também roda este job (credentials disponíveis).
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    # Codex review (P2, PR #238): dispatch com project=public não precisa
+    # deste job (sem secrets) — ver playwright-public acima.
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.project != 'public')
     runs-on: ubuntu-latest
     # W65: timeout reduzido de 30 para 20 min (suite atual termina em ~12 min).
     # Sharding (matrix: shard [1,2]) foi avaliado mas descartado: auth state
@@ -129,6 +138,20 @@ jobs:
       CI_BRANCH: ${{ github.ref_name }}
 
     steps:
+      # Codex review (P1, PR #238): um ref arbitrário digitado no dispatch
+      # rodaria código não revisado com as 4 credenciais de escrita do
+      # canônico. Só 'main' ou vazio (default = SHA do evento, sempre main
+      # neste job) são aceitos -- validado ANTES do checkout, então nada do
+      # ref rejeitado chega a ser baixado. Para testar branch não mergeada,
+      # usar a suíte pública (sem secrets).
+      - name: Validar ref de dispatch (restrito a main)
+        if: github.event_name == 'workflow_dispatch' && inputs.ref != '' && inputs.ref != 'main'
+        env:
+          REF_INPUT: ${{ inputs.ref }}
+        run: |
+          echo "::error::ref='${REF_INPUT}' não é permitido no job autenticado (credenciais de escrita). Use 'main', vazio, ou a suíte pública (project=public) para branches não mergeadas."
+          exit 1
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
@@ -186,7 +209,17 @@ jobs:
         run: ./node_modules/.bin/playwright install-deps chromium
 
       - name: Run Playwright E2E
-        run: npm run test:e2e
+        # Codex review (P2, PR #238): project input agora seleciona o
+        # projeto de verdade em dispatch; push na main continua rodando a
+        # suíte completa (PROJECT_INPUT vazio nesse evento).
+        env:
+          PROJECT_INPUT: ${{ inputs.project }}
+        run: |
+          if [ -n "${PROJECT_INPUT}" ] && [ "${PROJECT_INPUT}" != "all" ]; then
+            npx playwright test --project="${PROJECT_INPUT}"
+          else
+            npm run test:e2e
+          fi
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
