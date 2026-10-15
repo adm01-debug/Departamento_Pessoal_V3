@@ -442,7 +442,7 @@ canonical-sql-diag.yml   → novo (diagnóstico SQL) — 12 workflows no total �
 workflow-lint.yml        → actionlint no PATH (W86 bug fix) ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
 Branch ruleset           → 9 required checks (W12), baseline em infra/github/ ✅
-Aprovação de PR (W14)    → ruleset: 0 aprovações + code owner; CODEOWNERS ainda com "*" (estreitamento pendente) 🟡
+Aprovação de PR (W14)    → 0 aprovações; code owner só em caminhos sensíveis (.github/CODEOWNERS) ✅
 Branch protection (main) → clássica removida (W13); ruleset único; sha_pinning (W33) ✅
 Actions allowlist        → selected (W34): github_owned + verified + 5 patterns ✅
 audit-required-checks    → W17 live API check quando GITHUB_TOKEN disponível ✅
@@ -461,7 +461,7 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 | Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                   |
 | Branch delete          | ✅ delete_branch_on_merge=true                                                              |
 | Ruleset                | ✅ 21934736 — 9 required checks (W12) — baseline em infra/github/                           |
-| Aprovação de PR        | 🟡 ruleset 0 aprovações + code owner (W14); CODEOWNERS com `*` até o owner estreitá-lo      |
+| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`        |
 | Workflows com timeout  | ✅ 100% (todos os jobs)                                                                     |
 | supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                               |
 | Actions allowlist      | ✅ selected (W34): github_owned + verified + denoland, oven-sh, ossf, SonarSource, supabase |

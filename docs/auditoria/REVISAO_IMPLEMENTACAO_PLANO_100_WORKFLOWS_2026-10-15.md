@@ -85,10 +85,10 @@
 
 ## Decisões do Owner — Resolvidas
 
-| Código | Decisão                                                                                                                   |
-| ------ | ------------------------------------------------------------------------------------------------------------------------- |
-| W03 ✅ | **npm único.** bun.lock removido; `npm ci` em CI/E2E/deploy/Docker; gate `lockfile-single` em security-config             |
-| W14 🟡 | **0 aprovações + code owner em caminhos sensíveis.** Ruleset aplicado; CODEOWNERS estreito pendente de liberação do owner |
+| Código | Decisão                                                                                                                       |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| W03 ✅ | **npm único.** bun.lock removido; `npm ci` em CI/E2E/deploy/Docker; gate `lockfile-single` em security-config                 |
+| W14 ✅ | **0 aprovações + code owner em caminhos sensíveis.** Ruleset aplicado; CODEOWNERS estreito commitado com autorização do owner |
 
 **W03 — evidência:** `package-lock.json` estava sem `@lhci/cli` e ~260 dependências transitivas (só no `bun.lock`) — drift D1 ativo. Regenerado; `npm ci` limpo (966 pacotes); typecheck, lint:ci, build e bundle budget verdes. Dockerfiles corrigidos de `node:26` para `node:22` (alinhado a `engines` + `engine-strict`) e passaram a usar o lockfile. Pós-merge: remover `oven-sh/*` da allowlist de actions (W34) — não é mais usado.
 
