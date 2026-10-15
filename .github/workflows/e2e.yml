@@ -53,6 +53,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # Codex review (P2, PR #238): dispatch com project=public e um ref
+          # customizado testava a branch certa pelo input, mas o checkout
+          # deste job ignorava `inputs.ref` e sempre baixava o SHA do evento
+          # -- testando silenciosamente a branch errada. Sem secrets neste
+          # job, usar qualquer ref é seguro (ao contrário do job autenticado).
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Validate public E2E configuration
         run: |
@@ -144,12 +150,24 @@ jobs:
       # neste job) são aceitos -- validado ANTES do checkout, então nada do
       # ref rejeitado chega a ser baixado. Para testar branch não mergeada,
       # usar a suíte pública (sem secrets).
+      #
+      # Codex review (P1, PR #238, 2ª rodada): a checagem original só olhava
+      # `inputs.ref` (o campo de texto customizado). Quem disparasse o
+      # workflow_dispatch pelo seletor de branch NATIVO do GitHub (não pelo
+      # input de texto) escolhia uma branch não-main em `github.ref` e deixava
+      # `inputs.ref` vazio -- o guard antigo não disparava (inputs.ref == '')
+      # e o checkout abaixo usaria `github.sha` dessa branch arbitrária com as
+      # credenciais de escrita. Agora também exigimos `github.ref ==
+      # 'refs/heads/main'`, cobrindo os dois vetores (seletor nativo e input).
       - name: Validar ref de dispatch (restrito a main)
-        if: github.event_name == 'workflow_dispatch' && inputs.ref != '' && inputs.ref != 'main'
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          (github.ref != 'refs/heads/main' || (inputs.ref != '' && inputs.ref != 'main'))
         env:
           REF_INPUT: ${{ inputs.ref }}
+          DISPATCH_REF: ${{ github.ref }}
         run: |
-          echo "::error::ref='${REF_INPUT}' não é permitido no job autenticado (credenciais de escrita). Use 'main', vazio, ou a suíte pública (project=public) para branches não mergeadas."
+          echo "::error::Dispatch restrito a main: github.ref='${DISPATCH_REF}' (deve ser refs/heads/main, independente do seletor de branch usado) e ref='${REF_INPUT}' (deve ser 'main' ou vazio). Credenciais de escrita do canônico não podem rodar código de outra branch. Use a suíte pública (project=public) para branches não mergeadas."
           exit 1
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

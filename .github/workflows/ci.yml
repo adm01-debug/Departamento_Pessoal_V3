@@ -37,9 +37,19 @@ jobs:
       migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
-      # Sem checkout: modo via API do GitHub (token) evita depender da
-      # profundidade do fetch para calcular o diff — checkout raso (padrão)
-      # não teria o commit base disponível localmente.
+      # Codex review (P1, PR #238): o modo via API do GitHub (token) resolve
+      # o diff de pull_request contra a API (base/head do PR), mas push e
+      # workflow_dispatch não têm um PR para comparar -- sem checkout local,
+      # o paths-filter não tinha como calcular `git diff` contra
+      # `github.event.before`, e o job ERRARIA em todo push/dispatch na main,
+      # derrubando em cascata o check obrigatório "Edge Functions" via
+      # `needs: changes`. fetch-depth: 0 garante histórico completo para o
+      # diff funcionar nos três eventos (pull_request, push, workflow_dispatch).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter
         with:
