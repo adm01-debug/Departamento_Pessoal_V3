@@ -67,6 +67,12 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          # W91a: injeta <meta name="build-sha"> (vite.config.ts) para o
+          # healthcheck comparar o deploy publicado com o commit esperado.
+          # Este build é só a validação/orçamento de bundle do PR — o build
+          # de produção real roda na Vercel via integração Git, que expõe
+          # VERCEL_GIT_COMMIT_SHA automaticamente (ver vite.config.ts).
+          VITE_GIT_SHA: ${{ github.sha }}
 
       - name: Publicar artefato dist/
         # W87: salva o bundle como artifact para reuso (Lighthouse, auditoria).
