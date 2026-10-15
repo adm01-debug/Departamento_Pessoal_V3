@@ -1,15 +1,18 @@
 {
   "_comment": "Tabela offline: SHA → versão esperada no comentário '# vX'. Manter sincronizado com os workflows.",
-  "_updated": "2026-10-14",
+  "_updated": "2026-10-15",
   "pins": {
     "3d3c42e5aac5ba805825da76410c181273ba90b1": { "action": "actions/checkout", "version": "v7" },
     "820762786026740c76f36085b0efc47a31fe5020": { "action": "actions/setup-node", "version": "v7" },
     "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a": { "action": "actions/upload-artifact", "version": "v7" },
+    "ea165f8d65b6e75b540449e92b4886f43607fa02": { "action": "actions/upload-artifact", "version": "v4.6.2" },
     "55cc8345863c7cc4c66a329aec7e433d2d1c52a9": { "action": "actions/cache", "version": "v6" },
     "22d081ff2d3a40755e97629de92e3bcbfa7cf2ed": { "action": "denoland/setup-deno", "version": "v2.0.5" },
+    "e4831cb7f16ea8a030b21f86011cbaf44e7c6a06": { "action": "denoland/setup-deno", "version": "v1.1.4" },
     "2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2": { "action": "github/codeql-action/*", "version": "v4.38.2" },
     "0c5077e51419868618aeaa5fe8019c62421857d6": { "action": "oven-sh/setup-bun", "version": "v2" },
     "45a513f8c64c0bc8e0e3dfe572b5c95be85f6359": { "action": "supabase/setup-cli", "version": "v3.0.1" },
-    "4081bf99e2866ebe428fc0477b69eb4fcda7220a": { "action": "actions/dependency-review-action", "version": "v4.6.0" }
+    "4081bf99e2866ebe428fc0477b69eb4fcda7220a": { "action": "actions/dependency-review-action", "version": "v4.6.0" },
+    "62b2cac7ed8198b15735ed49ab1e5cf35480ba46": { "action": "ossf/scorecard-action", "version": "v2.4.2" }
   }
 }

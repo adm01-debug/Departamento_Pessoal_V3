@@ -234,9 +234,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+      - uses: denoland/setup-deno@e4831cb7f16ea8a030b21f86011cbaf44e7c6a06 # v1.1.4
         with:
-          deno-version: v2.x
+          deno-version: '1.46.3' # Supabase Edge Runtime — revisão: 2026-10-15
       - name: Type-check de todas as Edge Functions (gate bloqueante)
         # E40: fonte única — scripts/typecheck-edge.sh checa o bridge com zero
         # tolerância e depois faz o loop em todas as funções, listando todo o
