@@ -341,6 +341,13 @@ jobs:
           bash scripts/tests/migrations-p1-tenant-telemetry-contract.sh
           bash scripts/tests/migrations-p1-report-dispatch-idempotency.sh
           bash scripts/tests/migrations-p0-holerite-espelho.sh
+      - name: Resumo das migrações P0/P1 (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          echo "## p0-database-migrations" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| p0-migrations | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
@@ -424,3 +431,53 @@ jobs:
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
         # duplicadas, que reintroduzem a ambiguidade de relacionamento.
         run: node scripts/audit-embed-hints.mjs
+      - name: Resumo da integridade do banco (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          echo "## db-integrity" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| db-integrity | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+
+  npm-audit:
+    name: npm audit (produção, sem devDeps)
+    # W83: gate bloqueante — impede merge se houver vulnerabilidade high/critical
+    # em dependências de produção (--omit=dev).
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install (sem scripts)
+        run: npm ci --ignore-scripts
+      - name: Audit produção (bloqueante)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Audit dev deps (informativo)
+        # W83: informativo — não quebra o CI, mas mostra vulnerabilidades em devDeps
+        # contrato: continue-on-error usado para fins informativos; não oculta vulns prod
+        continue-on-error: true
+        run: npm audit --audit-level=critical
+
+  dependency-review:
+    name: Revisão de dependências (PR)
+    # W84: bloqueia PRs que introduzem vulnerabilidades high/critical ou
+    # licenças copyleft nas dependências.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/dependency-review-action@4081bf99e2866ebe428fc0477b69eb4fcda7220a # v4.6.0
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0

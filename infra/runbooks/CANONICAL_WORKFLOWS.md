@@ -1,137 +1,183 @@
-# Runbook — Workflows Canônicos
+# Canonical Workflows — Runbook
 
-> Audiência: engenheiro de plantão, arquiteto de segurança  
-> Escopo: workflows `canonical-*` e `db-tests.yml` que tocam o projeto Supabase canônico (`frjbfeamybqsejlvmqbl`)
+> Última revisão: 15/10/2026
 
----
+## Visão Geral
 
-## 1. Mapa dos workflows
+5 workflows operam diretamente contra o banco de dados canônico de produção
+(`frjbfeamybqsejlvmqbl`). Os três workflows com acesso direto ao PostgreSQL
+compartilham o grupo de concorrência `canonical-database`
+(cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL
+e probes simultâneas contra o mesmo banco.
 
-| Workflow | Gatilho | Alvo | Impacto em produção |
-|----------|---------|------|---------------------|
-| `canonical-edge-functions.yml` | `workflow_dispatch` (confirm ref) | Supabase Cloud — deploy de Edge Functions | **SIM** — substitui código em produção |
-| `canonical-migrations.yml` | `workflow_dispatch` (mode: validate\|apply) | Supabase Cloud — DDL direto no banco canônico | **SIM (apply)** / não (validate) |
-| `canonical-probes.yml` | `workflow_dispatch` | Supabase Cloud — probes de segurança read-only | não |
-| `db-tests.yml` | push/PR em paths `supabase/migrations/2026*_plano100_*.sql` | PostgreSQL descartável (Docker) | não |
-
----
-
-## 2. Pré-condições para dispatch manual
-
-### Ambos os workflows canônicos exigem:
-1. **`SUPABASE_ACCESS_TOKEN`** — secret no environment `production` (não em repository secrets).  
-2. **`confirm_project_ref`** — o operador digita `frjbfeamybqsejlvmqbl` no campo do `workflow_dispatch` para evitar alvo acidental.  
-3. Execução no environment **`production`** — requer aprovação de um reviewer configurado em Settings → Environments → production.
-
-### `canonical-migrations.yml` também exige:
-- **`SUPABASE_DB_URL`** — secret de repository (URL administrativa do Postgres canônico, com role `postgres`).
-- `mode = validate` para dry-run (ROLLBACK automático); `mode = apply` para efetivar.
+| Workflow                       | Trigger           | Acesso                | Concorrência               |
+| ------------------------------ | ----------------- | --------------------- | -------------------------- |
+| `canonical-migrations.yml`     | workflow_dispatch | postgres (migrations) | `canonical-database`       |
+| `canonical-probes.yml`         | workflow_dispatch | postgres (read-only)  | `canonical-database`       |
+| `canonical-sql-diag.yml`       | workflow_dispatch | postgres (read-only)  | `canonical-database`       |
+| `canonical-edge-functions.yml` | workflow_dispatch | Supabase Edge Runtime | `canonical-edge-functions` |
 
 ---
 
-## 3. Como disparar `canonical-edge-functions.yml`
+## Pré-requisitos
+
+- Secret `SUPABASE_DB_URL` configurado no environment `production`
+  (URL administrativa do Postgres canônico, role `postgres`).
+- Secret `SUPABASE_ACCESS_TOKEN` configurado no environment `production`
+  (usado pelo `canonical-edge-functions.yml`).
+- Reviewer obrigatório no environment `production`
+  (W26 — a configurar via API; ver `infra/github/`).
+- `confirm_project_ref = frjbfeamybqsejlvmqbl` obrigatório em todas as execuções
+  como defesa contra alvo acidental.
+
+---
+
+## canonical-migrations.yml
+
+Aplica migrações no banco canônico. **NUNCA rodar sem validação prévia.**
+
+**Modos:**
+
+- `validate` (default): simula o SQL em transação com ROLLBACK — sem efeito real.
+- `apply`: aplica migrações e registra no ledger `supabase_migrations.schema_migrations`
+  — **irreversível**. Só pode ser disparado a partir da branch `main`.
+
+**Uso:**
+
+1. Actions → "Canonical database — scoped migrations" → Run workflow
+2. Preencher `confirm_project_ref` = `frjbfeamybqsejlvmqbl`
+3. Escolher modo: `validate` primeiro, `apply` depois
+4. Verificar logs — qualquer erro aborta com `ON_ERROR_STOP=1`
+
+**Critério de sucesso (apply):** log termina com `CANONICAL_SCOPED_MIGRATIONS_OK`.
 
 ```bash
-# Via GitHub CLI
-gh workflow run canonical-edge-functions.yml \
-  -f confirm_project_ref=frjbfeamybqsejlvmqbl
-```
-
-O workflow:
-1. Faz `deno check` em todos os `index.ts` (gate bloqueante).  
-2. Executa `supabase functions deploy --use-api --jobs 4` (sem `--prune`).  
-3. Confirma que todos os slugs locais aparecem no inventário remoto.
-
-**Critério de sucesso:** log termina com `CANONICAL_EDGE_DEPLOY_OK local=N remote=M` onde `N ≤ M`.
-
----
-
-## 4. Como disparar `canonical-migrations.yml`
-
-### Dry-run (sempre antes do apply):
-```bash
+# Dry-run via CLI
 gh workflow run canonical-migrations.yml \
   -f mode=validate \
   -f confirm_project_ref=frjbfeamybqsejlvmqbl
-```
 
-### Apply (requer APROVADO explícito do responsável):
-```bash
+# Apply (requer aprovação no environment production)
 gh workflow run canonical-migrations.yml \
   -f mode=apply \
   -f confirm_project_ref=frjbfeamybqsejlvmqbl
 ```
 
-**Critério de sucesso (apply):** log termina com `CANONICAL_SCOPED_MIGRATIONS_OK`.
-
-> ⚠️ **Nunca** pule o `validate` antes do `apply`. O workflow não impede, mas o dry-run revelará conflitos sem custo de rollback manual.
+**Atualizar a lista de migrações:** edite o loop no step "Preparar somente as
+migrações aprovadas". Cada dispatch cobre **somente** as migrações novas do lote —
+não re-liste versões já registradas no ledger, pois `CREATE POLICY` não é
+idempotente e causará `policy already exists`.
 
 ---
 
-## 5. Como disparar `canonical-probes.yml`
+## canonical-probes.yml
+
+Roda probes de segurança RV-01/02/03/04 em transações READ ONLY com ROLLBACK.
+Nenhuma escrita é possível.
+
+**O que verifica:**
+
+| Probe    | Invariante                                                    | Saída esperada   |
+| -------- | ------------------------------------------------------------- | ---------------- |
+| `rv01`   | `user_empresa_id()` ignora `user_metadata` forjado            | `NULL`           |
+| `rv02`   | `medidas_ciencia_tokens` sem ACL/policy exposta               | `t`              |
+| `rv03`   | Zero policies permissivas (`USING true`) nas tabelas críticas | `0`              |
+| `rv04`   | RPCs de vínculo/autorização existem                           | `t`              |
+| `views`  | Views de PII ilegíveis para `anon`                            | `t`              |
+| `ledger` | Contagem de migrações no ledger (informativo)                 | qualquer inteiro |
+
+**Critério de sucesso:** log termina com `CANONICAL_PROBES_OK`.
 
 ```bash
 gh workflow run canonical-probes.yml \
   -f confirm_project_ref=frjbfeamybqsejlvmqbl
 ```
 
-O workflow executa `node scripts/probes/run-probes.mjs` (E71) com os 6 probes:
+**Teste local:**
 
-| Probe | O que verifica | Saída esperada |
-|-------|----------------|----------------|
-| `rv01` | `user_empresa_id()` ignora `user_metadata` forjado | `NULL` |
-| `rv02` | `medidas_ciencia_tokens` sem ACL nem policy | `t` |
-| `rv03` | Zero policies permissivas (`USING true`) nas tabelas críticas | `0` |
-| `rv04` | RPCs de vínculo/autorização presentes | `t` |
-| `views` | Views de PII ilegíveis para `anon` | `t` |
-| `ledger` | Contagem de migrações (informativo) | qualquer inteiro |
-
-**Critério de sucesso:** log termina com `CANONICAL_PROBES_OK`.  
-**Teste local:** `SUPABASE_DB_URL="postgresql://..." node scripts/probes/run-probes.mjs`
+```bash
+SUPABASE_DB_URL="postgresql://..." node scripts/probes/run-probes.mjs
+```
 
 ---
 
-## 6. Atualizar a lista de migrações em `canonical-migrations.yml`
+## canonical-sql-diag.yml
 
-A lista de migrações está no step **"Preparar somente as migrações aprovadas"** (`stage_dir` loop). Regra:
+Diagnóstico SQL: roda UMA instrução `SELECT`/`WITH`/`EXPLAIN`/`SHOW` em transação
+READ ONLY com ROLLBACK. Sem escrita possível — o runner valida a instrução antes de
+enviá-la e o banco rejeita qualquer DML/DDL dentro da transação somente-leitura.
 
-- Cada dispatch cobre **somente** as migrações novas daquele lote.  
-- Migrações já registradas no ledger (`supabase_migrations.schema_migrations`) **não** devem ser re-listadas — `CREATE POLICY` não é idempotente e causará falha.  
-- Após merge do PR com as migrações, atualize a lista fechada e execute o validate/apply em sequência.
+**Uso:**
+
+1. Actions → "Canonical database — read-only SQL diagnostic" → Run workflow
+2. Preencher `confirm_project_ref` = `frjbfeamybqsejlvmqbl`
+3. Preencher `query` com a instrução (apenas `SELECT`, `WITH`, `EXPLAIN`, `SHOW`)
+
+```bash
+gh workflow run canonical-sql-diag.yml \
+  -f confirm_project_ref=frjbfeamybqsejlvmqbl \
+  -f query="SELECT count(*) FROM public.colaboradores"
+```
 
 ---
 
-## 7. Rotação de segredos
+## canonical-edge-functions.yml
 
-| Secret | Onde fica | Rotacionar em |
-|--------|-----------|---------------|
+Deploy de Edge Functions (Deno) no projeto canônico.
+Requer `SUPABASE_ACCESS_TOKEN` no environment `production`.
+
+**Fluxo:**
+
+1. `deno check` bloqueante em todos os `index.ts` (gate de tipo).
+2. `supabase functions deploy --use-api --jobs 4` (sem `--prune` — não remove funções remotas não classificadas).
+3. Verifica que todos os slugs locais aparecem no inventário remoto.
+
+**Critério de sucesso:** log termina com `CANONICAL_EDGE_DEPLOY_OK local=N remote=M` (N ≤ M).
+
+```bash
+gh workflow run canonical-edge-functions.yml \
+  -f confirm_project_ref=frjbfeamybqsejlvmqbl
+```
+
+---
+
+## Segurança
+
+- Os YAML dos workflows canônicos **NUNCA** mudam em lotes de migrations.
+  Qualquer alteração nos workflows canônicos requer PR aprovado por humano.
+- Reviewer obrigatório no environment `production` (W26 — a configurar via API).
+- `SUPABASE_DB_URL` (admin): migrar para environment `production` exclusivo (W25 — pendente).
+- O gate `scripts/tests/workflows-contract.test.mjs` valida invariantes de todos
+  os workflows (SHA pins, timeout-minutes, permissions, concurrency) e roda no
+  job `security-config` do `ci.yml` em cada PR.
+
+---
+
+## Diagnóstico de falhas comuns
+
+| Sintoma                                                    | Causa provável                         | Ação                                                     |
+| ---------------------------------------------------------- | -------------------------------------- | -------------------------------------------------------- |
+| `Project ref de confirmação não corresponde ao canônico`   | Input digitado errado                  | Re-dispatch com `frjbfeamybqsejlvmqbl`                   |
+| `SUPABASE_DB_URL ausente`                                  | Secret não configurado em `production` | Settings → Environments → production → Add secret        |
+| `SUPABASE_ACCESS_TOKEN ausente`                            | Idem                                   | Idem                                                     |
+| `policy already exists` no apply                           | Migração já registrada re-listada      | Remover da lista fechada do step "Preparar"              |
+| `canonical migration prerequisites missing (N/16)`         | Schema divergiu do esperado            | Auditar via `canonical-probes.yml`; ver `BREAK_GLASS.md` |
+| `mode=apply só pode ser disparado a partir da branch main` | Dispatch de branch de feature          | Mergear para main e re-disparar                          |
+| `Edge Function $slug falhou no deno check`                 | Erro de tipo em `index.ts`             | Corrigir localmente, push, re-dispatch                   |
+| `SUPABASE_DB_URL ausente` (db-integrity em PR de fork)     | PR externo sem acesso a secrets        | Normal — job tem guard `if:` para isso                   |
+
+---
+
+## Rotação de segredos
+
+| Secret                  | Onde fica                | Rotacionar em                                             |
+| ----------------------- | ------------------------ | --------------------------------------------------------- |
 | `SUPABASE_ACCESS_TOKEN` | Environment `production` | Comprometimento confirmado ou saída de acesso do operador |
-| `SUPABASE_DB_URL` | Repository secret | Comprometimento confirmado; ver `ROTACAO_SEGREDOS.md` |
+| `SUPABASE_DB_URL`       | Repository secret        | Comprometimento confirmado; ver `ROTACAO_SEGREDOS.md`     |
 
-Ao rotacionar o `SUPABASE_DB_URL`, verifique também os workflows que o consomem:  
-`canonical-migrations.yml`, `ci.yml` (job `db-integrity`).
-
----
-
-## 8. Diagnóstico de falhas comuns
-
-| Sintoma | Causa provável | Ação |
-|---------|---------------|------|
-| `Project ref de confirmação não corresponde ao canônico` | Digitou o ref errado no input | Re-dispatch com `frjbfeamybqsejlvmqbl` |
-| `SUPABASE_ACCESS_TOKEN ausente` | Secret não configurado no environment `production` | Settings → Environments → production → Add secret |
-| `Edge Function $slug falhou no deno check` | Erro de tipo em `index.ts` | Corrigir localmente, push, re-dispatch |
-| `canonical migration prerequisites missing (N/16)` | Schema do canônico divergiu do esperado | Auditar via `canonical-probes.yml`; ver `BREAK_GLASS.md` |
-| `policy already exists` no apply | Migração já registrada foi re-listada | Remover da lista fechada do step "Preparar" |
-| `SUPABASE_DB_URL ausente` (db-integrity em PR) | PR de fork ou Dependabot | Normal — job tem guard `if:` para isso |
+Ao rotacionar `SUPABASE_DB_URL`, verificar também: `canonical-migrations.yml`,
+`ci.yml` (job `db-integrity`).
 
 ---
 
-## 9. Contratos e gates
-
-O workflow `db-tests.yml` (PostgreSQL descartável) valida as migrações do PLANO_100 via `scripts/tests/migrations-plano100.sh`. Ele **não** toca o banco canônico — é seguro rodar a qualquer momento.
-
-O gate de contrato `scripts/tests/workflows-contract.test.mjs` valida invariantes de todos os workflows (SHA pins, timeout-minutes, permissions, concurrency) e roda no job `security-config` do `ci.yml` em cada PR.
-
----
-
-*Criado por Claude Code — 27/09/2026*
+_Última atualização: 15/10/2026 — W79 (Claude Code)_
