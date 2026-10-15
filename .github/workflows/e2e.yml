@@ -44,7 +44,7 @@ jobs:
           test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo '::error::Repository variable VITE_SUPABASE_PUBLISHABLE_KEY is missing'; exit 1; }
           test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Public E2E target is not canonical'; exit 1; }
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           cache: 'npm'
@@ -74,7 +74,7 @@ jobs:
         run: npm run test:e2e:public
 
       - name: Upload public Playwright report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: playwright-public-report-${{ github.run_id }}
@@ -144,7 +144,7 @@ jobs:
           fi
           test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Authenticated E2E target is not canonical'; exit 1; }
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version-file: .nvmrc
           cache: 'npm'
@@ -176,7 +176,7 @@ jobs:
         run: npm run test:e2e
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: playwright-report-${{ github.run_id }}
@@ -186,7 +186,7 @@ jobs:
           retention-days: 14
 
       - name: Upload traces on failure
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: failure()
         with:
           name: playwright-traces-${{ github.run_id }}
