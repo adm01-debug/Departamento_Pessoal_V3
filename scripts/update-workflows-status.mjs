@@ -10,11 +10,20 @@
  *
  * Uso: node scripts/update-workflows-status.mjs <arquivo-com-saida-do-report>
  */
-import { closeSync, fstatSync, openSync, readFileSync, writeFileSync } from 'node:fs';
+import { closeSync, fstatSync, openSync, readFileSync, readlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
 
 const STATUS_PATH = 'docs/auditoria/estado/WORKFLOWS_STATUS.md';
 const START = '<!-- REPORT:START -->';
 const END = '<!-- REPORT:END -->';
+
+// SonarCloud (path traversal): o sink só pode ler de dentro do diretório
+// temporário do runner ou do próprio checkout — nunca de um path arbitrário
+// do sistema. É o único chamador real
+// (.github/workflows/workflows-report.yml), que sempre passa um arquivo em
+// /tmp (ex. /tmp/workflows-report.md).
+const ALLOWED_ROOTS = [tmpdir(), resolve('.')];
 
 const reportFileArg = process.argv[2];
 if (!reportFileArg) {
@@ -22,15 +31,12 @@ if (!reportFileArg) {
   process.exit(1);
 }
 
-// SonarCloud (path traversal) + CodeQL (TOCTOU/file-system race): abre o
-// arquivo uma única vez e valida o MESMO descritor (fstat) antes de ler
-// dele, em vez de checar o path (stat/realpath) e só depois abrir — essa
-// segunda forma deixa uma janela em que o arquivo apontado pelo path
-// poderia ser substituído entre o check e o uso (symlink race). O caminho
-// pode ser fora do repo por design: o único chamador real
-// (.github/workflows/workflows-report.yml) sempre passa um arquivo
-// temporário do runner (ex. /tmp/workflows-report.md), não input de
-// terceiros.
+// CodeQL (TOCTOU/file-system race): abre o arquivo uma única vez e valida o
+// MESMO descritor (fstat + /proc/self/fd, só Linux — único ambiente onde
+// este script roda, actions/runner-images ubuntu-latest) antes de ler dele,
+// em vez de checar o path (stat/realpath) e só depois abrir — essa segunda
+// forma deixa uma janela em que o arquivo apontado pelo path poderia ser
+// substituído entre o check e o uso (symlink race).
 let reportFd;
 try {
   reportFd = openSync(reportFileArg, 'r');
@@ -41,6 +47,12 @@ try {
 if (!fstatSync(reportFd).isFile()) {
   closeSync(reportFd);
   console.error(`Caminho não é um arquivo regular: ${reportFileArg}`);
+  process.exit(1);
+}
+const resolvedPath = readlinkSync(`/proc/self/fd/${reportFd}`);
+if (!ALLOWED_ROOTS.some((root) => resolvedPath === root || resolvedPath.startsWith(root + '/'))) {
+  closeSync(reportFd);
+  console.error(`Caminho fora dos diretórios permitidos (tmp ou projeto): ${reportFileArg}`);
   process.exit(1);
 }
 
