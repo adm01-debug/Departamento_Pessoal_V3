@@ -94,23 +94,26 @@
 
 **W14 — evidência:** com 1 aprovação obrigatória, stale-dismiss e proibição de auto-aprovação, todo PR (agentes, Dependabot, owner) dependia do bypass do owner. Ruleset 21934736 aplicado via API: `required_approving_review_count: 0`, `require_code_owner_review: true`. Mantidos: conversas resolvidas, linear history, squash/rebase, force-push/deleção bloqueados. **Pendente:** o CODEOWNERS atual tem `* @adm01-debug`, então o efeito ainda é aprovação do owner em todo PR (igual a antes). A versão estreita (sem `*`; owner só em `.github/`, `infra/`, `supabase/migrations/`, `supabase/config.toml`, `external-db-bridge/`, `functions/_shared/`, Dockerfiles, `docker-compose.prod.yml`, `nginx.conf`, `vercel.json`, `.npmrc`) foi preparada, mas o commit foi barrado pela política de segurança do agente e aguarda o owner commitá-la ou liberar a ação.
 
-## Decisões Pendentes do Owner
+**Demais decisões (critério: qualidade + velocidade + custo zero):**
 
-| Código | Decisão necessária                                               |
-| ------ | ---------------------------------------------------------------- |
-| W21 💰 | Tornar repositório privado?                                      |
-| W32 💰 | Aprovação humana obrigatória para PRs de agentes (Devin, Claude) |
-| W50 💰 | Auto-merge Dependabot patch/minor                                |
-| W58 💰 | Isolamento do alvo E2E (branch Supabase vs staging vs produção)  |
-| W63 💰 | Mailosaur (contratar ou remover specs de reset de senha)         |
-| W93 💰 | Notificação N8N/WhatsApp para main vermelha                      |
+| Código | Decisão                                                                                                                                                                                                                                                                                                |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| W25 🟡 | `db-integrity` (required) virou estático, sem segredo; auditorias reais em `db-integrity-live` (main/dispatch, `environment: production`). Os gates leem o catálogo de produção, que PR não altera. **Owner:** copiar `SUPABASE_DB_URL` para o environment Production e apagar o secret do repositório |
+| W26 ✅ | Sem revisor obrigatório no environment: travaria os probes agendados. A branch policy do environment já restringe quem recebe o segredo                                                                                                                                                                |
+| W21 ✅ | **Manter público.** Privado perde Actions ilimitado, CodeQL, dependency-review e secret scanning gratuitos                                                                                                                                                                                             |
+| W32 ✅ | Coberto pelo W14: code owner obrigatório nos caminhos sensíveis vale para qualquer autor, inclusive agentes                                                                                                                                                                                            |
+| W50 ⏸  | Auto-merge do Dependabot só depois do CODEOWNERS estreito (W14); hoje todo PR exige o owner, então o auto-merge não teria efeito                                                                                                                                                                       |
+| W58 ✅ | Alvo E2E = projeto canônico com usuários sintéticos (custo zero); suíte de PR é pública e sem credenciais. Depende de criar os usuários E2E (ação manual já listada)                                                                                                                                   |
+| W63 ✅ | Não contratar Mailosaur. `reset-password-callback.spec.ts` já é pulada sem os secrets; nenhuma mudança                                                                                                                                                                                                 |
+| W85 ✅ | Não contratar GHAS. Encerrado                                                                                                                                                                                                                                                                          |
+| W93 ✅ | Não construir N8N/WhatsApp. O healthcheck já abre issue, o que gera notificação do GitHub                                                                                                                                                                                                              |
 
 ## Score Atual: 6.5/10
 
 **O que falta para 10/10 (autônomo):**
 
 - P0: W15 (db-integrity fail-closed), W18 (check identifiers)
-- P0 PII: W25→W26 (SUPABASE_DB_URL para environment Production)
+- P0 PII: W25 — owner move SUPABASE_DB_URL para o environment Production (código pronto)
 - Supply chain: W23→W24 (role ci_auditor DDL)
 - CI cost: W45→W47 (sharding Postgres)
 - Canonical: W67→W68→W70→W71→W73→W75→W76

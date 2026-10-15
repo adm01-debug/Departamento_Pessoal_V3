@@ -328,18 +328,35 @@ jobs:
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
-    # W15: job sempre executado (sem if: de nível de job).
-    # Forks e Dependabot não recebem SUPABASE_DB_URL — DATABASE_URL ficará
-    # vazia. O step "Gate de banco ausente" detecta isso e emite ::notice::
-    # (exit 0), enquanto os steps que precisam do banco só rodam quando
-    # DATABASE_URL != ''. Assim o job nunca é skipped (verde por omissão),
-    # e uma regressão de RLS/PII em fork PR é capturada pelos auditores
-    # estáticos que rodam independentemente da conexão.
+    # W25: check obrigatório de PR, só estático e sem segredo. As auditorias
+    # leem o catálogo de produção, que um PR não altera (migrations só entram
+    # via canonical-migrations), então rodá-las no PR expunha a credencial sem
+    # validar nada do PR. A parte com banco roda em db-integrity-live.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+      - name: Regressão fail-closed dos auditores
+        run: npm run test:db-audit-contract
+      - name: Resumo da integridade estática (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          echo "## db-integrity (estático)" >> "$GITHUB_STEP_SUMMARY"
+          echo "| db-audit-contract | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+
+  db-integrity-live:
+    name: Integridade do banco canônico (live)
+    # W25: único job do ci.yml com acesso ao banco de produção. O environment
+    # production restringe as branches que recebem o segredo.
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Este é deliberadamente um gate de banco canônico, não uma análise
-    # estática. Sem uma conexão de auditoria, um "verde" não é evidência de
-    # RLS, grants, funções ou triggers reais.
+    environment: production
     env:
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
@@ -351,22 +368,10 @@ jobs:
           node-version-file: .nvmrc
       - name: Instalar cliente psql
         run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
-      - name: Regressão fail-closed dos auditores
-        run: npm run test:db-audit-contract
-      - name: Gate de banco ausente (fork/dependabot)
-        # W15: fork PRs e Dependabot não recebem SUPABASE_DB_URL.
-        # Emite notice informativo e sai com 0 — verificações estáticas
-        # (test:db-audit-contract acima) já rodaram; os steps de conexão
-        # abaixo são guardados por if: env.DATABASE_URL != ''.
-        if: env.DATABASE_URL == ''
-        run: |
-          echo "::notice::DATABASE_URL ausente — apenas verificações estáticas executadas (fork ou dependabot[bot])."
-          echo "STATIC_DB_INTEGRITY_PASS"
       - name: Exigir alvo canônico de auditoria
         # Não exibir nem testar a URL em shell com tracing. A presença é
         # suficiente; os scripts seguintes abrem a conexão read-only usada
         # pelos seus próprios SELECTs de catálogo.
-        if: env.DATABASE_URL != ''
         run: |
           if [ -z "${DATABASE_URL}" ]; then
             echo "::error::SUPABASE_DB_URL ausente. O gate de integridade não pode aprovar sem auditar o banco canônico."
@@ -377,13 +382,11 @@ jobs:
         # sem o schema da extensão no search_path fixado. Esse defeito NÃO é
         # acusado na criação da função — só explode em produção, na primeira
         # gravação selada por hash.
-        if: env.DATABASE_URL != ''
         run: node scripts/audit-db-search-path.mjs
       - name: Smoke test dos selos de integridade
         # Verifica que todo gatilho enforce_*_hash está acoplado, é BEFORE
         # INSERT/UPDATE e consegue resolver digest() sob seu próprio
         # search_path. Não grava dados de negócio.
-        if: env.DATABASE_URL != ''
         run: node scripts/smoke-hash-triggers.mjs
       - name: Regressão de RLS sobre PII
         # Reprova o build quando uma política sobre tabela com dado pessoal
@@ -391,7 +394,6 @@ jobs:
         # correlaciona com auth.uid() nem com o vínculo de empresa, ou quando
         # deriva o tenant de claim livre do JWT. O Postgres aceita esses
         # predicados sem reclamar — a exposição só aparece em produção.
-        if: env.DATABASE_URL != ''
         run: node scripts/audit-rls-pii.mjs
       - name: Menor privilégio em RLS (papel no caminho de escrita)
         # Complementa o gate acima. Isolar por empresa aprova ali, mas em tabela
@@ -399,7 +401,6 @@ jobs:
         # RH ficam indistinguíveis dentro do mesmo tenant — contracheque, conta
         # bancária, ASO e denúncia do canal de ética ficam graváveis por
         # qualquer autenticado. Escrita nessas tabelas exige papel explícito.
-        if: env.DATABASE_URL != ''
         run: node scripts/audit-rls-least-privilege.mjs
       - name: Política permissiva irrestrita em tabela multi-tenant
         # Políticas PERMISSIVAS se combinam por OU: basta UMA liberar para o
@@ -408,7 +409,6 @@ jobs:
         # rubricas de todas as empresas, porque uma legada `USING (true)` nunca
         # foi removida. Escrever a política certa não protege enquanto a errada
         # viver. Os gates acima não pegam o caso: rubrica de folha não é PII.
-        if: env.DATABASE_URL != ''
         run: node scripts/audit-rls-tenant-open.mjs
       - name: Autorização em funções SECURITY DEFINER
         # SECURITY DEFINER atravessa o RLS: se a função é executável por
@@ -416,22 +416,20 @@ jobs:
         # ela anula o isolamento multi-tenant sem que nenhuma política esteja
         # errada. O gate segue o fecho transitivo de chamadas para não reprovar
         # funções que delegam a checagem a um helper.
-        if: env.DATABASE_URL != ''
         run: node scripts/audit-secdef-authz.mjs
       - name: Integridade das dicas de relacionamento (PostgREST)
         # `.select('*, tabela!constraint(...)')` amarra o código a um nome de
         # constraint que nada valida: typecheck e testes com mock passam, e a
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
         # duplicadas, que reintroduzem a ambiguidade de relacionamento.
-        if: env.DATABASE_URL != ''
         run: node scripts/audit-embed-hints.mjs
       - name: Resumo da integridade do banco (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
-          echo "## db-integrity" >> "$GITHUB_STEP_SUMMARY"
+          echo "## db-integrity-live" >> "$GITHUB_STEP_SUMMARY"
           echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
           echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| db-integrity | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| db-integrity-live | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
 
   npm-audit:
     name: npm audit (produção, sem devDeps)
