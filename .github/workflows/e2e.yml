@@ -5,8 +5,19 @@ on:
     branches: [main]
   push:
     branches: [main]
-  # W61: E2E manual na branch escolhida no dispatch (sempre no projeto canônico).
+  # W61: E2E manual no projeto canônico com seleção de suite e ref.
   workflow_dispatch:
+    inputs:
+      project:
+        description: 'Suite a executar'
+        required: false
+        default: 'authenticated'
+        type: choice
+        options: [public, authenticated, authenticated-non-admin, mobile-smoke, all]
+      ref:
+        description: 'Branch/SHA a testar (vazio = branch atual)'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -121,6 +132,8 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # W61: usa o ref do input quando dispatch manual, senão usa o ref padrão do evento
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Validate E2E configuration
         run: |
