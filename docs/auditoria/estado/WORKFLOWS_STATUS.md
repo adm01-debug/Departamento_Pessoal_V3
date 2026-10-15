@@ -16,7 +16,21 @@ GITHUB_TOKEN=<seu-token> node scripts/report-workflows.mjs
 
 Sem token: modo offline (mostra apenas as metas, sem dados reais).
 
-## Workflows registrados (12 no total)
+### Automação (W92)
+
+`.github/workflows/workflows-report.yml` roda o script semanalmente
+(quarta-feira, cron) e também sob `workflow_dispatch`. A saída é injetada
+entre os marcadores abaixo via `scripts/update-workflows-status.mjs`; se o
+conteúdo mudar (`git diff --quiet`), o workflow cria uma branch dedicada,
+comita e abre um PR com `gh pr create` — nunca abre PR vazio.
+
+<!-- REPORT:START -->
+
+_(ainda sem execução automática — a primeira run de `workflows-report.yml` preenche esta seção)_
+
+<!-- REPORT:END -->
+
+## Workflows registrados (13 no total)
 
 | Workflow                 | Arquivo                      | Descrição                                    |
 | ------------------------ | ---------------------------- | -------------------------------------------- |
@@ -32,6 +46,8 @@ Sem token: modo offline (mostra apenas as metas, sem dados reais).
 | Canonical SQL Diag       | canonical-sql-diag.yml       | Diagnóstico SQL read-only no canônico        |
 | Ruleset Sync             | ruleset-sync.yml             | Compara ruleset vivo × baseline (semanal)    |
 | Workflow Lint            | workflow-lint.yml            | actionlint + shellcheck nos workflows        |
+| OSSF Scorecard           | ossf-scorecard.yml           | Supply-chain score (semanal)                 |
+| Workflows Report         | workflows-report.yml         | W92 — relatório de duração/P95 (semanal)     |
 
 ## Artifacts — Limpeza (W56)
 

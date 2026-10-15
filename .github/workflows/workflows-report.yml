@@ -1,0 +1,75 @@
+name: Workflows report
+# W92: roda scripts/report-workflows.mjs (mediana/P95 de duração dos últimos
+# 50 runs por workflow) semanalmente e injeta o resultado em
+# docs/auditoria/estado/WORKFLOWS_STATUS.md entre os marcadores
+# <!-- REPORT:START/END -->. Só abre PR se o conteúdo mudou
+# (git diff --quiet) — nunca abre PR vazio. Usa git + gh direto (sem
+# peter-evans/create-pull-request) para não depender da allowlist de actions.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Quarta 08:10 UTC — fora dos horários dos demais crons do repo:
+    # ruleset-sync (seg 07:41), ossf-scorecard (ter 07:15), security/CodeQL
+    # (qui 06:47), canonical-probes (diário 06:23), healthcheck (a cada 6h,
+    # minuto 17) e Dependabot (seg/ter/qua 09:00 America/Sao_Paulo = 12:00 UTC).
+    - cron: '10 8 * * 3'
+
+concurrency:
+  group: workflows-report
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    name: Gerar relatório e abrir PR se houver mudança
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Gerar relatório de workflows
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/report-workflows.mjs > /tmp/workflows-report.md
+
+      - name: Atualizar WORKFLOWS_STATUS.md
+        run: node scripts/update-workflows-status.mjs /tmp/workflows-report.md
+
+      - name: Verificar se o conteúdo mudou
+        id: diff
+        run: |
+          if git diff --quiet -- docs/auditoria/estado/WORKFLOWS_STATUS.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Criar branch, comitar e abrir PR
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          BRANCH="chore/workflows-report-$(date -u +%Y%m%d%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add docs/auditoria/estado/WORKFLOWS_STATUS.md
+          git commit -m "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92)"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "docs: atualizar WORKFLOWS_STATUS.md (relatório automático)" \
+            --body "Atualização automática gerada por \`workflows-report.yml\` a partir de \`scripts/report-workflows.mjs\` (mediana/P95 de duração dos últimos 50 runs por workflow)." \
+            --base main \
+            --head "$BRANCH" \
+            --label documentation
