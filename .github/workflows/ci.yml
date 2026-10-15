@@ -59,6 +59,12 @@ jobs:
               - 'supabase/functions/**'
               - 'deno.lock'
               - 'scripts/typecheck-edge.sh'
+              # Codex review (P2, PR #238): sem este arquivo aqui, um PR que
+              # só mudasse a própria lógica do job edge-functions (versão do
+              # Deno, flags, comando) nunca setava edge=true -- o check
+              # obrigatório "Edge Functions (deno check)" passaria pelo echo
+              # de "sem mudanças" sem exercitar o que de fato mudou.
+              - '.github/workflows/ci.yml'
             migrations:
               - 'supabase/migrations/**'
               - 'scripts/tests/**'

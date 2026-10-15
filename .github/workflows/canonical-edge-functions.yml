@@ -213,8 +213,23 @@ jobs:
                 TARGETS="$ALL_SLUGS"
                 SOURCE="config-toml-changed"
               elif [ -n "$FN_DIFF" ]; then
-                TARGETS="$FN_DIFF"
-                SOURCE="diff"
+                # Codex review (P1, PR #238): `git diff --name-only` lista
+                # TODO path que mudou entre os dois SHAs, inclusive os de
+                # diretórios removidos/renomeados -- sem filtrar, um slug sem
+                # diretório local chegaria ao `supabase functions deploy`
+                # abaixo e o comando abortaria (função inexistente),
+                # inclusive abortando o deploy de qualquer função renomeada
+                # no mesmo commit. Interseção com ALL_SLUGS (calculado do
+                # filesystem atual) garante que só publicamos slugs que
+                # ainda existem localmente; remoções continuam fora do
+                # escopo deste workflow (sem --prune, documentado acima).
+                TARGETS="$(comm -12 <(printf '%s\n' "$FN_DIFF") <(printf '%s\n' "$ALL_SLUGS"))"
+                if [ -n "$TARGETS" ]; then
+                  SOURCE="diff"
+                else
+                  echo "::notice::W75 — as mudanças em supabase/functions/** desde $LAST_GREEN_SHA foram só remoções/renomeações (nenhum diretório de função restante no escopo); nada a publicar."
+                  SOURCE="diff-only-removed"
+                fi
               else
                 echo "::notice::W75 — nenhum diretório de função (nem config.toml) mudou desde $LAST_GREEN_SHA; nada a publicar."
                 TARGETS=""

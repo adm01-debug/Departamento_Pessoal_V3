@@ -207,6 +207,22 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 
+      # Codex review (P2, PR #238): o projeto `cleanup` (W60) apaga
+      # colaboradores/folha da empresa sintética em TODO run completo da
+      # suíte autenticada; sem recriá-los antes do próximo run, a suíte
+      # testaria contra uma empresa vazia a partir da segunda execução.
+      # scripts/e2e/ensure-fixtures.mjs não precisa de
+      # SUPABASE_SERVICE_ROLE_KEY (não provisionado como secret aqui) —
+      # só recria colaboradores/folha via a própria sessão autenticada do
+      # admin E2E (RLS real), reaproveitando o vínculo usuário↔empresa já
+      # permanente (W58/W59). Roda em todo evento deste job (push/dispatch),
+      # antes de qualquer teste.
+      - name: Garantir fixtures do E2E autenticado (W59/W60 — idempotente)
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/e2e/ensure-fixtures.mjs
+
       # Cache dos binários do Chromium (~90% redução no download)
       - name: Cache Playwright browsers
         id: playwright-cache
