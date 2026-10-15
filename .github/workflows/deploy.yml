@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build-preview:
-    name: Build & Preview
+    name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

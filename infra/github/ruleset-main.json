@@ -10,9 +10,9 @@
     }
   },
   "rules": [
-    {"type": "deletion"},
-    {"type": "non_fast_forward"},
-    {"type": "required_linear_history"},
+    { "type": "deletion" },
+    { "type": "non_fast_forward" },
+    { "type": "required_linear_history" },
     {
       "type": "pull_request",
       "parameters": {
@@ -31,18 +31,18 @@
         "strict_required_status_checks_policy": false,
         "do_not_enforce_on_create": false,
         "required_status_checks": [
-          {"context": "Type Check"},
-          {"context": "Lint"},
-          {"context": "Unit Tests"},
-          {"context": "Edge Functions (deno check)"},
-          {"context": "Config de segurança (E-077, estático)"},
-          {"context": "Integridade do banco (search_path x extensões)"},
-          {"context": "CodeQL & Audit"}
+          { "context": "Type Check" },
+          { "context": "Lint" },
+          { "context": "Unit Tests" },
+          { "context": "Edge Functions (deno check)" },
+          { "context": "Config de segurança (E-077, estático)" },
+          { "context": "Integridade do banco (search_path x extensões)" },
+          { "context": "CodeQL & Audit" },
+          { "context": "Playwright público (PR)" },
+          { "context": "Build" }
         ]
       }
     }
   ],
-  "bypass_actors": [
-    {"actor_id": 231131902, "actor_type": "User", "bypass_mode": "always"}
-  ]
+  "bypass_actors": [{ "actor_id": 231131902, "actor_type": "User", "bypass_mode": "always" }]
 }
