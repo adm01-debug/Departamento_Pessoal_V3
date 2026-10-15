@@ -8,6 +8,8 @@
 # W91: REQUIRE_LOGIN=1 torna falha de login E2E não-admin fatal (default: só avisa).
 # W91: REQUIRE_BUILD_SHA=1 torna um build-sha divergente fatal (ausência da meta
 #      tag NUNCA é fatal — ver nota no check_build_sha).
+# REQUIRE_METRICS=1 torna HTTP != 200 em /functions/v1/metrics fatal (default:
+#      só avisa — ver nota no checkpoint "bridge metrics" abaixo, Codex review PR #242).
 # Exit: 0 = tudo saudável · 1 = pelo menos uma falha
 # ============================================================================
 set -uo pipefail
@@ -24,13 +26,14 @@ E2E_NON_ADMIN_EMAIL="${E2E_NON_ADMIN_EMAIL:-}"
 E2E_NON_ADMIN_PASSWORD="${E2E_NON_ADMIN_PASSWORD:-}"
 REQUIRE_LOGIN="${REQUIRE_LOGIN:-0}"
 REQUIRE_BUILD_SHA="${REQUIRE_BUILD_SHA:-0}"
+REQUIRE_METRICS="${REQUIRE_METRICS:-0}"
 # W91a: SHA esperado no <meta name="build-sha"> do deploy sob teste.
 EXPECTED_BUILD_SHA="${EXPECTED_BUILD_SHA:-${GITHUB_SHA:-}}"
 TIMEOUT="${HEALTHCHECK_TIMEOUT:-10}"
 FAILURES=0
 
 check() {
-  local name="$1" url="$2" expect="${3:-200}" use_apikey="${4:-0}"
+  local name="$1" url="$2" expect="${3:-200}" use_apikey="${4:-0}" required="${5:-1}"
   local code
   if [[ "$use_apikey" = "1" ]] && [[ -n "$SUPABASE_PUBLISHABLE_KEY" ]]; then
     code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" \
@@ -44,9 +47,11 @@ check() {
   [[ -z "$code" ]] && code="000"
   if [[ "$code" = "$expect" ]]; then
     echo "✅ $name → HTTP $code"
-  else
+  elif [[ "$required" = "1" ]]; then
     echo "❌ $name → HTTP $code (esperado $expect) — $url"
     FAILURES=$((FAILURES + 1))
+  else
+    echo "⚠️  $name → HTTP $code (esperado $expect, não bloqueante) — $url"
   fi
 }
 
@@ -156,7 +161,13 @@ if [[ -n "$SUPABASE_URL" ]]; then
   check "bridge method-gate" "$SUPABASE_URL/functions/v1/external-db-bridge" "405" "1"
   # W91c: métricas Prometheus do bridge — 503 = scrape incompleto/degradado
   # (fail-closed por design, ver supabase/functions/metrics/index.ts).
-  check "bridge metrics" "$SUPABASE_URL/functions/v1/metrics" "200" "1"
+  # Codex review (P1, PR #242): a função consulta a tabela health_checks,
+  # que não existe em nenhuma migration nem no canônico (confirmado via
+  # supabase_db_query) — brOk é sempre false, então o endpoint sempre
+  # retorna 503 hoje. Não-bloqueante até a tabela existir (REQUIRE_METRICS=1
+  # torna fatal quando a dependência for criada), senão o healthcheck
+  # agendado e o post-deploy-smoke de toda produção falhariam sempre.
+  check "bridge metrics" "$SUPABASE_URL/functions/v1/metrics" "200" "1" "$REQUIRE_METRICS"
 
   # W91b: login da identidade E2E não-admin (não bloqueante salvo REQUIRE_LOGIN=1)
   if [[ -n "$SUPABASE_PUBLISHABLE_KEY" ]] && [[ -n "$E2E_NON_ADMIN_EMAIL" ]] && [[ -n "$E2E_NON_ADMIN_PASSWORD" ]]; then

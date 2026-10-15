@@ -53,18 +53,28 @@ SELECT CASE WHEN (
 SELECT CASE WHEN to_regclass('public.contas_bancarias_decrypted') IS NOT NULL
             THEN 'ok' ELSE 'fail: view contas_bancarias_decrypted ausente' END;
 
--- 5. Backfill completo: toda linha com dado bancário em claro tem a cópia
---    cifrada correspondente (nenhuma linha esquecida pelo backfill).
+-- 5. Backfill completo E correto: toda linha com dado bancário em claro tem
+--    a cópia cifrada correspondente (nenhuma linha esquecida pelo backfill)
+--    E essa cópia decripta de volta para o valor em claro armazenado —
+--    checar só "não é NULL" (Codex review, PR #242) deixava passar um
+--    ciphertext corrompido ou cifrado com outra chave, já que o round-trip
+--    do check 6 só testa um valor novo com a chave atual, nunca as linhas
+--    de verdade. decrypt_dados_bancarios não grava em tabela — leitura pura.
 SELECT CASE WHEN NOT EXISTS (
   SELECT 1 FROM public.contas_bancarias
    WHERE (agencia IS NOT NULL AND agencia_encrypted IS NULL)
       OR (conta IS NOT NULL AND conta_encrypted IS NULL)
       OR (digito IS NOT NULL AND digito_encrypted IS NULL)
       OR (pix_chave IS NOT NULL AND pix_chave_encrypted IS NULL)
+      OR (agencia IS NOT NULL AND public.decrypt_dados_bancarios(agencia_encrypted) IS DISTINCT FROM agencia)
+      OR (conta IS NOT NULL AND public.decrypt_dados_bancarios(conta_encrypted) IS DISTINCT FROM conta)
+      OR (digito IS NOT NULL AND public.decrypt_dados_bancarios(digito_encrypted) IS DISTINCT FROM digito)
+      OR (pix_chave IS NOT NULL AND public.decrypt_dados_bancarios(pix_chave_encrypted) IS DISTINCT FROM pix_chave)
 ) AND NOT EXISTS (
   SELECT 1 FROM public.pix_itens
-   WHERE chave_pix IS NOT NULL AND chave_pix_encrypted IS NULL
-) THEN 'ok' ELSE 'fail: backfill incompleto — linha com dado em claro sem cópia cifrada' END;
+   WHERE (chave_pix IS NOT NULL AND chave_pix_encrypted IS NULL)
+      OR (chave_pix IS NOT NULL AND public.decrypt_dados_bancarios(chave_pix_encrypted) IS DISTINCT FROM chave_pix)
+) THEN 'ok' ELSE 'fail: backfill incompleto ou ciphertext existente não decripta para o valor em claro armazenado' END;
 
 -- 6. Chave do Vault configurada e round-trip completo operante (causa raiz
 --    do run 38428460909): a função lança EXCEPTION quando a chave não está

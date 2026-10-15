@@ -688,6 +688,14 @@ jobs:
         # (INSERT/UPDATE/DELETE/DDL em vez de só SELECT) falha com erro de
         # Postgres em vez de mutar o canônico, mesmo que tenha sido mergeado
         # em main.
+        #
+        # Codex review (P2, PR #242): a primeira versão usava
+        # `-c 'SET default_transaction_read_only = on;' -f sidecar` na mesma
+        # chamada de psql — mas psql imprime a tag de status ("SET") do -c
+        # no mesmo stdout capturado, e isso sempre reprovava o
+        # `grep -vx 'ok'` abaixo (toda run de verify falharia). Troca para
+        # PGOPTIONS: o GUC é setado no startup da conexão (libpq), não como
+        # um comando executado na sessão — nenhuma tag extra no stdout.
         if: inputs.mode == 'verify'
         run: |
           set -euo pipefail
@@ -702,7 +710,7 @@ jobs:
               continue
             fi
             echo "Sidecar: $sidecar"
-            sidecar_output="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -c 'SET default_transaction_read_only = on;' -f "$sidecar")" || {
+            sidecar_output="$(PGOPTIONS='-c default_transaction_read_only=on' psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
               echo "::error::Sidecar falhou (erro de execução): $sidecar"
               verify_errors=$((verify_errors + 1))
               continue
