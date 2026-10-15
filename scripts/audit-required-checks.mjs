@@ -3,6 +3,11 @@
  * correspondente em .github/workflows/*.yml.
  * Falha se um check obrigatório foi renomeado/removido sem atualizar o ruleset.
  * Roda em security-config.
+ *
+ * W17: TODO — comparação com ruleset vivo via API GitHub
+ * Para comparação live: gh api repos/OWNER/REPO/rulesets/21934736 --jq '.rules[].parameters.required_status_checks[].context'
+ * Requer GITHUB_TOKEN com permissão de leitura de rulesets.
+ * Atualmente: comparação offline contra infra/github/ruleset-main.json
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';

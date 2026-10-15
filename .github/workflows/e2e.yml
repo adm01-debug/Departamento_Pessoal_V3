@@ -5,6 +5,18 @@ on:
     branches: [main]
   push:
     branches: [main]
+  # W61: permite triggering manual para rodar E2E contra um ref ou projeto específico.
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Supabase project ref (default canonical)
+        required: false
+        type: string
+        default: frjbfeamybqsejlvmqbl
+      ref:
+        description: Git ref (branch/tag/SHA) para checkout
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -93,9 +105,17 @@ jobs:
     # As quatro identidades são sintéticas, mas ainda concedem escrita no
     # projeto canônico. Não expor suas credenciais a código de pull request.
     # O gate autenticado roda no SHA já integrado em main.
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # W65: workflow_dispatch também roda este job (credentials disponíveis).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # W65: timeout reduzido de 30 para 20 min (suite atual termina em ~12 min).
+    # Sharding (matrix: shard [1,2]) foi avaliado mas descartado: auth state
+    # (e2e/.auth/user.json, user-mobile.json, user-non-admin.json) é escrito
+    # por setup projects e lido por specs dependentes — cada shard teria que
+    # rodar setup independentemente e compartilhar os artefatos de auth entre
+    # shards (upload/download), o que complica a orquestração sem ganho real
+    # num suite de ~12 min. Reavaliar quando o suite ultrapassar 20 min.
+    timeout-minutes: 20
     permissions:
       contents: read
       issues: write

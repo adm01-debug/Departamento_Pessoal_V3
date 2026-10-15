@@ -8,7 +8,10 @@ on:
     branches: [main]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # W49: Para PRs, cancela runs mais antigos (mesmo ref). Para pushes na main,
+  # cada SHA recebe grupo próprio (sem cancelamento entre pushes distintos) —
+  # evita ocultar falha de um commit ao chegar o seguinte.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'push' && github.sha || '' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 defaults:
@@ -285,6 +288,14 @@ jobs:
         # W02: garante que bun install --frozen-lockfile não quebre no CI.
         # Detecta o caso Dependabot: atualiza package-lock.json mas não bun.lock.
         run: bash scripts/tests/lockfile-parity.test.sh
+      - name: Resumo dos contratos (GITHUB_STEP_SUMMARY)
+        if: always()
+        run: |
+          echo "## security-config" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Script | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|--------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| workflows-contract | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| lockfile-parity | ${{ job.status }} |" >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
     name: P0 database migration simulations
@@ -355,7 +366,7 @@ jobs:
         with:
           node-version-file: .nvmrc
       - name: Instalar cliente psql
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-17
       - name: Regressão fail-closed dos auditores
         run: npm run test:db-audit-contract
       - name: Exigir alvo canônico de auditoria
