@@ -29,15 +29,13 @@ GRANT USAGE ON SCHEMA pg_catalog TO ci_auditor;
 GRANT USAGE ON SCHEMA information_schema TO ci_auditor;
 
 -- cron.job NÃO é legível por padrão (extensão pg_cron, schema próprio) --
--- este GRANT é o único que de fato muda o acesso do role.
-DO $migration$
-BEGIN
-  IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'cron') THEN
-    EXECUTE 'GRANT USAGE ON SCHEMA cron TO ci_auditor';
-    EXECUTE 'GRANT SELECT ON cron.job TO ci_auditor';
-  END IF;
-END
-$migration$;
+-- estes GRANTs são os únicos que de fato mudam o acesso do role. SQL estático
+-- (sem EXECUTE) -- o schema `cron` já existe neste banco (pg_cron ativo,
+-- confirmado ao vivo antes de escrever esta migration); dynamic SQL via
+-- EXECUTE com string fixa só adicionava superfície para scanner de segurança
+-- sinalizar sem ganho real (nenhuma entrada externa é interpolada).
+GRANT USAGE ON SCHEMA cron TO ci_auditor;
+GRANT SELECT ON cron.job TO ci_auditor;
 
 -- Garantia explícita: NUNCA conceder acesso ao schema public a este role.
 -- Se uma migration futura rodar "GRANT ... ON ALL TABLES IN SCHEMA public
