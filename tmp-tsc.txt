@@ -1,0 +1,34 @@
+npm notice run departamento-pessoal@18.0.1 npx
+npm notice run tsc --noEmit -p tsconfig.json
+src/components/admin/UnifiedAuditSection.tsx(39,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/hooks/ferias/useAlertasPagamentoD2.ts(68,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/pages/AdminDiagnosticoMigracaoPage.tsx(95,55): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "colaboradores" | "empresas" | "admissoes" | "documentos" | "cid10" | "afdt_importacoes" | "afdt_registros_raw" | "registros_ponto" | "exames_agendamentos" | "clinicas_partners" | ... 343 more ... | "workflows_historico"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type '"colaboradores" | "empresas" | "admissoes" | "documentos" | "cid10" | "afdt_importacoes" | "afdt_registros_raw" | "registros_ponto" | "exames_agendamentos" | "clinicas_partners" | ... 343 more ... | "workflows_historico"'.
+  Overload 2 of 2, '(relation: "vw_cadastro_incompleto" | "vw_colaboradores_completo" | "vw_passivo_trabalhista_consolidado" | "pontos_abertos" | "vw_batidas_dia" | "v_contratos_vencendo" | "v_contratos_tokens_pendentes" | ... 30 more ... | "vw_saldo_compensacao_mensal"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type '"vw_cadastro_incompleto" | "vw_colaboradores_completo" | "vw_passivo_trabalhista_consolidado" | "pontos_abertos" | "vw_batidas_dia" | "v_contratos_vencendo" | "v_contratos_tokens_pendentes" | ... 30 more ... | "vw_saldo_compensacao_mensal"'.
+src/pages/AdminSecurityPage.tsx(51,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/pages/CienciaMedidaPage.tsx(148,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/pages/VerificarContratoPage.tsx(51,9): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/services/despesaService.ts(38,86): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/services/medidasDisciplinaresService.ts(135,7): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/services/medidasDisciplinaresService.ts(151,7): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/services/tabelasReferenciaService.ts(7,33): error TS2589: Type instantiation is excessively deep and possibly infinite.
+src/services/tabelasReferenciaService.ts(7,47): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(relation: "colaboradores" | "empresas" | "admissoes" | "documentos" | "cid10" | "afdt_importacoes" | "afdt_registros_raw" | "registros_ponto" | "exames_agendamentos" | "clinicas_partners" | ... 343 more ... | "workflows_historico"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type '"colaboradores" | "empresas" | "admissoes" | "documentos" | "cid10" | "afdt_importacoes" | "afdt_registros_raw" | "registros_ponto" | "exames_agendamentos" | "clinicas_partners" | ... 343 more ... | "workflows_historico"'.
+  Overload 2 of 2, '(relation: "vw_cadastro_incompleto" | "vw_colaboradores_completo" | "vw_passivo_trabalhista_consolidado" | "pontos_abertos" | "vw_batidas_dia" | "v_contratos_vencendo" | "v_contratos_tokens_pendentes" | ... 30 more ... | "vw_saldo_compensacao_mensal"): PostgrestQueryBuilder<...>', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type '"vw_cadastro_incompleto" | "vw_colaboradores_completo" | "vw_passivo_trabalhista_consolidado" | "pontos_abertos" | "vw_batidas_dia" | "v_contratos_vencendo" | "v_contratos_tokens_pendentes" | ... 30 more ... | "vw_saldo_compensacao_mensal"'.
+src/services/vinculoService.ts(33,29): error TS2322: Type 'MockRecord[]' is not assignable to type 'VinculoRow[]'.
+  Type 'MockRecord' is missing the following properties from type 'VinculoRow': id, colaborador_id, tipo, categoria, and 5 more.
+src/services/vinculoService.ts(99,15): error TS2322: Type 'Record<string, MockRecord>' is not assignable to type 'Record<string, VinculosResumo>'.
+  'string' index signatures are incompatible.
+    Type 'MockRecord' is missing the following properties from type 'VinculosResumo': quantidadePassagens, quantidadeRecontratacoes, primeiraAdmissao, admissaoAtual

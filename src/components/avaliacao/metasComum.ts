@@ -49,6 +49,7 @@
  * ============================================================================
  */
 import { estaAtrasado, progressoMeta } from './desempenhoComum';
+import { PALETAS_CHIP, type TemaChip } from './chipFiltroComum';
 
 const DIA_MS = 86_400_000;
 
@@ -185,7 +186,7 @@ export function tomTipo(tipo: unknown): string {
  * `concluida` usa `--info` (azul) e NÃO o verde de `emdia`: as duas situações
  * aparecem na mesma posição do card, então precisam de famílias de cor
  * diferentes. É também o tom que os filtros rápidos já usam para "Concluídas"
- * (`PELE_FILTRO.concluida`), deixando o chip da barra e o badge do card na
+ * (`TEMA_CHIP_METAS.concluida`), deixando o chip da barra e o badge do card na
  * mesma cor pela primeira vez.
  */
 export const CLASSE_SITUACAO: Record<SituacaoMeta, string> = {
@@ -212,65 +213,29 @@ export const TINTA_PRAZO: Record<SituacaoMeta, string> = {
 };
 
 /**
- * PELE SEMÂNTICA das pílulas de status (chip + badge numérica), por estado.
+ * TEMA de cor das pílulas de status — as MESMAS famílias do Design System
+ * usadas pelos chips coloridos da Auditoria (`chipFiltroComum.PALETAS_CHIP`).
  *
- * Cada status usa UMA família de cor do Design System — a mesma dos tokens de
- * situação do card (`CLASSE_SITUACAO`/`COR_DONUT`):
- *   • todas     → `primary` (lime)             — destaque da própria barra;
- *   • emdia     → `success` (verde);
- *   • risco     → `warning` (âmbar);
- *   • atrasada  → `destructive-vivid` (vermelho);
- *   • concluida → `info` (azul)                — escolhido NO LUGAR do verde
+ * Cada status usa UMA família de cor, a mesma dos tokens de situação do card
+ * (`CLASSE_SITUACAO`/`COR_DONUT`):
+ *   • todas     → `lime`    (`--primary`, lime da marca) — destaque da barra;
+ *   • emdia     → `emerald` (`--success`, verde);
+ *   • risco     → `amber`   (`--warning`, âmbar);
+ *   • atrasada  → `red`     (`--destructive-vivid`, vermelho);
+ *   • concluida → `blue`    (`--info`, azul) — escolhido NO LUGAR do verde
  *     para separar visualmente de "Em dia" (no card da meta ambos caem em
- *     `success`); para paridade estrita com o card, basta trocar `info` por
- *     `success` aqui — é o único ponto de verdade dessas cores.
+ *     `success`).
  *
- * INATIVO: mantém o fundo escuro do sistema com leve tint + borda e texto na
- * cor do status. ATIVO: mesma família, com intensidade maior (fundo, borda,
- * texto e badge) — mais contraste sem estourar a saturação do tema dark.
+ * Aqui fica SÓ a cor de cada categoria — a única fonte de verdade. A anatomia
+ * do chip (altura, padding, formato, bolinha, contador e a animação de glow) é
+ * do componente único `ColoredFilterChip`, o MESMO da Auditoria.
  */
-export interface PeleFiltroStatus {
-  /** Fundo/borda/texto do chip INATIVO. */
-  chip: string;
-  /** Fundo/borda/texto do chip ATIVO. */
-  chipAtivo: string;
-  /** Badge numérica INATIVA. */
-  badge: string;
-  /** Badge numérica ATIVA. */
-  badgeAtivo: string;
-}
-
-export const PELE_FILTRO: Record<FiltroStatus, PeleFiltroStatus> = {
-  todas: {
-    chip: 'border-primary/25 bg-primary/5 text-primary/80 hover:border-primary/45 hover:bg-primary/10 hover:text-primary',
-    chipAtivo: 'border-primary/60 bg-primary/15 text-primary',
-    badge: 'bg-primary/10 text-primary/80',
-    badgeAtivo: 'bg-primary/20 text-primary',
-  },
-  emdia: {
-    chip: 'border-success/25 bg-success/5 text-success/80 hover:border-success/45 hover:bg-success/10 hover:text-success',
-    chipAtivo: 'border-success/60 bg-success/15 text-success',
-    badge: 'bg-success/10 text-success/80',
-    badgeAtivo: 'bg-success/20 text-success',
-  },
-  risco: {
-    chip: 'border-warning/25 bg-warning/5 text-warning/80 hover:border-warning/45 hover:bg-warning/10 hover:text-warning',
-    chipAtivo: 'border-warning/60 bg-warning/15 text-warning',
-    badge: 'bg-warning/10 text-warning/80',
-    badgeAtivo: 'bg-warning/20 text-warning',
-  },
-  atrasada: {
-    chip: 'border-destructive-vivid/25 bg-destructive-vivid/5 text-destructive-vivid/80 hover:border-destructive-vivid/45 hover:bg-destructive-vivid/10 hover:text-destructive-vivid',
-    chipAtivo: 'border-destructive-vivid/60 bg-destructive-vivid/15 text-destructive-vivid',
-    badge: 'bg-destructive-vivid/10 text-destructive-vivid/80',
-    badgeAtivo: 'bg-destructive-vivid/20 text-destructive-vivid',
-  },
-  concluida: {
-    chip: 'border-info/25 bg-info/5 text-info/80 hover:border-info/45 hover:bg-info/10 hover:text-info',
-    chipAtivo: 'border-info/60 bg-info/15 text-info',
-    badge: 'bg-info/10 text-info/80',
-    badgeAtivo: 'bg-info/20 text-info',
-  },
+export const TEMA_CHIP_METAS: Record<FiltroStatus, TemaChip> = {
+  todas: PALETAS_CHIP.lime,
+  emdia: PALETAS_CHIP.emerald,
+  risco: PALETAS_CHIP.amber,
+  atrasada: PALETAS_CHIP.red,
+  concluida: PALETAS_CHIP.blue,
 };
 
 /** Pílulas da barra de filtros rápidos, na ordem da referência. */

@@ -80,6 +80,15 @@ export default {
         // Glow vermelho do botão "Novo Desligamento" (Desligamentos) — mesma régua
         // dos demais glows, na variante VIBRANTE do vermelho (`--destructive-vivid`).
         'glow-destructive': '0 0 20px -5px hsl(var(--destructive-vivid) / 0.4)',
+        // Glows temáticos dos chips de filtro da Auditoria de Desempenho — mesma
+        // régua dos demais (`0 0 20px -5px`), um por família de cor do chip
+        // (o lime usa `glow` e o vermelho usa `glow-destructive`, já existentes).
+        'glow-info': '0 0 20px -5px hsl(var(--info) / 0.4)',
+        'glow-success': '0 0 20px -5px hsl(var(--success) / 0.4)',
+        'glow-warning': '0 0 20px -5px hsl(var(--warning) / 0.4)',
+        // Violeta do tema (`--chart-4`) — usado pelo chip "Autoavaliação" da aba
+        // Feedbacks; mesma régua dos demais glows (0 0 20px -5px).
+        'glow-chart-4': '0 0 20px -5px hsl(var(--chart-4) / 0.4)',
         elevated: '0 10px 30px -10px hsl(var(--foreground) / 0.1)',
         glass: '0 8px 32px 0 hsl(var(--foreground) / 0.06)',
       },

@@ -6,10 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Check, FilterX, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { entradaCard } from './entradaCards';
+import { ColoredFilterChip } from './ColoredFilterChip';
 import {
   ORDEM_FEEDBACK_OPCOES,
   ROTULO_TIPO_FEEDBACK,
   SEGMENTOS,
+  TEMA_CHIP_FEEDBACKS,
   type ContagemSegmentos,
   type CriterioOrdemFeedback,
   type SegmentoFeedback,
@@ -38,71 +40,14 @@ import {
 const TODOS = '__todos';
 
 /**
- * IDENTIDADE CROMÁTICA PERMANENTE dos quatro chips de categoria.
+ * IDENTIDADE CROMÁTICA dos quatro chips de categoria.
  *
- * Regra: cada chip carrega a SUA família de cor nos DOIS estados — o inativo
- * nunca cai em cinza (`text-muted-foreground`/`bg-card`), só fica um degrau
- * abaixo do ativo. A diferença entre ativo e inativo é apenas de INTENSIDADE
- * (fundo, borda e contador), nunca de matiz.
- *
- * Tokens oficiais do Design System, um por categoria:
- *   • todos        → `--primary`   (verde-lima da marca);
- *   • gestor       → `--success`   (verde);
- *   • par (Pares)  → `--info`      (azul-ciano);
- *   • auto         → `--chart-4`   (violeta do tema).
- *
- * `--chart-4` não é utilitário registrado no `tailwind.config.js`, então entra
- * por valor arbitrário — o MESMO padrão já usado em `AssistenteIAPage` e no
- * restante do módulo de Desempenho. Nenhum token novo, nenhum CSS global.
- *
- * As classes são literais (nada de interpolação) para o scanner do Tailwind
- * gerar todo o CSS — inclusive os degraus só usados no hover.
+ * Cada chip carrega a SUA família de cor nos DOIS estados (inativo e ativo); a
+ * diferença entre eles é só de INTENSIDADE, nunca de matiz. As cores e a
+ * anatomia agora vêm do Design System compartilhado: `TEMA_CHIP_FEEDBACKS`
+ * (`feedbacksComum`) + o componente único `ColoredFilterChip` — o MESMO da
+ * Auditoria. Nenhuma pele local.
  */
-interface PeleChip {
-  /** Estado INATIVO: fundo ~10 %, borda ~25 %, texto/contador na cor. */
-  inativo: string;
-  /** Estado ATIVO: mesma cor, com fundo ~20 % e borda ~60 %. */
-  ativo: string;
-  /** Cor cheia do indicador circular. */
-  ponto: string;
-  /** Fundo do contador no estado inativo. */
-  contador: string;
-  /** Fundo do contador no estado ativo. */
-  contadorAtivo: string;
-}
-
-const PELE_CHIP: Record<SegmentoFeedback, PeleChip> = {
-  todos: {
-    inativo: 'border-primary/25 bg-primary/10 text-primary hover:border-primary/45 hover:bg-primary/[0.16]',
-    ativo: 'border-primary/60 bg-primary/20 text-primary',
-    ponto: 'bg-primary',
-    contador: 'bg-primary/10',
-    contadorAtivo: 'bg-primary/25',
-  },
-  gestor: {
-    inativo: 'border-success/25 bg-success/10 text-success hover:border-success/45 hover:bg-success/[0.16]',
-    ativo: 'border-success/60 bg-success/20 text-success',
-    ponto: 'bg-success',
-    contador: 'bg-success/10',
-    contadorAtivo: 'bg-success/25',
-  },
-  par: {
-    inativo: 'border-info/25 bg-info/10 text-info hover:border-info/45 hover:bg-info/[0.16]',
-    ativo: 'border-info/60 bg-info/20 text-info',
-    ponto: 'bg-info',
-    contador: 'bg-info/10',
-    contadorAtivo: 'bg-info/25',
-  },
-  auto: {
-    inativo:
-      'border-[hsl(var(--chart-4)/0.25)] bg-[hsl(var(--chart-4)/0.10)] text-[hsl(var(--chart-4))] hover:border-[hsl(var(--chart-4)/0.45)] hover:bg-[hsl(var(--chart-4)/0.16)]',
-    ativo:
-      'border-[hsl(var(--chart-4)/0.60)] bg-[hsl(var(--chart-4)/0.20)] text-[hsl(var(--chart-4))]',
-    ponto: 'bg-[hsl(var(--chart-4))]',
-    contador: 'bg-[hsl(var(--chart-4)/0.10)]',
-    contadorAtivo: 'bg-[hsl(var(--chart-4)/0.25)]',
-  },
-};
 
 interface FeedbacksFiltrosProps {
   /** Posição na cascata de entrada (mesma régua do Dashboard Executivo). */
@@ -264,40 +209,21 @@ export function FeedbacksFiltros({
         </div>
       </div>
 
-      {/* ── Linha 2: chips de segmentação com contador ───────────────────── */}
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Segmentar por tipo de feedback">
-        {SEGMENTOS.map((s) => {
-          const ativo = segmento === s.valor;
-          const pele = PELE_CHIP[s.valor];
-          return (
-            <button
-              key={s.valor}
-              type="button"
-              aria-pressed={ativo}
-              onClick={() => onSegmento(s.valor)}
-              className={cn(
-                // Geometria, tipografia e raio idênticos aos de antes — só a COR
-                // mudou: cada chip mantém a sua nos dois estados (o inativo nunca
-                // fica cinza), com o ativo um degrau acima em intensidade.
-                'inline-flex h-7 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] font-medium transition-colors duration-200',
-                ativo ? pele.ativo : pele.inativo
-              )}
-            >
-              {/* Indicador circular: SEMPRE na cor da categoria (inclusive com 0). */}
-              <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', pele.ponto)} />
-              {s.rotulo}
-              {/* Contador: herda a cor do texto do chip e ganha o fundo da família. */}
-              <span
-                className={cn(
-                  'rounded-md px-1.5 py-0.5 text-[10px] tabular-nums',
-                  ativo ? pele.contadorAtivo : pele.contador
-                )}
-              >
-                {contagem[s.valor]}
-              </span>
-            </button>
-          );
-        })}
+      {/* ── Linha 2: chips coloridos de segmentação com contador ───────────
+          MESMA anatomia e MESMA animação de glow dos chips da Auditoria: o
+          desenho vive no componente único `ColoredFilterChip`; aqui só entra a
+          cor de cada categoria (`TEMA_CHIP_FEEDBACKS`). */}
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Segmentar por tipo de feedback">
+        {SEGMENTOS.map((s) => (
+          <ColoredFilterChip
+            key={s.valor}
+            label={s.rotulo}
+            count={contagem[s.valor]}
+            tema={TEMA_CHIP_FEEDBACKS[s.valor]}
+            selected={segmento === s.valor}
+            onClick={() => onSegmento(s.valor)}
+          />
+        ))}
       </div>
     </motion.div>
   );

@@ -1,0 +1,87 @@
+arquivo: supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql
+statements: 50
+
+--- ordem real de criação (eventos) ---
+  POLICY  feedbacks_360_insert ON feedbacks_360
+  POLICY  feedbacks_360_select ON feedbacks_360
+  TABLE   feedbacks_360_operacoes
+  ALTER   feedbacks_360_operacoes
+  POLICY  fbo_select ON feedbacks_360_operacoes
+  TABLE   feedbacks_360_validacoes_potencial
+  INDEX   ON feedbacks_360_validacoes_potencial
+  ALTER   feedbacks_360_validacoes_potencial
+  POLICY  fvp_select ON feedbacks_360_validacoes_potencial
+
+  OK    primeiro statement é "begin" (obtido: "begin")
+  OK    último statement é "commit" (obtido: "commit")
+  OK    nenhum begin/commit/rollback DENTRO do envelope
+  OK    policy feedbacks_360_insert em feedbacks_360: criada DEPOIS da tabela
+  OK    policy feedbacks_360_select em feedbacks_360: criada DEPOIS da tabela
+  OK    alter table feedbacks_360_operacoes: aplicado DEPOIS da tabela
+  OK    policy fbo_select em feedbacks_360_operacoes: criada DEPOIS da tabela
+  OK    index em feedbacks_360_validacoes_potencial: criado DEPOIS da tabela
+  OK    alter table feedbacks_360_validacoes_potencial: aplicado DEPOIS da tabela
+  OK    policy fvp_select em feedbacks_360_validacoes_potencial: criada DEPOIS da tabela
+  OK    policy de SELECT existe em feedbacks_360_operacoes
+  OK    policy de feedbacks_360_operacoes: exige PAPEL (pode_gerir_avaliacoes())
+  OK    policy de feedbacks_360_operacoes: exige EMPRESA (get_user_empresas)
+  OK    policy de SELECT existe em feedbacks_360_validacoes_potencial
+  OK    policy de feedbacks_360_validacoes_potencial: exige PAPEL (pode_gerir_avaliacoes())
+  OK    policy de feedbacks_360_validacoes_potencial: exige EMPRESA (get_user_empresas)
+  OK    finalizar_feedback: papel, empresa e leitura de idempotência presentes
+  OK    finalizar_feedback: PAPEL conferido ANTES da idempotência (1027 < 1731)
+  OK    finalizar_feedback: EMPRESA conferida ANTES da idempotência (1527 < 1731)
+  OK    finalizar_feedback: reenvio restrito pela própria empresa
+  OK    finalizar_feedback: reenvio restrito pelo próprio feedback
+  OK    validar_potencial_avaliacao: papel, empresa e leitura de idempotência presentes
+  OK    validar_potencial_avaliacao: PAPEL conferido ANTES da idempotência (816 < 1527)
+  OK    validar_potencial_avaliacao: EMPRESA conferida ANTES da idempotência (1335 < 1527)
+  OK    validar_potencial_avaliacao: reenvio restrito pela própria empresa
+  OK    validar_potencial_avaliacao: reenvio restrito pelo próprio feedback
+  OK    criar_feedback_seguro: confere IDs em public.colaboradores
+  OK    criar_feedback_seguro: confere ciclo em public.ciclos_avaliacao
+  OK    criar_feedback_seguro: erro avaliado_fora_da_empresa presente
+  OK    criar_feedback_seguro: erro avaliador_fora_da_empresa presente
+  OK    criar_feedback_seguro: erro ciclo_fora_da_empresa presente
+  OK    criar_feedback_seguro: hash cobre v_fortes
+  OK    criar_feedback_seguro: hash cobre v_melhoria
+  OK    criar_feedback_seguro: hash cobre v_comentario
+  OK    criar_feedback_seguro: hash cobre p_avaliado_id
+  OK    criar_feedback_seguro: hash cobre p_ciclo_id
+  OK    criar_feedback_seguro: hash cobre p_avaliador_id
+  OK    criar_feedback_seguro: hash cobre p_nota_geral
+  OK    criar_feedback_seguro: hash cobre p_potencial
+  OK    criar_feedback_seguro: reenvio restrito à mesma empresa
+  OK    finalizar_feedback: valida a nota na escala 1–5
+  OK    finalizar_feedback: erro nota_desempenho_fora_da_escala presente
+  OK    versao_avaliacao_feedback: versão com precisão de MICROSSEGUNDO
+  OK    pre-aplicacao: abre transacao explicita
+  OK    pre-aplicacao: SET TRANSACTION READ ONLY presente
+  OK    pre-aplicacao: encerra em ROLLBACK (nada persiste)
+  OK    pre-aplicacao: nenhuma escrita/DDL (encontrados: 0)
+  OK    pre-aplicacao: checagem B1 presente no gate
+  OK    pre-aplicacao: checagem B2 presente no gate
+  OK    pre-aplicacao: checagem B3 presente no gate
+  OK    pre-aplicacao: checagem B4 presente no gate
+  OK    pre-aplicacao: checagem B5 presente no gate
+  OK    pre-aplicacao: checagem B6 presente no gate
+  OK    pre-aplicacao: checagem B7 presente no gate
+  OK    pre-aplicacao: checagem B8 presente no gate
+  OK    pre-aplicacao: checagem A1 presente no gate
+  OK    pre-aplicacao: checagem A2 presente no gate
+  OK    pre-aplicacao: checagem A3 presente no gate
+  OK    pre-aplicacao: bloco de diagnostico D1 presente
+  OK    pre-aplicacao: bloco de diagnostico D2 presente
+  OK    pre-aplicacao: bloco de diagnostico D3 presente
+  OK    pre-aplicacao: bloco de diagnostico D4 presente
+  OK    pre-aplicacao: diagnostico nao projeta dado pessoal (encontrados: 0)
+  OK    testes-seguranca: encerra em ROLLBACK (nenhum registro de teste permanece)
+  OK    testes-seguranca: casos 1..24 presentes
+  OK    testes-seguranca: caso 24 prova a exigencia de NOVA validacao do RH
+  OK    testes-seguranca: caso 24 exige 0 vigentes antes e 1 depois
+
+{
+  "verificacoes": 67,
+  "ok": 67,
+  "falhas": 0
+}

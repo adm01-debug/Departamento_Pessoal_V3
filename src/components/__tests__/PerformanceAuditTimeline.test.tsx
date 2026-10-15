@@ -1,32 +1,47 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    // `motion.create(Card)` é avaliado na CARGA de `ui/entrada-cards` (o mecanismo
-    // de entrada reutilizado pelo módulo de Desempenho) — sem `create` o import
-    // do módulo quebra antes de qualquer teste rodar.
-    create: (Component: any) =>
-      ({ children, custom, variants, initial, animate, ...props }: any) =>
-        <Component {...props}>{children}</Component>,
-  },
-  AnimatePresence: ({ children }: any) => children,
-}));
+/**
+ * ============================================================================
+ * AUDITORIA — prova da GRADE FIXA da trilha de desempenho.
+ *
+ * O que precisa ficar travado: cada evento é uma linha de grid com as MESMAS
+ * colunas (trilho · horário · ícone · bloco · nota · módulo · ação · responsável
+ * · "Ver detalhes" · menu), então nada "flutua" de uma linha para outra; o
+ * cabeçalho do dia mostra rótulo + data e a contagem real de eventos.
+ *
+ * O mock da Motion expõe só o necessário (os filhos rendem `children`); o
+ * `useReducedMotion`/`useInView` são consumidos por `ui/select` e pelos cards.
+ * ============================================================================
+ */
+vi.mock('framer-motion', () => {
+  const Fake = ({
+    children,
+    custom,
+    variants,
+    initial,
+    animate,
+    whileHover,
+    whileTap,
+    exit,
+    layout,
+    transition,
+    ...rest
+  }: any) => <div {...rest}>{children}</div>;
+  return {
+    motion: new Proxy({} as Record<string, unknown>, {
+      get: (_alvo, prop) => (prop === 'create' ? () => Fake : Fake),
+    }),
+    AnimatePresence: ({ children }: any) => children,
+    MotionConfig: ({ children }: any) => children,
+    useReducedMotion: () => false,
+    useInView: () => true,
+  };
+});
 
-vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
-}));
-
-vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: any) => <div>{children}</div>,
-}));
-
-vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+const estado = vi.hoisted(() => ({ logs: [] as unknown[] }));
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: () => ({ data: estado.logs, isLoading: false }),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -38,16 +53,6 @@ vi.mock('@/integrations/supabase/client', () => ({
       limit: vi.fn().mockResolvedValue({ data: [], error: null }),
     })),
   },
-}));
-
-vi.mock('date-fns', () => ({
-  format: vi.fn(() => '01/07 10:00'),
-}));
-
-vi.mock('date-fns/locale', () => ({ ptBR: {} }));
-
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: [], isLoading: false })),
 }));
 
 import { PerformanceAuditTimeline } from '../avaliacao/PerformanceAuditTimeline';
@@ -71,60 +76,89 @@ const MOCK_LOGS = [
   },
 ];
 
-describe('PerformanceAuditTimeline', () => {
-  it('renders Trilha de Desempenho title', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
-    render(<PerformanceAuditTimeline />);
-    expect(screen.getByText(/Trilha de Desempenho/i)).toBeInTheDocument();
-  });
+/** As linhas de evento: o `div.grid` que contém cada botão "Ver detalhes". */
+function linhasDeEvento(): HTMLElement[] {
+  return screen
+    .getAllByRole('button', { name: /Ver detalhes/i })
+    .map((botao) => botao.closest('div.grid') as HTMLElement);
+}
 
-  it('renders empty state message when no logs', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
+describe('PerformanceAuditTimeline — grade fixa da trilha', () => {
+  it('mostra o estado vazio quando não há registros', () => {
+    estado.logs = [];
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText(/Nenhum registro de auditoria/i)).toBeInTheDocument();
   });
 
-  it('renders acao badge when logs exist', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+  it('abre o cabeçalho de cada dia com a contagem real de eventos', () => {
+    estado.logs = MOCK_LOGS;
     render(<PerformanceAuditTimeline />);
-    expect(screen.getByText(/UPDATE/i)).toBeInTheDocument();
+    // Dois dias distintos, um evento em cada.
+    expect(screen.getAllByText('1 evento')).toHaveLength(2);
   });
 
-  it('renders tabela name in badge', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+  it('usa a MESMA grade de colunas em todas as linhas (alinhamento fixo)', () => {
+    estado.logs = MOCK_LOGS;
     render(<PerformanceAuditTimeline />);
-    expect(screen.getByText(/metas okrs/i)).toBeInTheDocument();
+
+    const linhas = linhasDeEvento();
+    expect(linhas).toHaveLength(MOCK_LOGS.length);
+    expect(linhas.every(Boolean)).toBe(true);
+
+    for (const linha of linhas) {
+      // Template da linha: as nove colunas do desktop + a versão compacta.
+      expect(linha.className).toContain('xl:grid-cols-[20px_40px_32px_minmax(0,2.9fr)');
+      expect(linha.className).toContain('grid-cols-[20px_32px_minmax(0,1fr)');
+      // Uma célula por coluna (mesmo as ocultas no mobile continuam no DOM).
+      expect(linha.children.length).toBe(9);
+    }
+
+    // Todas as linhas carregam EXATAMENTE as mesmas classes de grade.
+    const primeiro = linhas[0].className;
+    for (const linha of linhas) expect(linha.className).toBe(primeiro);
   });
 
-  it('renders user email', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+  it('mostra módulo, ação, responsável e "Ver detalhes" em cada evento', () => {
+    estado.logs = MOCK_LOGS;
     render(<PerformanceAuditTimeline />);
-    expect(screen.getByText('gestor@empresa.com')).toBeInTheDocument();
+
+    const linhas = linhasDeEvento();
+    // Ordem cronológica decrescente: metas (01/07) antes de ciclos (01/06).
+    const metas = within(linhas[0]);
+    expect(metas.getByText('Metas & OKRs')).toBeInTheDocument();
+    expect(metas.getByText('Atualizar')).toBeInTheDocument();
+    expect(metas.getByText('gestor@empresa.com')).toBeInTheDocument();
+
+    const ciclos = within(linhas[1]);
+    expect(ciclos.getByText('Ciclos')).toBeInTheDocument();
+    expect(ciclos.getByText('Criar')).toBeInTheDocument();
+    expect(ciclos.getByText('Sistema')).toBeInTheDocument();
+
+    expect(screen.getAllByRole('button', { name: /Ver detalhes/i })).toHaveLength(2);
   });
 
-  it('renders Sistema when user_email is null', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+  it('dá destaque ao CTA "Ver detalhes" (superfície e borda próprias)', () => {
+    estado.logs = MOCK_LOGS;
     render(<PerformanceAuditTimeline />);
-    expect(screen.getByText('Sistema')).toBeInTheDocument();
+
+    const cta = screen.getAllByRole('button', { name: /Ver detalhes/i })[0];
+    const classes = cta.className.split(/\s+/);
+    expect(classes).toContain('h-8');
+    expect(classes).toContain('bg-muted/60');
+    expect(classes).toContain('border-border/70');
+    expect(classes).toContain('text-foreground');
   });
 
-  it('renders dados_novos JSON when present', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
-    const { container } = render(<PerformanceAuditTimeline />);
-    expect(container.textContent).toContain('progresso');
-  });
-
-  it('renders no empty state when logs exist', async () => {
-    const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+  it('não renderiza o menu de 3 pontos e deixa o CTA como único botão da linha', () => {
+    estado.logs = MOCK_LOGS;
     render(<PerformanceAuditTimeline />);
-    expect(screen.queryByText(/Nenhum registro/i)).toBeNull();
+
+    expect(screen.queryByRole('button', { name: /Ações adicionais/i })).toBeNull();
+
+    for (const linha of linhasDeEvento()) {
+      const botoes = within(linha).getAllByRole('button');
+      expect(botoes).toHaveLength(1);
+      expect(botoes[0]).toHaveAccessibleName(/Ver detalhes/i);
+    }
   });
 });

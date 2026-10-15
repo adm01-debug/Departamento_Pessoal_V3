@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   CHIPS_PDI,
   CLASSE_STATUS,
-  PELE_CHIP,
   PROGRESSO_PDI_DISPONIVEL,
+  TEMA_CHIP_PDI,
   categoriaPdi,
   colaboradoresDosPdis,
   competenciasDisponiveis,
@@ -203,7 +203,7 @@ describe('pdiComum — contadores das pílulas', () => {
   it('mantém as quatro pílulas na ordem da referência', () => {
     expect(CHIPS_PDI.map((c) => c.valor)).toEqual(['todos', 'em_andamento', 'pendente', 'concluido']);
     CHIPS_PDI.forEach((c) => {
-      expect(PELE_CHIP[c.valor].chip).toBeTruthy();
+      expect(TEMA_CHIP_PDI[c.valor].ponto).toBeTruthy();
       expect(CLASSE_STATUS[c.valor]).toBeTruthy();
     });
   });

@@ -33,7 +33,12 @@ function setupInsertChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -43,7 +48,9 @@ function setupDeleteChain(error: any = null) {
 // ─── Ciclos ───────────────────────────────────────────────────────────────────
 
 describe('avaliacaoService.listarCiclos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns ciclos without empresa filter', async () => {
     const records = [{ id: 'ci1', nome: 'Q1 2026' }];
@@ -70,7 +77,9 @@ describe('avaliacaoService.listarCiclos', () => {
 });
 
 describe('avaliacaoService.criarCiclo', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new ciclo', async () => {
     const created = { id: 'ci-new', nome: 'Q2 2026' };
@@ -87,7 +96,9 @@ describe('avaliacaoService.criarCiclo', () => {
 });
 
 describe('avaliacaoService.excluirCiclo', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes ciclo by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -100,16 +111,16 @@ describe('avaliacaoService.excluirCiclo', () => {
 // ─── Metas (OKRs) ─────────────────────────────────────────────────────────────
 
 describe('avaliacaoService.listarMetas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns metas with colaborador join', async () => {
     const records = [{ id: 'm1', titulo: 'Aumentar vendas' }];
     const { selectFn } = setupListChain(records);
     const result = await avaliacaoService.listarMetas(EMPRESA_ID);
     expect(result).toEqual(records);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -138,7 +149,9 @@ describe('avaliacaoService.listarMetas', () => {
 });
 
 describe('avaliacaoService.criarMeta', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new meta', async () => {
     const created = { id: 'm-new', titulo: 'Meta X' };
@@ -150,7 +163,9 @@ describe('avaliacaoService.criarMeta', () => {
 });
 
 describe('avaliacaoService.excluirMeta', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes meta by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -162,16 +177,16 @@ describe('avaliacaoService.excluirMeta', () => {
 // ─── PDIs ─────────────────────────────────────────────────────────────────────
 
 describe('avaliacaoService.listarPDIs', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns PDIs with colaborador join', async () => {
     const records = [{ id: 'p1' }];
     const { selectFn } = setupListChain(records);
     const result = await avaliacaoService.listarPDIs(EMPRESA_ID);
     expect(result).toEqual(records);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('returns empty when null', async () => {
@@ -187,7 +202,9 @@ describe('avaliacaoService.listarPDIs', () => {
 });
 
 describe('avaliacaoService.criarPDI', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new PDI', async () => {
     const created = { id: 'p-new' };
@@ -198,7 +215,9 @@ describe('avaliacaoService.criarPDI', () => {
 });
 
 describe('avaliacaoService.excluirPDI', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes PDI by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -210,7 +229,9 @@ describe('avaliacaoService.excluirPDI', () => {
 // ─── Feedbacks (360) ──────────────────────────────────────────────────────────
 
 describe('avaliacaoService.listarFeedbacks', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns feedbacks with avaliado/avaliador joins', async () => {
     const records = [{ id: 'fb1' }];
@@ -235,7 +256,9 @@ describe('avaliacaoService.listarFeedbacks', () => {
 });
 
 describe('avaliacaoService.criarFeedback', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new feedback', async () => {
     const created = { id: 'fb-new' };
@@ -246,19 +269,28 @@ describe('avaliacaoService.criarFeedback', () => {
 });
 
 describe('avaliacaoService.excluirFeedback', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-  it('deletes feedback by id', async () => {
+  it('RECUSA a exclusão física e NÃO chama o DELETE (correção R2)', async () => {
     const { eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirFeedback('fb1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'fb1');
+    await expect(avaliacaoService.excluirFeedback('fb1', EMPRESA_ID)).rejects.toThrow(/EXCLUSAO_FISICA_DESATIVADA/);
+    expect(eqFn).not.toHaveBeenCalled();
+  });
+
+  it('explica que o caminho oficial é o cancelamento auditado', async () => {
+    setupDeleteChain();
+    await expect(avaliacaoService.excluirFeedback('fb1', EMPRESA_ID)).rejects.toThrow(/cancelamento auditado/);
   });
 });
 
 // ─── Competências ─────────────────────────────────────────────────────────────
 
 describe('avaliacaoService.listarCompetencias', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns competencias ordered by nome', async () => {
     const records = [{ id: 'co1', nome: 'Liderança' }];
@@ -276,7 +308,9 @@ describe('avaliacaoService.listarCompetencias', () => {
 });
 
 describe('avaliacaoService.criarCompetencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new competencia', async () => {
     const created = { id: 'co-new', nome: 'Comunicação' };
@@ -287,7 +321,9 @@ describe('avaliacaoService.criarCompetencia', () => {
 });
 
 describe('avaliacaoService.excluirCompetencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes competencia by id', async () => {
     const { eqFn } = setupDeleteChain();

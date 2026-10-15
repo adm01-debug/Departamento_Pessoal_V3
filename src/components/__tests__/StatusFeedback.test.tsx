@@ -234,6 +234,69 @@ describe('operação completa — status + auditoria no mesmo payload', () => {
     expect(r.motivo).toBe('perfil_nao_autorizado');
   });
 
+  it('REABRIR exige justificativa (histórico tem de explicar a volta a pendente)', () => {
+    const semJustificativa = montarOperacao({
+      ...base,
+      operacao: 'reabrir',
+      statusAtual: 'concluido',
+      perfil: 'admin_rh',
+    });
+    expect(semJustificativa.pronta).toBe(false);
+    if (semJustificativa.pronta) return;
+    expect(semJustificativa.motivo).toBe('justificativa_ausente');
+
+    const curta = montarOperacao({
+      ...base,
+      operacao: 'reabrir',
+      statusAtual: 'concluido',
+      perfil: 'admin_rh',
+      justificativaReabertura: 'curta',
+    });
+    expect(curta.pronta).toBe(false);
+    if (curta.pronta) return;
+    expect(curta.motivo).toBe('justificativa_curta');
+
+    const ok = montarOperacao({
+      ...base,
+      operacao: 'reabrir',
+      statusAtual: 'concluido',
+      perfil: 'admin_rh',
+      justificativaReabertura: 'Potencial informado incorretamente pelo gestor.',
+    });
+    expect(ok.pronta).toBe(true);
+    if (!ok.pronta) return;
+    expect(ok.operacao.para).toBe('pendente');
+    expect(ok.operacao.observacao).toContain('Potencial informado incorretamente');
+    expect(ok.operacao.auditoria.dadosAnteriores).toEqual({ status: 'concluido' });
+    expect(ok.operacao.auditoria.dadosNovos).toEqual({ status: 'pendente' });
+  });
+
+  it('reabrir de cancelado também exige justificativa e volta a pendente', () => {
+    const r = montarOperacao({
+      ...base,
+      operacao: 'reabrir',
+      statusAtual: 'cancelado',
+      perfil: 'admin_rh',
+      justificativaReabertura: 'Cancelamento lançado por engano.',
+    });
+    expect(r.pronta).toBe(true);
+    if (!r.pronta) return;
+    expect(r.operacao.para).toBe('pendente');
+  });
+
+  it('concluido → cancelado continua proibido (exige reabrir antes)', () => {
+    const r = montarOperacao({
+      ...base,
+      operacao: 'cancelar',
+      statusAtual: 'concluido',
+      perfil: 'admin_rh',
+      motivoCancelamento: 'motivo qualquer',
+    });
+    expect(r.pronta).toBe(false);
+    if (r.pronta) return;
+    expect(r.motivo).toBe('transicao_proibida');
+  });
+
   it('rótulos existem para as três ações e os três estados', () => {
     expect(Object.values(ROTULO_ACAO)).toEqual(['Concluir avaliação', 'Cancelar avaliação', 'Reabrir avaliação']);
     expect(ROTULO_STATUS.pendente).toBe('Pendente');

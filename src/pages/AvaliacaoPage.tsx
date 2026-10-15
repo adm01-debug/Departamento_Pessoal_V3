@@ -1,5 +1,5 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
@@ -15,6 +15,14 @@ import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboar
 import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
 import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxTab } from '@/components/avaliacao/NineBoxTab';
+// Modo real + ponte de criação auditada (idempotência por operação).
+import { modoRealAtivo } from '@/components/avaliacao/nineBoxModo';
+import {
+  assinaturaFeedback,
+  criarChaveIdempotente,
+  payloadCriacaoSegura,
+  type ChaveIdempotente,
+} from '@/components/avaliacao/criacaoFeedback';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { EntradaPresenca } from '@/components/avaliacao/entradaCards';
 import { FeedbacksTab } from '@/components/avaliacao/FeedbacksTab';
@@ -81,6 +89,16 @@ export default function AvaliacaoPage() {
   // leitura curto-circuita a chamada ao Supabase; `enabled` também passa a
   // valer sem empresa ativa (a área mostra os dados fictícios de demonstração).
   const mockAtivo = isDesempenhoMockEnabled();
+
+  /* ── IDEMPOTÊNCIA DA CRIAÇÃO (modo real) ──────────────────────────────────
+     A chave da operação nasce UMA vez por tentativa do formulário e é
+     reaproveitada em TODO reenvio da MESMA tentativa (duplo clique, erro de
+     rede, retry). Só uma operação NOVA ganha chave nova: conteúdo alterado ou
+     criação já confirmada pelo servidor (ver `onSuccess`).                  */
+  const chaveFeedbackRef = useRef<ChaveIdempotente | null>(null);
+  // Inicialização preguiçosa no formato aceito pela regra `react-hooks/refs`
+  // (`ref.current == null`): a fábrica é criada UMA vez por montagem.
+  if (chaveFeedbackRef.current == null) chaveFeedbackRef.current = criarChaveIdempotente();
   const { data: ciclos = [], isLoading: loadCiclos } = useQuery({
     queryKey: ['ciclos_avaliacao', empresaAtual?.id],
     queryFn: async (): Promise<any[]> => getMockCiclos() ?? (await avaliacaoService.listarCiclos(empresaAtual!.id)),
@@ -140,14 +158,40 @@ export default function AvaliacaoPage() {
     },
   });
 
-  const criarFeedback = useMutation({
+  const criarFeedback = useMutation<any, unknown, any>({
     mutationFn: (d: any) => {
       if (bloquearEscritaDesempenho('Criar feedback')) return Promise.reject(new Error('mock'));
+
+      /* MODO REAL: a gravação vai para a RPC `criar_feedback_seguro`, que grava
+         o feedback e a auditoria na MESMA transação e revalida papel, empresa,
+         ciclo e escala no servidor. Os campos enviados são os MESMOS do
+         formulário (`payloadCriacaoSegura` preserva textos, notas e Potencial);
+         a chave de idempotência é reaproveitada em todo reenvio desta tentativa,
+         então duplo clique/erro de rede NÃO duplica o registro. */
+      if (modoRealAtivo()) {
+        const idOperacao = chaveFeedbackRef.current!.para(assinaturaFeedback(d));
+        const params = payloadCriacaoSegura(d, { empresaId: empresaAtual?.id, idOperacao });
+        if (!params) return Promise.reject(new Error('Dados incompletos para registrar o feedback.'));
+        return avaliacaoService.criarFeedbackSeguro(params);
+      }
+
+      // Modo demonstração (padrão de hoje): caminho inalterado.
       return avaliacaoService.criarFeedback({ ...d, empresa_id: empresaAtual?.id });
     },
     onSuccess: () => {
+      // Sucesso SÓ depois da resposta do servidor: a tentativa está confirmada,
+      // logo a próxima criação é uma operação nova (chave nova). A atualização
+      // das listas também acontece aqui — nunca antes de gravar.
+      chaveFeedbackRef.current?.confirmar();
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
       toast.success('Feedback registrado!');
+    },
+    onError: (erro: unknown) => {
+      // Nada de sucesso falso: o motivo REAL (autorização, validação, rede) vai
+      // para o aviso. A chave é MANTIDA — reenviar a mesma tentativa é seguro.
+      if (isDesempenhoMockEnabled()) return; // o aviso de demonstração já apareceu
+      const mensagem = erro instanceof Error ? erro.message : String((erro as any)?.message ?? '');
+      toast.error(`Feedback não registrado: ${mensagem || 'erro inesperado.'}`);
     },
   });
 
@@ -188,9 +232,38 @@ export default function AvaliacaoPage() {
   );
 
   const cicloSelecionado = useMemo(
-    () => ciclos.find((c: any) => c.id === cicloSelecionadoId) ?? cicloAtivo,
+    () => ciclos.find((c) => c.id === cicloSelecionadoId) ?? cicloAtivo,
     [ciclos, cicloSelecionadoId, cicloAtivo]
   );
+
+  /* ── ENTRADAS DO MODO REAL DO NINE-BOX ────────────────────────────────────
+     Só são buscadas quando a flag está ligada E a área NÃO está em modo
+     demonstração — nunca existe mistura de dados reais com fictícios. As duas
+     consultas dependem do modo real (o serviço lança de outra forma) e NÃO
+     entram no `isLoading` da página: com a flag desligada (padrão) nada é
+     buscado e a tela é exatamente a de hoje.                               */
+  const modoReal = modoRealAtivo() && !mockAtivo && !!empresaAtual?.id;
+
+  const { data: validacoesPotencial = [] } = useQuery({
+    queryKey: ['feedbacks_360_validacoes_potencial', empresaAtual?.id, cicloSelecionado?.id],
+    queryFn: () => avaliacaoService.listarValidacoesPotencial(empresaAtual!.id, cicloSelecionado?.id || undefined),
+    enabled: modoReal,
+  });
+  const { data: versoesAvaliacao = [] } = useQuery({
+    queryKey: ['vw_feedbacks_360_versao', empresaAtual?.id, cicloSelecionado?.id],
+    queryFn: () => avaliacaoService.listarVersoesAvaliacao(empresaAtual!.id, cicloSelecionado?.id || undefined),
+    enabled: modoReal,
+  });
+
+  /** Versão canônica por feedback — o BANCO é a autoridade; aqui só se compara. */
+  const versoesPorFeedback = useMemo(() => {
+    const mapa: Record<string, string> = {};
+    for (const v of versoesAvaliacao) {
+      const id = String(v?.feedback_id ?? '').trim();
+      if (id) mapa[id] = String(v?.versao_avaliacao ?? '').trim();
+    }
+    return mapa;
+  }, [versoesAvaliacao]);
 
   return (
     <>
@@ -366,11 +439,19 @@ export default function AvaliacaoPage() {
                 onCicloId={setCicloSelecionadoId}
                 colaboradores={colaboradores}
                 pdis={pdis}
+                /* Modo real (inerte com a flag desligada): a matriz passa a vir
+                   da consolidação oficial sobre os feedbacks persistidos. */
+                empresaId={empresaAtual?.id}
+                validacoesPotencial={validacoesPotencial}
+                versoesPorFeedback={versoesPorFeedback}
               />
             </TabsContent>
 
             <TabsContent value="auditoria" className="space-y-6">
-              <PerformanceAuditTimeline />
+              {/* Aba redesenhada: filtros → chips por módulo → timeline agrupada
+                  por dia. Mesma consulta de `audit_log`; `colaboradores` entra
+                  apenas para resolver nome/cargo/foto do responsável. */}
+              <PerformanceAuditTimeline colaboradores={colaboradores} />
             </TabsContent>
           </Tabs>
         </EntradaPresenca>

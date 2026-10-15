@@ -35,6 +35,12 @@ const RelatoriosPage = lazy(() => import('@/pages/RelatoriosPage'));
 const ESocialPage = lazy(() => import('@/pages/ESocialPage'));
 const ConfiguracoesPage = lazy(() => import('@/pages/ConfiguracoesPage'));
 const DesignSystemPage = lazy(() => import('@/pages/DesignSystemPage'));
+/**
+ * PRÉVIA LOCAL dos controles do feedback (Nine-Box) — declarada apenas em DEV.
+ * Fora de DEV o valor é `null` e o `import()` é eliminado do build, de modo que
+ * a prévia não existe (nem como rota, nem como chunk) em produção.
+ */
+const NineBoxPreviewPage = import.meta.env.DEV ? lazy(() => import('@/pages/NineBoxPreviewPage')) : null;
 const AdmissoesPage = lazy(() => import('@/pages/AdmissoesPage'));
 const AfastamentosPage = lazy(() => import('@/pages/AfastamentosPage'));
 const CargosPage = lazy(() => import('@/pages/CargosPage'));
@@ -196,6 +202,28 @@ export default function App() {
       <Route path="/verificar-contrato/:hash" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/ciencia-medida/:token" element={<LazyPage Component={CienciaMedidaPage} />} />
       <Route path="/__measure-test" element={<MeasureTestPage />} />
+
+      {/* PRÉVIA LOCAL (SOMENTE DEV): controles do feedback do Nine-Box com dados
+          fictícios e serviço simulado. O `import.meta.env.DEV` é substituído por
+          `false` no build de produção, então a rota NÃO existe lá (e a própria
+          página também devolve `null` fora de DEV — dupla trava).
+          Renderizada com a mesma casca de `LazyPage` (RouteErrorBoundary →
+          Suspense → LazyPageMounted), montada aqui porque a página pode devolver
+          `null`, o que não casa com a assinatura `LazyExoticComponent`. */}
+      {import.meta.env.DEV && NineBoxPreviewPage && (
+        <Route
+          path="/dev/ninebox-preview"
+          element={
+            <RouteErrorBoundary>
+              <Suspense fallback={<PageLoader />}>
+                <LazyPageMounted>
+                  <NineBoxPreviewPage />
+                </LazyPageMounted>
+              </Suspense>
+            </RouteErrorBoundary>
+          }
+        />
+      )}
 
       <Route
         path="/"

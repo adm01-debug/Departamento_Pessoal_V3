@@ -10,6 +10,10 @@ import { NineBoxQuadranteDialog } from './NineBoxQuadranteDialog';
 // ⚠️ TEMPORÁRIO — mock visual do Nine-Box. Remover este import junto com o
 // bloco marcado no corpo do componente e com `nineBoxMock.ts`.
 import { aplicarMockNineBox, MOCK_NINEBOX_COMPARAR_INICIAL } from './nineBoxMock';
+import { modoRealAtivo } from './nineBoxModo';
+import { consolidarNineBox360, pontos360 } from './nineBox360';
+import type { ValidacaoPotencial } from './motorAvaliacao360';
+import type { PontoNineBox } from './nineBoxComum';
 import {
   cargosDisponiveis,
   contarQuadrantes,
@@ -63,6 +67,13 @@ interface NineBoxTabProps {
   colaboradores?: ColaboradorNineBox[];
   /** PDIs já carregados pela página (relação real por `colaborador_id`). */
   pdis?: any[];
+  /* ── Entradas do MODO REAL (ignoradas enquanto a flag estiver desligada) ── */
+  /** Empresa em foco (isolamento de tenant na consolidação oficial). */
+  empresaId?: string;
+  /** Validações de Potencial vigentes (tabela de validações do RH). */
+  validacoesPotencial?: ValidacaoPotencial[];
+  /** Versão canônica por feedback, vinda da view (o banco é a autoridade). */
+  versoesPorFeedback?: Record<string, string>;
 }
 
 export function NineBoxTab({
@@ -72,6 +83,9 @@ export function NineBoxTab({
   onCicloId,
   colaboradores = [],
   pdis = [],
+  empresaId,
+  validacoesPotencial = [],
+  versoesPorFeedback = {},
 }: NineBoxTabProps) {
   const [busca, setBusca] = useState('');
   const [departamento, setDepartamento] = useState('');
@@ -118,15 +132,44 @@ export function NineBoxTab({
   );
 
   /** Pessoas do ciclo em foco — uma por colaborador (ver `nineBoxComum`). */
-  const pontos = useMemo(
+  /* ── MODO REAL (só com NINEBOX_MODO_REAL_ATIVO = true) ─────────────────────
+     A matriz passa a vir da CONSOLIDAÇÃO 360° OFICIAL sobre os feedbacks
+     PERSISTIDOS — sem nenhum mock. Com a flag desligada (padrão), a derivação
+     abaixo é exatamente a de sempre (`derivarPontos`), sem qualquer alteração
+     visual. `empresaId`, `validacoesPotencial` e `versoesPorFeedback` só são
+     usados no modo real.                                                   ── */
+  const pontos = useMemo<PontoNineBox[]>(
     () =>
-      derivarPontos({
-        feedbacks: feedbacksBase,
-        cicloId: cicloId || null,
-        colaboradores: colaboradoresBase,
-        pdis: pdisBase,
-      }),
-    [feedbacksBase, cicloId, colaboradoresBase, pdisBase]
+      modoRealAtivo()
+        ? (pontos360(
+            consolidarNineBox360({
+              feedbacks,
+              cicloId: cicloId || null,
+              empresaId: empresaId ?? null,
+              validacoes: validacoesPotencial,
+              versoesPorFeedback,
+            }),
+            colaboradores,
+            pdis
+          ) as unknown as PontoNineBox[])
+        : derivarPontos({
+            feedbacks: feedbacksBase,
+            cicloId: cicloId || null,
+            colaboradores: colaboradoresBase,
+            pdis: pdisBase,
+          }),
+    [
+      feedbacksBase,
+      cicloId,
+      colaboradoresBase,
+      pdisBase,
+      feedbacks,
+      colaboradores,
+      pdis,
+      empresaId,
+      validacoesPotencial,
+      versoesPorFeedback,
+    ]
   );
 
   /** Pessoas do ciclo ANTERIOR (base do comparativo). */

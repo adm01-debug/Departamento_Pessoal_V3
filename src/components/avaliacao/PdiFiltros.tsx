@@ -4,14 +4,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { SearchInput } from '@/components/ui/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FilterX, SlidersHorizontal, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { entradaCard } from './entradaCards';
+import { ColoredFilterChip } from './ColoredFilterChip';
 import {
   CHIPS_PDI,
   FILTROS_PRAZO,
   ORDEM_PDI_OPCOES,
-  PELE_CHIP,
   ROTULO_CATEGORIA,
+  TEMA_CHIP_ATENCAO,
+  TEMA_CHIP_PDI,
   type CategoriaPdi,
   type ContagemPdi,
   type CriterioOrdemPdi,
@@ -247,50 +248,35 @@ export function PdiFiltros({
         </div>
       </div>
 
-      {/* ── Linha 2: pílulas de status com contador + pílula de atenção ──── */}
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filtrar por status">
-        {CHIPS_PDI.map((c) => {
-          const ativo = status === c.valor;
-          const pele = PELE_CHIP[c.valor];
-          return (
-            <button
-              key={c.valor}
-              type="button"
-              aria-pressed={ativo}
-              onClick={() => onStatus(c.valor)}
-              className={cn(
-                'inline-flex h-7 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] font-medium transition-colors',
-                ativo ? pele.chipAtivo : pele.chip
-              )}
-            >
-              {c.rotulo}
-              <span
-                className={cn(
-                  'rounded-md px-1.5 py-0.5 text-[10px] font-semibold tabular-nums',
-                  ativo ? pele.badgeAtivo : pele.badge
-                )}
-              >
-                {contagem[c.valor]}
-              </span>
-            </button>
-          );
-        })}
+      {/* ── Linha 2: chips coloridos de status + chip contextual de atenção ──
+          MESMA anatomia e MESMA animação de glow dos chips da Auditoria: o
+          desenho vive no componente único `ColoredFilterChip`; aqui só entra a
+          cor de cada categoria (`TEMA_CHIP_PDI`). */}
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por status">
+        {CHIPS_PDI.map((c) => (
+          <ColoredFilterChip
+            key={c.valor}
+            label={c.rotulo}
+            count={contagem[c.valor]}
+            tema={TEMA_CHIP_PDI[c.valor]}
+            selected={status === c.valor}
+            onClick={() => onStatus(c.valor)}
+          />
+        ))}
 
-        {/* Pílula contextual do banner: existe SÓ enquanto o filtro de atenção
-            está ligado e sai junto com ele — nenhum filtro invisível na lista. */}
+        {/* Chip contextual do banner: existe SÓ enquanto o filtro de atenção
+            está ligado e sai junto com ele — nenhum filtro invisível na lista.
+            Mesmo formato dos demais; a cor é a vermelha do Design System. */}
         {emAtencao && (
-          <button
-            type="button"
+          <ColoredFilterChip
+            label="Em atenção"
+            count={totalAtencao}
+            tema={TEMA_CHIP_ATENCAO}
+            selected
             onClick={onLimparAtencao}
-            aria-label="Remover filtro de atenção"
-            className="inline-flex h-7 items-center gap-1.5 rounded-lg border border-destructive-vivid/60 bg-destructive-vivid/15 px-2.5 text-[11px] font-medium text-destructive-vivid transition-colors hover:bg-destructive-vivid/25"
-          >
-            Em atenção
-            <span className="rounded-md bg-destructive-vivid/20 px-1.5 py-0.5 text-[10px] font-semibold tabular-nums">
-              {totalAtencao}
-            </span>
-            <X className="h-3 w-3" />
-          </button>
+            ariaLabel="Remover filtro de atenção"
+            trailing={<X className="h-3 w-3" />}
+          />
         )}
       </div>
     </motion.div>

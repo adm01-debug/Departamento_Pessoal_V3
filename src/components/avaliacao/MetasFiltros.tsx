@@ -4,12 +4,12 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { SearchInput } from '@/components/ui/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FilterX, SlidersHorizontal } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { entradaCard } from './entradaCards';
+import { ColoredFilterChip } from './ColoredFilterChip';
 import {
   FILTROS_STATUS,
   ORDEM_OPCOES,
-  PELE_FILTRO,
+  TEMA_CHIP_METAS,
   rotuloTipo,
   type ContagemMetas,
   type CriterioOrdem,
@@ -212,38 +212,21 @@ export function MetasFiltros({
         </div>
       </div>
 
-      {/* ── Linha 2: pílulas de status com contador ────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filtrar por situação">
-        {FILTROS_STATUS.map((f) => {
-          const ativo = status === f.valor;
-          // Pele semântica vinda do ponto único (`metasComum.PELE_FILTRO`):
-          // cada status mantém a MESMA família de cor em texto, borda, fundo e
-          // badge — inativo com tint sutil sobre o dark, ativo com mais
-          // contraste. Geometria (altura, padding, tipografia) inalterada.
-          const pele = PELE_FILTRO[f.valor];
-          return (
-            <button
-              key={f.valor}
-              type="button"
-              aria-pressed={ativo}
-              onClick={() => onStatus(f.valor)}
-              className={cn(
-                'inline-flex h-7 items-center gap-1.5 rounded-lg border px-2.5 text-[11px] font-medium transition-colors',
-                ativo ? pele.chipAtivo : pele.chip
-              )}
-            >
-              {f.rotulo}
-              <span
-                className={cn(
-                  'rounded-md px-1.5 py-0.5 text-[10px] tabular-nums',
-                  ativo ? pele.badgeAtivo : pele.badge
-                )}
-              >
-                {contagem[f.valor]}
-              </span>
-            </button>
-          );
-        })}
+      {/* ── Linha 2: chips coloridos de status com contador ──────────────────
+          MESMA anatomia e MESMA animação de glow dos chips da Auditoria: o
+          desenho vive no componente único `ColoredFilterChip`; aqui só entra a
+          cor de cada status (`TEMA_CHIP_METAS`). */}
+      <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filtrar por situação">
+        {FILTROS_STATUS.map((f) => (
+          <ColoredFilterChip
+            key={f.valor}
+            label={f.rotulo}
+            count={contagem[f.valor]}
+            tema={TEMA_CHIP_METAS[f.valor]}
+            selected={status === f.valor}
+            onClick={() => onStatus(f.valor)}
+          />
+        ))}
       </div>
     </motion.div>
   );

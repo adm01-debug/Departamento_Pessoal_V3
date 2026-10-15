@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { iniciais } from './desempenhoComum';
 import { EstrelasNota } from './EstrelasNota';
 import { tomTipoFeedback, type FeedbackDerivado } from './feedbacksComum';
+import { FeedbackAcoesRodape, type PreviewAcoes } from './FeedbackAcoesRodape';
 
 /**
  * ============================================================================
@@ -28,6 +29,11 @@ interface FeedbackDetalheDialogProps {
   onOpenChange: (aberto: boolean) => void;
   /** Ação real: filtra a timeline por este colaborador. */
   onFiltrarAvaliado?: (nome: string) => void;
+  /**
+   * SOMENTE PRÉVIA LOCAL (DEV): serviço e papel simulados repassados ao rodapé.
+   * Sem efeito em produção — ver `PreviewAcoes` em `FeedbackAcoesRodape.tsx`.
+   */
+  previa?: PreviewAcoes;
 }
 
 /** Bloco de texto longo (título + parágrafo), com ícone na família de cor. */
@@ -56,7 +62,13 @@ function Bloco({
   );
 }
 
-export function FeedbackDetalheDialog({ item, aberto, onOpenChange, onFiltrarAvaliado }: FeedbackDetalheDialogProps) {
+export function FeedbackDetalheDialog({
+  item,
+  aberto,
+  onOpenChange,
+  onFiltrarAvaliado,
+  previa,
+}: FeedbackDetalheDialogProps) {
   if (!item) return null;
 
   const f = item.feedback ?? {};
@@ -135,7 +147,9 @@ export function FeedbackDetalheDialog({ item, aberto, onOpenChange, onFiltrarAva
               </span>
               <span className="min-w-0">
                 <span className="block truncate text-[12px] font-medium leading-tight">{item.avaliador}</span>
-                <span className="block truncate text-[10px] leading-tight text-muted-foreground">{item.tipoRotulo}</span>
+                <span className="block truncate text-[10px] leading-tight text-muted-foreground">
+                  {item.tipoRotulo}
+                </span>
               </span>
             </div>
           </div>
@@ -190,6 +204,12 @@ export function FeedbackDetalheDialog({ item, aberto, onOpenChange, onFiltrarAva
             </Button>
           </div>
         )}
+
+        {/* Rodapé OPERACIONAL (Concluir / Cancelar / Reabrir / Validar Potencial
+            + situação do Potencial). Só existe no MODO REAL: em demonstração o
+            componente devolve `null` e o modal continua exatamente o de hoje.
+            Fonte oficial das regras: `statusFeedback` + `acoesFeedback`. */}
+        <FeedbackAcoesRodape item={item} previa={previa} />
       </DialogContent>
     </Dialog>
   );

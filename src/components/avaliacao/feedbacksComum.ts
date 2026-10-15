@@ -28,6 +28,7 @@
  * ============================================================================
  */
 import { formatarData, normalizarStatus } from './desempenhoComum';
+import { PALETAS_CHIP, type TemaChip } from './chipFiltroComum';
 
 /** Tipos de feedback realmente presentes na coluna `tipo`. */
 export type TipoFeedback = 'gestor' | 'par' | 'auto' | 'subordinado';
@@ -203,6 +204,24 @@ export const SEGMENTOS: { valor: SegmentoFeedback; rotulo: string }[] = [
   { valor: 'par', rotulo: 'Pares' },
   { valor: 'auto', rotulo: 'Autoavaliação' },
 ];
+
+/**
+ * TEMA de cor dos chips de segmentação — as MESMAS famílias do Design System
+ * usadas pelos chips coloridos da Auditoria (`chipFiltroComum.PALETAS_CHIP`):
+ *   • todos   → `lime`    (`--primary`, verde-lima da marca);
+ *   • gestor  → `emerald` (`--success`, verde);
+ *   • par     → `blue`    (`--info`, azul/ciano);
+ *   • auto    → `violet`  (`--chart-4`, violeta do tema).
+ * Aqui fica SÓ a cor de cada categoria. A anatomia do chip (altura, padding,
+ * formato, bolinha, contador e a animação de glow) é do componente único
+ * `ColoredFilterChip`, o MESMO da Auditoria.
+ */
+export const TEMA_CHIP_FEEDBACKS: Record<SegmentoFeedback, TemaChip> = {
+  todos: PALETAS_CHIP.lime,
+  gestor: PALETAS_CHIP.emerald,
+  par: PALETAS_CHIP.blue,
+  auto: PALETAS_CHIP.violet,
+};
 
 /** Contagem por chip de segmentação (chaves iguais às de `SEGMENTOS`). */
 export type ContagemSegmentos = Record<SegmentoFeedback, number>;

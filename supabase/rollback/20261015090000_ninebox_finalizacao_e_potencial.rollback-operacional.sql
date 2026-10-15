@@ -1,0 +1,74 @@
+-- ============================================================================
+-- ROLLBACK **OPERACIONAL** — reverte a FUNCIONALIDADE (não a segurança)
+-- ----------------------------------------------------------------------------
+-- ⚠️  ARQUIVO FORA DE `supabase/migrations` DE PROPÓSITO (a CLI executaria todo
+--     `.sql` daquela pasta). Execução MANUAL e consciente.
+-- ⚠️  NÃO EXECUTADO.
+--
+-- O QUE ESTE ROLLBACK REVERTE
+--   • RPC `finalizar_feedback`              (concluir/cancelar/reabrir);
+--   • RPC `validar_potencial_avaliacao`;
+--   • view `vw_feedbacks_360_versao` e função `versao_avaliacao_feedback(uuid)`.
+--
+-- O QUE ELE **NÃO** REVERTE (endurecimento de segurança PERMANECE)
+--   • INSERT continua exigindo papel `admin`/`rh` + empresa;
+--   • DELETE físico continua BLOQUEADO (a regra oficial é cancelar);
+--   • UPDATE direto continua revogado (só via RPC, se a RPC voltar a existir);
+--   • TRUNCATE continua REVOGADO de PUBLIC/`anon`/`authenticated` — este
+--     rollback NÃO re-concede o privilégio (§3b da migration). Restaurá-lo
+--     reintroduziria a destruição da tabela INTEIRA numa única instrução, sem
+--     RLS e sem trilha, e nenhuma rotina do app trunca nada;
+--   • `pode_gerir_avaliacoes()` / `pode_validar_potencial()` permanecem.
+--   → Reverter a segurança exige o arquivo `…rollback-seguranca.sql`, que é
+--     explicitamente desaconselhado e depende de decisão registrada.
+--
+-- ── O QUE CONTINUA FUNCIONANDO APÓS ESTE ROLLBACK ──────────────────────────
+--   • Consultar avaliações (RLS por papel + empresa) ............ OK
+--   • Criar avaliações pelo formulário atual (INSERT direto) .... OK
+--     (a policy `feedbacks_360_insert` com papel+empresa é mantida)
+--   • Leitura das tabelas auxiliares e da view .................. OK (leitura)
+--   • Ver Nine-Box / KPIs (dados e mocks) ....................... OK
+--
+-- ── O QUE FICA TEMPORARIAMENTE INDISPONÍVEL ────────────────────────────────
+--   • Concluir / Cancelar / Reabrir .......... indisponível (RPC removida).
+--     O frontend já bloqueia a ação (modo real desligado) — nenhuma tela quebra,
+--     simplesmente não há mais o caminho de escrita de status.
+--   • Validar Potencial pelo RH ............... indisponível (RPC removida).
+--   • Leitura da versão da avaliação .......... indisponível (view removida).
+--   • Consolidação oficial 360° ................ depende da validação; sem ela os
+--     colaboradores ficam como "potencial sem validação" (não classificados).
+--
+-- ── RECUPERAÇÃO SEGURA ─────────────────────────────────────────────────────
+--   1. Reaplique `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql`
+--      (idempotente: usa `create or replace` e `drop policy if exists`).
+--   2. Confira com `docs/ninebox-validacao-banco.sql` (Q5/Q10/Q15) que as policies
+--      voltaram com papel + empresa.
+--   3. Rode `docs/ninebox-testes-seguranca.sql` (24 casos) — `falhas` deve ser 0.
+--   NUNCA use `…rollback-seguranca.sql` para "consertar" algo: ele ABRE INSERT,
+--   UPDATE e DELETE diretos.
+--
+-- ── TESTES QUE CONFIRMAM AUSÊNCIA DE EXPOSIÇÃO ─────────────────────────────
+--   • `docs/ninebox-testes-seguranca.sql` casos 3, 4, 5, 7, 8, 9 (leitura),
+--     10, 11 (escrita direta), 16, 19 (tenant/papel). Após este rollback, a
+--     leitura continua restrita por papel e o DELETE/UPDATE seguem bloqueados.
+--
+-- ── DEPENDÊNCIAS ENTRE MIGRATION E RPCs ────────────────────────────────────
+--   RPCs → helpers (`pode_gerir_avaliacoes`, `pode_validar_potencial`) → `user_roles`.
+--   RPCs → `feedbacks_360_operacoes` (idempotência) e `feedbacks_360_validacoes_potencial`
+--   (validação do Potencial). Este rollback NÃO remove essas tabelas: o histórico
+--   permanece e a reaplicação da migration não gera conflito.
+--
+-- HISTÓRICO PRESERVADO: as tabelas `feedbacks_360_operacoes` e
+-- `feedbacks_360_validacoes_potencial` **não** são removidas; nenhum
+-- `feedbacks_360.status` gravado pelas RPCs é alterado; `audit_log` é append-only.
+-- ============================================================================
+
+drop function if exists public.validar_potencial_avaliacao(uuid, text, text);
+drop function if exists public.finalizar_feedback(uuid, text, text, text);
+drop view if exists public.vw_feedbacks_360_versao;
+drop function if exists public.versao_avaliacao_feedback(uuid);
+
+-- As duas tabelas de apoio FICAM (histórico de idempotência e de validações).
+-- Para removê-las, faça separadamente, com backup e decisão registrada:
+--   drop table if exists public.feedbacks_360_validacoes_potencial;
+--   drop table if exists public.feedbacks_360_operacoes;

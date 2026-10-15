@@ -253,6 +253,30 @@ export function validarCancelamento({ motivo }: { motivo?: unknown }): Resultado
   return { podeCancelar: impedimentos.length === 0, impedimentos };
 }
 
+export type ImpedimentoReabertura = 'justificativa_ausente' | 'justificativa_curta';
+
+export interface ResultadoReabertura {
+  podeReabrir: boolean;
+  impedimentos: ImpedimentoReabertura[];
+}
+
+/** Mínimo de caracteres da justificativa de reabertura (valor de partida). */
+export const MIN_CARACTERES_JUSTIFICATIVA = 10;
+
+/**
+ * Reabrir exige JUSTIFICATIVA (a trilha precisa explicar por que uma avaliação
+ * já concluída/cancelada volta a `pendente`). Reabrir não apaga histórico: o
+ * registro permanece e as aprovações que dependiam da versão anterior deixam de
+ * valer (ver `motorAvaliacao360.validacaoAplicavel`).
+ */
+export function validarReabertura({ justificativa }: { justificativa?: unknown }): ResultadoReabertura {
+  const impedimentos: ImpedimentoReabertura[] = [];
+  const texto = String(justificativa ?? '').trim();
+  if (texto === '') impedimentos.push('justificativa_ausente');
+  else if (texto.length < MIN_CARACTERES_JUSTIFICATIVA) impedimentos.push('justificativa_curta');
+  return { podeReabrir: impedimentos.length === 0, impedimentos };
+}
+
 /* ─── Idempotência POR OPERAÇÃO ───────────────────────────────────────────── */
 
 /**
@@ -330,6 +354,7 @@ export function montarOperacao({
   perfil,
   feedback,
   motivoCancelamento,
+  justificativaReabertura,
   idOperacao,
   usuarioEmail = null,
 }: {
@@ -340,6 +365,8 @@ export function montarOperacao({
   perfil: PerfilOperador;
   feedback: FeedbackParaValidar;
   motivoCancelamento?: unknown;
+  /** Justificativa obrigatória quando a ação é `reabrir`. */
+  justificativaReabertura?: unknown;
   idOperacao: string;
   usuarioEmail?: string | null;
 }): ResultadoOperacao {
@@ -367,6 +394,14 @@ export function montarOperacao({
     }
   }
 
+  const justificativaTexto = String(justificativaReabertura ?? '').trim();
+  if (operacao === 'reabrir') {
+    const { podeReabrir, impedimentos } = validarReabertura({ justificativa: justificativaReabertura });
+    if (!podeReabrir) {
+      return { pronta: false, motivo: impedimentos[0], descricao: 'Informe a justificativa da reabertura.' };
+    }
+  }
+
   const chave = montarChaveIdempotencia({ operacao, feedbackId, idOperacao });
   if (!chave.valida || !chave.chave) {
     return { pronta: false, motivo: chave.motivo, descricao: 'Operação sem identificador de idempotência.' };
@@ -388,7 +423,7 @@ export function montarOperacao({
       de: normalizarStatus(statusAtual) as StatusFeedback,
       para: transicao.para,
       chaveIdempotencia: chave.chave,
-      ...(motivoTexto ? { observacao: motivoTexto } : {}),
+      ...(motivoTexto || justificativaTexto ? { observacao: motivoTexto || justificativaTexto } : {}),
       auditoria,
       exigeBackend: true,
     },

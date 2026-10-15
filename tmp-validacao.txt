@@ -1,0 +1,229 @@
+{
+  "ambiente": {
+    "reduce": false,
+    "classeHtml": "dark"
+  },
+  "sequenciaValida": true,
+  "falhas": [],
+  "tabela": [
+    {
+      "item": "DIA 0 ┬À cabe├ºalho",
+      "comecaMs": 64,
+      "concluiMs": 334,
+      "deslocamentoPx": 0
+    },
+    {
+      "item": "DIA 0 ┬À evento 1",
+      "comecaMs": 365,
+      "concluiMs": 783,
+      "deslocamentoPx": -28,
+      "intervaloMs": null
+    },
+    {
+      "item": "DIA 0 ┬À evento 2",
+      "comecaMs": 556,
+      "concluiMs": 953,
+      "deslocamentoPx": -28,
+      "intervaloMs": 191
+    },
+    {
+      "item": "DIA 0 ┬À evento 3",
+      "comecaMs": 727,
+      "concluiMs": 1138,
+      "deslocamentoPx": -28,
+      "intervaloMs": 171
+    },
+    {
+      "item": "DIA 1 ┬À cabe├ºalho",
+      "comecaMs": 1165,
+      "concluiMs": 1498,
+      "deslocamentoPx": 0
+    },
+    {
+      "item": "DIA 1 ┬À evento 1",
+      "comecaMs": 1515,
+      "concluiMs": 1935,
+      "deslocamentoPx": -28,
+      "intervaloMs": null
+    },
+    {
+      "item": "DIA 1 ┬À evento 2",
+      "comecaMs": 1697,
+      "concluiMs": 2114,
+      "deslocamentoPx": -28,
+      "intervaloMs": 182
+    },
+    {
+      "item": "DIA 1 ┬À evento 3",
+      "comecaMs": 1883,
+      "concluiMs": 2299,
+      "deslocamentoPx": -28,
+      "intervaloMs": 186
+    },
+    {
+      "item": "DIA 2 ┬À cabe├ºalho",
+      "comecaMs": 2331,
+      "concluiMs": 2649,
+      "deslocamentoPx": 0
+    },
+    {
+      "item": "DIA 2 ┬À evento 1",
+      "comecaMs": 2682,
+      "concluiMs": 3099,
+      "deslocamentoPx": -28,
+      "intervaloMs": null
+    },
+    {
+      "item": "DIA 3 ┬À cabe├ºalho",
+      "comecaMs": 3132,
+      "concluiMs": 3448,
+      "deslocamentoPx": 0
+    },
+    {
+      "item": "DIA 3 ┬À evento 1",
+      "comecaMs": 3481,
+      "concluiMs": 3898,
+      "deslocamentoPx": -28,
+      "intervaloMs": null
+    },
+    {
+      "item": "DIA 4 ┬À cabe├ºalho",
+      "comecaMs": 3931,
+      "concluiMs": 4248,
+      "deslocamentoPx": 0
+    },
+    {
+      "item": "DIA 4 ┬À evento 1",
+      "comecaMs": 4281,
+      "concluiMs": 4698,
+      "deslocamentoPx": -28,
+      "intervaloMs": null
+    },
+    {
+      "item": "DIA 5 ┬À cabe├ºalho",
+      "comecaMs": 4731,
+      "concluiMs": 5048,
+      "deslocamentoPx": 0
+    },
+    {
+      "item": "DIA 5 ┬À evento 1",
+      "comecaMs": 5081,
+      "concluiMs": 5498,
+      "deslocamentoPx": -28,
+      "intervaloMs": null
+    }
+  ],
+  "capturas": [
+    {
+      "ms": 100,
+      "arquivo": "tmp-cascata-100.png",
+      "total": 16,
+      "visiveis": 1,
+      "emDeslocamento": 10
+    },
+    {
+      "ms": 400,
+      "arquivo": "tmp-cascata-400.png",
+      "total": 16,
+      "visiveis": 2,
+      "emDeslocamento": 10
+    },
+    {
+      "ms": 750,
+      "arquivo": "tmp-cascata-750.png",
+      "total": 16,
+      "visiveis": 4,
+      "emDeslocamento": 7
+    },
+    {
+      "ms": 1200,
+      "arquivo": "tmp-cascata-1200.png",
+      "total": 16,
+      "visiveis": 6,
+      "emDeslocamento": 7
+    },
+    {
+      "ms": 1800,
+      "arquivo": "tmp-cascata-1800.png",
+      "total": 16,
+      "visiveis": 8,
+      "emDeslocamento": 4
+    },
+    {
+      "ms": 3000,
+      "arquivo": "tmp-cascata-3000.png",
+      "total": 16,
+      "visiveis": 12,
+      "emDeslocamento": 3
+    },
+    {
+      "ms": 7000,
+      "arquivo": "tmp-cascata-7000.png",
+      "total": 16,
+      "visiveis": 16,
+      "emDeslocamento": 0
+    }
+  ],
+  "regressoes": {
+    "primeiraAbertura": {
+      "total": 16,
+      "visiveis": 16,
+      "problemas": []
+    },
+    "voltouParaAba": {
+      "total": 16,
+      "visiveis": 16,
+      "problemas": []
+    },
+    "aposReload": {
+      "total": 16,
+      "visiveis": 16,
+      "problemas": []
+    },
+    "filtroAplicado": {
+      "total": 6,
+      "visiveis": 6,
+      "problemas": []
+    },
+    "filtroRemovido": {
+      "total": 16,
+      "visiveis": 16,
+      "problemas": []
+    },
+    "diaRecolhido": {
+      "eventosDoDia0Visiveis": 0
+    },
+    "diaExpandido": {
+      "total": 16,
+      "visiveis": 16,
+      "problemas": []
+    },
+    "expandirGrupo": {
+      "quadros": 152,
+      "opacidadeMinimaEventosDoDiaReaberto": 0,
+      "opacidadeMinimaDosOutrosDias": 1,
+      "diaReabertoCompletoMs": 942
+    }
+  },
+  "cancelamento": {
+    "total": 16,
+    "visiveis": 16,
+    "problemas": []
+  },
+  "erroNoMotor": {
+    "total": 16,
+    "visiveis": 16,
+    "problemas": []
+  },
+  "movimentoReduzido": {
+    "itens": 16,
+    "todosVisiveis": true,
+    "primeiroAparecimentoMs": 72,
+    "deslocamentoMaximoPx": 0
+  },
+  "errosNavegador": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ]
+}

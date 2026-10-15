@@ -36,6 +36,7 @@
  * ============================================================================
  */
 import { estaAtrasado, formatarData, normalizarStatus } from './desempenhoComum';
+import { PALETAS_CHIP, type TemaChip } from './chipFiltroComum';
 
 /* ─── Categoria (as 4 pílulas da referência) ──────────────────────────────── */
 
@@ -182,55 +183,28 @@ export const CLASSE_STATUS: Record<CategoriaPdi, string> = {
   concluido: 'border-success/25 bg-success/10 text-success',
 };
 
-/* ─── Pílulas de filtro rápido (tokens oficiais) ──────────────────────────── */
-
-export interface PeleChip {
-  /** Fundo/borda/texto do chip INATIVO (colorido, intensidade menor). */
-  chip: string;
-  /** Fundo/borda/texto do chip ATIVO (mesma família, mais contraste). */
-  chipAtivo: string;
-  /** Badge numérica INATIVA. */
-  badge: string;
-  /** Badge numérica ATIVA. */
-  badgeAtivo: string;
-}
+/* ─── Chips de filtro rápido (tema compartilhado) ─────────────────────────── */
 
 /**
- * Pele de cada pílula, na família de cor pedida pela referência e usando
- * SOMENTE tokens do tema:
- *   • Todos         → `--primary`  (verde-lima da marca);
- *   • Em andamento  → `--info`     (azul/ciano);
- *   • Pendentes     → `--warning`  (âmbar);
- *   • Concluídos    → `--success`  (verde de sucesso).
- * O chip NÃO selecionado continua colorido, com tint mais leve; o ativo sobe um
- * degrau de intensidade — o mesmo desenho de `metasComum.PELE_FILTRO`.
+ * TEMA de cor de cada chip, nas MESMAS famílias do Design System usadas pelos
+ * chips coloridos da Auditoria (`chipFiltroComum.PALETAS_CHIP`):
+ *   • Todos         → `lime`    (`--primary`, verde-lima da marca);
+ *   • Em andamento  → `blue`    (`--info`, azul/ciano);
+ *   • Pendentes     → `amber`   (`--warning`, âmbar);
+ *   • Concluídos    → `emerald` (`--success`, verde de sucesso).
+ * Aqui fica SÓ a cor de cada categoria. A anatomia do chip (altura, padding,
+ * formato, bolinha, contador e a animação de glow) é do componente único
+ * `ColoredFilterChip`, o MESMO da Auditoria.
  */
-export const PELE_CHIP: Record<CategoriaPdi, PeleChip> = {
-  todos: {
-    chip: 'border-primary/25 bg-primary/5 text-primary/80 hover:border-primary/45 hover:bg-primary/10 hover:text-primary',
-    chipAtivo: 'border-primary/60 bg-primary/15 text-primary',
-    badge: 'bg-primary/10 text-primary/80',
-    badgeAtivo: 'bg-primary/20 text-primary',
-  },
-  em_andamento: {
-    chip: 'border-info/25 bg-info/5 text-info/80 hover:border-info/45 hover:bg-info/10 hover:text-info',
-    chipAtivo: 'border-info/60 bg-info/15 text-info',
-    badge: 'bg-info/10 text-info/80',
-    badgeAtivo: 'bg-info/20 text-info',
-  },
-  pendente: {
-    chip: 'border-warning/25 bg-warning/5 text-warning/80 hover:border-warning/45 hover:bg-warning/10 hover:text-warning',
-    chipAtivo: 'border-warning/60 bg-warning/15 text-warning',
-    badge: 'bg-warning/10 text-warning/80',
-    badgeAtivo: 'bg-warning/20 text-warning',
-  },
-  concluido: {
-    chip: 'border-success/25 bg-success/5 text-success/80 hover:border-success/45 hover:bg-success/10 hover:text-success',
-    chipAtivo: 'border-success/60 bg-success/15 text-success',
-    badge: 'bg-success/10 text-success/80',
-    badgeAtivo: 'bg-success/20 text-success',
-  },
+export const TEMA_CHIP_PDI: Record<CategoriaPdi, TemaChip> = {
+  todos: PALETAS_CHIP.lime,
+  em_andamento: PALETAS_CHIP.blue,
+  pendente: PALETAS_CHIP.amber,
+  concluido: PALETAS_CHIP.emerald,
 };
+
+/** Tema do chip contextual "Em atenção" (vermelho do Design System). */
+export const TEMA_CHIP_ATENCAO: TemaChip = PALETAS_CHIP.red;
 
 /** Pílulas da barra de filtros rápidos, na ordem da referência. */
 export const CHIPS_PDI: { valor: CategoriaPdi; rotulo: string }[] = [
