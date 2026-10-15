@@ -7,28 +7,107 @@ on:
     paths:
       - 'supabase/functions/**'
       - 'supabase/config.toml'
+  # W75: dry-run em PR — só `deno check` + diff do inventário de funções que
+  # mudaram vs a base do PR. Nunca publica nada (job `dry-run`, sem
+  # `environment: production` e sem segredos).
+  pull_request:
+    paths:
+      - 'supabase/functions/**'
+      - 'supabase/config.toml'
   workflow_dispatch:
     inputs:
       confirm_project_ref:
         # W76: obrigatório no dispatch manual para evitar alvo acidental;
-        # no push em main o input é ignorado pelo GitHub Actions (não existe).
+        # no push em main/PR o input é ignorado pelo GitHub Actions (não existe).
         description: Digite o project ref canônico para evitar alvo acidental
         required: true
         type: string
+      functions:
+        # W75: escopo explícito do deploy. Vazio (padrão) = detecta
+        # automaticamente quais diretórios em supabase/functions/<nome>/
+        # mudaram desde o último deploy bem-sucedido deste workflow. Também
+        # usado para rollback: apontar `ref` para o SHA anterior e deixar
+        # `functions` vazio republica exatamente o inventário daquele commit.
+        description: 'Funções a publicar — uma por linha ou separadas por vírgula. Vazio = detectar automaticamente o que mudou desde o último deploy verde.'
+        required: false
+        type: string
+        default: ''
 
 concurrency:
-  group: canonical-edge-functions
-  cancel-in-progress: false
+  # W75: o dry-run de PR não deve esperar nem bloquear o deploy real — cada
+  # PR tem seu próprio grupo e pode ser cancelado por um push novo. O deploy
+  # (push em main / workflow_dispatch) mantém o grupo original: serializado,
+  # nunca cancelado no meio de uma publicação.
+  group: ${{ github.event_name == 'pull_request' && format('canonical-edge-functions-pr-{0}', github.event.pull_request.number) || 'canonical-edge-functions' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
+  dry-run:
+    name: Dry-run (PR) — type-check + diff do inventário
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0 # precisa da base do PR para o diff abaixo
+          persist-credentials: false
+
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: v2.x
+
+      - name: Type-check bloqueante de todos os entrypoints (W74 — fonte única)
+        # E40/W74: scripts/typecheck-edge.sh é o mesmo gate usado em
+        # ci.yml — não duplicar o loop de `deno check` aqui.
+        run: bash scripts/typecheck-edge.sh
+
+      - name: Diff do inventário de funções vs a base do PR (nada é publicado)
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            echo "::warning::base.sha $BASE_SHA não encontrado no checkout — diff de inventário pulado (dry-run continua só com o type-check)."
+            exit 0
+          fi
+          mapfile -t CHANGED < <(
+            git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- supabase/functions \
+              | awk -F/ 'NF>=2{print $2}' \
+              | LC_ALL=C sort -u
+          )
+          CONFIG_CHANGED="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- supabase/config.toml)"
+          {
+            echo "### Dry-run — Edge Functions (W75)"
+            if [ "${#CHANGED[@]}" -eq 0 ]; then
+              echo "Nenhum diretório em \`supabase/functions/\` mudou neste PR."
+            else
+              echo "Funções que seriam publicadas (dry-run — nada foi deployado):"
+              printf -- '- %s\n' "${CHANGED[@]}"
+            fi
+            if [ -n "$CONFIG_CHANGED" ]; then
+              echo ""
+              echo "⚠️ \`supabase/config.toml\` também mudou — no deploy real isso publica o inventário completo (ver passo W75 do job \`deploy\`)."
+            fi
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "CANONICAL_EDGE_DRYRUN_OK changed=${#CHANGED[@]}"
+
   deploy:
     name: Validar e publicar Edge Functions no canônico
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: production
+    permissions:
+      contents: read
+      actions: read # W75: gh run list para achar o último deploy bem-sucedido
+      issues: write # W76: abrir/atualizar/fechar issue de rollback no smoke pós-deploy
     env:
       CANONICAL_REF: frjbfeamybqsejlvmqbl
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
@@ -36,10 +115,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
+          fetch-depth: 0 # W75: histórico completo — precisa do diff contra o último deploy verde
           persist-credentials: false
 
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
+          # W37 (tentativa revertida, 15/10/2026): ver ci.yml -- pin em v2.1.x
+          # quebrou o type-check real no CI. Mantido v2.x.
           deno-version: v2.x
 
       - uses: supabase/setup-cli@45a513f8c64c0bc8e0e3dfe572b5c95be85f6359 # v3.0.1
@@ -66,25 +148,132 @@ jobs:
             --output json >/tmp/functions-before.json
           echo "CANONICAL_EDGE_AUTHORIZATION_OK count=$(jq 'length' /tmp/functions-before.json)"
 
-      - name: Type-check bloqueante de todos os entrypoints
+      - name: Determinar funções a publicar (W75 — diff desde o último deploy verde)
+        id: scope
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FUNCTIONS_INPUT: ${{ inputs.functions }}
         run: |
           set -euo pipefail
-          errors=0
-          while IFS= read -r fn; do
-            if ! deno check --node-modules-dir=false "$fn"; then
-              echo "::error file=$fn::Edge Function falhou no deno check"
-              errors=$((errors + 1))
-            fi
-          done < <(find supabase/functions -mindepth 2 -maxdepth 2 -name index.ts -print | LC_ALL=C sort)
-          test "$errors" -eq 0
+          ALL_SLUGS="$(find supabase/functions -mindepth 2 -maxdepth 2 -name index.ts -printf '%h\n' \
+            | xargs -r -n1 basename | LC_ALL=C sort -u)"
 
-      - name: Publicar o inventário local sem excluir funções remotas
+          LAST_GREEN_SHA=""
+          if [ -n "$FUNCTIONS_INPUT" ]; then
+            # Operador escolheu o escopo explicitamente (dispatch manual) —
+            # também o caminho usado para rollback: apontar `ref` para o SHA
+            # anterior e deixar `functions` vazio em vez disso republica
+            # automaticamente tudo o que mudou até aquele commit.
+            TARGETS="$(printf '%s' "$FUNCTIONS_INPUT" \
+              | tr ',' '\n' \
+              | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
+              | grep -v '^$' \
+              | LC_ALL=C sort -u)"
+            SOURCE="input"
+            echo "::notice::W75 — escopo veio do input 'functions' (dispatch manual)."
+          else
+            # Codex review (P1, PR #238): `gh run list` sem filtro de evento
+            # aceitava um dispatch manual com `functions` restrito a um
+            # subconjunto como "último deploy verde" -- esse run só publicou
+            # as funções escolhidas pelo operador, não necessariamente tudo
+            # que havia mudado até aquele SHA. Usar esse SHA como baseline
+            # faria todo diff futuro esquecer permanentemente as funções que
+            # ficaram de fora do retry manual. Push em main nunca tem input
+            # `functions` (evento sem inputs) -- sempre passa pela mesma
+            # lógica de diff recursivo deste bloco, então é sempre uma
+            # baseline confiável. `--event push` exclui todo workflow_dispatch
+            # (inclusive um auto-detect legítimo) para manter a regra simples
+            # e sem exceção a auditar.
+            LAST_GREEN_SHA="$(gh run list -R "$GITHUB_REPOSITORY" \
+              --workflow canonical-edge-functions.yml \
+              --branch main --status success --event push --limit 1 \
+              --json headSha --jq '.[0].headSha' 2>/dev/null || true)"
+            if [ -z "$LAST_GREEN_SHA" ] || ! git cat-file -e "${LAST_GREEN_SHA}^{commit}" 2>/dev/null; then
+              echo "::notice::W75 — nenhum deploy anterior bem-sucedido encontrado (ou SHA fora do histórico clonado); publicando o inventário completo por segurança."
+              TARGETS="$ALL_SLUGS"
+              SOURCE="fallback-all"
+            else
+              FN_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/functions \
+                | awk -F/ 'NF>=2{print $2}' | LC_ALL=C sort -u)"
+              CONFIG_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/config.toml)"
+              # Codex review (P1, PR #238): "_shared" não é uma função (sem
+              # index.ts próprio) -- é código importado pelas funções reais
+              # (ver supabase/functions/_shared/**). Se aparecesse como alvo
+              # literal, o deploy falharia (slug inexistente) ou, pior,
+              # "funcionaria" sem publicar nenhum consumidor real que mudou
+              # de comportamento. Sem analisar imports (fora de escopo),
+              # qualquer mudança em _shared/** força o inventário completo —
+              # mesma estratégia de segurança já usada para config.toml.
+              if printf '%s\n' "$FN_DIFF" | grep -qx '_shared'; then
+                echo "::notice::W75 — supabase/functions/_shared/** mudou desde $LAST_GREEN_SHA; publicando o inventário completo (código compartilhado não tem um grafo de consumidores derivável aqui)."
+                TARGETS="$ALL_SLUGS"
+                SOURCE="shared-changed"
+              elif [ -n "$CONFIG_DIFF" ]; then
+                echo "::notice::W75 — supabase/config.toml mudou desde $LAST_GREEN_SHA; publicando o inventário completo (não há como derivar o subconjunto afetado por uma mudança de config)."
+                TARGETS="$ALL_SLUGS"
+                SOURCE="config-toml-changed"
+              elif [ -n "$FN_DIFF" ]; then
+                # Codex review (P1, PR #238): `git diff --name-only` lista
+                # TODO path que mudou entre os dois SHAs, inclusive os de
+                # diretórios removidos/renomeados -- sem filtrar, um slug sem
+                # diretório local chegaria ao `supabase functions deploy`
+                # abaixo e o comando abortaria (função inexistente),
+                # inclusive abortando o deploy de qualquer função renomeada
+                # no mesmo commit. Interseção com ALL_SLUGS (calculado do
+                # filesystem atual) garante que só publicamos slugs que
+                # ainda existem localmente; remoções continuam fora do
+                # escopo deste workflow (sem --prune, documentado acima).
+                TARGETS="$(comm -12 <(printf '%s\n' "$FN_DIFF") <(printf '%s\n' "$ALL_SLUGS"))"
+                if [ -n "$TARGETS" ]; then
+                  SOURCE="diff"
+                else
+                  echo "::notice::W75 — as mudanças em supabase/functions/** desde $LAST_GREEN_SHA foram só remoções/renomeações (nenhum diretório de função restante no escopo); nada a publicar."
+                  SOURCE="diff-only-removed"
+                fi
+              else
+                echo "::notice::W75 — nenhum diretório de função (nem config.toml) mudou desde $LAST_GREEN_SHA; nada a publicar."
+                TARGETS=""
+                SOURCE="diff-empty"
+              fi
+            fi
+          fi
+
+          COUNT="$(printf '%s\n' "$TARGETS" | grep -c . || true)"
+          echo "Fonte do escopo: $SOURCE | funções no escopo: $COUNT"
+          if [ "$COUNT" -gt 0 ]; then
+            printf '%s\n' "$TARGETS" | sed 's/^/- /'
+          fi
+
+          {
+            echo "targets<<EDGE_TARGETS_EOF"
+            echo "$TARGETS"
+            echo "EDGE_TARGETS_EOF"
+            echo "count=$COUNT"
+            echo "last_green_sha=$LAST_GREEN_SHA"
+            echo "source=$SOURCE"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Type-check bloqueante de todos os entrypoints (W74 — fonte única)
+        # E40/W74: scripts/typecheck-edge.sh é o mesmo gate usado em
+        # ci.yml — checa todos os entrypoints (não só o escopo do deploy),
+        # mantendo o gate tão estrito quanto antes desta mudança.
+        run: bash scripts/typecheck-edge.sh
+
+      - name: Publicar as funções no escopo sem excluir funções remotas (W75)
+        env:
+          TARGETS: ${{ steps.scope.outputs.targets }}
+          TARGETS_COUNT: ${{ steps.scope.outputs.count }}
         run: |
           set -euo pipefail
           # Sem --prune: este workflow não apaga funções que ainda precisem ser
           # classificadas. O config.toml mantém verify_jwt=false somente para
           # os quatro endpoints que possuem autenticação pública própria.
-          supabase functions deploy \
+          if [ "$TARGETS_COUNT" = "0" ]; then
+            echo "Nada a publicar — nenhuma função no escopo (W75)."
+            exit 0
+          fi
+          mapfile -t ARGS <<<"$TARGETS"
+          supabase functions deploy "${ARGS[@]}" \
             --project-ref "$CANONICAL_REF" \
             --use-api \
             --jobs 4
@@ -109,3 +298,91 @@ jobs:
           local_count="$(wc -l </tmp/slugs-local.txt | tr -d ' ')"
           remote_count="$(wc -l </tmp/slugs-remote.txt | tr -d ' ')"
           echo "CANONICAL_EDGE_DEPLOY_OK local=$local_count remote=$remote_count"
+
+      - name: Smoke pós-deploy (W76 — healthcheck + chamada read-only ao bridge)
+        id: smoke
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}
+          E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+          REQUIRE_BACKEND: '1'
+          # Precisa coincidir com ALLOWED_ORIGINS em
+          # supabase/functions/_shared/{contract,csrf}.ts, senão o bridge
+          # responde 403 (CSRF) antes mesmo de validar o JWT.
+          BRIDGE_ORIGIN: https://departamento-pessoal-v3.vercel.app
+        run: |
+          set -euo pipefail
+          # 1) Healthcheck padrão (web app opcional, edge/auth/bridge obrigatórios).
+          bash scripts/healthcheck.sh
+
+          # 2) Chamada autenticada read-only ao external-db-bridge: prova que o
+          #    gateway publicado aceita um request válido (contrato mínimo em
+          #    supabase/functions/external-db-bridge/request-schema.ts) e
+          #    responde com dados reais via RLS do usuário E2E — sem escrever
+          #    nada no banco.
+          echo "Chamada autenticada read-only ao external-db-bridge"
+          test -n "$SUPABASE_URL" || { echo '::error::SUPABASE_URL ausente para o smoke do bridge.'; exit 1; }
+          test -n "$SUPABASE_PUBLISHABLE_KEY" || { echo '::error::chave pública ausente para o smoke do bridge.'; exit 1; }
+          if ! { test -n "$E2E_USER_EMAIL" && test -n "$E2E_USER_PASSWORD"; }; then
+            echo '::error::credenciais E2E ausentes para autenticar o smoke do bridge.'
+            exit 1
+          fi
+
+          LOGIN_PAYLOAD="$(jq -nc --arg email "$E2E_USER_EMAIL" --arg password "$E2E_USER_PASSWORD" '{email:$email,password:$password}')"
+          TOKEN_JSON="$(curl -sS --max-time 10 -X POST "$SUPABASE_URL/auth/v1/token?grant_type=password" \
+            -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$LOGIN_PAYLOAD")"
+          ACCESS_TOKEN="$(printf '%s' "$TOKEN_JSON" | jq -r '.access_token // empty')"
+          test -n "$ACCESS_TOKEN" || {
+            echo '::error::Login E2E falhou ao obter access_token (ver secrets E2E_USER_EMAIL/E2E_USER_PASSWORD e Supabase Auth).'
+            exit 1
+          }
+
+          BRIDGE_CODE="$(curl -sS -o /tmp/bridge-smoke.json -w '%{http_code}' --max-time 10 \
+            -X POST "$SUPABASE_URL/functions/v1/external-db-bridge" \
+            -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            -H "Origin: $BRIDGE_ORIGIN" \
+            -H "Content-Type: application/json" \
+            -d '{"action":"select","table":"colaboradores","columns":"id","limit":1}')"
+          if [ "$BRIDGE_CODE" != "200" ]; then
+            echo "::error::Smoke do bridge retornou HTTP $BRIDGE_CODE (esperado 200)."
+            cat /tmp/bridge-smoke.json 2>/dev/null || true
+            exit 1
+          fi
+          echo "CANONICAL_EDGE_SMOKE_OK bridge_status=$BRIDGE_CODE"
+
+      - name: Falha no deploy/smoke → issue de rollback (W76)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LAST_GREEN_SHA: ${{ steps.scope.outputs.last_green_sha }}
+        run: |
+          set -euo pipefail
+          # Mesmo padrão de dedup por label de healthcheck.yml/post-deploy-smoke.yml:
+          # título estável, dedup via --label (não o título), 1 issue por vez.
+          TITLE="🔴 Deploy/smoke de Edge Functions (canônico) falhou"
+          EXISTING=$(gh issue list --label canonical-deploy --state open --json number --limit 1 --jq '.[0].number' || true)
+          ROLLBACK_SHA="${LAST_GREEN_SHA:-desconhecido — ver o último run verde em Actions > canonical-edge-functions.yml}"
+          BODY=$(printf 'O deploy/smoke de Edge Functions no canônico falhou.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s\n\nRollback: dispare manualmente este workflow (workflow_dispatch) com:\n  - ref: %s  (último deploy bem-sucedido conhecido)\n  - confirm_project_ref: frjbfeamybqsejlvmqbl\n  - functions: (deixe vazio — redeployar esse SHA republica automaticamente o inventário correspondente a ele)\n\nVerificar runbooks: infra/runbooks/CANONICAL_WORKFLOWS.md e infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$ROLLBACK_SHA")
+          # Garante a label antes de criar — sem ela, `gh issue create --label`
+          # falharia e a issue nasceria sem label, quebrando o dedup na próxima falha.
+          gh label create canonical-deploy --force >/dev/null 2>&1 || true
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label canonical-deploy
+          fi
+
+      - name: Deploy/smoke recuperou → fechar issue de rollback (W76)
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          EXISTING=$(gh issue list --label canonical-deploy --state open --json number --limit 1 --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "Deploy/smoke de Edge Functions (canônico) voltou ao verde. Commit: $GITHUB_SHA | Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi

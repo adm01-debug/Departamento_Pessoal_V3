@@ -5,8 +5,19 @@ on:
     branches: [main]
   push:
     branches: [main]
-  # W61: E2E manual na branch escolhida no dispatch (sempre no projeto canônico).
+  # W61: E2E manual no projeto canônico com seleção de suite e ref.
   workflow_dispatch:
+    inputs:
+      project:
+        description: 'Suite a executar'
+        required: false
+        default: 'authenticated'
+        type: choice
+        options: [public, authenticated, authenticated-non-admin, mobile-smoke, all]
+      ref:
+        description: 'Branch/SHA a testar (vazio = branch atual)'
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -20,7 +31,12 @@ concurrency:
 jobs:
   playwright-public:
     name: Playwright público (PR)
-    if: github.event_name == 'pull_request'
+    # Codex review (P2, PR #238): workflow_dispatch com project=public/all
+    # agora realmente roda a suíte pública — antes o input era decorativo.
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.project == 'public' || inputs.project == 'all'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -37,6 +53,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # Codex review (P2, PR #238): dispatch com project=public e um ref
+          # customizado testava a branch certa pelo input, mas o checkout
+          # deste job ignorava `inputs.ref` e sempre baixava o SHA do evento
+          # -- testando silenciosamente a branch errada. Sem secrets neste
+          # job, usar qualquer ref é seguro (ao contrário do job autenticado).
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Validate public E2E configuration
         run: |
@@ -89,7 +111,11 @@ jobs:
     # projeto canônico. Não expor suas credenciais a código de pull request.
     # O gate autenticado roda no SHA já integrado em main.
     # W65: workflow_dispatch também roda este job (credentials disponíveis).
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    # Codex review (P2, PR #238): dispatch com project=public não precisa
+    # deste job (sem secrets) — ver playwright-public acima.
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.project != 'public')
     runs-on: ubuntu-latest
     # W65: timeout reduzido de 30 para 20 min (suite atual termina em ~12 min).
     # Sharding (matrix: shard [1,2]) foi avaliado mas descartado: auth state
@@ -118,9 +144,37 @@ jobs:
       CI_BRANCH: ${{ github.ref_name }}
 
     steps:
+      # Codex review (P1, PR #238): um ref arbitrário digitado no dispatch
+      # rodaria código não revisado com as 4 credenciais de escrita do
+      # canônico. Só 'main' ou vazio (default = SHA do evento, sempre main
+      # neste job) são aceitos -- validado ANTES do checkout, então nada do
+      # ref rejeitado chega a ser baixado. Para testar branch não mergeada,
+      # usar a suíte pública (sem secrets).
+      #
+      # Codex review (P1, PR #238, 2ª rodada): a checagem original só olhava
+      # `inputs.ref` (o campo de texto customizado). Quem disparasse o
+      # workflow_dispatch pelo seletor de branch NATIVO do GitHub (não pelo
+      # input de texto) escolhia uma branch não-main em `github.ref` e deixava
+      # `inputs.ref` vazio -- o guard antigo não disparava (inputs.ref == '')
+      # e o checkout abaixo usaria `github.sha` dessa branch arbitrária com as
+      # credenciais de escrita. Agora também exigimos `github.ref ==
+      # 'refs/heads/main'`, cobrindo os dois vetores (seletor nativo e input).
+      - name: Validar ref de dispatch (restrito a main)
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          (github.ref != 'refs/heads/main' || (inputs.ref != '' && inputs.ref != 'main'))
+        env:
+          REF_INPUT: ${{ inputs.ref }}
+          DISPATCH_REF: ${{ github.ref }}
+        run: |
+          echo "::error::Dispatch restrito a main: github.ref='${DISPATCH_REF}' (deve ser refs/heads/main, independente do seletor de branch usado) e ref='${REF_INPUT}' (deve ser 'main' ou vazio). Credenciais de escrita do canônico não podem rodar código de outra branch. Use a suíte pública (project=public) para branches não mergeadas."
+          exit 1
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # W61: usa o ref do input quando dispatch manual, senão usa o ref padrão do evento
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Validate E2E configuration
         run: |
@@ -153,6 +207,22 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts --no-audit --no-fund
 
+      # Codex review (P2, PR #238): o projeto `cleanup` (W60) apaga
+      # colaboradores/folha da empresa sintética em TODO run completo da
+      # suíte autenticada; sem recriá-los antes do próximo run, a suíte
+      # testaria contra uma empresa vazia a partir da segunda execução.
+      # scripts/e2e/ensure-fixtures.mjs não precisa de
+      # SUPABASE_SERVICE_ROLE_KEY (não provisionado como secret aqui) —
+      # só recria colaboradores/folha via a própria sessão autenticada do
+      # admin E2E (RLS real), reaproveitando o vínculo usuário↔empresa já
+      # permanente (W58/W59). Roda em todo evento deste job (push/dispatch),
+      # antes de qualquer teste.
+      - name: Garantir fixtures do E2E autenticado (W59/W60 — idempotente)
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/e2e/ensure-fixtures.mjs
+
       # Cache dos binários do Chromium (~90% redução no download)
       - name: Cache Playwright browsers
         id: playwright-cache
@@ -173,7 +243,17 @@ jobs:
         run: ./node_modules/.bin/playwright install-deps chromium
 
       - name: Run Playwright E2E
-        run: npm run test:e2e
+        # Codex review (P2, PR #238): project input agora seleciona o
+        # projeto de verdade em dispatch; push na main continua rodando a
+        # suíte completa (PROJECT_INPUT vazio nesse evento).
+        env:
+          PROJECT_INPUT: ${{ inputs.project }}
+        run: |
+          if [ -n "${PROJECT_INPUT}" ] && [ "${PROJECT_INPUT}" != "all" ]; then
+            ./node_modules/.bin/playwright test --project="${PROJECT_INPUT}"
+          else
+            npm run test:e2e
+          fi
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

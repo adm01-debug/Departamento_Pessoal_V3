@@ -113,7 +113,17 @@ export default defineConfig({
     // direto e transformaria uma resposta válida em erro de CORS.
     command: 'VITE_DEV_PORT=4173 VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 npm run dev',
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    // Codex review (P1, PR #238): com CI=true, reuseExistingServer=false
+    // significa "sempre suba um servidor novo" -- e o Playwright ERRA (não
+    // reusa) quando a URL alvo já está respondendo. post-deploy-smoke.yml
+    // aponta E2E_BASE_URL para o deployment real (já no ar) com CI=true,
+    // então a suíte quebrava sempre, antes de qualquer teste rodar. Quando
+    // baseURL não é o endereço local (ou seja, aponta pra fora), reusar é
+    // sempre a opção correta -- não existe `npm run dev` local a subir
+    // contra uma URL de produção/preview. No CI "normal" (e2e.yml), baseURL
+    // continua sendo localE2EUrl e o comportamento antigo (subir servidor
+    // novo) é preservado.
+    reuseExistingServer: baseURL !== localE2EUrl || !process.env.CI,
     timeout: 120_000,
   },
 });

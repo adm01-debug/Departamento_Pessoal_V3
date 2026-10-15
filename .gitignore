@@ -53,3 +53,7 @@ AUDIT_REPORT.pdf
 # Lighthouse CI artifacts
 .lighthouseci/
 assertion-results.json
+
+# Worktrees locais de subagentes (checkouts isolados em paralelo) -- scratch
+# de execução, nunca conteúdo do repositório.
+.claude/worktrees/
