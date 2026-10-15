@@ -444,7 +444,7 @@ Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorad
 Branch ruleset           → 10 required checks (inclui Revisão de dependências), baseline em infra/github/ ✅
 Aprovação de PR (W14)    → 0 aprovações; code owner só em caminhos sensíveis (.github/CODEOWNERS) ✅
 Branch protection (main) → clássica removida (W13); ruleset único; sha_pinning (W33) ✅
-Actions allowlist        → selected (W34): github_owned + verified + 5 patterns ✅
+Actions allowlist        → selected: github_owned + verified + denoland/*, supabase/* ✅
 audit-required-checks    → W17 live API check quando GITHUB_TOKEN disponível ✅
 scripts canonicais       → W30 CANONICAL_SUPABASE_REF env var com fallback ✅
 Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
