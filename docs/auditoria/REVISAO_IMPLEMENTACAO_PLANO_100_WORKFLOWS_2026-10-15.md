@@ -83,11 +83,18 @@
 - Scripts de auditoria canonicalizados: aceitam var de ambiente para project ref (W30)
 - W85 ❌: secret_scanning_non_provider_patterns + validity_checks requerem GHAS — não disponível no plano atual
 
+## Decisões do Owner — Resolvidas
+
+| Código | Decisão                                                                                                       |
+| ------ | ------------------------------------------------------------------------------------------------------------- |
+| W03 ✅ | **npm único.** bun.lock removido; `npm ci` em CI/E2E/deploy/Docker; gate `lockfile-single` em security-config |
+
+**W03 — evidência:** `package-lock.json` estava sem `@lhci/cli` e ~260 dependências transitivas (só no `bun.lock`) — drift D1 ativo. Regenerado; `npm ci` limpo (966 pacotes); typecheck, lint:ci, build e bundle budget verdes. Dockerfiles corrigidos de `node:26` para `node:22` (alinhado a `engines` + `engine-strict`) e passaram a usar o lockfile. Pós-merge: remover `oven-sh/*` da allowlist de actions (W34) — não é mais usado.
+
 ## Decisões Pendentes do Owner
 
 | Código | Decisão necessária                                               |
 | ------ | ---------------------------------------------------------------- |
-| W03 💰 | npm vs Bun — gerenciador único                                   |
 | W14 💰 | Modelo de aprovação (required_approving_review_count)            |
 | W21 💰 | Tornar repositório privado?                                      |
 | W32 💰 | Aprovação humana obrigatória para PRs de agentes (Devin, Claude) |

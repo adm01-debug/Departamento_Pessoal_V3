@@ -12,23 +12,23 @@ Adicione estes scripts úteis ao seu `package.json`:
     "build:optimized": "vite build --config vite.config.optimized.ts",
     "build:analyze": "vite build --config vite.analyze.config.ts",
     "preview": "vite preview",
-    
+
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
-    
+
     "lint": "eslint . --ext ts,tsx",
     "lint:fix": "eslint . --ext ts,tsx --fix",
-    
+
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,md}\"",
-    
+
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    
+
     "clean": "rm -rf dist node_modules .turbo",
     "fresh": "npm run clean && npm install && npm run build",
-    
+
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "docker:down": "docker-compose -f docker-compose.dev.yml down"
   }
@@ -45,12 +45,14 @@ Adicione estes scripts úteis ao seu `package.json`:
 ## Uso dos Scripts
 
 ### Desenvolvimento
+
 ```bash
 npm run dev              # Inicia servidor de desenvolvimento
 npm run type-check       # Verifica tipos TypeScript
 ```
 
 ### Build
+
 ```bash
 npm run build            # Build padrão
 npm run build:optimized  # Build com configuração otimizada
@@ -58,6 +60,7 @@ npm run build:analyze    # Build com análise de bundle
 ```
 
 ### Qualidade de Código
+
 ```bash
 npm run lint             # Verifica código
 npm run lint:fix         # Corrige problemas automaticamente
@@ -65,12 +68,14 @@ npm run format           # Formata código com Prettier
 ```
 
 ### Limpeza
+
 ```bash
 npm run clean            # Remove arquivos gerados
 npm run fresh            # Reinstala tudo do zero
 ```
 
 ### Docker
+
 ```bash
 npm run docker:dev       # Inicia ambiente Docker
 npm run docker:down      # Para ambiente Docker
@@ -79,6 +84,7 @@ npm run docker:down      # Para ambiente Docker
 ## Scripts Úteis Adicionais
 
 ### Para CI/CD
+
 ```json
 {
   "scripts": {
@@ -90,6 +96,7 @@ npm run docker:down      # Para ambiente Docker
 ```
 
 ### Para Manutenção
+
 ```json
 {
   "scripts": {
@@ -102,26 +109,16 @@ npm run docker:down      # Para ambiente Docker
 
 ## Scripts de Manutenção
 
-### sync-lockfiles.sh (P2-035)
-Valida paridade entre `bun.lock` e `package-lock.json`.
+### lockfile-single.test.sh (W03)
+
+npm é o gerenciador único. Reprova `bun.lock`/`yarn.lock`/`pnpm-lock.yaml`, `packageManager` diferente de npm e uso de Bun em workflows. Roda no job `security-config`. Drift entre `package.json` e `package-lock.json` é reprovado pelo próprio `npm ci`.
 
 ```bash
-# Verificação (padrão — dry-run)
-./scripts/sync-lockfiles.sh
-
-# Corrigir drift automaticamente
-./scripts/sync-lockfiles.sh --fix
+bash scripts/tests/lockfile-single.test.sh
 ```
 
-| Saída | Significado |
-|-------|------------|
-| Exit 0 | Paridade OK ou drift abaixo do threshold (3) |
-| Exit 1 | Drift crítico detectado — CI deve falhar |
-| Exit 2 | Lockfile ausente |
-
-Packages comparados: `react`, `react-dom`, `vite`, `typescript`, `@supabase/supabase-js`, `zod`, `@tanstack/react-query`, `zustand`, etc. (14 críticos).
-
 ### regenerate-supabase-types.sh (P2-044)
+
 Regenera tipos TypeScript a partir do schema live do banco.
 
 ```bash
@@ -139,10 +136,9 @@ Saída: `src/integrations/supabase/types.ts`.
 
 ## Dicas
 
-1. **Use `bun run`** para ver todos os scripts disponíveis (preferível a `npm run`).
-2. **CI**: adicione `sync-lockfiles.sh` ao workflow de CI para detectar drift antes do merge.
-3. **Dependências**: após `bun install`, rode `sync-lockfiles.sh --fix` se usar npm em CI.
-4. **Documente** scripts complexos com comentários no próprio comando.
+1. **Use `npm run`** para ver todos os scripts disponíveis.
+2. **Dependências**: use `npm install <pkg>` para alterar e `npm ci` para instalar; commite sempre o `package-lock.json`.
+3. **Documente** scripts complexos com comentários no próprio comando.
 
 ---
 

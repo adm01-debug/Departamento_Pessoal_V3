@@ -46,7 +46,7 @@ Resumo: reverter `.env`, `src/integrations/supabase/client.ts` e `supabase/confi
 
 - Página de diagnóstico: `/admin/diagnostico-migracao` — health monitor com sparkline (últimas 20 amostras), validação de 13 buckets, 15 cron jobs, circuit breakers com reset manual.
 - Contract test da bridge: `node scripts/simulacao/verify_bridge_contract.cjs` — 18 cenários cobrindo filtros, verbos e CSRF.
-- Smoke E2E pós-cutover: `bunx playwright test e2e/authenticated/post-cutover-smoke.spec.ts`.
+- Smoke E2E pós-cutover: `npx playwright test e2e/authenticated/post-cutover-smoke.spec.ts`.
 
 ## Observação importante
 
@@ -59,4 +59,3 @@ Enquanto o Lovable Cloud continuar apontado para `ciziytrrjjotlsjzshnm`, novas m
 - **Duração da indisponibilidade:**
 - **Root cause:**
 - **Ação corretiva antes da re-tentativa:**
-

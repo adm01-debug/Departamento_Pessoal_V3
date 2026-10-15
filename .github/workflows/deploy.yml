@@ -46,15 +46,17 @@ jobs:
             exit 1
           fi
 
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          bun-version: 1.4.2
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci --no-audit --no-fund
 
       - name: Build
-        run: bun run build
+        run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
@@ -73,7 +75,6 @@ jobs:
       - name: Auditoria de bundle
         # W87: verifica orçamento contra scripts/.bundle-budget.json.
         # Falha bloqueia merge para evitar regressão de tamanho silenciosa.
-        # Node pré-instalado no runner; não precisa de setup-node extra aqui.
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
         run: node scripts/check-bundle-budget.mjs
 

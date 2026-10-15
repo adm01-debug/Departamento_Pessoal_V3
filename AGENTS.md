@@ -41,7 +41,7 @@
 | **Linguagem** | TypeScript (strict)                         | 6.0.3  |
 | **Framework** | React                                       | 19.2.8 |
 | **Build**     | Vite                                        | 8.1.4  |
-| **Bundler**   | Bun                                         | 1.3.14 |
+| **Pacotes**   | npm (único — `package-lock.json`, W03)      | 10.x   |
 | **Testes**    | Vitest                                      | 4.1.10 |
 | **E2E**       | Playwright                                  | 1.61.1 |
 | **Estilos**   | Tailwind CSS                                | 4.3.3  |
@@ -219,13 +219,9 @@ Dependabot               → Groups ativos ✅ (23 PRs merged na sessão)
 
 ## 🔧 Decisões Técnicas
 
-### Por que Bun + Node fallback?
+### W03 — npm como gerenciador único (15/10/2026)
 
-O `oven-sh/setup-bun@v2` action não funciona em repositórios privados do GitHub (restrição de actions de terceiros). Solução: fallback para `actions/setup-node@v4` com Node.js 22.
-
-### Por que npm install em vez de npm ci?
-
-O projeto usa `bun.lock` como lockfile, não `package-lock.json`. `npm ci` requer lockfile. `npm install` funciona sem.
+Bun foi removido; `package-lock.json` é o único lockfile e todo install usa `npm ci`. Detalhes em CLAUDE.md → Decisões Técnicas. Não reintroduzir Bun.
 
 ### TypeScript strict — estado real (28/07/2026)
 
@@ -255,11 +251,10 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Médios
 
-| Gap                            | Impacto                           | Solução                                |
-| ------------------------------ | --------------------------------- | -------------------------------------- |
-| `bun.lock` precisa sync manual | Lockfile desatualizado após bumps | Cron sync-bun-lock já roda (30min)     |
-| SonarCloud sem token           | Análise estática não roda         | Adicionar SONAR_TOKEN nas secrets      |
-| Deploy Netlify sem secrets     | Preview não deploya               | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID |
+| Gap                        | Impacto                   | Solução                                |
+| -------------------------- | ------------------------- | -------------------------------------- |
+| SonarCloud sem token       | Análise estática não roda | Adicionar SONAR_TOKEN nas secrets      |
+| Deploy Netlify sem secrets | Preview não deploya       | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID |
 
 ### Baixos
 
@@ -280,11 +275,10 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Curto Prazo
 
-1. Rodar `bun install` local + push `bun.lock` para CI ficar verde
-2. Revisar Bridge runbook (`infra/runbooks/BRIDGE_PERFORMANCE.md`)
-3. Adicionar query timeout no external-db-bridge (AbortController)
-4. Implementar keyset pagination para tabelas >100K registros
-5. Adicionar Content Security Policy headers no nginx
+1. Revisar Bridge runbook (`infra/runbooks/BRIDGE_PERFORMANCE.md`)
+2. Adicionar query timeout no external-db-bridge (AbortController)
+3. Implementar keyset pagination para tabelas >100K registros
+4. Adicionar Content Security Policy headers no nginx
 
 ### Médio Prazo
 
@@ -299,19 +293,19 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ```bash
 # Desenvolvimento
-bun dev                    # Servidor dev
-bun run build              # Build produção
-bun run ci:verify          # Typecheck + lint + format
-bun run test               # Testes unitários
-bun run test:e2e           # Testes E2E
+npm run dev                # Servidor dev
+npm run build              # Build produção
+npm run ci:verify          # Typecheck + lint + format
+npm run test               # Testes unitários
+npm run test:e2e           # Testes E2E
 
 # TypeScript
-bunx tsc --noEmit          # Typecheck (root config)
+npx tsc --noEmit          # Typecheck (root config)
 
 # Dependências
-bun install                # Instalar/atualizar
-bun outdated               # Verificar versões
-bun pm ls                  # Listar pacotes
+npm ci                     # Instalar/atualizar
+npm outdated               # Verificar versões
+npm ls                     # Listar pacotes
 
 # Git
 git fetch --prune          # Limpar branches remotas órfãs

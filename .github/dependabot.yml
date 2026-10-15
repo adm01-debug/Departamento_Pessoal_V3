@@ -1,19 +1,16 @@
 version: 2
 updates:
-  # W10: Após merge de PR do Dependabot (npm), regenerar bun.lock localmente
-  # com: bun install && git add bun.lock && git commit
-  # Isso garante paridade entre package-lock.json e bun.lock (D1).
   # ─── npm ────────────────────────────────────────────────────────────────────
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
       day: monday
-      time: "09:00"
+      time: '09:00'
       timezone: America/Sao_Paulo
     open-pull-requests-limit: 5
     cooldown:
-      default: "7d"
+      default: '7d'
     labels:
       - dependencies
       - javascript
@@ -21,33 +18,33 @@ updates:
     # Ver CLAUDE.md — NÃO remover sem confirmar suporte do typescript-eslint.
     ignore:
       - dependency-name: typescript
-        versions: [">=6.1.0"]
+        versions: ['>=6.1.0']
     groups:
       radix-ui:
         patterns:
-          - "@radix-ui/*"
+          - '@radix-ui/*'
         update-types:
           - minor
           - patch
       react-ecosystem:
         patterns:
-          - "react*"
-          - "@types/react*"
+          - 'react*'
+          - '@types/react*'
         update-types:
           - minor
           - patch
       testing:
         patterns:
-          - "@testing-library/*"
-          - "vitest"
-          - "@playwright/*"
+          - '@testing-library/*'
+          - 'vitest'
+          - '@playwright/*'
         update-types:
           - minor
           - patch
       # E64: catch-all para minor/patch de tudo mais — 1 PR/semana em vez de N individuais.
       minor-patch:
         patterns:
-          - "*"
+          - '*'
         update-types:
           - minor
           - patch
@@ -59,7 +56,7 @@ updates:
     schedule:
       interval: weekly
       day: tuesday
-      time: "09:00"
+      time: '09:00'
       timezone: America/Sao_Paulo
     open-pull-requests-limit: 5
     labels:
@@ -68,7 +65,7 @@ updates:
     groups:
       actions:
         patterns:
-          - "*"
+          - '*'
 
   # ─── docker ─────────────────────────────────────────────────────────────────
   # E63: Dockerfile, Dockerfile.prod, docker-compose.dev.yml, docker-compose.prod.yml
@@ -77,13 +74,17 @@ updates:
     schedule:
       interval: weekly
       day: wednesday
-      time: "09:00"
+      time: '09:00'
       timezone: America/Sao_Paulo
     open-pull-requests-limit: 3
     labels:
       - dependencies
       - docker
+    ignore:
+      # engines.node = 22.x + engine-strict: major de node na imagem precisa acompanhar .nvmrc
+      - dependency-name: node
+        update-types: ['version-update:semver-major']
     groups:
       docker-base:
         patterns:
-          - "*"
+          - '*'

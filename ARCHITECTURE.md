@@ -39,19 +39,20 @@ sequenceDiagram
 
 ## 3. Estrutura de Pastas
 
-| Pasta | Responsabilidade |
-| :--- | :--- |
-| `src/pages/` | Definição de rotas e layouts de alto nível. |
-| `src/components/` | UI Reutilizável (Botões, Cards, Modais). |
-| `src/hooks/` | Estado da UI e orquestração de dados via React Query. |
-| `src/services/` | Comunicação com API e abstração de tabelas. Estende `BaseService`. |
-| `src/integrations/` | Configurações do Supabase e o `dbBridgeProxy`. |
+| Pasta               | Responsabilidade                                                   |
+| :------------------ | :----------------------------------------------------------------- |
+| `src/pages/`        | Definição de rotas e layouts de alto nível.                        |
+| `src/components/`   | UI Reutilizável (Botões, Cards, Modais).                           |
+| `src/hooks/`        | Estado da UI e orquestração de dados via React Query.              |
+| `src/services/`     | Comunicação com API e abstração de tabelas. Estende `BaseService`. |
+| `src/integrations/` | Configurações do Supabase e o `dbBridgeProxy`.                     |
 
 ## 4. Contrato da Edge Function `external-db-bridge`
 
 A Edge Function intercepta requisições do frontend para garantir telemetria e compatibilidade de schema.
 
 ### Requisição (POST)
+
 - `action`: `'select' | 'insert' | 'update' | 'delete' | 'rpc' | 'upsert'`
 - `table`: Nome da tabela alvo.
 - `filters`: Array de objetos `{ column, op, value }`.
@@ -59,6 +60,7 @@ A Edge Function intercepta requisições do frontend para garantir telemetria e 
 - `limit/offset`: Parâmetros de paginação.
 
 ### Resposta
+
 - `data`: Dados retornados do banco.
 - `count`: Total de registros (quando solicitado).
 - `duration_ms`: Tempo de resposta do banco externo.
@@ -68,11 +70,13 @@ A Edge Function intercepta requisições do frontend para garantir telemetria e 
 1. **Nunca use o cliente Supabase original:** Sempre importe o `supabase` de `@/integrations/supabase/client` para garantir que a chamada passe pelo Proxy.
 2. **Use o BaseService:** Ao criar um novo serviço, estenda `BaseService<T>` para herdar funcionalidades de CRUD automaticamente.
 3. **Tipagem:** Embora o Proxy use `any` internamente para flexibilidade de schema, sempre tipagem as interfaces de retorno nos Hooks e Componentes.
+
 ## 6. Padrões Obrigatórios (External DB Bridge)
 
 Para manter a integridade do sistema e a visibilidade de performance, novos desenvolvedores devem seguir estes padrões ao interagir com o `external-db-bridge`:
 
 ### Exemplo de Chamada de Consulta (Select)
+
 ```typescript
 const { data, error, count } = await supabase
   .from('colaboradores')
@@ -80,7 +84,9 @@ const { data, error, count } = await supabase
   .eq('status', 'ativo')
   .range(0, 9);
 ```
+
 **Payload gerado internamente:**
+
 ```json
 {
   "action": "select",
@@ -94,21 +100,25 @@ const { data, error, count } = await supabase
 ```
 
 ### Tratamento de Erros Padronizado
+
 O Bridge retorna erros estruturados. O cliente em `client.ts` já lida com a exibição de toasts para erros de conexão, mas erros de lógica de negócio ou schema devem ser tratados no `Service`:
 
 ```typescript
 if (error) {
   // O Bridge retornará 400 se a coluna não existir no banco corporativo
-  console.error("Erro de Schema:", error.message);
+  console.error('Erro de Schema:', error.message);
   throw error;
 }
 ```
 
 ### Telemetria e Performance
+
 - Consultas que demoram mais de **3000ms** são marcadas como `SLOW` nos logs da Edge Function.
 - Consultas que demoram mais de **8000ms** são marcadas como `VERY_SLOW`.
 - Evite `select('*')` em tabelas com muitas colunas (ex: `colaboradores`) para reduzir o payload e tempo de resposta.
 
 ## 7. Scripts de Validação
+
 O projeto conta com um script de fumaça (smoke test) para validar a integridade do Bridge:
-- `bun run test:bridge`: Valida se a Edge Function está respondendo corretamente e se os contratos de request/response permanecem íntegros.
+
+- `npm run test:bridge`: Valida se a Edge Function está respondendo corretamente e se os contratos de request/response permanecem íntegros.

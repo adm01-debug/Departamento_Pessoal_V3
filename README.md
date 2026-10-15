@@ -9,27 +9,27 @@ MIT License — Copyright (c) 2026 AtomicaBR / Promo Brindes
 
 ## Status Atual
 
-| Item | Status |
-|------|--------|
-| **Última atualização** | 27/09/2026 |
-| **Open Issues/PRs** | ver badges acima |
-| **CI Pipeline** | Active (typecheck + lint + test + e2e) |
-| **Dependabot** | Weekly npm/actions/docker |
-| **Node** | 22 LTS (Docker) |
-| **Deploy** | Vercel (preview + production) |
+| Item                   | Status                                 |
+| ---------------------- | -------------------------------------- |
+| **Última atualização** | 27/09/2026                             |
+| **Open Issues/PRs**    | ver badges acima                       |
+| **CI Pipeline**        | Active (typecheck + lint + test + e2e) |
+| **Dependabot**         | Weekly npm/actions/docker              |
+| **Node**               | 22 LTS (Docker)                        |
+| **Deploy**             | Vercel (preview + production)          |
 
 ## Stack
 
-React 19.2 · TypeScript 6.0 · Vite 8.1 · Bun · Tailwind 4 · Supabase 2.x · Radix UI · TanStack Query · Recharts · Vitest · Playwright · PWA
+React 19.2 · TypeScript 6.0 · Vite 8.1 · npm · Tailwind 4 · Supabase 2.x · Radix UI · TanStack Query · Recharts · Vitest · Playwright · PWA
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/adm01-debug/departamento-pessoal-v2.git
 cd departamento-pessoal-v2
-bun install
+npm ci
 cp .env.example .env.local
-bun run dev
+npm run dev
 ```
 
 Veja [ARCHITECTURE.md](./ARCHITECTURE.md) para detalhes da arquitetura.

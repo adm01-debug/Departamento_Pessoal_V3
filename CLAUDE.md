@@ -35,7 +35,7 @@
 | **Linguagem** | TypeScript (strict)                         | 6.0.3  |
 | **Framework** | React                                       | 19.2.8 |
 | **Build**     | Vite                                        | 8.1.4  |
-| **Bundler**   | Bun                                         | 1.3.14 |
+| **Pacotes**   | npm (único — `package-lock.json`, W03)      | 10.x   |
 | **Testes**    | Vitest                                      | 4.1.10 |
 | **E2E**       | Playwright                                  | 1.61.1 |
 | **Estilos**   | Tailwind CSS                                | 4.3.3  |
@@ -431,8 +431,9 @@ POST-only gateway (32KB file, 729 lines)
 ```
 CI (ci.yml)              → 7 jobs, todos com timeout; label ci-main (D22 fix) ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
-Deploy (deploy.yml)      → Vercel (integração Git), bun-version: 1.4.2, dist artifact + bundle audit ✅
-E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.4.2 ✅
+Deploy (deploy.yml)      → Vercel (integração Git), npm ci, dist artifact + bundle audit ✅
+E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, npm ci ✅
+Pacotes (W03)            → npm único; bun.lock removido; gate lockfile-single em security-config ✅
 SonarCloud               → ✅ Automatic Analysis (GitHub App) — job CI removido (PR #162)
 Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
@@ -465,7 +466,7 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 | classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                     |
 | SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                    |
 | E2E secrets            | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl      |
-| bun.lock               | ✅ lockfileVersion:3 (Bun 1.4.2) — frozen-lockfile verde (W01, sessão 6)                    |
+| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido            |
 | fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                        |
 | CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                |
 | contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                    |
@@ -479,13 +480,13 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 
 ## 🔧 Decisões Técnicas
 
-### Por que Bun + Node fallback?
+### W03 — npm como gerenciador único (15/10/2026)
 
-O `oven-sh/setup-bun@v2` action não funciona em repositórios privados do GitHub (restrição de actions de terceiros). Solução: fallback para `actions/setup-node@v4` com Node.js 22.
+Bun foi removido. `package-lock.json` é o único lockfile e **todo** install (CI, E2E, deploy, Docker) usa `npm ci`.
 
-### Por que npm install em vez de npm ci?
+Motivo: dois lockfiles divergiam continuamente (D1). Na migração, `package-lock.json` estava sem `@lhci/cli` e ~260 dependências transitivas que só existiam no `bun.lock` — os jobs npm rodavam `npm install` sobre um lock incompleto. `package.json` já declarava `packageManager: npm@10.x`, Dependabot/`npm audit`/dependency-review já operavam sobre o lock npm, e Bun só aparecia em `e2e.yml`/`deploy.yml`.
 
-O projeto usa `bun.lock` como lockfile, não `package-lock.json`. `npm ci` requer lockfile. `npm install` funciona sem.
+Guardas: `scripts/tests/lockfile-single.test.sh` (security-config) reprova `bun.lock`/`yarn.lock`/`pnpm-lock.yaml`, `packageManager` ≠ npm e qualquer uso de Bun em workflow; `npm ci` reprova drift package.json ↔ lock. **Não reintroduzir Bun.** Imagens Docker seguem `engines.node` (22); Dependabot ignora majors de `node`.
 
 ### TypeScript strict — estado real (28/07/2026)
 
@@ -556,19 +557,19 @@ _Nenhum crítico bloqueante no momento._
 
 ```bash
 # Desenvolvimento
-bun dev                    # Servidor dev
-bun run build              # Build produção
-bun run ci:verify          # Typecheck + lint + format
-bun run test               # Testes unitários
-bun run test:e2e           # Testes E2E
+npm run dev                # Servidor dev
+npm run build              # Build produção
+npm run ci:verify          # Typecheck + lint + format
+npm run test               # Testes unitários
+npm run test:e2e           # Testes E2E
 
 # TypeScript
-bunx tsc --noEmit          # Typecheck (root config)
+npx tsc --noEmit          # Typecheck (root config)
 
 # Dependências
-bun install                # Instalar/atualizar
-bun outdated               # Verificar versões
-bun pm ls                  # Listar pacotes
+npm ci                     # Instalar/atualizar
+npm outdated               # Verificar versões
+npm ls                     # Listar pacotes
 
 # Git
 git fetch --prune          # Limpar branches remotas órfãs

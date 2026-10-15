@@ -1,5 +1,5 @@
 # https://docs.devin.ai/onboard-devin/environment-yaml
-# engines: node 22.x + .npmrc engine-strict; bun.lock está desatualizado — use npm, não bun.
+# engines: node 22.x + .npmrc engine-strict; npm é o gerenciador único (W03) — use npm ci.
 initialize: |
   export NVM_DIR="$HOME/.nvm"
   . "$NVM_DIR/nvm.sh"
@@ -32,7 +32,7 @@ knowledge:
       # nvm use 22 && npx tsc --noEmit  (TS pinned <6.1.0)
   - name: notes
     contents: |
-      # Node 22 obrigatório (engine-strict). npm, não bun (bun.lock desatualizado).
+      # Node 22 obrigatório (engine-strict). npm é o gerenciador único (W03).
   - name: dev-server
     contents: |
       # npm run dev precisa de .env.local com VITE_SUPABASE_URL=https://frjbfeamybqsejlvmqbl.supabase.co
