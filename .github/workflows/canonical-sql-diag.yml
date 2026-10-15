@@ -73,22 +73,27 @@ jobs:
 
       - name: Registrar execução no audit_log
         if: always()
-        # W28: registra hash da query (não a query em si) + metadados de rastreabilidade
+        # W28: registra hash da query (não a query em si) + metadados de rastreabilidade.
+        # audit_log é a tabela de auditoria de negócio (trigger-based row audit) — não
+        # tem detalhes/nivel/fonte, e 'acao' é restrito por CHECK a uma lista fechada.
+        # 'SYSTEM_ACTION' é o valor do enum reservado para eventos de sistema como este;
+        # tabela/registro_id (NOT NULL) descrevem a origem sintética do evento, e o
+        # payload de diagnóstico vai em dados_novos (jsonb).
         env:
           RUN_ACTOR: ${{ github.actor }}
           RUN_ID: ${{ github.run_id }}
         run: |
           QUERY_HASH="$(sha256sum <<< "$DIAG_QUERY" | awk '{print $1}')"
           psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -q <<SQL || true
-          INSERT INTO audit_log(acao, detalhes, nivel, fonte)
+          INSERT INTO audit_log(acao, tabela, registro_id, dados_novos)
           VALUES (
-            'DIAG_SQL_RUN',
+            'SYSTEM_ACTION',
+            'canonical-sql-diag',
+            gen_random_uuid(),
             jsonb_build_object(
               'query_sha256', '$QUERY_HASH',
               'run_id', '$RUN_ID',
               'actor', '$RUN_ACTOR'
-            ),
-            'info',
-            'canonical-sql-diag'
+            )
           );
           SQL
