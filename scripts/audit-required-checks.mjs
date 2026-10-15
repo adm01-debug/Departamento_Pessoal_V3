@@ -40,18 +40,19 @@ const canonical = (v) =>
     : v && typeof v === 'object'
       ? Object.fromEntries(
           Object.keys(v)
-            .sort()
+            .sort((a, b) => a.localeCompare(b))
             .map((k) => [k, canonical(v[k])])
         )
       : v;
-const normalize = (r) =>
-  JSON.stringify(
-    canonical({
-      enforcement: r.enforcement,
-      conditions: r.conditions,
-      bypass_actors: [...(r.bypass_actors ?? [])].sort((a, b) => a.actor_id - b.actor_id),
-      rules: [...(r.rules ?? [])].sort((a, b) => a.type.localeCompare(b.type)),
-    })
+const SECTIONS = {
+  enforcement: (r) => r.enforcement,
+  conditions: (r) => r.conditions,
+  bypass_actors: (r) => [...(r.bypass_actors ?? [])].sort((a, b) => a.actor_id - b.actor_id),
+  rules: (r) => [...(r.rules ?? [])].sort((a, b) => a.type.localeCompare(b.type)),
+};
+const divergentSections = (a, b) =>
+  Object.keys(SECTIONS).filter(
+    (k) => JSON.stringify(canonical(SECTIONS[k](a))) !== JSON.stringify(canonical(SECTIONS[k](b)))
   );
 
 if (FULL && !process.env.GITHUB_TOKEN) {
@@ -78,12 +79,9 @@ if (process.env.GITHUB_TOKEN) {
       console.warn(`⚠  W17: não foi possível buscar ruleset vivo (HTTP ${res.status}) — usando apenas baseline.`);
     } else {
       const live = await res.json();
-      if (FULL && normalize(live) !== normalize(baselineRules)) {
-        console.error(
-          '❌ ruleset vivo diverge de infra/github/ruleset-main.json (enforcement, condições, bypass ou regras).'
-        );
-        console.error(`  vivo:     ${normalize(live)}`);
-        console.error(`  baseline: ${normalize(baselineRules)}`);
+      const divergent = FULL ? divergentSections(live, baselineRules) : [];
+      if (divergent.length > 0) {
+        console.error(`❌ ruleset vivo diverge de infra/github/ruleset-main.json em: ${divergent.join(', ')}.`);
         process.exit(1);
       }
       const liveScRule = live.rules?.find((r) => r.type === 'required_status_checks');
