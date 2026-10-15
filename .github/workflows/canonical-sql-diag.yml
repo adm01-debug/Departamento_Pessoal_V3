@@ -66,4 +66,28 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Executar consulta read-only (ROLLBACK garantido)
-        run: node scripts/diag/run-sql-diag.mjs
+        run: |
+          # W27: limitar saída para reduzir risco de PII em logs de CI
+          node scripts/diag/run-sql-diag.mjs 2>&1 | head -n 50
+
+      - name: Registrar execução no audit_log
+        if: always()
+        # W28: registra hash da query (não a query em si) + metadados de rastreabilidade
+        env:
+          RUN_ACTOR: ${{ github.actor }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          QUERY_HASH="$(sha256sum <<< "$DIAG_QUERY" | awk '{print $1}')"
+          psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -q <<SQL || true
+          INSERT INTO audit_log(acao, detalhes, nivel, fonte)
+          VALUES (
+            'DIAG_SQL_RUN',
+            jsonb_build_object(
+              'query_sha256', '$QUERY_HASH',
+              'run_id', '$RUN_ID',
+              'actor', '$RUN_ACTOR'
+            ),
+            'info',
+            'canonical-sql-diag'
+          );
+          SQL
