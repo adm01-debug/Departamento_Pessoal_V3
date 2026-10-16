@@ -18,6 +18,23 @@
 --     rollback NÃO re-concede o privilégio (§3b da migration). Restaurá-lo
 --     reintroduziria a destruição da tabela INTEIRA numa única instrução, sem
 --     RLS e sem trilha, e nenhuma rotina do app trunca nada;
+--   • `feedbacks_360.revisao` PERMANECE (§0): a coluna é aditiva e é o que
+--     garante a invalidação da validação anterior do RH sem depender do
+--     relógio. Reverter para "só timestamp" reabriria o furo do mesmo
+--     segundo/mesma transação;
+--   • o TRIGGER `trg_feedbacks_360_revisao` (e a função
+--     `public.tg_feedbacks_360_revisao`) PERMANECE (§0.1): é ele quem garante
+--     que QUALQUER alteração da linha invalide a validação anterior do RH —
+--     inclusive uma correção privilegiada que não passe pela RPC. Sem a RPC de
+--     status ele fica dormente (o UPDATE direto segue revogado), mas reaplicar a
+--     migration é idempotente e o mecanismo já volta pronto;
+--   • a coluna `audit_log.empresa_id` (§0g) PERMANECE: é aditiva e é o vínculo
+--     que a Trilha de Auditoria usa para recortar por empresa. Removê-la
+--     apagaria o vínculo dos eventos JÁ gravados (dado histórico);
+--   • as FKs das tabelas de apoio PERMANECEM em `ON DELETE RESTRICT` (§1/§2):
+--     voltar para `ON DELETE CASCADE` permitiria apagar histórico de operações
+--     e de aprovações do RH em cascata — exatamente o que a regra aprovada
+--     proíbe. As duas tabelas de apoio também NÃO são removidas;
 --   • `pode_gerir_avaliacoes()` / `pode_validar_potencial()` permanecem.
 --   → Reverter a segurança exige o arquivo `…rollback-seguranca.sql`, que é
 --     explicitamente desaconselhado e depende de decisão registrada.
@@ -43,7 +60,7 @@
 --      (idempotente: usa `create or replace` e `drop policy if exists`).
 --   2. Confira com `docs/ninebox-validacao-banco.sql` (Q5/Q10/Q15) que as policies
 --      voltaram com papel + empresa.
---   3. Rode `docs/ninebox-testes-seguranca.sql` (24 casos) — `falhas` deve ser 0.
+--   3. Rode `docs/ninebox-testes-seguranca.sql` (28 casos) — `falhas` deve ser 0.
 --   NUNCA use `…rollback-seguranca.sql` para "consertar" algo: ele ABRE INSERT,
 --   UPDATE e DELETE diretos.
 --

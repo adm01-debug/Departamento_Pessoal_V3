@@ -1,0 +1,162 @@
+{
+  "url": "http://localhost:8080/premiacoes",
+  "screenshot": "tmp-diagnostico-2026-10-15T19-57-01-188Z.png",
+  "carimbo": "2026-10-15T19-57-01-188Z",
+  "modulosCarregados": [
+    {
+      "url": "/src/main.tsx?t=1792094220573",
+      "status": 200
+    },
+    {
+      "url": "/src/index.css?t=1792094220573",
+      "status": 200
+    },
+    {
+      "url": "/src/pages/PremiacoesPage.tsx?t=1792094205481",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/RewardsApprovalHub.tsx",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/CampanhaTabela.tsx?t=1792094205481",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/CampaignWizard.tsx",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/CampanhaDetalhesDialog.tsx",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/RewardsSimulator.tsx",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/premiacoesComum.ts",
+      "status": 200
+    },
+    {
+      "url": "/src/components/premiacoes/CampanhaLateral.tsx?t=1792094011744",
+      "status": 200
+    }
+  ],
+  "dom": {
+    "href": "http://localhost:8080/premiacoes",
+    "titulo": "Premiações & Renda Variável 10/10 | Sistema DP",
+    "estourosPorCelula": [],
+    "estourosFora": [
+      "atividade · span: \"Divergência de R$ 70,00 iden\" 288>158",
+      "atividade · span: \"Pagamento aprovado pelo fina\" 309>158",
+      "atividade · span: \"Enviado para revisão de comi\" 236>158",
+      "atividade · span: \"Campanha \"Premiação de Inova\" 353>158"
+    ],
+    "textoIndicadores": [
+      "Total AprovadoR$ 7.950,00Sem base de comparação",
+      "Pendente de AprovaçãoR$ 7.050,506 pagamentos pendentes",
+      "Campanhas Ativas2de 4 campanhas",
+      "Conciliação (Divergências)1Requer atenção na auditoria",
+      "Visão geral4 campanhas · 2 ativas6 pendentes · 1 divergência"
+    ],
+    "classeCartaoKpi": "flex h-[95px] min-w-0 items-start justify-between gap-2.5 rounded-[14px] border p-3 border-border/50 bg-gradient-to-b from-card to-card/60",
+    "paddingCartaoKpi": "12px",
+    "classes": {
+      "tabela": "w-full table-fixed border-collapse text-left min-w-[820px]",
+      "thead": "border-b border-border/40 bg-muted/20",
+      "nav": "justify-center text-muted-foreground grid h-11 w-full flex-1 grid-cols-2 items-stretch gap-0 rounded-xl border border-bo",
+      "barraFiltros": "flex min-h-14 min-w-0 flex-wrap items-center gap-2.5 rounded-[14px] border border-border/50 bg-card/60 px-3 py-2"
+    },
+    "largurasColunas": [
+      "Campanha:228px",
+      "Período:99px",
+      "Desempenho:130px",
+      "Orçamento:130px",
+      "Participantes:90px",
+      "Status:81px",
+      "Ações:139px"
+    ],
+    "largurasIndicadores": [
+      216,
+      216,
+      216,
+      216,
+      242
+    ],
+    "medidas": {
+      "navegacao": {
+        "top": 154,
+        "altura": 44,
+        "largura": 800
+      },
+      "indicadores": {
+        "top": 212,
+        "altura": 95,
+        "largura": 1152
+      },
+      "filtros": {
+        "top": 321,
+        "altura": 58,
+        "largura": 1152
+      },
+      "cabecalhoTabela": {
+        "top": 394,
+        "altura": 40,
+        "largura": 896
+      },
+      "topoTabela": 393,
+      "primeiraLinha": {
+        "top": 434,
+        "altura": 79,
+        "largura": 896
+      },
+      "rodapeTabela": {
+        "top": 750,
+        "altura": 54,
+        "largura": 896
+      },
+      "colunaLateral": {
+        "top": 393,
+        "altura": 539,
+        "largura": 240
+      },
+      "cabecalhoPagina": {
+        "top": 0,
+        "altura": 56,
+        "largura": 1200
+      }
+    },
+    "paineis": {
+      "proximasAcoes": {
+        "altura": 263,
+        "top": 393,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "ancestralComOverflow": "main.flex-1 overflow-auto p-page pb-20 lg:pb- => overflow:auto"
+      },
+      "atividadeRecente": {
+        "altura": 262,
+        "top": 670,
+        "display": "flex",
+        "visibility": "visible",
+        "opacity": "1",
+        "ancestralComOverflow": "main.flex-1 overflow-auto p-page pb-20 lg:pb- => overflow:auto"
+      }
+    },
+    "linhasTabela": 4,
+    "rodapeTexto": "Mostrando 4 de 4 campanhas1",
+    "scroll": {
+      "scrollHeightDoMain": 914,
+      "viewport": 816,
+      "rolagemHorizontalDaPagina": false
+    }
+  },
+  "errosJs": [],
+  "falhasDeRede": [
+    "HEAD https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/security_alerts?select=*&resolved=eq.false :: net::ERR_ABORTED",
+    "HEAD https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/colaboradores?select=*&status=eq.ativo :: net::ERR_ABORTED"
+  ]
+}

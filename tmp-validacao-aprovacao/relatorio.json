@@ -1,0 +1,22 @@
+{
+  "fila": {
+    "colaborador": "Ana Beatriz Souza",
+    "badge": "Aguardando gestor",
+    "acoes": [
+      "Ver avaliação"
+    ]
+  },
+  "modal": {
+    "titulo": "Ana Beatriz Souza",
+    "badge": "Aguardando gestor",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Fechar"
+    ],
+    "temConcluir": false,
+    "temAprovar": false,
+    "temValidarPotencial": false
+  },
+  "consistente": true,
+  "nota": "Pendente (não-aguardando-aprovação) segue com as ações de conclusão — ver teste unitário e captura previa-modal-rh/gestor."
+}

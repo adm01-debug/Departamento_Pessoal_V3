@@ -215,6 +215,77 @@ for (const [nome, rePapel] of [
 {
   const t = corpo('versao_avaliacao_feedback');
   checar(/HH24:MI:SS\.US/.test(t), 'versao_avaliacao_feedback: versão com precisão de MICROSSEGUNDO');
+/* 5.5 REVISÃO EXPLÍCITA (§0): coluna antes da função de versão + uso na versão */
+{
+  const iCol = sts.findIndex((s) => /add column if not exists revisao integer not null default 0/i.test(s));
+  const iVer = sts.findIndex((s) => /^create or replace function public\.versao_avaliacao_feedback/i.test(s));
+  checar(iCol > -1, 'revisao: coluna criada com ALTER TABLE ... ADD COLUMN IF NOT EXISTS');
+  checar(iVer > -1 && iCol < iVer, `revisao: coluna criada ANTES da função de versão (${iCol} < ${iVer})`);
+  const t = corpo('versao_avaliacao_feedback');
+  checar(/f\.revisao::text/.test(t), 'revisao: entra na versão canônica');
+}
+
+/* 5.6 CONDIÇÕES OBRIGATÓRIAS POR CATEGORIA (§3 / §6.1) */
+{
+  const t = corpo('finalizar_feedback');
+  checar(/categoria_invalida/.test(t), 'concluir: categoria fora das 4 do 360 e recusada');
+  checar(/potencial_obrigatorio_para_gestor/.test(t), 'concluir: Potencial obrigatorio PARA O GESTOR');
+  checar(/potencial_fora_da_escala/.test(t), 'concluir: Potencial validado na escala 1-5');
+  const iGestor = pos(t, /lower\(btrim\(v_linha\.tipo\)\)\s*=\s*'gestor'/i);
+  const iPot = pos(t, /potencial_obrigatorio_para_gestor/);
+  checar(iGestor > -1 && iGestor < iPot, 'concluir: exigencia de Potencial esta SO no ramo do gestor');
+  checar(/nota_desempenho_fora_da_escala/.test(t), 'concluir: nota de desempenho na escala 1-5 (todas as categorias)');
+  checar(/avaliado_ausente/.test(t) && /avaliador_ausente/.test(t) && /ciclo_ausente/.test(t),
+    'concluir: exige avaliado, avaliador e ciclo (espelho de statusFeedback.validarConclusao)');
+  const iCategoria = pos(t, /categoria_invalida/);
+  const iAvaliado = pos(t, /avaliado_ausente/);
+  checar(iCategoria > -1 && iAvaliado > iCategoria,
+    'concluir: identificacao conferida DEPOIS da categoria');
+}
+
+/* 5.7 REVISÃO — MECANISMO EXPLÍCITO DE BANCO (§0.1) */
+{
+  const t = corpo('finalizar_feedback');
+  checar(!/revisao\s*=\s*v_linha\.revisao\s*\+\s*1/i.test(t), 'finalizar_feedback: NAO incrementa revisao a mao (o trigger e o dono do contador)');
+  checar(/returning revisao into v_revisao/i.test(t), 'finalizar_feedback: devolve a revisao nova');
+  checar(/'revisao_nova',\s*v_revisao/.test(t), 'finalizar_feedback: resultado expõe revisao_nova');
+
+  const iTrigFn = sts.findIndex((s) => /^create or replace function public\.tg_feedbacks_360_revisao\s*\(/i.test(s));
+  checar(iTrigFn > -1, 'revisao: funcao de trigger tg_feedbacks_360_revisao existe');
+  checar(/new\.revisao\s*:=\s*coalesce\(old\.revisao,\s*0\)\s*\+\s*1/i.test(sts[iTrigFn] ?? ''), 'revisao: trigger incrementa new.revisao a cada UPDATE');
+  const iTrig = sts.findIndex((s) => /^create trigger trg_feedbacks_360_revisao/i.test(s));
+  checar(iTrig > -1 && /before update on public\.feedbacks_360/i.test(sts[iTrig] ?? ''), 'revisao: trigger BEFORE UPDATE criado em feedbacks_360');
+}
+
+/* 5.8 AUDITORIA VINCULADA À EMPRESA (COLUNA + dados_novos) + HISTÓRICO (§0g/§4) */
+{
+  const iCol = sts.findIndex((s) => /^alter table public\.audit_log[\s\S]*add column if not exists empresa_id/i.test(s));
+  checar(iCol > -1, 'audit_log: coluna empresa_id garantida (ALTER ... ADD COLUMN IF NOT EXISTS)');
+  const iRpc = sts.findIndex((s) => /^create or replace function public\.(finalizar_feedback|validar_potencial_avaliacao|criar_feedback_seguro)\s*\(/i.test(s));
+  checar(iCol > -1 && iCol < iRpc, `audit_log: coluna empresa_id garantida ANTES das RPCs (${iCol} < ${iRpc})`);
+
+  for (const nome of ['finalizar_feedback', 'validar_potencial_avaliacao']) {
+    const t = corpo(nome);
+    checar(/insert into public\.audit_log\s*\(\s*empresa_id\s*,/i.test(t), `${nome}: auditoria com empresa_id na COLUNA`);
+    checar(/'empresa_id',\s*v_linha\.empresa_id/.test(t), `${nome}: auditoria com empresa_id explicito em dados_novos`);
+  }
+  const criar = corpo('criar_feedback_seguro');
+  checar(/insert into public\.audit_log\s*\(\s*empresa_id\s*,/i.test(criar), 'criar_feedback_seguro: auditoria com empresa_id na COLUNA');
+  checar(/'empresa_id',\s*v_novo\.empresa_id/.test(criar), 'criar_feedback_seguro: auditoria com empresa_id explicito em dados_novos');
+
+  for (const [tabela, resto] of [
+    ['feedbacks_360_operacoes', 'feedbacks_360_operacoes_feedback_id_fkey'],
+    ['feedbacks_360_validacoes_potencial', 'feedbacks_360_validacoes_potencial_feedback_id_fkey'],
+  ]) {
+    const iTab = sts.findIndex((s) => new RegExp(`^create table if not exists public\\.${tabela}\\b`, 'i').test(s));
+    const iDrop = sts.findIndex((s) => new RegExp(`drop constraint if exists ${resto}`, 'i').test(s));
+    const iAdd = sts.findIndex((s) => new RegExp(`add constraint ${resto}[\\s\\S]*on delete restrict`, 'i').test(s));
+    checar(iDrop > iTab && iAdd > iTab, `${tabela}: FK recriada explicitamente DEPOIS do create table`);
+    checar(/on delete restrict/i.test(sts[iAdd] ?? ''), `${tabela}: FK com ON DELETE RESTRICT (historico preservado)`);
+    checar(!/references public\.feedbacks_360\(id\) on delete cascade/i.test(sts[iTab] ?? ''), `${tabela}: tabela NAO nasce em ON DELETE CASCADE`);
+  }
+}
+
 }
 
 /* ─── 6) Nenhum DML executado fora de corpo de função ──────────────────────── */
@@ -238,7 +309,7 @@ for (const s of sts) {
   checar(/^rollback;/m.test(gate), 'pre-aplicacao: encerra em ROLLBACK (nada persiste)');
   const proibidos = gate.match(/^\s*(insert|update|delete|drop|alter|create|grant|revoke|truncate|comment)\b/gim) ?? [];
   checar(proibidos.length === 0, `pre-aplicacao: nenhuma escrita/DDL (encontrados: ${proibidos.length})`);
-  for (const codigo of ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'A1', 'A2', 'A3']) {
+  for (const codigo of ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9', 'B10', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7']) {
     checar(new RegExp(`\\('${codigo}',`).test(gate), `pre-aplicacao: checagem ${codigo} presente no gate`);
   }
   for (const bloco of ['D1', 'D2', 'D3', 'D4']) {
@@ -251,10 +322,10 @@ for (const s of sts) {
   const roteiro = readFileSync('docs/ninebox-testes-seguranca.sql', 'utf8');
   checar(/^rollback;/m.test(roteiro), 'testes-seguranca: encerra em ROLLBACK (nenhum registro de teste permanece)');
   const faltando = [];
-  for (let n = 1; n <= 24; n++) {
+  for (let n = 1; n <= 29; n++) {
     if (!new RegExp(`'${n} ·`).test(roteiro)) faltando.push(n);
   }
-  checar(faltando.length === 0, `testes-seguranca: casos 1..24 presentes${faltando.length ? ` (faltam ${faltando.join(',')})` : ''}`);
+  checar(faltando.length === 0, `testes-seguranca: casos 1..29 presentes${faltando.length ? ` (faltam ${faltando.join(',')})` : ''}`);
   checar(
     /'24 · apos reabrir, EXIGE nova validacao de Potencial pelo RH'/.test(roteiro),
     'testes-seguranca: caso 24 prova a exigencia de NOVA validacao do RH'
@@ -262,6 +333,29 @@ for (const s of sts) {
   checar(
     /v_vigentes\s*=\s*0\s+and\s+v_vigentes_novo\s*=\s*1/.test(roteiro),
     'testes-seguranca: caso 24 exige 0 vigentes antes e 1 depois'
+  );
+  checar(
+    /v_r2\s*=\s*v_r1\s*\+\s*2\s+and\s+v_v1\s*<>\s*v_v2/.test(roteiro),
+    'testes-seguranca: caso 27 prova a REVISAO invalidando dentro da mesma transacao'
+  );
+  checar(
+    /execute 'reset role'/.test(roteiro) && /like '%foreign key%'/.test(roteiro),
+    'testes-seguranca: caso 28 prova a FK ON DELETE RESTRICT (probe como dono)'
+  );
+  checar(
+    /dados_novos\s*->>\s*'empresa_id'/.test(roteiro),
+    'testes-seguranca: caso 25 confere o empresa_id explicito na trilha'
+  );
+  checar(
+    /a\.empresa_id\s*=\s*'\{\{empresa_a\}\}'/.test(roteiro),
+    'testes-seguranca: caso 25 confere a COLUNA audit_log.empresa_id'
+  );
+  checar(
+    /'29 · concluir exige avaliado, avaliador e ciclo/.test(roteiro) &&
+      /avaliado_ausente/.test(roteiro) &&
+      /avaliador_ausente/.test(roteiro) &&
+      /ciclo_ausente/.test(roteiro),
+    'testes-seguranca: caso 29 prova o minimo de identificacao/rastreabilidade na conclusao'
   );
 }
 

@@ -118,16 +118,27 @@ export function FeedbackCard({
         </div>
       </div>
 
-      {/* ── (B) Origem: "Avaliado por" + tipo + data ─────────────────────── */}
-      <div className="flex shrink-0 flex-row items-end justify-between gap-3 border-t border-border/20 pt-2.5 lg:w-[216px] lg:flex-col lg:items-start lg:justify-start lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
-        <div className="min-w-0 space-y-1.5">
+      {/* ── (B) Origem: "Avaliado por" + tipo + data ───────────────────────
+          O TRUNCAMENTO DO NOME LONGO depende de DUAS coisas:
+          1. `min-w-0` no contêiner — sem ele o item não consegue encolher e o
+             texto invade a coluna da nota/estrelas;
+          2. `lg:w-full` no bloco interno — no desktop a coluna é `flex-col` com
+             `lg:items-start`, e um item que NÃO estica tem largura de conteúdo:
+             com nome longo ele crescia (277 px numa coluna de 216 px) e o
+             `truncate` de dentro nunca precisava cortar. Com `w-full` o bloco
+             passa a medir exatamente a coluna e a reticência acontece no ponto
+             certo. O nome completo continua acessível pelo `title`. */}
+      <div className="flex min-w-0 shrink-0 flex-row items-end justify-between gap-3 border-t border-border/20 pt-2.5 lg:w-[216px] lg:flex-col lg:items-start lg:justify-start lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0">
+        <div className="min-w-0 space-y-1.5 lg:w-full">
           <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Avaliado por</p>
           <div className="flex min-w-0 items-center gap-2">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[10px] font-semibold text-primary ring-1 ring-inset ring-primary/20">
               {iniciais(item.avaliador)}
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-[12px] font-medium leading-tight">{item.avaliador}</span>
+              <span className="block truncate text-[12px] font-medium leading-tight" title={item.avaliador}>
+                {item.avaliador}
+              </span>
             </span>
           </div>
           <span

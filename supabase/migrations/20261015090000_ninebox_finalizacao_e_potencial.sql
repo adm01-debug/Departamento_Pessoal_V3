@@ -34,6 +34,22 @@
 --        tabela inteira é destruição em MASSA, não escrita de registro — fica
 --        fora de qualquer caminho autorizado do app (inventário em §3b);
 --      • UPDATE direto revogado: só a RPC altera status.
+--   9. RASTREABILIDADE E REVISÃO (revisão final):
+--      • `feedbacks_360.revisao` (§0): contador MONOTÔNICO de ALTERAÇÃO da
+--        linha, incrementado por TRIGGER `before update` (§0.1) — invalida a
+--        validação anterior do RH mesmo quando duas transições ocorrem na
+--        MESMA transação (`now()` é constante nela) e também quando a
+--        avaliação é ALTERADA sem trocar de status;
+--      • auditoria das 3 RPCs com `empresa_id` EXPLÍCITO na COLUNA de
+--        `audit_log` (garantida em §0g) **e** replicada em `dados_novos` (§1)
+--        — é a coluna que a Trilha de Auditoria usa para recortar por empresa;
+--      • `finalizar_feedback` aplica TODAS as condições obrigatórias POR
+--        CATEGORIA (§3/§6.1): nota 1–5 para todas; Potencial 1–5 apenas para
+--        `gestor` (Pares/Auto/Subordinados NÃO o fornecem);
+--      • histórico preservado (§4): as FKs das duas tabelas de apoio são criadas
+--        JÁ em `ON DELETE RESTRICT` (e recriadas explicitamente para o caso de a
+--        tabela já existir com o `CASCADE` antigo) — exclusão privilegiada falha
+--        em vez de apagar operações e aprovações silenciosamente.
 --
 -- NÃO altera dados existentes, não cria/remove views (exceto a nova view de
 -- versão), não toca em RLS de outras tabelas e não modifica avaliações históricas.
@@ -75,11 +91,77 @@
 
 begin;
 
--- 0) VERSÃO CANÔNICA DA AVALIAÇÃO — fonte única (o app apenas LÊ este valor).
---    Formato: id | updated_at (YYYY-MM-DD"T"HH24:MI:SS.US, UTC) | potencial | status
---    Mudou nota, status ou updated_at ⇒ a versão muda ⇒ validação antiga expira.
+-- ============================================================================
+-- 0) CONTROLE DE REVISÃO DA AVALIAÇÃO — mecanismo EXPLÍCITO (coluna `revisao`)
+-- ----------------------------------------------------------------------------
+-- POR QUE NÃO BASTA O TIMESTAMP: `now()` devolve o horário de INÍCIO DA
+-- TRANSAÇÃO e é CONSTANTE dentro dela. Logo, reabrir e concluir de novo **na
+-- mesma transação** produziriam `updated_at` idênticos — e, com precisão de
+-- segundos, até transações distintas no mesmo segundo colidiam. Nesses casos a
+-- versão canônica NÃO mudaria e a aprovação ANTERIOR do RH continuaria valendo
+-- para uma avaliação já refeita.
 --
---    PRECISÃO SUBSECUNDO (`SS.US` = MICROSSEGUNDOS) — obrigatória, não estética:
+-- A coluna `revisao` é um contador MONOTÔNICO, incrementado por um TRIGGER de
+-- `before update` (§0.1) a CADA alteração da linha — transição de status pela
+-- RPC (`concluir`/`cancelar`/`reabrir`) OU qualquer alteração privilegiada da
+-- avaliação (ex.: correção de nota/potencial sem trocar o status). Como ela não
+-- depende de relógio, a invalidação é inequívoca em qualquer cenário —
+-- inclusive dentro da mesma transação.
+--
+-- A coluna é criada AQUI, antes de tudo: a §0a (versão canônica) é uma função
+-- `sql` cujo corpo o PostgreSQL valida na criação e que já a referencia.
+-- ============================================================================
+alter table public.feedbacks_360
+  add column if not exists revisao integer not null default 0;
+
+comment on column public.feedbacks_360.revisao is
+  'Contador monotonico incrementado a CADA alteracao da linha pelo trigger trg_feedbacks_360_revisao (status, nota, potencial ou qualquer outro campo). Entra na versao canonica: reabrir/alterar/concluir de novo invalida a validacao anterior do RH mesmo dentro da MESMA transacao, quando now() e constante.';
+
+-- 0.1) REVISÃO COMO MECANISMO DE BANCO — um TRIGGER, não um passo opcional da RPC
+-- ----------------------------------------------------------------------------
+-- O contador de revisão é incrementado por um trigger `before update` em
+-- `feedbacks_360`. Assim a invalidação da validação anterior do RH NÃO depende
+-- de QUAL caminho alterou a avaliação: a RPC de status (concluir/cancelar/
+-- reabrir), uma correção administrativa privilegiada (`service_role`) ou
+-- qualquer rotina futura passam TODAS pelo mesmo contador. É o "mecanismo
+-- explícito e robusto" de controle de revisão pedido na revisão: independe do
+-- relógio e cobre também o ato de ALTERAR (mudança de nota/potencial que não
+-- toque o status), não apenas a transição de status. Um único UPDATE = um
+-- incremento — por isso a RPC NÃO incrementa a revisão à mão (§3), para não
+-- contar em dobro. A coluna é criada AQUI, antes do trigger e antes da §0a
+-- (função `sql` cujo corpo o PostgreSQL valida na criação).
+create or replace function public.tg_feedbacks_360_revisao()
+returns trigger
+language plpgsql
+security invoker
+set search_path = public, pg_temp
+as $$
+begin
+  new.revisao := coalesce(old.revisao, 0) + 1;
+  return new;
+end;
+$$;
+
+comment on function public.tg_feedbacks_360_revisao() is
+  'Incrementa feedbacks_360.revisao a cada UPDATE. Dono UNICO do contador de revisao (a RPC de status nao o incrementa manualmente).';
+
+drop trigger if exists trg_feedbacks_360_revisao on public.feedbacks_360;
+create trigger trg_feedbacks_360_revisao
+  before update on public.feedbacks_360
+  for each row execute function public.tg_feedbacks_360_revisao();
+
+-- 0a) VERSÃO CANÔNICA DA AVALIAÇÃO — fonte única (o app apenas LÊ este valor).
+--    Formato: id | revisao | updated_at (YYYY-MM-DD"T"HH24:MI:SS.US, UTC) | potencial | status
+--    Mudou nota, status, potencial, `revisao` ou `updated_at` ⇒ a versão muda ⇒
+--    a validação anterior do RH expira.
+--
+--    A REVISÃO (§0) é o componente que garante a invalidação INDEPENDENTE DO
+--    RELÓGIO: cada `concluir`/`cancelar`/`reabrir` incrementa `revisao`, então o
+--    ciclo `concluído → reaberto → concluído` muda a versão **mesmo dentro da
+--    mesma transação** (quando `now()` é constante e `updated_at` se repete).
+--
+--    PRECISÃO SUBSECUNDO (`SS.US` = MICROSSEGUNDOS) — complementar, não
+--    substituta:
 --    a validação do RH guarda a versão EXATA que analisou e a compara por
 --    IGUALDADE. Com precisão de SEGUNDOS, o ciclo
 --        concluído → reaberto → concluído de novo dentro do MESMO segundo
@@ -100,6 +182,7 @@ security invoker
 set search_path = public, pg_temp
 as $$
   select f.id::text
+       || '|' || f.revisao::text
        || '|' || to_char(f.updated_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')
        || '|' || coalesce(f.potencial::text, '')
        || '|' || coalesce(lower(btrim(f.status)), '')
@@ -215,16 +298,57 @@ create policy "feedbacks_360_select" on public.feedbacks_360
 -- privilégio próprio: quem consulta paga as policies de `feedbacks_360` (agora
 -- com papel + empresa). `gestor`/`user` autenticados recebem **zero linhas**.
 
+-- 0g) TRILHA VINCULADA À EMPRESA — coluna EXPLÍCITA em `audit_log`.
+-- ----------------------------------------------------------------------------
+-- A forma canônica de `audit_log` TEM a coluna `empresa_id`: ela vem da
+-- migration `20260712214644_fixup_audit_log_config_afastamentos_empresa_id.sql`
+-- (`ALTER TABLE public.audit_log ADD COLUMN IF NOT EXISTS empresa_id UUID
+-- REFERENCES public.empresas(id)`), NÃO de um `CREATE TABLE IF NOT EXISTS`
+-- inerte. É essa coluna que:
+--   • a policy de leitura `audit_log_tenant_select` (de `20260719120000`) usa
+--     (`public.rls_tenant_or_admin(empresa_id)`), e
+--   • a RPC `listar_auditoria(p_empresa_id, …)` filtra (`a.empresa_id = …`).
+-- Os tipos gerados (`types.ts`) NÃO são prova do schema real (como o próprio
+-- `docs/ninebox-validacao-banco.sql` adverte) e estavam defasados.
+--
+-- CONSEQUÊNCIA de gravar a empresa SÓ em `dados_novos`: a coluna ficava NULA, e
+-- o evento — embora existisse — ficava INVISÍVEL na Trilha de Auditoria da
+-- própria empresa (`rls_tenant_or_admin(NULL)` é falso e o filtro por empresa
+-- não casa). Por isso a coluna é GARANTIDA aqui (idempotente, aditiva, sem
+-- tocar em dado algum) e as três RPCs passam a gravá-la EXPLICITAMENTE (§3/§4),
+-- mantendo `empresa_id` também em `dados_novos` como defesa em profundidade.
+alter table public.audit_log
+  add column if not exists empresa_id uuid references public.empresas(id);
+
+comment on column public.audit_log.empresa_id is
+  'Empresa do evento de auditoria (isolamento da Trilha por tenant). Preenchida explicitamente pelas RPCs do modulo Nine-Box; tambem replicada em dados_novos.empresa_id.';
+
 -- 1) Operações (idempotência por operação; chave + parâmetros + resultado)
 create table if not exists public.feedbacks_360_operacoes (
   idempotency_key text primary key,
-  feedback_id     uuid not null references public.feedbacks_360(id) on delete cascade,
+  feedback_id     uuid not null references public.feedbacks_360(id) on delete restrict,
   empresa_id      uuid not null,
   operacao        text not null check (operacao in ('concluir','cancelar','reabrir','validar_potencial','criar')),
   hash_parametros text not null,
   resultado       jsonb not null,
   criada_em       timestamptz not null default now()
 );
+
+-- ── HISTÓRICO NÃO PODE SER APAGADO EM CASCATA (§4) ──────────────────────────
+-- A FK inline acima é criada JÁ em `ON DELETE RESTRICT` (não mais `CASCADE`):
+-- uma exclusão privilegiada de `feedbacks_360` (dono/`service_role` —
+-- `authenticated` já não tem DELETE) NÃO pode apagar SILENCIOSAMENTE o
+-- histórico de idempotência. A regra aprovada é preservar histórico e
+-- rastreabilidade. Como `create table if not exists` é INERTE quando a tabela
+-- já existe (manteria o `CASCADE` antigo), a FK é RECRIADA explicitamente com
+-- `ON DELETE RESTRICT`: excluir um feedback com operações registradas FALHA com
+-- erro claro, em vez de destruir prova. Purga continua possível, mas de forma
+-- CONSCIENTE e com procedimento próprio — nunca como efeito colateral.
+alter table public.feedbacks_360_operacoes
+  drop constraint if exists feedbacks_360_operacoes_feedback_id_fkey;
+alter table public.feedbacks_360_operacoes
+  add constraint feedbacks_360_operacoes_feedback_id_fkey
+  foreign key (feedback_id) references public.feedbacks_360(id) on delete restrict;
 
 alter table public.feedbacks_360_operacoes enable row level security;
 
@@ -250,13 +374,26 @@ create table if not exists public.feedbacks_360_validacoes_potencial (
   empresa_id       uuid not null,
   ciclo_id         uuid,
   colaborador_id   uuid not null,
-  feedback_id      uuid not null references public.feedbacks_360(id) on delete cascade,
+  feedback_id      uuid not null references public.feedbacks_360(id) on delete restrict,
   versao_avaliacao text not null,
   potencial_validado numeric(4,2) not null check (potencial_validado between 1 and 5),
   validado_por     uuid not null,
   validado_em      timestamptz not null default now(),
   observacao       text
 );
+
+-- ── HISTÓRICO DE APROVAÇÕES NÃO PODE SER APAGADO EM CASCATA (§4) ────────────
+-- Mesma regra de §1: a FK inline é criada JÁ em `ON DELETE RESTRICT` e a
+-- aprovação do RH é PROVA (é ela que sustenta a classificação do Nine-Box).
+-- Recriada explicitamente (para o caso de a tabela já existir com `CASCADE`)
+-- com `ON DELETE RESTRICT`: excluir o feedback com validações registradas falha
+-- em vez de apagar a trilha de aprovação. As validações são imutáveis por
+-- desenho — nada aqui as reescreve.
+alter table public.feedbacks_360_validacoes_potencial
+  drop constraint if exists feedbacks_360_validacoes_potencial_feedback_id_fkey;
+alter table public.feedbacks_360_validacoes_potencial
+  add constraint feedbacks_360_validacoes_potencial_feedback_id_fkey
+  foreign key (feedback_id) references public.feedbacks_360(id) on delete restrict;
 
 create index if not exists idx_fb360_validacoes_potencial
   on public.feedbacks_360_validacoes_potencial (feedback_id, validado_em desc);
@@ -278,9 +415,13 @@ create policy fvp_select on public.feedbacks_360_validacoes_potencial
 revoke all on public.feedbacks_360_validacoes_potencial from anon;
 
 -- 3) RPC de finalização: identidade → PAPEL → linha+trava → EMPRESA →
---    IDEMPOTÊNCIA → transição → nota (escala 1–5) → UPDATE + auditoria +
---    operação, tudo em UMA transação. A ordem importa: o reenvio idempotente é
---    um caminho de LEITURA e só pode responder DEPOIS da autorização.
+--    IDEMPOTÊNCIA → transição → CONDIÇÕES OBRIGATÓRIAS (§6.1 + `validarConclusao`:
+--    avaliado/avaliador/ciclo presentes, categoria das 4 do 360°, nota 1–5 em
+--    todas e Potencial 1–5 do gestor) → UPDATE (status; a `revisao` é
+--    incrementada pelo TRIGGER §0.1) + auditoria (com empresa na COLUNA e em
+--    `dados_novos`) + operação, tudo em UMA transação. A ordem importa: o
+--    reenvio idempotente é um caminho de LEITURA e só pode responder DEPOIS da
+--    autorização.
 create or replace function public.finalizar_feedback(
   p_feedback_id  uuid,
   p_acao         text,
@@ -303,6 +444,7 @@ declare
   v_confere      text;
   v_anterior     jsonb;
   v_nota         numeric;
+  v_revisao      integer;
 begin
   if v_uid is null then
     raise exception 'nao_autenticado' using errcode = '28000';
@@ -382,12 +524,42 @@ begin
   if p_acao = 'cancelar' and (p_motivo is null or length(btrim(p_motivo)) < 3) then
     raise exception 'motivo_obrigatorio';
   end if;
-  -- Concluir exige a nota de desempenho NA ESCALA 1–5 (potencial é aviso, não
-  -- bloqueio — §6.1). "Preenchida" não basta: `performance` é `INTEGER CHECK
-  -- (1..5)` no banco, mas **`nota_geral` é `NUMERIC` SEM CHECK** — e a regra usa
-  -- `coalesce(performance, nota_geral)`. Sem o teste de faixa, o fallback deixava
-  -- CONCLUIR com nota 0, 7 ou -3 (uma avaliação fora da escala virava oficial).
+  -- ── CONCLUIR: TODAS as condições obrigatórias, POR CATEGORIA (§6.1) ────────
+  -- O servidor é o guardião: o front NÃO bloqueia "Concluir" por falta de nota
+  -- (ele só não oferece controle que o status/papel recusa — ver
+  -- `FeedbackAcoesRodape`), então estas checagens são a única barreira real.
   if p_acao = 'concluir' then
+    -- (a) A CATEGORIA precisa ser uma das quatro do 360°. Sem isso não existe
+    --     regra aprovada de elegibilidade, e a avaliação nunca classificaria.
+    if coalesce(lower(btrim(v_linha.tipo)), '') not in ('gestor','par','auto','subordinado') then
+      raise exception 'categoria_invalida';
+    end if;
+
+    -- (b) IDENTIFICAÇÃO E RASTREABILIDADE DA ORIGEM — espelho de
+    --     `statusFeedback.validarConclusao` (os mesmos impedimentos
+    --     `avaliado_ausente`, `avaliador_ausente` e `ciclo_ausente`). O contrato
+    --     do formulário já exige avaliado E avaliador (`podeSalvar =
+    --     Boolean(avaliadoId && avaliadorId)`) e a avaliação só existe dentro de
+    --     um ciclo: sem esses três vínculos não há a quem atribuir a avaliação
+    --     nem de onde rastrear sua origem. A checagem vale tanto para os
+    --     registros da criação segura quanto para os do INSERT direto
+    --     temporário — o registro pode ter nascido com a coluna nula, e é AQUI
+    --     que a conclusão inverte para recusa. Não exige mais que isso: a
+    --     existência dos vínculos é garantida pelas FKs.
+    if v_linha.avaliado_id is null then
+      raise exception 'avaliado_ausente';
+    end if;
+    if v_linha.avaliador_id is null then
+      raise exception 'avaliador_ausente';
+    end if;
+    if v_linha.ciclo_id is null then
+      raise exception 'ciclo_ausente';
+    end if;
+
+    -- (c) TODAS as categorias: nota de desempenho NA ESCALA 1–5. "Preenchida"
+    --     não basta: `performance` é `INTEGER CHECK (1..5)`, mas **`nota_geral`
+    --     é `NUMERIC` SEM CHECK** e a regra usa `coalesce(performance,
+    --     nota_geral)` — sem o teste de faixa, concluía com 0, 7 ou −3.
     v_nota := coalesce(v_linha.performance, v_linha.nota_geral);
     if v_nota is null then
       raise exception 'dados_incompletos';
@@ -395,18 +567,55 @@ begin
     if v_nota < 1 or v_nota > 5 then
       raise exception 'nota_desempenho_fora_da_escala';
     end if;
+
+    -- (d) Potencial, QUANDO informado, tem de estar na escala 1–5 — para
+    --     QUALQUER categoria. O `CHECK (1..5)` da coluna já barra no INSERT, mas
+    --     o servidor confere aqui também (defesa em profundidade: a coluna é
+    --     `integer` e pode ter sido tocada por via privilegiada). Não altera a
+    --     regra de obrigatoriedade — só garante a escala.
+    if v_linha.potencial is not null and (v_linha.potencial < 1 or v_linha.potencial > 5) then
+      raise exception 'potencial_fora_da_escala';
+    end if;
+
+    -- (e) OBRIGATÓRIO apenas para o GESTOR: o Potencial é campo da avaliação do
+    --     gestor — é 100% do eixo horizontal do Nine-Box (`gestor_sem_potencial`
+    --     no motor). Pares/Auto/Subordinados **NÃO** fornecem Potencial (§6.1) e
+    --     continuam concluindo sem ele: exigi-lo seria bloquear avaliação
+    --     legítima. A régua do servidor é a mesma que o front aplica — e o front
+    --     não é a barreira.
+    if lower(btrim(v_linha.tipo)) = 'gestor' and v_linha.potencial is null then
+      raise exception 'potencial_obrigatorio_para_gestor';
+    end if;
   end if;
 
+  -- A REVISÃO (§0.1) é incrementada pelo TRIGGER `trg_feedbacks_360_revisao` a
+  -- cada UPDATE — inclusive neste. A RPC NÃO a incrementa à mão (seria contagem
+  -- DOBRADA). O `returning` devolve o número NOVO já gravado pelo trigger, para
+  -- o resultado e para a trilha.
   update public.feedbacks_360
-     set status = v_novo, updated_at = now()
-   where id = p_feedback_id;
+     set status = v_novo,
+         updated_at = now()
+   where id = p_feedback_id
+  returning revisao into v_revisao;
 
+  -- AUDITORIA VINCULADA À EMPRESA (§0g). A `audit_log` canônica TEM a coluna
+  -- `empresa_id` — é ela que a policy `audit_log_tenant_select` e a RPC
+  -- `listar_auditoria` usam para recortar a Trilha por tenant. O vínculo vai,
+  -- portanto, na COLUNA **e** é replicado em `dados_novos.empresa_id` (defesa
+  -- em profundidade e leitura direta pela timeline) junto do `status` e da
+  -- `revisao` resultantes. Sem a coluna preenchida o evento existiria, mas
+  -- ficaria INVISÍVEL para a própria empresa.
   insert into public.audit_log (
-    tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
+    empresa_id, tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
   ) values (
+    v_linha.empresa_id,
     'feedbacks_360', p_feedback_id, 'UPDATE',
-    jsonb_build_object('status', v_linha.status),
-    jsonb_build_object('status', v_novo),
+    jsonb_build_object('status', v_linha.status, 'revisao', v_linha.revisao),
+    jsonb_build_object(
+      'empresa_id', v_linha.empresa_id,
+      'status', v_novo,
+      'revisao', v_revisao
+    ),
     array['status'], v_uid, v_email
   ) returning id into v_auditoria_id;
 
@@ -414,6 +623,7 @@ begin
     'ok', true,
     'status_anterior', v_linha.status,
     'status_novo', v_novo,
+    'revisao_nova', v_revisao,
     'auditoria_id', v_auditoria_id,
     'idempotente', false
   );
@@ -507,8 +717,9 @@ end $$;
 --    • A validação é gravada com a VERSÃO exata analisada. Se a avaliação for
 --      reaberta ou o potencial mudar, a versão deixa de casar e a aprovação
 --      anterior perde efeito — sem apagar o histórico.
---    FORMATO DA VERSÃO (deve espelhar `motorAvaliacao360.versaoDaAvaliacao`):
---      id | updated_at (to_char YYYY-MM-DD"T"HH24:MI:SS) | potencial | status
+--    FORMATO DA VERSÃO (fonte única: `public.versao_avaliacao_feedback`; o
+--    espelho documental é `motorAvaliacao360.CONTRATO_VERSAO_AVALIACAO`):
+--      id | revisao | updated_at (to_char YYYY-MM-DD"T"HH24:MI:SS.US) | potencial | status
 create or replace function public.validar_potencial_avaliacao(
   p_feedback_id  uuid,
   p_idempotencia text default null,
@@ -598,15 +809,22 @@ begin
     v_linha.potencial, v_uid, nullif(btrim(coalesce(p_observacao, '')), '')
   ) returning id into v_id;
 
+  -- AUDITORIA VINCULADA À EMPRESA (§0g): `empresa_id` na COLUNA de `audit_log`
+  -- **e** replicado em `dados_novos.empresa_id`. É a coluna que a policy de
+  -- leitura da trilha e a RPC `listar_auditoria` usam para o recorte por
+  -- empresa; sem ela o evento ficaria invisível para o próprio tenant.
   insert into public.audit_log (
-    tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
+    empresa_id, tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
   ) values (
+    v_linha.empresa_id,
     'feedbacks_360_validacoes_potencial', v_id, 'INSERT', null,
     jsonb_build_object(
+      'empresa_id', v_linha.empresa_id,
       'feedback_id', v_linha.id,
       'colaborador_id', v_linha.avaliado_id,
       'ciclo_id', v_linha.ciclo_id,
       'versao_avaliacao', v_versao,
+      'revisao_avaliada', v_linha.revisao,
       'potencial_validado', v_linha.potencial
     ),
     array['validado_por', 'versao_avaliacao'], v_uid, v_email
@@ -780,9 +998,12 @@ begin
     'pendente'
   ) returning * into v_novo;
 
+  -- AUDITORIA VINCULADA À EMPRESA (§0g): `empresa_id` na COLUNA de `audit_log`
+  -- **e** replicado em `dados_novos.empresa_id` (defesa em profundidade).
   insert into public.audit_log (
-    tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
+    empresa_id, tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
   ) values (
+    v_novo.empresa_id,
     'feedbacks_360', v_novo.id, 'INSERT', null,
     jsonb_build_object(
       'empresa_id', v_novo.empresa_id, 'avaliado_id', v_novo.avaliado_id,

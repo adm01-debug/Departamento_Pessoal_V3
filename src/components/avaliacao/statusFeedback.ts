@@ -45,8 +45,9 @@ export type StatusFeedback = (typeof STATUS_FEEDBACK)[keyof typeof STATUS_FEEDBA
 export type AcaoStatus = 'concluir' | 'cancelar' | 'reabrir';
 
 /**
- * Perfil do operador. `admin_rh` é o único que reabre; `gestor` e `avaliador`
- * concluem/cancelam dentro do escopo que o BACKEND validar.
+ * Perfil do operador. `admin_rh` é o único que REABRE; a CONCLUSÃO é ato do
+ * `gestor` responsável pela avaliação (regra de 16/10/2026) — o backend valida
+ * papel E vínculo. `avaliador` e `desconhecido` não concluem.
  */
 export type PerfilOperador = 'admin_rh' | 'gestor' | 'avaliador' | 'desconhecido';
 
@@ -76,9 +77,17 @@ export interface Transicao {
  * Tabela de transições — a regra fica visível e testável em um só lugar.
  * `concluido → cancelado` é DELIBERADAMENTE proibida: exige reabrir primeiro,
  * para não apagar a nota de uma avaliação já concluída sem trilha.
+ *
+ * ── CONCLUSÃO = GESTOR (regra de 16/10/2026) ────────────────────────────────
+ * `pendente → concluido` é exclusivo do perfil `gestor`; SOMENTE ele, e apenas
+ * quando for o RESPONSÁVEL pela avaliação (vínculo conferido em
+ * `acoesFeedback.ehGestorResponsavel` no front e por `pode_aprovar_colaborador`
+ * no servidor). `admin`/`rh` sem papel `gestor` NÃO concluem — nem pela tela nem
+ * por chamada direta à API (ver a migration aditiva da conclusão do gestor).
+ * Cancelar segue administrativo (`admin_rh`/`gestor`) e reabrir é só `admin_rh`.
  */
 export const TRANSICOES: readonly Transicao[] = [
-  { de: 'pendente', para: 'concluido', acao: 'concluir', perfis: ['admin_rh', 'gestor', 'avaliador'] },
+  { de: 'pendente', para: 'concluido', acao: 'concluir', perfis: ['gestor'] },
   { de: 'pendente', para: 'cancelado', acao: 'cancelar', perfis: ['admin_rh', 'gestor'] },
   { de: 'concluido', para: 'cancelado', acao: 'cancelar', perfis: [] },
   { de: 'concluido', para: 'pendente', acao: 'reabrir', perfis: ['admin_rh'] },

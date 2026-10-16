@@ -160,6 +160,16 @@ insert into _res values ('19 · admin NÃO valida potencial', 'bloqueado',
 --   • 24: depois de reabrir e concluir de novo, NÃO existe validação vigente — o
 --         Potencial volta a "sem validação" e o RH precisa validar OUTRA VEZ
 --         (mesma régua do front em `acoesFeedback.estadoValidacao`).
+--
+-- ─── 7) REVISÃO FINAL (25–28) — correções da última revisão da migration ─────
+--   • 25: as TRÊS RPCs gravam `empresa_id` EXPLÍCITO em `dados_novos` (vínculo
+--         da trilha com a empresa autorizada);
+--   • 26: Potencial é obrigatório SÓ para o `gestor` — `par`/`auto`/`subordinado`
+--         concluem sem ele (§6.1);
+--   • 27: a `revisao` (§0) invalida a validação anterior MESMO DENTRO DA MESMA
+--         TRANSAÇÃO, quando `now()`/`updated_at` se repetem;
+--   • 28: excluir feedback COM histórico falha pela FK `ON DELETE RESTRICT`
+--         (operações e aprovações são preservadas).
 
 -- 20 · reenvio com a MESMA chave, por usuário SEM papel, é bloqueado
 --      (a chave já existe: o caso 12 criou a operação 'teste-rpc-1')
@@ -267,6 +277,228 @@ begin
       pg_temp.bloqueado_como('{{usuario_rh}}',
         'select public.criar_feedback_seguro(''{{empresa_a}}'',''' || v_outro::text || ''',''{{ciclo_a}}'',''gestor'',4,null,null,null,null,null,''teste-outro-tenant-1'')'));
   end if;
+end $$;
+
+-- ─── 7) REVISÃO FINAL (25–28): auditoria por empresa · condições por categoria ·
+--        revisão explícita · histórico preservado (FK RESTRICT) ───────────────
+
+-- 25 · As TRÊS RPCs gravam `empresa_id` EXPLÍCITO na trilha — na COLUNA de
+--      `audit_log` **e** em `dados_novos`. É a COLUNA que a policy de leitura
+--      da trilha (`audit_log_tenant_select`) e a RPC `listar_auditoria` usam
+--      para recortar por empresa; sem ela o evento ficaria invisível para o
+--      próprio tenant. A migration garante a coluna (ADD COLUMN IF NOT EXISTS,
+--      §0g) — ver A4 do gate.
+do $$
+declare
+  v_id    uuid;
+  v_json  jsonb;
+  v_op    int;
+  v_valid int;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
+
+  v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
+            'gestor', 4.5, 4, null, null, null, null, 'teste-audit-1');
+  v_id := (v_json ->> 'feedback_id')::uuid;
+  perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-audit-2');
+  perform public.validar_potencial_avaliacao(v_id, 'teste-audit-3', null);
+
+  select count(*) filter (where a.tabela = 'feedbacks_360'
+                            and a.registro_id = v_id::text
+                            and a.empresa_id = '{{empresa_a}}'
+                            and a.dados_novos ->> 'empresa_id' = '{{empresa_a}}'),
+         count(*) filter (where a.tabela = 'feedbacks_360_validacoes_potencial'
+                            and a.empresa_id = '{{empresa_a}}'
+                            and a.dados_novos ->> 'empresa_id' = '{{empresa_a}}'
+                            and a.dados_novos ->> 'feedback_id' = v_id::text)
+    into v_op, v_valid
+    from public.audit_log a
+   where a.tabela in ('feedbacks_360', 'feedbacks_360_validacoes_potencial');
+
+  insert into _res values (
+    '25 · auditoria vinculada a empresa (coluna + dados_novos.empresa_id)',
+    'criacao+conclusao com empresa, validacao com empresa',
+    'criacao/conclusao=' || v_op || ' validacao=' || v_valid,
+    v_op >= 2 and v_valid = 1
+  );
+end $$;
+
+-- 26 · Potencial é obrigatório SÓ para o GESTOR (§6.1). Pares/Auto/Subordinados
+--      NÃO fornecem Potencial e continuam concluindo.
+do $$
+declare
+  v_gestor uuid;
+  v_par    uuid;
+  v_json   jsonb;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
+
+  v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
+            'gestor', 4.5, null, null, null, null, null, 'teste-cat-gestor-1');
+  v_gestor := (v_json ->> 'feedback_id')::uuid;
+
+  v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
+            'par', 4.5, null, null, null, null, null, 'teste-cat-par-1');
+  v_par := (v_json ->> 'feedback_id')::uuid;
+
+  insert into _res values (
+    '26 · Potencial obrigatorio SO para o gestor',
+    'gestor bloqueado, par permitido',
+    'gestor=' || case when pg_temp.bloqueado_como('{{usuario_rh}}',
+        format('select public.finalizar_feedback(%L,''concluir'',null,''teste-cat-g-2'')', v_gestor))
+      then 'bloqueado' else 'PERMITIDO (falha)' end
+      || ' | par=' || case when pg_temp.bloqueado_como('{{usuario_rh}}',
+        format('select public.finalizar_feedback(%L,''concluir'',null,''teste-cat-p-2'')', v_par))
+      then 'BLOQUEADO (falha)' else 'permitido' end,
+    pg_temp.bloqueado_como('{{usuario_rh}}',
+      format('select public.finalizar_feedback(%L,''concluir'',null,''teste-cat-g-3'')', v_gestor))
+    and not pg_temp.bloqueado_como('{{usuario_rh}}',
+      format('select public.finalizar_feedback(%L,''concluir'',null,''teste-cat-p-3'')', v_par))
+  );
+end $$;
+
+
+-- 27 · A REVISÃO (§0) invalida a validação anterior MESMO DENTRO DA MESMA
+--      TRANSAÇÃO. Aqui `now()` é constante, então `updated_at` SE REPETE e só a
+--      `revisao` distingue as duas conclusões — sem o contador, a versão não
+--      mudaria e a aprovação anterior do RH continuaria valendo.
+do $$
+declare
+  v_id   uuid;
+  v_json jsonb;
+  v_r1   int;
+  v_r2   int;
+  v_u1   text;
+  v_u2   text;
+  v_v1   text;
+  v_v2   text;
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
+
+  v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
+            'gestor', 4.5, 4, null, null, null, null, 'teste-rev-1');
+  v_id := (v_json ->> 'feedback_id')::uuid;
+
+  perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-rev-2');
+  select revisao, updated_at::text into v_r1, v_u1 from public.feedbacks_360 where id = v_id;
+  v_v1 := public.versao_avaliacao_feedback(v_id);
+
+  perform public.finalizar_feedback(v_id, 'reabrir', 'reabertura de teste com justificativa', 'teste-rev-3');
+  perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-rev-4');
+  select revisao, updated_at::text into v_r2, v_u2 from public.feedbacks_360 where id = v_id;
+  v_v2 := public.versao_avaliacao_feedback(v_id);
+
+  insert into _res values (
+    '27 · revisao invalida a validacao na MESMA transacao (updated_at igual)',
+    'revisao +2 e versoes diferentes',
+    'revisao ' || v_r1 || '->' || v_r2
+      || ' | updated_at repetido=' || (v_u1 = v_u2)::text
+      || ' | versoes diferentes=' || (v_v1 <> v_v2)::text,
+    v_r2 = v_r1 + 2 and v_v1 <> v_v2
+  );
+end $$;
+
+-- 28 · HISTÓRICO PRESERVADO (§4): excluir um feedback COM operações e validações
+--      registradas FALHA pela FK `ON DELETE RESTRICT`, em vez de apagar a trilha.
+--      O probe roda como o DONO (`reset role`): senão quem barraria seria o
+--      privilégio de DELETE já revogado, e não a integridade referencial. Se o
+--      ambiente não permitir a troca de papel, o caso falha ALTO — é sinal de
+--      que o probe não provou nada, e não de que a FK está errada (para a
+--      checagem estrutural, ver A7 do gate: `confdeltype = 'r'`).
+do $$
+declare
+  v_id     uuid;
+  v_json   jsonb;
+  v_erro   text := '';
+  v_cascate text := '';
+begin
+  perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
+
+  v_json := public.criar_feedback_seguro('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}',
+            'gestor', 4.5, 4, null, null, null, null, 'teste-cascade-1');
+  v_id := (v_json ->> 'feedback_id')::uuid;
+  perform public.finalizar_feedback(v_id, 'concluir', null, 'teste-cascade-2');
+  perform public.validar_potencial_avaliacao(v_id, 'teste-cascade-3', null);
+
+  select string_agg(c.relname || ':' || k.confdeltype, ', ')
+    into v_cascate
+    from pg_constraint k
+    join pg_class c on c.oid = k.conrelid
+    join pg_namespace n on n.oid = c.relnamespace
+   where n.nspname = 'public'
+     and c.relname in ('feedbacks_360_operacoes', 'feedbacks_360_validacoes_potencial')
+     and k.contype = 'f';
+
+  execute 'reset role';
+  begin
+    delete from public.feedbacks_360 where id = v_id;
+    v_erro := 'EXCLUIU (falha: o historico era para ser preservado)';
+  exception when others then
+    v_erro := sqlerrm;
+  end;
+  execute 'set local role authenticated';
+
+  insert into _res values (
+    '28 · excluir feedback com historico e bloqueado (FK RESTRICT)',
+    'bloqueado pela FK de historico',
+    case when v_erro like '%foreign key%' then 'bloqueado pela FK'
+         else left(v_erro, 80) end
+      || ' | FKs: ' || coalesce(v_cascate, 'n/a'),
+    v_erro like '%foreign key%'
+  );
+end $$;
+
+-- ─── 8) CONCLUSÃO: mínimo de identificação/rastreabilidade (29) ─────────────
+-- 29 · Concluir espelha `statusFeedback.validarConclusao`: exige colaborador
+--      avaliado, avaliador (origem rastreável) e ciclo. Os três probes são
+--      criados pelo DONO (a criação pela RPC já exige avaliado/ciclo; o
+--      avaliador é o vínculo que o contrato antigo/INSERT direto podia deixar
+--      nulo) e a conclusão é chamada como RH. Cada probe isola UM vínculo
+--      ausente, então o resultado não depende da ordem das checagens.
+do $$
+declare
+  v_sem_avaliado  uuid;
+  v_sem_avaliador uuid;
+  v_sem_ciclo     uuid;
+  v_ok_avaliado   boolean := false;
+  v_ok_avaliador  boolean := false;
+  v_ok_ciclo      boolean := false;
+begin
+  execute 'reset role';
+  insert into public.feedbacks_360 (empresa_id, avaliador_id, ciclo_id, tipo, nota_geral, potencial, status)
+    values ('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}', 'gestor', 4, 4, 'pendente')
+    returning id into v_sem_avaliado;
+  insert into public.feedbacks_360 (empresa_id, avaliado_id, ciclo_id, tipo, nota_geral, potencial, status)
+    values ('{{empresa_a}}', '{{colaborador_a}}', '{{ciclo_a}}', 'gestor', 4, 4, 'pendente')
+    returning id into v_sem_avaliador;
+  insert into public.feedbacks_360 (empresa_id, avaliado_id, avaliador_id, tipo, nota_geral, potencial, status)
+    values ('{{empresa_a}}', '{{colaborador_a}}', '{{colaborador_a}}', 'gestor', 4, 4, 'pendente')
+    returning id into v_sem_ciclo;
+
+  execute 'set local role authenticated';
+  perform set_config('request.jwt.claims', json_build_object('sub', '{{usuario_rh}}')::text, true);
+
+  begin
+    perform public.finalizar_feedback(v_sem_avaliado, 'concluir', null, 'teste-min-1');
+  exception when others then v_ok_avaliado := (sqlerrm like '%avaliado_ausente%');
+  end;
+
+  begin
+    perform public.finalizar_feedback(v_sem_avaliador, 'concluir', null, 'teste-min-2');
+  exception when others then v_ok_avaliador := (sqlerrm like '%avaliador_ausente%');
+  end;
+
+  begin
+    perform public.finalizar_feedback(v_sem_ciclo, 'concluir', null, 'teste-min-3');
+  exception when others then v_ok_ciclo := (sqlerrm like '%ciclo_ausente%');
+  end;
+
+  insert into _res values (
+    '29 · concluir exige avaliado, avaliador e ciclo (validarConclusao)',
+    'avaliado_ausente · avaliador_ausente · ciclo_ausente',
+    'avaliado=' || v_ok_avaliado || ' avaliador=' || v_ok_avaliador || ' ciclo=' || v_ok_ciclo,
+    v_ok_avaliado and v_ok_avaliador and v_ok_ciclo
+  );
 end $$;
 
 -- ─── RESULTADO ──────────────────────────────────────────────────────────────

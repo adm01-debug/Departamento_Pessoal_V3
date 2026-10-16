@@ -7,6 +7,16 @@ import { FeedbacksFocoBanner } from './FeedbacksFocoBanner';
 import { FeedbacksResumo } from './FeedbacksResumo';
 import { FeedbacksTimeline } from './FeedbacksTimeline';
 import { NovoFeedbackDialog } from './NovoFeedbackDialog';
+import { PendenciasAprovacao } from './PendenciasAprovacao';
+import { consolidarNineBox360, pontos360 } from './nineBox360';
+import type { ValidacaoPotencial } from './motorAvaliacao360';
+import {
+  contarAguardandoGestor,
+  derivarPendencias,
+  type ClassificacaoNineBox,
+  type EstadoAprovacao,
+  type PendenciaAprovacao,
+} from './aprovacaoGestor';
 import {
   agruparPorMes,
   avaliadoresDisponiveis,
@@ -19,6 +29,7 @@ import {
   mediaNotas,
   ordenarFeedbacks,
   pendentes as filtrarPendentes,
+  tipoFeedback,
   type CriterioOrdemFeedback,
   type FeedbackDerivado,
   type SegmentoFeedback,
@@ -62,12 +73,44 @@ interface FeedbacksTabProps {
     cargo?: string | null;
     departamento?: string | null;
   }[];
+  /**
+   * Opções REAIS (UUID) para o FORMULÁRIO de criação. Quando informadas, o
+   * "Novo Feedback" lista SOMENTE IDs reais — nunca `mock-*` (que a guarda de
+   * escrita recusa). A EXIBIÇÃO continua usando `colaboradores`/`ciclos`.
+   */
+  colaboradoresReais?: {
+    id?: string | null;
+    nome_completo?: string | null;
+    cargo?: string | null;
+    departamento?: string | null;
+  }[];
+  ciclosReais?: any[];
   /** PDIs já carregados (competência em foco do avaliado). */
   pdis?: any[];
   /** Cria o feedback (mutation real da página). */
   onCriarFeedback?: (dados: Record<string, unknown>) => void;
   /** Estado de envio do dialog de novo feedback. */
   salvandoFeedback?: boolean;
+  /* ── Subaba "Aguardando gestor" (fluxo de aprovação do gestor) ─────────────
+     Tudo opcional: sem estes props a aba continua EXATAMENTE a de antes, com
+     apenas a segunda visualização mostrando a fila derivada dos dados atuais. */
+  /** Validações de Potencial já carregadas (modo real). */
+  validacoesPotencial?: ValidacaoPotencial[];
+  /** Versão canônica por feedback (`vw_feedbacks_360_versao`). */
+  versoesPorFeedback?: Record<string, string>;
+  /** Cabeçalho do fluxo: `enviado_em` por colaborador+ciclo. */
+  consolidacoes?: unknown[];
+  /** Histórico de decisões do gestor. */
+  aprovacoesGestor?: unknown[];
+  /** Papel do usuário (`admin` | `rh` | `gestor` | `user`). */
+  papel?: string | null;
+  /** `true` só no modo real: libera os controles de escrita da aprovação. */
+  acoesAprovacaoHabilitadas?: boolean;
+  /** Operação de aprovação em andamento. */
+  salvandoAprovacao?: boolean;
+  onEnviarAprovacao?: (p: PendenciaAprovacao) => void;
+  onDecidirAprovacao?: (p: PendenciaAprovacao, decisao: 'aprovado' | 'devolvido', justificativa?: string | null) => void;
+  onValidarPotencial?: (p: PendenciaAprovacao) => void;
 }
 
 /** Ordem fixa de exibição dos tipos (a mesma dos chips). */
@@ -78,12 +121,32 @@ export function FeedbacksTab({
   ciclos = [],
   ciclo,
   colaboradores = [],
+  colaboradoresReais,
+  ciclosReais,
   pdis = [],
   onCriarFeedback,
   salvandoFeedback = false,
+  validacoesPotencial = [],
+  versoesPorFeedback = {},
+  consolidacoes = [],
+  aprovacoesGestor = [],
+  papel = null,
+  acoesAprovacaoHabilitadas = false,
+  salvandoAprovacao = false,
+  onEnviarAprovacao,
+  onDecidirAprovacao,
+  onValidarPotencial,
 }: FeedbacksTabProps) {
   const reduzirMovimento = useMovimentoReduzido();
   const referenciaTimeline = useRef<HTMLDivElement>(null);
+
+  /**
+   * VISUALIZAÇÃO INTERNA da aba: `avaliacoes` é a lista aprovada (intacta) e
+   * `aguardando` é a fila de aprovação do gestor. O seletor é o MESMO
+   * `ColoredFilterChip` do Design System usado por todos os filtros do módulo —
+   * nenhuma peça visual nova.
+   */
+  const [visao, setVisao] = useState<'avaliacoes' | 'aguardando'>('avaliacoes');
 
   const [busca, setBusca] = useState('');
   const [tipo, setTipo] = useState('');
@@ -164,6 +227,93 @@ export function FeedbacksTab({
   const tiposDoCiclo = useMemo(() => contagemTipos(doCiclo), [doCiclo]);
   const prazo = useMemo(() => descricaoPrazoCiclo(ciclo), [ciclo]);
 
+  /* ── Fila de aprovação do gestor (subaba "Aguardando gestor") ─────────────
+     A classificação vem do MESMO motor do Nine-Box (`consolidarNineBox360` →
+     `pontos360`): o desempenho exibido é o CONSOLIDADO 360° e o quadrante só
+     aparece quando o RH valida o Potencial — é a "classificação automática" do
+     passo 7 do fluxo, sem nenhuma fórmula nova. Fora do modo real a versão
+     canônica não existe e a derivação usa a MESMA regra sobre a lista atual. */
+  const classificacoes = useMemo(() => {
+    const mapa: Record<string, ClassificacaoNineBox> = {};
+    pontos360(
+      consolidarNineBox360({
+        feedbacks,
+        cicloId: String(ciclo?.id ?? '') || null,
+        validacoes: validacoesPotencial,
+        versoesPorFeedback,
+      }),
+      colaboradores,
+      pdis
+    ).forEach((p) => {
+      mapa[p.colaboradorId] = {
+        desempenho: p.desempenho,
+        potencial: p.potencial,
+        quadrante: p.quadrante,
+        nomeQuadrante: p.nomeQuadrante,
+        motivoNaoClassificado: p.motivoNaoClassificado,
+      };
+    });
+    return mapa;
+  }, [feedbacks, ciclo?.id, validacoesPotencial, versoesPorFeedback, colaboradores, pdis]);
+
+  const pendencias = useMemo(
+    () =>
+      derivarPendencias({
+        // `doCiclo` é a forma DERIVADA (para a timeline); a fila de aprovação lê
+        // os REGISTROS CRUS do ciclo — mesma lista, sem consulta nova.
+        feedbacks: doCiclo.map((d) => d.feedback),
+        colaboradores,
+        ciclos,
+        versoesPorFeedback,
+        aprovacoes: aprovacoesGestor,
+        consolidacoes,
+        validacoes: validacoesPotencial,
+        classificacoes,
+        modo: acoesAprovacaoHabilitadas ? 'real' : 'demonstracao',
+      }),
+    [
+      doCiclo,
+      colaboradores,
+      ciclos,
+      versoesPorFeedback,
+      aprovacoesGestor,
+      consolidacoes,
+      validacoesPotencial,
+      classificacoes,
+      acoesAprovacaoHabilitadas,
+    ]
+  );
+
+  /** Contador dinâmico da subaba: quantas avaliações aguardam o gestor agora. */
+  const aguardandoGestor = useMemo(() => contarAguardandoGestor(pendencias), [pendencias]);
+
+  /**
+   * ESTADO DA APROVAÇÃO por (colaborador × ciclo) — a MESMA instância derivada
+   * da fila (`PendenciaAprovacao.estado`). É o que o modal "Ver feedback"
+   * consome, para que listagem, contador, modal, etapa do RH e elegibilidade no
+   * Nine-Box falem de UM só estado (antes o rodapé só olhava o `status` do
+   * registro e divergia da fila).
+   */
+  const estadosAprovacao = useMemo(() => {
+    const mapa: Record<string, EstadoAprovacao> = {};
+    pendencias.forEach((p) => {
+      if (p.colaboradorId && p.cicloId) mapa[`${p.colaboradorId}::${p.cicloId}`] = p.estado;
+    });
+    return mapa;
+  }, [pendencias]);
+
+  /**
+   * O estado só vale para a avaliação que ANCORA a aprovação: a do GESTOR
+   * (é a versão canônica que o servidor usa em `situacao_aprovacao`). Cartões de
+   * Pares/Auto/Subordinados não recebem selo de aprovação de terceiros.
+   */
+  const estadoDoDetalhe = useMemo(() => {
+    const f = (detalhe?.feedback ?? {}) as Record<string, unknown>;
+    if (!detalhe || tipoFeedback(f.tipo) !== 'gestor') return null;
+    return estadosAprovacao[`${String(f.avaliado_id ?? '')}::${String(f.ciclo_id ?? '')}`] ?? null;
+  }, [detalhe, estadosAprovacao]);
+
+
   const filtrosAtivos = (tipo ? 1 : 0) + (avaliador ? 1 : 0) + (somentePendentes ? 1 : 0);
 
   /**
@@ -204,16 +354,31 @@ export function FeedbacksTab({
     setDetalheAberto(true);
   };
 
+  /** "Ver avaliação" da fila reusa o MESMO dialog de detalhe do módulo. */
+  const abrirAvaliacao = (p: PendenciaAprovacao) => {
+    const derivado = derivarFeedbacks([p.feedback], { colaboradores, pdis, ciclos })[0];
+    if (derivado) abrirDetalhe(derivado);
+  };
+
   return (
     <EntradaPresenca>
       <div className="space-y-4">
-        <FeedbacksFocoBanner
-          pendentes={pendentesDoCiclo.length}
-          prazo={prazo}
-          indice={0}
-          onVerPendentes={verPendentes}
-        />
+        {/* O banner "Foco agora" pertence à LISTAGEM: ao entrar na fila de
+            aprovação a aba mostra exclusivamente as pendências do gestor. */}
+        {visao === 'avaliacoes' && (
+          <FeedbacksFocoBanner
+            pendentes={pendentesDoCiclo.length}
+            prazo={prazo}
+            indice={0}
+            onVerPendentes={verPendentes}
+          />
+        )}
 
+        {/* Busca/filtros/segmentação — SEMPRE visível: é a ÚNICA linha de chips
+            coloridos da aba e é ela que carrega o recorte "Aguardando gestor"
+            (ao lado de Todos/Gestor/Pares/Autoavaliação) e o retorno por
+            "Todos". Nenhum bloco novo: o chip extra usa o MESMO
+            `ColoredFilterChip` e a MESMA linha da segmentação. */}
         <FeedbacksFiltros
           indice={1}
           busca={busca}
@@ -233,7 +398,13 @@ export function FeedbacksTab({
           contagem={contagem}
           filtrosAtivos={filtrosAtivos}
           onLimpar={limparFiltros}
+          aguardandoGestor={aguardandoGestor}
+          visaoAguardando={visao === 'aguardando'}
+          onVisaoAguardando={(ativo) => setVisao(ativo ? 'aguardando' : 'avaliacoes')}
         />
+
+        {visao === 'avaliacoes' ? (
+          <>
 
         {/* Duas colunas: timeline (maior) + widgets de resumo.
             `xl:pt-[30px]` = `DESLOCAMENTO_LATERAL` (18 da altura do marco do mês
@@ -274,6 +445,20 @@ export function FeedbacksTab({
             />
           </div>
         </div>
+          </>
+        ) : (
+          <PendenciasAprovacao
+            pendencias={pendencias}
+            papel={papel}
+            acoesHabilitadas={acoesAprovacaoHabilitadas}
+            salvando={salvandoAprovacao}
+            indiceBase={0}
+            onVerAvaliacao={abrirAvaliacao}
+            onEnviar={onEnviarAprovacao}
+            onDecidir={onDecidirAprovacao}
+            onValidarPotencial={onValidarPotencial}
+          />
+        )}
       </div>
 
       <FeedbackDetalheDialog
@@ -281,17 +466,18 @@ export function FeedbacksTab({
         aberto={detalheAberto}
         onOpenChange={setDetalheAberto}
         onFiltrarAvaliado={setBusca}
+        estadoAprovacao={estadoDoDetalhe}
       />
 
       <NovoFeedbackDialog
         aberto={novoAberto}
         onOpenChange={setNovoAberto}
-        colaboradores={colaboradores.map((c) => ({
+        colaboradores={(colaboradoresReais ?? colaboradores).map((c) => ({
           id: String(c?.id ?? ''),
           nome_completo: String(c?.nome_completo ?? ''),
         }))}
-        ciclos={ciclos.map((c: any) => ({ id: String(c?.id ?? ''), nome: String(c?.nome ?? 'Ciclo') }))}
-        cicloIdPadrao={String(ciclo?.id ?? '')}
+        ciclos={(ciclosReais ?? ciclos).map((c: any) => ({ id: String(c?.id ?? ''), nome: String(c?.nome ?? 'Ciclo') }))}
+        cicloIdPadrao={String((ciclosReais && ciclosReais.length ? ciclosReais[0] : ciclo)?.id ?? '')}
         onSubmit={(dados) => onCriarFeedback?.(dados)}
         salvando={salvandoFeedback}
       />

@@ -57,3 +57,31 @@ create policy "feedbacks_360_update" on public.feedbacks_360
 --     Comando NÃO incluído aqui, de propósito:
 --       grant truncate on table public.feedbacks_360 to authenticated;  -- ❌
 -- ============================================================================
+
+-- ============================================================================
+-- O QUE ESTE ARQUIVO **NÃO** RESTAURA DE PROPÓSITO — HISTÓRICO E REVISÃO
+-- ----------------------------------------------------------------------------
+-- 🚫  Mesmo no cenário "restaurar permissões amplas", NÃO se reverte:
+--       • `feedbacks_360.revisao` (§0 da migration) — continua na tabela. A
+--         coluna é aditiva (o app lê `*`) e é o que garante que reabrir e
+--         concluir de novo invalide a validação anterior do RH, inclusive
+--         dentro da MESMA transação (onde `now()` é constante);
+--       • o TRIGGER `trg_feedbacks_360_revisao` (§0.1) — continua ativo: é ele
+--         quem incrementa `revisao` a CADA UPDATE, inclusive numa correção
+--         privilegiada que não passe pela RPC. Comando NÃO incluído de
+--         propósito:
+--           drop trigger if exists trg_feedbacks_360_revisao on public.feedbacks_360;  -- ❌
+--       • a coluna `audit_log.empresa_id` (§0g) — continua na tabela de
+--         auditoria. É o vínculo por empresa que a Trilha usa para recortar os
+--         eventos; também é replicada em `dados_novos.empresa_id`;
+--       • as FKs de `feedbacks_360_operacoes` e
+--         `feedbacks_360_validacoes_potencial` — continuam em
+--         `ON DELETE RESTRICT`. Comando NÃO incluído, de propósito:
+--           alter table public.feedbacks_360_operacoes
+--             drop constraint feedbacks_360_operacoes_feedback_id_fkey;  -- ❌
+--         Voltar para `ON DELETE CASCADE` faria uma exclusão privilegiada
+--         apagar, em cascata, o histórico de operações (idempotência) e as
+--         APROVAÇÕES do RH — destruindo prova, não corrigindo nada.
+--     Restaurar permissões de escrita é uma decisão operacional; destruir
+--     histórico por efeito colateral nunca é.
+-- ============================================================================

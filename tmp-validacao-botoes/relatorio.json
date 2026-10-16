@@ -1,0 +1,23 @@
+{
+  "fila": {
+    "badge": "Aguardando gestor"
+  },
+  "modal": {
+    "colaborador": "Ana Beatriz Souza",
+    "selo": "Aguardando gestor",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Devolver para correção",
+      "Aprovar avaliação",
+      "Fechar"
+    ],
+    "temAprovar": true,
+    "temDevolver": true,
+    "tituloAprovar": "Operação demonstrativa — nada é gravado no banco",
+    "aprovarDesabilitado": false
+  },
+  "demonstracao": {
+    "aviso": "Demonstração: “Aprovar avaliação” NÃO foi gravada — registro fictício (nada foi enviado ao banco).",
+    "rpcsChamadas": []
+  }
+}

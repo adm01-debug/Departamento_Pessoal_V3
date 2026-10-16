@@ -7,6 +7,8 @@ import { Check, FilterX, SlidersHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { entradaCard } from './entradaCards';
 import { ColoredFilterChip } from './ColoredFilterChip';
+import { PALETAS_CHIP } from './chipFiltroComum';
+import { TIPOS_FEEDBACK } from './criacaoFeedback';
 import {
   ORDEM_FEEDBACK_OPCOES,
   ROTULO_TIPO_FEEDBACK,
@@ -24,7 +26,9 @@ import {
  *
  * Tudo aqui é client-side sobre a lista JÁ carregada pela `AvaliacaoPage`
  * (nenhuma consulta nova). Os selects são montados a partir dos valores
- * REALMENTE presentes nos registros (tipos e avaliadores) — nenhuma opção fixa
+ * REALMENTE presentes nos registros (avaliadores) — o dropdown de TIPO usa as
+ * QUATRO categorias oficiais do 360° (fixas), então categoria sem registro
+ * continua selecionável e cai no estado vazio existente. Nenhuma opção fixa
  * copiada da referência.
  *
  * · linha 1 → busca + Tipo + Avaliador + "Mais filtros" (pendentes) +
@@ -57,7 +61,7 @@ interface FeedbacksFiltrosProps {
   /** Tipo selecionado (`''` = todos). */
   tipo: string;
   onTipo: (valor: string) => void;
-  /** Tipos realmente presentes na lista. */
+  /** Tipos presentes na lista (usado pelos contadores; o dropdown usa as 4 oficiais). */
   tipos: TipoFeedback[];
   avaliador: string;
   onAvaliador: (valor: string) => void;
@@ -72,6 +76,17 @@ interface FeedbacksFiltrosProps {
   /** Quantidade de filtros ativos além da busca (badge de "Mais filtros"). */
   filtrosAtivos: number;
   onLimpar: () => void;
+  /* ── Fila de aprovação do gestor (chip na MESMA linha dos segmentos) ───────
+     Opcionais: sem eles a linha é exatamente a de antes. */
+  /** Contador DINÂMICO das avaliações aguardando o gestor. */
+  aguardandoGestor?: number;
+  /** O recorte exibido é a fila de aprovação (e não um segmento de tipo). */
+  visaoAguardando?: boolean;
+  /**
+   * Troca entre a listagem normal (`false`) e a fila de aprovação (`true`).
+   * Qualquer chip de segmento (inclusive "Todos") devolve a listagem normal.
+   */
+  onVisaoAguardando?: (ativo: boolean) => void;
 }
 
 export function FeedbacksFiltros({
@@ -80,7 +95,6 @@ export function FeedbacksFiltros({
   onBusca,
   tipo,
   onTipo,
-  tipos,
   avaliador,
   onAvaliador,
   avaliadores,
@@ -93,6 +107,9 @@ export function FeedbacksFiltros({
   contagem,
   filtrosAtivos,
   onLimpar,
+  aguardandoGestor,
+  visaoAguardando = false,
+  onVisaoAguardando,
 }: FeedbacksFiltrosProps) {
   /**
    * Existe filtro fora do padrão? Derivado SOMENTE dos props — a ORDENAÇÃO e o
@@ -118,7 +135,9 @@ export function FeedbacksFiltros({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value={TODOS}>Todos os tipos</SelectItem>
-            {tipos.map((t) => (
+            {/* As QUATRO categorias oficiais do 360°, sempre disponíveis — mesmo
+                com zero registros (a opção vazia é mostrada pelo estado vazio). */}
+            {TIPOS_FEEDBACK.map((t) => (
               <SelectItem key={t} value={t}>
                 {ROTULO_TIPO_FEEDBACK[t]}
               </SelectItem>
@@ -220,10 +239,26 @@ export function FeedbacksFiltros({
             label={s.rotulo}
             count={contagem[s.valor]}
             tema={TEMA_CHIP_FEEDBACKS[s.valor]}
-            selected={segmento === s.valor}
-            onClick={() => onSegmento(s.valor)}
+            selected={!visaoAguardando && segmento === s.valor}
+            onClick={() => {
+              onSegmento(s.valor);
+              onVisaoAguardando?.(false);
+            }}
           />
         ))}
+
+        {/* ── Fila de aprovação do gestor ─────────────────────────────────────
+            MESMO componente, MESMA anatomia e MESMO glow dos segmentos, na
+            MESMA linha e imediatamente após "Autoavaliação". Só a tinta muda:
+            âmbar (`PALETAS_CHIP.amber`), a que o fluxo já usa para "exige
+            atenção". O contador é DINÂMICO (vem de `contarAguardandoGestor`). */}
+        <ColoredFilterChip
+          label="Aguardando gestor"
+          count={aguardandoGestor ?? 0}
+          tema={PALETAS_CHIP.amber}
+          selected={visaoAguardando}
+          onClick={() => onVisaoAguardando?.(!visaoAguardando)}
+        />
       </div>
     </motion.div>
   );

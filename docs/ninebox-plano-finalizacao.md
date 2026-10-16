@@ -495,10 +495,61 @@ Revisão direta do arquivo, com **verificador estrutural automatizado**
 | 6 | hash de idempotência da criação **ignorava** `pontos_fortes`, `pontos_melhoria` e `comentarios` ⇒ reenvio com conteúdo diferente era aceito como "mesma operação" | hash cobre **todos** os parâmetros relevantes (textos normalizados uma vez e usados também no INSERT) |
 | 7 | `avaliado_id`, `avaliador_id` e `ciclo_id` **não eram conferidos** contra a empresa autorizada ⇒ dava para gravar avaliação da empresa A apontando para colaborador/ciclo da empresa B | cada ID é conferido na tabela de origem (`colaboradores`, `ciclos_avaliacao`) contra `p_empresa_id`: `avaliado_fora_da_empresa`, `avaliador_fora_da_empresa`, `ciclo_fora_da_empresa` |
 
-**Testes novos** em `docs/ninebox-testes-seguranca.sql`: casos **20–24** (reenvio
+**Testes novos** em `docs/ninebox-testes-seguranca.sql`: casos **20–28** (reenvio
 idempotente sem papel; nota fora da escala; reabertura invalidando a validação do
 RH; **exigência de NOVA validação de Potencial após a reabertura**; `avaliado_id`
-de outra empresa). Total do roteiro: **24 casos**.
+de outra empresa). Total do roteiro: **28 casos**.
+
+### 16.7 REVISÃO FINAL DA MIGRATION — CORREÇÕES (4 pontos)
+
+Revisão direta da versão de 863 linhas, com o verificador estrutural
+(`scripts/_tmp-migration-ninebox-check.mjs`, **99 verificações, 0 falhas**):
+
+| # | Defeito encontrado | Correção |
+|---|---|---|
+| 1 | As 3 RPCs gravavam em `audit_log` **sem vínculo explícito com a empresa**. Verificado o banco: a forma canônica de `audit_log` (a dos tipos gerados) **não tem coluna `empresa_id`** — a versão que a adiciona vem de um `CREATE TABLE IF NOT EXISTS` e é **inerte** se a tabela já existia. A leitura por empresa depende de `listar_auditoria(p_empresa_id)` | `empresa_id` EXPLÍCITO em `dados_novos` das 3 trilhas (§3/§4), à prova de esquema. Gate: **B10** (as 8 colunas que as RPCs gravam) e **A4** (tem `empresa_id`?) |
+| 2 | `finalizar_feedback` conferia apenas a faixa da nota — **não** aplicava as condições obrigatórias por categoria, e o front **não** bloqueia "Concluir" por falta de nota (só por status/papel) | §3/§6.1: categoria ∈ 4 do 360° (`categoria_invalida`); nota 1–5 em **todas**; **Potencial 1–5 só para `gestor`** (`potencial_obrigatorio_para_gestor`). Pares/Auto/Subordinados seguem concluindo sem Potencial. Gate: **A5/A6** |
+| 3 | A versão canônica dependia de `updated_at`. Como `now()` é **constante dentro da transação**, `concluir → reabrir → concluir` na MESMA transação repetia o timestamp (e a precisão de segundos colidia entre transações) ⇒ a aprovação anterior do RH **continuava valendo** | §0: coluna `feedbacks_360.revisao` (contador **monotônico**), incrementada a cada transição pela RPC e incluída na versão. Independe de relógio. Teste **27** prova com `updated_at` repetido |
+| 4 | As FKs de `feedbacks_360_operacoes` e `feedbacks_360_validacoes_potencial` nasciam `ON DELETE CASCADE`: uma exclusão privilegiada apagaria **em cascata** o histórico de operações e as aprovações do RH | §1/§2: FK **recriada explicitamente** (`drop constraint if exists` + `add constraint`) com `ON DELETE RESTRICT` — a exclusão **falha** em vez de destruir prova. Rollbacks NÃO reabrem o CASCADE. Gate: **A7** |
+
+**Testes novos** (roteiro de segurança, agora **28 casos**): **25** trilha com
+`empresa_id`; **26** Potencial só para o gestor; **27** revisão invalidando dentro
+da mesma transação; **28** exclusão bloqueada pela FK (probe como dono).
+
+### 16.8 SEGUNDA REVISÃO — CORREÇÕES (4 pontos) · versão canônica revisada
+
+Revisão da versão entregue, com o **verificador estrutural** (`scripts/_tmp-migration-ninebox-check.mjs`, agora **111 verificações, 0 falhas**) e o
+roteiro de segurança atualizado. As quatro correções, em ordem:
+
+| # | Defeito remanescente | Correção aplicada |
+|---|---|---|
+| 1 | As 3 RPCs gravavam a empresa **só** em `dados_novos.empresa_id`. A premissa de que `audit_log` **não tem** coluna `empresa_id` era **falsa**: `20260712214644` faz `ALTER TABLE public.audit_log ADD COLUMN IF NOT EXISTS empresa_id` (não é `CREATE TABLE IF NOT EXISTS` inerte), e é essa coluna que a policy `audit_log_tenant_select` e a RPC `listar_auditoria` usam. Resultado: com a coluna NULA, o evento ficava **invisível** na Trilha da própria empresa (`rls_tenant_or_admin(NULL) = false`) | §0g: a migration **garante** a coluna (`ADD COLUMN IF NOT EXISTS`, aditiva) e as 3 RPCs passam a gravar **na COLUNA** (`v_linha.empresa_id` / `v_novo.empresa_id`), **mantendo** `dados_novos.empresa_id` como defesa em profundidade. Gate: **A4** (informativo) e **B10** (as 8 colunas pré-existentes; a 9ª é criada pela migration). Teste **25** confere a coluna **e** o JSON |
+| 2 | `finalizar_feedback` aplicava as condições por categoria, mas não validava a **escala do Potencial** quando ele era informado por uma categoria que **não** o exige | §3: a escala 1–5 do Potencial passa a ser conferida **para qualquer categoria** quando o valor existe; a **obrigatoriedade** continua **exclusiva do `gestor`** (`potencial_obrigatorio_para_gestor`). Pares/Auto/Subordinados seguem concluindo sem Potencial. Teste **26** (gestor bloqueado, par permitido) |
+| 3 | A revisão era incrementada **à mão** pela RPC — cobria a transição de status, mas **não** uma ALTERAÇÃO da avaliação por outro caminho (correção privilegiada de nota/potencial), que poderia não mudar a versão dentro da mesma transação | §0.1: **trigger** `trg_feedbacks_360_revisao` (`before update`) incrementa `revisao` a **cada UPDATE** — a RPC **não** incrementa mais (evita contagem dobrada) e apenas lê o valor via `returning`. A invalidação da validação do RH deixa de depender do **caminho** da escrita e do **relógio**. Teste **27** (duas transições ⇒ `revisao + 2`, `updated_at` repetido, versões distintas) |
+| 4 | As FKs de `feedbacks_360_operacoes` e `feedbacks_360_validacoes_potencial` **nasciam** `ON DELETE CASCADE` e só depois eram trocadas para `RESTRICT` | §1/§2: as tabelas passam a nascer **JÁ** em `ON DELETE RESTRICT`; a recriação explícita (`drop constraint` + `add constraint`) permanece para o caso de a tabela **já existir** com o `CASCADE` antigo (`create table if not exists` é inerte). Uma exclusão privilegiada **falha** em vez de apagar histórico. Teste **28** (probe como dono) |
+
+Rollbacks (`…rollback-operacional.sql` / `…rollback-seguranca.sql`) atualizados
+com a nota de que o **trigger da revisão** e a **coluna `audit_log.empresa_id`**
+permanecem (aditivos, sem privilégio novo) — revertê-los não faz parte de nenhum
+rollback e reabriria o furo que a revisão fechou.
+
+### 16.9 AJUSTE PONTUAL — mínimo de identificação/rastreabilidade na conclusão
+
+Divergência **comprovada** entre o servidor e a regra existente:
+`statusFeedback.validarConclusao` (fonte única já testada) bloqueia a conclusão
+com `avaliado_ausente`, `avaliador_ausente` e `ciclo_ausente`, e o contrato do
+formulário exige avaliado **e** avaliador (`podeSalvar = Boolean(avaliadoId &&
+avaliadorId)`) — mas `finalizar_feedback` **não** checava esses vínculos.
+
+Correção (§3, bloco **b**), sem criar regra nova: ao concluir, o servidor passa a
+exigir `avaliado_id`, `avaliador_id` e `ciclo_id` presentes, com os **mesmos
+códigos** de impedimento da camada pura (`avaliado_ausente`, `avaliador_ausente`,
+`ciclo_ausente`). A ordem de checagem é categoria → identificação → nota →
+potencial. Vale para a criação segura e para o INSERT direto temporário; a
+existência dos vínculos continua garantida pelas FKs (por isso não se checa
+"ciclo existente" além da presença). Teste **29** cobre os três impedimentos.
+
+
 
 ### 16.5 Pendências para aplicar em homologação
 

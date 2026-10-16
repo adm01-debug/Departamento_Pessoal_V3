@@ -1,0 +1,28 @@
+{
+  "url": "http://localhost:8080/premiacoes",
+  "printFinal": "tmp-autocura-final-2026-10-15T19-10-59-811Z.png",
+  "estadoEnvenenado": {
+    "caches": [
+      "precache-antigo"
+    ],
+    "registrosDeSw": 0
+  },
+  "depoisDaRecarga": {
+    "cachesRestantes": [],
+    "registrosDeSw": 0,
+    "flagDeAutocura": "1",
+    "telaCorrigida": true,
+    "medidas": {
+      "navegacao": 44,
+      "indicadores": 95,
+      "topoTabela": 371
+    },
+    "linhas": 4,
+    "rodape": "Mostrando 4 de 4 campanhas1"
+  },
+  "navegacoesObservadas": [
+    "1) http://localhost:8080/premiacoes",
+    "2) http://localhost:8080/premiacoes"
+  ],
+  "errosJs": []
+}

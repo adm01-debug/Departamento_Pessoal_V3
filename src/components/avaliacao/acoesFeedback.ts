@@ -70,6 +70,50 @@ export function acaoDestrutiva(acao: AcaoStatus): boolean {
   return acao === 'cancelar';
 }
 
+/* ─── Responsabilidade do gestor (vínculo real, não o tipo da avaliação) ──── */
+
+/** Vínculo mínimo de um colaborador — o que basta para provar a responsabilidade. */
+export interface VinculoGestor {
+  id?: string | null;
+  user_id?: string | null;
+  supervisor_id?: string | null;
+}
+
+/**
+ * O usuário autenticado é o GESTOR RESPONSÁVEL pela avaliação do colaborador?
+ *
+ * Espelha `public.pode_aprovar_colaborador(uuid)` do banco — o gestor é quem tem
+ * `colaboradores.user_id = auth.uid()` e é `supervisor_id` do avaliado (ou o
+ * próprio avaliado). NÃO olha o `tipo` do feedback: tipo é ORIGEM da avaliação;
+ * quem conclui é definido pelo PAPEL e pelo VÍNCULO.
+ *
+ * Fail-closed: sem prova do vínculo (sem `user_id`, sem o colaborador do
+ * usuário ou sem o avaliado na lista) devolve `false` — a interface não oferece
+ * a conclusão, e o servidor revalida de qualquer forma.
+ */
+export function ehGestorResponsavel({
+  avaliadoId,
+  vinculos = [],
+  usuarioId,
+}: {
+  avaliadoId: unknown;
+  vinculos?: VinculoGestor[];
+  usuarioId: unknown;
+}): boolean {
+  const alvo = String(avaliadoId ?? '').trim();
+  const uid = String(usuarioId ?? '').trim();
+  if (!alvo || !uid) return false;
+
+  const eu = vinculos.find((v) => String(v?.user_id ?? '').trim() === uid);
+  const meuId = String(eu?.id ?? '').trim();
+  if (!meuId) return false;
+
+  const avaliado = vinculos.find((v) => String(v?.id ?? '').trim() === alvo);
+  if (!avaliado) return false;
+
+  return String(avaliado?.supervisor_id ?? '').trim() === meuId || alvo === meuId;
+}
+
 export interface AcaoDisponivel {
   acao: AcaoStatus;
   /** Rótulo pronto para o controle (mesma fonte das demais telas). */
@@ -88,20 +132,41 @@ export interface AcaoDisponivel {
  * Ações do fluxo para o status atual, na ordem em que a interface deve
  * apresentá-las. Sempre devolve as três — a UI decide esconder ou desabilitar
  * as `disponivel: false` (a proposta visual é explícita sobre isso).
+ *
+ * `responsavel` é a prova de que o usuário é o GESTOR RESPONSÁVEL pela avaliação
+ * (`ehGestorResponsavel`). Ela é exigida SÓ para `concluir`: sem ela, o perfil
+ * `gestor` não recebe o controle — muito menos `admin`/`rh`/`user`, que já não
+ * têm o perfil autorizado na tabela de transições.
  */
-export function acoesDisponiveis({ statusAtual, papel }: { statusAtual: unknown; papel: PapelApp }): AcaoDisponivel[] {
+export function acoesDisponiveis({
+  statusAtual,
+  papel,
+  responsavel = false,
+}: {
+  statusAtual: unknown;
+  papel: PapelApp;
+  /** `true` somente com o vínculo comprovado (ver `ehGestorResponsavel`). */
+  responsavel?: boolean;
+}): AcaoDisponivel[] {
   const perfil = perfilOperador(papel);
   const ordem: AcaoStatus[] = ['concluir', 'cancelar', 'reabrir'];
 
   return ordem.map((acao) => {
     const r = validarTransicao({ statusAtual, acao, perfil });
+    const exigeVinculo = acao === 'concluir';
+    const disponivel = r.permitido && (!exigeVinculo || responsavel === true);
+
     return {
       acao,
       rotulo: ROTULO_ACAO[acao],
       exigeJustificativa: exigeJustificativa(acao),
       destrutiva: acaoDestrutiva(acao),
-      disponivel: r.permitido,
-      motivoBloqueio: r.permitido ? null : r.descricao,
+      disponivel,
+      motivoBloqueio: disponivel
+        ? null
+        : r.permitido && exigeVinculo
+          ? 'Somente o gestor responsável pela avaliação pode concluir.'
+          : r.descricao,
     };
   });
 }

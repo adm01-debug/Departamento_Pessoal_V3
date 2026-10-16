@@ -39,6 +39,13 @@ export interface FilterChipProps {
   icone?: LucideIcon;
   variante?: VarianteFilterChip;
   onClick: () => void;
+  /**
+   * Ajustes de geometria do CHAMADOR (altura, respiro, `flex-none`) — entram por
+   * último no `cn`, então vencem a geometria da variante via tailwind-merge.
+   * Existe para que uma tela mais densa (Hub de Premiações, barra de filtros de
+   * 48–52 px) use a MESMA peça sem que as demais telas mudem de tamanho.
+   */
+  className?: string;
 }
 
 /** Atalho arredondado de filtro com contagem real. */
@@ -50,6 +57,7 @@ export function FilterChip({
   icone: Icone,
   variante = 'padrao',
   onClick,
+  className,
 }: FilterChipProps) {
   // `compacto` vive em faixa flex SEM wrapper: precisa medir o próprio texto
   // (`w-auto shrink-0`). Sem isso o `w-full` herdado faria cada chip ocupar a
@@ -90,7 +98,8 @@ export function FilterChip({
               // referência — e não como rótulos soltos sobre o fundo do card.
               'border-border/60 bg-muted/25 text-muted-foreground hover:border-border/80 hover:bg-muted/40 hover:text-foreground'
             : // INATIVO PADRÃO (Admissões/Onboarding): fundo do próprio card.
-              'border-border/40 bg-card text-muted-foreground hover:border-border/70 hover:bg-muted/50 hover:text-foreground'
+              'border-border/40 bg-card text-muted-foreground hover:border-border/70 hover:bg-muted/50 hover:text-foreground',
+        className
       )}
     >
       {ponto && (

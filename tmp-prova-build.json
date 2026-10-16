@@ -1,0 +1,26 @@
+{
+  "NOVO-BUILD": {
+    "url": "http://localhost:8080/premiacoes",
+    "titulo": "Premiações & Renda Variável 10/10 | Sistema DP",
+    "ehLogin": false,
+    "temHub": true,
+    "antigas": {
+      "PENDENTE (CALCULADO)": false,
+      "Progresso do Orçamento": false,
+      "Gerenciar Regras": false
+    },
+    "novas": {
+      "PRÓXIMAS AÇÕES": true,
+      "ATIVIDADE RECENTE": true,
+      "Visão": true,
+      "Mostrando": true
+    },
+    "medidas": {
+      "navegacao": 44,
+      "indicadores": 95,
+      "topoTabela": 371,
+      "linhas": 1
+    }
+  },
+  "erros": []
+}

@@ -21,8 +21,23 @@
  * ============================================================================
  */
 
-/** Interruptor único do modo real. Mantenha `false` até a homologação. */
-export const NINEBOX_MODO_REAL_ATIVO = false;
+/**
+ * Interruptor único do modo real — CONTROLADO POR AMBIENTE (local-only).
+ *
+ * Liga SOMENTE quando as três condições valem:
+ *   1. `import.meta.env.DEV`             — build de desenvolvimento;
+ *   2. `import.meta.env.MODE !== 'test'` — nunca nos testes;
+ *   3. `VITE_NINEBOX_MODO_REAL === 'true'` no `.env.local` (arquivo git-ignored).
+ *
+ * Em PRODUÇÃO a variável não existe, então o valor é `false` para todos os
+ * usuários — o comportamento de hoje é preservado e ninguém liga o modo real
+ * "sem querer" por variável de ambiente. O modo demonstração e os mocks
+ * continuam intactos (nada é removido; a flag apenas escolhe a origem dos dados).
+ * Para ligar no ambiente local de homologação: `VITE_NINEBOX_MODO_REAL=true`
+ * no `.env.local` e reiniciar o `vite dev`.
+ */
+export const NINEBOX_MODO_REAL_ATIVO =
+  import.meta.env.DEV && import.meta.env.MODE !== 'test' && import.meta.env.VITE_NINEBOX_MODO_REAL === 'true';
 
 export type ModoNineBox = 'demonstracao' | 'real';
 

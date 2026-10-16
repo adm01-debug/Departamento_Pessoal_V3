@@ -18,14 +18,16 @@ class ColaboradorService extends BaseService<Colaborador> {
       search,
       page = 1,
       pageSize = 25,
-      filters = {}
+      filters = {},
+      semMock = false
     } = options;
 
     const { status, departamento, cargo, empresaId } = filters;
 
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    const mockList = mockOr(MOCK_COLABORADORES);
+    // `semMock` (modo real do Nine-Box): usa o banco, nunca a lista fictícia.
+    const mockList = semMock ? undefined : mockOr(MOCK_COLABORADORES);
     if (mockList) {
       let items: unknown[] = [...mockList];
       if (status && status !== 'all') items = items.filter((c: any) => c.status === status);
@@ -173,9 +175,9 @@ class ColaboradorService extends BaseService<Colaborador> {
   }
 
   // Alias for backward compatibility
-  async list(empresaId: string) {
+  async list(empresaId: string, semMock = false) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
+    return (await this.listar({ filters: { empresaId }, pageSize: 1000, semMock })).data;
   }
 
   async buscarPorId(id: string, empresaId?: string): Promise<Colaborador | null> {

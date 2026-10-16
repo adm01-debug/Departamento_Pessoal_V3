@@ -1,0 +1,523 @@
+[
+  {
+    "nome": "desktop",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Campanha",
+      "Período",
+      "Desempenho",
+      "Orçamento",
+      "Participantes",
+      "Status",
+      "Ações"
+    ],
+    "linhas": [
+      "Premiação de InovaçãoReconhecimento de ideias que geraram ganho de eficiência.01/10/202631/12/202677 dias restantes—Sem ",
+      "Bônus por Meta de ProduçãoIncentivo por produtividade e qualidade na operação logística.01/08/202631/10/202616 dias rest",
+      "Campanha de Vendas Q3 2026Aceleração de receita com bônus por batimento trimestral de meta.01/07/202630/09/2026Encerrada",
+      "Programa Indique um AmigoPremiação por indicações que resultaram em contratação.01/03/202630/06/2026Encerrada100% aprova"
+    ],
+    "rodape": [
+      "Mostrando 4 de 4 campanhas"
+    ],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 46,
+      "indicadores": 107,
+      "tabela": 383,
+      "linha": 65,
+      "thead": 38
+    },
+    "paineis": [
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "larguraTabela": 884.375,
+    "acoesVisivel": {
+      "sobra": 0,
+      "colunas": [
+        190,
+        97,
+        128,
+        128,
+        88,
+        88,
+        164
+      ]
+    },
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "view-ref",
+    "largura": 1456,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Campanha",
+      "Período",
+      "Desempenho",
+      "Orçamento",
+      "Participantes",
+      "Status",
+      "Ações"
+    ],
+    "linhas": [
+      "Premiação de InovaçãoReconhecimento de ideias que geraram ganho de eficiência.01/10/202631/12/202677 dias restantes—Sem ",
+      "Bônus por Meta de ProduçãoIncentivo por produtividade e qualidade na operação logística.01/08/202631/10/202616 dias rest",
+      "Campanha de Vendas Q3 2026Aceleração de receita com bônus por batimento trimestral de meta.01/07/202630/09/2026Encerrada",
+      "Programa Indique um AmigoPremiação por indicações que resultaram em contratação.01/03/202630/06/2026Encerrada100% aprova"
+    ],
+    "rodape": [
+      "Mostrando 4 de 4 campanhas"
+    ],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 46,
+      "indicadores": 95,
+      "tabela": 371,
+      "linha": 65,
+      "thead": 38
+    },
+    "paineis": [
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "larguraTabela": 897.015625,
+    "acoesVisivel": {
+      "sobra": 0,
+      "colunas": [
+        193,
+        99,
+        130,
+        130,
+        90,
+        90,
+        166
+      ]
+    },
+    "larguraPagina": 1456,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "busca",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Campanha",
+      "Período",
+      "Desempenho",
+      "Orçamento",
+      "Participantes",
+      "Status",
+      "Ações"
+    ],
+    "linhas": [
+      "Bônus por Meta de ProduçãoIncentivo por produtividade e qualidade na operação logística.01/08/202631/10/202616 dias rest",
+      "Campanha de Vendas Q3 2026Aceleração de receita com bônus por batimento trimestral de meta.01/07/202630/09/2026Encerrada"
+    ],
+    "rodape": [
+      "Mostrando 2 de 2 campanhas"
+    ],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 46,
+      "indicadores": 107,
+      "tabela": 383,
+      "linha": 65,
+      "thead": 38
+    },
+    "paineis": [
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "larguraTabela": 884.375,
+    "acoesVisivel": {
+      "sobra": 0,
+      "colunas": [
+        190,
+        97,
+        128,
+        128,
+        88,
+        88,
+        164
+      ]
+    },
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "filtro-rascunho",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Campanha",
+      "Período",
+      "Desempenho",
+      "Orçamento",
+      "Participantes",
+      "Status",
+      "Ações"
+    ],
+    "linhas": [
+      "Premiação de InovaçãoReconhecimento de ideias que geraram ganho de eficiência.01/10/202631/12/202677 dias restantes—Sem "
+    ],
+    "rodape": [
+      "Mostrando 1 de 1 campanha"
+    ],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 46,
+      "indicadores": 107,
+      "tabela": 383,
+      "linha": 65,
+      "thead": 38
+    },
+    "paineis": [
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "larguraTabela": 884.375,
+    "acoesVisivel": {
+      "sobra": 0,
+      "colunas": [
+        190,
+        97,
+        128,
+        128,
+        88,
+        88,
+        164
+      ]
+    },
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "detalhe",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Campanha",
+      "Período",
+      "Desempenho",
+      "Orçamento",
+      "Participantes",
+      "Status",
+      "Ações",
+      "Colaborador",
+      "Valor",
+      "Estágio",
+      "Conciliação"
+    ],
+    "linhas": [
+      "Premiação de InovaçãoReconhecimento de ideias que geraram ganho de eficiência.01/10/202631/12/202677 dias restantes—Sem ",
+      "Bônus por Meta de ProduçãoIncentivo por produtividade e qualidade na operação logística.01/08/202631/10/202616 dias rest",
+      "Campanha de Vendas Q3 2026Aceleração de receita com bônus por batimento trimestral de meta.01/07/202630/09/2026Encerrada",
+      "Programa Indique um AmigoPremiação por indicações que resultaram em contratação.01/03/202630/06/2026Encerrada100% aprova",
+      "Nenhum pagamento lançado nesta campanha."
+    ],
+    "rodape": [
+      "Mostrando 4 de 4 campanhas"
+    ],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 46,
+      "indicadores": 107,
+      "tabela": 383,
+      "linha": 65,
+      "thead": 38
+    },
+    "paineis": [
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "larguraTabela": 884.375,
+    "acoesVisivel": {
+      "sobra": 107,
+      "colunas": [
+        190,
+        97,
+        128,
+        128,
+        88,
+        88,
+        164,
+        217,
+        119,
+        140,
+        200
+      ]
+    },
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "pagamentos",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Colaborador",
+      "Campanha",
+      "Valor Aprovado",
+      "Folha Real",
+      "Status / Justificativa",
+      "Auditoria"
+    ],
+    "linhas": [
+      "Carlos Eduardo LimaCampanha de Vendas Q3 2026R$ 1.250,00—pendente",
+      "William Nunes CardosoCampanha de Vendas Q3 2026R$ 980,50—pendente",
+      "Vanessa Rodrigues DiasBônus por Meta de ProduçãoR$ 720,00—pendente",
+      "Juliana Pereira MartinsCampanha de Vendas Q3 2026R$ 1.400,00—pendente",
+      "Rafaela Cristina GomesBônus por Meta de ProduçãoR$ 1.100,00—pendente",
+      "Lucas Gabriel FernandesBônus por Meta de ProduçãoR$ 1.600,00—pendente",
+      "Fernanda Costa RibeiroCampanha de Vendas Q3 2026R$ 2.200,00R$ 2.200,00conciliado",
+      "Pedro Henrique BarbosaCampanha de Vendas Q3 2026R$ 1.750,00R$ 1.680,00divergente\"Diferença de retenção de IRRF sobre a r",
+      "Ana Beatriz SouzaPrograma Indique um AmigoR$ 1.300,00R$ 1.300,00conciliado",
+      "Thiago Almeida RochaBônus por Meta de ProduçãoR$ 900,00—pendente"
+    ],
+    "rodape": [],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 0,
+      "indicadores": 107,
+      "tabela": 0,
+      "linha": 0,
+      "thead": 0
+    },
+    "paineis": [
+      "Aguardando Gestor",
+      "Em Revisão",
+      "Aguardando RH",
+      "Aguardando Financeiro",
+      "Conciliação (Folha)",
+      "Pagamentos Rejeitados (Auditoria Necessária)",
+      "Painel Gerencial de Auditoria & ROI v1.2"
+    ],
+    "larguraTabela": 0,
+    "acoesVisivel": null,
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "simulador",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [],
+    "linhas": [],
+    "rodape": [],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 0,
+      "indicadores": 107,
+      "tabela": 0,
+      "linha": 0,
+      "thead": 0
+    },
+    "paineis": [
+      "Simulador de ROI de Capital Humano 10/10",
+      "Snapshots (Auditoria)"
+    ],
+    "larguraTabela": 0,
+    "acoesVisivel": null,
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "auditoria",
+    "largura": 1440,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Data/Hora",
+      "Usuário",
+      "Ação",
+      "Entidade",
+      "Motivo/Detalhes"
+    ],
+    "linhas": [
+      "15/10/2026, 03:53RH / Adminaprovacaopagamento (a1b2c3d4)Pagamento aprovado pelo financeiro e conciliado com a folha.",
+      "15/10/2026, 07:53RH / Adminalteracaopagamento (a1b2c3d4)Divergência de R$ 70,00 identificada na conciliação (IRRF).",
+      "14/10/2026, 19:53RH / Adminalteracaopagamento (a1b2c3d4)Enviado para revisão de comissões pelo gestor.",
+      "09/07/2026, 15:53RH / Admincriacaocampanha (b7e2f1a0)Campanha \"Campanha de Vendas Q3 2026\" criada com orçamento de R$ 85",
+      "13/10/2026, 15:53RH / Adminalteracaocampanha (b7e2f1a0)Campanha \"Premiação de Inovação\" salva como rascunho para revisão",
+      "10/07/2026, 15:53RH / Admincriacaoregra (c3d4e5f6)Regra \"Bônus de Batimento\" (valor fixo R$ 500,00) vinculada à campanha",
+      "12/10/2026, 15:53RH / Adminalteracaopagamento (a1b2c3d4)Pagamento rejeitado — meta de produção não atingida.",
+      "07/07/2026, 15:53RH / Adminaprovacaopagamento (a1b2c3d4)Pagamento do ciclo de junho/2026 efetuado."
+    ],
+    "rodape": [],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 0,
+      "indicadores": 107,
+      "tabela": 0,
+      "linha": 0,
+      "thead": 0
+    },
+    "paineis": [
+      "Trilha de Auditoria de Premiações"
+    ],
+    "larguraTabela": 0,
+    "acoesVisivel": null,
+    "larguraPagina": 1440,
+    "rolagemHorizontal": false
+  },
+  {
+    "nome": "estreito",
+    "largura": 1024,
+    "erros": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "abas": [
+      "Campanhas",
+      "Pagamentos",
+      "Simulador ROI",
+      "Auditoria"
+    ],
+    "indicadores": [
+      "Visão geral"
+    ],
+    "colunas": [
+      "Campanha",
+      "Período",
+      "Desempenho",
+      "Orçamento",
+      "Participantes",
+      "Status",
+      "Ações"
+    ],
+    "linhas": [
+      "Premiação de InovaçãoReconhecimento de ideias que geraram ganho de eficiência.01/10/202631/12/202677 dias restantes—Sem ",
+      "Bônus por Meta de ProduçãoIncentivo por produtividade e qualidade na operação logística.01/08/202631/10/202616 dias rest",
+      "Campanha de Vendas Q3 2026Aceleração de receita com bônus por batimento trimestral de meta.01/07/202630/09/2026Encerrada",
+      "Programa Indique um AmigoPremiação por indicações que resultaram em contratação.01/03/202630/06/2026Encerrada100% aprova"
+    ],
+    "rodape": [
+      "Mostrando 4 de 4 campanhas"
+    ],
+    "alturas": {
+      "navegacao": 44,
+      "filtros": 86,
+      "indicadores": 280,
+      "tabela": 596,
+      "linha": 65,
+      "thead": 38
+    },
+    "paineis": [
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "larguraTabela": 820,
+    "acoesVisivel": {
+      "sobra": -102,
+      "colunas": [
+        176,
+        90,
+        119,
+        119,
+        82,
+        82,
+        152
+      ]
+    },
+    "larguraPagina": 1024,
+    "rolagemHorizontal": true
+  }
+]

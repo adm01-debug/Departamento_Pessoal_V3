@@ -46,9 +46,12 @@ export function camposFicticios(campos: Record<string, unknown>): string[] {
     .map(([nome]) => nome);
 }
 
-/** O modo demonstração do módulo está ligado (dev + `VITE_DESEMPENHO_MOCK`)? */
+/** O modo demonstração está em uso (dev + `VITE_DESEMPENHO_MOCK`)? */
 export function demonstracaoEmUso(): boolean {
-  return isDesempenhoMockEnabled();
+  // A demonstração é apenas de VISUALIZAÇÃO: ela não bloqueia gravações reais.
+  // Quem protege o banco é a regra de ID FICTÍCIO (`mock-*`), checada logo
+  // abaixo em `exigirEscritaOperacional` — nenhum registro fictício é enviado.
+  return false;
 }
 
 export type MotivoBloqueioEscrita = 'dado_ficticio' | 'demonstracao';

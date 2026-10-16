@@ -1,0 +1,2854 @@
+{
+  "400": {
+    "antes": [
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 180,
+          "right": 237
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 140,
+          "right": 237
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 180,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "depois": [
+      {
+        "nome": "HOMOLOG-NB Colaborador Descartavel",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 213,
+          "right": 270
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 173,
+          "right": 270
+        },
+        "nomeScrollW": 237,
+        "nomeClientW": 173,
+        "truncado": true,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 213,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 180,
+          "right": 237
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 140,
+          "right": 237
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 180,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 336,
+        "colB": {
+          "x": 57,
+          "w": 302,
+          "right": 359
+        },
+        "colInterna": {
+          "x": 57,
+          "w": 131,
+          "right": 188
+        },
+        "nomeBox": {
+          "x": 97,
+          "w": 91,
+          "right": 188
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 57,
+          "w": 302,
+          "left": 57
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "ciclo": {
+      "gatilho": {
+        "x": 24,
+        "w": 235,
+        "right": 259
+      },
+      "valorAntes": {
+        "x": 59,
+        "w": 165,
+        "right": 224,
+        "texto": "Ciclo S2 2026",
+        "sw": 165,
+        "cw": 165
+      },
+      "valorDepois": {
+        "x": 59,
+        "w": 282,
+        "right": 341,
+        "texto": "HOMOLOG-NB Ciclo Nine-Box de Avaliação T",
+        "sw": 367,
+        "cw": 282
+      },
+      "gatilhoScrollW": 0,
+      "gatilhoScrollH": 0
+    }
+  },
+  "900": {
+    "antes": [
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 180,
+          "right": 493
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 140,
+          "right": 493
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 180,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "depois": [
+      {
+        "nome": "HOMOLOG-NB Colaborador Descartavel",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 277,
+          "right": 590
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 237,
+          "right": 590
+        },
+        "nomeScrollW": 237,
+        "nomeClientW": 237,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 277,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 180,
+          "right": 493
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 140,
+          "right": 493
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 180,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 580,
+        "colB": {
+          "x": 313,
+          "w": 546,
+          "right": 859
+        },
+        "colInterna": {
+          "x": 313,
+          "w": 131,
+          "right": 444
+        },
+        "nomeBox": {
+          "x": 353,
+          "w": 91,
+          "right": 444
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 313,
+          "w": 546,
+          "left": 313
+        },
+        "invasaoColC": 131,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "ciclo": {
+      "gatilho": {
+        "x": 280,
+        "w": 230,
+        "right": 510
+      },
+      "valorAntes": {
+        "x": 315,
+        "w": 160,
+        "right": 475,
+        "texto": "Ciclo S2 2026",
+        "sw": 160,
+        "cw": 160
+      },
+      "valorDepois": {
+        "x": 315,
+        "w": 160,
+        "right": 475,
+        "texto": "HOMOLOG-NB Ciclo Nine-Box de Avaliação T",
+        "sw": 367,
+        "cw": 160
+      },
+      "gatilhoScrollW": 0,
+      "gatilhoScrollH": 0
+    }
+  },
+  "1194": {
+    "antes": [
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 140,
+          "right": 946
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -35,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "depois": [
+      {
+        "nome": "HOMOLOG-NB Colaborador Descartavel",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 155,
+          "right": 961
+        },
+        "nomeScrollW": 237,
+        "nomeClientW": 155,
+        "truncado": true,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -20,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 140,
+          "right": 946
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -35,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 874,
+        "colB": {
+          "x": 745,
+          "w": 216,
+          "right": 961
+        },
+        "colInterna": {
+          "x": 766,
+          "w": 195,
+          "right": 961
+        },
+        "nomeBox": {
+          "x": 806,
+          "w": 91,
+          "right": 897
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 981,
+          "w": 172,
+          "left": 981
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "ciclo": {
+      "gatilho": {
+        "x": 823,
+        "w": 230,
+        "right": 1053
+      },
+      "valorAntes": {
+        "x": 858,
+        "w": 160,
+        "right": 1018,
+        "texto": "Ciclo S2 2026",
+        "sw": 160,
+        "cw": 160
+      },
+      "valorDepois": {
+        "x": 858,
+        "w": 160,
+        "right": 1018,
+        "texto": "HOMOLOG-NB Ciclo Nine-Box de Avaliação T",
+        "sw": 367,
+        "cw": 160
+      },
+      "gatilhoScrollW": 0,
+      "gatilhoScrollH": 0
+    }
+  },
+  "1456": {
+    "antes": [
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 140,
+          "right": 872
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -35,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "depois": [
+      {
+        "nome": "HOMOLOG-NB Colaborador Descartavel",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 155,
+          "right": 887
+        },
+        "nomeScrollW": 237,
+        "nomeClientW": 155,
+        "truncado": true,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -20,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 140,
+          "right": 872
+        },
+        "nomeScrollW": 140,
+        "nomeClientW": 140,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -35,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      },
+      {
+        "nome": "Mariana Oliveira",
+        "cardLargura": 800,
+        "colB": {
+          "x": 671,
+          "w": 216,
+          "right": 887
+        },
+        "colInterna": {
+          "x": 692,
+          "w": 195,
+          "right": 887
+        },
+        "nomeBox": {
+          "x": 732,
+          "w": 91,
+          "right": 823
+        },
+        "nomeScrollW": 91,
+        "nomeClientW": 91,
+        "truncado": false,
+        "colC": {
+          "x": 907,
+          "w": 172,
+          "left": 907
+        },
+        "invasaoColC": -84,
+        "nomeOverflowEstilo": "hidden",
+        "nomeTextoOverflow": "ellipsis",
+        "nomeWhiteSpace": "nowrap"
+      }
+    ],
+    "ciclo": {
+      "gatilho": {
+        "x": 1085,
+        "w": 230,
+        "right": 1315
+      },
+      "valorAntes": {
+        "x": 1120,
+        "w": 160,
+        "right": 1280,
+        "texto": "Ciclo S2 2026",
+        "sw": 160,
+        "cw": 160
+      },
+      "valorDepois": {
+        "x": 1120,
+        "w": 160,
+        "right": 1280,
+        "texto": "HOMOLOG-NB Ciclo Nine-Box de Avaliação T",
+        "sw": 367,
+        "cw": 160
+      },
+      "gatilhoScrollW": 0,
+      "gatilhoScrollH": 0
+    }
+  }
+}

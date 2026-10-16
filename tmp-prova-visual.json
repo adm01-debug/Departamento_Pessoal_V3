@@ -1,0 +1,37 @@
+{
+  "servidorIniciadoPorMim": true,
+  "distExiste": true,
+  "prova": {
+    "urlDaPagina": "http://localhost:8080/premiacoes",
+    "titulo": "Premiações & Renda Variável 10/10 | Sistema DP",
+    "modulosServidos": [],
+    "marcadorPresente": false,
+    "outlineCalculado": null,
+    "stringsAntigas": {
+      "Impactando 85% do time": false,
+      "Aguardando revisao manual": false,
+      "PENDENTE (CALCULADO)": false,
+      "Progresso do Orçamento": false,
+      "Gerenciar Regras": false,
+      "vs mês anterior (hardcoded)": false
+    },
+    "stringsNovas": {
+      "Próximas ações (caixa alta no h3)": true,
+      "Atividade recente": true,
+      "Visão geral": true,
+      "Mostrando X de Y": true
+    },
+    "medidas": {
+      "navegacao": 44,
+      "indicadores": 95,
+      "filtros": 46,
+      "topoTabela": 371,
+      "thead": 38,
+      "linha": 65,
+      "painelAtividadeTopo": 641
+    },
+    "cartoesIndicador": 5,
+    "errosDeConsole": []
+  },
+  "errosDeConsole": []
+}

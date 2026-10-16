@@ -77,6 +77,46 @@ export interface ResultadoConsolidacao360 extends Consolidacao360 {
 }
 
 /**
+ * Normaliza uma validação de Potencial vinda do BANCO para o contrato do motor.
+ *
+ * O serviço entrega a LINHA CRUA de `feedbacks_360_validacoes_potencial`
+ * (`empresa_id`, `ciclo_id`, `colaborador_id`, `feedback_id`, `versao_avaliacao`,
+ * `validado_por`, `validado_em`), enquanto `motorAvaliacao360.ValidacaoPotencial`
+ * usa camelCase. Sem esta adaptação o motor NÃO reconhece a aprovação e o
+ * colaborador cai em `potencial_sem_validacao` — era exatamente a divergência
+ * que deixava a matriz vazia com avaliação válida.
+ *
+ * Aceita as DUAS formas (camelCase dos testes/preview e snake_case do banco) e
+ * NÃO inventa campo algum: se faltar qualquer identidade, devolve `null`.
+ */
+export function normalizarValidacaoPotencial(valor: unknown): ValidacaoPotencial | null {
+  const v = (valor ?? {}) as Record<string, unknown>;
+  const texto = (x: unknown) => String(x ?? '').trim();
+
+  const versaoAvaliacao = texto(v.versaoAvaliacao ?? v.versao_avaliacao);
+  const validadoPor = texto(v.validadoPor ?? v.validado_por);
+  const validadoEm = texto(v.validadoEm ?? v.validado_em);
+  const empresaId = texto(v.empresaId ?? v.empresa_id);
+  const colaboradorId = texto(v.colaboradorId ?? v.colaborador_id);
+  const feedbackId = texto(v.feedbackId ?? v.feedback_id);
+
+  if (!versaoAvaliacao || !validadoPor || !validadoEm || !empresaId || !colaboradorId || !feedbackId) {
+    return null;
+  }
+
+  const cicloBruto = v.cicloId ?? v.ciclo_id ?? null;
+  return {
+    versaoAvaliacao,
+    validadoPor,
+    validadoEm,
+    empresaId,
+    cicloId: cicloBruto === null || cicloBruto === undefined ? null : String(cicloBruto),
+    colaboradorId,
+    feedbackId,
+  };
+}
+
+/**
  * Consolida por (empresa + ciclo + colaborador) aplicando a metodologia aprovada.
  * Somente avaliações ELEGÍVEIS entram; `pendente`/`cancelado` ficam fora.
  */
@@ -92,6 +132,12 @@ export function consolidarNineBox360({
     if (empresaId !== null && a.empresaId !== null && a.empresaId !== empresaId) return false;
     return true;
   });
+
+  // Validações do RH normalizadas para o contrato do motor (aceita a linha CRUA
+  // do banco e a forma camelCase). A lista chega ordenada por `validado_em desc`.
+  const validacoesNormalizadas = (validacoes as unknown[])
+    .map(normalizarValidacaoPotencial)
+    .filter((v): v is ValidacaoPotencial => v !== null);
 
   const porColaborador = new Map<string, typeof doCiclo>();
   doCiclo
@@ -134,7 +180,16 @@ export function consolidarNineBox360({
 
     const gestor = categorias.find((c) => c.categoria === 'gestor');
     const versaoGestor = gestor?.feedbackId ? (versoesPorFeedback[gestor.feedbackId] ?? null) : null;
-    const validacao = validacoes.find((v) => v.colaboradorId === colaboradorId) ?? null;
+    // A validação aplicável é a MAIS RECENTE (lista ordenada por `validado_em desc`)
+    // do colaborador cuja versão casa com a versão canônica ATUAL do gestor — a
+    // mesma regra do banco/`situacaoPotencial`. Sem versão atual (ou sem validação
+    // que case) devolve `null` ⇒ o motor recusa com `potencial_sem_validacao`.
+    const validacao =
+      versaoGestor === null
+        ? null
+        : (validacoesNormalizadas.find(
+            (v) => v.colaboradorId === colaboradorId && v.versaoAvaliacao === versaoGestor
+          ) ?? null);
 
     const consolidado = consolidar360({
       empresaId,

@@ -1,0 +1,207 @@
+{
+  "versao": 1,
+  "area": "GESTAO DE DESEMPENHO",
+  "rota": "/avaliacao",
+  "congeladoEm": "2026-10-16",
+  "descricao": "Inventario das ancoras visuais protegidas. Cada 'trecho' e um literal que DEVE existir no arquivo. O verificador (scripts/verificar-layout-protegido.mjs) falha quando um trecho desaparece ou muda. Alteracoes funcionais que preservem todos os trechos sao permitidas.",
+  "arquivos": [
+    {
+      "caminho": "src/components/avaliacao/FeedbackCard.tsx",
+      "rotulo": "Card de feedback (3 faixas: colaborador, avaliador, nota)",
+      "ancoras": [
+        { "id": "card-raiz", "trecho": "className=\"flex flex-col gap-3 rounded-xl border-border/60 bg-gradient-to-b from-card to-card/60 px-4 py-3 shadow-elevated transition-all hover:border-primary/30 hover:shadow-lg lg:flex-row lg:items-stretch lg:gap-5\"" },
+        { "id": "coluna-a-abre", "trecho": "<div className=\"flex min-w-0 flex-1 gap-3\">" },
+        { "id": "avatar-avaliado", "trecho": "'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-semibold ring-1 ring-inset'," },
+        { "id": "nome-avaliado", "trecho": "<h3 className=\"truncate font-display text-[13px] font-semibold leading-tight tracking-tight\">" },
+        { "id": "citacao", "trecho": "<blockquote className=\"border-l-2 border-border/60 pl-2.5 text-[11px] italic leading-snug text-muted-foreground\">" },
+        { "id": "coluna-b-largura-fixa", "trecho": "className=\"flex min-w-0 shrink-0 flex-row items-end justify-between gap-3 border-t border-border/20 pt-2.5 lg:w-[216px] lg:flex-col lg:items-start lg:justify-start lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0\"" },
+        { "id": "coluna-b-interno-contratado", "trecho": "<div className=\"min-w-0 space-y-1.5 lg:w-full\">" },
+        { "id": "rotulo-avaliado-por", "trecho": "<p className=\"text-[10px] font-medium uppercase tracking-wider text-muted-foreground\">Avaliado por</p>" },
+        { "id": "linha-avaliador", "trecho": "<div className=\"flex min-w-0 items-center gap-2\">" },
+        { "id": "nome-avaliador-truncado", "trecho": "<span className=\"block truncate text-[12px] font-medium leading-tight\" title={item.avaliador}>" },
+        { "id": "chip-tipo", "trecho": "'inline-flex h-6 items-center rounded-md border px-2 text-[10px] font-medium uppercase tracking-wide'," },
+        { "id": "data-origem", "trecho": "<p className=\"flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[10px] text-muted-foreground lg:mt-auto\">" },
+        { "id": "coluna-c-largura-fixa", "trecho": "className=\"flex shrink-0 flex-col gap-2 border-t border-border/20 pt-2.5 lg:w-[172px] lg:justify-between lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0\"" },
+        { "id": "nota-numerica", "trecho": "<span className={cn('font-display text-xl font-semibold leading-none tabular-nums', item.faixa.tinta)}>" },
+        { "id": "estrelas", "trecho": "<EstrelasNota nota={item.nota} tinta={item.faixa.tinta} />" },
+        { "id": "badge-faixa", "trecho": "'rounded-md border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide'," },
+        { "id": "menu-tres-pontos", "trecho": "className=\"h-7 w-7 shrink-0 rounded-md text-muted-foreground hover:bg-accent/60 hover:text-foreground\"" },
+        { "id": "botao-ver-feedback", "trecho": "className=\"group h-8 w-full shrink-0 justify-center gap-1.5 rounded-lg border-border/60 bg-secondary/30 text-[11px] font-normal text-foreground/90 hover:border-primary/40 hover:bg-primary/10 hover:text-primary lg:w-auto\"" },
+        { "id": "rotulo-ver-feedback", "trecho": "Ver feedback" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/EstrelasNota.tsx",
+      "rotulo": "Estrelas da nota (card + dialog)",
+      "ancoras": [
+        { "id": "linha-estrelas", "trecho": "<span className={cn('flex items-center gap-0.5', className)} aria-label={`Nota ${nota} de 5`}>" },
+        { "id": "tamanho-padrao", "trecho": "tamanho = 'h-3.5 w-3.5'" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/FeedbacksTimeline.tsx",
+      "rotulo": "Timeline (trilho, ponto, marco de mes)",
+      "ancoras": [
+        { "id": "constante-altura-marco", "trecho": "export const ALTURA_MARCO_MES = 18;" },
+        { "id": "constante-vao", "trecho": "export const VAO_MARCO_CARDS = 12;" },
+        { "id": "constante-deslocamento", "trecho": "export const DESLOCAMENTO_LATERAL = ALTURA_MARCO_MES + VAO_MARCO_CARDS;" },
+        { "id": "marco-mes", "trecho": "<header className=\"flex items-center gap-2\" style={{ height: ALTURA_MARCO_MES }}>" },
+        { "id": "trilho-vertical", "trecho": "<span className=\"absolute left-0 top-0 h-full w-px bg-border/40\" aria-hidden=\"true\" />" },
+        { "id": "ponto-do-trilho", "trecho": "'absolute -left-4 top-5 h-2 w-2 rounded-full ring-4 ring-background'," },
+        { "id": "lista-coordenada", "trecho": "className=\"space-y-6\"" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/FeedbacksTab.tsx",
+      "rotulo": "Aba Feedbacks (grid de duas colunas + coluna lateral)",
+      "ancoras": [
+        { "id": "grid-duas-colunas", "trecho": "<div className=\"grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]\">" },
+        { "id": "padding-lateral", "trecho": "<div className=\"min-w-0 xl:pt-[30px]\">" },
+        { "id": "recorte-aguardando", "trecho": "aguardandoGestor={aguardandoGestor}" },
+        { "id": "visao-aguardando", "trecho": "visaoAguardando={visao === 'aguardando'}" },
+        { "id": "view-aguardando", "trecho": "<PendenciasAprovacao" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/PendenciasAprovacao.tsx",
+      "rotulo": "Subaba Aguardando gestor (fila de aprovacao) — AUTORIZADA em 16/10/2026",
+      "ancoras": [
+        { "id": "card-raiz", "trecho": "className=\"flex flex-col gap-3 rounded-xl border-border/60 bg-gradient-to-b from-card to-card/60 px-4 py-3 shadow-elevated transition-all hover:border-primary/30 hover:shadow-lg lg:flex-row lg:items-stretch lg:gap-5\"" },
+        { "id": "rotulo-gestor", "trecho": "Gestor responsável" },
+        { "id": "nota-desempenho", "trecho": "<BlocoNota rotulo=\"Desempenho\"" },
+        { "id": "nota-potencial", "trecho": "<BlocoNota rotulo=\"Potencial\"" },
+        { "id": "badge-status", "trecho": "'inline-flex h-6 w-fit items-center whitespace-nowrap rounded-md border px-2 text-[10px] font-medium uppercase tracking-wide'," },
+        { "id": "acao-ver-avaliacao", "trecho": "Ver avaliação" },
+        { "id": "acao-enviar", "trecho": "'Enviar ao gestor'" },
+        { "id": "acao-enviar-novamente", "trecho": "'Reenviar ao gestor'" },
+        { "id": "acao-aprovar", "trecho": "Aprovar" },
+        { "id": "acao-devolver", "trecho": "Devolver" },
+        { "id": "acao-validar-potencial", "trecho": "Validar Potencial" },
+        { "id": "dialog-devolucao", "trecho": "<DialogTitle className=\"font-display text-base\">Devolver para correção</DialogTitle>" },
+        { "id": "aviso-demonstracao", "trecho": "Em demonstração a fila é somente de leitura" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/aprovacaoGestor.ts",
+      "rotulo": "Regras do fluxo de aprovacao (status, permissoes, derivacao)",
+      "ancoras": [
+        { "id": "status-enum", "trecho": "export const STATUS_APROVACAO = {" },
+        { "id": "status-concluida", "trecho": "CONCLUIDA_VALIDADA: 'concluida_validada'," },
+        { "id": "situacao", "trecho": "export function situacaoAprovacao({" },
+        { "id": "minimo-justificativa", "trecho": "export const MIN_CARACTERES_JUSTIFICATIVA_DEVOLUCAO = 10;" },
+        { "id": "derivacao", "trecho": "export function derivarPendencias({" },
+        { "id": "contador", "trecho": "export function contarAguardandoGestor(" },
+        { "id": "tom-aguardando", "trecho": "aguardando_gestor: 'border-warning/45 bg-warning/20 text-warning'," }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/FeedbacksFiltros.tsx",
+      "rotulo": "Filtros de Feedbacks (busca, tipo, avaliador, ordem, chips)",
+      "ancoras": [
+        { "id": "dropdown-tipos-oficiais", "trecho": "{TIPOS_FEEDBACK.map((t) => (" },
+        { "id": "dropdown-ordem", "trecho": "{ORDEM_FEEDBACK_OPCOES.map((o) => (" },
+        { "id": "linha-unica-de-chips", "trecho": "<div className=\"flex flex-wrap items-center gap-2\" role=\"group\" aria-label=\"Segmentar por tipo de feedback\">" },
+        { "id": "segmentos-em-repouso-na-fila", "trecho": "selected={!visaoAguardando && segmento === s.valor}" },
+        { "id": "chip-aguardando-gestor", "trecho": "label=\"Aguardando gestor\"" },
+        { "id": "chip-aguardando-ambar", "trecho": "tema={PALETAS_CHIP.amber}" },
+        { "id": "chip-aguardando-selecao", "trecho": "selected={visaoAguardando}" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/FeedbacksResumo.tsx",
+      "rotulo": "Widgets de resumo da coluna lateral",
+      "ancoras": [
+        { "id": "card-resumo", "trecho": "className=\"rounded-xl border-border/60 bg-gradient-to-b from-card to-card/60 p-4" },
+        { "id": "titulo-widget", "trecho": "<h3 className=\"flex items-center gap-2 font-display text-[12px] font-semibold tracking-tight\">" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/FeedbacksFocoBanner.tsx",
+      "rotulo": "Banner 'Foco agora'",
+      "ancoras": [
+        { "id": "banner", "trecho": "className=\"flex flex-col gap-3 rounded-xl border border-destructive-vivid/30 bg-destructive-vivid/10 px-4 py-3" },
+        { "id": "banner-conteudo", "trecho": "<div className=\"flex min-w-0 flex-1 items-center gap-3\">" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/FeedbackDetalheDialog.tsx",
+      "rotulo": "Modal Ver Feedback",
+      "ancoras": [
+        { "id": "titulo-dialog", "trecho": "<DialogTitle className=\"truncate font-display text-base\">{item.avaliado}</DialogTitle>" },
+        { "id": "cabecalho", "trecho": "<DialogHeader>" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/NovoFeedbackDialog.tsx",
+      "rotulo": "Modal Novo Feedback",
+      "ancoras": [
+        { "id": "titulo-dialog", "trecho": "<DialogTitle className=\"font-display text-base\">Novo feedback</DialogTitle>" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/animacaoFeedbacks.ts",
+      "rotulo": "Animacao de entrada dos cards (desenho e duracao)",
+      "ancoras": [
+        { "id": "easing", "trecho": "export const EASE_FEEDBACKS: [number, number, number, number] = [0.22, 1, 0.36, 1];" },
+        { "id": "duracao-expansao", "trecho": "export const EXPANSAO_DURACAO_S = 0.9;" },
+        { "id": "escala-inicial", "trecho": "export const EXPANSAO_ESCALA_INICIAL = 0.78;" },
+        { "id": "clip-inicial", "trecho": "export const EXPANSAO_CLIP_INICIAL = 'inset(35% 25% round 16px)';" },
+        { "id": "clip-final", "trecho": "export const EXPANSAO_CLIP_FINAL = 'inset(0% 0% round 16px)';" },
+        { "id": "origem-expansao", "trecho": "export const EXPANSAO_ORIGEM: CSSProperties = { transformOrigin: 'center center' };" },
+        { "id": "duracao-cascata", "trecho": "export const CASCATA_DURACAO_S = 0.6;" },
+        { "id": "y-inicial-cascata", "trecho": "export const CASCATA_Y_INICIAL = -48;" },
+        { "id": "passo-cascata", "trecho": "export const CASCATA_PASSO_S = 0.2;" },
+        { "id": "atraso-cascata", "trecho": "export const CASCATA_ATRASO_S = EXPANSAO_DURACAO_S;" },
+        { "id": "variantes", "trecho": "export const entradaFeedbackVariants: Variants = {" },
+        { "id": "helper-card", "trecho": "export function cardEntradaFeedback(indice: number) {" }
+      ]
+    },
+    {
+      "caminho": "src/mocks/desempenhoMock.ts",
+      "rotulo": "Mocks demonstrativos de Desempenho (vitrine aprovada)",
+      "ancoras": [
+        { "id": "portao-do-mock", "trecho": "export function isDesempenhoMockEnabled(): boolean {" },
+        { "id": "feedback-mock-presente", "trecho": "mock-fb-1" }
+      ]
+    },
+    {
+      "caminho": "src/components/avaliacao/nineBoxMock.ts",
+      "rotulo": "Mocks do Nine-Box",
+      "ancoras": [{ "id": "arquivo-exporta", "trecho": "export " }]
+    },
+    {
+      "caminho": "src/components/avaliacao/pdiProgressoMock.ts",
+      "rotulo": "Mocks de PDI",
+      "ancoras": [{ "id": "arquivo-exporta", "trecho": "export " }]
+    },
+    {
+      "caminho": "src/components/avaliacao/NineBoxTab.tsx",
+      "rotulo": "Nine-Box (layout aprovado)",
+      "ancoras": [{ "id": "componente", "trecho": "export function NineBoxTab({" }]
+    },
+    {
+      "caminho": "src/components/avaliacao/PdiTab.tsx",
+      "rotulo": "PDI (layout aprovado)",
+      "ancoras": [{ "id": "componente", "trecho": "export function PdiTab({ pdis, colaboradores = [] }: PdiTabProps) {" }]
+    },
+    {
+      "caminho": "src/components/avaliacao/MetasOKRsTab.tsx",
+      "rotulo": "Metas & OKRs (layout aprovado)",
+      "ancoras": [{ "id": "componente", "trecho": "export function MetasOKRsTab({ metas, ciclos = [], colaboradores = [], onAbrirCiclo }: MetasOKRsTabProps) {" }]
+    },
+    {
+      "caminho": "src/pages/AvaliacaoPage.tsx",
+      "rotulo": "Chrome da area (abas + seletor de ciclo + acao primaria)",
+      "ancoras": [
+        { "id": "linha-controles", "trecho": "<div className=\"flex flex-col gap-3 lg:flex-row lg:items-center\">" },
+        { "id": "item-flex-das-abas", "trecho": "<div className=\"min-w-0 lg:flex-1\">" },
+        { "id": "faixa-de-abas", "trecho": "containerClassName=\"h-11 w-full rounded-xl border border-border/30 bg-card/50 p-1 overflow-x-auto lg:min-w-0 lg:flex-1 lg:overflow-visible\"" },
+        { "id": "classe-aba-texto", "trecho": "'min-w-0 truncate text-muted-foreground transition-colors group-data-[state=active]:text-foreground';" },
+        { "id": "gatilho-ciclo", "trecho": "<SelectTrigger className=\"h-11 w-full gap-2 rounded-xl sm:w-[230px]\">" },
+        { "id": "coluna-do-ciclo", "trecho": "<div className=\"flex min-w-0 flex-1 flex-col items-start gap-0.5 text-left leading-tight\">" },
+        { "id": "valor-ciclo-truncado", "trecho": "<span className=\"w-full max-w-full truncate\">" },
+        { "id": "periodo-ciclo-truncado", "trecho": "<span className=\"w-full max-w-full truncate font-mono text-[10px] text-muted-foreground\">" }
+      ]
+    }
+  ]
+}

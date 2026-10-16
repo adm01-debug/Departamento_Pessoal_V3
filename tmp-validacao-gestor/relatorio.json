@@ -1,0 +1,73 @@
+{
+  "chips": {
+    "quantidadeDeLinhasDeChips": 1,
+    "rotulosDaLinha": [
+      "Todos11",
+      "Gestor6",
+      "Pares4",
+      "Autoavaliação1",
+      "Aguardando gestor5"
+    ],
+    "chipAvaliacoesAcima": false,
+    "espacoAcimaDoBanner": 38
+  },
+  "modal": {
+    "cicloS2": {
+      "blocos": [
+        "ANALISTA DE RH · RECURSOS HUMANOS",
+        "AVALIADO POR",
+        "DATAS",
+        "12/10/2026",
+        "PRAZO DO CICLO: 30/12/2026 · POTENCIAL 4/5",
+        "PONTOS FORTES",
+        "REFERÊNCIA EM PROCESSOS DE RH.",
+        "PONTOS DE MELHORIA",
+        "DELEGAR ROTINAS OPERACIONAIS.",
+        "COMENTÁRIOS",
+        "EXCELENTE APOIO ÀS LIDERANÇAS."
+      ],
+      "botoes": [
+        "Ver só deste colaborador",
+        "Fechar"
+      ],
+      "largura": 672,
+      "ciclo": "Prazo do ciclo: 30/12/2026",
+      "concluirDesabilitado": null,
+      "concluirTitulo": null
+    },
+    "cicloAnual2025": {
+      "blocos": [
+        "COORDENADORA FINANCEIRA · FINANCEIRO",
+        "AVALIADO POR",
+        "DATAS",
+        "18/06/2026",
+        "PRAZO DO CICLO: 29/06/2026 · POTENCIAL 5/5",
+        "PONTOS FORTES",
+        "VISÃO FINANCEIRA ESTRATÉGICA.",
+        "PONTOS DE MELHORIA",
+        "DESCENTRALIZAR DECISÕES OPERACIONAIS.",
+        "COMENTÁRIOS",
+        "DESTAQUE DO SEMESTRE NA ÁREA FINANCEIRA."
+      ],
+      "botoes": [
+        "Ver só deste colaborador",
+        "Fechar"
+      ],
+      "largura": 672,
+      "ciclo": "Prazo do ciclo: 29/06/2026",
+      "concluirDesabilitado": null,
+      "concluirTitulo": null
+    },
+    "mesmaEstrutura": true
+  },
+  "rodape": {
+    "rh": {
+      "desabilitado": true,
+      "titulo": "Seu perfil não executa esta ação (a permissão também é conferida no servidor)."
+    },
+    "gestor": {
+      "desabilitado": false,
+      "titulo": null
+    }
+  }
+}

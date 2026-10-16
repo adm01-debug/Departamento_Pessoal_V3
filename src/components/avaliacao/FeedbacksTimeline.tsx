@@ -109,7 +109,9 @@ export function FeedbacksTimeline({
    * começar, visível como repetição). Com a chave do chamador, a sequência roda
    * UMA vez por apresentação e nunca por chegada de dado.
    */
-  const assinatura = apresentacao ?? 'lista';
+  const assinatura = `${apresentacao ?? 'lista'}#${comIndice
+    .flatMap((g) => g.itens.map(({ item }) => chaveDoItem(item)))
+    .join('|')}`;
 
   if (grupos.length === 0) {
     return (
@@ -151,6 +153,18 @@ export function FeedbacksTimeline({
 
 /** Item já posicionado na cascata (índice RELATIVO à lista inteira). */
 type ItemPosicionado = { item: FeedbackDerivado; indice: number };
+
+/**
+ * Identidade ESTÁVEL de um item da lista — SEMPRE pelo ID real do feedback
+ * (nunca pelo índice, que muda quando um registro é inserido/removido e faz o
+ * React remontar o card no meio da animação, deixando-o preso na variante).
+ * O fallback não usa posição: combina campos que não mudam com a ordenação.
+ */
+function chaveDoItem(item: FeedbackDerivado): string {
+  const f = (item?.feedback ?? {}) as Record<string, unknown>;
+  if (f.id) return `f:${String(f.id)}`;
+  return `s:${String(f.avaliado_id ?? '')}:${String(f.avaliador_id ?? '')}:${String(f.tipo ?? '')}:${String(f.created_at ?? '')}`;
+}
 
 /**
  * COORDENADOR da entrada: um único `motion.div` com um único gatilho
@@ -221,7 +235,7 @@ function ListaCoordenada({
             <span className="absolute left-0 top-0 h-full w-px bg-border/40" aria-hidden="true" />
 
             {grupo.itens.map(({ item, indice }) => (
-              <div key={item.feedback?.id ?? `${grupo.chave}-${indice}`} className="relative">
+              <div key={chaveDoItem(item)} className="relative">
                 {/* O PONTO do trilho fica FORA do elemento animado: ele é guia
                     fixo, então quem se move/escala/recorta é só o card. */}
                 <span

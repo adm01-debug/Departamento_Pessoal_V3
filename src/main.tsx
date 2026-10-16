@@ -157,12 +157,27 @@ if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in 
   // só evita um NOVO registro, não desfaz um já existente. Sem isso, o
   // sintoma persiste indefinidamente até o SW ser removido manualmente via
   // DevTools, o que não é óbvio para quem está apenas rodando `bun dev`.
-  navigator.serviceWorker.getRegistrations().then((regs) => {
-    regs.forEach((reg) => reg.unregister());
-  });
-  if ('caches' in window) {
-    caches.keys().then((names) => names.forEach((name) => caches.delete(name)));
-  }
+  //
+  // AUTO-CURA: se havia SW/caches, a carga atual PODE ter vindo do cache antigo
+  // (foi o SW que respondeu o HTML). Desregistrar e limpar não troca o que já
+  // está renderizado — por isso recarregamos UMA única vez (flag de sessão),
+  // garantindo que a tela exibida passe a ser a do dev server.
+  const FLAG_AUTOCURA = 'dp-sw-cleanup-reload';
+  navigator.serviceWorker
+    .getRegistrations()
+    .then(async (regs) => {
+      const tinhaServiceWorker = regs.length > 0;
+      await Promise.all(regs.map((reg) => reg.unregister()));
+      const nomesDeCache = 'caches' in window ? await caches.keys() : [];
+      await Promise.all(nomesDeCache.map((nome) => caches.delete(nome)));
+      if ((tinhaServiceWorker || nomesDeCache.length > 0) && !sessionStorage.getItem(FLAG_AUTOCURA)) {
+        sessionStorage.setItem(FLAG_AUTOCURA, '1');
+        window.location.reload();
+      }
+    })
+    .catch(() => {
+      /* cleanup é best-effort: nunca deve derrubar o boot do app */
+    });
 }
 
 // Env-var guard fail-fast: se VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY

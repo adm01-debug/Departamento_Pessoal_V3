@@ -1,13 +1,19 @@
 arquivo: supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql
-statements: 50
+statements: 62
 
 --- ordem real de criação (eventos) ---
+  ALTER   feedbacks_360
   POLICY  feedbacks_360_insert ON feedbacks_360
   POLICY  feedbacks_360_select ON feedbacks_360
+  ALTER   audit_log
   TABLE   feedbacks_360_operacoes
+  ALTER   feedbacks_360_operacoes
+  ALTER   feedbacks_360_operacoes
   ALTER   feedbacks_360_operacoes
   POLICY  fbo_select ON feedbacks_360_operacoes
   TABLE   feedbacks_360_validacoes_potencial
+  ALTER   feedbacks_360_validacoes_potencial
+  ALTER   feedbacks_360_validacoes_potencial
   INDEX   ON feedbacks_360_validacoes_potencial
   ALTER   feedbacks_360_validacoes_potencial
   POLICY  fvp_select ON feedbacks_360_validacoes_potencial
@@ -15,10 +21,16 @@ statements: 50
   OK    primeiro statement é "begin" (obtido: "begin")
   OK    último statement é "commit" (obtido: "commit")
   OK    nenhum begin/commit/rollback DENTRO do envelope
+  OK    alter table feedbacks_360: aplicado DEPOIS da tabela
   OK    policy feedbacks_360_insert em feedbacks_360: criada DEPOIS da tabela
   OK    policy feedbacks_360_select em feedbacks_360: criada DEPOIS da tabela
+  OK    alter table audit_log: aplicado DEPOIS da tabela
+  OK    alter table feedbacks_360_operacoes: aplicado DEPOIS da tabela
+  OK    alter table feedbacks_360_operacoes: aplicado DEPOIS da tabela
   OK    alter table feedbacks_360_operacoes: aplicado DEPOIS da tabela
   OK    policy fbo_select em feedbacks_360_operacoes: criada DEPOIS da tabela
+  OK    alter table feedbacks_360_validacoes_potencial: aplicado DEPOIS da tabela
+  OK    alter table feedbacks_360_validacoes_potencial: aplicado DEPOIS da tabela
   OK    index em feedbacks_360_validacoes_potencial: criado DEPOIS da tabela
   OK    alter table feedbacks_360_validacoes_potencial: aplicado DEPOIS da tabela
   OK    policy fvp_select em feedbacks_360_validacoes_potencial: criada DEPOIS da tabela
@@ -29,8 +41,8 @@ statements: 50
   OK    policy de feedbacks_360_validacoes_potencial: exige PAPEL (pode_gerir_avaliacoes())
   OK    policy de feedbacks_360_validacoes_potencial: exige EMPRESA (get_user_empresas)
   OK    finalizar_feedback: papel, empresa e leitura de idempotência presentes
-  OK    finalizar_feedback: PAPEL conferido ANTES da idempotência (1027 < 1731)
-  OK    finalizar_feedback: EMPRESA conferida ANTES da idempotência (1527 < 1731)
+  OK    finalizar_feedback: PAPEL conferido ANTES da idempotência (1053 < 1757)
+  OK    finalizar_feedback: EMPRESA conferida ANTES da idempotência (1553 < 1757)
   OK    finalizar_feedback: reenvio restrito pela própria empresa
   OK    finalizar_feedback: reenvio restrito pelo próprio feedback
   OK    validar_potencial_avaliacao: papel, empresa e leitura de idempotência presentes
@@ -55,6 +67,36 @@ statements: 50
   OK    finalizar_feedback: valida a nota na escala 1–5
   OK    finalizar_feedback: erro nota_desempenho_fora_da_escala presente
   OK    versao_avaliacao_feedback: versão com precisão de MICROSSEGUNDO
+  OK    revisao: coluna criada com ALTER TABLE ... ADD COLUMN IF NOT EXISTS
+  OK    revisao: coluna criada ANTES da função de versão (1 < 7)
+  OK    revisao: entra na versão canônica
+  OK    concluir: categoria fora das 4 do 360 e recusada
+  OK    concluir: Potencial obrigatorio PARA O GESTOR
+  OK    concluir: Potencial validado na escala 1-5
+  OK    concluir: exigencia de Potencial esta SO no ramo do gestor
+  OK    concluir: nota de desempenho na escala 1-5 (todas as categorias)
+  OK    concluir: exige avaliado, avaliador e ciclo (espelho de statusFeedback.validarConclusao)
+  OK    concluir: identificacao conferida DEPOIS da categoria
+  OK    finalizar_feedback: NAO incrementa revisao a mao (o trigger e o dono do contador)
+  OK    finalizar_feedback: devolve a revisao nova
+  OK    finalizar_feedback: resultado expõe revisao_nova
+  OK    revisao: funcao de trigger tg_feedbacks_360_revisao existe
+  OK    revisao: trigger incrementa new.revisao a cada UPDATE
+  OK    revisao: trigger BEFORE UPDATE criado em feedbacks_360
+  OK    audit_log: coluna empresa_id garantida (ALTER ... ADD COLUMN IF NOT EXISTS)
+  OK    audit_log: coluna empresa_id garantida ANTES das RPCs (27 < 44)
+  OK    finalizar_feedback: auditoria com empresa_id na COLUNA
+  OK    finalizar_feedback: auditoria com empresa_id explicito em dados_novos
+  OK    validar_potencial_avaliacao: auditoria com empresa_id na COLUNA
+  OK    validar_potencial_avaliacao: auditoria com empresa_id explicito em dados_novos
+  OK    criar_feedback_seguro: auditoria com empresa_id na COLUNA
+  OK    criar_feedback_seguro: auditoria com empresa_id explicito em dados_novos
+  OK    feedbacks_360_operacoes: FK recriada explicitamente DEPOIS do create table
+  OK    feedbacks_360_operacoes: FK com ON DELETE RESTRICT (historico preservado)
+  OK    feedbacks_360_operacoes: tabela NAO nasce em ON DELETE CASCADE
+  OK    feedbacks_360_validacoes_potencial: FK recriada explicitamente DEPOIS do create table
+  OK    feedbacks_360_validacoes_potencial: FK com ON DELETE RESTRICT (historico preservado)
+  OK    feedbacks_360_validacoes_potencial: tabela NAO nasce em ON DELETE CASCADE
   OK    pre-aplicacao: abre transacao explicita
   OK    pre-aplicacao: SET TRANSACTION READ ONLY presente
   OK    pre-aplicacao: encerra em ROLLBACK (nada persiste)
@@ -67,21 +109,32 @@ statements: 50
   OK    pre-aplicacao: checagem B6 presente no gate
   OK    pre-aplicacao: checagem B7 presente no gate
   OK    pre-aplicacao: checagem B8 presente no gate
+  OK    pre-aplicacao: checagem B9 presente no gate
+  OK    pre-aplicacao: checagem B10 presente no gate
   OK    pre-aplicacao: checagem A1 presente no gate
   OK    pre-aplicacao: checagem A2 presente no gate
   OK    pre-aplicacao: checagem A3 presente no gate
+  OK    pre-aplicacao: checagem A4 presente no gate
+  OK    pre-aplicacao: checagem A5 presente no gate
+  OK    pre-aplicacao: checagem A6 presente no gate
+  OK    pre-aplicacao: checagem A7 presente no gate
   OK    pre-aplicacao: bloco de diagnostico D1 presente
   OK    pre-aplicacao: bloco de diagnostico D2 presente
   OK    pre-aplicacao: bloco de diagnostico D3 presente
   OK    pre-aplicacao: bloco de diagnostico D4 presente
   OK    pre-aplicacao: diagnostico nao projeta dado pessoal (encontrados: 0)
   OK    testes-seguranca: encerra em ROLLBACK (nenhum registro de teste permanece)
-  OK    testes-seguranca: casos 1..24 presentes
+  OK    testes-seguranca: casos 1..29 presentes
   OK    testes-seguranca: caso 24 prova a exigencia de NOVA validacao do RH
   OK    testes-seguranca: caso 24 exige 0 vigentes antes e 1 depois
+  OK    testes-seguranca: caso 27 prova a REVISAO invalidando dentro da mesma transacao
+  OK    testes-seguranca: caso 28 prova a FK ON DELETE RESTRICT (probe como dono)
+  OK    testes-seguranca: caso 25 confere o empresa_id explicito na trilha
+  OK    testes-seguranca: caso 25 confere a COLUNA audit_log.empresa_id
+  OK    testes-seguranca: caso 29 prova o minimo de identificacao/rastreabilidade na conclusao
 
 {
-  "verificacoes": 67,
-  "ok": 67,
+  "verificacoes": 114,
+  "ok": 114,
   "falhas": 0
 }

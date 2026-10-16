@@ -124,20 +124,21 @@ export interface ValidacaoPotencial {
  * com o valor ATUAL lido da view. Assim não existem dois algoritmos divergentes.
  *
  * Formato canônico (definido em SQL):
- *   id | updated_at (UTC, YYYY-MM-DD"T"HH24:MI:SS.US) | potencial | status
+ *   id | revisao | updated_at (UTC, YYYY-MM-DD"T"HH24:MI:SS.US) | potencial | status
  *
- * O sufixo `.US` (MICROSSEGUNDOS) é o que faz a reabertura invalidadar a
- * aprovação: concluir → reabrir → concluir de novo dentro do MESMO segundo
- * produziria uma string idêntica com precisão de segundos, e a validação
- * anterior do RH continuaria sendo aceita. Aqui o valor é apenas LIDO — quem
- * produz a string é o banco (`versao_avaliacao_feedback`).
+ * O componente `revisao` é um contador MONOTÔNICO incrementado pela RPC a cada
+ * transição de status. É ele — e não o relógio — que garante a invalidação:
+ * `now()` é constante dentro da transação, então `concluir → reabrir → concluir`
+ * na MESMA transação repetiria o `updated_at`. O sufixo `.US` (MICROSSEGUNDOS)
+ * cobre o caso de transações distintas no mesmo segundo. Aqui o valor é apenas
+ * LIDO — quem produz a string é o banco (`versao_avaliacao_feedback`).
  */
 export const CONTRATO_VERSAO_AVALIACAO = {
   autoridade: 'banco',
   funcao: 'public.versao_avaliacao_feedback(uuid)',
   view: 'public.vw_feedbacks_360_versao',
   campo: 'versao_avaliacao',
-  formato: 'id|updated_at(us)|potencial|status',
+  formato: 'id|revisao|updated_at(us)|potencial|status',
 } as const;
 
 /**

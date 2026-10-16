@@ -7,7 +7,7 @@
  * de cache depois do sucesso e PRESERVAÇÃO DO MODO DEMONSTRAÇÃO.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
@@ -21,6 +21,8 @@ const { modo, auth, toasts, servico } = vi.hoisted(() => ({
     validarPotencialAvaliacao: vi.fn(),
     listarValidacoesPotencial: vi.fn(),
     listarVersoesAvaliacao: vi.fn(),
+    listarVinculos: vi.fn(),
+    decidirAprovacaoGestor: vi.fn(),
   },
 }));
 
@@ -38,6 +40,7 @@ vi.mock('@/hooks/useAuth', () => ({
 vi.mock('@/services/avaliacaoService', () => ({ avaliacaoService: servico }));
 
 import { FeedbackAcoesRodape, type PreviewAcoes } from '../avaliacao/FeedbackAcoesRodape';
+import { estadoAprovacao, type EstadoAprovacao } from '../avaliacao/aprovacaoGestor';
 import { FeedbackDetalheDialog } from '../avaliacao/FeedbackDetalheDialog';
 import NineBoxPreviewPage from '@/pages/NineBoxPreviewPage';
 import type { FeedbackDerivado } from '../avaliacao/feedbacksComum';
@@ -73,7 +76,12 @@ function montarItem(over: Record<string, unknown> = {}): FeedbackDerivado {
   } as unknown as FeedbackDerivado;
 }
 
-function renderizar(item = montarItem(), client?: QueryClient, previa?: PreviewAcoes) {
+function renderizar(
+  item = montarItem(),
+  client?: QueryClient,
+  previa?: PreviewAcoes,
+  estado?: EstadoAprovacao | null
+) {
   const qc =
     client ??
     new QueryClient({
@@ -82,11 +90,23 @@ function renderizar(item = montarItem(), client?: QueryClient, previa?: PreviewA
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={qc}>{children}</QueryClientProvider>
   );
-  return { qc, ...render(<FeedbackAcoesRodape item={item} previa={previa} />, { wrapper }) };
+  return {
+    qc,
+    ...render(<FeedbackAcoesRodape item={item} previa={previa} estadoAprovacao={estado} />, { wrapper }),
+  };
 }
 
 function botao(nome: RegExp | string) {
   return screen.getByRole('button', { name: nome });
+}
+
+/**
+ * Prévia do GESTOR RESPONSÁVEL (DEV): habilita o controle "Concluir avaliação"
+ * sem depender do papel real da sessão de teste. A responsabilidade de verdade
+ * vem dos vínculos (`listarVinculos` / `ehGestorResponsavel`).
+ */
+function previaGestor(): PreviewAcoes {
+  return { papel: 'gestor', responsavel: true, servico: servico as unknown as PreviewAcoes['servico'] };
 }
 
 beforeEach(() => {
@@ -96,6 +116,7 @@ beforeEach(() => {
   auth.isAdmin = false;
   servico.listarValidacoesPotencial.mockResolvedValue([]);
   servico.listarVersoesAvaliacao.mockResolvedValue([{ feedback_id: 'f1', versao_avaliacao: 'h1' }]);
+  servico.listarVinculos.mockResolvedValue([]);
 });
 
 afterEach(() => {
@@ -103,23 +124,47 @@ afterEach(() => {
 });
 
 describe('modo demonstração — experiência atual preservada', () => {
-  it('não renderiza NENHUM controle e não chama o serviço', () => {
+  it('registro FICTÍCIO (mock-*) não renderiza NENHUM controle e não chama o serviço', () => {
     modo.real = false;
-    const { container } = renderizar();
+    const { container } = renderizar(montarItem({ id: 'mock-feedback-1' }));
     expect(container).toBeEmptyDOMElement();
     expect(servico.finalizarFeedback).not.toHaveBeenCalled();
     expect(servico.validarPotencialAvaliacao).not.toHaveBeenCalled();
     expect(servico.listarValidacoesPotencial).not.toHaveBeenCalled();
   });
+
+  it('registro REAL mostra os controles mesmo com a flag de modo real DESLIGADA', () => {
+    // Correção: a exibição não depende mais de `modoRealAtivo()`. O que separa é
+    // o TIPO do registro — fictício nunca opera; real opera pelo mesmo rodapé.
+    modo.real = false;
+    renderizar(); // id real ('f1')
+    // A CONCLUSÃO não é do RH/admin (regra de 16/10/2026): fica bloqueada.
+    expect(botao(/Concluir avaliação/)).toBeDisabled();
+    expect(botao(/Cancelar avaliação/)).toBeEnabled();
+  });
 });
 
 describe('ações disponíveis por STATUS', () => {
-  it('pendente: concluir habilitado; reabrir bloqueado com motivo', () => {
-    renderizar();
+  it('pendente + GESTOR RESPONSÁVEL: concluir habilitado; reabrir bloqueado com motivo', () => {
+    renderizar(undefined, undefined, previaGestor());
     expect(botao(/Concluir avaliação/)).toBeEnabled();
     expect(botao(/Cancelar avaliação/)).toBeEnabled();
     expect(botao(/Reabrir avaliação/)).toBeDisabled();
     expect(botao(/Reabrir avaliação/)).toHaveAttribute('title', expect.stringContaining('Não existe transição'));
+  });
+
+  it('pendente + RH: concluir BLOQUEADO (perfil) e cancelar liberado', () => {
+    auth.roles = ['rh'];
+    renderizar();
+    expect(botao(/Concluir avaliação/)).toBeDisabled();
+    expect(botao(/Concluir avaliação/)).toHaveAttribute('title', expect.stringContaining('perfil'));
+    expect(botao(/Cancelar avaliação/)).toBeEnabled();
+  });
+
+  it('pendente + GESTOR sem vínculo: concluir bloqueado com o motivo da responsabilidade', () => {
+    renderizar(undefined, undefined, { papel: 'gestor', responsavel: false, servico: servico as unknown as PreviewAcoes['servico'] });
+    expect(botao(/Concluir avaliação/)).toBeDisabled();
+    expect(botao(/Concluir avaliação/)).toHaveAttribute('title', expect.stringContaining('gestor responsável'));
   });
 
   it('concluído: concluir bloqueado; cancelar exige reabrir antes; reabrir liberado', () => {
@@ -132,18 +177,19 @@ describe('ações disponíveis por STATUS', () => {
 });
 
 describe('ações disponíveis por PAPEL', () => {
-  it('avaliador (user) conclui, mas NÃO cancela', () => {
+  it('avaliador (user) NÃO conclui e não cancela', () => {
     auth.roles = ['user'];
     renderizar();
-    expect(botao(/Concluir avaliação/)).toBeEnabled();
+    expect(botao(/Concluir avaliação/)).toBeDisabled();
     expect(botao(/Cancelar avaliação/)).toBeDisabled();
     expect(botao(/Cancelar avaliação/)).toHaveAttribute('title', expect.stringContaining('perfil'));
   });
 
-  it('admin e rh gerenciam (concluir/cancelar/reabrir)', () => {
+  it('admin e rh gerenciam (cancelar/reabrir), mas NÃO concluem', () => {
     auth.roles = ['rh'];
     renderizar(montarItem({ status: 'concluido' }));
     expect(botao(/Reabrir avaliação/)).toBeEnabled();
+    expect(botao(/Concluir avaliação/)).toBeDisabled();
   });
 
   it('sem papel reconhecido, nenhum controle é liberado', () => {
@@ -328,7 +374,7 @@ describe('estado de carregamento e clique duplicado', () => {
           responder = resolve;
         })
     );
-    renderizar();
+    renderizar(undefined, undefined, previaGestor());
 
     await usuario.click(botao(/Concluir avaliação/));
     await waitFor(() => expect(botao(/Concluir avaliação/)).toBeDisabled());
@@ -349,7 +395,7 @@ describe('falha da RPC', () => {
   it('mostra a mensagem REAL, não anuncia sucesso e libera os controles', async () => {
     const usuario = userEvent.setup();
     servico.finalizarFeedback.mockRejectedValue(new Error('permission denied for function finalizar_feedback'));
-    renderizar();
+    renderizar(undefined, undefined, previaGestor());
 
     await usuario.click(botao(/Concluir avaliação/));
     await waitFor(() => expect(toasts.error).toHaveBeenCalledTimes(1));
@@ -366,7 +412,7 @@ describe('reenvio e idempotência', () => {
       .mockRejectedValueOnce(new Error('Failed to fetch'))
       .mockResolvedValueOnce({ ok: true, status_novo: 'concluido', idempotente: false })
       .mockResolvedValueOnce({ ok: true, status_novo: 'concluido', idempotente: false });
-    renderizar();
+    renderizar(undefined, undefined, previaGestor());
 
     await usuario.click(botao(/Concluir avaliação/));
     await waitFor(() => expect(servico.finalizarFeedback).toHaveBeenCalledTimes(1));
@@ -437,11 +483,16 @@ describe('evidência de layout e integração dentro do modal', () => {
     expect(screen.getByRole('button', { name: /Reabrir avaliação/ })).toBeInTheDocument();
   });
 
-  it('em demonstração o modal continua EXATAMENTE o de antes (sem controles)', async () => {
+  it('registro FICTÍCIO mantém o modal EXATAMENTE o de antes (sem controles)', async () => {
     modo.real = false;
     render(
       <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
-        <FeedbackDetalheDialog item={montarItem()} aberto onOpenChange={() => {}} onFiltrarAvaliado={() => {}} />
+        <FeedbackDetalheDialog
+          item={montarItem({ id: 'mock-feedback-1' })}
+          aberto
+          onOpenChange={() => {}}
+          onFiltrarAvaliado={() => {}}
+        />
       </QueryClientProvider>
     );
 
@@ -462,7 +513,7 @@ describe('prévia local (DEV) — flag desligada e ZERO RPC', () => {
       listarVersoesAvaliacao: vi.fn().mockResolvedValue([{ feedback_id: 'f1', versao_avaliacao: 'h1' }]),
     };
     const usuario = userEvent.setup();
-    renderizar(montarItem(), undefined, { servico: simulado, papel: 'rh' });
+    renderizar(montarItem(), undefined, { servico: simulado, papel: 'gestor', responsavel: true });
 
     await usuario.click(botao(/Concluir avaliação/));
     await waitFor(() => expect(simulado.finalizarFeedback).toHaveBeenCalledTimes(1));
@@ -522,5 +573,108 @@ describe('página de prévia local (/dev/ninebox-preview)', () => {
     expect(await screen.findByText('Ana Silva (fictícia)')).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /Concluir avaliação/ }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole('button', { name: /Cancelar avaliação/ }).length).toBeGreaterThan(0);
+  });
+});
+
+/* ─── APROVAÇÃO FORMAL NO MODAL (a MESMA regra da fila) ──────────────────── */
+describe('aprovação formal do gestor no rodapé do modal', () => {
+  const pendente = () => estadoAprovacao({ versaoGestor: 'v1', decisao: null, validada: false });
+  const aprovada = () => estadoAprovacao({ versaoGestor: 'v1', decisao: { decisao: 'aprovado', versao_avaliacao: 'v1' }, validada: false });
+
+  function previaCom(papel: string, responsavel: boolean): PreviewAcoes {
+    return { papel, responsavel, servico: servico as unknown as PreviewAcoes['servico'] };
+  }
+
+  beforeEach(() => {
+    servico.decidirAprovacaoGestor.mockResolvedValue({ ok: true, decisao: 'aprovado', status: 'aprovada_gestor' });
+  });
+
+  it('o selo mostra o ESTADO DA APROVAÇÃO (não o status do registro) quando há pedido pendente', () => {
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('rh', false), pendente());
+    expect(screen.getByRole('status')).toHaveTextContent(/Aguardando gestor/i);
+  });
+
+  it('gestor responsável vê Aprovar avaliação/Devolver para correção e a decisão chama a RPC do fluxo', async () => {
+    const usuario = userEvent.setup();
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('gestor', true), pendente());
+
+    await usuario.click(botao(/Aprovar avaliação/));
+    await waitFor(() => expect(servico.decidirAprovacaoGestor).toHaveBeenCalledTimes(1));
+    expect(servico.decidirAprovacaoGestor.mock.calls[0][0]).toMatchObject({
+      colaboradorId: 'colab-1',
+      cicloId: 'ciclo-1',
+      decisao: 'aprovado',
+    });
+    // A conclusão NÃO é usada para aprovar (são atos diferentes).
+    expect(servico.finalizarFeedback).not.toHaveBeenCalled();
+  });
+
+  it('a devolução exige justificativa (mínimo da RPC) antes de chamar a decisão', async () => {
+    const usuario = userEvent.setup();
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('gestor', true), pendente());
+
+    await usuario.click(botao(/Devolver para correção/));
+    const confirmar = await screen.findByRole('button', { name: /Confirmar devolução/ });
+    expect(confirmar).toBeDisabled();
+
+    await usuario.type(await screen.findByLabelText(/Justificativa obrigatória/i), 'Revisar os pontos de melhoria');
+    await waitFor(() => expect(confirmar).toBeEnabled());
+    await usuario.click(confirmar);
+
+    await waitFor(() => expect(servico.decidirAprovacaoGestor).toHaveBeenCalledTimes(1));
+    expect(servico.decidirAprovacaoGestor.mock.calls[0][0]).toMatchObject({
+      decisao: 'devolvido',
+      justificativa: 'Revisar os pontos de melhoria',
+    });
+  });
+
+  it('RH NÃO aprova nem devolve (a decisão é do gestor)', () => {
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('rh', false), pendente());
+    expect(screen.queryByRole('button', { name: /^Aprovar avaliação$/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Devolver para correção$/ })).toBeNull();
+  });
+
+  it('gestor NÃO responsável também não recebe a decisão em registro REAL', () => {
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('gestor', false), pendente());
+    expect(screen.queryByRole('button', { name: /^Aprovar avaliação$/ })).toBeNull();
+  });
+
+  /* ── VITRINE (mock): demonstra as ações SEM gravar nada ─────────────────── */
+  it('registro FICTÍCIO (vitrine) demonstra as ações e NÃO chama o serviço', async () => {
+    modo.real = false;
+    const usuario = userEvent.setup();
+    renderizar(montarItem({ id: 'mock-feedback-1', status: 'concluido' }), undefined, undefined, pendente());
+
+    const aprovar = screen.getByRole('button', { name: /Aprovar avaliação/ });
+    expect(aprovar).toBeInTheDocument();
+    expect(aprovar).toHaveAttribute('title', expect.stringContaining('demonstrativa'));
+    expect(screen.getByRole('button', { name: /Devolver para correção/ })).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(/Aguardando gestor/i);
+
+    await usuario.click(aprovar);
+    await waitFor(() => expect(toasts.info).toHaveBeenCalledTimes(1));
+    expect(String(toasts.info.mock.calls[0][0])).toContain('Demonstração');
+    // NADA foi enviado ao banco: nenhuma RPC, nenhum aviso de sucesso real.
+    expect(servico.decidirAprovacaoGestor).not.toHaveBeenCalled();
+    expect(toasts.success).not.toHaveBeenCalled();
+  });
+
+  it('na vitrine o RH puro NÃO recebe as ações de decisão', () => {
+    modo.real = false;
+    auth.roles = ['rh'];
+    renderizar(montarItem({ id: 'mock-feedback-2', status: 'concluido' }), undefined, undefined, pendente());
+    expect(screen.queryByRole('button', { name: /^Aprovar avaliação$/ })).toBeNull();
+  });
+
+  it('o RH só recebe "Validar Potencial" depois do aval do gestor vigente', () => {
+    auth.roles = ['rh'];
+    const item = montarItem({ status: 'concluido' });
+    // Pendente ⇒ sem validação.
+    renderizar(item, undefined, undefined, pendente());
+    expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
+    // Aprovada na mesma versão ⇒ validação disponível.
+    cleanup();
+    renderizar(item, undefined, undefined, aprovada());
+    expect(screen.getByRole('button', { name: /Validar Potencial/ })).toBeInTheDocument();
   });
 });

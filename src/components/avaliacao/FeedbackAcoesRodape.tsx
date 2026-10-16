@@ -26,7 +26,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { Ban, CheckCircle2, RotateCcw, ShieldCheck } from 'lucide-react';
+import { Ban, CheckCircle2, RotateCcw, ShieldCheck, UserCheck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -45,6 +45,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { avaliacaoService } from '@/services/avaliacaoService';
 
 import { modoRealAtivo } from './nineBoxModo';
+import { idFicticio } from './escritaOperacional';
 import { notaNaEscala } from './nineBoxConsolidacao';
 import { criarChaveIdempotente, type ChaveIdempotente } from './criacaoFeedback';
 import {
@@ -58,6 +59,7 @@ import {
 import {
   ROTULO_SITUACAO_POTENCIAL,
   acoesDisponiveis,
+  ehGestorResponsavel,
   podeValidarPotencial,
   situacaoPotencial,
   type AcaoDisponivel,
@@ -66,6 +68,11 @@ import {
   type ValidacaoPotencialLida,
 } from './acoesFeedback';
 import { tipoFeedback, type FeedbackDerivado } from './feedbacksComum';
+import {
+  MIN_CARACTERES_JUSTIFICATIVA_DEVOLUCAO,
+  validarJustificativaDevolucao,
+  type EstadoAprovacao,
+} from './aprovacaoGestor';
 
 /** Ações de status oferecidas por este rodapé. */
 type AcaoStatusRodape = 'concluir' | 'cancelar' | 'reabrir';
@@ -103,6 +110,10 @@ export interface ServicoAcoes {
   validarPotencialAvaliacao: typeof avaliacaoService.validarPotencialAvaliacao;
   listarValidacoesPotencial: typeof avaliacaoService.listarValidacoesPotencial;
   listarVersoesAvaliacao: typeof avaliacaoService.listarVersoesAvaliacao;
+  /** Vínculos (`id`, `user_id`, `supervisor_id`) — prova do gestor responsável. */
+  listarVinculos: typeof avaliacaoService.listarVinculos;
+  /** DECISÃO DA APROVAÇÃO FORMAL do gestor (aprovar/devolver) — a mesma RPC da fila. */
+  decidirAprovacaoGestor: typeof avaliacaoService.decidirAprovacaoGestor;
 }
 
 /**
@@ -117,9 +128,24 @@ export interface ServicoAcoes {
 export interface PreviewAcoes {
   servico?: ServicoAcoes;
   papel?: PapelApp;
+  /**
+   * Simula a prova de RESPONSABILIDADE (`ehGestorResponsavel`). Só existe na
+   * prévia de DEV para conferir o controle "Concluir avaliação" do gestor
+   * responsável; em produção o vínculo vem dos dados (`listarVinculos`).
+   */
+  responsavel?: boolean;
 }
 
-export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; previa?: PreviewAcoes }) {
+export function FeedbackAcoesRodape({
+  item,
+  previa,
+  estadoAprovacao,
+}: {
+  item: FeedbackDerivado;
+  previa?: PreviewAcoes;
+  /** Estado da APROVAÇÃO FORMAL — a MESMA instância da fila "Aguardando gestor". */
+  estadoAprovacao?: EstadoAprovacao | null;
+}) {
   const qc = useQueryClient();
   const { user, isAdmin } = useAuth();
   const f = (item?.feedback ?? {}) as Record<string, unknown>;
@@ -131,7 +157,19 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
 
   /* ─── Prévia local (DEV) × operação real ─────────────────────────────────── */
   const emPrevia = import.meta.env.DEV && !!previa;
-  const modoRealOuPrevia = modoRealAtivo() || emPrevia;
+  /**
+   * REGISTRO REAL × FICTÍCIO. O rodapé operacional aparece quando o feedback é
+   * um REGISTRO REAL (UUID, não `mock-*`) e foi aberto por quem opera o módulo
+   * (`admin`/`rh`). Antes exigia `modoRealAtivo()` (flag de ambiente), então com
+   * a tela aprovada em demonstração o RH não via Concluir/Cancelar/Reabrir nem
+   * Validar Potencial. Os dados fictícios continuam SEM ações — e nunca são
+   * gravados: a guarda de escrita recusa `mock-*`.
+   */
+  const registroReal = feedbackId !== '' && !idFicticio(feedbackId);
+  // Sem checagem de papel AQUI: quem já filtra por papel são os próprios botões
+  // (`acoesDisponiveis` por perfil e `podeValidarAgora` só para RH). O servidor
+  // revalida na RPC de qualquer forma.
+  const modoRealOuPrevia = modoRealAtivo() || emPrevia || registroReal;
   const servico: ServicoAcoes = previa?.servico ?? avaliacaoService;
 
   /* ─── Papel do operador (o servidor revalida de qualquer forma) ─────────── */
@@ -184,13 +222,46 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
 
   const situacao = situacaoPotencial(validacaoVigente, versaoAtual, f?.status);
 
+  /* ─── GESTOR RESPONSÁVEL (vínculo, não o tipo da avaliação) ───────────────
+     A conclusão só é oferecida a quem PROVA o vínculo: papel real `gestor` +
+     ser o `supervisor_id` do avaliado (ou o próprio avaliado). A prova vem dos
+     vínculos escopados à empresa; o servidor revalida em
+     `pode_aprovar_colaborador` antes de gravar. Sem prova, o controle não
+     aparece (fail-closed) — nem para `admin`/`rh`, que também não têm o perfil. */
+  const avaliadoId = String(f?.avaliado_id ?? '').trim();
+  const consultaVinculosAtiva =
+    modoRealOuPrevia && !emPrevia && !!empresaId && !!avaliadoId && papelStatus === 'gestor';
+  const { data: vinculos = [] } = useQuery({
+    queryKey: ['colaboradores_vinculos', empresaId],
+    queryFn: () => servico.listarVinculos(empresaId),
+    enabled: consultaVinculosAtiva,
+    retry: false,
+  });
+  const responsavel =
+    emPrevia && previa?.responsavel !== undefined
+      ? previa.responsavel === true
+      : ehGestorResponsavel({ avaliadoId, vinculos, usuarioId: user?.id });
+
   /* ─── Elegibilidade dos controles ───────────────────────────────────────── */
-  const acoes = acoesDisponiveis({ statusAtual: f?.status, papel: papelStatus });
+  const acoes = acoesDisponiveis({ statusAtual: f?.status, papel: papelStatus, responsavel });
   const conclusao = validarConclusao(f);
   const potencialValido = notaNaEscala(f?.potencial) !== null;
   const ehAvaliacaoDoGestor = tipoFeedback(f?.tipo) === 'gestor';
+  /* ─── APROVAÇÃO FORMAL — a MESMA regra/instância derivada pela fila ─────── */
+  const aprovacao = estadoAprovacao ?? null;
+  /** Solicitação de aprovação pendente para esta avaliação? */
+  const aprovacaoPendente = aprovacao?.pendente === true;
+
   const podeValidarAgora =
-    podeValidar && ehAvaliacaoDoGestor && statusAtual === 'concluido' && potencialValido && situacao !== 'validada';
+    podeValidar &&
+    ehAvaliacaoDoGestor &&
+    statusAtual === 'concluido' &&
+    potencialValido &&
+    situacao !== 'validada' &&
+    // Com o estado da aprovação disponível, o RH só valida DEPOIS do aval do
+    // gestor vigente (mesma etapa da fila); sem o estado, a regra do servidor
+    // segue valendo sozinha.
+    (!aprovacao || aprovacao.podeValidarPotencial);
   /**
    * O selo de situação só aparece para quem PODE consultar as validações (RH):
    * sem essa consulta não existe dado para afirmar "aguardando"/"validado" — e
@@ -212,6 +283,67 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
   /* ─── Estado dos diálogos de justificativa ──────────────────────────────── */
   const [motivoAberto, setMotivoAberto] = useState<'cancelar' | 'reabrir' | null>(null);
   const [motivo, setMotivo] = useState('');
+  /** Devolução da APROVAÇÃO (ação do gestor responsável) — diálogo próprio. */
+  const [devolucaoAberta, setDevolucaoAberta] = useState(false);
+  const [justificativaDevolucao, setJustificativaDevolucao] = useState('');
+
+  /* ─── APROVAÇÃO FORMAL: quem decide (o estado já foi derivado acima) ────── */
+  /**
+   * REGISTRO REAL → exige o vínculo provado (`responsavel`), reconferido no
+   * servidor por `pode_aprovar_colaborador`.
+   * REGISTRO FICTÍCIO (vitrine `mock-*`) → a decisão é DEMONSTRATIVA: os botões
+   * existem para demonstrar o fluxo, mas NADA é gravado (nenhuma RPC é chamada)
+   * e a operação é anunciada como demonstração. Exige papel de gestão
+   * (`admin`/`gestor`) — o RH puro não aprova nem na vitrine.
+   */
+  const papelDeGestao = papelStatus === 'admin' || papelStatus === 'gestor';
+  const decisaoDemonstrativa = aprovacaoPendente && !registroReal;
+  const podeDecidirAprovacao = aprovacaoPendente && (registroReal ? responsavel === true : papelDeGestao);
+  const chaveAprovacaoRef = useRef<ChaveIdempotente | null>(null);
+  if (chaveAprovacaoRef.current == null) chaveAprovacaoRef.current = criarChaveIdempotente();
+
+  const decidirAprovacao = useMutation({
+    mutationFn: (v: { decisao: 'aprovado' | 'devolvido'; justificativa?: string | null }) => {
+      // VITRINE (registro fictício): NADA vai ao banco — nem RPC, nem rede.
+      if (decisaoDemonstrativa) {
+        return Promise.resolve({ ok: true, demonstrativo: true, decisao: v.decisao });
+      }
+      const idOperacao = (chaveAprovacaoRef.current as ChaveIdempotente).para(
+        `${avaliadoId}|${cicloId}|${v.decisao}`
+      );
+      return servico.decidirAprovacaoGestor({
+        colaboradorId: avaliadoId,
+        cicloId,
+        decisao: v.decisao,
+        justificativa: v.justificativa ?? null,
+        idOperacao,
+      });
+    },
+    onSuccess: (_resposta: unknown, v) => {
+      const rotulo = v.decisao === 'devolvido' ? 'Devolver para correção' : 'Aprovar avaliação';
+      if (decisaoDemonstrativa) {
+        // Identificação CLARA da operação demonstrativa (nada foi gravado).
+        toast.info(`Demonstração: “${rotulo}” NÃO foi gravada — registro fictício (nada foi enviado ao banco).`);
+        setDevolucaoAberta(false);
+        setJustificativaDevolucao('');
+        return;
+      }
+      chaveAprovacaoRef.current?.confirmar();
+      // Fila, contador, versão e lista passam a refletir a MESMA decisão.
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
+      qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
+      setDevolucaoAberta(false);
+      setJustificativaDevolucao('');
+      toast.success(v.decisao === 'devolvido' ? 'Avaliação devolvida para correção.' : 'Avaliação aprovada pelo gestor!');
+    },
+    onError: (erro: unknown) => {
+      toast.error(`Decisão NÃO registrada: ${mensagemDeErro(erro)}`);
+    },
+  });
+
+  const minimaDevolucao = !validarJustificativaDevolucao(justificativaDevolucao).pode;
 
   /* ─── Escritas (RPC transacional; nada otimista) ────────────────────────── */
   const finalizar = useMutation({
@@ -264,7 +396,7 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
   });
 
   /* ─── Envios (validam o texto ANTES de chamar a RPC) ────────────────────── */
-  const emAndamento = finalizar.isPending || validarPotencial.isPending;
+  const emAndamento = finalizar.isPending || validarPotencial.isPending || decidirAprovacao.isPending;
 
   function concluir() {
     if (!conclusao.podeConcluir) {
@@ -294,32 +426,71 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
     finalizar.mutate({ acao: 'reabrir', observacao: texto, chave: chaveDe('reabrir', texto) });
   }
 
-  /* Em demonstração o bloco NÃO existe: experiência atual preservada. */
-  /* Sem modo real E sem prévia local (DEV): o bloco não existe — a experiência
-     visual atual fica preservada e nenhuma escrita é disparada. */
-  if (!modoRealOuPrevia) return null;
+  /* Sem modo real, sem prévia local (DEV) e SEM estado de aprovação a mostrar, o
+     bloco não existe — a experiência visual atual fica preservada e nenhuma
+     escrita é disparada. Havendo SOLICITAÇÃO DE APROVAÇÃO, o selo do estado
+     aparece em qualquer modo (é ESTADO, não escrita): era exatamente aqui que o
+     modal discordava da fila "Aguardando gestor". */
+  if (!modoRealOuPrevia && !aprovacao) return null;
 
   return (
     <>
       <Separator className="bg-border/50" />
 
       <div className="flex flex-col gap-3">
-        {/* Indicador discreto da situação do Potencial (avaliação do gestor). */}
-        {mostrarSituacao && (
+        {/* Selo do estado — MESMO controle, uma única regra: quando existe
+            aprovação formal, ele mostra o estado da APROVAÇÃO; sem ela (e para
+            o RH), segue mostrando a situação do Potencial. */}
+        {(aprovacao || mostrarSituacao) && (
           <span
             role="status"
             className={cn(
               'inline-flex h-6 w-fit items-center gap-1.5 rounded-md border px-2 text-[10px] font-medium uppercase tracking-wide',
-              TOM_SITUACAO[situacao]
+              aprovacao ? aprovacao.tom : TOM_SITUACAO[situacao]
             )}
           >
             <ShieldCheck className="h-3 w-3" />
-            {ROTULO_SITUACAO_POTENCIAL[situacao]}
+            {aprovacao ? aprovacao.rotulo : ROTULO_SITUACAO_POTENCIAL[situacao]}
           </span>
         )}
 
         <div className="flex flex-wrap justify-end gap-2">
-          {acoes.map((a: AcaoDisponivel) => {
+          {/* DECISÃO DO GESTOR RESPONSÁVEL — reusa os MESMOS controles aprovados
+              da fila (Aprovar / Devolver + diálogo de justificativa). */}
+          {podeDecidirAprovacao && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                disabled={emAndamento}
+                title={decisaoDemonstrativa ? 'Operação demonstrativa — nada é gravado no banco' : undefined}
+                onClick={() => {
+                  setJustificativaDevolucao('');
+                  setDevolucaoAberta(true);
+                }}
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                Devolver para correção
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 border-success/45 bg-success/15 text-xs text-success hover:bg-success/25 hover:text-success"
+                disabled={emAndamento}
+                title={decisaoDemonstrativa ? 'Operação demonstrativa — nada é gravado no banco' : undefined}
+                onClick={() => decidirAprovacao.mutate({ decisao: 'aprovado', justificativa: null })}
+              >
+                <UserCheck className="h-3.5 w-3.5" />
+                Aprovar avaliação
+              </Button>
+            </>
+          )}
+          {/* Ações de CONCLUSÃO/CANCELAMENTO/REABERTURA seguem exigindo o MODO
+              OPERÁVEL (registro real ou prévia): um registro fictício exibe
+              apenas o estado, nunca um controle de escrita. */}
+          {modoRealOuPrevia &&
+            acoes.map((a: AcaoDisponivel) => {
             const estilo = ESTILO_ACAO[a.acao as AcaoStatusRodape];
             const Icone = estilo.icone;
             const bloqueio = !a.disponivel
@@ -351,7 +522,7 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
             );
           })}
 
-          {podeValidarAgora && (
+          {modoRealOuPrevia && podeValidarAgora && (
             <Button
               variant="outline"
               size="sm"
@@ -437,6 +608,75 @@ export function FeedbackAcoesRodape({ item, previa }: { item: FeedbackDerivado; 
                 : motivoAberto === 'cancelar'
                   ? 'Confirmar cancelamento'
                   : 'Confirmar reabertura'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* DECISÃO DA APROVAÇÃO — devolução exige justificativa (mesmo mínimo da
+          RPC e do diálogo aprovado na fila "Aguardando gestor"). */}
+      <Dialog
+        open={devolucaoAberta}
+        onOpenChange={(aberto) => {
+          if (!aberto) {
+            setDevolucaoAberta(false);
+            setJustificativaDevolucao('');
+          }
+        }}
+      >
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display text-base">Devolver para correção</DialogTitle>
+            <DialogDescription className="text-[11px]">
+              {item.avaliado} · {item.tipoRotulo} · {item.data}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-1.5">
+            <Label
+              htmlFor={`devolucao-${feedbackId}`}
+              className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground"
+            >
+              Justificativa obrigatória
+            </Label>
+            <Textarea
+              id={`devolucao-${feedbackId}`}
+              value={justificativaDevolucao}
+              rows={3}
+              disabled={emAndamento}
+              onChange={(e) => setJustificativaDevolucao(e.target.value)}
+              placeholder="Explique o que precisa ser corrigido antes da aprovação"
+            />
+            <p className="text-[10px] leading-relaxed text-muted-foreground">
+              A avaliação volta para o RH corrigir e reenviar (mínimo de {MIN_CARACTERES_JUSTIFICATIVA_DEVOLUCAO}{' '}
+              caracteres). O histórico é preservado.
+            </p>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 text-xs"
+              disabled={emAndamento}
+              onClick={() => {
+                setDevolucaoAberta(false);
+                setJustificativaDevolucao('');
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="h-8 text-xs"
+              disabled={emAndamento || minimaDevolucao}
+              onClick={() => {
+                if (minimaDevolucao) return;
+                decidirAprovacao.mutate({ decisao: 'devolvido', justificativa: justificativaDevolucao.trim() });
+              }}
+            >
+              {emAndamento ? 'Enviando…' : 'Confirmar devolução'}
             </Button>
           </DialogFooter>
         </DialogContent>

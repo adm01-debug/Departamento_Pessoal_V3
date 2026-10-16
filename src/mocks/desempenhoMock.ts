@@ -34,10 +34,29 @@
 import { toast } from 'sonner';
 import { MOCK_COLABORADORES, MOCK_EMPRESA } from './colaboradoresMock';
 import { addDaysLocal, formatDateLocalISO } from '@/utils/dateLocal';
+// Portão do modo real do Nine-Box. Quando ele está LIGADO, o módulo de Desempenho
+// lê/grava no banco e os mocks do módulo ficam inertes — SEM desligar os mocks das
+// outras telas do sistema (cada uma tem a sua própria flag).
+import { modoRealAtivo } from '@/components/avaliacao/nineBoxModo';
 
-/** Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */
+/**
+ * Ativa o mock do módulo apenas em dev, com o opt-in explícito da env var E com o
+ * modo real do Nine-Box DESLIGADO.
+ *
+ * O `&& !modoRealAtivo()` é a DESACOPLAGEM: antes, para operar o Nine-Box com
+ * dados reais era preciso `VITE_DESEMPENHO_MOCK=false`, o que apagava também a
+ * demonstração de Feedbacks/PDI/Ciclos/Metas/Auditoria. Agora o **modo real tem
+ * precedência** dentro deste módulo: basta `VITE_NINEBOX_MODO_REAL=true` para o
+ * Desempenho usar o banco, mantendo `VITE_DESEMPENHO_MOCK=true` como padrão
+ * demonstrativo aprovado (e as demais telas intactas).
+ */
 export function isDesempenhoMockEnabled(): boolean {
-  return import.meta.env.DEV && import.meta.env.MODE !== 'test' && import.meta.env.VITE_DESEMPENHO_MOCK === 'true';
+  return (
+    import.meta.env.DEV &&
+    import.meta.env.MODE !== 'test' &&
+    import.meta.env.VITE_DESEMPENHO_MOCK === 'true' &&
+    !modoRealAtivo()
+  );
 }
 
 const EMPRESA = MOCK_EMPRESA.id;
@@ -345,7 +364,10 @@ export function getMockDesempenhoAudit(): DesempenhoAuditMock[] | undefined {
  * `if (bloquearEscritaDesempenho('...')) return;`.
  */
 export function bloquearEscritaDesempenho(acao: string): boolean {
-  if (!isDesempenhoMockEnabled()) return false;
-  toast.info(`Modo demonstração: "${acao}" não é gravado — os dados de desempenho exibidos são fictícios.`);
-  return true;
+  // A demonstração NÃO bloqueia mais a gravação: os mocks servem para
+  // VISUALIZAÇÃO. A proteção real é a de ID FICTÍCIO (`mock-*`), aplicada em
+  // `exigirEscritaOperacional` antes de qualquer chamada de rede — o formulário
+  // só grava com IDs reais (UUID). `acao` fica para diagnóstico/telemetria.
+  void acao;
+  return false;
 }

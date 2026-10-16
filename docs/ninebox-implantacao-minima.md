@@ -31,7 +31,7 @@ Dois arquivos, ambos `begin; set transaction read only; … rollback;` (zero esc
 |---|---|
 | `docs/ninebox-validacao-banco.sql` (Q1–Q16) | papéis RH/admin (Q1, Q13); estrutura de permissões e `user_roles` (Q2, Q2b, Q15); policies/RLS de `feedbacks_360` (Q5b, Q9b, Q10) e policies **sem filtro de empresa** (Q12); tabelas usadas (Q5c); funções/helpers (Q3, Q16); auditoria (Q4, Q4b, Q4c); dependências das RPCs (Q6, Q14, Q14b); **objetos da migration que já existem** (Q7, Q16) |
 | `docs/ninebox-divergencias-migrations.sql` (**novo**, D1–D6) | se as duas migrations do Nine-Box **já foram aplicadas**; última versão aplicada; se algo foi aplicado depois; **pré-requisitos existem aqui** (tabelas/funções, policy `feedbacks_360_insert` com o nome esperado, as 13 colunas usadas) |
-| `docs/ninebox-pre-aplicacao.sql` (**novo**, gate `B1–B8`/`A1–A3` + `BASE` + diagnóstico `D1–D4`) | **antes** de aplicar: consolida os bloqueios num único `pode_aplicar` (tabela alvo, etapa 1 já aplicada, papéis, `get_user_empresas`, `audit_log`, vínculo admin/rh, dono da tabela, **contexto empresarial dos colaboradores/ciclos**), avisa sobre locks concorrentes, registra o estado ATUAL do `TRUNCATE` (a prova do "antes") e traz o **diagnóstico agregado e sem dados pessoais** `D1–D4` (colaboradores sem empresa, ciclos sem empresa, referências de empresa inconsistentes no histórico e compatibilidade com as novas validações da RPC) |
+| `docs/ninebox-pre-aplicacao.sql` (**novo**, gate `B1–B9`/`A1–A3` + `BASE` + diagnóstico `D1–D4`) | **antes** de aplicar: consolida os bloqueios num único `pode_aplicar` (tabela alvo, etapa 1 já aplicada, papéis, `get_user_empresas`, `audit_log`, vínculo admin/rh, dono da tabela, **contexto empresarial dos colaboradores/ciclos**, **policies inesperadas em `feedbacks_360`**), avisa sobre locks concorrentes, registra o estado ATUAL do `TRUNCATE` (a prova do "antes") e traz o **diagnóstico agregado e sem dados pessoais** `D1–D4` (colaboradores sem empresa, ciclos sem empresa, referências de empresa inconsistentes no histórico e compatibilidade com as novas validações da RPC) |
 | `docs/ninebox-verificacao-truncate.sql` (**novo**, T1–T9 + `ACEITE`) | **pós-**migration: se o `TRUNCATE` de `feedbacks_360` está de fato revogado para `anon`/`authenticated`/PUBLIC (via `has_table_privilege` + ACL cru), se **algum papel herdado** ou um `WITH GRANT OPTION` ainda o concede, se uma função `SECURITY DEFINER` trunca (caminho indireto), se o dono da tabela ou os default privileges reabririam o furo, e se os caminhos de RH/proprietário (SELECT + RPCs) seguem intactos |
 
 **Devolver:** saída de **Q1, Q5b, Q7, Q13, Q16** e de **D1, D2, D4, D5, D6**.
@@ -112,6 +112,7 @@ Rodar `docs/ninebox-pre-aplicacao.sql` e exigir **`pode_aplicar = true`**
 | B6 | **nenhum** usuário com papel `admin`/`rh` | risco R1: a criação passaria a falhar para todos |
 | B7 | dono de `feedbacks_360` é papel de aplicação | o dono tem TRUNCATE implícito: a invariante §3b nunca passaria |
 | B8 | alguma empresa **com feedback** não tem colaborador **ou** não tem ciclo com o mesmo `empresa_id` | a validação §7 da RPC passa a exigir os dois ⇒ a CRIAÇÃO ficaria impossível nessa empresa |
+| B9 | existe policy em `feedbacks_360` com nome **diferente** das quatro conhecidas (`feedbacks_360_insert/_select/_delete/_update`) | a migration troca exatamente essas quatro; uma policy extra sobreviveria ao `drop policy if exists` e manteria acesso residual |
 
 Além dos bloqueios, o mesmo arquivo traz o **diagnóstico agregado (sem dados
 pessoais) `D1–D4`**: colaboradores com `empresa_id` nulo, ciclos com `empresa_id`
@@ -170,11 +171,12 @@ commit;         -- última linha do arquivo
    `T8b` **vazios**; `T1` sem `pode_truncate = true` em `anon`/`authenticated`.
 2. `Q7`/`Q16` agora **true**; `D1` confirmando que as migrations constam como
    aplicadas.
-3. `docs/ninebox-testes-seguranca.sql` — 24 casos, `falhas = 0`. Os casos **20–24**
-   cobrem exatamente as correções da revisão: reenvio idempotente sem papel,
-   nota fora da escala 1–5, reabertura invalidando a validação do RH, exigência
-   de NOVA validação de Potencial após a reabertura e `avaliado_id` de outra
-   empresa.
+3. `docs/ninebox-testes-seguranca.sql` — 28 casos, `falhas = 0`. Os casos **20–28**
+   cobrem as correções da revisão: reenvio idempotente sem papel, nota fora da
+   escala 1–5, reabertura invalidando a validação do RH, exigência de NOVA
+   validação de Potencial, `avaliado_id` de outra empresa, **trilha vinculada à
+   empresa**, **Potencial obrigatório só para o gestor**, **revisão invalidando
+   dentro da mesma transação** e **histórico preservado (FK RESTRICT)**.
 4. Fluxo real (criar → concluir → cancelar → reabrir → validar Potencial) e
    **1 linha em `audit_log` por operação**.
 
@@ -212,7 +214,7 @@ reabre escrita direta sem auditoria.
 |---|---|---|
 | 1 | Estrutural | `docs/ninebox-validacao-banco.sql` (`Q7/Q16` agora `true`) |
 | 1b | **Privilégio TRUNCATE (P1)** | `docs/ninebox-verificacao-truncate.sql` — `RESULTADO.falhas = 0`; T1 não pode trazer `anon`/`authenticated` com `pode_truncate = true`; T3 deve voltar **vazio** (nenhuma herança concedendo) |
-| 2 | Segurança/RLS | `docs/ninebox-testes-seguranca.sql` — 24 casos, `falhas = 0` |
+| 2 | Segurança/RLS | `docs/ninebox-testes-seguranca.sql` — 28 casos, `falhas = 0` |
 | 3 | Fluxo real | criar → concluir → cancelar (com motivo) → reabrir (com justificativa) → validar Potencial (usuário `rh`) |
 | 4 | Auditoria | **1 linha em `audit_log` por operação**, com status anterior/novo |
 | 5 | Idempotência/concorrência | mesma chave 2× (1 registro) e C1–C6 do anexo de `docs/ninebox-proposta-controles-feedback.md`, em duas sessões |

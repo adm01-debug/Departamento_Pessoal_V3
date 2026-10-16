@@ -1,0 +1,169 @@
+npm notice run departamento-pessoal@18.0.1 npx
+npm notice run vitest run src/services/__tests__/avaliacaoCriacaoSegura.test.ts src/components/__tests__/EscritaOperacional.test.ts src/components/__tests__/NineBox360.test.tsx
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:40:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+[vite:react-swc] We recommend switching to `@vitejs/plugin-react` for improved performance as no swc plugins are used. More information at https://vite.dev/rolldown
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/artes03/Desktop/departamento-pessoal-v2-main[39m
+
+ [31mÔØ»[39m src/components/__tests__/EscritaOperacional.test.ts [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 15[2mms[22m[39m
+     [32mÔ£ô[39m reconhece identificadores de demonstra├º├úo[32m 2[2mms[22m[39m
+     [32mÔ£ô[39m n├úo trata vazio/nulo como fict├¡cio[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m aponta os campos ofensivos[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m devolve lista vazia quando todos os ids s├úo reais[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m libera ids reais[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m bloqueia identificador fict├¡cio e diz em QUAL campo[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m bloqueia TUDO quando a demonstra├º├úo est├í ligada, mesmo com id real[39m[32m 6[2mms[22m[39m
+     [32mÔ£ô[39m a guarda de dado fict├¡cio n├úo acusa campo vazio[32m 0[2mms[22m[39m
+ [31mÔØ»[39m src/services/__tests__/avaliacaoCriacaoSegura.test.ts [2m([22m[2m19 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 37[2mms[22m[39m
+[31m     [31m├ù[31m criarFeedbackSeguro lan├ºa e N├âO chama a RPC[39m[32m 18[2mms[22m[39m
+[31m     [31m├ù[31m finalizarFeedback lan├ºa e n├úo grava[39m[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m validarPotencialAvaliacao lan├ºa e n├úo grava[39m[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m a mensagem deixa claro que nada foi simulado[39m[32m 3[2mms[22m[39m
+     [32mÔ£ô[39m envia o payload EXATO para criar_feedback_seguro[32m 2[2mms[22m[39m
+     [32mÔ£ô[39m Potencial e avaliador ausentes viram NULL (n├úo undefined)[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m REENVIO com a mesma chave manda a MESMA idempot├¬ncia (n├úo duplica)[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m erro da RPC (autoriza├º├úo/valida├º├úo) ├® propagado com a mensagem REAL[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m falha de REDE ├® propagada (nada de sucesso falso)[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m finalizarFeedback envia a├º├úo, motivo e chave[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m validarPotencialAvaliacao envia observa├º├úo e chave[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m MESMO em modo real, id fict├¡cio ├® bloqueado ANTES da rede[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m empresa fict├¡cia (`mock-empresa-1`) tamb├®m ├® bloqueada[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m a├º├Áes de status/valida├º├úo com feedback fict├¡cio ficam bloqueadas[32m 0[2mms[22m[39m
+[31m     [31m├ù[31m modo demonstra├º├úo ligado bloqueia tudo, com motivo pr├│prio[39m[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m INSERT direto legado (criarFeedback) tamb├®m respeita a guarda[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m criarFeedback com dados REAIS segue gravando (nada mudou por acidente)[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m excluirFeedback recusa e N├âO fala com o banco[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m recusa antes de tudo quando falta a empresa (isolamento de tenant)[32m 0[2mms[22m[39m
+ [31mÔØ»[39m src/components/__tests__/NineBox360.test.tsx [2m([22m[2m13 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 31[2mms[22m[39m
+     [32mÔ£ô[39m agrupa por categoria e aplica os pesos aprovados (4,26)[32m 4[2mms[22m[39m
+     [32mÔ£ô[39m mapeia os tipos para as quatro categorias (inclui varia├º├Áes)[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m sem gestor n├úo classifica, mesmo com as demais categorias presentes[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m feedback pendente n├úo entra como gestor conclu├¡do[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m substitui├º├úo dentro da categoria ├® sinalizada e o mais recente prevalece[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m sem valida├º├úo do RH o colaborador fica pendente de valida├º├úo[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m classifica com a valida├º├úo do RH na forma CRUA do banco (snake_case)[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m valida├º├úo de OUTRA vers├úo n├úo classifica (aprova├º├úo desatualizada)[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m o adaptador entrega a forma da interface (quadrante + motivo preservados)[32m 2[2mms[22m[39m
+     [32mÔ£ô[39m sem classifica├º├úo, o adaptador exp├Áe o motivo (nada de quadrante inventado)[32m 1[2mms[22m[39m
+     [32mÔ£ô[39m o modo ├® demonstra├º├úo por padr├úo[32m 0[2mms[22m[39m
+     [32mÔ£ô[39m opera├º├Áes de banco lan├ºam erro claro em vez de simular sucesso[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m com o modo real DESLIGADO o servi├ºo nem chama a RPC[39m[32m 18[2mms[22m[39m
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ» Failed Tests 7 ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»
+
+ FAIL  src/components/__tests__/EscritaOperacional.test.ts > escritaOperacional.exigirEscritaOperacional > bloqueia TUDO quando a demonstra├º├úo est├í ligada, mesmo com id real
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ÔØ» src/components/__tests__/EscritaOperacional.test.ts:82:33
+     80|   it('bloqueia TUDO quando a demonstra├º├úo est├í ligada, mesmo com id reÔÇª
+     81|     mockDemo.ativo = true;
+     82|     expect(demonstracaoEmUso()).toBe(true);
+       |                                 ^
+     83|     let erro: unknown = null;
+     84|     try {
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[1/7]ÔÄ»
+
+ FAIL  src/components/__tests__/NineBox360.test.tsx > fase E ┬À contrato das RPCs (respostas SIMULADAS ÔÇö n├úo ├® homologa├º├úo) > com o modo real DESLIGADO o servi├ºo nem chama a RPC
+AssertionError: expected TypeError: Cannot destructure property 'dÔÇª to match object { name: 'ModoRealIndisponivelError' }
+
+- Expected
++ Received
+
+- {
+-   "name": "ModoRealIndisponivelError",
++ TypeError {
++   "message": "Cannot destructure property 'data' of '(intermediate value)' as it is undefined.",
+  }
+
+ ÔØ» src/components/__tests__/NineBox360.test.tsx:233:101
+    231|     // classe muda entre inst├óncias do registry.
+    232|     await expect(
+    233|       avaliacaoService.finalizarFeedback({ feedbackId: 'fb-1', acao: 'ÔÇª
+       |                                                                                                     ^
+    234|     ).rejects.toMatchObject({ name: 'ModoRealIndisponivelError' });
+    235|     expect(rpc).not.toHaveBeenCalled();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[2/7]ÔÄ»
+
+ FAIL  src/services/__tests__/avaliacaoCriacaoSegura.test.ts > modo real DESLIGADO (padr├úo do c├│digo) > criarFeedbackSeguro lan├ºa e N├âO chama a RPC
+AssertionError: expected TypeError: Cannot destructure property 'dÔÇª to be an instance of ModoRealIndisponivelError
+ ÔØ» src/services/__tests__/avaliacaoCriacaoSegura.test.ts:87:55
+     85| describe('modo real DESLIGADO (padr├úo do c├│digo)', () => {
+     86|   it('criarFeedbackSeguro lan├ºa e N├âO chama a RPC', async () => {
+     87|     await expect(avaliacaoService.criarFeedbackSeguro(PARAMS)).rejectsÔÇª
+       |                                                       ^
+     88|     expect(mockRpc).not.toHaveBeenCalled();
+     89|     expect(mockFrom).not.toHaveBeenCalled();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[3/7]ÔÄ»
+
+ FAIL  src/services/__tests__/avaliacaoCriacaoSegura.test.ts > modo real DESLIGADO (padr├úo do c├│digo) > finalizarFeedback lan├ºa e n├úo grava
+AssertionError: expected TypeError: Cannot destructure property 'dÔÇª to be an instance of ModoRealIndisponivelError
+ ÔØ» src/services/__tests__/avaliacaoCriacaoSegura.test.ts:94:99
+     92|   it('finalizarFeedback lan├ºa e n├úo grava', async () => {
+     93|     await expect(
+     94|       avaliacaoService.finalizarFeedback({ feedbackId: 'f1', acao: 'coÔÇª
+       |                                                                                                   ^
+     95|     ).rejects.toBeInstanceOf(ModoRealIndisponivelError);
+     96|     expect(mockRpc).not.toHaveBeenCalled();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[4/7]ÔÄ»
+
+ FAIL  src/services/__tests__/avaliacaoCriacaoSegura.test.ts > modo real DESLIGADO (padr├úo do c├│digo) > validarPotencialAvaliacao lan├ºa e n├úo grava
+AssertionError: expected TypeError: Cannot destructure property 'dÔÇª to be an instance of ModoRealIndisponivelError
+ ÔØ» src/services/__tests__/avaliacaoCriacaoSegura.test.ts:101:89
+     99|   it('validarPotencialAvaliacao lan├ºa e n├úo grava', async () => {
+    100|     await expect(
+    101|       avaliacaoService.validarPotencialAvaliacao({ feedbackId: 'f1', iÔÇª
+       |                                                                                         ^
+    102|     ).rejects.toBeInstanceOf(ModoRealIndisponivelError);
+    103|     expect(mockRpc).not.toHaveBeenCalled();
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[5/7]ÔÄ»
+
+ FAIL  src/services/__tests__/avaliacaoCriacaoSegura.test.ts > modo real DESLIGADO (padr├úo do c├│digo) > a mensagem deixa claro que nada foi simulado
+AssertionError: expected [Function] to throw error matching /Nenhuma grava├º├úo foi simulada/ but got 'Cannot destructure property \'data\' ÔÇª'
+
+- Expected:
+/Nenhuma grava├º├úo foi simulada/
+
++ Received:
+"Cannot destructure property 'data' of '(intermediate value)' as it is undefined."
+
+ ÔØ» src/services/__tests__/avaliacaoCriacaoSegura.test.ts:107:55
+    105|
+    106|   it('a mensagem deixa claro que nada foi simulado', async () => {
+    107|     await expect(avaliacaoService.criarFeedbackSeguro(PARAMS)).rejectsÔÇª
+       |                                                       ^
+    108|   });
+    109| });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[6/7]ÔÄ»
+
+ FAIL  src/services/__tests__/avaliacaoCriacaoSegura.test.ts > guarda de escrita operacional (id fict├¡cio / demonstra├º├úo) > modo demonstra├º├úo ligado bloqueia tudo, com motivo pr├│prio
+TypeError: Cannot read properties of null (reading 'motivo')
+ ÔØ» src/services/__tests__/avaliacaoCriacaoSegura.test.ts:265:44
+    263|       erro = e;
+    264|     }
+    265|     expect((erro as EscritaBloqueadaError).motivo).toBe('demonstracao'ÔÇª
+       |                                            ^
+    266|     expect(mockRpc).not.toHaveBeenCalled();
+    267|   });
+
+ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»ÔÄ»[7/7]ÔÄ»
+
+
+[2m Test Files [22m [1m[31m3 failed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m7 failed[39m[22m[2m | [22m[1m[32m33 passed[39m[22m[90m (40)[39m
+[2m   Start at [22m 17:55:48
+[2m   Duration [22m 2.09s[2m (transform 366ms, setup 780ms, import 364ms, tests 82ms, environment 3.72s)[22m
+

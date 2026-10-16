@@ -1,0 +1,118 @@
+{
+  "usuario": "2a1f0c4f-7587-49a7-81aa-e7e35cf0848d",
+  "tabelas": {
+    "feedbacks_360_aprovacoes_gestor": {
+      "existe": false,
+      "codigo": "PGRST205",
+      "mensagem": "Could not find the table 'public.feedbacks_360_aprovacoes_gestor' in the schema cache"
+    },
+    "feedbacks_360_consolidacoes": {
+      "existe": false,
+      "codigo": "PGRST205",
+      "mensagem": "Could not find the table 'public.feedbacks_360_consolidacoes' in the schema cache"
+    },
+    "feedbacks_360_validacoes_potencial": {
+      "existe": true
+    },
+    "feedbacks_360_operacoes": {
+      "existe": false,
+      "codigo": "42703",
+      "mensagem": "column feedbacks_360_operacoes.id does not exist"
+    }
+  },
+  "estrutura": {
+    "aprovacoes": {
+      "ok": false,
+      "codigo": "PGRST205",
+      "mensagem": "Could not find the table 'public.feedbacks_360_aprovacoes_gestor' in the schema cache"
+    },
+    "consolidacoes": {
+      "ok": false,
+      "codigo": "PGRST205",
+      "mensagem": "Could not find the table 'public.feedbacks_360_consolidacoes' in the schema cache"
+    },
+    "validacoesPotencial": {
+      "ok": true
+    },
+    "operacoes": {
+      "ok": true
+    }
+  },
+  "contagens": {
+    "feedbacks360": {
+      "total": 0
+    },
+    "ciclos": {
+      "total": 0
+    },
+    "colaboradores": {
+      "total": 16
+    }
+  },
+  "feedbacksReais": [],
+  "ciclos": [],
+  "leiturasModoReal": {
+    "vw_feedbacks_360_versao": {
+      "ok": true
+    },
+    "feedbacks_360_select": {
+      "ok": true
+    }
+  },
+  "colaboradoresHomolog": [
+    {
+      "id": "0f303507-5b13-4ca2-aa76-16122b5b37e9",
+      "nome_completo": "HOMOLOG-NB Colaborador Descartavel",
+      "empresa_id": "66104399-aba8-4105-bbd3-9bf67820c1d0",
+      "supervisor_id": null,
+      "user_id": null,
+      "status": "ativo",
+      "cargo": "HOMOLOG-NB Cargo"
+    }
+  ],
+  "avaliacoesDoGestorConcluidas": [],
+  "consolidacoesExistentes": {
+    "erro": "PGRST205"
+  },
+  "aprovacoesExistentes": {
+    "erro": "PGRST205"
+  },
+  "rpcs": {
+    "pode_aprovar_colaborador": {
+      "existe": false,
+      "codigo": "PGRST202",
+      "mensagem": "Could not find the function public.pode_aprovar_colaborador(p_colaborador_id) in the schema cache"
+    },
+    "pode_gerir_avaliacoes": {
+      "existe": true,
+      "resposta": true
+    },
+    "pode_validar_potencial": {
+      "existe": true,
+      "resposta": false
+    },
+    "versao_avaliacao_feedback": {
+      "existe": true,
+      "resposta": null
+    }
+  },
+  "empresasDoUsuario": [
+    {
+      "empresa_id": "66104399-aba8-4105-bbd3-9bf67820c1d0",
+      "is_default": true
+    },
+    {
+      "empresa_id": "61e7d382-549f-4b17-afa4-4578ebc919f3",
+      "is_default": false
+    }
+  ],
+  "papeisDoUsuario": [
+    {
+      "role": "admin"
+    },
+    {
+      "role": "gestor"
+    }
+  ],
+  "colaboradorDoUsuario": []
+}

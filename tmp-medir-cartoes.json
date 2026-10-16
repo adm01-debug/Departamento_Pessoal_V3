@@ -1,0 +1,209 @@
+{
+  "cartoes": [
+    {
+      "altura": 111,
+      "largura": 222,
+      "conteudo": [
+        {
+          "tag": "span",
+          "classe": "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+          "altura": 36,
+          "filhos": [
+            {
+              "tag": "svg",
+              "altura": 16,
+              "texto": ""
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "classe": "flex min-w-0 flex-col gap-1",
+          "altura": 58,
+          "filhos": [
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Total Aprovado"
+            },
+            {
+              "tag": "p",
+              "altura": 24,
+              "texto": "R$ 7.950,00"
+            },
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Sem base de comparação"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "altura": 111,
+      "largura": 222,
+      "conteudo": [
+        {
+          "tag": "span",
+          "classe": "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+          "altura": 36,
+          "filhos": [
+            {
+              "tag": "svg",
+              "altura": 16,
+              "texto": ""
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "classe": "flex min-w-0 flex-col gap-1",
+          "altura": 58,
+          "filhos": [
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Pendente de Aprovação"
+            },
+            {
+              "tag": "p",
+              "altura": 24,
+              "texto": "R$ 7.050,50"
+            },
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "6 pagamentos pendentes"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "altura": 111,
+      "largura": 222,
+      "conteudo": [
+        {
+          "tag": "span",
+          "classe": "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+          "altura": 36,
+          "filhos": [
+            {
+              "tag": "svg",
+              "altura": 16,
+              "texto": ""
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "classe": "flex min-w-0 flex-col gap-1",
+          "altura": 58,
+          "filhos": [
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Campanhas Ativas"
+            },
+            {
+              "tag": "p",
+              "altura": 24,
+              "texto": "2"
+            },
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "de 4 campanhas"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "altura": 111,
+      "largura": 222,
+      "conteudo": [
+        {
+          "tag": "span",
+          "classe": "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+          "altura": 36,
+          "filhos": [
+            {
+              "tag": "svg",
+              "altura": 16,
+              "texto": ""
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "classe": "flex min-w-0 flex-col gap-1",
+          "altura": 58,
+          "filhos": [
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Conciliação (Divergências)"
+            },
+            {
+              "tag": "p",
+              "altura": 24,
+              "texto": "1"
+            },
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Requer atenção na auditoria"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "altura": 111,
+      "largura": 222,
+      "conteudo": [
+        {
+          "tag": "div",
+          "classe": "flex items-start gap-2.5",
+          "altura": 36,
+          "filhos": [
+            {
+              "tag": "span",
+              "altura": 36,
+              "texto": ""
+            },
+            {
+              "tag": "p",
+              "altura": 13,
+              "texto": "Visão geral"
+            },
+            {
+              "tag": "button",
+              "altura": 14,
+              "texto": ""
+            }
+          ]
+        },
+        {
+          "tag": "p",
+          "classe": "text-[10.5px] leading-tight",
+          "altura": 13,
+          "filhos": []
+        },
+        {
+          "tag": "p",
+          "classe": "text-[9.5px] leading-tight text-muted-foreground",
+          "altura": 24,
+          "filhos": []
+        }
+      ]
+    }
+  ],
+  "itensPainel": [
+    78,
+    78,
+    62
+  ]
+}

@@ -48,12 +48,38 @@ set transaction read only;
 --   B8  toda empresa que JÁ TEM feedback tem colaborador E ciclo com o MESMO
 --       `empresa_id` — é o que a validação §7 da RPC de criação passa a exigir.
 --       Se faltar um dos dois, a CRIAÇÃO fica impossível para essa empresa;
+--   B9  `feedbacks_360` não tem policy com nome DIFERENTE das quatro conhecidas
+--       (`feedbacks_360_insert/_select/_delete/_update`). A migration troca
+--       exatamente essas quatro; uma policy extra (nome antigo/divergente)
+--       sobreviveria ao `drop policy if exists` e manteria acesso residual;
+--   B10 `audit_log` tem as 8 colunas que as 3 RPCs gravam (`tabela`,
+--       `registro_id`, `acao`, `dados_anteriores`, `dados_novos`,
+--       `campos_alterados`, `user_id`, `user_email`). Sem elas, a trilha da
+--       criação/finalização/validação falharia e a transação inteira reverteria.
+--       A 9ª coluna gravada (`empresa_id`) NÃO entra aqui de propósito: a própria
+--       migration a GARANTE (`ADD COLUMN IF NOT EXISTS`, §0g), então ela não é
+--       pré-requisito deste gate — já existir é só informação (ver A4);
 --   A1  AVISO: nenhuma outra sessão segurando lock na tabela (o
 --       DROP/CREATE POLICY + REVOKE exigem ACCESS EXCLUSIVE durante toda a
 --       transação);
 --   A2  AVISO: RLS ligada na tabela;
 --   A3  AVISO: funções `SECURITY DEFINER` truncando FORA de `public`
---       (informação; a superfície deste módulo é `public`).
+--       (informação; a superfície deste módulo é `public`);
+--   A4  AVISO: `audit_log` já TEM a coluna `empresa_id`? A forma canônica do
+--       repositório a CRIA (`20260712214644`, `ALTER TABLE … ADD COLUMN IF NOT
+--       EXISTS empresa_id`) e é ela que a policy de leitura da trilha
+--       (`audit_log_tenant_select`) e a RPC `listar_auditoria` usam para o
+--       recorte por empresa. A migration do Nine-Box GARANTE essa coluna
+--       (idempotente, §0g) e passa a gravar a empresa NELA, além de
+--       `dados_novos.empresa_id`. Este A4 é só informativo: reporta o estado
+--       atual (é indiferente para a aplicação, pois a migration cria a coluna
+--       se faltar);
+--   A5  AVISO: nenhum feedback PENDENTE com categoria fora das 4 do 360 (a
+--       finalização passou a recusar `categoria_invalida`);
+--   A6  AVISO: nenhum feedback **gestor** pendente SEM Potencial (a finalização
+--       passou a exigir Potencial do gestor — ver §3/§6.1);
+--   A7  AVISO: nenhuma FK das tabelas de apoio ainda em `ON DELETE CASCADE`
+--       (após a migration, esperado: `RESTRICT` = `confdeltype = 'r'`).
 --
 -- ─────────────────────────────────────────────────────────────────────────────
 -- D · DIAGNÓSTICO DE CONTEXTO EMPRESARIAL (AGREGADO, SEM DADOS PESSOAIS)
@@ -130,6 +156,76 @@ with checagens as (
                  from (select distinct empresa_id
                          from public.feedbacks_360
                         where empresa_id is not null) f) z)),
+
+    ('B9', true,  'feedbacks_360 SEM policy inesperada (apenas as 4 conhecidas)',
+      not exists (
+        select 1 from pg_policies
+         where schemaname = 'public' and tablename = 'feedbacks_360'
+           and policyname not in ('feedbacks_360_insert', 'feedbacks_360_select',
+                                  'feedbacks_360_delete', 'feedbacks_360_update')),
+      coalesce((select 'inesperadas: ' || string_agg(policyname, ', ')
+                  from pg_policies
+                 where schemaname = 'public' and tablename = 'feedbacks_360'
+                   and policyname not in ('feedbacks_360_insert', 'feedbacks_360_select',
+                                          'feedbacks_360_delete', 'feedbacks_360_update')),
+               'nenhuma')),
+
+    ('B10', true,  'audit_log tem as 8 colunas que as 3 RPCs gravam',
+      (select count(*) = 8 from information_schema.columns
+        where table_schema = 'public' and table_name = 'audit_log'
+          and column_name in ('tabela', 'registro_id', 'acao', 'dados_anteriores',
+                              'dados_novos', 'campos_alterados', 'user_id', 'user_email')),
+      (select 'presentes: ' || count(*) filter (where column_name in ('tabela', 'registro_id', 'acao', 'dados_anteriores', 'dados_novos', 'campos_alterados', 'user_id', 'user_email')) || '/8'
+         from information_schema.columns
+        where table_schema = 'public' and table_name = 'audit_log')),
+
+    ('A4', false, 'audit_log JA tem a coluna empresa_id (a migration a garante se faltar)',
+      coalesce((select bool_or(column_name = 'empresa_id') from information_schema.columns
+                 where table_schema = 'public' and table_name = 'audit_log'), false),
+      (select concat('empresa_id: ', coalesce(bool_or(column_name = 'empresa_id')::text, 'false'),
+                     ' (a migration cria a coluna se ausente)',
+                     ' | payload: ', coalesce(bool_or(column_name = 'payload')::text, 'false'))
+         from information_schema.columns
+        where table_schema = 'public' and table_name = 'audit_log')),
+
+    ('A5', false, 'nenhum feedback PENDENTE com categoria fora das 4 do 360',
+      not exists (
+        select 1 from public.feedbacks_360
+         where coalesce(lower(btrim(status)), '') = 'pendente'
+           and coalesce(lower(btrim(tipo)), '') not in ('gestor', 'par', 'auto', 'subordinado')),
+      (select 'pendentes com categoria invalida: ' || count(*)
+         from public.feedbacks_360
+        where coalesce(lower(btrim(status)), '') = 'pendente'
+          and coalesce(lower(btrim(tipo)), '') not in ('gestor', 'par', 'auto', 'subordinado'))),
+
+    ('A6', false, 'nenhum feedback GESTOR pendente SEM Potencial (nao podera concluir)',
+      not exists (
+        select 1 from public.feedbacks_360
+         where coalesce(lower(btrim(status)), '') = 'pendente'
+           and lower(btrim(tipo)) = 'gestor'
+           and potencial is null),
+      (select 'gestores pendentes sem potencial: ' || count(*)
+         from public.feedbacks_360
+        where coalesce(lower(btrim(status)), '') = 'pendente'
+          and lower(btrim(tipo)) = 'gestor' and potencial is null)),
+
+    ('A7', false, 'nenhuma FK das tabelas de apoio ainda em ON DELETE CASCADE',
+      not exists (
+        select 1
+          from pg_constraint k
+          join pg_class c on c.oid = k.conrelid
+          join pg_namespace n on n.oid = c.relnamespace
+         where n.nspname = 'public'
+           and c.relname in ('feedbacks_360_operacoes', 'feedbacks_360_validacoes_potencial')
+           and k.contype = 'f' and k.confdeltype = 'c'),
+      coalesce((select string_agg(c.relname || ' (confdeltype=' || k.confdeltype || ')', ', ')
+                  from pg_constraint k
+                  join pg_class c on c.oid = k.conrelid
+                  join pg_namespace n on n.oid = c.relnamespace
+                 where n.nspname = 'public'
+                   and c.relname in ('feedbacks_360_operacoes', 'feedbacks_360_validacoes_potencial')
+                   and k.contype = 'f'),
+               'tabelas ainda nao existem (serao criadas pela migration)')),
 
     ('A1', false, 'nenhuma outra sessao com lock em feedbacks_360',
       not exists (

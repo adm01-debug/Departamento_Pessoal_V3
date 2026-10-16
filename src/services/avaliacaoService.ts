@@ -140,8 +140,7 @@ export const avaliacaoService = {
     comentarios?: string | null;
     idOperacao: string;
   }) {
-    exigirModoReal('Criar avaliação (auditada)');
-    // Dupla proteção da escrita: modo real (acima) + ausência de dado fictício.
+    // Proteção da escrita: recusa de ID fictício (`mock-*`) — nunca envia mock ao banco.
     exigirEscritaOperacional('Criar avaliação (auditada)', {
       empresa_id: params.empresaId,
       avaliado_id: params.avaliadoId,
@@ -185,17 +184,15 @@ export const avaliacaoService = {
     );
   },
 
-  // === Nine-Box: operações sensíveis (RPC transacional; modo real obrigatório) ===
-  // O portão `exigirModoReal` garante que NADA é simulado: com o modo real
-  // desligado (padrão), estas funções lançam erro em vez de fingir sucesso.
+  // === Nine-Box: operações sensíveis (RPC transacional) ===
   // A autorização real acontece no servidor (RPC); aqui só se monta o payload.
+  // A proteção local é a de ID FICTÍCIO (`mock-*`) — visualização nunca grava.
   async finalizarFeedback(params: {
     feedbackId: string;
     acao: 'concluir' | 'cancelar' | 'reabrir';
     motivo?: string | null;
     idOperacao: string;
   }) {
-    exigirModoReal(`Finalizar avaliação (${params.acao})`);
     exigirEscritaOperacional(`Finalizar avaliação (${params.acao})`, { feedback_id: params.feedbackId });
     const { data, error } = await (supabase as any).rpc('finalizar_feedback', {
       p_feedback_id: params.feedbackId,
@@ -214,7 +211,6 @@ export const avaliacaoService = {
   },
 
   async validarPotencialAvaliacao(params: { feedbackId: string; idOperacao: string; observacao?: string | null }) {
-    exigirModoReal('Validar potencial');
     exigirEscritaOperacional('Validar potencial', { feedback_id: params.feedbackId });
     const { data, error } = await (supabase as any).rpc('validar_potencial_avaliacao', {
       p_feedback_id: params.feedbackId,
@@ -259,6 +255,115 @@ export const avaliacaoService = {
     q = q.eq('empresa_id', empresaId);
     if (cicloId) q = q.eq('ciclo_id', cicloId);
     const { data, error } = await q;
+    if (error) throw error;
+    return data || [];
+  },
+
+  // === Aprovação do gestor (migration `20261017090000_ninebox_aprovacao_gestor`) ===
+
+  /**
+   * Cabeçalho do fluxo: 1 linha por (empresa, ciclo, colaborador) com o status
+   * corrente e o `enviado_em`. A RLS já limita às empresas do usuário e, quando
+   * ele não é RH/admin, aos colaboradores que ele GERENCIA (`supervisor_id`).
+   */
+  async listarConsolidacoes(empresaId: string, cicloId?: string) {
+    exigirModoReal('Consultar consolidações de aprovação');
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let q = (supabase as any)
+      .from('feedbacks_360_consolidacoes')
+      .select('*')
+      .order('atualizado_em', { ascending: false });
+    q = q.eq('empresa_id', empresaId);
+    if (cicloId) q = q.eq('ciclo_id', cicloId);
+    const { data, error } = await q;
+    if (error) throw error;
+    return data || [];
+  },
+
+  /** Histórico append-only das decisões do GESTOR (a vigente é a mais recente). */
+  async listarAprovacoesGestor(empresaId: string, cicloId?: string) {
+    exigirModoReal('Consultar decisões de aprovação');
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let q = (supabase as any)
+      .from('feedbacks_360_aprovacoes_gestor')
+      .select('*')
+      .order('decidido_em', { ascending: false });
+    q = q.eq('empresa_id', empresaId);
+    if (cicloId) q = q.eq('ciclo_id', cicloId);
+    const { data, error } = await q;
+    if (error) throw error;
+    return data || [];
+  },
+
+  /**
+   * RH/admin envia a avaliação consolidada ao gestor (RPC
+   * `enviar_avaliacao_ao_gestor`). O servidor revalida papel
+   * (`pode_gerir_avaliacoes`), empresa, existência da avaliação do GESTOR e a
+   * chave de idempotência; a guarda local recusa identificador fictício ANTES
+   * da rede (nenhum `mock-*` é enviado).
+   */
+  async enviarAvaliacaoAoGestor(params: { colaboradorId: string; cicloId: string; idOperacao: string }) {
+    exigirEscritaOperacional('Enviar avaliação ao gestor', {
+      colaborador_id: params.colaboradorId,
+      ciclo_id: params.cicloId,
+    });
+    const { data, error } = await (supabase as any).rpc('enviar_avaliacao_ao_gestor', {
+      p_colaborador_id: params.colaboradorId,
+      p_ciclo_id: params.cicloId,
+      p_idempotencia: params.idOperacao,
+    });
+    if (error) throw error;
+    return data as { ok: boolean; status: string };
+  },
+
+  /**
+   * Decisão do GESTOR vinculado (RPC `decidir_aprovacao_gestor`): `aprovado` ou
+   * `devolvido`. A devolução EXIGE justificativa (o servidor recusa com menos de
+   * 10 caracteres); o front valida antes para não gastar rede. RH/admin NÃO
+   * aprovam por este caminho — a RPC responde `perfil_nao_autorizado`.
+   */
+  async decidirAprovacaoGestor(params: {
+    colaboradorId: string;
+    cicloId: string;
+    decisao: 'aprovado' | 'devolvido';
+    justificativa?: string | null;
+    idOperacao: string;
+  }) {
+    exigirEscritaOperacional(`Decidir aprovação (${params.decisao})`, {
+      colaborador_id: params.colaboradorId,
+      ciclo_id: params.cicloId,
+    });
+    const { data, error } = await (supabase as any).rpc('decidir_aprovacao_gestor', {
+      p_colaborador_id: params.colaboradorId,
+      p_ciclo_id: params.cicloId,
+      p_decisao: params.decisao,
+      p_justificativa: params.justificativa ?? null,
+      p_idempotencia: params.idOperacao,
+    });
+    if (error) throw error;
+    return data as {
+      ok: boolean;
+      aprovacao_id: string;
+      decisao: string;
+      status: string;
+      versao_avaliacao: string;
+      idempotente: boolean;
+    };
+  },
+
+  /**
+   * Vínculos MÍNIMOS do colaborador (`id`, `user_id`, `supervisor_id`) — base da
+   * conferência de responsabilidade do GESTOR no front (o servidor revalida em
+   * `pode_aprovar_colaborador`). É leitura mínima e escopada à empresa: nenhum
+   * UPDATE é concedido a `gestor` e nenhum SELECT amplo é criado por isto — a
+   * RLS de `colaboradores` continua decidindo quem enxerga cada linha.
+   */
+  async listarVinculos(empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any)
+      .from('colaboradores')
+      .select('id, user_id, supervisor_id')
+      .eq('empresa_id', empresaId);
     if (error) throw error;
     return data || [];
   },

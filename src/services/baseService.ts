@@ -11,6 +11,12 @@ export interface ListOptions {
   filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
+  /**
+   * Lê SEMPRE do banco, ignorando o mock do módulo. Usado pelo fluxo REAL de
+   * gravação (Nine-Box): o formulário precisa de IDs REAIS (UUID), nunca os
+   * fictícios (`mock-*`), que a guarda de escrita recusa corretamente.
+   */
+  semMock?: boolean;
 }
 
 export interface ListResponse<T> {

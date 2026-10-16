@@ -238,7 +238,7 @@ supabase db push               # aplica apenas o que falta (as 649 + Nine-Box)
 ```
 Nas duas opções, valide depois com `docs/ninebox-validacao-banco.sql` (Q1–Q16),
 `docs/ninebox-verificacao-truncate.sql` (T1–T9 + `ACEITE`) e
-`docs/ninebox-testes-seguranca.sql` (24 casos) — ver §0b.
+`docs/ninebox-testes-seguranca.sql` (28 casos) — ver §0b.
 
 ### 15.2 Dependências já conferidas (offline)
 

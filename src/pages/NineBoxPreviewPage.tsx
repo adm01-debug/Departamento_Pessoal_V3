@@ -95,6 +95,15 @@ function Previa() {
     const espera = () => new Promise((r) => setTimeout(r, 450));
 
     return {
+      /** Vínculos: a prévia não lê o banco e não simula vínculo — quem simula a
+       *  RESPONSABILIDADE do gestor é o flag `responsavel` do `previa`. */
+      listarVinculos: async () => [],
+      /** Decisão da aprovação: a prévia NUNCA simula aprovação real — devolve
+       *  recusa explícita, para não confundir demonstração com gravação. */
+      decidirAprovacaoGestor: async () => {
+        await espera();
+        throw new Error('Prévia local: a decisão da aprovação não é executada aqui — nenhuma RPC foi chamada.');
+      },
       listarValidacoesPotencial: async (empresaId: string) => {
         const c = CENARIOS_SELO.find((x) => x.empresa === empresaId);
         return c?.validacao ? [{ feedback_id: 'previa-f1', versao_avaliacao: c.validacao, potencial_validado: 4 }] : [];
@@ -277,7 +286,7 @@ function Previa() {
                   <div style={{ width: largura }} className="max-w-full">
                     <FeedbackAcoesRodape
                       item={itemPrevia({ status: 'concluido' }, CENARIOS_SELO[itemSelo].empresa)}
-                      previa={{ servico: servicoSimulado, papel }}
+                      previa={{ servico: servicoSimulado, papel, responsavel: papel === 'gestor' }}
                     />
                   </div>
                 </div>
@@ -312,7 +321,7 @@ function Previa() {
         item={detalhe}
         aberto={aberto}
         onOpenChange={setAberto}
-        previa={{ servico: servicoSimulado, papel }}
+        previa={{ servico: servicoSimulado, papel, responsavel: papel === 'gestor' }}
       />
     </div>
   );

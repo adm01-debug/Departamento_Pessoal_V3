@@ -122,6 +122,56 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
     expect(r.motivo).toBe('potencial_sem_validacao');
   });
 
+  it('classifica com a validação do RH na forma CRUA do banco (snake_case)', () => {
+    // Regressão: o serviço entrega a LINHA CRUA de `feedbacks_360_validacoes_potencial`
+    // (colaborador_id / versao_avaliacao / validado_por / …). Sem a adaptação, o motor
+    // não reconhecia a aprovação e o colaborador caía em `potencial_sem_validacao`.
+    const validacaoCrua = {
+      id: 'val-1',
+      empresa_id: EMPRESA,
+      ciclo_id: CICLO,
+      colaborador_id: COLAB,
+      feedback_id: 'fb-gestor',
+      versao_avaliacao: VERSAO_GESTOR,
+      potencial_validado: 4,
+      validado_por: RH,
+      validado_em: '2026-09-21T09:00:00',
+      observacao: 'HOMOLOG-NB',
+    };
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacaoCrua as never],
+      versoesPorFeedback: versoes,
+    });
+    expect(r.classificavel).toBe(true);
+    expect(r.motivo).toBeNull();
+    expect(r.quadrante).not.toBeNull();
+  });
+
+  it('validação de OUTRA versão não classifica (aprovação desatualizada)', () => {
+    const validacaoCrua = {
+      empresa_id: EMPRESA,
+      ciclo_id: CICLO,
+      colaborador_id: COLAB,
+      feedback_id: 'fb-gestor',
+      versao_avaliacao: 'versao-antiga',
+      validado_por: RH,
+      validado_em: '2026-09-21T09:00:00',
+    };
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacaoCrua as never],
+      versoesPorFeedback: versoes,
+    });
+    expect(r.classificavel).toBe(false);
+    expect(r.motivo).toBe('potencial_sem_validacao');
+  });
+
+
   it('o adaptador entrega a forma da interface (quadrante + motivo preservados)', () => {
     const [r] = consolidar([fb({ nota_geral: 4, potencial: 4 })]);
     const [ponto] = pontos360(

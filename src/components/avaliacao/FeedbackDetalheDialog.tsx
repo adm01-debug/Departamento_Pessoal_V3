@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { iniciais } from './desempenhoComum';
 import { EstrelasNota } from './EstrelasNota';
 import { tomTipoFeedback, type FeedbackDerivado } from './feedbacksComum';
+import type { EstadoAprovacao } from './aprovacaoGestor';
 import { FeedbackAcoesRodape, type PreviewAcoes } from './FeedbackAcoesRodape';
 
 /**
@@ -34,6 +35,12 @@ interface FeedbackDetalheDialogProps {
    * Sem efeito em produção — ver `PreviewAcoes` em `FeedbackAcoesRodape.tsx`.
    */
   previa?: PreviewAcoes;
+  /**
+   * ESTADO DA APROVAÇÃO FORMAL do gestor para esta avaliação — a MESMA instância
+   * derivada pela fila "Aguardando gestor" (`aprovacaoGestor.estadoAprovacao`).
+   * É repassado ao rodapé para que modal e listagem falem do mesmo estado.
+   */
+  estadoAprovacao?: EstadoAprovacao | null;
 }
 
 /** Bloco de texto longo (título + parágrafo), com ícone na família de cor. */
@@ -68,6 +75,7 @@ export function FeedbackDetalheDialog({
   onOpenChange,
   onFiltrarAvaliado,
   previa,
+  estadoAprovacao,
 }: FeedbackDetalheDialogProps) {
   if (!item) return null;
 
@@ -209,7 +217,7 @@ export function FeedbackDetalheDialog({
             + situação do Potencial). Só existe no MODO REAL: em demonstração o
             componente devolve `null` e o modal continua exatamente o de hoje.
             Fonte oficial das regras: `statusFeedback` + `acoesFeedback`. */}
-        <FeedbackAcoesRodape item={item} previa={previa} />
+        <FeedbackAcoesRodape item={item} previa={previa} estadoAprovacao={estadoAprovacao} />
       </DialogContent>
     </Dialog>
   );

@@ -1,0 +1,78 @@
+# REGRAS PERMANENTES DO REPOSITÓRIO — departamento-pessoal-v2
+
+## 1. ÁREA PROTEGIDA: GESTÃO DE DESEMPENHO — FEEDBACKS
+
+O layout da área **Gestão de Desempenho** (rota `/avaliacao`) foi **aprovado pelo
+usuário** e está **CONGELADO**. As abas **Feedbacks** e as demais abas já
+aprovadas (Ciclos, Metas & OKRs, PDI, Nine-Box, Auditoria) **não podem receber
+alteração visual** sem autorização explícita e específica do usuário.
+
+### 1.1 O que é PROIBIDO alterar sem autorização explícita
+
+- Cards da listagem de feedbacks (três faixas: colaborador · avaliador · nota).
+- Estrutura visual da timeline (trilho, ponto, marco de mês, agrupamento).
+- Modal **Novo Feedback** e modal **Ver Feedback**.
+- Campos, botões, filtros, chips, selects e badges.
+- Cores, fontes, dimensões, proporções, bordas, sombras e espaçamentos.
+- CSS, classes Tailwind, tokens do Design System e animações
+  (`animacaoFeedbacks.ts`, `entradaCards.tsx`, durações/easings).
+- Mocks e fixtures demonstrativas (`src/mocks/desempenhoMock.ts`,
+  `nineBoxMock.ts`, `pdiProgressoMock.ts`) — são a fonte da vitrine aprovada.
+
+O inventário completo e as âncoras exatas (arquivo → trechos) estão em
+`docs/protegido/DESEMPENHO-LAYOUT-PROTEGIDO.md` e
+`docs/protegido/desempenho-layout.baseline.json`.
+
+### 1.2 REGRA de convivência com tarefas funcionais
+
+Qualquer tarefa futura de **backend, banco/migrations, RPCs, aprovação,
+autenticação, RH, Nine-Box, conclusão/cancelamento, validação ou consultas**
+DEVE **preservar integralmente** estas interfaces.
+
+- **Não** interpretar um pedido funcional como autorização implícita para
+  alteração visual.
+- Em arquivos **mistos** (TSX com lógica + JSX), alterações de lógica são
+  permitidas; o **JSX visual, as classes e o estilo devem permanecer
+  intactos**. Rode `node scripts/verificar-layout-protegido.mjs` antes de
+  concluir (ele mostra o diff dos arquivos protegidos e falha se uma âncora
+  visual desaparecer).
+- Se a mudança de interface for **indispensável**, **INTERROMPA** a tarefa e
+  **peça autorização específica** ao usuário antes de modificar qualquer coisa.
+- Vale para **agentes auxiliares e tarefas delegadas**: subagentes, codex,
+  claude, copilot ou qualquer automação herdam estas regras.
+
+### 1.3 Nunca fazer
+
+`git reset --hard`, `git restore .`, `git checkout -- .` ou qualquer reversão
+indiscriminada em nome de "restaurar layout". Restauração visual é **seletiva**:
+primeiro identifique o trecho alterado, apresente o diff e só então reverta
+apenas aquele trecho.
+
+### 1.4 Definição de "tarefa concluída" em Gestão de Desempenho
+
+Uma tarefa que toca a área **NÃO está concluída** se:
+
+1. houver mudança visual não autorizada (o verificador acusa âncora alterada); ou
+2. a validação no navegador (`e2e/authenticated/layout-protegido-desempenho.spec.ts`)
+   falhar por regressão de layout (sobreposição/overflow); ou
+3. os mocks demonstrativos ou as funcionalidades existentes (salvamento no
+   Supabase, RPCs, conclusão/cancelamento, validação do RH, fluxo do gestor,
+   consultas/hooks) tiverem sido quebrados.
+
+---
+
+## 2. MECANISMOS DE PROTEÇÃO INSTALADOS
+
+| Mecanismo | Onde | O que faz | Limitação |
+|---|---|---|---|
+| Regra persistente | este `.clinerules` | Instrui todo agente que trabalhe no repo | Depende do agente ler as regras |
+| Inventário + âncoras | `docs/protegido/desempenho-layout.baseline.json` | Lista arquivo → trechos visuais exatos | Cobre o que está listado |
+| Verificador local | `scripts/verificar-layout-protegido.mjs` (`npm run verificar:layout`) | Mostra o `git diff` dos arquivos protegidos e falha se uma âncora visual desaparecer | Heurístico por substring — não é pixel-diff |
+| Referências visuais | `docs/protegido/referencias/*.png` (`npm run capturar:referencias`) | Imagens do layout aprovado (incl. nome longo truncado) | São referência para olho humano, não comparação automática |
+| Teste de regressão no navegador | `e2e/authenticated/layout-protegido-desempenho.spec.ts` | Mede no DOM real: sem overflow/sobreposição nos cards, no seletor de ciclo e nas abas | Depende do dev server + sessão E2E |
+
+**Nenhum controle é infalível.** O verificador detecta remoção/alteração das
+âncoras declaradas, não qualquer mudança visual imaginável; o teste de
+navegador cobre as invariantes geométricas medidas. A proteção real é o gate
+humano: qualquer diff visual na área protegida deve ser **revisado e aprovado
+pelo usuário**.
