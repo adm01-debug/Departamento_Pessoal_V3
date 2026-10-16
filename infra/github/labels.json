@@ -20,17 +20,29 @@
       "used_by": ["healthcheck.yml"]
     },
     {
-      "name": "canonical",
+      "name": "canonical-probes",
       "color": "7c3aed",
-      "description": "Issue aberta automaticamente por falha em workflows canônicos",
-      "used_by": ["canonical-probes.yml", "canonical-migrations.yml"]
+      "description": "Issue aberta automaticamente por falha nos probes de segurança do canônico (RV-01/02/03/04)",
+      "used_by": ["canonical-probes.yml"]
+    },
+    {
+      "name": "canonical-deploy",
+      "color": "6d28d9",
+      "description": "Issue aberta automaticamente por falha no deploy/smoke de Edge Functions no canônico (W76)",
+      "used_by": ["canonical-edge-functions.yml"]
     },
     {
       "name": "ci",
       "color": "0075ca",
       "description": "Label genérico para PRs de CI — usado pelo Dependabot (grupo actions). NÃO usar em issues automatizadas; usar ci-main para evitar conflito.",
       "used_by": ["dependabot.yml (grupo actions)"]
+    },
+    {
+      "name": "post-deploy-smoke",
+      "color": "b91c1c",
+      "description": "Issue aberta automaticamente por falha no smoke pós-deploy (healthcheck + Playwright público contra o deployment real)",
+      "used_by": ["post-deploy-smoke.yml (W64)"]
     }
   ],
-  "_note": "D22: o label 'ci' era usado por rls-live (conflito com Dependabot). Corrigido para 'ci-main' em 14/10/2026."
+  "_note": "D22: o label 'ci' era usado por rls-live (conflito com Dependabot). Corrigido para 'ci-main' em 14/10/2026. Codex review (P2, PR #238, 15/10/2026): o label único 'canonical' era compartilhado por canonical-probes.yml e canonical-edge-functions.yml (W76) -- um incidente de deploy podia fechar/esconder um incidente de probe ainda ativo (e vice-versa), já que ambos buscavam '--label canonical --limit 1' sem distinguir workflow. Dividido em 'canonical-probes' e 'canonical-deploy'."
 }

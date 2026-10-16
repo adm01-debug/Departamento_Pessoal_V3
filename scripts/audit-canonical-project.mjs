@@ -90,10 +90,14 @@ expect(
   'E2E público de PR não recebe secrets nem identidades de escrita'
 );
 expect(
-  authenticatedJob.includes("if: github.event_name == 'push' && github.ref == 'refs/heads/main'")
+  authenticatedJob.includes("github.event_name == 'push' && github.ref == 'refs/heads/main'")
+    // W61: dispatch controlado também é um trigger legítimo (não expande para
+    // pull_request) -- checa a presença, não a ausência, de workflow_dispatch.
+    && authenticatedJob.includes("github.event_name == 'workflow_dispatch'")
+    && !authenticatedJob.includes("github.event_name == 'pull_request'")
     && authenticatedJob.includes('E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}')
     && authenticatedJob.includes('VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}'),
-  'E2E autenticado recebe secrets somente no SHA integrado em main'
+  'E2E autenticado recebe secrets somente no SHA integrado em main (push) ou em dispatch controlado — nunca em pull_request'
 );
 expect(
   (workflow.match(/test \"\$VITE_SUPABASE_URL\" = 'https:\/\/frjbfeamybqsejlvmqbl\.supabase\.co'/g) ?? []).length === 2,

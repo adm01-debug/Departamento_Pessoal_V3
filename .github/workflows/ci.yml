@@ -22,6 +22,58 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: Mudanças de caminho (paths-filter)
+    # W45: evita rodar edge-functions/p0-migrations/lighthouse em todo PR
+    # quando nada relevante mudou (ex.: PR só de docs). Só filtra em PR —
+    # push/dispatch na main sempre roda tudo, sem depender do último diff.
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      edge: ${{ steps.filter.outputs.edge }}
+      migrations: ${{ steps.filter.outputs.migrations }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      # Codex review (P1, PR #238): o modo via API do GitHub (token) resolve
+      # o diff de pull_request contra a API (base/head do PR), mas push e
+      # workflow_dispatch não têm um PR para comparar -- sem checkout local,
+      # o paths-filter não tinha como calcular `git diff` contra
+      # `github.event.before`, e o job ERRARIA em todo push/dispatch na main,
+      # derrubando em cascata o check obrigatório "Edge Functions" via
+      # `needs: changes`. fetch-depth: 0 garante histórico completo para o
+      # diff funcionar nos três eventos (pull_request, push, workflow_dispatch).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          token: ${{ github.token }}
+          filters: |
+            edge:
+              - 'supabase/functions/**'
+              - 'deno.lock'
+              - 'scripts/typecheck-edge.sh'
+              # Codex review (P2, PR #238): sem este arquivo aqui, um PR que
+              # só mudasse a própria lógica do job edge-functions (versão do
+              # Deno, flags, comando) nunca setava edge=true -- o check
+              # obrigatório "Edge Functions (deno check)" passaria pelo echo
+              # de "sem mudanças" sem exercitar o que de fato mudou.
+              - '.github/workflows/ci.yml'
+            migrations:
+              - 'supabase/migrations/**'
+              - 'scripts/tests/**'
+            frontend:
+              - 'src/**'
+              - 'vite.config.ts'
+              - 'package-lock.json'
+              - 'lighthouserc.cjs'
+
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
@@ -199,6 +251,12 @@ jobs:
 
   lighthouse:
     name: Lighthouse & orçamento de bundle (E51-030)
+    # W45: não é required check — skip simples quando nada em src/**,
+    # vite.config.ts, package-lock.json ou lighthouserc.cjs mudou.
+    needs: changes
+    if: >-
+      github.event_name != 'pull_request' ||
+      needs.changes.outputs.frontend == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -228,26 +286,47 @@ jobs:
 
   edge-functions:
     name: Edge Functions (deno check)
+    # W45: required check — nunca pode virar "skipped" sem rodar nada (essa é
+    # exatamente a armadilha do D3/"verde por omissão" que o W15 corrigiu
+    # para db-integrity). Em vez de condicionar o job inteiro, cada step real
+    # é condicionado e um step de sucesso explícito cobre o caso sem mudança
+    # relevante -- o job SEMPRE conclui com um resultado real, nunca "skipped".
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
         with:
           persist-credentials: false
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
         with:
+          # W37 (tentativa revertida, 15/10/2026): pinar em v2.1.x quebrou o
+          # type-check real (TS2315 "Type 'Uint8Array' is not generic" em
+          # supabase/functions/criptografia/index.ts:61 — lib TS mais antiga
+          # que o v2.x flutuante vinha resolvendo). "Edge Runtime compatível
+          # com Deno 2.1" (changelog supabase.com/changelog/37941) não
+          # significa a CLI exata 2.1.x -- confirmado pelo CI vermelho real.
+          # Mantido v2.x até existir uma forma de validar o pin antes de
+          # aplicar (ex.: Deno local neste runner).
           deno-version: v2.x
       - name: Type-check de todas as Edge Functions (gate bloqueante)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
         # E40: fonte única — scripts/typecheck-edge.sh checa o bridge com zero
         # tolerância e depois faz o loop em todas as funções, listando todo o
         # inventário de falhas antes de encerrar com erro.
         run: bash scripts/typecheck-edge.sh
       - name: Testes unitários das Edge Functions
+        if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
         # E39: descoberta automática — `deno test` num diretório acha todo
         # `*.test.ts` recursivamente; a lista de 15 globs hardcoded deixava
         # fora do CI 8 arquivos (calcular-folha, fechar-folha, processar-ponto*,
         # reabrir-folha, external-db-bridge/timeout, webhook).
         run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/
+      - name: Sem mudanças em supabase/functions/** — sucesso explícito
+        if: github.event_name == 'pull_request' && needs.changes.outputs.edge != 'true'
+        run: echo "Nenhum arquivo em supabase/functions/**, deno.lock ou scripts/typecheck-edge.sh mudou neste PR — pulado com sucesso explícito (W45)."
 
   security-config:
     name: Config de segurança (E-077, estático)
@@ -300,7 +379,22 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
-    name: P0 database migration simulations
+    name: P0 database migration simulations (shard ${{ matrix.shard }}/3)
+    # W45: não é required check — skip simples quando nada em
+    # supabase/migrations/** ou scripts/tests/** mudou.
+    # W47: paralelizado em 3 shards via strategy.matrix — cada shard roda num
+    # runner próprio, com seu próprio Postgres descartável (nenhum estado
+    # compartilhado entre shards). Distribuição round-robin determinística em
+    # scripts/tests/run-shard.sh, sobre a mesma descoberta automática (find |
+    # sort) que o job usava antes de virar matrix — nenhuma lista hardcoded.
+    needs: changes
+    if: >-
+      github.event_name != 'pull_request' ||
+      needs.changes.outputs.migrations == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     # Os scripts de simulação SQL não fazem chamadas à API do GitHub. Mantém o
@@ -311,25 +405,21 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-      - name: Simular a migração em PostgreSQL descartável
-        # W46: descoberta automática — elimina lista hardcoded (D27). Cobre
-        # migrations-p0-*, migrations-p1-* e migrations-plano100.sh. Novos
-        # scripts adicionados a scripts/tests/ são incluídos automaticamente
-        # sem alteração no workflow. W52: absorve db-tests.yml (deletado).
-        run: |
-          # W46: descoberta automática — elimina lista hardcoded (D27)
-          for script in $(find scripts/tests -name 'migrations-p*.sh' | sort); do
-            echo "▶ $script"
-            bash "$script"
-          done
-      - name: Resumo das migrações P0/P1 (GITHUB_STEP_SUMMARY)
+      - name: Simular a migração em PostgreSQL descartável (shard ${{ matrix.shard }}/3)
+        # W47: scripts/tests/run-shard.sh descobre migrations-p0-*,
+        # migrations-p1-* e migrations-plano100.sh do mesmo jeito que o loop
+        # original (find | sort) e roda só o subconjunto deste shard. Novos
+        # scripts adicionados a scripts/tests/ entram automaticamente, sem
+        # alteração no workflow. W52: absorve db-tests.yml (deletado).
+        run: bash scripts/tests/run-shard.sh ${{ matrix.shard }}/3
+      - name: Resumo do shard (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
           {
-            echo "## p0-database-migrations"
-            echo "| Script | Status |"
-            echo "|--------|--------|"
-            echo "| p0-migrations | ${{ job.status }} |"
+            echo "## p0-database-migrations — shard ${{ matrix.shard }}/3"
+            echo "| Shard | Status |"
+            echo "|-------|--------|"
+            echo "| ${{ matrix.shard }}/3 | ${{ job.status }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
   db-integrity:
@@ -359,14 +449,32 @@ jobs:
 
   db-integrity-live:
     name: Integridade do banco canônico (live)
-    # W25: único job do ci.yml com acesso ao banco de produção. O environment
-    # production restringe as branches que recebem o segredo.
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    # W15/W23/W24/W25: roda em push na main, dispatch E PRs internos (não forks).
+    # • Fork: pull_request de fork nunca recebe secrets do repositório — GitHub
+    #   trata esse caso automaticamente (DATABASE_URL vem vazia).
+    # • Dependabot: mesmo sendo PR same-repo (não fork), o GitHub também retém
+    #   secrets de PRs abertas por Dependabot por padrão — DATABASE_URL vem
+    #   vazia aqui também, tratado como caso esperado (não erro).
+    # • PR interno sem DATABASE_URL: falha fechada — credencial deve existir.
+    # • W24: usa SUPABASE_DB_URL_READONLY (role ci_auditor, só catálogo) em vez
+    #   do admin — os 7 scripts deste job são introspecção pura (search_path,
+    #   policies, triggers, função SECURITY DEFINER, hints de relacionamento),
+    #   nunca leem linha de tabela de negócio nem gravam nada. Secret de
+    #   repositório comum (sem `environment:`): a primeira tentativa usava
+    #   `environment: production`, que bloqueia o job INTEIRO (0 steps) em
+    #   qualquer branch != main por deployment_branch_policy — quebrava este
+    #   job em toda PR interna, não só nesta (achado real em CI, run
+    #   38759559111/job 116507412690). Least-privilege torna o gate
+    #   desnecessário: nenhum destes scripts precisa de admin em nenhum evento.
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: production
     env:
-      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL_READONLY }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -374,29 +482,44 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version-file: .nvmrc
-      - name: Instalar cliente psql
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
-      - name: Exigir alvo canônico de auditoria
-        # Não exibir nem testar a URL em shell com tracing. A presença é
-        # suficiente; os scripts seguintes abrem a conexão read-only usada
-        # pelos seus próprios SELECTs de catálogo.
+      - name: Verificar disponibilidade do alvo canônico
+        id: db-access
+        # W15: fork/Dependabot não recebem secrets de repositório — não é erro.
+        # PR interno sem DATABASE_URL é erro: a credencial deve ter sido configurada.
+        # github.actor passado via env para não violar D20 (sem ${{ }} em run:).
+        env:
+          ACTOR: ${{ github.actor }}
         run: |
           if [ -z "${DATABASE_URL}" ]; then
-            echo "::error::SUPABASE_DB_URL ausente. O gate de integridade não pode aprovar sem auditar o banco canônico."
-            exit 1
+            if [ "${ACTOR}" = "dependabot[bot]" ]; then
+              echo "::notice::Auditor role indisponível para este ator — alvo canônico não disponível para Dependabot."
+              echo "skip_live=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::SUPABASE_DB_URL ausente. O gate de integridade não pode aprovar sem auditar o banco canônico."
+              exit 1
+            fi
+          else
+            echo "skip_live=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Instalar cliente psql
+        if: steps.db-access.outputs.skip_live != 'true'
+        # W41: versão major fixa — sem regressão silenciosa por bump do apt.
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-16
       - name: Auditar search_path das funções
+        if: steps.db-access.outputs.skip_live != 'true'
         # Detecta funções que chamam rotinas de extensão (pgcrypto, pg_net, ...)
         # sem o schema da extensão no search_path fixado. Esse defeito NÃO é
         # acusado na criação da função — só explode em produção, na primeira
         # gravação selada por hash.
         run: node scripts/audit-db-search-path.mjs
       - name: Smoke test dos selos de integridade
+        if: steps.db-access.outputs.skip_live != 'true'
         # Verifica que todo gatilho enforce_*_hash está acoplado, é BEFORE
         # INSERT/UPDATE e consegue resolver digest() sob seu próprio
         # search_path. Não grava dados de negócio.
         run: node scripts/smoke-hash-triggers.mjs
       - name: Regressão de RLS sobre PII
+        if: steps.db-access.outputs.skip_live != 'true'
         # Reprova o build quando uma política sobre tabela com dado pessoal
         # (CPF, PIS, salário, conta bancária, endereço, biometria...) não
         # correlaciona com auth.uid() nem com o vínculo de empresa, ou quando
@@ -404,6 +527,7 @@ jobs:
         # predicados sem reclamar — a exposição só aparece em produção.
         run: node scripts/audit-rls-pii.mjs
       - name: Menor privilégio em RLS (papel no caminho de escrita)
+        if: steps.db-access.outputs.skip_live != 'true'
         # Complementa o gate acima. Isolar por empresa aprova ali, mas em tabela
         # sensível não basta: com `FOR ALL` + só `empresa_id`, o estagiário e o
         # RH ficam indistinguíveis dentro do mesmo tenant — contracheque, conta
@@ -411,6 +535,7 @@ jobs:
         # qualquer autenticado. Escrita nessas tabelas exige papel explícito.
         run: node scripts/audit-rls-least-privilege.mjs
       - name: Política permissiva irrestrita em tabela multi-tenant
+        if: steps.db-access.outputs.skip_live != 'true'
         # Políticas PERMISSIVAS se combinam por OU: basta UMA liberar para o
         # acesso ser concedido. `rubricas_folha` já tinha a política correta
         # (catálogo global OU pertence à empresa) e mesmo assim vazava as
@@ -419,6 +544,7 @@ jobs:
         # viver. Os gates acima não pegam o caso: rubrica de folha não é PII.
         run: node scripts/audit-rls-tenant-open.mjs
       - name: Autorização em funções SECURITY DEFINER
+        if: steps.db-access.outputs.skip_live != 'true'
         # SECURITY DEFINER atravessa o RLS: se a função é executável por
         # anon/authenticated e confia em identificadores vindos do chamador,
         # ela anula o isolamento multi-tenant sem que nenhuma política esteja
@@ -426,6 +552,7 @@ jobs:
         # funções que delegam a checagem a um helper.
         run: node scripts/audit-secdef-authz.mjs
       - name: Integridade das dicas de relacionamento (PostgREST)
+        if: steps.db-access.outputs.skip_live != 'true'
         # `.select('*, tabela!constraint(...)')` amarra o código a um nome de
         # constraint que nada valida: typecheck e testes com mock passam, e a
         # quebra só aparece em runtime como PGRST200. Também reprova FKs

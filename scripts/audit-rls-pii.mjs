@@ -97,13 +97,21 @@ const QUERY = `
 SET search_path = '';
 
 WITH pii_tables AS (
-  SELECT DISTINCT c.table_name
-  FROM information_schema.columns c
-  JOIN pg_class pc ON pc.relname = c.table_name
+  -- Codex review (P1, PR #238): information_schema.columns só lista colunas
+  -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do
+  -- padrão SQL, aplicada pelo Postgres). ci_auditor (W23/W24) não tem
+  -- NENHUM privilégio em public -- a CTE ficava sempre vazia e este gate
+  -- reportava sucesso sem checar nenhuma policy. pg_attribute/pg_class são
+  -- catálogo puro (pg_catalog): visíveis para qualquer role com USAGE em
+  -- pg_catalog, sem o filtro de privilégio por objeto do information_schema.
+  SELECT DISTINCT pc.relname AS table_name
+  FROM pg_attribute a
+  JOIN pg_class pc ON pc.oid = a.attrelid
   JOIN pg_namespace pn ON pn.oid = pc.relnamespace AND pn.nspname = 'public'
-  WHERE c.table_schema = 'public'
-    AND pc.relkind = 'r'
-    AND c.column_name ~* '${PII_COLUMN_RE}'
+  WHERE pc.relkind = 'r'
+    AND a.attnum > 0
+    AND NOT a.attisdropped
+    AND a.attname ~* '${PII_COLUMN_RE}'
 )
 SELECT
   p.tablename,

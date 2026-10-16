@@ -14,11 +14,12 @@ on:
         required: true
         type: string
       migration_files:
-        description: 'Arquivos de migração (um por linha, ex: 20261013150000_onda4a.sql)'
-        required: true
-        type: string
-      validated_hash:
-        description: 'Obrigatório em apply: hash exibido no resumo do run de validate da mesma lista'
+        description: >-
+          Arquivos de migração (um por linha, ex: 20261013150000_onda4a.sql).
+          Em mode=validate pode ficar vazio: a lista é derivada (W67) comparando
+          supabase/migrations/*.sql com o ledger do canônico. Em mode=apply é
+          obrigatório e precisa ser idêntico ao último validate verde no mesmo
+          SHA (W68) — copie a lista do resumo daquele run.
         required: false
         type: string
 
@@ -28,6 +29,11 @@ concurrency:
 
 permissions:
   contents: read
+  # W68: necessário para listar/baixar, via API, o artifact `validated-<sha>`
+  # produzido por um run de validate anterior (actions/upload-artifact e
+  # actions/download-artifact no MESMO run não precisam deste escopo; a
+  # leitura cross-run via REST, sim).
+  actions: read
 
 jobs:
   scoped-migrations:
@@ -42,7 +48,8 @@ jobs:
       # interpolating them into shell programs below.
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
       MIGRATION_FILES: ${{ inputs.migration_files }}
-      VALIDATED_HASH: ${{ inputs.validated_hash }}
+      DISPATCH_MODE: ${{ inputs.mode }}
+      VALIDATED_ARTIFACT_NAME: validated-${{ github.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -70,12 +77,18 @@ jobs:
             echo '::error::SUPABASE_DB_URL ausente.'
             exit 1
           }
+          # W67: apply nunca deriva a lista sozinho — exige o input explícito
+          # (a mesma lista confirmada num validate anterior; W68 confere isso).
+          if [ "$DISPATCH_MODE" = 'apply' ] && [ -z "$MIGRATION_FILES" ]; then
+            echo '::error::mode=apply exige migration_files explícito e idêntico ao último validate verde (W67/W68).'
+            exit 1
+          fi
           node scripts/validate-canonical-db-url.mjs
 
       - name: Instalar cliente PostgreSQL
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client
+          sudo apt-get install -y -qq postgresql-client-16 # W41: versão major fixa
 
       - name: Confirmar conexão e pré-condições canônicas
         run: |
@@ -119,6 +132,43 @@ jobs:
           SELECT 'MIGRATION_PREREQUISITES_OK';
           SQL
 
+      - name: Derivar lista de migrações pendentes quando migration_files vier vazio
+        # W67: nunca hardcoded. Só deriva em validate — apply sempre exige a
+        # lista explícita (checado acima) para não aplicar nada que não foi
+        # conferido por um humano no resumo do validate.
+        if: inputs.mode == 'validate' && env.MIGRATION_FILES == ''
+        run: |
+          set -euo pipefail
+          applied_file="$(mktemp)"
+          psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At \
+            -c "SELECT version FROM supabase_migrations.schema_migrations ORDER BY version" \
+            > "$applied_file"
+          derived_json="$(node scripts/db/derive-pending-migrations.mjs --applied-versions "$applied_file")"
+          echo "$derived_json"
+          pending_files="$(node -e '
+            const data = JSON.parse(require("fs").readFileSync(0, "utf8"));
+            process.stdout.write(data.pending_files.join("\n"));
+          ' <<< "$derived_json")"
+          {
+            echo "MIGRATION_FILES<<MIGRATION_FILES_EOF_W67"
+            echo "$pending_files"
+            echo "MIGRATION_FILES_EOF_W67"
+          } >> "$GITHUB_ENV"
+          {
+            echo '### W67 — lista derivada automaticamente (migration_files estava vazio)'
+            echo ''
+            echo 'Nenhum arquivo foi informado no campo migration_files. A lista abaixo'
+            echo 'foi derivada comparando os arquivos de supabase/migrations com o'
+            echo 'ledger (supabase_migrations.schema_migrations) no canônico.'
+            echo ''
+            echo 'CONFIRME esta lista antes de repetir o dispatch com mode=apply —'
+            echo 'copie exatamente estas linhas para o campo migration_files.'
+            echo ''
+            echo '```text'
+            echo "$pending_files"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Preparar somente as migrações aprovadas
         id: stage
         run: |
@@ -126,10 +176,11 @@ jobs:
           stage_dir="$(mktemp -d)"
           mkdir -p "$stage_dir/supabase/migrations"
           cp supabase/config.toml "$stage_dir/supabase/config.toml"
-          # W67: list is driven by the migration_files workflow_dispatch input.
-          # Each dispatch targets only NEW migrations for that batch — do NOT
-          # re-list already-applied migrations (non-idempotent CREATE POLICY
-          # statements would fail with "policy already exists").
+          # W67: lista nunca hardcoded — vem do input migration_files (ou da
+          # derivação automática acima, em validate, quando ele vier vazio).
+          # Cada dispatch cobre só as migrações NOVAS do lote: não reliste
+          # migrações já aplicadas (CREATE POLICY etc. não são idempotentes
+          # e falhariam com "policy already exists").
           while IFS= read -r migration; do
             migration="$(echo "$migration" | tr -d '[:space:]')"
             [ -z "$migration" ] && continue
@@ -148,6 +199,9 @@ jobs:
           MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
+          # Lote vazio é um caso válido (ex: smoke test W99) — sem nullglob o
+          # glob sem match vira literal "*.sql" e quebra o \i no psql.
+          shopt -s nullglob
           stage_dir="$MIGRATIONS_STAGE"
           {
             echo 'BEGIN;'
@@ -157,29 +211,129 @@ jobs:
             echo 'ROLLBACK;'
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
           echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
-          # W68: gerar hash da lista validada para auditoria
+          # W68: grava lista + hash num artifact (validated-<sha>.json) em vez
+          # de confiar num input `validated_hash` copiado à mão — o apply
+          # (mesmo SHA) baixa este artifact pela API e confere automaticamente.
           validated_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
-          echo "VALIDATED_HASH=$validated_hash" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          files_json="$(cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 -I{} basename {} | node -e '
+            const lines = require("fs").readFileSync(0, "utf8").split("\n").filter(Boolean);
+            process.stdout.write(JSON.stringify(lines));
+          ')"
+          artifact_dir="$(mktemp -d)"
+          node -e '
+            const fs = require("fs");
+            const [, , outPath, sha, hash, filesJson] = process.argv;
+            const files = JSON.parse(filesJson);
+            fs.writeFileSync(outPath, JSON.stringify({
+              sha, hash, files, generated_at: new Date().toISOString(),
+            }, null, 2) + "\n");
+          ' "$artifact_dir/${VALIDATED_ARTIFACT_NAME}.json" "$GITHUB_SHA" "$validated_hash" "$files_json"
+          echo "artifact_dir=$artifact_dir" >> "$GITHUB_OUTPUT"
           echo "validated_hash=$validated_hash" >> "$GITHUB_OUTPUT"
+          {
+            echo "### W68 — artifact de validação"
+            echo ""
+            echo "| Campo | Valor |"
+            echo "|-------|-------|"
+            echo "| Artifact | \`${VALIDATED_ARTIFACT_NAME}\` |"
+            echo "| Hash | \`$validated_hash\` |"
+          } >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Publicar artifact de validação (W68)
+        if: inputs.mode == 'validate'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ env.VALIDATED_ARTIFACT_NAME }}
+          path: ${{ steps.validate-dry-run.outputs.artifact_dir }}/${{ env.VALIDATED_ARTIFACT_NAME }}.json
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Baixar e conferir o artifact de validação correspondente (W68)
+        id: fetch-validated-artifact
+        if: inputs.mode == 'apply'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          api_base="repos/${GITHUB_REPOSITORY}/actions/artifacts"
+          artifacts_json="$(gh api "${api_base}?name=${VALIDATED_ARTIFACT_NAME}&per_page=100")"
+          artifact_id="$(node -e '
+            const data = JSON.parse(require("fs").readFileSync(0, "utf8"));
+            const name = process.argv[1];
+            const candidates = (data.artifacts || [])
+              .filter((a) => a.name === name && a.expired === false)
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            if (candidates.length === 0) process.exit(1);
+            process.stdout.write(String(candidates[0].id));
+          ' "$VALIDATED_ARTIFACT_NAME" <<< "$artifacts_json")" || {
+            echo "::error::Nenhum artifact '${VALIDATED_ARTIFACT_NAME}' encontrado (W68). Rode mode=validate neste mesmo SHA antes de apply."
+            exit 1
+          }
+          command -v unzip >/dev/null 2>&1 || sudo apt-get install -y -qq unzip
+          download_url="$(gh api "${api_base}/${artifact_id}" --jq '.archive_download_url')"
+          fetch_dir="$(mktemp -d)"
+          curl -sSfL -H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json" \
+            -o "$fetch_dir/artifact.zip" "$download_url"
+          unzip -o -q "$fetch_dir/artifact.zip" -d "$fetch_dir"
+          artifact_file="$fetch_dir/${VALIDATED_ARTIFACT_NAME}.json"
+          test -f "$artifact_file" || {
+            echo "::error::Artifact '${VALIDATED_ARTIFACT_NAME}' baixado sem o JSON esperado (W68)."
+            exit 1
+          }
+          echo "path=$artifact_file" >> "$GITHUB_OUTPUT"
 
       - name: Aplicar a lista fechada e registrar no ledger
         if: inputs.mode == 'apply'
         env:
           MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
+          VALIDATED_ARTIFACT_PATH: ${{ steps.fetch-validated-artifact.outputs.path }}
         run: |
           set -euo pipefail
+          # Lote vazio é um caso válido (ex: smoke test W99) — ver nota acima.
+          shopt -s nullglob
           stage_dir="$MIGRATIONS_STAGE"
-          # W68: verificar que a lista de apply é a mesma do validate
+          # W68: a lista/hash do apply precisa ser idêntica à do artifact
+          # validated-<sha> baixado do run de validate mais recente no mesmo
+          # SHA — não basta mais um input `validated_hash` digitado à mão.
           current_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
-          echo "Hash da lista: $current_hash"
-          if [ -z "$VALIDATED_HASH" ] || [ "$current_hash" != "$VALIDATED_HASH" ]; then
-            echo '::error::apply exige validated_hash igual ao hash da mesma lista no run de validate.'
-            exit 1
-          fi
+          echo "Hash da lista (apply): $current_hash"
+          node -e '
+            const fs = require("fs");
+            const artifact = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+            const expectedSha = process.argv[2];
+            const expectedHash = process.argv[3];
+            if (artifact.sha !== expectedSha) {
+              console.error(
+                "::error::Artifact validado é de outro SHA (" + artifact.sha +
+                "), esperado " + expectedSha + " (W68).",
+              );
+              process.exit(1);
+            }
+            if (artifact.hash !== expectedHash) {
+              console.error(
+                "::error::Hash da lista de apply (" + expectedHash +
+                ") difere do hash validado (" + artifact.hash + ") (W68).",
+              );
+              process.exit(1);
+            }
+          ' "$VALIDATED_ARTIFACT_PATH" "$GITHUB_SHA" "$current_hash"
+          echo 'CANONICAL_APPLY_MATCHES_VALIDATED_ARTIFACT_OK'
           # Execute the same closed list validated above and record only those
-          # versions. This deliberately avoids `db push --include-all` and
-          # `migration repair`, which are unsafe while the historical local
+          # versions. This deliberately avoids db push --include-all and
+          # migration repair, which are unsafe while the historical local
           # ledger differs from the canonical ledger.
+          content_args=()
+          for migration in "$stage_dir"/supabase/migrations/*.sql; do
+            filename="$(basename "$migration")"
+            version="${filename%%_*}"
+            content_var="content_${version}"
+            # W70: statements grava o conteúdo real do arquivo (um elemento
+            # de array, o arquivo inteiro) em vez de ARRAY[] vazio, para que
+            # "supabase migration list" reconheça o lote. O conteúdo vai via
+            # psql -v + :'var', que faz o quoting seguro do literal — evita
+            # escapar manualmente aspas/ponto-e-vírgula do SQL da migração.
+            content_args+=(-v "${content_var}=$(cat "$migration")")
+          done
           {
             echo 'BEGIN;'
             for migration in "$stage_dir"/supabase/migrations/*.sql; do
@@ -187,11 +341,12 @@ jobs:
               version="${filename%%_*}"
               name="${filename#*_}"
               name="${name%.sql}"
+              content_var="content_${version}"
               printf '\\i %s\n' "$migration"
-              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY['W68-hash:%s']::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name" "$current_hash"
+              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[:'%s']::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name" "$content_var"
             done
             echo 'COMMIT;'
-          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
+          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 "${content_args[@]}"
 
       - name: Verificar objetos e ledger
         if: inputs.mode == 'apply'
@@ -199,6 +354,9 @@ jobs:
           MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
         run: |
           set -euo pipefail
+          # Lote vazio é um caso válido (ex: smoke test W99): `IN ()` é
+          # inválido em SQL, então pula a query nesse caso em vez de gerá-la.
+          shopt -s nullglob
           stage_dir="$MIGRATIONS_STAGE"
 
           # W69: verificação genérica do ledger — não hardcoded por lote.
@@ -211,8 +369,12 @@ jobs:
             version_list="${version_list:+${version_list},}'${version}'"
             staged_count=$((staged_count + 1))
           done
-          ledger_found="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At \
-            -c "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version IN ($version_list)")"
+          if [ "$staged_count" -eq 0 ]; then
+            ledger_found=0
+          else
+            ledger_found="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At \
+              -c "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version IN ($version_list)")"
+          fi
           test "$ledger_found" -eq "$staged_count" || {
             echo "::error::Ledger incompleto: ${ledger_found}/${staged_count} versões do lote."
             exit 1
@@ -460,16 +622,34 @@ jobs:
           # W69: executar sidecars .verify.sql para cada migração do lote.
           # Crie supabase/migrations/<versão>_<nome>.verify.sql com SELECTs
           # que retornam 'ok' para verificar objetos criados pela migration.
+          #
+          # Codex review (P2, PR #238): um sidecar que segue o contrato
+          # documentado (SELECT retornando um valor, não uma exceção) sempre
+          # fazia o `psql` sair com código 0 -- a query em si é válida mesmo
+          # quando o valor retornado é 'f'/'fail'/qualquer coisa diferente de
+          # 'ok'. O `|| { ... }` só pegava erro de processo/SQL, nunca um
+          # assert que falhou dentro do próprio SELECT -- ou seja, um sidecar
+          # escrito exatamente como o comentário acima instrui nunca
+          # reprovava o apply. Agora capturamos a saída (-t -A: tuplas sem
+          # formatação) e exigimos que toda linha não-vazia seja literalmente
+          # 'ok'; qualquer outro valor conta como falha do sidecar.
           sidecar_errors=0
           for migration in "$stage_dir"/supabase/migrations/*.sql; do
             filename="$(basename "$migration")"
             sidecar="supabase/migrations/${filename%.sql}.verify.sql"
             if [ -f "$sidecar" ]; then
               echo "Sidecar: $sidecar"
-              psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -f "$sidecar" || {
-                echo "::error::Sidecar falhou: $sidecar"
+              sidecar_output="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
+                echo "::error::Sidecar falhou (erro de execução): $sidecar"
                 sidecar_errors=$((sidecar_errors + 1))
+                continue
               }
+              bad_lines="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' | grep -vx 'ok' || true)"
+              if [ -n "$bad_lines" ]; then
+                echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
+                printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+                sidecar_errors=$((sidecar_errors + 1))
+              fi
             fi
           done
           test "$sidecar_errors" -eq 0

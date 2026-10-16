@@ -17,6 +17,13 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # W43: attest-build-provenance assina o dist/ com OIDC (id-token) e grava
+    # a attestation no repositório (attestations) — permite comparar o hash do
+    # que o CI construiu com o que a Vercel publica.
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -71,6 +78,15 @@ jobs:
           path: dist/
           retention-days: 7
           if-no-files-found: error
+
+      - name: Provenance do build (W43)
+        # Assina dist/ e publica a attestation no repositório (Security →
+        # Attestations). Só roda para o mesmo repositório: forks não têm o
+        # OIDC token necessário para assinar.
+        if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/**
 
       - name: Auditoria de bundle
         # W87: verifica orçamento contra scripts/.bundle-budget.json.
