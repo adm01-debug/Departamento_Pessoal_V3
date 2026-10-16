@@ -15,7 +15,7 @@ jobs:
   smoke:
     name: Smoke pós-deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -31,4 +31,65 @@ jobs:
           REQUIRE_BACKEND: '1'
         run: |
           set -euo pipefail
+          echo "APP_URL=${DEPLOYMENT_URL:-$FALLBACK_APP_URL}" >> "$GITHUB_ENV"
           APP_URL="${DEPLOYMENT_URL:-$FALLBACK_APP_URL}" bash scripts/healthcheck.sh
+
+      # W64: fecha o buraco entre o merge e o healthcheck de 6h — roda a
+      # suíte pública de verdade contra o deployment recém-publicado, não só
+      # HTTP 200/405. Playwright detecta que APP_URL já está servindo e pula
+      # `npm run dev` (ver webServer em playwright.config.ts).
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install Playwright (chromium)
+        run: ./node_modules/.bin/playwright install --with-deps chromium
+      - name: Playwright público contra o deployment real
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_FUNCTIONS_BASE: /functions/v1
+          E2E_BASE_URL: ${{ env.APP_URL }}
+          CI: true
+          CI_BRANCH: main
+        run: npm run test:e2e:public
+      - name: Upload relatório Playwright (post-deploy)
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always()
+        with:
+          name: post-deploy-smoke-report-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+
+      # W64: alerta real — issue dedup (W09) em vez de só esperar o próximo
+      # healthcheck de 6h perceber que o deploy quebrou algo visível ao usuário.
+      - name: Abrir issue em caso de falha no smoke pós-deploy
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOY_URL: ${{ env.APP_URL }}
+        run: |
+          TITLE="🔴 Smoke pós-deploy falhou ($(date -u +%F\ %H:%M) UTC)"
+          EXISTING=$(gh issue list --label post-deploy-smoke --state open --json number --limit 1 --jq '.[0].number' || true)
+          BODY=$(printf 'O smoke pós-deploy (healthcheck + Playwright público) falhou contra %s.\n\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$DEPLOY_URL" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          gh label create post-deploy-smoke --force >/dev/null 2>&1 || true
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label post-deploy-smoke
+          fi
+
+      - name: Fechar issue ao recuperar
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --label post-deploy-smoke --state open --json number --limit 1 --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "Smoke pós-deploy voltou ao verde. Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi

@@ -26,6 +26,7 @@ concurrency:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   security-probes:
@@ -66,17 +67,57 @@ jobs:
           node-version-file: .nvmrc
 
       - name: Executar e verificar probes read-only (ROLLBACK garantido)
+        id: probes
         run: node scripts/probes/run-probes.mjs
 
+      # W71: resumo estruturado (pass/fail por probe) — nunca dados de linha
+      # de tabela de negócio (D4). `steps.probes.outputs.result` só contém
+      # os booleans/contagens já validados por run-probes.mjs (ex.: "t"/"f"/"0"),
+      # nunca PII.
       - name: Resumo das probes (GITHUB_STEP_SUMMARY)
         if: always()
+        env:
+          PROBES_RESULT: ${{ steps.probes.outputs.result }}
+          PROBES_OUTCOME: ${{ steps.probes.outcome }}
+        run: node scripts/probes/print-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      # W71/D8: schedule sem issue é um gap silencioso — ninguém sabia se
+      # RV-01..04 continuavam passando. Mesmo padrão de dedupe de
+      # healthcheck.yml/e2e.yml (W09): título estável, busca por label,
+      # comenta se já existe issue aberta (com aviso de reincidência ≥7 dias),
+      # cria se não existe.
+      - name: Abrir ou atualizar issue em caso de falha
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          {
-            echo "## Canonical Probes — ${{ github.run_id }}"
-            echo "| Probe | Status |"
-            echo "|-------|--------|"
-            echo "| RV-01 user_empresa_id | ${{ job.status }} |"
-            echo "| RV-02 medidas_ciencia | ${{ job.status }} |"
-            echo "| RV-03 policies USING true | ${{ job.status }} |"
-            echo "| RV-04 RPCs vínculo/auth | ${{ job.status }} |"
-          } >> "$GITHUB_STEP_SUMMARY"
+          set -euo pipefail
+          TITLE="🔴 Canonical probes falharam (RV-01/02/03/04)"
+          EXISTING=$(gh issue list --label canonical-probes --state open --json number --limit 1 --jq '.[0].number' || true)
+          BODY=$(printf 'Os probes de segurança do canônico (RV-01/02/03/04 + views de PII) falharam.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s\n\nResumo pass/fail por probe (sem dados de linha) no "Summary" do run acima.\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          gh label create canonical-probes --force >/dev/null 2>&1 || true
+          if [ -n "$EXISTING" ]; then
+            ISSUE_CREATED=$(gh issue view "$EXISTING" --json createdAt --jq '.createdAt')
+            ISSUE_EPOCH=$(date -d "$ISSUE_CREATED" +%s 2>/dev/null || echo 0)
+            NOW_EPOCH=$(date +%s)
+            DAYS_OLD=$(( (NOW_EPOCH - ISSUE_EPOCH) / 86400 ))
+            if [ "$DAYS_OLD" -ge 7 ]; then
+              COMMENT=$(printf '⚠️ Still failing — issue aberta há %d dias.\n\n%s' "$DAYS_OLD" "$BODY")
+            else
+              COMMENT="$BODY"
+            fi
+            gh issue comment "$EXISTING" --body "$COMMENT"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label canonical-probes
+          fi
+
+      - name: Fechar issue ao recuperar
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          EXISTING=$(gh issue list --label canonical-probes --state open --json number --limit 1 --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "Canonical probes voltaram a passar (RV-01/02/03/04). Commit: $GITHUB_SHA | Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi

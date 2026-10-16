@@ -1,0 +1,54 @@
+name: OSSF Scorecard
+
+# W44: mede supply chain (branch protection, SHA-pinning, dependency review,
+# token permissions, etc — exatamente o que W33-W84 implementaram) e publica
+# o resultado em Security → Code scanning. Rodagem semanal + manual; sem
+# gatilho em push para não competir com o CI em cada commit.
+
+on:
+  schedule:
+    - cron: '15 7 * * 2' # terça 07:15 UTC — fora dos horários do Dependabot (seg/ter/qua 09:00) e do CodeQL (qui 06:47 UTC)
+  workflow_dispatch:
+
+# SonarCloud (C Security Rating, PR #238): "read-all" é amplo demais mesmo
+# como default top-level -- o job abaixo já declara as permissões mínimas
+# específicas que precisa (security-events/id-token/contents/actions), então
+# o default aqui só precisa cobrir "nada declarado" com o mínimo seguro.
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      security-events: write
+      id-token: write
+      contents: read
+      actions: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: scorecard-sarif-${{ github.run_id }}
+          path: results.sarif
+          retention-days: 5
+
+      - uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: results.sarif

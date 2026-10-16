@@ -4,10 +4,10 @@
 
 ---
 
-# AI Context — Departamento Pessoal v2
+# AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 23/07/2026
+> Última atualização: 15/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -17,7 +17,7 @@
 > - Corrigidos 3 erros de tipo de mock em `loggerService.test.ts` (vitest 4).
 >   ✅ **Resolvido (28/07/2026)** — `tsconfig.app.json` foi removido (era órfão). O único config é `tsconfig.json` (raiz), o mesmo que o CI roda via `tsgo --noEmit`, agora com **`strict: true` + `noImplicitAny: true`** e **0 erros** (17 erros reais corrigidos em 7 arquivos).
 >   ✅ **Resolvido (28/07/2026)** — `build.minify` migrado para a forma de objeto do Vite 8/OXC (`{ type: 'oxc', compress: { dropConsole: [...] } }`). Auditoria do bundle: os `console.*` remanescentes são **100% de vendor chunks** (jspdf, vendor-react, vendor-supabase), sem PII e sem origem no nosso código.
-> - ⚠️ Pendente: arquivos de teste (`**/*.test.ts(x)`, `__tests__/`) seguem **excluídos** do typecheck — 232 erros de tipo sob strict apenas em testes.
+>   ✅ **Resolvido (29/09/2026)** — `typecheck:tests` roda limpo (0 erros); nota de 232 erros latentes removida.
 
 ## 📋 Sumário
 
@@ -73,13 +73,20 @@
 │   │   └── BRIDGE_PERFORMANCE.md # 10 gaps do bridge
 │   └── ...
 ├── .github/
-│   ├── workflows/                # GitHub Actions (7 workflows)
-│   │   ├── ci.yml                # CI principal (typecheck+lint+test)
-│   │   ├── deploy.yml            # Deploy preview
-│   │   ├── security.yml          # CodeQL + npm audit
-│   │   ├── e2e.yml               # Playwright E2E
-│   │   └── branch-protection.yml # Proteção de branch
-│   └── dependabot.yml            # Dependabot (grouped updates)
+│   ├── workflows/                # GitHub Actions (12 workflows)
+│   │   ├── ci.yml                # CI principal (12 jobs: typecheck, lint, testes, edge, segurança, migrations, banco, audit)
+│   │   ├── deploy.yml            # Build + bundle budget (deploy pela integração Git da Vercel)
+│   │   ├── security.yml          # CodeQL + npm audit de produção
+│   │   ├── e2e.yml               # Playwright E2E (público em PR + autenticado na main)
+│   │   ├── healthcheck.yml       # Healthcheck agendado a cada 6h
+│   │   ├── post-deploy-smoke.yml # healthcheck.sh após deploy de produção
+│   │   ├── canonical-probes.yml  # Probes RV-01/02/03/04 no canônico (diário)
+│   │   ├── canonical-migrations.yml # Migrations no canônico (validate/apply com hash)
+│   │   ├── canonical-edge-functions.yml # Deploy Edge Functions no canônico
+│   │   ├── canonical-sql-diag.yml # Diagnóstico SQL read-only no canônico
+│   │   ├── ruleset-sync.yml      # Compara ruleset vivo × baseline (semanal)
+│   │   └── workflow-lint.yml     # actionlint + shellcheck nos workflows
+│   └── dependabot.yml            # Dependabot: npm+docker+github-actions (semanal)
 ├── config/                       # Config filters
 ├── docker/                       # Dockerfiles auxiliares
 ├── scripts/                      # Scripts de build/audit
@@ -90,13 +97,24 @@
 
 ### Pipelines CI/CD
 
-| Workflow                  | Gatilho                            | Ações                                    |
-| ------------------------- | ---------------------------------- | ---------------------------------------- |
-| **ci.yml**                | push/PR/workflow_dispatch          | Bun→Node fallback, typecheck, lint, test |
-| **deploy.yml**            | PR preview/workflow_dispatch       | Build + Deploy Netlify preview           |
-| **security.yml**          | push/PR/schedule/workflow_dispatch | CodeQL + npm audit                       |
-| **e2e.yml**               | push/PR                            | Playwright tests                         |
-| **branch-protection.yml** | workflow_dispatch                  | API para proteger main (requer PAT)      |
+| Workflow                         | Gatilho                                | Ações                                                                                                                                  |
+| -------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **ci.yml**                       | push/PR/workflow_dispatch              | 12 jobs: typecheck, lint, testes, edge, security-config, migrations P0, db-integrity (+live), npm audit, dependency-review, Lighthouse |
+| **deploy.yml**                   | PR / workflow_dispatch                 | Build + bundle budget (deploy pela integração Git da Vercel)                                                                           |
+| **security.yml**                 | push/PR/schedule/workflow_dispatch     | CodeQL + npm audit de produção                                                                                                         |
+| **e2e.yml**                      | push/PR/workflow_dispatch              | Playwright público (PR) + autenticado (main e dispatch)                                                                                |
+| **healthcheck.yml**              | schedule (*/6h)/workflow_dispatch      | Healthcheck de produção + abre issue se falhar                                                                                         |
+| **post-deploy-smoke.yml**        | deployment_status                      | `scripts/healthcheck.sh` contra o deploy de produção                                                                                   |
+| **canonical-probes.yml**         | schedule/workflow_call/dispatch        | Probes RV-01–04 no canônico                                                                                                            |
+| **canonical-migrations.yml**     | workflow_dispatch                      | Migrations no canônico (validate; apply exige validated_hash)                                                                          |
+| **canonical-edge-functions.yml** | push (functions, config.toml)/dispatch | Deploy Edge Functions no canônico                                                                                                      |
+| **canonical-sql-diag.yml**       | workflow_dispatch                      | Diagnóstico SQL read-only no canônico                                                                                                  |
+| **ruleset-sync.yml**             | schedule/workflow_dispatch             | Compara o ruleset vivo com `infra/github/ruleset-main.json` (`--full`)                                                                 |
+| **workflow-lint.yml**            | PR (.github/**)/workflow_dispatch      | actionlint + shellcheck                                                                                                                |
+
+**Regras do merge (E09 — via API 27/09/2026):** squash-only, delete branch on merge, allow update branch.
+
+**Ruleset main (ID 21934736):** 10 required_status_checks, 0 aprovações + code owner em caminhos sensíveis — baseline em `infra/github/ruleset-main.json` (validado por `ruleset-sync`).
 
 ### Segurança do Bridge (external-db-bridge)
 
@@ -189,6 +207,231 @@ POST-only gateway (32KB file, 729 lines)
 ├── Dockerfile: npm ci → npm install
 ```
 
+### Sessão 2 — 27/09/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/great-rubin-c50zcx` | **PR:** #145 (draft) | **Plano:** 100 etapas
+
+#### O que foi feito:
+
+```
+🔒 WORKFLOWS AUDIT — plano docs/auditoria/PLANO_100_WORKFLOWS_2026-09-27.md
+├── E01 — branch-protection.yml congelado (if: false); evita destruir ruleset
+├── E02 — infra/github/ruleset-main.json: baseline dos 7 required_status_checks
+├── E08 — scripts/audit-required-checks.mjs: gate que valida required checks ↔ jobs
+├── E09 ⚙️ — repo: squash-only, delete-branch-on-merge, allow-update-branch (API)
+├── E21 — fallback morto VITE_SUPABASE_ANON_KEY removido de ci.yml/deploy.yml/healthcheck.yml
+├── E31 — package.json: engines + packageManager declarados
+├── E32/E62-E64 — dependabot.yml: ignore TS≥6.1.0; docker eco; actions semanal; grupo npm
+├── E33 — timeout-minutes em todos os 12 jobs que não tinham (ci×7, security, deploy,
+│          healthcheck, canonical-edge/migrations/probes)
+├── E35 — ci.yml: trigger branches: [master] removido (só main)
+├── E44 — permissions: contents: read no topo de deploy.yml e security.yml
+├── E53/E54 — e2e.yml: retention reduzida; CI_BRANCH injetado;
+│             playwright.config.ts: retries=0 em PR, 2 em main
+├── E87 — PULL_REQUEST_TEMPLATE.md: seção "verificado de verdade" adicionada
+├── E88 — ISSUE_TEMPLATE: bug/feature removidos; config.yml blank_issues=false
+├── E89 — FUNDING.yml removido
+├── E91 — README.md: badges CI/Security/E2E/Healthcheck; CLAUDE.md atualizado
+├── E93 ⚙️ — labels criados: e2e-main, ci, security, canonical
+└── E96 — scripts/tests/workflows-contract.test.mjs: 5 contratos em todos os workflows
+```
+
+### Sessão 3 — 28/09/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/chore-e03-e48-260928` | **PR:** #153
+
+#### O que foi feito:
+
+```
+🔒 E03 — Branch protection em main ativada via API
+│   required_pull_request_reviews (count=0, sem aprovação obrigatória)
+│   allow_force_pushes=false, allow_deletions=false
+│   required_conversation_resolution=true
+│   ⚠️  enforce_admins=false (CI/CD não bloqueado)
+
+🔑 E48 — Secrets E2E atualizados para credenciais conhecidas
+│   E2E_USER_EMAIL=admin@teste.local
+│   E2E_USER_PASSWORD=Admin@2026!
+│   E2E_NON_ADMIN_EMAIL=user@teste.local
+│   E2E_NON_ADMIN_PASSWORD=User@2026!
+│   (coincidem com os fallbacks de auth.setup.ts / auth-non-admin.setup.ts)
+│   ⚠️  Usuários devem existir em frjbfeamybqsejlvmqbl.supabase.co Auth
+│       — verificar na dashboard Supabase se E2E ainda falhar
+
+✅ E66 — Confirmado já completo na Sessão 2 (recon da sessão 3 confirmou SHA-pinning)
+```
+
+### Sessão 4 — 28/09/2026 (Claude Sonnet 4.6)
+
+**Branches:** `claude/fix-e2e-bun-lockfile-260928` (PR #154, merged) · `claude/feat-sonarcloud-260928-0045` (PR #155, CI verde, aguardando merge) · `claude/great-rubin-c50zcx` (este arquivo)
+
+#### O que foi feito:
+
+```
+🔧 MELHORIA 2 — bun lockfile + patch segurança (PR #154 → merged SHA 50e29626)
+├── e2e.yml: bun-version: latest → 1.3.14 (nos 2 jobs playwright)
+│   Causa raiz: Bun v1.4.2 (latest) escrevia lockfileVersion:3;
+│   Bun 1.3.14 não consegue ler → "Unknown lockfile version" em CI
+├── bun.lock regenerado com Bun 1.3.14 (lockfileVersion:1)
+└── @testing-library/dom 10.4.1 → 10.4.2 (Dependabot PR #147, patch de segurança)
+
+🔒 MELHORIA 3 — SonarCloud análise estática (PR #155 — CI verde, aguardando merge)
+├── sonar-project.properties criado
+│   key=adm01-debug_Departamento_Pessoal_V3, org=adm01-debug
+│   exclui arquivos de teste; lcov.info como coverage report
+├── security.yml: job `sonarcloud` adicionado após CodeQL
+│   skip gracioso sem SONAR_TOKEN (::notice:: + exit 0 — CI nunca quebra)
+│   SHA-pinado: SonarSource/sonarqube-scan-action@ba9859... (v8.2.2)
+│   Para ativar: criar projeto sonarcloud.io (org adm01-debug) + SONAR_TOKEN como repo secret
+└── CI verificado: 100% verde — 7 required checks + E2E + Security + Deploy ✅
+
+⛔ MELHORIA 1 — BLOQUEADA (ação manual obrigatória)
+│   Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth:
+│   admin@teste.local / Admin@2026! · user@teste.local / User@2026!
+└── MCP Departamento Pessoal somente leitura — sem supabase_auth_create_user
+```
+
+### Sessão 5 — 29/09/2026 (Claude Sonnet 4.6)
+
+**Branches:** `claude/fix-sonarcloud-autoscan-conflict-260929-1250` (PR #162, merged) · `claude/fix-fast-uri-audit-260929-1400` (PR #163, merged)
+
+#### O que foi feito:
+
+```
+🔒 PR #163 — fast-uri 3.1.6 → 3.1.8 (segurança alta, merged SHA 2b4e053)
+│   GHSA-qw65-cvwx-89v3 + GHSA-58mr-gqgx-xq4g (high severity)
+│   package.json: overrides range corrigido >=3.0.0 <=3.1.6 → 3.1.8
+│   package-lock.json + bun.lock regenerados
+│   npm audit --audit-level=high: 0 vulnerabilidades após fix
+│   CI 100% verde antes do merge
+
+🔧 PR #162 — SonarCloud CI scanner removido de security.yml (merged)
+│   Job `sonarcloud` conflitava com Automatic Analysis do GitHub App (exit code 3)
+│   Causa: ambos os modos não coexistem — CI scanner falha quando Automatic Analysis ativo
+│   Solução: manter apenas Automatic Analysis (zero-config, já verde)
+│   sonar-project.properties + SONAR_TOKEN preservados para futura migração
+└── CI 100% verde (branch atualizado com fix fast-uri de main antes do merge)
+
+⛔ BLOQUEADO — ação manual obrigatória
+│   Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth:
+│   admin@teste.local / Admin@2026! · user@teste.local / User@2026!
+└── MCP Departamento Pessoal V3 somente leitura — sem supabase_auth_create_user
+```
+
+### Sessão 6 — 14/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (plano 100 etapas — Wave 0 autônoma)
+
+#### O que foi feito:
+
+```
+🔧 W01 — bun.lock regenerado com Bun 1.4.2 (lockfileVersion:3)
+│   D1: Dependabot PRs #216/#217/#218 (13/10) atualizaram package-lock.json
+│   mas não bun.lock → bun install --frozen-lockfile falhava no CI.
+│   Solução: bun.lock regenerado; bun-version 1.3.14 → 1.4.2 em e2e.yml e
+│   deploy.yml (CI e local agora idênticos).
+
+📌 W35 — Comentários # v4 → # v7 em canonical-probes.yml e canonical-sql-diag.yml
+│   SHA 820762... (actions/setup-node) era v7 mas comentado como v4.
+│   Cria infra/github/action-pins.json: tabela offline SHA→versão (8 actions)
+│   usada pelo contrato W97 para validação sem rede.
+
+🔧 W53 — ratchet-lint-warnings.mjs: patch automático de lint:ci --max-warnings
+│   ao atualizar o budget, mantendo budget e package.json sempre em sincronia.
+
+⚙️ W54 — Contrato de auditoria Edge movido de typecheck → security-config
+│   typecheck fica puro (sem npm install); security-config já tem npm install.
+
+🧹 W82 — 9 variáveis/imports não-usados removidos em 9 arquivos Edge/src
+│   Fix CodeQL #187 (js/comparison-between-incompatible-types em safeError.ts).
+│   8 alertas js/unused-local-variable fechados na raiz.
+
+📝 W95 — ci.yml: comentário D26 explica format:check:changed em push na main.
+
+🔖 W96 — ci.yml: label ci → ci-main no job rls-live (D22).
+│   Cria infra/github/labels.json: inventário de 5 labels de workflow.
+
+✅ W97 — workflows-contract.test.mjs: 6 novos contratos (checks 6-11)
+│   Regex de var sensível narrowed (só $VAR, não string literal).
+│   npx -y → WARN pendente W40; node-version → WARN pendente W38.
+│   11/11 workflows passam, 0 falhas.
+
+🧪 W98 — scripts/tests/lockfile-parity.test.sh criado
+│   Detecta regressão D1: bun install --frozen-lockfile + paridade de pacotes.
+
+📚 W94 — CLAUDE.md: 11 workflows (era 10), sessão 6, gaps e métricas atualizados.
+```
+
+### Sessão 7 — 15/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 2 — W69/W86/W87)
+
+#### O que foi feito:
+
+```
+🔧 W86-fix — workflow-lint.yml: corrigir ./actionlint → actionlint (PATH)
+│   go install coloca o binário em ~/go/bin (no PATH), não em ./
+│   O ./ causava "command not found" em todo run do workflow.
+
+📦 W87 — deploy.yml: artefato dist/ + auditoria de bundle
+│   Publicar dist/ como artifact (upload-artifact v7, retention 7 dias)
+│   após o build para reuso downstream (Lighthouse, auditoria).
+│   Executar node scripts/check-bundle-budget.mjs para bloquear merge
+│   se orçamento de bundle for excedido.
+│   SHA 043fb46d já presente em action-pins.json → contrato check-6 passa.
+
+🔑 W69 — canonical-migrations.yml: ledger genérico + sidecars .verify.sql
+│   Substituiu ledger_count hardcoded (6 versões fixas de ondas 3b/4) por
+│   verificação dinâmica: itera os arquivos do stage, monta lista de versões,
+│   confirma count no supabase_migrations.schema_migrations.
+│   Adiciona runner de sidecars: se existir <versão>.verify.sql no repo,
+│   executa via psql após as invariantes acumuladas.
+│   Marcadores: CANONICAL_LEDGER_OK, CANONICAL_SCHEMA_INVARIANTS_OK,
+│   CANONICAL_SCOPED_MIGRATIONS_OK.
+
+✅ Contratos: 12/12 workflows, 0 falhas (W97 — detectou workflow-lint.yml fix).
+
+📚 W94 — CLAUDE.md: sessão 7, métricas e status atualizados.
+```
+
+### Sessão 8 — 15/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 3 — API + scripts)
+
+#### O que foi feito:
+
+```
+⚙️ W12 — Ruleset 21934736 atualizado via API: 7 → 9 required checks
+│   Adicionados: "Playwright público (PR)" e "Build"
+│   infra/github/ruleset-main.json atualizado para refletir os 9 checks
+
+⚙️ W13 — Proteção clássica de branch removida via API
+│   Resolve conflito histórico D2 (ruleset + classic protection coexistindo)
+│   Ruleset é agora a única fonte de proteção do branch main
+
+⚙️ W33 — sha_pinning_required=true via PUT /repos/…/actions/permissions
+│   Todas as GitHub Actions do repo precisam de SHA pin — supply chain hardened
+
+⚙️ W34 — allowed_actions=selected via API (fix 409 race condition)
+│   github_owned=true, verified=true
+│   patterns: denoland/*, oven-sh/*, ossf/*, SonarSource/*, supabase/*
+
+🔍 W17 — audit-required-checks.mjs: comparação live com GITHUB_TOKEN
+│   Quando GITHUB_TOKEN disponível: busca ruleset 21934736 via API e compara
+│   com baseline; falha se houver divergência (checks só no baseline ou só no live)
+│   Quando sem token: usa apenas baseline offline (comportamento anterior)
+
+🔧 W30 — validate-canonical-db-url.mjs + audit-canonical-project.mjs
+│   CANONICAL_PROJECT_REF / CANONICAL_REF agora leem process.env.CANONICAL_SUPABASE_REF
+│   com fallback para 'frjbfeamybqsejlvmqbl' — permite sobrescrever em staging
+
+❌ W85 — secret_scanning_non_provider_patterns + validity_checks
+│   GHAS requerido — não disponível no plano atual (public free repo)
+│   API retornou 200 mas campos permanecem "disabled"
+
+📚 W94 — CLAUDE.md: sessão 8, métricas e score atualizados (6.5/10)
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -196,24 +439,54 @@ POST-only gateway (32KB file, 729 lines)
 ### Status dos Workflows
 
 ```
-CI (ci.yml)              → configurado com Node fallback 🟡 (precisa: Settings→Actions)
-Security (security.yml)  → CodeQL ativado 🟡 (precisa Settings)
-Deploy (deploy.yml)      → Netlify preview 🟡 (precisa secrets)
-E2E (e2e.yml)            → Playwright ✅ (não modificado)
-Dependabot               → Groups ativos ✅ (23 PRs merged na sessão)
+CI (ci.yml)              → 12 jobs, todos com timeout; label ci-main (D22 fix) ✅
+Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
+Deploy (deploy.yml)      → Vercel (integração Git), npm ci, dist artifact + bundle audit ✅
+E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, npm ci ✅
+Pacotes (W03)            → npm único; bun.lock removido; gate lockfile-single em security-config ✅
+SonarCloud               → ✅ Automatic Analysis (GitHub App) — job CI removido (PR #162)
+Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
+Canônicos (×3)           → timeout adicionado, environment: production ✅
+canonical-migrations.yml → ledger dinâmico W69 + sidecars .verify.sql ✅
+canonical-sql-diag.yml   → novo (diagnóstico SQL) — 12 workflows no total ✅
+workflow-lint.yml        → actionlint via $GOPATH/bin publicado em $GITHUB_PATH + shellcheck limpo ✅
+Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
+Branch ruleset           → 10 required checks (inclui Revisão de dependências), baseline em infra/github/ ✅
+Aprovação de PR (W14)    → 0 aprovações; code owner só em caminhos sensíveis (.github/CODEOWNERS) ✅
+Branch protection (main) → clássica removida (W13); ruleset único; sha_pinning (W33) ✅
+Actions allowlist        → selected: github_owned + verified + denoland/*, supabase/* ✅
+audit-required-checks    → W17 live API check quando GITHUB_TOKEN disponível ✅
+scripts canonicais       → W30 CANONICAL_SUPABASE_REF env var com fallback ✅
+Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
 ```
 
-### Métricas
+### Métricas (15/10/2026)
 
-| Indicador          | Valor                                              |
-| ------------------ | -------------------------------------------------- |
-| Open Issues        | ~7 (Dependabot automáticos)                        |
-| Open PRs           | ~7 (Dependabot automáticos)                        |
-| TypeScript strict  | ✅ Ativado                                         |
-| `any` types no app | ✅ Compatível com `strict` (0 erros de tipo no CI) |
-| Testes             | ✅ Configurados                                    |
-| Cobertura          | ✅ v8 configurada                                  |
-| Branch protection  | ❌ Não ativo (Settings manual)                     |
+| Indicador              | Valor                                                                                    |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner mergeadas na main (PR #233, 15/10/2026)                 |
+| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                         |
+| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                  |
+| Cobertura              | ✅ v8 configurada                                                                        |
+| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                |
+| Branch delete          | ✅ delete_branch_on_merge=true                                                           |
+| Ruleset                | ✅ 21934736 — 10 required checks — baseline em infra/github/                             |
+| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`     |
+| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                  |
+| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                            |
+| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\* (sem oven-sh/ossf/Sonar) |
+| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                  |
+| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                 |
+| E2E secrets            | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)  |
+| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido         |
+| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                     |
+| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                             |
+| contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                 |
+| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                |
+| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows            |
+| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)           |
+| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)             |
+| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)            |
 
 ---
 
@@ -221,7 +494,11 @@ Dependabot               → Groups ativos ✅ (23 PRs merged na sessão)
 
 ### W03 — npm como gerenciador único (15/10/2026)
 
-Bun foi removido; `package-lock.json` é o único lockfile e todo install usa `npm ci`. Detalhes em CLAUDE.md → Decisões Técnicas. Não reintroduzir Bun.
+Bun foi removido. `package-lock.json` é o único lockfile e **todo** install (CI, E2E, deploy, Docker) usa `npm ci`.
+
+Motivo: dois lockfiles divergiam continuamente (D1). Na migração, `package-lock.json` estava sem `@lhci/cli` e ~260 dependências transitivas que só existiam no `bun.lock` — os jobs npm rodavam `npm install` sobre um lock incompleto. `package.json` já declarava `packageManager: npm@10.x`, Dependabot/`npm audit`/dependency-review já operavam sobre o lock npm, e Bun só aparecia em `e2e.yml`/`deploy.yml`.
+
+Guardas: `scripts/tests/lockfile-single.test.sh` (security-config) reprova `bun.lock`/`yarn.lock`/`pnpm-lock.yaml`, `packageManager` ≠ npm e qualquer uso de Bun em workflow; `npm ci` reprova drift package.json ↔ lock. **Não reintroduzir Bun.** Imagens Docker seguem `engines.node` (22); Dependabot ignora majors de `node`.
 
 ### TypeScript strict — estado real (28/07/2026)
 
@@ -244,34 +521,29 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Críticos
 
-| Gap                         | Impacto                        | Solução                        |
-| --------------------------- | ------------------------------ | ------------------------------ |
-| CI não roda em repo privado | Pipeline não executa           | Settings → Actions → Allow     |
-| Branch protection inativo   | Push direto p/ main sem review | Settings → Branches → Add rule |
+_Nenhum crítico bloqueante no momento._
 
 ### Médios
 
-| Gap                        | Impacto                   | Solução                                |
-| -------------------------- | ------------------------- | -------------------------------------- |
-| SonarCloud sem token       | Análise estática não roda | Adicionar SONAR_TOKEN nas secrets      |
-| Deploy Netlify sem secrets | Preview não deploya       | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID |
+| Gap                     | Impacto                                     | Solução                                                                            |
+| ----------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
+| SUPABASE_DB_URL no repo | Workflows de qualquer branch leem o segredo | Owner: copiar para o environment Production e apagar o secret do repositório (W25) |
 
 ### Baixos
 
-| Gap                                | Impacto                                   | Solução                                            |
-| ---------------------------------- | ----------------------------------------- | -------------------------------------------------- |
-| `noUnusedLocals:true` pode alertar | Warnings no build                         | Aceitar ou limpar                                  |
-| Testes fora do typecheck           | 232 erros de tipo latentes em `__tests__` | Incluir testes no `tsconfig` e sanear gradualmente |
+| Gap                                  | Impacto              | Solução                          |
+| ------------------------------------ | -------------------- | -------------------------------- |
+| `--no-lock` no `deno test` do ci.yml | Bypassa deno.lock    | Resolver após W36 corrigir lock  |
+| `noUnusedLocals:true` pode alertar   | Warnings no build    | Aceitar ou limpar                |
+| CodeQL unused-local (99 restantes)   | Ruído no painel GHAS | Fechar em batch via W82 contínuo |
 
 ---
 
 ## 🚀 Próximos Passos Recomendados
 
-### Imediatos (settings do GitHub)
+### Imediatos (ação manual obrigatória)
 
-1. **Settings → Actions → General → Allow GitHub Actions** ✅ Habilita CI
-2. **Settings → Branches → Add rule → main** ✅ Protege branch
-3. **Adicionar secrets**: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, SONAR_TOKEN
+1. **W25:** mover `SUPABASE_DB_URL` para o environment Production e apagar o secret do repositório (o valor não é legível via API).
 
 ### Curto Prazo
 
