@@ -39,6 +39,24 @@ export default defineConfig(({ mode }) => ({
       apply: 'serve',
       transformIndexHtml: (html: string) => html.replace(/\s*<meta http-equiv="Content-Security-Policy"[^>]*>/, ''),
     },
+    // W91a: injeta <meta name="build-sha"> no HTML publicado para o
+    // healthcheck comparar o deploy em produção com o commit esperado.
+    // Prioridade: VITE_GIT_SHA (setado explicitamente, ex. deploy.yml) →
+    // VERCEL_GIT_COMMIT_SHA (system env var da Vercel, auto-exposta se o
+    // projeto tiver "Automatically expose System Environment Variables"
+    // ligado) → GITHUB_SHA (fallback para builds feitos em CI puro, sem
+    // Vercel). Se nenhuma estiver presente (ex. build local), a tag não é
+    // emitida — scripts/healthcheck.sh já trata a ausência como aviso, nunca
+    // como falha.
+    {
+      name: 'inject-build-sha-meta',
+      transformIndexHtml(html: string) {
+        const sha = process.env.VITE_GIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || '';
+        if (!sha) return html;
+        const tag = `    <meta name="build-sha" content="${sha}" />\n`;
+        return html.includes('</head>') ? html.replace('</head>', `${tag}  </head>`) : html + tag;
+      },
+    },
     // P1-022: Babel-based plugin required for React Compiler
     react({
       // React Compiler: compila automaticamente components/hooks com dependências

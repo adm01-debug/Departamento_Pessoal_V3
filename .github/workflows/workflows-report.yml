@@ -1,0 +1,94 @@
+name: Workflows report
+# W92: roda scripts/report-workflows.mjs (mediana/P95 de duração dos últimos
+# 50 runs por workflow) semanalmente e injeta o resultado em
+# docs/auditoria/estado/WORKFLOWS_STATUS.md entre os marcadores
+# <!-- REPORT:START/END -->. Só abre PR se o conteúdo mudou
+# (git diff --quiet) — nunca abre PR vazio. Usa git + gh direto (sem
+# peter-evans/create-pull-request) para não depender da allowlist de actions.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Quarta 08:10 UTC — fora dos horários dos demais crons do repo:
+    # ruleset-sync (seg 07:41), ossf-scorecard (ter 07:15), security/CodeQL
+    # (qui 06:47), canonical-probes (diário 06:23), healthcheck (a cada 6h,
+    # minuto 17) e Dependabot (seg/ter/qua 09:00 America/Sao_Paulo = 12:00 UTC).
+    - cron: '10 8 * * 3'
+
+concurrency:
+  group: workflows-report
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    name: Gerar relatório e abrir PR se houver mudança
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    steps:
+      # Codex review (P2, PR #242): workflow_dispatch usa o ref selecionado
+      # na UI para GITHUB_SHA/GITHUB_REF — sem fixar `ref: main` aqui, um
+      # dispatch manual numa branch de feature geraria o relatório sobre o
+      # conteúdo dessa branch, e a PR resultante (base: main) arrastaria
+      # todos os commits não mergeados dela. Este workflow só lê métricas de
+      # runs via API e escreve num doc — nunca precisa de outro ref.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Gerar relatório de workflows
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/report-workflows.mjs > /tmp/workflows-report.md
+
+      - name: Atualizar WORKFLOWS_STATUS.md
+        run: node scripts/update-workflows-status.mjs
+
+      - name: Verificar se o conteúdo mudou
+        id: diff
+        run: |
+          if git diff --quiet -- docs/auditoria/estado/WORKFLOWS_STATUS.md; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Criar/atualizar branch e abrir PR (se ainda não houver um aberto)
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # Branch estável (não mais um nome com timestamp): evita que uma
+          # PR de relatório anterior, ainda aberta, fique esquecida enquanto
+          # cada run cria e abre outra concorrente. O branch é sempre
+          # recriado a partir do main atual (checkout -B local) e enviado
+          # com --force — ele é de uso exclusivo deste workflow (nenhum
+          # humano trabalha nele), então reescrever seu conteúdo a cada run
+          # é seguro e é exatamente o comportamento desejado: a PR aberta é
+          # atualizada no lugar em vez de ganhar uma concorrente.
+          BRANCH="chore/workflows-report"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$BRANCH"
+          git add docs/auditoria/estado/WORKFLOWS_STATUS.md
+          git commit -m "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92)"
+          git push --force origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' 2>/dev/null)" ]; then
+            gh pr create \
+              --title "docs: atualizar WORKFLOWS_STATUS.md (relatório automático)" \
+              --body "Atualização automática gerada por \`workflows-report.yml\` a partir de \`scripts/report-workflows.mjs\` (mediana/P95 de duração dos últimos 50 runs por workflow)." \
+              --base main \
+              --head "$BRANCH" \
+              --label documentation
+          fi

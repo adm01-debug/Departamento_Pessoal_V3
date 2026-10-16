@@ -29,6 +29,13 @@ jobs:
           SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
           REQUIRE_APP: '1'
           REQUIRE_BACKEND: '1'
+          # W91a: GITHUB_SHA aqui é o SHA do deploy que disparou o evento
+          # deployment_status (não o HEAD de main) — é exatamente o commit
+          # que deveria estar servido em DEPLOYMENT_URL.
+          # W91b: login E2E não-admin — visibilidade pós-deploy sem bloquear
+          # ainda (REQUIRE_LOGIN permanece 0/padrão até confirmar estabilidade).
+          E2E_NON_ADMIN_EMAIL: ${{ secrets.E2E_NON_ADMIN_EMAIL }}
+          E2E_NON_ADMIN_PASSWORD: ${{ secrets.E2E_NON_ADMIN_PASSWORD }}
         run: |
           set -euo pipefail
           echo "APP_URL=${DEPLOYMENT_URL:-$FALLBACK_APP_URL}" >> "$GITHUB_ENV"

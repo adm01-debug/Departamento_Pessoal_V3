@@ -4,11 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Simular com ROLLBACK ou aplicar e registrar no ledger
+        description: >-
+          validate=simula com ROLLBACK · apply=aplica e registra no ledger ·
+          verify=só roda sidecars .verify.sql de migrações já aplicadas
+          (read-only, sem tocar em stage/ledger — ver migration_files)
         required: true
         default: validate
         type: choice
-        options: [validate, apply]
+        options: [validate, apply, verify]
       confirm_project_ref:
         description: Digite o project ref canônico para evitar alvo acidental
         required: true
@@ -19,7 +22,9 @@ on:
           Em mode=validate pode ficar vazio: a lista é derivada (W67) comparando
           supabase/migrations/*.sql com o ledger do canônico. Em mode=apply é
           obrigatório e precisa ser idêntico ao último validate verde no mesmo
-          SHA (W68) — copie a lista do resumo daquele run.
+          SHA (W68) — copie a lista do resumo daquele run. Em mode=verify é
+          obrigatório: migrações JÁ aplicadas cujo sidecar <versão>.verify.sql
+          você quer re-executar agora contra o canônico (sem reaplicar nada).
         required: false
         type: string
 
@@ -55,14 +60,20 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Gate de branch para apply
+      - name: Gate de branch para apply/verify
         # E15/D4: DDL em produção só pode partir de código mergeado em main.
         # Antes, `apply` era disparado de branches de feature — o DDL aplicado
         # não correspondia a nenhum commit integrado.
-        if: inputs.mode == 'apply'
+        #
+        # Codex review (P1, PR #242): mode=verify roda o conteúdo de um
+        # .verify.sql direto do ref do checkout contra o canônico — sem este
+        # gate, um dispatch numa branch de feature executaria SQL não
+        # revisado (e potencialmente mutante, apesar do contrato ser
+        # read-only) em produção. Mesmo gate do apply.
+        if: inputs.mode == 'apply' || inputs.mode == 'verify'
         run: |
           test "$GITHUB_REF" = 'refs/heads/main' || {
-            echo '::error::mode=apply só pode ser disparado a partir da branch main.'
+            echo "::error::mode=$DISPATCH_MODE só pode ser disparado a partir da branch main."
             exit 1
           }
 
@@ -81,6 +92,10 @@ jobs:
           # (a mesma lista confirmada num validate anterior; W68 confere isso).
           if [ "$DISPATCH_MODE" = 'apply' ] && [ -z "$MIGRATION_FILES" ]; then
             echo '::error::mode=apply exige migration_files explícito e idêntico ao último validate verde (W67/W68).'
+            exit 1
+          fi
+          if [ "$DISPATCH_MODE" = 'verify' ] && [ -z "$MIGRATION_FILES" ]; then
+            echo '::error::mode=verify exige migration_files com as migrações já aplicadas a re-verificar.'
             exit 1
           fi
           node scripts/validate-canonical-db-url.mjs
@@ -654,6 +669,61 @@ jobs:
           done
           test "$sidecar_errors" -eq 0
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
+
+      - name: Executar sidecars de verificação (mode=verify)
+        # Codex review (P2, PR #242): o loop de sidecars em "Verificar objetos
+        # e ledger" só roda para migrações staged em mode=apply (lote NOVO,
+        # ainda fora do ledger) — um sidecar de uma migração JÁ aplicada
+        # (como 20261013152000_onda4b_vinculo_documentos_lgpd_crypto.verify.sql,
+        # criado em W80 para uma migração reaplicada numa onda anterior) nunca
+        # entra nesse lote de novo, então nunca é executado por nenhum run
+        # normal. mode=verify roda os sidecars listados em migration_files
+        # diretamente do checkout (sem stage/apply/ledger) — só leitura, mesmo
+        # contrato de saída do loop em "Verificar objetos e ledger": cada
+        # linha não-vazia precisa ser literalmente 'ok'.
+        #
+        # Codex review (P1, PR #242): além do gate de branch (main-only,
+        # acima), a sessão psql entra em default_transaction_read_only
+        # antes de rodar o arquivo — um sidecar que violasse o contrato
+        # (INSERT/UPDATE/DELETE/DDL em vez de só SELECT) falha com erro de
+        # Postgres em vez de mutar o canônico, mesmo que tenha sido mergeado
+        # em main.
+        #
+        # Codex review (P2, PR #242): a primeira versão usava
+        # `-c 'SET default_transaction_read_only = on;' -f sidecar` na mesma
+        # chamada de psql — mas psql imprime a tag de status ("SET") do -c
+        # no mesmo stdout capturado, e isso sempre reprovava o
+        # `grep -vx 'ok'` abaixo (toda run de verify falharia). Troca para
+        # PGOPTIONS: o GUC é setado no startup da conexão (libpq), não como
+        # um comando executado na sessão — nenhuma tag extra no stdout.
+        if: inputs.mode == 'verify'
+        run: |
+          set -euo pipefail
+          verify_errors=0
+          while IFS= read -r migration; do
+            migration="$(echo "$migration" | tr -d '[:space:]')"
+            [ -z "$migration" ] && continue
+            sidecar="supabase/migrations/${migration%.sql}.verify.sql"
+            if [ ! -f "$sidecar" ]; then
+              echo "::error::Sidecar não encontrado para $migration: $sidecar"
+              verify_errors=$((verify_errors + 1))
+              continue
+            fi
+            echo "Sidecar: $sidecar"
+            sidecar_output="$(PGOPTIONS='-c default_transaction_read_only=on' psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
+              echo "::error::Sidecar falhou (erro de execução): $sidecar"
+              verify_errors=$((verify_errors + 1))
+              continue
+            }
+            bad_lines="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' | grep -vx 'ok' || true)"
+            if [ -n "$bad_lines" ]; then
+              echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
+              printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+              verify_errors=$((verify_errors + 1))
+            fi
+          done <<< "$MIGRATION_FILES"
+          test "$verify_errors" -eq 0
+          echo 'CANONICAL_VERIFY_OK'
 
       - name: Resumo das migrações (GITHUB_STEP_SUMMARY)
         if: always()
