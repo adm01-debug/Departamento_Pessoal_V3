@@ -119,7 +119,9 @@ function needsPiiFlag(sql) {
   // ainda indicam PII mesmo quando TODAS as refs qualificadas são seguras, pois o
   // search_path padrão do Supabase resolve para public.
   // Detecta: FROM x, JOIN x, UPDATE x, INSERT INTO x (exclui funções com parênteses).
-  const unqualifiedTableRE = /\b(?:from|join|update|into)\s+([a-z_][a-z0-9_]*)(?!\s*\()/gi;
+  // Codex P2: exclui o prefixo de schema em refs qualificadas (FROM pg_catalog.pg_class):
+  // a lookahead negativa (?!\s*[.(]) impede capturar 'pg_catalog' antes do '.'.
+  const unqualifiedTableRE = /\b(?:from|join|update|into)\s+([a-z_][a-z0-9_]*)(?!\s*[.(])/gi;
   const unqualifiedRefs = [...sql.matchAll(unqualifiedTableRE)].map((m) => m[1].toLowerCase());
   if (unqualifiedRefs.length > 0) {
     // Identifiers que NÃO são referências a tabelas reais (palavras reservadas de SQL/Postgres)
@@ -217,7 +219,16 @@ const status = await new Promise((resolvePromise, rejectPromise) => {
 
 if (status !== 0 && !truncated) {
   console.error('::error::a consulta falhou no canônico');
-  console.error(stderr);
+  // Codex P1: quando allow_pii=1, stderr pode conter valores de linhas em mensagens de
+  // erro do Postgres (ex: "invalid input syntax for integer: 'user@example.com'").
+  // Redirecionar para o arquivo de saída protegido em vez do log de CI.
+  if (OUTPUT_FILE) {
+    const { appendFileSync: afs } = await import('node:fs');
+    afs(OUTPUT_FILE, `\n\n--- ERRO psql ---\n${stderr}`, 'utf8');
+    console.error('::error::a consulta falhou — detalhes no artifact (protegido de PII).');
+  } else {
+    console.error(stderr);
+  }
   process.exit(1);
 }
 
@@ -234,10 +245,13 @@ if (OUTPUT_FILE) {
   // W27: resultado com PII vai para arquivo isolado → artifact de curta retenção.
   // Nada é impresso nos logs de CI (evita PII em runs públicos).
   writeFileSync(OUTPUT_FILE, out, 'utf8');
+  // Codex P1: stderr também pode conter PII (valores em mensagens de erro do Postgres).
+  // Anexar ao arquivo protegido em vez de imprimir no log de CI.
+  if (stderr.trim()) appendFileSync(OUTPUT_FILE, `\n\n--- stderr psql ---\n${stderr}`, 'utf8');
   console.log(
     `::notice::Resultado em artifact sql-diag-output (retenção 1 dia) — omitido dos logs para proteção de PII (W27).`
   );
 } else {
   console.log(out);
+  if (stderr.trim()) console.error(stderr);
 }
-if (stderr.trim()) console.error(stderr);

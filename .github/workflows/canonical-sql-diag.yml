@@ -22,7 +22,10 @@ on:
         description: >
           W27 — marcar true para consultas que acessam tabelas com dados pessoais
           (schema public). O resultado NÃO aparecerá nos logs: será enviado como
-          artifact privado com retenção de 1 dia.
+          artifact com retenção de 1 dia. Atenção: em repositório público,
+          qualquer usuário autenticado no GitHub pode baixar o artifact durante
+          o período de retenção (Codex P1). O banco canônico usa apenas dados
+          sintéticos/mock — sem PII real.
         required: false
         default: false
         type: boolean
