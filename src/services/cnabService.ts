@@ -340,8 +340,18 @@ export const cnabService = {
     const cnabItensToInsert: DataRecord[] = [];
 
     // CNPJ da empresa — inscrição do header de lote (pos. 18-52 FEBRABAN).
-    const { data: empresaRow } = await supabase.from('empresas').select('cnpj').eq('id', empresaId).maybeSingle();
+    // Falha de leitura ou CNPJ ausente/inválido aborta: remessa com inscrição
+    // zerada é inválida no banco e ficaria persistida como 'enviado'.
+    const { data: empresaRow, error: empresaError } = await supabase
+      .from('empresas')
+      .select('cnpj')
+      .eq('id', empresaId)
+      .maybeSingle();
+    if (empresaError) throw empresaError;
     const cnpjEmpresa = onlyDigits((empresaRow as DataRecord | null)?.cnpj ?? '');
+    if (!/^\d{14}$/.test(cnpjEmpresa) || /^0+$/.test(cnpjEmpresa)) {
+      throw new Error('CNPJ da empresa ausente ou inválido — regularize o cadastro antes de gerar a remessa.');
+    }
 
     // Header de Lote (Tipo 1) — posições FEBRABAN CNAB240:
     // 14-16 versão '040' · 17 uso FEBRABAN · 18-19 tipo+nº inscrição
@@ -685,6 +695,18 @@ export const cnabService = {
         throw new Error('Lote PIX já está sendo gerado para esta folha — aguarde e tente novamente.');
     }
 
+    // Titularidade: a folha precisa pertencer a esta empresa — gravar pagamentos
+    // de outro tenant sob este empresa_id exporia dados bancários alheios.
+    const { data: folhaRow, error: folhaError } = await supabase
+      .from('folhas_pagamento')
+      .select('empresa_id')
+      .eq('id', folhaId)
+      .maybeSingle();
+    if (folhaError) throw folhaError;
+    if ((folhaRow as { empresa_id?: string } | null)?.empresa_id !== empresaId) {
+      throw new Error('Folha não pertence a esta empresa.');
+    }
+
     const { data: itens, error: hError } = await supabase
       .from('folha_itens')
       .select(
@@ -751,16 +773,16 @@ export const cnabService = {
         quantidade_pagamentos: csvLines.length - 1,
       });
       if (insErr) {
-        // 23505 = outro processo gravou primeiro — retorna o arquivo dele
-        if ((insErr as { code?: string }).code === '23505') {
-          const { data: won } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
-            .select('arquivo_lote')
-            .eq('empresa_id', empresaId)
-            .eq('folha_id', folhaId)
-            .maybeSingle();
-          const wonRec = won as { arquivo_lote?: string | null } | null;
-          if (wonRec?.arquivo_lote) return wonRec.arquivo_lote;
-        }
+        // Perdeu a corrida (o bridge devolve INSERT_ERROR, não 23505 — o
+        // único índice único em pix_lotes é (empresa_id, folha_id)): re-lê
+        // o lote e devolve o arquivo do vencedor se já está finalizado.
+        const { data: won } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
+          .select('status, arquivo_lote')
+          .eq('empresa_id', empresaId)
+          .eq('folha_id', folhaId)
+          .maybeSingle();
+        const wonRec = won as { status?: string; arquivo_lote?: string | null } | null;
+        if (wonRec?.status === 'finalizado' && wonRec.arquivo_lote) return wonRec.arquivo_lote;
         throw insErr;
       }
     }

@@ -369,6 +369,19 @@ export const calculoLoteService = {
       const somar = (campo: 'total_proventos' | 'total_descontos' | 'total_liquido' | 'fgts_mes') =>
         Math.round((itensFolha ?? []).reduce((acc, i) => acc + Number(i[campo] ?? 0), 0) * 100) / 100;
 
+      // 'aberta' (primeiro cálculo) e 'calculada' (recálculo de competência
+      // aberta) — o bridge só aceita eq em UPDATE, então lê o status atual e
+      // casa exatamente ele (in() era rejeitado e o cabeçalho ficava velho).
+      const { data: folhaAtual, error: folhaAtualError } = await supabase
+        .from('folhas_pagamento')
+        .select('status')
+        .eq('id', folhaId)
+        .maybeSingle();
+      if (folhaAtualError) throw folhaAtualError;
+      const statusFolha = (folhaAtual as { status?: string } | null)?.status;
+      if (statusFolha !== 'aberta' && statusFolha !== 'calculada') {
+        throw new Error(`Folha não está aberta para atualização de totais (status: ${statusFolha ?? 'inexistente'}).`);
+      }
       const { error: totaisError } = await supabase
         .from('folhas_pagamento')
         .update({
@@ -380,9 +393,7 @@ export const calculoLoteService = {
           data_calculo: new Date().toISOString(),
         })
         .eq('id', folhaId)
-        // 'aberta' (primeiro cálculo) e 'calculada' (recálculo de competência
-        // aberta) — eq('aberta') descartava o UPDATE dos totais no recálculo.
-        .in('status', ['aberta', 'calculada']);
+        .eq('status', statusFolha);
 
       if (totaisError) throw totaisError;
 
