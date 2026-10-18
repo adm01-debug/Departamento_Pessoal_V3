@@ -171,8 +171,14 @@ if (FORBIDDEN_RE.test(codeOnly)) {
 // cron.schedule writes survive ROLLBACK once dequeued by pg_cron workers;
 // pg_terminate/cancel affect live connections; dblink/pg_read_file/lo_*
 // reach outside the catalog. Reading cron.job / net queues stays allowed.
+// Codex P1: query_to_xml / query_to_xml_and_xmlroot aceitam uma query SQL como
+// string e a executam — literal stripping remove o argumento e a função aparece
+// sem FROM no topo, iludindo needsPiiFlag. Bloqueadas aqui independentemente de
+// ALLOW_PII, pois não há uso legítimo dessas funções em um script de diagnóstico.
+// table_to_xml/schema_to_xml/database_to_xml exportam dados em bulk (sem filtro
+// de PII possível); cursor_to_xml pode ser alimentada com cursor de query arbitrária.
 const FORBIDDEN_CALL_RE =
-  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_stat_file|pg_ls_dir|dblink_exec|dblink_send_query|lo_import|lo_export|lo_unlink)\b/i;
+  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_stat_file|pg_ls_dir|dblink_exec|dblink_send_query|lo_import|lo_export|lo_unlink|query_to_xml|query_to_xml_and_xmlroot|cursor_to_xml|table_to_xml|schema_to_xml|database_to_xml)\b/i;
 if (FORBIDDEN_CALL_RE.test(codeOnly)) {
   const fn = codeOnly.match(FORBIDDEN_CALL_RE)?.[0];
   console.error(`::error::chamada não permitida em diagnóstico read-only: "${fn}"`);
