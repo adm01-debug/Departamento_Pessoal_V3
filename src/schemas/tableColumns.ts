@@ -665,6 +665,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'updated_at',
   ],
   categorias_trabalhador: ['codigo_esocial', 'created_at', 'id', 'nome'],
+  cbo: ['codigo', 'descricao', 'grupo'],
   centros_custo: ['ativo', 'codigo', 'created_at', 'descricao', 'empresa_id', 'id', 'nome', 'updated_at'],
   certificados_digitais: [
     'arquivo_base64',
@@ -795,6 +796,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'updated_at',
     'valor_total',
   ],
+  cnae: ['codigo', 'descricao', 'subclasse'],
   colaborador_beneficios: ['beneficio_id', 'colaborador_id', 'created_at', 'id'],
   colaboradores: [
     'agencia',
@@ -1753,6 +1755,8 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'tipo_exame',
     'updated_at',
   ],
+  faixas_inss: ['aliquota', 'faixa', 'id', 'teto'],
+  faixas_irrf: ['aliquota', 'deducao', 'faixa', 'id'],
   faltas: [
     'aprovado_em',
     'aprovado_por',
@@ -2132,6 +2136,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'valor_segurados',
     'valor_total',
   ],
+  health_checks: ['created_at', 'detalhes', 'id', 'status'],
   historico_alertas: ['created_at', 'id', 'limite', 'mensagem', 'nivel', 'tipo', 'valor'],
   historico_calculos_folha: ['created_at', 'criado_por', 'empresa_id', 'folha_id', 'id', 'snapshot'],
   historico_cargo: [

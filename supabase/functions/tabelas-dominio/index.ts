@@ -51,9 +51,51 @@ const COLUMNS_MAP: Record<DomainType, string> = {
   rubricas: 'codigo, descricao, tipo, natureza',
 };
 
+// Coluna de ordenação por tabela — faixas_irrf/faixas_inss não têm `codigo`.
+const ORDER_MAP: Record<DomainType, string> = {
+  cbo: 'codigo',
+  cnae: 'codigo',
+  irrf: 'id',
+  inss: 'id',
+  feriados: 'data',
+  rubricas: 'codigo',
+};
+
 serve(async (req) => {
   const url = new URL(req.url);
-  const type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
+  // `type` vem da querystring (GET) ou do body — o frontend chama via
+  // functions.invoke com `body: { type }`.
+  let type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
+  if (!type && req.method === 'POST') {
+    // Body só carrega {type} — leitura bounded: soma bytes reais e cancela acima
+    // de 1KB mesmo em chunked sem Content-Length (antes do rate-limit).
+    try {
+      const reader = req.body?.getReader();
+      if (reader) {
+        const decoder = new TextDecoder();
+        let bytes = 0;
+        let text = '';
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          bytes += value.byteLength;
+          if (bytes > 1024) {
+            return new Response(JSON.stringify({ error: 'Payload muito grande' }), {
+              status: 413,
+              headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
+            });
+          }
+          text += decoder.decode(value, { stream: true });
+        }
+        const body = JSON.parse(text);
+        if (body && typeof body.type === 'string') {
+          type = body.type.toLowerCase() as DomainType;
+        }
+      }
+    } catch {
+      /* read interrompido ou JSON inválido — o 400 abaixo cobre */
+    }
+  }
 
   // E-077: CORS via allowlist compartilhada (sem wildcard fixo)
   const preflight = handlePreflight(req);
@@ -102,7 +144,7 @@ serve(async (req) => {
         const { data, error } = await supabase
           .from(table)
           .select(columns)
-          .order('codigo', { ascending: true });
+          .order(ORDER_MAP[type], { ascending: true });
 
         if (error) throw error;
         return data || [];

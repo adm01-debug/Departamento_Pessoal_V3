@@ -2935,6 +2935,42 @@ export type Database = {
         }
         Relationships: []
       }
+      cbo: {
+        Row: {
+          codigo: string
+          descricao: string
+          grupo: string | null
+        }
+        Insert: {
+          codigo: string
+          descricao: string
+          grupo?: string | null
+        }
+        Update: {
+          codigo?: string
+          descricao?: string
+          grupo?: string | null
+        }
+        Relationships: []
+      }
+      cnae: {
+        Row: {
+          codigo: string
+          descricao: string
+          subclasse: string | null
+        }
+        Insert: {
+          codigo: string
+          descricao: string
+          subclasse?: string | null
+        }
+        Update: {
+          codigo?: string
+          descricao?: string
+          subclasse?: string | null
+        }
+        Relationships: []
+      }
       centros_custo: {
         Row: {
           ativo: boolean | null
@@ -8547,6 +8583,48 @@ export type Database = {
           },
         ]
       }
+      faixas_inss: {
+        Row: {
+          aliquota: number
+          faixa: string
+          id: number
+          teto: number | null
+        }
+        Insert: {
+          aliquota: number
+          faixa: string
+          id?: never
+          teto?: number | null
+        }
+        Update: {
+          aliquota?: number
+          faixa?: string
+          id?: number
+          teto?: number | null
+        }
+        Relationships: []
+      }
+      faixas_irrf: {
+        Row: {
+          aliquota: number
+          deducao: number | null
+          faixa: string
+          id: number
+        }
+        Insert: {
+          aliquota: number
+          deducao?: number | null
+          faixa: string
+          id?: never
+        }
+        Update: {
+          aliquota?: number
+          deducao?: number | null
+          faixa?: string
+          id?: number
+        }
+        Relationships: []
+      }
       feriados: {
         Row: {
           cidade: string | null
@@ -10294,6 +10372,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      health_checks: {
+        Row: {
+          created_at: string
+          detalhes: Json | null
+          id: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string
+          detalhes?: Json | null
+          id?: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string
+          detalhes?: Json | null
+          id?: string
+          status?: string | null
+        }
+        Relationships: []
       }
       historico_alertas: {
         Row: {

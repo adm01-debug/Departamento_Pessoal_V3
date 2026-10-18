@@ -19,7 +19,7 @@ on:
         type: string
 
 concurrency:
-  group: canonical-database-migrations
+  group: canonical-database
   cancel-in-progress: false
 
 permissions:
@@ -131,25 +131,43 @@ jobs:
           # re-run non-idempotent CREATE POLICY statements and fail with
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
+          # Versões já presentes no ledger do canônico são puladas: um
+          # re-dispatch do mesmo lote não pode re-executar as migrações.
+          applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
           for migration in \
-            20261013150000_onda4a_security_lockdown.sql \
-            20261013151000_onda4a_auditoria_fn_revoke.sql \
-            20261013152000_onda4b_vinculo_documentos_lgpd_crypto.sql \
-            20261014160000_onda4c_review_fixes_empresa_id.sql \
-            20261014170000_ledger_repair.sql
+            20261018120000_onda4d_review243.sql \
+            20261018130000_onda4e_objetos_ausentes.sql
           do
+            version="${migration%%_*}"
+            if printf '%s\n' "$applied" | grep -qx "$version"; then
+              echo "skip $migration — versão $version já registrada no ledger canônico"
+              continue
+            fi
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
+            # sidecar de verificação (<nome>.verify.sql) acompanha a migration
+            sidecar="${migration%.sql}.verify.sql"
+            if [ -f "supabase/migrations/$sidecar" ]; then
+              cp "supabase/migrations/$sidecar" "$stage_dir/supabase/migrations/$sidecar"
+            fi
           done
           echo "dir=$stage_dir" >> "$GITHUB_OUTPUT"
 
       - name: Simular todas as mudanças no schema real e reverter
-        if: inputs.mode == 'validate'
         run: |
           set -euo pipefail
           stage_dir="${{ steps.stage.outputs.dir }}"
+          # Roda em AMBOS os modos: no mode=apply serve como gate — a aplicação
+          # só executa se o dry-run BEGIN/ROLLBACK do conteúdo exato passar.
+          shopt -s nullglob
+          migrations=("$stage_dir"/supabase/migrations/*.sql)
+          if [ "${#migrations[@]}" -eq 0 ]; then
+            echo 'Nada a aplicar — lote já registrado no ledger canônico.'
+            echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
+            exit 0
+          fi
           {
             echo 'BEGIN;'
-            for migration in "$stage_dir"/supabase/migrations/*.sql; do
+            for migration in "${migrations[@]}"; do
               printf '\\i %s\n' "$migration"
             done
             echo 'ROLLBACK;'
@@ -165,18 +183,50 @@ jobs:
           # versions. This deliberately avoids `db push --include-all` and
           # `migration repair`, which are unsafe while the historical local
           # ledger differs from the canonical ledger.
+          shopt -s nullglob
+          apply_migrations=("$stage_dir"/supabase/migrations/*.sql)
+          if [ "${#apply_migrations[@]}" -eq 0 ]; then
+            echo 'Nada a aplicar — lote já registrado no ledger canônico.'
+            exit 0
+          fi
           {
             echo 'BEGIN;'
-            for migration in "$stage_dir"/supabase/migrations/*.sql; do
+            for migration in "${apply_migrations[@]}"; do
               filename="$(basename "$migration")"
               version="${filename%%_*}"
               name="${filename#*_}"
               name="${name%.sql}"
               printf '\\i %s\n' "$migration"
-              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[]::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name"
+              # statements guarda o conteúdo exato aplicado (rastreabilidade),
+              # via literal dollar-quoted para preservar aspas/formato do arquivo
+              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[\$dp_mig_stmt\$\n" "$version" "$name"
+              cat "$migration"
+              printf "\n\$dp_mig_stmt\$]::text[]) ON CONFLICT (version) DO NOTHING;\n"
             done
             echo 'COMMIT;'
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
+
+      - name: Verificar sidecars das migrações
+        if: inputs.mode == 'apply'
+        run: |
+          set -euo pipefail
+          stage_dir="${{ steps.stage.outputs.dir }}"
+          # Cada <migration>.verify.sql emite linhas 'ok' quando os objetos
+          # criados pela migration batem o esperado; qualquer outra linha
+          # reprova o deploy.
+          shopt -s nullglob
+          sidecars=("$stage_dir"/supabase/migrations/*.verify.sql)
+          for sidecar in "${sidecars[@]}"; do
+            echo "::group::$(basename "$sidecar")"
+            out="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At -f "$sidecar")"
+            printf '%s\n' "$out"
+            if printf '%s\n' "$out" | grep -vE '^\s*$' | grep -vx 'ok' | grep -q .; then
+              echo "::error::sidecar $(basename "$sidecar") falhou — linha diferente de 'ok'"
+              exit 1
+            fi
+            echo "::endgroup::"
+          done
+          echo 'CANONICAL_SIDECARS_OK'
 
       - name: Verificar objetos e ledger
         if: inputs.mode == 'apply'
@@ -194,7 +244,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261018120000','20261018130000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -395,6 +445,37 @@ jobs:
             'onda4c_ledger_repaired', EXISTS (
               SELECT 1 FROM supabase_migrations.schema_migrations
               WHERE version = '20260809000000' -- lote p0_001_rls_batch_1 (repair)
+            ),
+            'onda4d_vinculo_counts_all', pg_get_functiondef(
+              'public.vincular_colaborador_ao_usuario()'::regprocedure
+            ) LIKE '%AND c.user_id IS NULL%',
+            'onda4d_sync_trigger', EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgname = 'trg_sync_empresa_colaborador'
+                AND tgrelid = 'public.documentos'::regclass
+                AND NOT tgisinternal
+            ),
+            'onda4d_stmts_recorded', EXISTS (
+              SELECT 1 FROM supabase_migrations.schema_migrations
+              WHERE version = '20261018120000'
+                AND statements IS NOT NULL AND cardinality(statements) > 0
+            ),
+            'onda4e_objs', (
+              SELECT count(*) FROM pg_class c
+              JOIN pg_namespace n ON n.oid = c.relnamespace
+              WHERE n.nspname = 'public'
+                AND c.relname IN ('health_checks','cbo','cnae','faixas_irrf','faixas_inss',
+                                  'mv_folha_summary','v_login_anomalies')
+            ),
+            'onda4e_mv_filled', EXISTS (
+              SELECT 1 FROM pg_matviews
+              WHERE schemaname = 'public' AND matviewname = 'mv_folha_summary'
+                AND ispopulated
+            ),
+            'onda4e_stmts_recorded', EXISTS (
+              SELECT 1 FROM supabase_migrations.schema_migrations
+              WHERE version = '20261018130000'
+                AND statements IS NOT NULL AND cardinality(statements) > 0
             )
           );
           SQL
@@ -403,7 +484,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 8 &&
+              Number(r.ledger_count) === 10 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -449,7 +530,13 @@ jobs:
               r.onda4c_no_guc_fallback === true &&
               r.onda4c_purge_resets_guc === true &&
               r.onda4c_docs_rh_policy === true &&
-              r.onda4c_ledger_repaired === true;
+              r.onda4c_ledger_repaired === true &&
+              r.onda4d_vinculo_counts_all === true &&
+              r.onda4d_sync_trigger === true &&
+              r.onda4d_stmts_recorded === true &&
+              Number(r.onda4e_objs) === 7 &&
+              r.onda4e_mv_filled === true &&
+              r.onda4e_stmts_recorded === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCHEMA_INVARIANTS_OK'

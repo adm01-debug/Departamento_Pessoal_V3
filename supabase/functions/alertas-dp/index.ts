@@ -250,10 +250,11 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 5. Anomalias de login (P3-057) ───────────────────────────────────
+    // v_login_anomalies é telemetria global de auth — login_attempts não
+    // carrega empresa_id; o filtro tenant aqui sempre retornava erro/vazio.
     const { data: anomaliasIP, error: anomaliasIPError } = await supabase
       .from("v_login_anomalies")
       .select("*")
-      .eq("empresa_id", empresaId)
       .limit(20);
     if (anomaliasIPError) throw anomaliasIPError;
 
