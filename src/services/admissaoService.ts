@@ -1,7 +1,9 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
+import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { admissaoSchema } from '@/schemas/admissao';
 import { validateInput } from '@/schemas/validate';
+import { todayLocalISO } from '@/utils/dateLocal';
 
 class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admissoes'>, Updatable<'admissoes'>> {
   constructor() {
@@ -51,9 +53,38 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
   async update(id: string, d: Updatable<'admissoes'>, empresaId: string) {
     return this.atualizar(id, d, empresaId);
   }
+  // Concluir a admissão fecha o funil: cria o colaborador a partir dos dados
+  // da admissão (idempotente via metadata.colaborador_id) e marca a etapa.
+  // Sem CPF a admissão não gera colaborador — conclui com pendência sinalizada.
   async concluir(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    return this.atualizar(id, { etapa: 'concluida' }, empresaId);
+    const adm = await this.buscarPorId(id, empresaId);
+    if (!adm) throw new Error('Admissão não encontrada');
+    const meta = { ...((adm.metadata ?? {}) as Record<string, unknown>) };
+    if (!meta.colaborador_id && adm.cpf) {
+      const { data: colab, error } = await supabase
+        .from('colaboradores')
+        .insert({
+          empresa_id: empresaId,
+          nome_completo: adm.nome,
+          cpf: adm.cpf,
+          email: adm.email ?? null,
+          cargo: adm.cargo ?? 'A definir',
+          departamento: adm.departamento ?? 'A definir',
+          data_admissao: adm.data_prevista ?? todayLocalISO(),
+          salario: adm.salario_proposto ?? 0,
+          status: 'ativo',
+          metadata: { admissao_id: adm.id },
+        } as never)
+        .select('id')
+        .single();
+      if (error) throw error;
+      meta.colaborador_id = colab.id;
+    } else if (!meta.colaborador_id && !adm.cpf) {
+      meta.pendente_colaborador = true;
+    }
+    const admissao = await this.atualizar(id, { etapa: 'concluida', metadata: meta as never }, empresaId);
+    return { admissao, colaboradorId: (meta.colaborador_id as string | undefined) ?? null };
   }
   async cancelar(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');

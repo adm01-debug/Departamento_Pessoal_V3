@@ -24496,6 +24496,8 @@ export const Constants = {
         "contrato",
         "assinatura",
         "esocial",
+        "concluida",
+        "cancelada",
       ],
       programacao_ferias_status: [
         "rascunho",
