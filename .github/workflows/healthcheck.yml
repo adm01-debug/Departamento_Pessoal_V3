@@ -33,11 +33,11 @@ jobs:
           # W91a: GITHUB_SHA já é exposto automaticamente pelo runner — o
           # script usa como EXPECTED_BUILD_SHA por padrão (ausência de
           # <meta name="build-sha"> em produção continua só um aviso).
-          # W91b: login E2E não-admin — visibilidade sem bloquear o
-          # scheduled job ainda (REQUIRE_LOGIN permanece 0/padrão até
-          # confirmarmos estabilidade rodando a cada 6h).
+          # W91b: login E2E não-admin — confirmado estável (15/10/2026);
+          # REQUIRE_LOGIN=1 ativado para tornar falha de auth fatal.
           E2E_NON_ADMIN_EMAIL: ${{ secrets.E2E_NON_ADMIN_EMAIL }}
           E2E_NON_ADMIN_PASSWORD: ${{ secrets.E2E_NON_ADMIN_PASSWORD }}
+          REQUIRE_LOGIN: '1'
         run: bash scripts/healthcheck.sh
 
       - name: Abrir issue em caso de falha

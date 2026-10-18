@@ -1,6 +1,7 @@
 {
   "name": "departamento-pessoal",
   "version": "18.0.1",
+  "homepage": "https://departamento-pessoal-v3.vercel.app",
   "private": true,
   "type": "module",
   "engines": {
