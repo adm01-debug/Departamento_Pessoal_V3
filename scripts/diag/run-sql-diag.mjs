@@ -111,8 +111,12 @@ function needsPiiFlag(sql) {
   const qualifiedSchemas = [...sql.matchAll(/\b([a-z_][a-z0-9_]*)\s*\.\s*[a-z_][a-z0-9_]*/gi)].map(
     (m) => m[1].toLowerCase()
   );
-  // Se não há nenhuma referência schema.tabela, assume public (busca tables sem qualificação)
-  if (qualifiedSchemas.length === 0) return true;
+  // Se não há nenhuma referência schema.tabela E existem cláusulas FROM/JOIN/INTO/UPDATE,
+  // assume public (busca tables sem qualificação). Queries sem FROM algum (ex: SELECT func())
+  // são seguras — não lêem tabelas, portanto não têm PII.
+  const hasDmlKeyword = /\b(?:from|join|update|into)\b/i.test(sql);
+  if (qualifiedSchemas.length === 0 && hasDmlKeyword) return true;
+  if (qualifiedSchemas.length === 0 && !hasDmlKeyword) return false;
   // Se alguma referência qualificada aponta para schema não-seguro (inclusive public explícito)
   if (qualifiedSchemas.some((s) => !SAFE_SCHEMA_RE.test(s))) return true;
   // Codex P1: referências de tabela sem qualificação de schema (ex: FROM colaboradores)
