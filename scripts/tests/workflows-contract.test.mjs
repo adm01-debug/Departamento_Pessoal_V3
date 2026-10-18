@@ -145,14 +145,16 @@ for (const file of files) {
     }
   }
 
-  // 7. --no-lock proibido quando deno.lock existe (W97b/D6) — AVISO até W36 corrigir
+  // 7. --no-lock proibido quando deno.lock existe (W97b/D6) — W36 corrigido
   if (denoLockExists && raw.includes('--no-lock')) {
     const noLockLines = lines
       .map((l, i) => ({ line: l, n: i + 1 }))
       .filter(({ line }) => line.includes('--no-lock'));
     for (const { line, n } of noLockLines) {
-      console.warn(`  WARN: ${file}:${n}: --no-lock usado apesar de deno.lock existir (D6/W97b, pendente W36): "${line.trim()}"`);
+      fail(`${file}:${n}: --no-lock usado apesar de deno.lock existir — usar --frozen (D6/W97b/W36): "${line.trim()}"`);
     }
+  } else if (denoLockExists) {
+    pass(`sem --no-lock (deno.lock presente)`);
   }
 
   // 8. continue-on-error: exige comentário # contrato: … (W97d)
