@@ -489,63 +489,157 @@ export const cnabService = {
     const lines = fileContent.split(/\r?\n/);
     const results = {
       sucesso: 0,
+      // erro = rejeição do banco; falhasTecnicas = falha de leitura/update no
+      // banco de dados — separado para a UI não chamar falha interna de
+      // 'rejeitado pelo banco'.
       erro: 0,
+      falhasTecnicas: 0,
+      // Item marcado pago mas sem folha_item_id — reimportar não restaura o
+      // vínculo; precisa de conciliação manual (bucket separado).
+      semVinculoFolha: 0,
+      naoEncontrados: 0,
       detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>,
+    };
+
+    // cnab_itens não tem empresa_id — o tenant é conferido item a item via
+    // cnab_remessas (cache por remessa; evita listar todas as remessas da
+    // empresa, que estouraria a paginação do bridge).
+    const remessaEmpresa = new Map<string, string>();
+    const empresaDaRemessa = async (id: string): Promise<string> => {
+      const cached = remessaEmpresa.get(id);
+      if (cached !== undefined) return cached;
+      const { data, error } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+        .select('empresa_id')
+        .eq('id', id)
+        .maybeSingle();
+      // Falha de leitura propaga — nunca é cacheada como 'empresa vazia'
+      // (senão itens válidos virariam 'não encontrado' em silêncio).
+      if (error) throw error;
+      const emp = (data as { empresa_id?: string } | null)?.empresa_id ?? '';
+      remessaEmpresa.set(id, emp);
+      return emp;
     };
 
     for (const line of lines) {
       if (line.length < 240) continue;
 
-      const tipoRegistro = line.substring(7, 8);
-      const segmento = line.substring(13, 14);
+      // CNAB 240: registro detalhe tipo '3' + segmento 'A' (pos 8 e 14).
+      // CNAB 400: registro detalhe tipo '1' em linha de 400 posições.
+      const is240 = line.substring(7, 8) === '3' && line.substring(13, 14) === 'A';
+      const is400 = !is240 && line.length === 400 && line.substring(0, 1) === '1';
+      if (!is240 && !is400) continue;
 
-      if (tipoRegistro === '3' && segmento === 'A') {
-        const seuNumero = line.substring(73, 93).trim();
-        const codigoOcorrencia = line.substring(230, 232);
+      const codigoOcorrencia = is240 ? line.substring(230, 232) : line.substring(108, 110);
+      // CNAB400: primário = pos 68-77 (onde generateCNAB400 grava seu_numero);
+      // secundário = pos 63-72 (só fallback — pode invadir o campo do nome).
+      const candidatos = is240
+        ? [line.substring(73, 93).trim()]
+        : [...new Set([line.substring(67, 77).trim(), line.substring(62, 72).trim()])].filter(Boolean);
+      if (candidatos.length === 0) continue;
 
-        const { data: item } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
-          .select('id, folha_item_id, nome_favorecido')
-          .eq('seu_numero', seuNumero)
-          .eq('empresa_id', empresaId)
-          .maybeSingle();
-
-        if (item) {
-          const itemRecord = item as CnabItemRecord;
-          const isSuccess = ['00', '02'].includes(codigoOcorrencia);
-          const status = isSuccess ? 'pago' : 'erro';
-
-          await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
-            .update(
-              validateTablePayload(
-                'cnab_itens',
-                {
-                  status,
-                  codigo_ocorrencia: codigoOcorrencia,
-                  mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco',
-                },
-                'cnabService:cnab_itens'
-              )
-            )
-            .eq('id', itemRecord.id)
-            .eq('empresa_id', empresaId);
-
-          if (isSuccess && itemRecord.folha_item_id) {
-            await (supabase.from('folha_itens') as unknown as QueryBuilderType)
-              .update(validateTablePayload('folha_itens', { status_pagamento: 'pago' }, 'cnabService:folha_itens'))
-              .eq('id', itemRecord.folha_item_id)
-              .eq('empresa_id', empresaId);
-            results.sucesso++;
-          } else {
-            results.erro++;
-          }
-
-          results.detalhes.push({
-            nome: itemRecord.nome_favorecido,
-            status,
-            ocorrencia: codigoOcorrencia,
-          });
+      // CNAB400: o arquivo ecoa só 10 posições de `seu_numero`; remessas antigas
+      // gravaram 12 — casa por prefixo (stored LIKE 'candidato%'). CNAB240: eq.
+      let query = (supabase.from('cnab_itens') as unknown as QueryBuilderType).select(
+        'id, remessa_id, folha_item_id, nome_favorecido, seu_numero'
+      );
+      if (is240) {
+        query = query.eq('seu_numero', candidatos[0]);
+      } else {
+        query = query.or(candidatos.map((c) => `seu_numero.like.${c}%`).join(','));
+      }
+      const { data: itens, error: findError } = await query;
+      // Tenant ANTES do match: dois tenants podem compartilhar o mesmo
+      // seu_numero — sem o filtro, o match pegaria (ou rejeitaria por
+      // ambiguidade) o item da outra empresa e deixaria o desta pendente.
+      // Falha de leitura de uma remessa conta erro NA LINHA (não aborta o
+      // arquivo nem vira 'não encontrado' em silêncio) e nunca é cacheada.
+      const itemList: CnabItemRecord[] = [];
+      let lookupFailed = false;
+      for (const i of (itens ?? []) as CnabItemRecord[]) {
+        try {
+          if ((await empresaDaRemessa(i.remessa_id)) === empresaId) itemList.push(i);
+        } catch {
+          lookupFailed = true;
+          break;
         }
       }
+      if (lookupFailed) {
+        results.falhasTecnicas++;
+        results.detalhes.push({
+          nome: '—',
+          status: 'erro',
+          ocorrencia: 'Falha ao verificar a remessa do item (leitura do banco)',
+        });
+        continue;
+      }
+      // Match só aceito quando inequívoco: exato primeiro; prefixo só com
+      // candidato de 10 posições completas (fragmento de padding do nome nunca
+      // casa — evita creditar o pagamento de outro favorecido/remessa).
+      const matchFor = (cand: string) => {
+        const exact = itemList.filter((i) => i.seu_numero === cand);
+        if (exact.length === 1) return exact[0];
+        if (exact.length > 1 || cand.length !== 10) return undefined;
+        const prefix = itemList.filter((i) => i.seu_numero.startsWith(cand));
+        return prefix.length === 1 ? prefix[0] : undefined;
+      };
+      const item = is240
+        ? itemList[0]
+        : (matchFor(candidatos[0]) ?? (candidatos[1] !== undefined ? matchFor(candidatos[1]) : undefined));
+
+      if (findError) {
+        results.falhasTecnicas++;
+        results.detalhes.push({ nome: candidatos[0], status: 'erro', ocorrencia: 'FALHA_CONSULTA' });
+        continue;
+      }
+      if (!item) {
+        results.naoEncontrados++;
+        continue;
+      }
+
+      const isSuccess = ['00', '02'].includes(codigoOcorrencia);
+      const status = isSuccess ? 'pago' : 'erro';
+
+      const { error: updError } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
+        .update(
+          validateTablePayload(
+            'cnab_itens',
+            {
+              status,
+              codigo_ocorrencia: codigoOcorrencia,
+              mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco',
+            },
+            'cnabService:cnab_itens'
+          )
+        )
+        .eq('id', item.id);
+
+      let folhaOk = true;
+      if (!updError && isSuccess && item.folha_item_id) {
+        const { error: fiError } = await (supabase.from('folha_itens') as unknown as QueryBuilderType)
+          .update(validateTablePayload('folha_itens', { status_pagamento: 'pago' }, 'cnabService:folha_itens'))
+          .eq('id', item.folha_item_id);
+        folhaOk = !fiError;
+      }
+
+      if (updError) {
+        results.falhasTecnicas++;
+      } else if (isSuccess && !item.folha_item_id) {
+        // Pago confirmado no cnab_itens mas sem folha_itens pra atualizar —
+        // reimportar não resolve: é conciliação manual, não falha transitória.
+        results.semVinculoFolha++;
+      } else if (isSuccess && !folhaOk) {
+        results.falhasTecnicas++;
+      } else if (isSuccess) {
+        results.sucesso++;
+      } else {
+        results.erro++;
+      }
+
+      results.detalhes.push({
+        nome: item.nome_favorecido,
+        status: updError ? 'erro' : status,
+        ocorrencia: updError ? 'FALHA_UPDATE' : codigoOcorrencia,
+      });
     }
     return results;
   },
@@ -854,7 +948,9 @@ export const cnabService = {
       }
       somaValores += valor;
 
-      const seuNumero = `${remessaRecord.id.slice(0, 8)}${String(idx + 1).padStart(4, '0')}`;
+      // Exatamente 10 posições: o campo no arquivo é 068-077 e o banco devolve
+      // só essas 10 — mais caracteres ficariam truncados e o retorno não casaria.
+      const seuNumero = `${remessaRecord.id.slice(0, 6)}${String(idx + 1).padStart(4, '0')}`;
       const nomeFav = (colab?.nome_completo ?? '').normalize('NFC').toUpperCase().substring(0, 40);
       const agenciaFmt = fmt(conta.agencia, 4, 'N');
       const contaFmt = fmt(conta.conta, 10, 'N');
