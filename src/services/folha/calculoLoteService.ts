@@ -380,7 +380,9 @@ export const calculoLoteService = {
           data_calculo: new Date().toISOString(),
         })
         .eq('id', folhaId)
-        .eq('status', 'aberta');
+        // 'aberta' (primeiro cálculo) e 'calculada' (recálculo de competência
+        // aberta) — eq('aberta') descartava o UPDATE dos totais no recálculo.
+        .in('status', ['aberta', 'calculada']);
 
       if (totaisError) throw totaisError;
 

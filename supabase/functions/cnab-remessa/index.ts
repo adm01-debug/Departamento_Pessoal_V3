@@ -121,16 +121,18 @@ Deno.serve(async (req) => {
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;
 
-    // Sequencial atômico: MAX + 1 por (empresa, banco)
-    const { data: maxRow } = await service
-      .from('cnab_remessas')
-      .select('sequencial_arquivo')
-      .eq('empresa_id', empresa_id)
-      .eq('banco_codigo', banco_codigo)
-      .order('sequencial_arquivo', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    const sequencial = (maxRow?.sequencial_arquivo ?? 0) + 1;
+    // Sequencial via contador atômico (cnab_sequencias): o MAX+1 anterior
+    // lia sem reservar — duas gerações concorrentes pegavam o mesmo número
+    // e dois arquivos saíam com o mesmo sequencial para o banco.
+    const { data: seqData, error: seqError } = await service.rpc('next_cnab_sequencial', {
+      p_empresa_id: empresa_id,
+      p_banco_codigo: banco_codigo,
+    });
+    if (seqError || seqData == null) {
+      await failIdempotency(service, idem.id);
+      throw seqError ?? new Error('Falha ao alocar sequencial CNAB');
+    }
+    const sequencial = seqData as number;
 
     // Cria remessa (header)
     const { data: remessa, error: remErr } = await service

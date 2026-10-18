@@ -27,13 +27,16 @@ const TABELAS: Readonly<
   },
 };
 
-// Fail-closed: ano sem tabela homologada é erro explícito, nunca aplica
-// a tabela errada em competências históricas.
+// Fail-closed: ano sem tabela homologada (ou competência malformada) é
+// erro explícito, nunca aplica a tabela errada.
 function tabelaDe(referencia: string) {
   const ano = referencia.slice(0, 4);
+  // A referência pode ser 'YYYY-MM' ou 'YYYY-MM-DD' — o mês precisa ser
+  // válido nos dois formatos ('2026-13' não pode cair na tabela de 2026).
+  const mes = referencia.slice(5, 7);
   const tabela = TABELAS[ano];
-  if (!tabela) {
-    throw new Error(`Tabela INSS não homologada para o ano ${ano} (referência: ${referencia})`);
+  if (!tabela || (mes !== '' && !(Number(mes) >= 1 && Number(mes) <= 12))) {
+    throw new Error(`Tabela INSS não homologada para a referência ${referencia}`);
   }
   return tabela;
 }
