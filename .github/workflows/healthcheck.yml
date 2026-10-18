@@ -26,8 +26,8 @@ jobs:
         id: hc
         env:
           APP_URL: ${{ vars.APP_URL }}
-          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
           REQUIRE_APP: '1'
           REQUIRE_BACKEND: '1'
           # W91a: GITHUB_SHA já é exposto automaticamente pelo runner — o
