@@ -4,11 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Simular com ROLLBACK ou aplicar e registrar no ledger
+        description: Simular com ROLLBACK ou aplicar e registrar no ledger (verify=roda sidecars .verify.sql)
         required: true
         default: validate
         type: choice
-        options: [validate, apply]
+        options: [validate, apply, verify]
+      migration_files:
+        description: "Lista de arquivos de migração separados por newline (obrigatório para mode=verify)"
+        required: false
+        type: string
       confirm_project_ref:
         description: Digite o project ref canônico para evitar alvo acidental
         required: true
@@ -33,19 +37,23 @@ jobs:
       # workflow_dispatch input is untrusted. Expose it as data instead of
       # interpolating it into the shell program below.
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
+      MIGRATION_FILES: ${{ inputs.migration_files }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
-      - name: Gate de branch para apply
+      - name: Gate de branch para apply e verify
         # E15/D4: DDL em produção só pode partir de código mergeado em main.
         # Antes, `apply` era disparado de branches de feature — o DDL aplicado
         # não correspondia a nenhum commit integrado.
-        if: inputs.mode == 'apply'
+        # Codex (P1, PR #244): estendido para `verify` — sidecars de feature
+        # branches podem conter SQL que desativa default_transaction_read_only
+        # e escreve no canônico usando as mesmas credenciais de apply.
+        if: inputs.mode == 'apply' || inputs.mode == 'verify'
         run: |
           test "$GITHUB_REF" = 'refs/heads/main' || {
-            echo '::error::mode=apply só pode ser disparado a partir da branch main.'
+            echo '::error::mode=apply e mode=verify só podem ser disparados a partir da branch main.'
             exit 1
           }
 
@@ -444,4 +452,164 @@ jobs:
               r.onda4c_ledger_repaired === true;
             if (!ok) process.exit(1);
           ' "$result"
+          echo 'CANONICAL_SCHEMA_INVARIANTS_OK'
+
+          # W69: executar sidecars .verify.sql para cada migração do lote.
+          # Crie supabase/migrations/<versão>_<nome>.verify.sql com SELECTs
+          # que retornam 'ok' para verificar objetos criados pela migration.
+          #
+          # Codex review (P2, PR #238): um sidecar que segue o contrato
+          # documentado (SELECT retornando um valor, não uma exceção) sempre
+          # fazia o `psql` sair com código 0 -- a query em si é válida mesmo
+          # quando o valor retornado é 'f'/'fail'/qualquer coisa diferente de
+          # 'ok'. O `|| { ... }` só pegava erro de processo/SQL, nunca um
+          # assert que falhou dentro do próprio SELECT -- ou seja, um sidecar
+          # escrito exatamente como o comentário acima instrui nunca
+          # reprovava o apply. Agora capturamos a saída (-t -A: tuplas sem
+          # formatação) e exigimos que toda linha não-vazia seja literalmente
+          # 'ok'; qualquer outro valor conta como falha do sidecar.
+          sidecar_errors=0
+          for migration in "$stage_dir"/supabase/migrations/*.sql; do
+            filename="$(basename "$migration")"
+            sidecar="supabase/migrations/${filename%.sql}.verify.sql"
+            if [ -f "$sidecar" ]; then
+              echo "Sidecar: $sidecar"
+              sidecar_output="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
+                echo "::error::Sidecar falhou (erro de execução): $sidecar"
+                sidecar_errors=$((sidecar_errors + 1))
+                continue
+              }
+              # Codex (P2, PR #242-followup): rejeitar sidecar sem nenhuma asserção
+              # (arquivo vazio ou só de comentários passaria sem checar nada).
+              non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$')"
+              if [ -z "$non_empty" ]; then
+                echo "::error::Sidecar não produziu nenhuma asserção (saída vazia): $sidecar"
+                sidecar_errors=$((sidecar_errors + 1))
+                continue
+              fi
+              bad_lines="$(printf '%s\n' "$non_empty" | grep -vx 'ok' || true)"
+              if [ -n "$bad_lines" ]; then
+                echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
+                printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+                sidecar_errors=$((sidecar_errors + 1))
+              fi
+            fi
+          done
+          test "$sidecar_errors" -eq 0
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
+
+      - name: Executar sidecars de verificação (mode=verify)
+        # Codex review (P2, PR #242): o loop de sidecars em "Verificar objetos
+        # e ledger" só roda para migrações staged em mode=apply (lote NOVO,
+        # ainda fora do ledger) — um sidecar de uma migração JÁ aplicada
+        # (como 20261013152000_onda4b_vinculo_documentos_lgpd_crypto.verify.sql,
+        # criado em W80 para uma migração reaplicada numa onda anterior) nunca
+        # entra nesse lote de novo, então nunca é executado por nenhum run
+        # normal. mode=verify roda os sidecars listados em migration_files
+        # diretamente do checkout (sem stage/apply/ledger) — só leitura, mesmo
+        # contrato de saída do loop em "Verificar objetos e ledger": cada
+        # linha não-vazia precisa ser literalmente 'ok'.
+        #
+        # Codex review (P1, PR #242): além do gate de branch (main-only,
+        # acima), a sessão psql entra em default_transaction_read_only
+        # antes de rodar o arquivo — um sidecar que violasse o contrato
+        # (INSERT/UPDATE/DELETE/DDL em vez de só SELECT) falha com erro de
+        # Postgres em vez de mutar o canônico, mesmo que tenha sido mergeado
+        # em main.
+        #
+        # Codex review (P2, PR #242): a primeira versão usava
+        # `-c 'SET default_transaction_read_only = on;' -f sidecar` na mesma
+        # chamada de psql — mas psql imprime a tag de status ("SET") do -c
+        # no mesmo stdout capturado, e isso sempre reprovava o
+        # `grep -vx 'ok'` abaixo (toda run de verify falharia). Troca para
+        # PGOPTIONS: o GUC é setado no startup da conexão (libpq), não como
+        # um comando executado na sessão — nenhuma tag extra no stdout.
+        if: inputs.mode == 'verify'
+        run: |
+          set -euo pipefail
+          verify_errors=0
+          migrations_processed=0
+          while IFS= read -r migration; do
+            migration="$(echo "$migration" | tr -d '[:space:]')"
+            [ -z "$migration" ] && continue
+            migrations_processed=$((migrations_processed + 1))
+            # Extrair versão: prefixo numérico do nome do arquivo (sem path, sem .sql).
+            version="$(basename "${migration%.sql}")"
+            version="${version%%_*}"
+            # Codex (P2, PR #242-followup): validar que a migração está no ledger canônico
+            # antes de rodar seu sidecar — impede aprovar um sidecar para uma migração
+            # pendente ou parcialmente criada via DDL manual.
+            # Codex (P1, PR #244): psql -c não expande :'v' (psql metacommand);
+            # usar stdin (printf | psql) para que a interpolação seja processada.
+            ledger_count="$(printf '%s\n' \
+              "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = :'v';" | \
+              psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At -v "v=$version")"
+            if [ "$ledger_count" -ne 1 ]; then
+              echo "::error::Migração $version não encontrada no ledger canônico — mode=verify só aceita migrações JÁ aplicadas."
+              verify_errors=$((verify_errors + 1))
+              continue
+            fi
+            sidecar="supabase/migrations/${migration%.sql}.verify.sql"
+            if [ ! -f "$sidecar" ]; then
+              echo "::error::Sidecar não encontrado para $migration: $sidecar"
+              verify_errors=$((verify_errors + 1))
+              continue
+            fi
+            echo "Sidecar: $sidecar (ledger ✓ versão $version)"
+            sidecar_output="$(PGOPTIONS='-c default_transaction_read_only=on' psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
+              echo "::error::Sidecar falhou (erro de execução): $sidecar"
+              verify_errors=$((verify_errors + 1))
+              continue
+            }
+            # Codex (P2, PR #242-followup): rejeitar sidecar sem nenhuma asserção.
+            non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$')"
+            if [ -z "$non_empty" ]; then
+              echo "::error::Sidecar não produziu nenhuma asserção (saída vazia): $sidecar"
+              verify_errors=$((verify_errors + 1))
+              continue
+            fi
+            bad_lines="$(printf '%s\n' "$non_empty" | grep -vx 'ok' || true)"
+            if [ -n "$bad_lines" ]; then
+              echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
+              printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+              verify_errors=$((verify_errors + 1))
+            fi
+          done <<< "$MIGRATION_FILES"
+          # Codex (P2, PR #244): falhar quando nenhuma migração foi processada —
+          # lista vazia ou só espaços em branco não constitui verificação válida.
+          if [ "$migrations_processed" -eq 0 ]; then
+            echo '::error::mode=verify requer pelo menos uma migração em migration_files — lista vazia ou só espaços em branco.'
+            exit 1
+          fi
+          test "$verify_errors" -eq 0
+          echo 'CANONICAL_VERIFY_OK'
+
+      - name: Resumo das migrações (GITHUB_STEP_SUMMARY)
+        if: always()
+        env:
+          DISPATCH_MODE: ${{ inputs.mode }}
+          MIGRATIONS_STAGE: ${{ steps.stage.outputs.dir }}
+        run: |
+          stage_dir="$MIGRATIONS_STAGE"
+          {
+            echo "## Resumo de migrações canônicas"
+            echo ""
+            echo "| Campo | Valor |"
+            echo "|-------|-------|"
+            echo "| Modo | $DISPATCH_MODE |"
+            echo "| Project ref | $CONFIRM_PROJECT_REF |"
+            if [ -d "$stage_dir/supabase/migrations" ] && compgen -G "$stage_dir/supabase/migrations/*.sql" > /dev/null 2>&1; then
+              summary_hash="$( (cd "$stage_dir/supabase/migrations" && find . -maxdepth 1 -name '*.sql' -print0 | sort -z | xargs -0 sha256sum) | sha256sum | awk '{print $1}')"
+              echo "| Hash da lista | \`$summary_hash\` |"
+              echo ""
+              echo "### Migrações staged"
+              echo ""
+              echo "| Arquivo |"
+              echo "|---------|"
+              for f in "$stage_dir"/supabase/migrations/*.sql; do
+                echo "| \`$(basename "$f")\` |"
+              done
+            else
+              echo "| Migrações staged | nenhuma / stage não disponível |"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
