@@ -75,33 +75,37 @@ const resolverJornada = async (
       return { minutos, entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
     }
   }
-  // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
-  // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
-  // Consultada ANTES do fallback semanal para o sábado: é a única fonte
-  // explícita de "sábado é folga" (dia_util=false). Inferir 5x2 de
-  // jornada_semanal<=40 errava em escala 6x1 com <=40h (ex.: 36h em 6×6h).
-  const { data: jh } = await supabase
+  // Grade da empresa inteira numa query só (tabela pequena) — precisamos
+  // saber se a empresa CONFIGUROU o sábado, não só a linha deste dia.
+  const { data: jhRows } = await supabase
     .from('jornadas_horarios')
-    .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
-    .eq('dia_semana', diaSemana)
+    .select('dia_semana, entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
     .eq('jornadas.empresa_id', empresaId)
-    .eq('jornadas.ativa', true)
-    .limit(1)
-    .maybeSingle();
-  // Folga explícita da grade vence qualquer escala própria — é a única
-  // fonte de "sábado (ou outro dia) é folga". Os HORÁRIOS da grade, porém,
-  // são default da empresa e só valem quando o colaborador não tem jornada
-  // própria: um semanal=36 não pode herdar grade de 8h/dia.
+    .eq('jornadas.ativa', true);
+  const grade = (jhRows ?? []) as Array<{
+    dia_semana: number; entrada: string | null; saida: string | null;
+    intervalo_inicio: string | null; intervalo_fim: string | null; dia_util: boolean | null;
+  }>;
+  const jh = grade.find((r) => r.dia_semana === diaSemana);
+  const temGrade = grade.length > 0;
+  // Folga explícita da grade vence qualquer escala própria.
   if (jh && jh.dia_util === false) {
     return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
   }
   const semanal = Number(colab?.jornada_semanal);
-  if (Number.isFinite(semanal) && semanal > 0) {
-    // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
-    // Sábado de folga só quando não há configuração explícita para o dia
-    // (nem grade nem horário próprio) e a semanal é tipicamente 5x2 (<=40h).
-    // Com grade existindo e marcada útil, o sábado é dia trabalhado.
-    if (diaSemana === 6 && semanal <= 40 && !jh && entradaColab === null) {
+  const temSemanal = Number.isFinite(semanal) && semanal > 0;
+  // 44h é o DEFAULT do schema (002_colaboradores.sql), não uma escolha do
+  // colaborador: semanal customizada (≠44) vence os horários da grade; o
+  // default 44h cede para a grade do dia (senão turno 8h da grade virava
+  // HE 40min sobre o alvo 7h20 derivado). Nunca inferimos 5x2 do total
+  // semanal — escala 6x1 de 36h também tem <=40h.
+  const semanalCustom = temSemanal && semanal !== 44;
+  const sabadoSemConfig = diaSemana === 6 && entradaColab === null && temGrade && !jh;
+  // Sábado: a grade da empresa define os dias úteis — sem linha para
+  // sábado, ele é folga (só quando a empresa tem grade; sem grade nenhuma
+  // mantém-se o fallback de dia trabalhado).
+  if (semanalCustom) {
+    if (sabadoSemConfig) {
       return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
     }
     return {
@@ -123,6 +127,22 @@ const resolverJornada = async (
       intervaloMin: int,
       toleranciaMin: tolerancia,
     };
+  }
+  if (temSemanal) {
+    // semanal default (44h): vale para dia trabalhado, mas respeita
+    // sábado-fora-da-grade como folga.
+    if (sabadoSemConfig) {
+      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+    }
+    return {
+      minutos: Math.round(semanal * 60 / 6),
+      entradaEsperada: entradaColab ?? (jh?.entrada ? timeToMin(jh.entrada) : null),
+      intervaloMin: intervaloColab,
+      toleranciaMin: tolerancia,
+    };
+  }
+  if (sabadoSemConfig) {
+    return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
   }
   const { data: j } = await supabase
     .from('jornadas')
@@ -188,7 +208,10 @@ const apurarDia = (
     // Uma 'saida' na cabeça da fila nunca abre par — saída órfã/rejeitada
     // é quarentena, não entrada (senão 2 saídas viravam turno pagável).
     if (entrada.tipo === 'saida') {
+      // Quarentena visível: a saída órfã aparece no espelho como slot
+      // aberto — sumir com a batida reportava o dia como sem_registro.
       incompleto = true;
+      slots.push({ entrada, saida: null });
       i += 1;
       continue;
     }
