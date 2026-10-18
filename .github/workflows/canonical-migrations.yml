@@ -141,7 +141,8 @@ jobs:
             20261018130000_onda4e_objetos_ausentes.sql \
             20261018140000_onda5_ponto_cols.sql \
             20261018150000_onda5_rescisao_detalhes_calculo.sql \
-            20261018160000_dedup_idempotency_anomalies_job.sql
+            20261018160000_dedup_idempotency_anomalies_job.sql \
+            20261019000000_qa3_db_fixes.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -249,7 +250,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261019000000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -503,6 +504,24 @@ jobs:
               WHERE version = '20261018150000'
                 AND statements IS NOT NULL AND cardinality(statements) > 0
             ),
+            'colab_metadata_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name = 'colaboradores'
+                AND column_name = 'metadata'
+            ),
+            'decrypt_wrapper_ok', to_regprocedure(
+              'public.decrypt_dados_bancarios_tenant(text,uuid)') IS NOT NULL,
+            'ferias_chk_wide', EXISTS (
+              SELECT 1 FROM pg_constraint
+              WHERE conrelid = 'public.ferias'::regclass
+                AND conname = 'chk_ferias_status'
+                AND pg_get_constraintdef(oid) LIKE '%programada%'
+            ),
+            'qa3_stmts_recorded', EXISTS (
+              SELECT 1 FROM supabase_migrations.schema_migrations
+              WHERE version = '20261019000000'
+                AND statements IS NOT NULL AND cardinality(statements) > 0
+            ),
             'ci_auditor_role', EXISTS (
               SELECT 1 FROM pg_roles WHERE rolname = 'ci_auditor' AND rolcanlogin
             ),
@@ -519,7 +538,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 15 &&
+              Number(r.ledger_count) === 16 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -574,6 +593,10 @@ jobs:
               r.onda5_stmts_recorded === true &&
               r.rescisao_detalhes_col === true &&
               r.rescisao_stmts_recorded === true &&
+              r.colab_metadata_col === true &&
+              r.decrypt_wrapper_ok === true &&
+              r.ferias_chk_wide === true &&
+              r.qa3_stmts_recorded === true &&
               r.onda4e_mv_filled === true &&
               r.onda4e_stmts_recorded === true &&
               r.ci_auditor_role === true &&
