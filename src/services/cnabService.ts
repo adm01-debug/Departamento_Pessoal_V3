@@ -544,9 +544,26 @@ export const cnabService = {
       // Tenant ANTES do match: dois tenants podem compartilhar o mesmo
       // seu_numero — sem o filtro, o match pegaria (ou rejeitaria por
       // ambiguidade) o item da outra empresa e deixaria o desta pendente.
+      // Falha de leitura de uma remessa conta erro NA LINHA (não aborta o
+      // arquivo nem vira 'não encontrado' em silêncio) e nunca é cacheada.
       const itemList: CnabItemRecord[] = [];
+      let lookupFailed = false;
       for (const i of (itens ?? []) as CnabItemRecord[]) {
-        if ((await empresaDaRemessa(i.remessa_id)) === empresaId) itemList.push(i);
+        try {
+          if ((await empresaDaRemessa(i.remessa_id)) === empresaId) itemList.push(i);
+        } catch {
+          lookupFailed = true;
+          break;
+        }
+      }
+      if (lookupFailed) {
+        results.erro++;
+        results.detalhes.push({
+          nome: '—',
+          status: 'erro',
+          ocorrencia: 'Falha ao verificar a remessa do item (leitura do banco)',
+        });
+        continue;
       }
       // Match só aceito quando inequívoco: exato primeiro; prefixo só com
       // candidato de 10 posições completas (fragmento de padding do nome nunca
