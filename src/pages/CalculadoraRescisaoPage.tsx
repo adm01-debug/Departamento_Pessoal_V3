@@ -67,6 +67,7 @@ export default function CalculadoraRescisaoPage() {
     diasAvisoNaoCumpridos: '',
     dataFimContrato: '',
     terminoIniciativa: 'empregador' as 'empregador' | 'empregado' | 'natural',
+    indenizacaoArt480Prejuizo: '',
     dataPagamento: '',
     motivoDesligamento: '',
     observacoes: '',
@@ -114,11 +115,20 @@ export default function CalculadoraRescisaoPage() {
     enabled: !!empresaAtual?.id,
   });
 
-  const handleCalcServidor = async () => {
+  const validarForm = useCallback(() => {
     if (!form.salario || !form.dataAdmissao || !form.dataDesligamento) {
       toast.error('Preencha salário, data de admissão e desligamento');
-      return;
+      return false;
     }
+    if (form.tipo === 'termino_contrato' && form.terminoIniciativa !== 'natural' && !form.dataFimContrato) {
+      toast.error('Informe a data prevista de fim do contrato (arts. 479/480)');
+      return false;
+    }
+    return true;
+  }, [form]);
+
+  const handleCalcServidor = async () => {
+    if (!validarForm()) return;
     setCalcServidor(true);
     try {
       const result = await edgeFunctionsService.calcularRescisao({
@@ -134,6 +144,9 @@ export default function CalculadoraRescisaoPage() {
         data_fim_contrato: form.dataFimContrato || undefined,
         termino_iniciativa: form.tipo === 'termino_contrato' ? form.terminoIniciativa : undefined,
         data_pagamento: form.dataPagamento || undefined,
+        indenizacao_art_480_prejuizo: form.indenizacaoArt480Prejuizo
+          ? Number(form.indenizacaoArt480Prejuizo)
+          : undefined,
       });
 
       const data = result;
@@ -151,10 +164,7 @@ export default function CalculadoraRescisaoPage() {
   };
 
   const handleCalc = useCallback(async () => {
-    if (!form.salario || !form.dataAdmissao || !form.dataDesligamento) {
-      toast.error('Preencha salário, data de admissão e desligamento');
-      return;
-    }
+    if (!validarForm()) return;
 
     const result = await calcularRescisao({
       salario: Number(form.salario),
@@ -168,11 +178,12 @@ export default function CalculadoraRescisaoPage() {
       dataFimContrato: form.dataFimContrato || undefined,
       terminoIniciativa: form.tipo === 'termino_contrato' ? form.terminoIniciativa : undefined,
       dataPagamento: form.dataPagamento || undefined,
+      indenizacaoArt480Prejuizo: form.indenizacaoArt480Prejuizo ? Number(form.indenizacaoArt480Prejuizo) : undefined,
     });
 
     setResult(result);
     toast.success('Rescisão calculada com sucesso!');
-  }, [form]);
+  }, [form, validarForm]);
 
   const salvarHistorico = useCallback(async () => {
     if (!result || !user || !empresaAtual) return;
@@ -246,7 +257,12 @@ export default function CalculadoraRescisaoPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result, form, user]);
-  const set = (k: keyof typeof form, v: string | boolean) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k: keyof typeof form, v: string | boolean) => {
+    // Qualquer edição nos inputs invalida o resultado exibido — mostrar o
+    // cálculo velho ao lado dos dados novos já causou homologação errada.
+    setResult(null);
+    setForm((p) => ({ ...p, [k]: v }));
+  };
 
   return (
     <>
@@ -359,7 +375,9 @@ export default function CalculadoraRescisaoPage() {
               {form.tipo === 'termino_contrato' && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="font-body text-xs">Fim previsto do contrato</Label>
+                    <Label className="font-body text-xs">
+                      Fim previsto do contrato{form.terminoIniciativa !== 'natural' ? ' *' : ''}
+                    </Label>
                     <Input
                       type="date"
                       value={form.dataFimContrato}
@@ -380,6 +398,19 @@ export default function CalculadoraRescisaoPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+              )}
+              {form.tipo === 'termino_contrato' && form.terminoIniciativa === 'empregado' && (
+                <div>
+                  <Label className="font-body text-xs">Perdas apuradas do empregador — Art. 480 (opcional)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={form.indenizacaoArt480Prejuizo}
+                    onChange={(e) => set('indenizacaoArt480Prejuizo', e.target.value)}
+                    className="rounded-xl"
+                    placeholder="Em branco: teto legal (50% dos dias restantes)"
+                  />
                 </div>
               )}
               {form.tipo === 'pedido_demissao' && !form.avisoTrabalhado && (
@@ -544,9 +575,21 @@ export default function CalculadoraRescisaoPage() {
                           </span>
                         </div>
                       )}
+                      {result.seguroDesemprego.observacao && (
+                        <p className="text-[11px] text-muted-foreground font-body">
+                          {result.seguroDesemprego.observacao}
+                        </p>
+                      )}
                     </div>
 
                     <Separator />
+
+                    {result.saldoDevedor > 0 && (
+                      <div className="flex justify-between text-xs font-body text-destructive">
+                        <span>Saldo devedor do empregado (Art. 480)</span>
+                        <span className="font-medium">R$ {fmt(result.saldoDevedor)}</span>
+                      </div>
+                    )}
 
                     <div className="bg-primary/5 rounded-xl p-3">
                       <div className="flex justify-between font-display font-bold">

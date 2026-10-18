@@ -145,6 +145,7 @@ describe('calcularRescisao — Sem Justa Causa', () => {
       'irrf',
       'totalDescontos',
       'totalLiquido',
+      'saldoDevedor',
       'diasTrabalhados',
       'mesesFerias',
       'meses13',
@@ -223,10 +224,11 @@ describe('calcularRescisao — Sem Justa Causa', () => {
     expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.descontoAvisoPrevio + r.indenizacaoArt480, 1);
   });
 
-  it('totalLiquido = proventos - descontos (multa FGTS é GRRF, fora do líquido)', async () => {
+  it('totalLiquido = max(0, proventos - descontos) (multa FGTS é GRRF, fora do líquido)', async () => {
     const r = await calcularRescisao(base);
     expect(r.multaFGTS).toBeGreaterThan(0);
-    expect(r.totalLiquido).toBeCloseTo(r.totalProventos - r.totalDescontos, 2);
+    expect(r.totalLiquido).toBeCloseTo(Math.max(0, r.totalProventos - r.totalDescontos), 2);
+    expect(r.saldoDevedor).toBe(0);
   });
 
   it('totalLiquido > 0 para salário positivo', async () => {
@@ -562,8 +564,9 @@ describe('calcularRescisao — Consistência Matemática', () => {
       // totalDescontos = INSS + IRRF + desconto aviso + indenização art. 480
       expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.descontoAvisoPrevio + r.indenizacaoArt480, 2);
 
-      // totalLiquido — multa FGTS fora do líquido (depósito GRRF)
-      expect(r.totalLiquido).toBeCloseTo(r.totalProventos - r.totalDescontos, 1);
+      // totalLiquido — multa FGTS fora do líquido (depósito GRRF);
+      // descontos > proventos viram saldoDevedor, líquido fica em 0
+      expect(r.totalLiquido).toBeCloseTo(Math.max(0, r.totalProventos - r.totalDescontos), 1);
 
       // All values >= 0
       expect(r.saldoSalario).toBeGreaterThanOrEqual(0);
@@ -630,16 +633,60 @@ describe('calcularRescisao — Término de Contrato a Prazo (arts. 479/480)', ()
     expect(r.seguroDesemprego.elegivel).toBe(false);
   });
 
-  it('término natural (contrato correu o prazo) → sem indenização, multa 40%', async () => {
+  it('término natural (contrato correu o prazo) → sem indenização e sem multa', async () => {
     const r = await calcularRescisao({ ...base, terminoIniciativa: 'natural' });
     expect(r.indenizacaoArt479).toBe(0);
     expect(r.indenizacaoArt480).toBe(0);
-    expect(r.multaFGTS).toBeCloseTo(Math.trunc((10000 + r.fgtsRescisao) * 0.4 * 100) / 100, 2);
+    // Término no prazo não é dispensa: libera saque do FGTS sem multa de 40%.
+    expect(r.multaFGTS).toBe(0);
+    expect(r.fgtsSaquePercentual).toBe(1);
   });
 
   it('desligamento após o fim previsto → sem indenização', async () => {
     const r = await calcularRescisao({ ...base, dataFimContrato: '2026-02-01', terminoIniciativa: 'empregador' });
     expect(r.indenizacaoArt479).toBe(0);
+  });
+
+  it('antecipação sem data de fim do contrato → erro (arts. 479/480)', async () => {
+    const { dataFimContrato, ...semFim } = base;
+    await expect(calcularRescisao({ ...semFim, terminoIniciativa: 'empregador' })).rejects.toThrow(/fim do contrato/);
+    await expect(calcularRescisao({ ...semFim, terminoIniciativa: 'empregado' })).rejects.toThrow(/fim do contrato/);
+    // 'natural' dispensa a data
+    await expect(calcularRescisao({ ...semFim, terminoIniciativa: 'natural' })).resolves.toBeDefined();
+  });
+
+  it('art. 480: indenização limitada às perdas apuradas (teto = art. 479)', async () => {
+    const r = await calcularRescisao({
+      ...base,
+      terminoIniciativa: 'empregado',
+      indenizacaoArt480Prejuizo: 2000,
+    });
+    expect(r.indenizacaoArt480).toBe(2000);
+    const acimaDoTeto = await calcularRescisao({
+      ...base,
+      terminoIniciativa: 'empregado',
+      indenizacaoArt480Prejuizo: 99999,
+    });
+    expect(acimaDoTeto.indenizacaoArt480).toBeCloseTo(10166.66, 2);
+  });
+
+  it('descontos > proventos → líquido 0 e saldo devedor do empregado', async () => {
+    // Salário baixo + indenização art. 480 grande → excedente é dívida, não
+    // líquido negativo (chk_desligamentos_valores_nao_negativos).
+    const r = await calcularRescisao({
+      salario: 1200,
+      dataAdmissao: '2025-06-01',
+      dataDesligamento: '2026-01-05',
+      tipo: 'termino_contrato',
+      terminoIniciativa: 'empregado',
+      dataFimContrato: '2027-01-01',
+      avisoTrabalhado: true,
+      feriasVencidas: false,
+      saldoFGTS: 0,
+    });
+    expect(r.totalDescontos).toBeGreaterThan(r.totalProventos);
+    expect(r.totalLiquido).toBe(0);
+    expect(r.saldoDevedor).toBeCloseTo(r.totalDescontos - r.totalProventos, 2);
   });
 });
 
@@ -673,7 +720,8 @@ describe('calcularRescisao — Pedido de Demissão sem aviso cumprido (art. 487 
   it('desconto entra em totalDescontos (e sai do líquido)', async () => {
     const r = await calcularRescisao(base);
     expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.descontoAvisoPrevio, 2);
-    expect(r.totalLiquido).toBeCloseTo(r.totalProventos - r.totalDescontos, 2);
+    expect(r.totalLiquido).toBeCloseTo(Math.max(0, r.totalProventos - r.totalDescontos), 2);
+    expect(r.saldoDevedor).toBeCloseTo(Math.max(0, r.totalDescontos - r.totalProventos), 2);
   });
 });
 
@@ -815,8 +863,8 @@ describe('calcularRescisao — Normalização de tipos', () => {
     const acordoCanon = await calcularRescisao({ ...base, tipo: 'acordo_mutuo' });
     expect(acordo.totalLiquido).toBe(acordoCanon.totalLiquido);
 
-    const fim = await calcularRescisao({ ...base, tipo: 'fim_contrato' });
-    const termino = await calcularRescisao({ ...base, tipo: 'termino_contrato' });
+    const fim = await calcularRescisao({ ...base, tipo: 'fim_contrato', terminoIniciativa: 'natural' });
+    const termino = await calcularRescisao({ ...base, tipo: 'termino_contrato', terminoIniciativa: 'natural' });
     expect(fim.totalLiquido).toBe(termino.totalLiquido);
   });
 });

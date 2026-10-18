@@ -178,6 +178,8 @@ export const edgeFunctionsService = {
     data_fim_contrato?: string;
     termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
     data_pagamento?: string;
+    /** Art. 480 CLT: perdas reais apuradas do empregador (teto = art. 479). */
+    indenizacao_art_480_prejuizo?: number;
   }) => handleInvoke<{ resultado?: RescisaoResult }>('calcular-rescisao', { body: params }),
 
   /** Exportação server-side */

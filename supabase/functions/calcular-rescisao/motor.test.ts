@@ -16,7 +16,7 @@ const BASE = {
 
 Deno.test('sem justa causa: multa FGTS fora do líquido (GRRF)', () => {
   const r = calcularRescisaoMotor(BASE);
-  assertAlmostEquals(r.totalLiquido, r.totalProventos - r.totalDescontos, 0.01);
+  assertAlmostEquals(r.totalLiquido, Math.max(0, r.totalProventos - r.totalDescontos), 0.01);
   assertEquals(r.multaFGTS > 0, true);
 });
 
@@ -53,7 +53,7 @@ Deno.test('termino_contrato empregado → indenização art. 480 nos descontos, 
   assertAlmostEquals(r.totalDescontos, r.inss + r.irrf + r.indenizacaoArt480, 0.01);
 });
 
-Deno.test('termino_contrato natural → sem indenização, multa 40%', () => {
+Deno.test('termino_contrato natural → sem indenização e sem multa', () => {
   const r = calcularRescisaoMotor({
     ...BASE,
     tipo: 'termino_contrato',
@@ -62,7 +62,51 @@ Deno.test('termino_contrato natural → sem indenização, multa 40%', () => {
   });
   assertEquals(r.indenizacaoArt479, 0);
   assertEquals(r.indenizacaoArt480, 0);
-  assertAlmostEquals(r.multaFGTS, (15000 + r.fgtsRescisao) * 0.4, 0.01);
+  // Término no prazo não é dispensa: saque do FGTS sem multa de 40%.
+  assertEquals(r.multaFGTS, 0);
+});
+
+Deno.test('termino_contrato sem data_fim_contrato + antecipação → erro', () => {
+  assertThrows(
+    () =>
+      calcularRescisaoMotor({
+        ...BASE,
+        tipo: 'termino_contrato',
+        terminoIniciativa: 'empregador',
+      }),
+    Error,
+    'fim do contrato'
+  );
+});
+
+Deno.test('art. 480 → indenização limitada às perdas apuradas (teto = 479)', () => {
+  const base = {
+    ...BASE,
+    tipo: 'termino_contrato',
+    terminoIniciativa: 'empregado' as const,
+    dataFimContrato: '2026-07-01',
+  };
+  const r = calcularRescisaoMotor({ ...base, indenizacaoArt480Prejuizo: 2000 });
+  assertEquals(r.indenizacaoArt480, 2000);
+  const teto = calcularRescisaoMotor({ ...base, indenizacaoArt480Prejuizo: 99999 });
+  assertAlmostEquals(teto.indenizacaoArt480, trunc2((5000 / 30) * 101 * 0.5), 0.01);
+});
+
+Deno.test('descontos > proventos → líquido 0 e saldoDevedor', () => {
+  const r = calcularRescisaoMotor({
+    salarioBase: 1200,
+    dataAdmissao: '2025-06-01',
+    dataDesligamento: '2026-01-05',
+    tipo: 'termino_contrato',
+    terminoIniciativa: 'empregado',
+    dataFimContrato: '2027-01-01',
+    avisoTrabalhado: true,
+    feriasVencidas: false,
+    saldoFGTS: 0,
+  });
+  assertEquals(r.totalDescontos > r.totalProventos, true);
+  assertEquals(r.totalLiquido, 0);
+  assertAlmostEquals(r.saldoDevedor, r.totalDescontos - r.totalProventos, 0.01);
 });
 
 Deno.test('pedido_demissao sem aviso → desconto art. 487 §2º (1 salário)', () => {

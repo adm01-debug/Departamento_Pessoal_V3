@@ -35,9 +35,20 @@ const BodySchema = z.object({
   termino_iniciativa: z.enum(['empregador', 'empregado', 'natural']).optional(),
   // Data do pagamento das verbas — atraso >10 dias corridos gera multa (art. 477 §8º).
   data_pagamento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  // Art. 480 CLT: perdas reais apuradas do empregador (teto = art. 479).
+  indenizacao_art_480_prejuizo: z.number().nonnegative().max(10_000_000).optional(),
   colaborador_id: z.string().uuid().optional(),
   empresa_id: z.string().uuid().optional(),
-});
+}).refine(
+  // Antecipação de contrato a prazo exige a data prevista de fim;
+  // 'natural' (fim no prazo) dispensa — mesmo critério dos motores.
+  (b) => {
+    const t = normalizarTipoRescisao(b.tipo_rescisao);
+    const ini = b.termino_iniciativa ?? 'empregador';
+    return t !== 'termino_contrato' || ini === 'natural' || !!b.data_fim_contrato;
+  },
+  { message: 'data_fim_contrato é obrigatória para antecipação de contrato a prazo (arts. 479/480)', path: ['data_fim_contrato'] }
+);
 
 Deno.serve(async (req) => {
   const __pf = handlePreflight(req); if (__pf) return __pf;
@@ -72,7 +83,7 @@ Deno.serve(async (req) => {
     const {
       salario_base, data_admissao, data_desligamento, tipo_rescisao, aviso_previo,
       saldo_fgts, ferias_vencidas, dependentes_irrf, dias_aviso_nao_cumpridos,
-      data_fim_contrato, termino_iniciativa, data_pagamento,
+      data_fim_contrato, termino_iniciativa, data_pagamento, indenizacao_art_480_prejuizo,
       colaborador_id, empresa_id,
     } = parsed.data;
 
@@ -95,7 +106,10 @@ Deno.serve(async (req) => {
     const rl = await checkRateLimit(admin, { key: `calc-rescisao:${userId}`, limit: 30, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    // Tenant scope opcional (apenas se veio empresa_id/colaborador_id)
+    // Tenant scope opcional (apenas se veio empresa_id/colaborador_id).
+    // O lookup do colaborador NÃO pode distinguir "não encontrado" de
+    // "outra empresa": um caller autenticado poderia sondar IDs entre
+    // tenants. Not-found responde o mesmo 403 genérico do requireRh.
     let empresaIdFinal = empresa_id;
     if (colaborador_id) {
       const { data: colab } = await admin
@@ -103,8 +117,8 @@ Deno.serve(async (req) => {
         .select('empresa_id')
         .eq('id', colaborador_id)
         .maybeSingle();
-      if (!colab) return json({ error: 'Colaborador não encontrado', code: 'NOT_FOUND' }, 404);
-      empresaIdFinal = colab.empresa_id;
+      if (colab) empresaIdFinal = colab.empresa_id;
+      else if (!empresaIdFinal) return json({ error: 'Sem permissão para este recurso', code: 'FORBIDDEN' }, 403);
     }
     if (empresaIdFinal) {
       // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
@@ -136,6 +150,7 @@ Deno.serve(async (req) => {
       dataFimContrato: data_fim_contrato,
       terminoIniciativa: termino_iniciativa,
       dataPagamento: data_pagamento,
+      indenizacaoArt480Prejuizo: indenizacao_art_480_prejuizo,
     });
 
     const {

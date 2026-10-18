@@ -50,35 +50,39 @@ export function mapearResultadoDeDesligamento(d: {
   total_proventos?: number | null;
   total_descontos?: number | null;
   valor_liquido?: number | null;
-  detalhes_calculo?: { inss?: number; irrf?: number } | null;
+  // Resultado completo do motor salvo pela migration 20261018150000;
+  // quando presente, cobre as rubricas que os campos legados não têm.
+  detalhes_calculo?: Partial<RescisaoResult> | null;
 }): RescisaoResult {
   const n = (v?: number | null) => v ?? 0;
+  const dc = d.detalhes_calculo;
   return {
-    saldoSalario: n(d.saldo_salario),
-    avisoIndenizado: n(d.aviso_previo),
-    descontoAvisoPrevio: 0,
-    feriasVencidas: n(d.ferias_vencidas),
-    feriasProporcionais: n(d.ferias_proporcionais),
-    tercoFerias: n(d.terco_constitucional),
-    decimoTerceiro: n(d.decimo_terceiro),
-    indenizacaoArt479: 0,
-    indenizacaoArt480: 0,
-    multa477: 0,
-    multaFGTS: n(d.multa_fgts),
-    fgtsRescisao: 0,
-    fgtsSaquePercentual: 0,
-    seguroDesemprego: { elegivel: false, parcelas: 0, valorParcela: 0 },
-    totalProventos: n(d.total_proventos),
-    inss: n(d.detalhes_calculo?.inss),
-    irrf: n(d.detalhes_calculo?.irrf),
-    totalDescontos: n(d.total_descontos),
-    totalLiquido: n(d.valor_liquido),
-    diasTrabalhados: 0,
-    mesesFerias: 0,
-    meses13: 0,
-    diasAviso: 0,
-    diasAvisoNaoCumpridos: 0,
-    timestamp: '',
+    saldoSalario: n(dc?.saldoSalario ?? d.saldo_salario),
+    avisoIndenizado: n(dc?.avisoIndenizado ?? d.aviso_previo),
+    descontoAvisoPrevio: n(dc?.descontoAvisoPrevio),
+    feriasVencidas: n(dc?.feriasVencidas ?? d.ferias_vencidas),
+    feriasProporcionais: n(dc?.feriasProporcionais ?? d.ferias_proporcionais),
+    tercoFerias: n(dc?.tercoFerias ?? d.terco_constitucional),
+    decimoTerceiro: n(dc?.decimoTerceiro ?? d.decimo_terceiro),
+    indenizacaoArt479: n(dc?.indenizacaoArt479),
+    indenizacaoArt480: n(dc?.indenizacaoArt480),
+    multa477: n(dc?.multa477),
+    multaFGTS: n(dc?.multaFGTS ?? d.multa_fgts),
+    fgtsRescisao: n(dc?.fgtsRescisao),
+    fgtsSaquePercentual: n(dc?.fgtsSaquePercentual),
+    seguroDesemprego: dc?.seguroDesemprego ?? { elegivel: false, parcelas: 0, valorParcela: 0, observacao: '' },
+    totalProventos: n(dc?.totalProventos ?? d.total_proventos),
+    inss: n(dc?.inss),
+    irrf: n(dc?.irrf),
+    totalDescontos: n(dc?.totalDescontos ?? d.total_descontos),
+    totalLiquido: n(dc?.totalLiquido ?? d.valor_liquido),
+    saldoDevedor: n(dc?.saldoDevedor),
+    diasTrabalhados: n(dc?.diasTrabalhados),
+    mesesFerias: n(dc?.mesesFerias),
+    meses13: n(dc?.meses13),
+    diasAviso: n(dc?.diasAviso),
+    diasAvisoNaoCumpridos: n(dc?.diasAvisoNaoCumpridos),
+    timestamp: dc?.timestamp ?? '',
   };
 }
 
@@ -181,6 +185,9 @@ export async function gerarPDFRescisao(
               fmt(result.seguroDesemprego.valorParcela),
             ],
           ]
+        : []),
+      ...(result.saldoDevedor > 0
+        ? [['Saldo devedor do empregado (Art. 480)', '', `(${fmt(result.saldoDevedor)})`]]
         : []),
       ['', 'VALOR LÍQUIDO', fmt(result.totalLiquido)],
     ],

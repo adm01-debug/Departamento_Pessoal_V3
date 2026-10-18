@@ -100,6 +100,9 @@ export interface SeguroDesempregoInfo {
   elegivel: boolean;
   parcelas: number;
   valorParcela: number;
+  /** Estimativa baseada na 1ª solicitação (≥12 meses de vínculo em 36).
+   *  Solicitações seguintes têm requisitos menores — resultado orientativo. */
+  observacao: string;
 }
 
 export interface RescisaoResult {
@@ -122,6 +125,9 @@ export interface RescisaoResult {
   irrf: number;
   totalDescontos: number;
   totalLiquido: number;
+  /** Quando os descontos superam os proventos, o excedente é dívida do
+   *  empregado (ex.: art. 480) — líquido fica em 0 e o saldo fica aqui. */
+  saldoDevedor: number;
   diasTrabalhados: number;
   mesesFerias: number;
   meses13: number;
@@ -152,6 +158,10 @@ export interface RescisaoParams {
   /** Data efetiva do pagamento das verbas; acima de desligamento + 10 dias
    *  corridos aplica a multa de 1 salário (art. 477 §8º CLT). */
   dataPagamento?: string;
+  /** Art. 480 CLT: perdas reais apuradas do empregador. A indenização devida
+   *  pelo empregado é o menor entre este valor e o teto legal (50% dos dias
+   *  restantes, art. 479). Omitido: presume-se o teto (cenário conservador). */
+  indenizacaoArt480Prejuizo?: number;
 }
 
 /**
@@ -197,6 +207,13 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
 
   const tipo = normalizarTipoRescisao(params.tipo);
   const terminoIniciativa = params.terminoIniciativa ?? 'empregador';
+
+  // Antecipação de contrato a prazo exige a data prevista de fim — sem ela
+  // as indenizações dos arts. 479/480 não podem ser calculadas (zero silencioso
+  // já causou rescisão subpaga). 'natural' dispensa a data (fim no prazo).
+  if (tipo === 'termino_contrato' && terminoIniciativa !== 'natural' && !params.dataFimContrato) {
+    throw new Error('Informe a data prevista de fim do contrato (arts. 479/480 CLT)');
+  }
 
   // 1. Saldo de Salário (Art. 4º CLT)
   const diasNoMes = new Date(desligamento.getFullYear(), desligamento.getMonth() + 1, 0).getDate();
@@ -279,7 +296,12 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
       if (diasRestantes > 0) {
         const valor = trunc2((salario / 30) * diasRestantes * 0.5);
         if (terminoIniciativa === 'empregado') {
-          indenizacaoArt480 = valor;
+          // Art. 480: a indenização ao empregador é limitada às perdas
+          // apuradas, teto = valor do art. 479 (50% dos dias restantes).
+          indenizacaoArt480 =
+            params.indenizacaoArt480Prejuizo != null
+              ? trunc2(Math.min(Math.max(0, params.indenizacaoArt480Prejuizo), valor))
+              : valor;
         } else if (terminoIniciativa !== 'natural') {
           indenizacaoArt479 = valor;
         }
@@ -291,9 +313,11 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
   // vinculada (GRRF) — NÃO é verba do TRCT e fica fora do total líquido.
   const fgtsRescisao = trunc2((saldoSalario + avisoIndenizado + decimoTerceiro) * 0.08);
   let multaFGTS = 0;
-  // Término de contrato a prazo pela iniciativa do empregador OU no prazo
-  // natural paga multa de 40%; só a iniciativa do empregado a perde.
-  if (tipo === 'sem_justa_causa' || (tipo === 'termino_contrato' && terminoIniciativa !== 'empregado')) {
+  // A multa de 40% só existe quando há dispensa sem justa causa: o término
+  // no prazo natural do contrato (ou pedido do empregado) não é dispensa —
+  // libera o saque do FGTS sem multa. No termino_contrato ela acompanha a
+  // indenização do art. 479 (antecipação pelo empregador).
+  if (tipo === 'sem_justa_causa' || indenizacaoArt479 > 0) {
     multaFGTS = trunc2((saldoFGTS + fgtsRescisao) * 0.4);
   } else if (tipo === 'acordo_mutuo' || tipo === 'culpa_reciproca') {
     multaFGTS = trunc2((saldoFGTS + fgtsRescisao) * 0.2);
@@ -334,7 +358,11 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
   // Descontos incluem o aviso não cumprido (487 §2º) e a indenização do
   // art. 480 devida pelo empregado ao empregador.
   const totalDescontos = trunc2(inss + irrf + descontoAvisoPrevio + indenizacaoArt480);
-  const totalLiquido = trunc2(totalProventos - totalDescontos);
+  // Descontos > proventos → o excedente é dívida do empregado (art. 480),
+  // não um líquido negativo (o chk_desligamentos_valores_nao_negativos
+  // rejeitaria a gravação). Líquido fica em 0 e o saldo fica separado.
+  const totalLiquido = Math.max(0, trunc2(totalProventos - totalDescontos));
+  const saldoDevedor = Math.max(0, trunc2(totalDescontos - totalProventos));
 
   // 9. Informativos — saque FGTS (484-A limita a 80%) e seguro-desemprego
   // (elegibilidade requer dispensa involuntária + vínculo mínimo de 12 meses
@@ -358,6 +386,9 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
     elegivel: seguroElegivel,
     parcelas: seguroElegivel ? (avosServico >= 24 ? 5 : 4) : 0,
     valorParcela: seguroElegivel ? estimarParcelaSeguro(salario) : 0,
+    observacao:
+      'Estimativa para 1ª solicitação (≥12 meses de vínculo nos últimos 36). ' +
+      'Solicitações seguintes têm requisitos de vínculo menores — confirme no gov.br.',
   };
 
   return {
@@ -380,6 +411,7 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
     irrf,
     totalDescontos,
     totalLiquido,
+    saldoDevedor,
     diasTrabalhados,
     mesesFerias: mesesFeriasPagos,
     meses13,

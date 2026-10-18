@@ -102,6 +102,9 @@ export interface RescisaoMotorParams {
   dataFimContrato?: string;
   terminoIniciativa?: 'empregador' | 'empregado' | 'natural';
   dataPagamento?: string;
+  /** Art. 480 CLT: perdas reais apuradas do empregador (teto = valor do
+   *  art. 479). Omitido: presume-se o teto (cenário conservador). */
+  indenizacaoArt480Prejuizo?: number;
 }
 
 /**
@@ -119,6 +122,12 @@ export function calcularRescisaoMotor(p: RescisaoMotorParams) {
 
   const tipo = normalizarTipoRescisao(p.tipo);
   const terminoIniciativa = p.terminoIniciativa ?? 'empregador';
+
+  // Antecipação de contrato a prazo exige a data prevista de fim (479/480);
+  // 'natural' dispensa. Portado de rescisaoCalc.ts — evita zero silencioso.
+  if (tipo === 'termino_contrato' && terminoIniciativa !== 'natural' && !p.dataFimContrato) {
+    throw new Error('Informe a data prevista de fim do contrato (arts. 479/480 CLT)');
+  }
   const referencia = dataDesligamento;
 
   // 1. Saldo de salário (Art. 4º CLT)
@@ -190,7 +199,11 @@ export function calcularRescisaoMotor(p: RescisaoMotorParams) {
       if (diasRestantes > 0) {
         const valor = trunc2((salarioBase / 30) * diasRestantes * 0.5);
         if (terminoIniciativa === 'empregado') {
-          indenizacaoArt480 = valor;
+          // Art. 480: indenização limitada às perdas apuradas, teto = 479.
+          indenizacaoArt480 =
+            p.indenizacaoArt480Prejuizo != null
+              ? trunc2(Math.min(Math.max(0, p.indenizacaoArt480Prejuizo), valor))
+              : valor;
         } else if (terminoIniciativa !== 'natural') {
           indenizacaoArt479 = valor;
         }
@@ -201,9 +214,9 @@ export function calcularRescisaoMotor(p: RescisaoMotorParams) {
   // 6. FGTS + multa (Art. 18 Lei 8.036/90) — multa FORA do líquido (GRRF).
   const fgtsRescisao = trunc2((saldoSalario + avisoIndenizado + decimoTerceiro) * 0.08);
   let multaFGTS = 0;
-  // Término de contrato a prazo pela iniciativa do empregador OU no prazo
-  // natural paga multa de 40%; só a iniciativa do empregado a perde.
-  if (tipo === 'sem_justa_causa' || (tipo === 'termino_contrato' && terminoIniciativa !== 'empregado')) {
+  // A multa de 40% só existe em dispensa sem justa causa: o término no prazo
+  // natural (ou o pedido do empregado) não é dispensa — saque sem multa.
+  if (tipo === 'sem_justa_causa' || indenizacaoArt479 > 0) {
     multaFGTS = trunc2((p.saldoFGTS + fgtsRescisao) * 0.40);
   } else if (tipo === 'acordo_mutuo' || tipo === 'culpa_reciproca') {
     multaFGTS = trunc2((p.saldoFGTS + fgtsRescisao) * 0.20);
@@ -229,7 +242,10 @@ export function calcularRescisaoMotor(p: RescisaoMotorParams) {
   const irrfB = calcIRRF(decimoTerceiro, 0, referencia);
   const irrf = (Math.round(irrfA * 100) + Math.round(irrfB * 100)) / 100;
   const totalDescontos = trunc2(inss + irrf + descontoAvisoPrevio + indenizacaoArt480);
-  const totalLiquido = trunc2(totalProventos - totalDescontos);
+  // Descontos > proventos → saldo devedor do empregado (art. 480), não
+  // líquido negativo (chk_desligamentos_valores_nao_negativos rejeitaria).
+  const totalLiquido = Math.max(0, trunc2(totalProventos - totalDescontos));
+  const saldoDevedor = Math.max(0, trunc2(totalDescontos - totalProventos));
 
   // 9. Informativos — saque FGTS e seguro-desemprego.
   const fgtsSaquePercentual =
@@ -275,12 +291,16 @@ export function calcularRescisaoMotor(p: RescisaoMotorParams) {
       elegivel: seguroElegivel,
       parcelas: seguroElegivel ? (avosServico >= 24 ? 5 : 4) : 0,
       valorParcela,
+      observacao:
+        'Estimativa para 1ª solicitação (≥12 meses de vínculo nos últimos 36). ' +
+        'Solicitações seguintes têm requisitos de vínculo menores — confirme no gov.br.',
     },
     totalProventos,
     inss,
     irrf,
     totalDescontos,
     totalLiquido,
+    saldoDevedor,
     diasTrabalhados,
     mesesFerias: mesesFeriasPagos,
     meses13,

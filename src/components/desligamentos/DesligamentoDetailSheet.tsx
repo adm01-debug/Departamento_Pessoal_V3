@@ -19,7 +19,11 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { useState } from 'react';
 
 interface DetailSheetProps {
-  desligamento: (DesligamentoComColaborador & { detalhes_calculo?: { inss?: number; irrf?: number } | null }) | null;
+  desligamento:
+    | (DesligamentoComColaborador & {
+        detalhes_calculo?: Partial<import('@/utils/rescisaoCalc').RescisaoResult> | null;
+      })
+    | null;
   open: boolean;
   onClose: () => void;
 }

@@ -72,14 +72,13 @@ describe('rescisaoService', () => {
   });
 
   describe('calcularESalvar', () => {
-    // Acompanha as três colunas que só existem em runtime, não em `any`:
+    // Acompanha as colunas que só existem em runtime, não em `any`:
     // `colaboradores.nome` (é `nome_completo`), `colaboradores.dependentes_irrf`
     // (aposentada, virou `dependentes.para_irrf`) e `desligamentos.detalhes_calculo`
-    // (nunca existiu). As três juntas faziam esta função falhar sempre — sem
-    // nenhum teste que as tivesse pego antes, porque nenhum mock aqui validava
-    // nomes reais de coluna. Este teste fixa o payload exato que o serviço
-    // agora envia ao Postgres, para que uma futura regressão de nome de coluna
-    // volte a quebrar em CI, não em produção.
+    // (criada pela migration 20261018150000 para guardar o resultado do motor).
+    // As três juntas faziam esta função falhar sempre — sem nenhum teste que
+    // as tivesse pego antes, porque nenhum mock aqui validava nomes reais de
+    // coluna. Este teste fixa o payload exato que o serviço envia ao Postgres.
     it('busca dependentes reais via para_irrf e persiste apenas colunas existentes', async () => {
       const anterior = {
         id: 'd1',
@@ -133,10 +132,10 @@ describe('rescisaoService', () => {
       );
 
       expect(result).toEqual(novo);
-      // Nenhuma chave inexistente (`nome`, `dependentes_irrf`, `detalhes_calculo`)
-      // deve voltar a aparecer no payload de update.
+      // `detalhes_calculo` recebe o resultado completo do motor (JSON) para o
+      // TRCT/PDF; chaves inexistentes (`nome`, `dependentes_irrf`) seguem fora.
       const payload = updateFn.mock.calls[0][0];
-      expect(payload).not.toHaveProperty('detalhes_calculo');
+      expect(payload).toHaveProperty('detalhes_calculo');
       expect(payload).toHaveProperty('saldo_salario');
       expect(payload).toHaveProperty('status', 'calculado');
       // O embed de colaborador não pode voltar a pedir `nome` (é
