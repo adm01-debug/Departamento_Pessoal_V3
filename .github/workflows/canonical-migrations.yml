@@ -717,9 +717,11 @@ jobs:
             # Codex (P2, PR #242-followup): validar que a migração está no ledger canônico
             # antes de rodar seu sidecar — impede aprovar um sidecar para uma migração
             # pendente ou parcialmente criada via DDL manual.
-            ledger_count="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At \
-              -v "v=$version" \
-              -c "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = :'v'")"
+            # Codex (P1, PR #244): psql -c não expande :'v' (psql metacommand);
+            # usar stdin (printf | psql) para que a interpolação seja processada.
+            ledger_count="$(printf '%s\n' \
+              "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = :'v';" | \
+              psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At -v "v=$version")"
             if [ "$ledger_count" -ne 1 ]; then
               echo "::error::Migração $version não encontrada no ledger canônico — mode=verify só aceita migrações JÁ aplicadas."
               verify_errors=$((verify_errors + 1))
