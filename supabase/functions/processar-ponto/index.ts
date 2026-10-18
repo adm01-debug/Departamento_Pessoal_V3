@@ -75,20 +75,23 @@ const resolverJornada = async (
       return { minutos, entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
     }
   }
-  // Grade da empresa inteira numa query só (tabela pequena) — precisamos
-  // saber se a empresa CONFIGUROU o sábado, não só a linha deste dia.
-  const { data: jhRows } = await supabase
+  // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
+  // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
+  // Query limitada ao dia (sem paginação) e erro propagado — silenciar erro
+  // como "sem grade" apagaria dia útil configurado e mudaria HE/falta.
+  const { data: jh, error: jhError } = await supabase
     .from('jornadas_horarios')
-    .select('dia_semana, entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
+    .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
+    .eq('dia_semana', diaSemana)
     .eq('jornadas.empresa_id', empresaId)
-    .eq('jornadas.ativa', true);
-  const grade = (jhRows ?? []) as Array<{
-    dia_semana: number; entrada: string | null; saida: string | null;
-    intervalo_inicio: string | null; intervalo_fim: string | null; dia_util: boolean | null;
-  }>;
-  const jh = grade.find((r) => r.dia_semana === diaSemana);
-  const temGrade = grade.length > 0;
-  // Folga explícita da grade vence qualquer escala própria.
+    .eq('jornadas.ativa', true)
+    .limit(1)
+    .maybeSingle();
+  if (jhError) throw jhError;
+  // Folga só por configuração EXPLÍCITA do dia (dia_util=false) — grade
+  // parcial sem linha de sábado não é descanso: poderia ser 5x2 ou 6x1.
+  // Os HORÁRIOS da grade são default da empresa e só valem quando o
+  // colaborador não tem jornada própria (semanal customizada ≠44 vence).
   if (jh && jh.dia_util === false) {
     return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
   }
@@ -97,17 +100,9 @@ const resolverJornada = async (
   // 44h é o DEFAULT do schema (002_colaboradores.sql), não uma escolha do
   // colaborador: semanal customizada (≠44) vence os horários da grade; o
   // default 44h cede para a grade do dia (senão turno 8h da grade virava
-  // HE 40min sobre o alvo 7h20 derivado). Nunca inferimos 5x2 do total
-  // semanal — escala 6x1 de 36h também tem <=40h.
+  // HE 40min sobre o alvo 7h20 derivado).
   const semanalCustom = temSemanal && semanal !== 44;
-  const sabadoSemConfig = diaSemana === 6 && entradaColab === null && temGrade && !jh;
-  // Sábado: a grade da empresa define os dias úteis — sem linha para
-  // sábado, ele é folga (só quando a empresa tem grade; sem grade nenhuma
-  // mantém-se o fallback de dia trabalhado).
   if (semanalCustom) {
-    if (sabadoSemConfig) {
-      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
-    }
     return {
       minutos: Math.round(semanal * 60 / 6),
       entradaEsperada: entradaColab ?? (jh?.entrada ? timeToMin(jh.entrada) : null),
@@ -129,20 +124,13 @@ const resolverJornada = async (
     };
   }
   if (temSemanal) {
-    // semanal default (44h): vale para dia trabalhado, mas respeita
-    // sábado-fora-da-grade como folga.
-    if (sabadoSemConfig) {
-      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
-    }
+    // semanal default (44h): sem grade no dia, cai para o alvo derivado.
     return {
       minutos: Math.round(semanal * 60 / 6),
       entradaEsperada: entradaColab ?? (jh?.entrada ? timeToMin(jh.entrada) : null),
       intervaloMin: intervaloColab,
       toleranciaMin: tolerancia,
     };
-  }
-  if (sabadoSemConfig) {
-    return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
   }
   const { data: j } = await supabase
     .from('jornadas')
