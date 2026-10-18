@@ -8,7 +8,13 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public
 
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'supabase_admin') THEN
-    EXECUTE 'ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin IN SCHEMA public
-      REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC';
+    -- Runner conecta como postgres; se não for membro de supabase_admin loga
+    -- warning em vez de abortar (padrão de 20261005160000_wave7_audit_fixes).
+    BEGIN
+      EXECUTE 'ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin IN SCHEMA public
+        REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC';
+    EXCEPTION WHEN OTHERS THEN
+      RAISE WARNING 'supabase_admin default privileges não alterados: %', SQLERRM;
+    END;
   END IF;
 END $$;
