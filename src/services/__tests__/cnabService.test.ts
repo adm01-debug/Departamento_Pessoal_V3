@@ -226,12 +226,17 @@ describe('cnabService.parseRetornoCNAB', () => {
     const line = makeSegmentALine('SEU001', '00');
     const item = { id: 'item-1', folha_item_id: 'fi-1', nome_favorecido: 'João', seu_numero: 'SEU001' };
 
+    const remChain = makeChain({ data: [{ id: 'rem-1' }], error: null });
     const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: null });
     const folhaChain = makeChain({ error: null });
     const updateFolha = folhaChain.update;
 
-    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain).mockReturnValueOnce(folhaChain);
+    mockFrom
+      .mockReturnValueOnce(remChain)
+      .mockReturnValueOnce(selChain)
+      .mockReturnValueOnce(updChain)
+      .mockReturnValueOnce(folhaChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(1);
@@ -250,10 +255,11 @@ describe('cnabService.parseRetornoCNAB', () => {
     const line = makeSegmentALine('SEU002', '99');
     const item = { id: 'item-2', folha_item_id: null, nome_favorecido: 'Maria', seu_numero: 'SEU002' };
 
+    const remChain = makeChain({ data: [{ id: 'rem-1' }], error: null });
     const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: null });
 
-    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
+    mockFrom.mockReturnValueOnce(remChain).mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.erro).toBe(1);
@@ -264,8 +270,9 @@ describe('cnabService.parseRetornoCNAB', () => {
   it('skips segment A lines where item is not found in DB', async () => {
     const line = makeSegmentALine('NOTFOUND', '00');
 
+    const remChain = makeChain({ data: [{ id: 'rem-1' }], error: null });
     const selChain = makeChain({ data: [], error: null });
-    mockFrom.mockReturnValueOnce(selChain);
+    mockFrom.mockReturnValueOnce(remChain).mockReturnValueOnce(selChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(0);
@@ -278,10 +285,11 @@ describe('cnabService.parseRetornoCNAB', () => {
     const line = makeSegmentALine('SEU003', '00');
     const item = { id: 'item-3', folha_item_id: 'fi-3', nome_favorecido: 'Ana', seu_numero: 'SEU003' };
 
+    const remChain = makeChain({ data: [{ id: 'rem-1' }], error: null });
     const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: { message: 'RLS' } });
 
-    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
+    mockFrom.mockReturnValueOnce(remChain).mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(0);
@@ -293,11 +301,16 @@ describe('cnabService.parseRetornoCNAB', () => {
     const line = makeCnab400Line('abcdef0007', true, '00');
     const item = { id: 'item-4', folha_item_id: 'fi-4', nome_favorecido: 'Beto', seu_numero: 'abcdef0007' };
 
+    const remChain = makeChain({ data: [{ id: 'rem-1' }], error: null });
     const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: null });
     const folhaChain = makeChain({ error: null });
 
-    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain).mockReturnValueOnce(folhaChain);
+    mockFrom
+      .mockReturnValueOnce(remChain)
+      .mockReturnValueOnce(selChain)
+      .mockReturnValueOnce(updChain)
+      .mockReturnValueOnce(folhaChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(1);
@@ -310,11 +323,16 @@ describe('cnabService.parseRetornoCNAB', () => {
     const line = makeCnab400Line('1234567800', true, '00');
     const item = { id: 'item-5', folha_item_id: 'fi-5', nome_favorecido: 'Carla', seu_numero: '123456780012' };
 
+    const remChain = makeChain({ data: [{ id: 'rem-1' }], error: null });
     const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: null });
     const folhaChain = makeChain({ error: null });
 
-    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain).mockReturnValueOnce(folhaChain);
+    mockFrom
+      .mockReturnValueOnce(remChain)
+      .mockReturnValueOnce(selChain)
+      .mockReturnValueOnce(updChain)
+      .mockReturnValueOnce(folhaChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(1);

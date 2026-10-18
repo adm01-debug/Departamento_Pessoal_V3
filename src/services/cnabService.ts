@@ -494,6 +494,10 @@ export const cnabService = {
       detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>,
     };
 
+    // cnab_itens não tem empresa_id — o tenant vem da remessa (cnab_remessas).
+    // Buscado sob demanda na primeira linha de detalhe válida.
+    let remessaIds: string[] | null = null;
+
     for (const line of lines) {
       if (line.length < 240) continue;
 
@@ -504,16 +508,31 @@ export const cnabService = {
       if (!is240 && !is400) continue;
 
       const codigoOcorrencia = is240 ? line.substring(230, 232) : line.substring(108, 110);
+      // CNAB400: primário = pos 68-77 (onde generateCNAB400 grava seu_numero);
+      // secundário = pos 63-72 (só fallback — pode invadir o campo do nome).
       const candidatos = is240
         ? [line.substring(73, 93).trim()]
-        : [...new Set([line.substring(62, 72).trim(), line.substring(67, 77).trim()])].filter(Boolean);
+        : [...new Set([line.substring(67, 77).trim(), line.substring(62, 72).trim()])].filter(Boolean);
       if (candidatos.length === 0) continue;
 
       // CNAB400: o arquivo ecoa só 10 posições de `seu_numero`; remessas antigas
       // gravaram 12 — casa por prefixo (stored LIKE 'candidato%'). CNAB240: eq.
+      if (remessaIds === null) {
+        const { data: remessas, error: remError } = await (
+          supabase.from('cnab_remessas') as unknown as QueryBuilderType
+        )
+          .select('id')
+          .eq('empresa_id', empresaId);
+        if (remError) throw remError;
+        remessaIds = ((remessas ?? []) as Array<{ id: string }>).map((r) => r.id);
+      }
+      if (remessaIds.length === 0) {
+        results.naoEncontrados++;
+        continue;
+      }
       let query = (supabase.from('cnab_itens') as unknown as QueryBuilderType)
         .select('id, folha_item_id, nome_favorecido, seu_numero')
-        .eq('empresa_id', empresaId);
+        .in('remessa_id', remessaIds);
       if (is240) {
         query = query.eq('seu_numero', candidatos[0]);
       } else {
@@ -521,15 +540,18 @@ export const cnabService = {
       }
       const { data: itens, error: findError } = await query;
       const itemList = (itens ?? []) as CnabItemRecord[];
+      // Match só aceito quando inequívoco: exato primeiro, prefixo único depois
+      // (prefixo curto de remessas antigas não pode escolher item de outro
+      // favorecido na mesma remessa).
+      const matchFor = (cand: string) => {
+        const exact = itemList.filter((i) => i.seu_numero === cand);
+        if (exact.length === 1) return exact[0];
+        const prefix = itemList.filter((i) => i.seu_numero.startsWith(cand));
+        return prefix.length === 1 ? prefix[0] : undefined;
+      };
       const item = is240
         ? itemList[0]
-        : itemList.find(
-            (i) =>
-              i.seu_numero === candidatos[0] ||
-              i.seu_numero.startsWith(candidatos[0]) ||
-              (candidatos[1] !== undefined &&
-                (i.seu_numero === candidatos[1] || i.seu_numero.startsWith(candidatos[1])))
-          );
+        : (matchFor(candidatos[0]) ?? (candidatos[1] !== undefined ? matchFor(candidatos[1]) : undefined));
 
       if (findError) {
         results.erro++;
@@ -556,15 +578,13 @@ export const cnabService = {
             'cnabService:cnab_itens'
           )
         )
-        .eq('id', item.id)
-        .eq('empresa_id', empresaId);
+        .eq('id', item.id);
 
       let folhaOk = true;
       if (!updError && isSuccess && item.folha_item_id) {
         const { error: fiError } = await (supabase.from('folha_itens') as unknown as QueryBuilderType)
           .update(validateTablePayload('folha_itens', { status_pagamento: 'pago' }, 'cnabService:folha_itens'))
-          .eq('id', item.folha_item_id)
-          .eq('empresa_id', empresaId);
+          .eq('id', item.folha_item_id);
         folhaOk = !fiError;
       }
 
