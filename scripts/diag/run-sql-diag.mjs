@@ -190,8 +190,11 @@ if (FORBIDDEN_CALL_RE.test(codeOnly)) {
 // swallow it and leave the statement unterminated before ROLLBACK.
 // W78: statement_timeout = '15s' evita scans longos acidentais.
 // W78: SET LOCAL ROLE ci_auditor restringe o escopo de acesso ao mínimo
-// necessário (role read-only criada em migration 20261015160000).
-const sql = `BEGIN TRANSACTION READ ONLY;\nSET LOCAL statement_timeout = '15s';\nSET LOCAL ROLE ci_auditor;\n${stripped}\n;\nROLLBACK;`;
+// necessário (role read-only criada em migration 20261015160000) — APENAS
+// quando ALLOW_PII=false (catalog queries). Com ALLOW_PII=true a query
+// precisa acessar tabelas de negócio que ci_auditor não tem privilégio.
+const roleClause = ALLOW_PII ? '' : 'SET LOCAL ROLE ci_auditor;\n';
+const sql = `BEGIN TRANSACTION READ ONLY;\nSET LOCAL statement_timeout = '15s';\n${roleClause}${stripped}\n;\nROLLBACK;`;
 
 // Stream stdout and truncate incrementally — buffering everything first
 // means a multi-MiB result dies on maxBuffer before the row cap can run.
