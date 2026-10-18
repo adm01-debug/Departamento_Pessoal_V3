@@ -50,9 +50,9 @@ describe('calcularRescisao', () => {
     expect(acordo.avisoPrevio).toBeGreaterThan(0);
   });
 
-  it('multaFGTS is 40% of saldoFGTS for sem_justa_causa', () => {
+  it('multaFGTS is 40% of (saldoFGTS + FGTS rescisão) for sem_justa_causa', () => {
     const result = calcularRescisao({ ...BASE_PARAMS, saldoFGTS: 10000 });
-    expect(result.multaFGTS).toBeCloseTo(4000, 1);
+    expect(result.multaFGTS).toBeCloseTo(Math.trunc((10000 + result.fgtsRescisao) * 0.4 * 100) / 100, 2);
   });
 
   it('multaFGTS is 0 for com_justa_causa', () => {

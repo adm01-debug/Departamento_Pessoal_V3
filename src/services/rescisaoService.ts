@@ -23,6 +23,12 @@ export interface CalcularRescisaoParams {
   aviso_trabalhado?: boolean;
   ferias_vencidas?: boolean;
   saldo_fgts?: number;
+  data_pagamento?: string;
+  data_fim_contrato?: string;
+  termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
+  dias_aviso_nao_cumpridos?: number;
+  /** Art. 480 CLT: perdas reais apuradas do empregador (teto = art. 479). */
+  indenizacao_art_480_prejuizo?: number;
 }
 
 export const rescisaoService = {
@@ -99,26 +105,21 @@ export const rescisaoService = {
         feriasVencidas: params.ferias_vencidas ?? false,
         saldoFGTS: params.saldo_fgts ?? 0,
         dependentes: dependentesIRRF,
+        // data_pagamento no banco é timestamptz — o motor espera 'YYYY-MM-DD'.
+        dataPagamento: (params.data_pagamento ?? anterior.data_pagamento)?.slice(0, 10),
+        dataFimContrato: params.data_fim_contrato,
+        terminoIniciativa: params.termino_iniciativa,
+        diasAvisoNaoCumpridos: params.dias_aviso_nao_cumpridos,
+        indenizacaoArt480Prejuizo: params.indenizacao_art_480_prejuizo,
       });
       const resultado = result;
 
-      // SCHEMA GAP (achado ao eliminar casts genéricos desta função, não corrigido aqui):
-      // `desligamentos` não tem coluna `detalhes_calculo`, mas
-      // DesligamentoDetailSheet.tsx:205 lê `d.detalhes_calculo || d` para
-      // montar o PDF da rescisão — ou seja, o código em dois lugares assume
-      // uma coluna que nunca existiu. Sob a tipagem genérica anterior, este `.update()` incluía
-      // `detalhes_calculo` no MESMO payload que os campos reais
-      // (saldo_salario, decimo_terceiro, ...): o PostgREST rejeita o UPDATE
-      // INTEIRO por uma chave inválida, então `calcularESalvar` sempre
-      // lançava aqui — nenhuma rescisão jamais foi salva com sucesso por
-      // este caminho. Removido do payload para o salvamento funcionar; os
-      // valores decompostos abaixo já são a fonte de verdade persistida.
-      // O fallback `|| d` do PDF passa a usar sempre a linha crua (campos
-      // snake_case, não o formato de RescisaoResult) — comportamento
-      // pré-existente, não alterado aqui. Requer migration própria
-      // (`ALTER TABLE desligamentos ADD COLUMN detalhes_calculo jsonb`) se o
-      // JSON completo for realmente necessário.
+      // detalhes_calculo (jsonb, migration 20261018150000) guarda o resultado
+      // completo do motor para o TRCT/PDF reproduzir todas as rubricas
+      // (INSS/IRRF, arts. 479/480, desconto do aviso, multa 477, saldo devedor);
+      // os campos decompostos abaixo seguem como fonte para relatórios/filtros.
       const dadosAtualizados: Partial<Tables<'desligamentos'>> = {
+        detalhes_calculo: resultado as unknown as Tables<'desligamentos'>['detalhes_calculo'],
         saldo_salario: resultado.saldoSalario,
         decimo_terceiro: resultado.decimoTerceiro,
         ferias_proporcionais: resultado.feriasProporcionais,

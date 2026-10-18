@@ -1351,6 +1351,7 @@ export const TABLE_COLUMNS: Record<string, readonly string[]> = {
     'data_pagamento',
     'data_remocao_acesso',
     'decimo_terceiro',
+    'detalhes_calculo',
     'empresa_id',
     'etapa',
     'ferias_proporcionais',

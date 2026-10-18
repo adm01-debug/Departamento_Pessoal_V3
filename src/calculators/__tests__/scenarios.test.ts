@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  calcularINSS,
-  calcularIRRF,
-  calcularFGTS,
-} from '../impostos';
+import { calcularINSS, calcularIRRF, calcularFGTS } from '../impostos';
 import {
   calcularRescisao,
   calcularSeguroDesemprego,
@@ -60,7 +56,7 @@ describe('Simulação — INSS (progressivo 2026, teto R$ 8.475,55)', () => {
       const v = calcularINSS(s);
       expect(isFiniteNum(v)).toBe(true);
       expect(v).toBeGreaterThanOrEqual(0);
-      expect(v).toBeLessThanOrEqual(988.10);
+      expect(v).toBeLessThanOrEqual(988.1);
       expect(v).toBeGreaterThanOrEqual(anterior - 0.001);
       anterior = v;
     }
@@ -135,9 +131,9 @@ describe('Simulação — Rescisão (4 tipos × múltiplos tempos de casa)', () 
     expect(r.multaFGTS).toBe(0);
   });
 
-  it('sem justa causa: multa 40% do FGTS e aviso prévio proporcional ao tempo', () => {
+  it('sem justa causa: multa 40% do (FGTS + FGTS rescisão) e aviso prévio proporcional ao tempo', () => {
     const r = calcularRescisao({ ...base, tipoRescisao: 'sem_justa_causa' });
-    expect(r.multaFGTS).toBeCloseTo(15000 * 0.4, 2);
+    expect(r.multaFGTS).toBeCloseTo((15000 + r.fgtsRescisao) * 0.4, 2);
     expect(r.diasAvisoPrevio).toBeGreaterThanOrEqual(30);
     expect(r.diasAvisoPrevio).toBeLessThanOrEqual(90);
     expect(r.avisoPrevio).toBeGreaterThan(0);
@@ -145,7 +141,7 @@ describe('Simulação — Rescisão (4 tipos × múltiplos tempos de casa)', () 
 
   it('acordo mútuo: multa 20% e meio aviso prévio', () => {
     const r = calcularRescisao({ ...base, tipoRescisao: 'acordo_mutuo' });
-    expect(r.multaFGTS).toBeCloseTo(15000 * 0.2, 2);
+    expect(r.multaFGTS).toBeCloseTo(Math.trunc((15000 + r.fgtsRescisao) * 0.2 * 100) / 100, 2);
     const cheio = calcularRescisao({ ...base, tipoRescisao: 'sem_justa_causa' });
     expect(r.avisoPrevio).toBeCloseTo(cheio.avisoPrevio * 0.5, 1);
   });
@@ -170,7 +166,12 @@ describe('Simulação — Rescisão (4 tipos × múltiplos tempos de casa)', () 
   });
 
   it('admissão = desligamento (0 dia) não quebra', () => {
-    const r = calcularRescisao({ salarioBase: 2000, dataAdmissao: '2026-03-01', dataDesligamento: '2026-03-01', tipoRescisao: 'sem_justa_causa' });
+    const r = calcularRescisao({
+      salarioBase: 2000,
+      dataAdmissao: '2026-03-01',
+      dataDesligamento: '2026-03-01',
+      tipoRescisao: 'sem_justa_causa',
+    });
     expect(isFiniteNum(r.totalBruto)).toBe(true);
     expect(r.totalBruto).toBeGreaterThanOrEqual(0);
   });
@@ -192,36 +193,39 @@ describe('Simulação — Rescisão (4 tipos × múltiplos tempos de casa)', () 
     }
   });
 
-  it('C34 — múltiplo exato de 12 meses: férias proporcionais = 0 (período aquisitivo completo, não 12)', () => {
-    // 24 meses exatos: avosTotal=24, 24%12=0 → feriasProporcional deve ser 0
+  it('C34 — 24 meses exatos: projeção OJ 82 entra no próximo período (1 avo)', () => {
+    // 24 meses exatos: 2 períodos aquisitivos fechados pelo desligamento e o
+    // aviso indenizado (36 dias, 2 anos) projeta 25/03→25/04 → 1 avo do novo
+    // período (OJ 82 SDI-I TST). O órfão antigo não projetava e dava 0.
     const r = calcularRescisao({
       salarioBase: 3000,
       dataAdmissao: '2024-03-20',
       dataDesligamento: '2026-03-20',
       tipoRescisao: 'sem_justa_causa',
     });
-    expect(r.feriasProporcional).toBe(0);
+    expect(r.feriasProporcional).toBe(250);
   });
 
-  it('C34 — 12 meses exatos: férias proporcionais = 0', () => {
+  it('C34 — 12 meses exatos: projeção de 33 dias paga 1 avo do novo período', () => {
     const r = calcularRescisao({
       salarioBase: 3000,
       dataAdmissao: '2025-03-20',
       dataDesligamento: '2026-03-20',
       tipoRescisao: 'sem_justa_causa',
     });
-    expect(r.feriasProporcional).toBe(0);
+    expect(r.feriasProporcional).toBe(250);
   });
 
-  it('C34 — 11 meses e 16 dias: avos=12 (≥15 dias), férias prop = 0 (período completo)', () => {
-    // Admissão 2025-04-04, desligamento 2026-03-20 → 11 meses + 16 dias → avos=12 → prop=0
+  it('C34 — 11 meses e 16 dias + projeção de 30 dias: 13 avos → 1 avo proporcional', () => {
+    // Admissão 2025-04-04, desligamento 2026-03-20 → aviso 30d projeta até
+    // 2026-04-19 → 12 meses + 15 dias = 13 avos → 1 avo do novo período.
     const r = calcularRescisao({
       salarioBase: 3000,
       dataAdmissao: '2025-04-04',
       dataDesligamento: '2026-03-20',
       tipoRescisao: 'sem_justa_causa',
     });
-    expect(r.feriasProporcional).toBe(0);
+    expect(r.feriasProporcional).toBe(250);
     expect(r.diasAvisoPrevio).toBe(30); // C35: < 1 ano completo → sem bônus
   });
 
@@ -365,7 +369,7 @@ describe('Simulação — Benefícios e descontos', () => {
 describe('Simulação — Banco de horas (saldo positivo/negativo/zerado)', () => {
   it('saldo positivo formatado corretamente', () => {
     const r = calcularBancoHoras(['08:00', '02:30'], ['01:00']);
-    expect(r.saldo).toBe((8 * 60) + (2 * 60 + 30) - 60); // 630 - 60 = 570
+    expect(r.saldo).toBe(8 * 60 + (2 * 60 + 30) - 60); // 630 - 60 = 570
     expect(r.saldoFormatado).toBe('9:30');
   });
   it('saldo negativo recebe sinal', () => {

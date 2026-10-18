@@ -1,18 +1,26 @@
 // Cálculos de rescisão, provisões e encargos
 import { SALARIO_MINIMO_2026, FAIXAS_SEGURO_DESEMPREGO_2026, FAIXAS_PLR_2026 } from './tabelas';
 import { calcularINSS, calcularIRRF, calcularFGTS } from './impostos';
+import { calcularRescisaoCore } from '@/utils/rescisaoCalc';
 
-export type TipoRescisao = 'sem_justa_causa' | 'com_justa_causa' | 'pedido_demissao' | 'acordo_mutuo';
+export type TipoRescisao =
+  | 'sem_justa_causa'
+  | 'com_justa_causa'
+  | 'justa_causa'
+  | 'pedido_demissao'
+  | 'acordo_mutuo'
+  | 'culpa_reciproca'
+  | 'termino_contrato'
+  | 'falecimento';
 
-// Avos proporcionais (CLT): fração >= 15 dias conta como mês integral.
-function calcularAvos(inicio: Date, fim: Date): number {
-  if (fim < inicio) return 0;
-  const meses = (fim.getFullYear() - inicio.getFullYear()) * 12 + (fim.getMonth() - inicio.getMonth());
-  const dataReferencia = new Date(inicio.getFullYear(), inicio.getMonth() + meses, inicio.getDate());
-  const diasRestantes = Math.floor((fim.getTime() - dataReferencia.getTime()) / (1000 * 60 * 60 * 24));
-  return diasRestantes >= 15 ? meses + 1 : meses;
-}
+const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 
+/**
+ * @deprecated Use `calcularRescisao` de `@/utils/rescisaoCalc` — motor único.
+ * Shim de compatibilidade que delega ao motor único (mesma saída) e remapeia
+ * os nomes históricos dos campos. Mantido porque consumidores legados usam
+ * este shape; não contém mais lógica própria de cálculo.
+ */
 export function calcularRescisao(params: {
   salarioBase: number;
   dataAdmissao: string;
@@ -20,62 +28,47 @@ export function calcularRescisao(params: {
   tipoRescisao: TipoRescisao;
   saldoFGTS?: number;
   feriasVencidas?: boolean;
+  avisoTrabalhado?: boolean;
+  dependentes?: number;
+  diasAvisoNaoCumpridos?: number;
+  dataFimContrato?: string;
+  terminoIniciativa?: 'empregador' | 'empregado' | 'natural';
+  dataPagamento?: string;
 }) {
-  const { salarioBase, dataAdmissao, dataDesligamento, tipoRescisao, saldoFGTS = 0, feriasVencidas = false } = params;
-  // Parse as local date (YYYY-MM-DD) to avoid timezone shift
-  const admissao = new Date(dataAdmissao + 'T00:00:00');
-  const desligamento = new Date(dataDesligamento + 'T00:00:00');
-  const avosTotal = calcularAvos(admissao, desligamento);
-
-  // Saldo de salário: dias trabalhados no mês sobre os dias reais do mês.
-  const diasNoMes = new Date(desligamento.getFullYear(), desligamento.getMonth() + 1, 0).getDate() || 30;
-  const diasTrabalhados = desligamento.getDate();
-  const saldoSalario = Math.trunc((salarioBase / diasNoMes) * diasTrabalhados * 100) / 100;
-
-  // 13º proporcional: meses trabalhados no ano-calendário (a partir da admissão, se admitido no ano).
-  const inicioAno = new Date(desligamento.getFullYear(), 0, 1);
-  const baseInicio13 = admissao > inicioAno ? admissao : inicioAno;
-  const meses13 = calcularAvos(baseInicio13, desligamento);
-  const decimo13Prop = tipoRescisao !== 'com_justa_causa' ? Math.trunc((salarioBase / 12) * meses13 * 100) / 100 : 0;
-
-  // Férias proporcionais: avos do período aquisitivo corrente (com regra dos 15 dias).
-  // C34: avosTotal múltiplo de 12 → período aquisitivo completo, proporcional = 0 (não 12).
-  const mesesFeriasProp = avosTotal % 12;
-  const feriasProp = tipoRescisao !== 'com_justa_causa' ? Math.trunc((salarioBase / 12) * mesesFeriasProp * 100) / 100 : 0;
-  const tercoFeriasProp = Math.trunc(feriasProp / 3 * 100) / 100;
-  const feriasVencidasValor = feriasVencidas ? salarioBase : 0;
-  const tercoFeriasVencidas = Math.trunc(feriasVencidasValor / 3 * 100) / 100;
-
-  // C35: aviso prévio proporcional usa anos completos de serviço calculados sem a regra de
-  // arredondamento dos 15 dias (que inflacionaria avosTotal e, por consequência, os dias extras).
-  const rawMeses = (desligamento.getFullYear() - admissao.getFullYear()) * 12
-    + (desligamento.getMonth() - admissao.getMonth());
-  const anosServico = Math.floor(rawMeses / 12);
-  const diasAvisoPrevio = tipoRescisao === 'sem_justa_causa' ? Math.min(90, 30 + anosServico * 3) : 0;
-  const avisoPrevio = tipoRescisao === 'sem_justa_causa'
-    ? Math.trunc((salarioBase / 30) * diasAvisoPrevio * 100) / 100
-    : tipoRescisao === 'acordo_mutuo'
-      ? Math.trunc((salarioBase / 30) * Math.min(90, 30 + anosServico * 3) * 0.5 * 100) / 100
-      : 0;
-
-  // Multa FGTS (Lei 8.036/90, Art. 18): 40% (sem justa causa) ou 20% (acordo mútuo) sobre saldo acumulado.
-  const multaFGTS = tipoRescisao === 'sem_justa_causa'
-    ? Math.trunc(saldoFGTS * 0.40 * 100) / 100
-    : tipoRescisao === 'acordo_mutuo'
-      ? Math.trunc(saldoFGTS * 0.20 * 100) / 100
-      : 0;
-
-  const totalBruto = saldoSalario + decimo13Prop + feriasProp + tercoFeriasProp + feriasVencidasValor + tercoFeriasVencidas + avisoPrevio;
-  // INSS/IRRF incidem sobre saldo de salário e 13º (em bases separadas); férias indenizadas são isentas.
-  const inss = Math.trunc((calcularINSS(saldoSalario) + calcularINSS(decimo13Prop)) * 100) / 100;
-  const irrf = Math.trunc((calcularIRRF(saldoSalario) + calcularIRRF(decimo13Prop)) * 100) / 100;
-  const totalLiquido = Math.trunc((totalBruto - inss - irrf) * 100) / 100;
+  const r = calcularRescisaoCore({
+    salario: params.salarioBase,
+    dataAdmissao: params.dataAdmissao,
+    dataDesligamento: params.dataDesligamento,
+    tipo: params.tipoRescisao,
+    avisoTrabalhado: params.avisoTrabalhado ?? false,
+    feriasVencidas: params.feriasVencidas ?? false,
+    saldoFGTS: params.saldoFGTS ?? 0,
+    dependentes: params.dependentes ?? 0,
+    diasAvisoNaoCumpridos: params.diasAvisoNaoCumpridos,
+    dataFimContrato: params.dataFimContrato,
+    terminoIniciativa: params.terminoIniciativa,
+    dataPagamento: params.dataPagamento,
+  });
 
   return {
-    saldoSalario, decimo13Proporcional: decimo13Prop, feriasProporcional: feriasProp,
-    tercoFeriasProporcional: tercoFeriasProp, feriasVencidas: feriasVencidasValor,
-    tercoFeriasVencidas, avisoPrevio, diasAvisoPrevio, multaFGTS,
-    totalBruto: Math.trunc(totalBruto * 100) / 100, inss, irrf, totalLiquido,
+    saldoSalario: r.saldoSalario,
+    decimo13Proporcional: r.decimoTerceiro,
+    feriasProporcional: r.feriasProporcionais,
+    tercoFeriasProporcional: trunc2(r.feriasProporcionais / 3),
+    feriasVencidas: r.feriasVencidas,
+    tercoFeriasVencidas: trunc2(r.feriasVencidas / 3),
+    avisoPrevio: r.avisoIndenizado,
+    diasAvisoPrevio: r.diasAviso,
+    descontoAvisoPrevio: r.descontoAvisoPrevio,
+    indenizacaoArt479: r.indenizacaoArt479,
+    indenizacaoArt480: r.indenizacaoArt480,
+    multa477: r.multa477,
+    fgtsRescisao: r.fgtsRescisao,
+    multaFGTS: r.multaFGTS,
+    totalBruto: r.totalProventos,
+    inss: r.inss,
+    irrf: r.irrf,
+    totalLiquido: r.totalLiquido,
   };
 }
 
@@ -98,8 +91,12 @@ export function calcularSeguroDesemprego(ultimosSalarios: number[], mesesVinculo
   return { valorParcela, parcelas: ref >= 24 ? 5 : ref >= 12 ? 4 : 3 };
 }
 
-export function calcularMultaFGTS(saldoFGTS: number, tipo: 'sem_justa_causa' | 'acordo_mutuo', fgtsRescisao = 0): number {
-  const percentual = tipo === 'sem_justa_causa' ? 0.40 : 0.20;
+export function calcularMultaFGTS(
+  saldoFGTS: number,
+  tipo: 'sem_justa_causa' | 'acordo_mutuo',
+  fgtsRescisao = 0
+): number {
+  const percentual = tipo === 'sem_justa_causa' ? 0.4 : 0.2;
   return Math.trunc((saldoFGTS + fgtsRescisao) * percentual * 100) / 100;
 }
 
@@ -114,7 +111,7 @@ export function calcularMulta477(salarioBase: number, empregadorCulpado: boolean
 export function calcularProvisaoFerias(salarioBase: number, mesesAquisitivo: number) {
   const proporcional = (salarioBase / 12) * mesesAquisitivo;
   const provisaoFerias = Math.trunc(proporcional * 100) / 100;
-  const provisaoTerco = Math.trunc(provisaoFerias / 3 * 100) / 100;
+  const provisaoTerco = Math.trunc((provisaoFerias / 3) * 100) / 100;
   const provisaoEncargos = Math.trunc((provisaoFerias + provisaoTerco) * 0.3637 * 100) / 100;
   const total = Math.trunc((provisaoFerias + provisaoTerco + provisaoEncargos) * 100) / 100;
   return { provisaoFerias, provisaoTerco, provisaoEncargos, total };
@@ -127,12 +124,16 @@ export function calcularProvisao13(salarioBase: number, mesesTrabalhados: number
   return { provisao13, provisaoEncargos, total };
 }
 
-export function calcularEncargos(salarioBase: number, percentualRAT: number = 0.03, percentualTerceiros: number = 0.058) {
+export function calcularEncargos(
+  salarioBase: number,
+  percentualRAT: number = 0.03,
+  percentualTerceiros: number = 0.058
+) {
   const inssEmpregado = calcularINSS(salarioBase);
   const irrfEmpregado = calcularIRRF(salarioBase);
   const fgts = calcularFGTS(salarioBase);
 
-  const inssPatronal = Math.trunc(salarioBase * 0.20 * 100) / 100;
+  const inssPatronal = Math.trunc(salarioBase * 0.2 * 100) / 100;
   const rat = Math.trunc(salarioBase * percentualRAT * 100) / 100;
   const terceiros = Math.trunc(salarioBase * percentualTerceiros * 100) / 100;
 
@@ -147,7 +148,7 @@ export function calcularEncargos(salarioBase: number, percentualRAT: number = 0.
     rat,
     terceiros,
     totalEncargosPatronais,
-    custoMensalTotal
+    custoMensalTotal,
   };
 }
 

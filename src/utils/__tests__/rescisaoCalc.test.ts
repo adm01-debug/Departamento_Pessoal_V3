@@ -7,7 +7,7 @@ import { calcularINSS as calcINSS, calcularIRRF as calcIRRF } from '@/calculator
 // ═══════════════════════════════════════════════════════
 describe('calcINSS — Tabela Progressiva 2026', () => {
   // Bracket boundaries
-  const FAIXA1_TETO = 1621.00;
+  const FAIXA1_TETO = 1621.0;
   const FAIXA2_TETO = 2902.84;
   const FAIXA3_TETO = 4354.27;
   const FAIXA4_TETO = 8475.55;
@@ -22,8 +22,8 @@ describe('calcINSS — Tabela Progressiva 2026', () => {
   });
 
   describe('faixa 1 — 7.5% até R$ 1.621,00', () => {
-    it('R$ 500', () => expect(calcINSS(500)).toBeCloseTo(37.50, 2));
-    it('R$ 1.000', () => expect(calcINSS(1000)).toBeCloseTo(75.00, 2));
+    it('R$ 500', () => expect(calcINSS(500)).toBeCloseTo(37.5, 2));
+    it('R$ 1.000', () => expect(calcINSS(1000)).toBeCloseTo(75.0, 2));
     it('R$ 1.621,00 (teto)', () => expect(calcINSS(FAIXA1_TETO)).toBeCloseTo(121.57, 2));
   });
 
@@ -55,12 +55,20 @@ describe('calcINSS — Tabela Progressiva 2026', () => {
 
   describe('faixa 4 — 14% de R$ 4.354,28 a R$ 8.475,55', () => {
     it('R$ 5.000', () => {
-      const expected = FAIXA1_TETO * 0.075 + (FAIXA2_TETO - FAIXA1_TETO) * 0.09 + (FAIXA3_TETO - FAIXA2_TETO) * 0.12 + (5000 - FAIXA3_TETO) * 0.14;
+      const expected =
+        FAIXA1_TETO * 0.075 +
+        (FAIXA2_TETO - FAIXA1_TETO) * 0.09 +
+        (FAIXA3_TETO - FAIXA2_TETO) * 0.12 +
+        (5000 - FAIXA3_TETO) * 0.14;
       expect(calcINSS(5000)).toBeCloseTo(expected, 2);
     });
     it('R$ 8.157,41 (teto)', () => {
       const r = calcINSS(FAIXA4_TETO);
-      const expected = FAIXA1_TETO * 0.075 + (FAIXA2_TETO - FAIXA1_TETO) * 0.09 + (FAIXA3_TETO - FAIXA2_TETO) * 0.12 + (FAIXA4_TETO - FAIXA3_TETO) * 0.14;
+      const expected =
+        FAIXA1_TETO * 0.075 +
+        (FAIXA2_TETO - FAIXA1_TETO) * 0.09 +
+        (FAIXA3_TETO - FAIXA2_TETO) * 0.12 +
+        (FAIXA4_TETO - FAIXA3_TETO) * 0.14;
       expect(r).toBeCloseTo(expected, 2);
     });
   });
@@ -123,7 +131,26 @@ describe('calcularRescisao — Sem Justa Causa', () => {
 
   it('retorna todos os campos obrigatórios', async () => {
     const r = await calcularRescisao(base);
-    const fields = ['saldoSalario', 'avisoIndenizado', 'feriasVencidas', 'feriasProporcionais', 'tercoFerias', 'decimoTerceiro', 'multaFGTS', 'fgtsRescisao', 'totalProventos', 'inss', 'irrf', 'totalDescontos', 'totalLiquido', 'diasTrabalhados', 'mesesFerias', 'meses13', 'diasAviso'];
+    const fields = [
+      'saldoSalario',
+      'avisoIndenizado',
+      'feriasVencidas',
+      'feriasProporcionais',
+      'tercoFerias',
+      'decimoTerceiro',
+      'multaFGTS',
+      'fgtsRescisao',
+      'totalProventos',
+      'inss',
+      'irrf',
+      'totalDescontos',
+      'totalLiquido',
+      'saldoDevedor',
+      'diasTrabalhados',
+      'mesesFerias',
+      'meses13',
+      'diasAviso',
+    ];
     fields.forEach((f) => expect(r).toHaveProperty(f));
   });
 
@@ -166,7 +193,7 @@ describe('calcularRescisao — Sem Justa Causa', () => {
 
   it('1/3 constitucional = (férias vencidas + proporcionais) / 3', async () => {
     const r = await calcularRescisao({ ...base, feriasVencidas: true });
-    expect(r.tercoFerias).toBe(Math.trunc((r.feriasVencidas + r.feriasProporcionais) / 3 * 100) / 100);
+    expect(r.tercoFerias).toBe(Math.trunc(((r.feriasVencidas + r.feriasProporcionais) / 3) * 100) / 100);
   });
 
   it('13º proporcional: decimoTerceiro = (salário/12) × meses13', async () => {
@@ -182,23 +209,26 @@ describe('calcularRescisao — Sem Justa Causa', () => {
 
   it('multa FGTS = 40% do (saldo FGTS + FGTS rescisão)', async () => {
     const r = await calcularRescisao(base);
-    expect(r.multaFGTS).toBeCloseTo((15000 + r.fgtsRescisao) * 0.40, 2);
+    expect(r.multaFGTS).toBeCloseTo((15000 + r.fgtsRescisao) * 0.4, 2);
   });
 
   it('totalProventos = soma de todas as verbas', async () => {
     const r = await calcularRescisao(base);
-    const expected = r.saldoSalario + r.avisoIndenizado + r.feriasVencidas + r.feriasProporcionais + r.tercoFerias + r.decimoTerceiro;
+    const expected =
+      r.saldoSalario + r.avisoIndenizado + r.feriasVencidas + r.feriasProporcionais + r.tercoFerias + r.decimoTerceiro;
     expect(r.totalProventos).toBeCloseTo(expected, 2);
   });
 
-  it('totalDescontos = INSS + IRRF', async () => {
+  it('totalDescontos = INSS + IRRF + desconto aviso + indenização art. 480', async () => {
     const r = await calcularRescisao(base);
-    expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf, 2);
+    expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.descontoAvisoPrevio + r.indenizacaoArt480, 1);
   });
 
-  it('totalLiquido = proventos - descontos + multa FGTS', async () => {
+  it('totalLiquido = max(0, proventos - descontos) (multa FGTS é GRRF, fora do líquido)', async () => {
     const r = await calcularRescisao(base);
-    expect(r.totalLiquido).toBeCloseTo(r.totalProventos - r.totalDescontos + r.multaFGTS, 2);
+    expect(r.multaFGTS).toBeGreaterThan(0);
+    expect(r.totalLiquido).toBeCloseTo(Math.max(0, r.totalProventos - r.totalDescontos), 2);
+    expect(r.saldoDevedor).toBe(0);
   });
 
   it('totalLiquido > 0 para salário positivo', async () => {
@@ -242,9 +272,9 @@ describe('calcularRescisao — Justa Causa', () => {
     expect((await calcularRescisao(base)).tercoFerias).toBe(0);
   });
 
-  it('férias vencidas = 0 em justa causa', async () => {
+  it('férias vencidas pagas mesmo em justa causa (art. 146 — só proporcionais se perdem)', async () => {
     const r = await calcularRescisao({ ...base, feriasVencidas: true });
-    expect(r.feriasVencidas).toBe(0);
+    expect(r.feriasVencidas).toBe(3000);
   });
 });
 
@@ -462,7 +492,7 @@ describe('calcularRescisao — Edge Cases', () => {
       feriasVencidas: false,
       saldoFGTS: 0,
     });
-    expect(r.multaFGTS).toBeCloseTo(r.fgtsRescisao * 0.40, 2);
+    expect(r.multaFGTS).toBeCloseTo(r.fgtsRescisao * 0.4, 2);
   });
 
   it('salário alto R$ 100.000', async () => {
@@ -490,7 +520,7 @@ describe('calcularRescisao — Edge Cases', () => {
     });
     expect(r.feriasVencidas).toBe(4000);
     expect(r.feriasProporcionais).toBeGreaterThan(0);
-    expect(r.tercoFerias).toBe(Math.trunc((r.feriasVencidas + r.feriasProporcionais) / 3 * 100) / 100);
+    expect(r.tercoFerias).toBe(Math.trunc(((r.feriasVencidas + r.feriasProporcionais) / 3) * 100) / 100);
   });
 });
 
@@ -520,14 +550,23 @@ describe('calcularRescisao — Consistência Matemática', () => {
       });
 
       // totalProventos = soma
-      const expectedProventos = r.saldoSalario + r.avisoIndenizado + r.feriasVencidas + r.feriasProporcionais + r.tercoFerias + r.decimoTerceiro;
+      const expectedProventos =
+        r.saldoSalario +
+        r.avisoIndenizado +
+        r.feriasVencidas +
+        r.feriasProporcionais +
+        r.tercoFerias +
+        r.decimoTerceiro +
+        r.indenizacaoArt479 +
+        r.multa477;
       expect(r.totalProventos).toBeCloseTo(expectedProventos, 1);
 
-      // totalDescontos = INSS + IRRF
-      expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf, 2);
+      // totalDescontos = INSS + IRRF + desconto aviso + indenização art. 480
+      expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.descontoAvisoPrevio + r.indenizacaoArt480, 2);
 
-      // totalLiquido
-      expect(r.totalLiquido).toBeCloseTo(r.totalProventos - r.totalDescontos + r.multaFGTS, 1);
+      // totalLiquido — multa FGTS fora do líquido (depósito GRRF);
+      // descontos > proventos viram saldoDevedor, líquido fica em 0
+      expect(r.totalLiquido).toBeCloseTo(Math.max(0, r.totalProventos - r.totalDescontos), 1);
 
       // All values >= 0
       expect(r.saldoSalario).toBeGreaterThanOrEqual(0);
@@ -540,5 +579,292 @@ describe('calcularRescisao — Consistência Matemática', () => {
       expect(r.inss).toBeGreaterThanOrEqual(0);
       expect(r.irrf).toBeGreaterThanOrEqual(0);
     });
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// Onda 5 — Regras novas do motor único
+// ═══════════════════════════════════════════════════════
+describe('calcularRescisao — Término de Contrato a Prazo (arts. 479/480)', () => {
+  const base = {
+    salario: 5000,
+    dataAdmissao: '2025-01-01',
+    dataDesligamento: '2026-03-01',
+    tipo: 'termino_contrato',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 10000,
+    dataFimContrato: '2026-07-01',
+  };
+
+  // 2026-03-01 → 2026-07-01 = 122 dias restantes → 5000/30 × 122 × 50% = 10.166,67
+  it('iniciativa do empregador → indenização art. 479 de 50% dos dias restantes', async () => {
+    const r = await calcularRescisao({ ...base, terminoIniciativa: 'empregador' });
+    expect(r.indenizacaoArt479).toBeCloseTo(10166.66, 2);
+    expect(r.indenizacaoArt480).toBe(0);
+    // entra nos proventos, não nos descontos
+    expect(r.totalProventos).toBeCloseTo(
+      r.saldoSalario +
+        r.avisoIndenizado +
+        r.feriasVencidas +
+        r.feriasProporcionais +
+        r.tercoFerias +
+        r.decimoTerceiro +
+        r.indenizacaoArt479 +
+        r.multa477,
+      2
+    );
+  });
+
+  it('iniciativa do empregador → multa FGTS 40% e saque FGTS pleno', async () => {
+    const r = await calcularRescisao({ ...base, terminoIniciativa: 'empregador' });
+    expect(r.multaFGTS).toBeCloseTo(Math.trunc((10000 + r.fgtsRescisao) * 0.4 * 100) / 100, 2);
+    expect(r.fgtsSaquePercentual).toBe(1);
+  });
+
+  it('iniciativa do empregado → indenização art. 480 nos descontos', async () => {
+    const r = await calcularRescisao({ ...base, terminoIniciativa: 'empregado' });
+    expect(r.indenizacaoArt480).toBeCloseTo(10166.66, 2);
+    expect(r.indenizacaoArt479).toBe(0);
+    expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.indenizacaoArt480, 2);
+    // empregado pediu: sem multa FGTS e sem saque
+    expect(r.multaFGTS).toBe(0);
+    expect(r.fgtsSaquePercentual).toBe(0);
+    expect(r.seguroDesemprego.elegivel).toBe(false);
+  });
+
+  it('término natural (contrato correu o prazo) → sem indenização e sem multa', async () => {
+    const r = await calcularRescisao({ ...base, terminoIniciativa: 'natural' });
+    expect(r.indenizacaoArt479).toBe(0);
+    expect(r.indenizacaoArt480).toBe(0);
+    // Término no prazo não é dispensa: libera saque do FGTS sem multa de 40%.
+    expect(r.multaFGTS).toBe(0);
+    expect(r.fgtsSaquePercentual).toBe(1);
+  });
+
+  it('desligamento após o fim previsto → sem indenização', async () => {
+    const r = await calcularRescisao({ ...base, dataFimContrato: '2026-02-01', terminoIniciativa: 'empregador' });
+    expect(r.indenizacaoArt479).toBe(0);
+  });
+
+  it('antecipação sem data de fim do contrato → erro (arts. 479/480)', async () => {
+    const { dataFimContrato, ...semFim } = base;
+    await expect(calcularRescisao({ ...semFim, terminoIniciativa: 'empregador' })).rejects.toThrow(/fim do contrato/);
+    await expect(calcularRescisao({ ...semFim, terminoIniciativa: 'empregado' })).rejects.toThrow(/fim do contrato/);
+    // 'natural' dispensa a data
+    await expect(calcularRescisao({ ...semFim, terminoIniciativa: 'natural' })).resolves.toBeDefined();
+  });
+
+  it('art. 480: indenização limitada às perdas apuradas (teto = art. 479)', async () => {
+    const r = await calcularRescisao({
+      ...base,
+      terminoIniciativa: 'empregado',
+      indenizacaoArt480Prejuizo: 2000,
+    });
+    expect(r.indenizacaoArt480).toBe(2000);
+    const acimaDoTeto = await calcularRescisao({
+      ...base,
+      terminoIniciativa: 'empregado',
+      indenizacaoArt480Prejuizo: 99999,
+    });
+    expect(acimaDoTeto.indenizacaoArt480).toBeCloseTo(10166.66, 2);
+  });
+
+  it('descontos > proventos → líquido 0 e saldo devedor do empregado', async () => {
+    // Salário baixo + indenização art. 480 grande → excedente é dívida, não
+    // líquido negativo (chk_desligamentos_valores_nao_negativos).
+    const r = await calcularRescisao({
+      salario: 1200,
+      dataAdmissao: '2025-06-01',
+      dataDesligamento: '2026-01-05',
+      tipo: 'termino_contrato',
+      terminoIniciativa: 'empregado',
+      dataFimContrato: '2027-01-01',
+      avisoTrabalhado: true,
+      feriasVencidas: false,
+      saldoFGTS: 0,
+    });
+    expect(r.totalDescontos).toBeGreaterThan(r.totalProventos);
+    expect(r.totalLiquido).toBe(0);
+    expect(r.saldoDevedor).toBeCloseTo(r.totalDescontos - r.totalProventos, 2);
+  });
+});
+
+describe('calcularRescisao — Pedido de Demissão sem aviso cumprido (art. 487 §2º)', () => {
+  const base = {
+    salario: 3000,
+    dataAdmissao: '2023-01-01',
+    dataDesligamento: '2026-04-10',
+    tipo: 'pedido_demissao',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 0,
+  };
+
+  it('30 dias não cumpridos (default) → desconto = 1 salário', async () => {
+    const r = await calcularRescisao(base);
+    expect(r.diasAvisoNaoCumpridos).toBe(30);
+    expect(r.descontoAvisoPrevio).toBe(3000);
+  });
+
+  it('dias parciais → desconto proporcional', async () => {
+    const r = await calcularRescisao({ ...base, diasAvisoNaoCumpridos: 15 });
+    expect(r.descontoAvisoPrevio).toBe(1500);
+  });
+
+  it('aviso trabalhado → sem desconto', async () => {
+    const r = await calcularRescisao({ ...base, avisoTrabalhado: true });
+    expect(r.descontoAvisoPrevio).toBe(0);
+  });
+
+  it('desconto entra em totalDescontos (e sai do líquido)', async () => {
+    const r = await calcularRescisao(base);
+    expect(r.totalDescontos).toBeCloseTo(r.inss + r.irrf + r.descontoAvisoPrevio, 2);
+    expect(r.totalLiquido).toBeCloseTo(Math.max(0, r.totalProventos - r.totalDescontos), 2);
+    expect(r.saldoDevedor).toBeCloseTo(Math.max(0, r.totalDescontos - r.totalProventos), 2);
+  });
+});
+
+describe('calcularRescisao — Culpa Recíproca (Súm. 14 TST)', () => {
+  const base = {
+    salario: 6000,
+    dataAdmissao: '2022-05-01',
+    dataDesligamento: '2026-06-01',
+    tipo: 'culpa_reciproca',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 20000,
+  };
+
+  it('aviso indenizado = 50% do aviso cheio', async () => {
+    const r = await calcularRescisao(base);
+    // 4 anos → 30 + 12 = 42 dias; metade = 21 dias → 6000/30 × 21 = 4.200
+    expect(r.diasAviso).toBe(42);
+    expect(r.avisoIndenizado).toBeCloseTo((6000 / 30) * 21, 2);
+  });
+
+  it('férias proporcionais e 13º a 50%', async () => {
+    const r = await calcularRescisao(base);
+    const sem = await calcularRescisao({ ...base, tipo: 'sem_justa_causa' });
+    expect(r.feriasProporcionais).toBeCloseTo(
+      Math.trunc((((6000 / 12) * r.mesesFerias * 100) / 100 / 2) * 100) / 100,
+      1
+    );
+    expect(r.decimoTerceiro).toBeLessThan(sem.decimoTerceiro);
+    expect(r.decimoTerceiro).toBeCloseTo(sem.decimoTerceiro / 2, 1);
+  });
+
+  it('multa FGTS 20% e seguro elegível', async () => {
+    const r = await calcularRescisao(base);
+    expect(r.multaFGTS).toBeCloseTo(Math.trunc((20000 + r.fgtsRescisao) * 0.2 * 100) / 100, 2);
+    expect(r.seguroDesemprego.elegivel).toBe(true);
+  });
+});
+
+describe('calcularRescisao — Acordo 484-A completo', () => {
+  const base = {
+    salario: 5000,
+    dataAdmissao: '2021-01-01',
+    dataDesligamento: '2026-05-10',
+    tipo: 'acordo_mutuo',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 18000,
+  };
+
+  it('aviso 50%, multa 20%, saque FGTS 80%, sem seguro-desemprego', async () => {
+    const r = await calcularRescisao(base);
+    const sem = await calcularRescisao({ ...base, tipo: 'sem_justa_causa' });
+    expect(r.avisoIndenizado).toBeCloseTo(sem.avisoIndenizado * 0.5, 1);
+    expect(r.multaFGTS).toBeCloseTo(Math.trunc((18000 + r.fgtsRescisao) * 0.2 * 100) / 100, 2);
+    expect(r.fgtsSaquePercentual).toBe(0.8);
+    expect(r.seguroDesemprego.elegivel).toBe(false);
+  });
+});
+
+describe('calcularRescisao — Multa art. 477 §8º', () => {
+  const base = {
+    salario: 4000,
+    dataAdmissao: '2020-01-01',
+    dataDesligamento: '2026-03-10',
+    tipo: 'sem_justa_causa',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 0,
+  };
+
+  it('pagamento > 10 dias corridos → multa de 1 salário', async () => {
+    const r = await calcularRescisao({ ...base, dataPagamento: '2026-03-25' });
+    expect(r.multa477).toBe(4000);
+    expect(r.totalProventos).toBeGreaterThanOrEqual(4000);
+  });
+
+  it('pagamento no 10º dia → sem multa', async () => {
+    const r = await calcularRescisao({ ...base, dataPagamento: '2026-03-20' });
+    expect(r.multa477).toBe(0);
+  });
+
+  it('sem data de pagamento → sem multa', async () => {
+    const r = await calcularRescisao(base);
+    expect(r.multa477).toBe(0);
+  });
+});
+
+describe('calcularRescisao — Seguro-desemprego informativo', () => {
+  const base = {
+    salario: 3000,
+    dataAdmissao: '2020-01-01',
+    dataDesligamento: '2026-06-15',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 0,
+  };
+
+  it('sem justa causa com ≥24 meses → elegível, 5 parcelas', async () => {
+    const r = await calcularRescisao({ ...base, tipo: 'sem_justa_causa' });
+    expect(r.seguroDesemprego.elegivel).toBe(true);
+    expect(r.seguroDesemprego.parcelas).toBe(5);
+    expect(r.seguroDesemprego.valorParcela).toBeGreaterThanOrEqual(1621);
+  });
+
+  it('sem justa causa com <12 meses → inelegível', async () => {
+    const r = await calcularRescisao({ ...base, tipo: 'sem_justa_causa', dataAdmissao: '2026-01-01' });
+    expect(r.seguroDesemprego.elegivel).toBe(false);
+    expect(r.seguroDesemprego.parcelas).toBe(0);
+  });
+
+  it('pedido de demissão → inelegível', async () => {
+    const r = await calcularRescisao({ ...base, tipo: 'pedido_demissao', avisoTrabalhado: true });
+    expect(r.seguroDesemprego.elegivel).toBe(false);
+  });
+
+  it('justa causa → inelegível', async () => {
+    const r = await calcularRescisao({ ...base, tipo: 'justa_causa' });
+    expect(r.seguroDesemprego.elegivel).toBe(false);
+  });
+});
+
+describe('calcularRescisao — Normalização de tipos', () => {
+  const base = {
+    salario: 3000,
+    dataAdmissao: '2020-01-01',
+    dataDesligamento: '2026-06-15',
+    avisoTrabalhado: false,
+    feriasVencidas: false,
+    saldoFGTS: 0,
+  };
+
+  it('aliases legados produzem o mesmo resultado do tipo canônico', async () => {
+    const jc = await calcularRescisao({ ...base, tipo: 'com_justa_causa' });
+    const jcCanon = await calcularRescisao({ ...base, tipo: 'justa_causa' });
+    expect(jc.totalLiquido).toBe(jcCanon.totalLiquido);
+
+    const acordo = await calcularRescisao({ ...base, tipo: 'acordo' });
+    const acordoCanon = await calcularRescisao({ ...base, tipo: 'acordo_mutuo' });
+    expect(acordo.totalLiquido).toBe(acordoCanon.totalLiquido);
+
+    const fim = await calcularRescisao({ ...base, tipo: 'fim_contrato', terminoIniciativa: 'natural' });
+    const termino = await calcularRescisao({ ...base, tipo: 'termino_contrato', terminoIniciativa: 'natural' });
+    expect(fim.totalLiquido).toBe(termino.totalLiquido);
   });
 });

@@ -6386,6 +6386,7 @@ export type Database = {
           data_pagamento: string | null
           data_remocao_acesso: string | null
           decimo_terceiro: number | null
+          detalhes_calculo: Json | null
           empresa_id: string | null
           etapa: string | null
           ferias_proporcionais: number | null
@@ -6436,6 +6437,7 @@ export type Database = {
           data_pagamento?: string | null
           data_remocao_acesso?: string | null
           decimo_terceiro?: number | null
+          detalhes_calculo?: Json | null
           empresa_id?: string | null
           etapa?: string | null
           ferias_proporcionais?: number | null
@@ -6486,6 +6488,7 @@ export type Database = {
           data_pagamento?: string | null
           data_remocao_acesso?: string | null
           decimo_terceiro?: number | null
+          detalhes_calculo?: Json | null
           empresa_id?: string | null
           etapa?: string | null
           ferias_proporcionais?: number | null
@@ -23461,6 +23464,7 @@ export type Database = {
           data_pagamento: string | null
           data_remocao_acesso: string | null
           decimo_terceiro: number | null
+          detalhes_calculo: Json | null
           empresa_id: string | null
           etapa: string | null
           ferias_proporcionais: number | null
