@@ -568,7 +568,7 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 
 | Indicador              | Valor                                                                                    |
 | ---------------------- | ---------------------------------------------------------------------------------------- |
-| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner + Wave 6 mergeadas na main; PR #244 em CI (18/10/2026)  |
+| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner + Wave 6 + PR #244 mergeados na main (18/10/2026)       |
 | TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                         |
 | Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                  |
 | Cobertura              | ✅ v8 configurada                                                                        |
@@ -591,8 +591,9 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 | ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69/PR #244)   |
 | live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)             |
 | canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)            |
-| Dependabot overrides   | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244)              |
+| Dependabot overrides   | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244 mergeado)     |
 | psql variable interp.  | ✅ :'v' via stdin (printf+pipe) em canonical-migrations.yml (Codex P1 — PR #244)         |
+| GITHUB_TOKEN gap       | ⚠️ workflows-report.yml PRs não disparam CI — gap documentado em "Baixos" (PR #244)      |
 
 ---
 
@@ -645,6 +646,7 @@ _Nenhum crítico bloqueante no momento._
 | `extract-zip ≤2.0.1` (Alerts #15/#16)  | Path traversal teórico em devDep (`@lhci/cli`)               | Sem fix upstream — risco zero em CI read-only; aguardar patch do upstream                                                                                                                                                      |
 | `sprintf-js ≤1.1.3` (Alert #18)        | Prototype pollution em devDep (`jasmine-core`)               | Sem fix upstream — baixo risco; aguardar atualização do `@testing-library`                                                                                                                                                     |
 | `uuid@8.3.2` em `@lhci/cli` (Alert #1) | Buffer bounds check GHSA-w5hq-g745-h8pq (CVSS 7.5) em devDep | Override `"@lhci/cli":{"uuid":"14.0.3"}` existe mas npm v10 não força majors incompatíveis — `@lhci/cli` requer `^8.3.1`; uuid@14 tem API quebrada. Risco zero (CI read-only, buf não controlado); aguardar @lhci/cli upstream |
+| `workflows-report.yml` + GITHUB_TOKEN  | PRs criadas pelo bot não disparam workflows `pull_request`   | Limitação documentada do GitHub: `GITHUB_TOKEN` não dispara CI em PRs automáticas. Workaround: GitHub App ou PAT como secret. Ação manual do owner quando quiser CI automático no relatório semanal                            |
 
 ---
 
