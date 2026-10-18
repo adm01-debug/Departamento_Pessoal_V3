@@ -189,7 +189,7 @@ Deno.serve(async (req) => {
       const colabIds = colabValidos.map(c => c.id);
 
       // batidas_ponto usa colunas data+hora (não existe data_hora).
-      const comBatidas = new Set<string>();
+      const diasComBatida = new Set<string>(); // 'colab|data'
       let offset = 0;
       while (true) {
         const { data: batch, error } = await admin
@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
         for (const b of batch) {
           const c = colabById.get((b as any).colaborador_id);
           if (!c) continue;
-          comBatidas.add((b as any).colaborador_id);
+          diasComBatida.add(`${(b as any).colaborador_id}|${(b as any).data}`);
           const iso = `${(b as any).data}T${String((b as any).hora).slice(0, 5)}:00-03:00`;
           lines.push(
             pad(nsr++, 9) + "3" + fmtDate(iso) + fmtTime(iso) + pad(onlyDigits(c.pis_pasep), 12)
@@ -219,20 +219,25 @@ Deno.serve(async (req) => {
         offset += LOTE_BATIDAS;
       }
 
-      // Ponte G-049: colaboradores sem batidas caem no modelo registros_ponto
-      // (timesheet processado) — derivar marcações das colunas entrada_N/saida_N.
-      const semBatidas = colabIds.filter((id) => !comBatidas.has(id));
-      if (semBatidas.length > 0) {
+      // Ponte G-049 por DIA: um colaborador pode ter batidas num dia e só o
+      // timesheet (registros_ponto) noutro — exclui-se por (colab, data), não
+      // por colaborador inteiro. Paginado como as batidas.
+      let offReg = 0;
+      while (true) {
         const { data: regs, error: rErr } = await admin
           .from("registros_ponto")
           .select("colaborador_id,data,entrada_1,saida_1,entrada_2,saida_2,entrada_3,saida_3")
           .eq("empresa_id", empresa_id)
-          .in("colaborador_id", semBatidas)
+          .in("colaborador_id", colabIds)
           .gte("data", periodo_inicio)
           .lte("data", periodo_fim)
-          .order("data", { ascending: true });
+          .order("data", { ascending: true })
+          .range(offReg, offReg + LOTE_BATIDAS - 1);
         if (rErr) throw rErr;
-        for (const reg of regs ?? []) {
+        if (!regs || regs.length === 0) break;
+        for (const reg of regs) {
+          const key = `${(reg as any).colaborador_id}|${(reg as any).data}`;
+          if (diasComBatida.has(key)) continue; // dia já coberto por batidas reais
           const c = colabById.get((reg as any).colaborador_id);
           if (!c) continue;
           for (const k of ["entrada_1", "saida_1", "entrada_2", "saida_2", "entrada_3", "saida_3"] as const) {
@@ -245,6 +250,8 @@ Deno.serve(async (req) => {
             totalMarcacoes++;
           }
         }
+        if (regs.length < LOTE_BATIDAS) break;
+        offReg += LOTE_BATIDAS;
       }
     }
 

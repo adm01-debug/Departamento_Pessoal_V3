@@ -140,13 +140,15 @@ export const calculoLoteService = {
         .gte('data', dataInicio)
         .lte('data', dataFim);
       const diasNoMes = Number(dataFim.slice(8, 10));
-      let domingosFeriados = new Set<string>(
+      // Set único de datas DSR — feriado em domingo conta uma vez só.
+      const dsrDatas = new Set<string>(
         (feriadosMes ?? []).filter((f) => f.empresa_id === null || f.empresa_id === empresaId).map((f) => f.data)
-      ).size;
+      );
       for (let d = 1; d <= diasNoMes; d++) {
         const dt = new Date(Number(ano), Number(mes) - 1, d);
-        if (dt.getDay() === 0) domingosFeriados++;
+        if (dt.getDay() === 0) dsrDatas.add(formatDateLocalISO(dt));
       }
+      const domingosFeriados = dsrDatas.size;
       const diasUteis = Math.max(0, diasNoMes - domingosFeriados);
       for (const ev of (eventosData ?? []) as unknown as EventoVariavelRow[]) {
         const tipo = ev.rubrica?.tipo;
@@ -174,7 +176,7 @@ export const calculoLoteService = {
           // 3.1 Integrar dados de PONTO ELETRÔNICO (Horas Extras e Faltas Aprovadas)
           const { data: registrosPonto } = await supabase
             .from('registros_ponto')
-            .select('horas_extras, horas_extras_50, horas_extras_100, horas_noturnas, horas_falta')
+            .select('horas_extras, horas_extras_50, horas_extras_100, horas_noturnas, he_banco_horas, horas_falta')
             .eq('colaborador_id', colab.id)
             .eq('aprovado', true)
             .gte('data', dataInicio)
@@ -187,16 +189,16 @@ export const calculoLoteService = {
 
           if (registrosPonto) {
             registrosPonto.forEach((r) => {
-              // Colunas novas (onda 5) guardam a parte PAGA já separada por
-              // adicional; registros antigos só têm o total em horas_extras
-              // (tratado como 50% como antes — nunca conta duas vezes).
-              const he50 = pontoIntegracaoUtils.intervalToDecimal(r.horas_extras_50);
-              const he100 = pontoIntegracaoUtils.intervalToDecimal(r.horas_extras_100);
-              if (he50 === 0 && he100 === 0) {
+              // Legado = colunas novas NULL (escritas antes da onda 5): o total
+              // vira HE 50% como antes. Registro novo sempre grava '00:00' nas
+              // parcelas — zero explícito NÃO é legado; se fosse, horas já
+              // enviadas ao banco seriam pagas de novo via horas_extras.
+              const legado = r.horas_extras_50 === null && r.horas_extras_100 === null && r.he_banco_horas === null;
+              if (legado) {
                 totalHE += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras);
               } else {
-                totalHE += he50;
-                totalHE100 += he100;
+                totalHE += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras_50);
+                totalHE100 += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras_100);
               }
               totalNoturno += pontoIntegracaoUtils.intervalToDecimal(r.horas_noturnas);
               totalFaltas += pontoIntegracaoUtils.intervalToDecimal(r.horas_falta);

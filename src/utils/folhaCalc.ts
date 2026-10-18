@@ -122,9 +122,12 @@ export const folhaCalc = {
     const totalHE = new Decimal(valorHE50).plus(valorHE100).toNumber();
 
     // 2b. Adicional noturno 20% (CLT art. 73) — horas trabalhadas 22h–05h.
+    // Hora noturna é reduzida: 52min30s por hora → cada hora civil noturna
+    // vale 60/52.5 horas para pagamento.
     const valorNoturno = new Decimal(salarioBase)
       .div(jornada)
       .times(horasNoturnas)
+      .times(60 / 52.5)
       .times(0.2)
       .toDecimalPlaces(2)
       .toNumber();

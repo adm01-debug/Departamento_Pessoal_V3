@@ -76,11 +76,12 @@ describe('Motor de Cálculo de Folha (folhaCalc)', () => {
       jornada: 220,
     });
 
-    // Noturno = (2200/220) * 10 * 0.2 = 20
+    // Hora noturna reduzida (52min30s): 10h civis → 10*60/52.5 ≈ 11,43h
+    // Noturno = (2200/220) * 11,43 * 0.2 ≈ 22,86
     const noturno = resultado.detalheEventos!.find((e) => e.codigo === '1004');
     expect(noturno).toBeTruthy();
     expect(noturno!.tipo).toBe('provento');
-    expect(noturno!.valor).toBeCloseTo(20, 2);
+    expect(noturno!.valor).toBeCloseTo(22.86, 2);
   });
 
   it('deve calcular horas extras 50% e 100% simultaneamente', () => {
