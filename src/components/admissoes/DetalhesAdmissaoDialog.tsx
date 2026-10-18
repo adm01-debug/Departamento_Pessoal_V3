@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { Tables } from '@/integrations/supabase/types';
@@ -41,10 +41,13 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   // O diálogo permanece montado: ao fechar, zera a marca para que reabrir a
   // MESMA admissão recarregue o form com os valores frescos da lista (sem isso,
   // salvar → fechar → reabrir exibia os valores antigos e um novo salvar
-  // sobrescrevia o banco com dados obsoletos).
-  useEffect(() => {
+  // sobrescrevia o banco com dados obsoletos). Ajuste em render (padrão
+  // "derive state during render") — efeito + setState cascateia renders.
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (prevOpen !== open) {
+    setPrevOpen(open);
     if (!open) setDadosLoaded('');
-  }, [open]);
+  }
 
   // Preenche o form uma vez por admissão (id muda → recarrega).
   if (admissao && dadosLoaded !== admissao.id) {
