@@ -501,10 +501,13 @@ export const cnabService = {
     const empresaDaRemessa = async (id: string): Promise<string> => {
       const cached = remessaEmpresa.get(id);
       if (cached !== undefined) return cached;
-      const { data } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+      const { data, error } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
         .select('empresa_id')
         .eq('id', id)
         .maybeSingle();
+      // Falha de leitura propaga — nunca é cacheada como 'empresa vazia'
+      // (senão itens válidos virariam 'não encontrado' em silêncio).
+      if (error) throw error;
       const emp = (data as { empresa_id?: string } | null)?.empresa_id ?? '';
       remessaEmpresa.set(id, emp);
       return emp;
@@ -538,7 +541,13 @@ export const cnabService = {
         query = query.or(candidatos.map((c) => `seu_numero.like.${c}%`).join(','));
       }
       const { data: itens, error: findError } = await query;
-      const itemList = (itens ?? []) as CnabItemRecord[];
+      // Tenant ANTES do match: dois tenants podem compartilhar o mesmo
+      // seu_numero — sem o filtro, o match pegaria (ou rejeitaria por
+      // ambiguidade) o item da outra empresa e deixaria o desta pendente.
+      const itemList: CnabItemRecord[] = [];
+      for (const i of (itens ?? []) as CnabItemRecord[]) {
+        if ((await empresaDaRemessa(i.remessa_id)) === empresaId) itemList.push(i);
+      }
       // Match só aceito quando inequívoco: exato primeiro; prefixo só com
       // candidato de 10 posições completas (fragmento de padding do nome nunca
       // casa — evita creditar o pagamento de outro favorecido/remessa).
@@ -549,14 +558,9 @@ export const cnabService = {
         const prefix = itemList.filter((i) => i.seu_numero.startsWith(cand));
         return prefix.length === 1 ? prefix[0] : undefined;
       };
-      let item = is240
+      const item = is240
         ? itemList[0]
         : (matchFor(candidatos[0]) ?? (candidatos[1] !== undefined ? matchFor(candidatos[1]) : undefined));
-
-      // Tenant: só processa se a remessa do item pertencer à empresa ativa.
-      if (item && (await empresaDaRemessa(item.remessa_id)) !== empresaId) {
-        item = undefined;
-      }
 
       if (findError) {
         results.erro++;
