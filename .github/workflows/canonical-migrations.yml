@@ -43,14 +43,17 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Gate de branch para apply
+      - name: Gate de branch para apply e verify
         # E15/D4: DDL em produção só pode partir de código mergeado em main.
         # Antes, `apply` era disparado de branches de feature — o DDL aplicado
         # não correspondia a nenhum commit integrado.
-        if: inputs.mode == 'apply'
+        # Codex (P1, PR #244): estendido para `verify` — sidecars de feature
+        # branches podem conter SQL que desativa default_transaction_read_only
+        # e escreve no canônico usando as mesmas credenciais de apply.
+        if: inputs.mode == 'apply' || inputs.mode == 'verify'
         run: |
           test "$GITHUB_REF" = 'refs/heads/main' || {
-            echo '::error::mode=apply só pode ser disparado a partir da branch main.'
+            echo '::error::mode=apply e mode=verify só podem ser disparados a partir da branch main.'
             exit 1
           }
 
@@ -525,9 +528,11 @@ jobs:
         run: |
           set -euo pipefail
           verify_errors=0
+          migrations_processed=0
           while IFS= read -r migration; do
             migration="$(echo "$migration" | tr -d '[:space:]')"
             [ -z "$migration" ] && continue
+            migrations_processed=$((migrations_processed + 1))
             # Extrair versão: prefixo numérico do nome do arquivo (sem path, sem .sql).
             version="$(basename "${migration%.sql}")"
             version="${version%%_*}"
@@ -570,6 +575,12 @@ jobs:
               verify_errors=$((verify_errors + 1))
             fi
           done <<< "$MIGRATION_FILES"
+          # Codex (P2, PR #244): falhar quando nenhuma migração foi processada —
+          # lista vazia ou só espaços em branco não constitui verificação válida.
+          if [ "$migrations_processed" -eq 0 ]; then
+            echo '::error::mode=verify requer pelo menos uma migração em migration_files — lista vazia ou só espaços em branco.'
+            exit 1
+          fi
           test "$verify_errors" -eq 0
           echo 'CANONICAL_VERIFY_OK'
 
