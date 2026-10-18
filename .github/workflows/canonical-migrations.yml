@@ -143,10 +143,12 @@ jobs:
             20261018150000_onda5_rescisao_detalhes_calculo.sql \
             20261018160000_dedup_idempotency_anomalies_job.sql \
             20261018170000_default_privs_revoke_execute_public.sql \
+            20261018200000_qa2_pix_lote_idempotente.sql \
             20261019000000_qa3_db_fixes.sql \
             20261020000000_colaboradores_metadata.sql \
             20261021000000_ledger_reconcile_secdef_defaults.sql \
-            20261021010000_default_privs_for_role.sql
+            20261021010000_default_privs_for_role.sql \
+            20261022000000_qa5_db_fixes.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -254,7 +256,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261019000000','20261020000000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -534,6 +536,31 @@ jobs:
             ),
             'idem_hourly_job_ok', EXISTS (
               SELECT 1 FROM cron.job WHERE jobname = 'check_idempotency_anomalies_hourly' AND active
+            ),
+            'pix_lote_cols', (
+              SELECT count(*) FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name = 'pix_lotes'
+                AND column_name IN ('folha_id','arquivo_lote')
+            ),
+            'espelho_revogado_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema = 'public'
+                AND table_name = 'ponto_espelhos_assinados'
+                AND column_name = 'revogado_em'
+            ),
+            'espelho_idx_partial', EXISTS (
+              SELECT 1 FROM pg_indexes
+              WHERE schemaname = 'public'
+                AND indexname = 'uq_espelho_colab_competencia'
+                AND indexdef LIKE '%revogado_em IS NULL%'
+            ),
+            'desl_guard_detalhes', pg_get_functiondef(
+              'public.impedir_alteracao_desligamento_homologado()'::regprocedure
+            ) LIKE '%detalhes_calculo%',
+            'qa5_stmts_recorded', EXISTS (
+              SELECT 1 FROM supabase_migrations.schema_migrations
+              WHERE version = '20261022000000'
+                AND statements IS NOT NULL AND cardinality(statements) > 0
             )
           );
           SQL
@@ -542,7 +569,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 17 &&
+              Number(r.ledger_count) === 22 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -598,6 +625,11 @@ jobs:
               r.rescisao_detalhes_col === true &&
               r.rescisao_stmts_recorded === true &&
               r.colab_metadata_col === true &&
+              Number(r.pix_lote_cols) === 2 &&
+              r.espelho_revogado_col === true &&
+              r.espelho_idx_partial === true &&
+              r.desl_guard_detalhes === true &&
+              r.qa5_stmts_recorded === true &&
               r.decrypt_wrapper_ok === true &&
               r.ferias_chk_wide === true &&
               r.qa3_stmts_recorded === true &&
