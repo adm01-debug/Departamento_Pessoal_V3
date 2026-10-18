@@ -113,17 +113,17 @@
 ### Segurança do Bridge (external-db-bridge)
 
 ```
-POST-only gateway (32KB file, 729 lines)
-├── JWT validation (getClaims) para writes
+POST-only gateway (781 lines)
+├── JWT validation (getUser()) para writes
 ├── CSRF fail-closed (verifyCsrf)
-├── Rate limiting (30 writes/100 reads por min)
+├── Rate limiting (30 writes/100 reads/20 anon por min)
 ├── Tenant isolation (empresa_id scope)
-├── Table denylist (16 tabelas sensíveis bloqueadas)
-├── RPC allowlist (25 RPCs aprovadas)
-├── SQL injection prevention (3 camadas regex)
-├── ORDER BY column validation (ORDER_COLUMN_RE)
+├── Table denylist (21 tabelas sensíveis bloqueadas)
+├── RPC allowlist (95+ RPCs aprovadas — expandida com cada wave)
+├── SQL injection prevention (isSafeTableName/Column/OrderColumn)
+├── ORDER BY column validation (isSafeOrderColumn)
 ├── .single() query support
-├── Payload cap (256KB streaming)
+├── Payload cap (256KB)
 ├── Telemetry batch (reduce 446/s → 10/s)
 └── Error tracking com severidade (SLOW/VERY_SLOW)
 ```
