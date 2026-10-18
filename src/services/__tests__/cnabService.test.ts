@@ -203,27 +203,31 @@ describe('cnabService.parseRetornoCNAB', () => {
     return chars.join('');
   }
 
+  function makeCnab400Line(seuNumero: string, pos63: boolean, ocorrencia: string): string {
+    // CNAB 400 retorno: tipo '1' na posição 1; seu número 63-72 (padrão) ou
+    // 68-77 (onde a remessa escreveu); ocorrência 109-110.
+    const chars = ' '.repeat(400).split('');
+    chars[0] = '1';
+    const start = pos63 ? 62 : 67;
+    const padded = seuNumero.padEnd(10, ' ');
+    for (let i = 0; i < 10; i++) chars[start + i] = padded[i];
+    chars[108] = ocorrencia[0];
+    chars[109] = ocorrencia[1];
+    return chars.join('');
+  }
+
   it('ignores lines shorter than 240 chars', async () => {
     const result = await cnabService.parseRetornoCNAB('emp-1', 'short line\n');
-    expect(result).toEqual({ sucesso: 0, erro: 0, detalhes: [] });
+    expect(result).toEqual({ sucesso: 0, erro: 0, naoEncontrados: 0, detalhes: [] });
     expect(mockFrom).not.toHaveBeenCalled();
   });
 
   it('processes success ocorrencia 00 and counts sucesso', async () => {
     const line = makeSegmentALine('SEU001', '00');
-    const item = { id: 'item-1', folha_item_id: 'fi-1', nome_favorecido: 'João' };
+    const item = { id: 'item-1', folha_item_id: 'fi-1', nome_favorecido: 'João', seu_numero: 'SEU001' };
 
-    // cnab_itens select.eq.maybeSingle
-    const maybeSingle = vi.fn().mockResolvedValue({ data: item, error: null });
-    const selChain = makeChain({ data: null, error: null });
-    selChain.maybeSingle.mockImplementation(() => maybeSingle());
-    const selectCnab = selChain.select;
-
-    // cnab_itens update.eq
+    const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: null });
-    const updateCnab = updChain.update;
-
-    // folha_itens update.eq
     const folhaChain = makeChain({ error: null });
     const updateFolha = folhaChain.update;
 
@@ -239,19 +243,15 @@ describe('cnabService.parseRetornoCNAB', () => {
         ocorrencia: '00',
       })
     );
+    expect(updateFolha).toHaveBeenCalled();
   });
 
   it('processes error ocorrencia and counts erro', async () => {
     const line = makeSegmentALine('SEU002', '99');
-    const item = { id: 'item-2', folha_item_id: null, nome_favorecido: 'Maria' };
+    const item = { id: 'item-2', folha_item_id: null, nome_favorecido: 'Maria', seu_numero: 'SEU002' };
 
-    const maybeSingle = vi.fn().mockResolvedValue({ data: item, error: null });
-    const selChain = makeChain({ data: null, error: null });
-    selChain.maybeSingle.mockImplementation(() => maybeSingle());
-    const selectCnab = selChain.select;
-
+    const selChain = makeChain({ data: [item], error: null });
     const updChain = makeChain({ error: null });
-    const updateCnab = updChain.update;
 
     mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
 
@@ -264,16 +264,69 @@ describe('cnabService.parseRetornoCNAB', () => {
   it('skips segment A lines where item is not found in DB', async () => {
     const line = makeSegmentALine('NOTFOUND', '00');
 
-    const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
-    const selChain = makeChain({ data: null, error: null });
-    selChain.maybeSingle.mockImplementation(() => maybeSingle());
-    const selectCnab = selChain.select;
+    const selChain = makeChain({ data: [], error: null });
     mockFrom.mockReturnValueOnce(selChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(0);
     expect(result.erro).toBe(0);
+    expect(result.naoEncontrados).toBe(1);
     expect(result.detalhes).toHaveLength(0);
+  });
+
+  it('conta erro quando o update de cnab_itens falha (antes era engolido)', async () => {
+    const line = makeSegmentALine('SEU003', '00');
+    const item = { id: 'item-3', folha_item_id: 'fi-3', nome_favorecido: 'Ana', seu_numero: 'SEU003' };
+
+    const selChain = makeChain({ data: [item], error: null });
+    const updChain = makeChain({ error: { message: 'RLS' } });
+
+    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
+
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
+    expect(result.sucesso).toBe(0);
+    expect(result.erro).toBe(1);
+    expect(result.detalhes[0].ocorrencia).toBe('FALHA_UPDATE');
+  });
+
+  it('CNAB400: casa item novo (10 chars) por posição 63-72', async () => {
+    const line = makeCnab400Line('abcdef0007', true, '00');
+    const item = { id: 'item-4', folha_item_id: 'fi-4', nome_favorecido: 'Beto', seu_numero: 'abcdef0007' };
+
+    const selChain = makeChain({ data: [item], error: null });
+    const updChain = makeChain({ error: null });
+    const folhaChain = makeChain({ error: null });
+
+    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain).mockReturnValueOnce(folhaChain);
+
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
+    expect(result.sucesso).toBe(1);
+    expect(result.erro).toBe(0);
+    expect(selChain.or).toHaveBeenCalled();
+  });
+
+  it('CNAB400: casa remessa antiga (12 chars) pelo prefixo gravado', async () => {
+    // Remessas antigas gravaram 12 chars mas o arquivo ecoou só 10.
+    const line = makeCnab400Line('1234567800', true, '00');
+    const item = { id: 'item-5', folha_item_id: 'fi-5', nome_favorecido: 'Carla', seu_numero: '123456780012' };
+
+    const selChain = makeChain({ data: [item], error: null });
+    const updChain = makeChain({ error: null });
+    const folhaChain = makeChain({ error: null });
+
+    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain).mockReturnValueOnce(folhaChain);
+
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
+    expect(result.sucesso).toBe(1);
+  });
+
+  it('CNAB400: linha de 400 chars que não é detalhe tipo 1 é ignorada', async () => {
+    const header = '0' + ' '.repeat(399);
+    const trailer = '9' + ' '.repeat(399);
+    const result = await cnabService.parseRetornoCNAB('emp-1', header + '\n' + trailer);
+    expect(result.sucesso).toBe(0);
+    expect(result.naoEncontrados).toBe(0);
+    expect(mockFrom).not.toHaveBeenCalled();
   });
 });
 
@@ -665,11 +718,11 @@ describe('cnabService.generateCNAB400', () => {
     // Itens persistidos e remessa marcada como enviada com o arquivo
     expect(itensChain.insert).toHaveBeenCalledWith([
       expect.objectContaining({
-        seu_numero: 'abcdef120001',
+        seu_numero: 'abcdef0001',
         nome_favorecido: 'JOÃO SILVA',
         data_pagamento: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
       }),
-      expect.objectContaining({ seu_numero: 'abcdef120002', nome_favorecido: 'MARIA SOUZA' }),
+      expect.objectContaining({ seu_numero: 'abcdef0002', nome_favorecido: 'MARIA SOUZA' }),
     ]);
     // remessa criada já com sequencial_arquivo vindo da RPC (não hardcoded)
     expect(remessaInsert.insert).toHaveBeenCalledWith([expect.objectContaining({ sequencial_arquivo: 7 })]);

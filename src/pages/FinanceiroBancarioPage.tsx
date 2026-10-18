@@ -216,7 +216,16 @@ export default function FinanceiroBancarioPage() {
       const content = await file.text();
       const results = await cnabService.parseRetornoCNAB(empresaAtual!.id, content);
 
-      toast.success(`Retorno processado: ${results.sucesso} sucessos, ${results.erro} erros.`);
+      const total = results.sucesso + results.erro + results.naoEncontrados;
+      if (total === 0) {
+        toast.warning('Nenhum registro de pagamento encontrado no arquivo — confira se o layout é CNAB 240 ou 400.');
+      } else {
+        toast.success(
+          `Retorno processado: ${results.sucesso} confirmados, ${results.erro} rejeitados` +
+            (results.naoEncontrados > 0 ? `, ${results.naoEncontrados} sem remessa correspondente` : '') +
+            '.'
+        );
+      }
       loadData();
     } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao processar arquivo de retorno.'));
