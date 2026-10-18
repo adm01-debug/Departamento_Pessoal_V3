@@ -15,12 +15,15 @@ const actionPins = existsSync(ACTION_PINS_PATH)
 const denoLockExists = existsSync(join(ROOT, 'deno.lock'));
 
 // W97c: carrega required checks do baseline para detectar jobs que podem ficar skipped
+// rules é um array de objetos {type, parameters?} — localiza pelo type antes de ler .parameters
 const RULESET_PATH = join(ROOT, 'infra/github/ruleset-main.json');
 const requiredChecks = new Set(
   existsSync(RULESET_PATH)
-    ? (JSON.parse(readFileSync(RULESET_PATH, 'utf-8'))
-        ?.rules?.parameters?.required_status_checks ?? [])
-        .map(c => c.context)
+    ? (((JSON.parse(readFileSync(RULESET_PATH, 'utf-8'))
+          ?.rules ?? [])
+          .find(r => r.type === 'required_status_checks')
+          ?.parameters?.required_status_checks) ?? [])
+          .map(c => c.context)
     : []
 );
 
