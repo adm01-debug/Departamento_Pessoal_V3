@@ -58,3 +58,29 @@ A edge temporária `migrate-helper` continha:
 | Data       | Segredo                   | Motivo                                     | Executor |
 | ---------- | ------------------------- | ------------------------------------------ | -------- |
 | 2026-08-30 | migrate-helper ACCESS_KEY | A-015: commitada no repo (função removida) | —        |
+
+## 6. Incidente A-016 — Resultados de SQL canônico em logs públicos de CI (18/10/2026)
+
+**Descrição:** Antes da implementação de W27 (PR #247), o workflow `canonical-sql-diag.yml`
+imprimia os resultados de queries SQL diretamente nos logs do GitHub Actions, sem filtragem de PII.
+Qualquer query executada contra o banco canônico (schema `public`) produzia saída visível nos
+logs públicos do repositório.
+
+**Escopo:** 38 runs do `canonical-sql-diag.yml` + 50 runs do `canonical-migrations.yml` +
+11 runs do `canonical-probes.yml` = **99 runs com logs potencialmente contendo dados de
+tabelas do schema public do banco canônico.**
+
+**Dados canônicos:** O banco canônico usa CNPJ `00000000000191` e dados sintéticos/mock
+criados para validação de design (conforme documentado em CLAUDE.md, Sessão 9). CPFs,
+nomes, salários e dados bancários são **fictícios** — sem exposição de PII real.
+
+**Ação tomada (18/10/2026):**
+
+- Logs de todos os 99 runs deletados via API (`DELETE /repos/…/actions/runs/{id}/logs`).
+- W27 implementado: queries ao schema `public` agora exigem `allow_pii=true` e o resultado
+  vai para artifact privado (retenção 1 dia), nunca para os logs de CI.
+
+**Status:** Risco residual zero para dados reais (dados são mock/sintéticos). Logs deletados.
+
+**Pendência:** W25 — mover `SUPABASE_DB_URL` para o environment `production` e apagar
+o secret de repositório (impede acesso de forks ao banco canônico).
