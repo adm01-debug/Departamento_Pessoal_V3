@@ -24,6 +24,27 @@ import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Json, Database } from '@/integrations/supabase/types';
 import { validateTablePayload } from '@/schemas/validate';
 
+// O enum `tipo_desligamento` do banco usa nomes distintos dos tipos do motor
+// (e não cobre culpa_reciproca — esse tipo fica só no histórico).
+function mapTipoDesligamentoDB(tipo: string): Database['public']['Enums']['tipo_desligamento'] | null {
+  switch (tipo) {
+    case 'sem_justa_causa':
+      return 'sem_justa_causa';
+    case 'justa_causa':
+      return 'justa_causa';
+    case 'pedido_demissao':
+      return 'pedido_demissao';
+    case 'acordo_mutuo':
+      return 'acordo';
+    case 'termino_contrato':
+      return 'fim_contrato';
+    case 'falecimento':
+      return 'falecimento';
+    default:
+      return null;
+  }
+}
+
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
   const { empresaAtual } = useEmpresas();
@@ -43,6 +64,10 @@ export default function CalculadoraRescisaoPage() {
     avisoTrabalhado: false,
     feriasVencidas: false,
     saldoFGTS: '',
+    diasAvisoNaoCumpridos: '',
+    dataFimContrato: '',
+    terminoIniciativa: 'empregador' as 'empregador' | 'empregado' | 'natural',
+    dataPagamento: '',
     motivoDesligamento: '',
     observacoes: '',
   });
@@ -105,6 +130,10 @@ export default function CalculadoraRescisaoPage() {
         saldo_fgts: Number(form.saldoFGTS || 0),
         ferias_vencidas: form.feriasVencidas,
         dependentes_irrf: 0,
+        dias_aviso_nao_cumpridos: form.diasAvisoNaoCumpridos ? Number(form.diasAvisoNaoCumpridos) : undefined,
+        data_fim_contrato: form.dataFimContrato || undefined,
+        termino_iniciativa: form.tipo === 'termino_contrato' ? form.terminoIniciativa : undefined,
+        data_pagamento: form.dataPagamento || undefined,
       });
 
       const data = result;
@@ -135,6 +164,10 @@ export default function CalculadoraRescisaoPage() {
       avisoTrabalhado: form.avisoTrabalhado,
       feriasVencidas: form.feriasVencidas,
       saldoFGTS: Number(form.saldoFGTS || 0),
+      diasAvisoNaoCumpridos: form.diasAvisoNaoCumpridos ? Number(form.diasAvisoNaoCumpridos) : undefined,
+      dataFimContrato: form.dataFimContrato || undefined,
+      terminoIniciativa: form.tipo === 'termino_contrato' ? form.terminoIniciativa : undefined,
+      dataPagamento: form.dataPagamento || undefined,
     });
 
     setResult(result);
@@ -179,7 +212,7 @@ export default function CalculadoraRescisaoPage() {
 
       // 2. Integration with Desligamentos Table
       const colabDesl = colaboradores.find((c) => c.nome_completo === form.nomeColaborador);
-      if (form.dataDesligamento && colabDesl) {
+      if (form.dataDesligamento && colabDesl && mapTipoDesligamentoDB(form.tipo)) {
         const { error: deslError } = await supabase.from('desligamentos').insert(
           validateTablePayload(
             'desligamentos',
@@ -187,7 +220,10 @@ export default function CalculadoraRescisaoPage() {
               empresa_id: empresaAtual.id,
               colaborador_id: colabDesl.id,
               data_desligamento: form.dataDesligamento,
-              tipo: form.tipo as Database['public']['Enums']['tipo_desligamento'],
+              // Enum do banco tem nomes diferentes do motor
+              // (acordo/fim_contrato); culpa_reciproca não tem equivalente
+              // e não é persistida aqui.
+              tipo: mapTipoDesligamentoDB(form.tipo)!,
               motivo: form.tipo.replace(/_/g, ' '),
               valor_liquido: result.totalLiquido,
               status: 'pendente',
@@ -313,8 +349,64 @@ export default function CalculadoraRescisaoPage() {
                     <SelectItem value="sem_justa_causa">Sem Justa Causa</SelectItem>
                     <SelectItem value="justa_causa">Justa Causa</SelectItem>
                     <SelectItem value="pedido_demissao">Pedido de Demissão</SelectItem>
+                    <SelectItem value="acordo_mutuo">Acordo Mútuo (Art. 484-A)</SelectItem>
+                    <SelectItem value="culpa_reciproca">Culpa Recíproca</SelectItem>
+                    <SelectItem value="termino_contrato">Término de Contrato a Prazo</SelectItem>
+                    <SelectItem value="falecimento">Falecimento</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              {form.tipo === 'termino_contrato' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label className="font-body text-xs">Fim previsto do contrato</Label>
+                    <Input
+                      type="date"
+                      value={form.dataFimContrato}
+                      onChange={(e) => set('dataFimContrato', e.target.value)}
+                      className="rounded-xl"
+                    />
+                  </div>
+                  <div>
+                    <Label className="font-body text-xs">Quem antecipou o término?</Label>
+                    <Select value={form.terminoIniciativa} onValueChange={(v) => set('terminoIniciativa', v)}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="empregador">Empregador (Art. 479)</SelectItem>
+                        <SelectItem value="empregado">Empregado (Art. 480)</SelectItem>
+                        <SelectItem value="natural">Término natural (no prazo)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+              {form.tipo === 'pedido_demissao' && !form.avisoTrabalhado && (
+                <div>
+                  <Label className="font-body text-xs">Dias de aviso não cumpridos (Art. 487 §2º)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    max={30}
+                    value={form.diasAvisoNaoCumpridos}
+                    onChange={(e) => set('diasAvisoNaoCumpridos', e.target.value)}
+                    className="rounded-xl"
+                    placeholder="30"
+                  />
+                </div>
+              )}
+              <div>
+                <Label className="font-body text-xs">Data do pagamento das verbas (opcional)</Label>
+                <Input
+                  type="date"
+                  value={form.dataPagamento}
+                  onChange={(e) => set('dataPagamento', e.target.value)}
+                  className="rounded-xl"
+                />
+                <p className="text-[11px] text-muted-foreground font-body">
+                  Após 10 dias corridos do desligamento aplica-se a multa do art. 477 §8º (1 salário).
+                </p>
               </div>
               <div>
                 <Label className="font-body text-xs">Saldo FGTS (R$)</Label>
@@ -379,6 +471,8 @@ export default function CalculadoraRescisaoPage() {
                           ['Férias Proporcionais', `${result.mesesFerias}/12`, result.feriasProporcionais],
                           ['1/3 Constitucional', '', result.tercoFerias],
                           ['13º Proporcional', `${result.meses13}/12`, result.decimoTerceiro],
+                          ['Indenização Art. 479 (contrato a prazo)', '', result.indenizacaoArt479],
+                          ['Multa Art. 477 §8º (pagamento em atraso)', '', result.multa477],
                         ] as [string, string, number][]
                       ).map(([label, ref, val]) => (
                         <div key={label} className="flex justify-between text-xs font-body">
@@ -401,6 +495,8 @@ export default function CalculadoraRescisaoPage() {
                         [
                           ['INSS', result.inss],
                           ['IRRF', result.irrf],
+                          ['Aviso prévio não cumprido (Art. 487 §2º)', result.descontoAvisoPrevio],
+                          ['Indenização Art. 480 (contrato a prazo)', result.indenizacaoArt480],
                         ] as [string, number][]
                       ).map(([label, val]) => (
                         <div key={label} className="flex justify-between text-xs font-body">
@@ -423,9 +519,31 @@ export default function CalculadoraRescisaoPage() {
                         <span>R$ {fmt(result.fgtsRescisao)}</span>
                       </div>
                       <div className="flex justify-between text-xs font-body">
-                        <span>Multa 40% FGTS</span>
+                        <span>Multa FGTS (GRRF — fora do líquido)</span>
                         <span className="font-medium text-info">R$ {fmt(result.multaFGTS)}</span>
                       </div>
+                      <div className="flex justify-between text-xs font-body">
+                        <span>Saque FGTS permitido</span>
+                        <span>{Math.round(result.fgtsSaquePercentual * 100)}%</span>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-2">
+                      <p className="text-xs font-display font-semibold text-info">SEGURO-DESEMPREGO (informativo)</p>
+                      <div className="flex justify-between text-xs font-body">
+                        <span>Elegível</span>
+                        <span>{result.seguroDesemprego.elegivel ? 'Sim' : 'Não'}</span>
+                      </div>
+                      {result.seguroDesemprego.elegivel && (
+                        <div className="flex justify-between text-xs font-body">
+                          <span>Parcelas estimadas</span>
+                          <span>
+                            {result.seguroDesemprego.parcelas} × R$ {fmt(result.seguroDesemprego.valorParcela)}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     <Separator />

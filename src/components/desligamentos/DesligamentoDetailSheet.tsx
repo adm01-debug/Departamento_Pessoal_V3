@@ -9,8 +9,7 @@ import { Calculator, Download, FileText, User, Calendar, DollarSign, RefreshCw, 
 import { useNavigate } from 'react-router-dom';
 import { desligamentoService, type DesligamentoComColaborador } from '@/services/desligamentoService';
 import { rescisaoService } from '@/services/rescisaoService';
-import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
-import type { RescisaoResult } from '@/utils/rescisaoCalc';
+import { gerarPDFRescisao, mapearResultadoDeDesligamento } from '@/utils/rescisaoPDF';
 import type { Updatable } from '@/integrations/supabase/database.types';
 import type { LucideIcon } from 'lucide-react';
 
@@ -77,6 +76,9 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
           aviso_trabalhado: false,
           ferias_vencidas: false,
           saldo_fgts: 0,
+          // Com data_pagamento registrada, o motor aplica a multa do
+          // art. 477 §8º quando a quitação passou de 10 dias corridos.
+          data_pagamento: d.data_pagamento ?? undefined,
         },
         d.empresa_id ?? ''
       );
@@ -232,7 +234,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                     dataDesligamento: d.data_desligamento,
                     tipo: d.tipo,
                   };
-                  gerarPDFRescisao(form, (d.detalhes_calculo || d) as unknown as RescisaoResult);
+                  gerarPDFRescisao(form, mapearResultadoDeDesligamento(d));
                 }}
                 variant="outline"
                 className="w-full rounded-xl font-body gap-2"

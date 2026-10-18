@@ -174,6 +174,10 @@ export const edgeFunctionsService = {
     saldo_fgts: number;
     ferias_vencidas: boolean;
     dependentes_irrf: number;
+    dias_aviso_nao_cumpridos?: number;
+    data_fim_contrato?: string;
+    termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
+    data_pagamento?: string;
   }) => handleInvoke<{ resultado?: RescisaoResult }>('calcular-rescisao', { body: params }),
 
   /** Exportação server-side */

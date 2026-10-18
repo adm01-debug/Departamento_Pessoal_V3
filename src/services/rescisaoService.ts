@@ -23,6 +23,10 @@ export interface CalcularRescisaoParams {
   aviso_trabalhado?: boolean;
   ferias_vencidas?: boolean;
   saldo_fgts?: number;
+  data_pagamento?: string;
+  data_fim_contrato?: string;
+  termino_iniciativa?: 'empregador' | 'empregado' | 'natural';
+  dias_aviso_nao_cumpridos?: number;
 }
 
 export const rescisaoService = {
@@ -99,6 +103,11 @@ export const rescisaoService = {
         feriasVencidas: params.ferias_vencidas ?? false,
         saldoFGTS: params.saldo_fgts ?? 0,
         dependentes: dependentesIRRF,
+        // data_pagamento no banco é timestamptz — o motor espera 'YYYY-MM-DD'.
+        dataPagamento: (params.data_pagamento ?? anterior.data_pagamento)?.slice(0, 10),
+        dataFimContrato: params.data_fim_contrato,
+        terminoIniciativa: params.termino_iniciativa,
+        diasAvisoNaoCumpridos: params.dias_aviso_nao_cumpridos,
       });
       const resultado = result;
 
