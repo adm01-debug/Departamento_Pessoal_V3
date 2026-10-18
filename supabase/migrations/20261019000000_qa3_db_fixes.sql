@@ -21,13 +21,65 @@
 -- (1) coluna metadata em colaboradores
 ALTER TABLE public.colaboradores ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb;
 
--- (2) view decrypted volta a funcionar para RH/admin autenticados
-GRANT EXECUTE ON FUNCTION public.decrypt_dados_bancarios(text) TO authenticated;
+-- (2) view decrypted volta a funcionar SEM abrir o decrypt para qualquer
+-- autenticado: o wrapper amarra ciphertext→empresa (o valor precisa existir
+-- numa linha daquele tenant) e confirma RH/admin sobre a empresa — um
+-- usuário não consegue decriptar blob de outra empresa nem inventar tenant.
+CREATE OR REPLACE FUNCTION public.decrypt_dados_bancarios_tenant(p_ciphertext text, p_empresa_id uuid)
+RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $fn$
+BEGIN
+  IF p_ciphertext IS NULL THEN RETURN NULL; END IF;
+  IF NOT (public.is_admin(auth.uid()) OR public.pode_gerir_rh(p_empresa_id)) THEN
+    RAISE EXCEPTION 'Acesso negado.';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.contas_bancarias cb
+     WHERE cb.empresa_id = p_empresa_id
+       AND (cb.agencia_encrypted = p_ciphertext OR cb.conta_encrypted = p_ciphertext
+            OR cb.digito_encrypted = p_ciphertext OR cb.pix_chave_encrypted = p_ciphertext)
+  ) THEN
+    RAISE EXCEPTION 'Acesso negado.';
+  END IF;
+  RETURN public.decrypt_dados_bancarios(p_ciphertext);
+END;
+$fn$;
+REVOKE ALL ON FUNCTION public.decrypt_dados_bancarios_tenant(text, uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.decrypt_dados_bancarios_tenant(text, uuid) TO authenticated;
+
+-- A view passa a chamar o wrapper com a empresa da própria linha (o mesmo
+-- gate pode_gerir_rh/is_admin do WHERE segue valendo na leitura).
+CREATE OR REPLACE VIEW public.contas_bancarias_decrypted AS
+SELECT
+  id, colaborador_id, empresa_id,
+  banco_nome, banco_codigo,
+  public.decrypt_dados_bancarios_tenant(agencia_encrypted, empresa_id)   AS agencia,
+  public.decrypt_dados_bancarios_tenant(conta_encrypted, empresa_id)     AS conta,
+  public.decrypt_dados_bancarios_tenant(digito_encrypted, empresa_id)    AS digito,
+  tipo_conta,
+  public.decrypt_dados_bancarios_tenant(pix_chave_encrypted, empresa_id) AS pix_chave,
+  pix_tipo, modalidade, principal, ativo, created_at, updated_at
+FROM public.contas_bancarias
+WHERE public.pode_gerir_rh(empresa_id)
+   OR public.is_admin(auth.uid());
 
 -- (3) chk_ferias_status reconciliado (inclui 'pendente' e 'programada', os
 -- dois defaults históricos) — NOT VALID preserva linhas legadas.
 ALTER TABLE public.ferias DROP CONSTRAINT IF EXISTS chk_ferias_status;
 ALTER TABLE public.ferias ADD CONSTRAINT chk_ferias_status
+  CHECK (status IS NULL OR status IN (
+    'pendente','programada','solicitada','em_analise','aprovada','rejeitada',
+    'cancelada','agendada','em_gozo','concluida','pendente_aprovacao','vencida'
+  )) NOT VALID;
+
+-- A baseline também criou ferias_status_check (sem 'pendente'/'programada'):
+-- programacao_ferias_converter insere 'pendente' após aprovação do RH e
+-- falhava nesse SEGUNDO check. Mesma união de vocabulário, NOT VALID.
+ALTER TABLE public.ferias DROP CONSTRAINT IF EXISTS ferias_status_check;
+ALTER TABLE public.ferias ADD CONSTRAINT ferias_status_check
   CHECK (status IS NULL OR status IN (
     'pendente','programada','solicitada','em_analise','aprovada','rejeitada',
     'cancelada','agendada','em_gozo','concluida','pendente_aprovacao','vencida'
@@ -91,23 +143,25 @@ BEGIN
   FROM public.batidas_ponto
   WHERE colaborador_id = NEW.colaborador_id AND data = NEW.data;
 
+  -- Cada turno com modulo 1440: saída < entrada é virada de dia (ex.: 22h→06h
+  -- dura 8h, não -16h). Par com entrada=saida conta 0 (batida duplicada).
   IF v_entrada_1 IS NOT NULL AND v_saida_1 IS NOT NULL THEN
-    v_total_minutos := v_total_minutos + EXTRACT(EPOCH FROM (v_saida_1::time - v_entrada_1::time))::INTEGER / 60;
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_1::time - v_entrada_1::time))::INTEGER / 60 + 1440) % 1440);
   END IF;
   IF v_entrada_2 IS NOT NULL AND v_saida_2 IS NOT NULL THEN
-    v_total_minutos := v_total_minutos + EXTRACT(EPOCH FROM (v_saida_2::time - v_entrada_2::time))::INTEGER / 60;
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_2::time - v_entrada_2::time))::INTEGER / 60 + 1440) % 1440);
   END IF;
   IF v_entrada_3 IS NOT NULL AND v_saida_3 IS NOT NULL THEN
-    v_total_minutos := v_total_minutos + EXTRACT(EPOCH FROM (v_saida_3::time - v_entrada_3::time))::INTEGER / 60;
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_3::time - v_entrada_3::time))::INTEGER / 60 + 1440) % 1440);
   END IF;
   IF v_entrada_4 IS NOT NULL AND v_saida_4 IS NOT NULL THEN
-    v_total_minutos := v_total_minutos + EXTRACT(EPOCH FROM (v_saida_4::time - v_entrada_4::time))::INTEGER / 60;
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_4::time - v_entrada_4::time))::INTEGER / 60 + 1440) % 1440);
   END IF;
   IF v_entrada_5 IS NOT NULL AND v_saida_5 IS NOT NULL THEN
-    v_total_minutos := v_total_minutos + EXTRACT(EPOCH FROM (v_saida_5::time - v_entrada_5::time))::INTEGER / 60;
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_5::time - v_entrada_5::time))::INTEGER / 60 + 1440) % 1440);
   END IF;
   IF v_entrada_6 IS NOT NULL AND v_saida_6 IS NOT NULL THEN
-    v_total_minutos := v_total_minutos + EXTRACT(EPOCH FROM (v_saida_6::time - v_entrada_6::time))::INTEGER / 60;
+    v_total_minutos := v_total_minutos + ((EXTRACT(EPOCH FROM (v_saida_6::time - v_entrada_6::time))::INTEGER / 60 + 1440) % 1440);
   END IF;
 
   v_horas_trab := (v_total_minutos || ' minutes')::INTERVAL;

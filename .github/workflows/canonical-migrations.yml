@@ -137,7 +137,9 @@ jobs:
           for migration in \
             20261018120000_onda4d_review243.sql \
             20261018130000_onda4e_objetos_ausentes.sql \
-            20261018140000_onda5_ponto_cols.sql
+            20261018140000_onda5_ponto_cols.sql \
+            20261018150000_onda5_rescisao_detalhes_calculo.sql \
+            20261019000000_qa3_db_fixes.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
