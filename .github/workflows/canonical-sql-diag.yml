@@ -33,8 +33,6 @@ concurrency:
 
 permissions:
   contents: read
-  # W27: upload-artifact requer actions:write quando allow_pii=true (resultado isolado)
-  actions: write
 
 jobs:
   sql-diag:
@@ -42,6 +40,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: production
+    permissions:
+      contents: read
+      # W27: upload-artifact requer actions:write quando allow_pii=true (resultado isolado)
+      # Definido no job (não no workflow) para satisfazer Scorecard Token-Permissions
+      actions: write
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       CANONICAL_REF: frjbfeamybqsejlvmqbl
