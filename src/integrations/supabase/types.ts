@@ -16648,8 +16648,12 @@ export type Database = {
           entrada_esperada: string | null
           hash_digital: string | null
           hash_integridade: string | null
+          he_banco_horas: string | null
           horas_extras: string | null
+          horas_extras_100: string | null
+          horas_extras_50: string | null
           horas_falta: string | null
+          horas_noturnas: string | null
           horas_trabalhadas: string | null
           id: string
           is_offline: boolean | null
@@ -16693,8 +16697,12 @@ export type Database = {
           entrada_esperada?: string | null
           hash_digital?: string | null
           hash_integridade?: string | null
+          he_banco_horas?: string | null
           horas_extras?: string | null
+          horas_extras_100?: string | null
+          horas_extras_50?: string | null
           horas_falta?: string | null
+          horas_noturnas?: string | null
           horas_trabalhadas?: string | null
           id?: string
           is_offline?: boolean | null
@@ -16738,6 +16746,7 @@ export type Database = {
           entrada_esperada?: string | null
           hash_digital?: string | null
           hash_integridade?: string | null
+          he_banco_horas?: string | null
           horas_extras?: string | null
           horas_falta?: string | null
           horas_trabalhadas?: string | null

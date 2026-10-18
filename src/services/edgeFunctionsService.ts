@@ -130,7 +130,10 @@ export const edgeFunctionsService = {
 
   /** Processa ponto do período — retry com idempotência. */
   processarPonto: async (params: { empresaId: string; dataInicio: string; dataFim: string }) => {
-    const idemKey = `processar-ponto:${params.empresaId}:${params.dataInicio}:${params.dataFim}`;
+    // Chave por CLIQUE: um novo processamento deliberado deve reapurar (novas
+    // batidas podem ter entrado); a chave estável só serve para deduplicar
+    // retries dentro desta mesma tentativa.
+    const idemKey = `processar-ponto:${params.empresaId}:${params.dataInicio}:${params.dataFim}:${crypto.randomUUID()}`;
     return retryWithIdempotency({
       fn: () => handleInvoke('processar-ponto', { body: params }),
       idempotencyKey: idemKey,

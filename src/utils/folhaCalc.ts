@@ -33,6 +33,7 @@ export interface CalculoParams {
   dependentes?: number;
   horasExtras50?: number;
   horasExtras100?: number;
+  horasNoturnas?: number;
   meses13?: number;
   parcela13?: 1 | 2;
   jornada?: number;
@@ -93,6 +94,7 @@ export const folhaCalc = {
       dependentes = 0,
       horasExtras50 = 0,
       horasExtras100 = 0,
+      horasNoturnas = 0,
       meses13 = 0,
       parcela13,
       jornada = 220,
@@ -118,6 +120,24 @@ export const folhaCalc = {
       detalheEventos.push({ codigo: '1002', descricao: 'Horas Extras 100%', tipo: 'provento', valor: valorHE100 });
 
     const totalHE = new Decimal(valorHE50).plus(valorHE100).toNumber();
+
+    // 2b. Adicional noturno 20% (CLT art. 73) — horas trabalhadas 22h–05h.
+    // Hora noturna é reduzida: 52min30s por hora → cada hora civil noturna
+    // vale 60/52.5 horas para pagamento.
+    const valorNoturno = new Decimal(salarioBase)
+      .div(jornada)
+      .times(horasNoturnas)
+      .times(60 / 52.5)
+      .times(0.2)
+      .toDecimalPlaces(2)
+      .toNumber();
+    if (valorNoturno > 0)
+      detalheEventos.push({
+        codigo: '1004',
+        descricao: 'Adicional Noturno 20%',
+        tipo: 'provento',
+        valor: valorNoturno,
+      });
 
     // 3. DSR
     const dsr = diasUteis > 0 && domingosFeriados > 0 ? calcularDSR(totalHE, diasUteis, domingosFeriados) : 0;
