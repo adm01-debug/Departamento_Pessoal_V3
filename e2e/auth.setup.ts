@@ -8,6 +8,49 @@ const EMAIL = process.env.E2E_USER_EMAIL ?? 'admin@teste.local';
 const PASSWORD = process.env.E2E_USER_PASSWORD ?? 'Admin@2026!';
 
 /**
+ * Aguarda o store Zustand (empresa-storage) persistir um empresaAtualId
+ * válido no localStorage. Sem isso, cada spec autenticado começa "frio" —
+ * dispara user-empresas + todas-empresas antes de habilitar dados, o que
+ * pode ultrapassar os timeouts de heading (15s) nos testes de módulo.
+ *
+ * Navega para /colaboradores para forçar a montagem de useEmpresas e o
+ * useEffect de auto-seleção, depois aguarda até 25s pelo ID.
+ */
+async function waitForEmpresaStorage(page: Page): Promise<void> {
+  const hasEmpresaId = () =>
+    page.waitForFunction(
+      () => {
+        try {
+          const raw = localStorage.getItem('empresa-storage');
+          if (!raw) return false;
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          return !!JSON.parse(raw)?.state?.empresaAtualId;
+        } catch {
+          return false;
+        }
+      },
+      undefined,
+      { timeout: 25_000 }
+    );
+
+  const alreadySelected = await page.evaluate(() => {
+    try {
+      const raw = localStorage.getItem('empresa-storage');
+      if (!raw) return false;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return !!JSON.parse(raw)?.state?.empresaAtualId;
+    } catch {
+      return false;
+    }
+  });
+
+  if (!alreadySelected) {
+    await page.goto('/colaboradores', { waitUntil: 'domcontentloaded' });
+    await hasEmpresaId();
+  }
+}
+
+/**
  * Autentica e persiste a sessão (cookies + localStorage).
  * Os specs autenticados reusam esse arquivo, evitando múltiplos logins.
  *
@@ -29,6 +72,7 @@ async function login(page: Page, file: string) {
 
   // Caso a sessão já esteja persistida pelo dev, o app redireciona para /dashboard.
   if (page.url().includes('/dashboard')) {
+    await waitForEmpresaStorage(page);
     await page.context().storageState({ path: file });
     return;
   }
@@ -37,17 +81,26 @@ async function login(page: Page, file: string) {
   await expect(emailInput, 'tela de login deve estar visível').toBeVisible({ timeout: 15_000 });
 
   await emailInput.fill(EMAIL);
-  await page.getByLabel(/senha|password/i).first().fill(PASSWORD);
-  await page.getByRole('button', { name: /entrar|login|acessar/i }).first().click();
+  await page
+    .getByLabel(/senha|password/i)
+    .first()
+    .fill(PASSWORD);
+  await page
+    .getByRole('button', { name: /entrar|login|acessar/i })
+    .first()
+    .click();
 
   await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 20_000 });
 
   // Aguarda a sessão Supabase ser gravada no localStorage antes de persisti-la
-  await page.waitForFunction(
-    () => Object.keys(localStorage).some((k) => k.startsWith('sb-')),
-    undefined,
-    { timeout: 10_000 },
-  );
+  await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.startsWith('sb-')), undefined, {
+    timeout: 10_000,
+  });
+
+  // Aguarda empresa ser selecionada e persistida (empresa-storage.empresaAtualId)
+  // antes de salvar o storageState — sem isso cada spec começa sem empresa e
+  // precisa de 2 roundtrips extras ao Supabase antes de renderizar dados.
+  await waitForEmpresaStorage(page);
 
   await page.context().storageState({ path: file });
 }
