@@ -1,6 +1,6 @@
 # Canonical Workflows — Runbook
 
-> Última revisão: 15/10/2026
+> Última revisão: 18/10/2026
 
 ## Visão Geral
 
@@ -10,12 +10,17 @@ compartilham o grupo de concorrência `canonical-database`
 (cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL
 e probes simultâneas contra o mesmo banco.
 
-| Workflow                       | Trigger           | Acesso                | Concorrência               |
-| ------------------------------ | ----------------- | --------------------- | -------------------------- |
-| `canonical-migrations.yml`     | workflow_dispatch | postgres (migrations) | `canonical-database`       |
-| `canonical-probes.yml`         | workflow_dispatch | postgres (read-only)  | `canonical-database`       |
-| `canonical-sql-diag.yml`       | workflow_dispatch | postgres (read-only)  | `canonical-database`       |
-| `canonical-edge-functions.yml` | workflow_dispatch | Supabase Edge Runtime | `canonical-edge-functions` |
+| Workflow                       | Trigger              | Acesso                | Concorrência               |
+| ------------------------------ | -------------------- | --------------------- | -------------------------- |
+| `canonical-migrations.yml`     | workflow_dispatch    | postgres (migrations) | `canonical-database`       |
+| `canonical-probes.yml`         | schedule/dispatch    | postgres (read-only)  | `canonical-database`       |
+| `canonical-sql-diag.yml`       | workflow_dispatch    | postgres (read-only)  | `canonical-database`       |
+| `canonical-edge-functions.yml` | push main / dispatch | Supabase Edge Runtime | `canonical-edge-functions` |
+| `ruleset-sync.yml`             | schedule/dispatch    | GitHub API (read)     | —                          |
+
+> **Regra de ouro:** o YAML dos workflows canônicos **NUNCA** muda em lotes de migrations. Qualquer alteração nesses workflows requer PR aprovado por humano, separado do lote de SQL.
+>
+> **Reviewer obrigatório:** o environment `production` ainda não tem reviewer obrigatório (W26 — pendente de configuração via API). Até W26 ser aplicado, o gate é o PR + required checks.
 
 ---
 
@@ -36,37 +41,51 @@ e probes simultâneas contra o mesmo banco.
 
 Aplica migrações no banco canônico. **NUNCA rodar sem validação prévia.**
 
-**Modos:**
+### Modos (W67–W70)
 
-- `validate` (default): simula o SQL em transação com ROLLBACK — sem efeito real.
-- `apply`: aplica migrações e registra no ledger `supabase_migrations.schema_migrations`
-  — **irreversível**. Só pode ser disparado a partir da branch `main`.
+- `validate` (default): simula o SQL em transação com ROLLBACK — sem efeito real. Gera hash `validated_hash` no output do step.
+- `apply`: aplica as migrações listadas em `migration_files` e registra no ledger `supabase_migrations.schema_migrations` — **irreversível**. Requer `validated_hash` do validate anterior. Só pode ser disparado a partir da branch `main`.
+- `verify`: executa os sidecars `.verify.sql` correspondentes — valida invariantes pós-apply. Só pode ser disparado a partir da branch `main`.
 
-**Uso:**
+### Ledger dinâmico (W67/W69)
 
-1. Actions → "Canonical database — scoped migrations" → Run workflow
-2. Preencher `confirm_project_ref` = `frjbfeamybqsejlvmqbl`
-3. Escolher modo: `validate` primeiro, `apply` depois
-4. Verificar logs — qualquer erro aborta com `ON_ERROR_STOP=1`
+O workflow deriva a lista de migrações automaticamente do diretório `supabase/migrations/`:
 
-**Critério de sucesso (apply):** log termina com `CANONICAL_SCOPED_MIGRATIONS_OK`.
+- Não existe mais uma lista hardcoded no YAML.
+- Use o input `migration_files` para restringir a um subconjunto (um por linha, sem path).
+- O step verifica que todas as versões listadas estão no ledger antes de executar sidecars.
+
+### Sidecars `.verify.sql` (W69)
+
+Para cada migração `20XXXXXX_nome.sql`, pode existir um `20XXXXXX_nome.verify.sql`.
+Se presente, o workflow o executa via `psql` após o apply e exige literalmente `ok` na saída (não só exit 0). Sidecars com saída vazia são rejeitados.
+
+### Uso
 
 ```bash
-# Dry-run via CLI
+# 1. Validar (obtenha validated_hash no log)
 gh workflow run canonical-migrations.yml \
   -f mode=validate \
-  -f confirm_project_ref=frjbfeamybqsejlvmqbl
+  -f confirm_project_ref=frjbfeamybqsejlvmqbl \
+  -f migration_files="20261013152000_nome.sql"
 
-# Apply (requer aprovação no environment production)
+# 2. Apply (requer validated_hash do step anterior)
 gh workflow run canonical-migrations.yml \
   -f mode=apply \
-  -f confirm_project_ref=frjbfeamybqsejlvmqbl
+  -f confirm_project_ref=frjbfeamybqsejlvmqbl \
+  -f migration_files="20261013152000_nome.sql" \
+  -f validated_hash="<hash do validate>"
+
+# 3. Verify (pós-apply, valida sidecars)
+gh workflow run canonical-migrations.yml \
+  -f mode=verify \
+  -f confirm_project_ref=frjbfeamybqsejlvmqbl \
+  -f migration_files="20261013152000_nome.sql"
 ```
 
-**Atualizar a lista de migrações:** edite o loop no step "Preparar somente as
-migrações aprovadas". Cada dispatch cobre **somente** as migrações novas do lote —
-não re-liste versões já registradas no ledger, pois `CREATE POLICY` não é
-idempotente e causará `policy already exists`.
+**Critérios de sucesso:** `CANONICAL_LEDGER_OK`, `CANONICAL_SCHEMA_INVARIANTS_OK`, `CANONICAL_SCOPED_MIGRATIONS_OK`.
+
+> Cada dispatch cobre **somente** as migrações novas do lote. Não re-liste versões já registradas no ledger — `CREATE POLICY` não é idempotente.
 
 ---
 
@@ -123,33 +142,48 @@ gh workflow run canonical-sql-diag.yml \
 
 ## canonical-edge-functions.yml
 
-Deploy de Edge Functions (Deno) no projeto canônico.
-Requer `SUPABASE_ACCESS_TOKEN` no environment `production`.
+Deploy de Edge Functions (Deno) no projeto canônico. Ativado por push em `main`
+quando `supabase/functions/**` ou `supabase/config.toml` mudam, ou por dispatch manual.
 
-**Fluxo:**
+### Fluxo (W75–W76)
 
-1. `deno check` bloqueante em todos os `index.ts` (gate de tipo).
-2. `supabase functions deploy --use-api --jobs 4` (sem `--prune` — não remove funções remotas não classificadas).
-3. Verifica que todos os slugs locais aparecem no inventário remoto.
-
-**Critério de sucesso:** log termina com `CANONICAL_EDGE_DEPLOY_OK local=N remote=M` (N ≤ M).
+1. **Gate de tipo**: `deno check` bloqueante em todos os `index.ts` alterados (diff incremental em PR, todos em push/dispatch).
+2. **Dry-run em PR**: apenas `deno check` + diff de inventário (sem deploy real).
+3. **Deploy incremental em push/dispatch**: só as funções cujo `index.ts` mudou (intersecção FN_DIFF × ALL_SLUGS). Slugs removidos/renomeados não abortam o deploy.
+4. **Smoke pós-deploy**: `curl` básico em cada slug deployado; falha ativa rollback.
+5. **Inventário**: verifica que todos os slugs locais aparecem no inventário remoto.
 
 ```bash
 gh workflow run canonical-edge-functions.yml \
   -f confirm_project_ref=frjbfeamybqsejlvmqbl
 ```
 
+**Critério de sucesso:** log termina com `CANONICAL_EDGE_DEPLOY_OK local=N remote=M` (N ≤ M).
+
+---
+
+## ruleset-sync.yml
+
+Compara o ruleset vivo (`21934736`) com o baseline `infra/github/ruleset-main.json`.
+Roda semanalmente e por dispatch. Falha se houver divergência (check só no baseline ou só no live).
+
+```bash
+gh workflow run ruleset-sync.yml
+```
+
+**Critério de sucesso:** sem diff entre baseline e live; `audit-required-checks.mjs` imprime `RULESET_BASELINE_MATCH`.
+
 ---
 
 ## Segurança
 
-- Os YAML dos workflows canônicos **NUNCA** mudam em lotes de migrations.
-  Qualquer alteração nos workflows canônicos requer PR aprovado por humano.
-- Reviewer obrigatório no environment `production` (W26 — a configurar via API).
-- `SUPABASE_DB_URL` (admin): migrar para environment `production` exclusivo (W25 — pendente).
-- O gate `scripts/tests/workflows-contract.test.mjs` valida invariantes de todos
-  os workflows (SHA pins, timeout-minutes, permissions, concurrency) e roda no
-  job `security-config` do `ci.yml` em cada PR.
+> **Regra de ouro:** o YAML dos workflows canônicos **NUNCA** muda em lotes de migrations. Alterações nesses workflows requerem PR aprovado por humano, separado do SQL.
+>
+> **Reviewer obrigatório:** W26 está pendente. Até sua configuração, o gate é PR + required checks no ruleset.
+
+- `SUPABASE_DB_URL` (admin): migrar para environment `production` exclusivo (W25 — pendente; owner deve fazer manualmente).
+- `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`: migrados de secrets para vars em ci.yml/e2e.yml/healthcheck.yml (W29 — 18/10/2026). Owner deve apagar os secrets homônimos.
+- O gate `scripts/tests/workflows-contract.test.mjs` valida invariantes de todos os workflows (SHA pins, timeout-minutes, permissions, concurrency) e roda em `security-config` a cada PR.
 
 ---
 
@@ -180,4 +214,4 @@ Ao rotacionar `SUPABASE_DB_URL`, verificar também: `canonical-migrations.yml`,
 
 ---
 
-_Última atualização: 15/10/2026 — W79 (Claude Code)_
+_Última atualização: 18/10/2026 — W79 revisado (Claude Code): ledger dinâmico W67-W70, sidecars W69, deploy incremental W75-W76, ruleset-sync, regras de segurança atualizadas._
