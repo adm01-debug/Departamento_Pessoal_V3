@@ -59,18 +59,24 @@ jobs:
           # quebrava na rodada seguinte (D12).
           gh label create healthcheck --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
-            # W09: stale check — se a issue tem 7+ dias, prefixar o comentário
-            # com aviso de reincidência para aumentar visibilidade.
-            ISSUE_CREATED=$(gh issue view "$EXISTING" --json createdAt --jq '.createdAt')
-            ISSUE_EPOCH=$(date -d "$ISSUE_CREATED" +%s 2>/dev/null || echo 0)
-            NOW_EPOCH=$(date +%s)
-            DAYS_OLD=$(( (NOW_EPOCH - ISSUE_EPOCH) / 86400 ))
-            if [ "$DAYS_OLD" -ge 7 ]; then
-              COMMENT=$(printf '⚠️ Still failing — issue aberta há %d dias.\n\n%s' "$DAYS_OLD" "$BODY")
+            # W09: só comentar se o SHA mudou desde o último comentário.
+            LAST_SHA=$(gh issue view "$EXISTING" --json comments --jq '.comments[-1].body' 2>/dev/null | grep -oP 'Commit: \K[0-9a-f]+' | head -1 || true)
+            if [ "$LAST_SHA" = "$GITHUB_SHA" ]; then
+              FAIL_COUNT=$(gh issue view "$EXISTING" --json comments --jq '.comments | length')
+              gh issue edit "$EXISTING" --title "🔴 Healthcheck falhou × $((FAIL_COUNT + 2)) runs" >/dev/null
             else
-              COMMENT="$BODY"
+              # W09: stale check — se a issue tem 7+ dias, prefixar o comentário.
+              ISSUE_CREATED=$(gh issue view "$EXISTING" --json createdAt --jq '.createdAt')
+              ISSUE_EPOCH=$(date -d "$ISSUE_CREATED" +%s 2>/dev/null || echo 0)
+              NOW_EPOCH=$(date +%s)
+              DAYS_OLD=$(( (NOW_EPOCH - ISSUE_EPOCH) / 86400 ))
+              if [ "$DAYS_OLD" -ge 7 ]; then
+                COMMENT=$(printf '⚠️ Still failing — issue aberta há %d dias.\n\n%s' "$DAYS_OLD" "$BODY")
+              else
+                COMMENT="$BODY"
+              fi
+              gh issue comment "$EXISTING" --body "$COMMENT"
             fi
-            gh issue comment "$EXISTING" --body "$COMMENT"
           else
             gh issue create --title "$TITLE" --body "$BODY" --label healthcheck
           fi

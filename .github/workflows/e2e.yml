@@ -281,12 +281,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # W09: só comentar se o SHA mudou desde o último comentário (evita ruído).
           TITLE="🔴 E2E autenticado falhou na main ($(date -u +%F\ %H:%M) UTC)"
           EXISTING=$(gh issue list --label e2e-main --state open --json number --jq '.[0].number' || true)
-          BODY=$(printf 'O E2E autenticado falhou em push na main.\n\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          BODY=$(printf 'O E2E autenticado falhou em push na main.\n\nCommit: %s\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
           gh label create e2e-main --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" --body "$BODY"
+            LAST_SHA=$(gh issue view "$EXISTING" --json comments --jq '.comments[-1].body' 2>/dev/null | grep -oP 'Commit: \K[0-9a-f]+' | head -1 || true)
+            if [ "$LAST_SHA" = "$GITHUB_SHA" ]; then
+              # Mesmo SHA: só atualiza o título com contagem incremental.
+              FAIL_COUNT=$(gh issue view "$EXISTING" --json comments --jq '.comments | length')
+              gh issue edit "$EXISTING" --title "🔴 E2E autenticado falhou na main × $((FAIL_COUNT + 2)) runs" >/dev/null
+            else
+              gh issue comment "$EXISTING" --body "$BODY"
+            fi
           else
             gh issue create --title "$TITLE" --body "$BODY" --label e2e-main
           fi
