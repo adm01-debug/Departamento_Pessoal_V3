@@ -14,6 +14,7 @@ echo "── lockfile-parity"
 
 PKG="$ROOT/package.json"
 LOCK="$ROOT/package-lock.json"
+export PKG LOCK
 
 # 1. Ambos os arquivos existem
 if [[ ! -f "$PKG" ]]; then
@@ -86,8 +87,6 @@ else
   echo "  WARN: package-lock.json mais antigo que package.json — rode npm install"
   # Não falha — pode ser artefato de checkout; npm ci detecta o drift real
 fi
-
-export PKG LOCK
 
 if [[ $FAIL -ne 0 ]]; then
   echo ""
