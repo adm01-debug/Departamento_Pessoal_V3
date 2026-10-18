@@ -9,7 +9,10 @@ import { getClientIp } from '../_shared/clientIp.ts';
 
 const TZ = "America/Sao_Paulo";
 const CRLF = "\r\n";
-const LOTE_BATIDAS = 5000;
+// Paginação defensiva: 1000 ≤ max-rows padrão do PostgREST. Um lote maior que
+// o limite da instância retornaria página curta e o loop `length < LOTE`
+// terminaria cedo, omitindo marcações do AEJ.
+const LOTE_BATIDAS = 1000;
 
 function pad(v: string | number, len: number, char = "0", left = true): string {
   const s = String(v ?? "");
