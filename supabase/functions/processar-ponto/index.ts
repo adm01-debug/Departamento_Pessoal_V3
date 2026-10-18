@@ -78,6 +78,11 @@ const resolverJornada = async (
   const semanal = Number(colab?.jornada_semanal);
   if (Number.isFinite(semanal) && semanal > 0) {
     // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
+    // Escala 5x2 (semanal <= 40h) tem sábado de folga — sem isso o sábado
+    // recebia jornada esperada e batia falta indevida.
+    if (diaSemana === 6 && semanal <= 40) {
+      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+    }
     return { minutos: Math.round(semanal * 60 / 6), entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
   }
   // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
@@ -183,7 +188,17 @@ const apurarDia = (
     }
     const e = timeToMin(entrada.hora);
     let s = timeToMin(saida.hora);
-    if (saida.data !== entrada.data || s <= e) s += 1440;
+    if (saida.data !== entrada.data) {
+      if (s <= e) s += 1440; // virada de dia legítima
+    } else if (s <= e) {
+      // Saída no MESMO dia com hora <= entrada = dado inconsistente
+      // (batida fora de ordem/ajuste). Não inventa turno de 20h+: a
+      // entrada fica pendente para revisão.
+      incompleto = true;
+      slots.push({ entrada, saida: null });
+      i += 1;
+      continue;
+    }
     pares.push([e, s]);
     slots.push({ entrada, saida });
     i += 2;
@@ -200,7 +215,7 @@ const apurarDia = (
 
   if (ehDsr) {
     // Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso.
-    return { totalMin, extra50Min: 0, extra100Min: totalMin, noturnoMin, faltaMin: 0, atrasoMin, incompleto, slots };
+    return { totalMin, extra50Min: 0, extra100Min: totalMin, noturnoMin, faltaMin: 0, atrasoMin: 0, incompleto, slots };
   }
 
   const brutoExtra = Math.max(0, totalMin - jornada.minutos);
@@ -343,13 +358,17 @@ serve(async (req) => {
       const dataAnt = addDia(dataRef, -1);
       const dataSeg = addDia(dataRef, 1);
       const [{ data: prevDia }, { data: batidasRaw, error: bErr }] = await Promise.all([
+        // Ordem cronológica REAL = hora da batida (ajustes retroativos 671
+        // recebem `ordem` sequencial de inserção, não a posição no dia).
         supabase.from('batidas_ponto').select('data,hora,tipo,ordem')
           .eq('colaborador_id', colabId).eq('data', dataAnt)
+          .order('hora', { ascending: true })
           .order('ordem', { ascending: true }),
         supabase.from('batidas_ponto').select('*')
           .eq('colaborador_id', colabId)
           .in('data', [dataRef, dataSeg])
           .order('data', { ascending: true })
+          .order('hora', { ascending: true })
           .order('ordem', { ascending: true }),
       ]);
       if (bErr) throw bErr;
@@ -544,7 +563,7 @@ serve(async (req) => {
           integrity_hash: await integrityHash({ empresaId, dataInicio, dataFim, dias: diasProcessados.length }),
         };
       } else {
-        const dataRef = dataRegistro || new Date().toISOString().split('T')[0];
+        const dataRef = dataRegistro || hojeISO;
         const r = await processarColaboradorDia(colaboradorId, dataRef);
         responseBody = {
           success: true,
