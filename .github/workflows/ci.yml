@@ -374,6 +374,8 @@ jobs:
           node scripts/tests/workflows-contract.test.mjs
       - name: Lockfile único npm (W03)
         run: bash scripts/tests/lockfile-single.test.sh
+      - name: Paridade package.json ↔ package-lock.json (W98)
+        run: bash scripts/tests/lockfile-parity.test.sh
       - name: Resumo dos contratos (GITHUB_STEP_SUMMARY)
         if: always()
         run: |
@@ -383,6 +385,7 @@ jobs:
             echo "|--------|--------|"
             echo "| workflows-contract | ${{ job.status }} |"
             echo "| lockfile-single | ${{ job.status }} |"
+            echo "| lockfile-parity | ${{ job.status }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
   p0-database-migrations:
