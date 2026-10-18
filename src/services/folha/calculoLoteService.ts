@@ -369,7 +369,25 @@ export const calculoLoteService = {
       const somar = (campo: 'total_proventos' | 'total_descontos' | 'total_liquido' | 'fgts_mes') =>
         Math.round((itensFolha ?? []).reduce((acc, i) => acc + Number(i[campo] ?? 0), 0) * 100) / 100;
 
-      const { error: totaisError } = await supabase
+      // 'aberta' (primeiro cálculo) e 'calculada' (recálculo de competência
+      // aberta) — o bridge só aceita eq em UPDATE, então lê o status atual e
+      // casa exatamente ele (in() era rejeitado e o cabeçalho ficava velho).
+      const { data: folhaAtual, error: folhaAtualError } = await supabase
+        .from('folhas_pagamento')
+        .select('status')
+        .eq('id', folhaId)
+        .maybeSingle();
+      if (folhaAtualError) throw folhaAtualError;
+      const statusFolha = (folhaAtual as { status?: string } | null)?.status;
+      if (statusFolha !== 'aberta' && statusFolha !== 'calculada') {
+        throw new Error(`Folha não está aberta para atualização de totais (status: ${statusFolha ?? 'inexistente'}).`);
+      }
+      // O bridge retorna data=[] SEM erro quando o filtro de status não casa
+      // nenhuma linha. Um status diferente indica outro cálculo em andamento
+      // (o calcular-folha grava o header antes dos itens) — retentar com o
+      // snapshot de itens lido antes sobrescreveria os totais dele. 0 linhas =
+      // conflito: aborta e o operador reexecuta o lote, que relê tudo.
+      const { data: atualizados, error: totaisError } = await supabase
         .from('folhas_pagamento')
         .update({
           total_proventos: somar('total_proventos'),
@@ -380,9 +398,14 @@ export const calculoLoteService = {
           data_calculo: new Date().toISOString(),
         })
         .eq('id', folhaId)
-        .eq('status', 'aberta');
-
+        .eq('status', statusFolha)
+        .select('id');
       if (totaisError) throw totaisError;
+      if (!atualizados || (atualizados as unknown[]).length === 0) {
+        throw new Error(
+          'Conflito: outra execução alterou o status da folha durante o lote — reexecute o cálculo em lote.'
+        );
+      }
 
       return progress;
     } catch (error) {

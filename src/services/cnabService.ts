@@ -27,6 +27,8 @@ interface CnabConfigRecord {
   nome_empresa?: string;
 }
 
+const onlyDigits = (v: unknown) => String(v ?? '').replace(/\D/g, '');
+
 interface CnabRemessaRecord {
   id: string;
   empresa_id: string;
@@ -337,27 +339,51 @@ export const cnabService = {
     let totalValue = 0;
     const cnabItensToInsert: DataRecord[] = [];
 
-    // Header de Lote (Tipo 1)
+    // CNPJ da empresa — inscrição do header de lote (pos. 18-52 FEBRABAN).
+    // Falha de leitura ou CNPJ ausente/inválido aborta: remessa com inscrição
+    // zerada é inválida no banco e ficaria persistida como 'enviado'.
+    const { data: empresaRow, error: empresaError } = await supabase
+      .from('empresas')
+      .select('cnpj')
+      .eq('id', empresaId)
+      .maybeSingle();
+    if (empresaError) throw empresaError;
+    const cnpjEmpresa = onlyDigits((empresaRow as DataRecord | null)?.cnpj ?? '');
+    if (!/^\d{14}$/.test(cnpjEmpresa) || /^0+$/.test(cnpjEmpresa)) {
+      throw new Error('CNPJ da empresa ausente ou inválido — regularize o cadastro antes de gerar a remessa.');
+    }
+
+    // Header de Lote (Tipo 1) — posições FEBRABAN CNAB240:
+    // 14-16 versão '040' · 17 uso FEBRABAN · 18-19 tipo+nº inscrição
+    // (1+14) · 33-52 convênio · 53-57 agência · 59-70 conta.
     const lotHeader =
       pad(config.banco_codigo, 3, '0', 'left') +
-      '00011' +
+      '0001' +
+      '1' +
       'C' +
       '30' +
       '01' +
-      ' ' +
       '040' +
+      ' ' +
+      '2' + // tipo inscrição: 2 = CNPJ
+      pad(cnpjEmpresa, 14, '0', 'left') +
+      pad(config.convenio, 20) +
       pad(config.agencia, 5, '0', 'left') +
       pad(config.agencia_digito || '', 1) +
       pad(config.conta, 12, '0', 'left') +
       pad(config.conta_digito, 1) +
       ' ' +
       pad(config.nome_empresa || 'EMPRESA', 30) +
-      pad('', 40) +
-      pad('', 30) +
-      pad('', 10) +
-      dateStr +
-      pad('', 8, '0') +
-      pad('', 33);
+      pad('', 40) + // mensagem
+      pad('', 30) + // logradouro
+      pad('', 5) + // número
+      pad('', 15) + // complemento
+      pad('', 20) + // cidade
+      pad('', 5) + // CEP
+      pad('', 3) + // complemento CEP
+      pad('', 2) + // UF
+      dateStr + // 223-230
+      pad('', 10); // 231-240 uso FEBRABAN
     lines.push(lotHeader.padEnd(240, ' '));
 
     const typedContas = (contas as ContaBancariaRecord[]) || [];
@@ -411,16 +437,19 @@ export const cnabService = {
         pad('', 10);
       lines.push(segA.padEnd(240, ' '));
 
-      // Se tiver chave PIX, adiciona Segmento B (PIX)
+      // Se tiver chave PIX, adiciona Segmento B (PIX). Tipo de inscrição
+      // segue o documento: 1=CPF (11), 2=CNPJ (14) — antes declarava '2'
+      // carregando CPF, e o banco rejeitava a inscrição.
       if (conta.pix_chave) {
+        const docFav = onlyDigits(colab?.cpf || '');
         const segB =
           pad(config.banco_codigo, 3, '0', 'left') +
           '00013' +
           pad(detailSequence++, 5, '0', 'left') +
           'B' +
           pad('', 3) +
-          '2' +
-          pad(colab?.cpf || '', 14, '0', 'left') +
+          (docFav.length > 11 ? '2' : '1') +
+          pad(docFav, 14, '0', 'left') +
           pad('', 30) +
           pad('', 30) +
           pad('', 30) +
@@ -431,15 +460,20 @@ export const cnabService = {
       }
     }
 
-    // Trailer de Lote (Tipo 5)
+    // Trailer de Lote (Tipo 5) — FEBRABAN: somatória dos valores é pos.
+    // 24-41 (18 dígitos), depois qtd. moeda (18), aviso débito (6), uso
+    // FEBRABAN (165) e ocorrências (10). A soma de 15 dígitos desalinhava
+    // o trailer inteiro.
     const lotTrailer =
       pad(config.banco_codigo, 3, '0', 'left') +
       '00015' +
       pad('', 9) +
       pad(detailSequence + 1, 6, '0', 'left') +
-      formatAmount(totalValue) +
+      pad(Math.trunc(totalValue * 100), 18, '0', 'left') +
       pad('', 18, '0') +
-      pad('', 183);
+      pad('', 6) +
+      pad('', 165) +
+      pad('', 10);
     lines.push(lotTrailer.padEnd(240, ' '));
 
     // Trailer de Arquivo (Tipo 9)
@@ -645,6 +679,34 @@ export const cnabService = {
   },
 
   async generatePIXBatch(empresaId: string, folhaId: string): Promise<string> {
+    // Idempotência (BUG-2.5): o CSV PIX pagável fica registrado em pix_lotes
+    // igual ao CNAB240 — um lote por (empresa, folha). Remessa finalizada é
+    // reutilizada; uma segunda geração nunca cria arquivo paralelo.
+    const { data: existingLote } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
+      .select('id, status, arquivo_lote')
+      .eq('empresa_id', empresaId)
+      .eq('folha_id', folhaId)
+      .maybeSingle();
+
+    if (existingLote) {
+      const rec = existingLote as { id: string; status: string; arquivo_lote?: string | null };
+      if (rec.status === 'finalizado' && rec.arquivo_lote) return rec.arquivo_lote;
+      if (rec.status === 'aberto')
+        throw new Error('Lote PIX já está sendo gerado para esta folha — aguarde e tente novamente.');
+    }
+
+    // Titularidade: a folha precisa pertencer a esta empresa — gravar pagamentos
+    // de outro tenant sob este empresa_id exporia dados bancários alheios.
+    const { data: folhaRow, error: folhaError } = await supabase
+      .from('folhas_pagamento')
+      .select('empresa_id')
+      .eq('id', folhaId)
+      .maybeSingle();
+    if (folhaError) throw folhaError;
+    if ((folhaRow as { empresa_id?: string } | null)?.empresa_id !== empresaId) {
+      throw new Error('Folha não pertence a esta empresa.');
+    }
+
     const { data: itens, error: hError } = await supabase
       .from('folha_itens')
       .select(
@@ -682,7 +744,49 @@ export const cnabService = {
     }
 
     if (csvLines.length === 1) throw new Error('Nenhum colaborador com chave PIX cadastrada nesta folha.');
-    return csvLines.join('\n');
+
+    const csv = csvLines.join('\n');
+    const totalPix = typedItens
+      .filter((i) => typedContas.some((c) => c.colaborador_id === i.colaborador_id && c.pix_chave))
+      .reduce((acc, i) => acc + Number(i.total_liquido), 0);
+
+    // Persiste o lote com o arquivo — o unique (empresa_id, folha_id) rejeita
+    // concorrentes: quem perde a corrida reusa o arquivo do vencedor.
+    if (existingLote) {
+      const rec = existingLote as { id: string };
+      const { error: updErr } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
+        .update({
+          status: 'finalizado',
+          arquivo_lote: csv,
+          valor_total: totalPix,
+          quantidade_pagamentos: csvLines.length - 1,
+        })
+        .eq('id', rec.id);
+      if (updErr) throw updErr;
+    } else {
+      const { error: insErr } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType).insert({
+        empresa_id: empresaId,
+        folha_id: folhaId,
+        status: 'finalizado',
+        arquivo_lote: csv,
+        valor_total: totalPix,
+        quantidade_pagamentos: csvLines.length - 1,
+      });
+      if (insErr) {
+        // Perdeu a corrida (o bridge devolve INSERT_ERROR, não 23505 — o
+        // único índice único em pix_lotes é (empresa_id, folha_id)): re-lê
+        // o lote e devolve o arquivo do vencedor se já está finalizado.
+        const { data: won } = await (supabase.from('pix_lotes') as unknown as QueryBuilderType)
+          .select('status, arquivo_lote')
+          .eq('empresa_id', empresaId)
+          .eq('folha_id', folhaId)
+          .maybeSingle();
+        const wonRec = won as { status?: string; arquivo_lote?: string | null } | null;
+        if (wonRec?.status === 'finalizado' && wonRec.arquivo_lote) return wonRec.arquivo_lote;
+        throw insErr;
+      }
+    }
+    return csv;
   },
 
   /**

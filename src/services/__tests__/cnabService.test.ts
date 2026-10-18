@@ -487,6 +487,10 @@ function mockTables(opts: {
     switch (table) {
       case 'cnab_configuracoes':
         return makeChain({ data: opts.config ?? null, error: null });
+      case 'empresas':
+        return makeChain({ data: { cnpj: '11222333000181' }, error: null });
+      case 'folhas_pagamento':
+        return makeChain({ data: { empresa_id: EMP }, error: null });
       case 'folha_itens':
         return opts.folhaItensUpdate ?? makeChain({ data: opts.itens ?? [], error: null });
       case 'contas_bancarias':

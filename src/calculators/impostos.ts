@@ -1,32 +1,38 @@
 // Cálculos base: INSS, IRRF, FGTS
-import { 
-  FAIXAS_INSS_2026, 
-  FAIXAS_IRRF_2026, 
-  DEDUCAO_DEPENDENTE_IRRF, 
+import {
+  FAIXAS_INSS_2026,
+  FAIXAS_IRRF_2026,
+  DEDUCAO_DEPENDENTE_IRRF,
   ALIQUOTA_FGTS,
   DEDUCAO_SIMPLIFICADA_IRRF_2026,
-  TETO_INSS_2026
+  TETO_INSS_2026,
 } from './tabelas';
 
+// INSS progressivo em centavos: soma as contribuições das faixas em
+// milésimos de centavo e trunca o total uma vez — acumular em float perdia
+// 1 centavo em bases com centavos na fronteira da faixa (ex.: 1.700,50).
+// Mesma convenção das edge functions (_shared/inss.ts).
 export function calcularINSS(salarioBruto: number): number {
   if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos
 
-  let descontoTotal = 0;
-  let baseRestante = Math.min(salarioBruto, TETO_INSS_2026);
+  const baseCents = BigInt(Math.round(salarioBruto * 100));
+  const tetoCents = BigInt(Math.round(TETO_INSS_2026 * 100));
+  const b = baseCents < tetoCents ? baseCents : tetoCents;
 
-  for (let i = 0; i < FAIXAS_INSS_2026.length; i++) {
-    const faixa = FAIXAS_INSS_2026[i];
-    const limiteAnterior = i === 0 ? 0 : FAIXAS_INSS_2026[i - 1].limite;
-    const faixaCalculo = Math.min(baseRestante, faixa.limite - limiteAnterior);
-
-    if (faixaCalculo <= 0) break;
-
-    descontoTotal += faixaCalculo * faixa.aliquota;
-    baseRestante -= faixaCalculo;
+  let inssMilesimos = 0n;
+  let anterior = 0n;
+  for (const faixa of FAIXAS_INSS_2026) {
+    if (b <= anterior) break;
+    const limite = BigInt(Math.round(faixa.limite * 100));
+    const aliquota = BigInt(Math.round(faixa.aliquota * 1000));
+    const faixaCents = (b < limite ? b : limite) - anterior;
+    inssMilesimos += faixaCents * aliquota;
+    anterior = limite;
+    if (b <= limite) break;
   }
 
   // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal
-  return Math.trunc(descontoTotal * 100) / 100;
+  return Number(inssMilesimos / 1000n) / 100;
 }
 
 export function calcularIRRF(
@@ -34,15 +40,15 @@ export function calcularIRRF(
   dependentes: number = 0,
   outrasDeducoes: number = 0,
   // Pensão alimentícia recebida é isenta de IRRF (Art. 6°, XXXIII, Lei 7.713/88)
-  isPensaoAlimenticia: boolean = false,
+  isPensaoAlimenticia: boolean = false
 ): number {
   if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos
-  if (isPensaoAlimenticia) return 0;  // rendimento isento — sem incidência de IRRF
+  if (isPensaoAlimenticia) return 0; // rendimento isento — sem incidência de IRRF
 
   const descontoINSS = calcularINSS(salarioBruto);
 
   // Opção 1: Deduções Legais
-  const baseCalculoLegal = salarioBruto - descontoINSS - (dependentes * DEDUCAO_DEPENDENTE_IRRF) - outrasDeducoes;
+  const baseCalculoLegal = salarioBruto - descontoINSS - dependentes * DEDUCAO_DEPENDENTE_IRRF - outrasDeducoes;
 
   // Opção 2: Desconto Simplificado
   const baseCalculoSimplificado = salarioBruto - DEDUCAO_SIMPLIFICADA_IRRF_2026;
@@ -52,18 +58,22 @@ export function calcularIRRF(
 
   if (baseCalculo <= 0) return 0;
 
-  let impostoTotal = 0;
-  for (let i = 0; i < FAIXAS_IRRF_2026.length; i++) {
-    const faixa = FAIXAS_IRRF_2026[i];
-    const limiteAnterior = i === 0 ? 0 : FAIXAS_IRRF_2026[i - 1].limite;
-    const baseNaFaixa = Math.min(Math.max(0, baseCalculo - limiteAnterior), (faixa.limite || Infinity) - limiteAnterior);
-
-    if (baseNaFaixa <= 0) break;
-    impostoTotal += baseNaFaixa * faixa.aliquota;
+  // Mesma convenção do INSS: centavos inteiros por faixa, truncamento único.
+  const baseCents = BigInt(Math.round(baseCalculo * 100));
+  let impostoMilesimos = 0n;
+  let anteriorIrrf = 0n;
+  for (const faixa of FAIXAS_IRRF_2026) {
+    if (baseCents <= anteriorIrrf) break;
+    const limite = faixa.limite === Infinity ? baseCents : BigInt(Math.round(faixa.limite * 100));
+    const aliquota = BigInt(Math.round(faixa.aliquota * 1000));
+    const faixaCents = (baseCents < limite ? baseCents : limite) - anteriorIrrf;
+    impostoMilesimos += faixaCents * aliquota;
+    anteriorIrrf = limite;
+    if (baseCents <= limite) break;
   }
 
   // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal
-  return Math.max(0, Math.trunc(impostoTotal * 100) / 100);
+  return Math.max(0, Number(impostoMilesimos / 1000n) / 100);
 }
 
 export function calcularFGTS(salarioBruto: number): number {
