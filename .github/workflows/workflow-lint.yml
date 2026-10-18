@@ -52,5 +52,5 @@ jobs:
       - name: Analisar segurança dos workflows (zizmor W86)
         uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
         with:
-          args: --format plain
+          advanced-security: false  # sem security-events:write → plain output, sem SARIF upload
         continue-on-error: true  # triagem inicial — remover após avaliar achados
