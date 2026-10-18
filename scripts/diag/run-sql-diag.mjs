@@ -123,13 +123,12 @@ function needsPiiFlag(sql) {
   // ainda indicam PII mesmo quando TODAS as refs qualificadas são seguras, pois o
   // search_path padrão do Supabase resolve para public.
   // Detecta: FROM x, JOIN x, UPDATE x, INSERT INTO x (exclui funções com parênteses).
-  // Codex P1: lookahead POSITIVA para caractere não-identificador ou fim de string —
-  // evita backtracking que truncava schema qualificado (FROM pg_catalog.pg_class → 'pg_catalo').
-  // (?!\s*[.(]) (negativa) causava: regex tentava 'pg_catalog', lookahead falha (próximo é '.');
-  // retraía um char e capturava 'pg_catalo' (lookahead passa pois próximo é 'g' de 'g.').
-  // (?=[^a-z0-9_.(]|$) (positiva) exige que o próximo char NÃO seja parte de identificador nem '.':
-  // 'pg_catalog.' → próximo é '.' → não casa; 'pg_class' final → próximo é '' → casa.
-  const unqualifiedTableRE = /\b(?:from|join|update|into)\s+([a-z_][a-z0-9_]*)(?=[^a-z0-9_.(]|$)/gi;
+  // Codex P1: (?!\w) âncora o fim do identificador — sem isso o motor JS faz backtrack
+  // e captura 'pg_catalo' de 'pg_catalog.pg_class' (lookahead negativo (?!\s*[.]) falha
+  // no match completo, o motor recua 1 char e tenta de novo).
+  // (?!\w) força o match completo: 'pg_catalo' falha porque o próximo char é 'g' (word char).
+  // (?!\s*\.) descarta schema.tabela qualificado: 'pg_catalog.pg_class' — próximo é '.' → não casa.
+  const unqualifiedTableRE = /\b(?:from|join|update|into)\s+([a-z_][a-z0-9_]*)(?!\w)(?!\s*\.)/gi;
   const unqualifiedRefs = [...sql.matchAll(unqualifiedTableRE)].map((m) => m[1].toLowerCase());
   if (unqualifiedRefs.length > 0) {
     // Identifiers que NÃO são referências a tabelas reais (palavras reservadas de SQL/Postgres)
