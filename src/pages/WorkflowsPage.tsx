@@ -90,7 +90,21 @@ export default function WorkflowsPage() {
   });
 
   const criar = useMutation({
-    mutationFn: () => workflowService.criarDefinicao({ ...form, empresa_id: empresaAtual?.id }),
+    mutationFn: async () => {
+      const { etapas, ...definicao } = form;
+      const def = await workflowService.criarDefinicao({ ...definicao, empresa_id: empresaAtual?.id });
+      const definicaoId = (def as { id?: string } | null)?.id;
+      if (!definicaoId) throw new Error('Definição criada sem id');
+      for (const [i, etapa] of etapas.entries()) {
+        await workflowService.criarEtapa({
+          workflow_id: definicaoId,
+          nome: etapa.nome,
+          ordem: i + 1,
+          aprovador_tipo: i === 0 ? 'gestor' : 'rh',
+          config: { sla_horas: etapa.sla_horas },
+        });
+      }
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['workflows_def'] });
       setOpen(false);
@@ -588,6 +602,10 @@ export default function WorkflowsPage() {
                     aprovador_tipo: (n.config.papel as string) ?? 'gestor',
                     config: { sla_horas: (n.config.sla_horas as number) ?? 48 },
                   }));
+                if (etapas.length === 0) {
+                  toast.error('Adicione pelo menos um nó de aprovação entre Início e Fim.');
+                  return;
+                }
                 workflowService
                   .criarDefinicao({
                     empresa_id: empresaAtual?.id,
