@@ -4,11 +4,15 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Simular com ROLLBACK ou aplicar e registrar no ledger
+        description: Simular com ROLLBACK ou aplicar e registrar no ledger (verify=roda sidecars .verify.sql)
         required: true
         default: validate
         type: choice
-        options: [validate, apply]
+        options: [validate, apply, verify]
+      migration_files:
+        description: "Lista de arquivos de migração separados por newline (obrigatório para mode=verify)"
+        required: false
+        type: string
       confirm_project_ref:
         description: Digite o project ref canônico para evitar alvo acidental
         required: true
@@ -33,6 +37,7 @@ jobs:
       # workflow_dispatch input is untrusted. Expose it as data instead of
       # interpolating it into the shell program below.
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
+      MIGRATION_FILES: ${{ inputs.migration_files }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
