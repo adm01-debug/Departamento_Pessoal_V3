@@ -2,7 +2,7 @@
 // Env: E2E_SUPABASE_URL, E2E_ANON_KEY, E2E_JWT, E2E_COLABORADOR_ID, E2E_EMPRESA_ID
 // Opcionais: E2E_ORIGIN, E2E_CONCURRENCY (default 6), E2E_PONTO_DATA (YYYY-MM-DD)
 
-import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 
 const url = Deno.env.get("E2E_SUPABASE_URL");
 const anon = Deno.env.get("E2E_ANON_KEY");
