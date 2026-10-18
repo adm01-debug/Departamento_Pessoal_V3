@@ -119,7 +119,7 @@ POST-only gateway (781 lines)
 ├── Rate limiting (30 writes/100 reads/20 anon por min)
 ├── Tenant isolation (empresa_id scope)
 ├── Table denylist (21 tabelas sensíveis bloqueadas)
-├── RPC allowlist (95+ RPCs aprovadas — expandida com cada wave)
+├── RPC allowlist (95 RPCs aprovadas — expandida com cada wave)
 ├── SQL injection prevention (isSafeTableName/Column/OrderColumn)
 ├── ORDER BY column validation (isSafeOrderColumn)
 ├── .single() query support
@@ -343,7 +343,7 @@ POST-only gateway (781 lines)
 📝 W95 — ci.yml: comentário D26 explica format:check:changed em push na main.
 
 🔖 W96 — ci.yml: label ci → ci-main no job rls-live (D22).
-│   Cria infra/github/labels.json: inventário de 5 labels de workflow.
+│   Cria infra/github/labels.json: inventário de labels de workflow.
 
 ✅ W97 — workflows-contract.test.mjs: 6 novos contratos (checks 6-11)
 │   Regex de var sensível narrowed (só $VAR, não string literal).
@@ -714,9 +714,10 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | vars públicas Supabase | ✅ W29: 12 ocorrências migradas secrets→vars (PR #247 merged) — owner deve deletar os secrets                  |
 | OSSF Scorecard         | ✅ W44: job scorecard adicionado a security.yml (PR #247 merged)                                               |
 | cache cleanup (W48)    | ✅ 46 caches stale deletados — 3 válidos restantes                                                             |
-| deno --frozen (W36)    | 🔄 --no-lock→--frozen + cache deno; deno.lock specifiers+npm fix (PR #251 em CI, HEAD 238269a8)                |
+| deno --frozen (W36)    | 🔄 --no-lock→--frozen + cache deno; deno.lock specifiers+npm fix (PR #251 em CI, HEAD 80170763a)               |
 | zizmor scanner (W86)   | 🔄 zizmorcore/zizmor-action@cc914d7f em workflow-lint.yml (PR #251 em CI)                                      |
 | W97c required if: gate | 🔄 check 12 em workflows-contract.test.mjs (PR #251 em CI)                                                     |
+| ALTER DEFAULT PRIVS    | 🔄 migration 20261018160000 (GAP MÉDIO — sessão 15, próximo PR)                                                |
 
 ---
 
