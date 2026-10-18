@@ -95,6 +95,8 @@ function buildSupabaseChain(overrides: Record<string, unknown> = {}) {
     });
     const select = vi.fn().mockReturnValue({
       eq,
+      gte,
+      lte,
       then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
     });
     return { select, upsert, insert, update, eq };

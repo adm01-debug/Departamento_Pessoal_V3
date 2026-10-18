@@ -136,7 +136,8 @@ jobs:
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
           for migration in \
             20261018120000_onda4d_review243.sql \
-            20261018130000_onda4e_objetos_ausentes.sql
+            20261018130000_onda4e_objetos_ausentes.sql \
+            20261018140000_onda5_ponto_cols.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -244,7 +245,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261018120000','20261018130000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261018120000','20261018130000','20261018140000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -476,6 +477,17 @@ jobs:
               SELECT 1 FROM supabase_migrations.schema_migrations
               WHERE version = '20261018130000'
                 AND statements IS NOT NULL AND cardinality(statements) > 0
+            ),
+            'onda5_cols', (
+              SELECT count(*) FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name = 'registros_ponto'
+                AND column_name IN ('horas_extras_50','horas_extras_100',
+                                    'horas_noturnas','he_banco_horas')
+            ),
+            'onda5_stmts_recorded', EXISTS (
+              SELECT 1 FROM supabase_migrations.schema_migrations
+              WHERE version = '20261018140000'
+                AND statements IS NOT NULL AND cardinality(statements) > 0
             )
           );
           SQL
@@ -484,7 +496,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 10 &&
+              Number(r.ledger_count) === 11 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -535,6 +547,8 @@ jobs:
               r.onda4d_sync_trigger === true &&
               r.onda4d_stmts_recorded === true &&
               Number(r.onda4e_objs) === 7 &&
+              Number(r.onda5_cols) === 4 &&
+              r.onda5_stmts_recorded === true &&
               r.onda4e_mv_filled === true &&
               r.onda4e_stmts_recorded === true;
             if (!ok) process.exit(1);

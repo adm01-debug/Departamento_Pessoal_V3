@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { ImportarAFDTDialog } from '@/components/ponto/ImportarAFDTDialog';
 import { GerarAEJDialog } from '@/components/ponto/GerarAEJDialog';
+import { AssinarEspelhoDialog } from '@/components/ponto/AssinarEspelhoDialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -80,6 +81,20 @@ export default function PontoPage() {
     return () => clearInterval(i);
   }, []);
   const today = todayLocalISO();
+
+  const { data: meuColaborador } = useQuery({
+    queryKey: ['me-colaborador-ponto', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const { data } = await supabase
+        .from('colaboradores')
+        .select('id, nome_completo')
+        .eq('email', user.email)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.email,
+  });
 
   const { data: registroHoje, refetch: refetchRegistro } = useQuery({
     queryKey: ['registro-ponto-hoje', user?.id, today],
@@ -357,18 +372,21 @@ export default function PontoPage() {
               {processando ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               <span className="hidden sm:inline">Processar Servidor</span>
             </Button>
-            <Button
-              size="sm"
-              className="rounded-xl gap-1.5 font-bold shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-primary-glow border-none"
-              onClick={() =>
-                toast.success('Relatório MTP 671 Gerado com Sucesso!', {
-                  description: 'O documento foi assinado digitalmente e está disponível no histórico de auditoria.',
-                })
-              }
-            >
-              <ShieldCheck className="h-4 w-4" />
-              <span className="hidden sm:inline">Gerar Espelho 671</span>
-            </Button>
+            {meuColaborador && (
+              <AssinarEspelhoDialog
+                colaboradorId={meuColaborador.id}
+                colaboradorNome={meuColaborador.nome_completo}
+                trigger={
+                  <Button
+                    size="sm"
+                    className="rounded-xl gap-1.5 font-bold shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-primary-glow border-none"
+                  >
+                    <ShieldCheck className="h-4 w-4" />
+                    <span className="hidden sm:inline">Gerar Espelho 671</span>
+                  </Button>
+                }
+              />
+            )}
           </div>
         }
       >

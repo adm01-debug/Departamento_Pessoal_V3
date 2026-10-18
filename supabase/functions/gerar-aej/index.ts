@@ -187,19 +187,20 @@ Deno.serve(async (req) => {
     let totalMarcacoes = 0;
     if (colabValidos.length > 0) {
       const colabIds = colabValidos.map(c => c.id);
-      const startISO = `${periodo_inicio}T00:00:00-03:00`;
-      const endISO = `${periodo_fim}T23:59:59-03:00`;
 
+      // batidas_ponto usa colunas data+hora (não existe data_hora).
+      const comBatidas = new Set<string>();
       let offset = 0;
       while (true) {
         const { data: batch, error } = await admin
           .from("batidas_ponto")
-          .select("colaborador_id,data_hora")
+          .select("colaborador_id,data,hora")
           .eq("empresa_id", empresa_id)
           .in("colaborador_id", colabIds)
-          .gte("data_hora", startISO)
-          .lte("data_hora", endISO)
-          .order("data_hora", { ascending: true })
+          .gte("data", periodo_inicio)
+          .lte("data", periodo_fim)
+          .order("data", { ascending: true })
+          .order("hora", { ascending: true })
           .range(offset, offset + LOTE_BATIDAS - 1);
         if (error) throw error;
         if (!batch || batch.length === 0) break;
@@ -207,7 +208,8 @@ Deno.serve(async (req) => {
         for (const b of batch) {
           const c = colabById.get((b as any).colaborador_id);
           if (!c) continue;
-          const iso = (b as any).data_hora;
+          comBatidas.add((b as any).colaborador_id);
+          const iso = `${(b as any).data}T${String((b as any).hora).slice(0, 5)}:00-03:00`;
           lines.push(
             pad(nsr++, 9) + "3" + fmtDate(iso) + fmtTime(iso) + pad(onlyDigits(c.pis_pasep), 12)
           );
@@ -215,6 +217,34 @@ Deno.serve(async (req) => {
         }
         if (batch.length < LOTE_BATIDAS) break;
         offset += LOTE_BATIDAS;
+      }
+
+      // Ponte G-049: colaboradores sem batidas caem no modelo registros_ponto
+      // (timesheet processado) — derivar marcações das colunas entrada_N/saida_N.
+      const semBatidas = colabIds.filter((id) => !comBatidas.has(id));
+      if (semBatidas.length > 0) {
+        const { data: regs, error: rErr } = await admin
+          .from("registros_ponto")
+          .select("colaborador_id,data,entrada_1,saida_1,entrada_2,saida_2,entrada_3,saida_3")
+          .eq("empresa_id", empresa_id)
+          .in("colaborador_id", semBatidas)
+          .gte("data", periodo_inicio)
+          .lte("data", periodo_fim)
+          .order("data", { ascending: true });
+        if (rErr) throw rErr;
+        for (const reg of regs ?? []) {
+          const c = colabById.get((reg as any).colaborador_id);
+          if (!c) continue;
+          for (const k of ["entrada_1", "saida_1", "entrada_2", "saida_2", "entrada_3", "saida_3"] as const) {
+            const hora = (reg as any)[k];
+            if (!hora) continue;
+            const iso = `${(reg as any).data}T${String(hora).slice(0, 5)}:00-03:00`;
+            lines.push(
+              pad(nsr++, 9) + "3" + fmtDate(iso) + fmtTime(iso) + pad(onlyDigits(c.pis_pasep), 12)
+            );
+            totalMarcacoes++;
+          }
+        }
       }
     }
 

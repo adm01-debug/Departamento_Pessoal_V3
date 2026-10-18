@@ -130,6 +130,24 @@ export const calculoLoteService = {
 
       if (eventosError) throw eventosError;
       const eventosPorColaborador = new Map<string, EventoFolha[]>();
+
+      // DSR real da competência: domingos + feriados (empresa ou nacionais)
+      // dentro do mês — antes era a constante 26/4 para qualquer mês.
+      // Sem .or(): o bridge não aceita — filtra empresa/global no cliente.
+      const { data: feriadosMes } = await supabase
+        .from('feriados')
+        .select('data, empresa_id')
+        .gte('data', dataInicio)
+        .lte('data', dataFim);
+      const diasNoMes = Number(dataFim.slice(8, 10));
+      let domingosFeriados = new Set<string>(
+        (feriadosMes ?? []).filter((f) => f.empresa_id === null || f.empresa_id === empresaId).map((f) => f.data)
+      ).size;
+      for (let d = 1; d <= diasNoMes; d++) {
+        const dt = new Date(Number(ano), Number(mes) - 1, d);
+        if (dt.getDay() === 0) domingosFeriados++;
+      }
+      const diasUteis = Math.max(0, diasNoMes - domingosFeriados);
       for (const ev of (eventosData ?? []) as unknown as EventoVariavelRow[]) {
         const tipo = ev.rubrica?.tipo;
         if (!ev.rubrica || (tipo !== 'provento' && tipo !== 'desconto')) continue;
@@ -156,18 +174,31 @@ export const calculoLoteService = {
           // 3.1 Integrar dados de PONTO ELETRÔNICO (Horas Extras e Faltas Aprovadas)
           const { data: registrosPonto } = await supabase
             .from('registros_ponto')
-            .select('horas_extras, horas_falta')
+            .select('horas_extras, horas_extras_50, horas_extras_100, horas_noturnas, horas_falta')
             .eq('colaborador_id', colab.id)
             .eq('aprovado', true)
             .gte('data', dataInicio)
             .lte('data', dataFim);
 
           let totalHE = 0;
+          let totalHE100 = 0;
+          let totalNoturno = 0;
           let totalFaltas = 0;
 
           if (registrosPonto) {
             registrosPonto.forEach((r) => {
-              totalHE += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras);
+              // Colunas novas (onda 5) guardam a parte PAGA já separada por
+              // adicional; registros antigos só têm o total em horas_extras
+              // (tratado como 50% como antes — nunca conta duas vezes).
+              const he50 = pontoIntegracaoUtils.intervalToDecimal(r.horas_extras_50);
+              const he100 = pontoIntegracaoUtils.intervalToDecimal(r.horas_extras_100);
+              if (he50 === 0 && he100 === 0) {
+                totalHE += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras);
+              } else {
+                totalHE += he50;
+                totalHE100 += he100;
+              }
+              totalNoturno += pontoIntegracaoUtils.intervalToDecimal(r.horas_noturnas);
               totalFaltas += pontoIntegracaoUtils.intervalToDecimal(r.horas_falta);
             });
           }
@@ -261,6 +292,10 @@ export const calculoLoteService = {
             dependentes: dependentesCount,
             eventos: [...eventosVariaveis, ...beneficiosEventos],
             horasExtras50: totalHE,
+            horasExtras100: totalHE100,
+            horasNoturnas: totalNoturno,
+            diasUteis,
+            domingosFeriados,
             horasFalta: totalFaltas,
             jornada,
             descontosExtras: 0,
