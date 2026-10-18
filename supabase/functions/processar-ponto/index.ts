@@ -93,10 +93,12 @@ const resolverJornada = async (
       .order('id')
       .limit(1)
       .maybeSingle();
-    // colaboradores.jornada_id não existe no schema canônico (a migration
-    // que o adiciona foi marcada no ledger sem efeito em prod) — não filtrar
-    // por ela; a grade segue por empresa até o campo existir de fato.
-    q = q.eq('jornadas.empresa_id', empresaId);
+    // colaboradores.jornada_id: existe onde a migration fixup foi aplicada
+    // — quando o colaborador a tem, a grade é a DELE (folga de jornada
+    // alheia não se aplica); sem o campo, grade por empresa (schema canônico).
+    q = colab?.jornada_id
+      ? q.eq('jornada_id', colab.jornada_id)
+      : q.eq('jornadas.empresa_id', empresaId);
     q = apenasUteis ? q.or('dia_util.is.null,dia_util.eq.true') : q.eq('dia_util', false);
     const { data, error } = await q;
     if (error) throw error;
@@ -467,9 +469,11 @@ serve(async (req) => {
 
       // Erro de consulta não pode virar colab=null silencioso — apurar com
       // defaults num colaborador com horário próprio grava falta/HE errados.
+      // select('*'): traz jornada_id onde a coluna existe (migration fixup)
+      // e não quebra no canônico onde ela ainda falta.
       const { data: colab, error: colabError } = await supabase
         .from('colaboradores')
-        .select('horario_entrada, horario_saida, intervalo_minutos, jornada_semanal')
+        .select('*')
         .eq('id', colabId)
         .maybeSingle();
       if (colabError) throw colabError;
