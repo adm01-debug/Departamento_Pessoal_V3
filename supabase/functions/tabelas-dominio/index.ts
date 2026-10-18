@@ -67,6 +67,15 @@ serve(async (req) => {
   // functions.invoke com `body: { type }`.
   let type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
   if (!type && req.method === 'POST') {
+    // Body só carrega {type} — rejeita payloads grandes antes de parsear
+    // (evita consumo de memória antes do rate-limit).
+    const contentLength = Number(req.headers.get('content-length') ?? '0');
+    if (contentLength > 1024) {
+      return new Response(JSON.stringify({ error: 'Payload muito grande' }), {
+        status: 413,
+        headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
+      });
+    }
     try {
       const body = await req.clone().json();
       if (body && typeof body.type === 'string') {
