@@ -218,7 +218,14 @@ describe('cnabService.parseRetornoCNAB', () => {
 
   it('ignores lines shorter than 240 chars', async () => {
     const result = await cnabService.parseRetornoCNAB('emp-1', 'short line\n');
-    expect(result).toEqual({ sucesso: 0, erro: 0, falhasTecnicas: 0, naoEncontrados: 0, detalhes: [] });
+    expect(result).toEqual({
+      sucesso: 0,
+      erro: 0,
+      falhasTecnicas: 0,
+      semVinculoFolha: 0,
+      naoEncontrados: 0,
+      detalhes: [],
+    });
     expect(mockFrom).not.toHaveBeenCalled();
   });
 

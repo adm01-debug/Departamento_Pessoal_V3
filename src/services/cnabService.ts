@@ -494,6 +494,9 @@ export const cnabService = {
       // 'rejeitado pelo banco'.
       erro: 0,
       falhasTecnicas: 0,
+      // Item marcado pago mas sem folha_item_id — reimportar não restaura o
+      // vínculo; precisa de conciliação manual (bucket separado).
+      semVinculoFolha: 0,
       naoEncontrados: 0,
       detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>,
     };
@@ -618,7 +621,13 @@ export const cnabService = {
         folhaOk = !fiError;
       }
 
-      if (updError || (isSuccess && (!item.folha_item_id || !folhaOk))) {
+      if (updError) {
+        results.falhasTecnicas++;
+      } else if (isSuccess && !item.folha_item_id) {
+        // Pago confirmado no cnab_itens mas sem folha_itens pra atualizar —
+        // reimportar não resolve: é conciliação manual, não falha transitória.
+        results.semVinculoFolha++;
+      } else if (isSuccess && !folhaOk) {
         results.falhasTecnicas++;
       } else if (isSuccess) {
         results.sucesso++;
