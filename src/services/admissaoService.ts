@@ -94,24 +94,34 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
           salario_base: adm.salario_proposto ?? 0,
           status: 'ativo',
           observacoes: `Origem: admissão ${adm.id}`,
+          // Identidade imutável da origem (observacoes é campo livre editável —
+          // não serve como chave de reconciliação sozinho).
+          metadata: { admissao_id: adm.id },
         } as never)
         .select('id')
         .single();
       if (error) {
         // Falha parcial de uma conclusão anterior (colaborador inserido, etapa
         // não gravada): o CPF único rejeita o novo insert. Só reconcilia quando
-        // o colaborador encontrado foi criado POR ESTA admissão (marca em
-        // observacoes) — um colaborador pré-existente com o mesmo CPF não é
-        // vínculo válido e o erro original é propagado.
+        // o colaborador encontrado foi criado POR ESTA admissão — identidade em
+        // metadata.admissao_id (imutável) ou, para linhas criadas antes desta
+        // versão, a marca em observacoes. Um colaborador pré-existente com o
+        // mesmo CPF não é vínculo válido e o erro original é propagado.
         const { data: existente } = await supabase
           .from('colaboradores')
-          .select('id')
+          .select('id, observacoes, metadata')
           .eq('empresa_id', empresaId)
           .eq('cpf', adm.cpf as string)
-          .eq('observacoes', `Origem: admissão ${adm.id}`)
           .maybeSingle();
-        if (existente?.id) {
-          meta.colaborador_id = existente.id;
+        const ex = existente as {
+          id: string;
+          observacoes?: string | null;
+          metadata?: { admissao_id?: string } | null;
+        } | null;
+        const criadoPorEstaAdmissao =
+          ex?.metadata?.admissao_id === adm.id || ex?.observacoes === `Origem: admissão ${adm.id}`;
+        if (ex?.id && criadoPorEstaAdmissao) {
+          meta.colaborador_id = ex.id;
         } else {
           throw error;
         }

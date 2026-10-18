@@ -201,7 +201,11 @@ describe('admissaoService.concluir', () => {
     const insertFn = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({ single: vi.fn().mockResolvedValue(colabResult) }),
     });
-    const colabSelect = vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue(existente) });
+    const colabSelectResult: Record<string, unknown> = {};
+    const colabEq = vi.fn().mockReturnValue(colabSelectResult);
+    colabSelectResult.eq = colabEq;
+    colabSelectResult.maybeSingle = vi.fn().mockResolvedValue(existente);
+    const colabSelect = vi.fn().mockReturnValue(colabSelectResult);
     const maybeSingleUpdate = vi.fn().mockResolvedValue({ data: { id: 'adm-1' }, error: null });
     const eqChain: Record<string, unknown> = {};
     eqChain.eq = vi.fn().mockReturnValue(eqChain);
@@ -211,7 +215,7 @@ describe('admissaoService.concluir', () => {
       if (table === 'colaboradores') return { insert: insertFn, select: colabSelect };
       return { select: buscarSelect, update: updateFn };
     });
-    return { insertFn, updateFn, colabSelect };
+    return { insertFn, updateFn, colabSelect, colabEq };
   }
 
   it('cria colaborador com campos mapeados e conclui', async () => {
@@ -239,21 +243,44 @@ describe('admissaoService.concluir', () => {
     expect(updateFn).not.toHaveBeenCalled();
   });
 
-  it('insert falha → reconcilia pelo colaborador marcado com o id da admissão', async () => {
-    const { updateFn, colabSelect } = setupConcluirChains(
+  it('insert falha → reconcilia pelo metadata.admissao_id imutável', async () => {
+    const { updateFn, colabSelect, colabEq } = setupConcluirChains(
       admCompleto,
       { data: null, error: { message: 'INSERT_ERROR: duplicate key' } },
-      { data: { id: 'colab-previo' }, error: null }
+      { data: { id: 'colab-previo', metadata: { admissao_id: 'adm-1' } }, error: null }
     );
     const r = await admissaoService.concluir('adm-1', EMPRESA_ID);
     expect(r.colaboradorId).toBe('colab-previo');
-    expect(colabSelect).toHaveBeenCalledWith('id');
+    expect(colabSelect).toHaveBeenCalledWith('id, observacoes, metadata');
+    expect(colabEq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(colabEq).toHaveBeenCalledWith('cpf', admCompleto.cpf);
     expect(updateFn).toHaveBeenCalledWith(
       expect.objectContaining({
         etapa: 'concluida',
         metadata: expect.objectContaining({ colaborador_id: 'colab-previo' }),
       })
     );
+  });
+
+  it('insert falha → reconcilia pela marca legada em observacoes', async () => {
+    const { updateFn } = setupConcluirChains(
+      admCompleto,
+      { data: null, error: { message: 'INSERT_ERROR: duplicate key' } },
+      { data: { id: 'colab-legacy', observacoes: 'Origem: admissão adm-1' }, error: null }
+    );
+    const r = await admissaoService.concluir('adm-1', EMPRESA_ID);
+    expect(r.colaboradorId).toBe('colab-legacy');
+    expect(updateFn).toHaveBeenCalled();
+  });
+
+  it('insert falha e colaborador com mesmo CPF é de terceiro → propaga o erro', async () => {
+    const { updateFn } = setupConcluirChains(
+      admCompleto,
+      { data: null, error: { message: 'INSERT_ERROR: duplicate key' } },
+      { data: { id: 'colab-outro', observacoes: 'cadastro manual', metadata: null }, error: null }
+    );
+    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toThrow('INSERT_ERROR');
+    expect(updateFn).not.toHaveBeenCalled();
   });
 
   it('insert falha e não existe colaborador marcado → propaga o erro (não vincula terceiros)', async () => {

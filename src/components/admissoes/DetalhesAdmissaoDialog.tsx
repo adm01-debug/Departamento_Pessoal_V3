@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import type { Tables } from '@/integrations/supabase/types';
@@ -37,6 +37,14 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   const [savingDados, setSavingDados] = useState(false);
   const [dados, setDados] = useState({ cpf: '', data_nascimento: '', nome_mae: '', sexo: '' });
   const [dadosLoaded, setDadosLoaded] = useState('');
+
+  // O diálogo permanece montado: ao fechar, zera a marca para que reabrir a
+  // MESMA admissão recarregue o form com os valores frescos da lista (sem isso,
+  // salvar → fechar → reabrir exibia os valores antigos e um novo salvar
+  // sobrescrevia o banco com dados obsoletos).
+  useEffect(() => {
+    if (!open) setDadosLoaded('');
+  }, [open]);
 
   // Preenche o form uma vez por admissão (id muda → recarrega).
   if (admissao && dadosLoaded !== admissao.id) {
@@ -245,8 +253,8 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                       </Label>
                       <Input
                         id="det-cpf"
-                        value={dados.cpf}
-                        disabled={terminal}
+                        value={pii.cpf(dados.cpf)}
+                        disabled={terminal || !pii.canViewPii}
                         onChange={(e) => setDados((d) => ({ ...d, cpf: e.target.value }))}
                         placeholder="000.000.000-00"
                       />
