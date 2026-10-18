@@ -437,7 +437,12 @@ serve(async (req) => {
         atraso_minutos: r.atrasoMin,
         // Sem nenhum turno do dia (ex.: a única batida fechou o turno de
         // ontem) o registro não é 'completo' — é ausência de jornada própria.
-        status: s.length === 0 ? 'sem_registro' : (r.incompleto ? 'incompleto' : 'completo'),
+        // Overflow de turnos (>3 slots) também marca 'incompleto': as colunas
+        // não representam todas as batidas — sinaliza revisão manual em vez de
+        // omitir silenciosamente um turno fechado (horas seguem contadas).
+        status: s.length === 0
+          ? 'sem_registro'
+          : (r.incompleto || r.slots.length > 3 ? 'incompleto' : 'completo'),
       };
 
       const { data: regRow, error: uErr } = await supabase
