@@ -659,7 +659,15 @@ jobs:
                 sidecar_errors=$((sidecar_errors + 1))
                 continue
               }
-              bad_lines="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' | grep -vx 'ok' || true)"
+              # Codex (P2, PR #242-followup): rejeitar sidecar sem nenhuma asserção
+              # (arquivo vazio ou só de comentários passaria sem checar nada).
+              non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$')"
+              if [ -z "$non_empty" ]; then
+                echo "::error::Sidecar não produziu nenhuma asserção (saída vazia): $sidecar"
+                sidecar_errors=$((sidecar_errors + 1))
+                continue
+              fi
+              bad_lines="$(printf '%s\n' "$non_empty" | grep -vx 'ok' || true)"
               if [ -n "$bad_lines" ]; then
                 echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
                 printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
@@ -703,19 +711,40 @@ jobs:
           while IFS= read -r migration; do
             migration="$(echo "$migration" | tr -d '[:space:]')"
             [ -z "$migration" ] && continue
+            # Extrair versão: prefixo numérico do nome do arquivo (sem path, sem .sql).
+            version="$(basename "${migration%.sql}")"
+            version="${version%%_*}"
+            # Codex (P2, PR #242-followup): validar que a migração está no ledger canônico
+            # antes de rodar seu sidecar — impede aprovar um sidecar para uma migração
+            # pendente ou parcialmente criada via DDL manual.
+            ledger_count="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At \
+              -v "v=$version" \
+              -c "SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = :'v'")"
+            if [ "$ledger_count" -ne 1 ]; then
+              echo "::error::Migração $version não encontrada no ledger canônico — mode=verify só aceita migrações JÁ aplicadas."
+              verify_errors=$((verify_errors + 1))
+              continue
+            fi
             sidecar="supabase/migrations/${migration%.sql}.verify.sql"
             if [ ! -f "$sidecar" ]; then
               echo "::error::Sidecar não encontrado para $migration: $sidecar"
               verify_errors=$((verify_errors + 1))
               continue
             fi
-            echo "Sidecar: $sidecar"
+            echo "Sidecar: $sidecar (ledger ✓ versão $version)"
             sidecar_output="$(PGOPTIONS='-c default_transaction_read_only=on' psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A -f "$sidecar")" || {
               echo "::error::Sidecar falhou (erro de execução): $sidecar"
               verify_errors=$((verify_errors + 1))
               continue
             }
-            bad_lines="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' | grep -vx 'ok' || true)"
+            # Codex (P2, PR #242-followup): rejeitar sidecar sem nenhuma asserção.
+            non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$')"
+            if [ -z "$non_empty" ]; then
+              echo "::error::Sidecar não produziu nenhuma asserção (saída vazia): $sidecar"
+              verify_errors=$((verify_errors + 1))
+              continue
+            fi
+            bad_lines="$(printf '%s\n' "$non_empty" | grep -vx 'ok' || true)"
             if [ -n "$bad_lines" ]; then
               echo "::error::Sidecar reportou assert(s) que não retornaram 'ok': $sidecar"
               printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
