@@ -495,6 +495,42 @@ POST-only gateway (32KB file, 729 lines)
 registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 ```
 
+### Sessão 11 — 18/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Wave 7 — PR #247 em CI)
+
+#### O que foi feito:
+
+```
+🔑 W29 — Migrar VITE_SUPABASE_URL/PUBLISHABLE_KEY de secrets para vars
+│   Identificadores públicos (URL + anon key) não devem ocupar slot de secret.
+│   ci.yml: 6 ocorrências (jobs typecheck, unit-tests, rls-live)
+│   e2e.yml: 4 ocorrências (jobs playwright-public e playwright)
+│   healthcheck.yml: 2 ocorrências (job healthcheck)
+│   ⚠️  Ação pendente do owner: deletar secrets.VITE_SUPABASE_URL e
+│   secrets.VITE_SUPABASE_PUBLISHABLE_KEY após confirmar vars equivalentes
+
+🔕 W09 — Deduplicar comentários de issue por SHA do commit
+│   healthcheck.yml e e2e.yml: ao falhar mais de uma vez no mesmo commit,
+│   atualiza o título com contagem (× N runs) em vez de novo comentário.
+│   Corpo dos comentários inclui "Commit: <sha>" para rastreabilidade.
+
+🛡️ W44 — OSSF Scorecard semanal (PR #247)
+│   Job scorecard adicionado a security.yml (segunda-feira 13:02 UTC)
+│   ossf/scorecard-action@fa7117db (# v2.5.0), SHA-pinado
+│   SARIF → code-scanning; gracioso em forks; timeout 10min
+
+📚 W79 — Runbook canônicos atualizado (PR #247)
+│   infra/runbooks/CANONICAL_WORKFLOWS.md: 5 workflows, fluxo W67-W78,
+│   ledger dinâmico, sidecars .verify.sql, deploy incremental
+
+🧹 W48 — Cache cleanup: 46 caches stale deletados
+│   PRs #236–#233, #238, #235, #237, #230, #231 (merged)
+│   codeql-trap para commits não-HEAD de main
+│   node-cache para hashes de lockfile antigos
+│   Restaram apenas 3 válidos: main HEAD, codeql atual, PR #246 playwright
+```
+
 ### Sessão 10 — 18/10/2026 (Claude Sonnet 4.6)
 
 **Branch:** `claude/happy-cori-3z9h7f` (PR #244 — Codex P2 + Dependabot overrides)
@@ -561,39 +597,44 @@ Branch protection (main) → clássica removida (W13); ruleset único; sha_pinni
 Actions allowlist        → selected: github_owned + verified + denoland/*, supabase/* ✅
 audit-required-checks    → W17 live API check quando GITHUB_TOKEN disponível ✅
 scripts canonicais       → W30 CANONICAL_SUPABASE_REF env var com fallback ✅
-Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
+Contract test            → 14/14 workflows, 0 falhas (W97 — 11 contratos) ✅
+OSSF Scorecard (W44)     → job scorecard em security.yml — PR #247 em CI ✅
+Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 em CI ✅
 ```
 
 ### Métricas (18/10/2026)
 
-| Indicador              | Valor                                                                                    |
-| ---------------------- | ---------------------------------------------------------------------------------------- |
-| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner + Wave 6 + PR #244 mergeados na main (18/10/2026)       |
-| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                         |
-| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                  |
-| Cobertura              | ✅ v8 configurada                                                                        |
-| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                |
-| Branch delete          | ✅ delete_branch_on_merge=true                                                           |
-| Ruleset                | ✅ 21934736 — 10 required checks — baseline em infra/github/                             |
-| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`     |
-| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                  |
-| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                            |
-| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\* (sem oven-sh/ossf/Sonar) |
-| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                  |
-| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                 |
-| E2E secrets            | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)  |
-| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido         |
-| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                     |
-| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                             |
-| contract test          | ✅ 14/14 workflows, 0 falhas (W97 — 11 contratos ativos)                                 |
-| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                |
-| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows            |
-| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69/PR #244)   |
-| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)             |
-| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)            |
-| Dependabot overrides   | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244 mergeado)     |
-| psql variable interp.  | ✅ :'v' via stdin (printf+pipe) em canonical-migrations.yml (Codex P1 — PR #244)         |
-| GITHUB_TOKEN gap       | ⚠️ workflows-report.yml PRs não disparam CI — gap documentado em "Baixos" (PR #244)      |
+| Indicador              | Valor                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner + Wave 6 + PR #244 mergeados; PR #247 (W29/W09/W44/W79) em CI (18/10/2026) |
+| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                                            |
+| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                                     |
+| Cobertura              | ✅ v8 configurada                                                                                           |
+| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                                   |
+| Branch delete          | ✅ delete_branch_on_merge=true                                                                              |
+| Ruleset                | ✅ 21934736 — 10 required checks — baseline em infra/github/                                                |
+| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`                        |
+| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                                     |
+| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                                               |
+| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\* (sem oven-sh/ossf/Sonar)                    |
+| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                                     |
+| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                                    |
+| E2E secrets            | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)                     |
+| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido                            |
+| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                                        |
+| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                                |
+| contract test          | ✅ 14/14 workflows, 0 falhas (W97 — 11 contratos ativos)                                                    |
+| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                                   |
+| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows                               |
+| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69/PR #244)                      |
+| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)                                |
+| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)                               |
+| Dependabot overrides   | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244 mergeado)                        |
+| psql variable interp.  | ✅ :'v' via stdin (printf+pipe) em canonical-migrations.yml (Codex P1 — PR #244)                            |
+| GITHUB_TOKEN gap       | ⚠️ workflows-report.yml PRs não disparam CI — gap documentado em "Baixos" (PR #244)                         |
+| vars públicas Supabase | 🔄 W29: 12 ocorrências migradas secrets→vars (PR #247 em CI) — owner deve deletar os secrets                |
+| OSSF Scorecard         | 🔄 W44: job scorecard adicionado a security.yml (PR #247 em CI)                                             |
+| cache cleanup (W48)    | ✅ 46 caches stale deletados — 3 válidos restantes                                                          |
 
 ---
 
