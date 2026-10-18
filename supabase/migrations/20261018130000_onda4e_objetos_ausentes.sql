@@ -226,3 +226,30 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_folha_summary_pk
   ON mv_folha_summary (empresa_id, competencia_month);
 
 REFRESH MATERIALIZED VIEW mv_folha_summary;
+
+-- ── Grants mínimos ──────────────────────────────────────────
+-- Telemetria global de auth e agregados de folha: só service_role (edges).
+REVOKE SELECT ON public.v_login_anomalies, public.v_login_anomalies_ip, public.v_login_anomalies_email
+  FROM PUBLIC, anon, authenticated;
+GRANT SELECT ON public.v_login_anomalies, public.v_login_anomalies_ip, public.v_login_anomalies_email
+  TO service_role;
+
+REVOKE SELECT ON public.mv_folha_summary FROM PUBLIC, anon, authenticated;
+GRANT SELECT ON public.mv_folha_summary TO service_role;
+
+-- health_checks: leitura só via edges (service_role).
+REVOKE SELECT ON public.health_checks FROM PUBLIC, anon, authenticated;
+GRANT SELECT ON public.health_checks TO service_role;
+
+-- ── Job de refresh da MV de folha ───────────────────────────
+-- refresh_dashboard_views() (20260724140000) cobre 4 MVs e nunca foi agendada;
+-- as outras 3 MVs podem não existir aqui — agenda refresh só desta, direto.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_cron')
+     AND NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'refresh-mv-folha') THEN
+    PERFORM cron.schedule(
+      'refresh-mv-folha', '0 5 * * *',
+      'REFRESH MATERIALIZED VIEW CONCURRENTLY public.mv_folha_summary');
+  END IF;
+END $$;

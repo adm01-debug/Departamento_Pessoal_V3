@@ -51,6 +51,16 @@ const COLUMNS_MAP: Record<DomainType, string> = {
   rubricas: 'codigo, descricao, tipo, natureza',
 };
 
+// Coluna de ordenação por tabela — faixas_irrf/faixas_inss não têm `codigo`.
+const ORDER_MAP: Record<DomainType, string> = {
+  cbo: 'codigo',
+  cnae: 'codigo',
+  irrf: 'id',
+  inss: 'id',
+  feriados: 'data',
+  rubricas: 'codigo',
+};
+
 serve(async (req) => {
   const url = new URL(req.url);
   const type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
@@ -102,7 +112,7 @@ serve(async (req) => {
         const { data, error } = await supabase
           .from(table)
           .select(columns)
-          .order('codigo', { ascending: true });
+          .order(ORDER_MAP[type], { ascending: true });
 
         if (error) throw error;
         return data || [];

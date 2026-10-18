@@ -114,3 +114,7 @@ BEGIN
          FOR EACH ROW EXECUTE FUNCTION public.dp_sync_empresa_from_colaborador()', t);
   END LOOP;
 END $$;
+
+-- Trigger helper não é RPC de usuário — fecha EXECUTE público (só é chamada
+-- pelo trigger, que roda como owner/SECURITY não depende de GRANT).
+REVOKE EXECUTE ON FUNCTION public.dp_sync_empresa_from_colaborador() FROM PUBLIC, anon, authenticated;
