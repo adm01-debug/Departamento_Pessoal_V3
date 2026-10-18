@@ -79,15 +79,23 @@ const resolverJornada = async (
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
   // Query limitada ao dia (sem paginação) e erro propagado — silenciar erro
   // como "sem grade" apagaria dia útil configurado e mudaria HE/falta.
-  const { data: jh, error: jhError } = await supabase
+  // Com várias jornadas ativas, preferimos a linha de dia útil (uma folga
+  // de outra grade não pode anular um dia útil configurado) e ordenamos
+  // para seleção determinística — limit(1) sem ordem escolhia aleatoriamente.
+  const { data: jhRows, error: jhError } = await supabase
     .from('jornadas_horarios')
     .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
     .eq('dia_semana', diaSemana)
     .eq('jornadas.empresa_id', empresaId)
     .eq('jornadas.ativa', true)
-    .limit(1)
-    .maybeSingle();
+    .order('id')
+    .limit(20);
   if (jhError) throw jhError;
+  const rows = (jhRows ?? []) as Array<{
+    entrada: string | null; saida: string | null;
+    intervalo_inicio: string | null; intervalo_fim: string | null; dia_util: boolean | null;
+  }>;
+  const jh = rows.find((r) => r.dia_util !== false) ?? rows[0] ?? null;
   // Folga só por configuração EXPLÍCITA do dia (dia_util=false) — grade
   // parcial sem linha de sábado não é descanso: poderia ser 5x2 ou 6x1.
   // Os HORÁRIOS da grade são default da empresa e só valem quando o
