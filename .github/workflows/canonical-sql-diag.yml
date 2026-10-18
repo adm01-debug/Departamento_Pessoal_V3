@@ -90,8 +90,10 @@ jobs:
             # W27: query acessa schema public → resultado isolado em arquivo, nunca impresso no log.
             DIAG_OUTPUT_FILE="$(mktemp /tmp/sql-diag-XXXXXX.txt)"
             export DIAG_OUTPUT_FILE
-            node scripts/diag/run-sql-diag.mjs
+            # Codex P2: registrar o caminho ANTES de chamar o Node — set -e encerraria
+            # o step em falha antes que o echo chegasse a rodar, impedindo o upload.
             echo "DIAG_OUTPUT_FILE=$DIAG_OUTPUT_FILE" >> "$GITHUB_ENV"
+            node scripts/diag/run-sql-diag.mjs
           else
             # Sem PII: limita saída a 50 linhas para reduzir ruído em logs públicos.
             node scripts/diag/run-sql-diag.mjs 2>&1 | head -n 50
@@ -99,7 +101,8 @@ jobs:
 
       - name: Fazer upload do resultado (somente queries com allow_pii=true)
         # W27: artifact com retenção mínima (1 dia) — não fica nos logs de CI.
-        if: env.DIAG_OUTPUT_FILE != ''
+        # always(): garante upload mesmo quando a query falhou (Codex P2 — falha antes do upload sem isso).
+        if: always() && env.DIAG_OUTPUT_FILE != ''
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: sql-diag-output-${{ github.run_id }}
