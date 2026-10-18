@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS public.health_checks (
 );
 COMMENT ON TABLE public.health_checks IS 'Registro opcional de execuções de healthcheck (healthcheck/metrics).';
 ALTER TABLE public.health_checks ENABLE ROW LEVEL SECURITY;
+-- audit-migration-style: allow-silent-drop recria a policy idempotente logo abaixo
 DROP POLICY IF EXISTS health_checks_read_auth ON public.health_checks;
 CREATE POLICY health_checks_read_auth ON public.health_checks
   FOR SELECT TO authenticated USING (true);
