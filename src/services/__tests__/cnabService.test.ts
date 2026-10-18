@@ -547,7 +547,9 @@ describe('cnabService.generateCNAB240', () => {
 
     // Segmentos A: valores em centavos com 15 dígitos
     expect(lines[2]).toContain('000000000123456'); // 1234.56
-    expect(lines[2]).toContain('João Silva');
+    // CNAB é ASCII posicional: diacríticos são removidos para não deslocar
+    // campos em bytes.
+    expect(lines[2]).toContain('Joao Silva');
     expect(lines[3]).toContain('000000000076544'); // 765.44
 
     // Segmento B só existe para quem tem PIX
@@ -790,7 +792,7 @@ describe('cnabService.generateCNAB400', () => {
 
     // Detalhes: tipo 1, CPF padded a 14, valor em centavos 15 dígitos
     expect(lines[1].charAt(0)).toBe('1');
-    expect(lines[1]).toContain('JOÃO SILVA');
+    expect(lines[1]).toContain('JOAO SILVA');
     expect(lines[1]).toContain('00052998224725');
     expect(lines[1]).toContain('000000000123456');
     expect(lines[2]).toContain('MARIA SOUZA');
@@ -802,11 +804,13 @@ describe('cnabService.generateCNAB400', () => {
     // Itens persistidos e remessa marcada como enviada com o arquivo
     expect(itensChain.insert).toHaveBeenCalledWith([
       expect.objectContaining({
-        seu_numero: 'abcdef0001',
+        // seu_numero gravado no mesmo casing que o arquivo (fmt 'A' → upper),
+        // senão parseRetornoCNAB (LIKE case-sensitive) nunca casa.
+        seu_numero: 'ABCDEF0001',
         nome_favorecido: 'JOÃO SILVA',
         data_pagamento: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
       }),
-      expect.objectContaining({ seu_numero: 'abcdef0002', nome_favorecido: 'MARIA SOUZA' }),
+      expect.objectContaining({ seu_numero: 'ABCDEF0002', nome_favorecido: 'MARIA SOUZA' }),
     ]);
     // remessa criada já com sequencial_arquivo vindo da RPC (não hardcoded)
     expect(remessaInsert.insert).toHaveBeenCalledWith([expect.objectContaining({ sequencial_arquivo: 7 })]);
