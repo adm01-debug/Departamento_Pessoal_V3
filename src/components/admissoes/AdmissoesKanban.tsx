@@ -77,7 +77,10 @@ function KanbanCard({ item, dragging }: { item: Admissao; dragging?: boolean }) 
 }
 
 function DraggableCard({ item }: { item: Admissao }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id });
+  // Etapas terminais não saem da coluna: concluída já criou colaborador e
+  // cancelada é definitiva — arrastar de volta deixaria o vínculo divergente.
+  const terminal = item.etapa === 'concluida' || item.etapa === 'cancelada';
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id, disabled: terminal });
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} className={cn(isDragging && 'opacity-30')}>
       <KanbanCard item={item} />
@@ -174,6 +177,7 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
         toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
       }
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
+      if (target === 'concluida') await qc.invalidateQueries({ queryKey: ['colaboradores'] });
     } catch (err) {
       setOptimistic((s) => {
         const next = { ...s };

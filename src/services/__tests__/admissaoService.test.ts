@@ -172,16 +172,84 @@ describe('admissaoService.concluir', () => {
     vi.clearAllMocks();
   });
 
-  it('calls update with etapa=concluida', async () => {
-    const updated = { id: 'adm-1', etapa: 'concluida' };
-    const { updateFn } = setupAtualizarChain(updated);
-    await admissaoService.concluir('adm-1', EMPRESA_ID);
-    expect(updateFn).toHaveBeenCalledWith({ etapa: 'concluida' });
+  const admCompleto = {
+    id: 'adm-1',
+    etapa: 'documentacao',
+    nome: 'Ana',
+    cpf: '12345678901',
+    email: 'ana@x.com',
+    cargo: 'Dev',
+    departamento: 'TI',
+    data_prevista: '2026-10-01',
+    data_nascimento: '1990-01-01',
+    nome_mae: 'Mae Ana',
+    sexo: 'feminino',
+    salario_proposto: 3000,
+    metadata: null,
+  };
+
+  // mock por TABELA: buscarPorId (admissoes select) → insert colaboradores →
+  // reconciliação por CPF (select colaboradores, só em erro) → update admissoes.
+  function setupConcluirChains(
+    adm: unknown,
+    colabResult: { data: unknown; error: unknown },
+    existente: { data: unknown; error: unknown } = { data: null, error: null }
+  ) {
+    const buscarSelect = vi
+      .fn()
+      .mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: adm, error: null }) });
+    const insertFn = vi.fn().mockReturnValue({
+      select: vi.fn().mockReturnValue({ single: vi.fn().mockResolvedValue(colabResult) }),
+    });
+    const colabSelect = vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue(existente) });
+    const maybeSingleUpdate = vi.fn().mockResolvedValue({ data: { id: 'adm-1' }, error: null });
+    const eqChain: Record<string, unknown> = {};
+    eqChain.eq = vi.fn().mockReturnValue(eqChain);
+    eqChain.select = vi.fn().mockReturnValue({ maybeSingle: maybeSingleUpdate });
+    const updateFn = vi.fn().mockReturnValue(eqChain);
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'colaboradores') return { insert: insertFn, select: colabSelect };
+      return { select: buscarSelect, update: updateFn };
+    });
+    return { insertFn, updateFn, colabSelect };
+  }
+
+  it('cria colaborador com campos mapeados e conclui', async () => {
+    const { insertFn, updateFn } = setupConcluirChains(admCompleto, { data: { id: 'colab-1' }, error: null });
+    const r = await admissaoService.concluir('adm-1', EMPRESA_ID);
+    expect(r.colaboradorId).toBe('colab-1');
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        cpf: '12345678901',
+        salario_base: 3000,
+        data_nascimento: '1990-01-01',
+        nome_mae: 'Mae Ana',
+        sexo: 'feminino',
+        empresa_id: EMPRESA_ID,
+      })
+    );
+    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ etapa: 'concluida' }));
   });
 
-  it('throws on DB error', async () => {
-    setupAtualizarChain(null, { message: 'fail' });
-    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toBeDefined();
+  it('sem dados obrigatórios conclui com pendência, sem insert', async () => {
+    const admSemCpf = { ...admCompleto, cpf: null };
+    const { insertFn, updateFn } = setupConcluirChains(admSemCpf, { data: null, error: null });
+    const r = await admissaoService.concluir('adm-1', EMPRESA_ID);
+    expect(insertFn).not.toHaveBeenCalled();
+    expect(r.colaboradorId).toBeNull();
+    expect(updateFn).toHaveBeenCalledWith(
+      expect.objectContaining({ etapa: 'concluida', metadata: expect.objectContaining({ pendente_colaborador: true }) })
+    );
+  });
+
+  it('adm inexistente lança erro', async () => {
+    setupConcluirChains(null, { data: null, error: null });
+    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toThrow('Admissão não encontrada');
+  });
+
+  it('admissão cancelada não pode ser concluída', async () => {
+    setupConcluirChains({ ...admCompleto, etapa: 'cancelada' }, { data: null, error: null });
+    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toThrow('cancelada');
   });
 });
 
