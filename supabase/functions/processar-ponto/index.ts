@@ -93,9 +93,10 @@ const resolverJornada = async (
       .order('id')
       .limit(1)
       .maybeSingle();
-    q = colab?.jornada_id
-      ? q.eq('jornada_id', colab.jornada_id)
-      : q.eq('jornadas.empresa_id', empresaId);
+    // colaboradores.jornada_id não existe no schema canônico (a migration
+    // que o adiciona foi marcada no ledger sem efeito em prod) — não filtrar
+    // por ela; a grade segue por empresa até o campo existir de fato.
+    q = q.eq('jornadas.empresa_id', empresaId);
     q = apenasUteis ? q.or('dia_util.is.null,dia_util.eq.true') : q.eq('dia_util', false);
     const { data, error } = await q;
     if (error) throw error;
@@ -464,11 +465,14 @@ serve(async (req) => {
         // Re-ancora: a lista ainda pode abrir par novo a partir do restante.
       }
 
-      const { data: colab } = await supabase
+      // Erro de consulta não pode virar colab=null silencioso — apurar com
+      // defaults num colaborador com horário próprio grava falta/HE errados.
+      const { data: colab, error: colabError } = await supabase
         .from('colaboradores')
-        .select('horario_entrada, horario_saida, intervalo_minutos, jornada_semanal, jornada_id')
+        .select('horario_entrada, horario_saida, intervalo_minutos, jornada_semanal')
         .eq('id', colabId)
         .maybeSingle();
+      if (colabError) throw colabError;
 
       const diaSemana = new Date(`${dataRef}T12:00:00`).getDay();
       const jornada = await resolverJornada(supabase, empresaId, colab, diaSemana);
