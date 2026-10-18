@@ -14,6 +14,19 @@ const actionPins = existsSync(ACTION_PINS_PATH)
   : {};
 const denoLockExists = existsSync(join(ROOT, 'deno.lock'));
 
+// W97c: carrega required checks do baseline para detectar jobs que podem ficar skipped
+// rules é um array de objetos {type, parameters?} — localiza pelo type antes de ler .parameters
+const RULESET_PATH = join(ROOT, 'infra/github/ruleset-main.json');
+const requiredChecks = new Set(
+  existsSync(RULESET_PATH)
+    ? (((JSON.parse(readFileSync(RULESET_PATH, 'utf-8'))
+          ?.rules ?? [])
+          .find(r => r.type === 'required_status_checks')
+          ?.parameters?.required_status_checks) ?? [])
+          .map(c => c.context)
+    : []
+);
+
 const files = readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.yml') || f.endsWith('.yaml'));
 
 let failures = 0;
@@ -145,14 +158,16 @@ for (const file of files) {
     }
   }
 
-  // 7. --no-lock proibido quando deno.lock existe (W97b/D6) — AVISO até W36 corrigir
+  // 7. --no-lock proibido quando deno.lock existe (W97b/D6) — W36 corrigido
   if (denoLockExists && raw.includes('--no-lock')) {
     const noLockLines = lines
       .map((l, i) => ({ line: l, n: i + 1 }))
       .filter(({ line }) => line.includes('--no-lock'));
     for (const { line, n } of noLockLines) {
-      console.warn(`  WARN: ${file}:${n}: --no-lock usado apesar de deno.lock existir (D6/W97b, pendente W36): "${line.trim()}"`);
+      fail(`${file}:${n}: --no-lock usado apesar de deno.lock existir — usar --frozen (D6/W97b/W36): "${line.trim()}"`);
     }
+  } else if (denoLockExists) {
+    pass(`sem --no-lock (deno.lock presente)`);
   }
 
   // 8. continue-on-error: exige comentário # contrato: … (W97d)
@@ -186,6 +201,45 @@ for (const file of files) {
   for (let i = 0; i < lines.length; i++) {
     if (/^\s+node-version:\s+'?\d/.test(lines[i])) {
       fail(`${file}:${i + 1}: node-version: literal, usar node-version-file: .nvmrc (W97g/D6): "${lines[i].trim()}"`);
+    }
+  }
+
+  // 12. W97c: jobs required pelo ruleset baseline não podem ter if: de nível de job
+  // que os exclua de pull_request (causaria check "never reported" no ruleset).
+  // Exceção: if: contendo 'pull_request' ou 'workflow_call' é seguro.
+  if (requiredChecks.size > 0) {
+    const jobsIdx12 = raw.search(/^jobs:\s*$/m);
+    if (jobsIdx12 !== -1) {
+      const js12 = raw.slice(jobsIdx12);
+      const heads12 = [...js12.matchAll(JOB_HEADER_RE)];
+      const violations = [];
+      for (let i = 0; i < heads12.length; i++) {
+        const start12 = heads12[i].index;
+        const end12 = i + 1 < heads12.length ? heads12[i + 1].index : js12.length;
+        const body12 = js12.slice(start12, end12);
+        if (body12.includes('if: false')) continue; // job desabilitado
+        const nameMatch12 = body12.match(/^\s{4}name:\s+(.+)$/m);
+        if (!nameMatch12) continue;
+        const jobName12 = nameMatch12[1].trim();
+        if (!requiredChecks.has(jobName12)) continue;
+        // Job é required — verifica if: de nível (4 espaços), coletando blocos multi-linha
+        const bodyLines12 = body12.split('\n');
+        let ifBlock = []; let inIf = false;
+        for (const ln of bodyLines12) {
+          if (!inIf && /^ {4}if:/.test(ln)) { inIf = true; ifBlock.push(ln); continue; }
+          if (inIf) { if (/^ {5,}/.test(ln)) { ifBlock.push(ln); } else { break; } }
+        }
+        if (ifBlock.length === 0) continue;
+        const ifText = ifBlock.join('\n');
+        // Seguro se a condição inclui pull_request ou workflow_call
+        if (ifText.includes('pull_request') || ifText.includes('workflow_call')) continue;
+        violations.push(`${heads12[i][1]} (name: "${jobName12}", if: "${ifBlock[0].trim().slice(0, 60)}")`);
+      }
+      if (violations.length > 0) {
+        fail(`${file}: jobs required com if: que pode excluí-los de PRs (W97c/D3): ${violations.join('; ')}`);
+      } else {
+        pass(`jobs required sem if: perigoso (W97c)`);
+      }
     }
   }
 

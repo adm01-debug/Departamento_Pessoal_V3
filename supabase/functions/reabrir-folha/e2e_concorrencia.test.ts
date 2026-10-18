@@ -4,7 +4,7 @@
 // Env: E2E_SUPABASE_URL, E2E_ANON_KEY, E2E_JWT, E2E_FOLHA_ID, E2E_MOTIVO
 // Opcionais: E2E_ORIGIN, E2E_CONCURRENCY (default 8)
 
-import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 
 const url = Deno.env.get("E2E_SUPABASE_URL");
 const anon = Deno.env.get("E2E_ANON_KEY");

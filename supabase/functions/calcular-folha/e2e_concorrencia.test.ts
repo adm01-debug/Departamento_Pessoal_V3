@@ -20,7 +20,7 @@
 //
 // Este arquivo é IGNORADO quando as variáveis não estão presentes — não quebra CI padrão.
 
-import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 
 const url = Deno.env.get("E2E_SUPABASE_URL");
 const anon = Deno.env.get("E2E_ANON_KEY");

@@ -42,6 +42,12 @@
       "color": "b91c1c",
       "description": "Issue aberta automaticamente por falha no smoke pós-deploy (healthcheck + Playwright público contra o deployment real)",
       "used_by": ["post-deploy-smoke.yml (W64)"]
+    },
+    {
+      "name": "security",
+      "color": "e11d48",
+      "description": "Issue de segurança aberta automaticamente por OSSF Scorecard ou CodeQL (security.yml)",
+      "used_by": ["security.yml (scorecard, codeql)"]
     }
   ],
   "_note": "D22: o label 'ci' era usado por rls-live (conflito com Dependabot). Corrigido para 'ci-main' em 14/10/2026. Codex review (P2, PR #238, 15/10/2026): o label único 'canonical' era compartilhado por canonical-probes.yml e canonical-edge-functions.yml (W76) -- um incidente de deploy podia fechar/esconder um incidente de probe ainda ativo (e vice-versa), já que ambos buscavam '--label canonical --limit 1' sem distinguir workflow. Dividido em 'canonical-probes' e 'canonical-deploy'."

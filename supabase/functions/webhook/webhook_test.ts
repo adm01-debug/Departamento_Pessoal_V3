@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { crypto } from "https://deno.land/std@0.177.0/crypto/mod.ts";
 
 const WEBHOOK_URL = "http://localhost:54321/functions/v1/webhook";

@@ -39,12 +39,22 @@ interface JornadaDia {
   entradaEsperada: number | null; // minutos
   intervaloMin: number;
   toleranciaMin: number;
+  folga?: boolean; // grade marca o dia como não trabalhado → tudo é HE 100%
 }
 
-// Resolve a jornada do colaborador para o dia:
+interface BatidaDia {
+  data: string;
+  hora: string;
+  tipo?: string | null;
+  ordem?: number | null;
+}
+
+// Resolve a jornada do colaborador para o dia (em ordem de precedência — os
+// horários próprios do colaborador vencem qualquer grade da empresa):
 // 1) campos próprios do colaborador (horario_entrada/saida/intervalo)
 // 2) jornada_semanal do colaborador (assume 6 dias úteis CLT)
-// 3) jornadas_horarios do dia da semana (jornada ativa da empresa)
+// 3) jornadas_horarios do dia da semana — inclusive dia_util=false = folga
+//    configurada (trabalhar na folga → tudo vira HE 100%)
 // 4) primeira jornada ativa da empresa
 // 5) fallback legal 8h + tolerância 10min
 const resolverJornada = async (
@@ -65,22 +75,62 @@ const resolverJornada = async (
       return { minutos, entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
     }
   }
-  const semanal = Number(colab?.jornada_semanal);
-  if (Number.isFinite(semanal) && semanal > 0) {
-    // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
-    return { minutos: Math.round(semanal * 60 / 6), entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
-  }
   // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
-  const { data: jh } = await supabase
-    .from('jornadas_horarios')
-    .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
-    .eq('dia_semana', diaSemana)
-    .eq('jornadas.empresa_id', empresaId)
-    .eq('jornadas.ativa', true)
-    .limit(1)
-    .maybeSingle();
-  if (jh?.entrada && jh?.saida && jh.dia_util !== false) {
+  // Query limitada ao dia (sem paginação) e erro propagado — silenciar erro
+  // como "sem grade" apagaria dia útil configurado e mudaria HE/falta.
+  // Jornada do colaborador quando vinculada (colaboradores.jornada_id) —
+  // folga de jornada ALHEIA não pode virar HE 100% de quem tem escala
+  // própria. Sem vínculo, usa as ativas da empresa. Dia útil prevalece
+  // sobre folga entre jornadas conflitantes; cada consulta é limit(1) com
+  // ordem determinística — a preferência é feita no banco, sem truncamento.
+  const fetchDia = async (apenasUteis: boolean) => {
+    let q = supabase
+      .from('jornadas_horarios')
+      .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
+      .eq('dia_semana', diaSemana)
+      .eq('jornadas.ativa', true)
+      .order('id')
+      .limit(1)
+      .maybeSingle();
+    // colaboradores.jornada_id: existe onde a migration fixup foi aplicada
+    // — quando o colaborador a tem, a grade é a DELE (folga de jornada
+    // alheia não se aplica); sem o campo, grade por empresa (schema canônico).
+    // jornada_id filtra a grade do colaborador, mas o escopo de tenant
+    // (empresa_id) é mantido SEMPRE — um vínculo apontando para jornada de
+    // outra empresa não pode ler/aplicar grade de outro tenant.
+    q = colab?.jornada_id
+      ? q.eq('jornada_id', colab.jornada_id).eq('jornadas.empresa_id', empresaId)
+      : q.eq('jornadas.empresa_id', empresaId);
+    q = apenasUteis ? q.or('dia_util.is.null,dia_util.eq.true') : q.eq('dia_util', false);
+    const { data, error } = await q;
+    if (error) throw error;
+    return data;
+  };
+  const jh = (await fetchDia(true)) ?? (await fetchDia(false));
+  // Folga só por configuração EXPLÍCITA do dia (dia_util=false) — grade
+  // parcial sem linha de sábado não é descanso: poderia ser 5x2 ou 6x1.
+  // Os HORÁRIOS da grade são default da empresa e só valem quando o
+  // colaborador não tem jornada própria (semanal customizada ≠44 vence).
+  if (jh && jh.dia_util === false) {
+    return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+  }
+  const semanal = Number(colab?.jornada_semanal);
+  const temSemanal = Number.isFinite(semanal) && semanal > 0;
+  // 44h é o DEFAULT do schema (002_colaboradores.sql), não uma escolha do
+  // colaborador: semanal customizada (≠44) vence os horários da grade; o
+  // default 44h cede para a grade do dia (senão turno 8h da grade virava
+  // HE 40min sobre o alvo 7h20 derivado).
+  const semanalCustom = temSemanal && semanal !== 44;
+  if (semanalCustom) {
+    return {
+      minutos: Math.round(semanal * 60 / 6),
+      entradaEsperada: entradaColab ?? (jh?.entrada ? timeToMin(jh.entrada) : null),
+      intervaloMin: intervaloColab,
+      toleranciaMin: tolerancia,
+    };
+  }
+  if (jh?.entrada && jh?.saida) {
     let span = timeToMin(jh.saida) - timeToMin(jh.entrada);
     if (span <= 0) span += 1440;
     const int = jh.intervalo_inicio && jh.intervalo_fim
@@ -90,6 +140,15 @@ const resolverJornada = async (
       minutos: Math.max(0, span - int) || 480,
       entradaEsperada: timeToMin(jh.entrada),
       intervaloMin: int,
+      toleranciaMin: tolerancia,
+    };
+  }
+  if (temSemanal) {
+    // semanal default (44h): sem grade no dia, cai para o alvo derivado.
+    return {
+      minutos: Math.round(semanal * 60 / 6),
+      entradaEsperada: entradaColab ?? (jh?.entrada ? timeToMin(jh.entrada) : null),
+      intervaloMin: intervaloColab,
       toleranciaMin: tolerancia,
     };
   }
@@ -127,6 +186,11 @@ interface ResultadoDia {
   noturnoMin: number;
   faltaMin: number;
   atrasoMin: number;
+  incompleto: boolean;
+  // Slots do espelho em ordem cronológica: cada turno é {entrada, saida} — a
+  // saída pode pertencer ao dia seguinte (virada) e uma entrada pendente
+  // aparece com saida=null (nunca ocupa o slot de saída de outro turno).
+  slots: Array<{ entrada: BatidaDia; saida: BatidaDia | null }>;
 }
 
 // Apura um dia: pares entrada/saída com suporte a virada de dia,
@@ -137,26 +201,70 @@ interface ResultadoDia {
 // dia seguinte — só fechamos pares cuja ENTRADA pertence a `dataRef`; um par
 // que atravessa meia-noite pertence inteiro ao dia da entrada.
 const apurarDia = (
-  batidas: Array<{ data: string; hora: string }>,
+  batidas: BatidaDia[],
   dataRef: string,
   jornada: JornadaDia,
   ehDsr: boolean,
   diaEmAndamento: boolean,
 ): ResultadoDia => {
   const pares: Array<[number, number]> = [];
+  const slots: Array<{ entrada: BatidaDia; saida: BatidaDia | null }> = [];
   let incompleto = false;
-  for (let i = 0; i < batidas.length; i += 2) {
+  for (let i = 0; i < batidas.length;) {
     const entrada = batidas[i];
     if (entrada.data !== dataRef) break; // batida seguinte abre jornada do próximo dia
+    // Uma 'saida' na cabeça da fila nunca abre par — saída órfã/rejeitada
+    // é quarentena, não entrada (senão 2 saídas viravam turno pagável).
+    if (entrada.tipo === 'saida') {
+      // Quarentena visível: a saída órfã aparece no espelho como slot
+      // aberto — sumir com a batida reportava o dia como sem_registro.
+      incompleto = true;
+      slots.push({ entrada, saida: null });
+      i += 1;
+      continue;
+    }
     const saida = batidas[i + 1];
-    if (!saida) {
-      incompleto = true; // entrada sem saída registrada
-      break;
+    // Uma batida marcada 'entrada' nunca fecha o turno anterior — sem isso a
+    // entrada do turno seguinte vira saída fake de uma jornada aberta (turno
+    // fictício de 10h+). O turno fica aberto e a batida abre par próprio.
+    if (!saida || saida.tipo === 'entrada') {
+      incompleto = true;
+      slots.push({ entrada, saida: null });
+      if (!saida || saida.data !== dataRef) break;
+      i += 1;
+      continue;
     }
     const e = timeToMin(entrada.hora);
     let s = timeToMin(saida.hora);
-    if (saida.data !== entrada.data || s <= e) s += 1440;
+    if (saida.data !== entrada.data) {
+      // Saída em dia seguinte soma a diferença real de dias — s>e sem o
+      // +1440 apagava 24h de turnos longos (08:00→10:00 do dia seguinte
+      // contava 2h). Turno > 24h segue flaggeado como inconsistente.
+      const dias = Math.round((Date.parse(saida.data) - Date.parse(entrada.data)) / 86400000);
+      s += Math.max(1, dias) * 1440;
+      if (s - e > 1440) {
+        // Turno > 24h é dado inconsistente (quase sempre saída esquecida de
+        // outro dia): vai a quarentena no espelho, nunca vira hora paga
+        // nem crédito de banco de horas.
+        incompleto = true;
+        slots.push({ entrada, saida });
+        i += 2;
+        continue;
+      }
+    } else if (s <= e) {
+      // Saída no MESMO dia com hora <= entrada = dado inconsistente
+      // (batida fora de ordem/ajuste). Não inventa turno de 20h+: a
+      // entrada fica pendente para revisão E a saída rejeitada é
+      // consumida — deixá-la na cabeça da fila a transformava em entrada
+      // do próximo par (turno falso pagável).
+      incompleto = true;
+      slots.push({ entrada, saida: null });
+      i += 2;
+      continue;
+    }
     pares.push([e, s]);
+    slots.push({ entrada, saida });
+    i += 2;
   }
 
   const totalMin = pares.reduce((acc, [e, s]) => acc + (s - e), 0);
@@ -169,8 +277,8 @@ const apurarDia = (
   }
 
   if (ehDsr) {
-    // Domingo/feriado trabalhado: tudo é HE 100% (DSR); sem falta/atraso.
-    return { totalMin, extra50Min: 0, extra100Min: totalMin, noturnoMin, faltaMin: 0, atrasoMin };
+    // Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso.
+    return { totalMin, extra50Min: 0, extra100Min: totalMin, noturnoMin, faltaMin: 0, atrasoMin: 0, incompleto, slots };
   }
 
   const brutoExtra = Math.max(0, totalMin - jornada.minutos);
@@ -178,7 +286,7 @@ const apurarDia = (
   // Jornada aberta no dia corrente ainda não configura falta — a saída pode
   // estar pendente. Dias passados com batida ímpar seguem com falta medida.
   const faltaMin = incompleto && diaEmAndamento ? 0 : Math.max(0, jornada.minutos - totalMin);
-  return { totalMin, extra50Min, extra100Min: 0, noturnoMin, faltaMin, atrasoMin };
+  return { totalMin, extra50Min, extra100Min: 0, noturnoMin, faltaMin, atrasoMin, incompleto, slots };
 };
 
 serve(async (req) => {
@@ -251,7 +359,14 @@ serve(async (req) => {
         .eq('id', colaboradorId)
         .eq('empresa_id', empresaId)
         .maybeSingle();
-      const authz = await requireSelfOrRh(supabase, userId, dono?.user_id, empresaId, req);
+      // Colaborador de OUTRA empresa (ou inexistente) não pode ser processado
+      // pelo RH da empresa informada — sem isso o escopo de tenant era burlado.
+      if (!dono) {
+        return new Response(JSON.stringify({ error: 'Colaborador não encontrado nesta empresa', code: 'NOT_FOUND' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404,
+        });
+      }
+      const authz = await requireSelfOrRh(supabase, userId, dono.user_id, empresaId, req);
       if (authz.denied) return authz.denied;
     }
 
@@ -288,7 +403,10 @@ serve(async (req) => {
       .or(`empresa_id.eq.${empresaId},empresa_id.is.null`);
     const feriados = new Set((feriadosRows ?? []).map((f: any) => f.data));
 
-    const hojeISO = new Date().toISOString().split('T')[0];
+    // 'Hoje' no calendário das batidas (America/Sao_Paulo) — entre 21h e
+    // meia-noite em BRT o dia UTC já virou e uma jornada aberta receberia
+    // falta indevida se comparássemos com a data UTC.
+    const hojeISO = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
     const addDia = (iso: string, dias: number) => {
       const d = new Date(`${iso}T00:00:00Z`);
       d.setUTCDate(d.getUTCDate() + dias);
@@ -302,15 +420,32 @@ serve(async (req) => {
       // estar no dia seguinte.
       const dataAnt = addDia(dataRef, -1);
       const dataSeg = addDia(dataRef, 1);
-      const [{ data: prevCnt }, { data: batidasRaw, error: bErr }] = await Promise.all([
-        supabase.from('batidas_ponto').select('id').eq('colaborador_id', colabId).eq('data', dataAnt),
+      const [{ data: prevDia }, { data: batidasRaw, error: bErr }] = await Promise.all([
+        // Ordem cronológica REAL = hora da batida (ajustes retroativos 671
+        // recebem `ordem` sequencial de inserção, não a posição no dia).
+        supabase.from('batidas_ponto').select('data,hora,tipo,ordem')
+          .eq('colaborador_id', colabId).eq('data', dataAnt)
+          .order('hora', { ascending: true })
+          .order('ordem', { ascending: true }),
         supabase.from('batidas_ponto').select('*')
           .eq('colaborador_id', colabId)
           .in('data', [dataRef, dataSeg])
           .order('data', { ascending: true })
+          .order('hora', { ascending: true })
           .order('ordem', { ascending: true }),
       ]);
       if (bErr) throw bErr;
+
+      // Replay do pareamento de ontem com a MESMA regra de apurarDia (par
+      // adjacente; entrada seguinte a entrada deixa a anterior pendente):
+      // o que decide é se a ÚLTIMA batida de ontem ficou como entrada aberta —
+      // contar entrada/saída separadamente não reproduz a regra.
+      let abertaOntem = false;
+      for (let i = 0; i < (prevDia ?? []).length;) {
+        const nx = prevDia![i + 1];
+        if (!nx || nx.tipo === 'entrada') { abertaOntem = true; i += 1; continue; }
+        abertaOntem = false; i += 2;
+      }
 
       let batidas = batidasRaw ?? [];
       const batidasDoDia = batidas.filter((b: any) => b.data === dataRef);
@@ -323,22 +458,33 @@ serve(async (req) => {
           horas_extras: '00:00',
         };
       }
-      // Descarta a primeira batida do dia quando ela é a saída do par aberto
-      // ontem (contagem ímpar no dia anterior).
-      if ((prevCnt?.length ?? 0) % 2 === 1 && batidas[0]?.data === dataRef) {
+      // Descarta a primeira batida do dia quando ela fecha o turno aberto de
+      // ontem (mesma decisão que a apuração de ontem toma). Batida marcada
+      // 'entrada' nunca é saída de ontem — abre par novo aqui.
+      if (
+        abertaOntem &&
+        batidas[0]?.data === dataRef &&
+        batidas[0]?.tipo !== 'entrada'
+      ) {
         batidas = batidas.slice(1);
         // Re-ancora: a lista ainda pode abrir par novo a partir do restante.
       }
 
-      const { data: colab } = await supabase
+      // Erro de consulta não pode virar colab=null silencioso — apurar com
+      // defaults num colaborador com horário próprio grava falta/HE errados.
+      // select('*'): traz jornada_id onde a coluna existe (migration fixup)
+      // e não quebra no canônico onde ela ainda falta.
+      const { data: colab, error: colabError } = await supabase
         .from('colaboradores')
-        .select('horario_entrada, horario_saida, intervalo_minutos, jornada_semanal')
+        .select('*')
         .eq('id', colabId)
         .maybeSingle();
+      if (colabError) throw colabError;
 
       const diaSemana = new Date(`${dataRef}T12:00:00`).getDay();
-      const ehDsr = diaSemana === 0 || feriados.has(dataRef);
       const jornada = await resolverJornada(supabase, empresaId, colab, diaSemana);
+      // DSR = domingo, feriado ou folga marcada na grade (dia_util=false).
+      const ehDsr = diaSemana === 0 || feriados.has(dataRef) || jornada.folga === true;
       const r = apurarDia(batidas, dataRef, jornada, ehDsr, dataRef === hojeISO);
 
       const extraTotalMin = r.extra50Min + r.extra100Min;
@@ -351,17 +497,23 @@ serve(async (req) => {
       const pago50 = bancoAtivo ? 0 : r.extra50Min;
       const pago100 = bancoAtivo ? 0 : r.extra100Min;
 
-      const visDia = batidas.filter((b: any) => b.data === dataRef);
+      // Espelho: cada slot é um turno {entrada, saida|null} em ORDEM
+      // CRONOLÓGICA — a saída de um turno que cruza meia-noite aparece no dia
+      // da entrada, e entrada pendente mostra saida=null (os painéis de
+      // inconsistência detectam turno aberto exatamente por esse null; não
+      // reordenar). O registro só tem 3 pares de colunas: no overflow raro,
+      // os turnos mais antigos ficam visíveis primeiro.
+      const s = r.slots.slice(0, 3);
       const registro = {
         colaborador_id: colabId,
         empresa_id: empresaId,
         data: dataRef,
-        entrada_1: visDia[0]?.hora || null,
-        saida_1: visDia[1]?.hora || null,
-        entrada_2: visDia[2]?.hora || null,
-        saida_2: visDia[3]?.hora || null,
-        entrada_3: visDia[4]?.hora || null,
-        saida_3: visDia[5]?.hora || null,
+        entrada_1: s[0]?.entrada?.hora || null,
+        saida_1: s[0]?.saida?.hora || null,
+        entrada_2: s[1]?.entrada?.hora || null,
+        saida_2: s[1]?.saida?.hora || null,
+        entrada_3: s[2]?.entrada?.hora || null,
+        saida_3: s[2]?.saida?.hora || null,
         horas_trabalhadas: fmt(r.totalMin),
         horas_extras: fmt(extraTotalMin),
         horas_extras_50: fmt(pago50),
@@ -370,7 +522,14 @@ serve(async (req) => {
         he_banco_horas: fmt(heBancoMin),
         horas_falta: fmt(r.faltaMin),
         atraso_minutos: r.atrasoMin,
-        status: visDia.length >= 4 ? 'completo' : 'incompleto',
+        // Sem nenhum turno do dia (ex.: a única batida fechou o turno de
+        // ontem) o registro não é 'completo' — é ausência de jornada própria.
+        // Overflow de turnos (>3 slots) também marca 'incompleto': as colunas
+        // não representam todas as batidas — sinaliza revisão manual em vez de
+        // omitir silenciosamente um turno fechado (horas seguem contadas).
+        status: s.length === 0
+          ? 'sem_registro'
+          : (r.incompleto || r.slots.length > 3 ? 'incompleto' : 'completo'),
       };
 
       const { data: regRow, error: uErr } = await supabase
@@ -472,7 +631,7 @@ serve(async (req) => {
           integrity_hash: await integrityHash({ empresaId, dataInicio, dataFim, dias: diasProcessados.length }),
         };
       } else {
-        const dataRef = dataRegistro || new Date().toISOString().split('T')[0];
+        const dataRef = dataRegistro || hojeISO;
         const r = await processarColaboradorDia(colaboradorId, dataRef);
         responseBody = {
           success: true,
