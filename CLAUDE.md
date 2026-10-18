@@ -610,6 +610,50 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   lockfile-parity: paridade npm OK ✅
 ```
 
+### Sessão 16 — 18/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (Validação exaustiva com 5 agentes + correções)
+
+#### O que foi feito:
+
+```
+⚙️ W29 — Deletados secrets públicos migrados para vars (execução direta via MCP)
+│   secrets.VITE_SUPABASE_URL + secrets.VITE_SUPABASE_PUBLISHABLE_KEY — ambos 204 OK
+│   Eram identificadores públicos já migrados para vars.VITE_SUPABASE_* no PR #247
+
+✅ W25 — Confirmado já resolvido: SUPABASE_DB_URL está no environment Production
+│   Criado em 15/10/2026 (verificado via GitHub MCP — env.secrets listing)
+│   Não estava nos secrets de repositório; gap do CLAUDE.md estava desatualizado
+
+🔍 VALIDAÇÃO EXAUSTIVA — 5 agentes especializados em paralelo
+│   Agente 1: Bridge (TABLE_DENYLIST=21✅, RPC_ALLOWLIST=97✅, JWT✅, 5 ataques bloqueados✅)
+│   Agente 2: CI/CD (14/14 workflows, 12 contratos, SHA-pins 100%)
+│   Agente 3: DB ao vivo (RLS 376/376✅, 263/265 SECURITY DEFINER clean✅)
+│   Agente 4: TypeScript (tsc 0 erros✅, vitest 482/482✅)
+│   Agente 5: Supply chain (0 vulns produção✅, 12 SHA-pins✅)
+
+🔒 CORREÇÃO — Bridge: CSRF code smell (L1)
+│   index.ts: if (!csrf.ok && csrf.response) → if (!csrf.ok) return csrf.response ?? jsonError(403,...)
+│   Elimina fail-open teórico se verifyCsrf retornar {ok:false, response:undefined}
+
+🔒 CORREÇÃO — Bridge: rate limiting fail-open quando SERVICE_KEY ausente (M2)
+│   index.ts: writes sem SERVICE_ROLE_KEY agora retornam 503 SERVICE_UNAVAILABLE
+│   Rate limiting e isolamento de tenant são pré-requisitos para operações de escrita
+
+🛡️ CORREÇÃO — ALTER DEFAULT PRIVILEGES com FOR ROLE (M1)
+│   Migration 20261021010000_default_privs_for_role.sql:
+│   ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC
+│   ALTER DEFAULT PRIVILEGES FOR ROLE supabase_admin IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC
+│   Cobre ambos os roles (migração original só cobria o executor, normalmente postgres)
+│   Sidecar .verify.sql: verifica pg_default_acl por role para ausência de =X/%
+
+📋 RECONCILIAÇÃO — Ledger de migrações (gap crítico do Agente 3)
+│   Migration 20261021000000_ledger_reconcile_secdef_defaults.sql:
+│   INSERT idempotente para 20261015170000 e 20261018160000 no supabase_migrations.schema_migrations
+│   Ambas aplicadas ao vivo mas ausentes do ledger — canonical-migrations.yml tentaria re-aplicar
+│   Sidecar .verify.sql: confirma que ambas as versões estão no ledger após execução
+```
+
 ### Sessão 15 — 18/10/2026 (Claude Sonnet 4.6)
 
 **Branch:** `claude/happy-cori-3z9h7f` (PR #251 — merge squash; sessão de validação exaustiva)
@@ -755,7 +799,9 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | deno --frozen (W36)    | ✅ --no-lock→--frozen + cache deno; deno.lock denonext hashes fix (PR #251 mergeado SHA febe78de)                         |
 | zizmor scanner (W86)   | ✅ zizmorcore/zizmor-action@cc914d7f em workflow-lint.yml (PR #251 mergeado)                                              |
 | W97c required if: gate | ✅ check 12 em workflows-contract.test.mjs (PR #251 mergeado)                                                             |
-| ALTER DEFAULT PRIVS    | ✅ migration 20261018160000 mergeada (GAP MÉDIO fechado — sessão 15, PR #251)                                             |
+| ALTER DEFAULT PRIVS    | ✅ 20261018160000 + 20261021010000 (FOR ROLE postgres+supabase_admin — sessão 16)                                         |
+| Ledger reconciliação   | ✅ 20261021000000 insere 20261015170000+20261018160000 no ledger (sessão 16)                                              |
+| Bridge CSRF+rate-limit | ✅ CSRF fail-closed fix + rate limit 503 se SERVICE_KEY ausente (sessão 16)                                               |
 
 ---
 
@@ -794,21 +840,28 @@ _Nenhum crítico bloqueante no momento._
 
 ### Médios
 
-| Gap                     | Impacto                                     | Solução                                                                            |
-| ----------------------- | ------------------------------------------- | ---------------------------------------------------------------------------------- |
-| SUPABASE_DB_URL no repo | Workflows de qualquer branch leem o segredo | Owner: copiar para o environment Production e apagar o secret do repositório (W25) |
+| Gap                                       | Impacto                                                                                    | Solução                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Bridge rate limiting fail-open            | Se `SUPABASE_SERVICE_ROLE_KEY` ausente, rate limiting silenciosamente desabilitado         | ✅ Corrigido na sessão 16 — writes retornam 503 sem SERVICE_KEY           |
+| `ALTER DEFAULT PRIVILEGES` sem `FOR ROLE` | Migration 20261018160000 cobria apenas o role `postgres`; `supabase_admin` não era coberto | ✅ Corrigido na sessão 16 — migration 20261021010000 cobre ambos os roles |
 
 ### Baixos
 
-| Gap                                    | Impacto                                                      | Solução                                                                                                                                                                                                                        |
-| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `--no-lock` no `deno test` do ci.yml   | Bypassa deno.lock                                            | Resolver após W36 corrigir lock                                                                                                                                                                                                |
-| `noUnusedLocals:true` pode alertar     | Warnings no build                                            | Aceitar ou limpar                                                                                                                                                                                                              |
-| CodeQL unused-local (99 restantes)     | Ruído no painel GHAS                                         | Fechar em batch via W82 contínuo                                                                                                                                                                                               |
-| `extract-zip ≤2.0.1` (Alerts #15/#16)  | Path traversal teórico em devDep (`@lhci/cli`)               | Sem fix upstream — risco zero em CI read-only; aguardar patch do upstream                                                                                                                                                      |
-| `sprintf-js ≤1.1.3` (Alert #18)        | Prototype pollution em devDep (`jasmine-core`)               | Sem fix upstream — baixo risco; aguardar atualização do `@testing-library`                                                                                                                                                     |
-| `uuid@8.3.2` em `@lhci/cli` (Alert #1) | Buffer bounds check GHSA-w5hq-g745-h8pq (CVSS 7.5) em devDep | Override `"@lhci/cli":{"uuid":"14.0.3"}` existe mas npm v10 não força majors incompatíveis — `@lhci/cli` requer `^8.3.1`; uuid@14 tem API quebrada. Risco zero (CI read-only, buf não controlado); aguardar @lhci/cli upstream |
-| `workflows-report.yml` + GITHUB_TOKEN  | PRs criadas pelo bot não disparam workflows `pull_request`   | Limitação documentada do GitHub: `GITHUB_TOKEN` não dispara CI em PRs automáticas. Workaround: GitHub App ou PAT como secret. Ação manual do owner quando quiser CI automático no relatório semanal                            |
+| Gap                                                        | Impacto                                                                                                                                    | Solução                                                                                                                                                                                                                       |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--no-lock` no `deno test` do ci.yml                       | Bypassa deno.lock                                                                                                                          | Resolver após W36 corrigir lock                                                                                                                                                                                               |
+| `noUnusedLocals:true` pode alertar                         | Warnings no build                                                                                                                          | Aceitar ou limpar                                                                                                                                                                                                             |
+| CodeQL unused-local (99 restantes)                         | Ruído no painel GHAS                                                                                                                       | Fechar em batch via W82 contínuo                                                                                                                                                                                              |
+| `extract-zip ≤2.0.1` (Alerts #15/#16)                      | Path traversal teórico em devDep (`@lhci/cli`)                                                                                             | Sem fix upstream — risco zero em CI read-only; aguardar patch do upstream                                                                                                                                                     |
+| `sprintf-js ≤1.1.3` (Alert #18)                            | Prototype pollution em devDep (`jasmine-core`)                                                                                             | Sem fix upstream — baixo risco; aguardar atualização do `@testing-library`                                                                                                                                                    |
+| `uuid@8.3.2` em `@lhci/cli` (Alert #1)                     | Buffer bounds check GHSA-w5hq-g745-h8pq (CVSS 7.5) em devDep                                                                               | Override `"@lhci/cli":{"uuid":"14.0.3"}` existe mas npm v10 não força majors incompatíveis — `@lhci/cli` requer `^8.3.1`; uuid@14 tem API quebrada. Override inválido; risco zero (CI read-only); aguardar @lhci/cli upstream |
+| `basic-ftp` (Alert GHSA-c475-qrg2-pj4r)                    | CPU DoS via regex CRLF (high, CVSS 7.5) em devDep transitivo `@lhci/cli → lighthouse → puppeteer-core → proxy-agent → get-uri → basic-ftp` | Sem patch upstream — risco zero (CI read-only, Lighthouse não exposto); aguardar @lhci/cli                                                                                                                                    |
+| `workflows-report.yml` + GITHUB_TOKEN                      | PRs criadas pelo bot não disparam workflows `pull_request`                                                                                 | Limitação documentada do GitHub: `GITHUB_TOKEN` não dispara CI em PRs automáticas. Workaround: GitHub App ou PAT como secret. Ação manual do owner quando quiser CI automático no relatório semanal                           |
+| Bridge CSRF code smell                                     | `if (!csrf.ok && csrf.response)` — fail-open teórico se verifyCsrf retornar response undefined                                             | ✅ Corrigido na sessão 16 — `if (!csrf.ok) return csrf.response ?? jsonError(403,...)`                                                                                                                                        |
+| `admissao_registrar_documento` fora da RPC_ALLOWLIST       | Tem GRANT para anon/authenticated mas não está na allowlist — acessível via PostgREST sem bridge                                           | Baixo risco — função usa token interno como arg; avaliar se deve entrar na allowlist                                                                                                                                          |
+| Policies `role: public` em tabelas sensíveis               | `empresas`, `user_empresas`, `auditoria_logs`, `configuracoes_esocial` têm policies com role público                                       | Auditar corpo USING() para confirmar `auth.uid() IS NOT NULL`; adicionar guard se ausente                                                                                                                                     |
+| Migrações 20261015170000/20261018160000 ausentes do ledger | `canonical-migrations.yml` tentaria re-aplicar — idempotente mas inconsistente                                                             | ✅ Corrigido na sessão 16 — migration 20261021000000 insere ambas no ledger                                                                                                                                                   |
+| Docker images: tags mutáveis                               | `node:22-alpine` e `nginx:alpine` sem SHA digest — supply chain gap baixo                                                                  | Adicionar digest SHA nas imagens base do Dockerfile                                                                                                                                                                           |
 
 ---
 
@@ -816,7 +869,8 @@ _Nenhum crítico bloqueante no momento._
 
 ### Imediatos (ação manual obrigatória)
 
-1. **W25:** mover `SUPABASE_DB_URL` para o environment Production e apagar o secret do repositório (o valor não é legível via API).
+1. **W25 ✅ RESOLVIDO:** `SUPABASE_DB_URL` já está no environment Production desde 15/10/2026 (verificado via API na sessão 16). Nenhuma ação pendente.
+2. **Policies `role: public`:** auditar o corpo USING() das policies de `empresas`, `user_empresas`, `auditoria_logs` e `configuracoes_esocial` para confirmar que exigem `auth.uid() IS NOT NULL` — ação manual no painel Supabase ou via migration.
 
 ### Curto Prazo
 
