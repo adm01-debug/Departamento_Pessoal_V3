@@ -9,7 +9,10 @@ import { getClientIp } from '../_shared/clientIp.ts';
 
 const TZ = "America/Sao_Paulo";
 const CRLF = "\r\n";
-const LOTE_BATIDAS = 5000;
+// Paginação defensiva: 1000 ≤ max-rows padrão do PostgREST. Um lote maior que
+// o limite da instância retornaria página curta e o loop `length < LOTE`
+// terminaria cedo, omitindo marcações do AEJ.
+const LOTE_BATIDAS = 1000;
 
 function pad(v: string | number, len: number, char = "0", left = true): string {
   const s = String(v ?? "");
@@ -80,18 +83,6 @@ Deno.serve(async (req) => {
     const rl = await checkRateLimit(rlAdmin, { key: `gerar-aej:${userId}`, limit: 5, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    // AEJ contém PIS/jornada de TODOS os colaboradores da empresa — qualquer
-    // membro do tenant podia baixar (mass PII export sem gate nem trilha).
-    // Restringe a admin/rh e registra o acesso na trilha LGPD.
-    const { data: roleRows } = await rlAdmin
-      .from("user_roles").select("role").eq("user_id", userId);
-    const roles = (roleRows ?? []).map((r: { role: string }) => r.role);
-    if (!roles.includes("admin") && !roles.includes("rh")) {
-      return new Response(JSON.stringify({ error: "forbidden — AEJ restrito a admin/rh" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
     const body = (_pb ?? {}) as Record<string, unknown>;
@@ -105,20 +96,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Autorização
+    // AEJ contém PIS/jornada de TODOS os colaboradores da empresa — requer
+    // papel RH/admin NAQUELA empresa (pode_gerir_rh_para, a mesma regra das
+    // outras edges). O gate anterior aceitava 'rh' global de user_roles +
+    // vínculo simples — um rh de qualquer contexto baixava o AEJ da empresa.
     const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data: role } = await admin.rpc("has_role", { _user_id: userId, _role: "admin" });
-    let authorized = role === true;
-    if (!authorized) {
-      const { data: ue } = await admin
-        .from("user_empresas").select("empresa_id").eq("user_id", userId).eq("empresa_id", empresa_id).maybeSingle();
-      authorized = !!ue;
-    }
-    if (!authorized) {
-      return new Response(JSON.stringify({ error: "forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const { requireRh } = await import('../_shared/authz.ts');
+    const authz = await requireRh(admin, userId, empresa_id, req);
+    if (authz.denied) return authz.denied;
 
     // Trilha LGPD — export massivo de PIS/jornada deve ficar registrado.
     // Best-effort: falha no log não bloqueia a geração.
@@ -199,8 +184,12 @@ Deno.serve(async (req) => {
           .in("colaborador_id", colabIds)
           .gte("data", periodo_inicio)
           .lte("data", periodo_fim)
+          // Paginação por OFFSET exige ORDER BY total — sem o desempate por
+          // id, empates em (data,hora) na fronteira de página podiam omitir
+          // ou duplicar marcações no AEJ.
           .order("data", { ascending: true })
           .order("hora", { ascending: true })
+          .order("id", { ascending: true })
           .range(offset, offset + LOTE_BATIDAS - 1);
         if (error) throw error;
         if (!batch || batch.length === 0) break;
@@ -232,6 +221,7 @@ Deno.serve(async (req) => {
           .gte("data", periodo_inicio)
           .lte("data", periodo_fim)
           .order("data", { ascending: true })
+          .order("id", { ascending: true }) // desempate p/ OFFSET determinístico
           .range(offReg, offReg + LOTE_BATIDAS - 1);
         if (rErr) throw rErr;
         if (!regs || regs.length === 0) break;

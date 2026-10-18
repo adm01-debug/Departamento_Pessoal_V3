@@ -135,7 +135,9 @@ export const edgeFunctionsService = {
     // retries dentro desta mesma tentativa.
     const idemKey = `processar-ponto:${params.empresaId}:${params.dataInicio}:${params.dataFim}:${crypto.randomUUID()}`;
     return retryWithIdempotency({
-      fn: () => handleInvoke('processar-ponto', { body: params }),
+      // A chave viaja no body — sem ela o beginIdempotency do edge não enxerga
+      // os retries desta tentativa (mesmo padrão de calcularFolha).
+      fn: () => handleInvoke('processar-ponto', { body: { ...params, idempotency_key: idemKey } }),
       idempotencyKey: idemKey,
     });
   },
