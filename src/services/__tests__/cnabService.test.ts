@@ -344,7 +344,7 @@ describe('cnabService.parseRetornoCNAB', () => {
     expect(result.falhasTecnicas).toBe(0);
     expect(result.semVinculoFolha).toBe(1);
     // cnab_itens ainda foi marcado pago — só falta o vínculo com a folha
-    expect(updChain.update).toHaveBeenCalled();
+    expect(updChain.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'pago' }));
   });
 
   it('CNAB400: casa item novo (10 chars) por posição 63-72', async () => {
