@@ -7,6 +7,7 @@ on:
     branches: [main]
   schedule:
     - cron: '47 6 * * 4'
+    - cron: '2 13 * * 1'
 permissions:
   contents: read
 concurrency:
@@ -45,3 +46,29 @@ jobs:
         uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
         with:
           category: '/language:javascript-typescript'
+
+  scorecard:
+    name: OSSF Scorecard
+    # W44: skip em PRs de forks (sem permissão de escrita para code-scanning)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      security-events: write
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Run OSSF Scorecard
+        uses: ossf/scorecard-action@fa7117db83c52d787ae5a89f350999701505d78e # v2.5.0
+        with:
+          results_file: scorecard-results.sarif
+          results_format: sarif
+          publish_results: true
+      - name: Upload SARIF para code-scanning
+        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
+        with:
+          sarif_file: scorecard-results.sarif
+          category: ossf-scorecard

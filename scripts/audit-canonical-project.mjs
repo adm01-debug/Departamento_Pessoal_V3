@@ -96,7 +96,7 @@ expect(
     && authenticatedJob.includes("github.event_name == 'workflow_dispatch'")
     && !authenticatedJob.includes("github.event_name == 'pull_request'")
     && authenticatedJob.includes('E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}')
-    && authenticatedJob.includes('VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}'),
+    && authenticatedJob.includes('VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}'),
   'E2E autenticado recebe secrets somente no SHA integrado em main (push) ou em dispatch controlado — nunca em pull_request'
 );
 expect(

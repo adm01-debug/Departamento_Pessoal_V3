@@ -13,10 +13,17 @@
  */
 
 import { spawn } from 'node:child_process';
+import { writeFileSync, appendFileSync } from 'node:fs';
 
 const DB_URL = process.env.SUPABASE_DB_URL;
 const QUERY = (process.env.DIAG_QUERY ?? '').trim();
 const MAX_ROWS = Number(process.env.DIAG_MAX_ROWS ?? '300');
+// W27: ALLOW_PII=1 obrigatório para queries que acessam tabelas do schema public.
+// Sem essa flag, o runner bloqueia para evitar que dados pessoais apareçam nos logs de CI.
+const ALLOW_PII = process.env.ALLOW_PII === '1';
+// Output file path: quando definido, resultado vai para arquivo em vez de stdout
+// (canonical-sql-diag.yml seta isso e faz upload do artifact com retenção curta).
+const OUTPUT_FILE = process.env.DIAG_OUTPUT_FILE ?? '';
 
 if (!DB_URL) {
   console.error('::error::SUPABASE_DB_URL is required');
@@ -91,6 +98,55 @@ function stripSqlComments(input) {
 const stripped = QUERY.replace(/;+\s*$/, '');
 const codeOnly = stripSqlComments(stripped);
 
+// W27: identifica se a query acessa tabelas fora dos schemas de sistema seguros.
+// Schemas seguros: nunca contêm dados pessoais dos tenants (colaboradores, folha, etc).
+// Qualquer referência sem schema explícito é tratada como public (conservador) porque
+// o search_path padrão do Supabase aponta para public antes de pg_catalog.
+// W27: auth e vault removidos da lista de schemas seguros (Codex P1):
+// auth.users contém e-mails reais; vault.decrypted_secrets contém chaves de criptografia.
+const SAFE_SCHEMA_RE =
+  /^(pg_catalog|information_schema|cron|supabase_migrations|storage|extensions|pg_toast|pg_temp|pg_stat|pg_statio)$/i;
+
+function needsPiiFlag(sql) {
+  const qualifiedSchemas = [...sql.matchAll(/\b([a-z_][a-z0-9_]*)\s*\.\s*[a-z_][a-z0-9_]*/gi)].map(
+    (m) => m[1].toLowerCase()
+  );
+  // Se não há nenhuma referência schema.tabela E existem cláusulas FROM/JOIN/INTO/UPDATE,
+  // assume public (busca tables sem qualificação). Queries sem FROM algum (ex: SELECT func())
+  // são seguras — não lêem tabelas, portanto não têm PII.
+  const hasDmlKeyword = /\b(?:from|join|update|into)\b/i.test(sql);
+  if (qualifiedSchemas.length === 0 && hasDmlKeyword) return true;
+  if (qualifiedSchemas.length === 0 && !hasDmlKeyword) return false;
+  // Se alguma referência qualificada aponta para schema não-seguro (inclusive public explícito)
+  if (qualifiedSchemas.some((s) => !SAFE_SCHEMA_RE.test(s))) return true;
+  // Codex P1: referências de tabela sem qualificação de schema (ex: FROM colaboradores)
+  // ainda indicam PII mesmo quando TODAS as refs qualificadas são seguras, pois o
+  // search_path padrão do Supabase resolve para public.
+  // Detecta: FROM x, JOIN x, UPDATE x, INSERT INTO x (exclui funções com parênteses).
+  // Codex P1: (?!\w) âncora o fim do identificador — sem isso o motor JS faz backtrack
+  // e captura 'pg_catalo' de 'pg_catalog.pg_class' (lookahead negativo (?!\s*[.]) falha
+  // no match completo, o motor recua 1 char e tenta de novo).
+  // (?!\w) força o match completo: 'pg_catalo' falha porque o próximo char é 'g' (word char).
+  // (?!\s*\.) descarta schema.tabela qualificado: 'pg_catalog.pg_class' — próximo é '.' → não casa.
+  const unqualifiedTableRE = /\b(?:from|join|update|into)\s+([a-z_][a-z0-9_]*)(?!\w)(?!\s*\.)/gi;
+  const unqualifiedRefs = [...sql.matchAll(unqualifiedTableRE)].map((m) => m[1].toLowerCase());
+  if (unqualifiedRefs.length > 0) {
+    // Identifiers que NÃO são referências a tabelas reais (palavras reservadas de SQL/Postgres)
+    const SQL_NON_TABLES = new Set(['lateral', 'rows', 'only', 'unnest', 'generate_series',
+      'values', 'select', 'with', 'recursive']);
+    return unqualifiedRefs.some((r) => !SQL_NON_TABLES.has(r));
+  }
+  return false;
+}
+
+if (needsPiiFlag(codeOnly) && !ALLOW_PII) {
+  console.error(
+    '::error::W27 — esta consulta pode acessar tabelas com dados pessoais (schema public). ' +
+      'Execute novamente com allow_pii=true; o resultado será enviado como artifact (1 dia) e não aparecerá nos logs.'
+  );
+  process.exit(1);
+}
+
 // Single statement only: no semicolons except an optional trailing one.
 if (codeOnly.includes(';')) {
   console.error('::error::somente UMA instrução é permitida (sem ponto-e-vírgula interno)');
@@ -115,8 +171,14 @@ if (FORBIDDEN_RE.test(codeOnly)) {
 // cron.schedule writes survive ROLLBACK once dequeued by pg_cron workers;
 // pg_terminate/cancel affect live connections; dblink/pg_read_file/lo_*
 // reach outside the catalog. Reading cron.job / net queues stays allowed.
+// Codex P1: query_to_xml / query_to_xml_and_xmlroot aceitam uma query SQL como
+// string e a executam — literal stripping remove o argumento e a função aparece
+// sem FROM no topo, iludindo needsPiiFlag. Bloqueadas aqui independentemente de
+// ALLOW_PII, pois não há uso legítimo dessas funções em um script de diagnóstico.
+// table_to_xml/schema_to_xml/database_to_xml exportam dados em bulk (sem filtro
+// de PII possível); cursor_to_xml pode ser alimentada com cursor de query arbitrária.
 const FORBIDDEN_CALL_RE =
-  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_stat_file|pg_ls_dir|dblink_exec|dblink_send_query|lo_import|lo_export|lo_unlink)\b/i;
+  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_stat_file|pg_ls_dir|dblink_exec|dblink_send_query|lo_import|lo_export|lo_unlink|query_to_xml|query_to_xml_and_xmlroot|cursor_to_xml|table_to_xml|schema_to_xml|database_to_xml)\b/i;
 if (FORBIDDEN_CALL_RE.test(codeOnly)) {
   const fn = codeOnly.match(FORBIDDEN_CALL_RE)?.[0];
   console.error(`::error::chamada não permitida em diagnóstico read-only: "${fn}"`);
@@ -126,7 +188,9 @@ if (FORBIDDEN_CALL_RE.test(codeOnly)) {
 // Hard guard: READ ONLY transaction — Postgres rejects any write attempt.
 // The terminator goes on its own line so a trailing `-- comment` cannot
 // swallow it and leave the statement unterminated before ROLLBACK.
-const sql = `BEGIN TRANSACTION READ ONLY;\n${stripped}\n;\nROLLBACK;`;
+// W78: statement_timeout limita cada query a 15s — evita scans longos acidentais
+// que consumiriam conexões do pool do canônico.
+const sql = `BEGIN TRANSACTION READ ONLY;\nSET LOCAL statement_timeout = '15s';\n${stripped}\n;\nROLLBACK;`;
 
 // Stream stdout and truncate incrementally — buffering everything first
 // means a multi-MiB result dies on maxBuffer before the row cap can run.
@@ -168,18 +232,38 @@ const status = await new Promise((resolvePromise, rejectPromise) => {
 
 if (status !== 0 && !truncated) {
   console.error('::error::a consulta falhou no canônico');
-  console.error(stderr);
+  // Codex P1: quando allow_pii=1, stderr pode conter valores de linhas em mensagens de
+  // erro do Postgres (ex: "invalid input syntax for integer: 'user@example.com'").
+  // Redirecionar para o arquivo de saída protegido em vez do log de CI.
+  if (OUTPUT_FILE) {
+    appendFileSync(OUTPUT_FILE, `\n\n--- ERRO psql ---\n${stderr}`, 'utf8');
+    console.error('::error::a consulta falhou — detalhes no artifact (protegido de PII).');
+  } else {
+    console.error(stderr);
+  }
   process.exit(1);
 }
 
 const lines = stdout.split('\n');
+let out = '';
 if (lines.length > MAX_ROWS) {
-  console.log(lines.slice(0, MAX_ROWS).join('\n'));
-  console.log(`\n… saída truncada em ${MAX_ROWS} linhas (${lines.length} no total)`);
+  out = lines.slice(0, MAX_ROWS).join('\n') + `\n\n… saída truncada em ${MAX_ROWS} linhas (${lines.length} no total)`;
 } else {
-  console.log(stdout);
+  out = stdout;
 }
-if (truncated) {
-  console.log(`\n… saída truncada em ${MAX_BYTES / 1024} KiB`);
+if (truncated) out += `\n\n… saída truncada em ${MAX_BYTES / 1024} KiB`;
+
+if (OUTPUT_FILE) {
+  // W27: resultado com PII vai para arquivo isolado → artifact de curta retenção.
+  // Nada é impresso nos logs de CI (evita PII em runs públicos).
+  writeFileSync(OUTPUT_FILE, out, 'utf8');
+  // Codex P1: stderr também pode conter PII (valores em mensagens de erro do Postgres).
+  // Anexar ao arquivo protegido em vez de imprimir no log de CI.
+  if (stderr.trim()) appendFileSync(OUTPUT_FILE, `\n\n--- stderr psql ---\n${stderr}`, 'utf8');
+  console.log(
+    `::notice::Resultado em artifact sql-diag-output (retenção 1 dia) — omitido dos logs para proteção de PII (W27).`
+  );
+} else {
+  console.log(out);
+  if (stderr.trim()) console.error(stderr);
 }
-if (stderr.trim()) console.error(stderr);

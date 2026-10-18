@@ -117,20 +117,30 @@ for (const file of files) {
     pass(`permissions: presente`);
   }
 
-  // 6. Comentário # vX coerente com o SHA (W35/W97a) — modo offline via action-pins.json
+  // 6. SHA pins: (a) comentário coerente + (b) check reverso — todo SHA usado deve estar no JSON
   if (Object.keys(actionPins).length > 0) {
     const versionCommentRe = /uses:\s+[^\s@]+@([0-9a-f]{40})\s+#\s+(\S+)/g;
     let mismatches = [];
+    let missing = [];
     for (const m of raw.matchAll(versionCommentRe)) {
       const sha = m[1];
       const comment = m[2];
-      if (actionPins[sha] && actionPins[sha].version !== comment) {
-        mismatches.push(`SHA ${sha.slice(0,8)}… comentado como '${comment}', esperado '${actionPins[sha].version}'`);
+      if (actionPins[sha]) {
+        if (actionPins[sha].version !== comment) {
+          mismatches.push(`SHA ${sha.slice(0,8)}… comentado como '${comment}', esperado '${actionPins[sha].version}'`);
+        }
+      } else {
+        // W35 check reverso: SHA usado no workflow mas ausente do action-pins.json
+        missing.push(`${sha.slice(0,8)}… (${comment}) não está em action-pins.json — atualize infra/github/action-pins.json`);
       }
     }
     if (mismatches.length > 0) {
       for (const m of mismatches) fail(`${file}: comentário de versão incorreto: ${m} (D6/W35)`);
-    } else {
+    }
+    if (missing.length > 0) {
+      for (const m of missing) fail(`${file}: SHA sem entrada no catálogo: ${m} (W35)`);
+    }
+    if (mismatches.length === 0 && missing.length === 0) {
       pass(`comentários de versão coerentes com action-pins.json`);
     }
   }
