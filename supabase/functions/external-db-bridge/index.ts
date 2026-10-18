@@ -431,7 +431,7 @@ Deno.serve(async (req) => {
   }
 
   // Rate limit — bridge é o endpoint mais genérico: 100 req/min para reads, 30 req/min para writes
-  if (!serviceKey && isWrite) {
+  if (!serviceKey && (isWrite || action === "rpc")) {
     // Fail-closed: writes + RPCs requerem rate limiting e isolamento de tenant.
     // Sem SERVICE_ROLE_KEY o rate limiting é impossível — negar.
     return jsonError(503, "SERVICE_UNAVAILABLE", "Service role key not configured");
@@ -458,7 +458,7 @@ Deno.serve(async (req) => {
     if (!isSafeTableName(table)) {
       return jsonError(400, "INVALID_TABLE", "Table name is invalid");
     }
-    if (TABLE_DENYLIST.has(table!)) {
+    if (TABLE_DENYLIST.has(table!.toLowerCase())) {
       return jsonError(403, "TABLE_DENIED", `Table '${table}' is not accessible via bridge`);
     }
     if (columns !== undefined && !isSafeColumnsExpr(columns)) {

@@ -4,7 +4,7 @@ DECLARE missing text;
 BEGIN
   SELECT string_agg(v, ', ') INTO missing
   FROM (
-    VALUES ('20261015170000'), ('20261018160000')
+    VALUES ('20261015170000'), ('20261018170000')
   ) AS expected(v)
   WHERE NOT EXISTS (
     SELECT 1 FROM supabase_migrations.schema_migrations s

@@ -1,4 +1,6 @@
 -- Verifica que ALTER DEFAULT PRIVILEGES cobre ambos os roles.
+-- unnest garante que só entradas com grantee vazio (PUBLIC) disparam: '=X/%'
+-- Padrão LIKE '%=X/%' seria falso positivo (postgres=X/postgres também contém '=X/').
 DO $$
 DECLARE v_count int;
 BEGIN
@@ -9,7 +11,10 @@ BEGIN
   WHERE n.nspname = 'public'
     AND da.defaclobjtype = 'f'
     AND r.rolname IN ('postgres', 'supabase_admin')
-    AND array_to_string(da.defaclacl, ',') LIKE '%=X/%';
+    AND EXISTS (
+      SELECT 1 FROM unnest(da.defaclacl) AS acl_entry
+      WHERE acl_entry::text LIKE '=X/%'
+    );
 
   IF v_count > 0 THEN
     RAISE EXCEPTION '% entradas de DEFAULT ACL ainda concedem EXECUTE ao PUBLIC para postgres/supabase_admin', v_count;

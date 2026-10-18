@@ -143,7 +143,9 @@ jobs:
             20261018150000_onda5_rescisao_detalhes_calculo.sql \
             20261018160000_dedup_idempotency_anomalies_job.sql \
             20261019000000_qa3_db_fixes.sql \
-            20261020000000_colaboradores_metadata.sql
+            20261020000000_colaboradores_metadata.sql \
+            20261021000000_ledger_reconcile_secdef_defaults.sql \
+            20261021010000_default_privs_for_role.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
