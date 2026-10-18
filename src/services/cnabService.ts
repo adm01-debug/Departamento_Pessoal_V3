@@ -306,6 +306,7 @@ export const cnabService = {
       const s = String(val || '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\x20-\x7E]/g, '')
         .substring(0, len);
       return side === 'right' ? s.padEnd(len, char) : s.padStart(len, char);
     };
@@ -933,6 +934,7 @@ export const cnabService = {
         s = String(val ?? '')
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^\x20-\x7E]/g, '')
           .toUpperCase()
           .substring(0, len);
       }
