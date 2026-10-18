@@ -354,15 +354,15 @@ serve(async (req) => {
       ]);
       if (bErr) throw bErr;
 
-      // Replay do pareamento de ontem com a mesma regra de tipo: quantas
-      // entradas ficaram abertas? Contagem ímpar NÃO basta — duas entradas
-      // seguidas (par) também deixam a última aberta e a primeira saída de
-      // hoje fecha ONTEM, não pode abrir turno novo aqui.
-      let abertasOntem = 0;
-      for (const b of prevDia ?? []) {
-        if (b.tipo === 'entrada') abertasOntem++;
-        else if (b.tipo === 'saida') { if (abertasOntem > 0) abertasOntem--; }
-        else { if (abertasOntem % 2 === 0) abertasOntem++; else abertasOntem--; } // sem tipo: alternância
+      // Replay do pareamento de ontem com a MESMA regra de apurarDia (par
+      // adjacente; entrada seguinte a entrada deixa a anterior pendente):
+      // o que decide é se a ÚLTIMA batida de ontem ficou como entrada aberta —
+      // contar entrada/saída separadamente não reproduz a regra.
+      let abertaOntem = false;
+      for (let i = 0; i < (prevDia ?? []).length;) {
+        const nx = prevDia![i + 1];
+        if (!nx || nx.tipo === 'entrada') { abertaOntem = true; i += 1; continue; }
+        abertaOntem = false; i += 2;
       }
 
       let batidas = batidasRaw ?? [];
@@ -380,7 +380,7 @@ serve(async (req) => {
       // ontem (mesma decisão que a apuração de ontem toma). Batida marcada
       // 'entrada' nunca é saída de ontem — abre par novo aqui.
       if (
-        abertasOntem > 0 &&
+        abertaOntem &&
         batidas[0]?.data === dataRef &&
         batidas[0]?.tipo !== 'entrada'
       ) {
@@ -410,10 +410,15 @@ serve(async (req) => {
       const pago50 = bancoAtivo ? 0 : r.extra50Min;
       const pago100 = bancoAtivo ? 0 : r.extra100Min;
 
-      // Espelho: cada slot é um turno {entrada, saida|null} em ordem — a
-      // saída de um turno que cruza meia-noite aparece no dia da entrada, e
-      // entrada pendente mostra saida=null (nunca vira "saída" de outro turno).
-      const s = r.slots;
+      // Espelho: cada slot é um turno {entrada, saida|null} — a saída de um
+      // turno que cruza meia-noite aparece no dia da entrada, e entrada
+      // pendente mostra saida=null (nunca vira "saída" de outro turno).
+      // O registro só tem 3 pares de colunas: com overflow, turnos FECHADOS
+      // (horas realmente trabalhadas) têm prioridade sobre entradas pendentes.
+      const s = [
+        ...r.slots.filter((x) => x.saida),
+        ...r.slots.filter((x) => !x.saida),
+      ].slice(0, 3);
       const registro = {
         colaborador_id: colabId,
         empresa_id: empresaId,
