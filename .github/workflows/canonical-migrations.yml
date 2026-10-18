@@ -193,7 +193,7 @@ jobs:
               # via literal dollar-quoted para preservar aspas/formato do arquivo
               printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[\$dp_mig_stmt\$\n" "$version" "$name"
               cat "$migration"
-              printf '\n\$dp_mig_stmt\$]::text[]) ON CONFLICT (version) DO NOTHING;\n'
+              printf "\n\$dp_mig_stmt\$]::text[]) ON CONFLICT (version) DO NOTHING;\n"
             done
             echo 'COMMIT;'
           } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
