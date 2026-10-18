@@ -177,7 +177,12 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
         toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
       }
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
-      if (target === 'concluida') await qc.invalidateQueries({ queryKey: ['colaboradores'] });
+      if (target === 'concluida') {
+        await Promise.all([
+          qc.invalidateQueries({ queryKey: ['colaboradores'] }),
+          qc.invalidateQueries({ queryKey: ['colaboradores-summary'] }),
+        ]);
+      }
     } catch (err) {
       setOptimistic((s) => {
         const next = { ...s };

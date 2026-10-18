@@ -1,5 +1,12 @@
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import type { Tables } from '@/integrations/supabase/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { admissaoService } from '@/services/admissaoService';
 import { AdmissaoChecklist, Documento } from '@/components/admissao/AdmissaoChecklist';
 import { useContratacaoDigital } from '@/hooks/useContratacaoDigital';
 import { useAdmissaoWorkflow } from '@/hooks/useAdmissaoWorkflow';
@@ -26,6 +33,44 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   const { workflow } = useAdmissaoWorkflow(admissao?.id);
   const { enviarEvento } = useESocial();
   const { empresaAtual } = useEmpresas();
+  const qc = useQueryClient();
+  const [savingDados, setSavingDados] = useState(false);
+  const [dados, setDados] = useState({ cpf: '', data_nascimento: '', nome_mae: '', sexo: '' });
+  const [dadosLoaded, setDadosLoaded] = useState('');
+
+  // Preenche o form uma vez por admissão (id muda → recarrega).
+  if (admissao && dadosLoaded !== admissao.id) {
+    setDadosLoaded(admissao.id);
+    setDados({
+      cpf: admissao.cpf ?? '',
+      data_nascimento: admissao.data_nascimento ?? '',
+      nome_mae: admissao.nome_mae ?? '',
+      sexo: admissao.sexo ?? '',
+    });
+  }
+
+  const salvarDados = async () => {
+    if (!admissao || !empresaAtual?.id) return;
+    setSavingDados(true);
+    try {
+      await admissaoService.atualizar(
+        admissao.id,
+        {
+          cpf: dados.cpf || null,
+          data_nascimento: dados.data_nascimento || null,
+          nome_mae: dados.nome_mae || null,
+          sexo: dados.sexo || null,
+        },
+        empresaAtual.id
+      );
+      await qc.invalidateQueries({ queryKey: ['admissoes'] });
+      toast.success('Dados pessoais salvos.');
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Falha ao salvar dados.');
+    } finally {
+      setSavingDados(false);
+    }
+  };
 
   const handleEnvioESocial = () => {
     if (!empresaAtual?.id || !admissao) return;
@@ -37,6 +82,8 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   };
 
   if (!admissao) return null;
+
+  const terminal = admissao.etapa === 'concluida' || admissao.etapa === 'cancelada';
 
   const documentos: Documento[] = [
     {
@@ -184,6 +231,74 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                         </span>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                    Dados Pessoais (exigidos p/ gerar o colaborador)
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3 bg-muted/20 p-4 rounded-2xl border border-border/5">
+                    <div>
+                      <Label htmlFor="det-cpf" className="text-xs">
+                        CPF
+                      </Label>
+                      <Input
+                        id="det-cpf"
+                        value={dados.cpf}
+                        disabled={terminal}
+                        onChange={(e) => setDados((d) => ({ ...d, cpf: e.target.value }))}
+                        placeholder="000.000.000-00"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="det-nasc" className="text-xs">
+                        Data de nascimento
+                      </Label>
+                      <Input
+                        id="det-nasc"
+                        type="date"
+                        value={dados.data_nascimento}
+                        disabled={terminal}
+                        onChange={(e) => setDados((d) => ({ ...d, data_nascimento: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="det-sexo" className="text-xs">
+                        Sexo
+                      </Label>
+                      <Select
+                        value={dados.sexo}
+                        onValueChange={(v) => setDados((d) => ({ ...d, sexo: v }))}
+                        disabled={terminal}
+                      >
+                        <SelectTrigger id="det-sexo">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="masculino">Masculino</SelectItem>
+                          <SelectItem value="feminino">Feminino</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="det-mae" className="text-xs">
+                        Nome da mãe
+                      </Label>
+                      <Input
+                        id="det-mae"
+                        value={dados.nome_mae}
+                        disabled={terminal}
+                        onChange={(e) => setDados((d) => ({ ...d, nome_mae: e.target.value }))}
+                      />
+                    </div>
+                    {!terminal && (
+                      <div className="col-span-2 flex justify-end">
+                        <Button size="sm" variant="outline" onClick={salvarDados} disabled={savingDados}>
+                          {savingDados ? 'Salvando...' : 'Salvar dados pessoais'}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
 

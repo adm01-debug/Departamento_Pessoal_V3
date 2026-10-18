@@ -231,15 +231,39 @@ describe('admissaoService.concluir', () => {
     expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ etapa: 'concluida' }));
   });
 
-  it('sem dados obrigatórios conclui com pendência, sem insert', async () => {
+  it('sem dados obrigatórios BLOQUEIA a conclusão com erro acionável', async () => {
     const admSemCpf = { ...admCompleto, cpf: null };
     const { insertFn, updateFn } = setupConcluirChains(admSemCpf, { data: null, error: null });
-    const r = await admissaoService.concluir('adm-1', EMPRESA_ID);
+    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toThrow('CPF');
     expect(insertFn).not.toHaveBeenCalled();
-    expect(r.colaboradorId).toBeNull();
-    expect(updateFn).toHaveBeenCalledWith(
-      expect.objectContaining({ etapa: 'concluida', metadata: expect.objectContaining({ pendente_colaborador: true }) })
+    expect(updateFn).not.toHaveBeenCalled();
+  });
+
+  it('insert falha → reconcilia pelo colaborador marcado com o id da admissão', async () => {
+    const { updateFn, colabSelect } = setupConcluirChains(
+      admCompleto,
+      { data: null, error: { message: 'INSERT_ERROR: duplicate key' } },
+      { data: { id: 'colab-previo' }, error: null }
     );
+    const r = await admissaoService.concluir('adm-1', EMPRESA_ID);
+    expect(r.colaboradorId).toBe('colab-previo');
+    expect(colabSelect).toHaveBeenCalledWith('id');
+    expect(updateFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        etapa: 'concluida',
+        metadata: expect.objectContaining({ colaborador_id: 'colab-previo' }),
+      })
+    );
+  });
+
+  it('insert falha e não existe colaborador marcado → propaga o erro (não vincula terceiros)', async () => {
+    const { updateFn } = setupConcluirChains(
+      admCompleto,
+      { data: null, error: { message: 'INSERT_ERROR: duplicate key' } },
+      { data: null, error: null }
+    );
+    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toThrow('INSERT_ERROR');
+    expect(updateFn).not.toHaveBeenCalled();
   });
 
   it('adm inexistente lança erro', async () => {

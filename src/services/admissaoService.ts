@@ -56,8 +56,8 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
   // Concluir a admissão fecha o funil: cria o colaborador a partir dos dados
   // da admissão (idempotente via metadata.colaborador_id) e marca a etapa.
   // O insert exige os NOT NULL do schema (cpf, data_nascimento, nome_mae, sexo)
-  // — sem eles a admissão conclui com pendência sinalizada para completar o
-  // cadastro, em vez de quebrar no banco.
+  // — sem eles a conclusão é BLOQUEADA com erro acionável (o card permanece
+  // arrastável e os dados podem ser completados na tela de detalhes).
   async concluir(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const adm = await this.buscarPorId(id, empresaId);
@@ -66,8 +66,18 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
     if (adm.etapa === 'cancelada') throw new Error('Admissão cancelada não pode ser concluída.');
     const meta = { ...((adm.metadata ?? {}) as Record<string, unknown>) };
     const sexoValido = adm.sexo === 'masculino' || adm.sexo === 'feminino';
-    const dadosCompletos = !!(adm.cpf && adm.data_nascimento && adm.nome_mae && sexoValido);
-    if (!meta.colaborador_id && dadosCompletos) {
+    const faltantes: string[] = [];
+    if (!adm.cpf) faltantes.push('CPF');
+    if (!adm.data_nascimento) faltantes.push('data de nascimento');
+    if (!adm.nome_mae) faltantes.push('nome da mãe');
+    if (!sexoValido) faltantes.push('sexo');
+    if (!meta.colaborador_id && faltantes.length > 0) {
+      throw new Error(
+        `Admissão sem dados obrigatórios do colaborador: ${faltantes.join(', ')}. ` +
+          'Complete os dados no detalhe da admissão antes de concluir.'
+      );
+    }
+    if (!meta.colaborador_id) {
       const { data: colab, error } = await supabase
         .from('colaboradores')
         .insert({
@@ -89,13 +99,16 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
         .single();
       if (error) {
         // Falha parcial de uma conclusão anterior (colaborador inserido, etapa
-        // não gravada): o CPF único rejeita o novo insert — reconcilia
-        // buscando o colaborador existente em vez de falhar para sempre.
+        // não gravada): o CPF único rejeita o novo insert. Só reconcilia quando
+        // o colaborador encontrado foi criado POR ESTA admissão (marca em
+        // observacoes) — um colaborador pré-existente com o mesmo CPF não é
+        // vínculo válido e o erro original é propagado.
         const { data: existente } = await supabase
           .from('colaboradores')
           .select('id')
           .eq('empresa_id', empresaId)
           .eq('cpf', adm.cpf as string)
+          .eq('observacoes', `Origem: admissão ${adm.id}`)
           .maybeSingle();
         if (existente?.id) {
           meta.colaborador_id = existente.id;
@@ -105,8 +118,6 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
       } else {
         meta.colaborador_id = colab.id;
       }
-    } else if (!meta.colaborador_id && !dadosCompletos) {
-      meta.pendente_colaborador = true;
     }
     const admissao = await this.atualizar(id, { etapa: 'concluida', metadata: meta as never }, empresaId);
     return { admissao, colaboradorId: (meta.colaborador_id as string | undefined) ?? null };
