@@ -8593,7 +8593,7 @@ export type Database = {
         Insert: {
           aliquota: number
           faixa: string
-          id?: number
+          id?: never
           teto?: number | null
         }
         Update: {
@@ -8615,7 +8615,7 @@ export type Database = {
           aliquota: number
           deducao?: number | null
           faixa: string
-          id?: number
+          id?: never
         }
         Update: {
           aliquota?: number
