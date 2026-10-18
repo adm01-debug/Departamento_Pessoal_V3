@@ -322,6 +322,31 @@ describe('cnabService.parseRetornoCNAB', () => {
     expect(result.detalhes[0].ocorrencia).toBe('FALHA_UPDATE');
   });
 
+  it('pagamento confirmado sem folha_item_id vira semVinculoFolha (conciliação manual)', async () => {
+    const line = makeSegmentALine('SEU004', '00');
+    const item = {
+      id: 'item-4b',
+      folha_item_id: null,
+      nome_favorecido: 'Paulo',
+      seu_numero: 'SEU004',
+      remessa_id: 'rem-1',
+    };
+
+    const remChain = makeChain({ data: { empresa_id: 'emp-1' }, error: null });
+    const selChain = makeChain({ data: [item], error: null });
+    const updChain = makeChain({ error: null });
+
+    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(remChain).mockReturnValueOnce(updChain);
+
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
+    expect(result.sucesso).toBe(0);
+    expect(result.erro).toBe(0);
+    expect(result.falhasTecnicas).toBe(0);
+    expect(result.semVinculoFolha).toBe(1);
+    // cnab_itens ainda foi marcado pago — só falta o vínculo com a folha
+    expect(updChain.update).toHaveBeenCalled();
+  });
+
   it('CNAB400: casa item novo (10 chars) por posição 63-72', async () => {
     const line = makeCnab400Line('abcdef0007', true, '00');
     const item = {
