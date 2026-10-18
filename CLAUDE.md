@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 15/10/2026
+> Última atualização: 18/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -495,6 +495,47 @@ POST-only gateway (32KB file, 729 lines)
 registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 ```
 
+### Sessão 10 — 18/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (PR #244 — Codex P2 + Dependabot overrides)
+
+#### O que foi feito:
+
+```
+🔒 CODEX P2 FOLLOWUP — verify.sql + canonical-migrations.yml
+├── verify.sql (20261013152000_onda4b_vinculo_documentos_lgpd_crypto):
+│   Check 2b: funções decrypt verificam ACLs (anon/authenticated negados,
+│   service_role com EXECUTE) via has_function_privilege
+│   Check 3: pg_proc.pronamespace restrito (JOIN pg_namespace np); tgenabled
+│   narrowed para IN ('O','A') (exclui replica-only 'R'); tgtype=23 asserido
+│   (BEFORE FOR EACH ROW ON INSERT OR UPDATE)
+│   Check 4: to_regclass IS NOT NULL → pg_class.relkind = 'v' (view estrita)
+├── canonical-migrations.yml: sidecar apply rejeita saída completamente vazia;
+│   sidecar verify valida ledger antes de executar (migração pendente = abort)
+├── scripts/update-workflows-status.mjs: preserva data existente quando
+│   conteúdo do relatório não muda (evita diff só de timestamp)
+└── psql stdin fix (Codex P1 de PR #242): :'v' interpolado via stdin HEREDOC
+    (psql -c não expande variáveis de cliente — D29)
+
+🔧 DEPENDABOT OVERRIDES — 3 alertas remediados (PR #244)
+├── Alert #13/#14 — tmp <0.2.6 (moderate ReDoS): override "tmp": "0.2.7"
+├── Alert #1 — uuid 8.3.2 em @lhci/cli (critical): override
+│   "uuid@<11.1.1": "14.0.3" (scoped, só dependências que usam versão antiga)
+└── npm install --engine-strict=false (bypass engine check de
+    @asamuzakjp/css-color@7.1.4 que exige Node ^22.22.2, não afeta runtime)
+
+⚠️ DEPENDABOT ALERTS SEM FIX UPSTREAM (documentados como gap)
+├── Alert #15/#16 — extract-zip ≤2.0.1 (path traversal): sem patch upstream
+│   Consumer: @lhci/cli (devDependency) — risco: zero em CI read-only
+└── Alert #18 — sprintf-js ≤1.1.3 (prototype pollution): sem patch upstream
+    Consumer: jasmine-core (devDependency de @testing-library) — baixo risco
+
+🔀 MERGE CONFLICT RESOLVIDO (PR #244 vs PR #243)
+│   PR #243 (main) removeu sidecar loop + verify mode + summary do
+│   canonical-migrations.yml. PR #244 re-adiciona com melhorias Codex P2.
+└── Resolução: kept HEAD (PR #244) — todos os marcadores preservados.
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -523,11 +564,11 @@ scripts canonicais       → W30 CANONICAL_SUPABASE_REF env var com fallback ✅
 Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) ✅
 ```
 
-### Métricas (15/10/2026)
+### Métricas (18/10/2026)
 
 | Indicador              | Valor                                                                                    |
 | ---------------------- | ---------------------------------------------------------------------------------------- |
-| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner mergeadas na main (PR #233, 15/10/2026)                 |
+| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner + Wave 6 mergeadas na main; PR #244 em CI (18/10/2026)  |
 | TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                         |
 | Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                  |
 | Cobertura              | ✅ v8 configurada                                                                        |
@@ -544,12 +585,14 @@ Contract test            → 12/12 workflows, 0 falhas (W97 — 11 contratos) �
 | lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido         |
 | fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                     |
 | CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                             |
-| contract test          | ✅ 12/12 workflows, 0 falhas (W97 — 11 contratos ativos)                                 |
+| contract test          | ✅ 14/14 workflows, 0 falhas (W97 — 11 contratos ativos)                                 |
 | bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                |
 | actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows            |
-| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69)           |
+| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69/PR #244)   |
 | live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)             |
 | canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)            |
+| Dependabot overrides   | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244)              |
+| psql variable interp.  | ✅ :'v' via stdin (printf+pipe) em canonical-migrations.yml (Codex P1 — PR #244)         |
 
 ---
 
@@ -594,11 +637,13 @@ _Nenhum crítico bloqueante no momento._
 
 ### Baixos
 
-| Gap                                  | Impacto              | Solução                          |
-| ------------------------------------ | -------------------- | -------------------------------- |
-| `--no-lock` no `deno test` do ci.yml | Bypassa deno.lock    | Resolver após W36 corrigir lock  |
-| `noUnusedLocals:true` pode alertar   | Warnings no build    | Aceitar ou limpar                |
-| CodeQL unused-local (99 restantes)   | Ruído no painel GHAS | Fechar em batch via W82 contínuo |
+| Gap                                   | Impacto                                        | Solução                                                                    |
+| ------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
+| `--no-lock` no `deno test` do ci.yml  | Bypassa deno.lock                              | Resolver após W36 corrigir lock                                            |
+| `noUnusedLocals:true` pode alertar    | Warnings no build                              | Aceitar ou limpar                                                          |
+| CodeQL unused-local (99 restantes)    | Ruído no painel GHAS                           | Fechar em batch via W82 contínuo                                           |
+| `extract-zip ≤2.0.1` (Alerts #15/#16) | Path traversal teórico em devDep (`@lhci/cli`) | Sem fix upstream — risco zero em CI read-only; aguardar patch do upstream  |
+| `sprintf-js ≤1.1.3` (Alert #18)       | Prototype pollution em devDep (`jasmine-core`) | Sem fix upstream — baixo risco; aguardar atualização do `@testing-library` |
 
 ---
 
