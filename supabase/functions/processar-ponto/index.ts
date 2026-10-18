@@ -79,23 +79,29 @@ const resolverJornada = async (
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
   // Query limitada ao dia (sem paginação) e erro propagado — silenciar erro
   // como "sem grade" apagaria dia útil configurado e mudaria HE/falta.
-  // Com várias jornadas ativas, preferimos a linha de dia útil (uma folga
-  // de outra grade não pode anular um dia útil configurado) e ordenamos
-  // para seleção determinística — limit(1) sem ordem escolhia aleatoriamente.
-  const { data: jhRows, error: jhError } = await supabase
-    .from('jornadas_horarios')
-    .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
-    .eq('dia_semana', diaSemana)
-    .eq('jornadas.empresa_id', empresaId)
-    .eq('jornadas.ativa', true)
-    .order('id')
-    .limit(20);
-  if (jhError) throw jhError;
-  const rows = (jhRows ?? []) as Array<{
-    entrada: string | null; saida: string | null;
-    intervalo_inicio: string | null; intervalo_fim: string | null; dia_util: boolean | null;
-  }>;
-  const jh = rows.find((r) => r.dia_util !== false) ?? rows[0] ?? null;
+  // Jornada do colaborador quando vinculada (colaboradores.jornada_id) —
+  // folga de jornada ALHEIA não pode virar HE 100% de quem tem escala
+  // própria. Sem vínculo, usa as ativas da empresa. Dia útil prevalece
+  // sobre folga entre jornadas conflitantes; cada consulta é limit(1) com
+  // ordem determinística — a preferência é feita no banco, sem truncamento.
+  const fetchDia = async (apenasUteis: boolean) => {
+    let q = supabase
+      .from('jornadas_horarios')
+      .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
+      .eq('dia_semana', diaSemana)
+      .eq('jornadas.ativa', true)
+      .order('id')
+      .limit(1)
+      .maybeSingle();
+    q = colab?.jornada_id
+      ? q.eq('jornada_id', colab.jornada_id)
+      : q.eq('jornadas.empresa_id', empresaId);
+    q = apenasUteis ? q.or('dia_util.is.null,dia_util.eq.true') : q.eq('dia_util', false);
+    const { data, error } = await q;
+    if (error) throw error;
+    return data;
+  };
+  const jh = (await fetchDia(true)) ?? (await fetchDia(false));
   // Folga só por configuração EXPLÍCITA do dia (dia_util=false) — grade
   // parcial sem linha de sábado não é descanso: poderia ser 5x2 ou 6x1.
   // Os HORÁRIOS da grade são default da empresa e só valem quando o
@@ -460,7 +466,7 @@ serve(async (req) => {
 
       const { data: colab } = await supabase
         .from('colaboradores')
-        .select('horario_entrada, horario_saida, intervalo_minutos, jornada_semanal')
+        .select('horario_entrada, horario_saida, intervalo_minutos, jornada_semanal, jornada_id')
         .eq('id', colabId)
         .maybeSingle();
 
