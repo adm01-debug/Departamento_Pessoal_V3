@@ -301,22 +301,41 @@ export const cnabService = {
     const lines: string[] = [];
 
     const pad = (val: unknown, len: number, char = ' ', side: 'left' | 'right' = 'right') => {
-      const s = String(val || '').substring(0, len);
+      // CNAB é ASCII posicional: diacríticos viram 2+ bytes em UTF-8 e
+      // deslocariam todos os campos seguintes — remove antes de medir.
+      const s = String(val || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .substring(0, len);
       return side === 'right' ? s.padEnd(len, char) : s.padStart(len, char);
     };
 
     const formatAmount = (val: number) => pad(Math.trunc(val * 100), 15, '0', 'left');
 
     const today = new Date();
-    const dateStr = formatDateLocalISO(today).replace(/-/g, '');
+    const dateStr = formatDateLocalISO(today).split('-').reverse().join(''); // DDMMAAAA — FEBRABAN
     const timeStr = today.toTimeString().slice(0, 8).replace(/:/g, '');
+
+    // CNPJ da empresa — inscrição dos headers de arquivo e lote (FEBRABAN).
+    // Falha de leitura ou CNPJ ausente/inválido aborta: remessa com inscrição
+    // zerada é inválida no banco e ficaria persistida como 'enviado'.
+    const { data: empresaRow, error: empresaError } = await supabase
+      .from('empresas')
+      .select('cnpj')
+      .eq('id', empresaId)
+      .maybeSingle();
+    if (empresaError) throw empresaError;
+    const cnpjEmpresa = onlyDigits((empresaRow as DataRecord | null)?.cnpj ?? '');
+    if (!/^\d{14}$/.test(cnpjEmpresa) || /^0+$/.test(cnpjEmpresa)) {
+      throw new Error('CNPJ da empresa ausente ou inválido — regularize o cadastro antes de gerar a remessa.');
+    }
 
     const header =
       pad(config.banco_codigo, 3, '0', 'left') +
       '00000' +
       pad('', 9) +
       '2' +
-      pad('', 14, '0') +
+      pad(cnpjEmpresa, 14, '0', 'left') +
       pad(config.convenio, 20) +
       pad(config.agencia, 5, '0', 'left') +
       pad(config.agencia_digito || '', 1) +
@@ -338,20 +357,6 @@ export const cnabService = {
     let detailSequence = 1;
     let totalValue = 0;
     const cnabItensToInsert: DataRecord[] = [];
-
-    // CNPJ da empresa — inscrição do header de lote (pos. 18-52 FEBRABAN).
-    // Falha de leitura ou CNPJ ausente/inválido aborta: remessa com inscrição
-    // zerada é inválida no banco e ficaria persistida como 'enviado'.
-    const { data: empresaRow, error: empresaError } = await supabase
-      .from('empresas')
-      .select('cnpj')
-      .eq('id', empresaId)
-      .maybeSingle();
-    if (empresaError) throw empresaError;
-    const cnpjEmpresa = onlyDigits((empresaRow as DataRecord | null)?.cnpj ?? '');
-    if (!/^\d{14}$/.test(cnpjEmpresa) || /^0+$/.test(cnpjEmpresa)) {
-      throw new Error('CNPJ da empresa ausente ou inválido — regularize o cadastro antes de gerar a remessa.');
-    }
 
     // Header de Lote (Tipo 1) — posições FEBRABAN CNAB240:
     // 14-16 versão '040' · 17 uso FEBRABAN · 18-19 tipo+nº inscrição
@@ -926,7 +931,8 @@ export const cnabService = {
         s = String(scaled);
       } else {
         s = String(val ?? '')
-          .normalize('NFC')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
           .toUpperCase()
           .substring(0, len);
       }
@@ -1103,7 +1109,9 @@ export const cnabService = {
         cpf_cnpj_favorecido: cpfFav,
         valor_pagamento: valor,
         data_pagamento: formatDateLocalISO(today),
-        seu_numero: seuNumero,
+        // O arquivo escreve fmt(...,'A') → uppercase; gravar o mesmo casing
+        // senão parseRetornoCNAB (LIKE case-sensitive) nunca casa.
+        seu_numero: seuNumero.toUpperCase(),
         status: 'processando',
       });
     }
