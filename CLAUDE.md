@@ -581,6 +581,35 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Integrado ao PR #251 (HEAD 870f82c4a)
 ```
 
+### Sessão 14 — 18/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (PR #251 — Codex P1 deno.lock + allowlist fix)
+
+#### O que foi feito:
+
+```
+🔧 Codex P1 — deno.lock: seções specifiers+npm ausentes (commit 238269a8)
+│   deno check --frozen falhava: "specifiers section missing" para
+│   npm:@supabase/supabase-js@2 — deno.lock v5 exige seções obrigatórias.
+│   Adicionadas: specifiers{"npm:@supabase/supabase-js@2":"2.118.0"} e
+│   npm{9 pacotes: supabase-js + auth-js + functions-js + phoenix +
+│   postgrest-js + realtime-js + storage-js + iceberg-js + tslib}.
+│   Verificado: deno check --frozen --node-modules-dir=false exit 0.
+
+🔑 Allowlist fix — zizmorcore/* adicionado às GitHub Actions patterns
+│   workflow-lint.yml (W86) usa zizmorcore/zizmor-action@cc914d7f
+│   Causa raiz: zizmorcore/* não estava em allowed_actions patterns.
+│   Fix: set_selected_actions → patterns: [..., "zizmorcore/*"].
+│   workflow-lint.yml não é required check — não bloqueava PR.
+
+✅ Validações locais (tsc + vitest + contracts)
+│   tsc --noEmit: 0 erros
+│   vitest: 482/482 testes passaram (5495 total, 10 skipped canvas/nav)
+│   workflows-contract: 14/14 workflows, 0 falhas
+│   lockfile-single: package-lock.json único, sem bun.lock ✅
+│   lockfile-parity: paridade npm OK ✅
+```
+
 ### Sessão 10 — 18/10/2026 (Claude Sonnet 4.6)
 
 **Branch:** `claude/happy-cori-3z9h7f` (PR #244 — Codex P2 + Dependabot overrides)
@@ -666,7 +695,7 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`                           |
 | Workflows com timeout  | ✅ 100% (todos os jobs)                                                                                        |
 | supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                                                  |
-| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\* (sem oven-sh/ossf/Sonar)                       |
+| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\*, ossf/\*, dorny/\*, zizmorcore/\*              |
 | classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                                        |
 | SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                                       |
 | E2E secrets            | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)                        |
@@ -685,7 +714,7 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | vars públicas Supabase | ✅ W29: 12 ocorrências migradas secrets→vars (PR #247 merged) — owner deve deletar os secrets                  |
 | OSSF Scorecard         | ✅ W44: job scorecard adicionado a security.yml (PR #247 merged)                                               |
 | cache cleanup (W48)    | ✅ 46 caches stale deletados — 3 válidos restantes                                                             |
-| deno --frozen (W36)    | 🔄 --no-lock→--frozen + cache deno (PR #251 em CI)                                                             |
+| deno --frozen (W36)    | 🔄 --no-lock→--frozen + cache deno; deno.lock specifiers+npm fix (PR #251 em CI, HEAD 238269a8)                |
 | zizmor scanner (W86)   | 🔄 zizmorcore/zizmor-action@cc914d7f em workflow-lint.yml (PR #251 em CI)                                      |
 | W97c required if: gate | 🔄 check 12 em workflows-contract.test.mjs (PR #251 em CI)                                                     |
 
