@@ -494,9 +494,21 @@ export const cnabService = {
       detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>,
     };
 
-    // cnab_itens não tem empresa_id — o tenant vem da remessa (cnab_remessas).
-    // Buscado sob demanda na primeira linha de detalhe válida.
-    let remessaIds: string[] | null = null;
+    // cnab_itens não tem empresa_id — o tenant é conferido item a item via
+    // cnab_remessas (cache por remessa; evita listar todas as remessas da
+    // empresa, que estouraria a paginação do bridge).
+    const remessaEmpresa = new Map<string, string>();
+    const empresaDaRemessa = async (id: string): Promise<string> => {
+      const cached = remessaEmpresa.get(id);
+      if (cached !== undefined) return cached;
+      const { data } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+        .select('empresa_id')
+        .eq('id', id)
+        .maybeSingle();
+      const emp = (data as { empresa_id?: string } | null)?.empresa_id ?? '';
+      remessaEmpresa.set(id, emp);
+      return emp;
+    };
 
     for (const line of lines) {
       if (line.length < 240) continue;
@@ -517,22 +529,9 @@ export const cnabService = {
 
       // CNAB400: o arquivo ecoa só 10 posições de `seu_numero`; remessas antigas
       // gravaram 12 — casa por prefixo (stored LIKE 'candidato%'). CNAB240: eq.
-      if (remessaIds === null) {
-        const { data: remessas, error: remError } = await (
-          supabase.from('cnab_remessas') as unknown as QueryBuilderType
-        )
-          .select('id')
-          .eq('empresa_id', empresaId);
-        if (remError) throw remError;
-        remessaIds = ((remessas ?? []) as Array<{ id: string }>).map((r) => r.id);
-      }
-      if (remessaIds.length === 0) {
-        results.naoEncontrados++;
-        continue;
-      }
-      let query = (supabase.from('cnab_itens') as unknown as QueryBuilderType)
-        .select('id, folha_item_id, nome_favorecido, seu_numero')
-        .in('remessa_id', remessaIds);
+      let query = (supabase.from('cnab_itens') as unknown as QueryBuilderType).select(
+        'id, remessa_id, folha_item_id, nome_favorecido, seu_numero'
+      );
       if (is240) {
         query = query.eq('seu_numero', candidatos[0]);
       } else {
@@ -540,18 +539,24 @@ export const cnabService = {
       }
       const { data: itens, error: findError } = await query;
       const itemList = (itens ?? []) as CnabItemRecord[];
-      // Match só aceito quando inequívoco: exato primeiro, prefixo único depois
-      // (prefixo curto de remessas antigas não pode escolher item de outro
-      // favorecido na mesma remessa).
+      // Match só aceito quando inequívoco: exato primeiro; prefixo só com
+      // candidato de 10 posições completas (fragmento de padding do nome nunca
+      // casa — evita creditar o pagamento de outro favorecido/remessa).
       const matchFor = (cand: string) => {
         const exact = itemList.filter((i) => i.seu_numero === cand);
         if (exact.length === 1) return exact[0];
+        if (exact.length > 1 || cand.length !== 10) return undefined;
         const prefix = itemList.filter((i) => i.seu_numero.startsWith(cand));
         return prefix.length === 1 ? prefix[0] : undefined;
       };
-      const item = is240
+      let item = is240
         ? itemList[0]
         : (matchFor(candidatos[0]) ?? (candidatos[1] !== undefined ? matchFor(candidatos[1]) : undefined));
+
+      // Tenant: só processa se a remessa do item pertencer à empresa ativa.
+      if (item && (await empresaDaRemessa(item.remessa_id)) !== empresaId) {
+        item = undefined;
+      }
 
       if (findError) {
         results.erro++;
