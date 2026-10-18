@@ -216,9 +216,17 @@ export default function FinanceiroBancarioPage() {
       const content = await file.text();
       const results = await cnabService.parseRetornoCNAB(empresaAtual!.id, content);
 
-      const total = results.sucesso + results.erro + results.naoEncontrados;
+      const total = results.sucesso + results.erro + results.falhasTecnicas + results.naoEncontrados;
       if (total === 0) {
         toast.warning('Nenhum registro de pagamento encontrado no arquivo — confira se o layout é CNAB 240 ou 400.');
+      } else if (results.falhasTecnicas > 0) {
+        // Falha técnica (leitura/update) não é rejeição do banco — a linha
+        // ficou pendente e pode ser reimportada.
+        toast.warning(
+          `Retorno parcial: ${results.sucesso} confirmados, ${results.erro} rejeitados pelo banco` +
+            (results.naoEncontrados > 0 ? `, ${results.naoEncontrados} sem remessa` : '') +
+            `, ${results.falhasTecnicas} com falha técnica — reimporte para tentar de novo.`
+        );
       } else {
         toast.success(
           `Retorno processado: ${results.sucesso} confirmados, ${results.erro} rejeitados` +

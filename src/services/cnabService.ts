@@ -489,7 +489,11 @@ export const cnabService = {
     const lines = fileContent.split(/\r?\n/);
     const results = {
       sucesso: 0,
+      // erro = rejeição do banco; falhasTecnicas = falha de leitura/update no
+      // banco de dados — separado para a UI não chamar falha interna de
+      // 'rejeitado pelo banco'.
       erro: 0,
+      falhasTecnicas: 0,
       naoEncontrados: 0,
       detalhes: [] as Array<{ nome: string; status: string; ocorrencia: string }>,
     };
@@ -557,7 +561,7 @@ export const cnabService = {
         }
       }
       if (lookupFailed) {
-        results.erro++;
+        results.falhasTecnicas++;
         results.detalhes.push({
           nome: '—',
           status: 'erro',
@@ -580,7 +584,7 @@ export const cnabService = {
         : (matchFor(candidatos[0]) ?? (candidatos[1] !== undefined ? matchFor(candidatos[1]) : undefined));
 
       if (findError) {
-        results.erro++;
+        results.falhasTecnicas++;
         results.detalhes.push({ nome: candidatos[0], status: 'erro', ocorrencia: 'FALHA_CONSULTA' });
         continue;
       }
@@ -615,7 +619,7 @@ export const cnabService = {
       }
 
       if (updError || (isSuccess && (!item.folha_item_id || !folhaOk))) {
-        results.erro++;
+        results.falhasTecnicas++;
       } else if (isSuccess) {
         results.sucesso++;
       } else {

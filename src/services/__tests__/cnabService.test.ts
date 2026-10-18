@@ -218,7 +218,7 @@ describe('cnabService.parseRetornoCNAB', () => {
 
   it('ignores lines shorter than 240 chars', async () => {
     const result = await cnabService.parseRetornoCNAB('emp-1', 'short line\n');
-    expect(result).toEqual({ sucesso: 0, erro: 0, naoEncontrados: 0, detalhes: [] });
+    expect(result).toEqual({ sucesso: 0, erro: 0, falhasTecnicas: 0, naoEncontrados: 0, detalhes: [] });
     expect(mockFrom).not.toHaveBeenCalled();
   });
 
@@ -310,7 +310,8 @@ describe('cnabService.parseRetornoCNAB', () => {
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(0);
-    expect(result.erro).toBe(1);
+    expect(result.erro).toBe(0);
+    expect(result.falhasTecnicas).toBe(1);
     expect(result.detalhes[0].ocorrencia).toBe('FALHA_UPDATE');
   });
 
