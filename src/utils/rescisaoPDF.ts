@@ -173,7 +173,7 @@ export async function gerarPDFRescisao(
       ...(result.fgtsSaquePercentual > 0
         ? [[`Saque FGTS permitido`, '', `${Math.round(result.fgtsSaquePercentual * 100)}%`]]
         : []),
-      ...(result.seguroDesemprego.elegivel
+      ...(result.seguroDesemprego?.elegivel
         ? [
             [
               'Seguro-desemprego (informativo)',
