@@ -58,11 +58,6 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Skip sem token de escrita
-        if: ${{ github.token == '' }}
-        run: |
-          echo "::notice::GITHUB_TOKEN ausente — Scorecard ignorado."
-          exit 0
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false

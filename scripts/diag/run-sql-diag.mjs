@@ -102,8 +102,10 @@ const codeOnly = stripSqlComments(stripped);
 // Schemas seguros: nunca contêm dados pessoais dos tenants (colaboradores, folha, etc).
 // Qualquer referência sem schema explícito é tratada como public (conservador) porque
 // o search_path padrão do Supabase aponta para public antes de pg_catalog.
+// W27: auth e vault removidos da lista de schemas seguros (Codex P1):
+// auth.users contém e-mails reais; vault.decrypted_secrets contém chaves de criptografia.
 const SAFE_SCHEMA_RE =
-  /^(pg_catalog|information_schema|cron|supabase_migrations|storage|auth|vault|extensions|pg_toast|pg_temp|pg_stat|pg_statio)$/i;
+  /^(pg_catalog|information_schema|cron|supabase_migrations|storage|extensions|pg_toast|pg_temp|pg_stat|pg_statio)$/i;
 
 function needsPiiFlag(sql) {
   const qualifiedSchemas = [...sql.matchAll(/\b([a-z_][a-z0-9_]*)\s*\.\s*[a-z_][a-z0-9_]*/gi)].map(
@@ -111,8 +113,21 @@ function needsPiiFlag(sql) {
   );
   // Se não há nenhuma referência schema.tabela, assume public (busca tables sem qualificação)
   if (qualifiedSchemas.length === 0) return true;
-  // Se alguma referência aponta para um schema não-seguro (inclusive public explícito)
-  return qualifiedSchemas.some((s) => !SAFE_SCHEMA_RE.test(s));
+  // Se alguma referência qualificada aponta para schema não-seguro (inclusive public explícito)
+  if (qualifiedSchemas.some((s) => !SAFE_SCHEMA_RE.test(s))) return true;
+  // Codex P1: referências de tabela sem qualificação de schema (ex: FROM colaboradores)
+  // ainda indicam PII mesmo quando TODAS as refs qualificadas são seguras, pois o
+  // search_path padrão do Supabase resolve para public.
+  // Detecta: FROM x, JOIN x, UPDATE x, INSERT INTO x (exclui funções com parênteses).
+  const unqualifiedTableRE = /\b(?:from|join|update|into)\s+([a-z_][a-z0-9_]*)(?!\s*\()/gi;
+  const unqualifiedRefs = [...sql.matchAll(unqualifiedTableRE)].map((m) => m[1].toLowerCase());
+  if (unqualifiedRefs.length > 0) {
+    // Identifiers que NÃO são referências a tabelas reais (palavras reservadas de SQL/Postgres)
+    const SQL_NON_TABLES = new Set(['lateral', 'rows', 'only', 'unnest', 'generate_series',
+      'values', 'select', 'with', 'recursive']);
+    return unqualifiedRefs.some((r) => !SQL_NON_TABLES.has(r));
+  }
+  return false;
 }
 
 if (needsPiiFlag(codeOnly) && !ALLOW_PII) {
