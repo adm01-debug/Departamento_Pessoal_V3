@@ -95,8 +95,10 @@ jobs:
             echo "DIAG_OUTPUT_FILE=$DIAG_OUTPUT_FILE" >> "$GITHUB_ENV"
             node scripts/diag/run-sql-diag.mjs
           else
-            # Sem PII: limita saída a 50 linhas para reduzir ruído em logs públicos.
-            node scripts/diag/run-sql-diag.mjs 2>&1 | head -n 50
+            # Sem PII: saída já truncada pelo script (MAX_ROWS=300, MAX_BYTES=256 KiB).
+            # Codex P3: | head -n 50 com set -eo pipefail causava SIGPIPE (exit 141)
+            # quando a query retornava >50 linhas — step falhava espuriamente.
+            node scripts/diag/run-sql-diag.mjs
           fi
 
       - name: Fazer upload do resultado (somente queries com allow_pii=true)

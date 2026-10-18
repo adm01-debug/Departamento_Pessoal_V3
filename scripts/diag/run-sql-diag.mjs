@@ -231,8 +231,7 @@ if (status !== 0 && !truncated) {
   // erro do Postgres (ex: "invalid input syntax for integer: 'user@example.com'").
   // Redirecionar para o arquivo de saída protegido em vez do log de CI.
   if (OUTPUT_FILE) {
-    const { appendFileSync: afs } = await import('node:fs');
-    afs(OUTPUT_FILE, `\n\n--- ERRO psql ---\n${stderr}`, 'utf8');
+    appendFileSync(OUTPUT_FILE, `\n\n--- ERRO psql ---\n${stderr}`, 'utf8');
     console.error('::error::a consulta falhou — detalhes no artifact (protegido de PII).');
   } else {
     console.error(stderr);

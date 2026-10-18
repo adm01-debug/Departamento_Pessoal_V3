@@ -8,6 +8,10 @@ on:
     - cron: '17 */6 * * *' # a cada 6h, minuto 17 (fora da hora cheia)
   workflow_dispatch:
 
+concurrency:
+  group: healthcheck
+  cancel-in-progress: false
+
 permissions:
   contents: read
   issues: write
