@@ -165,7 +165,7 @@ function main() {
     console.error(
       `\n[embed-hints] FALHA — ${dupOut.length} par(es) de tabelas com FK duplicada (ambiguidade no PostgREST):`
     );
-    for (const l of dupOut) console.error(`  ${l.replace('\t', ' — ')} constraints para a mesma coluna`);
+    for (const l of dupOut) console.error(`  ${l.replace(/\t/g, ' — ')} constraints para a mesma coluna`);
   }
 
   if (falhou) process.exit(1);
