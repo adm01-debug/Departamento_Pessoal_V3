@@ -2,7 +2,7 @@
 // Garante que os 3 endpoints (calcular/fechar/reabrir) produzam SEMPRE o mesmo
 // hash para o mesmo snapshot lógico, independente da ordem das chaves.
 
-import { assert, assertEquals, assertNotEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
+import { assert, assertEquals, assertNotEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
 import { canonicalize, integrityHash, sha256Hex } from './integrityHash.ts';
 
 Deno.test('canonicalize: ordena chaves recursivamente', () => {
