@@ -216,6 +216,7 @@ GRANT EXECUTE ON FUNCTION public.run_lgpd_purge(boolean) TO service_role;
 -- ── 4. documentos sem colaborador: RH gerencia pelo escopo da empresa ──────────
 -- A policy tenant original filtra via colaborador; documentos de empresa
 -- (sem colaborador_id) ficavam ilegíveis e o cadastro era rejeitado (BUG_0002).
+-- audit-migration-style: allow-silent-drop policy criada logo abaixo; IF EXISTS só evita erro em re-run idempotente
 DROP POLICY IF EXISTS documentos_rh_empresa_manage ON public.documentos;
 CREATE POLICY documentos_rh_empresa_manage
   ON public.documentos FOR ALL TO authenticated
