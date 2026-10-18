@@ -311,6 +311,13 @@ jobs:
           # Mantido v2.x até existir uma forma de validar o pin antes de
           # aplicar (ex.: Deno local neste runner).
           deno-version: v2.x
+      - name: Cache de módulos Deno (W36)
+        if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ~/.cache/deno
+          key: deno-${{ runner.os }}-${{ hashFiles('deno.lock') }}
+          restore-keys: deno-${{ runner.os }}-
       - name: Type-check de todas as Edge Functions (gate bloqueante)
         if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
         # E40: fonte única — scripts/typecheck-edge.sh checa o bridge com zero
@@ -323,7 +330,7 @@ jobs:
         # `*.test.ts` recursivamente; a lista de 15 globs hardcoded deixava
         # fora do CI 8 arquivos (calcular-folha, fechar-folha, processar-ponto*,
         # reabrir-folha, external-db-bridge/timeout, webhook).
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/
+        run: deno test --allow-env --frozen --node-modules-dir=false supabase/functions/
       - name: Sem mudanças em supabase/functions/** — sucesso explícito
         if: github.event_name == 'pull_request' && needs.changes.outputs.edge != 'true'
         run: echo "Nenhum arquivo em supabase/functions/**, deno.lock ou scripts/typecheck-edge.sh mudou neste PR — pulado com sucesso explícito (W45)."

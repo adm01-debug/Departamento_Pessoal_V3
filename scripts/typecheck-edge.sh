@@ -22,14 +22,14 @@ command -v deno >/dev/null || {
 }
 
 echo "Type-check external-db-bridge (gate crítico)"
-deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
+deno check --frozen --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
 
 ERRORS=0
 for fn in supabase/functions/*/index.ts; do
   dir=$(dirname "$fn")
   name=$(basename "$dir")
   if [ "$name" = "external-db-bridge" ]; then continue; fi
-  if ! deno check --no-lock --node-modules-dir=false "$fn"; then
+  if ! deno check --frozen --node-modules-dir=false "$fn"; then
     ERRORS=$((ERRORS + 1))
     echo "::error file=$fn::Edge Function $name falhou no deno check"
   fi
