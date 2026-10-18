@@ -96,8 +96,11 @@ const resolverJornada = async (
     // colaboradores.jornada_id: existe onde a migration fixup foi aplicada
     // — quando o colaborador a tem, a grade é a DELE (folga de jornada
     // alheia não se aplica); sem o campo, grade por empresa (schema canônico).
+    // jornada_id filtra a grade do colaborador, mas o escopo de tenant
+    // (empresa_id) é mantido SEMPRE — um vínculo apontando para jornada de
+    // outra empresa não pode ler/aplicar grade de outro tenant.
     q = colab?.jornada_id
-      ? q.eq('jornada_id', colab.jornada_id)
+      ? q.eq('jornada_id', colab.jornada_id).eq('jornadas.empresa_id', empresaId)
       : q.eq('jornadas.empresa_id', empresaId);
     q = apenasUteis ? q.or('dia_util.is.null,dia_util.eq.true') : q.eq('dia_util', false);
     const { data, error } = await q;
