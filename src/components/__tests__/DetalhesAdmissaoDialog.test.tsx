@@ -2,6 +2,14 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-query')>();
+  return {
+    ...actual,
+    useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+  };
+});
+
 vi.mock('@/hooks/useContratacaoDigital', () => ({
   useContratacaoDigital: vi.fn(() => ({
     validarDocumento: { mutate: vi.fn(), isPending: false },
