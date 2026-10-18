@@ -75,21 +75,11 @@ const resolverJornada = async (
       return { minutos, entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
     }
   }
-  const semanal = Number(colab?.jornada_semanal);
-  if (Number.isFinite(semanal) && semanal > 0) {
-    // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
-    // Escala 5x2 (semanal <= 40h) tem sábado de folga — sem isso o sábado
-    // recebia jornada esperada e batia falta indevida.
-    if (diaSemana === 6 && semanal <= 40) {
-      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
-    }
-    return { minutos: Math.round(semanal * 60 / 6), entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
-  }
   // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
-  // Só é avaliada quando o colaborador NÃO tem escala própria — aplicar a
-  // folga da grade a quem tem horário individual transformava dia útil em
-  // HE 100% indevido.
+  // Consultada ANTES do fallback semanal para o sábado: é a única fonte
+  // explícita de "sábado é folga" (dia_util=false). Inferir 5x2 de
+  // jornada_semanal<=40 errava em escala 6x1 com <=40h (ex.: 36h em 6×6h).
   const { data: jh } = await supabase
     .from('jornadas_horarios')
     .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
@@ -101,7 +91,7 @@ const resolverJornada = async (
   if (jh && jh.dia_util === false) {
     return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
   }
-  if (jh?.entrada && jh?.saida) {
+  if (jh?.entrada && jh?.saida && entradaColab === null) {
     let span = timeToMin(jh.saida) - timeToMin(jh.entrada);
     if (span <= 0) span += 1440;
     const int = jh.intervalo_inicio && jh.intervalo_fim
@@ -113,6 +103,17 @@ const resolverJornada = async (
       intervaloMin: int,
       toleranciaMin: tolerancia,
     };
+  }
+  const semanal = Number(colab?.jornada_semanal);
+  if (Number.isFinite(semanal) && semanal > 0) {
+    // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
+    // Sábado de folga só quando configurado explicitamente (dia_util=false
+    // acima) ou quando nem a grade nem horário do colaborador existem para
+    // o sábado e a escala é tipicamente 5x2 (semanal múltiplo de 8h até 40h).
+    if (diaSemana === 6 && semanal <= 40 && semanal % 8 === 0 && !jh && entradaColab === null) {
+      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+    }
+    return { minutos: Math.round(semanal * 60 / 6), entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
   }
   const { data: j } = await supabase
     .from('jornadas')
@@ -175,6 +176,13 @@ const apurarDia = (
   for (let i = 0; i < batidas.length;) {
     const entrada = batidas[i];
     if (entrada.data !== dataRef) break; // batida seguinte abre jornada do próximo dia
+    // Uma 'saida' na cabeça da fila nunca abre par — saída órfã/rejeitada
+    // é quarentena, não entrada (senão 2 saídas viravam turno pagável).
+    if (entrada.tipo === 'saida') {
+      incompleto = true;
+      i += 1;
+      continue;
+    }
     const saida = batidas[i + 1];
     // Uma batida marcada 'entrada' nunca fecha o turno anterior — sem isso a
     // entrada do turno seguinte vira saída fake de uma jornada aberta (turno
@@ -189,14 +197,21 @@ const apurarDia = (
     const e = timeToMin(entrada.hora);
     let s = timeToMin(saida.hora);
     if (saida.data !== entrada.data) {
-      if (s <= e) s += 1440; // virada de dia legítima
+      // Saída em dia seguinte soma a diferença real de dias — s>e sem o
+      // +1440 apagava 24h de turnos longos (08:00→10:00 do dia seguinte
+      // contava 2h). Turno > 24h segue flaggeado como inconsistente.
+      const dias = Math.round((Date.parse(saida.data) - Date.parse(entrada.data)) / 86400000);
+      s += Math.max(1, dias) * 1440;
+      if (s - e > 1440) incompleto = true;
     } else if (s <= e) {
       // Saída no MESMO dia com hora <= entrada = dado inconsistente
       // (batida fora de ordem/ajuste). Não inventa turno de 20h+: a
-      // entrada fica pendente para revisão.
+      // entrada fica pendente para revisão E a saída rejeitada é
+      // consumida — deixá-la na cabeça da fila a transformava em entrada
+      // do próximo par (turno falso pagável).
       incompleto = true;
       slots.push({ entrada, saida: null });
-      i += 1;
+      i += 2;
       continue;
     }
     pares.push([e, s]);
