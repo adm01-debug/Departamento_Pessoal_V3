@@ -38,6 +38,12 @@ CREATE TRIGGER trg_ponto_espelhos_assinados_no_update
   BEFORE UPDATE ON public.ponto_espelhos_assinados
   FOR EACH ROW EXECUTE FUNCTION public.ponto_espelhos_assinados_guard_update();
 
+-- Defesa em profundidade (Devin Review #260): mesmo com RLS bloqueando
+-- UPDATE direto hoje, revoga-se o privilégio de tabela — uma policy futura
+-- FOR ALL não pode reabrir o bypass silenciosamente. revogar_espelho_ponto é
+-- SECURITY DEFINER (roda como owner) e não é afetado.
+REVOKE UPDATE, DELETE ON public.ponto_espelhos_assinados FROM anon, authenticated;
+
 -- Backfill re-executado (idempotente): cobre o caso do apply de
 -- 20261022000000 ter abortado este UPDATE no canônico.
 UPDATE public.ponto_espelhos_assinados a
