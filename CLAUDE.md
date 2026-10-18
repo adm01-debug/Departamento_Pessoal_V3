@@ -637,13 +637,14 @@ _Nenhum crítico bloqueante no momento._
 
 ### Baixos
 
-| Gap                                   | Impacto                                        | Solução                                                                    |
-| ------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
-| `--no-lock` no `deno test` do ci.yml  | Bypassa deno.lock                              | Resolver após W36 corrigir lock                                            |
-| `noUnusedLocals:true` pode alertar    | Warnings no build                              | Aceitar ou limpar                                                          |
-| CodeQL unused-local (99 restantes)    | Ruído no painel GHAS                           | Fechar em batch via W82 contínuo                                           |
-| `extract-zip ≤2.0.1` (Alerts #15/#16) | Path traversal teórico em devDep (`@lhci/cli`) | Sem fix upstream — risco zero em CI read-only; aguardar patch do upstream  |
-| `sprintf-js ≤1.1.3` (Alert #18)       | Prototype pollution em devDep (`jasmine-core`) | Sem fix upstream — baixo risco; aguardar atualização do `@testing-library` |
+| Gap                                    | Impacto                                                      | Solução                                                                                                                                                                                                                        |
+| -------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `--no-lock` no `deno test` do ci.yml   | Bypassa deno.lock                                            | Resolver após W36 corrigir lock                                                                                                                                                                                                |
+| `noUnusedLocals:true` pode alertar     | Warnings no build                                            | Aceitar ou limpar                                                                                                                                                                                                              |
+| CodeQL unused-local (99 restantes)     | Ruído no painel GHAS                                         | Fechar em batch via W82 contínuo                                                                                                                                                                                               |
+| `extract-zip ≤2.0.1` (Alerts #15/#16)  | Path traversal teórico em devDep (`@lhci/cli`)               | Sem fix upstream — risco zero em CI read-only; aguardar patch do upstream                                                                                                                                                      |
+| `sprintf-js ≤1.1.3` (Alert #18)        | Prototype pollution em devDep (`jasmine-core`)               | Sem fix upstream — baixo risco; aguardar atualização do `@testing-library`                                                                                                                                                     |
+| `uuid@8.3.2` em `@lhci/cli` (Alert #1) | Buffer bounds check GHSA-w5hq-g745-h8pq (CVSS 7.5) em devDep | Override `"@lhci/cli":{"uuid":"14.0.3"}` existe mas npm v10 não força majors incompatíveis — `@lhci/cli` requer `^8.3.1`; uuid@14 tem API quebrada. Risco zero (CI read-only, buf não controlado); aguardar @lhci/cli upstream |
 
 ---
 
