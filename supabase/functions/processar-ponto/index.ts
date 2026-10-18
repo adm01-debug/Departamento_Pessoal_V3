@@ -67,14 +67,6 @@ const resolverJornada = async (
   const entradaColab = colab?.horario_entrada ? timeToMin(colab.horario_entrada) : null;
   const saidaColab = colab?.horario_saida ? timeToMin(colab.horario_saida) : null;
   const intervaloColab = Number(colab?.intervalo_minutos) || 0;
-  if (entradaColab !== null && saidaColab !== null) {
-    let span = saidaColab - entradaColab;
-    if (span <= 0) span += 1440; // turno cruza meia-noite
-    const minutos = Math.max(0, span - intervaloColab);
-    if (minutos > 0) {
-      return { minutos, entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
-    }
-  }
   // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
   // Query limitada ao dia (sem paginação) e erro propagado — silenciar erro
@@ -110,10 +102,20 @@ const resolverJornada = async (
   const jh = (await fetchDia(true)) ?? (await fetchDia(false));
   // Folga só por configuração EXPLÍCITA do dia (dia_util=false) — grade
   // parcial sem linha de sábado não é descanso: poderia ser 5x2 ou 6x1.
-  // Os HORÁRIOS da grade são default da empresa e só valem quando o
-  // colaborador não tem jornada própria (semanal customizada ≠44 vence).
+  // A folga configurada vence TAMBÉM os horários próprios do colaborador
+  // (regra 1): sem isso, sábado trabalhado de quem tem horario_entrada
+  // virava 'falta' em vez de HE 100%.
   if (jh && jh.dia_util === false) {
     return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+  }
+  // 1) horários próprios do colaborador
+  if (entradaColab !== null && saidaColab !== null) {
+    let span = saidaColab - entradaColab;
+    if (span <= 0) span += 1440; // turno cruza meia-noite
+    const minutos = Math.max(0, span - intervaloColab);
+    if (minutos > 0) {
+      return { minutos, entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
+    }
   }
   const semanal = Number(colab?.jornada_semanal);
   const temSemanal = Number.isFinite(semanal) && semanal > 0;
@@ -442,9 +444,12 @@ serve(async (req) => {
       // contar entrada/saída separadamente não reproduz a regra.
       let abertaOntem = false;
       for (let i = 0; i < (prevDia ?? []).length;) {
+        const cur = prevDia![i];
         const nx = prevDia![i + 1];
-        if (!nx || nx.tipo === 'entrada') { abertaOntem = true; i += 1; continue; }
-        abertaOntem = false; i += 2;
+        if (cur.tipo === 'saida') { abertaOntem = false; i += 1; continue; }
+        // cur é entrada: fecha par só se a próxima for saída; senão fica aberta
+        if (nx && nx.tipo === 'saida') { abertaOntem = false; i += 2; continue; }
+        abertaOntem = true; i += 1;
       }
 
       let batidas = batidasRaw ?? [];

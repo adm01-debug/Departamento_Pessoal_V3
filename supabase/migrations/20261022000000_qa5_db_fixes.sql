@@ -110,3 +110,163 @@ $$;
 
 REVOKE ALL ON FUNCTION public.revogar_espelho_ponto(uuid, text, inet, text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.revogar_espelho_ponto(uuid, text, inet, text) TO authenticated;
+
+-- (3) QA-1 F1 — gerar_canonical_espelho_ponto lia batidas_ponto.data_hora e
+--     b.nsr, colunas que nunca existiram (a tabela tem data date + hora time;
+--     NSR é campo AFDT em afdt_registros_raw). Resultado: a função quebrava e
+--     nenhum espelho 671 era gerado. Recria o corpo igual à versão mais
+--     recente (20260924220000 — SECURITY DEFINER + guarda sou_o_colaborador/
+--     pode_gerir_rh), montando o timestamp a partir de data+hora e removendo
+--     o campo nsr.
+CREATE OR REPLACE FUNCTION public.gerar_canonical_espelho_ponto(_colaborador_id uuid, _competencia text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+DECLARE
+  v_inicio date;
+  v_fim date;
+  v_colab record;
+  v_batidas jsonb;
+BEGIN
+  v_inicio := to_date(_competencia || '-01', 'YYYY-MM-DD');
+  v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;
+
+  SELECT c.id, c.nome_completo, c.cpf, c.pis_pasep, c.empresa_id, c.matricula
+    INTO v_colab
+    FROM public.colaboradores c
+   WHERE c.id = _colaborador_id;
+
+  IF v_colab.id IS NULL THEN
+    RAISE EXCEPTION 'Colaborador não encontrado';
+  END IF;
+
+  IF NOT (public.sou_o_colaborador(_colaborador_id) OR public.pode_gerir_rh(v_colab.empresa_id)) THEN
+    RAISE EXCEPTION 'Sem permissão para este espelho de ponto';
+  END IF;
+
+  SELECT COALESCE(jsonb_agg(
+    jsonb_build_object(
+      'id', b.id,
+      -- data+hora já são horário local; monta o timestamp sem conversão de tz
+      'data_hora', to_char(b.data + b.hora, 'YYYY-MM-DD"T"HH24:MI:SS'),
+      'tipo', b.tipo,
+      'origem', b.origem,
+      'ordem', b.ordem
+    ) ORDER BY b.data ASC, b.hora ASC, b.ordem ASC, b.id ASC
+  ), '[]'::jsonb)
+  INTO v_batidas
+  FROM public.batidas_ponto b
+  WHERE b.colaborador_id = _colaborador_id
+    AND b.data BETWEEN v_inicio AND v_fim;
+
+  RETURN jsonb_build_object(
+    'versao', '1.0',
+    'colaborador', jsonb_build_object(
+      'id', v_colab.id,
+      'nome', v_colab.nome_completo,
+      'cpf', v_colab.cpf,
+      'pis', v_colab.pis_pasep,
+      'matricula', v_colab.matricula
+    ),
+    'empresa_id', v_colab.empresa_id,
+    'competencia', _competencia,
+    'periodo', jsonb_build_object('inicio', v_inicio, 'fim', v_fim),
+    'batidas', v_batidas,
+    'total_batidas', jsonb_array_length(v_batidas)
+  );
+END;
+$function$;
+
+-- ACL canônica (20260731151103): só service_role — a função é chamada por
+-- assinar_espelho_ponto (SECURITY DEFINER), nunca direto pelo cliente.
+REVOKE ALL ON FUNCTION public.gerar_canonical_espelho_ponto(uuid, text) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.gerar_canonical_espelho_ponto(uuid, text) TO service_role;
+
+-- (4) QA-1 F3 — fn_consolidar_batidas calculava campos derivados com a regra
+--     LEGADA (alvo semanal/5, atraso linear delta-10, sem DSR/HE100/noturno)
+--     enquanto a apuração CLT real vive na edge processar-ponto. Resultado:
+--     espelho antes do "Processar" mostrava outra matemática e batida tardia
+--     misturava os dois motores na mesma linha (derrubava o HE100 domingal
+--     gravado pelo motor). A trigger passa a espelhar SÓ as batidas brutas;
+--     os campos derivados ficam NULL até o motor apurar — e nunca mais são
+--     sobrescritos depois (DO UPDATE não toca nos campos do motor).
+CREATE OR REPLACE FUNCTION public.fn_consolidar_batidas()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
+DECLARE
+  v_total_batidas INTEGER;
+  v_entrada_1 TEXT; v_saida_1 TEXT;
+  v_entrada_2 TEXT; v_saida_2 TEXT;
+  v_entrada_3 TEXT; v_saida_3 TEXT;
+  v_entrada_4 TEXT; v_saida_4 TEXT;
+  v_entrada_5 TEXT; v_saida_5 TEXT;
+  v_entrada_6 TEXT; v_saida_6 TEXT;
+BEGIN
+  SELECT COUNT(*) INTO v_total_batidas
+  FROM public.batidas_ponto
+  WHERE colaborador_id = NEW.colaborador_id AND data = NEW.data;
+
+  SELECT
+    MAX(CASE WHEN ordem = 1  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 2  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 3  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 4  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 5  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 6  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 7  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 8  AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 9  AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 10 AND tipo = 'saida'   THEN hora::text END),
+    MAX(CASE WHEN ordem = 11 AND tipo = 'entrada' THEN hora::text END),
+    MAX(CASE WHEN ordem = 12 AND tipo = 'saida'   THEN hora::text END)
+  INTO v_entrada_1, v_saida_1, v_entrada_2, v_saida_2, v_entrada_3, v_saida_3,
+       v_entrada_4, v_saida_4, v_entrada_5, v_saida_5, v_entrada_6, v_saida_6
+  FROM public.batidas_ponto
+  WHERE colaborador_id = NEW.colaborador_id AND data = NEW.data;
+
+  INSERT INTO public.registros_ponto (
+    colaborador_id, empresa_id, data,
+    entrada_1, saida_1, entrada_2, saida_2, entrada_3, saida_3,
+    entrada_4, saida_4, entrada_5, saida_5, entrada_6, saida_6,
+    saida_intervalo, retorno_intervalo, total_batidas
+  ) VALUES (
+    NEW.colaborador_id, NEW.empresa_id, NEW.data,
+    v_entrada_1::time, v_saida_1::time, v_entrada_2::time, v_saida_2::time,
+    v_entrada_3::time, v_saida_3::time, v_entrada_4::time, v_saida_4::time,
+    v_entrada_5::time, v_saida_5::time, v_entrada_6::time, v_saida_6::time,
+    v_saida_1::time, v_entrada_2::time, v_total_batidas
+  )
+  ON CONFLICT (colaborador_id, data)
+  DO UPDATE SET
+    entrada_1 = EXCLUDED.entrada_1, saida_1 = EXCLUDED.saida_1,
+    entrada_2 = EXCLUDED.entrada_2, saida_2 = EXCLUDED.saida_2,
+    entrada_3 = EXCLUDED.entrada_3, saida_3 = EXCLUDED.saida_3,
+    entrada_4 = EXCLUDED.entrada_4, saida_4 = EXCLUDED.saida_4,
+    entrada_5 = EXCLUDED.entrada_5, saida_5 = EXCLUDED.saida_5,
+    entrada_6 = EXCLUDED.entrada_6, saida_6 = EXCLUDED.saida_6,
+    saida_intervalo = EXCLUDED.saida_intervalo,
+    retorno_intervalo = EXCLUDED.retorno_intervalo,
+    total_batidas = EXCLUDED.total_batidas,
+    updated_at = now();
+
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  -- A consolidação é um resumo derivado. Uma falha aqui NUNCA pode impedir o
+  -- registro da batida, que é o documento com valor legal (Portaria 671).
+  INSERT INTO public.logs_sistema (nivel, mensagem, contexto)
+  VALUES ('error',
+          'Falha ao consolidar espelho do dia; batida preservada',
+          jsonb_build_object(
+            'origem', 'fn_consolidar_batidas',
+            'colaborador_id', NEW.colaborador_id,
+            'data', NEW.data,
+            'erro', SQLERRM,
+            'sqlstate', SQLSTATE));
+  RETURN NEW;
+END;
+$function$;
