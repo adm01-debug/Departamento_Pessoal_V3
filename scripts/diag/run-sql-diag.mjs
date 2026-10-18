@@ -188,9 +188,10 @@ if (FORBIDDEN_CALL_RE.test(codeOnly)) {
 // Hard guard: READ ONLY transaction — Postgres rejects any write attempt.
 // The terminator goes on its own line so a trailing `-- comment` cannot
 // swallow it and leave the statement unterminated before ROLLBACK.
-// W78: statement_timeout limita cada query a 15s — evita scans longos acidentais
-// que consumiriam conexões do pool do canônico.
-const sql = `BEGIN TRANSACTION READ ONLY;\nSET LOCAL statement_timeout = '15s';\n${stripped}\n;\nROLLBACK;`;
+// W78: statement_timeout = '15s' evita scans longos acidentais.
+// W78: SET LOCAL ROLE ci_auditor restringe o escopo de acesso ao mínimo
+// necessário (role read-only criada em migration 20261015160000).
+const sql = `BEGIN TRANSACTION READ ONLY;\nSET LOCAL statement_timeout = '15s';\nSET LOCAL ROLE ci_auditor;\n${stripped}\n;\nROLLBACK;`;
 
 // Stream stdout and truncate incrementally — buffering everything first
 // means a multi-MiB result dies on maxBuffer before the row cap can run.
