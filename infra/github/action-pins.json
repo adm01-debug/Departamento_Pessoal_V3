@@ -1,18 +1,22 @@
 {
   "_comment": "Tabela offline: SHA → versão esperada no comentário '# vX'. Manter sincronizado com os workflows.",
-  "_updated": "2026-10-15",
+  "_updated": "2026-10-18",
   "pins": {
     "3d3c42e5aac5ba805825da76410c181273ba90b1": { "action": "actions/checkout", "version": "v7" },
-    "820762786026740c76f36085b0efc47a31fe5020": { "action": "actions/setup-node", "version": "v7" },
+    "949feb2413d6458794dcd2491c4babbbce0c15c1": { "action": "actions/setup-node", "version": "v7" },
     "043fb46d1a93c77aae656e7c1c64a875d1fc6a0a": { "action": "actions/upload-artifact", "version": "v7" },
+    "cf430e030ddbb5b0abf93d22962f4752f3646cd9": { "action": "actions/upload-artifact", "version": "v7" },
     "ea165f8d65b6e75b540449e92b4886f43607fa02": { "action": "actions/upload-artifact", "version": "v4.6.2" },
     "55cc8345863c7cc4c66a329aec7e433d2d1c52a9": { "action": "actions/cache", "version": "v6" },
     "22d081ff2d3a40755e97629de92e3bcbfa7cf2ed": { "action": "denoland/setup-deno", "version": "v2.0.5" },
     "2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2": { "action": "github/codeql-action/*", "version": "v4.38.2" },
+    "24c54180a607b1449ed407dd24f251e4e9147c8d": { "action": "github/codeql-action/*", "version": "v4.38.3" },
     "45a513f8c64c0bc8e0e3dfe572b5c95be85f6359": { "action": "supabase/setup-cli", "version": "v3.0.1" },
+    "a1d282b36b6f3519aa1f3fc636f609c47dddb294": { "action": "actions/dependency-review-action", "version": "v4.6.0" },
     "4081bf99e2866ebe428fc0477b69eb4fcda7220a": { "action": "actions/dependency-review-action", "version": "v4.6.0" },
     "fa7117db83c52d787ae5a89f350999701505d78e": { "action": "ossf/scorecard-action", "version": "v2.5.0" },
     "4d101475d8b20a2381f78447822ac1eab6504dd8": { "action": "actions/attest-build-provenance", "version": "v4.2.2" },
-    "ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d": { "action": "dorny/paths-filter", "version": "v4.0.3" }
+    "ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d": { "action": "dorny/paths-filter", "version": "v4.0.3" },
+    "023070a287cd8cccd71515fedc843f1985bf96c4": { "action": "actionlint-binary", "version": "1.7.7" }
   }
 }
