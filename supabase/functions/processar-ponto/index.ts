@@ -410,15 +410,13 @@ serve(async (req) => {
       const pago50 = bancoAtivo ? 0 : r.extra50Min;
       const pago100 = bancoAtivo ? 0 : r.extra100Min;
 
-      // Espelho: cada slot é um turno {entrada, saida|null} — a saída de um
-      // turno que cruza meia-noite aparece no dia da entrada, e entrada
-      // pendente mostra saida=null (nunca vira "saída" de outro turno).
-      // O registro só tem 3 pares de colunas: com overflow, turnos FECHADOS
-      // (horas realmente trabalhadas) têm prioridade sobre entradas pendentes.
-      const s = [
-        ...r.slots.filter((x) => x.saida),
-        ...r.slots.filter((x) => !x.saida),
-      ].slice(0, 3);
+      // Espelho: cada slot é um turno {entrada, saida|null} em ORDEM
+      // CRONOLÓGICA — a saída de um turno que cruza meia-noite aparece no dia
+      // da entrada, e entrada pendente mostra saida=null (os painéis de
+      // inconsistência detectam turno aberto exatamente por esse null; não
+      // reordenar). O registro só tem 3 pares de colunas: no overflow raro,
+      // os turnos mais antigos ficam visíveis primeiro.
+      const s = r.slots.slice(0, 3);
       const registro = {
         colaborador_id: colabId,
         empresa_id: empresaId,
