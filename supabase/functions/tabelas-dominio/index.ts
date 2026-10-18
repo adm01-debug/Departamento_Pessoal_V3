@@ -63,7 +63,19 @@ const ORDER_MAP: Record<DomainType, string> = {
 
 serve(async (req) => {
   const url = new URL(req.url);
-  const type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
+  // `type` vem da querystring (GET) ou do body — o frontend chama via
+  // functions.invoke com `body: { type }`.
+  let type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
+  if (!type && req.method === 'POST') {
+    try {
+      const body = await req.clone().json();
+      if (body && typeof body.type === 'string') {
+        type = body.type.toLowerCase() as DomainType;
+      }
+    } catch {
+      /* body ausente/inválido — o 400 abaixo cobre */
+    }
+  }
 
   // E-077: CORS via allowlist compartilhada (sem wildcard fixo)
   const preflight = handlePreflight(req);
