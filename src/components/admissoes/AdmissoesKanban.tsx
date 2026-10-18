@@ -43,6 +43,8 @@ const COLUMNS: { key: EtapaAdmissao; label: string; accent: string }[] = [
   { key: 'contrato', label: 'Contrato', accent: 'from-info/20 to-info/5' },
   { key: 'assinatura', label: 'Assinatura', accent: 'from-primary/20 to-primary/5' },
   { key: 'esocial', label: 'eSocial', accent: 'from-success/20 to-success/5' },
+  { key: 'concluida', label: 'Concluída', accent: 'from-success/30 to-success/10' },
+  { key: 'cancelada', label: 'Cancelada', accent: 'from-destructive/20 to-destructive/5' },
 ];
 
 function KanbanCard({ item, dragging }: { item: Admissao; dragging?: boolean }) {
@@ -75,7 +77,10 @@ function KanbanCard({ item, dragging }: { item: Admissao; dragging?: boolean }) 
 }
 
 function DraggableCard({ item }: { item: Admissao }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id });
+  // Etapas terminais não saem da coluna: concluída já criou colaborador e
+  // cancelada é definitiva — arrastar de volta deixaria o vínculo divergente.
+  const terminal = item.etapa === 'concluida' || item.etapa === 'cancelada';
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id, disabled: terminal });
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} className={cn(isDragging && 'opacity-30')}>
       <KanbanCard item={item} />
@@ -161,9 +166,23 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
 
     setOptimistic((s) => ({ ...s, [id]: target }));
     try {
-      await admissaoService.atualizar(id, { etapa: target }, empresaAtual.id);
-      toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
+      if (target === 'concluida') {
+        const r = await admissaoService.concluir(id, empresaAtual.id);
+        toast.success(r.colaboradorId ? 'Admissão concluída — colaborador criado.' : 'Admissão concluída.');
+      } else if (target === 'cancelada') {
+        await admissaoService.cancelar(id, empresaAtual.id);
+        toast.success('Admissão cancelada.');
+      } else {
+        await admissaoService.atualizar(id, { etapa: target }, empresaAtual.id);
+        toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
+      }
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
+      if (target === 'concluida') {
+        await Promise.all([
+          qc.invalidateQueries({ queryKey: ['colaboradores'] }),
+          qc.invalidateQueries({ queryKey: ['colaboradores-summary'] }),
+        ]);
+      }
     } catch (err) {
       setOptimistic((s) => {
         const next = { ...s };
