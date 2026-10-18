@@ -13,10 +13,17 @@
  */
 
 import { spawn } from 'node:child_process';
+import { writeFileSync, appendFileSync } from 'node:fs';
 
 const DB_URL = process.env.SUPABASE_DB_URL;
 const QUERY = (process.env.DIAG_QUERY ?? '').trim();
 const MAX_ROWS = Number(process.env.DIAG_MAX_ROWS ?? '300');
+// W27: ALLOW_PII=1 obrigatório para queries que acessam tabelas do schema public.
+// Sem essa flag, o runner bloqueia para evitar que dados pessoais apareçam nos logs de CI.
+const ALLOW_PII = process.env.ALLOW_PII === '1';
+// Output file path: quando definido, resultado vai para arquivo em vez de stdout
+// (canonical-sql-diag.yml seta isso e faz upload do artifact com retenção curta).
+const OUTPUT_FILE = process.env.DIAG_OUTPUT_FILE ?? '';
 
 if (!DB_URL) {
   console.error('::error::SUPABASE_DB_URL is required');
@@ -90,6 +97,31 @@ function stripSqlComments(input) {
 
 const stripped = QUERY.replace(/;+\s*$/, '');
 const codeOnly = stripSqlComments(stripped);
+
+// W27: identifica se a query acessa tabelas fora dos schemas de sistema seguros.
+// Schemas seguros: nunca contêm dados pessoais dos tenants (colaboradores, folha, etc).
+// Qualquer referência sem schema explícito é tratada como public (conservador) porque
+// o search_path padrão do Supabase aponta para public antes de pg_catalog.
+const SAFE_SCHEMA_RE =
+  /^(pg_catalog|information_schema|cron|supabase_migrations|storage|auth|vault|extensions|pg_toast|pg_temp|pg_stat|pg_statio)$/i;
+
+function needsPiiFlag(sql) {
+  const qualifiedSchemas = [...sql.matchAll(/\b([a-z_][a-z0-9_]*)\s*\.\s*[a-z_][a-z0-9_]*/gi)].map(
+    (m) => m[1].toLowerCase()
+  );
+  // Se não há nenhuma referência schema.tabela, assume public (busca tables sem qualificação)
+  if (qualifiedSchemas.length === 0) return true;
+  // Se alguma referência aponta para um schema não-seguro (inclusive public explícito)
+  return qualifiedSchemas.some((s) => !SAFE_SCHEMA_RE.test(s));
+}
+
+if (needsPiiFlag(codeOnly) && !ALLOW_PII) {
+  console.error(
+    '::error::W27 — esta consulta pode acessar tabelas com dados pessoais (schema public). ' +
+      'Execute novamente com allow_pii=true; o resultado será enviado como artifact (1 dia) e não aparecerá nos logs.'
+  );
+  process.exit(1);
+}
 
 // Single statement only: no semicolons except an optional trailing one.
 if (codeOnly.includes(';')) {
@@ -173,13 +205,22 @@ if (status !== 0 && !truncated) {
 }
 
 const lines = stdout.split('\n');
+let out = '';
 if (lines.length > MAX_ROWS) {
-  console.log(lines.slice(0, MAX_ROWS).join('\n'));
-  console.log(`\n… saída truncada em ${MAX_ROWS} linhas (${lines.length} no total)`);
+  out = lines.slice(0, MAX_ROWS).join('\n') + `\n\n… saída truncada em ${MAX_ROWS} linhas (${lines.length} no total)`;
 } else {
-  console.log(stdout);
+  out = stdout;
 }
-if (truncated) {
-  console.log(`\n… saída truncada em ${MAX_BYTES / 1024} KiB`);
+if (truncated) out += `\n\n… saída truncada em ${MAX_BYTES / 1024} KiB`;
+
+if (OUTPUT_FILE) {
+  // W27: resultado com PII vai para arquivo isolado → artifact de curta retenção.
+  // Nada é impresso nos logs de CI (evita PII em runs públicos).
+  writeFileSync(OUTPUT_FILE, out, 'utf8');
+  console.log(
+    `::notice::Resultado em artifact sql-diag-output (retenção 1 dia) — omitido dos logs para proteção de PII (W27).`
+  );
+} else {
+  console.log(out);
 }
 if (stderr.trim()) console.error(stderr);

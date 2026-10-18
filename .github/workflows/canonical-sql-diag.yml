@@ -18,6 +18,14 @@ on:
         description: Consulta SQL (somente SELECT/WITH/EXPLAIN/SHOW)
         required: true
         type: string
+      allow_pii:
+        description: >
+          W27 — marcar true para consultas que acessam tabelas com dados pessoais
+          (schema public). O resultado NÃO aparecerá nos logs: será enviado como
+          artifact privado com retenção de 1 dia.
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: canonical-database
@@ -25,6 +33,8 @@ concurrency:
 
 permissions:
   contents: read
+  # W27: upload-artifact requer actions:write quando allow_pii=true (resultado isolado)
+  actions: write
 
 jobs:
   sql-diag:
@@ -37,6 +47,8 @@ jobs:
       CANONICAL_REF: frjbfeamybqsejlvmqbl
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
       DIAG_QUERY: ${{ inputs.query }}
+      # W27: '1' ativa modo PII → resultado em artifact, não em log de CI
+      ALLOW_PII: ${{ inputs.allow_pii == true && '1' || '0' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -67,9 +79,26 @@ jobs:
 
       - name: Executar consulta read-only (ROLLBACK garantido)
         run: |
-          set -o pipefail
-          # W27: limitar saída para reduzir risco de PII em logs de CI
-          node scripts/diag/run-sql-diag.mjs 2>&1 | head -n 50
+          set -eo pipefail
+          if [ "$ALLOW_PII" = "1" ]; then
+            # W27: query acessa schema public → resultado isolado em arquivo, nunca impresso no log.
+            DIAG_OUTPUT_FILE="$(mktemp /tmp/sql-diag-XXXXXX.txt)"
+            export DIAG_OUTPUT_FILE
+            node scripts/diag/run-sql-diag.mjs
+            echo "DIAG_OUTPUT_FILE=$DIAG_OUTPUT_FILE" >> "$GITHUB_ENV"
+          else
+            # Sem PII: limita saída a 50 linhas para reduzir ruído em logs públicos.
+            node scripts/diag/run-sql-diag.mjs 2>&1 | head -n 50
+          fi
+
+      - name: Fazer upload do resultado (somente queries com allow_pii=true)
+        # W27: artifact com retenção mínima (1 dia) — não fica nos logs de CI.
+        if: env.DIAG_OUTPUT_FILE != ''
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: sql-diag-output-${{ github.run_id }}
+          path: ${{ env.DIAG_OUTPUT_FILE }}
+          retention-days: 1
 
       - name: Registrar execução no audit_log
         if: always()
