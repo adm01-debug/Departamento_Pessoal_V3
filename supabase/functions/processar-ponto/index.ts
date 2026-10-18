@@ -49,11 +49,12 @@ interface BatidaDia {
   ordem?: number | null;
 }
 
-// Resolve a jornada do colaborador para o dia:
-// 0) grade do dia com dia_util=false → folga configurada (tudo vira HE 100%)
+// Resolve a jornada do colaborador para o dia (em ordem de precedência — os
+// horários próprios do colaborador vencem qualquer grade da empresa):
 // 1) campos próprios do colaborador (horario_entrada/saida/intervalo)
 // 2) jornada_semanal do colaborador (assume 6 dias úteis CLT)
-// 3) jornadas_horarios do dia da semana (jornada ativa da empresa)
+// 3) jornadas_horarios do dia da semana — inclusive dia_util=false = folga
+//    configurada (trabalhar na folga → tudo vira HE 100%)
 // 4) primeira jornada ativa da empresa
 // 5) fallback legal 8h + tolerância 10min
 const resolverJornada = async (
@@ -63,20 +64,6 @@ const resolverJornada = async (
   diaSemana: number,
 ): Promise<JornadaDia> => {
   const tolerancia = 10;
-  // Grade do dia — lida antes dos fallbacks porque `dia_util=false` é uma
-  // marcação explícita de FOLGA (ex.: escala seg–sex com sábado de descanso).
-  // Sem isso, trabalhar na folga caía na jornada genérica e não gerava HE 100%.
-  const { data: jh } = await supabase
-    .from('jornadas_horarios')
-    .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
-    .eq('dia_semana', diaSemana)
-    .eq('jornadas.empresa_id', empresaId)
-    .eq('jornadas.ativa', true)
-    .limit(1)
-    .maybeSingle();
-  if (jh && jh.dia_util === false) {
-    return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
-  }
   const entradaColab = colab?.horario_entrada ? timeToMin(colab.horario_entrada) : null;
   const saidaColab = colab?.horario_saida ? timeToMin(colab.horario_saida) : null;
   const intervaloColab = Number(colab?.intervalo_minutos) || 0;
@@ -95,6 +82,20 @@ const resolverJornada = async (
   }
   // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
+  // Só é avaliada quando o colaborador NÃO tem escala própria — aplicar a
+  // folga da grade a quem tem horário individual transformava dia útil em
+  // HE 100% indevido.
+  const { data: jh } = await supabase
+    .from('jornadas_horarios')
+    .select('entrada, saida, intervalo_inicio, intervalo_fim, dia_util, jornadas!inner(empresa_id, ativa)')
+    .eq('dia_semana', diaSemana)
+    .eq('jornadas.empresa_id', empresaId)
+    .eq('jornadas.ativa', true)
+    .limit(1)
+    .maybeSingle();
+  if (jh && jh.dia_util === false) {
+    return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+  }
   if (jh?.entrada && jh?.saida) {
     let span = timeToMin(jh.saida) - timeToMin(jh.entrada);
     if (span <= 0) span += 1440;
@@ -143,11 +144,10 @@ interface ResultadoDia {
   faltaMin: number;
   atrasoMin: number;
   incompleto: boolean;
-  // Pares efetivamente fechados — a saída pode pertencer ao dia seguinte
-  // (virada de turno) e ainda assim aparece no espelho do dia da entrada.
-  paresBatidas: Array<[BatidaDia, BatidaDia]>;
-  // Batidas do dia sem par (entrada pendente exibida no espelho).
-  pendentes: BatidaDia[];
+  // Slots do espelho em ordem cronológica: cada turno é {entrada, saida} — a
+  // saída pode pertencer ao dia seguinte (virada) e uma entrada pendente
+  // aparece com saida=null (nunca ocupa o slot de saída de outro turno).
+  slots: Array<{ entrada: BatidaDia; saida: BatidaDia | null }>;
 }
 
 // Apura um dia: pares entrada/saída com suporte a virada de dia,
@@ -165,8 +165,7 @@ const apurarDia = (
   diaEmAndamento: boolean,
 ): ResultadoDia => {
   const pares: Array<[number, number]> = [];
-  const paresBatidas: Array<[BatidaDia, BatidaDia]> = [];
-  const pendentes: BatidaDia[] = [];
+  const slots: Array<{ entrada: BatidaDia; saida: BatidaDia | null }> = [];
   let incompleto = false;
   for (let i = 0; i < batidas.length;) {
     const entrada = batidas[i];
@@ -177,7 +176,7 @@ const apurarDia = (
     // fictício de 10h+). O turno fica aberto e a batida abre par próprio.
     if (!saida || saida.tipo === 'entrada') {
       incompleto = true;
-      pendentes.push(entrada);
+      slots.push({ entrada, saida: null });
       if (!saida || saida.data !== dataRef) break;
       i += 1;
       continue;
@@ -186,7 +185,7 @@ const apurarDia = (
     let s = timeToMin(saida.hora);
     if (saida.data !== entrada.data || s <= e) s += 1440;
     pares.push([e, s]);
-    paresBatidas.push([entrada, saida]);
+    slots.push({ entrada, saida });
     i += 2;
   }
 
@@ -201,7 +200,7 @@ const apurarDia = (
 
   if (ehDsr) {
     // Domingo/feriado/folga trabalhado: tudo é HE 100% (DSR); sem falta/atraso.
-    return { totalMin, extra50Min: 0, extra100Min: totalMin, noturnoMin, faltaMin: 0, atrasoMin, incompleto, paresBatidas, pendentes };
+    return { totalMin, extra50Min: 0, extra100Min: totalMin, noturnoMin, faltaMin: 0, atrasoMin, incompleto, slots };
   }
 
   const brutoExtra = Math.max(0, totalMin - jornada.minutos);
@@ -209,7 +208,7 @@ const apurarDia = (
   // Jornada aberta no dia corrente ainda não configura falta — a saída pode
   // estar pendente. Dias passados com batida ímpar seguem com falta medida.
   const faltaMin = incompleto && diaEmAndamento ? 0 : Math.max(0, jornada.minutos - totalMin);
-  return { totalMin, extra50Min, extra100Min: 0, noturnoMin, faltaMin, atrasoMin, incompleto, paresBatidas, pendentes };
+  return { totalMin, extra50Min, extra100Min: 0, noturnoMin, faltaMin, atrasoMin, incompleto, slots };
 };
 
 serve(async (req) => {
@@ -343,8 +342,10 @@ serve(async (req) => {
       // estar no dia seguinte.
       const dataAnt = addDia(dataRef, -1);
       const dataSeg = addDia(dataRef, 1);
-      const [{ data: prevCnt }, { data: batidasRaw, error: bErr }] = await Promise.all([
-        supabase.from('batidas_ponto').select('id').eq('colaborador_id', colabId).eq('data', dataAnt),
+      const [{ data: prevDia }, { data: batidasRaw, error: bErr }] = await Promise.all([
+        supabase.from('batidas_ponto').select('data,hora,tipo,ordem')
+          .eq('colaborador_id', colabId).eq('data', dataAnt)
+          .order('ordem', { ascending: true }),
         supabase.from('batidas_ponto').select('*')
           .eq('colaborador_id', colabId)
           .in('data', [dataRef, dataSeg])
@@ -352,6 +353,17 @@ serve(async (req) => {
           .order('ordem', { ascending: true }),
       ]);
       if (bErr) throw bErr;
+
+      // Replay do pareamento de ontem com a mesma regra de tipo: quantas
+      // entradas ficaram abertas? Contagem ímpar NÃO basta — duas entradas
+      // seguidas (par) também deixam a última aberta e a primeira saída de
+      // hoje fecha ONTEM, não pode abrir turno novo aqui.
+      let abertasOntem = 0;
+      for (const b of prevDia ?? []) {
+        if (b.tipo === 'entrada') abertasOntem++;
+        else if (b.tipo === 'saida') { if (abertasOntem > 0) abertasOntem--; }
+        else { if (abertasOntem % 2 === 0) abertasOntem++; else abertasOntem--; } // sem tipo: alternância
+      }
 
       let batidas = batidasRaw ?? [];
       const batidasDoDia = batidas.filter((b: any) => b.data === dataRef);
@@ -364,11 +376,11 @@ serve(async (req) => {
           horas_extras: '00:00',
         };
       }
-      // Descarta a primeira batida do dia quando ela é a saída do par aberto
-      // ontem (contagem ímpar no dia anterior). Batida marcada 'entrada' nunca
-      // é saída de ontem — o turno anterior ficou aberto e hoje abre par novo.
+      // Descarta a primeira batida do dia quando ela fecha o turno aberto de
+      // ontem (mesma decisão que a apuração de ontem toma). Batida marcada
+      // 'entrada' nunca é saída de ontem — abre par novo aqui.
       if (
-        (prevCnt?.length ?? 0) % 2 === 1 &&
+        abertasOntem > 0 &&
         batidas[0]?.data === dataRef &&
         batidas[0]?.tipo !== 'entrada'
       ) {
@@ -398,22 +410,20 @@ serve(async (req) => {
       const pago50 = bancoAtivo ? 0 : r.extra50Min;
       const pago100 = bancoAtivo ? 0 : r.extra100Min;
 
-      // Espelho: colunas entrada_N/saida_N refletem os PARES fechados — a
-      // saída de um turno que cruza meia-noite aparece no dia da entrada
-      // (antes ficava vazia e o painel lia o registro como aberto), e batidas
-      // pendentes preenchem os slots seguintes em ordem.
-      const seq: BatidaDia[] = r.paresBatidas.flat();
-      seq.push(...r.pendentes);
+      // Espelho: cada slot é um turno {entrada, saida|null} em ordem — a
+      // saída de um turno que cruza meia-noite aparece no dia da entrada, e
+      // entrada pendente mostra saida=null (nunca vira "saída" de outro turno).
+      const s = r.slots;
       const registro = {
         colaborador_id: colabId,
         empresa_id: empresaId,
         data: dataRef,
-        entrada_1: seq[0]?.hora || null,
-        saida_1: seq[1]?.hora || null,
-        entrada_2: seq[2]?.hora || null,
-        saida_2: seq[3]?.hora || null,
-        entrada_3: seq[4]?.hora || null,
-        saida_3: seq[5]?.hora || null,
+        entrada_1: s[0]?.entrada?.hora || null,
+        saida_1: s[0]?.saida?.hora || null,
+        entrada_2: s[1]?.entrada?.hora || null,
+        saida_2: s[1]?.saida?.hora || null,
+        entrada_3: s[2]?.entrada?.hora || null,
+        saida_3: s[2]?.saida?.hora || null,
         horas_trabalhadas: fmt(r.totalMin),
         horas_extras: fmt(extraTotalMin),
         horas_extras_50: fmt(pago50),
@@ -422,7 +432,9 @@ serve(async (req) => {
         he_banco_horas: fmt(heBancoMin),
         horas_falta: fmt(r.faltaMin),
         atraso_minutos: r.atrasoMin,
-        status: r.incompleto ? 'incompleto' : 'completo',
+        // Sem nenhum turno do dia (ex.: a única batida fechou o turno de
+        // ontem) o registro não é 'completo' — é ausência de jornada própria.
+        status: s.length === 0 ? 'sem_registro' : (r.incompleto ? 'incompleto' : 'completo'),
       };
 
       const { data: regRow, error: uErr } = await supabase
