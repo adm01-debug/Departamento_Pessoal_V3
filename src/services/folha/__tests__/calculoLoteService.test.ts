@@ -58,6 +58,9 @@ function buildSupabaseChain(overrides: Record<string, unknown> = {}) {
     folha_itens: { data: null, error: null },
     folha_itens_select: { data: [], error: null },
     folha_auditoria: { data: null, error: null },
+    // UPDATE do header: sucesso retorna a linha afetada (o serviço confere
+    // linhas, não só error — 0 linhas = conflito de status concorrente).
+    folha_update: { data: [{ id: 'folha-1' }], error: null },
   };
   const results = { ...defaults, ...overrides };
 
@@ -73,10 +76,16 @@ function buildSupabaseChain(overrides: Record<string, unknown> = {}) {
       select: vi.fn().mockReturnValue({ single }),
       then: (fn: (v?: unknown) => unknown) => Promise.resolve(writeResult).then(fn),
     });
+    const updateResult = results.folha_update;
     const update =
       table === 'folhas_pagamento'
         ? mockFolhaUpdate.mockReturnValue({
-            eq: vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ data: null, error: null }) }),
+            eq: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                select: vi.fn().mockResolvedValue(updateResult),
+                then: (fn: (v?: unknown) => unknown) => Promise.resolve(updateResult).then(fn),
+              }),
+            }),
           })
         : vi.fn();
     const gte = vi.fn().mockReturnValue({ lte: vi.fn().mockResolvedValue(result) });
@@ -208,6 +217,15 @@ describe('calculoLoteService.processarLote', () => {
       })
     );
     await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow('DB error');
+  });
+
+  it('throws conflict when header update matches 0 rows (status changed mid-batch)', async () => {
+    mockFrom.mockImplementation(
+      buildSupabaseChain({
+        folha_update: { data: [], error: null },
+      })
+    );
+    await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow('Conflito');
   });
 
   it('throws when folha is already fechada', async () => {

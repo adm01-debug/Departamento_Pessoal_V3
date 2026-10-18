@@ -383,46 +383,28 @@ export const calculoLoteService = {
         throw new Error(`Folha não está aberta para atualização de totais (status: ${statusFolha ?? 'inexistente'}).`);
       }
       // O bridge retorna data=[] SEM erro quando o filtro de status não casa
-      // nenhuma linha (recálculo concorrente mudou o status entre o read e o
-      // update). Detecta 0 linhas afetadas, relê o status e retenta uma vez;
-      // persistindo, o lote é abortado em vez de reportar sucesso com totais
-      // divergentes do cabeçalho.
-      const atualizarTotais = async (statusEsperado: 'aberta' | 'calculada') =>
-        supabase
-          .from('folhas_pagamento')
-          .update({
-            total_proventos: somar('total_proventos'),
-            total_descontos: somar('total_descontos'),
-            total_liquido: somar('total_liquido'),
-            total_fgts: somar('fgts_mes'),
-            total_colaboradores: itensFolha?.length ?? 0,
-            data_calculo: new Date().toISOString(),
-          })
-          .eq('id', folhaId)
-          .eq('status', statusEsperado)
-          .select('id');
-
-      const { data: atualizados, error: totaisError } = await atualizarTotais(statusFolha);
+      // nenhuma linha. Um status diferente indica outro cálculo em andamento
+      // (o calcular-folha grava o header antes dos itens) — retentar com o
+      // snapshot de itens lido antes sobrescreveria os totais dele. 0 linhas =
+      // conflito: aborta e o operador reexecuta o lote, que relê tudo.
+      const { data: atualizados, error: totaisError } = await supabase
+        .from('folhas_pagamento')
+        .update({
+          total_proventos: somar('total_proventos'),
+          total_descontos: somar('total_descontos'),
+          total_liquido: somar('total_liquido'),
+          total_fgts: somar('fgts_mes'),
+          total_colaboradores: itensFolha?.length ?? 0,
+          data_calculo: new Date().toISOString(),
+        })
+        .eq('id', folhaId)
+        .eq('status', statusFolha)
+        .select('id');
       if (totaisError) throw totaisError;
-
       if (!atualizados || (atualizados as unknown[]).length === 0) {
-        const { data: folhaRetry, error: retryReadError } = await supabase
-          .from('folhas_pagamento')
-          .select('status')
-          .eq('id', folhaId)
-          .maybeSingle();
-        if (retryReadError) throw retryReadError;
-        const statusNovo = (folhaRetry as { status?: string } | null)?.status;
-        if (statusNovo !== 'aberta' && statusNovo !== 'calculada') {
-          throw new Error(
-            `Conflito: folha mudou para '${statusNovo ?? 'inexistente'}' durante o lote — reexecute o cálculo.`
-          );
-        }
-        const { data: atualizados2, error: totaisError2 } = await atualizarTotais(statusNovo);
-        if (totaisError2) throw totaisError2;
-        if (!atualizados2 || (atualizados2 as unknown[]).length === 0) {
-          throw new Error('Conflito de status ao atualizar totais da folha — reexecute o cálculo em lote.');
-        }
+        throw new Error(
+          'Conflito: outra execução alterou o status da folha durante o lote — reexecute o cálculo em lote.'
+        );
       }
 
       return progress;
