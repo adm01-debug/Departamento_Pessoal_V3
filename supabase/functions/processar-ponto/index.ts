@@ -88,10 +88,30 @@ const resolverJornada = async (
     .eq('jornadas.ativa', true)
     .limit(1)
     .maybeSingle();
+  // Folga explícita da grade vence qualquer escala própria — é a única
+  // fonte de "sábado (ou outro dia) é folga". Os HORÁRIOS da grade, porém,
+  // são default da empresa e só valem quando o colaborador não tem jornada
+  // própria: um semanal=36 não pode herdar grade de 8h/dia.
   if (jh && jh.dia_util === false) {
     return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
   }
-  if (jh?.entrada && jh?.saida && entradaColab === null) {
+  const semanal = Number(colab?.jornada_semanal);
+  if (Number.isFinite(semanal) && semanal > 0) {
+    // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
+    // Sábado de folga só quando não há configuração explícita para o dia
+    // (nem grade nem horário próprio) e a semanal é tipicamente 5x2 (<=40h).
+    // Com grade existindo e marcada útil, o sábado é dia trabalhado.
+    if (diaSemana === 6 && semanal <= 40 && !jh && entradaColab === null) {
+      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
+    }
+    return {
+      minutos: Math.round(semanal * 60 / 6),
+      entradaEsperada: entradaColab ?? (jh?.entrada ? timeToMin(jh.entrada) : null),
+      intervaloMin: intervaloColab,
+      toleranciaMin: tolerancia,
+    };
+  }
+  if (jh?.entrada && jh?.saida) {
     let span = timeToMin(jh.saida) - timeToMin(jh.entrada);
     if (span <= 0) span += 1440;
     const int = jh.intervalo_inicio && jh.intervalo_fim
@@ -103,17 +123,6 @@ const resolverJornada = async (
       intervaloMin: int,
       toleranciaMin: tolerancia,
     };
-  }
-  const semanal = Number(colab?.jornada_semanal);
-  if (Number.isFinite(semanal) && semanal > 0) {
-    // Escala padrão CLT: 6 dias úteis (seg–sáb); domingo/feriado é DSR.
-    // Sábado de folga só quando configurado explicitamente (dia_util=false
-    // acima) ou quando nem a grade nem horário do colaborador existem para
-    // o sábado e a escala é tipicamente 5x2 (semanal múltiplo de 8h até 40h).
-    if (diaSemana === 6 && semanal <= 40 && semanal % 8 === 0 && !jh && entradaColab === null) {
-      return { minutos: 0, entradaEsperada: null, intervaloMin: 0, toleranciaMin: tolerancia, folga: true };
-    }
-    return { minutos: Math.round(semanal * 60 / 6), entradaEsperada: entradaColab, intervaloMin: intervaloColab, toleranciaMin: tolerancia };
   }
   const { data: j } = await supabase
     .from('jornadas')
@@ -202,7 +211,15 @@ const apurarDia = (
       // contava 2h). Turno > 24h segue flaggeado como inconsistente.
       const dias = Math.round((Date.parse(saida.data) - Date.parse(entrada.data)) / 86400000);
       s += Math.max(1, dias) * 1440;
-      if (s - e > 1440) incompleto = true;
+      if (s - e > 1440) {
+        // Turno > 24h é dado inconsistente (quase sempre saída esquecida de
+        // outro dia): vai a quarentena no espelho, nunca vira hora paga
+        // nem crédito de banco de horas.
+        incompleto = true;
+        slots.push({ entrada, saida });
+        i += 2;
+        continue;
+      }
     } else if (s <= e) {
       // Saída no MESMO dia com hora <= entrada = dado inconsistente
       // (batida fora de ordem/ajuste). Não inventa turno de 20h+: a
