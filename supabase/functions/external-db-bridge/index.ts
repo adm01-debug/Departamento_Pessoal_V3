@@ -383,7 +383,8 @@ Deno.serve(async (req) => {
   // Se não vier do frontend, geramos um novo para correlação nos logs.
   const traceId: string = (() => {
     const candidate = (body as Record<string, unknown>).trace_id ?? (body as Record<string, unknown>).traceId;
-    if (typeof candidate === 'string' && candidate.length >= 16) return candidate;
+    // L2: validação de comprimento e charset para evitar log injection
+    if (typeof candidate === 'string' && candidate.length >= 16 && candidate.length <= 128 && /^[A-Za-z0-9_:@.-]+$/.test(candidate)) return candidate;
     try { return crypto.randomUUID(); } catch { return `no-trace-${Date.now()}`; }
   })();
   const rpcName = body.rpcName || body.fn;

@@ -200,7 +200,9 @@ export const NOT_EXTRA_OPS = new Set(["eq", "neq", "gt", "gte", "lt", "lte", "in
 // Validação de expressões .or() — permite apenas operadores seguros sobre colunas válidas
 // Formato PostgREST: "col.op.val,col.op.val" — bloqueia subqueries, parênteses aninhados, SQL keywords
 export const OR_SAFE_OPS = /^(eq|neq|gt|gte|lt|lte|like|ilike|is|in)\./;
-export const OR_DANGEROUS = /(;|--|\/\*|\*\/|\bSELECT\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bDROP\b|\bEXEC\b)/i;
+// Sincronizado com DANGEROUS_TOKENS (auditoria round-4): adicionados TRUNCATE, ALTER, GRANT, UNION,
+// MERGE, COPY, FROM, WHERE e EXEC(UTE)? para cobrir o mesmo surface que isSafeFilterColumn.
+export const OR_DANGEROUS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b)/i;
 export function isSafeOrExpression(expr: unknown): boolean {
   if (typeof expr !== "string" || expr.length === 0 || expr.length > 500) return false;
   if (OR_DANGEROUS.test(expr)) return false;
