@@ -118,7 +118,7 @@ POST-only gateway (781 lines)
 ├── CSRF fail-closed (verifyCsrf)
 ├── Rate limiting (30 writes/100 reads/20 anon por min)
 ├── Tenant isolation (empresa_id scope)
-├── Table denylist (22 tabelas sensíveis bloqueadas)
+├── Table denylist (27 tabelas sensíveis bloqueadas)
 ├── RPC allowlist (97 RPCs aprovadas — expandida com cada wave)
 ├── SQL injection prevention (isSafeTableName/Column/OrderColumn)
 ├── ORDER BY column validation (isSafeOrderColumn)
@@ -820,6 +820,39 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   "npm": ">=10.0.0" adicionado em engines (complementa packageManager: npm@10.x)
 ```
 
+### Sessão 21 — 19/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (PR #264 — round-4 fixes M1+L2)
+
+#### O que foi feito:
+
+```
+🔒 M1 — OR_DANGEROUS sincronizado com DANGEROUS_TOKENS
+│   validation.ts L203: OR_DANGEROUS expandido para incluir
+│   TRUNCATE, ALTER, GRANT, UNION, MERGE, COPY, FROM, WHERE e EXEC(UTE)?
+│   Elimina assimetria de surface entre isSafeOrExpression e isSafeFilterColumn
+│   Detectado por: Agente 1 (round-4), finding M1
+
+🛡️ L2 — trace_id: validação de comprimento + charset (log injection)
+│   index.ts L386: candidate validado com length <= 128 e /^[A-Za-z0-9_:@.-]+$/
+│   Impede log injection via trace_id arbitrário fornecido pelo cliente
+│   Detectado por: Agente 1 (round-4), finding L2
+
+✅ VALIDAÇÃO EXAUSTIVA ROUND-4 — 5 agentes especializados
+│   Agente 1: Bridge — M1+L2 detectados e corrigidos; 12/12 vetores bloqueados após fix
+│   Agente 2: TypeScript — tsc 0 erros ✅, vitest 5516/5516 ✅, 14/14 contratos ✅
+│   Agente 3: SQL Migrations — 3 sidecars verificados; positivos; supabase_admin dep documentada
+│   Agente 4: CI/CD — 14/14 workflows, SHA-pins 100%, contracts passing
+│   Agente 5: Supply chain + CLAUDE.md — "22 tabelas" → "27 tabelas" corrigido (commit 3ba12bd14)
+
+📋 AÇÃO PENDENTE DO OWNER (pós-merge PR #264)
+│   Disparar canonical-migrations.yml com mode=apply para aplicar ao canônico:
+│   - 20261018170000_default_privs_revoke_execute_public.sql
+│   - 20261021000000_ledger_reconcile_secdef_defaults.sql
+│   - 20261021010000_default_privs_for_role.sql
+│   URL: https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/canonical-migrations.yml
+```
+
 ### Sessão 20 — 19/10/2026 (Claude Sonnet 4.6)
 
 **Branch:** `claude/happy-cori-3z9h7f` (PR #263 — validação round-3 + 4 correções de segurança)
@@ -946,6 +979,8 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | TABLE_DENYLIST          | ✅ 27 entradas — +5 pg_catalog (pg_shadow/authid/user/stat_activity/roles) adicionados (PR #263 — sessão 20)                                                          |
 | engines.npm             | ✅ "npm": ">=10.0.0" adicionado em package.json (sessão 19)                                                                                                           |
 | isSafeFilterColumn      | ✅ DANGEROUS_TOKENS check adicionado — "data FROM secrets" bloqueado (PR #263 — sessão 20)                                                                            |
+| OR_DANGEROUS (M1)       | ✅ sincronizado com DANGEROUS_TOKENS: +TRUNCATE/ALTER/GRANT/UNION/MERGE/COPY/FROM/WHERE/EXEC(UTE)? (PR #264 — sessão 21)                                              |
+| trace_id log injection  | ✅ length<=128 + /^[A-Za-z0-9_:@.-]+$/ validação adicionada (PR #264 — sessão 21)                                                                                     |
 | sidecar empty output    | ✅ canonical-migrations.yml: runner rejeita saída vazia explicitamente (PR #263 — sessão 20)                                                                          |
 | verify.sql supabase_adm | ✅ 20261021010000.verify.sql: dependência supabase_admin documentada (PR #263 — sessão 20)                                                                            |
 
