@@ -89,6 +89,13 @@ export const TABLE_DENYLIST = new Set<string>([
   // Tabela interna do Supabase CLI — defesa em profundidade (PostgREST expõe
   // apenas schema public, mas bloquear explicitamente elimina o risco residual).
   "supabase_migrations",
+  // Catálogo do PostgreSQL — defesa em profundidade caso db-schemas seja
+  // expandido acidentalmente para pg_catalog (pg_shadow contém hashes de senhas).
+  "pg_shadow",
+  "pg_authid",
+  "pg_user",
+  "pg_stat_activity",
+  "pg_roles",
 ]);
 
 // Tabelas em que writes são permitidos apenas com auth+tenant válido.
@@ -218,6 +225,9 @@ export function isSafeOrExpression(expr: unknown): boolean {
 // NB: a versão anterior usava /^[a-zA-Z0-9_.,()->\s"-]+$/ — o trecho `)->`
 // formava um RANGE acidental de `)`(0x29) a `>`(0x3E), aceitando `;`, `*`, `<`,
 // `=` etc. Aqui `-` fica no fim (literal) e `>` é literal: sem range indesejado.
+// `>` e `-` são permitidos intencionalmente para JSON path do PostgREST (data->>'key').
 export function isSafeFilterColumn(c: unknown): c is string {
-  return typeof c === "string" && /^[A-Za-z0-9_.,"()>\s-]+$/.test(c);
+  if (typeof c !== "string") return false;
+  if (DANGEROUS_TOKENS.test(c)) return false;
+  return /^[A-Za-z0-9_.,"()>\s-]+$/.test(c);
 }
