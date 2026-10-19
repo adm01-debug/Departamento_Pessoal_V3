@@ -118,8 +118,8 @@ POST-only gateway (781 lines)
 ├── CSRF fail-closed (verifyCsrf)
 ├── Rate limiting (30 writes/100 reads/20 anon por min)
 ├── Tenant isolation (empresa_id scope)
-├── Table denylist (21 tabelas sensíveis bloqueadas)
-├── RPC allowlist (95 RPCs aprovadas — expandida com cada wave)
+├── Table denylist (22 tabelas sensíveis bloqueadas)
+├── RPC allowlist (97 RPCs aprovadas — expandida com cada wave)
 ├── SQL injection prevention (isSafeTableName/Column/OrderColumn)
 ├── ORDER BY column validation (isSafeOrderColumn)
 ├── .single() query support
@@ -626,7 +626,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Não estava nos secrets de repositório; gap do CLAUDE.md estava desatualizado
 
 🔍 VALIDAÇÃO EXAUSTIVA — 5 agentes especializados em paralelo
-│   Agente 1: Bridge (TABLE_DENYLIST=21✅, RPC_ALLOWLIST=97✅, JWT✅, 5 ataques bloqueados✅)
+│   Agente 1: Bridge (TABLE_DENYLIST=22✅, RPC_ALLOWLIST=97✅, JWT✅, 5 ataques bloqueados✅)
 │   Agente 2: CI/CD (14/14 workflows, 12 contratos, SHA-pins 100%)
 │   Agente 3: DB ao vivo (RLS 376/376✅, 263/265 SECURITY DEFINER clean✅)
 │   Agente 4: TypeScript (tsc 0 erros✅, vitest 482/482✅)
@@ -683,7 +683,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 ✅ Validações exaustivas (5 agentes paralelos)
 │   contracts: 14/14 workflows, 0 falhas (W97 — 12 contratos)
 │   tsc --noEmit: 0 erros | vitest: 482/482 | audit: 0 vulns
-│   RPC_ALLOWLIST: 97 entradas | TABLE_DENYLIST: 21 entradas
+│   RPC_ALLOWLIST: 97 entradas | TABLE_DENYLIST: 22 entradas
 │   audit-required-checks: 10/10 | lockfile-single: npm único ✅
 │   SHA pins: 72 actions todas pinadas
 
@@ -776,6 +776,50 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   - 20261021010000_default_privs_for_role.sql
 ```
 
+### Sessão 19 — 19/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (PR #261 mergeado + TABLE_DENYLIST fix + PR #262)
+
+#### O que foi feito:
+
+```
+✅ PR #261 MERGEADO (SHA bb48a3a74) — sidecars verify.sql check positivo + CLAUDE.md
+│   20261018170000_default_privs_revoke_execute_public.verify.sql:
+│   Check negativo → check POSITIVO (EXISTS + NOT EXISTS '=X/%')
+│   Evita falso positivo quando pg_default_acl está vazio (migration não aplicada)
+│   20261021010000_default_privs_for_role.verify.sql:
+│   Check negativo → count(DISTINCT r.rolname) = 2 (ambos postgres + supabase_admin)
+│   CLAUDE.md: 6 referências 20261018160000 → 20261018170000 corrigidas
+
+🔒 GAP-1 — TABLE_DENYLIST: supabase_migrations adicionado (21 → 22 entradas)
+│   validation.ts linha 91: "supabase_migrations" adicionado ao TABLE_DENYLIST
+│   Defesa em profundidade: tabela interna do Supabase CLI bloqueada mesmo que
+│   PostgREST fosse reconfigurado para expor schemas adicionais
+│   Commit 1a8eac0c1 — PR #262 aberto com CI rodando
+
+🔍 VALIDAÇÃO EXAUSTIVA — 2 rounds de 5 agentes especializados em paralelo
+│   Round 1 (19/10 manhã):
+│   │   Agente 1: Bridge — GAP-1 identificado (supabase_migrations fora da denylist)
+│   │   Agente 2: CI/CD — 14/14 workflows, 12 contratos, SHA-pins 100%
+│   │   Agente 3: DB Live — MCP apontava para projeto errado (674 migrations ≠ DP V3)
+│   │   Agente 4: TypeScript — tsc 0 erros, vitest 5516/5516, 14/14 contratos
+│   │   Agente 5: Supply chain — 0 vulns produção, 12 SHA-pins
+│   Round 2 (19/10):
+│   │   Agente 1: Bridge — TABLE_DENYLIST=22✅, RPC=97✅, 6 vetores de ataque bloqueados✅
+│   │   Agente 2: TypeScript — (rodando em paralelo com demais)
+│   │   Agente 3: Migrações — 4 migrations de segurança no staged batch✅, sidecars✅
+│   │   Agente 4: CI/CD — PR #262 criado, canonical runs travados detectados
+│   │   Agente 5: Segurança/CLAUDE.md — deno.lock✅, playwright✅, e2e guard✅
+
+🛑 CANONICAL RUNS CANCELADOS (travados/orphaned)
+│   Run 39234873794 — cancelado (pending 33+ min com SHA anterior ao PR #261)
+│   Run 39130751318 — cancelado (waiting 21+ h sem aprovação de deployment)
+│   3 runs cancelled consecutivos (18/10): padrão de stall de environment de produção
+
+🔧 engines.npm adicionado em package.json
+│   "npm": ">=10.0.0" adicionado em engines (complementa packageManager: npm@10.x)
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -806,47 +850,50 @@ OSSF Scorecard (W44)     → job scorecard em security.yml — PR #247 em CI ✅
 Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 em CI ✅
 ```
 
-### Métricas (18/10/2026)
+### Métricas (19/10/2026)
 
-| Indicador              | Valor                                                                                                                                          |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Plano 100 workflows    | ✅ Waves 0–3 + decisões do owner + Wave 6 + PRs #244/#247/#251/#257 mergeados; W36/W86/W97c + ALTER DEFAULT PRIVS + batch gap fix (18/10/2026) |
-| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                                                                               |
-| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                                                                        |
-| Cobertura              | ✅ v8 configurada                                                                                                                              |
-| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                                                                                      |
-| Branch delete          | ✅ delete_branch_on_merge=true                                                                                                                 |
-| Ruleset                | ✅ 21934736 — 10 required checks — baseline em infra/github/                                                                                   |
-| Aprovação de PR        | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`                                                           |
-| Workflows com timeout  | ✅ 100% (todos os jobs)                                                                                                                        |
-| supply chain (SHA-pin) | ✅ sha_pinning_required=true (W33) + action-pins.json offline                                                                                  |
-| Actions allowlist      | ✅ selected: github_owned + verified + denoland/\*, supabase/\*, ossf/\*, dorny/\*, zizmorcore/\*                                              |
-| classic branch protect | ✅ Removida (W13) — ruleset é a única fonte de proteção                                                                                        |
-| SHA comments           | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                                                                       |
-| E2E secrets            | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)                                                        |
-| lockfile               | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido                                                               |
-| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                                                                           |
-| CodeQL unused vars     | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                                                                   |
-| contract test          | ✅ 14/14 workflows, 0 falhas (W97 — 11 contratos ativos)                                                                                       |
-| bundle audit           | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                                                                      |
-| actionlint path        | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows                                                                  |
-| ledger dinâmico        | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69/PR #244)                                                         |
-| live ruleset audit     | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)                                                                   |
-| canonical env var      | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)                                                                  |
-| Dependabot overrides   | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244 mergeado)                                                           |
-| psql variable interp.  | ✅ :'v' via stdin (printf+pipe) em canonical-migrations.yml (Codex P1 — PR #244)                                                               |
-| GITHUB_TOKEN gap       | ⚠️ workflows-report.yml PRs não disparam CI — gap documentado em "Baixos" (PR #244)                                                            |
-| vars públicas Supabase | ✅ W29: 12 ocorrências migradas secrets→vars (PR #247 merged) — owner deve deletar os secrets                                                  |
-| OSSF Scorecard         | ✅ W44: job scorecard adicionado a security.yml (PR #247 merged)                                                                               |
-| cache cleanup (W48)    | ✅ 46 caches stale deletados — 3 válidos restantes                                                                                             |
-| deno --frozen (W36)    | ✅ --no-lock→--frozen + cache deno; deno.lock denonext hashes fix (PR #251 mergeado SHA febe78de)                                              |
-| zizmor scanner (W86)   | ✅ zizmorcore/zizmor-action@cc914d7f em workflow-lint.yml (PR #251 mergeado)                                                                   |
-| W97c required if: gate | ✅ check 12 em workflows-contract.test.mjs (PR #251 mergeado)                                                                                  |
-| ALTER DEFAULT PRIVS    | ✅ 20261018170000 + 20261021010000 (FOR ROLE postgres+supabase_admin — sessão 16)                                                              |
-| Ledger reconciliação   | ✅ 20261021000000 insere 20261015170000+20261018170000 no ledger (sessão 16)                                                                   |
-| Bridge CSRF+rate-limit | ✅ CSRF fail-closed fix + rate limit 503 se SERVICE_KEY ausente (sessão 16)                                                                    |
-| canonical batch gap    | ✅ 20261018170000 adicionada ao staged batch + ledger_count (sessão 17+18 — commit be0c26418)                                                  |
-| PR #257 mergeado       | ✅ SHA 1bd5081ad — 28/28 checks verdes — squash merge 18/10/2026 17:16 UTC                                                                     |
+| Indicador               | Valor                                                                                                                                                      |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plano 100 workflows     | ✅ Waves 0–3 + decisões do owner + Wave 6 + PRs #244/#247/#251/#257/#261 mergeados; TABLE_DENYLIST 22 + sidecars check positivo + engines.npm (19/10/2026) |
+| TypeScript strict       | ✅ strict: true + noImplicitAny (0 erros no src)                                                                                                           |
+| Testes com tipo         | ✅ 0 erros (typecheck:tests runs clean)                                                                                                                    |
+| Cobertura               | ✅ v8 configurada                                                                                                                                          |
+| Merge strategy          | ✅ squash-only (allow_merge_commit=false)                                                                                                                  |
+| Branch delete           | ✅ delete_branch_on_merge=true                                                                                                                             |
+| Ruleset                 | ✅ 21934736 — 10 required checks — baseline em infra/github/                                                                                               |
+| Aprovação de PR         | ✅ 0 aprovações + code owner em governança/produção (W14) — ver `.github/CODEOWNERS`                                                                       |
+| Workflows com timeout   | ✅ 100% (todos os jobs)                                                                                                                                    |
+| supply chain (SHA-pin)  | ✅ sha_pinning_required=true (W33) + action-pins.json offline                                                                                              |
+| Actions allowlist       | ✅ selected: github_owned + verified + denoland/\*, supabase/\*, ossf/\*, dorny/\*, zizmorcore/\*                                                          |
+| classic branch protect  | ✅ Removida (W13) — ruleset é a única fonte de proteção                                                                                                    |
+| SHA comments            | ✅ Corrigidos (# v4 → # v7 em canonical-probes + canonical-sql-diag) W35                                                                                   |
+| E2E secrets             | ✅ Usuários E2E existem no canônico e as senhas batem com os secrets (verificado 15/10)                                                                    |
+| lockfile                | ✅ package-lock.json único (W03) — `npm ci` em todo CI/Docker; bun.lock removido                                                                           |
+| fast-uri                | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                                                                                       |
+| CodeQL unused vars      | ✅ 9 alertas fechados — 9 arquivos Edge/src corrigidos (W82)                                                                                               |
+| contract test           | ✅ 14/14 workflows, 0 falhas (W97 — 11 contratos ativos)                                                                                                   |
+| bundle audit            | ✅ deploy.yml gate ativo (W87) — orçamento em scripts/.bundle-budget.json                                                                                  |
+| actionlint path         | ✅ $GOPATH/bin no $GITHUB_PATH; 0 achados de shellcheck em todos os workflows                                                                              |
+| ledger dinâmico         | ✅ canonical-migrations.yml — ledger sem hardcode + sidecars .verify.sql (W69/PR #244)                                                                     |
+| live ruleset audit      | ✅ audit-required-checks.mjs compara baseline↔live quando GITHUB_TOKEN (W17)                                                                               |
+| canonical env var       | ✅ CANONICAL_SUPABASE_REF env var com fallback nos scripts de auditoria (W30)                                                                              |
+| Dependabot overrides    | ✅ tmp→0.2.7 + uuid@<11.1.1→14.0.3 (Alerts #1/#13/#14 — sessão 10, PR #244 mergeado)                                                                       |
+| psql variable interp.   | ✅ :'v' via stdin (printf+pipe) em canonical-migrations.yml (Codex P1 — PR #244)                                                                           |
+| GITHUB_TOKEN gap        | ⚠️ workflows-report.yml PRs não disparam CI — gap documentado em "Baixos" (PR #244)                                                                        |
+| vars públicas Supabase  | ✅ W29: 12 ocorrências migradas secrets→vars (PR #247 merged) — owner deve deletar os secrets                                                              |
+| OSSF Scorecard          | ✅ W44: job scorecard adicionado a security.yml (PR #247 merged)                                                                                           |
+| cache cleanup (W48)     | ✅ 46 caches stale deletados — 3 válidos restantes                                                                                                         |
+| deno --frozen (W36)     | ✅ --no-lock→--frozen + cache deno; deno.lock denonext hashes fix (PR #251 mergeado SHA febe78de)                                                          |
+| zizmor scanner (W86)    | ✅ zizmorcore/zizmor-action@cc914d7f em workflow-lint.yml (PR #251 mergeado)                                                                               |
+| W97c required if: gate  | ✅ check 12 em workflows-contract.test.mjs (PR #251 mergeado)                                                                                              |
+| ALTER DEFAULT PRIVS     | ✅ 20261018170000 + 20261021010000 (FOR ROLE postgres+supabase_admin — sessão 16)                                                                          |
+| Ledger reconciliação    | ✅ 20261021000000 insere 20261015170000+20261018170000 no ledger (sessão 16)                                                                               |
+| Bridge CSRF+rate-limit  | ✅ CSRF fail-closed fix + rate limit 503 se SERVICE_KEY ausente (sessão 16)                                                                                |
+| canonical batch gap     | ✅ 20261018170000 adicionada ao staged batch + ledger_count (sessão 17+18 — commit be0c26418)                                                              |
+| PR #257 mergeado        | ✅ SHA 1bd5081ad — 28/28 checks verdes — squash merge 18/10/2026 17:16 UTC                                                                                 |
+| sidecars check positivo | ✅ PR #261 mergeado (SHA bb48a3a74) — verify.sql 20261018170000+20261021010000 com check positivo (sessão 19)                                              |
+| TABLE_DENYLIST          | ✅ 22 entradas — supabase_migrations adicionado (PR #262 em CI — sessão 19)                                                                                |
+| engines.npm             | ✅ "npm": ">=10.0.0" adicionado em package.json (sessão 19)                                                                                                |
 
 ---
 
