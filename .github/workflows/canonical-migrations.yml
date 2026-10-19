@@ -149,7 +149,8 @@ jobs:
             20261021000000_ledger_reconcile_secdef_defaults.sql \
             20261021010000_default_privs_for_role.sql \
             20261022000000_qa5_db_fixes.sql \
-            20261023000000_qa_r3_fixes.sql
+            20261023000000_qa_r3_fixes.sql \
+            20261024000000_qa_r4_fixes.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -262,7 +263,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000','20261023000000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000','20261023000000','20261024000000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -579,7 +580,56 @@ jobs:
                 AND c.relname = 'ponto_espelhos_assinados'
                 AND t.tgname = 'trg_ponto_espelhos_assinados_no_update'
                 AND p.proname = 'ponto_espelhos_assinados_guard_update'
-            )
+            ),
+            'qa_r4_stmts_recorded', EXISTS (
+              SELECT 1 FROM supabase_migrations.schema_migrations
+              WHERE version = '20261024000000'
+                AND statements IS NOT NULL AND cardinality(statements) > 0
+            ),
+            'sec_cron_jobs_ok', (
+              SELECT count(*) FROM cron.job
+              WHERE jobname IN (
+                'sec-audit-policies-daily',
+                'sec-policy-regressions-purge',
+                'sec-verify-seals-weekly'
+              )
+            ) = 3,
+            'sec_fns_ok', (
+              SELECT count(*) FROM pg_proc p
+              JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public'
+                AND p.proname IN (
+                  'sec_audit_policies','sec_audit_policies_scan',
+                  'sec_policy_regressions_purge',
+                  'sec_verify_seals','sec_verify_seals_admin',
+                  'sec_verify_seals_scan'
+                )
+            ) = 6,
+            'registros_ponto_gated', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE tablename = 'registros_ponto'
+                AND policyname = 'tenant_registros_ponto'
+            ) AND EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE tablename = 'registros_ponto'
+                AND policyname = 'registros_ponto_write'
+                AND qual LIKE '%sou_o_colaborador%'
+            ),
+            'desl_delete_blocks_pago', pg_get_functiondef(
+              'public.proibir_delete_desligamento_homologado()'::regprocedure
+            ) LIKE '%pago%',
+            'folha_delete_blocks_paga', pg_get_functiondef(
+              'public.proibir_delete_folha_fechada()'::regprocedure
+            ) LIKE '%paga%',
+            'contas_admin_bypass', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE tablename = 'contas_bancarias'
+                AND policyname = 'contas_bancarias_rh_manage'
+                AND qual LIKE '%is_admin%'
+            ),
+            'anonimizar_latest', pg_get_functiondef(
+              'public.anonimizar_dados_pessoais(uuid)'::regprocedure
+            ) LIKE '%lgpd-anon%'
           );
           SQL
           )"
@@ -587,7 +637,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 23 &&
+              Number(r.ledger_count) === 24 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -649,6 +699,14 @@ jobs:
               r.desl_guard_detalhes === true &&
               r.qa5_stmts_recorded === true &&
               r.espelho_guard_fn === true &&
+              r.qa_r4_stmts_recorded === true &&
+              Number(r.sec_cron_jobs_ok) === 3 &&
+              Number(r.sec_fns_ok) === 6 &&
+              r.registros_ponto_gated === true &&
+              r.desl_delete_blocks_pago === true &&
+              r.folha_delete_blocks_paga === true &&
+              r.contas_admin_bypass === true &&
+              r.anonimizar_latest === true &&
               r.decrypt_wrapper_ok === true &&
               r.ferias_chk_wide === true &&
               r.qa3_stmts_recorded === true &&
