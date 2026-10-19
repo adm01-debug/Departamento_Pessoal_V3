@@ -14,9 +14,26 @@ interface DonutChartProps {
   className?: string;
   /** Legenda abaixo do gráfico. Desligue quando a lista for renderizada ao lado. */
   showLegend?: boolean;
+  /**
+   * Formatação dos números do gráfico (centro e legenda). Sem esta prop o
+   * comportamento é o histórico: o número cru (`String`). Passar `formatCurrency`
+   * permite o mesmo donut servir a contagens (Dashboard Executivo) e a valores
+   * monetários (Resumo Financeiro de Pagamentos) sem duplicar o componente.
+   */
+  formatValue?: (valor: number) => string;
+  /** Classes do valor central (para o valor monetário caber no anel). */
+  centerClassName?: string;
 }
 
-export function DonutChart({ segments, size = 140, strokeWidth = 16, className, showLegend = true }: DonutChartProps) {
+export function DonutChart({
+  segments,
+  size = 140,
+  strokeWidth = 16,
+  className,
+  showLegend = true,
+  formatValue,
+  centerClassName,
+}: DonutChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true });
 
@@ -95,7 +112,7 @@ export function DonutChart({ segments, size = 140, strokeWidth = 16, className, 
             "42 / Total" visivelmente deslocado do centro real do gráfico).
             Fonte um pouco maior (`text-xl`→`text-2xl`) para ficar
             proporcional ao tamanho do gráfico. */}
-        <text x={center} y={center - 8} textAnchor="middle" dominantBaseline="central" className="fill-foreground text-data text-xl">{total}</text>
+        <text x={center} y={center - 8} textAnchor="middle" dominantBaseline="central" className={centerClassName ?? 'fill-foreground text-data text-xl'}>{formatValue ? formatValue(total) : total}</text>
         <text x={center} y={center + 11} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground text-caption">Total</text>
       </svg>
 
@@ -106,7 +123,7 @@ export function DonutChart({ segments, size = 140, strokeWidth = 16, className, 
           <div key={i} className="flex items-center gap-2 text-caption">
             <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: seg.color }} />
             <span className="flex-1 text-muted-foreground font-body truncate">{seg.label}</span>
-            <span className="font-display font-medium">{seg.value}</span>
+            <span className="font-display font-medium">{formatValue ? formatValue(seg.value) : seg.value}</span>
           </div>
         ))}
       </div>

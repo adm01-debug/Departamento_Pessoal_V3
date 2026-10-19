@@ -18,6 +18,30 @@ import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxTab } from '@/components/avaliacao/NineBoxTab';
 // Modo real + ponte de criação auditada (idempotência por operação).
 import { modoRealAtivo } from '@/components/avaliacao/nineBoxModo';
+import { normalizarPapeis } from '@/components/avaliacao/papeisAvaliacao';
+import {
+  CHAVE_REGISTROS_DEMO,
+  aplicarEstadoDemo,
+  atualizarRegistroDemo,
+  criarRegistroDemo,
+  excluirRegistroDemo,
+  lerRegistrosDemo,
+  type EntidadeDemo,
+} from '@/components/avaliacao/desempenhoDemoStore';
+import { criarServicoDemo } from '@/components/avaliacao/servicoDemo';
+import {
+  CHAVE_ARMAZENAMENTO as CHAVE_DEMO,
+  aprovacoesLocais,
+  decidirLocal,
+  encaminharLocal,
+  enviarLocal,
+  estadoLocalVazio,
+  lerEstadoLocal,
+  reenviarLocal,
+  validacoesLocais,
+  validarPotencialLocal,
+  type EstadoLocalDemo,
+} from '@/components/avaliacao/aprovacaoLocal';
 import {
   assinaturaFeedback,
   criarChaveIdempotente,
@@ -101,6 +125,9 @@ export default function AvaliacaoPage() {
   // Inicialização preguiçosa no formato aceito pela regra `react-hooks/refs`
   // (`ref.current == null`): a fábrica é criada UMA vez por montagem.
   if (chaveFeedbackRef.current == null) chaveFeedbackRef.current = criarChaveIdempotente();
+  /** Chave da EDIÇÃO (uma por tentativa; confirmada no sucesso). */
+  const chaveEdicaoRef = useRef<ChaveIdempotente | null>(null);
+  if (chaveEdicaoRef.current == null) chaveEdicaoRef.current = criarChaveIdempotente();
 
   /* ── Chaves das operações de APROVAÇÃO do gestor ──────────────────────────
      A MESMA fábrica da criação: uma chave por operação (enviar / decidir /
@@ -126,6 +153,13 @@ export default function AvaliacaoPage() {
     if (roles.includes('user')) return 'user';
     return null;
   }, [user, isAdmin]);
+
+  /**
+   * LISTA completa de papéis da conta (`user_roles` → `['admin','gestor']`).
+   * Fonte das CAPACIDADES: `admin` não anula `gestor`. `papel` acima segue
+   * servindo de rótulo/precedência onde um único valor é esperado.
+   */
+  const papeisDoUsuario = useMemo(() => normalizarPapeis(user?.roles), [user]);
   /**
    * Mocks (VISUALIZAÇÃO aprovada) + registros REAIS do banco, sem duplicar.
    * Os fictícios NUNCA são enviados ao banco (a guarda recusa `mock-*`); a leitura
@@ -143,24 +177,39 @@ export default function AvaliacaoPage() {
     }
   };
 
+  /**
+   * PERSISTÊNCIA DEMONSTRATIVA sobre a lista visível: esconde os excluídos na
+   * vitrine, aplica as alterações de estado e ACRESCENTA os registros criados
+   * localmente. Só age em modo demonstração — no modo real a lista é do banco.
+   */
+  const comEstadoDemo = <T extends Record<string, unknown>>(lista: T[], entidade: EntidadeDemo): T[] =>
+    isDesempenhoMockEnabled() ? aplicarEstadoDemo(lista, entidade, lerRegistrosDemo()) : lista;
+
   const { data: ciclos = [], isLoading: loadCiclos } = useQuery({
     queryKey: ['ciclos_avaliacao', empresaAtual?.id],
-    queryFn: (): Promise<any[]> => mesclar(getMockCiclos(), () => avaliacaoService.listarCiclos(empresaAtual!.id)),
+    queryFn: async (): Promise<any[]> =>
+      comEstadoDemo(await mesclar(getMockCiclos(), () => avaliacaoService.listarCiclos(empresaAtual!.id)), 'ciclos'),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: metas = [], isLoading: loadMetas } = useQuery({
     queryKey: ['metas_okrs', empresaAtual?.id],
-    queryFn: (): Promise<any[]> => mesclar(getMockMetas(), () => avaliacaoService.listarMetas(empresaAtual!.id)),
+    queryFn: async (): Promise<any[]> =>
+      comEstadoDemo(await mesclar(getMockMetas(), () => avaliacaoService.listarMetas(empresaAtual!.id)), 'metas'),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: feedbacks = [], isLoading: loadFeedbacks } = useQuery({
     queryKey: ['feedbacks_360', empresaAtual?.id],
-    queryFn: (): Promise<any[]> => mesclar(getMockFeedbacks(), () => avaliacaoService.listarFeedbacks(empresaAtual!.id)),
+    queryFn: async (): Promise<any[]> =>
+      comEstadoDemo(
+        await mesclar(getMockFeedbacks(), () => avaliacaoService.listarFeedbacks(empresaAtual!.id)),
+        'feedbacks'
+      ),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: pdis = [], isLoading: loadPDIs } = useQuery({
     queryKey: ['pdis', empresaAtual?.id],
-    queryFn: (): Promise<any[]> => mesclar(getMockPdis(), () => avaliacaoService.listarPDIs(empresaAtual!.id)),
+    queryFn: async (): Promise<any[]> =>
+      comEstadoDemo(await mesclar(getMockPdis(), () => avaliacaoService.listarPDIs(empresaAtual!.id)), 'pdis'),
     enabled: !!empresaAtual?.id || mockAtivo,
   });
   const { data: competencias = [], isLoading: loadComp } = useQuery({
@@ -181,11 +230,18 @@ export default function AvaliacaoPage() {
     enabled: !!empresaAtual?.id,
   });
 
-  /** Opções REAIS (UUID) para os formulários — nunca `mock-*` (recusado na escrita). */
+  /**
+   * Opções dos FORMULÁRIOS. No modo real só entram UUIDs (a guarda de escrita
+   * recusa `mock-*`); na DEMONSTRAÇÃO valem os colaboradores/ciclos fictícios —
+   * a gravação é local e nada disso vai ao banco.
+   */
   const semFicticios = (lista: any[]) =>
     lista.filter((x) => !String((x as { id?: unknown })?.id ?? '').startsWith('mock-'));
-  const colaboradoresReais = useMemo(() => semFicticios(colaboradores), [colaboradores]);
-  const ciclosReais = useMemo(() => semFicticios(ciclos), [ciclos]);
+  const colaboradoresReais = useMemo(
+    () => (mockAtivo ? colaboradores : semFicticios(colaboradores)),
+    [colaboradores, mockAtivo]
+  );
+  const ciclosReais = useMemo(() => (mockAtivo ? ciclos : semFicticios(ciclos)), [ciclos, mockAtivo]);
 
   // === Mutations ===
   // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Cada escrita é abortada com
@@ -216,11 +272,32 @@ export default function AvaliacaoPage() {
 
   const criarCiclo = useMutation({
     mutationFn: (d: any) => {
-      if (bloquearEscritaDesempenho('Criar ciclo de avaliação')) return Promise.reject(new Error('mock'));
+      if (mockAtivo) {
+        // DEMONSTRAÇÃO: cria no armazenamento local (fixtures e banco intactos).
+        const { registro } = criarRegistroDemo(
+          'ciclos',
+          {
+            ...d,
+            empresa_id: empresaDaEscrita(),
+            criado_em_demo: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          { por: user?.email ?? null, descricao: `Ciclo "${String(d?.nome ?? '')}" criado na demonstração` }
+        );
+        return Promise.resolve(registro);
+      }
       return avaliacaoService.criarCiclo({ ...d, empresa_id: empresaDaEscrita() });
     },
-    onSuccess: () => {
+    onSuccess: (registro: any) => {
       qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] });
+      if (mockAtivo) {
+        // O ciclo criado já pode ser selecionado nas demais abas.
+        const id = String(registro?.id ?? '').trim();
+        if (id) setCicloSelecionadoId(id);
+        toast.success('Demonstração: ciclo criado e salvo localmente (nada foi enviado ao banco).');
+        return;
+      }
       toast.success('Ciclo criado!');
     },
     onError: (erro: unknown) => {
@@ -231,12 +308,26 @@ export default function AvaliacaoPage() {
 
   const criarMeta = useMutation({
     mutationFn: (d: any) => {
-      if (bloquearEscritaDesempenho('Criar meta/OKR')) return Promise.reject(new Error('mock'));
+      if (mockAtivo) {
+        const { registro } = criarRegistroDemo(
+          'metas',
+          {
+            ...d,
+            empresa_id: empresaDaEscrita(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          { por: user?.email ?? null, descricao: `Meta "${String(d?.titulo ?? d?.nome ?? '')}" criada na demonstração` }
+        );
+        return Promise.resolve(registro);
+      }
       return avaliacaoService.criarMeta({ ...d, empresa_id: empresaDaEscrita() });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['metas_okrs'] });
-      toast.success('Meta criada!');
+      toast.success(
+        mockAtivo ? 'Demonstração: meta criada e salva localmente (nada foi enviado ao banco).' : 'Meta criada!'
+      );
     },
     onError: (erro: unknown) => {
       if (isDesempenhoMockEnabled()) return;
@@ -246,6 +337,41 @@ export default function AvaliacaoPage() {
 
   const criarFeedback = useMutation<any, unknown, any>({
     mutationFn: (d: any) => {
+      /* DEMONSTRAÇÃO: a avaliação é criada no armazenamento local da vitrine —
+         aparece na listagem, sobrevive ao F5 e NUNCA vai ao banco (nenhum id
+         fictício é enviado). */
+      if (mockAtivo) {
+        const { registro } = criarRegistroDemo(
+          'feedbacks',
+          {
+            ...d,
+            status: 'pendente',
+            empresa_id: empresaDaEscrita(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            por: user?.email ?? null,
+            descricao: `Avaliação (${String(d?.tipo ?? '')}) criada na demonstração`,
+          }
+        );
+        /* ENCAMINHAMENTO AUTOMÁTICO (vitrine): salvar QUALQUER avaliação já cria
+           a pendência do gestor responsável — o RH não clica em mais nada. A
+           consolidação é por colaborador+ciclo (idempotente) e a data do envio
+           fica no armazenamento da demonstração (sobrevive ao F5). */
+        const avaliado = String((registro as any)?.avaliado_id ?? d?.avaliado_id ?? '').trim();
+        const cicloDoFeedback = String((registro as any)?.ciclo_id ?? d?.ciclo_id ?? '').trim();
+        if (avaliado && cicloDoFeedback) {
+          encaminharLocal({
+            colaboradorId: avaliado,
+            cicloId: cicloDoFeedback,
+            por: user?.email ?? null,
+            automatico: true,
+          });
+          invalidarDemo();
+        }
+        return Promise.resolve(registro);
+      }
       /* GRAVAÇÃO REAL pelo formulário existente: SEMPRE pela RPC implantada
          `criar_feedback_seguro` (feedback + auditoria na MESMA transação). Os
          campos são os MESMOS do formulário e a chave de idempotência é
@@ -258,16 +384,20 @@ export default function AvaliacaoPage() {
       return avaliacaoService.criarFeedbackSeguro(params);
     },
     onSuccess: (_resposta: any, dadosEnviados: any) => {
-      // Sucesso SÓ depois da resposta do servidor: a tentativa está confirmada,
-      // logo a próxima criação é uma operação nova (chave nova). A atualização
-      // das listas também acontece aqui — nunca antes de gravar.
+      // Sucesso SÓ depois da resposta do servidor (ou da gravação local na
+      // demonstração): a tentativa está confirmada, logo a próxima criação é uma
+      // operação nova (chave nova). A atualização das listas acontece aqui.
       chaveFeedbackRef.current?.confirmar();
       // Foca o ciclo do registro criado para que ele APAREÇA na listagem
       // (a lista respeita o filtro de ciclo selecionado no topo).
       const cicloCriado = String((dadosEnviados as { ciclo_id?: unknown })?.ciclo_id ?? '').trim();
       if (cicloCriado) setCicloSelecionadoId(cicloCriado);
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
-      toast.success('Feedback registrado!');
+      toast.success(
+        mockAtivo
+          ? 'Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).'
+          : 'Feedback registrado!'
+      );
     },
     onError: (erro: unknown) => {
       // Nada de sucesso falso: o motivo REAL (autorização, validação, rede) vai
@@ -277,14 +407,100 @@ export default function AvaliacaoPage() {
     },
   });
 
+  /* ── EDIÇÃO de um feedback existente (filtros normais) ────────────────────
+     DEMONSTRAÇÃO: grava o patch no armazenamento local (sobrevive ao F5) e
+     reencaminha a consolidação — a versão do conjunto muda e invalida decisões
+     anteriores, exatamente como no banco.
+     REAL: RPC `editar_feedback_seguro` (migration aditiva). Ela reabre registro
+     concluído de forma explícita, audita antes/depois e o trigger sincroniza a
+     consolidação. A guarda de escrita recusa `mock-*` antes da rede. */
+  const editarFeedback = useMutation<any, unknown, { id: string; dados: Record<string, unknown> }>({
+    mutationFn: ({ id, dados }) => {
+      const alvo = String(id ?? '').trim();
+      if (!alvo) return Promise.reject(new Error('Registro sem identificador — não é possível editar.'));
+      if (mockAtivo) {
+        const patch = {
+          ...dados,
+          status: 'pendente',
+          updated_at: new Date().toISOString(),
+        };
+        atualizarRegistroDemo('feedbacks', alvo, patch, {
+          por: user?.email ?? null,
+          descricao: 'Avaliação editada na demonstração (reaberta como pendente)',
+          operacao: 'editar',
+        });
+        const avaliado = String(dados?.avaliado_id ?? '').trim();
+        const cicloDoFeedback = String(dados?.ciclo_id ?? '').trim();
+        if (avaliado && cicloDoFeedback) {
+          encaminharLocal({
+            colaboradorId: avaliado,
+            cicloId: cicloDoFeedback,
+            por: user?.email ?? null,
+            automatico: true,
+          });
+          invalidarDemo();
+        }
+        return Promise.resolve({ id: alvo, ...patch });
+      }
+      const idOperacao = chaveEdicaoRef.current!.para(`editar:${alvo}`);
+      return avaliacaoService.editarFeedbackSeguro({
+        feedbackId: alvo,
+        avaliado_id: String(dados.avaliado_id ?? ''),
+        avaliador_id: String(dados.avaliador_id ?? ''),
+        ciclo_id: dados.ciclo_id ? String(dados.ciclo_id) : null,
+        tipo: String(dados.tipo ?? 'gestor'),
+        nota_geral: Number(dados.nota_geral ?? 0),
+        potencial: dados.potencial == null ? null : Number(dados.potencial),
+        pontos_fortes: (dados.pontos_fortes as string | undefined) ?? null,
+        pontos_melhoria: (dados.pontos_melhoria as string | undefined) ?? null,
+        comentarios: (dados.comentarios as string | undefined) ?? null,
+        idOperacao,
+      });
+    },
+    onSuccess: (_r: any, { dados }) => {
+      chaveEdicaoRef.current?.confirmar();
+      const cicloEditado = String((dados as { ciclo_id?: unknown })?.ciclo_id ?? '').trim();
+      if (cicloEditado) setCicloSelecionadoId(cicloEditado);
+      qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      toast.success(
+        mockAtivo
+          ? 'Demonstração: avaliação atualizada e salva localmente (nada foi enviado ao banco).'
+          : 'Avaliação atualizada.'
+      );
+    },
+    onError: (erro: unknown) => {
+      if (isDesempenhoMockEnabled()) return;
+      toast.error(`Avaliação NÃO atualizada: ${mensagemDeErro(erro)}`);
+    },
+  });
+
   const criarPDI = useMutation({
     mutationFn: (d: any) => {
-      if (bloquearEscritaDesempenho('Criar PDI')) return Promise.reject(new Error('mock'));
+      if (mockAtivo) {
+        const { registro } = criarRegistroDemo(
+          'pdis',
+          {
+            ...d,
+            empresa_id: empresaDaEscrita(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          {
+            por: user?.email ?? null,
+            descricao: `PDI de "${String(d?.competencia_foco ?? d?.titulo ?? '')}" criado na demonstração`,
+          }
+        );
+        return Promise.resolve(registro);
+      }
       return avaliacaoService.criarPDI({ ...d, empresa_id: empresaDaEscrita() });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pdis'] });
-      toast.success('PDI criado!');
+      toast.success(
+        mockAtivo ? 'Demonstração: PDI criado e salvo localmente (nada foi enviado ao banco).' : 'PDI criado!'
+      );
     },
     onError: (erro: unknown) => {
       if (isDesempenhoMockEnabled()) return;
@@ -294,12 +510,19 @@ export default function AvaliacaoPage() {
 
   const excluirCiclo = useMutation({
     mutationFn: (c: any) => {
-      if (bloquearEscritaDesempenho('Excluir ciclo de avaliação')) return Promise.reject(new Error('mock'));
+      const id = String(c?.id ?? '').trim();
+      if (mockAtivo) {
+        excluirRegistroDemo('ciclos', id, {
+          por: user?.email ?? null,
+          descricao: `Ciclo "${String(c?.nome ?? '')}" excluído na demonstração`,
+        });
+        return Promise.resolve();
+      }
       return avaliacaoService.excluirCiclo(c.id, empresaDaEscrita());
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] });
-      toast.success('Ciclo excluído!');
+      toast.success(mockAtivo ? 'Demonstração: ciclo excluído localmente.' : 'Ciclo excluído!');
     },
     onError: (erro: unknown) => {
       if (isDesempenhoMockEnabled()) return;
@@ -423,6 +646,20 @@ export default function AvaliacaoPage() {
     enabled: modoReal,
   });
 
+  /* ── VÍNCULOS PARA A APROVAÇÃO (`id`, `user_id`, `supervisor_id`) ──────────
+     A MESMA consulta que o rodapé do modal já faz (mesma `queryKey`, portanto
+     um único request no cache). É a prova de QUEM deve aprovar: o gestor sai do
+     `supervisor_id` do avaliado — nunca do tipo nem do avaliador do registro.
+     Leitura mínima e escopada à empresa; a RLS de `colaboradores` continua
+     decidindo quem enxerga cada linha. Em demonstração ela fica desligada (não
+     há vínculo fictício) e a fila segue pela leitura por PAPEL. */
+  const { data: vinculos = [] } = useQuery({
+    queryKey: ['colaboradores_vinculos', empresaAtual?.id],
+    queryFn: () => avaliacaoService.listarVinculos(empresaAtual!.id),
+    enabled: modoReal && !!empresaAtual?.id,
+    retry: false,
+  });
+
   /** Versão canônica por feedback — o BANCO é a autoridade; aqui só se compara. */
   const versoesPorFeedback = useMemo(() => {
     const mapa: Record<string, string> = {};
@@ -432,6 +669,140 @@ export default function AvaliacaoPage() {
     }
     return mapa;
   }, [versoesAvaliacao]);
+
+  /* ── VITRINE (demonstração): decisões persistidas LOCALMENTE ───────────────
+     Fora do modo real não existe backend de aprovação: as decisões dos
+     registros fictícios vão para `localStorage` (chave própria, mocks
+     intactos) e alimentam as MESMAS derivações/fila/contadores/Nine-Box.
+     Persistem após F5 e em qualquer aba do mesmo perfil. */
+  const demoAtivo = !modoReal;
+
+  /**
+   * VITRINE: serviço demonstrativo. Presente, os MESMOS controles do rodapé do
+   * modal (Concluir, Cancelar, Reabrir, Validar Potencial) executam a ação
+   * gravando no armazenamento local — nunca no banco. Ausente no modo real.
+   */
+  const servicoDemo = useMemo(
+    () =>
+      demoAtivo
+        ? criarServicoDemo({
+            usuarioId: user?.id ?? null,
+            email: user?.email ?? null,
+            feedbackDe: (id) =>
+              ((feedbacks ?? []) as Record<string, unknown>[]).find((f) => String(f?.id ?? '') === id) ?? null,
+            feedbacks: (feedbacks ?? []) as Record<string, unknown>[],
+            colaboradoresIds: ((colaboradores ?? []) as { id?: unknown }[])
+              .map((c) => String(c?.id ?? ''))
+              .filter(Boolean),
+          })
+        : undefined,
+    [demoAtivo, user, feedbacks, colaboradores]
+  );
+  const { data: estadoDemo = estadoLocalVazio() } = useQuery<EstadoLocalDemo>({
+    queryKey: [CHAVE_DEMO],
+    queryFn: lerEstadoLocal,
+    staleTime: Infinity,
+  });
+  const invalidarDemo = () => qc.invalidateQueries({ queryKey: [CHAVE_DEMO] });
+
+  /** Decisões efetivas: do BANCO no modo real; do armazenamento local na vitrine. */
+  const aprovacoesEfetivas = useMemo(
+    () => (demoAtivo ? aprovacoesLocais(estadoDemo) : aprovacoesGestor),
+    [demoAtivo, estadoDemo, aprovacoesGestor]
+  );
+  const validacoesEfetivas = useMemo(
+    () => (demoAtivo ? validacoesLocais(estadoDemo) : validacoesPotencial),
+    [demoAtivo, estadoDemo, validacoesPotencial]
+  );
+  /** Encaminhamentos automáticos da vitrine (`chave → { em }`) — data do envio. */
+  const encaminhamentosEfetivos = useMemo(() => {
+    if (!demoAtivo) return {} as Record<string, { em?: string | null }>;
+    const mapa: Record<string, { em?: string | null }> = {};
+    Object.entries(estadoDemo.encaminhamentos ?? {}).forEach(([chave, encaminhamento]) => {
+      const em = encaminhamento?.encaminhadoEm;
+      if (em) mapa[chave] = { em };
+    });
+    return mapa;
+  }, [demoAtivo, estadoDemo]);
+
+  /* ── Mutations da VITRINE (gravam no armazenamento local, nunca no banco) ── */
+  const enviarAprovacaoDemo = useMutation({
+    mutationFn: async (p: {
+      colaboradorId: string;
+      cicloId: string;
+      versaoAvaliacao?: string | null;
+      devolvida?: boolean;
+    }) => {
+      if (p.devolvida) {
+        // Devolvida → o RH corrige e REENVIA: a decisão volta a aguardar o gestor.
+        reenviarLocal({ colaboradorId: p.colaboradorId, cicloId: p.cicloId, por: user?.email ?? null });
+      } else {
+        enviarLocal({
+          colaboradorId: p.colaboradorId,
+          cicloId: p.cicloId,
+          versaoAvaliacao: p.versaoAvaliacao ?? null,
+          por: user?.email ?? null,
+        });
+      }
+      return null;
+    },
+    onSuccess: (_r, p) => {
+      invalidarDemo();
+      toast.success(
+        p.devolvida
+          ? 'Demonstração: avaliação reenviada ao gestor (salva localmente).'
+          : 'Demonstração: envio ao gestor registrado localmente (nada foi enviado ao banco).'
+      );
+    },
+  });
+
+  const decidirAprovacaoDemo = useMutation({
+    mutationFn: async (d: {
+      colaboradorId: string;
+      cicloId: string;
+      decisao: 'aprovado' | 'devolvido';
+      justificativa?: string | null;
+      versaoAvaliacao: string;
+    }) => {
+      decidirLocal({
+        colaboradorId: d.colaboradorId,
+        cicloId: d.cicloId,
+        decisao: d.decisao,
+        justificativa: d.justificativa ?? null,
+        versaoAvaliacao: d.versaoAvaliacao,
+        por: user?.email ?? null,
+      });
+      return null;
+    },
+    onSuccess: (_r, d) => {
+      invalidarDemo();
+      toast.success(
+        d.decisao === 'devolvido'
+          ? 'Demonstração: devolução salva localmente (nada foi enviado ao banco).'
+          : 'Demonstração: aprovação salva localmente (nada foi enviado ao banco).'
+      );
+    },
+  });
+
+  const validarPotencialDemo = useMutation({
+    mutationFn: async (p: { colaboradorId: string; cicloId: string; versaoAvaliacao: string }) => {
+      const { resultado } = validarPotencialLocal({
+        colaboradorId: p.colaboradorId,
+        cicloId: p.cicloId,
+        versaoAvaliacao: p.versaoAvaliacao,
+        por: user?.email ?? null,
+      });
+      if (!resultado.ok) throw new Error(resultado.descricao);
+      return null;
+    },
+    onSuccess: () => {
+      invalidarDemo();
+      toast.success('Demonstração: Potencial validado localmente — o Nine-Box classifica.');
+    },
+    onError: (erro: unknown) => {
+      toast.error(`Potencial NÃO validado: ${mensagemDeErro(erro)}`);
+    },
+  });
 
   return (
     <>
@@ -589,23 +960,46 @@ export default function AvaliacaoPage() {
                 ciclosReais={ciclosReais}
                 pdis={pdis}
                 onCriarFeedback={(dados) => criarFeedback.mutate(dados)}
-                salvandoFeedback={criarFeedback.isPending}
+                onEditarFeedback={(item, dados) =>
+                  editarFeedback.mutate({ id: String((item.feedback as { id?: unknown })?.id ?? ''), dados })
+                }
+                salvandoFeedback={criarFeedback.isPending || editarFeedback.isPending}
                 /* ── Subaba "Aguardando gestor" ────────────────────────────────
                    Somente no MODO REAL os controles de escrita são liberados (a
                    fila continua visível em demonstração, como leitura). O ciclo
                    é obrigatório no payload: sem ele a RPC não tem chave. */
                 papel={papel}
-                acoesAprovacaoHabilitadas={modoReal}
-                validacoesPotencial={validacoesPotencial}
+                papeis={papeisDoUsuario}
+                servicoDemo={servicoDemo}
+                acoesAprovacaoHabilitadas={modoReal || demoAtivo}
+                modoAprovacao={demoAtivo ? 'demonstracao' : 'real'}
+                validacoesPotencial={validacoesEfetivas}
+                encaminhamentos={encaminhamentosEfetivos}
                 versoesPorFeedback={versoesPorFeedback}
                 consolidacoes={consolidacoes}
-                aprovacoesGestor={aprovacoesGestor}
+                aprovacoesGestor={aprovacoesEfetivas}
+                vinculos={demoAtivo ? [] : vinculos}
+                usuarioId={user?.id ?? null}
                 salvandoAprovacao={
-                  enviarAprovacao.isPending || decidirAprovacao.isPending || validarPotencialAprovacao.isPending
+                  enviarAprovacao.isPending ||
+                  decidirAprovacao.isPending ||
+                  validarPotencialAprovacao.isPending ||
+                  enviarAprovacaoDemo.isPending ||
+                  decidirAprovacaoDemo.isPending ||
+                  validarPotencialDemo.isPending
                 }
                 onEnviarAprovacao={(p) => {
                   if (!p.cicloId) {
                     toast.error('Envio NÃO realizado: a avaliação está sem ciclo vinculado.');
+                    return;
+                  }
+                  if (demoAtivo) {
+                    enviarAprovacaoDemo.mutate({
+                      colaboradorId: p.colaboradorId,
+                      cicloId: p.cicloId,
+                      versaoAvaliacao: p.versaoAvaliacao,
+                      devolvida: p.status === 'devolvida',
+                    });
                     return;
                   }
                   enviarAprovacao.mutate({ colaboradorId: p.colaboradorId, cicloId: p.cicloId });
@@ -615,6 +1009,16 @@ export default function AvaliacaoPage() {
                     toast.error('Decisão NÃO registrada: a avaliação está sem ciclo vinculado.');
                     return;
                   }
+                  if (demoAtivo) {
+                    decidirAprovacaoDemo.mutate({
+                      colaboradorId: p.colaboradorId,
+                      cicloId: p.cicloId,
+                      decisao,
+                      justificativa: justificativa ?? null,
+                      versaoAvaliacao: String(p.versaoAvaliacao ?? ''),
+                    });
+                    return;
+                  }
                   decidirAprovacao.mutate({
                     colaboradorId: p.colaboradorId,
                     cicloId: p.cicloId,
@@ -622,7 +1026,17 @@ export default function AvaliacaoPage() {
                     justificativa: justificativa ?? null,
                   });
                 }}
-                onValidarPotencial={(p) => validarPotencialAprovacao.mutate({ feedbackId: p.feedbackId })}
+                onValidarPotencial={(p) => {
+                  if (demoAtivo) {
+                    validarPotencialDemo.mutate({
+                      colaboradorId: p.colaboradorId,
+                      cicloId: String(p.cicloId ?? ''),
+                      versaoAvaliacao: String(p.versaoAvaliacao ?? ''),
+                    });
+                    return;
+                  }
+                  validarPotencialAprovacao.mutate({ feedbackId: p.feedbackId });
+                }}
               />
             </TabsContent>
 
@@ -651,8 +1065,13 @@ export default function AvaliacaoPage() {
                 /* Modo real (inerte com a flag desligada): a matriz passa a vir
                    da consolidação oficial sobre os feedbacks persistidos. */
                 empresaId={empresaAtual?.id}
-                validacoesPotencial={validacoesPotencial}
+                validacoesPotencial={validacoesEfetivas}
                 versoesPorFeedback={versoesPorFeedback}
+                aprovacoesDemo={estadoDemo}
+                /* MESMA fonte de aprovação/versão da fila: o Nine-Box não
+                   classifica uma avaliação sem aprovação vigente do gestor. */
+                aprovacoesGestor={aprovacoesEfetivas}
+                consolidacoes={consolidacoes}
               />
             </TabsContent>
 

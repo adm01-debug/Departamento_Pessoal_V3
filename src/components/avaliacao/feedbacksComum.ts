@@ -27,7 +27,7 @@
  * valor curto quanto rótulos por extenso ("Autoavaliação").
  * ============================================================================
  */
-import { formatarData, normalizarStatus } from './desempenhoComum';
+import { formatarData } from './desempenhoComum';
 import { PALETAS_CHIP, type TemaChip } from './chipFiltroComum';
 
 /** Tipos de feedback realmente presentes na coluna `tipo`. */
@@ -41,8 +41,17 @@ export type CriterioOrdemFeedback = 'recentes' | 'antigos' | 'maior_nota' | 'men
 
 /** Contexto opcional para enriquecer o card (cargo/departamento e PDI). */
 export interface ContextoFeedbacks {
-  /** Colaboradores da página (mesma query de `['colaboradores', empresaId]`). */
-  colaboradores?: { id?: string | null; cargo?: string | null; departamento?: string | null }[];
+  /**
+   * Colaboradores da página (mesma query de `['colaboradores', empresaId]`).
+   * `nome_completo` entra aqui de propósito: é a fonte do RECUO do nome quando o
+   * registro não traz a relação embutida (`avaliado`/`avaliador`) — ver `nomeDe`.
+   */
+  colaboradores?: {
+    id?: string | null;
+    nome_completo?: string | null;
+    cargo?: string | null;
+    departamento?: string | null;
+  }[];
   /** PDIs já carregados — origem da competência em foco do avaliado. */
   pdis?: { colaborador_id?: string | null; competencia_foco?: string | null }[];
 }
@@ -105,11 +114,41 @@ export interface FeedbackDerivado {
  * superfície de Gestão de Desempenho.
  */
 export const FAIXAS_NOTA: FaixaNota[] = [
-  { nota: 5, rotulo: 'Excelente', tinta: 'text-success', badge: 'border-success/45 bg-success/20 text-success', barra: 'bg-gradient-to-r from-success to-primary' },
-  { nota: 4, rotulo: 'Muito bom', tinta: 'text-success', badge: 'border-success/45 bg-success/20 text-success', barra: 'bg-gradient-to-r from-success to-primary' },
-  { nota: 3, rotulo: 'Bom', tinta: 'text-primary', badge: 'border-primary/45 bg-primary/20 text-primary', barra: 'bg-gradient-to-r from-primary to-warning' },
-  { nota: 2, rotulo: 'Regular', tinta: 'text-warning', badge: 'border-warning/45 bg-warning/20 text-warning', barra: 'bg-gradient-to-r from-warning/60 to-warning' },
-  { nota: 1, rotulo: 'A melhorar', tinta: 'text-destructive-vivid', badge: 'border-destructive-vivid/45 bg-destructive-vivid/20 text-destructive-vivid', barra: 'bg-gradient-to-r from-destructive/60 to-destructive-vivid' },
+  {
+    nota: 5,
+    rotulo: 'Excelente',
+    tinta: 'text-success',
+    badge: 'border-success/45 bg-success/20 text-success',
+    barra: 'bg-gradient-to-r from-success to-primary',
+  },
+  {
+    nota: 4,
+    rotulo: 'Muito bom',
+    tinta: 'text-success',
+    badge: 'border-success/45 bg-success/20 text-success',
+    barra: 'bg-gradient-to-r from-success to-primary',
+  },
+  {
+    nota: 3,
+    rotulo: 'Bom',
+    tinta: 'text-primary',
+    badge: 'border-primary/45 bg-primary/20 text-primary',
+    barra: 'bg-gradient-to-r from-primary to-warning',
+  },
+  {
+    nota: 2,
+    rotulo: 'Regular',
+    tinta: 'text-warning',
+    badge: 'border-warning/45 bg-warning/20 text-warning',
+    barra: 'bg-gradient-to-r from-warning/60 to-warning',
+  },
+  {
+    nota: 1,
+    rotulo: 'A melhorar',
+    tinta: 'text-destructive-vivid',
+    badge: 'border-destructive-vivid/45 bg-destructive-vivid/20 text-destructive-vivid',
+    barra: 'bg-gradient-to-r from-destructive/60 to-destructive-vivid',
+  },
 ];
 
 /** Faixa semântica de uma nota (0–5). Arredonda como o resto do módulo. */
@@ -169,7 +208,9 @@ export const TRACO_TIPO_FEEDBACK: Record<TipoFeedback, string> = {
  * `gestor`, o tipo dominante dos dados — nenhum tipo novo é inventado.
  */
 export function tipoFeedback(tipo: unknown): TipoFeedback {
-  const t = String(tipo ?? '').trim().toLowerCase();
+  const t = String(tipo ?? '')
+    .trim()
+    .toLowerCase();
   if (t.includes('auto')) return 'auto';
   if (t.includes('subordin')) return 'subordinado';
   if (t.includes('par')) return 'par';
@@ -192,9 +233,37 @@ export function segmentoDoTipo(tipo: unknown): Exclude<SegmentoFeedback, 'todos'
   return t === 'subordinado' ? 'gestor' : t;
 }
 
-/** Feedback pendente = ainda não concluído (mesma régua do módulo). */
+/**
+ * Normaliza o status SEM depender de acento/caixa. A coluna é TEXT livre e os
+ * registros históricos convivem com `concluido`, `Concluído`, `CONCLUÍDA`,
+ * `finalizado`… Comparar com `=== 'concluido'` fazia um registro antigo
+ * acentuado ser contado como PENDENTE (defeito real de dados históricos).
+ */
+function statusHistorico(status: unknown): string {
+  return String(status ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\s-]+/g, '_');
+}
+
+/** Status que representam um registro ENCERRADO (não aguardam mais nada). */
+const STATUS_ENCERRADOS = new Set([
+  'concluido',
+  'concluida',
+  'finalizado',
+  'finalizada',
+  'aprovado',
+  'aprovada',
+  'validado',
+  'cancelado',
+  'cancelada',
+]);
+
+/** Feedback pendente = ainda não encerrado (mesma régua do módulo). */
 export function estaPendente(feedback: any): boolean {
-  return normalizarStatus(feedback?.status) !== 'concluido';
+  return !STATUS_ENCERRADOS.has(statusHistorico(feedback?.status));
 }
 
 /** Chips de segmentação, na ordem da referência (o contador vem do dado). */
@@ -237,8 +306,18 @@ export function contarPorSegmento(itens: FeedbackDerivado[]): ContagemSegmentos 
 
 /** Títulos dos grupos de mês em pt-BR, na ordem do calendário. */
 const MESES = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ];
 
 /** Início do mês local de um instante (ms) — base do agrupamento. */
@@ -255,6 +334,30 @@ function rotuloMes(ms: number): string {
   if (!ms) return 'Sem data';
   const d = new Date(ms);
   return `${MESES[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+/**
+ * NOME do colaborador pela RELAÇÃO embutida (`avaliado`/`avaliador`) com RECUO
+ * para a lista já carregada pela página, pelo id.
+ *
+ * POR QUE O RECUO EXISTE: nem toda origem traz o embed. Registros criados no
+ * ambiente demonstrativo são gravados com os CAMPOS crus (`avaliado_id`/
+ * `avaliador_id`) e não têm o objeto da relação; o mesmo vale para payloads
+ * devolvidos por caminhos que não pedem o join. Sem o recuo, o card mostrava
+ * `—` no avaliado e no avaliador mesmo com os ids preenchidos e resolvíveis
+ * (o cargo/departamento já vinha do id — era a única pista de que o id existia).
+ * A ordem de precedência continua sendo a do banco: embed primeiro, id depois.
+ */
+function nomeDe(
+  relacao: { nome_completo?: string | null } | null | undefined,
+  colaboradores: ContextoFeedbacks['colaboradores'],
+  id: unknown
+): string {
+  const doEmbed = String(relacao?.nome_completo ?? '').trim();
+  if (doEmbed) return doEmbed;
+  const alvo = String(id ?? '').trim();
+  const achado = alvo ? colaboradores?.find((c) => String(c?.id ?? '') === alvo) : undefined;
+  return String(achado?.nome_completo ?? '').trim() || '—';
 }
 
 /** Cargo/departamento do colaborador pelo id (lista já carregada pela página). */
@@ -295,8 +398,8 @@ export function derivarFeedbacks(
   return feedbacks.map((f) => {
     const nota = Number(f?.nota_geral ?? 0);
     const mesMs = inicioDoMes(f?.created_at);
-    const avaliado = String(f?.avaliado?.nome_completo ?? '').trim() || '—';
-    const avaliador = String(f?.avaliador?.nome_completo ?? '').trim() || '—';
+    const avaliado = nomeDe(f?.avaliado, colaboradores, f?.avaliado_id);
+    const avaliador = nomeDe(f?.avaliador, colaboradores, f?.avaliador_id);
     const local = localDe(colaboradores, f?.avaliado_id);
     const tipo = tipoFeedback(f?.tipo);
 
@@ -389,16 +492,23 @@ export function contagemTipos(itens: FeedbackDerivado[]): LinhaTipo[] {
     .filter((linha) => linha.quantidade > 0);
 }
 
-/** Grupo de mês da timeline. */
-export interface GrupoMes {
+/**
+ * Grupo de mês da timeline.
+ *
+ * GENÉRICO de propósito: a aba passou a agrupar o modelo CANÔNICO
+ * (`FeedbackCanonico extends FeedbackDerivado`) para que card, fila e modal
+ * recebam o MESMO objeto. O padrão continua `FeedbackDerivado`, então chamadores
+ * antigos seguem funcionando sem conversão.
+ */
+export interface GrupoMes<T extends FeedbackDerivado = FeedbackDerivado> {
   chave: number;
   rotulo: string;
-  itens: FeedbackDerivado[];
+  itens: T[];
 }
 
 /** Agrupa por mês/ano (mais recente primeiro), preservando a ordem de cada grupo. */
-export function agruparPorMes(itens: FeedbackDerivado[]): GrupoMes[] {
-  const mapa = new Map<number, FeedbackDerivado[]>();
+export function agruparPorMes<T extends FeedbackDerivado>(itens: T[]): GrupoMes<T>[] {
+  const mapa = new Map<number, T[]>();
   itens.forEach((i) => {
     const atual = mapa.get(i.mesMs) ?? [];
     atual.push(i);
@@ -416,7 +526,7 @@ export function agruparPorMes(itens: FeedbackDerivado[]): GrupoMes[] {
  * assim, dentro do mesmo grupo de mês, a timeline fica na ordem cronológica
  * real (o mais recente primeiro), como a referência.
  */
-export function ordenarFeedbacks(itens: FeedbackDerivado[], criterio: CriterioOrdemFeedback): FeedbackDerivado[] {
+export function ordenarFeedbacks<T extends FeedbackDerivado>(itens: T[], criterio: CriterioOrdemFeedback): T[] {
   const copia = [...itens];
   switch (criterio) {
     case 'antigos':
@@ -449,7 +559,7 @@ export function avaliadoresDisponiveis(itens: FeedbackDerivado[]): string[] {
 }
 
 /** Feedbacks pendentes do recorte, os mais recentes primeiro. */
-export function pendentes(itens: FeedbackDerivado[]): FeedbackDerivado[] {
+export function pendentes<T extends FeedbackDerivado>(itens: T[]): T[] {
   return ordenarFeedbacks(
     itens.filter((i) => i.pendente),
     'recentes'
@@ -478,4 +588,3 @@ export function descricaoPrazoCiclo(ciclo: any, agora: number = Date.now()): str
   if (dias === 0) return 'Último dia do ciclo.';
   return `Próximo prazo em ${dias} ${dias === 1 ? 'dia' : 'dias'}.`;
 }
-

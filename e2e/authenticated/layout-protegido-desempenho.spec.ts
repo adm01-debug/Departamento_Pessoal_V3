@@ -16,7 +16,7 @@ import { test, expect, type Page } from '@playwright/test';
  *   • nome longo É truncado (scrollWidth > clientWidth) e não empurra nada;
  *   • o seletor de ciclo não transborda (scrollWidth/scrollHeight == caixa);
  *   • a faixa de abas continua com os seis rótulos, sem sobrepor o seletor;
- *   • os controles aprovados (Ver feedback, menu, Novo Ciclo) continuam lá.
+ *   • os controles aprovados (Editar feedback, menu, Novo Ciclo) continuam lá.
  *
  * Todas as medições com nome longo são feitas com o texto INJETADO apenas no DOM
  * do navegador — nenhum dado é gravado.
@@ -29,14 +29,14 @@ const CICLO_LONGO = 'HOMOLOG-NB Ciclo Nine-Box de Avaliação Trimestral 2026';
 /** Geometria das colunas do card, medida no DOM real. */
 async function medirCards(page: Page) {
   return page.evaluate(() => {
-    const colunas = Array.from(document.querySelectorAll('div')).filter((d) => {
-      const p = d.querySelector(':scope > p');
-      return p && /^Avaliado por$/i.test((p.textContent ?? '').trim());
-    });
-    return colunas.map((colInterna) => {
-      // `colunas` são os blocos INTERNOS; a COLUNA "Avaliado por" é o pai.
+    // O card canônico tem DUAS caixas de responsável ("Gestor responsável" e
+    // "Avaliado por"): a âncora é o parágrafo "Avaliado por" — a sua caixa
+    // interna é o pai e a coluna é o avô (largura 216 px contratada).
+    const rotulos = Array.from(document.querySelectorAll('p')).filter((p) => p.textContent?.trim() === 'Avaliado por');
+    return rotulos.map((p) => {
+      const colInterna = p.parentElement!;
       const colB = colInterna.parentElement!;
-      const nome = colB.querySelector('span.block');
+      const nome = p.nextElementSibling?.querySelector('span.block') ?? null;
       const colC = colB.nextElementSibling;
       const rb = colB.getBoundingClientRect();
       const rn = nome?.getBoundingClientRect();
@@ -72,9 +72,10 @@ test.describe('Layout protegido — Gestão de Desempenho / Feedbacks', () => {
     expect(cards.length).toBeGreaterThan(0);
 
     for (const c of cards) {
-      // Largura contratada da coluna de origem (216 px) e da coluna de nota (172 px).
+      // Largura contratada da coluna de origem (216 px) e da coluna de
+      // resultados (230 px — a MESMA na lista e na fila "Aguardando gestor").
       expect(c.colB.width, `coluna "Avaliado por" de "${c.nome}"`).toBeCloseTo(216, 0);
-      expect(c.colCWidth, 'coluna de nota/estrelas').toBeCloseTo(172, 0);
+      expect(c.colCWidth, 'coluna de resultados').toBeCloseTo(230, 0);
       // O nome termina ANTES da coluna de nota começar.
       expect(c.nomeRight!, `nome "${c.nome}" invadiu a coluna de nota`).toBeLessThanOrEqual(c.colCLeft! + 0.5);
     }
@@ -87,11 +88,10 @@ test.describe('Layout protegido — Gestão de Desempenho / Feedbacks', () => {
     expect(antes.length).toBeGreaterThan(0);
 
     await page.evaluate((nome) => {
-      const colunas = Array.from(document.querySelectorAll('div')).filter((d) => {
-        const p = d.querySelector(':scope > p');
-        return p && /^Avaliado por$/i.test((p.textContent ?? '').trim());
-      });
-      const alvo = colunas[0]?.querySelector('span.block');
+      const rotulos = Array.from(document.querySelectorAll('p')).filter(
+        (p) => p.textContent?.trim() === 'Avaliado por'
+      );
+      const alvo = rotulos[0]?.nextElementSibling?.querySelector('span.block');
       if (alvo) alvo.textContent = nome;
     }, NOME_LONGO);
     await page.waitForTimeout(300);
@@ -160,11 +160,11 @@ test.describe('Layout protegido — Gestão de Desempenho / Feedbacks', () => {
     expect(folga!).toBeGreaterThan(-1);
 
     // Controles aprovados seguem presentes…
-    await expect(page.getByRole('button', { name: 'Ver feedback' }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Editar feedback' }).first()).toBeVisible();
     await expect(page.getByRole('button', { name: /Novo Ciclo/i }).first()).toBeVisible();
 
-    // …e "Ver feedback" continua abrindo o modal real (contrato funcional preservado).
-    await page.getByRole('button', { name: 'Ver feedback' }).first().click();
+    // …e "Editar feedback" continua abrindo o formulário existente (contrato preservado).
+    await page.getByRole('button', { name: 'Editar feedback' }).first().click();
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.keyboard.press('Escape');
   });
@@ -209,12 +209,14 @@ test.describe('Layout protegido — Gestão de Desempenho / Feedbacks', () => {
     await expect(page.getByRole('dialog')).toBeVisible();
     await page.keyboard.press('Escape');
 
-    // Em demonstração a fila é somente de leitura (os fictícios nunca gravam).
-    await expect(page.getByText(/somente de leitura/i)).toBeVisible();
+    // Em demonstração a fila OPERA sobre o armazenamento local: o aviso
+    // identifica que as decisões ficam SALVAS LOCALMENTE (nada é enviado ao
+    // banco e os mocks permanecem intactos).
+    await expect(page.getByText(/salvas LOCALMENTE/i)).toBeVisible();
 
-    // "Todos" devolve a listagem normal de avaliações.
+    // "Todos" devolve a listagem normal de avaliações (com Editar feedback).
     await chipTodos.click();
     await expect(page.getByText('AVALIADO POR').first()).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Ver feedback' }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Editar feedback' }).first()).toBeVisible();
   });
 });

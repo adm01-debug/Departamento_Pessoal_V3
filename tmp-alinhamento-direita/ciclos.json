@@ -1,0 +1,88 @@
+{
+  "ciclosDisponiveis": [
+    "Ciclo Anual 2025",
+    "Ciclo S1 2026",
+    "Ciclo S2 2026",
+    "Avaliação de Experiência 90 dias",
+    "Ciclo S1 2027"
+  ],
+  "Ciclo Anual 2025": {
+    "linhas": 0,
+    "amostra": []
+  },
+  "Ciclo S1 2026": {
+    "linhas": 2,
+    "amostra": [
+      {
+        "estado": "Gestor não atribuído",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "bordaInterna": 1528,
+        "potencial": 1527,
+        "status": 1527,
+        "acoes": 1527,
+        "mesmaBorda": true
+      },
+      {
+        "estado": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver",
+          "Aprovar"
+        ],
+        "bordaInterna": 1528,
+        "potencial": 1527,
+        "status": 1527,
+        "acoes": 1527,
+        "mesmaBorda": true
+      }
+    ]
+  },
+  "Ciclo S2 2026": {
+    "linhas": 10,
+    "amostra": [
+      {
+        "estado": "Gestor não atribuído",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "bordaInterna": 1528,
+        "potencial": 1527,
+        "status": 1527,
+        "acoes": 1527,
+        "mesmaBorda": true
+      },
+      {
+        "estado": "Gestor não atribuído",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "bordaInterna": 1528,
+        "potencial": 1527,
+        "status": 1527,
+        "acoes": 1527,
+        "mesmaBorda": true
+      },
+      {
+        "estado": "Gestor não atribuído",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "bordaInterna": 1528,
+        "potencial": 1527,
+        "status": 1527,
+        "acoes": 1527,
+        "mesmaBorda": true
+      }
+    ]
+  },
+  "Avaliação de Experiência 90 dias": {
+    "linhas": 0,
+    "amostra": []
+  },
+  "Ciclo S1 2027": {
+    "linhas": 0,
+    "amostra": []
+  }
+}

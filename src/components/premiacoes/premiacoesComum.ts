@@ -79,9 +79,16 @@ export interface PagamentoHub {
   colaborador_id?: string | null;
   valor_calculado?: number | string | null;
   valor_aprovado?: number | string | null;
+  /** Valor lançado na folha (preenchido pela conciliação). */
+  valor_folha_real?: number | string | null;
+  /** Motivo registrado quando a conciliação diverge. */
+  justificativa_divergencia?: string | null;
+  /** Observação do cálculo/aprovação (campo real da tabela). */
+  observacoes?: string | null;
   status: string;
   status_conciliacao?: string | null;
   data_pagamento?: string | null;
+  created_at?: string | null;
   updated_at?: string | null;
   historico_mudancas?: unknown;
   colaborador?: { nome_completo?: string | null } | null;
@@ -640,6 +647,15 @@ export interface EventoAtividade {
   objeto: string | null;
   responsavel: string | null;
   quando: string | null;
+  /** Entidade REAL do evento na trilha (`pagamento`, `campanha`, `regra`). */
+  entidade: string;
+  /** Ação REAL registrada na trilha (`criacao`, `aprovacao`, `alteracao`…) —
+   *  é por ela (nunca pelo texto do título) que a interface escolhe o ícone e a
+   *  cor semântica de cada registro. */
+  acao: string;
+  /** O pagamento do evento está com conciliação DIVERGENTE (campo real
+   *  `status_conciliacao`): o registro ganha o tom de alerta. */
+  divergente: boolean;
 }
 
 /** Gênero do substantivo de cada entidade da trilha (para o particípio correto). */
@@ -711,6 +727,12 @@ export function montarAtividadeRecente(
         objeto: campanha?.nome ?? pagamento?.campanha?.nome ?? null,
         responsavel: responsavelDoPagamento(pagamento),
         quando: a.created_at,
+        entidade: a.entidade_tipo,
+        acao: a.acao,
+        // Estado REAL da conciliação do pagamento do evento (regra idêntica à
+        // de `pagamentosComum.divergenciaDoPagamento`, sem criar dependência
+        // circular entre os dois módulos comuns).
+        divergente: pagamento?.status_conciliacao === 'divergente',
       };
     });
 }

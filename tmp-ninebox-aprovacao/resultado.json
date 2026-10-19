@@ -1,0 +1,38 @@
+{
+  "quando": "2026-10-19T19:56:51.691Z",
+  "antes": {
+    "contador": "Aguardando gestor10"
+  },
+  "aprovado": {
+    "toast": [
+      "Demonstração: aprovação salva localmente (nada foi enviado ao banco)."
+    ],
+    "statusFeedbacks": "Aprovada pelo gestor",
+    "banner": "1 aprovada pelo gestor aguardando a validação do Potencial pelo RH: Ana Beatriz Souza",
+    "nomeNoBanner": true,
+    "quadranteEstrela": "Estrela — 8 colaboradores",
+    "noQuadranteAntesDoRh": false
+  },
+  "validado": {
+    "botaoVisivel": true,
+    "toast": [
+      "Demonstração: Potencial validado localmente (nada foi enviado ao banco)."
+    ],
+    "aindaNoBanner": false,
+    "noQuadrante": true
+  },
+  "f5": {
+    "aindaNoBanner": false,
+    "noQuadrante": true
+  },
+  "ciclos": {
+    "s1NomeVisivel": false,
+    "voltouS2ComColaborador": true
+  },
+  "invalidado": {
+    "bannerPendente": "1 avaliação com aprovação do gestor pendente, devolvida ou invalidada: Ana Beatriz Souza",
+    "nomeNoBanner": true,
+    "noQuadrante": false
+  },
+  "escritas": []
+}

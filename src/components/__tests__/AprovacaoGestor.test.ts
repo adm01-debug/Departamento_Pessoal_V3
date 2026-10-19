@@ -15,6 +15,7 @@ import {
   resumoPorStatus,
   situacaoAprovacao,
   validarJustificativaDevolucao,
+  versaoConsolidadaDemo,
 } from '@/components/avaliacao/aprovacaoGestor';
 
 /**
@@ -63,9 +64,9 @@ describe('situacaoAprovacao — espelho da função SQL', () => {
     expect(situacaoAprovacao({ versaoGestor: 'v1', decisao: null, validada: false })).toBe('aguardando_gestor');
   });
 
-  it('decisão de OUTRA versão ⇒ devolvida (a avaliação mudou depois da decisão)', () => {
+  it('decisão de OUTRA versão ⇒ volta a aguardar o gestor (aprovação INVALIDADA)', () => {
     expect(situacaoAprovacao({ versaoGestor: 'v2', decisao: decisao('aprovado', 'v1'), validada: false })).toBe(
-      'devolvida'
+      'aguardando_gestor'
     );
   });
 
@@ -84,6 +85,23 @@ describe('situacaoAprovacao — espelho da função SQL', () => {
   it('aprovado SEM validação ⇒ aprovada_gestor (falta o RH validar o Potencial)', () => {
     expect(situacaoAprovacao({ versaoGestor: 'v1', decisao: decisao('aprovado', 'v1'), validada: false })).toBe(
       'aprovada_gestor'
+    );
+  });
+
+  it('decisão vigente PREVALECE sobre a ausência de vínculo (sem_gestor não é terminal)', () => {
+    expect(
+      situacaoAprovacao({
+        versaoGestor: 'v1',
+        decisao: decisao('aprovado', 'v1'),
+        validada: false,
+        gestorIdentificado: false,
+      })
+    ).toBe('aprovada_gestor');
+  });
+
+  it('SEM vínculo e SEM decisão ⇒ sem_gestor (pendência de ATRIBUIÇÃO, não de aprovação)', () => {
+    expect(situacaoAprovacao({ versaoGestor: 'v1', decisao: null, validada: false, gestorIdentificado: false })).toBe(
+      'sem_gestor'
     );
   });
 
@@ -158,16 +176,125 @@ describe('derivarPendencias — fila de aprovação', () => {
     });
   });
 
-  it('sem avaliação do gestor concluída NÃO há pendência (fica em preparação)', () => {
+  it('a pendência APARECE sem a avaliação do gestor e a decisão CONTINUA disponível', () => {
     const pendencias = derivarPendencias({
       ...base,
       feedbacks: [{ ...FEEDBACK_GESTOR, status: 'pendente' }],
     });
     expect(pendencias).toHaveLength(1);
-    expect(pendencias[0].status).toBe('em_preparacao');
+    expect(pendencias[0].status).toBe('aguardando_gestor');
+    expect(pendencias[0].avaliacaoGestorValida).toBe(false);
+    // A falta da avaliação do gestor é INFORMATIVA — não bloqueia a aprovação.
+    expect(pendencias[0].motivoBloqueioAprovacao).toBeNull();
+    expect(pendencias[0].estado.aprovacaoPermitida).toBe(true);
+    expect(pendencias[0].estado.podeDecidir).toBe(true);
   });
 
-  it('decisão de outra versão devolve para correção', () => {
+  it('PAR concluído SEM gestor vinculado: a pendência aparece e RH/admin pode decidir', () => {
+    const par = { ...FEEDBACK_GESTOR, id: 'fb-par-1', tipo: 'par', avaliador_id: 'c-2', status: 'concluido' };
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'real',
+      feedbacks: [par],
+      versoesPorFeedback: { 'fb-par-1': 'v-par' },
+      // Vínculo carregado, porém SEM supervisor definido para o colaborador.
+      vinculos: [{ id: 'c-1', user_id: null, supervisor_id: null }],
+      usuarioId: 'u-admin',
+      podeGerirAvaliacoes: true,
+    });
+
+    expect(pendencias).toHaveLength(1);
+    expect(pendencias[0].status).toBe('sem_gestor');
+    expect(pendencias[0].gestorResponsavel).toBe('Não identificado');
+    expect(pendencias[0].avaliacaoGestorValida).toBe(false);
+    expect(pendencias[0].motivoBloqueioAprovacao).toBeNull();
+    expect(pendencias[0].estado.pendente).toBe(true);
+    expect(pendencias[0].estado.podeDecidir).toBe(true);
+  });
+
+  it('PAR sem gestor vinculado + gestor fora de escopo: bloqueado com motivo (não inventa vínculo)', () => {
+    const par = { ...FEEDBACK_GESTOR, id: 'fb-par-1', tipo: 'par', status: 'concluido' };
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'real',
+      feedbacks: [par],
+      versoesPorFeedback: { 'fb-par-1': 'v-par' },
+      vinculos: [{ id: 'c-1', user_id: null, supervisor_id: null }],
+      usuarioId: 'u-gestor',
+      podeGerirAvaliacoes: false,
+    });
+
+    expect(pendencias[0].status).toBe('sem_gestor');
+    expect(pendencias[0].estado.podeDecidir).toBe(false);
+    expect(pendencias[0].motivoBloqueioAprovacao).toMatch(/RH\/admin/);
+  });
+
+  it('RH/admin decide também COM gestor vinculado (escopo de tenant)', () => {
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'real',
+      feedbacks: [FEEDBACK_GESTOR],
+      versoesPorFeedback: { 'fb-gestor-1': 'v1' },
+      vinculos: [
+        { id: 'c-1', user_id: 'u-ana', supervisor_id: 'c-2' },
+        { id: 'c-2', user_id: 'u-bruno', supervisor_id: null },
+      ],
+      usuarioId: 'u-admin',
+      podeGerirAvaliacoes: true,
+    });
+
+    expect(pendencias[0].status).toBe('aguardando_gestor');
+    expect(pendencias[0].gestorResponsavel).toBe('Bruno Lima');
+    expect(pendencias[0].estado.podeDecidir).toBe(true);
+  });
+
+  it('gestor vinculado a OUTRO colaborador não decide (fora de escopo)', () => {
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'real',
+      feedbacks: [FEEDBACK_GESTOR],
+      versoesPorFeedback: { 'fb-gestor-1': 'v1' },
+      vinculos: [
+        { id: 'c-3', user_id: 'u-sessao', supervisor_id: null },
+        { id: 'c-1', user_id: 'u-ana', supervisor_id: 'c-2' },
+        { id: 'c-2', user_id: 'u-bruno', supervisor_id: null },
+      ],
+      usuarioId: 'u-sessao',
+      podeGerirAvaliacoes: false,
+    });
+
+    expect(pendencias[0].gestorResponsavel).toBe('Bruno Lima');
+    expect(pendencias[0].estado.podeDecidir).toBe(false);
+  });
+
+  it('decisão em consolidação SEM gestor é reconhecida (aprovada_gestor) e libera o RH', () => {
+    const par = { ...FEEDBACK_GESTOR, id: 'fb-par-1', tipo: 'par', status: 'concluido' };
+    const versao = versaoConsolidadaDemo([par]);
+    expect(versao).toBeTruthy();
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'real',
+      feedbacks: [par],
+      versoesPorFeedback: { 'fb-par-1': versao! },
+      vinculos: [{ id: 'c-1', user_id: null, supervisor_id: null }],
+      podeGerirAvaliacoes: true,
+      aprovacoes: [
+        {
+          ciclo_id: 'ciclo-1',
+          colaborador_id: 'c-1',
+          decisao: 'aprovado',
+          versao_avaliacao: versao,
+          decidido_em: '2026-10-04T10:00:00.000Z',
+        },
+      ],
+    });
+
+    expect(pendencias[0].status).toBe('aprovada_gestor');
+    expect(pendencias[0].estado.podeValidarPotencial).toBe(true);
+    expect(pendencias[0].estado.aprovacaoPermitida).toBe(false); // não repete a decisão
+  });
+
+  it('decisão de outra versão é INVALIDADA e a linha volta a aguardar o gestor', () => {
     const pendencias = derivarPendencias({
       ...base,
       versoesPorFeedback: { 'fb-gestor-1': 'v2' },
@@ -181,7 +308,9 @@ describe('derivarPendencias — fila de aprovação', () => {
         },
       ],
     });
-    expect(pendencias[0].status).toBe('devolvida');
+    expect(pendencias[0].status).toBe('aguardando_gestor');
+    expect(pendencias[0].aprovacaoInvalidada).toBe(true);
+    expect(pendencias[0].estado.aprovacaoPermitida).toBe(true);
   });
 
   it('aprovado na mesma versão + validação vigente ⇒ concluida_validada (Nine-Box classifica)', () => {
@@ -247,6 +376,150 @@ describe('derivarPendencias — fila de aprovação', () => {
   });
 });
 
+/**
+ * ============================================================================
+ * ENCAMINHAMENTO — quem aprova sai do VÍNCULO, não do registro.
+ *
+ * Cobre as falhas observadas no fluxo real:
+ *   • o card mostrava como "gestor responsável" quem AVALIOU o registro;
+ *   • não havia como distinguir pendência demonstrativa de pendência real;
+ *   • uma autoavaliação salva não entrava na fila e não havia explicação.
+ * ============================================================================
+ */
+describe('derivarPendencias — vínculo do gestor responsável e origem da linha', () => {
+  const base = {
+    feedbacks: [FEEDBACK_GESTOR],
+    colaboradores: COLABORADORES,
+    ciclos: CICLOS,
+    modo: 'demonstracao' as const,
+  };
+
+  /** Ana (c-1) é supervisionada por Bruno (c-2), que é o gestor de verdade. */
+  const VINCULOS = [
+    { id: 'c-1', user_id: 'u-ana', supervisor_id: 'c-2' },
+    { id: 'c-2', user_id: 'u-bruno', supervisor_id: null },
+    { id: 'c-3', user_id: 'u-carla', supervisor_id: null },
+  ];
+
+  it('atribui a pendência ao SUPERVISOR do avaliado, não a quem preencheu o registro', () => {
+    const [p] = derivarPendencias({
+      ...base,
+      // O registro do gestor foi preenchido por Carla — não é ela quem aprova.
+      feedbacks: [{ ...FEEDBACK_GESTOR, avaliador_id: 'c-3' }],
+      vinculos: VINCULOS,
+      usuarioId: 'u-bruno',
+    });
+
+    expect(p.gestorResponsavel).toBe('Bruno Lima');
+    expect(p.gestorResponsavelId).toBe('c-2');
+    expect(p.gestorResponsavelUserId).toBe('u-bruno');
+    expect(p.impedimentoEnvio).toBeNull();
+    // O gestor do vínculo autenticado PODE decidir (a mesma instância da fila).
+    expect(p.responsavel).toBe(true);
+    expect(p.estado.podeDecidir).toBe(true);
+  });
+
+  it('não oferece a decisão a gestor SEM vínculo com o avaliado (fail-closed)', () => {
+    const [p] = derivarPendencias({
+      ...base,
+      vinculos: VINCULOS,
+      usuarioId: 'u-carla',
+    });
+    expect(p.responsavel).toBe(false);
+    expect(p.estado.podeDecidir).toBe(false);
+  });
+
+  it('sem `supervisor_id` não identifica o gestor e BLOQUEIA o envio', () => {
+    const [p] = derivarPendencias({
+      ...base,
+      vinculos: [{ id: 'c-1', user_id: 'u-ana', supervisor_id: null }],
+      usuarioId: 'u-bruno', // não é o avaliado nem supervisor de ninguém aqui
+    });
+    expect(p.gestorResponsavelId).toBeNull();
+    expect(p.gestorResponsavel).toBe('Não identificado');
+    expect(p.impedimentoEnvio).toMatch(/supervisor_id/);
+    expect(p.responsavel).toBe(false);
+  });
+
+  it('sem supervisor, o PRÓPRIO avaliado é o responsável (espelho de `pode_aprovar_colaborador`)', () => {
+    const [p] = derivarPendencias({
+      ...base,
+      vinculos: [{ id: 'c-1', user_id: 'u-ana', supervisor_id: null }],
+      usuarioId: 'u-ana',
+    });
+    expect(p.responsavel).toBe(true);
+    // O envio continua bloqueado: não há gestor identificado para receber.
+    expect(p.impedimentoEnvio).toMatch(/supervisor_id/);
+  });
+
+  it('ambiente sem vínculo algum (vitrine): mantém o rótulo e não julga responsabilidade', () => {
+    const [p] = derivarPendencias(base);
+    expect(p.gestorResponsavel).toBe('Bruno Lima'); // avaliador do registro (legado)
+    expect(p.responsavel).toBeNull();
+    expect(p.impedimentoEnvio).toBeNull();
+    expect(p.origem).toBe('demonstracao');
+  });
+
+  it('consolida as QUATRO categorias na mesma linha (gestor + opcionais)', () => {
+    const [p] = derivarPendencias({
+      ...base,
+      feedbacks: [
+        FEEDBACK_GESTOR,
+        { ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par', avaliador_id: 'c-3' },
+        { ...FEEDBACK_GESTOR, id: 'fb-auto', tipo: 'auto', avaliador_id: 'c-1' },
+        { ...FEEDBACK_GESTOR, id: 'fb-sub', tipo: 'subordinado', avaliador_id: 'c-3' },
+      ],
+    });
+
+    expect(p.fontes).toEqual({ gestor: 1, par: 1, auto: 1, subordinado: 1 });
+    // A âncora continua sendo a avaliação do GESTOR (uma única linha).
+    expect(p.feedbackId).toBe('fb-gestor-1');
+  });
+
+  it('a PRIMEIRA avaliação de QUALQUER categoria já cria a pendência', () => {
+    const pendencias = derivarPendencias({
+      ...base,
+      feedbacks: [
+        { ...FEEDBACK_GESTOR, id: 'fb-auto', tipo: 'auto', avaliador_id: 'c-1' },
+        { ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par', avaliador_id: 'c-3' },
+      ],
+    });
+    // Sem a avaliação do GESTOR não há evidência de quem aprova ⇒ a linha existe
+    // como pendência de ATRIBUIÇÃO (visível ao RH), nunca "aprovada".
+    expect(pendencias).toHaveLength(1);
+    expect(pendencias[0].fontes).toEqual({ gestor: 0, par: 1, auto: 1, subordinado: 0 });
+    expect(pendencias[0].status).toBe('sem_gestor');
+    expect(pendencias[0].avaliacaoGestorValida).toBe(false);
+    expect(pendencias[0].impedimentoEnvio).toMatch(/supervisor_id/);
+    expect(pendencias[0].estado.podeDecidir).toBe(false);
+  });
+
+  it('quando o GESTOR entra no conjunto, a MESMA linha fica pronta para aprovar', () => {
+    const semGestor = derivarPendencias({
+      ...base,
+      feedbacks: [{ ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par', avaliador_id: 'c-3' }],
+    });
+    const comGestor = derivarPendencias({
+      ...base,
+      feedbacks: [{ ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par', avaliador_id: 'c-3' }, FEEDBACK_GESTOR],
+    });
+
+    expect(semGestor).toHaveLength(1);
+    expect(comGestor).toHaveLength(1); // mesma chave: NÃO duplica
+    expect(comGestor[0].id).toBe(semGestor[0].id);
+    expect(comGestor[0].status).toBe('aguardando_gestor');
+    expect(comGestor[0].avaliacaoGestorValida).toBe(true);
+    expect(comGestor[0].estado.aprovacaoPermitida).toBe(true);
+    // A versão consolidada muda quando o conjunto muda (invalida decisões antigas).
+    expect(comGestor[0].versaoAvaliacao).not.toBe(semGestor[0].versaoAvaliacao);
+  });
+
+  it('marca `origem: real` quando a linha vem do banco', () => {
+    const [p] = derivarPendencias({ ...base, modo: 'real', versoesPorFeedback: { 'fb-gestor-1': 'v1' } });
+    expect(p.origem).toBe('real');
+  });
+});
+
 describe('estadoAprovacao — regra única de estado (§5 do pedido)', () => {
   const decisao = (d: string, versao: string) => ({ decisao: d, versao_avaliacao: versao });
 
@@ -286,10 +559,12 @@ describe('estadoAprovacao — regra única de estado (§5 do pedido)', () => {
     expect(devolvida.pendente).toBe(false);
     expect(devolvida.status).toBe('devolvida');
     expect(devolvida.justificativa).toBe('Revisar metas.');
-    // Avaliação alterada depois da decisão ⇒ volta a exigir decisão (devolvida).
-    expect(
-      estadoAprovacao({ versaoGestor: 'v2', decisao: decisao('aprovado', 'v1'), validada: false }).pendente
-    ).toBe(false);
+    // Avaliação alterada depois da decisão ⇒ a aprovação é INVALIDADA e a linha
+    // volta para a fila do gestor (reencaminhamento automático).
+    const invalidada = estadoAprovacao({ versaoGestor: 'v2', decisao: decisao('aprovado', 'v1'), validada: false });
+    expect(invalidada.pendente).toBe(true);
+    expect(invalidada.status).toBe('aguardando_gestor');
+    expect(invalidada.aprovacaoInvalidada).toBe(true);
   });
 
   it('6) o RH valida o Potencial SÓ depois do aval do gestor vigente', () => {
@@ -351,5 +626,106 @@ describe('ordenação e contadores da subaba', () => {
     expect(contarEmAndamento([...linhas])).toBe(2);
     expect(resumoPorStatus([...linhas]).aguardando_gestor).toBe(1);
     expect(resumoPorStatus([...linhas]).concluida_validada).toBe(1);
+  });
+});
+
+/**
+ * ============================================================================
+ * ENCAMINHAMENTO AUTOMÁTICO — a PRIMEIRA avaliação de qualquer categoria cria
+ * a pendência (T1–T5/T16 do pedido), consolidando por colaborador × ciclo.
+ * ============================================================================
+ */
+describe('consolidação automática ao salvar (qualquer categoria, idempotente)', () => {
+  const base = { colaboradores: COLABORADORES, ciclos: CICLOS, modo: 'demonstracao' as const };
+
+  it('T1–T4: gestor, par, auto e subordinado criam pendência sem clique do RH', () => {
+    (['gestor', 'par', 'auto', 'subordinado'] as const).forEach((tipo) => {
+      const pendencias = derivarPendencias({
+        ...base,
+        feedbacks: [{ ...FEEDBACK_GESTOR, id: `fb-${tipo}`, tipo }],
+      });
+      expect(pendencias, tipo).toHaveLength(1);
+      expect(pendencias[0].fontes[tipo]).toBe(1);
+      expect(pendencias[0].versaoAvaliacao).toBeTruthy();
+    });
+
+    // Só o GESTOR concluído libera a aprovação final; a linha do gestor nasce
+    // pronta (é a avaliação obrigatória já válida).
+    const [doGestor] = derivarPendencias({ ...base, feedbacks: [FEEDBACK_GESTOR] });
+    expect(doGestor.status).toBe('aguardando_gestor');
+    expect(doGestor.avaliacaoGestorValida).toBe(true);
+    expect(doGestor.estado.aprovacaoPermitida).toBe(true);
+  });
+
+  it('T5: avaliações adicionais ATUALIZAM a mesma linha (nunca duplicam)', () => {
+    const uma = derivarPendencias({ ...base, feedbacks: [{ ...FEEDBACK_GESTOR, id: 'a', tipo: 'par' }] });
+    const tres = derivarPendencias({
+      ...base,
+      feedbacks: [
+        { ...FEEDBACK_GESTOR, id: 'a', tipo: 'par' },
+        { ...FEEDBACK_GESTOR, id: 'b', tipo: 'auto' },
+        { ...FEEDBACK_GESTOR, id: 'c', tipo: 'subordinado' },
+        FEEDBACK_GESTOR,
+      ],
+    });
+
+    expect(uma).toHaveLength(1);
+    expect(tres).toHaveLength(1);
+    expect(tres[0].id).toBe(uma[0].id);
+    expect(tres[0].fontes).toEqual({ gestor: 1, par: 1, auto: 1, subordinado: 1 });
+  });
+
+  it('T6: cada ciclo tem a SUA linha (nunca por nome, sempre por id)', () => {
+    const doisCiclos = derivarPendencias({
+      ...base,
+      ciclos: [...CICLOS, { id: 'ciclo-2', nome: 'Ciclo S2 2026' }],
+      feedbacks: [FEEDBACK_GESTOR, { ...FEEDBACK_GESTOR, id: 'fb-c2', ciclo_id: 'ciclo-2', tipo: 'par' }],
+    });
+    expect(doisCiclos).toHaveLength(2);
+    expect(doisCiclos.map((p) => p.cicloId).sort()).toEqual(['ciclo-1', 'ciclo-2']);
+    // Mesmo NOME de ciclo, ids diferentes ⇒ linhas diferentes.
+    expect(new Set(doisCiclos.map((p) => p.id)).size).toBe(2);
+  });
+
+  it('T16: a versão consolidada muda quando o CONTEÚDO muda (invalida decisões)', () => {
+    const grupo = [FEEDBACK_GESTOR];
+    const v1 = versaoConsolidadaDemo(grupo);
+    expect(versaoConsolidadaDemo([...grupo])).toBe(v1); // estável sem mudança
+    // Datas RELATIVAS das fixtures não podem mexer na versão (senão a aprovação
+    // cairia sozinha a cada carga da página).
+    expect(versaoConsolidadaDemo([{ ...FEEDBACK_GESTOR, updated_at: '2026-10-09T10:00:00.000Z' }])).toBe(v1);
+
+    const alterado = versaoConsolidadaDemo([{ ...FEEDBACK_GESTOR, nota_geral: 3 }]);
+    const adicionado = versaoConsolidadaDemo([...grupo, { ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par' }]);
+    const cancelado = versaoConsolidadaDemo([{ ...FEEDBACK_GESTOR, status: 'cancelado' }]);
+
+    expect(alterado).not.toBe(v1);
+    expect(adicionado).not.toBe(v1);
+    expect(cancelado).not.toBe(v1);
+  });
+
+  it('T10: colaborador sem gestor fica em `sem_gestor` (não conta como aguardando gestor)', () => {
+    const semGestor = derivarPendencias({
+      ...base,
+      feedbacks: [{ ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par', avaliador_id: 'c-3' }],
+    });
+    expect(semGestor[0].status).toBe('sem_gestor');
+    expect(semGestor[0].impedimentoEnvio).toBeTruthy();
+    expect(contarAguardandoGestor(semGestor)).toBe(1);
+    expect(resumoPorStatus(semGestor).sem_gestor).toBe(1);
+    // A linha continua na fila (visível ao RH), com o motivo explícito.
+    expect(semGestor[0].motivoBloqueioAprovacao).toMatch(/gestor responsável/i);
+  });
+
+  it('avaliação CANCELADA não é fonte (mas o registro é preservado)', () => {
+    const pendencias = derivarPendencias({
+      ...base,
+      feedbacks: [
+        { ...FEEDBACK_GESTOR, id: 'fb-par', tipo: 'par' },
+        { ...FEEDBACK_GESTOR, id: 'fb-auto', tipo: 'auto', status: 'cancelado' },
+      ],
+    });
+    expect(pendencias).toHaveLength(1);
+    expect(pendencias[0].fontes).toEqual({ gestor: 0, par: 1, auto: 0, subordinado: 0 });
   });
 });

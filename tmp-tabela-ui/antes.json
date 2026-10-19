@@ -1,0 +1,276 @@
+{
+  "larguraDaTabela": 980,
+  "larguraDoCard": 982,
+  "paddingDaCelulaCorpo": "12px",
+  "colunas": [
+    36,
+    175,
+    172,
+    100,
+    100,
+    100,
+    171,
+    125
+  ],
+  "sombra": [
+    {
+      "rotulo": "",
+      "largura": 36,
+      "padding": "8px/8px",
+      "fonte": "16px 700 \"Plus Jakarta Sans\"",
+      "precisaDe": null,
+      "cortado": null
+    },
+    {
+      "rotulo": "Colaborador",
+      "largura": 175,
+      "padding": "6px/6px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 112,
+      "cortado": false
+    },
+    {
+      "rotulo": "Campanha",
+      "largura": 172,
+      "padding": "6px/6px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 87,
+      "cortado": false
+    },
+    {
+      "rotulo": "Valor Calculado",
+      "largura": 100,
+      "padding": "6px/6px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 100,
+      "cortado": false
+    },
+    {
+      "rotulo": "Valor Aprovado",
+      "largura": 100,
+      "padding": "6px/6px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 100,
+      "cortado": false
+    },
+    {
+      "rotulo": "Valor Pago",
+      "largura": 100,
+      "padding": "6px/6px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 95,
+      "cortado": false
+    },
+    {
+      "rotulo": "Status / Etapa",
+      "largura": 171,
+      "padding": "6px/6px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 94,
+      "cortado": false
+    },
+    {
+      "rotulo": "Ações",
+      "largura": 125,
+      "padding": "6px/12px",
+      "fonte": "11px 500 \"Plus Jakarta Sans\"",
+      "precisaDe": 51,
+      "cortado": false
+    }
+  ],
+  "alturasDasLinhas": [
+    66,
+    66,
+    66,
+    88,
+    88,
+    88
+  ],
+  "truncamentos": [
+    [],
+    [],
+    [
+      {
+        "t": "Campanha de Vendas Q3 2026",
+        "cortado": true,
+        "precisa": 197,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      },
+      {
+        "t": "Aguardando validação do ge",
+        "cortado": true,
+        "precisa": 256,
+        "fonte": "12px/400",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      {
+        "t": "William Nunes Cardoso",
+        "cortado": true,
+        "precisa": 150,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [
+      {
+        "t": "Campanha de Vendas Q3 2026",
+        "cortado": true,
+        "precisa": 197,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      },
+      {
+        "t": "Meta de vendas do trimestr",
+        "cortado": true,
+        "precisa": 220,
+        "fonte": "12px/400",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      {
+        "t": "Vanessa Rodrigues Dias",
+        "cortado": true,
+        "precisa": 154,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [
+      {
+        "t": "Bônus por Meta de Produção",
+        "cortado": true,
+        "precisa": 187,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      },
+      {
+        "t": "Produtividade dentro da fa",
+        "cortado": true,
+        "precisa": 207,
+        "fonte": "12px/400",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      {
+        "t": "Juliana Pereira Martins",
+        "cortado": true,
+        "precisa": 143,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [
+      {
+        "t": "Campanha de Vendas Q3 2026",
+        "cortado": true,
+        "precisa": 197,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      },
+      {
+        "t": "Em análise de ajuste de co",
+        "cortado": true,
+        "precisa": 198,
+        "fonte": "12px/400",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [],
+    [
+      {
+        "t": "Enviado para revisão de co",
+        "cortado": true,
+        "precisa": 208,
+        "fonte": "12px/400",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [
+      {
+        "t": "Rafaela Cristina Gomes",
+        "cortado": true,
+        "precisa": 152,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [
+      {
+        "t": "Bônus por Meta de Produção",
+        "cortado": true,
+        "precisa": 187,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [],
+    [
+      {
+        "t": "Aprovado pelo gestor imedi",
+        "cortado": true,
+        "precisa": 186,
+        "fonte": "12px/400",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [
+      {
+        "t": "Lucas Gabriel Fernandes",
+        "cortado": true,
+        "precisa": 159,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [
+      {
+        "t": "Bônus por Meta de Produção",
+        "cortado": true,
+        "precisa": 187,
+        "fonte": "13px/600",
+        "familia": "\"Plus Jakarta Sans\""
+      }
+    ],
+    [],
+    [],
+    [],
+    [],
+    []
+  ],
+  "fontesResolvidas": {
+    "nome": "10px 500 \"Plus Jakarta Sans\"",
+    "dinheiro": "13px 500 \"Plus Jakarta Sans\" variant=tabular-nums",
+    "badge": "10px 400"
+  }
+}

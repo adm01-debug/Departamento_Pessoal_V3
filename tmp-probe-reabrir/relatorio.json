@@ -1,0 +1,91 @@
+[
+  {
+    "passo": "1-aberto",
+    "estado": {
+      "t": 7628,
+      "quantos": 1,
+      "transform": [
+        "none"
+      ],
+      "opacidade": [
+        "1"
+      ]
+    },
+    "texto": "Fechar\nAS\nAna Beatriz Souza\n\nAnalista de RH · Recursos Human"
+  },
+  {
+    "passo": "2-fechado",
+    "estado": {
+      "t": 10738,
+      "quantos": 0,
+      "transform": [],
+      "opacidade": []
+    }
+  },
+  {
+    "passo": "3-reaberto-300ms",
+    "estado": {
+      "t": 11593,
+      "quantos": 1,
+      "transform": [
+        "matrix(0.212387, 0, 0, 0.16, 0, 0)"
+      ],
+      "opacidade": [
+        "1"
+      ]
+    }
+  },
+  {
+    "passo": "4-reaberto-estavel",
+    "estado": {
+      "t": 14012,
+      "quantos": 1,
+      "transform": [
+        "none"
+      ],
+      "opacidade": [
+        "1"
+      ]
+    },
+    "texto": "Fechar\nAS\nAna Beatriz Souza\n\nAnalista de RH · Recursos Human"
+  },
+  {
+    "passo": "5-ciclo-1",
+    "estado": {
+      "t": 18688,
+      "quantos": 1,
+      "transform": [
+        "none"
+      ],
+      "opacidade": [
+        "1"
+      ]
+    }
+  },
+  {
+    "passo": "5-ciclo-2",
+    "estado": {
+      "t": 23058,
+      "quantos": 1,
+      "transform": [
+        "none"
+      ],
+      "opacidade": [
+        "1"
+      ]
+    }
+  },
+  {
+    "passo": "5-ciclo-3",
+    "estado": {
+      "t": 27400,
+      "quantos": 1,
+      "transform": [
+        "none"
+      ],
+      "opacidade": [
+        "1"
+      ]
+    }
+  }
+]

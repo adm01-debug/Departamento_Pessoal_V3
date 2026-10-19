@@ -1,0 +1,167 @@
+{
+  "t": {
+    "T17_mocksIntactos": {
+      "linhasBase": 10,
+      "contadorBase": "Aguardando gestor5"
+    },
+    "T2_parSemGestor": {
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "encontrada": true,
+        "selo": "Gestor não atribuído",
+        "titulo": "Demonstração (decisões salvas localmente) · Gestor responsável: Não identificado · Avaliações — gestor: 0, pares: 1, autoavaliação: 1, subordinados: 0 · Versão consolidada: demo:ce7ce457:2 · ENVIO BLOQUEADO: Gestor responsável não identificado (colaborador sem supervisor_id) · APROVAÇÃO BLOQUEADA: Colaborador sem gestor responsável definido — atribua o gestor para encaminhar.",
+        "acoes": [
+          {
+            "rotulo": "Ver avaliação",
+            "desabilitado": false,
+            "title": null
+          }
+        ],
+        "contador": "Aguardando gestor5"
+      }
+    },
+    "T10_aprovacaoBloqueada": {
+      "selo": "Gestor não atribuído",
+      "semBotoesDeDecisao": true,
+      "motivoVisivel": true
+    },
+    "T1_gestor": {
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "selo": "Aguardando gestor",
+        "acoes": [
+          {
+            "rotulo": "Ver avaliação",
+            "desabilitado": false,
+            "title": null
+          },
+          {
+            "rotulo": "Devolver",
+            "desabilitado": true,
+            "title": "Falta a avaliação do Gestor (obrigatória) concluída para este colaborador e ciclo."
+          },
+          {
+            "rotulo": "Aprovar",
+            "desabilitado": true,
+            "title": "Falta a avaliação do Gestor (obrigatória) concluída para este colaborador e ciclo."
+          }
+        ],
+        "contador": "Aguardando gestor6"
+      }
+    },
+    "T11_aprovacaoPermitida": {
+      "aprovarHabilitado": false,
+      "motivoNoControle": "Falta a avaliação do Gestor (obrigatória) concluída para este colaborador e ciclo.",
+      "cardEncontrado": true,
+      "botaoConcluir": {
+        "visivel": true,
+        "habilitado": true
+      },
+      "avisoConcluir": "Demonstração: Avaliação concluída — salvo localmente (nada foi enviado ao banco).",
+      "depoisDeConcluir": {
+        "selo": "Aguardando gestor",
+        "aprovarHabilitado": true,
+        "contador": "Aguardando gestor6"
+      }
+    },
+    "T5_adicional": {
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "linhasDoColaborador": 1,
+        "selo": "Aguardando gestor",
+        "titulo": "Demonstração (decisões salvas localmente) · Gestor responsável: Fernanda Costa Ribeiro · Avaliações — gestor: 1, pares: 1, autoavaliação: 1, subordinados: 1 · Versão consolidada: demo:ef780f2a:4",
+        "semDuplicar": true
+      }
+    },
+    "T3_auto": {
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "linhasDoColaborador": 1,
+        "titulo": "Demonstração (decisões salvas localmente) · Gestor responsável: Fernanda Costa Ribeiro · Avaliações — gestor: 1, pares: 1, autoavaliação: 2, subordinados: 1 · Versão consolidada: demo:af4d8fc1:5",
+        "contador": "Aguardando gestor6"
+      }
+    },
+    "T12_aprovar": {
+      "clicou": true,
+      "aviso": "Demonstração: aprovação salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "contador": "Aguardando gestor5",
+        "selo": "Aprovada pelo gestor"
+      }
+    },
+    "T16_invalidacao": {
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "selo": "Aguardando gestor",
+        "contador": "Aguardando gestor6"
+      }
+    },
+    "T7_f5": {
+      "contador": "Aguardando gestor6",
+      "total": 10,
+      "selo": "Aguardando gestor"
+    },
+    "T13_devolver": {
+      "clicou": true,
+      "aviso": "Demonstração: devolução salva localmente (nada foi enviado ao banco).",
+      "selo": "Devolvida para correção"
+    },
+    "T6_trocaCiclo": {
+      "outroCiclo": "Ciclo Anual 2025",
+      "linhasNoOutroCiclo": 0,
+      "contemOMesmoColaborador": false,
+      "contador": "Aguardando gestor0"
+    },
+    "T13_reencaminhamento": {
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "fila": {
+        "selo": "Aguardando gestor",
+        "aprovarHabilitado": true,
+        "contador": "Aguardando gestor6"
+      }
+    },
+    "T14_etapaRh": {
+      "aviso": "Demonstração: aprovação salva localmente (nada foi enviado ao banco).",
+      "selo": "Aprovada pelo gestor"
+    },
+    "T18_layout": {
+      "folgaDireitaDoSelo": 17,
+      "ordem": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "mesmaLinha": true,
+      "alturasIguais": true,
+      "estouro": false
+    },
+    "T9_rhNaoAprova": {
+      "selo": "Aprovada pelo gestor",
+      "acoes": [
+        {
+          "rotulo": "Ver avaliação",
+          "desabilitado": false,
+          "title": null
+        },
+        {
+          "rotulo": "Validar Potencial",
+          "desabilitado": false,
+          "title": null
+        }
+      ],
+      "semAprovarOuDevolver": true
+    },
+    "T14_validarPotencial": {
+      "visivel": true,
+      "habilitado": true,
+      "aviso": "Demonstração: Potencial validado localmente — o Nine-Box classifica.",
+      "textoDoCard": "MS Mariana Oliveira Santos Gerente de Produto · Produto Ciclo S2 2026 GESTOR RESPONSÁVEL FR Fernanda Costa Ribeiro Enviado em 19/10/2026 DESEMPENHO 3,0 BOM POTENCIAL 4,0 MUITO BOM CONCLUÍDA E VALIDADA Ver avaliação"
+    },
+    "T15_nineBox": {
+      "selo": "Concluída e validada",
+      "classificou": false,
+      "painel": null
+    }
+  },
+  "cicloEmFoco": "Ciclo S2 2026"
+}

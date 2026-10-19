@@ -1,0 +1,17 @@
+npm notice run departamento-pessoal@18.0.1 npx
+npm notice run vitest run src/components/__tests__/PagamentosComum.test.ts src/components/__tests__/PremiacoesComum.test.ts
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vitest.config.ts:40:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+[vite:react-swc] We recommend switching to `@vitejs/plugin-react` for improved performance as no swc plugins are used. More information at https://vite.dev/rolldown
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90mC:/Users/artes03/Desktop/departamento-pessoal-v2-main[39m
+
+ [32mÔ£ô[39m src/components/__tests__/PremiacoesComum.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32mÔ£ô[39m src/components/__tests__/PagamentosComum.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m42 passed[39m[22m[90m (42)[39m
+[2m   Start at [22m 13:51:33
+[2m   Duration [22m 3.25s[2m (transform 376ms, setup 915ms, import 281ms, tests 69ms, environment 3.96s)[22m
+

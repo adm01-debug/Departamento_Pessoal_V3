@@ -1,0 +1,28 @@
+{
+  "antes": {
+    "contador": 5,
+    "contadorAposAprovar": 4,
+    "toasts": [
+      "Demonstração: aprovação salva localmente (nada foi enviado ao banco)."
+    ],
+    "statusAposAprovar": "Aprovada pelo gestor"
+  },
+  "edicao": {
+    "textoNoCard": true,
+    "toast": [
+      "Demonstração: avaliação atualizada e salva localmente (nada foi enviado ao banco)."
+    ]
+  },
+  "depois": {
+    "contador": 5,
+    "status": "Aguardando gestor",
+    "aprovarDesabilitado": true,
+    "aprovarTitulo": "Falta a avaliação do Gestor (obrigatória) concluída para este colaborador e ciclo."
+  },
+  "f5": {
+    "contador": 5,
+    "status": "Aguardando gestor",
+    "textoNaFila": true
+  },
+  "escritas": 2
+}

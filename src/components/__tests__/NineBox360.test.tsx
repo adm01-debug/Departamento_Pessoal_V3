@@ -171,6 +171,88 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
     expect(r.motivo).toBe('potencial_sem_validacao');
   });
 
+  it('aprovado SEM validação: motivo do RH e indicador de pendência (não some da aba)', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+    });
+    expect(r.classificavel).toBe(false);
+    expect(r.motivo).toBe('potencial_sem_validacao');
+    expect(r.quadrante).toBeNull();
+    const [ponto] = pontos360([r]);
+    expect(ponto).toMatchObject({
+      quadrante: null,
+      aguardandoValidacaoRh: true,
+      aguardandoAprovacao: false,
+      motivoNaoClassificado: 'potencial_sem_validacao',
+      motivoNaoClassificadoTexto: 'Potencial aguardando validação do RH.',
+    });
+  });
+
+  it('aprovado + validação vigente: classifica no quadrante (flags desligadas)', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacao],
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+    });
+    expect(r.classificavel).toBe(true);
+    expect(r.motivo).toBeNull();
+    const [ponto] = pontos360([r]);
+    expect(ponto.quadrante).not.toBeNull();
+    expect(ponto.aguardandoValidacaoRh).toBe(false);
+    expect(ponto.aguardandoAprovacao).toBe(false);
+  });
+
+  it('decisão de versão ANTIGA não vale: aprovacao_pendente, sem quadrante', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacao],
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-antiga' }],
+      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+    });
+    expect(r.classificavel).toBe(false);
+    expect(r.motivo).toBe('aprovacao_pendente');
+    expect(r.quadrante).toBeNull();
+  });
+
+  it('devolvida pelo gestor: aprovacao_devolvida (não entra mesmo com validação antiga)', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacao],
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'devolvido', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+    });
+    expect(r.motivo).toBe('aprovacao_devolvida');
+    expect(r.quadrante).toBeNull();
+  });
+
+  it('sem aprovação informada no fluxo: aprovacao_pendente (validação não substitui)', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacao],
+      versoesPorFeedback: versoes,
+      aprovacoes: [],
+      consolidacoes: [],
+    });
+    expect(r.motivo).toBe('aprovacao_pendente');
+    expect(r.classificavel).toBe(false);
+  });
 
   it('o adaptador entrega a forma da interface (quadrante + motivo preservados)', () => {
     const [r] = consolidar([fb({ nota_geral: 4, potencial: 4 })]);
@@ -225,13 +307,13 @@ describe('fase E · contrato das RPCs (respostas SIMULADAS — não é homologa�
   });
   afterEach(() => vi.doUnmock('@/integrations/supabase/client'));
 
-  it('com o modo real DESLIGADO o serviço nem chama a RPC', async () => {
+  it('ID FICTÍCIO nunca chega à RPC (mesmo com a área em demonstração)', async () => {
     const { avaliacaoService } = await import('@/services/avaliacaoService');
     // Comparamos pelo NOME do erro: o módulo é reimportado e a identidade da
     // classe muda entre instâncias do registry.
     await expect(
-      avaliacaoService.finalizarFeedback({ feedbackId: 'fb-1', acao: 'concluir', idOperacao: 'op-1' })
-    ).rejects.toMatchObject({ name: 'ModoRealIndisponivelError' });
+      avaliacaoService.finalizarFeedback({ feedbackId: 'mock-fb-1', acao: 'concluir', idOperacao: 'op-1' })
+    ).rejects.toMatchObject({ name: 'EscritaBloqueadaError' });
     expect(rpc).not.toHaveBeenCalled();
   });
 });

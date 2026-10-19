@@ -1,0 +1,252 @@
+{
+  "quando": "2026-10-19T18:58:48.406Z",
+  "adminGestor": {
+    "contador": 10,
+    "cards": [
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Rafaela Cristina Gomes",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Thiago Almeida Rocha",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Mariana Oliveira Santos",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Vanessa Rodrigues Dias",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Ana Beatriz Souza",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      }
+    ]
+  },
+  "aprovacao": {
+    "alvo": {
+      "nome": "Lucas Gabriel Fernandes",
+      "status": "Gestor não atribuído",
+      "aprovar": {
+        "disabled": false,
+        "title": null
+      }
+    },
+    "toasts": [
+      "Demonstração: aprovação salva localmente (nada foi enviado ao banco)."
+    ],
+    "contador": 9,
+    "badge": "Aprovada pelo gestor"
+  },
+  "f5": {
+    "contador": 9,
+    "badge": "Aprovada pelo gestor"
+  },
+  "gestorSo": {
+    "cards": [
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": true,
+          "title": "Sem vínculo de gestor para este colaborador — a aprovação está disponível ao RH/admin."
+        },
+        "devolver": {
+          "disabled": true
+        }
+      },
+      {
+        "nome": "Rafaela Cristina Gomes",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": true,
+          "title": "Sem vínculo de gestor para este colaborador — a aprovação está disponível ao RH/admin."
+        },
+        "devolver": {
+          "disabled": true
+        }
+      },
+      {
+        "nome": "Thiago Almeida Rocha",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": true,
+          "title": "Sem vínculo de gestor para este colaborador — a aprovação está disponível ao RH/admin."
+        },
+        "devolver": {
+          "disabled": true
+        }
+      },
+      {
+        "nome": "Mariana Oliveira Santos",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": true,
+          "title": "Sem vínculo de gestor para este colaborador — a aprovação está disponível ao RH/admin."
+        },
+        "devolver": {
+          "disabled": true
+        }
+      },
+      {
+        "nome": "Vanessa Rodrigues Dias",
+        "status": "Gestor não atribuído",
+        "aprovar": {
+          "disabled": true,
+          "title": "Sem vínculo de gestor para este colaborador — a aprovação está disponível ao RH/admin."
+        },
+        "devolver": {
+          "disabled": true
+        }
+      },
+      {
+        "nome": "Ana Beatriz Souza",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "status": "Aguardando gestor",
+        "aprovar": {
+          "disabled": false,
+          "title": null
+        },
+        "devolver": {
+          "disabled": false
+        }
+      }
+    ]
+  },
+  "escritas": []
+}

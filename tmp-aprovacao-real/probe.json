@@ -1,0 +1,59 @@
+{
+  "projeto": "https://frjbfeamybqsejlvmqbl.supabase.co",
+  "conta": "admin@teste.local",
+  "userId": "ed8ba796-912b-4e72-ab12-6f63555b26e1",
+  "feedbacks": {
+    "status": 200,
+    "ok": true,
+    "erro": null,
+    "linhas": 0
+  },
+  "consolidacoes": {
+    "status": 404,
+    "ok": false,
+    "erro": "Could not find the table 'public.feedbacks_360_consolidacoes' in the schema cache",
+    "linhas": null
+  },
+  "aprovacoes": {
+    "status": 404,
+    "ok": false,
+    "erro": "Could not find the table 'public.feedbacks_360_aprovacoes_gestor' in the schema cache",
+    "linhas": null
+  },
+  "validacoesPotencial": {
+    "status": 200,
+    "ok": true,
+    "erro": null,
+    "linhas": 0
+  },
+  "rpcPodeAprovar": {
+    "status": 404,
+    "ok": false,
+    "erro": "Could not find the function public.pode_aprovar_colaborador(p_colaborador_id) in the schema cache",
+    "linhas": null
+  },
+  "rpcSituacao": {
+    "status": 404,
+    "ok": false,
+    "erro": "Could not find the function public.situacao_aprovacao(p_ciclo_id, p_colaborador_id) in the schema cache",
+    "linhas": null
+  },
+  "rpcVersaoConsolidada": {
+    "status": 404,
+    "ok": false,
+    "erro": "Could not find the function public.versao_consolidada_avaliacao(p_ciclo_id, p_colaborador_id) in the schema cache",
+    "linhas": null
+  },
+  "papeis": {
+    "status": 200,
+    "ok": true,
+    "erro": null,
+    "linhas": 1
+  },
+  "vinculoDaConta": {
+    "status": 200,
+    "ok": true,
+    "erro": null,
+    "linhas": 0
+  }
+}

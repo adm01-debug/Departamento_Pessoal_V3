@@ -1,0 +1,52 @@
+{
+  "papeisAbner": {
+    "status": 200,
+    "corpo": "[\"admin\",\"gestor\"]"
+  },
+  "papeisSessaoE2E": {
+    "status": 200,
+    "corpo": "[\"admin\"]"
+  },
+  "usuariosComPapelGestorOuRh": {
+    "status": 200,
+    "corpo": "[{\"user_id\":\"2a1f0c4f-7587-49a7-81aa-e7e35cf0848d\",\"role\":\"gestor\"}, \n {\"user_id\":\"60767f3f-bb08-4917-9d74-17ce19ef8adb\",\"role\":\"rh\"}]"
+  },
+  "vinculoAbner": {
+    "status": 200,
+    "corpo": "[]"
+  },
+  "colaboradorDoRh": {
+    "status": 200,
+    "corpo": "[]"
+  },
+  "descartavelHomolog": {
+    "status": 200,
+    "corpo": "[{\"id\":\"0f303507-5b13-4ca2-aa76-16122b5b37e9\",\"nome_completo\":\"HOMOLOG-NB Colaborador Descartavel\",\"empresa_id\":\"66104399-aba8-4105-bbd3-9bf67820c1d0\",\"user_id\":null,\"supervisor_id\":null,\"cpf\":\"00000000000\"}]"
+  },
+  "colaboradoresDaEmpresa": {
+    "status": 200,
+    "corpo": "[{\"id\":\"d05818dd-1f98-402c-8255-84d07375b598\",\"nome_completo\":\"João Batista Rosa \",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"0f303507-5b13-4ca2-aa76-16122b5b37e9\",\"nome_completo\":\"HOMOLOG-NB Colaborador Descartavel\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"11110000-0000-0000-0000-000000000001\",\"nome_completo\":\"Ana Silva Santos\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"11110000-0000-0000-0000-000000000002\",\"nome_completo\":\"João Pedro Santos\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"11110000-0000-0000-0000-000000000003\",\"nome_completo\":\"Maria Oliveira Lima\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"11110000-0000-0000-0000-000000000004\",\"nome_completo\":\"Ricardo Costa"
+  },
+  "avaliacoesGestorConcluidas": {
+    "status": 200,
+    "corpo": "[]"
+  },
+  "objetosDaMigration": {
+    "consolidacoes": {
+      "status": 404,
+      "corpo": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.feedbacks_360_operacoes'\",\"message\":\"Could not find the table 'public.feedbacks_360_consolidacoes' in the schema cache\"}"
+    },
+    "aprovacoes": {
+      "status": 404,
+      "corpo": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.feedbacks_360_operacoes'\",\"message\":\"Could not find the table 'public.feedbacks_360_aprovacoes_gestor' in the schema cache\"}"
+    },
+    "podeAprovar": {
+      "status": 404,
+      "corpo": "{\"code\":\"PGRST202\",\"details\":\"Searched for the function public.pode_aprovar_colaborador with parameter p_colaborador_id or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\",\"hint\":\"Perhaps you meant to call the function public.sou_o_colaborador\",\"message\":\"Could not find the function public.pode_aprovar_colaborador(p_colaborador_id) in the schema cache\"}"
+    },
+    "situacao": {
+      "status": 404,
+      "corpo": "{\"code\":\"PGRST202\",\"details\":\"Searched for the function public.situacao_aprovacao with parameters p_ciclo_id, p_colaborador_id or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\",\"hint\":\"Perhaps you meant to call the function public.medida_enviar_aprovacao\",\"message\":\"Could not find the function public.situacao_aprovacao(p_ciclo_id, p_colaborador_id) in t"
+    }
+  }
+}

@@ -1,0 +1,408 @@
+{
+  "quando": "2026-10-19T17:45:05.073Z",
+  "lista": [
+    {
+      "colaborador": "Ana Beatriz Souza",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "William Nunes Cardoso",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Carlos Eduardo Lima",
+      "altura": 241,
+      "corpo": 160,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Carlos Eduardo Lima",
+      "altura": 241,
+      "corpo": 160,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Juliana Pereira Martins",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Lucas Gabriel Fernandes",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Rafaela Cristina Gomes",
+      "altura": 211,
+      "corpo": 130,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Gustavo Henrique Alves",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Thiago Almeida Rocha",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Mariana Oliveira Santos",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Vanessa Rodrigues Dias",
+      "altura": 211,
+      "corpo": 130,
+      "rodape": 43,
+      "acoes": [
+        "Editar feedback"
+      ],
+      "previa": []
+    }
+  ],
+  "fila": [
+    {
+      "colaborador": "Lucas Gabriel Fernandes",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Rafaela Cristina Gomes",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Thiago Almeida Rocha",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Mariana Oliveira Santos",
+      "altura": 222,
+      "corpo": 141,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Vanessa Rodrigues Dias",
+      "altura": 222,
+      "corpo": 141,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Ana Beatriz Souza",
+      "altura": 210,
+      "corpo": 129,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Referência em processos de RH.",
+        "Melhoria:Delegar rotinas operacionais.",
+        "Comentários:Excelente apoio às lideranças."
+      ]
+    },
+    {
+      "colaborador": "William Nunes Cardoso",
+      "altura": 210,
+      "corpo": 129,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Forte gestão comercial e foco em resultado.",
+        "Melhoria:Melhorar previsibilidade de forecast.",
+        "Comentários:Superou a meta de vendas do trimestre."
+      ]
+    },
+    {
+      "colaborador": "Carlos Eduardo Lima",
+      "altura": 210,
+      "corpo": 129,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Autonomia técnica e liderança natural.",
+        "Melhoria:Delegar mais atividades do time.",
+        "Comentários:Referência técnica do time de frontend."
+      ]
+    },
+    {
+      "colaborador": "Juliana Pereira Martins",
+      "altura": 210,
+      "corpo": 129,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Rigor com números e organização.",
+        "Melhoria:Abrir mais espaço para inovação.",
+        "Comentários:Entrega consistente no fechamento contábil."
+      ]
+    },
+    {
+      "colaborador": "Gustavo Henrique Alves",
+      "altura": 210,
+      "corpo": 129,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Bom relacionamento interpessoal.",
+        "Melhoria:Assumir mais protagonismo em projetos.",
+        "Comentários:Colaborador estável e confiável."
+      ]
+    }
+  ],
+  "formEdicao": {
+    "titulo": "Editar feedback",
+    "textareas": [
+      "Referência em processos de RH.",
+      "Delegar rotinas operacionais.",
+      "Excelente apoio às lideranças."
+    ],
+    "botao": true
+  },
+  "fila1024": [
+    {
+      "colaborador": "Lucas Gabriel Fernandes",
+      "altura": 209,
+      "corpo": 128,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Rafaela Cristina Gomes",
+      "altura": 209,
+      "corpo": 128,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Thiago Almeida Rocha",
+      "altura": 209,
+      "corpo": 128,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Mariana Oliveira Santos",
+      "altura": 222,
+      "corpo": 141,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Vanessa Rodrigues Dias",
+      "altura": 222,
+      "corpo": 141,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": []
+    },
+    {
+      "colaborador": "Ana Beatriz Souza",
+      "altura": 240,
+      "corpo": 159,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Referência em processos de RH.",
+        "Melhoria:Delegar rotinas operacionais.",
+        "Comentários:Excelente apoio às lideranças."
+      ]
+    },
+    {
+      "colaborador": "William Nunes Cardoso",
+      "altura": 240,
+      "corpo": 159,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Forte gestão comercial e foco em resultado.",
+        "Melhoria:Melhorar previsibilidade de forecast.",
+        "Comentários:Superou a meta de vendas do trimestre."
+      ]
+    },
+    {
+      "colaborador": "Carlos Eduardo Lima",
+      "altura": 240,
+      "corpo": 159,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Autonomia técnica e liderança natural.",
+        "Melhoria:Delegar mais atividades do time.",
+        "Comentários:Referência técnica do time de frontend."
+      ]
+    },
+    {
+      "colaborador": "Juliana Pereira Martins",
+      "altura": 240,
+      "corpo": 159,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Rigor com números e organização.",
+        "Melhoria:Abrir mais espaço para inovação.",
+        "Comentários:Entrega consistente no fechamento contábil."
+      ]
+    },
+    {
+      "colaborador": "Gustavo Henrique Alves",
+      "altura": 240,
+      "corpo": 159,
+      "rodape": 43,
+      "acoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "previa": [
+        "Fortes:Bom relacionamento interpessoal.",
+        "Melhoria:Assumir mais protagonismo em projetos.",
+        "Comentários:Colaborador estável e confiável."
+      ]
+    }
+  ]
+}

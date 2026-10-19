@@ -35,6 +35,12 @@ interface NineBoxFocoBannerProps {
   semPdi: number;
   /** Quantos ficaram fora da matriz por falta de nota/potencial. */
   semClassificacao?: number;
+  /** Aprovados pelo gestor aguardando a validação do Potencial pelo RH. */
+  aguardandoRh?: number;
+  nomesAguardandoRh?: string[];
+  /** Aprovação do gestor pendente/devolvida/invalidada. */
+  aguardandoAprovacao?: number;
+  nomesAguardandoAprovacao?: string[];
   /** Posição na cascata (a referência coloca o banner como 2º item). */
   indice?: number;
   /** True quando o filtro de atenção do banner já está aplicado. */
@@ -43,20 +49,35 @@ interface NineBoxFocoBannerProps {
   onVerDetalhes?: () => void;
 }
 
+/** Lista curta de nomes no MESMO parágrafo do banner (sem novo componente). */
+function nomesCurto(nomes: string[] = []): string {
+  const limpos = nomes.filter(Boolean);
+  if (limpos.length === 0) return '';
+  if (limpos.length <= 3) return limpos.join(', ');
+  return `${limpos.slice(0, 3).join(', ')} e mais ${limpos.length - 3}`;
+}
+
 export function NineBoxFocoBanner({
   total,
   emRisco,
   semPdi,
   semClassificacao = 0,
+  aguardandoRh = 0,
+  nomesAguardandoRh = [],
+  aguardandoAprovacao = 0,
+  nomesAguardandoAprovacao = [],
   indice = 1,
   ativo = false,
   onVerDetalhes,
 }: NineBoxFocoBannerProps) {
-  if (total <= 0) return null;
+  const pendenciaDeFluxo = aguardandoRh > 0 || aguardandoAprovacao > 0;
+  if (total <= 0 && !pendenciaDeFluxo && semClassificacao <= 0) return null;
 
   const resumo = [emRisco > 0 && `${emRisco} em quadrante de atenção`, semPdi > 0 && `${semPdi} sem PDI vinculado`]
     .filter(Boolean)
     .join('  •  ');
+  const listaRh = nomesCurto(nomesAguardandoRh);
+  const listaAprovacao = nomesCurto(nomesAguardandoAprovacao);
 
   return (
     <motion.div
@@ -70,9 +91,27 @@ export function NineBoxFocoBanner({
         <div className="min-w-0">
           <p className="text-[10px] font-medium uppercase tracking-wider text-destructive-vivid">Foco agora</p>
           <p className="text-[13px] font-medium leading-tight">
-            {total} {total === 1 ? 'talento precisa' : 'talentos precisam'} de atenção.
+            {total > 0
+              ? `${total} ${total === 1 ? 'talento precisa' : 'talentos precisam'} de atenção.`
+              : 'Avaliações aguardando etapa obrigatória do fluxo.'}
           </p>
           {resumo && <p className="text-[11px] leading-tight text-muted-foreground">{resumo}</p>}
+          {aguardandoRh > 0 && (
+            <p className="text-[10px] leading-tight text-muted-foreground/70">
+              <span className="font-medium text-foreground/80">{aguardandoRh}</span>{' '}
+              {aguardandoRh === 1 ? 'aprovada pelo gestor aguardando' : 'aprovadas pelo gestor aguardando'} a validação
+              do Potencial pelo RH
+              {listaRh ? `: ${listaRh}` : '.'}
+            </p>
+          )}
+          {aguardandoAprovacao > 0 && (
+            <p className="text-[10px] leading-tight text-muted-foreground/70">
+              <span className="font-medium text-foreground/80">{aguardandoAprovacao}</span>{' '}
+              {aguardandoAprovacao === 1 ? 'avaliação com' : 'avaliações com'} aprovação do gestor pendente, devolvida
+              ou invalidada
+              {listaAprovacao ? `: ${listaAprovacao}` : '.'}
+            </p>
+          )}
           {semClassificacao > 0 && (
             <p className="text-[10px] leading-tight text-muted-foreground/70">
               {semClassificacao} {semClassificacao === 1 ? 'registro está' : 'registros estão'} fora da matriz por falta
@@ -82,15 +121,17 @@ export function NineBoxFocoBanner({
         </div>
       </div>
 
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={onVerDetalhes}
-        className="h-8 shrink-0 gap-1.5 self-start border-destructive-vivid/30 bg-transparent text-xs text-destructive-vivid transition-colors hover:bg-destructive-vivid/10 hover:text-destructive-vivid lg:self-auto"
-      >
-        {ativo ? 'Limpar atenção' : 'Ver detalhes'}
-        <ArrowRight className="h-3.5 w-3.5" />
-      </Button>
+      {total > 0 && onVerDetalhes && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onVerDetalhes}
+          className="h-8 shrink-0 gap-1.5 self-start border-destructive-vivid/30 bg-transparent text-xs text-destructive-vivid transition-colors hover:bg-destructive-vivid/10 hover:text-destructive-vivid lg:self-auto"
+        >
+          {ativo ? 'Limpar atenção' : 'Ver detalhes'}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </Button>
+      )}
     </motion.div>
   );
 }

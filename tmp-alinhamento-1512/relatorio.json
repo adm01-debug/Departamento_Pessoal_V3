@@ -1,0 +1,115 @@
+{
+  "pagina1": {
+    "tableBottom": 1057,
+    "activityBottom": 1056,
+    "difference": 0,
+    "absDifference": 0,
+    "linhas": 6,
+    "alturaDaLinha": 79,
+    "rodape": "Mostrando 6 de 10 pagamentosLinhas por p",
+    "seletor": "6",
+    "paginaAtiva": "1",
+    "alturaAtividade": 227,
+    "alturaTabela": 570,
+    "alturaAcoes": 267,
+    "gapEntreCards": 16,
+    "atividades": [
+      {
+        "altura": 45,
+        "texto": "Pagamento alteradoDivergência de R$ 70,00 identificada na conciliação "
+      },
+      {
+        "altura": 45,
+        "texto": "Pagamento aprovadoPagamento aprovado pelo financeiro e conciliado com "
+      },
+      {
+        "altura": 45,
+        "texto": "Pagamento alteradoEnviado para revisão de comissões pelo gestor.há 20 "
+      },
+      {
+        "altura": 45,
+        "texto": "Campanha alteradaCampanha \"Premiação de Inovação\" salva como rascunho "
+      }
+    ],
+    "vazioAbaixoDaUltimaAtividade": 11,
+    "rolagemInterna": 0,
+    "alturaDosCardsLaterais": [
+      319,
+      267,
+      227
+    ],
+    "flexGrow": [
+      "0",
+      "0",
+      "0"
+    ]
+  },
+  "guia": {
+    "baseAtividade": 1056,
+    "baseTabela": 1057
+  },
+  "pagina2": {
+    "tableBottom": 928,
+    "activityBottom": 1056,
+    "difference": 129,
+    "absDifference": 129,
+    "linhas": 4,
+    "alturaDaLinha": 88,
+    "rodape": "Mostrando 4 de 10 pagamentosLinhas por p",
+    "seletor": "6",
+    "paginaAtiva": "2",
+    "alturaAtividade": 227,
+    "alturaTabela": 441,
+    "alturaAcoes": 267,
+    "gapEntreCards": 16,
+    "atividades": [
+      {
+        "altura": 45,
+        "texto": "Pagamento alteradoDivergência de R$ 70,00 identificada na conciliação "
+      },
+      {
+        "altura": 45,
+        "texto": "Pagamento aprovadoPagamento aprovado pelo financeiro e conciliado com "
+      },
+      {
+        "altura": 45,
+        "texto": "Pagamento alteradoEnviado para revisão de comissões pelo gestor.há 20 "
+      },
+      {
+        "altura": 45,
+        "texto": "Campanha alteradaCampanha \"Premiação de Inovação\" salva como rascunho "
+      }
+    ],
+    "vazioAbaixoDaUltimaAtividade": 11,
+    "rolagemInterna": 0,
+    "alturaDosCardsLaterais": [
+      319,
+      267,
+      227
+    ],
+    "flexGrow": [
+      "0",
+      "0",
+      "0"
+    ]
+  },
+  "semJanela": true,
+  "repeticoes": [
+    {
+      "tableBottom": 1057,
+      "activityBottom": 1056,
+      "difference": 0
+    },
+    {
+      "tableBottom": 1057,
+      "activityBottom": 1056,
+      "difference": 0
+    },
+    {
+      "tableBottom": 1057,
+      "activityBottom": 1056,
+      "difference": 0
+    }
+  ],
+  "erros": []
+}

@@ -1,0 +1,75 @@
+{
+  "empresas": {
+    "status": 200,
+    "total": 2
+  },
+  "empresaId": "66104399-aba8-4105-bbd3-9bf67820c1d0",
+  "porEmpresa": {
+    "66104399": {
+      "colaboradores": 14,
+      "comSupervisor": 0,
+      "comUserId": 0,
+      "feedbacks": 0,
+      "porTipo": {},
+      "gestorConcluido": 0,
+      "semAvaliado": 0,
+      "semAvaliador": 0,
+      "semCiclo": 0,
+      "amostraFeedbacks": []
+    },
+    "61e7d382": {
+      "colaboradores": 2,
+      "comSupervisor": 0,
+      "comUserId": 0,
+      "feedbacks": 0,
+      "porTipo": {},
+      "gestorConcluido": 0,
+      "semAvaliado": 0,
+      "semAvaliador": 0,
+      "semCiclo": 0,
+      "amostraFeedbacks": []
+    }
+  },
+  "vinculos": {
+    "status": 200,
+    "total": 14,
+    "comSupervisor": 0,
+    "comUserId": 0,
+    "amostra": [
+      {
+        "nome": "João Batista Rosa ",
+        "supervisor": null,
+        "user": null
+      },
+      {
+        "nome": "HOMOLOG-NB Colaborador Descartavel",
+        "supervisor": null,
+        "user": null
+      },
+      {
+        "nome": "Ana Silva Santos",
+        "supervisor": null,
+        "user": null
+      },
+      {
+        "nome": "João Pedro Santos",
+        "supervisor": null,
+        "user": null
+      },
+      {
+        "nome": "Maria Oliveira Lima",
+        "supervisor": null,
+        "user": null
+      }
+    ]
+  },
+  "tabelasDaMigration": {
+    "consolidacoes": 404,
+    "aprovacoes": 404,
+    "versoes": 200
+  },
+  "rpcsDaMigration": {
+    "pode_aprovar_colaborador": 404,
+    "situacao_aprovacao": 404
+  }
+}

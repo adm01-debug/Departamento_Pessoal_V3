@@ -1,0 +1,156 @@
+{
+  "w1512": {
+    "larguraTabela": 980,
+    "colunas": [
+      36,
+      161,
+      179,
+      100,
+      100,
+      100,
+      172,
+      132
+    ],
+    "rolagemHorizontalInterna": 0,
+    "linhas": 6,
+    "alturasDasLinhas": [
+      79,
+      79,
+      79,
+      88,
+      88,
+      73
+    ],
+    "valoresTruncados": [],
+    "sobreposicoes": [],
+    "svgsFora": 0,
+    "badgeIntegro": true,
+    "tableBottom": 1057,
+    "activityBottom": 1056,
+    "diferenca": 0,
+    "rodape": ""
+  },
+  "w1512_pagina2": {
+    "larguraTabela": 980,
+    "colunas": [
+      36,
+      161,
+      179,
+      100,
+      100,
+      100,
+      172,
+      132
+    ],
+    "rolagemHorizontalInterna": 0,
+    "linhas": 4,
+    "alturasDasLinhas": [
+      88,
+      88,
+      93,
+      88
+    ],
+    "valoresTruncados": [],
+    "sobreposicoes": [],
+    "svgsFora": 0,
+    "badgeIntegro": true,
+    "tableBottom": 928,
+    "activityBottom": 1056,
+    "diferenca": 129,
+    "rodape": ""
+  },
+  "w1600": {
+    "larguraTabela": 1068,
+    "colunas": [
+      40,
+      175,
+      195,
+      109,
+      109,
+      109,
+      187,
+      144
+    ],
+    "rolagemHorizontalInterna": 0,
+    "linhas": 6,
+    "alturasDasLinhas": [
+      79,
+      79,
+      79,
+      88,
+      88,
+      73
+    ],
+    "valoresTruncados": [],
+    "sobreposicoes": [],
+    "svgsFora": 0,
+    "badgeIntegro": true,
+    "tableBottom": 1057,
+    "activityBottom": 1056,
+    "diferenca": 0,
+    "rodape": ""
+  },
+  "w1280": {
+    "larguraTabela": 900,
+    "colunas": [
+      33,
+      148,
+      165,
+      92,
+      92,
+      92,
+      158,
+      122
+    ],
+    "rolagemHorizontalInterna": 152,
+    "linhas": 6,
+    "alturasDasLinhas": [
+      93,
+      79,
+      79,
+      88,
+      88,
+      87
+    ],
+    "valoresTruncados": [],
+    "sobreposicoes": [],
+    "svgsFora": 0,
+    "badgeIntegro": true,
+    "tableBottom": 1197,
+    "activityBottom": 1056,
+    "diferenca": -140,
+    "rodape": ""
+  },
+  "w1366": {
+    "larguraTabela": 900,
+    "colunas": [
+      33,
+      148,
+      165,
+      92,
+      92,
+      92,
+      158,
+      122
+    ],
+    "rolagemHorizontalInterna": 66,
+    "linhas": 6,
+    "alturasDasLinhas": [
+      93,
+      79,
+      79,
+      88,
+      88,
+      87
+    ],
+    "valoresTruncados": [],
+    "sobreposicoes": [],
+    "svgsFora": 0,
+    "badgeIntegro": true,
+    "tableBottom": 1197,
+    "activityBottom": 1056,
+    "diferenca": -140,
+    "rodape": ""
+  },
+  "erros": []
+}

@@ -1,0 +1,235 @@
+{
+  "inicial": {
+    "linhasVisiveis": 6,
+    "rodape": "Mostrando 6 de 10 pagamentosLinhas por página61",
+    "seletor": "6",
+    "paginaAtiva": "1",
+    "registrosNaAtividade": 4,
+    "alturaTabela": 568,
+    "baseTabela": 1070,
+    "baseAtividade": 1070,
+    "diferencaDasBases": 0,
+    "alturaResumo": 319,
+    "alturaAcoes": 267,
+    "alturaAtividade": 241,
+    "respiroEntreCardsLaterais": 16,
+    "flexGrowDosCards": [
+      "0",
+      "0",
+      "0"
+    ],
+    "margensDeEmpurrao": [
+      "0px/0px",
+      "0px/0px",
+      "0px/0px"
+    ],
+    "vazioInternoNaAtividade": 1,
+    "rolagemInterna": false,
+    "empilhado": false,
+    "colaboradoresVisiveis": [
+      "CECarlos Eduardo LimaCampanha ",
+      "WNWilliam Nunes CardosoCampanh",
+      "VRVanessa Rodrigues DiasBônus ",
+      "JPJuliana Pereira MartinsCampa",
+      "RCRafaela Cristina GomesBônus ",
+      "LGLucas Gabriel FernandesBônus"
+    ]
+  },
+  "pagina2": {
+    "linhasVisiveis": 4,
+    "rodape": "Mostrando 4 de 10 pagamentosLinhas por página62",
+    "seletor": "6",
+    "paginaAtiva": "2",
+    "registrosNaAtividade": 4,
+    "alturaTabela": 450,
+    "baseTabela": 844,
+    "baseAtividade": 962,
+    "diferencaDasBases": -119,
+    "alturaResumo": 319,
+    "alturaAcoes": 267,
+    "alturaAtividade": 241,
+    "respiroEntreCardsLaterais": 16,
+    "flexGrowDosCards": [
+      "0",
+      "0",
+      "0"
+    ],
+    "margensDeEmpurrao": [
+      "0px/0px",
+      "0px/0px",
+      "0px/0px"
+    ],
+    "vazioInternoNaAtividade": 1,
+    "rolagemInterna": false,
+    "empilhado": false,
+    "colaboradoresVisiveis": [
+      "TAThiago Almeida RochaBônus po",
+      "FCFernanda Costa RibeiroCampan",
+      "PHPedro Henrique BarbosaCampan",
+      "ABAna Beatriz SouzaPrograma In"
+    ]
+  },
+  "voltaParaPagina1": {
+    "linhasVisiveis": 6,
+    "rodape": "Mostrando 6 de 10 pagamentosLinhas por página61",
+    "seletor": "6",
+    "paginaAtiva": "1",
+    "registrosNaAtividade": 4,
+    "alturaTabela": 568,
+    "baseTabela": 962,
+    "baseAtividade": 962,
+    "diferencaDasBases": 0,
+    "alturaResumo": 319,
+    "alturaAcoes": 267,
+    "alturaAtividade": 241,
+    "respiroEntreCardsLaterais": 16,
+    "flexGrowDosCards": [
+      "0",
+      "0",
+      "0"
+    ],
+    "margensDeEmpurrao": [
+      "0px/0px",
+      "0px/0px",
+      "0px/0px"
+    ],
+    "vazioInternoNaAtividade": 1,
+    "rolagemInterna": false,
+    "empilhado": false,
+    "colaboradoresVisiveis": [
+      "CECarlos Eduardo LimaCampanha ",
+      "WNWilliam Nunes CardosoCampanh",
+      "VRVanessa Rodrigues DiasBônus ",
+      "JPJuliana Pereira MartinsCampa",
+      "RCRafaela Cristina GomesBônus ",
+      "LGLucas Gabriel FernandesBônus"
+    ]
+  },
+  "opcoesDoSeletor": [
+    "6",
+    "10",
+    "25",
+    "50",
+    "100"
+  ],
+  "com10PorPagina": {
+    "linhasVisiveis": 10,
+    "rodape": "Mostrando 10 de 10 pagamentosLinhas por página101",
+    "seletor": "10",
+    "paginaAtiva": "1",
+    "registrosNaAtividade": 4,
+    "alturaTabela": 919,
+    "baseTabela": 1313,
+    "baseAtividade": 962,
+    "diferencaDasBases": 351,
+    "alturaResumo": 319,
+    "alturaAcoes": 267,
+    "alturaAtividade": 241,
+    "respiroEntreCardsLaterais": 16,
+    "flexGrowDosCards": [
+      "0",
+      "0",
+      "0"
+    ],
+    "margensDeEmpurrao": [
+      "0px/0px",
+      "0px/0px",
+      "0px/0px"
+    ],
+    "vazioInternoNaAtividade": 1,
+    "rolagemInterna": false,
+    "empilhado": false,
+    "colaboradoresVisiveis": [
+      "CECarlos Eduardo LimaCampanha ",
+      "WNWilliam Nunes CardosoCampanh",
+      "VRVanessa Rodrigues DiasBônus ",
+      "JPJuliana Pereira MartinsCampa",
+      "RCRafaela Cristina GomesBônus ",
+      "LGLucas Gabriel FernandesBônus",
+      "TAThiago Almeida RochaBônus po",
+      "FCFernanda Costa RibeiroCampan",
+      "PHPedro Henrique BarbosaCampan",
+      "ABAna Beatriz SouzaPrograma In"
+    ]
+  },
+  "opcoesDepoisDeEscolher10": [
+    "6",
+    "10",
+    "25",
+    "50",
+    "100"
+  ],
+  "voltaPara6": {
+    "linhasVisiveis": 6,
+    "rodape": "Mostrando 6 de 10 pagamentosLinhas por página61",
+    "seletor": "6",
+    "paginaAtiva": "1",
+    "registrosNaAtividade": 4,
+    "alturaTabela": 568,
+    "baseTabela": 962,
+    "baseAtividade": 962,
+    "diferencaDasBases": 0,
+    "alturaResumo": 319,
+    "alturaAcoes": 267,
+    "alturaAtividade": 241,
+    "respiroEntreCardsLaterais": 16,
+    "flexGrowDosCards": [
+      "0",
+      "0",
+      "0"
+    ],
+    "margensDeEmpurrao": [
+      "0px/0px",
+      "0px/0px",
+      "0px/0px"
+    ],
+    "vazioInternoNaAtividade": 1,
+    "rolagemInterna": false,
+    "empilhado": false,
+    "colaboradoresVisiveis": [
+      "CECarlos Eduardo LimaCampanha ",
+      "WNWilliam Nunes CardosoCampanh",
+      "VRVanessa Rodrigues DiasBônus ",
+      "JPJuliana Pereira MartinsCampa",
+      "RCRafaela Cristina GomesBônus ",
+      "LGLucas Gabriel FernandesBônus"
+    ]
+  },
+  "tablet": {
+    "linhasVisiveis": 6,
+    "rodape": "Mostrando 6 de 10 pagamentosLinhas por página61",
+    "seletor": "6",
+    "paginaAtiva": "1",
+    "registrosNaAtividade": 4,
+    "alturaTabela": 568,
+    "baseTabela": 1146,
+    "baseAtividade": 1943,
+    "diferencaDasBases": -797,
+    "alturaResumo": 319,
+    "alturaAcoes": 192,
+    "alturaAtividade": 241,
+    "respiroEntreCardsLaterais": 16,
+    "flexGrowDosCards": [
+      "0",
+      "0",
+      "0"
+    ],
+    "margensDeEmpurrao": [
+      "0px/0px",
+      "0px/0px",
+      "0px/0px"
+    ],
+    "vazioInternoNaAtividade": 1,
+    "rolagemInterna": false,
+    "empilhado": true,
+    "colaboradoresVisiveis": [
+      "CECarlos Eduardo LimaCampanha ",
+      "WNWilliam Nunes CardosoCampanh",
+      "VRVanessa Rodrigues DiasBônus ",
+      "JPJuliana Pereira MartinsCampa",
+      "RCRafaela Cristina GomesBônus ",
+      "LGLucas Gabriel FernandesBônus"
+    ]
+  },
+  "erros": []
+}

@@ -12,6 +12,7 @@ import { NineBoxQuadranteDialog } from './NineBoxQuadranteDialog';
 import { aplicarMockNineBox, MOCK_NINEBOX_COMPARAR_INICIAL } from './nineBoxMock';
 import { modoRealAtivo } from './nineBoxModo';
 import { consolidarNineBox360, pontos360 } from './nineBox360';
+import { aplicarAprovacaoLocal, estadoLocalVazio, type EstadoLocalDemo } from './aprovacaoLocal';
 import type { ValidacaoPotencial } from './motorAvaliacao360';
 import type { PontoNineBox } from './nineBoxComum';
 import {
@@ -72,8 +73,22 @@ interface NineBoxTabProps {
   empresaId?: string;
   /** Validações de Potencial vigentes (tabela de validações do RH). */
   validacoesPotencial?: ValidacaoPotencial[];
+  /**
+   * Decisões do gestor e consolidações (`feedbacks_360_aprovacoes_gestor` /
+   * `feedbacks_360_consolidacoes`) — usadas no modo real para que o Nine-Box
+   * aplique a MESMA versão aprovada da fila. Sem elas, o modo real mantém a
+   * leitura anterior (validação como âncora).
+   */
+  aprovacoesGestor?: unknown[];
+  consolidacoes?: unknown[];
   /** Versão canônica por feedback, vinda da view (o banco é a autoridade). */
   versoesPorFeedback?: Record<string, string>;
+  /**
+   * VITRINE: decisões tomadas na demonstração (armazenamento local). Aplicam o
+   * MESMO portão do motor oficial à matriz demonstrativa — sem aprovação do
+   * gestor + validação do Potencial vigentes, o colaborador não é classificado.
+   */
+  aprovacoesDemo?: EstadoLocalDemo;
 }
 
 export function NineBoxTab({
@@ -86,6 +101,9 @@ export function NineBoxTab({
   empresaId,
   validacoesPotencial = [],
   versoesPorFeedback = {},
+  aprovacoesDemo,
+  aprovacoesGestor,
+  consolidacoes,
 }: NineBoxTabProps) {
   const [busca, setBusca] = useState('');
   const [departamento, setDepartamento] = useState('');
@@ -148,16 +166,27 @@ export function NineBoxTab({
               empresaId: empresaId ?? null,
               validacoes: validacoesPotencial,
               versoesPorFeedback,
+              // MESMA versão/aprovação da fila: o Nine-Box não classifica uma
+              // avaliação cuja aprovação do gestor não esteja vigente.
+              aprovacoes: aprovacoesGestor,
+              consolidacoes,
             }),
             colaboradores,
             pdis
           ) as unknown as PontoNineBox[])
-        : derivarPontos({
-            feedbacks: feedbacksBase,
-            cicloId: cicloId || null,
-            colaboradores: colaboradoresBase,
-            pdis: pdisBase,
-          }),
+        : aplicarAprovacaoLocal(
+            derivarPontos({
+              feedbacks: feedbacksBase,
+              cicloId: cicloId || null,
+              colaboradores: colaboradoresBase,
+              pdis: pdisBase,
+            }),
+            aprovacoesDemo ?? estadoLocalVazio(),
+            cicloId || null,
+            // A versão do grupo vem da MESMA lista da aba Feedbacks (sem os
+            // mocks exclusivos desta aba) — é a âncora da invalidação.
+            feedbacks
+          ),
     [
       feedbacksBase,
       cicloId,
@@ -169,6 +198,9 @@ export function NineBoxTab({
       empresaId,
       validacoesPotencial,
       versoesPorFeedback,
+      aprovacoesDemo,
+      aprovacoesGestor,
+      consolidacoes,
     ]
   );
 
@@ -285,8 +317,13 @@ export function NineBoxTab({
           emRisco={atencao.emRisco}
           semPdi={atencao.semPdi}
           semClassificacao={atencao.semClassificacao}
+          aguardandoRh={atencao.aguardandoRh}
+          nomesAguardandoRh={atencao.nomesAguardandoRh}
+          aguardandoAprovacao={atencao.aguardandoAprovacao}
+          nomesAguardandoAprovacao={atencao.nomesAguardandoAprovacao}
           ativo={emAtencao}
-          onVerDetalhes={() => setEmAtencao((v) => !v)}
+          /* Só há "detalhes" de risco a filtrar; pendência de fluxo é informativa. */
+          onVerDetalhes={atencao.total > 0 ? () => setEmAtencao((v) => !v) : undefined}
         />
 
         {/* C · Busca + filtros + comparativo + ciclo em visão. */}

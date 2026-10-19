@@ -1,0 +1,251 @@
+{
+  "passos": {
+    "D1": {
+      "titulo": "Criar ciclo pela interface",
+      "ok": true,
+      "aviso": "Demonstração: ciclo criado e salvo localmente (nada foi enviado ao banco).",
+      "ciclosLocais": [
+        "Demonstração E2E mvbbi2m3"
+      ]
+    },
+    "D2": {
+      "titulo": "Ciclo persiste após F5 e é selecionável",
+      "ok": true,
+      "opcoesComCiclo": 1
+    },
+    "D3": {
+      "titulo": "Criar avaliação do gestor (Novo feedback)",
+      "ok": true,
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "escolhas": [
+        {
+          "nome": "Tipo de feedback",
+          "opcoes": 4,
+          "escolhido": "Gestor"
+        },
+        {
+          "nome": "Ciclo do feedback",
+          "opcoes": 7,
+          "escolhido": "Ciclo Anual 2025"
+        },
+        {
+          "nome": "Avaliado",
+          "opcoes": 15,
+          "escolhido": "Carlos Eduardo Lima"
+        },
+        {
+          "nome": "diagnosticoAvaliado",
+          "t1": [
+            "Carlos Eduardo Lima",
+            "Selecione",
+            "Gestor",
+            "Ciclo Anual 2025"
+          ],
+          "t2": [
+            "Carlos Eduardo Lima",
+            "Selecione",
+            "Gestor",
+            "Ciclo Anual 2025"
+          ],
+          "combosComNome": [
+            {
+              "nome": "Avaliado",
+              "texto": "Carlos Eduardo Lima"
+            },
+            {
+              "nome": "Avaliador do feedback",
+              "texto": "Selecione"
+            },
+            {
+              "nome": "Tipo de feedback",
+              "texto": "Gestor"
+            },
+            {
+              "nome": "Ciclo do feedback",
+              "texto": "Ciclo Anual 2025"
+            }
+          ]
+        },
+        {
+          "nome": "Avaliador do feedback",
+          "opcoes": 15,
+          "escolhido": "Fernanda Costa Ribeiro"
+        }
+      ],
+      "criadosLocal": 1,
+      "tipoCriado": "gestor"
+    },
+    "D5": {
+      "titulo": "Concluir avaliação pelo modal (demonstração)",
+      "ok": true,
+      "aviso": "Demonstração: Avaliação concluída — salvo localmente (nada foi enviado ao banco).",
+      "patchesComConcluido": 1
+    },
+    "D6": {
+      "titulo": "Enviar avaliação para aprovação do gestor",
+      "ok": true,
+      "linhasEmPreparacao": 0,
+      "observacao": "a vitrine já apresenta a fila enviada ao gestor"
+    },
+    "D4": {
+      "titulo": "Criar avaliação de pares (Novo feedback)",
+      "ok": true,
+      "aviso": "Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).",
+      "escolhas": [
+        {
+          "nome": "Tipo de feedback",
+          "opcoes": 4,
+          "escolhido": "Par"
+        },
+        {
+          "nome": "Ciclo do feedback",
+          "opcoes": 7,
+          "escolhido": "Ciclo Anual 2025"
+        },
+        {
+          "nome": "Avaliado",
+          "opcoes": 15,
+          "escolhido": "Gustavo Henrique Alves"
+        },
+        {
+          "nome": "Avaliador do feedback",
+          "opcoes": 15,
+          "escolhido": "Juliana Pereira Martins"
+        }
+      ],
+      "tiposCriados": [
+        "gestor",
+        "par"
+      ]
+    },
+    "D7": {
+      "titulo": "Aprovar avaliação (gestor responsável, demonstração)",
+      "ok": true,
+      "aviso": "Demonstração: “Aprovar avaliação” salva localmente (nada foi enviado ao banco).",
+      "alvo": "Ana Beatriz Souza",
+      "decisao": "aprovado"
+    },
+    "D8": {
+      "titulo": "Aprovação e registros persistem após F5",
+      "ok": true,
+      "contador": "Aguardando gestor4",
+      "selo": "Aprovada pelo gestor",
+      "decisoesLocais": 1,
+      "criadosLocais": {
+        "ciclos": 1,
+        "feedbacks": 2
+      }
+    },
+    "D9": {
+      "titulo": "Devolver para correção com justificativa",
+      "ok": true,
+      "aviso": "Demonstração: “Devolver para correção” salva localmente (nada foi enviado ao banco).",
+      "alvo": "William Nunes Cardoso"
+    },
+    "D10": {
+      "titulo": "Reenviar ao gestor após correção",
+      "ok": true,
+      "aviso": "Demonstração: avaliação reenviada ao gestor (salva localmente).",
+      "decisoesRestantes": 1
+    },
+    "D11": {
+      "titulo": "Validar Potencial na demonstração (papel RH)",
+      "ok": true,
+      "bloqueio": "sessão sem papel `rh`: controle não oferecido (regra preservada)",
+      "selo": "Aprovada pelo gestor",
+      "botaoOferecido": false
+    },
+    "D12": {
+      "titulo": "Nine-Box classifica conforme as decisões",
+      "ok": true,
+      "kpi": "Colaboradores avaliados2496% do ciclo",
+      "temControleComparar": true
+    },
+    "D13": {
+      "titulo": "Reabrir avaliação e invalidar a decisão anterior",
+      "ok": true,
+      "botaoOferecido": true,
+      "aviso": "Demonstração: Avaliação reaberta — voltou para pendente. — salvo localmente (nada foi enviado ao banco).",
+      "patchesDeEstado": 2
+    },
+    "D14": {
+      "titulo": "Reabertura retira a avaliação da classificação",
+      "ok": true,
+      "kpi": "Colaboradores avaliados2496% do ciclo",
+      "idReaberto": ""
+    },
+    "D15": {
+      "titulo": "Reaprovar; reclassificação depende da validação do RH",
+      "ok": true,
+      "aviso": "Demonstração: “Aprovar avaliação” salva localmente (nada foi enviado ao banco).",
+      "kpi": "Colaboradores avaliados2392% do ciclo",
+      "observacao": "a conclusão definitiva exige a validação do Potencial pelo RH"
+    },
+    "D16": {
+      "titulo": "Metas & OKRs: aba funcional com os registros da vitrine",
+      "ok": true,
+      "cartoesVisiveis": 10,
+      "observacao": "a aba não possui controle de criação (nada quebrado a corrigir)"
+    },
+    "D17": {
+      "titulo": "PDI: aba funcional com os registros da vitrine",
+      "ok": true,
+      "cartoesVisiveis": 9,
+      "observacao": "a aba não possui controle de criação (nada quebrado a corrigir)"
+    },
+    "D18": {
+      "titulo": "Auditoria: aba aprovada + histórico local separado",
+      "ok": true,
+      "blocosDeLinhaTempo": 1,
+      "eventosDemonstrativos": 9,
+      "ultimos": [
+        "status:feedbacks",
+        "criar:feedbacks",
+        "status:feedbacks"
+      ],
+      "observacao": "a trilha da demonstração fica no armazenamento local (nunca em audit_log)"
+    },
+    "D19": {
+      "titulo": "Comparação de ciclos e filtros do Nine-Box",
+      "ok": true,
+      "temControleDeComparacao": true,
+      "kpi": "Colaboradores avaliados2392% do ciclo"
+    },
+    "D20": {
+      "titulo": "Estado demonstrativo sobrevive ao fechar/reabrir o navegador",
+      "ok": true,
+      "ciclosCriados": 1,
+      "feedbacksCriados": 2,
+      "decisoes": 2,
+      "eventos": 5
+    }
+  },
+  "evidencias": [
+    "tmp-roteiro-demo/D1-ciclo-criado.png",
+    "tmp-roteiro-demo/D2-ciclo-persistido.png",
+    "tmp-roteiro-demo/D3-feedback-gestor.png",
+    "tmp-roteiro-demo/D5-avaliacao-concluida.png",
+    "tmp-roteiro-demo/D4-feedback-par.png",
+    "tmp-roteiro-demo/D7-aprovado.png",
+    "tmp-roteiro-demo/D8-apos-f5.png",
+    "tmp-roteiro-demo/D9-devolvido.png",
+    "tmp-roteiro-demo/D10-reenviado.png",
+    "tmp-roteiro-demo/D11-fila-rh.png",
+    "tmp-roteiro-demo/D12-ninebox.png",
+    "tmp-roteiro-demo/D13-reaberto.png",
+    "tmp-roteiro-demo/D14-ninebox-pos-reabertura.png",
+    "tmp-roteiro-demo/D15-ninebox-reaprovado.png",
+    "tmp-roteiro-demo/D16-metas.png",
+    "tmp-roteiro-demo/D17-pdi.png",
+    "tmp-roteiro-demo/D18-auditoria.png",
+    "tmp-roteiro-demo/D19-ninebox-comparar.png"
+  ],
+  "contexto": {
+    "storageState": "e2e/.auth/user.json",
+    "papeisSimulados": [
+      "admin",
+      "gestor"
+    ],
+    "observacao": "lista de papéis devolvida pelo RPC de leitura (conta admin+gestor)"
+  }
+}

@@ -33,10 +33,29 @@ import { isDesempenhoMockEnabled } from '@/mocks/desempenhoMock';
 /** Prefixo de TODO identificador fictício do módulo (`mock-empresa-1`, ...). */
 export const PREFIXO_FICTICIO = 'mock-';
 
+/**
+ * Prefixo dos registros criados na VITRINE (armazenamento local do navegador,
+ * `demo-feedback-…`) — ver `desempenhoDemoStore.criarRegistroDemo`. Eles NÃO são
+ * `mock-*` (não vêm das fixtures), mas também não existem no banco: qualquer
+ * leitura que precise separar "persistido no Supabase" de "demonstrativo local"
+ * tem de considerar OS DOIS prefixos.
+ */
+export const PREFIXO_DEMONSTRATIVO_LOCAL = 'demo-';
+
 /** O valor é um identificador fictício? Vazio/`null` NUNCA é fictício. */
 export function idFicticio(valor: unknown): boolean {
   const texto = String(valor ?? '').trim();
   return texto.startsWith(PREFIXO_FICTICIO);
+}
+
+/**
+ * O valor é um registro DEMONSTRATIVO (fixture `mock-*` ou criado na vitrine
+ * `demo-*`)? Vazio/`null` é tratado como REAL (fail-closed: sem prova de que é
+ * demonstração, a interface segue o caminho conservador).
+ */
+export function idDemonstrativo(valor: unknown): boolean {
+  const texto = String(valor ?? '').trim();
+  return texto.startsWith(PREFIXO_FICTICIO) || texto.startsWith(PREFIXO_DEMONSTRATIVO_LOCAL);
 }
 
 /** Nomes dos campos que carregam identificador fictício (na ordem do objeto). */

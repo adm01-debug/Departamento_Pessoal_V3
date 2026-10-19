@@ -1,0 +1,39 @@
+{
+  "papeis": {
+    "status": 401,
+    "roles": {
+      "code": "PGRST303",
+      "details": null,
+      "hint": null,
+      "message": "JWT expired"
+    }
+  },
+  "vinculoDaConta": {
+    "status": 401,
+    "linhas": {
+      "code": "PGRST303",
+      "details": null,
+      "hint": null,
+      "message": "JWT expired"
+    }
+  },
+  "descartavelHomologacao": {
+    "status": 401,
+    "linhas": {
+      "code": "PGRST303",
+      "details": null,
+      "hint": null,
+      "message": "JWT expired"
+    }
+  },
+  "empresa": null,
+  "infraestrutura": {
+    "consolidacoes": 401,
+    "aprovacoes": 401,
+    "validacoes": 401,
+    "versoes": 401,
+    "rpc_pode_aprovar": 401,
+    "rpc_situacao": 401,
+    "rpc_versao_consolidada": 401
+  }
+}

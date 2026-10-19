@@ -1,0 +1,200 @@
+{
+  "quantidadeDeItens": 3,
+  "itens": [
+    {
+      "indice": 1,
+      "normal": {
+        "itens": 3,
+        "rotulo": "6 pagamentos aguardando aprovaçãoR$ 7.05",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 592,
+          "w": 186,
+          "h": 72
+        },
+        "corDoIcone": "rgb(245, 163, 20)",
+        "corDaSeta": "rgb(245, 163, 20)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      },
+      "hover": {
+        "itens": 3,
+        "rotulo": "6 pagamentos aguardando aprovaçãoR$ 7.05",
+        "fundo": "rgb(11, 18, 30)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 592,
+          "w": 186,
+          "h": 72
+        },
+        "corDoIcone": "rgb(245, 163, 20)",
+        "corDaSeta": "rgb(245, 163, 20)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      },
+      "voltou": {
+        "itens": 3,
+        "rotulo": "6 pagamentos aguardando aprovaçãoR$ 7.05",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 592,
+          "w": 186,
+          "h": 72
+        },
+        "corDoIcone": "rgb(245, 163, 20)",
+        "corDaSeta": "rgb(245, 163, 20)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      }
+    },
+    {
+      "indice": 2,
+      "normal": {
+        "itens": 3,
+        "rotulo": "1 divergência na conciliaçãoR$ 70,00",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 668,
+          "w": 186,
+          "h": 57
+        },
+        "corDoIcone": "rgb(145, 33, 33)",
+        "corDaSeta": "rgb(145, 33, 33)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      },
+      "hover": {
+        "itens": 3,
+        "rotulo": "1 divergência na conciliaçãoR$ 70,00",
+        "fundo": "rgb(11, 18, 30)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 668,
+          "w": 186,
+          "h": 57
+        },
+        "corDoIcone": "rgb(145, 33, 33)",
+        "corDaSeta": "rgb(145, 33, 33)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      },
+      "voltou": {
+        "itens": 3,
+        "rotulo": "1 divergência na conciliaçãoR$ 70,00",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 668,
+          "w": 186,
+          "h": 57
+        },
+        "corDoIcone": "rgb(145, 33, 33)",
+        "corDaSeta": "rgb(145, 33, 33)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      }
+    },
+    {
+      "indice": 3,
+      "normal": {
+        "itens": 3,
+        "rotulo": "2 aprovados aguardando conciliaçãoR$ 3.8",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 729,
+          "w": 186,
+          "h": 72
+        },
+        "corDoIcone": "rgb(24, 180, 81)",
+        "corDaSeta": "rgb(24, 180, 81)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      },
+      "hover": {
+        "itens": 3,
+        "rotulo": "2 aprovados aguardando conciliaçãoR$ 3.8",
+        "fundo": "rgb(11, 18, 30)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 729,
+          "w": 186,
+          "h": 72
+        },
+        "corDoIcone": "rgb(24, 180, 81)",
+        "corDaSeta": "rgb(24, 180, 81)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      },
+      "voltou": {
+        "itens": 3,
+        "rotulo": "2 aprovados aguardando conciliaçãoR$ 3.8",
+        "fundo": "rgba(0, 0, 0, 0)",
+        "raio": "10px",
+        "transicaoPropriedade": "color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to",
+        "transicaoDuracao": "0.2s",
+        "transicaoTiming": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "cursor": "pointer",
+        "box": {
+          "x": 1289,
+          "y": 729,
+          "w": 186,
+          "h": 72
+        },
+        "corDoIcone": "rgb(24, 180, 81)",
+        "corDaSeta": "rgb(24, 180, 81)",
+        "fonte": "16px 400",
+        "gap": "12px"
+      }
+    }
+  ],
+  "focoPorTeclado": {
+    "fundo": "rgb(11, 18, 30)",
+    "sombra": "presente",
+    "outline": "none"
+  },
+  "erros": []
+}

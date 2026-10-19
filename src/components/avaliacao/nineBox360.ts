@@ -25,6 +25,7 @@ import {
 import { QUADRANTE_POR_CHAVE, type ColaboradorNineBox } from './nineBoxComum';
 import {
   CATEGORIAS_360,
+  MOTIVO_NAO_CLASSIFICADO_360,
   consolidar360,
   type Categoria360,
   type Consolidacao360,
@@ -52,6 +53,15 @@ export interface OpcoesConsolidacao360 {
   validacoes?: ValidacaoPotencial[];
   /** Versão canônica por feedback, vinda da view (NUNCA calculada no front). */
   versoesPorFeedback?: Record<string, string>;
+  /**
+   * Decisões do gestor (`feedbacks_360_aprovacoes_gestor`) e cabeçalhos
+   * (`feedbacks_360_consolidacoes`). Quando informados, a classificação exige a
+   * aprovação VIGENTE para a versão consolidada — a MESMA regra da fila.
+   * Omitidos = leitura anterior (validação como âncora), compatível com
+   * chamadas antigas e com o modo demonstrativo.
+   */
+  aprovacoes?: unknown[];
+  consolidacoes?: unknown[];
 }
 
 /** Uma nota consolidada por categoria, com rastreabilidade do registro usado. */
@@ -126,6 +136,8 @@ export function consolidarNineBox360({
   empresaId = null,
   validacoes = [],
   versoesPorFeedback = {},
+  aprovacoes,
+  consolidacoes,
 }: OpcoesConsolidacao360): ResultadoConsolidacao360[] {
   const doCiclo = normalizarAvaliacoes(feedbacks, empresaId).filter((a) => {
     if (cicloId !== null && a.cicloId !== String(cicloId)) return false;
@@ -146,6 +158,39 @@ export function consolidarNineBox360({
       const chave = String(a.colaboradorId);
       porColaborador.set(chave, [...(porColaborador.get(chave) ?? []), a]);
     });
+
+  /* ── APROVAÇÃO VIGENTE (mesma âncora da fila) ─────────────────────────────
+     `feedbacks_360_aprovacoes_gestor` guarda a decisão com a versão do CONJUNTO;
+     `feedbacks_360_consolidacoes` mantém a versão vigente. Só se classifica
+     quando as duas casam — decisão antiga é invalidação, não aprovação. O gate
+     só é aplicado quando os arrays são INFORMADOS (compatibilidade). */
+  const gateAprovacao = aprovacoes !== undefined || consolidacoes !== undefined;
+  const decisaoPorChave = new Map<string, { decisao: string; versao: string; decididoEm: number }>();
+  (aprovacoes ?? []).forEach((bruto) => {
+    const a = (bruto ?? {}) as Record<string, unknown>;
+    const col = String(a.colaborador_id ?? '').trim();
+    if (!col) return;
+    const chave = `${String(a.ciclo_id ?? '').trim()}::${col}`;
+    const quando = Date.parse(String(a.decidido_em ?? '')) || 0;
+    const atual = decisaoPorChave.get(chave);
+    if (!atual || quando >= atual.decididoEm) {
+      decisaoPorChave.set(chave, {
+        decisao: String(a.decisao ?? '')
+          .trim()
+          .toLowerCase(),
+        versao: String(a.versao_avaliacao ?? '').trim(),
+        decididoEm: quando,
+      });
+    }
+  });
+  const versaoConsolidadaPorChave = new Map<string, string>();
+  (consolidacoes ?? []).forEach((bruto) => {
+    const c = (bruto ?? {}) as Record<string, unknown>;
+    const col = String(c.colaborador_id ?? '').trim();
+    const versao = String(c.versao_consolidada ?? '').trim();
+    if (!col || !versao) return;
+    versaoConsolidadaPorChave.set(`${String(c.ciclo_id ?? '').trim()}::${col}`, versao);
+  });
 
   return Array.from(porColaborador.entries()).map(([colaboradorId, registros]) => {
     // ELEGIBILIDADE POR CATEGORIA (§6.1): identidade + NOTA de desempenho válida +
@@ -191,7 +236,7 @@ export function consolidarNineBox360({
             (v) => v.colaboradorId === colaboradorId && v.versaoAvaliacao === versaoGestor
           ) ?? null);
 
-    const consolidado = consolidar360({
+    let consolidado = consolidar360({
       empresaId,
       cicloId,
       colaboradorId,
@@ -202,6 +247,30 @@ export function consolidarNineBox360({
       versaoGestor,
       substituicaoDeConcluida: categorias.some((c) => c.substituicaoDeConcluida),
     });
+
+    if (gateAprovacao) {
+      const chave = `${String(cicloId ?? '').trim()}::${colaboradorId}`;
+      const decisao = decisaoPorChave.get(chave) ?? null;
+      const versaoConsolidada = versaoConsolidadaPorChave.get(chave) ?? null;
+      // Sem cabeçalho de consolidação (dado histórico), a própria versão da
+      // decisão é a âncora disponível — não se invalida por ausência de linha.
+      const aprovacaoVigente = decisao && (!versaoConsolidada || decisao.versao === versaoConsolidada);
+      if (!aprovacaoVigente) {
+        consolidado = {
+          ...consolidado,
+          classificavel: false,
+          quadrante: null,
+          motivo: 'aprovacao_pendente',
+        };
+      } else if (decisao.decisao !== 'aprovado') {
+        consolidado = {
+          ...consolidado,
+          classificavel: false,
+          quadrante: null,
+          motivo: 'aprovacao_devolvida',
+        };
+      }
+    }
 
     return {
       ...consolidado,
@@ -230,6 +299,12 @@ export interface Ponto360 {
   pontuacao: number | null;
   /** Motivo legível quando não há classificação (equivalente a `pendencias`). */
   motivoNaoClassificado: string | null;
+  /** Texto pronto do motivo (para exibição, se necessário). */
+  motivoNaoClassificadoTexto: string | null;
+  /** Aprovado pelo gestor, aguardando a validação do Potencial pelo RH. */
+  aguardandoValidacaoRh: boolean;
+  /** Aprovação do gestor pendente, devolvida ou invalidada. */
+  aguardandoAprovacao: boolean;
   /** Rastreabilidade preservada para a coluna lateral e os detalhes. */
   categoriasUsadas: Categoria360[];
   substituicaoDeConcluida: boolean;
@@ -269,6 +344,8 @@ export function pontos360(
     const nome = String(quem?.nome_completo ?? '').trim() || 'Sem colaborador';
     const quadrante = c.quadrante;
     const motivo = c.classificavel ? null : c.motivo;
+    const aguardandoValidacaoRh = motivo === 'potencial_sem_validacao';
+    const aguardandoAprovacao = motivo === 'aprovacao_pendente' || motivo === 'aprovacao_devolvida';
     return {
       id: c.categorias.find((x) => x.feedbackId)?.feedbackId ?? `consolidado360:${c.colaboradorId}`,
       colaboradorId: c.colaboradorId,
@@ -284,6 +361,10 @@ export function pontos360(
       nomeQuadrante: quadrante ? QUADRANTE_POR_CHAVE[quadrante].nome : null,
       pontuacao: c.desempenho !== null && c.potencial !== null ? c.desempenho + c.potencial : null,
       motivoNaoClassificado: motivo,
+      /** Texto pronto para exibição (o motivo acima é o código do motor). */
+      motivoNaoClassificadoTexto: motivo ? MOTIVO_NAO_CLASSIFICADO_360[motivo] : null,
+      aguardandoValidacaoRh,
+      aguardandoAprovacao,
       categoriasUsadas: c.categoriasUsadas,
       substituicaoDeConcluida: c.substituicaoDeConcluida,
       registrosSinalizados: c.registrosSinalizados,

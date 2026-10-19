@@ -1,0 +1,81 @@
+{
+  "quando": "2026-10-19T18:07:56.237Z",
+  "ciclos": {
+    "Ciclo Anual 2025": {
+      "listaCards": 0,
+      "listaAcoes": [],
+      "listaSoEdicao": true,
+      "filaCards": 0,
+      "filaAcoes": [],
+      "filaTemEdicao": false,
+      "filaAlturas": [],
+      "filaComPrevia": 0
+    },
+    "Ciclo S1 2026": {
+      "listaCards": 2,
+      "listaAcoes": [
+        "Editar feedback"
+      ],
+      "listaSoEdicao": true,
+      "filaCards": 2,
+      "filaAcoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "filaTemEdicao": false,
+      "filaAlturas": [
+        203,
+        210
+      ],
+      "filaComPrevia": 1
+    },
+    "Ciclo S2 2026": {
+      "listaCards": 11,
+      "listaAcoes": [
+        "Editar feedback"
+      ],
+      "listaSoEdicao": true,
+      "filaCards": 10,
+      "filaAcoes": [
+        "Ver avaliação",
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "filaTemEdicao": false,
+      "filaAlturas": [
+        203,
+        203,
+        203,
+        222,
+        222,
+        210,
+        210,
+        210,
+        210,
+        210
+      ],
+      "filaComPrevia": 5
+    },
+    "Avaliação de Experiência 90 dias": {
+      "listaCards": 0,
+      "listaAcoes": [],
+      "listaSoEdicao": true,
+      "filaCards": 0,
+      "filaAcoes": [],
+      "filaTemEdicao": false,
+      "filaAlturas": [],
+      "filaComPrevia": 0
+    },
+    "Ciclo S1 2027": {
+      "listaCards": 0,
+      "listaAcoes": [],
+      "listaSoEdicao": true,
+      "filaCards": 0,
+      "filaAcoes": [],
+      "filaTemEdicao": false,
+      "filaAlturas": [],
+      "filaComPrevia": 0
+    }
+  }
+}

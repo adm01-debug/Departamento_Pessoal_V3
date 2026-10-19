@@ -1,0 +1,38 @@
+{
+  "etapas": {
+    "A_pendente": {
+      "acoes": [
+        "Concluir avaliação",
+        "Cancelar avaliação"
+      ],
+      "selo": null
+    },
+    "A_aposConcluir": {
+      "aviso": "Demonstração: Avaliação concluída — salvo localmente (nada foi enviado ao banco)."
+    },
+    "B_concluido": {
+      "acoes": [],
+      "selo": "Aguardando gestor"
+    },
+    "C_aguardandoGestor": {
+      "acoes": [
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "selo": "Aguardando gestor"
+    },
+    "D_aposAprovar": {
+      "aviso": "Demonstração: “Aprovar avaliação” salva localmente (nada foi enviado ao banco)."
+    },
+    "D_reabertoAprovada": {
+      "acoes": [],
+      "selo": "Aprovada pelo gestor"
+    },
+    "E_validacaoRh": {
+      "acoes": [
+        "Validar Potencial"
+      ],
+      "selo": "Aprovada pelo gestor"
+    }
+  }
+}

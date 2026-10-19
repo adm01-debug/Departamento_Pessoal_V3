@@ -1,0 +1,91 @@
+{
+  "A_adminSozinho": {
+    "fila": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      }
+    ],
+    "menu": {
+      "temAdministracao": true,
+      "temColaboradores": true
+    }
+  },
+  "B_adminMaisGestor": {
+    "fila": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Devolver",
+          "Aprovar",
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Devolver",
+          "Aprovar",
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Devolver",
+          "Aprovar",
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Devolver",
+          "Aprovar",
+          "Ver avaliação"
+        ]
+      }
+    ],
+    "menu": {
+      "temAdministracao": true,
+      "temColaboradores": true
+    }
+  },
+  "B_modal": {
+    "colaborador": "Ana Beatriz Souza",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Devolver para correção",
+      "Aprovar avaliação",
+      "Fechar"
+    ]
+  }
+}

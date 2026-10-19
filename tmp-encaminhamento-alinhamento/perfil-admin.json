@@ -1,0 +1,30 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:8080",
+      "localStorage": [
+        {
+          "name": "dp-desempenho-demo-registros",
+          "value": "{\"versao\":1,\"criados\":{\"ciclos\":{},\"metas\":{},\"feedbacks\":{\"demo-feedback-mvbfh7pr-bocow\":{\"avaliado_id\":\"mock-2\",\"avaliador_id\":\"mock-3\",\"tipo\":\"auto\",\"nota_geral\":4,\"potencial\":4,\"ciclo_id\":\"mock-ciclo-3\",\"pontos_fortes\":\"Autonomia e organização.\",\"pontos_melhoria\":\"Delegar mais.\",\"comentarios\":\"Autoavaliação criada na validação do encaminhamento.\",\"status\":\"pendente\",\"empresa_id\":\"61e7d382-549f-4b17-afa4-4578ebc919f3\",\"created_at\":\"2026-10-16T20:36:27.855Z\",\"updated_at\":\"2026-10-16T20:36:27.855Z\",\"id\":\"demo-feedback-mvbfh7pr-bocow\"}},\"pdis\":{}},\"patches\":{\"ciclos\":{},\"metas\":{},\"feedbacks\":{},\"pdis\":{}},\"removidos\":{\"ciclos\":[],\"metas\":[],\"feedbacks\":[],\"pdis\":[]},\"historico\":[{\"em\":\"2026-10-16T20:36:27.855Z\",\"entidade\":\"feedbacks\",\"operacao\":\"criar\",\"id\":\"demo-feedback-mvbfh7pr-bocow\",\"descricao\":\"Avaliação (auto) criada na demonstração\",\"dados\":{\"avaliado_id\":\"mock-2\",\"avaliador_id\":\"mock-3\",\"tipo\":\"auto\",\"nota_geral\":4,\"potencial\":4,\"ciclo_id\":\"mock-ciclo-3\",\"pontos_fortes\":\"Autonomia e organização.\",\"pontos_melhoria\":\"Delegar mais.\",\"comentarios\":\"Autoavaliação criada na validação do encaminhamento.\",\"status\":\"pendente\",\"empresa_id\":\"61e7d382-549f-4b17-afa4-4578ebc919f3\",\"created_at\":\"2026-10-16T20:36:27.855Z\",\"updated_at\":\"2026-10-16T20:36:27.855Z\",\"id\":\"demo-feedback-mvbfh7pr-bocow\"},\"por\":\"admin@teste.local\"}]}"
+        },
+        {
+          "name": "sb-frjbfeamybqsejlvmqbl-auth-token",
+          "value": "{\"access_token\":\"eyJhbGciOiJFUzI1NiIsImtpZCI6ImMyZDU3NGIzLTQzMGYtNGIwNy1iMmJiLThiZmM0MWI5ZWY4YyIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2ZyamJmZWFteWJxc2VqbHZtcWJsLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJlZDhiYTc5Ni05MTJiLTRlNzItYWIxMi02ZjYzNTU1YjI2ZTEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzkyMTg2NDE0LCJpYXQiOjE3OTIxODI4MTQsImVtYWlsIjoiYWRtaW5AdGVzdGUubG9jYWwiLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJub21lIjoiQWRtaW4gRTJFIFRlc3RlIiwicm9sZSI6ImFkbWluIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3OTIxODI4MTR9XSwic2Vzc2lvbl9pZCI6ImNmMTg5Y2UwLTUwOTQtNGJmMS1iNGY2LTIyNjk3MzQyNzIyOCIsImlzX2Fub255bW91cyI6ZmFsc2V9.1bd0yvF5LWDtJw6y5m_g7W7owU_k24G3YrXLTNb7qfL70JjHtsFJZIhdC0Ki33zILLwWzwIDXi5Vb9N3Uf-WSA\",\"refresh_token\":\"4r3pxjoyvxaq\",\"user\":{\"id\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\",\"aud\":\"authenticated\",\"role\":\"authenticated\",\"email\":\"admin@teste.local\",\"email_confirmed_at\":\"2026-07-24T02:35:01.130837Z\",\"phone\":\"\",\"confirmed_at\":\"2026-07-24T02:35:01.130837Z\",\"last_sign_in_at\":\"2026-10-16T20:33:34.211738Z\",\"app_metadata\":{\"provider\":\"email\",\"providers\":[\"email\"]},\"user_metadata\":{\"email_verified\":true,\"nome\":\"Admin E2E Teste\",\"role\":\"admin\"},\"identities\":[{\"identity_id\":\"92dc4557-8b57-4195-b9c3-a594d1a5dfe4\",\"id\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\",\"user_id\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\",\"identity_data\":{\"email\":\"admin@teste.local\",\"email_verified\":false,\"phone_verified\":false,\"sub\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\"},\"provider\":\"email\",\"last_sign_in_at\":\"2026-07-24T02:35:01.074431Z\",\"created_at\":\"2026-07-24T02:35:01.074493Z\",\"updated_at\":\"2026-07-24T02:35:01.074493Z\",\"email\":\"admin@teste.local\"}],\"created_at\":\"2026-07-24T02:35:01.054949Z\",\"updated_at\":\"2026-10-16T20:33:34.388557Z\",\"is_anonymous\":false},\"token_type\":\"bearer\",\"expires_in\":3597.4189999103546,\"expires_at\":1792186414}"
+        },
+        {
+          "name": "empresa-storage",
+          "value": "{\"state\":{\"empresaAtualId\":\"61e7d382-549f-4b17-afa4-4578ebc919f3\",\"modo\":\"consolidado\"},\"version\":2}"
+        },
+        {
+          "name": "dp-tour-completed",
+          "value": "true"
+        },
+        {
+          "name": "ui-theme",
+          "value": "dark"
+        }
+      ]
+    }
+  ]
+}

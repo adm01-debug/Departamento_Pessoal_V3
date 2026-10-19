@@ -1,0 +1,493 @@
+{
+  "pagamentos": [
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 526,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 526,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 526,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 605,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 605,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 605,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 684,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 684,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 684,
+          "w": 980,
+          "h": 79
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 763,
+          "w": 980,
+          "h": 88
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 763,
+          "w": 980,
+          "h": 88
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 763,
+          "w": 980,
+          "h": 88
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 851,
+          "w": 980,
+          "h": 88
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 851,
+          "w": 980,
+          "h": 88
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 851,
+          "w": 980,
+          "h": 88
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px rgb(26, 38, 56)",
+        "box": {
+          "x": 281,
+          "y": 939,
+          "w": 980,
+          "h": 73
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px rgb(26, 38, 56)",
+        "box": {
+          "x": 281,
+          "y": 939,
+          "w": 980,
+          "h": 73
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "rgba(0, 0, 0, 0)",
+        "corDoAvatar": "rgb(224, 224, 224)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px rgb(26, 38, 56)",
+        "box": {
+          "x": 281,
+          "y": 939,
+          "w": 980,
+          "h": 73
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    }
+  ],
+  "campanhas": [
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 441,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 441,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 441,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 556,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 556,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 556,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 671,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 671,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px oklab(0.265696 -0.00771903 -0.0372934 / 0.25)",
+        "box": {
+          "x": 281,
+          "y": 671,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    },
+    {
+      "antes": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px rgb(26, 38, 56)",
+        "box": {
+          "x": 281,
+          "y": 786,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "durante": {
+        "fundo": "rgb(11, 18, 30)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px rgb(26, 38, 56)",
+        "box": {
+          "x": 281,
+          "y": 786,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "depois": {
+        "fundo": "rgba(0, 0, 0, 0)",
+        "fundoDoBadge": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+        "corDoAvatar": "rgb(148, 148, 148)|rgba(0, 0, 0, 0)",
+        "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "sombra": "none",
+        "borda": "0px rgb(26, 38, 56)",
+        "box": {
+          "x": 281,
+          "y": 786,
+          "w": 980,
+          "h": 115
+        },
+        "escala": "none"
+      },
+      "outrasLinhasIntactas": true
+    }
+  ],
+  "erros": [],
+  "checkboxFunciona": {
+    "estadoDoCheckbox": "checked",
+    "barraDeSelecao": true
+  },
+  "menuAbre": true,
+  "tabelaCampanhasLinhas": 4
+}

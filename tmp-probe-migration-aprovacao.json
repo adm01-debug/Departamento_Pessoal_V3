@@ -1,0 +1,29 @@
+{
+  "resultado": {
+    "temToken": true,
+    "tabelas": [
+      {
+        "tabela": "feedbacks_360_aprovacoes_gestor",
+        "status": 404,
+        "resposta": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.feedbacks_360_operacoes'\",\"message\":\"Could not find the table 'public.feedbacks_360_aprovacoes_gestor'"
+      },
+      {
+        "tabela": "feedbacks_360_consolidacoes",
+        "status": 404,
+        "resposta": "{\"code\":\"PGRST205\",\"details\":null,\"hint\":\"Perhaps you meant the table 'public.feedbacks_360_operacoes'\",\"message\":\"Could not find the table 'public.feedbacks_360_consolidacoes' in "
+      },
+      {
+        "tabela": "feedbacks_360_validacoes_potencial",
+        "status": 200,
+        "resposta": "[]"
+      }
+    ],
+    "rpcs": [
+      {
+        "rpc": "pode_aprovar_colaborador",
+        "status": 404,
+        "resposta": "{\"code\":\"PGRST202\",\"details\":\"Searched for the function public.pode_aprovar_colaborador without parameters or with a single unnamed json/jsonb parameter, but no matches were found "
+      }
+    ]
+  }
+}

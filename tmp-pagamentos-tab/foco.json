@@ -1,0 +1,20 @@
+{
+  "tabela": {
+    "larguraScroller": 924,
+    "larguraTabela": 924,
+    "sobraParaAcoes": -226,
+    "rolaInterno": false
+  },
+  "acaoLateralTexto": "6 pagamentos aguardando aprovação R$ 7.050,50",
+  "linhasAposAcaoLateral": 16,
+  "resumoMostrando": "Mostrando 6 de 6 pagamentos",
+  "barraLote": 1,
+  "textoBarraLote": "10 pagamentos selecionados",
+  "opcoesPeriodo": [
+    "Todos os períodos",
+    "Out/2026",
+    "Set/2026",
+    "Jun/2026"
+  ],
+  "erros": []
+}

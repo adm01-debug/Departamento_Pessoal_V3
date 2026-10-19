@@ -1,0 +1,21 @@
+{
+  "ciclo": "CICLO APENAS DE TESTE",
+  "antes": {
+    "cards": 1
+  },
+  "aprovado": {
+    "banner": "1 aprovada pelo gestor aguardando a validação do Potencial pelo RH: Ana Beatriz Souza",
+    "nomeVisivel": true
+  },
+  "validado": {
+    "toast": [
+      "Demonstração: Potencial validado localmente (nada foi enviado ao banco)."
+    ],
+    "estrela": "Estrela — 1 colaborador",
+    "noQuadrante": true
+  },
+  "escritos": [
+    "dp-desempenho-demo-registros",
+    "dp-desempenho-aprovacoes-demo"
+  ]
+}

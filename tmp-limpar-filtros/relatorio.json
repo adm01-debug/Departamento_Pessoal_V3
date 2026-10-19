@@ -1,0 +1,226 @@
+{
+  "semFiltros": {
+    "botaoDesabilitado": true,
+    "botaoBox": {
+      "w": 40,
+      "h": 40
+    },
+    "botaoRaio": "12px",
+    "botaoFundo": "rgb(11, 18, 30)",
+    "alturaDaBarra": 66,
+    "controlesNaBarra": [
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 188
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 150
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 190
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 40
+      }
+    ],
+    "numaUnicaLinha": true,
+    "busca": "",
+    "etapa": "Todas as etapas",
+    "campanha": "Todas as campanhas",
+    "status": "Todos os status",
+    "ordenacao": "Mais recentes",
+    "paginaAtiva": "Premiações 10/10",
+    "seletorLinhas": "6",
+    "linhasVisiveis": 6,
+    "etapasDoFluxoMarcadas": [],
+    "estouroHorizontal": 0
+  },
+  "opcoesDeOrdenacao": [
+    "Mais recentes",
+    "Mais antigos",
+    "Maior valor",
+    "Menor valor",
+    "Colaborador (A–Z)",
+    "Campanha (A–Z)"
+  ],
+  "comFiltros": {
+    "botaoDesabilitado": false,
+    "botaoBox": {
+      "w": 40,
+      "h": 40
+    },
+    "botaoRaio": "12px",
+    "botaoFundo": "rgb(11, 18, 30)",
+    "alturaDaBarra": 66,
+    "controlesNaBarra": [
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 188
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 150
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 190
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 40
+      }
+    ],
+    "numaUnicaLinha": true,
+    "busca": "Juliana",
+    "etapa": "2 · Em aprovação",
+    "campanha": "Bônus por Meta de Produção",
+    "status": "Aguardando gestor",
+    "ordenacao": "Mais antigos",
+    "paginaAtiva": "Premiações 10/10",
+    "seletorLinhas": "6",
+    "linhasVisiveis": 1,
+    "etapasDoFluxoMarcadas": [
+      "2Em aprovação2"
+    ],
+    "estouroHorizontal": 0
+  },
+  "tooltip": "Limpar filtros",
+  "aposLimpar": {
+    "botaoDesabilitado": true,
+    "botaoBox": {
+      "w": 40,
+      "h": 40
+    },
+    "botaoRaio": "12px",
+    "botaoFundo": "rgb(11, 18, 30)",
+    "alturaDaBarra": 66,
+    "controlesNaBarra": [
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 188
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 150
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 190
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 420,
+        "altura": 40,
+        "largura": 40
+      }
+    ],
+    "numaUnicaLinha": true,
+    "busca": "",
+    "etapa": "Todas as etapas",
+    "campanha": "Todas as campanhas",
+    "status": "Todos os status",
+    "ordenacao": "Mais antigos",
+    "paginaAtiva": "Premiações 10/10",
+    "seletorLinhas": "6",
+    "linhasVisiveis": 6,
+    "etapasDoFluxoMarcadas": [],
+    "estouroHorizontal": 0
+  },
+  "mobile": {
+    "botaoDesabilitado": true,
+    "botaoBox": {
+      "w": 40,
+      "h": 40
+    },
+    "botaoRaio": "12px",
+    "botaoFundo": "rgb(11, 18, 30)",
+    "alturaDaBarra": 274,
+    "controlesNaBarra": [
+      {
+        "top": 944,
+        "altura": 40,
+        "largura": 308
+      },
+      {
+        "top": 996,
+        "altura": 40,
+        "largura": 150
+      },
+      {
+        "top": 1048,
+        "altura": 40,
+        "largura": 190
+      },
+      {
+        "top": 1100,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 1152,
+        "altura": 40,
+        "largura": 160
+      },
+      {
+        "top": 1152,
+        "altura": 40,
+        "largura": 40
+      }
+    ],
+    "numaUnicaLinha": false,
+    "busca": "",
+    "etapa": "Todas as etapas",
+    "campanha": "Todas as campanhas",
+    "status": "Todos os status",
+    "ordenacao": "Mais antigos",
+    "paginaAtiva": "Premiações 10/10",
+    "seletorLinhas": "6",
+    "linhasVisiveis": 6,
+    "etapasDoFluxoMarcadas": [],
+    "estouroHorizontal": 158
+  },
+  "erros": []
+}

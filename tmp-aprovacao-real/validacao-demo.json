@@ -1,0 +1,127 @@
+{
+  "quando": "2026-10-19T17:55:19.909Z",
+  "conta": "admin@teste.local",
+  "t": {
+    "fila1440": {
+      "cards": 10,
+      "alturas": [
+        203,
+        203,
+        203,
+        222,
+        222,
+        210,
+        210,
+        210,
+        210,
+        210
+      ]
+    },
+    "exemploCard": {
+      "colaborador": "Lucas Gabriel Fernandes",
+      "altura": 203,
+      "corpo": 122,
+      "rodape": 43,
+      "badges": [
+        "Gestor não atribuído"
+      ],
+      "paragrafos": [
+        "Designer Gráfico · Marketing",
+        "Relato de terceiro — conteúdo disponível apenas ao RH.",
+        "Gestor responsável",
+        "Avaliado por",
+        "Desempenho",
+        "Potencial"
+      ],
+      "botoes": [
+        {
+          "rotulo": "Ver avaliação",
+          "desabilitado": false,
+          "title": "",
+          "aria": "Ver avaliação"
+        },
+        {
+          "rotulo": "Devolver para correção",
+          "desabilitado": true,
+          "title": "Gestor responsável não identificado (colaborador sem supervisor_id).",
+          "aria": "Devolver para correção"
+        },
+        {
+          "rotulo": "Aprovar avaliação",
+          "desabilitado": true,
+          "title": "Gestor responsável não identificado (colaborador sem supervisor_id).",
+          "aria": "Aprovar avaliação"
+        }
+      ]
+    },
+    "fila1024": {
+      "cards": 10,
+      "alturas": [
+        209,
+        209,
+        209,
+        222,
+        222,
+        240,
+        240,
+        240,
+        240,
+        240
+      ]
+    },
+    "permissoes": {
+      "algumSemGestorComAprovarBloqueado": true,
+      "motivoDoBloqueio": "Gestor responsável não identificado (colaborador sem supervisor_id)."
+    },
+    "aprovar": {
+      "encontrado": true,
+      "colaborador": "Ana Beatriz Souza",
+      "toasts": [
+        "Demonstração: aprovação salva localmente (nada foi enviado ao banco)."
+      ],
+      "escritasDeAprovacao": [],
+      "localStorage": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demo:e8b30bab:1",
+          "decididoEm": "2026-10-19T17:55:36.877Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "aposF5": {
+        "contadorAntes": 5,
+        "contadorDepois": 4,
+        "aindaNaFila": true,
+        "badgeNaFila": [
+          "Aprovada pelo gestor"
+        ],
+        "decisaoNoStorage": true
+      },
+      "badgeNaLista": [
+        "Aprovada pelo gestor"
+      ]
+    },
+    "devolver": {
+      "encontrado": true,
+      "colaborador": "William Nunes Cardoso",
+      "curtaDesabilita": true,
+      "curtaAindaDesabilita": true,
+      "longaHabilita": true,
+      "toasts": [
+        "Demonstração: devolução salva localmente (nada foi enviado ao banco)."
+      ],
+      "escritasDeAprovacao": [],
+      "badgeNaLista": [
+        "Devolvida para correção"
+      ]
+    },
+    "escritasDeAprovacaoNaSessao": []
+  },
+  "papeisSimuladosNoFront": [
+    "admin",
+    "gestor"
+  ]
+}

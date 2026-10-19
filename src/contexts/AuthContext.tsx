@@ -7,7 +7,12 @@ import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
 import { functionUrl } from '@/lib/functionsUrl';
 
-export type AppRole = 'admin' | 'moderator' | 'user';
+/**
+ * Papéis do app — a tabela `user_roles` guarda UMA linha por papel e o RPC
+ * `get_user_roles` devolve a LISTA completa (`['admin','gestor']`). `admin`
+ * convive com `gestor`/`rh`/... — possuir um NÃO anula os outros.
+ */
+export type AppRole = 'admin' | 'moderator' | 'user' | 'gestor' | 'rh';
 
 /**
  * Estado da carga de papéis do usuário — tri-state EXPLÍCITO para que a autorização

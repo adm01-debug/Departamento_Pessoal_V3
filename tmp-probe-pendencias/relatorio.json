@@ -1,0 +1,20 @@
+[
+  {
+    "passo": "linhas-na-listagem",
+    "linhas": 14
+  },
+  {
+    "passo": "clique-linha-1",
+    "url": "/colaboradores/mock-1",
+    "navegou": true
+  },
+  {
+    "passo": "botao-Ver-todas",
+    "achou": true
+  },
+  {
+    "passo": "popup",
+    "quantos": 1,
+    "titulo": "Fechar Pendências 1 tarefa de onboarding atrasada Alta Tarefas do plano de integ"
+  }
+]

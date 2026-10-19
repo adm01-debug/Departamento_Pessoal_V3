@@ -100,9 +100,13 @@ describe('feedbacksComum — nota e faixa', () => {
     expect(formatarNota(4.25)).toBe('4,3');
   });
 
-  it('considera pendente tudo que não está concluído', () => {
+  it('considera pendente tudo que NÃO está encerrado (histórico acentuado incluso)', () => {
     expect(estaPendente({ status: 'pendente' })).toBe(true);
     expect(estaPendente({ status: 'CONCLUIDO' })).toBe(false);
+    expect(estaPendente({ status: 'Concluído' })).toBe(false);
+    expect(estaPendente({ status: 'CONCLUÍDA' })).toBe(false);
+    expect(estaPendente({ status: 'finalizado' })).toBe(false);
+    expect(estaPendente({ status: 'cancelado' })).toBe(false);
     expect(estaPendente({})).toBe(true);
   });
 });
@@ -139,17 +143,94 @@ describe('feedbacksComum — derivação do card', () => {
     expect(d.avaliado).toBe('—');
     expect(d.avaliador).toBe('—');
   });
+
+  /**
+   * REGRESSÃO REAL: registros criados na vitrine são gravados com os CAMPOS crus
+   * (`avaliado_id`/`avaliador_id`) e NÃO trazem a relação embutida — o card
+   * mostrava `—` no nome e no "Avaliado por" mesmo com os ids resolvíveis (o
+   * cargo/departamento já vinha deles). O nome agora cai no cadastro pelo id.
+   */
+  it('cai no cadastro pelo ID quando o registro vem SEM a relação embutida', () => {
+    const contexto = {
+      ...CONTEXTO,
+      colaboradores: [
+        { id: 'col-1', nome_completo: 'Carlos Eduardo Lima', cargo: 'Dev', departamento: 'Tecnologia' },
+        { id: 'col-9', nome_completo: 'Mariana Oliveira', cargo: 'Gestora', departamento: 'Tecnologia' },
+      ],
+    };
+    const [d] = derivarFeedbacks([bruto({ avaliado: undefined, avaliador: undefined })], contexto);
+
+    expect(d.avaliado).toBe('Carlos Eduardo Lima');
+    expect(d.avaliador).toBe('Mariana Oliveira');
+    expect(d.cargo).toBe('Dev');
+  });
+
+  it('a relação embutida tem PRECEDÊNCIA sobre o cadastro pelo id', () => {
+    const contexto = {
+      ...CONTEXTO,
+      colaboradores: [{ id: 'col-1', nome_completo: 'Nome do Cadastro', cargo: null, departamento: null }],
+    };
+    const [d] = derivarFeedbacks([bruto()], contexto);
+    expect(d.avaliado).toBe('Carlos Eduardo Lima');
+  });
+
+  it('mantém `—` quando nem a relação nem o id resolvem', () => {
+    const [d] = derivarFeedbacks(
+      [bruto({ avaliado: null, avaliador: null, avaliado_id: 'nao-existe', avaliador_id: null })],
+      CONTEXTO
+    );
+    expect(d.avaliado).toBe('—');
+    expect(d.avaliador).toBe('—');
+  });
 });
 
 /** Conjunto de apoio: 6 feedbacks em 2 meses, 3 tipos e notas variadas. */
 const LISTA = derivarFeedbacks(
   [
-    bruto({ id: 'f1', tipo: 'gestor', nota_geral: 5, avaliador: { nome_completo: 'Mariana Oliveira' }, created_at: em(2026, 10, 8) }),
-    bruto({ id: 'f2', tipo: 'par', nota_geral: 4, avaliador: { nome_completo: 'Rafael Mendes' }, created_at: em(2026, 10, 6) }),
-    bruto({ id: 'f3', tipo: 'auto', nota_geral: 2, avaliador: { nome_completo: 'Mariana Oliveira' }, created_at: em(2026, 10, 3) }),
-    bruto({ id: 'f4', tipo: 'gestor', nota_geral: 3, avaliador: { nome_completo: 'Mariana Oliveira' }, created_at: em(2026, 9, 30) }),
-    bruto({ id: 'f5', tipo: 'par', nota_geral: 5, status: 'pendente', avaliador: { nome_completo: 'Rafael Mendes' }, created_at: em(2026, 9, 28) }),
-    bruto({ id: 'f6', tipo: 'subordinado', nota_geral: 1, status: 'pendente', avaliador: { nome_completo: 'Mariana Oliveira' }, created_at: em(2026, 9, 22) }),
+    bruto({
+      id: 'f1',
+      tipo: 'gestor',
+      nota_geral: 5,
+      avaliador: { nome_completo: 'Mariana Oliveira' },
+      created_at: em(2026, 10, 8),
+    }),
+    bruto({
+      id: 'f2',
+      tipo: 'par',
+      nota_geral: 4,
+      avaliador: { nome_completo: 'Rafael Mendes' },
+      created_at: em(2026, 10, 6),
+    }),
+    bruto({
+      id: 'f3',
+      tipo: 'auto',
+      nota_geral: 2,
+      avaliador: { nome_completo: 'Mariana Oliveira' },
+      created_at: em(2026, 10, 3),
+    }),
+    bruto({
+      id: 'f4',
+      tipo: 'gestor',
+      nota_geral: 3,
+      avaliador: { nome_completo: 'Mariana Oliveira' },
+      created_at: em(2026, 9, 30),
+    }),
+    bruto({
+      id: 'f5',
+      tipo: 'par',
+      nota_geral: 5,
+      status: 'pendente',
+      avaliador: { nome_completo: 'Rafael Mendes' },
+      created_at: em(2026, 9, 28),
+    }),
+    bruto({
+      id: 'f6',
+      tipo: 'subordinado',
+      nota_geral: 1,
+      status: 'pendente',
+      avaliador: { nome_completo: 'Mariana Oliveira' },
+      created_at: em(2026, 9, 22),
+    }),
   ],
   CONTEXTO
 );

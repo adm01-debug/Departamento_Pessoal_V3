@@ -1,0 +1,265 @@
+{
+  "390": {
+    "barra": {
+      "altura": 215
+    },
+    "fluxo": {
+      "linhas": 3,
+      "rolaHorizontal": false,
+      "larguraConteudo": 308,
+      "larguraDisponivel": 308,
+      "passos": 5,
+      "nomeTrunca": false,
+      "nomes": [
+        "Calculado 59/59",
+        "Em aprovação 83/83",
+        "Aprovado 58/58",
+        "Enviado à folha 87/87",
+        "Conciliado 63/63"
+      ],
+      "circulosUniformes": true,
+      "circulo": 34,
+      "setas": 4,
+      "setasAlinhadas": true
+    },
+    "resumo": {
+      "cardLargura": 342,
+      "donut": {
+        "w": 172,
+        "h": 172
+      },
+      "espessuraDoAnel": "16",
+      "xDoDonutNoCard": 85,
+      "centralizado": true,
+      "valorCentral": "R$ 10.620,50",
+      "valorY": "78",
+      "rotuloY": "97",
+      "centroGeometricoY": 86,
+      "legenda": [
+        "AprovadosR$ 2.200,00",
+        "PendentesR$ 7.050,50",
+        "PagosR$ 1.300,00",
+        "DivergênciasR$ 70,00"
+      ],
+      "linhasDaLegenda": 4,
+      "valoresADireita": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "rolagemDaPagina": true
+  },
+  "1024": {
+    "barra": {
+      "altura": 122
+    },
+    "fluxo": {
+      "linhas": 2,
+      "rolaHorizontal": false,
+      "larguraConteudo": 471,
+      "larguraDisponivel": 471,
+      "passos": 5,
+      "nomeTrunca": false,
+      "nomes": [
+        "Calculado 59/59",
+        "Em aprovação 83/83",
+        "Aprovado 58/58",
+        "Enviado à folha 87/87",
+        "Conciliado 63/63"
+      ],
+      "circulosUniformes": true,
+      "circulo": 34,
+      "setas": 4,
+      "setasAlinhadas": true
+    },
+    "resumo": {
+      "cardLargura": 720,
+      "donut": {
+        "w": 172,
+        "h": 172
+      },
+      "espessuraDoAnel": "16",
+      "xDoDonutNoCard": 274,
+      "centralizado": true,
+      "valorCentral": "R$ 10.620,50",
+      "valorY": "78",
+      "rotuloY": "97",
+      "centroGeometricoY": 86,
+      "legenda": [
+        "AprovadosR$ 2.200,00",
+        "PendentesR$ 7.050,50",
+        "PagosR$ 1.300,00",
+        "DivergênciasR$ 70,00"
+      ],
+      "linhasDaLegenda": 4,
+      "valoresADireita": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "rolagemDaPagina": true
+  },
+  "1280": {
+    "barra": {
+      "altura": 122
+    },
+    "fluxo": {
+      "linhas": 2,
+      "rolaHorizontal": false,
+      "larguraConteudo": 501,
+      "larguraDisponivel": 501,
+      "passos": 5,
+      "nomeTrunca": false,
+      "nomes": [
+        "Calculado 59/59",
+        "Em aprovação 83/83",
+        "Aprovado 58/58",
+        "Enviado à folha 87/87",
+        "Conciliado 63/63"
+      ],
+      "circulosUniformes": true,
+      "circulo": 34,
+      "setas": 4,
+      "setasAlinhadas": false
+    },
+    "resumo": {
+      "cardLargura": 212,
+      "donut": {
+        "w": 172,
+        "h": 172
+      },
+      "espessuraDoAnel": "16",
+      "xDoDonutNoCard": 20,
+      "centralizado": true,
+      "valorCentral": "R$ 10.620,50",
+      "valorY": "78",
+      "rotuloY": "97",
+      "centroGeometricoY": 86,
+      "legenda": [
+        "AprovadosR$ 2.200,00",
+        "PendentesR$ 7.050,50",
+        "PagosR$ 1.300,00",
+        "DivergênciasR$ 70,00"
+      ],
+      "linhasDaLegenda": 4,
+      "valoresADireita": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "rolagemDaPagina": false
+  },
+  "1400": {
+    "barra": {
+      "altura": 77
+    },
+    "fluxo": {
+      "linhas": 1,
+      "rolaHorizontal": false,
+      "larguraConteudo": 621,
+      "larguraDisponivel": 621,
+      "passos": 5,
+      "nomeTrunca": false,
+      "nomes": [
+        "Calculado 59/59",
+        "Em aprovação 83/83",
+        "Aprovado 58/58",
+        "Enviado à folha 87/87",
+        "Conciliado 63/63"
+      ],
+      "circulosUniformes": true,
+      "circulo": 34,
+      "setas": 4,
+      "setasAlinhadas": true
+    },
+    "resumo": {
+      "cardLargura": 212,
+      "donut": {
+        "w": 172,
+        "h": 172
+      },
+      "espessuraDoAnel": "16",
+      "xDoDonutNoCard": 20,
+      "centralizado": true,
+      "valorCentral": "R$ 10.620,50",
+      "valorY": "78",
+      "rotuloY": "97",
+      "centroGeometricoY": 86,
+      "legenda": [
+        "AprovadosR$ 2.200,00",
+        "PendentesR$ 7.050,50",
+        "PagosR$ 1.300,00",
+        "DivergênciasR$ 70,00"
+      ],
+      "linhasDaLegenda": 4,
+      "valoresADireita": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "rolagemDaPagina": false
+  },
+  "1456": {
+    "barra": {
+      "altura": 77
+    },
+    "fluxo": {
+      "linhas": 1,
+      "rolaHorizontal": false,
+      "larguraConteudo": 677,
+      "larguraDisponivel": 677,
+      "passos": 5,
+      "nomeTrunca": false,
+      "nomes": [
+        "Calculado 59/59",
+        "Em aprovação 83/83",
+        "Aprovado 58/58",
+        "Enviado à folha 87/87",
+        "Conciliado 63/63"
+      ],
+      "circulosUniformes": true,
+      "circulo": 34,
+      "setas": 4,
+      "setasAlinhadas": true
+    },
+    "resumo": {
+      "cardLargura": 212,
+      "donut": {
+        "w": 172,
+        "h": 172
+      },
+      "espessuraDoAnel": "16",
+      "xDoDonutNoCard": 20,
+      "centralizado": true,
+      "valorCentral": "R$ 10.620,50",
+      "valorY": "78",
+      "rotuloY": "97",
+      "centroGeometricoY": 86,
+      "legenda": [
+        "AprovadosR$ 2.200,00",
+        "PendentesR$ 7.050,50",
+        "PagosR$ 1.300,00",
+        "DivergênciasR$ 70,00"
+      ],
+      "linhasDaLegenda": 4,
+      "valoresADireita": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "rolagemDaPagina": false
+  },
+  "erros": [
+    "screenshot resumo 390: page.screenshot: Clipped area is either empty or outside the resulting image\nCal"
+  ]
+}

@@ -29,6 +29,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import { entradaCard } from './premiacoesEntrada';
+import { linhaTabelaVariants } from '@/components/ui/table-row-reveal';
 import { cn } from '@/lib/utils';
 import {
   indiceEntrada,
@@ -120,7 +121,14 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
               const aparencia = APARENCIA_ACAO[acao.tipo];
               const desde = tempoRelativo(acao.desde);
               return (
-                <motion.li key={acao.id} {...entradaCard(indiceEntrada('lateral', 1 + indiceAcao))}>
+                <motion.li
+                  key={acao.id}
+                  custom={indiceAcao}
+                  variants={linhaTabelaVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="origin-center"
+                >
                   <button
                     type="button"
                     onClick={() => onNavegar(acao.destino)}
@@ -154,7 +162,7 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
 
         {podeExpandir && (
           <motion.div
-            {...entradaCard(indiceEntrada('lateral', 1 + acoesVisiveis.length))}
+            {...entradaCard(acoesVisiveis.length)}
             className="mt-1.5 border-t border-border/30 pt-2"
           >
             <BotaoCabecalho onClick={() => setDetalheAberto(true)}>Ver todas as ações</BotaoCabecalho>
@@ -197,8 +205,11 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
                 // sendo o MESMO `li` flex, só recebe a entrada do Dashboard.
                 <motion.li
                   key={evento.id}
-                  {...entradaCard(indiceEntrada('lateral', 7 + indiceEvento))}
-                  className="flex items-center gap-3 px-1.5 py-2"
+                  custom={indiceEvento}
+                  variants={linhaTabelaVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex origin-center items-center gap-3 px-1.5 py-2"
                 >
                   {evento.responsavel ? (
                     <span

@@ -33,9 +33,11 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AppPagination } from '@/components/ui/app-pagination';
 import { Button } from '@/components/ui/button';
+import { CascadeTableRow } from '@/components/ui/cascade-table';
+import { tomDoAvatar } from '@/lib/avatarTons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { entradaCard } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
@@ -88,6 +90,22 @@ function acaoPrincipal(status: string): { label: string; Icone: LucideIcon } {
   if (status === 'suspenso') return { label: 'Ver campanha', Icone: ArrowRight };
   return { label: 'Revisar campanha', Icone: ChevronRight };
 }
+
+/**
+ * IDENTIDADE ÚNICA dos botões da coluna Ações: azul-ciano do Design System
+ * (`--info` = `hsl(199 89% 50%)` ≈ `#0EA5E9`), com fundo translúcido, borda
+ * discreta e texto/ícone na mesma cor. Vale para TODAS as ações principais da
+ * coluna (Revisar campanha, Ver campanha, Ver resultados, Continuar edição…),
+ * independentemente do status da campanha — o que muda de um botão para outro é
+ * só o texto e o ícone.
+ *
+ * Hover: fundo um passo mais intenso e borda com mais contraste, com transição
+ * de cor de 200ms `ease-in-out`, sem deslocar nem alterar dimensões. O estado
+ * desabilitado continua com o tratamento neutro do próprio `Button` do DS
+ * (`disabled:opacity-50` + `pointer-events-none`), preservando as permissões.
+ */
+const TOM_BOTAO_ACOES =
+  'border-info/40 bg-info/10 text-info transition-colors duration-200 ease-in-out hover:border-info/60 hover:bg-info/20 hover:text-info';
 
 /**
  * Situação temporal da coluna Período — sempre calculada das datas reais.
@@ -166,10 +184,16 @@ function PilhaAvatares({ nomes, total }: { nomes: string[]; total: number }) {
     <div className="flex flex-col gap-1.5">
       <div className="flex -space-x-[6px]">
         {visiveis.map((nome, indice) => (
+          /* Mesma paleta estável do UserAvatar (`tomDoAvatar`): a mesma pessoa
+             tem a mesma cor em qualquer lugar do sistema, com iniciais legíveis
+             no navy — antes todas eram cinza sobre cinza. */
           <span
             key={`${nome}-${indice}`}
             title={nome}
-            className="flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border-2 border-card bg-muted text-[9px] font-semibold text-muted-foreground"
+            className={cn(
+              'flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border-2 border-card text-[9px] font-semibold',
+              tomDoAvatar(nome),
+            )}
           >
             {iniciaisDe(nome)}
           </span>
@@ -217,7 +241,14 @@ function LinhaCampanha({
     linha.pctOrcamento === null ? 'bg-muted' : linha.pctOrcamento > 100 ? 'bg-warning' : 'bg-info';
 
   return (
-    <motion.tr {...entradaCard(indice)} className="align-middle transition-colors hover:bg-accent/5">
+    /* Linha da cascata compartilhada (`ui/cascade-table`) — a MESMA animação da
+       lista de Processos de Desligamentos: opacity + y(10px) + scaleX(0.94→1)
+       abrindo do centro, 0,8s, atraso `0,52s + índice × 0,04s`, ease
+       [0.22, 1, 0.36, 1]. O hover da linha (fundo escurecendo) continua igual. */
+    <CascadeTableRow
+      index={indice}
+      className="align-middle transition-colors duration-200 ease-in-out hover:bg-background"
+    >
       {/* Campanha */}
       <td className="px-2 py-[26px]">
         <div className="flex items-center gap-2.5">
@@ -337,7 +368,10 @@ function LinhaCampanha({
             variant="outline"
             size="sm"
             onClick={() => onAbrirDetalhes(linha)}
-            className="h-9 gap-1 whitespace-nowrap rounded-xl border-border/50 bg-transparent px-1 text-[10px] font-medium hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+            className={cn(
+              'h-9 gap-1 whitespace-nowrap rounded-xl px-1 text-[10px] font-medium',
+              TOM_BOTAO_ACOES,
+            )}
           >
             {acao.label}
             <acao.Icone className="h-3 w-3" />
@@ -364,7 +398,7 @@ function LinhaCampanha({
           </DropdownMenu>
         </div>
       </td>
-    </motion.tr>
+    </CascadeTableRow>
   );
 }
 
@@ -394,6 +428,14 @@ export function CampanhaTabela({
   const colunaOrdenada = ORDENACAO_POR_COLUNA[ordenacaoAtual];
   const exibidos = linhas.length;
 
+  /**
+   * Identidade da lista visível (página + ordenação + registros): é a `key` do
+   * `<tbody>`. Quando o conjunto/ordem muda a cascata toca de novo; hover,
+   * clique e re-render não mudam a chave, então a animação não reinicia à toa —
+   * o MESMO mecanismo da lista de Processos de Desligamentos.
+   */
+  const chaveCascata = [pagina, ordenacaoAtual, ...linhas.map((l) => l.campanha.id)].join('|');
+
   return (
     <motion.section
       {...entradaCard(indiceEntrada('tabela', 0))}
@@ -409,7 +451,8 @@ export function CampanhaTabela({
             ))}
           </colgroup>
           <thead>
-            <motion.tr {...entradaCard(indiceEntrada('tabela', 1))} className="border-b border-border/40 bg-muted/20">
+            {/* Cabeçalho NÃO anima (na referência só as linhas entram em cascata). */}
+            <tr className="border-b border-border/40 bg-muted/20">
               {COLUNAS.map((coluna) => (
                 <th
                   key={coluna.id}
@@ -437,33 +480,38 @@ export function CampanhaTabela({
                   </span>
                 </th>
               ))}
-            </motion.tr>
+            </tr>
           </thead>
-          <tbody className="divide-y divide-border/25">
-            {linhas.map((linha, indiceLinha) => (
-              <LinhaCampanha
-                key={linha.campanha.id}
-                linha={linha}
-                indice={indiceEntrada('tabela', 2 + indiceLinha)}
-                onAbrirDetalhes={onAbrirDetalhes}
-                onVerPagamentos={onVerPagamentos}
-                onExportar={onExportar}
-              />
-            ))}
+          {/* Corpo em cascata — mesmo mecanismo de `CascadeTableBody`
+              (Processos/Desligamentos): `AnimatePresence` local + `key` que muda
+              quando a lista troca de identidade (página, ordenação, filtros). */}
+          <AnimatePresence>
+            <tbody key={chaveCascata} className="divide-y divide-border/25">
+              {linhas.map((linha, indiceLinha) => (
+                <LinhaCampanha
+                  key={linha.campanha.id}
+                  linha={linha}
+                  indice={indiceLinha}
+                  onAbrirDetalhes={onAbrirDetalhes}
+                  onVerPagamentos={onVerPagamentos}
+                  onExportar={onExportar}
+                />
+              ))}
 
-            {exibidos === 0 && (
-              <motion.tr {...entradaCard(indiceEntrada('tabela', 2))}>
-                <td colSpan={COLUNAS.length} className="px-4 py-12 text-center">
-                  <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
-                      <Trophy className="h-4 w-4" />
-                    </span>
-                    <p className="text-xs font-medium">{mensagemVazia}</p>
-                  </div>
-                </td>
-              </motion.tr>
-            )}
-          </tbody>
+              {exibidos === 0 && (
+                <CascadeTableRow index={0}>
+                  <td colSpan={COLUNAS.length} className="px-4 py-12 text-center">
+                    <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
+                        <Trophy className="h-4 w-4" />
+                      </span>
+                      <p className="text-xs font-medium">{mensagemVazia}</p>
+                    </div>
+                  </td>
+                </CascadeTableRow>
+              )}
+            </tbody>
+          </AnimatePresence>
         </table>
       </div>
 
@@ -473,7 +521,7 @@ export function CampanhaTabela({
           flex e, sem ele, encolheria ao próprio conteúdo, deixando o
           `justify-between` sem efeito). */}
       <motion.footer
-        {...entradaCard(indiceEntrada('tabela', 2 + linhas.length))}
+        {...entradaCard(linhas.length)}
         className="flex h-[56px] items-center border-t border-border/40 px-4"
       >
         <AppPagination

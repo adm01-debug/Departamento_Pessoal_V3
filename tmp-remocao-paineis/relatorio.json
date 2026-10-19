@@ -1,0 +1,28 @@
+{
+  "bandaRejeitadosNaAba": 0,
+  "painelGerencialNaAba": 0,
+  "tabelasNaAba": 1,
+  "lateraisNaAba": 3,
+  "fimDaAba": {
+    "alturaAba": 1286,
+    "ultimoVisivel": "div bottom=1498",
+    "folgaFinal": 0
+  },
+  "linhaRejeitadaExiste": true,
+  "acaoDaLinhaRejeitada": "Reiniciar fluxo",
+  "kebabDaRejeitadaTemReiniciar": true,
+  "dialogoReinicio": "Reiniciar Fluxo\n\nO pagamento volta ao primeiro estágio da cadeia (Aguardando gestor).\n\nThiago Almeida Rocha\n\nBônus por Meta de Produção\n\nR$ 900,00\n\nPRÓXIMO ESTÁ",
+  "auditoria": {
+    "painelGerencial": 1,
+    "subtitulo": 1,
+    "filtros": 3,
+    "botoesCsvPdf": [
+      1,
+      1
+    ],
+    "tabelas": 2,
+    "linhasDoPainel": 18,
+    "trilha": 1
+  },
+  "erros": []
+}

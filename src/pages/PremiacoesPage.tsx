@@ -21,9 +21,6 @@ import {
   ChevronRight,
   Clock,
   DollarSign,
-  Download,
-  FileText,
-  Filter,
   History,
   Layers,
   Plus,
@@ -37,11 +34,13 @@ import { premiacoesService } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
-import { RewardsApprovalHub } from '@/components/premiacoes/RewardsApprovalHub';
 import { CampaignWizard } from '@/components/premiacoes/CampaignWizard';
 import { CampanhaTabela } from '@/components/premiacoes/CampanhaTabela';
 import { CampanhaLateral } from '@/components/premiacoes/CampanhaLateral';
 import { CampanhaDetalhesDialog } from '@/components/premiacoes/CampanhaDetalhesDialog';
+import { Indicador } from '@/components/premiacoes/IndicadorPremiacoes';
+import { PagamentosTab } from '@/components/premiacoes/PagamentosTab';
+import { PainelAuditoriaRoi } from '@/components/premiacoes/PainelAuditoriaRoi';
 import {
   FILTROS_HUB_INICIAIS,
   ORDENACAO_ROTULOS,
@@ -115,82 +114,10 @@ const OPCOES_PERIODO: { valor: FiltroPeriodoCampanha; label: string }[] = [
   { valor: 'ano_atual', label: 'Ano atual' },
 ];
 
-/* ─── Indicadores (blocos compactos da faixa superior) ─────────────────────── */
+/* ─── Indicadores (blocos compactos da faixa superior) ──────────────────────
+ * O componente do cartão mora em `premiacoes/IndicadorPremiacoes.tsx` — é o
+ * MESMO cartão usado pelos indicadores financeiros da aba Pagamentos. */
 
-interface IndicadorProps {
-  titulo: string;
-  valor: string;
-  icone: typeof Trophy;
-  caixa: string;
-  /** Texto secundário (sempre derivado de dados reais). */
-  rodape?: React.ReactNode;
-  rodapeClasse?: string;
-  destaque?: boolean;
-  /** Índice na cascata de entrada do grupo dos KPIs (ver `premiacoesComum`). */
-  indice?: number;
-}
-
-/**
- * Bloco de indicador (especificação §6) — padronizado com os KPI Cards do
- * módulo Desligamentos (`dashboard/MetricCard`, variante `dense`):
- *  · cartão com o MESMO padrão dimensional — padding `p-3`, `gap-2.5` entre o
- *    ícone e o bloco de informações, contêiner de ícone 36×36 à ESQUERDA;
- *  · pilha de texto com 4px entre as linhas (título 11px · valor 24px com
- *    `leading-6`, a MESMA linha de 24px do `text-data` · complemento 10px);
- *  · 5 colunas uniformes e todos os cards na MESMA altura (o grid estica);
- *  · título longo trunca (`truncate`) em vez de empurrar o valor para baixo;
- *  · a ENTRADA é a MESMA linguagem dos KPI Cards do Dashboard Executivo
- *    (`entradaCard`) com a cadência própria do hub (`premiacoesEntrada.ts`).
- */
-function Indicador({
-  titulo,
-  valor,
-  icone: Icone,
-  caixa,
-  rodape,
-  rodapeClasse,
-  destaque,
-  indice = 0,
-}: IndicadorProps) {
-  return (
-    <motion.div
-      {...entradaCard(indice)}
-      className={cn(
-        'flex min-w-0 items-center gap-2.5 rounded-[14px] border p-3',
-        destaque
-          ? // Alerta (§6.4): o CARD INTEIRO recebe a tinta vermelho-escura
-            // TRANSLÚCIDA (não só a borda) — gradiente discreto no lugar do fundo
-            // neutro e contorno de baixo contraste, como na referência.
-            // `--destructive` é o token de perigo do tema (no noturno ele já é o
-            // vermelho profundo), então o tom acompanha claro/escuro sozinho.
-            'border-destructive/30 bg-gradient-to-br from-destructive/25 to-destructive/[0.15]'
-          : 'border-border/50 bg-gradient-to-b from-card to-card/60',
-      )}
-    >
-      <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', caixa)}>
-        <Icone className="h-[18px] w-[18px]" />
-      </span>
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="truncate text-[11px] font-medium leading-[17px] text-muted-foreground" title={titulo}>
-          {titulo}
-        </p>
-        <p className="text-[24px] font-semibold leading-6 tracking-tight text-foreground">{valor}</p>
-        {rodape && (
-          // Linha de apoio com a MESMA estrutura do `MetricCard` de Desligamentos
-          // (wrapper flex + span de 10px), o que reproduz também a altura exata
-          // da linha e mantém os cinco cards idênticos ao padrão de referência.
-          <div className="flex min-w-0 flex-wrap items-center">
-            <span
-              className={cn('text-pretty text-[10px] font-normal', rodapeClasse ?? 'text-muted-foreground')}
-            >
-              {rodape}
-            </span>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
-}
 
 export default function PremiacoesPage() {
   const { empresaAtual } = useEmpresas();
@@ -369,7 +296,8 @@ export default function PremiacoesPage() {
               ativa como pílula escura que desliza, ícone lime e texto claro),
               preservando ícones e rótulos próprios de Campanhas. O botão Exportar
               saiu desta barra (não existe na referência) — a exportação continua
-              acessível pelas ações da tabela e pelo painel gerencial de Pagamentos. */}
+              acessível pelas ações da tabela de Campanhas e pelos botões CSV/PDF
+              do Painel Gerencial de Auditoria (aba Auditoria). */}
           <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
             {/* Wrapper = ITEM FLEX da linha (o `AnimatedTabsList` renderiza um
                 `div` por fora das classes de `containerClassName`, então o
@@ -414,7 +342,11 @@ export default function PremiacoesPage() {
             </motion.div>
           </div>
           {/* 2 · Indicadores + visão geral (§6): uma linha, cartões compactos com
-              ícone à esquerda e informação à direita */}
+              ícone à esquerda e informação à direita.
+              Só nas abas que falam de CAMPANHAS: a aba Pagamentos tem a própria
+              faixa de indicadores FINANCEIROS (IMAGEM 4 — quatro cartões do mesmo
+              padrão dimensional), então a faixa genérica não é duplicada lá. */}
+          {activeTab !== 'pagamentos' && (
           <div className="grid min-w-0 grid-cols-1 gap-3 min-[640px]:grid-cols-2 min-[1024px]:grid-cols-3 min-[1440px]:grid-cols-5">
             <Indicador
               indice={indiceEntrada('kpis', 0)}
@@ -517,6 +449,7 @@ export default function PremiacoesPage() {
               </div>
             </motion.div>
           </div>
+          )}
 
           <TabsContent value="campanhas" className="space-y-3.5">
             {/* 3 · Busca, filtros rápidos, ordenação e período (§7).
@@ -668,123 +601,36 @@ export default function PremiacoesPage() {
           </TabsContent>
 
           <TabsContent value="pagamentos" className="space-y-6">
-            <RewardsApprovalHub pagamentos={pagamentos} />
+            {/* Aba Pagamentos — nova composição (IMAGEM 4): cabeçalho próprio,
+                quatro indicadores financeiros, fluxo horizontal, filtros, tabela
+                e coluna lateral (resumo, próximas ações e atividade). As escritas
+                e os filtros são os MESMOS do quadro de aprovação anterior. */}
+            <PagamentosTab
+              pagamentos={pagamentos}
+              auditoria={auditoria}
+              campanhas={campanhas}
+              onNavegar={irParaAba}
+            />
             
-            <Card className="border-border/30 rounded-2xl overflow-hidden shadow-xs mt-8 bg-card/50 backdrop-blur-xs">
-              <CardHeader className="bg-muted/30 border-b border-border/10 p-6">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                  <div>
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" />
-                      Painel Gerencial de Auditoria & ROI v1.2
-                    </CardTitle>
-                    <CardDescription className="text-[10px] uppercase tracking-widest mt-1">Dados consolidados com snapshot de metas e conciliação</CardDescription>
-                  </div>
-                  <div className="flex flex-wrap gap-2 w-full md:w-auto">
-                    <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
-                      <Filter className="h-3 w-3 text-muted-foreground" />
-                      <select 
-                        className="bg-transparent text-[10px] font-medium outline-hidden border-none"
-                        value={periodoFiltro}
-                        onChange={(e) => setPeriodoFiltro(e.target.value)}
-                      >
-                        <option>Todos os Períodos</option>
-                        <option>Maio 2026</option>
-                        <option>Abril 2026</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
-                      <select 
-                        className="bg-transparent text-[10px] font-medium outline-hidden border-none"
-                        value={unidadeFiltro}
-                        onChange={(e) => setUnidadeFiltro(e.target.value)}
-                      >
-                        <option>Todas as Unidades</option>
-                        <option>Matriz</option>
-                        <option>Filial Sul</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
-                      <select 
-                        className="bg-transparent text-[10px] font-medium outline-hidden border-none"
-                        value={faixaMetaFiltro}
-                        onChange={(e) => setFaixaMetaFiltro(e.target.value)}
-                      >
-                        <option>Todas as Metas</option>
-                          <option>Meta {'>'} 100%</option>
-                          <option>Meta {'>'} 120%</option>
-                      </select>
-                    </div>
-                    <Button variant="outline" size="sm" className="h-9 text-[10px] font-medium uppercase rounded-xl" onClick={() => handleExport('csv')}>
-                      <Download className="mr-1 h-3 w-3" /> CSV
-                    </Button>
-                    <Button variant="outline" size="sm" className="h-9 text-[10px] font-medium uppercase rounded-xl" onClick={() => handleExport('pdf')}>
-                      <FileText className="mr-1 h-3 w-3" /> PDF
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/10 border-b border-border/5">
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Colaborador</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Campanha</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Valor Aprovado</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Folha Real</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Status / Justificativa</th>
-                        <th className="text-right p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Auditoria</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/5">
-                      {pagamentos.map((p: any) => (
-                        <tr key={p.id} className="hover:bg-accent/5 transition-colors group">
-                          <td className="p-4">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium text-xs">{p.colaborador?.nome_completo}</span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <Badge variant="outline" className="text-[9px] font-medium border-border/50">{p.campanha?.nome}</Badge>
-                          </td>
-                          <td className="p-4 font-mono font-medium text-xs">
-                            {formatCurrency(p.valor_aprovado || p.valor_calculado)}
-                          </td>
-                          <td className="p-4 font-mono font-medium text-xs text-muted-foreground">
-                            {p.valor_folha_real ? formatCurrency(p.valor_folha_real) : '—'}
-                          </td>
-                          <td className="p-4">
-                            <div className="flex flex-col gap-1">
-                              <Badge className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-full w-fit ${
-                                p.status_conciliacao === 'conciliado' ? 'bg-success/10 text-success' : 
-                                p.status_conciliacao === 'divergente' ? 'bg-amber-500/10 text-amber-500' : 
-                                'bg-muted text-muted-foreground'
-                              }`}>
-                                {p.status_conciliacao || 'pendente'}
-                              </Badge>
-                              {p.justificativa_divergencia && (
-                                <span className="text-[9px] text-muted-foreground italic truncate max-w-[150px]" title={p.justificativa_divergencia}>
-                                  "{p.justificativa_divergencia}"
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="p-4 text-right">
-                            <Button variant="ghost" size="icon" aria-label="Histórico" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <History className="h-3 w-3" />
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
           <TabsContent value="auditoria" className="space-y-6">
+            {/* Painel Gerencial de Auditoria & ROI v1.2 — REALOCADO da aba
+                Pagamentos para a aba de AUDITORIA (o lugar dele, ao lado da
+                trilha). A implementação é a MESMA (`PainelAuditoriaRoi`):
+                filtros de período/unidade/meta, exportação CSV/PDF e a tabela
+                consolidada sobre os pagamentos reais. */}
+            <PainelAuditoriaRoi
+              pagamentos={pagamentos}
+              periodoFiltro={periodoFiltro}
+              unidadeFiltro={unidadeFiltro}
+              faixaMetaFiltro={faixaMetaFiltro}
+              onPeriodoFiltroChange={setPeriodoFiltro}
+              onUnidadeFiltroChange={setUnidadeFiltro}
+              onFaixaMetaFiltroChange={setFaixaMetaFiltro}
+              onExportar={handleExport}
+            />
+
             <Card className="border-border/30 rounded-2xl overflow-hidden shadow-xs">
               <CardHeader className="bg-muted/30 border-b border-border/30 py-4">
                 <div className="flex items-center gap-2">

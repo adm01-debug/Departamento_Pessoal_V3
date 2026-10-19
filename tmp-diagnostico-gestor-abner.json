@@ -1,0 +1,34 @@
+{
+  "sessaoE2E": {
+    "email": "admin@teste.local",
+    "uid": "ed8ba796-912b-4e72-ab12-6f63555b26e1"
+  },
+  "papeisDoSessao": {
+    "status": 200,
+    "corpo": "[\"admin\"]"
+  },
+  "papeisDaContaAlvo": {
+    "status": 200,
+    "corpo": "[\"admin\",\"gestor\"]"
+  },
+  "vinculoDaContaAlvo": {
+    "status": 200,
+    "corpo": "[]"
+  },
+  "descartavelHomologacao": {
+    "status": 200,
+    "corpo": "[{\"id\":\"0f303507-5b13-4ca2-aa76-16122b5b37e9\",\"nome_completo\":\"HOMOLOG-NB Colaborador Descartavel\",\"empresa_id\":\"66104399-aba8-4105-bbd3-9bf67820c1d0\",\"user_id\":null,\"supervisor_id\":null,\"cpf\":\"00000000000\"}]"
+  },
+  "colaboradoresDaEmpresa": {
+    "status": 200,
+    "corpo": "[{\"id\":\"d05818dd-1f98-402c-8255-84d07375b598\",\"nome_completo\":\"João Batista Rosa \",\"empresa_id\":\"66104399-aba8-4105-bbd3-9bf67820c1d0\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"0f303507-5b13-4ca2-aa76-16122b5b37e9\",\"nome_completo\":\"HOMOLOG-NB Colaborador Descartavel\",\"empresa_id\":\"66104399-aba8-4105-bbd3-9bf67820c1d0\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"11110000-0000-0000-0000-000000000001\",\"nome_completo\":\"Ana Silva Santos\",\"empresa_id\":\"66104399-aba8-4105-bbd3-9bf67820c1d0\",\"user_id\":null,\"supervisor_id\":null}, \n {\"id\":\"11110000-0000-0000-0000-000000000002\",\"nome_completo\":\"J"
+  },
+  "avaliacoesGestorConcluidas": {
+    "status": 200,
+    "corpo": "[]"
+  },
+  "colaboradorDoVinculoDaContaAlvo": {
+    "status": 404,
+    "corpo": "{\"code\":\"PGRST202\",\"details\":\"Searched for the function public.pode_aprovar_colaborador with parameter _colaborador_id or with a single unnamed json/jsonb parameter, but no matches were found in the schema cache.\",\"hint\":\"Perhaps you meant to call the function public.sou_o_colaborador\",\"message\":\"Could not find the function public.pode_aprovar_colaborador(_colaborador_id) in the schema cache\"}"
+  }
+}

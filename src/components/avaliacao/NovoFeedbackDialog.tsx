@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { ROTULO_TIPO_FEEDBACK, type TipoFeedback } from './feedbacksComum';
+import type { FeedbackCanonico } from './feedbackCanonico';
 // A coreografia é a MESMA da janela "Pendências" — a cadeia é
 // `PendenciasDialog` → `AnimatedCascadeDialog` → estas variants. Importar da
 // fonte é o que garante movimento IDÊNTICO (nada de réplica local com números
@@ -76,6 +77,11 @@ interface NovoFeedbackDialogProps {
   ciclos: { id: string; nome: string }[];
   /** Ciclo pré-selecionado (o que está em foco na aba). */
   cicloIdPadrao?: string;
+  /**
+   * EDIÇÃO: registro canônico já carregado. Presente, o MESMO formulário abre
+   * preenchido (não existe segundo modal) e o texto do rodapé muda.
+   */
+  registro?: FeedbackCanonico | null;
   onSubmit: (dados: Record<string, unknown>) => void;
   salvando?: boolean;
 }
@@ -86,24 +92,34 @@ export function NovoFeedbackDialog({
   colaboradores,
   ciclos,
   cicloIdPadrao,
+  registro = null,
   onSubmit,
   salvando = false,
 }: NovoFeedbackDialogProps) {
-  const [avaliadoId, setAvaliadoId] = useState('');
-  const [avaliadorId, setAvaliadorId] = useState('');
-  const [tipo, setTipo] = useState<TipoFeedback>('gestor');
-  const [nota, setNota] = useState('4');
-  const [potencial, setPotencial] = useState('4');
-  const [cicloId, setCicloId] = useState(cicloIdPadrao ?? '');
-  const [pontosFortes, setPontosFortes] = useState('');
-  const [pontosMelhoria, setPontosMelhoria] = useState('');
-  const [comentarios, setComentarios] = useState('');
+  const emEdicao = Boolean(registro);
+  /**
+   * Valores iniciais vêm do REGISTRO quando há edição. O pai remonta este
+   * diálogo com `key` por registro (ver `FeedbacksTab`), então o preenchimento
+   * acontece na montagem — sem efeito e sem cópia de estado.
+   */
+  const inicial = (registro?.feedback ?? {}) as Record<string, unknown>;
+  const [avaliadoId, setAvaliadoId] = useState(() => String(inicial.avaliado_id ?? ''));
+  const [avaliadorId, setAvaliadorId] = useState(() => String(inicial.avaliador_id ?? ''));
+  const [tipo, setTipo] = useState<TipoFeedback>(() => registro?.tipo ?? 'gestor');
+  const [nota, setNota] = useState(() => String(inicial.nota_geral ?? '4'));
+  const [potencial, setPotencial] = useState(() => String(inicial.potencial ?? '4'));
+  const [cicloId, setCicloId] = useState(() =>
+    registro ? String(inicial.ciclo_id ?? '') : String(cicloIdPadrao ?? '')
+  );
+  const [pontosFortes, setPontosFortes] = useState(() => String(inicial.pontos_fortes ?? ''));
+  const [pontosMelhoria, setPontosMelhoria] = useState(() => String(inicial.pontos_melhoria ?? ''));
+  const [comentarios, setComentarios] = useState(() => String(inicial.comentarios ?? ''));
 
   const podeSalvar = Boolean(avaliadoId && avaliadorId) && !salvando;
 
   const enviar = () => {
     if (!podeSalvar) return;
-    onSubmit({
+    const dados = {
       avaliado_id: avaliadoId,
       avaliador_id: avaliadorId,
       tipo,
@@ -113,12 +129,20 @@ export function NovoFeedbackDialog({
       pontos_fortes: pontosFortes.trim(),
       pontos_melhoria: pontosMelhoria.trim(),
       comentarios: comentarios.trim(),
+      /**
+       * EDIÇÃO de registro concluído REABRE de forma explícita (status volta a
+       * `pendente`) — nunca alteração silenciosa. A aprovação anterior deixa de
+       * valer porque a versão consolidada do conjunto muda.
+       */
       status: 'pendente',
-    });
+    };
+    onSubmit(dados);
     onOpenChange(false);
-    setPontosFortes('');
-    setPontosMelhoria('');
-    setComentarios('');
+    if (!emEdicao) {
+      setPontosFortes('');
+      setPontosMelhoria('');
+      setComentarios('');
+    }
   };
 
   // Variants da referência (fonte única): o número de blocos só recalcula o
@@ -172,131 +196,143 @@ export function NovoFeedbackDialog({
                 >
                   <motion.div variants={cascadeItemVariants}>
                     <DialogHeader>
-                      <DialogTitle className="font-display text-base">Novo feedback</DialogTitle>
+                      <DialogTitle className="font-display text-base">
+                        {emEdicao ? 'Editar feedback' : 'Novo feedback'}
+                      </DialogTitle>
                       <DialogDescription className="text-[11px]">
-                        O registro entra como{' '}
-                        <span className="font-medium text-foreground">pendente</span> no ciclo escolhido.
+                        {emEdicao ? (
+                          <>
+                            As alterações são salvas no registro. Se a avaliação já estava concluída, ela volta para{' '}
+                            <span className="font-medium text-foreground">pendente</span> e as aprovações anteriores são
+                            invalidadas.
+                          </>
+                        ) : (
+                          <>
+                            O registro entra como <span className="font-medium text-foreground">pendente</span> no ciclo
+                            escolhido.
+                          </>
+                        )}
                       </DialogDescription>
                     </DialogHeader>
                   </motion.div>
 
-        {/* Grade de campos — item da cascata, com as variants da referência. */}
-        <motion.div variants={cascadeItemVariants} className="grid gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Avaliado</Label>
-            <Select value={avaliadoId} onValueChange={setAvaliadoId}>
-              <SelectTrigger aria-label="Avaliado" className="h-9 rounded-lg">
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                {colaboradores.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.nome_completo}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                  {/* Grade de campos — item da cascata, com as variants da referência. */}
+                  <motion.div variants={cascadeItemVariants} className="grid gap-3 sm:grid-cols-2">
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Avaliado</Label>
+                      <Select value={avaliadoId} onValueChange={setAvaliadoId}>
+                        <SelectTrigger aria-label="Avaliado" className="h-9 rounded-lg">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {colaboradores.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.nome_completo}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Avaliador</Label>
-            <Select value={avaliadorId} onValueChange={setAvaliadorId}>
-              <SelectTrigger aria-label="Avaliador do feedback" className="h-9 rounded-lg">
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                {colaboradores.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.nome_completo}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Avaliador</Label>
+                      <Select value={avaliadorId} onValueChange={setAvaliadorId}>
+                        <SelectTrigger aria-label="Avaliador do feedback" className="h-9 rounded-lg">
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {colaboradores.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.nome_completo}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Tipo</Label>
-            <Select value={tipo} onValueChange={(v) => setTipo(v as TipoFeedback)}>
-              <SelectTrigger aria-label="Tipo de feedback" className="h-9 rounded-lg">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {TIPOS.map((t) => (
-                  <SelectItem key={t} value={t}>
-                    {ROTULO_TIPO_FEEDBACK[t]}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Tipo</Label>
+                      <Select value={tipo} onValueChange={(v) => setTipo(v as TipoFeedback)}>
+                        <SelectTrigger aria-label="Tipo de feedback" className="h-9 rounded-lg">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIPOS.map((t) => (
+                            <SelectItem key={t} value={t}>
+                              {ROTULO_TIPO_FEEDBACK[t]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Ciclo</Label>
-            <Select value={cicloId || '__vazio'} onValueChange={(v) => setCicloId(v === '__vazio' ? '' : v)}>
-              <SelectTrigger aria-label="Ciclo do feedback" className="h-9 rounded-lg">
-                <SelectValue placeholder="Sem ciclo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__vazio">Sem ciclo</SelectItem>
-                {ciclos.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Ciclo</Label>
+                      <Select value={cicloId || '__vazio'} onValueChange={(v) => setCicloId(v === '__vazio' ? '' : v)}>
+                        <SelectTrigger aria-label="Ciclo do feedback" className="h-9 rounded-lg">
+                          <SelectValue placeholder="Sem ciclo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__vazio">Sem ciclo</SelectItem>
+                          {ciclos.map((c) => (
+                            <SelectItem key={c.id} value={c.id}>
+                              {c.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Nota (1–5)</Label>
-            <Input
-              type="number"
-              min={1}
-              max={5}
-              value={nota}
-              onChange={(e) => setNota(e.target.value)}
-              className="h-9"
-            />
-          </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Nota (1–5)</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={nota}
+                        onChange={(e) => setNota(e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Potencial (1–5)</Label>
-            <Input
-              type="number"
-              min={1}
-              max={5}
-              value={potencial}
-              onChange={(e) => setPotencial(e.target.value)}
-              className="h-9"
-            />
-          </div>
-        </motion.div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Potencial (1–5)</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={5}
+                        value={potencial}
+                        onChange={(e) => setPotencial(e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
+                  </motion.div>
 
-        <motion.div variants={cascadeItemVariants} className="space-y-3">
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Pontos fortes</Label>
-            <Textarea rows={2} value={pontosFortes} onChange={(e) => setPontosFortes(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Pontos de melhoria</Label>
-            <Textarea rows={2} value={pontosMelhoria} onChange={(e) => setPontosMelhoria(e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-[11px]">Comentários</Label>
-            <Textarea rows={3} value={comentarios} onChange={(e) => setComentarios(e.target.value)} />
-          </div>
-        </motion.div>
+                  <motion.div variants={cascadeItemVariants} className="space-y-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Pontos fortes</Label>
+                      <Textarea rows={2} value={pontosFortes} onChange={(e) => setPontosFortes(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Pontos de melhoria</Label>
+                      <Textarea rows={2} value={pontosMelhoria} onChange={(e) => setPontosMelhoria(e.target.value)} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[11px]">Comentários</Label>
+                      <Textarea rows={3} value={comentarios} onChange={(e) => setComentarios(e.target.value)} />
+                    </div>
+                  </motion.div>
 
-        <motion.div variants={cascadeItemVariants}>
-          <DialogFooter>
-            <Button variant="outline" size="sm" className="h-9" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
-            <Button size="sm" className="h-9" onClick={enviar} disabled={!podeSalvar}>
-              {salvando ? 'Salvando...' : 'Salvar feedback'}
-            </Button>
-          </DialogFooter>
-        </motion.div>
+                  <motion.div variants={cascadeItemVariants}>
+                    <DialogFooter>
+                      <Button variant="outline" size="sm" className="h-9" onClick={() => onOpenChange(false)}>
+                        Cancelar
+                      </Button>
+                      <Button size="sm" className="h-9" onClick={enviar} disabled={!podeSalvar}>
+                        {salvando ? 'Salvando...' : emEdicao ? 'Salvar alterações' : 'Salvar feedback'}
+                      </Button>
+                    </DialogFooter>
+                  </motion.div>
                 </motion.div>
               </motion.div>
             </DialogPrimitive.Content>

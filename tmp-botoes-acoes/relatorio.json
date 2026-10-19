@@ -1,0 +1,87 @@
+{
+  "normal": [
+    {
+      "rotulo": "Revisar campanha",
+      "fundo": "oklab(0.698371 -0.0806345 -0.129937 / 0.1)",
+      "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.4) 1px",
+      "texto": "rgb(14, 169, 241)",
+      "icone": "rgb(14, 169, 241)",
+      "raio": "12px",
+      "fonte": "10px/500",
+      "caixa": "113x36",
+      "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "fundoDoBadgeDaCampanha": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+      "barra": null
+    },
+    {
+      "rotulo": "Ver campanha",
+      "fundo": "oklab(0.698371 -0.0806345 -0.129937 / 0.1)",
+      "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.4) 1px",
+      "texto": "rgb(14, 169, 241)",
+      "icone": "rgb(14, 169, 241)",
+      "raio": "12px",
+      "fonte": "10px/500",
+      "caixa": "94x36",
+      "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "fundoDoBadgeDaCampanha": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+      "barra": null
+    },
+    {
+      "rotulo": "Ver campanha",
+      "fundo": "oklab(0.698371 -0.0806345 -0.129937 / 0.1)",
+      "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.4) 1px",
+      "texto": "rgb(14, 169, 241)",
+      "icone": "rgb(14, 169, 241)",
+      "raio": "12px",
+      "fonte": "10px/500",
+      "caixa": "94x36",
+      "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "fundoDoBadgeDaCampanha": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+      "barra": null
+    },
+    {
+      "rotulo": "Ver resultados",
+      "fundo": "oklab(0.698371 -0.0806345 -0.129937 / 0.1)",
+      "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.4) 1px",
+      "texto": "rgb(14, 169, 241)",
+      "icone": "rgb(14, 169, 241)",
+      "raio": "12px",
+      "fonte": "10px/500",
+      "caixa": "94x36",
+      "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+      "fundoDoBadgeDaCampanha": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+      "barra": null
+    }
+  ],
+  "comHover": {
+    "rotulo": "Revisar campanha",
+    "fundo": "oklab(0.698371 -0.0806345 -0.129937 / 0.2)",
+    "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.6) 1px",
+    "texto": "rgb(14, 169, 241)",
+    "icone": "rgb(14, 169, 241)",
+    "raio": "12px",
+    "fonte": "10px/500",
+    "caixa": "113x36",
+    "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "fundoDoBadgeDaCampanha": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+    "barra": null
+  },
+  "depois": {
+    "rotulo": "Revisar campanha",
+    "fundo": "oklab(0.698371 -0.0806345 -0.129937 / 0.1)",
+    "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.4) 1px",
+    "texto": "rgb(14, 169, 241)",
+    "icone": "rgb(14, 169, 241)",
+    "raio": "12px",
+    "fonte": "10px/500",
+    "caixa": "113x36",
+    "transicao": "0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+    "fundoDoBadgeDaCampanha": "oklab(0.252675 -0.00293687 -0.0143203 / 0.6)",
+    "barra": null
+  },
+  "todosIguaisNoNormal": true,
+  "hoverMudaFundo": true,
+  "hoverMantemDimensoes": true,
+  "voltaAoNormal": true,
+  "erros": []
+}

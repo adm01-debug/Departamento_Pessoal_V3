@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { tomDoAvatar } from '@/lib/avatarTons';
 import { cn } from '@/lib/utils';
 
 interface UserAvatarProps {
@@ -24,28 +25,17 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-function getAvatarColor(name: string): string {
-  const colors = [
-    'from-primary to-primary-glow',
-    'from-chart-1 to-chart-2',
-    'from-chart-3 to-chart-4',
-    'from-chart-2 to-chart-5',
-    'from-chart-4 to-chart-1',
-  ];
-  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return colors[hash % colors.length];
-}
-
 export function UserAvatar({ name, imageUrl, size = 'md', className }: UserAvatarProps) {
   const initials = getInitials(name);
-  const gradient = getAvatarColor(name);
 
   return (
     <Avatar className={cn(sizeClasses[size], 'ring-1 ring-border/20', className)}>
       {imageUrl && <AvatarImage src={imageUrl} alt={name} />}
-      <AvatarFallback className={cn('bg-gradient-to-br text-primary-foreground font-medium', gradient)}>
-        {initials}
-      </AvatarFallback>
+      {/* Fallback com a paleta estável de `lib/avatarTons` (fundo translúcido +
+          texto na cor cheia do token). Antes usava `bg-gradient-to-br` com
+          `from-/to-`, sintaxe da v3 do Tailwind que não gera CSS nenhum na v4 —
+          o avatar ficava sem fundo e com tinta quase preta sobre o navy. */}
+      <AvatarFallback className={cn('font-semibold', tomDoAvatar(name))}>{initials}</AvatarFallback>
     </Avatar>
   );
 }

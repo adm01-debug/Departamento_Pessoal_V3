@@ -1,0 +1,365 @@
+{
+  "antes": [
+    {
+      "nome": "Lucas Gabriel Fernandes",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Rafaela Cristina Gomes",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Thiago Almeida Rocha",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Mariana Oliveira Santos",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Vanessa Rodrigues Dias",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Ana Beatriz Souza",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "William Nunes Cardoso",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Carlos Eduardo Lima",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Juliana Pereira Martins",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Gustavo Henrique Alves",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    }
+  ],
+  "depoisDeAprovar": [
+    {
+      "nome": "Lucas Gabriel Fernandes",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Rafaela Cristina Gomes",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Thiago Almeida Rocha",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Mariana Oliveira Santos",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Vanessa Rodrigues Dias",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "William Nunes Cardoso",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Carlos Eduardo Lima",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Juliana Pereira Martins",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Gustavo Henrique Alves",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Ana Beatriz Souza",
+      "estado": "Aprovada pelo gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Validar Potencial"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    }
+  ],
+  "depoisDeDevolver": [
+    {
+      "nome": "Lucas Gabriel Fernandes",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Rafaela Cristina Gomes",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Thiago Almeida Rocha",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Mariana Oliveira Santos",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Vanessa Rodrigues Dias",
+      "estado": "Gestor não atribuído",
+      "botoes": [
+        "Ver avaliação"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Carlos Eduardo Lima",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Juliana Pereira Martins",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Gustavo Henrique Alves",
+      "estado": "Aguardando gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Devolver",
+        "Aprovar"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "William Nunes Cardoso",
+      "estado": "Devolvida para correção",
+      "botoes": [
+        "Ver avaliação",
+        "Reenviar ao gestor"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    },
+    {
+      "nome": "Ana Beatriz Souza",
+      "estado": "Aprovada pelo gestor",
+      "botoes": [
+        "Ver avaliação",
+        "Validar Potencial"
+      ],
+      "larguraColuna": 340,
+      "sobraSelo": 1,
+      "sobraNotas": 1,
+      "sobraAcoes": 1
+    }
+  ]
+}

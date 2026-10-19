@@ -26,4 +26,6 @@ Thumbs.db
 .DS_Store
 
 # Lint-staged legado (mantemos apenas .lintstagedrc.json)
-.lintstagedrc
+.lintstagedrc/tmp-animacao/videos/1-desligamentos-referencia.webm
+
+/tmp-animacao/

@@ -178,6 +178,16 @@ export interface PontoNineBox {
   temPdi: boolean;
   /** Motivo de não entrar na matriz (`null` = entrou). */
   pendencias: 'sem_potencial' | 'sem_nota' | 'sem_base' | null;
+  /**
+   * APROVADO PELO GESTOR, AGUARDANDO O RH: a pessoa já é elegível pelo fluxo,
+   * mas ainda não pode ocupar um quadrante oficial. A aba a apresenta com o
+   * indicador existente (banner/insights), nunca a esconde por completo.
+   */
+  aguardandoValidacaoRh?: boolean;
+  /** Ainda não há aprovação vigente do gestor (ou ela foi devolvida/invalidada). */
+  aguardandoAprovacao?: boolean;
+  /** Texto objetivo do motivo fora da matriz (mesma fonte do motor oficial). */
+  motivoNaoClassificado?: string | null;
   /* ── Rastreabilidade da consolidação (auditoria; a UI visual ignora) ── */
   /** Avaliações existentes no grupo (empresa+ciclo+colaborador). */
   quantidadeAvaliacoes: number;
@@ -375,15 +385,36 @@ export interface LeituraAtencao {
   semPdi: number;
   /** Sem nota e/ou sem potencial — fora da matriz, por falta de dado. */
   semClassificacao: number;
+  /** Aprovados pelo gestor aguardando a validação do Potencial pelo RH. */
+  aguardandoRh: number;
+  /** Nomes de quem está aguardando o RH (o mesmo indicador os apresenta). */
+  nomesAguardandoRh: string[];
+  /** Aprovação do gestor pendente/devolvida/invalidada. */
+  aguardandoAprovacao: number;
+  nomesAguardandoAprovacao: string[];
 }
 
 export function lerAtencao(pontos: PontoNineBox[]): LeituraAtencao {
   const emRisco = pontos.filter((p) => p.quadrante !== null && QUADRANTES_ATENCAO.includes(p.quadrante));
   const semPdiLista = pontos.filter((p) => p.quadrante !== null && !p.temPdi);
-  const semClassificacao = pontos.filter((p) => p.quadrante === null).length;
+  const aguardandoRhLista = pontos.filter((p) => p.aguardandoValidacaoRh === true);
+  const aguardandoAprovacaoLista = pontos.filter((p) => p.aguardandoAprovacao === true);
+  // Os pendentes de fluxo têm indicador próprio — não entram no "sem dado".
+  const semClassificacao = pontos.filter(
+    (p) => p.quadrante === null && !p.aguardandoValidacaoRh && !p.aguardandoAprovacao
+  ).length;
 
   const ids = new Set([...emRisco.map((p) => p.id), ...semPdiLista.map((p) => p.id)]);
-  return { total: ids.size, emRisco: emRisco.length, semPdi: semPdiLista.length, semClassificacao };
+  return {
+    total: ids.size,
+    emRisco: emRisco.length,
+    semPdi: semPdiLista.length,
+    semClassificacao,
+    aguardandoRh: aguardandoRhLista.length,
+    nomesAguardandoRh: aguardandoRhLista.map((p) => p.nome),
+    aguardandoAprovacao: aguardandoAprovacaoLista.length,
+    nomesAguardandoAprovacao: aguardandoAprovacaoLista.map((p) => p.nome),
+  };
 }
 
 /** Quem entra no "Foco agora" (união dos critérios, sem repetir). */
@@ -496,6 +527,37 @@ export function lerInsightsEstruturados(
       trechos: [
         { texto: `${atencao.semPdi} ${atencao.semPdi === 1 ? 'colaborador' : 'colaboradores'}`, forte: true },
         { texto: ' classificados estão sem PDI vinculado.' },
+      ],
+    });
+  }
+
+  /* PENDÊNCIAS DE FLUXO — usam o MESMO card de insights (sem novo componente):
+     aprovado pelo gestor ainda não é classificação oficial; o RH precisa
+     validar o Potencial. A aprovação também pode estar pendente/invalidada. */
+  if (atencao.aguardandoRh > 0) {
+    itens.push({
+      id: 'aguardando-rh',
+      tipo: 'potencial',
+      trechos: [
+        {
+          texto: `${atencao.aguardandoRh} ${atencao.aguardandoRh === 1 ? 'avaliação' : 'avaliações'}`,
+          forte: true,
+        },
+        { texto: ' aprovada(s) pelo gestor aguardando a validação do Potencial pelo RH.' },
+      ],
+    });
+  }
+
+  if (atencao.aguardandoAprovacao > 0) {
+    itens.push({
+      id: 'aguardando-aprovacao',
+      tipo: 'potencial',
+      trechos: [
+        {
+          texto: `${atencao.aguardandoAprovacao} ${atencao.aguardandoAprovacao === 1 ? 'avaliação' : 'avaliações'}`,
+          forte: true,
+        },
+        { texto: ' com aprovação do gestor pendente, devolvida ou invalidada.' },
       ],
     });
   }

@@ -1,0 +1,941 @@
+{
+  "animacao": {
+    "cadeia": {
+      "referencia": {
+        "PendenciasDialog usa AnimatedCascadeDialog": true,
+        "AnimatedCascadeDialog usa CascadeDialogFrame": true,
+        "CascadeDialogFrame importa cascade-motion": true,
+        "CascadeDialogFrame aplica as 3 variants": true
+      },
+      "alvos": [
+        {
+          "arquivo": "FeedbackDetalheDialog.tsx",
+          "importaMolduraCompartilhada": true,
+          "importaVariantsCompartilhados": true,
+          "blocks": "blocks={5}",
+          "defineCoreografiaLocal": false
+        },
+        {
+          "arquivo": "FeedbackAcoesRodape.tsx",
+          "importaMolduraCompartilhada": true,
+          "importaVariantsCompartilhados": true,
+          "blocks": "blocks={3} blocks={3}",
+          "defineCoreografiaLocal": false
+        },
+        {
+          "arquivo": "PendenciasAprovacao.tsx",
+          "importaMolduraCompartilhada": true,
+          "importaVariantsCompartilhados": true,
+          "blocks": "blocks={3}",
+          "defineCoreografiaLocal": false
+        }
+      ],
+      "parametrosCompartilhados": [
+        "export const CASCADE_SHELL_OPEN_DURATION = 0.9",
+        "export const CASCADE_SHELL_CLOSE_DURATION = 0.55",
+        "export const CASCADE_ITEM_STAGGER = 0.1",
+        "export const CASCADE_ITEM_DURATION_OUT = 0.22",
+        "export const CASCADE_ITEM_DURATION_IN = 0.35",
+        "export const CASCADE_OVERLAY_OPEN_DURATION = 0.25"
+      ]
+    },
+    "A_blocos": {
+      "blocos": 5,
+      "fechamentoPrevistoMs": 1170
+    },
+    "A_fechar": {
+      "amostras": 65,
+      "amostrasComElemento": 12,
+      "escalaInicial": {
+        "x": 1,
+        "y": 1
+      },
+      "escalaFinal": {
+        "x": 0.0512301,
+        "y": 0.0512301
+      },
+      "maxScaleX": 1,
+      "minScaleX": 0.051,
+      "faseEsticaLarguraDepoisAltura": true,
+      "tempoAteDesmontarMs": 1540,
+      "aindaPresenteNoFim": false,
+      "opacidadeFinal": 1
+    },
+    "A_fecharOverlay": {
+      "amostras": 65,
+      "opacidadeInicial": 1,
+      "opacidadeFinal": 0,
+      "tempoAteSumirMs": 1539,
+      "aindaNoFim": false
+    },
+    "A_reabrir": {
+      "abertura": {
+        "amostras": 23,
+        "amostrasComElemento": 20,
+        "escalaInicial": {
+          "x": 1,
+          "y": 1
+        },
+        "escalaFinal": {
+          "x": 1,
+          "y": 1
+        },
+        "maxScaleX": 1,
+        "minScaleX": 0,
+        "faseEsticaLarguraDepoisAltura": true,
+        "tempoAteDesmontarMs": 13,
+        "aindaPresenteNoFim": true,
+        "opacidadeFinal": 1
+      },
+      "overlayAbertura": {
+        "amostras": 23,
+        "opacidadeInicial": 0,
+        "opacidadeFinal": 1,
+        "tempoAteSumirMs": 12,
+        "aindaNoFim": true
+      },
+      "fechamento": {
+        "amostras": 55,
+        "amostrasComElemento": 12,
+        "escalaInicial": {
+          "x": 1,
+          "y": 1
+        },
+        "escalaFinal": {
+          "x": 0.0373614,
+          "y": 0.0373614
+        },
+        "maxScaleX": 1,
+        "minScaleX": 0.037,
+        "faseEsticaLarguraDepoisAltura": true,
+        "tempoAteDesmontarMs": 1629,
+        "aindaPresenteNoFim": false,
+        "opacidadeFinal": 1
+      },
+      "overlayFechamento": {
+        "amostras": 55,
+        "opacidadeInicial": 1,
+        "opacidadeFinal": 0,
+        "tempoAteSumirMs": 1627,
+        "aindaNoFim": false
+      }
+    },
+    "C_devolucaoAbertura": {
+      "amostras": 13,
+      "amostrasComElemento": 13,
+      "escalaInicial": {
+        "x": 1,
+        "y": 1
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "maxScaleX": 1,
+      "minScaleX": 0,
+      "faseEsticaLarguraDepoisAltura": true,
+      "tempoAteDesmontarMs": null,
+      "aindaPresenteNoFim": true,
+      "opacidadeFinal": 1
+    },
+    "C_blocosDevolucao": {
+      "blocos": 3,
+      "fechamentoPrevistoMs": 970
+    },
+    "C_devolucaoFechamento": {
+      "amostras": 13,
+      "amostrasComElemento": 13,
+      "escalaInicial": {
+        "x": 1,
+        "y": 1
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "maxScaleX": 1,
+      "minScaleX": 0.165,
+      "faseEsticaLarguraDepoisAltura": true,
+      "tempoAteDesmontarMs": null,
+      "aindaPresenteNoFim": true,
+      "opacidadeFinal": 1
+    },
+    "referenciaPendenciasBlocos": {
+      "blocos": 2,
+      "fechamentoPrevistoMs": 870
+    }
+  },
+  "alinhamento": {
+    "verAvaliacaoNosCards": {
+      "total": 0,
+      "direitaIgual": true,
+      "deltaDireita": 0,
+      "alturaIgual": true
+    },
+    "A_modalPendente": {
+      "operacionais": [
+        "Concluir avaliação",
+        "Cancelar avaliação"
+      ],
+      "botoesOperacionais": [
+        {
+          "texto": "Concluir avaliação",
+          "operacional": true,
+          "visivel": true,
+          "top": 714.5,
+          "bottom": 746.5,
+          "left": 732.45,
+          "right": 876.97,
+          "height": 32,
+          "centroX": 804.71,
+          "centroY": 730.5
+        },
+        {
+          "texto": "Cancelar avaliação",
+          "operacional": true,
+          "visivel": true,
+          "top": 714.5,
+          "bottom": 746.5,
+          "left": 884.97,
+          "right": 1035,
+          "height": 32,
+          "centroX": 959.98,
+          "centroY": 730.5
+        }
+      ],
+      "demaisBotoesVisiveis": [
+        "Fechar",
+        "Ver só deste colaborador"
+      ],
+      "selo": null,
+      "caixa": {
+        "width": 672,
+        "height": 535,
+        "conteudoDir": 1056
+      },
+      "metricas": {
+        "mesmaLinha": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "alturas": [
+          32,
+          32
+        ],
+        "seloAlinhadoAoEixo": null,
+        "deltaCentroSeloBotao": null,
+        "seloNaEsquerda": null,
+        "deltaXCeloBotao": null,
+        "alturaLinhaRodape": 32,
+        "verSoDesteColaborador": {
+          "altura": 32,
+          "right": 1035,
+          "deltaParaBordaConteudo": 21
+        },
+        "frestaDireita": 21,
+        "ultimoBotaoDireita": 1035,
+        "sobreposicao": false,
+        "estourouDireita": false,
+        "scrollHorizontal": false
+      }
+    },
+    "A_reaberto": {
+      "operacionais": [],
+      "botoesOperacionais": [],
+      "demaisBotoesVisiveis": [
+        "Fechar",
+        "Ver só deste colaborador"
+      ],
+      "selo": {
+        "texto": "Aguardando gestor",
+        "top": 718.5,
+        "bottom": 742.5,
+        "left": 405,
+        "right": 559.91,
+        "centroX": 482.45,
+        "height": 24,
+        "centroY": 730.5
+      },
+      "caixa": {
+        "width": 672,
+        "height": 527,
+        "conteudoDir": 1056
+      },
+      "metricas": {
+        "mesmaLinha": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "alturas": [],
+        "seloAlinhadoAoEixo": null,
+        "deltaCentroSeloBotao": null,
+        "seloNaEsquerda": null,
+        "deltaXCeloBotao": null,
+        "alturaLinhaRodape": 24,
+        "verSoDesteColaborador": {
+          "altura": 32,
+          "right": 1035,
+          "deltaParaBordaConteudo": 21
+        },
+        "frestaDireita": null,
+        "ultimoBotaoDireita": null,
+        "sobreposicao": false,
+        "estourouDireita": false,
+        "scrollHorizontal": false
+      }
+    },
+    "B_modalSemAcoes": {
+      "aviso": "nenhum card \"Concluído\" aberto na listagem deste ambiente"
+    },
+    "verAvaliacaoNaFila": {
+      "total": 5,
+      "direitaIgual": true,
+      "deltaDireita": 0,
+      "alturaIgual": true
+    },
+    "C_aguardandoGestor": {
+      "operacionais": [
+        "Devolver para correção",
+        "Aprovar avaliação"
+      ],
+      "botoesOperacionais": [
+        {
+          "texto": "Devolver para correção",
+          "operacional": true,
+          "visivel": true,
+          "top": 714.5,
+          "bottom": 746.5,
+          "left": 707.44,
+          "right": 883.33,
+          "height": 32,
+          "centroX": 795.38,
+          "centroY": 730.5
+        },
+        {
+          "texto": "Aprovar avaliação",
+          "operacional": true,
+          "visivel": true,
+          "top": 714.5,
+          "bottom": 746.5,
+          "left": 891.33,
+          "right": 1035,
+          "height": 32,
+          "centroX": 963.16,
+          "centroY": 730.5
+        }
+      ],
+      "demaisBotoesVisiveis": [
+        "Fechar",
+        "Ver só deste colaborador"
+      ],
+      "selo": {
+        "texto": "Aguardando gestor",
+        "top": 718.5,
+        "bottom": 742.5,
+        "left": 405,
+        "right": 559.91,
+        "centroX": 482.45,
+        "height": 24,
+        "centroY": 730.5
+      },
+      "caixa": {
+        "width": 672,
+        "height": 535,
+        "conteudoDir": 1056
+      },
+      "metricas": {
+        "mesmaLinha": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "alturas": [
+          32,
+          32
+        ],
+        "seloAlinhadoAoEixo": true,
+        "deltaCentroSeloBotao": 0,
+        "seloNaEsquerda": true,
+        "deltaXCeloBotao": -312.93,
+        "alturaLinhaRodape": 32,
+        "verSoDesteColaborador": {
+          "altura": 32,
+          "right": 1035,
+          "deltaParaBordaConteudo": 21
+        },
+        "frestaDireita": 21,
+        "ultimoBotaoDireita": 1035,
+        "sobreposicao": false,
+        "estourouDireita": false,
+        "scrollHorizontal": false
+      }
+    },
+    "C_dialogoDevolucao": {
+      "operacionais": [],
+      "botoesOperacionais": [],
+      "demaisBotoesVisiveis": [
+        "Fechar",
+        "Cancelar",
+        "Confirmar devolução"
+      ],
+      "selo": null,
+      "caixa": {
+        "width": 448,
+        "height": 281.5,
+        "conteudoDir": 944
+      },
+      "metricas": {
+        "mesmaLinha": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "alturas": [],
+        "seloAlinhadoAoEixo": null,
+        "deltaCentroSeloBotao": null,
+        "seloNaEsquerda": null,
+        "deltaXCeloBotao": null,
+        "alturaLinhaRodape": null,
+        "verSoDesteColaborador": null,
+        "frestaDireita": null,
+        "ultimoBotaoDireita": null,
+        "sobreposicao": false,
+        "estourouDireita": false,
+        "scrollHorizontal": false
+      }
+    },
+    "D_aposAprovarSemAcoes": {
+      "operacionais": [],
+      "botoesOperacionais": [],
+      "demaisBotoesVisiveis": [
+        "Fechar",
+        "Ver só deste colaborador"
+      ],
+      "selo": {
+        "texto": "Aprovada pelo gestor",
+        "top": 718.5,
+        "bottom": 742.5,
+        "left": 405,
+        "right": 571.67,
+        "centroX": 488.34,
+        "height": 24,
+        "centroY": 730.5
+      },
+      "caixa": {
+        "width": 672,
+        "height": 527,
+        "conteudoDir": 1056
+      },
+      "metricas": {
+        "mesmaLinha": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "alturas": [],
+        "seloAlinhadoAoEixo": null,
+        "deltaCentroSeloBotao": null,
+        "seloNaEsquerda": null,
+        "deltaXCeloBotao": null,
+        "alturaLinhaRodape": 24,
+        "verSoDesteColaborador": {
+          "altura": 32,
+          "right": 1035,
+          "deltaParaBordaConteudo": 21
+        },
+        "frestaDireita": null,
+        "ultimoBotaoDireita": null,
+        "sobreposicao": false,
+        "estourouDireita": false,
+        "scrollHorizontal": false
+      }
+    },
+    "E_rhUmaAcao": {
+      "operacionais": [
+        "Validar Potencial"
+      ],
+      "botoesOperacionais": [
+        {
+          "texto": "Validar Potencial",
+          "operacional": true,
+          "visivel": true,
+          "top": 714.5,
+          "bottom": 746.5,
+          "left": 897.72,
+          "right": 1035,
+          "height": 32,
+          "centroX": 966.36,
+          "centroY": 730.5
+        }
+      ],
+      "demaisBotoesVisiveis": [
+        "Fechar",
+        "Ver só deste colaborador"
+      ],
+      "selo": {
+        "texto": "Aprovada pelo gestor",
+        "top": 718.5,
+        "bottom": 742.5,
+        "left": 405,
+        "right": 571.67,
+        "centroX": 488.34,
+        "height": 24,
+        "centroY": 730.5
+      },
+      "caixa": {
+        "width": 672,
+        "height": 535,
+        "conteudoDir": 1056
+      },
+      "metricas": {
+        "mesmaLinha": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "alturas": [
+          32
+        ],
+        "seloAlinhadoAoEixo": true,
+        "deltaCentroSeloBotao": 0,
+        "seloNaEsquerda": true,
+        "deltaXCeloBotao": -478.02,
+        "alturaLinhaRodape": 32,
+        "verSoDesteColaborador": {
+          "altura": 32,
+          "right": 1035,
+          "deltaParaBordaConteudo": 21
+        },
+        "frestaDireita": 21,
+        "ultimoBotaoDireita": 1035,
+        "sobreposicao": false,
+        "estourouDireita": false,
+        "scrollHorizontal": false
+      }
+    }
+  },
+  "larguras": {
+    "1440px": {
+      "cardsVerAvaliacao": {
+        "total": 5,
+        "direitaIgual": true,
+        "deltaDireita": 0,
+        "alturaIgual": true
+      },
+      "rodapeGestor": {
+        "operacionais": [
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "botoesOperacionais": [
+          {
+            "texto": "Devolver para correção",
+            "operacional": true,
+            "visivel": true,
+            "top": 689.5,
+            "bottom": 721.5,
+            "left": 707.44,
+            "right": 883.33,
+            "height": 32,
+            "centroX": 795.38,
+            "centroY": 705.5
+          },
+          {
+            "texto": "Aprovar avaliação",
+            "operacional": true,
+            "visivel": true,
+            "top": 689.5,
+            "bottom": 721.5,
+            "left": 891.33,
+            "right": 1035,
+            "height": 32,
+            "centroX": 963.16,
+            "centroY": 705.5
+          }
+        ],
+        "demaisBotoesVisiveis": [
+          "Fechar",
+          "Ver só deste colaborador"
+        ],
+        "selo": {
+          "texto": "Aguardando gestor",
+          "top": 693.5,
+          "bottom": 717.5,
+          "left": 405,
+          "right": 559.91,
+          "centroX": 482.45,
+          "height": 24,
+          "centroY": 705.5
+        },
+        "caixa": {
+          "width": 672,
+          "height": 535,
+          "conteudoDir": 1056
+        },
+        "metricas": {
+          "mesmaLinha": true,
+          "deltaTop": 0,
+          "alturasIguais": true,
+          "alturas": [
+            32,
+            32
+          ],
+          "seloAlinhadoAoEixo": true,
+          "deltaCentroSeloBotao": 0,
+          "seloNaEsquerda": true,
+          "deltaXCeloBotao": -312.93,
+          "alturaLinhaRodape": 32,
+          "verSoDesteColaborador": {
+            "altura": 32,
+            "right": 1035,
+            "deltaParaBordaConteudo": 21
+          },
+          "frestaDireita": 21,
+          "ultimoBotaoDireita": 1035,
+          "sobreposicao": false,
+          "estourouDireita": false,
+          "scrollHorizontal": false
+        }
+      }
+    },
+    "1280px": {
+      "cardsVerAvaliacao": {
+        "total": 5,
+        "direitaIgual": true,
+        "deltaDireita": 0,
+        "alturaIgual": true
+      },
+      "rodapeGestor": {
+        "operacionais": [
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "botoesOperacionais": [
+          {
+            "texto": "Devolver para correção",
+            "operacional": true,
+            "visivel": true,
+            "top": 689.5,
+            "bottom": 721.5,
+            "left": 627.44,
+            "right": 803.33,
+            "height": 32,
+            "centroX": 715.38,
+            "centroY": 705.5
+          },
+          {
+            "texto": "Aprovar avaliação",
+            "operacional": true,
+            "visivel": true,
+            "top": 689.5,
+            "bottom": 721.5,
+            "left": 811.33,
+            "right": 955,
+            "height": 32,
+            "centroX": 883.16,
+            "centroY": 705.5
+          }
+        ],
+        "demaisBotoesVisiveis": [
+          "Fechar",
+          "Ver só deste colaborador"
+        ],
+        "selo": {
+          "texto": "Aguardando gestor",
+          "top": 693.5,
+          "bottom": 717.5,
+          "left": 325,
+          "right": 479.91,
+          "centroX": 402.45,
+          "height": 24,
+          "centroY": 705.5
+        },
+        "caixa": {
+          "width": 672,
+          "height": 535,
+          "conteudoDir": 976
+        },
+        "metricas": {
+          "mesmaLinha": true,
+          "deltaTop": 0,
+          "alturasIguais": true,
+          "alturas": [
+            32,
+            32
+          ],
+          "seloAlinhadoAoEixo": true,
+          "deltaCentroSeloBotao": 0,
+          "seloNaEsquerda": true,
+          "deltaXCeloBotao": -312.93,
+          "alturaLinhaRodape": 32,
+          "verSoDesteColaborador": {
+            "altura": 32,
+            "right": 955,
+            "deltaParaBordaConteudo": 21
+          },
+          "frestaDireita": 21,
+          "ultimoBotaoDireita": 955,
+          "sobreposicao": false,
+          "estourouDireita": false,
+          "scrollHorizontal": false
+        }
+      }
+    },
+    "1024px": {
+      "cardsVerAvaliacao": {
+        "total": 5,
+        "direitaIgual": true,
+        "deltaDireita": 0,
+        "alturaIgual": true
+      },
+      "rodapeGestor": {
+        "operacionais": [
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "botoesOperacionais": [
+          {
+            "texto": "Devolver para correção",
+            "operacional": true,
+            "visivel": true,
+            "top": 689.5,
+            "bottom": 721.5,
+            "left": 499.44,
+            "right": 675.33,
+            "height": 32,
+            "centroX": 587.38,
+            "centroY": 705.5
+          },
+          {
+            "texto": "Aprovar avaliação",
+            "operacional": true,
+            "visivel": true,
+            "top": 689.5,
+            "bottom": 721.5,
+            "left": 683.33,
+            "right": 827,
+            "height": 32,
+            "centroX": 755.16,
+            "centroY": 705.5
+          }
+        ],
+        "demaisBotoesVisiveis": [
+          "Fechar",
+          "Ver só deste colaborador"
+        ],
+        "selo": {
+          "texto": "Aguardando gestor",
+          "top": 693.5,
+          "bottom": 717.5,
+          "left": 197,
+          "right": 351.91,
+          "centroX": 274.45,
+          "height": 24,
+          "centroY": 705.5
+        },
+        "caixa": {
+          "width": 672,
+          "height": 535,
+          "conteudoDir": 848
+        },
+        "metricas": {
+          "mesmaLinha": true,
+          "deltaTop": 0,
+          "alturasIguais": true,
+          "alturas": [
+            32,
+            32
+          ],
+          "seloAlinhadoAoEixo": true,
+          "deltaCentroSeloBotao": 0,
+          "seloNaEsquerda": true,
+          "deltaXCeloBotao": -312.93,
+          "alturaLinhaRodape": 32,
+          "verSoDesteColaborador": {
+            "altura": 32,
+            "right": 827,
+            "deltaParaBordaConteudo": 21
+          },
+          "frestaDireita": 21,
+          "ultimoBotaoDireita": 827,
+          "sobreposicao": false,
+          "estourouDireita": false,
+          "scrollHorizontal": false
+        }
+      }
+    }
+  },
+  "referenciaPendencias": {
+    "titulo": "Fechar Pendências 1 tarefa de onboarding atrasada Alta Taref",
+    "abertura": {
+      "amostras": 24,
+      "amostrasComElemento": 22,
+      "escalaInicial": {
+        "x": 1,
+        "y": 1
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "maxScaleX": 1,
+      "minScaleX": 0,
+      "faseEsticaLarguraDepoisAltura": true,
+      "tempoAteDesmontarMs": 15,
+      "aindaPresenteNoFim": true,
+      "opacidadeFinal": 1
+    },
+    "overlayAbertura": {
+      "amostras": 24,
+      "opacidadeInicial": 0,
+      "opacidadeFinal": 1,
+      "tempoAteSumirMs": 14,
+      "aindaNoFim": true
+    },
+    "fechamento": {
+      "amostras": 62,
+      "amostrasComElemento": 9,
+      "escalaInicial": {
+        "x": 1,
+        "y": 1
+      },
+      "escalaFinal": {
+        "x": 0.00200849,
+        "y": 0.00200849
+      },
+      "maxScaleX": 1,
+      "minScaleX": 0.002,
+      "faseEsticaLarguraDepoisAltura": true,
+      "tempoAteDesmontarMs": 1352,
+      "aindaPresenteNoFim": false,
+      "opacidadeFinal": 1
+    },
+    "overlayFechamento": {
+      "amostras": 62,
+      "opacidadeInicial": 1,
+      "opacidadeFinal": 0,
+      "tempoAteSumirMs": 1352,
+      "aindaNoFim": false
+    }
+  },
+  "decisaoDemo": {
+    "aviso": "Demonstração: “Aprovar avaliação” salva localmente (nada foi enviado ao banco)."
+  },
+  "comparacaoComPendencias": {
+    "Ver Feedback (abrir)": {
+      "escalaInicial": {
+        "referencia": {
+          "x": 1,
+          "y": 1
+        },
+        "alvo": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "escalaFinal": {
+        "referencia": {
+          "x": 1,
+          "y": 1
+        },
+        "alvo": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "faseEsticaLarguraDepoisAltura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "tempoAteDesmontarMs": {
+        "referencia": 15,
+        "alvo": 13
+      },
+      "igual": true,
+      "escalaFinalIgual": true,
+      "duracaoIgual": true,
+      "deltasEscalaFinal": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "Devolver para correção (abrir)": {
+      "escalaInicial": {
+        "referencia": {
+          "x": 1,
+          "y": 1
+        },
+        "alvo": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "escalaFinal": {
+        "referencia": {
+          "x": 1,
+          "y": 1
+        },
+        "alvo": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "faseEsticaLarguraDepoisAltura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "tempoAteDesmontarMs": {
+        "referencia": 15,
+        "alvo": null
+      },
+      "igual": true,
+      "escalaFinalIgual": true,
+      "duracaoIgual": true,
+      "deltasEscalaFinal": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "Ver Feedback (fechar)": {
+      "escalaInicial": {
+        "referencia": {
+          "x": 1,
+          "y": 1
+        },
+        "alvo": {
+          "x": 1,
+          "y": 1
+        }
+      },
+      "escalaFinal": {
+        "referencia": {
+          "x": 0.00200849,
+          "y": 0.00200849
+        },
+        "alvo": {
+          "x": 0.0373614,
+          "y": 0.0373614
+        }
+      },
+      "faseEsticaLarguraDepoisAltura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "tempoAteDesmontarMs": {
+        "referencia": 1352,
+        "alvo": 1629
+      },
+      "igual": true,
+      "escalaFinalIgual": true,
+      "duracaoIgual": true,
+      "deltasEscalaFinal": {
+        "x": 0.035,
+        "y": 0.035
+      }
+    }
+  },
+  "reducedMotion": {
+    "reduzidoMovimento": "emulado via context.reducedMotion = reduce",
+    "caixaAposAbrir": {
+      "visivel": true,
+      "opacity": 1,
+      "pointerEvents": "auto",
+      "botaoFocavel": true
+    },
+    "desmontouAoFechar": true,
+    "scrollTravadoLiberado": {
+      "bodyOverflow": "visible",
+      "pointerEvents": "auto"
+    }
+  }
+}

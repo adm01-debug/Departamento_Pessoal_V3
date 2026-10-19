@@ -1,0 +1,34 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:8080",
+      "localStorage": [
+        {
+          "name": "dp-desempenho-demo-registros",
+          "value": "{\"versao\":1,\"criados\":{\"ciclos\":{},\"metas\":{},\"feedbacks\":{},\"pdis\":{}},\"patches\":{\"ciclos\":{},\"metas\":{},\"feedbacks\":{\"mock-fb-11\":{\"status\":\"concluido\",\"updated_at\":\"2026-10-16T19:09:28.346Z\"}},\"pdis\":{}},\"removidos\":{\"ciclos\":[],\"metas\":[],\"feedbacks\":[],\"pdis\":[]},\"historico\":[{\"em\":\"2026-10-16T19:09:28.346Z\",\"entidade\":\"feedbacks\",\"operacao\":\"status\",\"id\":\"mock-fb-11\",\"descricao\":\"Avaliação concluída na demonstração\",\"dados\":{\"status\":\"concluido\",\"updated_at\":\"2026-10-16T19:09:28.346Z\"},\"por\":\"admin@teste.local\"}]}"
+        },
+        {
+          "name": "sb-frjbfeamybqsejlvmqbl-auth-token",
+          "value": "{\"access_token\":\"eyJhbGciOiJFUzI1NiIsImtpZCI6ImMyZDU3NGIzLTQzMGYtNGIwNy1iMmJiLThiZmM0MWI5ZWY4YyIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2ZyamJmZWFteWJxc2VqbHZtcWJsLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiJlZDhiYTc5Ni05MTJiLTRlNzItYWIxMi02ZjYzNTU1YjI2ZTEiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzkyMTc5OTA5LCJpYXQiOjE3OTIxNzYzMDksImVtYWlsIjoiYWRtaW5AdGVzdGUubG9jYWwiLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIl19LCJ1c2VyX21ldGFkYXRhIjp7ImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJub21lIjoiQWRtaW4gRTJFIFRlc3RlIiwicm9sZSI6ImFkbWluIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3OTIxNzYzMDl9XSwic2Vzc2lvbl9pZCI6ImI3M2JhOWY2LTA3ZjYtNDM3MC05MDY3LTE3ZWI4YzFkYzc2ZiIsImlzX2Fub255bW91cyI6ZmFsc2V9.AGfrEuEqM1Eo21hJYkcy4UaElHm7XzyJCVNQWyD8ftB69uUjB248w5y3Wz3ThahEMCihp0EXdE2wdadyXdPmuA\",\"refresh_token\":\"m2odgzbmwega\",\"user\":{\"id\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\",\"aud\":\"authenticated\",\"role\":\"authenticated\",\"email\":\"admin@teste.local\",\"email_confirmed_at\":\"2026-07-24T02:35:01.130837Z\",\"phone\":\"\",\"confirmed_at\":\"2026-07-24T02:35:01.130837Z\",\"last_sign_in_at\":\"2026-10-16T18:45:09.209273Z\",\"app_metadata\":{\"provider\":\"email\",\"providers\":[\"email\"]},\"user_metadata\":{\"email_verified\":true,\"nome\":\"Admin E2E Teste\",\"role\":\"admin\"},\"identities\":[{\"identity_id\":\"92dc4557-8b57-4195-b9c3-a594d1a5dfe4\",\"id\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\",\"user_id\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\",\"identity_data\":{\"email\":\"admin@teste.local\",\"email_verified\":false,\"phone_verified\":false,\"sub\":\"ed8ba796-912b-4e72-ab12-6f63555b26e1\"},\"provider\":\"email\",\"last_sign_in_at\":\"2026-07-24T02:35:01.074431Z\",\"created_at\":\"2026-07-24T02:35:01.074493Z\",\"updated_at\":\"2026-07-24T02:35:01.074493Z\",\"email\":\"admin@teste.local\"}],\"created_at\":\"2026-07-24T02:35:01.054949Z\",\"updated_at\":\"2026-10-16T18:45:09.254168Z\",\"is_anonymous\":false},\"token_type\":\"bearer\",\"expires_in\":3598.5230000019073,\"expires_at\":1792179909}"
+        },
+        {
+          "name": "dp-desempenho-aprovacoes-demo",
+          "value": "{\"versao\":1,\"decisoes\":{\"mock-1::mock-ciclo-3\":{\"colaboradorId\":\"mock-1\",\"cicloId\":\"mock-ciclo-3\",\"decisao\":\"aprovado\",\"justificativa\":null,\"versaoAvaliacao\":\"demonstracao:mock-fb-12\",\"decididoEm\":\"2026-10-16T19:09:36.259Z\",\"decididoPor\":\"admin@teste.local\"}},\"validacoes\":{},\"historico\":[{\"em\":\"2026-10-16T19:09:36.259Z\",\"operacao\":\"aprovar\",\"colaboradorId\":\"mock-1\",\"cicloId\":\"mock-ciclo-3\",\"versaoAvaliacao\":\"demonstracao:mock-fb-12\",\"justificativa\":null,\"por\":\"admin@teste.local\"}]}"
+        },
+        {
+          "name": "empresa-storage",
+          "value": "{\"state\":{\"empresaAtualId\":\"61e7d382-549f-4b17-afa4-4578ebc919f3\",\"modo\":\"consolidado\"},\"version\":2}"
+        },
+        {
+          "name": "dp-tour-completed",
+          "value": "true"
+        },
+        {
+          "name": "ui-theme",
+          "value": "dark"
+        }
+      ]
+    }
+  ]
+}

@@ -28,6 +28,7 @@ import {
   type AcaoStatus,
   type PerfilOperador,
 } from './statusFeedback';
+import { capacidadesAvaliacao, normalizarPapeis, type PapeisAvaliacao } from './papeisAvaliacao';
 
 /** Papel do usuário como o app entrega (`app_role`: admin|gestor|rh|user). */
 export type PapelApp = string | null | undefined;
@@ -51,13 +52,23 @@ export function perfilOperador(papel: PapelApp): PerfilOperador {
  * A validação de Potencial é EXCLUSIVA do RH — espelha, no front, a função
  * `pode_validar_potencial()` da migration (`role = 'rh'`, sem admin). O servidor
  * é quem decide; aqui só se evita oferecer um controle que vai falhar.
+ *
+ * Aceita a LISTA de papéis (`user_roles` → `['admin','gestor']`) ou um papel
+ * único: a capacidade é decidida pelo papel que a concede (`rh`), nunca pela
+ * precedência entre papéis.
  */
-export function podeValidarPotencial(papel: PapelApp): boolean {
-  return (
-    String(papel ?? '')
-      .trim()
-      .toLowerCase() === 'rh'
-  );
+export function podeValidarPotencial(papeis: PapeisAvaliacao): boolean {
+  return capacidadesAvaliacao(papeis).podeValidarPotencial;
+}
+
+/** RH/admin enviam e reenviam ao gestor (`pode_gerir_avaliacoes()`). */
+export function podeGerirAvaliacoes(papeis: PapeisAvaliacao): boolean {
+  return capacidadesAvaliacao(papeis).podeGerirAvaliacoes;
+}
+
+/** A conta tem o papel `gestor`? (independe de também ser `admin`/`rh`.) */
+export function temPerfilGestor(papeis: PapeisAvaliacao): boolean {
+  return capacidadesAvaliacao(papeis).gestor;
 }
 
 /** Ação de status que exige texto obrigatório do operador. */
@@ -129,6 +140,41 @@ export interface AcaoDisponivel {
 }
 
 /**
+ * Perfis EFETIVOS do operador no fluxo de STATUS (uma conta pode ter VÁRIOS).
+ *
+ * `admin`+`gestor` não escolhe um perfil: as DUAS capacidades valem, cada ação
+ * pela tabela de transições — o gestor responsável CONCLUI e o admin/RH REABRE.
+ * O servidor reconfere tudo (`finalizar_feedback`/`pode_gerir_avaliacoes`).
+ */
+export function perfisOperadorEfetivos(papeis: PapeisAvaliacao, responsavel: boolean): PerfilOperador[] {
+  const c = capacidadesAvaliacao(papeis);
+  const perfis: PerfilOperador[] = [];
+  if (c.admin || c.rh) perfis.push('admin_rh');
+  if (c.gestor && responsavel === true) perfis.push('gestor');
+  if (perfis.length === 0 && c.gestor) perfis.push('gestor');
+  if (perfis.length === 0) perfis.push(normalizarPapeis(papeis).includes('user') ? 'avaliador' : 'desconhecido');
+  return perfis;
+}
+
+/**
+ * Perfil do fluxo de STATUS quando a conta tem VÁRIOS papéis.
+ *
+ * `admin`+`gestor` não pode virar só `admin_rh`: quem é o GESTOR RESPONSÁVEL
+ * pela avaliação opera como `gestor` (é o perfil autorizado a concluir na tabela
+ * de transições — `TRANSICOES`, `concluir` → `['gestor']`). Sem o vínculo
+ * provado, prevalece a leitura por precedência (`admin`/`rh` → `admin_rh`), que
+ * é o comportamento de hoje.
+ */
+export function perfilOperadorComVinculo(
+  papel: PapelApp,
+  temGestor: boolean,
+  responsavel: boolean
+): PerfilOperador {
+  if (temGestor && responsavel === true) return 'gestor';
+  return perfilOperador(papel);
+}
+
+/**
  * Ações do fluxo para o status atual, na ordem em que a interface deve
  * apresentá-las. Sempre devolve as três — a UI decide esconder ou desabilitar
  * as `disponivel: false` (a proposta visual é explícita sobre isso).
@@ -141,18 +187,31 @@ export interface AcaoDisponivel {
 export function acoesDisponiveis({
   statusAtual,
   papel,
+  perfil,
+  perfis,
   responsavel = false,
 }: {
   statusAtual: unknown;
   papel: PapelApp;
+  /**
+   * Perfil do fluxo já resolvido pelo chamador (útil quando a conta tem VÁRIOS
+   * papéis — ver `perfilOperadorComVinculo`). Ausente, deriva de `papel`.
+   */
+  perfil?: PerfilOperador;
+  /**
+   * LISTA de perfis da conta (`admin`+`gestor` → `['admin_rh','gestor']`): cada
+   * ação autorizada por QUALQUER perfil que a conceda, nunca por precedência.
+   */
+  perfis?: PerfilOperador[];
   /** `true` somente com o vínculo comprovado (ver `ehGestorResponsavel`). */
   responsavel?: boolean;
 }): AcaoDisponivel[] {
-  const perfil = perfilOperador(papel);
+  const efetivos: PerfilOperador[] = perfis?.length ? perfis : [perfil ?? perfilOperador(papel)];
   const ordem: AcaoStatus[] = ['concluir', 'cancelar', 'reabrir'];
 
   return ordem.map((acao) => {
-    const r = validarTransicao({ statusAtual, acao, perfil });
+    const tentativas = efetivos.map((p) => validarTransicao({ statusAtual, acao, perfil: p }));
+    const r = tentativas.find((t) => t.permitido) ?? tentativas[0];
     const exigeVinculo = acao === 'concluir';
     const disponivel = r.permitido && (!exigeVinculo || responsavel === true);
 

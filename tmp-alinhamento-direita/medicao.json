@@ -1,0 +1,1244 @@
+{
+  "1568px": {
+    "Ciclo S1 2026": {
+      "larguraJanela": 1568,
+      "overflowDaPagina": false,
+      "linhas": [
+        {
+          "nome": "Pedro Henrique Barbosa",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1444.05,
+            "valor": 1401.55,
+            "seloDaFaixa": 1444.05,
+            "caixa": 1444.05
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1484.5,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Fernanda Costa Ribeiro",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1414.23,
+            "valor": 1371.73,
+            "seloDaFaixa": 1414.23,
+            "caixa": 1414.23
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1454.69,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        }
+      ],
+      "timeline": []
+    },
+    "Ciclo S2 2026": {
+      "larguraJanela": 1568,
+      "overflowDaPagina": false,
+      "linhas": [
+        {
+          "nome": "Lucas Gabriel Fernandes",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1414.23,
+            "valor": 1340.06,
+            "seloDaFaixa": 1414.23,
+            "caixa": 1414.23
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1454.69,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Rafaela Cristina Gomes",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1412.38,
+            "valor": 1369.88,
+            "seloDaFaixa": 1412.38,
+            "caixa": 1412.38
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1452.83,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Thiago Almeida Rocha",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1444.05,
+            "valor": 1369.88,
+            "seloDaFaixa": 1444.05,
+            "caixa": 1444.05
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1484.5,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Mariana Oliveira Santos",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1444.05,
+            "valor": 1380.78,
+            "seloDaFaixa": 1444.05,
+            "caixa": 1444.05
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1484.5,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Vanessa Rodrigues Dias",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1423.28,
+            "valor": 1360.02,
+            "seloDaFaixa": 1423.28,
+            "caixa": 1423.28
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1463.73,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Ana Beatriz Souza",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1412.38,
+            "valor": 1369.88,
+            "seloDaFaixa": 1412.38,
+            "caixa": 1412.38
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1452.83,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "William Nunes Cardoso",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1412.38,
+            "valor": 1369.88,
+            "seloDaFaixa": 1412.38,
+            "caixa": 1412.38
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1452.83,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Carlos Eduardo Lima",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1414.23,
+            "valor": 1371.73,
+            "seloDaFaixa": 1414.23,
+            "caixa": 1414.23
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1454.69,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Juliana Pereira Martins",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1412.38,
+            "valor": 1369.88,
+            "seloDaFaixa": 1412.38,
+            "caixa": 1412.38
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1452.83,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Gustavo Henrique Alves",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1444.05,
+            "valor": 1380.78,
+            "seloDaFaixa": 1444.05,
+            "caixa": 1444.05
+          },
+          "potencial": {
+            "rotulo": 1527,
+            "valor": 1484.5,
+            "seloDaFaixa": 1527,
+            "caixa": 1527
+          },
+          "linhaNotas": 1527,
+          "status": 1527,
+          "acoes": 1527,
+          "bordaInterna": 1528,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        }
+      ],
+      "timeline": []
+    },
+    "timeline": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "sobraBotao": 1
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "sobraBotao": 1
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "sobraBotao": 1
+      }
+    ]
+  },
+  "1280px": {
+    "Ciclo S1 2026": {
+      "larguraJanela": 1280,
+      "overflowDaPagina": false,
+      "linhas": [
+        {
+          "nome": "Pedro Henrique Barbosa",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1156.05,
+            "valor": 1113.55,
+            "seloDaFaixa": 1156.05,
+            "caixa": 1156.05
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1196.5,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Fernanda Costa Ribeiro",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1126.23,
+            "valor": 1083.73,
+            "seloDaFaixa": 1126.23,
+            "caixa": 1126.23
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1166.69,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        }
+      ],
+      "timeline": []
+    },
+    "Ciclo S2 2026": {
+      "larguraJanela": 1280,
+      "overflowDaPagina": false,
+      "linhas": [
+        {
+          "nome": "Lucas Gabriel Fernandes",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1126.23,
+            "valor": 1052.06,
+            "seloDaFaixa": 1126.23,
+            "caixa": 1126.23
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1166.69,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Rafaela Cristina Gomes",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1124.38,
+            "valor": 1081.88,
+            "seloDaFaixa": 1124.38,
+            "caixa": 1124.38
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1164.83,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Thiago Almeida Rocha",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1156.05,
+            "valor": 1081.88,
+            "seloDaFaixa": 1156.05,
+            "caixa": 1156.05
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1196.5,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Mariana Oliveira Santos",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1156.05,
+            "valor": 1092.78,
+            "seloDaFaixa": 1156.05,
+            "caixa": 1156.05
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1196.5,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Vanessa Rodrigues Dias",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1135.28,
+            "valor": 1072.02,
+            "seloDaFaixa": 1135.28,
+            "caixa": 1135.28
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1175.73,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Ana Beatriz Souza",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1124.38,
+            "valor": 1081.88,
+            "seloDaFaixa": 1124.38,
+            "caixa": 1124.38
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1164.83,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "William Nunes Cardoso",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1124.38,
+            "valor": 1081.88,
+            "seloDaFaixa": 1124.38,
+            "caixa": 1124.38
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1164.83,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Carlos Eduardo Lima",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1126.23,
+            "valor": 1083.73,
+            "seloDaFaixa": 1126.23,
+            "caixa": 1126.23
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1166.69,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Juliana Pereira Martins",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1124.38,
+            "valor": 1081.88,
+            "seloDaFaixa": 1124.38,
+            "caixa": 1124.38
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1164.83,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Gustavo Henrique Alves",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 1156.05,
+            "valor": 1092.78,
+            "seloDaFaixa": 1156.05,
+            "caixa": 1156.05
+          },
+          "potencial": {
+            "rotulo": 1239,
+            "valor": 1196.5,
+            "seloDaFaixa": 1239,
+            "caixa": 1239
+          },
+          "linhaNotas": 1239,
+          "status": 1239,
+          "acoes": 1239,
+          "bordaInterna": 1240,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        }
+      ],
+      "timeline": []
+    },
+    "timeline": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "sobraBotao": 1
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "sobraBotao": 1
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "sobraBotao": 1
+      }
+    ]
+  },
+  "1024px": {
+    "Ciclo S1 2026": {
+      "larguraJanela": 1024,
+      "overflowDaPagina": true,
+      "linhas": [
+        {
+          "nome": "Pedro Henrique Barbosa",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 900.05,
+            "valor": 857.55,
+            "seloDaFaixa": 900.05,
+            "caixa": 900.05
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 940.5,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Fernanda Costa Ribeiro",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 870.23,
+            "valor": 827.73,
+            "seloDaFaixa": 870.23,
+            "caixa": 870.23
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 910.69,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        }
+      ],
+      "timeline": []
+    },
+    "Ciclo S2 2026": {
+      "larguraJanela": 1024,
+      "overflowDaPagina": true,
+      "linhas": [
+        {
+          "nome": "Lucas Gabriel Fernandes",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 870.23,
+            "valor": 796.06,
+            "seloDaFaixa": 870.23,
+            "caixa": 870.23
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 910.69,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Rafaela Cristina Gomes",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 868.38,
+            "valor": 825.88,
+            "seloDaFaixa": 868.38,
+            "caixa": 868.38
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 908.83,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Thiago Almeida Rocha",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 900.05,
+            "valor": 825.88,
+            "seloDaFaixa": 900.05,
+            "caixa": 900.05
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 940.5,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Mariana Oliveira Santos",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 900.05,
+            "valor": 836.78,
+            "seloDaFaixa": 900.05,
+            "caixa": 900.05
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 940.5,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Vanessa Rodrigues Dias",
+          "estado": "Gestor não atribuído",
+          "botoes": [
+            "Ver avaliação"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 879.28,
+            "valor": 816.02,
+            "seloDaFaixa": 879.28,
+            "caixa": 879.28
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 919.73,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Ana Beatriz Souza",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 868.38,
+            "valor": 825.88,
+            "seloDaFaixa": 868.38,
+            "caixa": 868.38
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 908.83,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "William Nunes Cardoso",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 868.38,
+            "valor": 825.88,
+            "seloDaFaixa": 868.38,
+            "caixa": 868.38
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 908.83,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Carlos Eduardo Lima",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 870.23,
+            "valor": 827.73,
+            "seloDaFaixa": 870.23,
+            "caixa": 870.23
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 910.69,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Juliana Pereira Martins",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 868.38,
+            "valor": 825.88,
+            "seloDaFaixa": 868.38,
+            "caixa": 868.38
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 908.83,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        },
+        {
+          "nome": "Gustavo Henrique Alves",
+          "estado": "Aguardando gestor",
+          "botoes": [
+            "Ver avaliação",
+            "Devolver",
+            "Aprovar"
+          ],
+          "larguraColuna": 340,
+          "desempenho": {
+            "rotulo": 900.05,
+            "valor": 836.78,
+            "seloDaFaixa": 900.05,
+            "caixa": 900.05
+          },
+          "potencial": {
+            "rotulo": 983,
+            "valor": 940.5,
+            "seloDaFaixa": 983,
+            "caixa": 983
+          },
+          "linhaNotas": 983,
+          "status": 983,
+          "acoes": 983,
+          "bordaInterna": 984,
+          "sobras": {
+            "notas": 1,
+            "selo": 1,
+            "acoes": 1
+          },
+          "mesmaBordaDireita": true,
+          "passaDoCard": -17
+        }
+      ],
+      "timeline": []
+    },
+    "timeline": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "sobraBotao": 1
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "sobraBotao": 1
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "sobraBotao": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "inicial": {
+    "registros": 4,
+    "alturaDoCard": 290,
+    "vazioInternoAbaixoDaUltima": 1,
+    "flexGrow": "0",
+    "alturaTabela": 842,
+    "alturaDaAtividade": 290,
+    "baseTabela": 1344,
+    "baseAtividade": 1344,
+    "desalinhamento": 0,
+    "alturaResumo": 343,
+    "alturaAcoes": 295,
+    "alturaDoCardPr": "0",
+    "registrosVisiveis": [
+      "Pagamento alteradoDivergência de R$ 70,00 iden",
+      "Pagamento aprovadoPagamento aprovado pelo fina",
+      "Pagamento alteradoEnviado para revisão de comi",
+      "Campanha alteradaCampanha \"Premiação de Inovaç"
+    ],
+    "rolagemInterna": false
+  },
+  "aposFiltroRejeitado": {
+    "registros": 4,
+    "alturaDoCard": 290,
+    "vazioInternoAbaixoDaUltima": 1,
+    "flexGrow": "0",
+    "alturaTabela": 666,
+    "alturaDaAtividade": 290,
+    "baseTabela": 1168,
+    "baseAtividade": 1168,
+    "desalinhamento": 0,
+    "alturaResumo": 343,
+    "alturaAcoes": 295,
+    "alturaDoCardPr": "0",
+    "registrosVisiveis": [
+      "Pagamento alteradoDivergência de R$ 70,00 iden",
+      "Pagamento aprovadoPagamento aprovado pelo fina",
+      "Pagamento alteradoEnviado para revisão de comi",
+      "Campanha alteradaCampanha \"Premiação de Inovaç"
+    ],
+    "rolagemInterna": false
+  },
+  "aposLimparFiltro": {
+    "registros": 4,
+    "alturaDoCard": 290,
+    "vazioInternoAbaixoDaUltima": 1,
+    "flexGrow": "0",
+    "alturaTabela": 842,
+    "alturaDaAtividade": 290,
+    "baseTabela": 1344,
+    "baseAtividade": 1344,
+    "desalinhamento": 0,
+    "alturaResumo": 343,
+    "alturaAcoes": 295,
+    "alturaDoCardPr": "0",
+    "registrosVisiveis": [
+      "Pagamento alteradoDivergência de R$ 70,00 iden",
+      "Pagamento aprovadoPagamento aprovado pelo fina",
+      "Pagamento alteradoEnviado para revisão de comi",
+      "Campanha alteradaCampanha \"Premiação de Inovaç"
+    ],
+    "rolagemInterna": false
+  },
+  "tablet": {
+    "registros": 4,
+    "alturaDoCard": 275,
+    "vazioInternoAbaixoDaUltima": 1,
+    "flexGrow": "0",
+    "alturaTabela": 842,
+    "alturaDaAtividade": 275,
+    "baseTabela": 1528,
+    "baseAtividade": 2407,
+    "desalinhamento": 879,
+    "alturaResumo": 343,
+    "alturaAcoes": 220,
+    "alturaDoCardPr": "0",
+    "registrosVisiveis": [
+      "Pagamento alteradoDivergência de R$ 70,00 iden",
+      "Pagamento aprovadoPagamento aprovado pelo fina",
+      "Pagamento alteradoEnviado para revisão de comi",
+      "Campanha alteradaCampanha \"Premiação de Inovaç"
+    ],
+    "rolagemInterna": false
+  },
+  "verTodasVaiParaAuditoria": "true",
+  "erros": []
+}

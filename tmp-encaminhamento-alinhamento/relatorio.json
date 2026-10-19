@@ -1,0 +1,265 @@
+{
+  "layout": {
+    "1440px": {
+      "selo": {
+        "top": 347.5,
+        "bottom": 371.5,
+        "left": 1262.09,
+        "right": 1399,
+        "height": 24,
+        "width": 136.91,
+        "texto": "Aguardando gestor"
+      },
+      "botoes": [
+        {
+          "rotulo": "Ver avaliação",
+          "top": 379.5,
+          "height": 32,
+          "left": 1116.53,
+          "right": 1206.77
+        },
+        {
+          "rotulo": "Devolver",
+          "top": 379.5,
+          "height": 32,
+          "left": 1212.77,
+          "right": 1305.72
+        },
+        {
+          "rotulo": "Aprovar",
+          "top": 379.5,
+          "height": 32,
+          "left": 1311.72,
+          "right": 1399
+        }
+      ],
+      "metricas": {
+        "folgaDireitaDoSelo": 17,
+        "seloNaMetadeDireita": true,
+        "linhaUnica": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "ordem": [
+          "Ver avaliação",
+          "Devolver",
+          "Aprovar"
+        ],
+        "aprovarNaPontaDireita": true,
+        "verAvaliacaoNaPontaEsquerda": true,
+        "acoesAbaixoDoSelo": true,
+        "estouroHorizontal": false,
+        "sobreposicao": false
+      }
+    },
+    "1280px": {
+      "selo": {
+        "top": 377.5,
+        "bottom": 401.5,
+        "left": 1102.09,
+        "right": 1239,
+        "height": 24,
+        "width": 136.91,
+        "texto": "Aguardando gestor"
+      },
+      "botoes": [
+        {
+          "rotulo": "Ver avaliação",
+          "top": 409.5,
+          "height": 32,
+          "left": 956.53,
+          "right": 1046.77
+        },
+        {
+          "rotulo": "Devolver",
+          "top": 409.5,
+          "height": 32,
+          "left": 1052.77,
+          "right": 1145.72
+        },
+        {
+          "rotulo": "Aprovar",
+          "top": 409.5,
+          "height": 32,
+          "left": 1151.72,
+          "right": 1239
+        }
+      ],
+      "metricas": {
+        "folgaDireitaDoSelo": 17,
+        "seloNaMetadeDireita": true,
+        "linhaUnica": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "ordem": [
+          "Ver avaliação",
+          "Devolver",
+          "Aprovar"
+        ],
+        "aprovarNaPontaDireita": true,
+        "verAvaliacaoNaPontaEsquerda": true,
+        "acoesAbaixoDoSelo": true,
+        "estouroHorizontal": false,
+        "sobreposicao": false
+      }
+    },
+    "1024px": {
+      "selo": {
+        "top": 421.5,
+        "bottom": 445.5,
+        "left": 846.09,
+        "right": 983,
+        "height": 24,
+        "width": 136.91,
+        "texto": "Aguardando gestor"
+      },
+      "botoes": [
+        {
+          "rotulo": "Ver avaliação",
+          "top": 453.5,
+          "height": 32,
+          "left": 700.53,
+          "right": 790.77
+        },
+        {
+          "rotulo": "Devolver",
+          "top": 453.5,
+          "height": 32,
+          "left": 796.77,
+          "right": 889.72
+        },
+        {
+          "rotulo": "Aprovar",
+          "top": 453.5,
+          "height": 32,
+          "left": 895.72,
+          "right": 983
+        }
+      ],
+      "metricas": {
+        "folgaDireitaDoSelo": 17,
+        "seloNaMetadeDireita": true,
+        "linhaUnica": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "ordem": [
+          "Ver avaliação",
+          "Devolver",
+          "Aprovar"
+        ],
+        "aprovarNaPontaDireita": true,
+        "verAvaliacaoNaPontaEsquerda": true,
+        "acoesAbaixoDoSelo": true,
+        "estouroHorizontal": false,
+        "sobreposicao": false
+      }
+    },
+    "900px": {
+      "selo": {
+        "top": 676.5,
+        "bottom": 700.5,
+        "left": 722.09,
+        "right": 859,
+        "height": 24,
+        "width": 136.91,
+        "texto": "Aguardando gestor"
+      },
+      "botoes": [
+        {
+          "rotulo": "Ver avaliação",
+          "top": 708.5,
+          "height": 32,
+          "left": 576.53,
+          "right": 666.77
+        },
+        {
+          "rotulo": "Devolver",
+          "top": 708.5,
+          "height": 32,
+          "left": 672.77,
+          "right": 765.72
+        },
+        {
+          "rotulo": "Aprovar",
+          "top": 708.5,
+          "height": 32,
+          "left": 771.72,
+          "right": 859
+        }
+      ],
+      "metricas": {
+        "folgaDireitaDoSelo": 17,
+        "seloNaMetadeDireita": true,
+        "linhaUnica": true,
+        "deltaTop": 0,
+        "alturasIguais": true,
+        "ordem": [
+          "Ver avaliação",
+          "Devolver",
+          "Aprovar"
+        ],
+        "aprovarNaPontaDireita": true,
+        "verAvaliacaoNaPontaEsquerda": true,
+        "acoesAbaixoDoSelo": true,
+        "estouroHorizontal": false,
+        "sobreposicao": false
+      }
+    }
+  },
+  "autoavaliacao": {
+    "filaAntes": 5,
+    "nomeAvaliadoEscolhido": "Carlos Eduardo Lima",
+    "nomeAvaliadorEscolhido": "Fernanda Costa Ribeiro",
+    "cicloEmFoco": "Ciclo S2 2026",
+    "card": {
+      "nomes": {
+        "avaliado": "Carlos Eduardo Lima",
+        "avaliador": "Fernanda Costa Ribeiro"
+      },
+      "texto": "CL Carlos Eduardo Lima Desenvolvedor Frontend · Tecnologia “Autoavaliação criada na validação do encaminhamento.” Arquitetura de software PENDENTE AVALIADO POR FR Fernanda Costa Ribeiro AUTOAVALIAÇÃO 16/10/2026 4,0 MUITO BOM Ver feedback",
+      "avaliadoVisivel": "CL Carlos Eduardo Lima Desenvolvedor Frontend · Tecnologia “Autoavaliação criada na validação do encaminhamento.” Arquitetura de software PENDENTE",
+      "avaliadorVisivel": "FR Fernanda Costa Ribeiro AUTOAVALIAÇÃO ",
+      "avaliadoTemPlaceholder": false,
+      "avaliadorTemPlaceholder": false,
+      "contemNomeAvaliado": true,
+      "contemNomeAvaliador": true
+    },
+    "fila": {
+      "total": 5,
+      "temOColaboradorDaAutoavaliacao": true,
+      "textos": [
+        "AS Ana Beatriz Souza Analista de RH · Recursos Humanos Ciclo S2 2026 GESTOR RESPONSÁVEL MO",
+        "WC William Nunes Cardoso Supervisor Comercial · Comercial Ciclo S2 2026 GESTOR RESPONSÁVEL",
+        "CL Carlos Eduardo Lima Desenvolvedor Frontend · Tecnologia Ciclo S2 2026 GESTOR RESPONSÁVE",
+        "JM Juliana Pereira Martins Assistente Administrativo · Administrativo Ciclo S2 2026 GESTOR",
+        "GA Gustavo Henrique Alves Vendedor Externo · Comercial Ciclo S2 2026 GESTOR RESPONSÁVEL MO"
+      ]
+    }
+  },
+  "decisao": {
+    "avisoDevolucao": "Demonstração: devolução salva localmente (nada foi enviado ao banco).",
+    "seloAposDevolver": "Aguardando gestor",
+    "avisoAprovacao": "Demonstração: aprovação salva localmente (nada foi enviado ao banco).",
+    "selosAposF5": [
+      "Aguardando gestor",
+      "Aguardando gestor",
+      "Aguardando gestor",
+      "Devolvida para correção",
+      "Aprovada pelo gestor"
+    ]
+  },
+  "rh": {
+    "total": 5,
+    "selo": "Aprovada pelo gestor",
+    "botoes": [
+      "Ver avaliação",
+      "Validar Potencial"
+    ],
+    "selosDaFila": [
+      "Aguardando gestor",
+      "Aguardando gestor",
+      "Aguardando gestor",
+      "Devolvida para correção",
+      "Aprovada pelo gestor"
+    ]
+  }
+}

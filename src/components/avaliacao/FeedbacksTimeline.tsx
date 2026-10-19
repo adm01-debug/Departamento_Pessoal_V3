@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { EXPANSAO_ORIGEM, cardEntradaFeedback } from './animacaoFeedbacks';
 import { FeedbackCard } from './FeedbackCard';
 import { COR_TIPO_FEEDBACK, type FeedbackDerivado, type GrupoMes } from './feedbacksComum';
+import type { FeedbackCanonico } from './feedbackCanonico';
 
 /**
  * ============================================================================
@@ -62,8 +63,8 @@ export const DESLOCAMENTO_LATERAL = ALTURA_MARCO_MES + VAO_MARCO_CARDS;
 const FRACAO_PARA_INICIAR = 0.08;
 
 interface FeedbacksTimelineProps {
-  /** Grupos já ordenados (mais recente primeiro). */
-  grupos: GrupoMes[];
+  /** Grupos já ordenados (mais recente primeiro) — modelo CANÔNICO. */
+  grupos: GrupoMes<FeedbackCanonico>[];
   /**
    * Chave da APRESENTAÇÃO (ver o bloco do coordenador): muda quando o usuário
    * troca ciclo/filtro/segmentação/ordenação, e então a sequência roda uma vez
@@ -72,7 +73,8 @@ interface FeedbacksTimelineProps {
   apresentacao?: string;
   /** Movimento reduzido (ver `useMovimentoReduzido`). */
   reduzirMovimento?: boolean;
-  onVerDetalhes?: (item: FeedbackDerivado) => void;
+  /** Ação dos filtros NORMAIS: abre o formulário existente em modo de edição. */
+  onEditar?: (item: FeedbackCanonico) => void;
   onFiltrarAvaliador?: (nome: string) => void;
   onFiltrarAvaliado?: (nome: string) => void;
   /** Chamado pelo estado vazio. */
@@ -83,7 +85,7 @@ export function FeedbacksTimeline({
   grupos,
   apresentacao,
   reduzirMovimento = false,
-  onVerDetalhes,
+  onEditar,
   onFiltrarAvaliador,
   onFiltrarAvaliado,
   onLimpar,
@@ -144,7 +146,7 @@ export function FeedbacksTimeline({
       key={assinatura}
       grupos={comIndice}
       reduzirMovimento={reduzirMovimento}
-      onVerDetalhes={onVerDetalhes}
+      onEditar={onEditar}
       onFiltrarAvaliador={onFiltrarAvaliador}
       onFiltrarAvaliado={onFiltrarAvaliado}
     />
@@ -152,7 +154,7 @@ export function FeedbacksTimeline({
 }
 
 /** Item já posicionado na cascata (índice RELATIVO à lista inteira). */
-type ItemPosicionado = { item: FeedbackDerivado; indice: number };
+type ItemPosicionado = { item: FeedbackCanonico; indice: number };
 
 /**
  * Identidade ESTÁVEL de um item da lista — SEMPRE pelo ID real do feedback
@@ -175,13 +177,13 @@ function chaveDoItem(item: FeedbackDerivado): string {
 function ListaCoordenada({
   grupos,
   reduzirMovimento,
-  onVerDetalhes,
+  onEditar,
   onFiltrarAvaliador,
   onFiltrarAvaliado,
 }: {
-  grupos: (Omit<GrupoMes, 'itens'> & { itens: ItemPosicionado[] })[];
+  grupos: (Omit<GrupoMes<FeedbackCanonico>, 'itens'> & { itens: ItemPosicionado[] })[];
   reduzirMovimento: boolean;
-  onVerDetalhes?: (item: FeedbackDerivado) => void;
+  onEditar?: (item: FeedbackCanonico) => void;
   onFiltrarAvaliador?: (nome: string) => void;
   onFiltrarAvaliado?: (nome: string) => void;
 }) {
@@ -245,13 +247,10 @@ function ListaCoordenada({
                   )}
                   aria-hidden="true"
                 />
-                <motion.div
-                  {...cardEntradaFeedback(indice)}
-                  style={indice === 0 ? EXPANSAO_ORIGEM : undefined}
-                >
+                <motion.div {...cardEntradaFeedback(indice)} style={indice === 0 ? EXPANSAO_ORIGEM : undefined}>
                   <FeedbackCard
                     item={item}
-                    onVerDetalhes={onVerDetalhes}
+                    onEditar={onEditar}
                     onFiltrarAvaliador={onFiltrarAvaliador}
                     onFiltrarAvaliado={onFiltrarAvaliado}
                   />

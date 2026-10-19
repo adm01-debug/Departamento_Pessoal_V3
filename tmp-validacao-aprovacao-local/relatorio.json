@@ -1,0 +1,403 @@
+{
+  "escritasNoSupabase": [],
+  "errosDePagina": [],
+  "papeisDoSessao": [
+    "admin"
+  ],
+  "passo0_limpo": {
+    "contador": "Aguardando gestor5",
+    "local": {}
+  },
+  "passo0_ninebox": {
+    "kpi": {
+      "bruto": "Colaboradores avaliados25100% do ciclo",
+      "valor": 25100
+    }
+  },
+  "passo1_fila": {
+    "linhas": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "selo": "Aguardando gestor",
+        "botoes": [
+          "Ver avaliação"
+        ]
+      }
+    ]
+  },
+  "passo2_modalAntes": {
+    "nome": "Ana Beatriz Souza",
+    "colaborador": "Ana Beatriz Souza",
+    "selo": "Aguardando gestor",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Devolver para correção",
+      "Aprovar avaliação",
+      "Fechar"
+    ],
+    "temAprovar": true,
+    "temDevolver": true,
+    "temValidarPotencial": false,
+    "tituloAprovar": "Operação demonstrativa — nada é gravado no banco"
+  },
+  "passo2_aposAprovar": {
+    "aviso": "Demonstração: “Aprovar avaliação” salva localmente (nada foi enviado ao banco).",
+    "local": {
+      "versao": 1,
+      "decisoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "decididoEm": "2026-10-16T17:16:29.451Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "validacoes": {},
+      "historico": [
+        {
+          "em": "2026-10-16T17:16:29.451Z",
+          "operacao": "aprovar",
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        }
+      ]
+    },
+    "escritasNoSupabase": []
+  },
+  "passo3_aposF5": {
+    "contador": "Aguardando gestor4",
+    "linhaDoColaborador": {
+      "nome": "Ana Beatriz Souza",
+      "selo": "Aprovada pelo gestor",
+      "botoes": [
+        "Ver avaliação"
+      ]
+    },
+    "local": {
+      "versao": 1,
+      "decisoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "decididoEm": "2026-10-16T17:16:29.451Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "validacoes": {},
+      "historico": [
+        {
+          "em": "2026-10-16T17:16:29.451Z",
+          "operacao": "aprovar",
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        }
+      ]
+    }
+  },
+  "passo4_etapaRh": {
+    "colaborador": "Ana Beatriz Souza",
+    "selo": "Aprovada pelo gestor",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Fechar"
+    ],
+    "temAprovar": false,
+    "temDevolver": false,
+    "temValidarPotencial": false,
+    "tituloAprovar": null
+  },
+  "passo4_temValidarNoModal": false,
+  "passo5_filaRh": {
+    "nome": "Ana Beatriz Souza",
+    "selo": "Aprovada pelo gestor",
+    "botoes": [
+      "Ver avaliação"
+    ]
+  },
+  "passo6_ninebox": {
+    "antes": {
+      "bruto": "Colaboradores avaliados25100% do ciclo",
+      "valor": 25100
+    },
+    "depois": {
+      "bruto": "Colaboradores avaliados2496% do ciclo",
+      "valor": 2496
+    },
+    "local": {
+      "versao": 1,
+      "decisoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "decididoEm": "2026-10-16T17:16:29.451Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "validacoes": {},
+      "historico": [
+        {
+          "em": "2026-10-16T17:16:29.451Z",
+          "operacao": "aprovar",
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        }
+      ]
+    }
+  },
+  "passo6b_nineboxValidado": {
+    "kpi": {
+      "bruto": "Colaboradores avaliados25100% do ciclo",
+      "valor": 25100
+    }
+  },
+  "passo6b_modalValidado": {
+    "colaborador": "Ana Beatriz Souza",
+    "selo": "Concluída e validada",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Fechar"
+    ],
+    "temAprovar": false,
+    "temDevolver": false,
+    "temValidarPotencial": false,
+    "tituloAprovar": null
+  },
+  "passo7_modal": {
+    "nome": "Carlos Eduardo Lima",
+    "colaborador": "Carlos Eduardo Lima",
+    "selo": "Aguardando gestor",
+    "botoes": [
+      "Ver só deste colaborador",
+      "Devolver para correção",
+      "Aprovar avaliação",
+      "Fechar"
+    ],
+    "temAprovar": true,
+    "temDevolver": true,
+    "temValidarPotencial": false,
+    "tituloAprovar": "Operação demonstrativa — nada é gravado no banco"
+  },
+  "passo7_aposDevolver": {
+    "aviso": "Demonstração: “Devolver para correção” salva localmente (nada foi enviado ao banco).",
+    "local": {
+      "versao": 1,
+      "decisoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "decididoEm": "2026-10-16T17:16:29.451Z",
+          "decididoPor": "admin@teste.local"
+        },
+        "mock-2::mock-ciclo-3": {
+          "colaboradorId": "mock-2",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "devolvido",
+          "justificativa": "Devolvido no teste de demonstração: revisar as metas do ciclo.",
+          "versaoAvaliacao": "demonstracao:mock-fb-1",
+          "decididoEm": "2026-10-16T17:17:02.816Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "validacoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "validadoEm": "2026-10-16T17:16:43.972Z",
+          "validadoPor": "rh@teste.local",
+          "observacao": "Validação do Potencial semeada (equivalente ao clique do RH na fila)."
+        }
+      },
+      "historico": [
+        {
+          "em": "2026-10-16T17:16:29.451Z",
+          "operacao": "aprovar",
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        },
+        {
+          "em": "2026-10-16T17:17:02.816Z",
+          "operacao": "devolver",
+          "colaboradorId": "mock-2",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-1",
+          "justificativa": "Devolvido no teste de demonstração: revisar as metas do ciclo.",
+          "por": "admin@teste.local"
+        }
+      ]
+    }
+  },
+  "passo7_filaReenvio": {
+    "nome": "Carlos Eduardo Lima",
+    "selo": "Devolvida para correção",
+    "botoes": [
+      "Reenviar ao gestor",
+      "Ver avaliação"
+    ]
+  },
+  "passo7_aposReenviar": {
+    "aviso": "Demonstração: avaliação reenviada ao gestor (salva localmente).",
+    "local": {
+      "versao": 1,
+      "decisoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "decididoEm": "2026-10-16T17:16:29.451Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "validacoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "validadoEm": "2026-10-16T17:16:43.972Z",
+          "validadoPor": "rh@teste.local",
+          "observacao": "Validação do Potencial semeada (equivalente ao clique do RH na fila)."
+        }
+      },
+      "historico": [
+        {
+          "em": "2026-10-16T17:16:29.451Z",
+          "operacao": "aprovar",
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        },
+        {
+          "em": "2026-10-16T17:17:02.816Z",
+          "operacao": "devolver",
+          "colaboradorId": "mock-2",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-1",
+          "justificativa": "Devolvido no teste de demonstração: revisar as metas do ciclo.",
+          "por": "admin@teste.local"
+        },
+        {
+          "em": "2026-10-16T17:17:08.636Z",
+          "operacao": "reenviar",
+          "colaboradorId": "mock-2",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-1",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        }
+      ]
+    }
+  },
+  "passo8_final": {
+    "contador": "Aguardando gestor4",
+    "local": {
+      "versao": 1,
+      "decisoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "decisao": "aprovado",
+          "justificativa": null,
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "decididoEm": "2026-10-16T17:16:29.451Z",
+          "decididoPor": "admin@teste.local"
+        }
+      },
+      "validacoes": {
+        "mock-1::mock-ciclo-3": {
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "validadoEm": "2026-10-16T17:16:43.972Z",
+          "validadoPor": "rh@teste.local",
+          "observacao": "Validação do Potencial semeada (equivalente ao clique do RH na fila)."
+        }
+      },
+      "historico": [
+        {
+          "em": "2026-10-16T17:16:29.451Z",
+          "operacao": "aprovar",
+          "colaboradorId": "mock-1",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-12",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        },
+        {
+          "em": "2026-10-16T17:17:02.816Z",
+          "operacao": "devolver",
+          "colaboradorId": "mock-2",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-1",
+          "justificativa": "Devolvido no teste de demonstração: revisar as metas do ciclo.",
+          "por": "admin@teste.local"
+        },
+        {
+          "em": "2026-10-16T17:17:08.636Z",
+          "operacao": "reenviar",
+          "colaboradorId": "mock-2",
+          "cicloId": "mock-ciclo-3",
+          "versaoAvaliacao": "demonstracao:mock-fb-1",
+          "justificativa": null,
+          "por": "admin@teste.local"
+        }
+      ]
+    },
+    "escritasNoSupabase": []
+  }
+}

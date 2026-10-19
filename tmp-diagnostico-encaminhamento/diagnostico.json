@@ -1,0 +1,39 @@
+{
+  "colaboradores": {
+    "total": 2,
+    "campos": [
+      "cargo",
+      "cpf",
+      "data_admissao",
+      "departamento",
+      "email",
+      "empresa_id",
+      "foto_url",
+      "id",
+      "matricula",
+      "nome_completo",
+      "status",
+      "telefone"
+    ],
+    "comSupervisorId": 0,
+    "comUserId": 0,
+    "amostra": [
+      {
+        "id": "06b52e96-9f8",
+        "nome": "[E2E-SEED] Colaborador Dois",
+        "supervisor_id": null,
+        "user_id": null
+      },
+      {
+        "id": "32c5f340-83a",
+        "nome": "[E2E-SEED] Colaborador Um",
+        "supervisor_id": null,
+        "user_id": null
+      }
+    ]
+  },
+  "feedbacks": null,
+  "ciclos": [],
+  "demoLocal": {},
+  "fila": []
+}

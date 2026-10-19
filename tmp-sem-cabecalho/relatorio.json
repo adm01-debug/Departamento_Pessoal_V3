@@ -1,0 +1,41 @@
+{
+  "pagamentos": {
+    "temTituloDoCabecalho": false,
+    "temCicloDePagamento": false,
+    "temChipPeriodo": false,
+    "respiroTablistParaKpi": 19,
+    "primeiroFilhoDoPainel": "grid min-w-0 grid-cols-1 items-stretch gap-3.5 xl:grid-cols-",
+    "kpiAntesDoFluxo": true,
+    "kpis": [
+      "Total AprovadoR$ 7.950,005 pagamentos",
+      "Aguardando AprovaçãoR$ 7.050,506 pagamentos",
+      "Divergências IdentificadasR$ 70,001 pagamento · requer conciliação",
+      "Total Pago no PeríodoR$ 1.300,001 pagamento"
+    ],
+    "etapasDoFluxo": 5,
+    "filtros": [
+      "Buscar pagamentos",
+      "Etapa do fluxo",
+      "Campanha",
+      "Status",
+      "Ordenar por",
+      "Linhas por página"
+    ],
+    "linhasDaTabela": 10,
+    "rodape": "Mostrando 10 de 10 pagamentos",
+    "laterais": [
+      "Resumo Financeiro",
+      "Próximas ações",
+      "Atividade recente"
+    ],
+    "periodoNoResumo": "Todos os períodos",
+    "elementosNoTopoDoPainel": [
+      "div"
+    ],
+    "errosPagina": 0
+  },
+  "campanhas": {
+    "respiroTablistParaKpi": 19
+  },
+  "erros": []
+}

@@ -1,0 +1,351 @@
+{
+  "desktop-1456": {
+    "existe": true,
+    "alturaBarra": 77,
+    "textoDaBarra": "Fluxo de PagamentoAcompanhe cada etapa do processo1Calculado32Em aprovação23Aprovado14Enviado à folha25Conciliado1",
+    "temValorMonetario": false,
+    "temForaDoFluxo": false,
+    "titulo": {
+      "x": 297,
+      "y": 423,
+      "w": 195,
+      "h": 18,
+      "cy": 432
+    },
+    "subtitulo": {
+      "x": 297,
+      "y": 445,
+      "w": 195,
+      "h": 16,
+      "cy": 453
+    },
+    "tituloEhEsquerda": true,
+    "itens": 5,
+    "circulos": [
+      {
+        "x": 514,
+        "y": 424,
+        "w": 36,
+        "h": 36,
+        "cy": 442,
+        "borda": "2px"
+      },
+      {
+        "x": 647,
+        "y": 424,
+        "w": 36,
+        "h": 36,
+        "cy": 442,
+        "borda": "2px"
+      },
+      {
+        "x": 801,
+        "y": 424,
+        "w": 36,
+        "h": 36,
+        "cy": 442,
+        "borda": "2px"
+      },
+      {
+        "x": 933,
+        "y": 424,
+        "w": 36,
+        "h": 36,
+        "cy": 442,
+        "borda": "2px"
+      },
+      {
+        "x": 1091,
+        "y": 424,
+        "w": 36,
+        "h": 36,
+        "cy": 442,
+        "borda": "2px"
+      }
+    ],
+    "nomes": [
+      "Calculado",
+      "Em aprovação",
+      "Aprovado",
+      "Enviado à folha",
+      "Conciliado"
+    ],
+    "contadores": [
+      "3",
+      "2",
+      "1",
+      "2",
+      "1"
+    ],
+    "contadorAbaixoDoNome": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "botoesSemCartao": [
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      }
+    ],
+    "diferencaVerticalEntreEtapas": 0,
+    "chevrons": 4,
+    "chevronsCentrados": true,
+    "chipForaDoFluxo": null,
+    "rolagemHorizontalPagina": false,
+    "opcaoForaDoFluxo": "Fora do fluxo (auditoria) · 1",
+    "alturaBarraFiltros": 66
+  },
+  "tablet-1024": {
+    "existe": true,
+    "alturaBarra": 77,
+    "textoDaBarra": "Fluxo de PagamentoAcompanhe cada etapa do processo1Calculado32Em aprovação23Aprovado14Enviado à folha25Conciliado1",
+    "temValorMonetario": false,
+    "temForaDoFluxo": false,
+    "titulo": {
+      "x": 297,
+      "y": 564,
+      "w": 195,
+      "h": 18,
+      "cy": 573
+    },
+    "subtitulo": {
+      "x": 297,
+      "y": 586,
+      "w": 195,
+      "h": 16,
+      "cy": 594
+    },
+    "tituloEhEsquerda": true,
+    "itens": 5,
+    "circulos": [
+      {
+        "x": 514,
+        "y": 565,
+        "w": 36,
+        "h": 36,
+        "cy": 583,
+        "borda": "2px"
+      },
+      {
+        "x": 607,
+        "y": 565,
+        "w": 36,
+        "h": 36,
+        "cy": 583,
+        "borda": "2px"
+      },
+      {
+        "x": 715,
+        "y": 565,
+        "w": 36,
+        "h": 36,
+        "cy": 583,
+        "borda": "2px"
+      },
+      {
+        "x": 807,
+        "y": 565,
+        "w": 36,
+        "h": 36,
+        "cy": 583,
+        "borda": "2px"
+      },
+      {
+        "x": 918,
+        "y": 565,
+        "w": 36,
+        "h": 36,
+        "cy": 583,
+        "borda": "2px"
+      }
+    ],
+    "nomes": [
+      "Calculado",
+      "Em aprovação",
+      "Aprovado",
+      "Enviado à folha",
+      "Conciliado"
+    ],
+    "contadores": [
+      "3",
+      "2",
+      "1",
+      "2",
+      "1"
+    ],
+    "contadorAbaixoDoNome": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "botoesSemCartao": [
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      }
+    ],
+    "diferencaVerticalEntreEtapas": 0,
+    "chevrons": 4,
+    "chevronsCentrados": true,
+    "chipForaDoFluxo": null,
+    "rolagemHorizontalPagina": true,
+    "opcaoForaDoFluxo": "Fora do fluxo (auditoria) · 1",
+    "alturaBarraFiltros": 118
+  },
+  "mobile-390": {
+    "existe": true,
+    "alturaBarra": 125,
+    "textoDaBarra": "Fluxo de PagamentoAcompanhe cada etapa do processo1Calculado32Em aprovação23Aprovado14Enviado à folha25Conciliado1",
+    "temValorMonetario": false,
+    "temForaDoFluxo": false,
+    "titulo": {
+      "x": 41,
+      "y": 927,
+      "w": 308,
+      "h": 18,
+      "cy": 936
+    },
+    "subtitulo": {
+      "x": 41,
+      "y": 949,
+      "w": 308,
+      "h": 16,
+      "cy": 957
+    },
+    "tituloEhEsquerda": false,
+    "itens": 5,
+    "circulos": [
+      {
+        "x": 43,
+        "y": 977,
+        "w": 36,
+        "h": 36,
+        "cy": 995,
+        "borda": "2px"
+      },
+      {
+        "x": 165,
+        "y": 977,
+        "w": 36,
+        "h": 36,
+        "cy": 995,
+        "borda": "2px"
+      },
+      {
+        "x": 306,
+        "y": 977,
+        "w": 36,
+        "h": 36,
+        "cy": 995,
+        "borda": "2px"
+      },
+      {
+        "x": 427,
+        "y": 977,
+        "w": 36,
+        "h": 36,
+        "cy": 995,
+        "borda": "2px"
+      },
+      {
+        "x": 572,
+        "y": 977,
+        "w": 36,
+        "h": 36,
+        "cy": 995,
+        "borda": "2px"
+      }
+    ],
+    "nomes": [
+      "Calculado",
+      "Em aprovação",
+      "Aprovado",
+      "Enviado à folha",
+      "Conciliado"
+    ],
+    "contadores": [
+      "3",
+      "2",
+      "1",
+      "2",
+      "1"
+    ],
+    "contadorAbaixoDoNome": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "botoesSemCartao": [
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      },
+      {
+        "borda": "0px",
+        "fundo": "rgba(0, 0, 0, 0)"
+      }
+    ],
+    "diferencaVerticalEntreEtapas": 0,
+    "chevrons": 4,
+    "chevronsCentrados": true,
+    "chipForaDoFluxo": null,
+    "rolagemHorizontalPagina": true,
+    "opcaoForaDoFluxo": "Fora do fluxo (auditoria) · 1",
+    "alturaBarraFiltros": 274
+  },
+  "etapaCalculadoFiltra": "Mostrando 3 de 3 pagamentos",
+  "erros": [
+    "screenshot mobile-390: page.screenshot: Clipped area is either empty or outside the resulting image\nCall log:\n\u001b[2m  - takin"
+  ]
+}

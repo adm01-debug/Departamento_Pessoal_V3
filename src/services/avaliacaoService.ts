@@ -165,6 +165,58 @@ export const avaliacaoService = {
   },
 
   /**
+   * EDIÇÃO SEGURA (RPC `editar_feedback_seguro`) — usada pelo formulário dos
+   * filtros normais. Só RH/admin (revalidado no servidor). Registro CONCLUÍDO é
+   * reaberto (status `pendente`), `revisao` sobe e a versão consolidada muda —
+   * as aprovações/validações anteriores deixam de valer. Auditoria antes/depois
+   * e idempotência por operação ficam no servidor.
+   */
+  async editarFeedbackSeguro(params: {
+    feedbackId: string;
+    avaliado_id: string;
+    avaliador_id: string;
+    ciclo_id: string | null;
+    tipo: string;
+    nota_geral: number;
+    potencial?: number | null;
+    pontos_fortes?: string | null;
+    pontos_melhoria?: string | null;
+    comentarios?: string | null;
+    idOperacao: string;
+  }) {
+    // Guarda de escrita: `mock-*` nunca chega à rede.
+    exigirEscritaOperacional('Editar avaliação (auditada)', {
+      feedback_id: params.feedbackId,
+      avaliado_id: params.avaliado_id,
+      avaliador_id: params.avaliador_id,
+      ciclo_id: params.ciclo_id,
+    });
+    const { data, error } = await (supabase as any).rpc('editar_feedback_seguro', {
+      p_feedback_id: params.feedbackId,
+      p_avaliado_id: params.avaliado_id,
+      p_avaliador_id: params.avaliador_id,
+      p_ciclo_id: params.ciclo_id,
+      p_tipo: params.tipo,
+      p_nota: params.nota_geral,
+      p_potencial: params.potencial ?? null,
+      p_pontos_fortes: params.pontos_fortes ?? null,
+      p_pontos_melhoria: params.pontos_melhoria ?? null,
+      p_comentarios: params.comentarios ?? null,
+      p_idempotencia: params.idOperacao,
+    });
+    if (error) throw error;
+    return data as {
+      ok: boolean;
+      feedback_id: string;
+      status: string;
+      revisao: number;
+      reaberta: boolean;
+      versao_avaliacao: string;
+      idempotente: boolean;
+    };
+  },
+
+  /**
    * @deprecated A EXCLUSÃO FÍSICA não é permitida no módulo de desempenho.
    *
    * A correção de segurança R2 (`20261015090000_ninebox_finalizacao_e_potencial.sql`)

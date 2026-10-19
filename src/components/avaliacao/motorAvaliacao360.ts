@@ -177,6 +177,8 @@ export type MotivoNaoClassificado360 =
   | 'gestor_sem_desempenho'
   | 'gestor_sem_potencial'
   | 'potencial_sem_validacao'
+  | 'aprovacao_pendente'
+  | 'aprovacao_devolvida'
   | 'sem_notas_disponiveis';
 
 export interface Consolidacao360 {
@@ -330,5 +332,7 @@ export const MOTIVO_NAO_CLASSIFICADO_360: Readonly<Record<MotivoNaoClassificado3
   gestor_sem_desempenho: 'Avaliação do gestor sem nota de desempenho válida.',
   gestor_sem_potencial: 'Avaliação do gestor sem nota de potencial.',
   potencial_sem_validacao: 'Potencial aguardando validação do RH.',
+  aprovacao_pendente: 'Aguardando aprovação do gestor.',
+  aprovacao_devolvida: 'Avaliação devolvida para correção pelo gestor.',
   sem_notas_disponiveis: 'Nenhuma nota elegível para o cálculo.',
 };

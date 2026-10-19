@@ -14,7 +14,7 @@ import type { ReactNode } from 'react';
 
 const { modo, auth, toasts, servico } = vi.hoisted(() => ({
   modo: { real: true },
-  auth: { roles: ['admin'] as string[], isAdmin: false },
+  auth: { roles: ['admin'] as string[], isAdmin: false, userId: 'uid-sessao' },
   toasts: { success: vi.fn(), error: vi.fn(), info: vi.fn() },
   servico: {
     finalizarFeedback: vi.fn(),
@@ -34,13 +34,20 @@ vi.mock('@/components/avaliacao/nineBoxModo', async (importOriginal) => {
 });
 
 vi.mock('@/hooks/useAuth', () => ({
-  useAuth: () => ({ user: { roles: auth.roles }, isAdmin: auth.isAdmin }),
+  // `hasRole` é o MESMO contrato do contexto real (lista de papéis da conta):
+  // uma conta pode ser `admin` E `gestor` ao mesmo tempo.
+  useAuth: () => ({
+    user: { id: auth.userId, roles: auth.roles },
+    isAdmin: auth.isAdmin,
+    hasRole: (role: string) => auth.roles.includes(role),
+  }),
 }));
 
 vi.mock('@/services/avaliacaoService', () => ({ avaliacaoService: servico }));
 
-import { FeedbackAcoesRodape, type PreviewAcoes } from '../avaliacao/FeedbackAcoesRodape';
+import { FeedbackAcoesRodape, type ContextoAcoes, type PreviewAcoes } from '../avaliacao/FeedbackAcoesRodape';
 import { estadoAprovacao, type EstadoAprovacao } from '../avaliacao/aprovacaoGestor';
+import { CHAVE_ARMAZENAMENTO, limparEstadoLocal } from '../avaliacao/aprovacaoLocal';
 import { FeedbackDetalheDialog } from '../avaliacao/FeedbackDetalheDialog';
 import NineBoxPreviewPage from '@/pages/NineBoxPreviewPage';
 import type { FeedbackDerivado } from '../avaliacao/feedbacksComum';
@@ -80,7 +87,9 @@ function renderizar(
   item = montarItem(),
   client?: QueryClient,
   previa?: PreviewAcoes,
-  estado?: EstadoAprovacao | null
+  estado?: EstadoAprovacao | null,
+  /** Etapa do modal (regra única de ações): ver `ContextoAcoes`. */
+  contexto: ContextoAcoes = 'avaliacoes'
 ) {
   const qc =
     client ??
@@ -92,7 +101,9 @@ function renderizar(
   );
   return {
     qc,
-    ...render(<FeedbackAcoesRodape item={item} previa={previa} estadoAprovacao={estado} />, { wrapper }),
+    ...render(<FeedbackAcoesRodape item={item} previa={previa} estadoAprovacao={estado} contexto={contexto} />, {
+      wrapper,
+    }),
   };
 }
 
@@ -114,9 +125,12 @@ beforeEach(() => {
   modo.real = true;
   auth.roles = ['admin'];
   auth.isAdmin = false;
+  auth.userId = 'uid-sessao';
   servico.listarValidacoesPotencial.mockResolvedValue([]);
   servico.listarVersoesAvaliacao.mockResolvedValue([{ feedback_id: 'f1', versao_avaliacao: 'h1' }]);
   servico.listarVinculos.mockResolvedValue([]);
+  // Armazenamento da vitrine limpo entre testes (cada caso é independente).
+  limparEstadoLocal();
 });
 
 afterEach(() => {
@@ -133,71 +147,82 @@ describe('modo demonstração — experiência atual preservada', () => {
     expect(servico.listarValidacoesPotencial).not.toHaveBeenCalled();
   });
 
-  it('registro REAL mostra os controles mesmo com a flag de modo real DESLIGADA', () => {
+  it('registro REAL mostra as ações da etapa mesmo com a flag de modo real DESLIGADA', () => {
     // Correção: a exibição não depende mais de `modoRealAtivo()`. O que separa é
     // o TIPO do registro — fictício nunca opera; real opera pelo mesmo rodapé.
     modo.real = false;
-    renderizar(); // id real ('f1')
-    // A CONCLUSÃO não é do RH/admin (regra de 16/10/2026): fica bloqueada.
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
+    renderizar(); // id real ('f1'), papel admin
+    // Etapa Avaliações: só as ações do status. A conclusão não é do RH/admin.
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
     expect(botao(/Cancelar avaliação/)).toBeEnabled();
   });
 });
 
-describe('ações disponíveis por STATUS', () => {
-  it('pendente + GESTOR RESPONSÁVEL: concluir habilitado; reabrir bloqueado com motivo', () => {
+describe('ações visíveis por STATUS — etapa "Avaliações" (regra única)', () => {
+  it('pendente + GESTOR RESPONSÁVEL: Concluir/Cancelar habilitados e SEM decisão de aprovação', () => {
     renderizar(undefined, undefined, previaGestor());
     expect(botao(/Concluir avaliação/)).toBeEnabled();
     expect(botao(/Cancelar avaliação/)).toBeEnabled();
-    expect(botao(/Reabrir avaliação/)).toBeDisabled();
-    expect(botao(/Reabrir avaliação/)).toHaveAttribute('title', expect.stringContaining('Não existe transição'));
+    // Aprovação só existe na fila "Aguardando gestor" — aqui, nem desabilitada.
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Aprovar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Devolver para correção/ })).toBeNull();
   });
 
-  it('pendente + RH: concluir BLOQUEADO (perfil) e cancelar liberado', () => {
+  it('pendente + RH: cancelar liberado; concluir NÃO é oferecido (perfil)', () => {
     auth.roles = ['rh'];
     renderizar();
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
-    expect(botao(/Concluir avaliação/)).toHaveAttribute('title', expect.stringContaining('perfil'));
+    expect(botao(/Cancelar avaliação/)).toBeEnabled();
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+  });
+
+  it('pendente + GESTOR sem vínculo: concluir NÃO é oferecido (responsabilidade)', () => {
+    renderizar(undefined, undefined, {
+      papel: 'gestor',
+      responsavel: false,
+      servico: servico as unknown as PreviewAcoes['servico'],
+    });
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
     expect(botao(/Cancelar avaliação/)).toBeEnabled();
   });
 
-  it('pendente + GESTOR sem vínculo: concluir bloqueado com o motivo da responsabilidade', () => {
-    renderizar(undefined, undefined, { papel: 'gestor', responsavel: false, servico: servico as unknown as PreviewAcoes['servico'] });
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
-    expect(botao(/Concluir avaliação/)).toHaveAttribute('title', expect.stringContaining('gestor responsável'));
+  it('CONCLUÍDO: nenhum botão operacional (nem concluir, nem cancelar, nem reabrir)', () => {
+    auth.roles = ['rh'];
+    renderizar(montarItem({ status: 'concluido' }));
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
   });
 
-  it('concluído: concluir bloqueado; cancelar exige reabrir antes; reabrir liberado', () => {
-    renderizar(montarItem({ status: 'concluido' }));
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
-    expect(botao(/Cancelar avaliação/)).toBeDisabled();
-    expect(botao(/Cancelar avaliação/)).toHaveAttribute('title', expect.stringContaining('reabrir'));
-    expect(botao(/Reabrir avaliação/)).toBeEnabled();
+  it('CANCELADO: nenhuma ação de conclusão/cancelamento e nenhuma decisão', () => {
+    auth.roles = ['rh'];
+    renderizar(montarItem({ status: 'cancelado' }));
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Aprovar avaliação/ })).toBeNull();
   });
 });
 
-describe('ações disponíveis por PAPEL', () => {
-  it('avaliador (user) NÃO conclui e não cancela', () => {
+describe('ações visíveis por PAPEL — etapa "Avaliações"', () => {
+  it('avaliador (user) NÃO recebe nenhuma ação', () => {
     auth.roles = ['user'];
     renderizar();
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
-    expect(botao(/Cancelar avaliação/)).toBeDisabled();
-    expect(botao(/Cancelar avaliação/)).toHaveAttribute('title', expect.stringContaining('perfil'));
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
   });
 
-  it('admin e rh gerenciam (cancelar/reabrir), mas NÃO concluem', () => {
+  it('admin/RH em registro CONCLUÍDO não recebem ação alguma', () => {
     auth.roles = ['rh'];
     renderizar(montarItem({ status: 'concluido' }));
-    expect(botao(/Reabrir avaliação/)).toBeEnabled();
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
   });
 
   it('sem papel reconhecido, nenhum controle é liberado', () => {
     auth.roles = [];
     renderizar();
-    expect(botao(/Concluir avaliação/)).toBeDisabled();
-    expect(botao(/Cancelar avaliação/)).toBeDisabled();
-    expect(botao(/Reabrir avaliação/)).toBeDisabled();
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
   });
 });
 
@@ -254,44 +279,28 @@ describe('cancelamento com justificativa', () => {
   });
 });
 
-describe('reabertura com justificativa', () => {
-  it('exige a justificativa e envia a ação de reabertura', async () => {
-    const usuario = userEvent.setup();
-    servico.finalizarFeedback.mockResolvedValue({ ok: true, status_novo: 'pendente', idempotente: false });
+describe('reabertura NÃO pertence a este rodapé (regra por etapa)', () => {
+  it('registro concluído não oferece "Reabrir avaliação" em nenhuma etapa do rodapé', () => {
+    auth.roles = ['rh']; // perfil que ANTES reabria por aqui
     renderizar(montarItem({ status: 'concluido' }));
-
-    await usuario.click(botao(/Reabrir avaliação/));
-    const campo = await screen.findByLabelText(/Justificativa da reabertura/i);
-    const confirmar = botao(/Confirmar reabertura/);
-    expect(confirmar).toBeDisabled();
-
-    await usuario.type(campo, 'nota incorreta'); // >= 10
-    expect(confirmar).toBeEnabled();
-    await usuario.click(confirmar);
-
-    await waitFor(() =>
-      expect(servico.finalizarFeedback).toHaveBeenCalledWith({
-        feedbackId: 'f1',
-        acao: 'reabrir',
-        motivo: 'nota incorreta',
-        idOperacao: expect.any(String),
-      })
-    );
-    expect(toasts.success).toHaveBeenCalledWith(expect.stringContaining('reaberta'));
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
+    cleanup();
+    renderizar(montarItem({ status: 'concluido' }), undefined, undefined, null, 'aguardando_gestor');
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
   });
 });
 
-describe('validação de Potencial — exclusiva do RH', () => {
+describe('validação de Potencial — exclusiva do RH (etapa "rh")', () => {
   it('gestor e admin NÃO veem o controle, mesmo com tudo elegível', async () => {
-    renderizar(montarItem({ status: 'concluido' }), undefined);
+    renderizar(montarItem({ status: 'concluido' }), undefined, undefined, null, 'rh');
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
 
     auth.roles = ['admin'];
-    renderizar(montarItem({ status: 'concluido' }));
+    renderizar(montarItem({ status: 'concluido' }), undefined, undefined, null, 'rh');
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
   });
 
-  it('RH vê o controle em avaliação do gestor, concluída, com Potencial válido', async () => {
+  it('RH vê o controle de validação nesta etapa (sem decisão do gestor)', async () => {
     auth.roles = ['rh'];
     servico.validarPotencialAvaliacao.mockResolvedValue({
       ok: true,
@@ -301,9 +310,15 @@ describe('validação de Potencial — exclusiva do RH', () => {
       idempotente: false,
     });
     const usuario = userEvent.setup();
-    renderizar(montarItem({ status: 'concluido' }));
+    renderizar(montarItem({ status: 'concluido' }), undefined, undefined, null, 'rh');
 
     const validar = await screen.findByRole('button', { name: /Validar Potencial/ });
+    // Nenhuma ação de CONCLUSÃO/APROVAÇÃO aparece nesta etapa.
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Aprovar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Devolver para correção/ })).toBeNull();
+
     await usuario.click(validar);
 
     await waitFor(() => expect(servico.validarPotencialAvaliacao).toHaveBeenCalledTimes(1));
@@ -314,15 +329,15 @@ describe('validação de Potencial — exclusiva do RH', () => {
     expect(toasts.success).toHaveBeenCalledWith('Potencial validado pelo RH.');
   });
 
-  it('NÃO oferece validação fora dos requisitos (pendente, par, sem Potencial ou já validado)', () => {
+  it('NÃO oferece validação fora dos requisitos (pendente, par, sem Potencial)', () => {
     auth.roles = ['rh'];
-    renderizar(montarItem({ status: 'pendente' }));
+    renderizar(montarItem({ status: 'pendente' }), undefined, undefined, null, 'rh');
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
 
-    renderizar(montarItem({ status: 'concluido', tipo: 'par' }));
+    renderizar(montarItem({ status: 'concluido', tipo: 'par' }), undefined, undefined, null, 'rh');
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
 
-    renderizar(montarItem({ status: 'concluido', potencial: 0 }));
+    renderizar(montarItem({ status: 'concluido', potencial: 0 }), undefined, undefined, null, 'rh');
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
   });
 });
@@ -358,9 +373,9 @@ describe('indicador de situação do Potencial', () => {
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Validação desatualizada'));
   });
 
-  it('quem não é RH não vê selo (não afirmamos estado sem o dado do RH)', () => {
+  it('quem não é RH vê o status do registro, sem afirmar nada sobre o Potencial', () => {
     renderizar(montarItem({ status: 'concluido' }));
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.getByRole('status')).toHaveTextContent('Concluído');
   });
 });
 
@@ -379,7 +394,8 @@ describe('estado de carregamento e clique duplicado', () => {
     await usuario.click(botao(/Concluir avaliação/));
     await waitFor(() => expect(botao(/Concluir avaliação/)).toBeDisabled());
     expect(botao(/Cancelar avaliação/)).toBeDisabled();
-    expect(botao(/Reabrir avaliação/)).toBeDisabled();
+    // A etapa Avaliações não oferece reabertura (regra única de ações).
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
 
     // Segundo clique no botão já desabilitado não pode gerar nova chamada.
     fireEvent.click(botao(/Concluir avaliação/));
@@ -436,24 +452,25 @@ describe('atualização da interface após o sucesso', () => {
       defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
     });
     const invalidar = vi.spyOn(qc, 'invalidateQueries');
-    servico.finalizarFeedback.mockResolvedValue({ ok: true, status_novo: 'pendente', idempotente: false });
+    servico.finalizarFeedback.mockResolvedValue({ ok: true, status_novo: 'cancelado', idempotente: false });
+    auth.roles = ['rh']; // perfil que cancela pelo rodapé
 
-    renderizar(montarItem({ status: 'concluido' }), qc);
-    await usuario.click(botao(/Reabrir avaliação/));
-    await usuario.type(await screen.findByLabelText(/Justificativa da reabertura/i), 'nota incorreta');
-    await usuario.click(botao(/Confirmar reabertura/));
+    renderizar(montarItem({ status: 'pendente' }), qc);
+    await usuario.click(botao(/Cancelar avaliação/));
+    await usuario.type(await screen.findByLabelText(/Motivo do cancelamento/i), 'registro em duplicidade');
+    await usuario.click(botao(/Confirmar cancelamento/));
 
     await waitFor(() => expect(invalidar).toHaveBeenCalledWith({ queryKey: ['feedbacks_360'] }));
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['feedbacks_360_validacoes_potencial'] });
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['vw_feedbacks_360_versao'] });
-    await waitFor(() => expect(screen.queryByLabelText(/Justificativa da reabertura/i)).toBeNull());
-    expect(toasts.success).toHaveBeenCalledWith(expect.stringContaining('reaberta'));
+    await waitFor(() => expect(screen.queryByLabelText(/Motivo do cancelamento/i)).toBeNull());
+    expect(toasts.success).toHaveBeenCalledWith(expect.stringContaining('cancelada'));
   });
 });
 
 describe('evidência de layout e integração dentro do modal', () => {
   it('usa o alinhamento e a pele do rodapé existente (h-8/text-xs, quebra, separator)', () => {
-    const { container } = renderizar();
+    const { container } = renderizar(undefined, undefined, previaGestor());
     const linha = botao(/Concluir avaliação/).parentElement as HTMLElement;
 
     expect(linha.className).toContain('justify-end');
@@ -463,27 +480,28 @@ describe('evidência de layout e integração dentro do modal', () => {
     expect(container.querySelector('div[class*="bg-border"]')).not.toBeNull();
   });
 
-  it('no modal: conteúdo existente preservado + controles no FIM do rodapé', async () => {
+  it('no modal: conteúdo existente preservado + controles da etapa no FIM do rodapé', async () => {
     render(
       <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
         <FeedbackDetalheDialog item={montarItem()} aberto onOpenChange={() => {}} onFiltrarAvaliado={() => {}} />
       </QueryClientProvider>
     );
 
-    // Conteúdo atual do modal intocado.
-    expect(await screen.findByText('Ana Silva')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Ver só deste colaborador/ })).toBeInTheDocument();
+    // Tom: o texto é o REAL do registro (novo conteúdo canônico).
     expect(screen.getByText('Pontos fortes')).toBeInTheDocument();
+    expect(screen.getByText('Entrega consistente e comunicação clara')).toBeInTheDocument();
 
-    // Controles novos, DEPOIS do bloco que já existia (ordem no DOM).
+    // Ações da etapa (padrão: Avaliações) DEPOIS do bloco que já existia.
     const verSo = screen.getByRole('button', { name: /Ver só deste colaborador/ });
-    const concluir = screen.getByRole('button', { name: /Concluir avaliação/ });
-    expect(verSo.compareDocumentPosition(concluir) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(screen.getByRole('button', { name: /Cancelar avaliação/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Reabrir avaliação/ })).toBeInTheDocument();
+    const cancelar = screen.getByRole('button', { name: /Cancelar avaliação/ });
+    expect(verSo.compareDocumentPosition(cancelar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Sem reabertura e SEM controles de aprovação nesta etapa (só na fila).
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Aprovar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Devolver para correção/ })).toBeNull();
   });
 
-  it('registro FICTÍCIO mantém o modal EXATAMENTE o de antes (sem controles)', async () => {
+  it('registro FICTÍCIO mantém o modal de leitura (controles de escrita desabilitados)', async () => {
     modo.real = false;
     render(
       <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
@@ -500,6 +518,9 @@ describe('evidência de layout e integração dentro do modal', () => {
     expect(screen.getByRole('button', { name: /Ver só deste colaborador/ })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
+    // A seção de conteúdo não desaparece no registro fictício.
+    expect(screen.getByText('Pontos de melhoria')).toBeInTheDocument();
+    expect(screen.getByText('Comentários')).toBeInTheDocument();
   });
 });
 
@@ -511,6 +532,8 @@ describe('prévia local (DEV) — flag desligada e ZERO RPC', () => {
       validarPotencialAvaliacao: vi.fn(),
       listarValidacoesPotencial: vi.fn().mockResolvedValue([]),
       listarVersoesAvaliacao: vi.fn().mockResolvedValue([{ feedback_id: 'f1', versao_avaliacao: 'h1' }]),
+      listarVinculos: vi.fn().mockResolvedValue([]),
+      decidirAprovacaoGestor: vi.fn(),
     };
     const usuario = userEvent.setup();
     renderizar(montarItem(), undefined, { servico: simulado, papel: 'gestor', responsavel: true });
@@ -529,7 +552,9 @@ describe('prévia local (DEV) — flag desligada e ZERO RPC', () => {
     modo.real = false;
     auth.roles = ['admin'];
     renderizar(montarItem({ status: 'concluido' }), undefined, { papel: 'gestor' });
-    expect(botao(/Reabrir avaliação/)).toBeDisabled();
+    // Registro concluído na etapa Avaliações: nenhuma ação operacional.
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
   });
 });
@@ -562,7 +587,7 @@ describe('página de prévia local (/dev/ninebox-preview)', () => {
     expect(servico.listarVersoesAvaliacao).not.toHaveBeenCalled();
   });
 
-  it('abre o modal REAL a partir de um cenário, com os controles dentro', async () => {
+  it('abre o modal REAL a partir de um cenário, com o rodapé da etapa dentro', async () => {
     modo.real = false;
     const usuario = userEvent.setup();
     renderizarPagina();
@@ -571,15 +596,19 @@ describe('página de prévia local (/dev/ninebox-preview)', () => {
     await usuario.click(aberturas[0]);
 
     expect(await screen.findByText('Ana Silva (fictícia)')).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: /Concluir avaliação/ }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole('button', { name: /Cancelar avaliação/ }).length).toBeGreaterThan(0);
+    // Regra única de ações: a reabertura NÃO pertence a este rodapé; a decisão
+    // formal só existe na fila "Aguardando gestor".
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Aprovar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Devolver para correção/ })).toBeNull();
   });
 });
 
 /* ─── APROVAÇÃO FORMAL NO MODAL (a MESMA regra da fila) ──────────────────── */
 describe('aprovação formal do gestor no rodapé do modal', () => {
   const pendente = () => estadoAprovacao({ versaoGestor: 'v1', decisao: null, validada: false });
-  const aprovada = () => estadoAprovacao({ versaoGestor: 'v1', decisao: { decisao: 'aprovado', versao_avaliacao: 'v1' }, validada: false });
+  const aprovada = () =>
+    estadoAprovacao({ versaoGestor: 'v1', decisao: { decisao: 'aprovado', versao_avaliacao: 'v1' }, validada: false });
 
   function previaCom(papel: string, responsavel: boolean): PreviewAcoes {
     return { papel, responsavel, servico: servico as unknown as PreviewAcoes['servico'] };
@@ -590,13 +619,25 @@ describe('aprovação formal do gestor no rodapé do modal', () => {
   });
 
   it('o selo mostra o ESTADO DA APROVAÇÃO (não o status do registro) quando há pedido pendente', () => {
-    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('rh', false), pendente());
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('rh', false), pendente(), 'aguardando_gestor');
     expect(screen.getByRole('status')).toHaveTextContent(/Aguardando gestor/i);
   });
 
-  it('gestor responsável vê Aprovar avaliação/Devolver para correção e a decisão chama a RPC do fluxo', async () => {
+  it('gestor responsável vê SOMENTE Aprovar/Devolver e a decisão chama a RPC do fluxo', async () => {
     const usuario = userEvent.setup();
-    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('gestor', true), pendente());
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      previaCom('gestor', true),
+      pendente(),
+      'aguardando_gestor'
+    );
+
+    // Nesta etapa NÃO existem ações de conclusão/cancelamento/reabertura.
+    expect(screen.queryByRole('button', { name: /Concluir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Cancelar avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Reabrir avaliação/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
 
     await usuario.click(botao(/Aprovar avaliação/));
     await waitFor(() => expect(servico.decidirAprovacaoGestor).toHaveBeenCalledTimes(1));
@@ -609,9 +650,127 @@ describe('aprovação formal do gestor no rodapé do modal', () => {
     expect(servico.finalizarFeedback).not.toHaveBeenCalled();
   });
 
+  it('REGISTRO REAL: conta admin+gestor COM vínculo prova o responsável e recebe a decisão', async () => {
+    // Defeito corrigido: a conta era tratada só como `admin` (precedência), a
+    // consulta de vínculo não rodava e Aprovar/Devolver nunca apareciam.
+    auth.roles = ['admin', 'gestor'];
+    auth.isAdmin = true;
+    auth.userId = 'uid-sessao';
+    servico.listarVinculos.mockResolvedValue([
+      { id: 'colab-1', user_id: 'uid-sessao', supervisor_id: null },
+      { id: 'colab-9', user_id: null, supervisor_id: 'colab-1' },
+    ]);
+    const usuario = userEvent.setup();
+    renderizar(montarItem({ status: 'concluido' }), undefined, undefined, pendente(), 'aguardando_gestor');
+
+    expect(await screen.findByRole('button', { name: /Aprovar avaliação/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Devolver para correção/ })).toBeInTheDocument();
+
+    await usuario.click(botao(/Aprovar avaliação/));
+    await waitFor(() => expect(servico.decidirAprovacaoGestor).toHaveBeenCalledTimes(1));
+    expect(servico.decidirAprovacaoGestor.mock.calls[0][0]).toMatchObject({
+      colaboradorId: 'colab-1',
+      cicloId: 'ciclo-1',
+      decisao: 'aprovado',
+    });
+  });
+
+  it('REGISTRO REAL: admin sozinho decide a consolidação SEM gestor vinculado (fallback)', () => {
+    auth.roles = ['admin'];
+    auth.isAdmin = true;
+    auth.userId = 'uid-sessao';
+    servico.listarVinculos.mockResolvedValue([{ id: 'colab-1', user_id: 'uid-outro', supervisor_id: null }]);
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      undefined,
+      estadoAprovacao({
+        versaoGestor: 'v1',
+        decisao: null,
+        validada: false,
+        gestorIdentificado: false,
+        autorizadoAmplo: true,
+      }),
+      'aguardando_gestor'
+    );
+
+    expect(botao(/^Aprovar avaliação$/)).toBeEnabled();
+    expect(botao(/Devolver para correção/)).toBeEnabled();
+  });
+
+  it('REGISTRO REAL: admin decide também COM gestor vinculado (escopo de tenant)', () => {
+    auth.roles = ['admin'];
+    auth.isAdmin = true;
+    auth.userId = 'uid-sessao';
+    servico.listarVinculos.mockResolvedValue([
+      { id: 'colab-1', user_id: 'uid-outro', supervisor_id: 'colab-2' },
+      { id: 'colab-2', user_id: 'uid-terceiro', supervisor_id: null },
+    ]);
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      undefined,
+      estadoAprovacao({ versaoGestor: 'v1', decisao: null, validada: false, gestorIdentificado: true }),
+      'aguardando_gestor'
+    );
+
+    expect(botao(/^Aprovar avaliação$/)).toBeEnabled();
+    expect(botao(/Devolver para correção/)).toBeEnabled();
+  });
+
+  it('REGISTRO REAL: admin+gestor SEM vínculo usa o mesmo fallback (PODE decidir)', () => {
+    auth.roles = ['admin', 'gestor'];
+    auth.isAdmin = true;
+    auth.userId = 'uid-sessao';
+    servico.listarVinculos.mockResolvedValue([{ id: 'colab-1', user_id: 'uid-outro', supervisor_id: null }]);
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      undefined,
+      estadoAprovacao({
+        versaoGestor: 'v1',
+        decisao: null,
+        validada: false,
+        gestorIdentificado: false,
+        autorizadoAmplo: true,
+      }),
+      'aguardando_gestor'
+    );
+
+    expect(botao(/^Aprovar avaliação$/)).toBeEnabled();
+    expect(botao(/Devolver para correção/)).toBeEnabled();
+  });
+
+  it('REGISTRO REAL: PAR sem avaliação do gestor continua APROVÁVEL (tipo não bloqueia)', () => {
+    auth.roles = ['gestor'];
+    auth.isAdmin = false;
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      previaCom('gestor', true),
+      estadoAprovacao({
+        versaoGestor: 'v1',
+        decisao: null,
+        validada: false,
+        responsavel: true,
+        avaliacaoGestorValida: false,
+      }),
+      'aguardando_gestor'
+    );
+
+    expect(botao(/^Aprovar avaliação$/)).toBeEnabled();
+    expect(botao(/Devolver para correção/)).toBeEnabled();
+  });
+
   it('a devolução exige justificativa (mínimo da RPC) antes de chamar a decisão', async () => {
     const usuario = userEvent.setup();
-    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('gestor', true), pendente());
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      previaCom('gestor', true),
+      pendente(),
+      'aguardando_gestor'
+    );
 
     await usuario.click(botao(/Devolver para correção/));
     const confirmar = await screen.findByRole('button', { name: /Confirmar devolução/ });
@@ -628,22 +787,38 @@ describe('aprovação formal do gestor no rodapé do modal', () => {
     });
   });
 
-  it('RH NÃO aprova nem devolve (a decisão é do gestor)', () => {
-    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('rh', false), pendente());
-    expect(screen.queryByRole('button', { name: /^Aprovar avaliação$/ })).toBeNull();
-    expect(screen.queryByRole('button', { name: /^Devolver para correção$/ })).toBeNull();
+  it('RH tem escopo de tenant: Aprovar/Devolver habilitados na etapa do gestor', () => {
+    auth.roles = ['rh'];
+    auth.isAdmin = false;
+    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('rh', false), pendente(), 'aguardando_gestor');
+    expect(botao(/^Aprovar avaliação$/)).toBeEnabled();
+    expect(botao(/^Devolver para correção$/)).toBeEnabled();
   });
 
-  it('gestor NÃO responsável também não recebe a decisão em registro REAL', () => {
-    renderizar(montarItem({ status: 'concluido' }), undefined, previaCom('gestor', false), pendente());
-    expect(screen.queryByRole('button', { name: /^Aprovar avaliação$/ })).toBeNull();
+  it('gestor NÃO responsável também não recebe a decisão em registro REAL (bloqueada)', () => {
+    auth.roles = ['gestor'];
+    auth.isAdmin = false;
+    renderizar(
+      montarItem({ status: 'concluido' }),
+      undefined,
+      previaCom('gestor', false),
+      pendente(),
+      'aguardando_gestor'
+    );
+    expect(botao(/^Aprovar avaliação$/)).toBeDisabled();
   });
 
-  /* ── VITRINE (mock): demonstra as ações SEM gravar nada ─────────────────── */
-  it('registro FICTÍCIO (vitrine) demonstra as ações e NÃO chama o serviço', async () => {
+  /* ── VITRINE (mock): demonstra as ações gravando LOCALMENTE ─────────────── */
+  it('registro FICTÍCIO (vitrine) SALVA a decisão localmente e não chama o serviço', async () => {
     modo.real = false;
     const usuario = userEvent.setup();
-    renderizar(montarItem({ id: 'mock-feedback-1', status: 'concluido' }), undefined, undefined, pendente());
+    renderizar(
+      montarItem({ id: 'mock-feedback-1', status: 'concluido' }),
+      undefined,
+      undefined,
+      pendente(),
+      'aguardando_gestor'
+    );
 
     const aprovar = screen.getByRole('button', { name: /Aprovar avaliação/ });
     expect(aprovar).toBeInTheDocument();
@@ -652,14 +827,18 @@ describe('aprovação formal do gestor no rodapé do modal', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/Aguardando gestor/i);
 
     await usuario.click(aprovar);
-    await waitFor(() => expect(toasts.info).toHaveBeenCalledTimes(1));
-    expect(String(toasts.info.mock.calls[0][0])).toContain('Demonstração');
-    // NADA foi enviado ao banco: nenhuma RPC, nenhum aviso de sucesso real.
+    await waitFor(() => expect(toasts.success).toHaveBeenCalledTimes(1));
+    expect(String(toasts.success.mock.calls[0][0])).toContain('salva localmente');
+
+    // A decisão FOI gravada — no armazenamento da demonstração (nunca no banco).
+    const salvo = JSON.parse(localStorage.getItem(CHAVE_ARMAZENAMENTO) ?? '{}');
+    expect(salvo.decisoes?.['colab-1::ciclo-1']).toMatchObject({ decisao: 'aprovado', versaoAvaliacao: 'v1' });
+    // NADA foi enviado ao Supabase: nenhuma RPC do fluxo.
     expect(servico.decidirAprovacaoGestor).not.toHaveBeenCalled();
-    expect(toasts.success).not.toHaveBeenCalled();
+    expect(servico.finalizarFeedback).not.toHaveBeenCalled();
   });
 
-  it('na vitrine o RH puro NÃO recebe as ações de decisão', () => {
+  it('na vitrine o RH puro NÃO recebe a decisão fora da fila', () => {
     modo.real = false;
     auth.roles = ['rh'];
     renderizar(montarItem({ id: 'mock-feedback-2', status: 'concluido' }), undefined, undefined, pendente());
@@ -670,11 +849,11 @@ describe('aprovação formal do gestor no rodapé do modal', () => {
     auth.roles = ['rh'];
     const item = montarItem({ status: 'concluido' });
     // Pendente ⇒ sem validação.
-    renderizar(item, undefined, undefined, pendente());
+    renderizar(item, undefined, undefined, pendente(), 'rh');
     expect(screen.queryByRole('button', { name: /Validar Potencial/ })).toBeNull();
     // Aprovada na mesma versão ⇒ validação disponível.
     cleanup();
-    renderizar(item, undefined, undefined, aprovada());
+    renderizar(item, undefined, undefined, aprovada(), 'rh');
     expect(screen.getByRole('button', { name: /Validar Potencial/ })).toBeInTheDocument();
   });
 });
