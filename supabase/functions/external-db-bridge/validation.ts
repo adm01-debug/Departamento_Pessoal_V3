@@ -86,6 +86,9 @@ export const TABLE_DENYLIST = new Set<string>([
   "geo_blocking_config",
   "geo_allowed_countries",
   "govbr_auth_state",
+  // Tabela interna do Supabase CLI — defesa em profundidade (PostgREST expõe
+  // apenas schema public, mas bloquear explicitamente elimina o risco residual).
+  "supabase_migrations",
 ]);
 
 // Tabelas em que writes são permitidos apenas com auth+tenant válido.
