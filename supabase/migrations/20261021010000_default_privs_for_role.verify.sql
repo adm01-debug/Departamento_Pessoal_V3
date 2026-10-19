@@ -4,6 +4,9 @@
 -- entradas em pg_default_acl sem '=X/%' (PUBLIC execute revogado).
 -- Check negativo anterior retornava 'ok' quando não havia entradas (falso positivo),
 -- e não detectava falha silenciosa do DO block para supabase_admin.
+-- DEPENDÊNCIA: supabase_admin deve existir no banco alvo. Em instalações Supabase
+-- canônicas este role sempre existe. Se ausente: migration.sql skipa (IF EXISTS) e
+-- count=1 → este verify retorna 'fail' — comportamento intencional (fail-closed).
 SELECT CASE
   WHEN (
     SELECT count(DISTINCT r.rolname)

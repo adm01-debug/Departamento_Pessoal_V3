@@ -233,7 +233,12 @@ jobs:
             echo "::group::$(basename "$sidecar")"
             out="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At -f "$sidecar")"
             printf '%s\n' "$out"
-            if printf '%s\n' "$out" | grep -vE '^\s*$' | grep -vx 'ok' | grep -q .; then
+            non_empty="$(printf '%s\n' "$out" | grep -vE '^\s*$' || true)"
+            if [ -z "$non_empty" ]; then
+              echo "::error::sidecar $(basename "$sidecar") retornou saída vazia — migration pode não ter sido aplicada"
+              exit 1
+            fi
+            if printf '%s\n' "$non_empty" | grep -vx 'ok' | grep -q .; then
               echo "::error::sidecar $(basename "$sidecar") falhou — linha diferente de 'ok'"
               exit 1
             fi
