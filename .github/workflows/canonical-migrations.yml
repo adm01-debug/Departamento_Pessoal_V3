@@ -477,7 +477,9 @@ jobs:
               SELECT 1 FROM supabase_migrations.schema_migrations
               WHERE version = '20261018120000'
                 AND statements IS NOT NULL AND cardinality(statements) > 0
-            ),
+            )
+          ) ||
+          jsonb_build_object(
             'onda4e_objs', (
               SELECT count(*) FROM pg_class c
               JOIN pg_namespace n ON n.oid = c.relnamespace
