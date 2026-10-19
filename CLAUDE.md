@@ -649,7 +649,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 
 📋 RECONCILIAÇÃO — Ledger de migrações (gap crítico do Agente 3)
 │   Migration 20261021000000_ledger_reconcile_secdef_defaults.sql:
-│   INSERT idempotente para 20261015170000 e 20261018160000 no supabase_migrations.schema_migrations
+│   INSERT idempotente para 20261015170000 e 20261018170000 no supabase_migrations.schema_migrations
 │   Ambas aplicadas ao vivo mas ausentes do ledger — canonical-migrations.yml tentaria re-aplicar
 │   Sidecar .verify.sql: confirma que ambas as versões estão no ledger após execução
 ```
@@ -675,7 +675,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Edge Functions (deno check): queued → in_progress → success ✅
 
 🔒 Migração de segurança — ALTER DEFAULT PRIVILEGES (commit 55376bb72)
-│   20261018160000_default_privs_revoke_execute_public.sql:
+│   20261018170000_default_privs_revoke_execute_public.sql:
 │   ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC
 │   Sidecar .verify.sql: checa pg_default_acl (sem =X/% para PUBLIC)
 │   Fecha GAP MÉDIO — futuras funções SECURITY DEFINER não herdam PUBLIC execute
@@ -842,8 +842,8 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | deno --frozen (W36)    | ✅ --no-lock→--frozen + cache deno; deno.lock denonext hashes fix (PR #251 mergeado SHA febe78de)                                              |
 | zizmor scanner (W86)   | ✅ zizmorcore/zizmor-action@cc914d7f em workflow-lint.yml (PR #251 mergeado)                                                                   |
 | W97c required if: gate | ✅ check 12 em workflows-contract.test.mjs (PR #251 mergeado)                                                                                  |
-| ALTER DEFAULT PRIVS    | ✅ 20261018160000 + 20261021010000 (FOR ROLE postgres+supabase_admin — sessão 16)                                                              |
-| Ledger reconciliação   | ✅ 20261021000000 insere 20261015170000+20261018160000 no ledger (sessão 16)                                                                   |
+| ALTER DEFAULT PRIVS    | ✅ 20261018170000 + 20261021010000 (FOR ROLE postgres+supabase_admin — sessão 16)                                                              |
+| Ledger reconciliação   | ✅ 20261021000000 insere 20261015170000+20261018170000 no ledger (sessão 16)                                                                   |
 | Bridge CSRF+rate-limit | ✅ CSRF fail-closed fix + rate limit 503 se SERVICE_KEY ausente (sessão 16)                                                                    |
 | canonical batch gap    | ✅ 20261018170000 adicionada ao staged batch + ledger_count (sessão 17+18 — commit be0c26418)                                                  |
 | PR #257 mergeado       | ✅ SHA 1bd5081ad — 28/28 checks verdes — squash merge 18/10/2026 17:16 UTC                                                                     |
@@ -888,7 +888,7 @@ _Nenhum crítico bloqueante no momento._
 | Gap                                       | Impacto                                                                                    | Solução                                                                   |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
 | Bridge rate limiting fail-open            | Se `SUPABASE_SERVICE_ROLE_KEY` ausente, rate limiting silenciosamente desabilitado         | ✅ Corrigido na sessão 16 — writes retornam 503 sem SERVICE_KEY           |
-| `ALTER DEFAULT PRIVILEGES` sem `FOR ROLE` | Migration 20261018160000 cobria apenas o role `postgres`; `supabase_admin` não era coberto | ✅ Corrigido na sessão 16 — migration 20261021010000 cobre ambos os roles |
+| `ALTER DEFAULT PRIVILEGES` sem `FOR ROLE` | Migration 20261018170000 cobria apenas o role `postgres`; `supabase_admin` não era coberto | ✅ Corrigido na sessão 16 — migration 20261021010000 cobre ambos os roles |
 
 ### Baixos
 
@@ -905,7 +905,7 @@ _Nenhum crítico bloqueante no momento._
 | Bridge CSRF code smell                                     | `if (!csrf.ok && csrf.response)` — fail-open teórico se verifyCsrf retornar response undefined                                             | ✅ Corrigido na sessão 16 — `if (!csrf.ok) return csrf.response ?? jsonError(403,...)`                                                                                                                                        |
 | `admissao_registrar_documento` fora da RPC_ALLOWLIST       | Tem GRANT para anon/authenticated mas não está na allowlist — acessível via PostgREST sem bridge                                           | Baixo risco — função usa token interno como arg; avaliar se deve entrar na allowlist                                                                                                                                          |
 | Policies `role: public` em tabelas sensíveis               | `empresas`, `user_empresas`, `auditoria_logs`, `configuracoes_esocial` têm policies com role público                                       | Auditar corpo USING() para confirmar `auth.uid() IS NOT NULL`; adicionar guard se ausente                                                                                                                                     |
-| Migrações 20261015170000/20261018160000 ausentes do ledger | `canonical-migrations.yml` tentaria re-aplicar — idempotente mas inconsistente                                                             | ✅ Corrigido na sessão 16 — migration 20261021000000 insere ambas no ledger                                                                                                                                                   |
+| Migrações 20261015170000/20261018170000 ausentes do ledger | `canonical-migrations.yml` tentaria re-aplicar — idempotente mas inconsistente                                                             | ✅ Corrigido na sessão 16 — migration 20261021000000 insere ambas no ledger                                                                                                                                                   |
 | Docker images: tags mutáveis                               | `node:22-alpine` e `nginx:alpine` sem SHA digest — supply chain gap baixo                                                                  | Adicionar digest SHA nas imagens base do Dockerfile                                                                                                                                                                           |
 
 ---
