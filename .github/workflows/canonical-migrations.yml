@@ -675,7 +675,7 @@ jobs:
           # reprovava o apply. Agora capturamos a saída (-t -A: tuplas sem
           # formatação) e exigimos que toda linha não-vazia seja literalmente
           # 'ok'; qualquer outro valor conta como falha do sidecar.
-          stage_dir="$MIGRATIONS_STAGE"
+          stage_dir="${{ steps.stage.outputs.dir }}"
           sidecar_errors=0
           for migration in "$stage_dir"/supabase/migrations/*.sql; do
             filename="$(basename "$migration")"
