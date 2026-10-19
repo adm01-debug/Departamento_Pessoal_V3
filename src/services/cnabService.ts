@@ -311,7 +311,9 @@ export const cnabService = {
       return side === 'right' ? s.padEnd(len, char) : s.padStart(len, char);
     };
 
-    const formatAmount = (val: number) => pad(Math.trunc(val * 100), 15, '0', 'left');
+    // QA-r4: Math.trunc(9.95*100) perdia 1 centavo (~5,9% dos valores) —
+    // FEBRABAN espera valor em centavos arredondado, igual ao CNAB400.
+    const formatAmount = (val: number) => pad(Math.round(val * 100), 15, '0', 'left');
 
     const today = new Date();
     const dateStr = formatDateLocalISO(today).split('-').reverse().join(''); // DDMMAAAA — FEBRABAN
@@ -475,7 +477,7 @@ export const cnabService = {
       '00015' +
       pad('', 9) +
       pad(detailSequence + 1, 6, '0', 'left') +
-      pad(Math.trunc(totalValue * 100), 18, '0', 'left') +
+      pad(Math.round(totalValue * 100), 18, '0', 'left') +
       pad('', 18, '0') +
       pad('', 6) +
       pad('', 165) +
@@ -520,13 +522,16 @@ export const cnabService = {
         )
       )
       .eq('id', remessaRecord.id)
-      .eq('empresa_id', empresaId);
+      .eq('empresa_id', empresaId)
+      .eq('status', 'processando');
 
     return fullFile;
   },
 
   async parseRetornoCNAB(empresaId: string, fileContent: string) {
-    const lines = fileContent.split(/\r?\n/);
+    // CR-only (mainframe legado) também separa registros — antes só o 1º
+    // era processado em silêncio.
+    const lines = fileContent.split(/\r\n|[\r\n]/);
     const results = {
       sucesso: 0,
       // erro = rejeição do banco; falhasTecnicas = falha de leitura/update no
@@ -738,6 +743,12 @@ export const cnabService = {
 
     const typedContas = (contas as ContaBancariaRecord[]) || [];
 
+    // QA-r4: campos concatenados crus permitiam injeção — ';' criava coluna
+    // extra e '\n' na chave PIX injetava uma linha pagável no arquivo.
+    const csvField = (v: unknown) =>
+      String(v ?? '')
+        .replace(/[;\r\n]/g, ' ')
+        .trim();
     const csvLines = ['Nome;CPF/CNPJ;Chave Pix;Tipo Chave;Valor;Descricao;ID_Folha_Item'];
     for (const item of typedItens) {
       const colab = item.colaborador;
@@ -745,7 +756,7 @@ export const cnabService = {
       if (!conta || !conta.pix_chave) continue;
       const valor = Number(item.total_liquido);
       csvLines.push(
-        `${colab?.nome_completo ?? ''};${colab?.cpf || ''};${conta.pix_chave};${conta.pix_tipo || 'CPF'};${valor.toFixed(2).replace('.', ',')};Pagamento Salarial;${item.id}`
+        `${csvField(colab?.nome_completo)};${csvField(colab?.cpf)};${csvField(conta.pix_chave)};${csvField(conta.pix_tipo || 'CPF')};${valor.toFixed(2).replace('.', ',')};Pagamento Salarial;${item.id}`
       );
     }
 
@@ -1163,7 +1174,8 @@ export const cnabService = {
         )
       )
       .eq('id', remessaRecord.id)
-      .eq('empresa_id', empresaId);
+      .eq('empresa_id', empresaId)
+      .eq('status', 'processando');
 
     return fullFile;
   },
