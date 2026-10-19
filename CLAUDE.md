@@ -850,6 +850,45 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Environment production ID 21313806673 aprovado manualmente
 ```
 
+### Sessão 23 — 19/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (PR #275 — round-6 bridge security fixes, mergeado SHA `6b5f1d7b`)
+
+#### O que foi feito:
+
+```
+🔒 VALIDAÇÃO EXAUSTIVA ROUND-6 — 5 agentes especializados em paralelo
+│   Agente 1: Bridge Security — 4 findings (M1, L1, L2, L3) detectados e corrigidos
+│   Agente 2: TypeScript/Tests — tsc 0 erros, vitest 5516/5516, 14/14 contratos ✅
+│   Agente 3: SQL Migrations — sidecars ✅, ledger ✅, canonical OK ✅
+│   Agente 4: CI/CD — 14/14 workflows, SHA-pins 100%, contratos passing ✅
+│   Agente 5: Supply chain — 0 vulns produção, OSSF Scorecard ✅
+
+🔒 M1 — Rate limiting fail-closed para TODAS as operações
+│   index.ts: guard anterior verificava !serviceKey && (isWrite || action === "rpc")
+│   SELECTs passavam sem rate limiting quando SERVICE_ROLE_KEY ausente → flood ilimitado
+│   Fix: if (!serviceKey) cobre todas as operações → retorna 503 SERVICE_UNAVAILABLE
+
+🛡️ L1 — Tenant scope fail-closed quando lookup retorna zero rows
+│   index.ts: assertTenantScope retornava {ok: true} quando empresaIds.size === 0
+│   Para UPDATE/DELETE: RLS bloqueando SELECT era indistinguível de "não existe"
+│   Fix: empresaIds.size === 0 → {ok: false, msg: "TENANT_SCOPE_LOOKUP_EMPTY"}
+
+🔑 L2 — DANGEROUS_TOKENS + OR_DANGEROUS expandidos (assimetria eliminada)
+│   validation.ts: AND, AS, CAST, CASE, JOIN, HAVING ausentes de DANGEROUS_TOKENS
+│   mas presentes em OR_DANGEROUS → isSafeColumnsExpr e isSafeOrExpression assimétricos
+│   Fix: ambos os regex expandidos com os 6 keywords — superfície de validação uniforme
+
+🧹 L3 — Dead code removido dos handlers UPDATE e DELETE
+│   index.ts: branches neq/gt/gte/lt/lte/in/is eram inalcançáveis
+│   Guard UNSUPPORTED_FILTER_FOR_WRITE (L488) já rejeita qualquer op != eq antes
+│   Fix: handlers simplificados para apenas 'eq' — código mais claro e auditável
+
+✅ PR #275 MERGEADO (SHA 6b5f1d7b) — CI 100% verde — 19/10/2026
+│   Todos os required checks passaram incluindo Edge Functions (deno check)
+│   tsc 0 erros + vitest 5516/5516 + pre-commit hook (ESLint + Prettier) ✅
+```
+
 ### Sessão 21 — 19/10/2026 (Claude Sonnet 4.6)
 
 **Branch:** `claude/happy-cori-3z9h7f` (PR #264 — round-4 fixes M1+L2)
@@ -1005,6 +1044,10 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | verify.sql supabase_adm | ✅ 20261021010000.verify.sql: dependência supabase_admin documentada (PR #263 — sessão 20)                                                                            |
 | canonical apply ✅      | ✅ run 39266270116 — 3 migrações de segurança aplicadas; ledger_count=23; INVARIANTS_OK+SCOPED_OK (sessão 22)                                                         |
 | PR #271 (stage_dir fix) | ✅ SHA 9627f967 — MIGRATIONS_STAGE: unbound variable corrigido com steps.stage.outputs.dir (sessão 22)                                                                |
+| bridge round-6 (M1)     | ✅ rate limit fail-closed — SELECTs sem SERVICE_KEY retornam 503 (PR #275 — sessão 23)                                                                                |
+| bridge round-6 (L1)     | ✅ tenant scope fail-closed — lookup vazio retorna TENANT_SCOPE_LOOKUP_EMPTY (PR #275 — sessão 23)                                                                    |
+| bridge round-6 (L2)     | ✅ DANGEROUS_TOKENS + OR_DANGEROUS: AND/AS/CAST/CASE/JOIN/HAVING adicionados — assimetria eliminada (PR #275 — sessão 23)                                             |
+| bridge round-6 (L3)     | ✅ dead code removido de UPDATE/DELETE handlers — neq/gt/gte/lt/lte/in/is eram inalcançáveis (PR #275 — sessão 23)                                                    |
 
 ---
 
