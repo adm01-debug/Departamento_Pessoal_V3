@@ -254,7 +254,9 @@ async function assertTenantScope(
   userId: string,
   empresaIds: Set<string>,
 ): Promise<{ ok: true; isAdmin: boolean } | { ok: false; msg: string }> {
-  if (empresaIds.size === 0) return { ok: true, isAdmin: false };
+  // Fail-closed: lookup vazio = linha não existe ou RLS bloqueou o SELECT.
+  // Para writes (update/delete) ambos os casos são indistinguíveis do cross-tenant.
+  if (empresaIds.size === 0) return { ok: false, msg: "TENANT_SCOPE_LOOKUP_EMPTY" };
 
   // Verifica via RPC has_role(admin) primeiro
   const { data: isAdminData } = await localClient.rpc("is_admin", { _user_id: userId });
@@ -432,27 +434,25 @@ Deno.serve(async (req) => {
   }
 
   // Rate limit — bridge é o endpoint mais genérico: 100 req/min para reads, 30 req/min para writes
-  if (!serviceKey && (isWrite || action === "rpc")) {
-    // Fail-closed: writes + RPCs requerem rate limiting e isolamento de tenant.
-    // Sem SERVICE_ROLE_KEY o rate limiting é impossível — negar.
+  if (!serviceKey) {
+    // Fail-closed: todas as operações requerem SERVICE_ROLE_KEY para rate limiting.
+    // Sem a chave o throttling é impossível — negar (reads incluídos).
     return jsonError(503, "SERVICE_UNAVAILABLE", "Service role key not configured");
   }
-  if (serviceKey) {
-    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
-    const rlClient = createClient(supabaseUrl, serviceKey);
-    // P3-062: rate limit composto por user_id + IP.
-    // Hierarquia: user_id (autenticado) > IP (anon).
-    // IP entra como segundo fator — evita que um usuário autenticado abuse
-    // da cota se compartilhar IP (NAT, VPN compartilhada, escritório).
-    // cf-connecting-ip/x-real-ip são headers que o cliente pode injetar
-    // livremente — usar o IP observado pelo gateway (rightmost XFF).
-    const ip = getClientIp(req);
-    const rlIdentity = user ? `${user.id}|${ip}` : ip;
-    const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
-    const rlLimit = isWrite ? 30 : (user ? 100 : 20);
-    const rl = await checkRateLimit(rlClient as any, { key: rlKey, limit: rlLimit, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
-  }
+  const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+  const rlClient = createClient(supabaseUrl, serviceKey);
+  // P3-062: rate limit composto por user_id + IP.
+  // Hierarquia: user_id (autenticado) > IP (anon).
+  // IP entra como segundo fator — evita que um usuário autenticado abuse
+  // da cota se compartilhar IP (NAT, VPN compartilhada, escritório).
+  // cf-connecting-ip/x-real-ip são headers que o cliente pode injetar
+  // livremente — usar o IP observado pelo gateway (rightmost XFF).
+  const ip = getClientIp(req);
+  const rlIdentity = user ? `${user.id}|${ip}` : ip;
+  const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
+  const rlLimit = isWrite ? 30 : (user ? 100 : 20);
+  const rl = await checkRateLimit(rlClient as any, { key: rlKey, limit: rlLimit, windowSec: 60 });
+  if (!rl.allowed) return rateLimitResponse(rl, req);
 
   // Validação: table obrigatório para non-rpc + regex + denylist
   if (action !== "rpc") {
@@ -698,15 +698,9 @@ Deno.serve(async (req) => {
       const t0 = performance.now();
       const updateData = (data ?? {}) as Record<string, unknown>;
       let query = externalDataClient.from(table!).update(updateData);
+      // Apenas 'eq' chega aqui: o guard UNSUPPORTED_FILTER_FOR_WRITE (L488) rejeita outros ops.
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
-        else if (f.op === "neq") query = query.neq(f.column, f.value);
-        else if (f.op === "gt") query = query.gt(f.column, f.value);
-        else if (f.op === "gte") query = query.gte(f.column, f.value);
-        else if (f.op === "lt") query = query.lt(f.column, f.value);
-        else if (f.op === "lte") query = query.lte(f.column, f.value);
-        else if (f.op === "in") query = query.in(f.column, f.value as unknown[]);
-        else if (f.op === "is") query = query.is(f.column, f.value as null | boolean);
       }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
@@ -725,15 +719,9 @@ Deno.serve(async (req) => {
       }
       const t0 = performance.now();
       let query = externalDataClient.from(table!).delete();
+      // Apenas 'eq' chega aqui: o guard UNSUPPORTED_FILTER_FOR_WRITE (L488) rejeita outros ops.
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
-        else if (f.op === "neq") query = query.neq(f.column, f.value);
-        else if (f.op === "gt") query = query.gt(f.column, f.value);
-        else if (f.op === "gte") query = query.gte(f.column, f.value);
-        else if (f.op === "lt") query = query.lt(f.column, f.value);
-        else if (f.op === "lte") query = query.lte(f.column, f.value);
-        else if (f.op === "in") query = query.in(f.column, f.value as unknown[]);
-        else if (f.op === "is") query = query.is(f.column, f.value as null | boolean);
       }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
