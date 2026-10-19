@@ -430,10 +430,12 @@ REVOKE ALL ON public.sec_policy_regressions, public.sec_seal_events FROM PUBLIC,
 GRANT SELECT ON public.sec_policy_regressions, public.sec_seal_events TO authenticated;
 GRANT ALL ON public.sec_policy_regressions, public.sec_seal_events TO service_role;
 
+-- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
 DROP POLICY IF EXISTS sec_policy_regressions_admin_read ON public.sec_policy_regressions;
 CREATE POLICY sec_policy_regressions_admin_read
   ON public.sec_policy_regressions FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));
+-- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
 DROP POLICY IF EXISTS sec_seal_events_admin_read ON public.sec_seal_events;
 CREATE POLICY sec_seal_events_admin_read
   ON public.sec_seal_events FOR SELECT TO authenticated
@@ -603,7 +605,9 @@ $$;
 REVOKE EXECUTE ON FUNCTION public.sou_o_colaborador(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.sou_o_colaborador(uuid) TO authenticated, service_role;
 
+-- audit-migration-style: allow-silent-drop remove a policy permissiva legada (ALL sem gate de papel) — é exatamente o reparo desta migration
 DROP POLICY IF EXISTS tenant_registros_ponto ON public.registros_ponto;
+-- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
 DROP POLICY IF EXISTS "registros_ponto_write" ON public.registros_ponto;
 CREATE POLICY registros_ponto_write ON public.registros_ponto
   FOR ALL TO authenticated
