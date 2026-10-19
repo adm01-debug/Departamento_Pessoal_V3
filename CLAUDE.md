@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 18/10/2026
+> Última atualização: 19/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -769,11 +769,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Trigger safety-net trig_01BLMkEsUvSLkbTSWph4XAdA cancelado
 │   PR desscrito + branch resetado para origin/main
 
-📋 AÇÃO PENDENTE DO OWNER (pós-merge)
-│   Disparar canonical-migrations.yml com mode=apply para aplicar ao canônico:
-│   - 20261018170000_default_privs_revoke_execute_public.sql
-│   - 20261021000000_ledger_reconcile_secdef_defaults.sql
-│   - 20261021010000_default_privs_for_role.sql
+✅ RESOLVIDO (sessão 22) — canonical-migrations aplicadas via run 39266270116
 ```
 
 ### Sessão 19 — 19/10/2026 (Claude Sonnet 4.6)
@@ -820,6 +816,40 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   "npm": ">=10.0.0" adicionado em engines (complementa packageManager: npm@10.x)
 ```
 
+### Sessão 22 — 19/10/2026 (Claude Sonnet 4.6)
+
+**Branch:** `claude/happy-cori-3z9h7f` (PRs #269/#270/#271 — canonical-migrations apply + bugfixes)
+
+#### O que foi feito:
+
+```
+🐛 PR #269 — Fix jsonb_build_object >100 args (merged SHA 4df6e61)
+│   canonical-migrations.yml: invariants JSON query usava 140 args em
+│   jsonb_build_object() — limite do PostgreSQL é 100 args.
+│   Fix: split em dois jsonb_build_object() conectados por ||
+
+🐛 PR #270 — Fix stage_dir: unbound variable (merged SHA b81e6adc)
+│   canonical-migrations.yml: sidecar runner na step 11 usava $stage_dir
+│   sem inicializar a variável. Fix: stage_dir="$MIGRATIONS_STAGE"
+│   (introduziu nova regressão — ver PR #271)
+
+🐛 PR #271 — Fix MIGRATIONS_STAGE: unbound variable (merged SHA 9627f967)
+│   PR #270 assumiu MIGRATIONS_STAGE no step 11, mas a var só está no
+│   env: do step de summary (linha 797). Fix: usar expressão GHA
+│   stage_dir="${{ steps.stage.outputs.dir }}" — consistente com
+│   linhas 171, 194, 226. actionlint: passou ✅
+
+✅ CANONICAL-MIGRATIONS.YML MODE=APPLY — RUN 39266270116 (success)
+│   3 migrações de segurança aplicadas ao canônico frjbfeamybqsejlvmqbl:
+│   - 20261018170000_default_privs_revoke_execute_public.sql ✅
+│   - 20261021000000_ledger_reconcile_secdef_defaults.sql ✅
+│   - 20261021010000_default_privs_for_role.sql ✅
+│   Marcadores confirmados nos logs:
+│   CANONICAL_SCHEMA_INVARIANTS_OK + CANONICAL_SCOPED_MIGRATIONS_OK
+│   ledger_count: 23 (20 anteriores + 3 novas de segurança)
+│   Environment production ID 21313806673 aprovado manualmente
+```
+
 ### Sessão 21 — 19/10/2026 (Claude Sonnet 4.6)
 
 **Branch:** `claude/happy-cori-3z9h7f` (PR #264 — round-4 fixes M1+L2)
@@ -845,12 +875,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Agente 4: CI/CD — 14/14 workflows, SHA-pins 100%, contracts passing
 │   Agente 5: Supply chain + CLAUDE.md — "22 tabelas" → "27 tabelas" corrigido (commit 3ba12bd14)
 
-📋 AÇÃO PENDENTE DO OWNER (pós-merge PR #264)
-│   Disparar canonical-migrations.yml com mode=apply para aplicar ao canônico:
-│   - 20261018170000_default_privs_revoke_execute_public.sql
-│   - 20261021000000_ledger_reconcile_secdef_defaults.sql
-│   - 20261021010000_default_privs_for_role.sql
-│   URL: https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/canonical-migrations.yml
+✅ RESOLVIDO (sessão 22) — canonical-migrations aplicadas via run 39266270116 (SHA 9627f967)
 ```
 
 ### Sessão 20 — 19/10/2026 (Claude Sonnet 4.6)
@@ -896,12 +921,7 @@ registrada, score 6.5/10 → 8.5/10 (justificativa no documento de revisão)
 │   Agente 4: CI/CD — 14/14 workflows, SHA-pins, contracts (todos passando)
 │   Agente 5: Supply chain + CLAUDE.md — pg_catalog gap detectado e corrigido
 
-📋 AÇÃO PENDENTE DO OWNER (pós-merge PR #263)
-│   Disparar canonical-migrations.yml com mode=apply para aplicar ao canônico:
-│   - 20261018170000_default_privs_revoke_execute_public.sql
-│   - 20261021000000_ledger_reconcile_secdef_defaults.sql
-│   - 20261021010000_default_privs_for_role.sql
-│   URL: https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/canonical-migrations.yml
+✅ RESOLVIDO (sessão 22) — canonical-migrations aplicadas via run 39266270116 (SHA 9627f967)
 ```
 
 ---
@@ -983,6 +1003,8 @@ Vars públicas (W29)      → 12 ocorrências vars.VITE_SUPABASE_* — PR #247 e
 | trace_id log injection  | ✅ length<=128 + /^[A-Za-z0-9_:@.-]+$/ validação adicionada (PR #264 — sessão 21)                                                                                     |
 | sidecar empty output    | ✅ canonical-migrations.yml: runner rejeita saída vazia explicitamente (PR #263 — sessão 20)                                                                          |
 | verify.sql supabase_adm | ✅ 20261021010000.verify.sql: dependência supabase_admin documentada (PR #263 — sessão 20)                                                                            |
+| canonical apply ✅      | ✅ run 39266270116 — 3 migrações de segurança aplicadas; ledger_count=23; INVARIANTS_OK+SCOPED_OK (sessão 22)                                                         |
+| PR #271 (stage_dir fix) | ✅ SHA 9627f967 — MIGRATIONS_STAGE: unbound variable corrigido com steps.stage.outputs.dir (sessão 22)                                                                |
 
 ---
 
