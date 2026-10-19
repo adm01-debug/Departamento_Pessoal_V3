@@ -11,7 +11,9 @@ export const COLUMNS_RE = /^[a-zA-Z0-9_,.\s*!():"-]+$/;
 // subquery/DML que não aparecem em tokens legítimos do PostgREST (colunas,
 // embeds `tabela(col)`, casts `col::tipo`, JSON `->`). Fecha o buraco de aceitar
 // algo como "(select senha from secrets)" na expressão de colunas.
-export const DANGEROUS_TOKENS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b)/i;
+// Sincronizado com OR_DANGEROUS (auditoria round-6): adicionados AND, AS, CAST, CASE, JOIN, HAVING
+// para cobrir expressões de alias/subquery que passavam no regex de charset.
+export const DANGEROUS_TOKENS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b|\bAND\b|\bAS\b|\bCAST\b|\bCASE\b|\bJOIN\b|\bHAVING\b)/i;
 
 export function isSafeTableName(t: unknown): t is string {
   return typeof t === "string" && t.length > 0 && t.length <= 63 && IDENTIFIER_RE.test(t);
@@ -200,9 +202,9 @@ export const NOT_EXTRA_OPS = new Set(["eq", "neq", "gt", "gte", "lt", "lte", "in
 // Validação de expressões .or() — permite apenas operadores seguros sobre colunas válidas
 // Formato PostgREST: "col.op.val,col.op.val" — bloqueia subqueries, parênteses aninhados, SQL keywords
 export const OR_SAFE_OPS = /^(eq|neq|gt|gte|lt|lte|like|ilike|is|in)\./;
-// Sincronizado com DANGEROUS_TOKENS (auditoria round-4): adicionados TRUNCATE, ALTER, GRANT, UNION,
-// MERGE, COPY, FROM, WHERE e EXEC(UTE)? para cobrir o mesmo surface que isSafeFilterColumn.
-export const OR_DANGEROUS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b)/i;
+// Sincronizado com DANGEROUS_TOKENS (auditoria round-4 + round-6): adicionados TRUNCATE, ALTER, GRANT,
+// UNION, MERGE, COPY, FROM, WHERE, EXEC(UTE)?, AND, AS, CAST, CASE, JOIN, HAVING.
+export const OR_DANGEROUS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b|\bSELECT\b|\bUNION\b|\bINSERT\b|\bUPDATE\b|\bDELETE\b|\bEXEC(UTE)?\b|\bMERGE\b|\bCOPY\b|\bFROM\b|\bWHERE\b|\bAND\b|\bAS\b|\bCAST\b|\bCASE\b|\bJOIN\b|\bHAVING\b)/i;
 export function isSafeOrExpression(expr: unknown): boolean {
   if (typeof expr !== "string" || expr.length === 0 || expr.length > 500) return false;
   if (OR_DANGEROUS.test(expr)) return false;
