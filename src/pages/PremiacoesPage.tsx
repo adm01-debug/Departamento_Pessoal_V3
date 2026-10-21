@@ -131,7 +131,7 @@ export default function PremiacoesPage() {
    * sai e retorna à aba.
    */
   const selecionarAba = (valor: string) => {
-    if (valor === 'simulador') {
+    if (valor === 'simulador' && activeTab !== 'simulador') {
       try {
         sessionStorage.setItem('dp-premiacoes-roi-kpi-acesso', String(Date.now()));
       } catch {
