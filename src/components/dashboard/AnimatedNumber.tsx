@@ -30,11 +30,15 @@ export function AnimatedNumber({ value, format, duration = 1.2, className, decim
 
     const start = 0;
     const end = value;
-    const startTime = performance.now();
     const dur = duration * 1000;
+    // O início é o timestamp do PRIMEIRO quadro (não o `performance.now()` do
+    // efeito): se o mount estiver ocupado, o primeiro rAF pode vir centenas de
+    // ms depois; medir dali evita que a contagem “pule” direto para o fim.
+    let startTime = 0;
 
     function step(now: number) {
-      const progress = Math.min((now - startTime) / dur, 1);
+      if (startTime === 0) startTime = now;
+      const progress = Math.min(Math.max((now - startTime) / dur, 0), 1);
       const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
       const bruto = start + (end - start) * eased;
       const current = decimals > 0 ? Number(bruto.toFixed(decimals)) : Math.round(bruto);

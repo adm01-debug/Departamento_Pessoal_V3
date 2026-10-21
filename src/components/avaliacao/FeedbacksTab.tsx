@@ -12,6 +12,7 @@ import { FeedbacksTimeline } from './FeedbacksTimeline';
 import { NovoFeedbackDialog } from './NovoFeedbackDialog';
 import { PendenciasAprovacao } from './PendenciasAprovacao';
 import { normalizarFeedback, type FeedbackCanonico } from './feedbackCanonico';
+import { impedimentoEdicaoFeedback } from './edicaoFeedback';
 import { capacidadesAvaliacao } from './papeisAvaliacao';
 import { podeConcluirFeedback } from './acoesFeedback';
 import { consolidarNineBox360, pontos360 } from './nineBox360';
@@ -563,6 +564,8 @@ export function FeedbacksTab({
    * segundo modal, nem cópia da tela de detalhe.
    */
   const abrirEdicao = (item: FeedbackCanonico) => {
+    /** Defesa em profundidade: cancelado só volta a editar após reabertura. */
+    if (impedimentoEdicaoFeedback(item.feedback?.status)) return;
     setEditando(item);
     setNovoAberto(true);
   };

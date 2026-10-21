@@ -185,6 +185,12 @@ describe('derivarPendencias — fila de aprovação', () => {
       potencial: 5,
       enviadoEm: '2026-10-02T10:00:00.000Z',
     });
+    expect(pendencias[0].relatos?.map((r) => `${r.tipo}:${r.avaliador}`)).toEqual([
+      'gestor:Bruno Lima',
+      'auto:Ana Souza',
+      'par:Carla Dias',
+    ]);
+    expect(pendencias[0].relatos?.map((r) => r.id)).toEqual(['fb-gestor-1', 'fb-auto-1', 'fb-par-1']);
   });
 
   it('a pendência APARECE sem a avaliação do gestor, mas a decisão fica BLOQUEADA', () => {

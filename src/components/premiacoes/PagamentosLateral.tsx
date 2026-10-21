@@ -76,16 +76,17 @@ const APARENCIA_DIVERGENCIA = { Icone: AlertTriangle, tom: 'bg-destructive-vivid
  * TRAÇADO DO DONUT DO RESUMO FINANCEIRO — mais lento e mais suave que a régua
  * padrão do `DonutChart` (0,6s por segmento, passo de 0,15s, `easeOut`):
  *
- *    0,85s por segmento · passo de 0,17s · atraso inicial 0,22s ·
+ *    1,07s por segmento · passo de 0,17s · atraso inicial 0,22s ·
  *    ease [0.4, 0, 0.2, 1] (acelera e desacelera — o traçado "assenta")
  *
- * O gráfico de "Tipo de Vínculo" do Dashboard Executivo continua usando os
- * defaults do componente: o ajuste vale só para este card. Com os quatro
- * segmentos, o desenho termina em ~1,6s (0,22 + 3 × 0,17 + 0,85), sem atrasar
- * a leitura dos valores — que já estão visíveis na legenda e no centro.
+ * Com os quatro segmentos, o preenchimento completo termina em ~1,8s
+ * (0,22 + 3 × 0,17 + 1,07 = 1,80s). O stagger e a ordem dos segmentos foram
+ * preservados; só a duração de cada traçado aumentou. O gráfico de "Tipo de
+ * Vínculo" do Dashboard Executivo continua usando os defaults do componente:
+ * o ajuste vale só para este card.
  */
 const TRAÇADO_DONUT_RESUMO = {
-  animationDuration: 0.85,
+  animationDuration: 1.07,
   animationDelay: 0.22,
   segmentStagger: 0.17,
   animationEase: [0.4, 0, 0.2, 1] as Transition['ease'],

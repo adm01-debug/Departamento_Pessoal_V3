@@ -106,6 +106,10 @@ visualização interna** da aba Feedbacks, com os controles do fluxo de aprovaç
 
 ### 2.6 Padronização da interface (AUTORIZADA em 19/10/2026)
 
+> Atualização AUTORIZADA em 21/10/2026: a prévia da fila passou a exibir os
+> três campos de todos os relatos do conjunto (com autoria), inclusive
+> Par/Auto/Subordinado, sem alterar permissões nem o fluxo de aprovação.
+
 Pedido explícito do usuário: **filtros normais para editar; fila do gestor para
 aprovar/devolver; cards compactos e informativos.**
 
@@ -119,8 +123,11 @@ aprovar/devolver; cards compactos e informativos.**
 - **um único card** (`CartaoFeedbackCanonico.tsx`) para as duas superfícies; o
   chamador define o conjunto de ações (`acoes`) e a prévia de textos;
 - **fila informativa**: prévia de uma linha por seção (`Fortes:`, `Melhoria:`,
-  `Comentários:`) **somente da avaliação do GESTOR** (relatos de Par/Auto/
-  Subordinado não são expostos — confidencialidade);
+  `Comentários:`) de **todos os relatos do conjunto** (Gestor, Par,
+  Autoavaliação e Subordinado), cada um com tipo e avaliador. Os três campos
+  aparecem sempre; vazio vira `Não informado`. A confidencialidade é aplicada
+  antes da renderização (RLS/consultas): o card só mostra os relatos recebidos
+  pelo perfil autenticado;
 - **altura pelo conteúdo**: cards da fila em 203–240 px (eram 255–287), sem
   `min-height`/altura fixa; a linha de ações tem 43 px e não quebra em 1440;
 - **modal com seções fixas** (fortes/melhoria/comentários/PDI) e caixas

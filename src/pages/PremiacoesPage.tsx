@@ -123,6 +123,24 @@ export default function PremiacoesPage() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = React.useState('campanhas');
+
+  /**
+   * Cada ativação da aba Simulador ROI recebe um token novo. Os KPIs usam esse
+   * token para rodar a contagem UMA vez por acesso — inclusive se o subtree
+   * remontar durante transições do React — e voltam a contar quando o usuário
+   * sai e retorna à aba.
+   */
+  const selecionarAba = (valor: string) => {
+    if (valor === 'simulador') {
+      try {
+        sessionStorage.setItem('dp-premiacoes-roi-kpi-acesso', String(Date.now()));
+      } catch {
+        /* sessionStorage indisponível: a contagem segue pelo guard de mount */
+      }
+    }
+    setActiveTab(valor);
+  };
+
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [periodoFiltro, setPeriodoFiltro] = React.useState('Todos os Períodos');
   const [unidadeFiltro, setUnidadeFiltro] = React.useState('Todas as Unidades');
@@ -241,7 +259,7 @@ export default function PremiacoesPage() {
   };
   const irParaAba = (destino: string) => {
     setDetalhe(null);
-    setActiveTab(destino);
+    selecionarAba(destino);
   };
 
   const mensagemVazia =
@@ -290,7 +308,7 @@ export default function PremiacoesPage() {
           </div>
         </header>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-3.5">
+        <Tabs value={activeTab} onValueChange={selecionarAba} className="space-y-3.5">
           {/* 1 · Navegação das seções (§5): a MESMA tablist de Gestão de Desempenho
               (`ui/animated-tabs` — contêiner azul-marinho arredondado, `p-1`, aba
               ativa como pílula escura que desliza, ícone lime e texto claro),
@@ -311,7 +329,7 @@ export default function PremiacoesPage() {
             <motion.div {...entradaCard(indiceEntrada('navegacao', 0))} className="min-w-0 lg:flex-1">
               <AnimatedTabsList
                 value={activeTab}
-                onValueChange={setActiveTab}
+                onValueChange={selecionarAba}
                 containerClassName="h-11 w-full rounded-xl border border-border/30 bg-card/50 p-1 overflow-x-auto lg:min-w-0 lg:flex-1 lg:overflow-visible"
                 highlightClassName="rounded-lg bg-background shadow-xs"
                 listClassName="flex h-full w-full items-center justify-start gap-1 text-muted-foreground lg:grid lg:grid-cols-4"

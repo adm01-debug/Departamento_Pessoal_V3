@@ -22,6 +22,16 @@ const DIR = 'tmp-feedbacks-edicao';
 const ACOES_APROVACAO = ['Ver avaliação', 'Devolver para correção', 'Aprovar avaliação', 'Enviar ao gestor'];
 
 async function abrirFeedbacks(page: Page) {
+  // A sessão E2E (`admin@teste.local`) tem papel único `admin`. Para exercitar a
+  // fila do GESTOR sem tocar em permissões remotas, devolvemos a mesma conta com
+  // `gestor` na leitura de papéis — exatamente o cenário admin+gestor.
+  await page.route('**/rest/v1/rpc/get_user_roles*', (rota) =>
+    rota.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(['admin', 'gestor']),
+    })
+  );
   await page.goto('/avaliacao');
   await expect(page.getByRole('heading', { name: /Gestão de Desempenho/ })).toBeVisible();
   await page.getByRole('tab', { name: /Feedbacks/i }).click();
@@ -116,7 +126,9 @@ test.describe('Feedbacks — filtros normais × fila', () => {
         expect(c.acoes, `"${acao}" ausente na fila`).toContain(acao)
       );
       // Altura acompanha o conteúdo (sem min-height/estiramento artificial).
-      expect(c.altura, `card de ${c.colaborador} alto demais`).toBeLessThanOrEqual(270);
+      // Cada relato adicional acrescenta um bloco compacto de 3 linhas.
+      const relatos = c.regioes.filter((t) => t.startsWith('Fortes:')).length;
+      expect(c.altura, `card de ${c.colaborador} alto demais`).toBeLessThanOrEqual(270 + Math.max(0, relatos - 1) * 60);
       expect(c.corpo).toBeLessThanOrEqual(c.altura);
     });
 
@@ -131,7 +143,10 @@ test.describe('Feedbacks — filtros normais × fila', () => {
     await page.setViewportSize({ width: 1024, height: 1000 });
     await page.waitForTimeout(1200);
     const cards1024 = await lerCards(page);
-    cards1024.forEach((c) => expect(c.altura, `card 1024 de ${c.colaborador}`).toBeLessThanOrEqual(270));
+    cards1024.forEach((c) => {
+      const relatos = c.regioes.filter((t) => t.startsWith('Fortes:')).length;
+      expect(c.altura, `card 1024 de ${c.colaborador}`).toBeLessThanOrEqual(270 + Math.max(0, relatos - 1) * 60);
+    });
     await page.screenshot({ path: `${DIR}/fila-1024.png`, fullPage: true });
   });
 
@@ -197,7 +212,11 @@ test.describe('Feedbacks — filtros normais × fila', () => {
       const t = (await chip(page, /Aguardando gestor/).textContent()) ?? '';
       return Number((t.match(/(\d+)\s*$/)?.[1] ?? '-1').toString());
     };
-    const cardDe = (nome: string) => page.locator('[data-testid="cartao-feedback"]').filter({ hasText: nome }).first();
+    const cardDe = (nome: string) =>
+      page
+        .locator('[data-testid="cartao-feedback"]')
+        .filter({ has: page.getByRole('heading', { name: nome, exact: true }) })
+        .first();
 
     expect(await contador()).toBeGreaterThan(0);
 

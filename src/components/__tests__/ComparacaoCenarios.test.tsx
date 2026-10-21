@@ -9,7 +9,7 @@ const linhas: LinhaComparacao[] = [
     base: '50',
     selecionados: [{ id: 'c1', nome: 'Cenário 1', valor: '50' }],
     variacao: '0',
-    corVariacao: 'text-muted-foreground',
+    corVariacao: 'text-success',
   },
   {
     chave: 'avgSalary',
@@ -17,7 +17,7 @@ const linhas: LinhaComparacao[] = [
     base: 'R$ 4.500,00',
     selecionados: [{ id: 'c1', nome: 'Cenário 1', valor: 'R$ 5.200,00' }],
     variacao: '+15,6%',
-    corVariacao: 'text-destructive',
+    corVariacao: 'text-success',
   },
   {
     chave: 'resultadoLiquido',
@@ -25,7 +25,7 @@ const linhas: LinhaComparacao[] = [
     base: '-R$ 14.062,50',
     selecionados: [{ id: 'c1', nome: 'Cenário 1', valor: '-R$ 61.776,00' }],
     variacao: '-339,3%',
-    corVariacao: 'text-destructive',
+    corVariacao: 'text-success',
   },
 ];
 
@@ -43,13 +43,13 @@ describe('ComparacaoCenarios', () => {
     ]);
   });
 
-  it('renderiza todos os valores, inclusive negativos e a variação colorida', () => {
+  it('renderiza todos os valores, inclusive negativos, com a variação em verde', () => {
     render(<ComparacaoCenarios linhas={linhas} cenarios={[{ id: 'c1', nome: 'Cenário 1' }]} />);
     expect(screen.getAllByText('Colaboradores').length).toBeGreaterThan(0);
     expect(screen.getAllByText('R$ 4.500,00').length).toBeGreaterThan(0);
     expect(screen.getAllByText('-R$ 14.062,50').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('+15,6%')[0]).toHaveClass('text-destructive');
-    expect(screen.getAllByText('-339,3%')[0]).toHaveClass('text-destructive');
+    expect(screen.getAllByText('+15,6%')[0]).toHaveClass('text-success', 'font-semibold');
+    expect(screen.getAllByText('-339,3%')[0]).toHaveClass('text-success', 'font-semibold');
   });
 
   it('acomoda dois cenários com cinco colunas', () => {

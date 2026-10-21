@@ -72,12 +72,12 @@ gestor autorizado em `decidir_aprovacao_gestor`.
 - `node scripts/verificar-layout-protegido.mjs`: OK.
 - ESLint: 0 erros.
 
-## Bloqueios
+## Bloqueios (reconciliados em 2026-10-21)
 
-1. A migration `20261022090000` **não foi aplicada** no Supabase principal.
-   Enquanto isso, uma conta puramente `gestor` (sem admin/rh) pode ver o botão,
-   mas o backend antigo ainda recusa a RPC; a aplicação exige autorização.
+1. A `20261022090000` está **parcialmente ausente** no principal:
+   `pode_finalizar_feedback` não existe e `finalizar_feedback` ainda é a versão
+   antiga. A reconciliação `20261027090000` cria/substitui somente esses objetos.
 2. A conta real do caso (Beatriz/Carlos) não estava disponível nesta sessão;
    a reprodução foi feita com os mesmos campos e regras em testes.
-3. RLS/policies do Supabase não foram auditadas por falta de acesso SQL
-   administrativo; a PGlite valida a lógica, não o tenant real.
+3. As policies do escopo Nine-Box foram conferidas por catálogo; a PGlite valida
+   a lógica da migration, não o tenant inteiro.

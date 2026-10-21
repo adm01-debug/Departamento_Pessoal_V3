@@ -344,6 +344,27 @@ describe('getFeedbackActions — regra única de habilitar/desabilitar', () => {
     expect(editar?.motivo).toContain('RH');
   });
 
+  it('EDIÇÃO: cancelado é SOMENTE LEITURA, inclusive para admin', () => {
+    const cancelado = normalizarFeedback(derivado({ status: 'cancelado' }), {
+      cicloNome: 'Ciclo S2 2026',
+      pendencia: pendencia(),
+      papeis: ['admin'],
+      acoesHabilitadas: true,
+    });
+    const editar = cancelado.acoes.find((a) => a.id === 'editar');
+    expect(editar?.habilitado).toBe(false);
+    expect(editar?.motivo).toMatch(/cancelado/i);
+    expect(editar?.motivo).toMatch(/reabra/i);
+
+    const pendente = normalizarFeedback(derivado({ status: 'pendente' }), {
+      cicloNome: 'Ciclo S2 2026',
+      pendencia: pendencia(),
+      papeis: ['admin'],
+      acoesHabilitadas: true,
+    });
+    expect(pendente.acoes.find((a) => a.id === 'editar')?.habilitado).toBe(true);
+  });
+
   it('o conjunto obrigatório existe em QUALQUER status do registro', () => {
     ['pendente', 'concluido', 'cancelado', 'em_revisao', 'status_legado'].forEach((status) => {
       const item = normalizarFeedback(derivado({ status }), {

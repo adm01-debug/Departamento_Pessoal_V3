@@ -89,13 +89,23 @@ describe('flag do Nine-Box desligada NÃO bloqueia a escrita de UUID real', () =
   });
 
   it('finalizarFeedback chama a RPC com feedback real', async () => {
-    mockRpc.mockResolvedValue({ data: { ok: true, status_novo: 'concluido' }, error: null });
+    mockRpc.mockResolvedValue({
+      data: { ok: true, status_anterior: 'pendente', status_novo: 'concluido', auditoria_id: 'a1' },
+      error: null,
+    });
     await avaliacaoService.finalizarFeedback({ feedbackId: 'f1', acao: 'concluir', idOperacao: 'op-1' });
     expect(mockRpc).toHaveBeenCalledWith('finalizar_feedback', expect.objectContaining({ p_feedback_id: 'f1' }));
   });
 
+  it('finalizarFeedback sem auditoria NÃO é aceito como persistência confirmada', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true, status_novo: 'concluido' }, error: null });
+    await expect(
+      avaliacaoService.finalizarFeedback({ feedbackId: 'f1', acao: 'concluir', idOperacao: 'op-1' })
+    ).rejects.toThrow(/registro de auditoria/i);
+  });
+
   it('validarPotencialAvaliacao chama a RPC com feedback real', async () => {
-    mockRpc.mockResolvedValue({ data: { ok: true, versao_avaliacao: 'v1' }, error: null });
+    mockRpc.mockResolvedValue({ data: { ok: true, validacao_id: 'v1', versao_avaliacao: 'v1' }, error: null });
     await avaliacaoService.validarPotencialAvaliacao({ feedbackId: 'f1', idOperacao: 'op-1' });
     expect(mockRpc).toHaveBeenCalledWith(
       'validar_potencial_avaliacao',
@@ -175,6 +185,11 @@ describe('modo real LIGADO · criação auditada', () => {
   it('falha de REDE é propagada (nada de sucesso falso)', async () => {
     mockRpc.mockRejectedValue(new TypeError('Failed to fetch'));
     await expect(avaliacaoService.criarFeedbackSeguro(PARAMS)).rejects.toThrow('Failed to fetch');
+  });
+
+  it('resposta nula sem erro NÃO é aceita como criação confirmada', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: null });
+    await expect(avaliacaoService.criarFeedbackSeguro(PARAMS)).rejects.toThrow(/não confirmou/i);
   });
 
   it('finalizarFeedback envia ação, motivo e chave', async () => {

@@ -27,9 +27,14 @@
   consolidações, aprovações, validações de Potencial e metas.
 - Com qualquer dependência, a exclusão é bloqueada, nada é apagado em cascata
   e a interface informa as contagens.
-- Migration `20261026090000_ciclos_exclusao_autorizada.sql` (não aplicada)
-  reforça no banco: policy de INSERT/DELETE por RH/admin e trigger
-  `BEFORE DELETE` que recusa ciclos com dependências.
+- Migration `20261026090000_ciclos_exclusao_autorizada.sql` **não está refletida
+  no principal** (policies antigas e trigger ausente). A versão incremental de
+  reconciliação `20261027090000_ninebox_reconciliacao_incremental.sql` contém
+  as policies por RH/admin e o trigger `BEFORE DELETE` que recusa ciclos com
+  dependências. Dependências verificadas: feedbacks, consolidações, aprovações,
+  validações de Potencial, metas e histórico em `audit_log`. PDI não possui
+  `ciclo_id` (FK para colaborador/empresa), portanto não é uma dependência do
+  ciclo. A migration ainda depende de autorização para ser aplicada.
 
 ## Exclusão pelo seletor (lixeira)
 

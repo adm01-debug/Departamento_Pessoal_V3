@@ -3,6 +3,18 @@ import { supabase } from '@/integrations/supabase/client';
 // demonstração em TODA escrita operacional — a flag da matriz não basta.
 import { exigirEscritaOperacional } from '@/components/avaliacao/escritaOperacional';
 
+/**
+ * Confirmação de operação de escrita: uma resposta sem `ok:true` NÃO é sucesso.
+ * O serviço só devolve o resultado depois desta checagem; a UI nunca recebe
+ * confirmação presumida de INSERT/UPDATE/RPC.
+ */
+function exigirOk<T extends { ok?: boolean }>(data: T | null | undefined, operacao: string): T {
+  if (!data || data.ok !== true) {
+    throw new Error(`O banco não confirmou ${operacao}. Nenhum sucesso foi presumido.`);
+  }
+  return data;
+}
+
 export const avaliacaoService = {
   // === Ciclos ===
   async listarCiclos(empresaId: string) {
@@ -66,8 +78,18 @@ export const avaliacaoService = {
   async excluirCiclo(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     await avaliacaoService.garantirGestaoCiclos('Excluir ciclo');
-    const { error } = await supabase.from('ciclos_avaliacao').delete().eq('id', id).eq('empresa_id', empresaId);
+    const { data, error } = await supabase
+      .from('ciclos_avaliacao')
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .select('id')
+      .maybeSingle();
     if (error) throw error;
+    if (!data?.id) {
+      throw new Error('O banco não confirmou a exclusão do ciclo. Nenhum sucesso foi presumido.');
+    }
+    return data;
   },
 
   // === Metas ===
@@ -145,6 +167,23 @@ export const avaliacaoService = {
     if (error) throw error;
     return data || [];
   },
+  /**
+   * HISTÓRICO AUTORIZADO DE UM FEEDBACK.
+   *
+   * A RPC `listar_historico_feedback` valida, no servidor, empresa + papel
+   * (RH/admin, gestor responsável/exceção ou avaliador designado). O cliente
+   * não consulta `audit_log` diretamente para montar o histórico do card/modal.
+   */
+  async listarHistoricoFeedback(feedbackId: string) {
+    const id = String(feedbackId ?? '').trim();
+    if (!id) throw new Error('feedback_id obrigatório para consultar o histórico');
+    const { data, error } = await (supabase as any).rpc('listar_historico_feedback', {
+      p_feedback_id: id,
+    });
+    if (error) throw error;
+    return data || [];
+  },
+
   async criarFeedback(d: any) {
     // Guarda obrigatória: nenhum registro com identificador fictício (`mock-*`)
     // e nenhuma gravação com a área em modo demonstração.
@@ -204,7 +243,26 @@ export const avaliacaoService = {
       p_idempotencia: params.idOperacao,
     });
     if (error) throw error;
-    return data as { ok: boolean; feedback_id: string; status: string; auditoria_id: string; idempotente: boolean };
+    const confirmado = exigirOk(
+      data as {
+        ok?: boolean;
+        feedback_id?: string;
+        status?: string;
+        auditoria_id?: string;
+        idempotente?: boolean;
+      } | null,
+      'a criação do feedback'
+    );
+    if (!confirmado.feedback_id) {
+      throw new Error('O banco não devolveu o feedback criado. Nenhum sucesso foi presumido.');
+    }
+    return confirmado as {
+      ok: boolean;
+      feedback_id: string;
+      status: string;
+      auditoria_id: string;
+      idempotente: boolean;
+    };
   },
 
   /**
@@ -248,7 +306,22 @@ export const avaliacaoService = {
       p_idempotencia: params.idOperacao,
     });
     if (error) throw error;
-    return data as {
+    const confirmado = exigirOk(
+      data as {
+        ok?: boolean;
+        feedback_id?: string;
+        status?: string;
+        revisao?: number;
+        reaberta?: boolean;
+        versao_avaliacao?: string;
+        idempotente?: boolean;
+      } | null,
+      'a edição do feedback'
+    );
+    if (!confirmado.feedback_id) {
+      throw new Error('O banco não devolveu o feedback editado. Nenhum sucesso foi presumido.');
+    }
+    return confirmado as {
       ok: boolean;
       feedback_id: string;
       status: string;
@@ -296,7 +369,23 @@ export const avaliacaoService = {
       p_idempotencia: params.idOperacao,
     });
     if (error) throw error;
-    return data as {
+    const confirmado = exigirOk(
+      data as {
+        ok?: boolean;
+        status_anterior?: string | null;
+        status_novo?: string;
+        auditoria_id?: string;
+        idempotente?: boolean;
+      } | null,
+      `a ação ${params.acao}`
+    );
+    if (!confirmado.status_novo) {
+      throw new Error('O banco não devolveu o novo status da avaliação. Nenhum sucesso foi presumido.');
+    }
+    if (!confirmado.auditoria_id) {
+      throw new Error('O banco não devolveu o registro de auditoria. Nenhum sucesso foi presumido.');
+    }
+    return confirmado as {
       ok: boolean;
       status_anterior: string | null;
       status_novo: string;
@@ -313,7 +402,20 @@ export const avaliacaoService = {
       p_observacao: params.observacao ?? null,
     });
     if (error) throw error;
-    return data as {
+    const confirmado = exigirOk(
+      data as {
+        ok?: boolean;
+        validacao_id?: string;
+        versao_avaliacao?: string;
+        potencial_validado?: number;
+        idempotente?: boolean;
+      } | null,
+      'a validação do Potencial'
+    );
+    if (!confirmado.validacao_id) {
+      throw new Error('O banco não devolveu a validação do Potencial. Nenhum sucesso foi presumido.');
+    }
+    return confirmado as {
       ok: boolean;
       validacao_id: string;
       versao_avaliacao: string;
@@ -404,7 +506,10 @@ export const avaliacaoService = {
       p_idempotencia: params.idOperacao,
     });
     if (error) throw error;
-    return data as { ok: boolean; status: string };
+    return exigirOk(data as { ok?: boolean; status?: string } | null, 'o envio ao gestor') as {
+      ok: boolean;
+      status: string;
+    };
   },
 
   /**
@@ -432,7 +537,17 @@ export const avaliacaoService = {
       p_idempotencia: params.idOperacao,
     });
     if (error) throw error;
-    return data as {
+    return exigirOk(
+      data as {
+        ok?: boolean;
+        aprovacao_id?: string;
+        decisao?: string;
+        status?: string;
+        versao_avaliacao?: string;
+        idempotente?: boolean;
+      } | null,
+      `a decisão ${params.decisao}`
+    ) as {
       ok: boolean;
       aprovacao_id: string;
       decisao: string;

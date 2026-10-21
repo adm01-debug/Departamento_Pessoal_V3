@@ -1,4 +1,16 @@
-import { Calendar, MoreHorizontal, Pencil, RotateCcw, Send, ShieldCheck, Target, User, UserCheck } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Calendar,
+  History,
+  MoreHorizontal,
+  Pencil,
+  RotateCcw,
+  Send,
+  ShieldCheck,
+  Target,
+  User,
+  UserCheck,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -10,8 +22,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 
+import { CancelamentoFeedbackResumo } from './CancelamentoFeedbackResumo';
 import { iniciais } from './desempenhoComum';
 import { tomTipoFeedback } from './feedbacksComum';
+import { HistoricoFeedbackDialog } from './HistoricoFeedbackDialog';
+import { useHistoricoFeedback } from './useHistoricoFeedback';
 import {
   TEXTO_NAO_INFORMADO,
   textoDoCampo,
@@ -81,34 +96,67 @@ const BADGE_STATUS =
   'inline-flex h-6 w-fit items-center whitespace-nowrap rounded-md border px-2 text-[10px] font-medium uppercase tracking-wide';
 
 /**
- * PRÉVIA DOS TEXTOS — aparece SÓ na fila do gestor e SÓ quando o registro é a
- * avaliação do GESTOR (relatos de Par/Auto/Subordinado são confidenciais e não
- * são expostos aqui; o RH os consulta no módulo de origem).
+ * PRÉVIA DOS TEXTOS — aparece na fila do gestor e mostra TODOS os relatos do
+ * conjunto (Gestor, Par, Autoavaliação e Subordinado), cada um com sua autoria.
+ * A visibilidade é decidida antes da renderização (RLS/consultas): o card só
+ * recebe os registros que a conta autenticada pode ler.
  *
  * Uma linha por seção (`truncate` + `title` com o texto completo) para informar
- * a decisão sem inflar a altura do card. Campo vazio não vira texto fictício.
+ * a decisão sem inflar a altura do card. Campo vazio vira "Não informado".
  */
 function PreviaTextos({ item }: { item: FeedbackCanonico }) {
-  const linhas = [
-    { rotulo: 'Fortes', texto: item.conteudo.pontosFortes, tinta: 'text-success' },
-    { rotulo: 'Melhoria', texto: item.conteudo.pontosMelhoria, tinta: 'text-warning' },
-    { rotulo: 'Comentários', texto: item.conteudo.comentarios, tinta: 'text-muted-foreground' },
-  ].filter((l) => l.texto.estado === 'informado');
+  /**
+   * Um relato por avaliador. Em registros isolados só existe ele mesmo; na fila
+   * consolidada vêm todos os relatos recebidos, cada um com sua autoria. As três
+   * seções são SEMPRE renderizadas e campo vazio usa "Não informado".
+   */
+  const relatos = item.relatos?.length
+    ? item.relatos
+    : [
+        {
+          id: item.feedback?.id ? String(item.feedback.id) : 'atual',
+          tipo: item.tipo,
+          tipoRotulo: item.tipoRotulo,
+          avaliador: item.avaliador === '—' ? '' : item.avaliador,
+          conteudo: item.conteudo,
+        },
+      ];
+  const multiplos = relatos.length > 1;
+
+  const linhasDe = (conteudo: FeedbackCanonico['conteudo']) => [
+    { rotulo: 'Fortes', texto: conteudo.pontosFortes, tinta: 'text-success' },
+    { rotulo: 'Melhoria', texto: conteudo.pontosMelhoria, tinta: 'text-warning' },
+    { rotulo: 'Comentários', texto: conteudo.comentarios, tinta: 'text-muted-foreground' },
+  ];
 
   return (
-    <div className="min-w-0 space-y-0.5 rounded-lg border border-border/50 bg-background/40 px-2.5 py-1.5">
-      {linhas.length === 0 ? (
-        <p className="truncate text-[10px] italic text-muted-foreground/70">Sem texto registrado.</p>
-      ) : (
-        linhas.map((l) => (
-          <p key={l.rotulo} className="flex min-w-0 items-baseline gap-1.5 text-[10px] leading-snug">
-            <span className={cn('shrink-0 font-medium', l.tinta)}>{l.rotulo}:</span>
-            <span className="min-w-0 flex-1 truncate text-muted-foreground" title={textoDoCampo(l.texto)}>
-              {textoDoCampo(l.texto)}
-            </span>
-          </p>
-        ))
-      )}
+    <div className="min-w-0 space-y-1 rounded-lg border border-border/50 bg-background/40 px-2.5 py-1.5">
+      {relatos.map((relato, indice) => (
+        <div
+          key={`${relato.id}-${indice}`}
+          className={cn('min-w-0 space-y-0.5', indice > 0 && 'border-t border-border/30 pt-1')}
+        >
+          {multiplos && (
+            <p
+              className="truncate text-[9px] font-medium uppercase tracking-wide text-muted-foreground/80"
+              title={`${relato.tipoRotulo} · ${relato.avaliador || TEXTO_NAO_INFORMADO}`}
+            >
+              {relato.tipoRotulo} · {relato.avaliador || TEXTO_NAO_INFORMADO}
+            </p>
+          )}
+          {linhasDe(relato.conteudo).map((linha) => (
+            <p
+              key={`${relato.id}-${linha.rotulo}`}
+              className="flex min-w-0 items-baseline gap-1.5 text-[10px] leading-snug"
+            >
+              <span className={cn('shrink-0 font-medium', linha.tinta)}>{linha.rotulo}:</span>
+              <span className="min-w-0 flex-1 truncate text-muted-foreground" title={textoDoCampo(linha.texto)}>
+                {textoDoCampo(linha.texto)}
+              </span>
+            </p>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
@@ -175,6 +223,9 @@ export function CartaoFeedbackCanonico({
     .filter((a): a is AcaoFeedback => Boolean(a));
   const podeFiltrar = contexto === 'lista' && Boolean(onFiltrarAvaliado || onFiltrarAvaliador);
 
+  const [historicoAberto, setHistoricoAberto] = useState(false);
+  const cancelado = item.status.chave === 'cancelado';
+
   const aoClicar = (id: AcaoFeedbackId) => {
     if (id === 'ver') onVer?.();
     if (id === 'editar') onEditar?.();
@@ -231,14 +282,10 @@ export function CartaoFeedbackCanonico({
               )}
             </div>
 
-            {/* PRÉVIA (fila do gestor): só a avaliação do GESTOR, uma linha por
-                seção. Preenche a área central sem aumentar a altura. */}
-            {previaTextos && contexto === 'fila' && item.tipo === 'gestor' && <PreviaTextos item={item} />}
-            {previaTextos && contexto === 'fila' && item.tipo !== 'gestor' && (
-              <p className="text-[10px] italic leading-snug text-muted-foreground/70">
-                Avaliação do gestor pendente — relatos individuais restritos ao RH.
-              </p>
-            )}
+            {/* PRÉVIA (fila do gestor): os três campos de TODOS os relatos do
+                conjunto, com o tipo/avaliador de cada um. Campo vazio aparece
+                como "Não informado"; nenhum tipo é ocultado. */}
+            {previaTextos && contexto === 'fila' && <PreviaTextos item={item} />}
 
             {/* Citação (lista) — texto REAL do registro, sem reticências forçadas. */}
             {contexto === 'lista' && (
@@ -376,6 +423,12 @@ export function CartaoFeedbackCanonico({
         </div>
       </div>
 
+      {/* CANCELAMENTO (lista): faixa de largura TOTAL, compacta, com a MESMA
+          fonte do modal. Fora da coluna estreita para o motivo não ser picado. */}
+      {contexto === 'lista' && cancelado && (
+        <CancelamentoFeedbackResumo item={item} onVerHistorico={() => setHistoricoAberto(true)} />
+      )}
+
       {/* ── (D) AÇÕES — linha própria: badge à esquerda, controles à direita ──
           A linha ocupa a largura do card (nunca é espremida pela coluna de
           resultados) e quebra em duas linhas em telas estreitas. Os botões
@@ -402,6 +455,18 @@ export function CartaoFeedbackCanonico({
               {acao.rotulo}
             </Button>
           ))}
+
+          {contexto === 'lista' && !cancelado && (
+            <Button
+              variant="outline"
+              size="sm"
+              className={CLASSE_ACAO.ver}
+              onClick={() => setHistoricoAberto(true)}
+            >
+              <History className="h-3.5 w-3.5" />
+              Ver histórico
+            </Button>
+          )}
 
           {podeFiltrar && (
             <DropdownMenu>
@@ -431,6 +496,33 @@ export function CartaoFeedbackCanonico({
           )}
         </div>
       </div>
+
+      {historicoAberto && (
+        <DialogHistoricoCarregado item={item} aberto onOpenChange={setHistoricoAberto} />
+      )}
     </Card>
+  );
+}
+
+/** Diálogo conectado: só monta o hook quando o usuário abre o histórico. */
+function DialogHistoricoCarregado({
+  item,
+  aberto,
+  onOpenChange,
+}: {
+  item: FeedbackCanonico;
+  aberto: boolean;
+  onOpenChange: (aberto: boolean) => void;
+}) {
+  const { data: eventos = [], isLoading, error } = useHistoricoFeedback(item, aberto);
+  return (
+    <HistoricoFeedbackDialog
+      item={item}
+      aberto={aberto}
+      onOpenChange={onOpenChange}
+      eventos={eventos}
+      carregando={isLoading}
+      erro={error}
+    />
   );
 }

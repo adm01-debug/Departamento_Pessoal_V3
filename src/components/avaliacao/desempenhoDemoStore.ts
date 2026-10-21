@@ -22,6 +22,8 @@
  * ============================================================================
  */
 
+import { impedimentoEdicaoFeedback } from './edicaoFeedback';
+
 export const CHAVE_REGISTROS_DEMO = 'dp-desempenho-demo-registros';
 
 export type EntidadeDemo = 'ciclos' | 'metas' | 'feedbacks' | 'pdis';
@@ -159,6 +161,19 @@ export function atualizarRegistroDemo(
   const estado = lerRegistrosDemo();
   const chave = String(id ?? '').trim();
   if (!chave) return estado;
+
+  /**
+   * CANCELADO É SOMENTE LEITURA. A edição demonstrativa não pode “reabrir por
+   * acidente”: o status anterior vem do estado local (criado ou patch). A
+   * reabertura legítima usa `operacao: 'status'` pelo serviço administrativo,
+   * com justificativa e autorização.
+   */
+  if (entidade === 'feedbacks' && operacao === 'editar') {
+    const statusAnterior =
+      estado.patches.feedbacks[chave]?.status ?? estado.criados.feedbacks[chave]?.status;
+    const impedimento = impedimentoEdicaoFeedback(statusAnterior);
+    if (impedimento) throw new Error(impedimento);
+  }
 
   const criado = estado.criados[entidade][chave];
   const criados = criado

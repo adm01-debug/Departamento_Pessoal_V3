@@ -6,6 +6,7 @@ import { loggerService } from '@/services/loggerService';
 import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
 import { functionUrl } from '@/lib/functionsUrl';
+import { limparSessaoLocal } from '@/lib/sessaoLocal';
 
 /**
  * Papéis do app — a tabela `user_roles` guarda UMA linha por papel e o RPC
@@ -48,6 +49,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_INIT_TIMEOUT_MS = 10000;
 const USER_ROLES_TIMEOUT_MS = 5000;
+const AUTH_LOGIN_TIMEOUT_MS = 15000;
 
 /**
  * Resultado da carga de papéis: os papéis + o MOTIVO da falha (quando houve).
@@ -141,23 +143,58 @@ function criarErroAuth(message: string, code: string, status?: number): AuthFlow
 }
 
 /**
+ * Converte o erro do GoTrue direto (`/auth/v1/token`) no mesmo contrato de
+ * códigos usado pela UI. Esse caminho só é usado quando a Edge Function
+ * `auth-login` está indisponível (rede/CORS/5xx), nunca quando ela respondeu
+ * credencial inválida, bloqueio ou rate limit.
+ */
+function mapearErroGoTrue(error: AuthError): AuthFlowError {
+  const status = (error as AuthError & { status?: number }).status;
+  const codigo = (error as AuthError & { code?: string }).code ?? '';
+  const mensagem = error.message ?? '';
+
+  if (codigo === 'invalid_credentials' || /invalid login credentials/i.test(mensagem)) {
+    return criarErroAuth('Credenciais inválidas.', 'INVALID_CREDENTIALS', status);
+  }
+  if (codigo === 'email_not_confirmed' || /email not confirmed/i.test(mensagem)) {
+    return criarErroAuth('É necessário confirmar o e-mail antes de entrar.', 'EMAIL_NOT_CONFIRMED', status);
+  }
+  if (codigo === 'user_banned' || /banned/i.test(mensagem)) {
+    return criarErroAuth('Esta conta está desativada. Contate o administrador.', 'ACCOUNT_LOCKED', status);
+  }
+  if (status === 429 || codigo === 'over_request_rate_limit' || codigo === 'over_email_send_rate_limit') {
+    return criarErroAuth('Muitas tentativas em pouco tempo. Aguarde alguns minutos.', 'RATE_LIMIT_EXCEEDED', status);
+  }
+  if (
+    status === 0 ||
+    error.name === 'AuthRetryableFetchError' ||
+    /failed to fetch|network ?error|fetch failed/i.test(mensagem)
+  ) {
+    return criarErroAuth(
+      'Não foi possível conectar ao serviço de autenticação. Verifique sua internet e tente novamente.',
+      'NETWORK_ERROR',
+      status
+    );
+  }
+  return criarErroAuth(
+    'Serviço de autenticação indisponível. Tente novamente em instantes.',
+    'AUTH_BACKEND_ERROR',
+    status
+  );
+}
+
+/**
  * Normaliza o corpo de erro da edge function. Convivem dois formatos:
  *  - `{ success:false, code, error: <string> }` (respostas do próprio auth-login)
  *  - `{ error: { code, message } }` (createErrorResponse de `_shared/contract.ts`)
  * Antes, o segundo formato virava `new Error(<objeto>)` → "[object Object]", que a
  * tela mascarava como "Email ou senha inválidos".
  */
-function normalizarErroEdge(
-  body: EdgeLoginResponse,
-  status: number,
-): { code: string; message: string } {
-  const aninhado =
-    typeof body.error === 'object' && body.error !== null ? body.error : undefined;
+function normalizarErroEdge(body: EdgeLoginResponse, status: number): { code: string; message: string } {
+  const aninhado = typeof body.error === 'object' && body.error !== null ? body.error : undefined;
   const code = body.code ?? aninhado?.code ?? '';
-  const rawMessage =
-    (typeof body.error === 'string' ? body.error : undefined) ?? aninhado?.message;
-  const fallback =
-    status >= 500 ? 'Servidor de autenticação indisponível.' : 'Credenciais inválidas.';
+  const rawMessage = (typeof body.error === 'string' ? body.error : undefined) ?? aninhado?.message;
+  const fallback = status >= 500 ? 'Servidor de autenticação indisponível.' : 'Credenciais inválidas.';
   return { code, message: rawMessage?.trim() ? rawMessage : fallback };
 }
 
@@ -294,116 +331,165 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // `functionUrl` resolve para o proxy do dev server em desenvolvimento
       // (same-origin, sem CORS) e para a URL absoluta do projeto em produção.
-      let res: Response;
+      let res: Response | null = null;
+      let falhaTransporte: unknown = null;
+      const abortController = new AbortController();
+      const timeoutId = window.setTimeout(() => abortController.abort(), AUTH_LOGIN_TIMEOUT_MS);
       try {
         res = await fetch(functionUrl('auth-login'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', apikey: ANON_KEY },
           body: JSON.stringify({ email: emailNormalizado, password }),
+          signal: abortController.signal,
         });
       } catch (networkErr) {
-        // Falha de rede/CORS — NÃO é credencial inválida. Reportar como tal
-        // evita que o usuário fique tentando senhas corretas contra um
-        // servidor inalcançável (e que a tentativa entre no contador de
-        // brute-force).
-        loggerService.error('Auth endpoint unreachable', { email }, networkErr as Error);
-        throw criarErroAuth(
-          'Não foi possível contatar o servidor de autenticação. Verifique sua conexão e tente novamente.',
-          'NETWORK_ERROR',
-        );
+        falhaTransporte = networkErr;
+      } finally {
+        window.clearTimeout(timeoutId);
       }
 
-      // Lemos o corpo como TEXTO antes de tentar JSON: quando o alvo do proxy está
-      // fora do ar (projeto Supabase removido/inacessível), o dev server responde
-      // HTML/502 e `res.json()` estourava silenciosamente — o `.catch(() => ({}))`
-      // transformava qualquer falha de infraestrutura em `{ success: undefined }`,
-      // exibida como "Email ou senha inválidos".
-      const rawBody = await res.text().catch(() => '');
-      let body: EdgeLoginResponse = {};
-      let corpoEhJson = false;
-      try {
-        body = rawBody ? (JSON.parse(rawBody) as EdgeLoginResponse) : {};
-        corpoEhJson = true;
-      } catch {
-        corpoEhJson = false;
-      }
-
-      const { code, message } = normalizarErroEdge(body, res.status);
-      const success = res.ok && body.success === true;
-
-      if (!success) {
-        const codigo =
-          code || (corpoEhJson ? 'INVALID_CREDENTIALS' : 'AUTH_BACKEND_ERROR');
-        const status = res.status;
-
-        if (codigo === 'ACCOUNT_LOCKED') {
-          // Bloqueio de conta decidido pelo servidor: a UI reflete a espera e NÃO
-          // conta como mais uma senha errada.
-          loggerService.warn('Login blocked - account locked', { email, code: codigo });
+      /**
+       * Fallback de DISPONIBILIDADE: vai direto ao GoTrue (`/auth/v1/token`)
+       * somente quando a edge `auth-login` não respondeu (rede/CORS/timeout)
+       * ou devolveu falha de infraestrutura (5xx/404/HTML). Respostas 401/429
+       * da edge continuam sendo a autoridade de credencial/lockout e nunca
+       * chegam aqui. O GoTrue também aplica seus próprios rate limits nativos.
+       */
+      let sessaoHidratada = false;
+      const autenticarDiretamente = async (causa: unknown) => {
+        const abortado = causa instanceof Error && causa.name === 'AbortError';
+        loggerService.warn('Auth edge unavailable — fallback GoTrue', {
+          email,
+          causa: abortado ? 'timeout' : String((causa as Error)?.message ?? causa),
+        });
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: emailNormalizado,
+            password,
+          });
+          if (error) throw mapearErroGoTrue(error);
+          if (!data.session) {
+            throw criarErroAuth('Login aceito, mas a sessão não pôde ser criada. Tente novamente.', 'SESSION_ERROR');
+          }
+          sessaoHidratada = true;
+          loggerService.info('User signed in via GoTrue fallback', { email });
+        } catch (fallbackErr) {
+          if ((fallbackErr as AuthFlowError)?.code) throw fallbackErr;
+          loggerService.error('GoTrue fallback failed', { email }, fallbackErr as Error);
           throw criarErroAuth(
-            message || 'Conta temporariamente bloqueada por excesso de tentativas.',
-            'ACCOUNT_LOCKED',
-            status,
+            abortado
+              ? 'O serviço de autenticação demorou para responder. Tente novamente.'
+              : 'Não foi possível conectar ao serviço de autenticação. Verifique sua internet e tente novamente.',
+            abortado ? 'TIMEOUT' : 'NETWORK_ERROR'
           );
         }
-        if (codigo === 'RATE_LIMIT_EXCEEDED' || status === 429) {
-          // Limitação por IP/e-mail (não é senha errada).
-          loggerService.warn('Login blocked - rate limited', { email, code: codigo });
-          throw criarErroAuth(
-            message || 'Muitas tentativas em pouco tempo. Aguarde alguns minutos.',
-            'RATE_LIMIT_EXCEEDED',
-            status,
-          );
-        }
-        if (codigo === 'EMAIL_NOT_CONFIRMED') {
-          throw criarErroAuth(message || 'Confirme seu e-mail antes de entrar.', codigo, status);
-        }
-        if (codigo === 'VALIDATION_ERROR') {
-          throw criarErroAuth('Dados de login inválidos.', codigo, status);
-        }
-        if (codigo === 'INVALID_CREDENTIALS') {
-          throw criarErroAuth(message || 'Credenciais inválidas.', codigo, status);
-        }
-        if (codigo === 'AUTH_BACKEND_ERROR' || !corpoEhJson || status >= 500) {
-          // Infraestrutura, proxy ou configuração do projeto Supabase — NUNCA
-          // credencial inválida. Mensagem orientada a causa real, sem detalhes internos.
-          loggerService.error(
-            'Auth backend unavailable or misconfigured',
-            { email, status },
-            new Error(message),
-          );
-          throw criarErroAuth(
-            'Não foi possível contatar o servidor de autenticação. Verifique se o projeto Supabase configurado está ativo e tente novamente.',
-            'AUTH_BACKEND_ERROR',
-            status,
-          );
-        }
-        // Código desconhecido porém legítimo do backend: repassa sem contar como senha errada.
-        throw criarErroAuth(message, codigo, status);
+      };
+
+      if (falhaTransporte) {
+        await autenticarDiretamente(falhaTransporte);
       }
 
-      // Hydrate the Supabase client session from the token returned by the edge function.
-      const session = body.session;
-      if (!session?.access_token || !session?.refresh_token) {
-        loggerService.error('Auth success response missing session tokens', { email });
-        throw criarErroAuth(
-          'Login aceito, mas a sessão não pôde ser criada. Tente novamente.',
-          'SESSION_ERROR',
-          res.status,
-        );
-      }
-      const { error: sessionErr } = await supabase.auth.setSession({
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-      });
-      if (sessionErr) {
-        // Falha ao criar a sessão (ex.: token inválido/relógio) — distinta de senha errada.
-        loggerService.error('Session creation failed', { email }, sessionErr as unknown as Error);
-        throw criarErroAuth(
-          'Login aceito, mas não foi possível iniciar a sessão. Tente novamente.',
-          'SESSION_ERROR',
-          res.status,
-        );
+      if (!sessaoHidratada) {
+        // Lemos o corpo como TEXTO antes de tentar JSON: quando o alvo do proxy está
+        // fora do ar (projeto Supabase removido/inacessível), o dev server responde
+        // HTML/502 e `res.json()` estourava silenciosamente — o `.catch(() => ({}))`
+        // transformava qualquer falha de infraestrutura em `{ success: undefined }`,
+        // exibida como "Email ou senha inválidos".
+        const statusEdge = res?.status ?? 0;
+        const rawBody = (await res?.text().catch(() => '')) ?? '';
+        let body: EdgeLoginResponse = {};
+        let corpoEhJson = false;
+        try {
+          body = rawBody ? (JSON.parse(rawBody) as EdgeLoginResponse) : {};
+          corpoEhJson = true;
+        } catch {
+          corpoEhJson = false;
+        }
+
+        const { code, message } = normalizarErroEdge(body, statusEdge);
+        const success = Boolean(res?.ok) && body.success === true;
+
+        if (!success) {
+          // Corpo JSON sem `code` (ex.: 403 do CSRF/gateway) não é senha errada.
+          // Resposta HTML/401 de gateway também é infraestrutura, não credencial.
+          const codigo =
+            code ||
+            (corpoEhJson && (statusEdge === 400 || statusEdge === 401) ? 'INVALID_CREDENTIALS' : 'AUTH_BACKEND_ERROR');
+
+          if (codigo === 'ACCOUNT_LOCKED') {
+            // Bloqueio de conta decidido pelo servidor: a UI reflete a espera e NÃO
+            // conta como mais uma senha errada.
+            loggerService.warn('Login blocked - account locked', { email, code: codigo });
+            throw criarErroAuth(
+              message || 'Conta temporariamente bloqueada por excesso de tentativas.',
+              'ACCOUNT_LOCKED',
+              statusEdge
+            );
+          }
+          if (codigo === 'RATE_LIMIT_EXCEEDED' || statusEdge === 429) {
+            // Limitação por IP/e-mail (não é senha errada).
+            loggerService.warn('Login blocked - rate limited', { email, code: codigo });
+            throw criarErroAuth(
+              message || 'Muitas tentativas em pouco tempo. Aguarde alguns minutos.',
+              'RATE_LIMIT_EXCEEDED',
+              statusEdge
+            );
+          }
+          if (codigo === 'EMAIL_NOT_CONFIRMED') {
+            throw criarErroAuth(message || 'Confirme seu e-mail antes de entrar.', codigo, statusEdge);
+          }
+          if (codigo === 'VALIDATION_ERROR') {
+            throw criarErroAuth('Dados de login inválidos.', codigo, statusEdge);
+          }
+          if (codigo === 'INVALID_CREDENTIALS') {
+            throw criarErroAuth(message || 'Credenciais inválidas.', codigo, statusEdge);
+          }
+
+          const edgeIndisponivel =
+            !corpoEhJson ||
+            statusEdge >= 500 ||
+            statusEdge === 404 ||
+            codigo === 'AUTH_BACKEND_ERROR' ||
+            codigo === 'AUTH_UPSTREAM_ERROR' ||
+            codigo === 'AUTH_MISCONFIGURED' ||
+            codigo === 'INTERNAL_SERVER_ERROR';
+
+          if (edgeIndisponivel) {
+            loggerService.error(
+              'Auth backend unavailable — trying GoTrue fallback',
+              { email, status: statusEdge, code: codigo },
+              new Error(message)
+            );
+            await autenticarDiretamente(new Error(`edge ${statusEdge}${codigo ? ` (${codigo})` : ''}: ${message}`));
+          } else {
+            // Código desconhecido porém legítimo do backend: repassa sem contar como senha errada.
+            throw criarErroAuth(message, codigo, statusEdge);
+          }
+        }
+
+        if (!sessaoHidratada) {
+          // Hydrate the Supabase client session from the token returned by the edge function.
+          const session = body.session;
+          if (!session?.access_token || !session?.refresh_token) {
+            loggerService.error('Auth success response missing session tokens', { email });
+            await autenticarDiretamente(new Error('auth-login sem tokens de sessão'));
+          } else {
+            const { error: sessionErr } = await supabase.auth.setSession({
+              access_token: session.access_token,
+              refresh_token: session.refresh_token,
+            });
+            if (sessionErr) {
+              // Falha ao criar a sessão (ex.: token inválido/relógio) — distinta de senha errada.
+              loggerService.error('Session creation failed', { email }, sessionErr as unknown as Error);
+              throw criarErroAuth(
+                'Login aceito, mas não foi possível iniciar a sessão. Tente novamente.',
+                'SESSION_ERROR',
+                statusEdge
+              );
+            }
+            sessaoHidratada = true;
+          }
+        }
       }
 
       // Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)
@@ -474,32 +560,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loggerService.error('Sign out error', {}, e as Error);
     } finally {
       queryClient.clear();
-      try {
-        localStorage.clear();
-      } catch {
-        /* private browsing */
-      }
-      try {
-        sessionStorage.clear();
-      } catch {
-        /* private browsing */
-      }
-      try {
-        indexedDB.deleteDatabase('ponto-offline-db');
-      } catch {
-        /* ignore */
-      }
-      try {
-        if ('caches' in window) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map((k) => caches.delete(k)));
-        }
-      } catch {
-        /* caches API unavailable */
-      }
+      // Remove SOMENTE artefatos de autenticação. Dados de trabalho locais
+      // (rascunhos, fila offline do ponto, preferências) são preservados.
+      limparSessaoLocal();
       setUser(null);
       setSession(null);
-      loggerService.info('User signed out - all local state cleared');
+      loggerService.info('User signed out - auth state cleared');
     }
   }, []);
 

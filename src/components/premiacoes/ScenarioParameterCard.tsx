@@ -1,6 +1,8 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { entradaSimulador } from './simuladorEntrada';
 
 /**
  * ============================================================================
@@ -31,6 +33,8 @@ interface ScenarioParameterCardProps {
   icon: React.ReactNode;
   iconClassName?: string;
   onChange: (value: number) => void;
+  /** Índice da cascata de entrada (0–8); o próprio card é o item animado. */
+  indice?: number;
 }
 
 const CASAS: Record<ScenarioParameterUnit, number> = {
@@ -111,6 +115,7 @@ export function ScenarioParameterCard({
   icon,
   iconClassName,
   onChange,
+  indice = 0,
 }: ScenarioParameterCardProps) {
   const id = React.useId();
   const erroId = `${id}-erro`;
@@ -148,7 +153,8 @@ export function ScenarioParameterCard({
   };
 
   return (
-    <div
+    <motion.div
+      {...entradaSimulador(indice)}
       className={cn(
         'flex min-w-0 flex-col rounded-xl border border-border/60 bg-card/80 p-3.5',
         'transition-colors duration-150 hover:border-border hover:bg-card',
@@ -251,7 +257,7 @@ export function ScenarioParameterCard({
       </p>
 
       <Slider
-        className="mt-3"
+        className="mt-3 roi-slider-gradient"
         value={[value]}
         min={min}
         max={max}
@@ -270,7 +276,7 @@ export function ScenarioParameterCard({
       <span id={erroId} role="status" aria-live="polite" className="sr-only">
         {invalido ? mensagem : ''}
       </span>
-    </div>
+    </motion.div>
   );
 }
 

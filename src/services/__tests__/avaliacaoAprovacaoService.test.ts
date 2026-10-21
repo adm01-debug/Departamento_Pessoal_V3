@@ -133,11 +133,21 @@ describe('avaliação — RPCs reais de aprovação do gestor', () => {
     ).rejects.toMatchObject({ message: 'perfil_nao_autorizado' });
   });
 
+  it('resposta sem ok NÃO é aceita como decisão registrada', async () => {
+    mockRpc.mockResolvedValue(ok({ status: 'aprovada_gestor' }));
+    await expect(
+      avaliacaoService.decidirAprovacaoGestor({
+        colaboradorId: '11111111-1111-4111-8111-111111111111',
+        cicloId: '22222222-2222-4222-8222-222222222222',
+        decisao: 'aprovado',
+        idOperacao: 'op-4b',
+      })
+    ).rejects.toThrow(/não confirmou/i);
+  });
+
   it('autorização efetiva: consulta `pode_aprovar_colaborador` pelo UUID', async () => {
     mockRpc.mockResolvedValue(ok(true));
-    await expect(
-      avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')
-    ).resolves.toBe(true);
+    await expect(avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')).resolves.toBe(true);
     expect(mockRpc).toHaveBeenCalledWith('pode_aprovar_colaborador', {
       p_colaborador_id: '11111111-1111-4111-8111-111111111111',
     });
@@ -145,16 +155,14 @@ describe('avaliação — RPCs reais de aprovação do gestor', () => {
 
   it('autorização efetiva: `false` do servidor mantém a decisão bloqueada', async () => {
     mockRpc.mockResolvedValue(ok(false));
-    await expect(
-      avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')
-    ).resolves.toBe(false);
+    await expect(avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')).resolves.toBe(false);
   });
 
   it('autorização efetiva: erro do servidor é propagado (fail-closed no chamador)', async () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: 'permission denied' } });
-    await expect(
-      avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')
-    ).rejects.toMatchObject({ message: 'permission denied' });
+    await expect(avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')).rejects.toMatchObject(
+      { message: 'permission denied' }
+    );
   });
 
   it('validar Potencial: chama a RPC com feedback + idempotência + observação', async () => {

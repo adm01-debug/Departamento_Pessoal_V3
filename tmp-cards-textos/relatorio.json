@@ -1,0 +1,300 @@
+{
+  "rh": {
+    "papel": "rh",
+    "ciclo": null,
+    "cards": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "texto": "ASAna Beatriz SouzaAnalista de RH · Recursos HumanosCiclo S2 2026 (demonstração)ConcluídoFortes:Referência em processos de RH.Melhoria:Delegar rotinas operacionais.Comentários:Excelente apoio às lideranças.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 17/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "texto": "WCWilliam Nunes CardosoSupervisor Comercial · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Forte gestão comercial e foco em resultado.Melhoria:Melhorar previsibilidade de forecast.Comentários:Superou a meta de vendas do trimestre.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 16/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "texto": "CLCarlos Eduardo LimaDesenvolvedor Frontend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoGestor · Mariana OliveiraFortes:Autonomia técnica e liderança natural.Melhoria:Delegar mais atividades do time.Comentários:Referência técnica do time de frontend.Par · Lucas Gabriel FernandesFortes:Colaboração entre equipes.Melhoria:Poderia mentorar colegas júniores.Comentários:Feedback de par elogiando o apoio técnico.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 15/10/2026Desempenho5,0ExcelentePotencial5,0ExcelenteAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 296
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "texto": "JMJuliana Pereira MartinsAssistente Administrativo · AdministrativoCiclo S2 2026 (demonstração)ConcluídoFortes:Rigor com números e organização.Melhoria:Abrir mais espaço para inovação.Comentários:Entrega consistente no fechamento contábil.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 12/10/2026Desempenho4,0Muito bomPotencial4,0Muito bomAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "texto": "LFLucas Gabriel FernandesDesigner Gráfico · MarketingCiclo S2 2026 (demonstração)ConcluídoFortes:Criatividade e domínio das ferramentas de design.Melhoria:Cumprir prazos de revisão.Comentários:Alto potencial para liderança de projetos.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 10/10/2026Desempenho4,0Muito bomPotencial5,0Muito bomAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Rafaela Cristina Gomes",
+        "texto": "RGRafaela Cristina GomesAnalista Fiscal · FinanceiroCiclo S2 2026 (demonstração)ConcluídoFortes:Boa análise de dados.Melhoria:Comunicação de resultados para leigos.Comentários:Em desenvolvimento na apresentação executiva.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 07/10/2026Desempenho3,0BomPotencial4,0BomAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "texto": "GAGustavo Henrique AlvesVendedor Externo · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Bom relacionamento interpessoal.Melhoria:Assumir mais protagonismo em projetos.Comentários:Colaborador estável e confiável.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 05/10/2026Desempenho3,0BomPotencial3,0BomAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Thiago Almeida Rocha",
+        "texto": "TRThiago Almeida RochaDesenvolvedor Backend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoFortes:Disciplina operacional.Melhoria:Desenvolver visão estratégica.Comentários:Executa muito bem o plano definido.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 03/10/2026Desempenho4,0Muito bomPotencial3,0Muito bomAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Mariana Oliveira Santos",
+        "texto": "MSMariana Oliveira SantosGerente de Produto · ProdutoCiclo S2 2026 (demonstração)ConcluídoFortes:Autocrítica e vontade de aprender.Melhoria:Precisa elevar a qualidade das entregas.Comentários:Autoavaliação apontou oportunidades claras.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraAutoavaliaçãoEnviado 01/10/2026Desempenho2,0RegularPotencial3,0RegularAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 222
+      },
+      {
+        "nome": "Vanessa Rodrigues Dias",
+        "texto": "VDVanessa Rodrigues DiasRecepcionista · AdministrativoCiclo S2 2026 (demonstração)PendenteFortes:Pontualidade e cordialidade.Melhoria:Reciclagem nas rotinas administrativas.Comentários:Plano de melhoria em discussão com o gestor.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraSubordinadoEnviado 29/09/2026Desempenho2,0RegularPotencial2,0RegularAguardando gestorVer avaliação",
+        "botoes": [
+          "Ver avaliação"
+        ],
+        "altura": 222
+      }
+    ],
+    "cardsF5": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "texto": "ASAna Beatriz SouzaAnalista de RH · Recursos HumanosCiclo S2 2026 (demonstração)ConcluídoFortes:Referência em processos de RH.Melhoria:Delegar rotinas operacionais.Comentários:Excelente apoio às lideranças.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 17/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "texto": "WCWilliam Nunes CardosoSupervisor Comercial · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Forte gestão comercial e foco em resultado.Melhoria:Melhorar previsibilidade de forecast.Comentários:Superou a meta de vendas do trimestre.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 16/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "texto": "CLCarlos Eduardo LimaDesenvolvedor Frontend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoGestor · Mariana OliveiraFortes:Autonomia técnica e liderança natural.Melhoria:Delegar mais atividades do time.Comentários:Referência técnica do time de frontend.Par · Lucas Gabriel FernandesFortes:Colaboração entre equipes.Melhoria:Poderia mentorar colegas júniores.Comentários:Feedback de par elogiando o apoio técnico.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 15/10/2026Desempenho5,0ExcelentePotencial5,0ExcelenteAguardando gestorVer avaliação",
+        "altura": 296
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "texto": "JMJuliana Pereira MartinsAssistente Administrativo · AdministrativoCiclo S2 2026 (demonstração)ConcluídoFortes:Rigor com números e organização.Melhoria:Abrir mais espaço para inovação.Comentários:Entrega consistente no fechamento contábil.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 12/10/2026Desempenho4,0Muito bomPotencial4,0Muito bomAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "texto": "LFLucas Gabriel FernandesDesigner Gráfico · MarketingCiclo S2 2026 (demonstração)ConcluídoFortes:Criatividade e domínio das ferramentas de design.Melhoria:Cumprir prazos de revisão.Comentários:Alto potencial para liderança de projetos.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 10/10/2026Desempenho4,0Muito bomPotencial5,0Muito bomAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Rafaela Cristina Gomes",
+        "texto": "RGRafaela Cristina GomesAnalista Fiscal · FinanceiroCiclo S2 2026 (demonstração)ConcluídoFortes:Boa análise de dados.Melhoria:Comunicação de resultados para leigos.Comentários:Em desenvolvimento na apresentação executiva.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 07/10/2026Desempenho3,0BomPotencial4,0BomAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "texto": "GAGustavo Henrique AlvesVendedor Externo · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Bom relacionamento interpessoal.Melhoria:Assumir mais protagonismo em projetos.Comentários:Colaborador estável e confiável.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 05/10/2026Desempenho3,0BomPotencial3,0BomAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Thiago Almeida Rocha",
+        "texto": "TRThiago Almeida RochaDesenvolvedor Backend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoFortes:Disciplina operacional.Melhoria:Desenvolver visão estratégica.Comentários:Executa muito bem o plano definido.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 03/10/2026Desempenho4,0Muito bomPotencial3,0Muito bomAguardando gestorVer avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Mariana Oliveira Santos",
+        "texto": "MSMariana Oliveira SantosGerente de Produto · ProdutoCiclo S2 2026 (demonstração)ConcluídoFortes:Autocrítica e vontade de aprender.Melhoria:Precisa elevar a qualidade das entregas.Comentários:Autoavaliação apontou oportunidades claras.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraAutoavaliaçãoEnviado 01/10/2026Desempenho2,0RegularPotencial3,0RegularAguardando gestorVer avaliação",
+        "altura": 222
+      },
+      {
+        "nome": "Vanessa Rodrigues Dias",
+        "texto": "VDVanessa Rodrigues DiasRecepcionista · AdministrativoCiclo S2 2026 (demonstração)PendenteFortes:Pontualidade e cordialidade.Melhoria:Reciclagem nas rotinas administrativas.Comentários:Plano de melhoria em discussão com o gestor.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraSubordinadoEnviado 29/09/2026Desempenho2,0RegularPotencial2,0RegularAguardando gestorVer avaliação",
+        "altura": 222
+      }
+    ],
+    "erros": []
+  },
+  "gestor": {
+    "papel": "gestor",
+    "ciclo": null,
+    "cards": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "texto": "ASAna Beatriz SouzaAnalista de RH · Recursos HumanosCiclo S2 2026 (demonstração)ConcluídoFortes:Referência em processos de RH.Melhoria:Delegar rotinas operacionais.Comentários:Excelente apoio às lideranças.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 17/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "texto": "WCWilliam Nunes CardosoSupervisor Comercial · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Forte gestão comercial e foco em resultado.Melhoria:Melhorar previsibilidade de forecast.Comentários:Superou a meta de vendas do trimestre.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 16/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "texto": "CLCarlos Eduardo LimaDesenvolvedor Frontend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoGestor · Mariana OliveiraFortes:Autonomia técnica e liderança natural.Melhoria:Delegar mais atividades do time.Comentários:Referência técnica do time de frontend.Par · Lucas Gabriel FernandesFortes:Colaboração entre equipes.Melhoria:Poderia mentorar colegas júniores.Comentários:Feedback de par elogiando o apoio técnico.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 15/10/2026Desempenho5,0ExcelentePotencial5,0ExcelenteAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 296
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "texto": "JMJuliana Pereira MartinsAssistente Administrativo · AdministrativoCiclo S2 2026 (demonstração)ConcluídoFortes:Rigor com números e organização.Melhoria:Abrir mais espaço para inovação.Comentários:Entrega consistente no fechamento contábil.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 12/10/2026Desempenho4,0Muito bomPotencial4,0Muito bomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "texto": "LFLucas Gabriel FernandesDesigner Gráfico · MarketingCiclo S2 2026 (demonstração)ConcluídoFortes:Criatividade e domínio das ferramentas de design.Melhoria:Cumprir prazos de revisão.Comentários:Alto potencial para liderança de projetos.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 10/10/2026Desempenho4,0Muito bomPotencial5,0Muito bomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Rafaela Cristina Gomes",
+        "texto": "RGRafaela Cristina GomesAnalista Fiscal · FinanceiroCiclo S2 2026 (demonstração)ConcluídoFortes:Boa análise de dados.Melhoria:Comunicação de resultados para leigos.Comentários:Em desenvolvimento na apresentação executiva.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 07/10/2026Desempenho3,0BomPotencial4,0BomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "texto": "GAGustavo Henrique AlvesVendedor Externo · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Bom relacionamento interpessoal.Melhoria:Assumir mais protagonismo em projetos.Comentários:Colaborador estável e confiável.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 05/10/2026Desempenho3,0BomPotencial3,0BomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Thiago Almeida Rocha",
+        "texto": "TRThiago Almeida RochaDesenvolvedor Backend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoFortes:Disciplina operacional.Melhoria:Desenvolver visão estratégica.Comentários:Executa muito bem o plano definido.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 03/10/2026Desempenho4,0Muito bomPotencial3,0Muito bomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 210
+      },
+      {
+        "nome": "Mariana Oliveira Santos",
+        "texto": "MSMariana Oliveira SantosGerente de Produto · ProdutoCiclo S2 2026 (demonstração)ConcluídoFortes:Autocrítica e vontade de aprender.Melhoria:Precisa elevar a qualidade das entregas.Comentários:Autoavaliação apontou oportunidades claras.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraAutoavaliaçãoEnviado 01/10/2026Desempenho2,0RegularPotencial3,0RegularAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 222
+      },
+      {
+        "nome": "Vanessa Rodrigues Dias",
+        "texto": "VDVanessa Rodrigues DiasRecepcionista · AdministrativoCiclo S2 2026 (demonstração)PendenteFortes:Pontualidade e cordialidade.Melhoria:Reciclagem nas rotinas administrativas.Comentários:Plano de melhoria em discussão com o gestor.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraSubordinadoEnviado 29/09/2026Desempenho2,0RegularPotencial2,0RegularAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "botoes": [
+          "Ver avaliação",
+          "Devolver para correção",
+          "Aprovar avaliação"
+        ],
+        "altura": 222
+      }
+    ],
+    "cardsF5": [
+      {
+        "nome": "Ana Beatriz Souza",
+        "texto": "ASAna Beatriz SouzaAnalista de RH · Recursos HumanosCiclo S2 2026 (demonstração)ConcluídoFortes:Referência em processos de RH.Melhoria:Delegar rotinas operacionais.Comentários:Excelente apoio às lideranças.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 17/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "William Nunes Cardoso",
+        "texto": "WCWilliam Nunes CardosoSupervisor Comercial · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Forte gestão comercial e foco em resultado.Melhoria:Melhorar previsibilidade de forecast.Comentários:Superou a meta de vendas do trimestre.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 16/10/2026Desempenho5,0ExcelentePotencial4,0ExcelenteAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Carlos Eduardo Lima",
+        "texto": "CLCarlos Eduardo LimaDesenvolvedor Frontend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoGestor · Mariana OliveiraFortes:Autonomia técnica e liderança natural.Melhoria:Delegar mais atividades do time.Comentários:Referência técnica do time de frontend.Par · Lucas Gabriel FernandesFortes:Colaboração entre equipes.Melhoria:Poderia mentorar colegas júniores.Comentários:Feedback de par elogiando o apoio técnico.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 15/10/2026Desempenho5,0ExcelentePotencial5,0ExcelenteAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 296
+      },
+      {
+        "nome": "Juliana Pereira Martins",
+        "texto": "JMJuliana Pereira MartinsAssistente Administrativo · AdministrativoCiclo S2 2026 (demonstração)ConcluídoFortes:Rigor com números e organização.Melhoria:Abrir mais espaço para inovação.Comentários:Entrega consistente no fechamento contábil.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 12/10/2026Desempenho4,0Muito bomPotencial4,0Muito bomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Lucas Gabriel Fernandes",
+        "texto": "LFLucas Gabriel FernandesDesigner Gráfico · MarketingCiclo S2 2026 (demonstração)ConcluídoFortes:Criatividade e domínio das ferramentas de design.Melhoria:Cumprir prazos de revisão.Comentários:Alto potencial para liderança de projetos.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 10/10/2026Desempenho4,0Muito bomPotencial5,0Muito bomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Rafaela Cristina Gomes",
+        "texto": "RGRafaela Cristina GomesAnalista Fiscal · FinanceiroCiclo S2 2026 (demonstração)ConcluídoFortes:Boa análise de dados.Melhoria:Comunicação de resultados para leigos.Comentários:Em desenvolvimento na apresentação executiva.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 07/10/2026Desempenho3,0BomPotencial4,0BomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Gustavo Henrique Alves",
+        "texto": "GAGustavo Henrique AlvesVendedor Externo · ComercialCiclo S2 2026 (demonstração)ConcluídoFortes:Bom relacionamento interpessoal.Melhoria:Assumir mais protagonismo em projetos.Comentários:Colaborador estável e confiável.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraGestorEnviado 05/10/2026Desempenho3,0BomPotencial3,0BomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Thiago Almeida Rocha",
+        "texto": "TRThiago Almeida RochaDesenvolvedor Backend · TecnologiaCiclo S2 2026 (demonstração)ConcluídoFortes:Disciplina operacional.Melhoria:Desenvolver visão estratégica.Comentários:Executa muito bem o plano definido.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraParEnviado 03/10/2026Desempenho4,0Muito bomPotencial3,0Muito bomAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 210
+      },
+      {
+        "nome": "Mariana Oliveira Santos",
+        "texto": "MSMariana Oliveira SantosGerente de Produto · ProdutoCiclo S2 2026 (demonstração)ConcluídoFortes:Autocrítica e vontade de aprender.Melhoria:Precisa elevar a qualidade das entregas.Comentários:Autoavaliação apontou oportunidades claras.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraAutoavaliaçãoEnviado 01/10/2026Desempenho2,0RegularPotencial3,0RegularAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 222
+      },
+      {
+        "nome": "Vanessa Rodrigues Dias",
+        "texto": "VDVanessa Rodrigues DiasRecepcionista · AdministrativoCiclo S2 2026 (demonstração)PendenteFortes:Pontualidade e cordialidade.Melhoria:Reciclagem nas rotinas administrativas.Comentários:Plano de melhoria em discussão com o gestor.Gestor responsávelMOMariana OliveiraAvaliado porMOMariana OliveiraSubordinadoEnviado 29/09/2026Desempenho2,0RegularPotencial2,0RegularAguardando gestorVer avaliaçãoDevolver para correçãoAprovar avaliação",
+        "altura": 222
+      }
+    ],
+    "erros": []
+  }
+}

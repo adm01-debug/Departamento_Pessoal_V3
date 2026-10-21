@@ -3,9 +3,9 @@
  * GUARDA DE ESCRITA OPERACIONAL (Gestão de Desempenho / Nine-Box).
  *
  * ── POR QUE ESTA CAMADA EXISTE ──────────────────────────────────────────────
- * A área pode estar EXIBINDO dados fictícios: `MOCK_NINEBOX_ATIVO` está ligado
- * e, em desenvolvimento com `VITE_DESEMPENHO_MOCK=true`, as listas de ciclos,
- * feedbacks, PDIs e competências vêm de `desempenhoMock`. Os identificadores
+ * A área pode estar EXIBINDO dados fictícios: em desenvolvimento com
+ * `VITE_DESEMPENHO_MOCK=true` (e sem `VITE_NINEBOX_MODO_REAL=true`), as listas de
+ * ciclos, feedbacks, PDIs e competências vêm de `desempenhoMock`. Os identificadores
  * desses registros são reconhecíveis (`mock-empresa-1`, `mock-ciclo-3`, ...).
  *
  * Ligar/desligar a flag da MATRIZ não é proteção suficiente para os fluxos de

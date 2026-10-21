@@ -30,6 +30,7 @@ import { NineBoxTab } from '@/components/avaliacao/NineBoxTab';
 import { normalizarPapeis, capacidadesAvaliacao } from '@/components/avaliacao/papeisAvaliacao';
 import { vinculosDemonstracao } from '@/components/avaliacao/servicoDemo';
 import { idDemonstrativo } from '@/components/avaliacao/escritaOperacional';
+import { impedimentoEdicaoFeedback } from '@/components/avaliacao/edicaoFeedback';
 import {
   CHAVE_REGISTROS_DEMO,
   aplicarEstadoDemo,
@@ -62,6 +63,7 @@ import {
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { EntradaPresenca } from '@/components/avaliacao/entradaCards';
 import { FeedbacksTab } from '@/components/avaliacao/FeedbacksTab';
+import { OrigemHomologacao } from '@/components/avaliacao/OrigemHomologacao';
 import { MetasOKRsTab } from '@/components/avaliacao/MetasOKRsTab';
 import { PdiTab } from '@/components/avaliacao/PdiTab';
 import { cn } from '@/lib/utils';
@@ -448,6 +450,7 @@ export default function AvaliacaoPage() {
             por: user?.email ?? null,
             automatico: true,
           });
+          qc.setQueryData([CHAVE_DEMO], lerEstadoLocal());
           invalidarDemo();
         }
         return Promise.resolve(registro);
@@ -507,6 +510,17 @@ export default function AvaliacaoPage() {
        * SEMPRE passa pela RPC `editar_feedback_seguro`, mesmo com mocks na tela.
        */
       if (idDemonstrativo(alvo)) {
+        /**
+         * CANCELADO NÃO É EDITÁVEL. O status é lido do registro ATUAL (lista já
+         * com patches locais), nunca presumido. Sem esta guarda, o patch abaixo
+         * forçava `status: 'pendente'` e “reabria” o cancelado no localStorage.
+         */
+        const atual = (feedbacks as Record<string, unknown>[]).find(
+          (f) => String(f?.id ?? '') === alvo
+        );
+        const impedimento = impedimentoEdicaoFeedback(atual?.status);
+        if (impedimento) return Promise.reject(new Error(impedimento));
+
         const patch = {
           ...dados,
           status: 'pendente',
@@ -526,6 +540,7 @@ export default function AvaliacaoPage() {
             por: user?.email ?? null,
             automatico: true,
           });
+          qc.setQueryData([CHAVE_DEMO], lerEstadoLocal());
           invalidarDemo();
         }
         return Promise.resolve({ id: alvo, ...patch });
@@ -554,6 +569,7 @@ export default function AvaliacaoPage() {
       qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
       qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
+      qc.invalidateQueries({ queryKey: ['historico_feedback', id] });
       toast.success(
         idDemonstrativo(id)
           ? 'Demonstração: avaliação atualizada e salva localmente (nada foi enviado ao banco).'
@@ -561,8 +577,10 @@ export default function AvaliacaoPage() {
       );
     },
     onError: (erro: unknown, { id }) => {
-      if (idDemonstrativo(id)) return;
-      toast.error(`Avaliação NÃO atualizada: ${mensagemDeErro(erro)}`);
+      const mensagem = mensagemDeErro(erro);
+      // O silêncio da vitrine não pode esconder a recusa de edição de cancelado.
+      if (idDemonstrativo(id) && !/cancelad/i.test(mensagem)) return;
+      toast.error(`Avaliação NÃO atualizada: ${mensagem}`);
     },
   });
 
@@ -868,6 +886,7 @@ export default function AvaliacaoPage() {
             colaboradoresIds: ((colaboradores ?? []) as { id?: unknown }[])
               .map((c) => String(c?.id ?? ''))
               .filter((id) => Boolean(id) && idDemonstrativo(id)),
+            podeGerirAvaliacoes: podeExcluirCiclos,
           })
         : undefined,
     [demoAtivo, user, feedbacks, colaboradores]
@@ -962,6 +981,9 @@ export default function AvaliacaoPage() {
       return null;
     },
     onSuccess: (_r, p) => {
+      // Atualização IMEDIATA do cache (o refetch por invalidação pode chegar
+      // depois do frame do clique); a decisão local já está no localStorage.
+      qc.setQueryData([CHAVE_DEMO], lerEstadoLocal());
       invalidarDemo();
       toast.success(
         p.devolvida
@@ -990,6 +1012,7 @@ export default function AvaliacaoPage() {
       return null;
     },
     onSuccess: (_r, d) => {
+      qc.setQueryData([CHAVE_DEMO], lerEstadoLocal());
       invalidarDemo();
       toast.success(
         d.decisao === 'devolvido'
@@ -1017,6 +1040,7 @@ export default function AvaliacaoPage() {
       return null;
     },
     onSuccess: () => {
+      qc.setQueryData([CHAVE_DEMO], lerEstadoLocal());
       invalidarDemo();
       toast.success('Demonstração: Potencial validado localmente — o Nine-Box classifica.');
     },
@@ -1392,6 +1416,15 @@ export default function AvaliacaoPage() {
               <PerformanceAuditTimeline colaboradores={colaboradores} />
             </TabsContent>
           </Tabs>
+          {/* TEMPORÁRIO (DEV/HOMOLOGAÇÃO): painel fora do layout aprovado,
+              habilitado somente por VITE_HOMOLOG_ORIGEM=true. */}
+          <OrigemHomologacao
+            visivel={tab === 'feedbacks'}
+            feedbacks={feedbacks}
+            colaboradores={colaboradores}
+            ciclos={ciclos}
+            cicloId={cicloSelecionado?.id}
+          />
         </EntradaPresenca>
       </PageLayout>
     </>

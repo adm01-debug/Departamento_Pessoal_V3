@@ -821,4 +821,91 @@
   }
 }
 
+/* ─── Simulador ROI: cascata em contêiner estável ──────────────────────────
+   O progresso fica em variáveis CSS no contêiner, fora do ResponsiveContainer.
+   Se o Recharts recriar as paths, as novas herdam o progresso atual. */
+.roi-grafico {
+  --roi-payout-scale: 0;
+  --roi-economia-scale: 0;
+  --roi-rotulos-opacity: 0;
+  /* Evolução temporal (`pathLength=1`): 1 = linha recolhida; 0 = desenhada. */
+  --roi-linha-payout-offset: 1;
+  --roi-linha-economia-offset: 1;
+  --roi-linha-payout-revelado: 0;
+  --roi-linha-economia-revelado: 0;
+}
 
+.roi-grafico [data-testid='roi-bar-payout'] {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(var(--roi-payout-scale, 1));
+}
+
+.roi-grafico [data-testid='roi-bar-economia'] {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scaleY(var(--roi-economia-scale, 1));
+}
+
+.roi-grafico .recharts-label-list {
+  opacity: var(--roi-rotulos-opacity, 1);
+  transition: opacity 200ms ease-out;
+}
+
+/* ─── Simulador ROI: evolução temporal (desenho das linhas) ────────────────
+   O progresso fica em variáveis do contêiner e cada path usa `pathLength=1`
+   — o dashoffset também é 0..1. Paths recriados pelo Recharts herdam o estado
+   atual e redimensionamentos não exigem remedir comprimento. */
+.roi-grafico .roi-area-payout .recharts-area-curve,
+.roi-grafico .roi-area-economia .recharts-area-curve {
+  stroke-dasharray: 1;
+}
+
+.roi-grafico .roi-area-payout .recharts-area-curve {
+  stroke-dashoffset: var(--roi-linha-payout-offset, 1);
+}
+
+.roi-grafico .roi-area-economia .recharts-area-curve {
+  stroke-dashoffset: var(--roi-linha-economia-offset, 1);
+}
+
+/* O degradê abaixo de cada linha aparece junto com o desenho (recorte
+   horizontal), e não inteiro antes da linha começar. */
+.roi-grafico .roi-area-payout .recharts-area-area {
+  clip-path: inset(0 calc((1 - var(--roi-linha-payout-revelado, 0)) * 100%) 0 0);
+}
+
+.roi-grafico .roi-area-economia .recharts-area-area {
+  clip-path: inset(0 calc((1 - var(--roi-linha-economia-revelado, 0)) * 100%) 0 0);
+}
+
+/* Pontos: aparecem quando a ponta do traço alcança a fração de arco do ponto
+   (`--roi-ponto-fracao`, medida pelo controlador no path real). */
+.roi-grafico .roi-ponto {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.roi-grafico .roi-ponto-payout {
+  opacity: clamp(0, calc((var(--roi-linha-payout-revelado, 0) - var(--roi-ponto-fracao, 1)) * 100 + 1), 1);
+}
+
+.roi-grafico .roi-ponto-economia {
+  opacity: clamp(0, calc((var(--roi-linha-economia-revelado, 0) - var(--roi-ponto-fracao, 1)) * 100 + 1), 1);
+}
+
+/* ─── Simulador ROI: degradê do preenchimento dos sliders ─────────────────
+   O `roi-slider-gradient` é o Root do Slider dentro do card de parâmetro.
+   O seletor atinge APENAS o Range (Root > Track > Range, todos com
+   data-orientation); trilho, thumb, dimensões e arraste não mudam. O
+   degradê ocupa a largura do preenchimento, acompanhando o valor. */
+.roi-slider-gradient > [data-orientation='horizontal'] > [data-orientation='horizontal'] {
+  background-color: transparent;
+  background-image: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--success)) 100%);
+}
+
+/* O controlador JS anima SEMPRE (entrada automática e botão manual usam a
+   mesma função), inclusive com "movimento reduzido" do sistema — era essa
+   preferência que fazia a entrada automática saltar direto para a altura
+   final e parecer que a animação não existia. Não há override de `transform`
+   aqui para não anular a reprodução manual. */

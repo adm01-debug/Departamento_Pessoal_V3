@@ -1,4 +1,6 @@
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { entradaSimulador } from './simuladorEntrada';
 
 /**
  * ============================================================================
@@ -50,7 +52,7 @@ export function ComparacaoCenarios({ linhas, cenarios }: ComparacaoCenariosProps
           ))}
         </colgroup>
         <thead>
-          <tr className="border-b border-border/40 text-muted-foreground">
+          <motion.tr {...entradaSimulador(0)} className="border-b border-border/40 text-muted-foreground">
             <th className="text-left font-medium uppercase tracking-wide">Indicador</th>
             <th className="text-right font-medium uppercase tracking-wide">Cenário base</th>
             {cenarios.map((c) => (
@@ -63,11 +65,15 @@ export function ComparacaoCenarios({ linhas, cenarios }: ComparacaoCenariosProps
               </th>
             ))}
             <th className="text-right font-medium uppercase tracking-wide">Variação</th>
-          </tr>
+          </motion.tr>
         </thead>
         <tbody>
           {linhas.map((linha, indice) => (
-            <tr key={linha.chave} className={indice < linhas.length - 1 ? 'border-b border-border/20' : undefined}>
+            <motion.tr
+              key={linha.chave}
+              {...entradaSimulador(indice + 1)}
+              className={indice < linhas.length - 1 ? 'border-b border-border/20' : undefined}
+            >
               <td className="break-words leading-snug text-muted-foreground">{linha.rotulo}</td>
               <td className="text-numeric whitespace-nowrap text-right font-medium tabular-nums">{linha.base}</td>
               {linha.selecionados.map((s) => (
@@ -77,13 +83,13 @@ export function ComparacaoCenarios({ linhas, cenarios }: ComparacaoCenariosProps
               ))}
               <td
                 className={cn(
-                  'text-numeric whitespace-nowrap text-right font-medium tabular-nums',
+                  'text-numeric whitespace-nowrap text-right font-semibold tabular-nums',
                   linha.corVariacao,
                 )}
               >
                 {linha.variacao}
               </td>
-            </tr>
+            </motion.tr>
           ))}
         </tbody>
       </table>

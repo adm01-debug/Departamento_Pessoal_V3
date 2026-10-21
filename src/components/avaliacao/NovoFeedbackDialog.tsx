@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { ROTULO_TIPO_FEEDBACK, type TipoFeedback } from './feedbacksComum';
 import type { FeedbackCanonico } from './feedbackCanonico';
+import { impedimentoEdicaoFeedback } from './edicaoFeedback';
 // A coreografia é a MESMA da janela "Pendências" — a cadeia é
 // `PendenciasDialog` → `AnimatedCascadeDialog` → estas variants. Importar da
 // fonte é o que garante movimento IDÊNTICO (nada de réplica local com números
@@ -115,7 +116,8 @@ export function NovoFeedbackDialog({
   const [pontosMelhoria, setPontosMelhoria] = useState(() => String(inicial.pontos_melhoria ?? ''));
   const [comentarios, setComentarios] = useState(() => String(inicial.comentarios ?? ''));
 
-  const podeSalvar = Boolean(avaliadoId && avaliadorId) && !salvando;
+  const bloqueioEdicao = emEdicao ? impedimentoEdicaoFeedback(inicial.status) : null;
+  const podeSalvar = Boolean(avaliadoId && avaliadorId) && !salvando && !bloqueioEdicao;
 
   const enviar = () => {
     if (!podeSalvar) return;
@@ -328,7 +330,13 @@ export function NovoFeedbackDialog({
                       <Button variant="outline" size="sm" className="h-9" onClick={() => onOpenChange(false)}>
                         Cancelar
                       </Button>
-                      <Button size="sm" className="h-9" onClick={enviar} disabled={!podeSalvar}>
+                      <Button
+                        size="sm"
+                        className="h-9"
+                        onClick={enviar}
+                        disabled={!podeSalvar}
+                        title={bloqueioEdicao ?? undefined}
+                      >
                         {salvando ? 'Salvando...' : emEdicao ? 'Salvar alterações' : 'Salvar feedback'}
                       </Button>
                     </DialogFooter>

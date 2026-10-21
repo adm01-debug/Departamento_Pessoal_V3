@@ -165,6 +165,9 @@ export default function LoginPage() {
           // removido): mostra a causa real e NÃO contabiliza como senha errada.
           setError(msg ?? 'Não foi possível contatar o servidor de autenticação.');
           break;
+        case 'TIMEOUT':
+          setError(msg ?? 'O serviço de autenticação demorou para responder. Tente novamente.');
+          break;
         case 'INVALID_CREDENTIALS':
           // Único caso que realmente significa senha/e-mail incorretos.
           await recordFailedAttempt(email);

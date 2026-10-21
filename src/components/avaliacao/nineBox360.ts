@@ -253,15 +253,17 @@ export function consolidarNineBox360({
       const chave = `${String(cicloId ?? '').trim()}::${colaboradorId}`;
       const decisao = decisaoPorChave.get(chave) ?? null;
       const versaoConsolidada = versaoConsolidadaPorChave.get(chave) ?? null;
-      // Sem cabeçalho de consolidação (dado histórico), a própria versão da
-      // decisão é a âncora disponível — não se invalida por ausência de linha.
-      const aprovacaoVigente = decisao && (!versaoConsolidada || decisao.versao === versaoConsolidada);
-      if (!aprovacaoVigente) {
+      // Versão consolidada + decisão são obrigatórias: sem os dois não existe
+      // aprovação oficial para esta versão (fail-closed).
+      if (!decisao || !versaoConsolidada || decisao.versao !== versaoConsolidada) {
         consolidado = {
           ...consolidado,
           classificavel: false,
           quadrante: null,
-          motivo: 'aprovacao_pendente',
+          // Preserva o motivo ESPECÍFICO da base (sem gestor, gestor pendente…).
+          // Só usa `aprovacao_pendente` quando a única coisa que faltava era a
+          // decisão do gestor.
+          motivo: consolidado.motivo ?? 'aprovacao_pendente',
         };
       } else if (decisao.decisao !== 'aprovado') {
         consolidado = {
@@ -273,12 +275,20 @@ export function consolidarNineBox360({
       } else {
         /**
          * FLUXO NOVO: a aprovação do gestor confirma os valores do conjunto.
-         * O snapshot `desempenho_aprovado`/`potencial_aprovado` é a fonte
-         * oficial; não há validação posterior do RH. Quando o snapshot não
-         * existe (legado), mantém-se a composição 360 já calculada acima.
+         * O snapshot `desempenho_aprovado`/`potencial_aprovado` é OBRIGATÓRIO:
+         * uma decisão antiga/sem snapshot não pode classificar por aproximação.
          */
         const snapshot = aprovadoPorChave.get(chave) ?? null;
-        if (snapshot) {
+        if (!snapshot) {
+          consolidado = {
+            ...consolidado,
+            classificavel: false,
+            quadrante: null,
+            desempenho: null,
+            potencial: null,
+            motivo: 'aprovacao_sem_valores',
+          };
+        } else {
           consolidado = consolidar360({
             empresaId,
             cicloId,
@@ -291,11 +301,6 @@ export function consolidarNineBox360({
             desempenhoAprovado: snapshot.desempenho,
             potencialAprovado: snapshot.potencial,
           });
-        } else if (!consolidado.classificavel && !consolidado.motivo) {
-          consolidado = {
-            ...consolidado,
-            motivo: 'aprovacao_sem_valores',
-          };
         }
       }
     }

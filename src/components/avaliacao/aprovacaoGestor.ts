@@ -27,7 +27,7 @@
  */
 
 import { notaNaEscala } from './nineBoxConsolidacao';
-import { tipoFeedback, type TipoFeedback } from './feedbacksComum';
+import { ROTULO_TIPO_FEEDBACK, tipoFeedback, type TipoFeedback } from './feedbacksComum';
 import { capacidadesAvaliacao, type PapeisAvaliacao } from './papeisAvaliacao';
 import { ehAvaliadorDesignado, ehGestorResponsavel, type VinculoGestor } from './acoesFeedback';
 import { idDemonstrativo } from './escritaOperacional';
@@ -296,6 +296,21 @@ export interface OpcoesPendencias {
 
 /* ─── Pendência (uma linha da fila de aprovação) ─────────────────────────── */
 
+/**
+ * Relato individual preservado no conjunto consolidado. A fila continua sendo
+ * UMA linha por colaborador × ciclo (a aprovação é do conjunto), mas os textos
+ * exibidos no card mantêm o avaliador e a categoria de origem de cada registro.
+ */
+export interface RelatoFeedbackPendencia {
+  id: string;
+  tipo: TipoFeedback;
+  tipoRotulo: string;
+  avaliador: string;
+  pontos_fortes: string | null;
+  pontos_melhoria: string | null;
+  comentarios: string | null;
+}
+
 export interface PendenciaAprovacao {
   /** Chave estável da linha (`ciclo:colaborador`). */
   id: string;
@@ -354,6 +369,12 @@ export interface PendenciaAprovacao {
   feedbackId: string;
   /** Registro completo (o dialog "Ver avaliação" o consome sem nova consulta). */
   feedback: Record<string, unknown>;
+  /**
+   * TODOS os relatos do conjunto (gestor, par, auto, subordinado), com autoria.
+   * `feedback` continua sendo a referência canônica da decisão; esta lista é
+   * somente de LEITURA e evita que o card resuma o conjunto no último registro.
+   */
+  relatos?: RelatoFeedbackPendencia[];
   /** Versão CONSOLIDADA do conjunto — âncora da DECISÃO do gestor. */
   versaoAvaliacao: string | null;
   /**
@@ -917,6 +938,43 @@ export function derivarPendencias({
       ? null
       : 'Gestor responsável não identificado (colaborador sem supervisor_id)';
 
+    /**
+     * Relatos do conjunto para a PRÉVIA do card. A ordem é determinística
+     * (categoria → data → id), nunca “último registro”; cada item mantém o
+     * avaliador e o tipo do próprio feedback. Nenhum texto é concatenado.
+     */
+    const prioridadeTipo: Record<TipoFeedback, number> = {
+      gestor: 0,
+      auto: 1,
+      par: 2,
+      subordinado: 3,
+    };
+    const relatos: RelatoFeedbackPendencia[] = [...grupo]
+      .sort((a, b) => {
+        const tipoA = tipoFeedback(a.tipo);
+        const tipoB = tipoFeedback(b.tipo);
+        const porTipo = prioridadeTipo[tipoA] - prioridadeTipo[tipoB];
+        if (porTipo !== 0) return porTipo;
+        const dataA = instante(a.created_at) || 0;
+        const dataB = instante(b.created_at) || 0;
+        if (dataA !== dataB) return dataA - dataB;
+        return texto(a.id).localeCompare(texto(b.id));
+      })
+      .map((f, indice) => {
+        const tipo = tipoFeedback(f.tipo);
+        const embed = (f.avaliador ?? {}) as { nome_completo?: string | null };
+        const avaliador = pessoa.get(texto(f.avaliador_id))?.nome || texto(embed.nome_completo) || 'Não informado';
+        return {
+          id: texto(f.id) || `${chave}:${indice}`,
+          tipo,
+          tipoRotulo: ROTULO_TIPO_FEEDBACK[tipo],
+          avaliador,
+          pontos_fortes: texto(f.pontos_fortes) || null,
+          pontos_melhoria: texto(f.pontos_melhoria) || null,
+          comentarios: texto(f.comentarios) || null,
+        };
+      });
+
     linhas.push({
       id: chave,
       origem: origemGrupo,
@@ -939,6 +997,7 @@ export function derivarPendencias({
       impedimentoEnvio,
       feedbackId,
       feedback: referencia ?? {},
+      relatos,
       versaoAvaliacao: versao,
       versaoValidacao,
       desempenho: classificacao?.desempenho ?? notaNaEscala(notaBase),

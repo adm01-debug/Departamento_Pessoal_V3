@@ -34,18 +34,15 @@ function setupInsertChain(data: any, error: any = null) {
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: any) => Promise.resolve({ error }).then(r),
-    catch: (r: any) => Promise.resolve({ error }).catch(r),
-    finally: (r: any) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
-  eqFn.mockReturnValue(__delChain);
-  const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
+function setupDeleteChain(data: any = { id: 'ci1' }, error: any = null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+  const selectFn = vi.fn().mockReturnValue({ maybeSingle });
+  const chain: any = { select: selectFn };
+  const eqFn = vi.fn().mockReturnValue(chain);
+  chain.eq = eqFn;
+  const deleteFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ delete: deleteFn });
-  return { deleteFn, eqFn };
+  return { deleteFn, eqFn, selectFn, maybeSingle };
 }
 
 // ─── Ciclos ───────────────────────────────────────────────────────────────────
@@ -152,6 +149,11 @@ describe('avaliacaoService.excluirCiclo', () => {
     await avaliacaoService.excluirCiclo('ci1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'ci1');
+  });
+
+  it('não presume sucesso quando o banco não devolve a linha excluída', async () => {
+    setupDeleteChain(null);
+    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toThrow(/não confirmou/i);
   });
 
   it('blocks deletion for a profile without RH/admin permission', async () => {

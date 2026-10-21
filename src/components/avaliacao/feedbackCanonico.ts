@@ -44,6 +44,7 @@ import {
 } from './aprovacaoGestor';
 import type { FeedbackDerivado } from './feedbacksComum';
 import { idDemonstrativo } from './escritaOperacional';
+import { impedimentoEdicaoFeedback } from './edicaoFeedback';
 import { normalizarStatus as normalizarStatusFeedback, type StatusLido } from './statusFeedback';
 
 /* ─── Campo normalizado (ausente ≠ não aplicável ≠ não preenchido) ────────── */
@@ -311,6 +312,8 @@ export function getFeedbackActions(registro: FeedbackCanonico, opcoes: OpcoesAco
   const caps = capacidadesAvaliacao(papeis);
   const aprov = registro.aprovacao;
   const escrita = registro.origemDemonstrativa || acoesHabilitadas;
+  /** Cancelado é SOMENTE LEITURA até reabertura administrativa. */
+  const bloqueioEdicao = impedimentoEdicaoFeedback(registro.feedback?.status);
 
   /**
    * DECISÃO (Devolver/Aprovar) — visível SEMPRE que existe consolidação, para
@@ -374,8 +377,10 @@ export function getFeedbackActions(registro: FeedbackCanonico, opcoes: OpcoesAco
       id: 'editar',
       rotulo: 'Editar feedback',
       variante: 'outline',
-      habilitado: escrita && caps.podeGerirAvaliacoes,
-      motivo: !caps.podeGerirAvaliacoes ? MOTIVO.somenteRhAdmin : escrita ? null : MOTIVO.semEscrita,
+      habilitado: escrita && caps.podeGerirAvaliacoes && !bloqueioEdicao,
+      motivo:
+        bloqueioEdicao ??
+        (!caps.podeGerirAvaliacoes ? MOTIVO.somenteRhAdmin : escrita ? null : MOTIVO.semEscrita),
       escrita: true,
     },
   ];
@@ -497,6 +502,20 @@ export function habilitadoPara(acoes: AcaoFeedback[], id: AcaoFeedbackId): boole
  *   3. resultados   → `desempenho`, `potencial`, `faixa`, `status`, `aprovacao`;
  *   4. ações        → `acoes`.
  */
+export interface RelatoFeedback {
+  id: string;
+  /** Categoria do relato individual (nunca a categoria da linha consolidada). */
+  tipo: FeedbackDerivado['tipo'];
+  tipoRotulo: string;
+  avaliador: string;
+  /** Os três campos existem sempre; vazio = `nao_informado` → "Não informado". */
+  conteudo: {
+    pontosFortes: Campo<string>;
+    pontosMelhoria: Campo<string>;
+    comentarios: Campo<string>;
+  };
+}
+
 export interface FeedbackCanonico extends FeedbackDerivado {
   /** Nome do ciclo do registro (campo normalizado). */
   cicloNome: Campo<string>;
@@ -522,6 +541,11 @@ export interface FeedbackCanonico extends FeedbackDerivado {
     pontosMelhoria: Campo<string>;
     comentarios: Campo<string>;
   };
+  /**
+   * Todos os relatos do conjunto, com autoria. Em um feedback isolado contém
+   * apenas ele mesmo; na fila consolidada contém gestor/par/auto/subordinado.
+   */
+  relatos: RelatoFeedback[];
   /** Competência em foco no PDI (informação complementar). */
   pdi: Campo<string>;
   /** Registro fictício (`mock-*`/`demo-*`) — decisão local, nunca gravação real. */
@@ -573,6 +597,39 @@ export function normalizarFeedback(item: FeedbackDerivado, opcoes: OpcoesCanonic
   const nota = Number(f?.nota_geral ?? 0);
   const potencialBruto = Number(f?.potencial ?? 0);
 
+  const conteudo = {
+    pontosFortes: campo(f?.pontos_fortes as string | null | undefined),
+    pontosMelhoria: campo(f?.pontos_melhoria as string | null | undefined),
+    comentarios: campo(f?.comentarios as string | null | undefined),
+  };
+
+  /**
+   * A lista de relatos é montada da LINHA DA FILA (conjunto completo). Fora da
+   * fila — ou em registros antigos sem `relatos` — o próprio feedback é o único
+   * relato. Isso mantém a autoria e evita que a prévia escolha “o último”.
+   */
+  const relatos: RelatoFeedback[] = pendencia?.relatos?.length
+    ? pendencia.relatos.map((relato) => ({
+        id: relato.id,
+        tipo: relato.tipo,
+        tipoRotulo: relato.tipoRotulo,
+        avaliador: relato.avaliador,
+        conteudo: {
+          pontosFortes: campo(relato.pontos_fortes),
+          pontosMelhoria: campo(relato.pontos_melhoria),
+          comentarios: campo(relato.comentarios),
+        },
+      }))
+    : [
+        {
+          id: String(f?.id ?? pendencia?.feedbackId ?? ''),
+          tipo: item.tipo,
+          tipoRotulo: item.tipoRotulo,
+          avaliador: item.avaliador === '—' ? '' : item.avaliador,
+          conteudo,
+        },
+      ];
+
   const base: Omit<FeedbackCanonico, 'acoes'> = {
     ...item,
     cicloNome: campo(opcoes.cicloNome ?? ''),
@@ -584,11 +641,8 @@ export function normalizarFeedback(item: FeedbackDerivado, opcoes: OpcoesCanonic
     potencial: campo(Number.isFinite(potencialBruto) && potencialBruto > 0 ? potencialBruto : null),
     status: statusCanonico(f?.status),
     aprovacao,
-    conteudo: {
-      pontosFortes: campo(f?.pontos_fortes as string | null | undefined),
-      pontosMelhoria: campo(f?.pontos_melhoria as string | null | undefined),
-      comentarios: campo(f?.comentarios as string | null | undefined),
-    },
+    conteudo,
+    relatos,
     pdi: campo(item.competencia),
     /**
      * ORIGEM: o id do registro OU o id canônico da pendência (o mesmo que a fila

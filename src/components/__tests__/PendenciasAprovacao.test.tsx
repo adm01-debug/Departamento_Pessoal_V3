@@ -279,7 +279,7 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
     expect(screen.getByText('Ciclo fechado no prazo')).toBeInTheDocument();
   });
 
-  it('NÃO expõe o relato individual de Par/Auto na fila (confidencialidade)', () => {
+  it('expõe os três campos de Par/Auto/Subordinado na fila (sem filtro por tipo)', () => {
     renderizar(
       linha({
         feedback: {
@@ -290,17 +290,109 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
           status: 'concluido',
           nota_geral: 4,
           potencial: 4,
-          pontos_fortes: 'Relato reservado do par',
-          pontos_melhoria: 'Relato reservado do par',
-          comentarios: 'Relato reservado do par',
+          pontos_fortes: 'Relato do par: entrega',
+          pontos_melhoria: 'Relato do par: delegação',
+          comentarios: 'Relato do par: comentário',
         },
       })
     );
 
-    expect(screen.queryByText('Fortes:')).toBeNull();
-    expect(screen.queryByText('Relato reservado do par')).toBeNull();
+    expect(screen.getByText('Fortes:')).toBeInTheDocument();
+    expect(screen.getByText('Relato do par: entrega')).toBeInTheDocument();
+    expect(screen.getByText('Melhoria:')).toBeInTheDocument();
+    expect(screen.getByText('Relato do par: delegação')).toBeInTheDocument();
+    expect(screen.getByText('Comentários:')).toBeInTheDocument();
+    expect(screen.getByText('Relato do par: comentário')).toBeInTheDocument();
   });
 
+  it('campos vazios continuam com os três rótulos e usam "Não informado"', () => {
+    renderizar(
+      linha({
+        feedback: {
+          id: 'fb-vazio-1',
+          avaliado_id: 'colab-1',
+          ciclo_id: 'ciclo-1',
+          tipo: 'auto',
+          status: 'pendente',
+          nota_geral: 0,
+          potencial: 0,
+          pontos_fortes: '',
+          pontos_melhoria: null,
+          comentarios: undefined,
+        },
+      })
+    );
+
+    expect(screen.getByText('Fortes:')).toBeInTheDocument();
+    expect(screen.getByText('Melhoria:')).toBeInTheDocument();
+    expect(screen.getByText('Comentários:')).toBeInTheDocument();
+    expect(screen.getAllByText('Não informado').length).toBeGreaterThanOrEqual(3);
+  });
+
+  it('vários relatos preservam autoria e não são misturados nem reduzidos ao último', () => {
+    renderizar(
+      linha({
+        feedback: {
+          id: 'fb-gestor-1',
+          avaliado_id: 'colab-1',
+          ciclo_id: 'ciclo-1',
+          tipo: 'gestor',
+          status: 'concluido',
+          nota_geral: 4,
+          potencial: 5,
+        },
+        relatos: [
+          {
+            id: 'fb-gestor-1',
+            tipo: 'gestor',
+            tipoRotulo: 'Gestor',
+            avaliador: 'Bruno Lima',
+            pontos_fortes: 'Gestor: forte A',
+            pontos_melhoria: 'Gestor: melhoria A',
+            comentarios: 'Gestor: comentário A',
+          },
+          {
+            id: 'fb-par-1',
+            tipo: 'par',
+            tipoRotulo: 'Par',
+            avaliador: 'Carla Souza',
+            pontos_fortes: 'Par: forte B',
+            pontos_melhoria: 'Par: melhoria B',
+            comentarios: 'Par: comentário B',
+          },
+        ],
+      })
+    );
+
+    expect(screen.getByText('Gestor · Bruno Lima')).toBeInTheDocument();
+    expect(screen.getByText('Par · Carla Souza')).toBeInTheDocument();
+    expect(screen.getByText('Gestor: forte A')).toBeInTheDocument();
+    expect(screen.getByText('Par: forte B')).toBeInTheDocument();
+    expect(screen.getByText('Gestor: comentário A')).toBeInTheDocument();
+    expect(screen.getByText('Par: comentário B')).toBeInTheDocument();
+    expect(screen.queryByText('Gestor: forte A Par: forte B')).toBeNull();
+  });
+
+  it('texto longo mantém o valor completo no title (tooltip) sem estourar o card', () => {
+    const longo = `Fortes ${'muito '.repeat(60)}`.trim();
+    renderizar(
+      linha({
+        feedback: {
+          id: 'fb-longo-1',
+          avaliado_id: 'colab-1',
+          ciclo_id: 'ciclo-1',
+          tipo: 'gestor',
+          status: 'concluido',
+          nota_geral: 4,
+          potencial: 5,
+          pontos_fortes: longo,
+          pontos_melhoria: 'Curta',
+          comentarios: 'Curto',
+        },
+      })
+    );
+    expect(screen.getByTitle(longo)).toBeInTheDocument();
+  });
   it('nenhum botão obrigatório desaparece quando muda o status', () => {
     ['aguardando_gestor', 'aprovada_gestor', 'devolvida', 'em_preparacao', 'sem_gestor'].forEach((status) => {
       const { unmount } = renderizar(linha({ status: status as PendenciaAprovacao['status'] }));

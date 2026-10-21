@@ -140,7 +140,8 @@ motor e a interface não o exigem.
 - `nineBox360.ts`
   - lê `desempenho_aprovado`/`potencial_aprovado` da consolidação;
   - classifica mesmo sem feedback separado `tipo='gestor'` quando há snapshot;
-  - mantém fallback legado para grupos com avaliação de gestor e sem snapshot;
+  - aprovação aprovada **sem snapshot** (`desempenho_aprovado`/`potencial_aprovado`)
+    é fail-closed: `aprovacao_sem_valores`, sem quadrante nem notas;
   - bloqueia decisão pendente/devolvida/versão diferente.
 - `aprovacaoLocal.ts`
   - aprovação demonstrativa classifica imediatamente;
@@ -160,7 +161,7 @@ motor e a interface não o exigem.
 
 ### Backend
 
-Migration aditiva preparada, **não executada**:
+Estrutura **já refletida no principal** (ver `NINEBOX-ESTABILIZACAO-PRODUCAO.md`):
 `supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql`
 
 - adiciona `desempenho_proposto`, `potencial_proposto`, `desempenho_aprovado`,
@@ -173,11 +174,13 @@ Migration aditiva preparada, **não executada**:
   360° com os pesos aprovados, valida 1–5 e versão vigente, grava decisão +
   snapshot + auditoria na mesma transação. O gestor autorizado pode aprovar a
   avaliação que ele mesmo criou; a autoria não é bloqueio.
+- o principal possui ainda uma checagem remota adicional
+  (`empresa_ciclo_colaborador_inconsistentes`) que o repositório não contém e
+  que **não deve ser sobrescrita**;
 - rollback real em
   `supabase/rollback/20261021090000_ninebox_aprovacao_confirmada_rollback.sql`;
-- migration aditiva `20261025090000_ninebox_aprovacao_autoria.sql` remove o
-  bloqueio de autoria (gestor pode criar e aprovar), preservando as demais
-  validações.
+- `20261025090000_ninebox_aprovacao_autoria.sql` é funcionalmente idêntica à
+  função de 210 (diferença apenas de whitespace); não acrescenta objeto novo.
 
 ## Evidências desta rodada
 
@@ -201,13 +204,21 @@ Migration aditiva preparada, **não executada**:
 - `node scripts/verificar-layout-protegido.mjs`: **OK**.
 - ESLint: **0 erros** nos arquivos tocados.
 
-## Bloqueios reais
+## Bloqueios reais (reconciliados em 2026-10-21)
 
-1. A migration `20261021090000` **não foi aplicada** no Supabase principal; a
-   homologação real depende de autorização explícita.
-2. A migration de edição `20261020090000` continua ausente no banco principal
-   (`editar_feedback_seguro` → `PGRST202`).
-3. A conta `ti@promobrindes.com.br` não está disponível nesta sessão; o fluxo
+1. A estrutura de `20261021090000` **já está refletida** no principal (colunas,
+   constraints, `sincronizar_consolidacao_avaliacao` e `decidir_aprovacao_gestor`).
+   Não reaplicar.
+2. `20261025090000` é funcionalmente idêntica à versão de 210; não há objeto novo.
+3. `20261022090000` está parcialmente ausente: `pode_finalizar_feedback` não existe
+   e `finalizar_feedback` ainda é a versão antiga.
+4. `20261020090000` continua ausente (`editar_feedback_seguro` → `PGRST202`) e o
+   CHECK de operações não aceita `editar_feedback`.
+5. `20261026090000` também está ausente: policies antigas de ciclo e trigger de
+   dependências inexistente.
+6. A reconciliação incremental `20261027090000` está preparada e testada em
+   PGlite, mas **não aplicada** por falta de autorização.
+7. A conta `ti@promobrindes.com.br` não está disponível nesta sessão; o fluxo
    real de aprovação/RH/F5 não foi executado no Supabase.
-4. RLS/policies efetivas não foram auditadas por falta de acesso SQL
-   administrativo; a execução PGlite valida a lógica, não as policies do tenant.
+8. RLS/policies efetivas foram verificadas por catálogo para o escopo do Nine-Box,
+   mas não houve auditoria administrativa ampla do tenant.

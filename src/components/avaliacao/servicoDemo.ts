@@ -22,6 +22,7 @@ import type { ServicoAcoes } from './FeedbackAcoesRodape';
 import { atualizarRegistroDemo, lerRegistrosDemo, patchDe } from './desempenhoDemoStore';
 import { chaveLocal, lerEstadoLocal, validacoesLocais, validarPotencialLocal } from './aprovacaoLocal';
 import { feedbackDoGestor, versaoValidacaoDemo } from './aprovacaoGestor';
+import { normalizarStatus, validarReabertura } from './statusFeedback';
 
 /** Gestor de referência da vitrine (avaliador dos mocks de `desempenhoMock`). */
 export const GESTOR_DEMO_ID = 'mock-13';
@@ -37,6 +38,11 @@ export interface ContextoServicoDemo {
   feedbacks?: Record<string, unknown>[];
   /** Ids dos colaboradores visíveis (cenário de vínculos da demonstração). */
   colaboradoresIds?: string[];
+  /**
+   * Capacidade administrativa do operador (RH/admin). Reabrir é ato exclusivo
+   * desse perfil; ausente = negado (fail-closed).
+   */
+  podeGerirAvaliacoes?: boolean;
 }
 
 /**
@@ -86,6 +92,26 @@ export function criarServicoDemo(contexto: ContextoServicoDemo): ServicoAcoes {
       motivo?: string | null;
       idOperacao: string;
     }) {
+      /**
+       * REABRIR = ATO ADMINISTRATIVO. A demonstração espelha o servidor:
+       * exige RH/admin, estado reabrível (cancelado/concluído) e justificativa.
+       * Sem isso, chamar o serviço diretamente não pode “ressuscitar” um
+       * cancelado nem transformá-lo em pendente por edição.
+       */
+      if (params.acao === 'reabrir') {
+        if (contexto.podeGerirAvaliacoes !== true) {
+          throw new Error('perfil_nao_autorizado');
+        }
+        const atual = contexto.feedbackDe?.(params.feedbackId) ?? null;
+        const statusAtual = normalizarStatus(atual?.status);
+        if (statusAtual !== 'cancelado' && statusAtual !== 'concluido') {
+          throw new Error('transicao_invalida');
+        }
+        if (!validarReabertura({ justificativa: params.motivo }).podeReabrir) {
+          throw new Error('justificativa_obrigatoria');
+        }
+      }
+
       const status = params.acao === 'concluir' ? 'concluido' : params.acao === 'cancelar' ? 'cancelado' : 'pendente';
       const patch: Record<string, unknown> = { status, updated_at: new Date().toISOString() };
       if (params.acao === 'cancelar') patch.motivo_cancelamento = params.motivo ?? null;
@@ -101,6 +127,17 @@ export function criarServicoDemo(contexto: ContextoServicoDemo): ServicoAcoes {
               ? 'Avaliação cancelada na demonstração'
               : 'Avaliação reaberta na demonstração',
       });
+
+      /**
+       * CONFIRMAÇÃO LOCAL: só devolve sucesso se o status lido de volta é o
+       * esperado. Se o armazenamento recusar/ignorar a gravação, o rodapé recebe
+       * erro e NÃO mostra toast de sucesso.
+       */
+      const estadoPersistido = lerRegistrosDemo();
+      const statusGravado = normalizarStatus(patchDe(estadoPersistido, 'feedbacks', params.feedbackId).status);
+      if (statusGravado !== status) {
+        throw new Error('O armazenamento demonstrativo não confirmou a alteração.');
+      }
 
       return { ok: true, idempotente: false, status, acao: params.acao, versao_avaliacao: versaoDe(params.feedbackId) };
     },

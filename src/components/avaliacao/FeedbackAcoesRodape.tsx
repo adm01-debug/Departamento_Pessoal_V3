@@ -40,8 +40,8 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { avaliacaoService } from '@/services/avaliacaoService';
 
-import { modoRealAtivo } from './nineBoxModo';
 import { idDemonstrativo } from './escritaOperacional';
+import { confirmarFinalizacao, mensagemFinalizacao, resolverDestinoAcao } from './execucaoFeedback';
 import { notaNaEscala } from './nineBoxConsolidacao';
 import { criarChaveIdempotente, type ChaveIdempotente } from './criacaoFeedback';
 import {
@@ -191,28 +191,32 @@ export function FeedbackAcoesRodape({
   /* ─── Prévia local (DEV) × operação real ─────────────────────────────────── */
   const emPrevia = import.meta.env.DEV && !!previa;
   /**
-   * REGISTRO REAL × FICTÍCIO. O rodapé operacional aparece quando o feedback é
-   * um REGISTRO REAL (UUID, não `mock-*`) e foi aberto por quem opera o módulo
-   * (`admin`/`rh`). Antes exigia `modoRealAtivo()` (flag de ambiente), então com
-   * a tela aprovada em demonstração o RH não via Concluir/Cancelar/Reabrir nem
-   * Validar Potencial. Os dados fictícios continuam SEM ações — e nunca são
-   * gravados: a guarda de escrita recusa `mock-*`.
+   * REGISTRO REAL × FICTÍCIO. `registroReal` vale para identificadores que NÃO
+   * são `mock-*`/`demo-*`. O rodapé operacional não depende de flag de ambiente:
+   * os dados fictícios continuam sem ações e a guarda de escrita os recusa.
    */
   const registroReal = feedbackId !== '' && !idDemonstrativo(feedbackId);
   // Sem checagem de papel AQUI: quem já filtra por papel são os próprios botões
   // (`acoesDisponiveis` por perfil e `podeValidarAgora` só para RH). O servidor
   // revalida na RPC de qualquer forma.
   /**
-   * SERVIÇO POR REGISTRO (correção do fluxo real):
-   *   • registro REAL (UUID) → SEMPRE `avaliacaoService`/RPC, mesmo que a tela
-   *     esteja exibindo mocks ao lado. Antes, `servicoDemo` era escolhido para a
-   *     página inteira e a decisão de um UUID era gravada só no navegador.
-   *   • registro FICTÍCIO (`mock-*`/`demo-*`) → `servicoDemo` (local).
+   * SERVIÇO + ORIGEM = UMA ÚNICA DECISÃO POR REGISTRO.
+   *   • real (não demonstrativo) → `avaliacaoService`/RPC, mesmo em tela mista;
+   *   • `mock-*`/`demo-*` → `servicoDemo` (localStorage);
+   *   • prévia DEV → serviço simulado;
+   *   • sem ID/serviço → indisponível.
+   * O toast usa a MESMA origem do serviço executado.
    */
-  const modoDemoLocal = !registroReal && !!servicoDemo;
-  const modoRealOuPrevia = modoRealAtivo() || emPrevia || registroReal || modoDemoLocal;
-  const servico: ServicoAcoes =
-    registroReal && !emPrevia ? avaliacaoService : (previa?.servico ?? servicoDemo ?? avaliacaoService);
+  const destino = resolverDestinoAcao<ServicoAcoes>({
+    feedbackId,
+    emPrevia,
+    previaServico: previa?.servico,
+    demoService: servicoDemo,
+    realService: avaliacaoService,
+  });
+  const servico: ServicoAcoes = destino.servico ?? avaliacaoService;
+  const modoDemoLocal = destino.origem === 'demo';
+  const modoRealOuPrevia = destino.origem !== 'indisponivel';
 
   /* ─── Papel do operador (o servidor revalida de qualquer forma) ─────────── */
   const roles = useMemo(() => (user?.roles ?? []).map((r) => String(r).toLowerCase().trim()), [user]);
@@ -456,6 +460,7 @@ export function FeedbackAcoesRodape({
       if (decisaoDemonstrativa) {
         // Identificação CLARA: a decisão é da DEMONSTRAÇÃO, salva localmente.
         qc.invalidateQueries({ queryKey: [CHAVE_QUERY_DEMO] });
+        qc.invalidateQueries({ queryKey: ['historico_feedback', feedbackId] });
         toast.success(`Demonstração: “${rotulo}” salva localmente (nada foi enviado ao banco).`);
         setDevolucaoAberta(false);
         setJustificativaDevolucao('');
@@ -468,6 +473,7 @@ export function FeedbackAcoesRodape({
       qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
       qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
+      qc.invalidateQueries({ queryKey: ['historico_feedback', feedbackId] });
       setDevolucaoAberta(false);
       setJustificativaDevolucao('');
       toast.success(
@@ -481,38 +487,54 @@ export function FeedbackAcoesRodape({
 
   const minimaDevolucao = !validarJustificativaDevolucao(justificativaDevolucao).pode;
 
-  /* ─── Escritas (RPC transacional; nada otimista) ────────────────────────── */
+  /* ─── Escritas (RPC transacional/local; nada otimista) ─────────────────── */
   const finalizar = useMutation({
-    mutationFn: (v: { acao: AcaoStatusRodape; observacao: string | null; chave: string }) =>
-      servico.finalizarFeedback({
+    mutationFn: async (v: { acao: AcaoStatusRodape; observacao: string | null; chave: string }) => {
+      if (!destino.servico) {
+        throw new Error(destino.motivo ?? 'Serviço de persistência indisponível para este registro.');
+      }
+      const resposta = await servico.finalizarFeedback({
         feedbackId,
         acao: v.acao,
         motivo: v.observacao,
         idOperacao: v.chave,
-      }),
-    onSuccess: (resposta: { idempotente?: boolean } | null, v) => {
-      // Confirmação do SERVIDOR: operação fechada (a próxima recebe chave nova).
+      });
+      /**
+       * CONFIRMAÇÃO ANTES DO TOAST: `ok:true` + status esperado. Resposta vazia,
+       * `ok:false` ou status divergente não produzem sucesso.
+       */
+      return confirmarFinalizacao(resposta, v.acao, destino.origem);
+    },
+    onSuccess: (confirmado, v) => {
+      // Confirmação do serviço: operação fechada (a próxima recebe chave nova).
       chavesRef.current?.get(v.acao)?.confirmar();
-      // Consultas/caches afetados: lista da aba + Potencial + versão canônica.
-      qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
-      qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
-      qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
-      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
-      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
-      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
+
+      /**
+       * CACHE ÚNICO DO FLUXO. Inclui a lista, consolidações, versões,
+       * aprovações, Potencial, histórico, trilha e a raiz do Nine-Box. Demonstrativo
+       * também invalida o estado local de aprovação.
+       */
+      [
+        ['feedbacks_360'],
+        ['feedbacks_360_consolidacoes'],
+        ['feedbacks_360_aprovacoes_gestor'],
+        ['feedbacks_360_validacoes_potencial'],
+        ['vw_feedbacks_360_versao'],
+        ['historico_feedback'],
+        ['performance-audit-logs'],
+        ['pode_aprovar_colaborador'],
+        ['ninebox'],
+        ['ninebox_360'],
+        ['ninebox_consolidacoes'],
+      ].forEach((queryKey) => qc.invalidateQueries({ queryKey }));
+      if (destino.origem === 'demo') {
+        qc.invalidateQueries({ queryKey: [CHAVE_QUERY_DEMO] });
+      }
+
       setMotivoAberto(null);
       setMotivo('');
-      const repetida = Boolean(resposta?.idempotente);
-      const mensagens: Record<AcaoStatusRodape, string> = {
-        concluir: repetida ? 'Avaliação já estava concluída.' : 'Avaliação concluída!',
-        cancelar: repetida ? 'Cancelamento já registrado.' : 'Avaliação cancelada (registro preservado).',
-        reabrir: repetida ? 'Reabertura já registrada.' : 'Avaliação reaberta — voltou para pendente.',
-      };
-      toast.success(
-        modoDemoLocal
-          ? `Demonstração: ${mensagens[v.acao].replace(/!$/, '')} — salvo localmente (nada foi enviado ao banco).`
-          : mensagens[v.acao]
-      );
+      const repetida = Boolean(confirmado.idempotente);
+      toast.success(mensagemFinalizacao(destino.origem, v.acao, repetida, 'sucesso'));
     },
     onError: (erro: unknown) => {
       // Nada de sucesso falso: o motivo REAL vai para o aviso. A chave fica.

@@ -136,6 +136,16 @@ function previaGestor(): PreviewAcoes {
   return { papel: 'gestor', responsavel: true, servico: servico as unknown as PreviewAcoes['servico'] };
 }
 
+function demoService(finalizar = vi.fn()): ServicoAcoes {
+  return { ...servico, finalizarFeedback: finalizar } as unknown as ServicoAcoes;
+}
+
+async function cancelar(usuario: ReturnType<typeof userEvent.setup>, motivo = 'motivo válido') {
+  await usuario.click(botao(/Cancelar avaliação/));
+  await usuario.type(await screen.findByLabelText(/Motivo do cancelamento/i), motivo);
+  await usuario.click(botao(/Confirmar cancelamento/));
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   modo.real = true;
@@ -302,7 +312,8 @@ describe('ações visíveis por PAPEL — etapa "Avaliações"', () => {
     const demoFinalizar = vi.fn().mockResolvedValue({
       ok: true,
       status_anterior: 'pendente',
-      status_novo: 'concluido',
+      // O serviço demonstrativo devolve `status`; a confirmação normaliza.
+      status: 'concluido',
       auditoria_id: 'demo-a1',
       idempotente: false,
     });
@@ -544,6 +555,106 @@ describe('indicador de situação do Potencial', () => {
   });
 });
 
+describe('origem por registro, confirmação e mensagens', () => {
+  it('UUID real usa a RPC mesmo com serviço demonstrativo disponível e NÃO anuncia gravação local', async () => {
+    const usuario = userEvent.setup();
+    const demoFinalizar = vi.fn();
+    servico.finalizarFeedback.mockResolvedValue({
+      ok: true,
+      status_novo: 'cancelado',
+      auditoria_id: 'audit-real-1',
+      idempotente: false,
+    });
+
+    renderizar(
+      montarItem({ id: '11111111-1111-4111-8111-111111111111', status: 'pendente' }),
+      undefined,
+      undefined,
+      null,
+      'avaliacoes',
+      demoService(demoFinalizar)
+    );
+
+    await cancelar(usuario);
+
+    await waitFor(() => expect(servico.finalizarFeedback).toHaveBeenCalledTimes(1));
+    expect(demoFinalizar).not.toHaveBeenCalled();
+    expect(toasts.success).toHaveBeenCalledTimes(1);
+    const mensagem = String(toasts.success.mock.calls[0][0]);
+    expect(mensagem).toContain('cancelada');
+    expect(mensagem).not.toMatch(/Demonstração|local|Supabase não foi alterado/i);
+    expect(toasts.error).not.toHaveBeenCalled();
+  });
+
+  it('registro demonstrativo usa o armazenamento local e identifica claramente a demonstração', async () => {
+    const usuario = userEvent.setup();
+    const demoFinalizar = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 'cancelado',
+      idempotente: false,
+    });
+
+    renderizar(
+      montarItem({ id: 'demo-feedback-1', status: 'pendente' }),
+      undefined,
+      undefined,
+      null,
+      'avaliacoes',
+      demoService(demoFinalizar)
+    );
+
+    await cancelar(usuario);
+
+    await waitFor(() => expect(demoFinalizar).toHaveBeenCalledTimes(1));
+    expect(servico.finalizarFeedback).not.toHaveBeenCalled();
+    expect(toasts.success).toHaveBeenCalledTimes(1);
+    const mensagem = String(toasts.success.mock.calls[0][0]);
+    expect(mensagem).toContain('Demonstração');
+    expect(mensagem).toContain('armazenamento local');
+    expect(mensagem).toContain('Supabase não foi alterado');
+    expect(toasts.success).not.toHaveBeenCalledWith(expect.stringMatching(/gravad|banco/i));
+  });
+
+  it('ok:false não produz sucesso', async () => {
+    const usuario = userEvent.setup();
+    servico.finalizarFeedback.mockResolvedValue({ ok: false, idempotente: false });
+    renderizar(montarItem({ id: '11111111-1111-4111-8111-111111111111', status: 'pendente' }));
+
+    await cancelar(usuario);
+
+    await waitFor(() => expect(toasts.error).toHaveBeenCalledTimes(1));
+    expect(toasts.success).not.toHaveBeenCalled();
+  });
+
+  it('status divergente do esperado não produz sucesso', async () => {
+    const usuario = userEvent.setup();
+    servico.finalizarFeedback.mockResolvedValue({
+      ok: true,
+      status_novo: 'concluido',
+      idempotente: false,
+    });
+    renderizar(montarItem({ id: '11111111-1111-4111-8111-111111111111', status: 'pendente' }));
+
+    await cancelar(usuario);
+
+    await waitFor(() => expect(toasts.error).toHaveBeenCalledTimes(1));
+    expect(String(toasts.error.mock.calls[0][0])).toContain('não corresponde');
+    expect(toasts.success).not.toHaveBeenCalled();
+  });
+
+  it('falha de rede não produz sucesso', async () => {
+    const usuario = userEvent.setup();
+    servico.finalizarFeedback.mockRejectedValue(new Error('Failed to fetch'));
+    renderizar(montarItem({ id: '11111111-1111-4111-8111-111111111111', status: 'pendente' }));
+
+    await cancelar(usuario);
+
+    await waitFor(() => expect(toasts.error).toHaveBeenCalledTimes(1));
+    expect(String(toasts.error.mock.calls[0][0])).toContain('Failed to fetch');
+    expect(toasts.success).not.toHaveBeenCalled();
+  });
+});
+
 describe('estado de carregamento e clique duplicado', () => {
   it('desabilita os controles durante a RPC e ignora o segundo clique', async () => {
     const usuario = userEvent.setup();
@@ -567,7 +678,11 @@ describe('estado de carregamento e clique duplicado', () => {
     expect(servico.finalizarFeedback).toHaveBeenCalledTimes(1);
 
     responder({ ok: true, status_novo: 'concluido', idempotente: false });
-    await waitFor(() => expect(toasts.success).toHaveBeenCalledWith('Avaliação concluída!'));
+    await waitFor(() =>
+      expect(toasts.success).toHaveBeenCalledWith(expect.stringContaining('Avaliação concluída'))
+    );
+    // A conta de teste usa a prévia DEV; a mensagem não pode afirmar gravação real.
+    expect(String(toasts.success.mock.calls[0][0])).toContain('Prévia');
     await waitFor(() => expect(botao(/Concluir avaliação/)).toBeEnabled());
   });
 });
@@ -628,6 +743,12 @@ describe('atualização da interface após o sucesso', () => {
     await waitFor(() => expect(invalidar).toHaveBeenCalledWith({ queryKey: ['feedbacks_360'] }));
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['feedbacks_360_validacoes_potencial'] });
     expect(invalidar).toHaveBeenCalledWith({ queryKey: ['vw_feedbacks_360_versao'] });
+    expect(invalidar).toHaveBeenCalledWith({ queryKey: ['feedbacks_360_consolidacoes'] });
+    expect(invalidar).toHaveBeenCalledWith({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+    expect(invalidar).toHaveBeenCalledWith({ queryKey: ['historico_feedback'] });
+    expect(invalidar).toHaveBeenCalledWith({ queryKey: ['ninebox'] });
+    expect(invalidar).toHaveBeenCalledWith({ queryKey: ['ninebox_360'] });
+    expect(invalidar).toHaveBeenCalledWith({ queryKey: ['ninebox_consolidacoes'] });
     await waitFor(() => expect(screen.queryByLabelText(/Motivo do cancelamento/i)).toBeNull());
     expect(toasts.success).toHaveBeenCalledWith(expect.stringContaining('cancelada'));
   });

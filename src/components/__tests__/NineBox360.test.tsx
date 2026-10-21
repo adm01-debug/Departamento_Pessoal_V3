@@ -11,6 +11,7 @@ import {
   modoNineBox,
   ModoRealIndisponivelError,
 } from '@/components/avaliacao/nineBoxModo';
+import { MOCK_NINEBOX_ATIVO, MOCK_NINEBOX_COMPARAR_INICIAL } from '@/components/avaliacao/nineBoxMock';
 
 /**
  * ============================================================================
@@ -69,6 +70,8 @@ const consolidacaoVigente = {
   ciclo_id: CICLO,
   colaborador_id: COLAB,
   versao_consolidada: 'v-grupo',
+  desempenho_aprovado: 4.5,
+  potencial_aprovado: 4,
 };
 
 const consolidar = (feedbacks: Record<string, unknown>[]) =>
@@ -83,15 +86,25 @@ const consolidar = (feedbacks: Record<string, unknown>[]) =>
     consolidacoes: [consolidacaoVigente],
   });
 
+/** Composição 360 sem aprovação — usada para provar os pesos e as recusas. */
+const consolidarSemAprovacao = (feedbacks: Record<string, unknown>[]) =>
+  consolidarNineBox360({
+    feedbacks,
+    cicloId: CICLO,
+    empresaId: EMPRESA,
+    versoesPorFeedback: versoes,
+  });
+
 describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
   it('agrupa por categoria e aplica os pesos aprovados (4,26)', () => {
-    const [r] = consolidar([
+    const [r] = consolidarSemAprovacao([
       fb({ id: 'fb-gestor' }),
       fb({ id: 'fb-par', tipo: 'par', nota_geral: 4.0, potencial: null, updated_at: '2026-09-19T10:00:00' }),
       fb({ id: 'fb-auto', tipo: 'auto', nota_geral: 3.5, potencial: null }),
       fb({ id: 'fb-sub', tipo: 'subordinado', nota_geral: 4.2, potencial: null }),
     ]);
-    expect(r.classificavel).toBe(true);
+    expect(r.classificavel).toBe(false);
+    expect(r.motivo).toBe('aprovacao_pendente');
     expect(r.desempenho).toBeCloseTo(4.26, 10);
     expect(r.categoriasUsadas).toEqual(['gestor', 'par', 'auto', 'subordinado']);
     expect(r.categorias.map((c) => c.categoria)).toEqual(['gestor', 'par', 'auto', 'subordinado']);
@@ -104,13 +117,13 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
   });
 
   it('sem gestor não classifica, mesmo com as demais categorias presentes', () => {
-    const [r] = consolidar([fb({ id: 'fb-par', tipo: 'par', nota_geral: 5 })]);
+    const [r] = consolidarSemAprovacao([fb({ id: 'fb-par', tipo: 'par', nota_geral: 5 })]);
     expect(r.classificavel).toBe(false);
     expect(r.motivo).toBe('sem_gestor');
   });
 
   it('feedback pendente não entra como gestor concluído', () => {
-    const [r] = consolidar([fb({ id: 'fb-gestor', status: 'pendente' })]);
+    const [r] = consolidarSemAprovacao([fb({ id: 'fb-gestor', status: 'pendente' })]);
     expect(r.motivo).toBe('gestor_pendente');
     expect(r.desempenho).toBeNull();
     expect(r.classificavel).toBe(false);
@@ -176,14 +189,22 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
     expect(r.motivo).toBeNull();
   });
 
-  it('aprovado SEM validação: classifica e não fica aguardando RH', () => {
+  it('aprovado com snapshot: classifica e não fica aguardando RH', () => {
     const [r] = consolidarNineBox360({
       feedbacks: [fb()],
       cicloId: CICLO,
       empresaId: EMPRESA,
       versoesPorFeedback: versoes,
       aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
-      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+      consolidacoes: [
+        {
+          ciclo_id: CICLO,
+          colaborador_id: COLAB,
+          versao_consolidada: 'v-grupo',
+          desempenho_aprovado: 4.5,
+          potencial_aprovado: 4,
+        },
+      ],
     });
     expect(r.classificavel).toBe(true);
     expect(r.motivo).toBeNull();
@@ -250,7 +271,7 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
     expect(r.quadrante).not.toBeNull();
   });
 
-  it('aprovado + validação vigente: classifica no quadrante (flags desligadas)', () => {
+  it('aprovado + snapshot vigente: classifica no quadrante (flags desligadas)', () => {
     const [r] = consolidarNineBox360({
       feedbacks: [fb()],
       cicloId: CICLO,
@@ -258,7 +279,15 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
       validacoes: [validacao],
       versoesPorFeedback: versoes,
       aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
-      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+      consolidacoes: [
+        {
+          ciclo_id: CICLO,
+          colaborador_id: COLAB,
+          versao_consolidada: 'v-grupo',
+          desempenho_aprovado: 4.5,
+          potencial_aprovado: 4,
+        },
+      ],
     });
     expect(r.classificavel).toBe(true);
     expect(r.motivo).toBeNull();
@@ -266,6 +295,36 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
     expect(ponto.quadrante).not.toBeNull();
     expect(ponto.aguardandoValidacaoRh).toBe(false);
     expect(ponto.aguardandoAprovacao).toBe(false);
+  });
+
+  it('aprovado sem cabeçalho/versão consolidada NÃO classifica (fail-closed)', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [],
+    });
+    expect(r.classificavel).toBe(false);
+    expect(r.quadrante).toBeNull();
+    expect(r.motivo).toBe('aprovacao_pendente');
+  });
+
+  it('aprovado SEM snapshot NÃO classifica (fail-closed)', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+    });
+    expect(r.classificavel).toBe(false);
+    expect(r.quadrante).toBeNull();
+    expect(r.desempenho).toBeNull();
+    expect(r.potencial).toBeNull();
+    expect(r.motivo).toBe('aprovacao_sem_valores');
   });
 
   it('decisão de versão ANTIGA não vale: aprovacao_pendente, sem quadrante', () => {
@@ -330,7 +389,7 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
   });
 
   it('sem classificação, o adaptador expõe o motivo (nada de quadrante inventado)', () => {
-    const [r] = consolidar([fb({ id: 'fb-par', tipo: 'par' })]);
+    const [r] = consolidarSemAprovacao([fb({ id: 'fb-par', tipo: 'par' })]);
     const [ponto] = pontos360([r] as ResultadoConsolidacao360[]);
     expect(ponto.quadrante).toBeNull();
     expect(ponto.motivoNaoClassificado).toBe('sem_gestor');
@@ -338,6 +397,11 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
 });
 
 describe('fase E · portão do modo real (padrão desligado)', () => {
+  it('o mock visual do Nine-Box fica desligado em teste/produção', () => {
+    expect(MOCK_NINEBOX_ATIVO).toBe(false);
+    expect(MOCK_NINEBOX_COMPARAR_INICIAL).toBe(false);
+  });
+
   it('o modo é demonstração por padrão', () => {
     expect(NINEBOX_MODO_REAL_ATIVO).toBe(false);
     expect(modoNineBox()).toBe('demonstracao');

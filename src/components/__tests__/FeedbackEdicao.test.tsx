@@ -11,8 +11,15 @@
  *   • a permissão da ação é RH/admin (gestor sozinho não edita).
  * ============================================================================
  */
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
+
+const historicoMock = vi.hoisted(() => ({ eventos: [] as unknown[] }));
+// O card consulta o histórico compartilhado; este dublê permite provar tanto o
+// estado vazio quanto a justificativa real no card.
+vi.mock('@/components/avaliacao/useHistoricoFeedback', () => ({
+  useHistoricoFeedback: () => ({ data: historicoMock.eventos, isLoading: false, error: null }),
+}));
 
 import { FeedbackCard } from '@/components/avaliacao/FeedbackCard';
 import { NovoFeedbackDialog } from '@/components/avaliacao/NovoFeedbackDialog';
@@ -51,6 +58,10 @@ function canonico(extra: Record<string, unknown> = {}, papeis: string[] = ['admi
 }
 
 describe('filtros normais — somente Editar feedback', () => {
+  beforeEach(() => {
+    historicoMock.eventos = [];
+  });
+
   it('o card tem a ação de edição e NENHUM controle de aprovação', () => {
     const onEditar = vi.fn();
     render(<FeedbackCard item={canonico()} onEditar={onEditar} />);
@@ -64,6 +75,44 @@ describe('filtros normais — somente Editar feedback', () => {
     fireEvent.click(editar);
     expect(onEditar).toHaveBeenCalledTimes(1);
     expect(onEditar.mock.calls[0][0]).toMatchObject({ avaliado: 'Ana Souza' });
+  });
+
+  it('cancelado NÃO pode ser editado: ação desabilitada e clique não abre o formulário', () => {
+    const onEditar = vi.fn();
+    render(<FeedbackCard item={canonico({ status: 'cancelado' })} onEditar={onEditar} />);
+
+    const editar = screen.getByRole('button', { name: 'Editar feedback' });
+    expect(editar).toBeDisabled();
+    expect(editar).toHaveAttribute('title', expect.stringMatching(/cancelado/i));
+    fireEvent.click(editar);
+    expect(onEditar).not.toHaveBeenCalled();
+
+    // Sem evento local na simulação: o card é honesto e não inventa motivo.
+    expect(screen.getByText('Motivo do cancelamento')).toBeInTheDocument();
+    expect(screen.getByText('Motivo não registrado')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ver histórico' })).toBeInTheDocument();
+  });
+
+  it('cancelado exibe no card o motivo e o responsável vindos do histórico', () => {
+    historicoMock.eventos = [
+      {
+        id: 'ev-cancel',
+        tipo: 'cancelado',
+        ocorridoEm: '2026-10-02T12:00:00Z',
+        responsavelId: null,
+        responsavelEmail: 'rh@exemplo.invalid',
+        responsavelNome: 'RH Teste',
+        justificativa: 'Cancelado a pedido do gestor responsável.',
+        statusAnterior: 'pendente',
+        statusPosterior: 'cancelado',
+        detalhes: null,
+      },
+    ];
+    render(<FeedbackCard item={canonico({ status: 'cancelado' })} onEditar={() => {}} />);
+
+    expect(screen.getByText('Cancelado a pedido do gestor responsável.')).toBeInTheDocument();
+    expect(screen.getByText(/Por RH Teste/)).toBeInTheDocument();
+    expect(screen.getByText(/02\/10\/2026/)).toBeInTheDocument();
   });
 
   it('gestor sem papel de gestão vê a ação, porém desabilitada com motivo', () => {
@@ -124,5 +173,28 @@ describe('formulário de edição — mesmo modal, preenchido', () => {
       comentarios: 'Comentário revisado',
       status: 'pendente',
     });
+  });
+
+  it('cancelado NÃO pode ser salvo pelo formulário, mesmo aberto por chamada direta', () => {
+    const onSubmit = vi.fn();
+    render(
+      <NovoFeedbackDialog
+        aberto
+        onOpenChange={() => {}}
+        colaboradores={[
+          { id: 'colab-1', nome_completo: 'Ana Souza' },
+          { id: 'colab-2', nome_completo: 'Bruno Lima' },
+        ]}
+        ciclos={[{ id: 'ciclo-1', nome: 'Ciclo S1 2026' }]}
+        registro={canonico({ status: 'cancelado' })}
+        onSubmit={onSubmit}
+      />
+    );
+
+    const salvar = screen.getByRole('button', { name: 'Salvar alterações' });
+    expect(salvar).toBeDisabled();
+    expect(salvar).toHaveAttribute('title', expect.stringMatching(/cancelado/i));
+    fireEvent.click(salvar);
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 });

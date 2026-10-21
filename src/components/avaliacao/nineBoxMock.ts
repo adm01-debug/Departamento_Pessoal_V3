@@ -34,15 +34,22 @@
 
 import type { ColaboradorNineBox } from './nineBoxComum';
 
-/** Interruptor único: `false` desliga o mock sem apagar nada. */
-export const MOCK_NINEBOX_ATIVO = true;
+/**
+ * Interruptor único do mock: só pode ser ligado em DESENVOLVIMENTO e com a
+ * vitrine explicitamente habilitada. Em produção/teste é sempre `false` — o
+ * Nine-Box de produção nunca mistura fixtures com avaliações reais.
+ */
+export const MOCK_NINEBOX_ATIVO =
+  import.meta.env.DEV &&
+  import.meta.env.MODE !== 'test' &&
+  import.meta.env.VITE_DESEMPENHO_MOCK === 'true' &&
+  import.meta.env.VITE_NINEBOX_MODO_REAL !== 'true';
 
 /**
- * Estado inicial do botão "Comparar ciclos" enquanto o mock está ligado: como a
- * aba nasce com o comparativo desligado (KPI indisponível), o mock já o deixa
- * ligado para o layout aparecer completo. O botão continua funcionando normal.
+ * Estado inicial do botão "Comparar ciclos": só parte ligado quando o mock
+ * visual está ativo; em produção/teste o comparativo começa desligado.
  */
-export const MOCK_NINEBOX_COMPARAR_INICIAL = true;
+export const MOCK_NINEBOX_COMPARAR_INICIAL = MOCK_NINEBOX_ATIVO;
 
 /** Ciclos usados pelo mock — os MESMOS ids do `desempenhoMock` do módulo. */
 const CICLO_ATUAL = 'mock-ciclo-3';
