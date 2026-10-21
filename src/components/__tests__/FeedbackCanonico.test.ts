@@ -187,6 +187,26 @@ describe('getFeedbackActions — regra única de habilitar/desabilitar', () => {
       acoesHabilitadas: true,
     });
 
+  it('conclusão usa autorização do REGISTRO, não o vínculo de aprovação', () => {
+    const item = normalizarFeedback(derivarFeedbacks([bruto({ status: 'pendente' })])[0], {
+      papeis: ['gestor'],
+      autorizadoConcluir: true,
+      acoesHabilitadas: true,
+    });
+    expect(habilitadoPara(item.acoes, 'concluir')).toBe(true);
+    expect(item.acoes.find((a) => a.id === 'concluir')?.motivo).toBeNull();
+  });
+
+  it('sem autorização de conclusão o botão permanece bloqueado com motivo explícito', () => {
+    const item = normalizarFeedback(derivarFeedbacks([bruto({ status: 'pendente' })])[0], {
+      papeis: ['gestor'],
+      autorizadoConcluir: false,
+      acoesHabilitadas: true,
+    });
+    expect(habilitadoPara(item.acoes, 'concluir')).toBe(false);
+    expect(item.acoes.find((a) => a.id === 'concluir')?.motivo).toMatch(/autorização/i);
+  });
+
   it('gestor responsável + pendência + avaliação do gestor: Aprovar/Devolver habilitados', () => {
     const item = canonico();
     expect(habilitadoPara(item.acoes, 'aprovar')).toBe(true);
@@ -205,7 +225,7 @@ describe('getFeedbackActions — regra única de habilitar/desabilitar', () => {
     expect(habilitadoPara(item.acoes, 'aprovar')).toBe(true);
   });
 
-  it('avaliação do gestor ausente NÃO bloqueia a decisão (tipo/conclusão são informativos)', () => {
+  it('proposta sem Desempenho/Potencial válidos BLOQUEIA a decisão', () => {
     const item = canonico({
       avaliacaoGestorValida: false,
       estado: estadoAprovacao({
@@ -217,8 +237,8 @@ describe('getFeedbackActions — regra única de habilitar/desabilitar', () => {
       }),
     });
     const aprovar = item.acoes.find((a) => a.id === 'aprovar');
-    expect(aprovar?.habilitado).toBe(true);
-    expect(aprovar?.motivo).toBeNull();
+    expect(aprovar?.habilitado).toBe(false);
+    expect(aprovar?.motivo).toContain('Desempenho e Potencial');
   });
 
   it('sem gestor identificado: gestor fora de escopo permanece bloqueado, com motivo', () => {
@@ -237,10 +257,10 @@ describe('getFeedbackActions — regra única de habilitar/desabilitar', () => {
     });
     const aprovar = item.acoes.find((a) => a.id === 'aprovar');
     expect(aprovar?.habilitado).toBe(false);
-    expect(aprovar?.motivo).toContain('RH/admin');
+    expect(aprovar?.motivo).toContain('Gestor responsável');
   });
 
-  it('sem gestor identificado: RH/admin decide a consolidação órfã (fallback legítimo)', () => {
+  it('sem gestor identificado: RH/admin NÃO decide a consolidação órfã', () => {
     const item = normalizarFeedback(derivado({ tipo: 'par', status: 'concluido' }), {
       cicloNome: 'Ciclo S2 2026',
       pendencia: pendencia({
@@ -255,14 +275,13 @@ describe('getFeedbackActions — regra única de habilitar/desabilitar', () => {
           validada: false,
           responsavel: false,
           gestorIdentificado: false,
-          autorizadoAmplo: true,
         }),
       }),
       papeis: ['admin'],
       acoesHabilitadas: true,
     });
-    expect(habilitadoPara(item.acoes, 'aprovar')).toBe(true);
-    expect(habilitadoPara(item.acoes, 'devolver')).toBe(true);
+    expect(habilitadoPara(item.acoes, 'aprovar')).toBe(false);
+    expect(habilitadoPara(item.acoes, 'devolver')).toBe(false);
   });
 
   it('usuário sem o papel gestor: controles existem e estão desabilitados', () => {

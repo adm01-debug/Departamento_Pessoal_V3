@@ -1,7 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-// Portão do modo real do Nine-Box (colocado junto da funcionalidade). Enquanto o
-// modo real estiver desligado, as operações de RPC lançam erro — nunca simulam.
-import { exigirModoReal } from '@/components/avaliacao/nineBoxModo';
 // Guarda de escrita: bloqueia id fictício (`mock-*`) e o ambiente de
 // demonstração em TODA escrita operacional — a flag da matriz não basta.
 import { exigirEscritaOperacional } from '@/components/avaliacao/escritaOperacional';
@@ -16,13 +13,59 @@ export const avaliacaoService = {
     if (error) throw error;
     return data || [];
   },
+  /**
+   * Portão de autorização para operações de ciclo. O banco também valida por
+   * RLS/trigger; esta checagem evita que uma chamada direta do app apresente
+   * sucesso sem permissão e mantém a UI e o serviço com a mesma regra.
+   */
+  async garantirGestaoCiclos(operacao: string) {
+    const { data, error } = await (supabase as any).rpc('pode_gerir_avaliacoes');
+    if (error) throw error;
+    if (data !== true) {
+      throw new Error(`"${operacao}" bloqueada: perfil_nao_autorizado (RH/admin).`);
+    }
+  },
   async criarCiclo(d: any) {
+    await avaliacaoService.garantirGestaoCiclos('Criar ciclo');
     const { data, error } = await supabase.from('ciclos_avaliacao').insert(d).select().maybeSingle();
     if (error) throw error;
+    if (!data?.id) {
+      throw new Error('O banco não confirmou o INSERT do ciclo. Nada foi considerado criado.');
+    }
     return data;
+  },
+  /**
+   * Dependências REAIS de um ciclo. A exclusão física só é permitida quando
+   * todas são zero; caso contrário a UI bloqueia e não apaga nada em cascata.
+   */
+  async contarDependenciasCiclo(cicloId: string, empresaId: string) {
+    if (!cicloId) throw new Error('ciclo_id obrigatório');
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const tabelas = [
+      'feedbacks_360',
+      'feedbacks_360_consolidacoes',
+      'feedbacks_360_aprovacoes_gestor',
+      'feedbacks_360_validacoes_potencial',
+      'metas_okrs',
+    ] as const;
+    const entradas = await Promise.all(
+      tabelas.map(async (tabela) => {
+        const { count, error } = await (supabase as any)
+          .from(tabela)
+          .select('id', { count: 'exact', head: true })
+          .eq('empresa_id', empresaId)
+          .eq('ciclo_id', cicloId);
+        if (error) throw error;
+        return [tabela, Number(count ?? 0)] as const;
+      })
+    );
+    const porTabela = Object.fromEntries(entradas);
+    const total = entradas.reduce((soma, [, n]) => soma + n, 0);
+    return { total, porTabela };
   },
   async excluirCiclo(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    await avaliacaoService.garantirGestaoCiclos('Excluir ciclo');
     const { error } = await supabase.from('ciclos_avaliacao').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
@@ -284,7 +327,6 @@ export const avaliacaoService = {
    * recente cuja `versao_avaliacao` casa com a versão atual da avaliação).
    */
   async listarValidacoesPotencial(empresaId: string, cicloId?: string) {
-    exigirModoReal('Consultar validações de potencial');
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = (supabase as any)
       .from('feedbacks_360_validacoes_potencial')
@@ -299,7 +341,6 @@ export const avaliacaoService = {
 
   /** Versão canônica de cada avaliação — o BANCO é a autoridade (o front só lê). */
   async listarVersoesAvaliacao(empresaId: string, cicloId?: string) {
-    exigirModoReal('Consultar versões das avaliações');
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = (supabase as any)
       .from('vw_feedbacks_360_versao')
@@ -319,7 +360,6 @@ export const avaliacaoService = {
    * ele não é RH/admin, aos colaboradores que ele GERENCIA (`supervisor_id`).
    */
   async listarConsolidacoes(empresaId: string, cicloId?: string) {
-    exigirModoReal('Consultar consolidações de aprovação');
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = (supabase as any)
       .from('feedbacks_360_consolidacoes')
@@ -334,7 +374,6 @@ export const avaliacaoService = {
 
   /** Histórico append-only das decisões do GESTOR (a vigente é a mais recente). */
   async listarAprovacoesGestor(empresaId: string, cicloId?: string) {
-    exigirModoReal('Consultar decisões de aprovação');
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = (supabase as any)
       .from('feedbacks_360_aprovacoes_gestor')
@@ -418,6 +457,24 @@ export const avaliacaoService = {
       .eq('empresa_id', empresaId);
     if (error) throw error;
     return data || [];
+  },
+
+  /**
+   * AUTORIZAÇÃO EFETIVA DO SERVIDOR (`pode_aprovar_colaborador`).
+   *
+   * Fonte ÚNICA para a interface reconhecer vínculo, autoaprovação permitida ou
+   * exceção temporária de homologação. Não há lista de e-mails no front: a
+   * função SQL aplica empresa, papéis, vínculo/exceção e expiração. A RPC de
+   * decisão revalida no momento da gravação.
+   */
+  async podeAprovarColaborador(colaboradorId: string) {
+    const id = String(colaboradorId ?? '').trim();
+    if (!id) return false;
+    const { data, error } = await (supabase as any).rpc('pode_aprovar_colaborador', {
+      p_colaborador_id: id,
+    });
+    if (error) throw error;
+    return data === true;
   },
 
   // === Competências ===

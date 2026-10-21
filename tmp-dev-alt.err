@@ -1,0 +1,11 @@
+npm notice run departamento-pessoal@18.0.1 dev
+npm notice run vite
+[33m(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:138:25). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.[39m
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+[31mfile watcher error: EBUSY: resource busy or locked, watch 'C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-recuperacao-feedbacks\profile-copy-inspect\Default\Network\Cookies'[39m
+[31mfile watcher error: EBUSY: resource busy or locked, watch 'C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-recuperacao-feedbacks\profile-copy-inspect\Default\Network\Cookies-journal'[39m
+[31mfile watcher error: EBUSY: resource busy or locked, watch 'C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-recuperacao-feedbacks\profile-copy-inspect-all\Default\Network\Cookies'[39m
+[31mfile watcher error: EBUSY: resource busy or locked, watch 'C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-recuperacao-feedbacks\profile-copy-inspect-all\Default\Network\Cookies-journal'[39m

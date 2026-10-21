@@ -29,7 +29,8 @@
 import { notaNaEscala } from './nineBoxConsolidacao';
 import { tipoFeedback, type TipoFeedback } from './feedbacksComum';
 import { capacidadesAvaliacao, type PapeisAvaliacao } from './papeisAvaliacao';
-import { ehGestorResponsavel, type VinculoGestor } from './acoesFeedback';
+import { ehAvaliadorDesignado, ehGestorResponsavel, type VinculoGestor } from './acoesFeedback';
+import { idDemonstrativo } from './escritaOperacional';
 
 /* ─── Status de aprovação (o CHECK da tabela é a autoridade) ──────────────── */
 
@@ -130,6 +131,8 @@ export function situacaoAprovacao({
   decisao,
   validada,
   gestorIdentificado = true,
+  avaliacaoGestorValida = true,
+  autorizadoServidor = false,
 }: {
   /** Versão CONSOLIDADA vigente do conjunto (colaborador × ciclo). */
   versaoGestor: string | null;
@@ -137,20 +140,31 @@ export function situacaoAprovacao({
   validada: boolean;
   /** `false` = não há gestor responsável resolvido para o colaborador. */
   gestorIdentificado?: boolean;
+  /** A avaliação do GESTOR (obrigatória) existe e está concluída? */
+  avaliacaoGestorValida?: boolean;
+  /** Exceção/vínculo confirmado pelo servidor (`pode_aprovar_colaborador`). */
+  autorizadoServidor?: boolean;
 }): StatusAprovacaoLido {
   /**
-   * ORDEM DE AUTORIDADE (correção estrutural):
-   *   1. DECISÃO VIGENTE — aprovado/devolvido vale mesmo quando não há gestor
-   *      vinculado (a ausência de `supervisor_id` é pendência de ATRIBUIÇÃO, não
-   *      motivo para anular uma aprovação já registrada);
-   *   2. `sem_gestor` — informativo para a linha ainda NÃO decidida;
-   *   3. `em_preparacao` / `aguardando_gestor`.
+   * ORDEM DE AUTORIDADE (a MESMA do servidor — `public.situacao_aprovacao`):
+   *   1. `sem_gestor` — sem gestor responsável NÃO existe aprovação válida. Uma
+   *      decisão histórica gravada sem vínculo é INVÁLIDA (não é aprovação);
+   *   2. `em_preparacao` — nenhuma avaliação no conjunto;
+   *   3. DECISÃO VIGENTE:
+   *      • devolvido → `devolvida`;
+   *      • sem a avaliação do GESTOR concluída → `aguardando_gestor` (a RPC
+   *        `decidir_aprovacao_gestor` recusa sem ela; nada é "aprovado" antes do
+   *        requisito obrigatório);
+   *      • com validação vigente do RH → `concluida_validada`;
+   *      • senão → `aprovada_gestor`.
    *
    * O status do REGISTRO (`concluido`, `pendente`) e o TIPO da avaliação nunca
    * entram aqui: conclusão ≠ aprovação gerencial e aprovação é do CONJUNTO.
    */
+  if (!gestorIdentificado && !autorizadoServidor) return 'sem_gestor';
+  if (!versaoGestor) return 'em_preparacao';
   const versaoDecidida = String(decisao?.versao_avaliacao ?? '').trim();
-  const vigente = versaoGestor && decisao && versaoDecidida === versaoGestor ? decisao : null;
+  const vigente = decisao && versaoDecidida === versaoGestor ? decisao : null;
   if (vigente) {
     if (
       String(vigente.decisao ?? '')
@@ -158,11 +172,13 @@ export function situacaoAprovacao({
         .toLowerCase() !== 'aprovado'
     )
       return 'devolvida';
+    if (!avaliacaoGestorValida) return 'aguardando_gestor';
     if (validada) return 'concluida_validada';
     return 'aprovada_gestor';
   }
+  // Antes da decisão, a ausência de gestor oficial continua visível mesmo com
+  // exceção autorizada; depois da decisão o estado avança para aprovação/RH.
   if (!gestorIdentificado) return 'sem_gestor';
-  if (!versaoGestor) return 'em_preparacao';
   return 'aguardando_gestor';
 }
 
@@ -212,6 +228,10 @@ export function validarJustificativaDevolucao(texto: unknown): ValidacaoJustific
 
 const texto = (valor: unknown): string => String(valor ?? '').trim();
 
+/** ID real do Supabase é UUID; `mock-*`/`demo-*` e fixtures de teste não são. */
+const ID_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const ehIdUuid = (valor: unknown): boolean => ID_UUID.test(texto(valor));
+
 const instante = (valor: unknown): number => {
   const t = new Date(String(valor ?? '')).getTime();
   return Number.isFinite(t) ? t : 0;
@@ -246,17 +266,24 @@ export interface OpcoesPendencias {
   /** Usuário autenticado — entra na prova de responsabilidade (como no rodapé). */
   usuarioId?: string | null;
   /**
-   * ESCOPO DE FALLBACK: quando o colaborador NÃO tem gestor vinculado, RH/admin
-   * (`pode_gerir_avaliacoes`) são a autoridade legítima para decidir — sem
-   * inventar vínculo e sem liberar gestores fora do escopo. O papel é o mesmo
-   * do servidor (`pode_aprovar_colaborador`).
+   * ESCOPO ADMINISTRATIVO apenas para ENCAMINHAMENTO/CONCLUSÃO do registro.
+   * NÃO autoriza aprovação: a decisão é exclusiva do gestor vinculado (ou
+   * exceção confirmada pelo servidor).
    */
   podeGerirAvaliacoes?: boolean;
+  /** Papéis efetivos da conta; usados apenas para autorizar a conclusão. */
+  papeis?: PapeisAvaliacao;
   /**
    * VITRINE: encaminhamentos automáticos já registrados (`chave → { em }`).
    * É o que dá data ao "Enviado em" sem depender de clique do RH.
    */
   encaminhamentos?: Record<string, { em?: string | null } | undefined>;
+  /**
+   * `colaborador_id` → `pode_aprovar_colaborador` confirmado pelo banco.
+   * A decisão de oferecer Aprovar/Devolver usa esta confirmação; o servidor
+   * revalida a cada chamada (expiração/revogação têm efeito imediato).
+   */
+  autorizacoesAprovacao?: Record<string, boolean>;
   /**
    * `demonstracao` (PADRÃO): fora do modo real a view de versão não existe, então
    * a avaliação do gestor CONCLUÍDA é tratada como "avaliação pronta" (versão
@@ -296,6 +323,17 @@ export interface PendenciaAprovacao {
    */
   responsavel: boolean | null;
   /**
+   * Autorização para CONCLUIR o feedback desta linha (avaliador designado,
+   * gestor responsável, exceção ou RH/admin). Não interfere na aprovação.
+   */
+  autorizadoConcluir?: boolean;
+  /**
+   * Autorização confirmada pelo SERVIDOR (`pode_aprovar_colaborador`) para este
+   * colaborador. Cobre exceção temporária de homologação e vínculo. Não é uma
+   * lista de e-mails e não altera o gestor oficial.
+   */
+  autorizadoServidor?: boolean;
+  /**
    * Quantas avaliações de CADA categoria existem para (colaborador × ciclo) —
    * é a consolidação que o RH encaminha. O GESTOR é obrigatório; as demais
    * (`par`, `auto`, `subordinado`) são fontes opcionais.
@@ -316,7 +354,16 @@ export interface PendenciaAprovacao {
   feedbackId: string;
   /** Registro completo (o dialog "Ver avaliação" o consome sem nova consulta). */
   feedback: Record<string, unknown>;
+  /** Versão CONSOLIDADA do conjunto — âncora da DECISÃO do gestor. */
   versaoAvaliacao: string | null;
+  /**
+   * Versão da AVALIAÇÃO DO GESTOR — âncora da VALIDAÇÃO do Potencial pelo RH.
+   *
+   * É a MESMA âncora do banco (`versao_avaliacao_feedback(gestor)`) e do motor
+   * do Nine-Box (`consolidarNineBox360`). Comparar a validação com a versão do
+   * CONJUNTO nunca casaria e o fluxo ficaria eternamente em `aprovada_gestor`.
+   */
+  versaoValidacao?: string | null;
   /** Desempenho CONSOLIDADO (motor 360°) ou a nota do gestor como fallback. */
   desempenho: number | null;
   /** Potencial ATRIBUÍDO pelo gestor (o motor só classifica após o RH validar). */
@@ -391,8 +438,17 @@ export interface EstadoAprovacao {
    * pendência APARECE, mas a aprovação final NÃO pode ser executada.
    */
   avaliacaoGestorValida: boolean;
-  /** A decisão pode ser EXECUTADA agora? (pendência + vínculo + requisitos) */
+  /**
+   * A decisão pode ser EXECUTADA agora? (pendência + requisitos + escopo)
+   * Inclui a autorização EXCEPCIONAL confirmada pelo servidor.
+   */
   aprovacaoPermitida: boolean;
+  /**
+   * Autorização confirmada por `pode_aprovar_colaborador` (exceção de
+   * homologação, vínculo ou autoaprovação permitida). É a ÚNICA forma de a
+   * interface reconhecer uma exceção — nunca uma lista fixa de e-mails.
+   */
+  autorizadoServidor?: boolean;
   /** Por que a aprovação final ainda não pode ocorrer (texto pronto). */
   motivoBloqueio: string | null;
   /** Havia decisão de uma versão anterior, invalidada pela mudança do conjunto. */
@@ -414,7 +470,11 @@ export interface EstadoAprovacao {
 
 /** Texto único do bloqueio por falta da avaliação obrigatória do gestor. */
 export const MOTIVO_FALTA_AVALIACAO_GESTOR =
-  'Falta a avaliação do Gestor (obrigatória) concluída para este colaborador e ciclo.';
+  'Falta Desempenho e Potencial válidos na avaliação consolidada para este colaborador e ciclo.';
+
+/** Texto único do bloqueio por ausência de gestor responsável (atribuição). */
+export const MOTIVO_GESTOR_NAO_ATRIBUIDO =
+  'Gestor responsável não atribuído — vincule um gestor (supervisor_id) ao colaborador antes de aprovar.';
 
 /**
  * Deriva o estado da aprovação a partir das MESMAS entradas do banco:
@@ -432,7 +492,7 @@ export function estadoAprovacao({
   responsavel = null,
   gestorIdentificado = true,
   avaliacaoGestorValida = true,
-  autorizadoAmplo = false,
+  autorizadoServidor = false,
 }: {
   versaoGestor: string | null;
   decisao: DecisaoAprovacaoLida | null;
@@ -446,19 +506,35 @@ export function estadoAprovacao({
   /** `false` = nenhum gestor resolvido para o colaborador (pendência de atribuição). */
   gestorIdentificado?: boolean;
   /**
-   * Informativo: a avaliação do gestor existe e está concluída. NÃO bloqueia
-   * mais a decisão — o registro pode ser de Pares/Auto e a aprovação é do
-   * CONJUNTO (conclusão ≠ aprovação; tipo não libera nem impede).
+   * A proposta consolidada possui Desempenho E Potencial válidos (1–5)? Não é
+   * exigido que exista um feedback separado `tipo='gestor'`: o RH prepara o
+   * conjunto e o gestor confirma os dois valores.
    */
   avaliacaoGestorValida?: boolean;
   /**
-   * ESCOPO AMPLO (RH/admin — `pode_gerir_avaliacoes`): autoridade de tenant,
-   * vale COM ou SEM vínculo. O gestor vinculado continua restrito ao seu time;
-   * um gestor sem vínculo não recebe esse poder.
+   * AUTORIZAÇÃO DO SERVIDOR: `pode_aprovar_colaborador` confirmou a exceção
+   * (vínculo, autoaprovação permitida ou homologação temporária). A interface
+   * NÃO replica listas de e-mails: apenas confia nesta confirmação, sempre
+   * escopada por empresa e revalidada a cada decisão.
+   */
+  autorizadoServidor?: boolean;
+  /**
+   * ESCOPO AMPLO (RH/admin — `pode_gerir_avaliacoes`).
+   *
+   * NÃO concede a decisão: o servidor (`decidir_aprovacao_gestor` →
+   * `pode_aprovar_colaborador`) é a autoridade. Mantido no contrato por
+   * compatibilidade dos chamadores.
    */
   autorizadoAmplo?: boolean;
 }): EstadoAprovacao {
-  const status = situacaoAprovacao({ versaoGestor, decisao, validada, gestorIdentificado });
+  const status = situacaoAprovacao({
+    versaoGestor,
+    decisao,
+    validada,
+    gestorIdentificado,
+    avaliacaoGestorValida,
+    autorizadoServidor,
+  });
   const iniciada = status !== 'em_preparacao';
   const versaoDecidida = texto(decisao?.versao_avaliacao);
   const decisaoVigente = decisao && versaoDecidida === texto(versaoGestor) ? decisao : null;
@@ -468,17 +544,27 @@ export function estadoAprovacao({
    * ausência de vínculo é um aviso, não um encerramento do fluxo).
    */
   const pendente = status === 'aguardando_gestor' || status === 'sem_gestor';
-  const motivoBloqueio =
-    pendente && !gestorIdentificado && !autorizadoAmplo
-      ? 'Colaborador sem gestor responsável vinculado — a aprovação está disponível ao RH/admin.'
-      : null;
+  /**
+   * POR QUE A APROVAÇÃO AINDA NÃO PODE ACONTECER — a MESMA razão para qualquer
+   * papel (inclusive RH/admin): o servidor exige gestor vinculado E avaliação do
+   * gestor concluída. Sem esses requisitos o controle fica desabilitado.
+   */
+  const motivoBloqueio = !pendente
+    ? null
+    : !gestorIdentificado && !autorizadoServidor
+      ? MOTIVO_GESTOR_NAO_ATRIBUIDO
+      : !avaliacaoGestorValida
+        ? MOTIVO_FALTA_AVALIACAO_GESTOR
+        : null;
 
   /**
-   * HABILITAÇÃO (escopo): RH/admin têm autoridade de tenant (com ou sem
-   * vínculo); o gestor decide apenas o próprio time (vínculo provado). Sem
-   * vínculo, um gestor fora de escopo NÃO decide.
+   * HABILITAÇÃO (escopo): a decisão é do GESTOR vinculado OU de uma conta
+   * autorizada pelo SERVIDOR (exceção de homologação). O front não inventa
+   * gestor responsável: apenas reflete a confirmação de
+   * `pode_aprovar_colaborador`.
    */
-  const escopoAutorizado = autorizadoAmplo || (gestorIdentificado ? responsavel !== false : responsavel === true);
+  const escopoAutorizado = autorizadoServidor || (responsavel === null ? gestorIdentificado : responsavel === true);
+  const aprovacaoPermitida = pendente && (gestorIdentificado || autorizadoServidor) && avaliacaoGestorValida;
   return {
     status,
     versaoAvaliacao: versaoGestor,
@@ -488,16 +574,16 @@ export function estadoAprovacao({
     iniciada,
     gestorIdentificado,
     avaliacaoGestorValida,
-    aprovacaoPermitida: pendente,
+    aprovacaoPermitida,
+    autorizadoServidor,
     motivoBloqueio,
     aprovacaoInvalidada: Boolean(decisao) && !decisaoVigente,
     justificativa: texto(decisaoVigente?.justificativa) || null,
     decididoEm,
-    // O RH valida depois do "aprovado" vigente — e uma devolução devolve ao RH
-    // corrigir/reenviar (não valida).
-    podeValidarPotencial: status === 'aprovada_gestor',
-    elegivelNineBox: status === 'concluida_validada',
-    podeDecidir: pendente && escopoAutorizado,
+    // A APROVAÇÃO DO GESTOR é a decisão final: não existe validação posterior.
+    podeValidarPotencial: false,
+    elegivelNineBox: status === 'aprovada_gestor' || status === 'concluida_validada',
+    podeDecidir: aprovacaoPermitida && escopoAutorizado,
   };
 }
 
@@ -540,6 +626,37 @@ export function versaoConsolidadaDemo(grupo: unknown[]): string | null {
 }
 
 /**
+ * Avaliação do GESTOR do conjunto — a OBRIGATÓRIA do fluxo (a mais recente,
+ * excluindo canceladas). É dela que sai a versão de VALIDAÇÃO do RH.
+ */
+export function feedbackDoGestor(grupo: unknown[]): Record<string, unknown> | null {
+  const gestores = (grupo ?? [])
+    .map((bruto) => (bruto ?? {}) as Record<string, unknown>)
+    .filter(
+      (f) => tipoFeedback(f.tipo) === 'gestor' && texto(f.id) !== '' && texto(f.status).toLowerCase() !== 'cancelado'
+    );
+  if (gestores.length === 0) return null;
+  return gestores.sort(
+    (a, b) => (instante(b.updated_at) || instante(b.created_at)) - (instante(a.updated_at) || instante(a.created_at))
+  )[0];
+}
+
+/** A avaliação do GESTOR existe e está CONCLUÍDA? (requisito da aprovação) */
+export function avaliacaoDoGestorConcluida(grupo: unknown[]): boolean {
+  const gestor = feedbackDoGestor(grupo);
+  return !!gestor && texto(gestor.status).toLowerCase() === 'concluido';
+}
+
+/**
+ * Versão canônica da AVALIAÇÃO DO GESTOR — âncora da validação do RH.
+ * Espelha `public.versao_avaliacao_feedback(feedback_do_gestor)` no modo real.
+ */
+export function versaoValidacaoDemo(grupo: unknown[]): string | null {
+  const gestor = feedbackDoGestor(grupo);
+  return gestor ? versaoConsolidadaDemo([gestor]) : null;
+}
+
+/**
  * Deriva a fila de aprovação: UMA linha por (colaborador × ciclo) — a
  * CONSOLIDAÇÃO da avaliação 360°. A primeira avaliação de QUALQUER categoria
  * (gestor, par, auto, subordinado) já cria a pendência; registros adicionais
@@ -571,7 +688,9 @@ export function derivarPendencias({
   vinculos = [],
   usuarioId = null,
   encaminhamentos = {},
+  autorizacoesAprovacao = {},
   podeGerirAvaliacoes = false,
+  papeis = null,
 }: OpcoesPendencias): PendenciaAprovacao[] {
   const pessoa = new Map<string, { nome: string; cargo: string | null; departamento: string | null }>();
   colaboradores.forEach((c) => {
@@ -668,7 +787,6 @@ export function derivarPendencias({
   gruposPorChave.forEach((grupo, chave) => {
     const [cicloId, colaboradorId] = chave.split('::');
     const gestor = gestorPorChave.get(chave) ?? null;
-    const gestorConcluido = Boolean(gestor) && texto(gestor?.status).toLowerCase() === 'concluido';
     /**
      * Registro de REFERÊNCIA da linha: a avaliação do GESTOR quando existe (é a
      * que o fluxo aprova); senão a mais recente do conjunto. É o que permite a
@@ -682,18 +800,39 @@ export function derivarPendencias({
       )[0];
     const feedbackId = texto(referencia?.id);
     /**
+     * ORIGEM DO CONJUNTO (por grupo, não pela tela): basta UM registro com ID
+     * real (UUID) para o conjunto ser REAL. Só conjuntos 100% `mock-*`/`demo-*`
+     * usam versão sintética e persistência local. Isso permite a tela MISTA
+     * (mocks + registros reais) sem que uma decisão local seja lida como real.
+     */
+    const grupoReal =
+      grupo.some((f) => ehIdUuid(f.id)) || (!grupo.some((f) => idDemonstrativo(f.id)) && modo === 'real');
+    const origemGrupo: PendenciaAprovacao['origem'] = grupoReal ? 'real' : 'demonstracao';
+    const autorizadoServidor = grupoReal && autorizacoesAprovacao[colaboradorId] === true;
+    /**
      * VERSÃO CONSOLIDADA do conjunto:
-     *   • modo real  → coluna mantida pelo servidor (trigger da migration);
-     *   • demonstração → impressão digital determinística do conjunto;
-     *   • fallback    → versão canônica da avaliação do gestor (compatibilidade).
+     *   • REAL  → coluna mantida pelo servidor (trigger da migration) + versão
+     *             canônica da view; sem versão real o fluxo fica em preparação;
+     *   • DEMO  → impressão digital determinística do conjunto.
      */
     const versao =
       versaoConsolidadaReal.get(chave) ||
       texto(versoesPorFeedback[feedbackId]) ||
-      (modo === 'demonstracao' ? versaoConsolidadaDemo(grupo) : null);
+      (grupoReal ? null : versaoConsolidadaDemo(grupo));
 
     const decisao = decisaoPorChave.get(chave) ?? null;
-    const validada = !!versao && validacoesLidas.some((v) => v.chave === chave && v.versao === versao);
+    /**
+     * ÂNCORA DA VALIDAÇÃO DO RH — a versão da AVALIAÇÃO DO GESTOR, nunca a do
+     * conjunto. É a mesma âncora do banco (`versao_avaliacao_feedback`) e do
+     * motor do Nine-Box (`consolidarNineBox360`). Sem isso a validação gravada
+     * pelo RH (versão canônica do gestor) nunca casaria com a versão do conjunto
+     * e o status ficaria eternamente em `aprovada_gestor`.
+     */
+    const versaoValidacao = gestor
+      ? texto(versoesPorFeedback[texto(gestor.id)]) || (grupoReal ? null : versaoConsolidadaDemo([gestor]))
+      : null;
+    const validada =
+      !!versaoValidacao && validacoesLidas.some((v) => v.chave === chave && v.versao === versaoValidacao);
     // REGRA ÚNICA: a linha da fila carrega o estado já derivado — o modal, o
     // contador e a etapa do RH consomem EXATAMENTE esta instância.
     //
@@ -721,11 +860,38 @@ export function derivarPendencias({
     const gestorIdentificado = gestorResponsavel !== 'Não identificado';
 
     /**
-     * REQUISITO DA APROVAÇÃO FINAL: a avaliação do GESTOR existe e está
-     * concluída. Sem ela a pendência APARECE (regra nova), mas aprovar/devolver
-     * ficam bloqueados com o motivo explícito.
+     * REQUISITO DA APROVAÇÃO: a proposta consolidada precisa ter Desempenho E
+     * Potencial válidos (1–5) e estar concluída. NÃO é exigido um feedback
+     * separado `tipo='gestor'`: o RH prepara o conjunto e o gestor confirma os
+     * dois valores. Prioriza o registro do gestor; sem ele, usa a avaliação
+     * consolidada mais recente que tenha os dois valores.
      */
-    const avaliacaoGestorValida = Boolean(gestor) && gestorConcluido;
+    const concluidaComValores = [...grupo].filter((f) => {
+      const nota = Number(f?.nota_geral);
+      const potencial = Number(f?.potencial);
+      return (
+        texto(f?.status).toLowerCase() === 'concluido' &&
+        Number.isFinite(nota) &&
+        nota >= 1 &&
+        nota <= 5 &&
+        Number.isFinite(potencial) &&
+        potencial >= 1 &&
+        potencial <= 5
+      );
+    });
+    const referenciaValida =
+      concluidaComValores.find((f) => texto(f?.tipo).toLowerCase() === 'gestor') ??
+      concluidaComValores.sort(
+        (a, b) =>
+          (instante(b.updated_at) || instante(b.created_at)) - (instante(a.updated_at) || instante(a.created_at))
+      )[0] ??
+      null;
+    const avaliacaoGestorValida = Boolean(referenciaValida);
+    const autorizadoConcluir =
+      podeGerirAvaliacoes === true ||
+      autorizadoServidor ||
+      (responsavel === true && (papeis === null || capacidadesAvaliacao(papeis).gestor)) ||
+      ehAvaliadorDesignado({ avaliadorId: referencia?.avaliador_id, vinculos, usuarioId });
 
     const estado = estadoAprovacao({
       versaoGestor: versao,
@@ -734,15 +900,15 @@ export function derivarPendencias({
       responsavel,
       gestorIdentificado,
       avaliacaoGestorValida,
-      // ESCOPO AMPLO (RH/admin): autoridade de tenant, com ou sem vínculo.
-      // O gestor vinculado decide o próprio time; o servidor aplica a mesma regra.
-      autorizadoAmplo: podeGerirAvaliacoes === true,
+      autorizadoServidor,
+      // ESCOPO ADMINISTRATIVO (RH/admin) NÃO aprova: serve apenas para
+      // encaminhamento/conclusão do registro. A decisão é do gestor vinculado.
     });
     const status = estado.status;
     const classificacao = classificacoes[colaboradorId];
     const enviado = enviadoPorChave.get(chave) || texto(encaminhamentos[chave]?.em) || '';
-    const notaBase = gestor?.nota_geral ?? referencia?.nota_geral;
-    const potencialBase = gestor?.potencial ?? referencia?.potencial;
+    const notaBase = referenciaValida?.nota_geral ?? gestor?.nota_geral ?? referencia?.nota_geral;
+    const potencialBase = referenciaValida?.potencial ?? gestor?.potencial ?? referencia?.potencial;
     /**
      * IMPEDIMENTO DE ENVIO — sem gestor identificado o RH não encaminha (e a
      * linha aparece como `sem_gestor`, sem fingir que foi enviada a alguém).
@@ -753,7 +919,7 @@ export function derivarPendencias({
 
     linhas.push({
       id: chave,
-      origem: modo === 'demonstracao' ? 'demonstracao' : 'real',
+      origem: origemGrupo,
       colaboradorId,
       colaborador: quem?.nome ?? 'Sem nome',
       cargo: quem?.cargo ?? null,
@@ -764,6 +930,8 @@ export function derivarPendencias({
       gestorResponsavelId,
       gestorResponsavelUserId,
       responsavel,
+      autorizadoServidor,
+      autorizadoConcluir,
       fontes: fontesPorChave.get(chave) ?? { gestor: 0, par: 0, auto: 0, subordinado: 0 },
       avaliacaoGestorValida,
       motivoBloqueioAprovacao: estado.motivoBloqueio,
@@ -772,10 +940,12 @@ export function derivarPendencias({
       feedbackId,
       feedback: referencia ?? {},
       versaoAvaliacao: versao,
+      versaoValidacao,
       desempenho: classificacao?.desempenho ?? notaNaEscala(notaBase),
       potencial: classificacao?.potencial ?? notaNaEscala(potencialBase),
       enviadoEm:
-        enviado || (modo === 'demonstracao' ? texto(referencia?.updated_at) || texto(referencia?.created_at) : null),
+        enviado ||
+        (origemGrupo === 'demonstracao' ? texto(referencia?.updated_at) || texto(referencia?.created_at) : null),
       justificativa: estado.justificativa,
       decididoEm: estado.decididoEm,
       status,

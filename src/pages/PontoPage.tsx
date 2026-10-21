@@ -612,7 +612,7 @@ export default function PontoPage() {
                         <TableCell className="font-body font-medium">
                           {(b as any).colaborador?.nome_completo || b.colaborador_id?.slice(0, 8)}
                         </TableCell>
-                        <TableCell className="font-body font-mono">{b.hora}</TableCell>
+                        <TableCell className="text-numeric">{b.hora}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className="text-[10px]">
                             {b.tipo}

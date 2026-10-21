@@ -192,20 +192,41 @@ describe('360 · potencial exclusivo do gestor + validação do RH', () => {
     expect(r.classificavel).toBe(false); // …mas não há classificação oficial
   });
 
-  it('potencial sem validação do RH bloqueia', () => {
+  it('potencial válido classifica SEM validação posterior do RH', () => {
     const r = consolidar360({ ...base, potencialGestor: 4, validacaoPotencial: null, ...VERSOES });
-    expect(r.motivo).toBe('potencial_sem_validacao');
+    expect(r.motivo).toBeNull();
     expect(r.potencial).toBe(4);
+    expect(r.classificavel).toBe(true);
   });
 
-  it('validação de VERSÃO diferente deixa de valer (reabertura/edição do potencial)', () => {
+  it('snapshot aprovado é a fonte oficial e não exige feedback de gestor', () => {
     const r = consolidar360({
-      ...base,
-      potencialGestor: 5,
-      validacaoPotencial: validacao(), // validação da versão antiga (potencial 4)
-      versaoGestor: 'fb-gestor|2026-09-25T08:00:00|5|concluido',
+      empresaId: EMPRESA,
+      cicloId: CICLO,
+      colaboradorId: COLAB,
+      notas: {},
+      status: {},
+      aprovado: true,
+      desempenhoAprovado: 4.25,
+      potencialAprovado: 4,
     });
-    expect(r.motivo).toBe('potencial_sem_validacao');
+    expect(r.classificavel).toBe(true);
+    expect(r.desempenho).toBe(4.25);
+    expect(r.quadrante).toBe('3-3');
+  });
+
+  it('snapshot aprovado inválido bloqueia com motivo explícito', () => {
+    const r = consolidar360({
+      empresaId: EMPRESA,
+      cicloId: CICLO,
+      colaboradorId: COLAB,
+      notas: {},
+      status: {},
+      aprovado: true,
+      desempenhoAprovado: null,
+      potencialAprovado: 4,
+    });
+    expect(r.motivo).toBe('aprovacao_sem_valores');
     expect(r.classificavel).toBe(false);
   });
 
@@ -262,15 +283,14 @@ describe('360 · potencial exclusivo do gestor + validação do RH', () => {
     });
   });
 
-  it('reabertura invalida a classificação mesmo mantendo o potencial', () => {
+  it('reabertura é barrada pelo gate de aprovação, não pelo motor', () => {
     const r = consolidar360({
       ...base,
       potencialGestor: 4,
       validacaoPotencial: validacao(),
       versaoGestor: versao('fb-gestor', '2026-09-20T10:00:00', 4, 'pendente'),
     });
-    expect(r.motivo).toBe('potencial_sem_validacao');
-    expect(r.classificavel).toBe(false);
+    expect(r.classificavel).toBe(true); // motor calcula; o gate da decisão barra
   });
 
   it('versão vazia (banco não devolveu) nunca autoriza', () => {
@@ -320,7 +340,7 @@ describe('360 · nove quadrantes, limiares e rastreabilidade', () => {
     casos.forEach(([desempenho, potencial, esperado]) => {
       const r = classificar(desempenho, potencial);
       expect(r.quadrante).toBe(esperado);
-      expect(QUADRANTE_POR_CHAVE[esperado].nome).toBeTruthy();
+      expect(QUADRANTE_POR_CHAVE[esperado as keyof typeof QUADRANTE_POR_CHAVE].nome).toBeTruthy();
     });
   });
 

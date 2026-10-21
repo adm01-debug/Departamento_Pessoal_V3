@@ -29,3 +29,7 @@ Thumbs.db
 .lintstagedrc/tmp-animacao/videos/1-desligamentos-referencia.webm
 
 /tmp-animacao/
+
+/tmp-recuperacao-feedbacks/
+/tmp-auth-diag/
+/_tmp-*.mjs

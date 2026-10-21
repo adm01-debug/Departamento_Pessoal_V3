@@ -1,0 +1,2979 @@
+{
+  "/dashboard": {
+    "urlFinal": "/dashboard",
+    "titulo": "Sistema DP - Departamento Pessoal",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "24px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 182,
+      "Outfit, sans-serif": 48,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 298.996"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "30px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 157.769"
+      }
+    ]
+  },
+  "/dashboard-executivo": {
+    "urlFinal": "/dashboard-executivo",
+    "titulo": "Dashboard Executivo | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 142,
+      "Outfit, sans-serif": 5,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 494.000"
+      }
+    ]
+  },
+  "/colaboradores": {
+    "urlFinal": "/colaboradores",
+    "titulo": "Colaboradores | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "peso": "600",
+        "altura": "16px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 171,
+      "Outfit, sans-serif": 58,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/avaliacao": {
+    "urlFinal": "/avaliacao",
+    "titulo": "Performance & Gestão 10/10 | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "peso": "500",
+        "altura": "32px",
+        "espacamento": "-0.6px",
+        "numerico": "tabular-nums"
+      },
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.7143px",
+        "espacamento": "0.55px",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 211,
+      "Outfit, sans-serif": 5,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 3
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "w-full max-w-full truncate font-mono text-[10px] text-muted-foreground",
+        "texto": "01/07/2026 - 30/12/2026"
+      }
+    ],
+    "monetarios": []
+  },
+  "/premiacoes": {
+    "urlFinal": "/premiacoes",
+    "titulo": "Premiações & Renda Variável 10/10 | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "11px",
+        "peso": "600",
+        "altura": "16.5px",
+        "espacamento": "-0.275px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "16.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "400",
+        "altura": "24px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 195,
+      "Outfit, sans-serif": 7,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.950,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0,00 / R$ 30.000,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 2.700,00 / R$ 4.320,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.320,00 / R$ 42.000,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.950,00 / R$ 7.580,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.580,50 / R$ 85.000,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.300,00 / R$ 1.300,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "8.5px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.300,00 / R$ 18.000,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "Divergência de R$ 70,00 iden"
+      }
+    ]
+  },
+  "/desligamentos": {
+    "urlFinal": "/desligamentos",
+    "titulo": "Desligamentos | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "15px",
+        "peso": "600",
+        "altura": "18.75px",
+        "espacamento": "-0.375px",
+        "numerico": "tabular-nums"
+      },
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 178,
+      "Outfit, sans-serif": 42,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 60.155,86"
+      },
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.562,44"
+      },
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 8.299,07"
+      }
+    ]
+  },
+  "/admissoes": {
+    "urlFinal": "/admissoes",
+    "titulo": "Admissões | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 165,
+      "Outfit, sans-serif": 54,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/afastamentos": {
+    "urlFinal": "/afastamentos",
+    "titulo": "Sistema DP - Departamento Pessoal",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "peso": "600",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "600",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 301,
+      "Outfit, sans-serif": 6,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 13
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "K29.7"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "J03.9"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "J11"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "J00"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "M54.5"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "S62.0"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "M75.1"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "V43"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "A09"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "F41.1"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-xs font-mono px-1.5 py-0.5 rounded cursor-help border transition-",
+        "texto": "N39.0"
+      }
+    ],
+    "monetarios": []
+  },
+  "/ferias": {
+    "urlFinal": "/ferias",
+    "titulo": "Férias | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "peso": "500",
+        "altura": "16px",
+        "espacamento": "1.2px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 197,
+      "Outfit, sans-serif": 12,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/ponto": {
+    "urlFinal": "/ponto",
+    "titulo": "Registro de Ponto | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "22px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "600",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 199,
+      "Outfit, sans-serif": 48,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/beneficios": {
+    "urlFinal": "/beneficios",
+    "titulo": "Benefícios Inteligentes | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 95,
+      "Outfit, sans-serif": 10,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0,00"
+      }
+    ]
+  },
+  "/folha": {
+    "urlFinal": "/folha",
+    "titulo": "Folha de Pagamento | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "600",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "peso": "600",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 100,
+      "Outfit, sans-serif": 14,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "18px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "18px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "18px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 0"
+      }
+    ]
+  },
+  "/rubricas": {
+    "urlFinal": "/rubricas",
+    "titulo": "Rubricas | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "JetBrains Mono, ui-monospace, SFMono-Regular, monospace",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 116,
+      "Outfit, sans-serif": 22,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 15
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "1000"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "1000"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "1000"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "1001"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "1002"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "1003"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5000"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5000"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5000"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5001"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5001"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5001"
+      },
+      {
+        "tag": "TD",
+        "classe": "p-4 align-middle [&:has([role=checkbox])]:pr-0 font-mono font-medium t",
+        "texto": "5005"
+      }
+    ],
+    "monetarios": []
+  },
+  "/provisoes": {
+    "urlFinal": "/provisoes",
+    "titulo": "Provisões Mensais | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "18px",
+        "peso": "600",
+        "altura": "28px",
+        "espacamento": "-0.45px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 93,
+      "Outfit, sans-serif": 7,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/contabilidade": {
+    "urlFinal": "/contabilidade",
+    "titulo": "Contabilidade | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "18px",
+        "peso": "600",
+        "altura": "28px",
+        "espacamento": "-0.45px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 104,
+      "Outfit, sans-serif": 8,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/cargos": {
+    "urlFinal": "/cargos",
+    "titulo": "Gestão de Cargos | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "peso": "500",
+        "altura": "32px",
+        "espacamento": "-0.6px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 93,
+      "Outfit, sans-serif": 6,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/departamentos": {
+    "urlFinal": "/departamentos",
+    "titulo": "Unidades & Departamentos | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "18px",
+        "peso": "600",
+        "altura": "28px",
+        "espacamento": "-0.45px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 91,
+      "Outfit, sans-serif": 6,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/auditoria": {
+    "urlFinal": "/auditoria",
+    "titulo": "Sistema DP - Departamento Pessoal",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "peso": "600",
+        "altura": "27px",
+        "espacamento": "-0.5px",
+        "numerico": "tabular-nums"
+      },
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 90,
+      "Outfit, sans-serif": 4,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/seguranca": {
+    "urlFinal": "/seguranca",
+    "titulo": "Sistema DP - Departamento Pessoal",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "peso": "600",
+        "altura": "27px",
+        "espacamento": "-0.5px",
+        "numerico": "tabular-nums"
+      },
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 90,
+      "Outfit, sans-serif": 4,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/banco-horas": {
+    "urlFinal": "/banco-horas",
+    "titulo": "Banco de Horas | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 248,
+      "Outfit, sans-serif": 4,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/relatorios": {
+    "urlFinal": "/relatorios",
+    "titulo": "Relatórios | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 127,
+      "Outfit, sans-serif": 16,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 6k"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.1k"
+      }
+    ]
+  },
+  "/workflows": {
+    "urlFinal": "/workflows",
+    "titulo": "Workflows | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 94,
+      "Outfit, sans-serif": 15,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/design-system": {
+    "urlFinal": "/design-system",
+    "titulo": "Design System | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "peso": "500",
+        "altura": "28px",
+        "espacamento": "-0.5px",
+        "numerico": "tabular-nums"
+      },
+      "h3": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "24px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "10px",
+        "peso": "400",
+        "altura": "15px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      }
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 131,
+      "Outfit, sans-serif": 44,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 26
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--primary"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--primary-glow"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--success"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--warning"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--destructive"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--info"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--muted"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[11px] text-muted-foreground font-mono",
+        "texto": "--accent"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "card"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "elevated"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "glass"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "float"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "glow"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "glow-sm"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "glow-lg"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-mono text-muted-foreground",
+        "texto": "elegant"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "fade-in"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "slide-up"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "scale-in"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "bounce-in"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "float"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "glow-pulse"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "pop"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] font-mono text-muted-foreground ml-2",
+        "texto": "wiggle"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 12.345,67"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.234,56 · 48:00 · 98,5%"
+      }
+    ]
+  },
+  "/medidas-disciplinares": {
+    "urlFinal": "/medidas-disciplinares",
+    "titulo": "Medidas Disciplinares | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "24px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "peso": "600",
+        "altura": "16px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 111,
+      "Outfit, sans-serif": 21,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/treinamentos": {
+    "urlFinal": "/treinamentos",
+    "titulo": "Sistema DP - Departamento Pessoal",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": null,
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 131,
+      "Outfit, sans-serif": 5,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/integracoes": {
+    "urlFinal": "/integracoes",
+    "titulo": "Integrações | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "24px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 103,
+      "Outfit, sans-serif": 13,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/holerites": {
+    "urlFinal": "/holerites",
+    "titulo": "Holerites Digitais | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "10px",
+        "peso": "500",
+        "altura": "15px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "500",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "400",
+        "altura": "20px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 160,
+      "Outfit, sans-serif": 5,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 67.200,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 12.740,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 54.460,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 6.240,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.180,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.060,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.650,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.020,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.630,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.500,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 760,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.740,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.300,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.620,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.680,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.600,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.740,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.860,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.400,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 720,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.680,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.180,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 910,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.270,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.800,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 580,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.220,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.920,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.090,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.830,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 6.700,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.440,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.260,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.810,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 830,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.980,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 5.100,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 850,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 4.250,00"
+      }
+    ]
+  },
+  "/portal": {
+    "urlFinal": "/portal",
+    "titulo": "Portal | Sistema DP",
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "20px",
+        "peso": "500",
+        "altura": "28px",
+        "espacamento": "-0.5px",
+        "numerico": "tabular-nums"
+      },
+      "h3": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "14px",
+        "peso": "600",
+        "altura": "21px",
+        "espacamento": "-0.35px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": null,
+      "td": null,
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 105,
+      "Outfit, sans-serif": 17,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": []
+  },
+  "/premiacoes#pagamentos": {
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": null,
+      "h3": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "13px",
+        "peso": "600",
+        "altura": "18px",
+        "espacamento": "-0.325px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "700",
+        "altura": "24px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "400",
+        "altura": "24px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 219,
+      "Outfit, sans-serif": 13,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.950,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 70,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.300,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.250,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 980,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 720,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.400,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.100,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.100,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.600,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.600,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "15px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 10.620,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 2.200,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.300,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 70,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 70,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.880,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "Divergência de R$ 70,00 iden"
+      }
+    ]
+  },
+  "/premiacoes#detalhes-pagamento": {
+    "categorias": {
+      "h1": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "16px",
+        "peso": "500",
+        "altura": "20.8px",
+        "espacamento": "-0.4px",
+        "numerico": "tabular-nums"
+      },
+      "h2": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "17px",
+        "peso": "600",
+        "altura": "23.375px",
+        "espacamento": "-0.425px",
+        "numerico": "tabular-nums"
+      },
+      "h3": {
+        "familia": "Outfit, sans-serif",
+        "tamanho": "13px",
+        "peso": "600",
+        "altura": "18px",
+        "espacamento": "-0.325px",
+        "numerico": "tabular-nums"
+      },
+      "corpo": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "peso": "500",
+        "altura": "15.4px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "label": null,
+      "botao": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "peso": "500",
+        "altura": "19.5px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "th": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "700",
+        "altura": "24px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "td": {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "16px",
+        "peso": "400",
+        "altura": "24px",
+        "espacamento": "normal",
+        "numerico": "tabular-nums"
+      },
+      "badge": null
+    },
+    "familias": {
+      "Plus Jakarta Sans, sans-serif": 235,
+      "Outfit, sans-serif": 13,
+      "JetBrains Mono, ui-monospace, SFMono-Regular, monospace": 2
+    },
+    "monospace": [
+      {
+        "tag": "SPAN",
+        "classe": "text-xs",
+        "texto": "⌘"
+      },
+      {
+        "tag": "KBD",
+        "classe": "hidden lg:inline-flex h-5 items-center gap-1 rounded border border-bor",
+        "texto": "⌘K"
+      }
+    ],
+    "monetarios": [
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.950,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 70,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "24px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.300,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.250,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 980,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 720,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.400,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.100,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.100,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.600,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "13px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.600,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "15px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 10.620,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 2.200,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.300,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 70,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 7.050,50"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 70,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 3.880,00"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "11px",
+        "numerico": "tabular-nums",
+        "texto": "Divergência de R$ 70,00 iden"
+      },
+      {
+        "familia": "Plus Jakarta Sans, sans-serif",
+        "tamanho": "12px",
+        "numerico": "tabular-nums",
+        "texto": "R$ 1.250,00"
+      }
+    ]
+  }
+}

@@ -185,7 +185,7 @@ export function MetaCard({
               <Calendar className="h-3.5 w-3.5 shrink-0" />
               <span className="truncate">{descricaoPrazo(item)}</span>
             </p>
-            <p className="mt-0.5 truncate font-mono text-[10px] leading-tight text-muted-foreground">Prazo: {prazo}</p>
+            <p className="text-numeric mt-0.5 truncate text-[10px] leading-tight text-muted-foreground">Prazo: {prazo}</p>
           </div>
           {evolucao !== null && (
             // Evolução só existe com histórico (`progresso_anterior`): sem ele

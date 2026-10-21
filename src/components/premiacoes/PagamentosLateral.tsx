@@ -17,7 +17,7 @@
  * borda, fundo e tipografia da coluna lateral de Campanhas).
  * ============================================================================
  */
-import { motion } from 'framer-motion';
+import { motion, type Transition } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowRight,
@@ -30,11 +30,10 @@ import {
   XCircle,
 } from 'lucide-react';
 import { DonutChart } from '@/components/dashboard/DonutChart';
-import { entradaCard } from './premiacoesEntrada';
+import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/utils/format';
 import { indiceEntrada, iniciaisDe, tempoRelativo, type EventoAtividade } from './premiacoesComum';
-import { linhaTabelaVariants } from '@/components/ui/table-row-reveal';
 import type { AcaoPagamento, ResumoFinanceiro } from './pagamentosComum';
 
 /** Ícone + tom de cada pendência (mesmos tons dos indicadores financeiros). */
@@ -72,6 +71,25 @@ const APARENCIA_EVENTO: Record<string, { Icone: typeof History; tom: string }> =
 
 /** Divergência de conciliação é um ESTADO do pagamento: sobrepõe o tom da ação. */
 const APARENCIA_DIVERGENCIA = { Icone: AlertTriangle, tom: 'bg-destructive-vivid/15 text-destructive-vivid' };
+
+/**
+ * TRAÇADO DO DONUT DO RESUMO FINANCEIRO — mais lento e mais suave que a régua
+ * padrão do `DonutChart` (0,6s por segmento, passo de 0,15s, `easeOut`):
+ *
+ *    0,85s por segmento · passo de 0,17s · atraso inicial 0,22s ·
+ *    ease [0.4, 0, 0.2, 1] (acelera e desacelera — o traçado "assenta")
+ *
+ * O gráfico de "Tipo de Vínculo" do Dashboard Executivo continua usando os
+ * defaults do componente: o ajuste vale só para este card. Com os quatro
+ * segmentos, o desenho termina em ~1,6s (0,22 + 3 × 0,17 + 0,85), sem atrasar
+ * a leitura dos valores — que já estão visíveis na legenda e no centro.
+ */
+const TRAÇADO_DONUT_RESUMO = {
+  animationDuration: 0.85,
+  animationDelay: 0.22,
+  segmentStagger: 0.17,
+  animationEase: [0.4, 0, 0.2, 1] as Transition['ease'],
+} as const;
 
 function aparenciaDoEvento(evento: EventoAtividade): { Icone: typeof History; tom: string } {
   if (evento.divergente) return APARENCIA_DIVERGENCIA;
@@ -124,6 +142,7 @@ export function PagamentosLateral({
             className="w-full [&>svg]:mx-auto"
             formatValue={formatCurrency}
             centerClassName="fill-foreground text-[15px] font-semibold tabular-nums"
+            {...TRAÇADO_DONUT_RESUMO}
           />
         ) : (
           <p className="px-1 py-3 text-[11px] text-muted-foreground">Nenhum valor no período selecionado.</p>
@@ -159,7 +178,7 @@ export function PagamentosLateral({
                 <motion.li
                   key={acao.id}
                   custom={indice}
-                  variants={linhaTabelaVariants}
+                  variants={linhaEntradaHubVariants}
                   initial="hidden"
                   animate="visible"
                   className="origin-center"
@@ -258,7 +277,7 @@ export function PagamentosLateral({
                 <motion.li
                   key={evento.id}
                   custom={indiceEvento}
-                  variants={linhaTabelaVariants}
+                  variants={linhaEntradaHubVariants}
                   initial="hidden"
                   animate="visible"
                   className="flex origin-center items-center gap-3 px-1.5 py-1.5"

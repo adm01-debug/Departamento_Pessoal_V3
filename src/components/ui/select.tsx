@@ -24,8 +24,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'group flex h-9 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-1.5 text-[13px] placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-inset disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-      className,
+      'group flex h-9 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-1.5 text-control placeholder:text-muted-foreground focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-inset disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+      className
     )}
     {...props}
   >
@@ -56,7 +56,7 @@ const SelectContent = React.forwardRef<
           // toca neste elemento (o Motion anima o wrapper interno, nunca o
           // `transform` deste Content, que é do Popper).
           overlayContentCloseOnlyAnimClasses('select-content-anim'),
-          className,
+          className
         )}
         position={position}
         // `sideOffset = 4`: mesmo padrão já usado por `DropdownMenuContent`/
@@ -102,17 +102,28 @@ SelectContent.displayName = SelectPrimitive.Content.displayName;
 // herda open/closed do `motion.div` ancestral em `SelectContent`.
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item> & {
+    /**
+     * Ação secundária (ex.: lixeira) ancorada à direita do item. Fica FORA do
+     * `ItemText` para que o texto continue sendo a opção e os eventos da ação
+     * não selecionem o item.
+     */
+    acao?: React.ReactNode;
+  }
+>(({ className, children, acao, ...props }, ref) => {
   const prefersReducedMotion = useReducedMotion();
+  const pararEvento = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
+  };
   return (
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
         // `transition-colors duration-150`: só o background/cor do texto anima
         // suavemente no hover/foco — nada de posição/tamanho se move.
-        'relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-[13px] outline-hidden transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        className,
+        'relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-control outline-hidden transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        acao && 'group/ciclo pr-1.5',
+        className
       )}
       {...props}
     >
@@ -124,10 +135,21 @@ const SelectItem = React.forwardRef<
       <motion.span
         variants={dropdownItemVariants}
         transition={prefersReducedMotion ? { duration: 0 } : undefined}
-        className="inline-flex w-full items-center"
+        className={cn('inline-flex w-full items-center', acao && 'min-w-0')}
       >
         <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       </motion.span>
+      {acao ? (
+        <span
+          className="ml-2 flex shrink-0 items-center"
+          onPointerDown={pararEvento}
+          onPointerUp={pararEvento}
+          onClick={pararEvento}
+          onKeyDown={pararEvento}
+        >
+          {acao}
+        </span>
+      ) : null}
     </SelectPrimitive.Item>
   );
 });

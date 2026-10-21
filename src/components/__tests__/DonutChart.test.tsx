@@ -6,6 +6,8 @@ vi.mock('framer-motion', () => ({
     circle: (props: any) => <circle {...props} />,
   },
   useInView: vi.fn(() => true),
+  // `DonutChart` consulta o modo de movimento reduzido (via `motionMode`).
+  useReducedMotion: vi.fn(() => false),
 }));
 
 import { DonutChart } from '../dashboard/DonutChart';

@@ -57,6 +57,19 @@ const validacao = {
   feedbackId: 'fb-gestor',
 };
 const versoes = { 'fb-gestor': VERSAO_GESTOR };
+const aprovacaoVigente = {
+  empresa_id: EMPRESA,
+  ciclo_id: CICLO,
+  colaborador_id: COLAB,
+  decisao: 'aprovado',
+  versao_avaliacao: 'v-grupo',
+};
+const consolidacaoVigente = {
+  empresa_id: EMPRESA,
+  ciclo_id: CICLO,
+  colaborador_id: COLAB,
+  versao_consolidada: 'v-grupo',
+};
 
 const consolidar = (feedbacks: Record<string, unknown>[]) =>
   consolidarNineBox360({
@@ -65,6 +78,9 @@ const consolidar = (feedbacks: Record<string, unknown>[]) =>
     empresaId: EMPRESA,
     validacoes: [validacao],
     versoesPorFeedback: versoes,
+    // O motor oficial só classifica com decisão vigente do gestor.
+    aprovacoes: [aprovacaoVigente],
+    consolidacoes: [consolidacaoVigente],
   });
 
 describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
@@ -112,14 +128,96 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
     expect(gestor.feedbackId).toBe('fb-gestor-2');
   });
 
-  it('sem validação do RH o colaborador fica pendente de validação', () => {
+  it('SEM aprovação do gestor o colaborador NÃO classifica (concluir não basta)', () => {
     const [r] = consolidarNineBox360({
       feedbacks: [fb()],
       cicloId: CICLO,
       empresaId: EMPRESA,
       versoesPorFeedback: versoes,
     });
-    expect(r.motivo).toBe('potencial_sem_validacao');
+    expect(r.motivo).toBe('aprovacao_pendente');
+    expect(r.classificavel).toBe(false);
+    expect(r.quadrante).toBeNull();
+  });
+
+  it('decisão de OUTRA empresa/ciclo não classifica', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ...aprovacaoVigente, empresa_id: 'outra-empresa', ciclo_id: 'outro-ciclo' }],
+      consolidacoes: [{ ...consolidacaoVigente, empresa_id: 'outra-empresa', ciclo_id: 'outro-ciclo' }],
+    });
+    expect(r.motivo).toBe('aprovacao_pendente');
+    expect(r.classificavel).toBe(false);
+  });
+
+  it('validação legada de OUTRA versão não bloqueia o fluxo novo', () => {
+    const validacaoCrua = {
+      empresa_id: EMPRESA,
+      ciclo_id: CICLO,
+      colaborador_id: COLAB,
+      feedback_id: 'fb-gestor',
+      versao_avaliacao: 'versao-antiga',
+      validado_por: RH,
+      validado_em: '2026-09-21T09:00:00',
+    };
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      validacoes: [validacaoCrua as never],
+      versoesPorFeedback: versoes,
+      aprovacoes: [aprovacaoVigente],
+      consolidacoes: [consolidacaoVigente],
+    });
+    expect(r.classificavel).toBe(true);
+    expect(r.motivo).toBeNull();
+  });
+
+  it('aprovado SEM validação: classifica e não fica aguardando RH', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb()],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
+    });
+    expect(r.classificavel).toBe(true);
+    expect(r.motivo).toBeNull();
+    expect(r.quadrante).not.toBeNull();
+    const [ponto] = pontos360([r]);
+    expect(ponto).toMatchObject({
+      quadrante: r.quadrante,
+      aguardandoValidacaoRh: false,
+      aguardandoAprovacao: false,
+      motivoNaoClassificado: null,
+    });
+  });
+
+  it('snapshot aprovado classifica mesmo sem feedback de gestor', () => {
+    const [r] = consolidarNineBox360({
+      feedbacks: [fb({ id: 'fb-par', tipo: 'par', nota_geral: 3 })],
+      cicloId: CICLO,
+      empresaId: EMPRESA,
+      versoesPorFeedback: versoes,
+      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
+      consolidacoes: [
+        {
+          ciclo_id: CICLO,
+          colaborador_id: COLAB,
+          versao_consolidada: 'v-grupo',
+          desempenho_aprovado: 4.25,
+          potencial_aprovado: 4,
+        },
+      ],
+    });
+    expect(r.classificavel).toBe(true);
+    expect(r.desempenho).toBe(4.25);
+    expect(r.potencial).toBe(4);
+    expect(r.quadrante).toBe('3-3');
   });
 
   it('classifica com a validação do RH na forma CRUA do banco (snake_case)', () => {
@@ -144,53 +242,12 @@ describe('fase E · consolidação 360 dos feedbacks persistidos', () => {
       empresaId: EMPRESA,
       validacoes: [validacaoCrua as never],
       versoesPorFeedback: versoes,
+      aprovacoes: [aprovacaoVigente],
+      consolidacoes: [consolidacaoVigente],
     });
     expect(r.classificavel).toBe(true);
     expect(r.motivo).toBeNull();
     expect(r.quadrante).not.toBeNull();
-  });
-
-  it('validação de OUTRA versão não classifica (aprovação desatualizada)', () => {
-    const validacaoCrua = {
-      empresa_id: EMPRESA,
-      ciclo_id: CICLO,
-      colaborador_id: COLAB,
-      feedback_id: 'fb-gestor',
-      versao_avaliacao: 'versao-antiga',
-      validado_por: RH,
-      validado_em: '2026-09-21T09:00:00',
-    };
-    const [r] = consolidarNineBox360({
-      feedbacks: [fb()],
-      cicloId: CICLO,
-      empresaId: EMPRESA,
-      validacoes: [validacaoCrua as never],
-      versoesPorFeedback: versoes,
-    });
-    expect(r.classificavel).toBe(false);
-    expect(r.motivo).toBe('potencial_sem_validacao');
-  });
-
-  it('aprovado SEM validação: motivo do RH e indicador de pendência (não some da aba)', () => {
-    const [r] = consolidarNineBox360({
-      feedbacks: [fb()],
-      cicloId: CICLO,
-      empresaId: EMPRESA,
-      versoesPorFeedback: versoes,
-      aprovacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, decisao: 'aprovado', versao_avaliacao: 'v-grupo' }],
-      consolidacoes: [{ ciclo_id: CICLO, colaborador_id: COLAB, versao_consolidada: 'v-grupo' }],
-    });
-    expect(r.classificavel).toBe(false);
-    expect(r.motivo).toBe('potencial_sem_validacao');
-    expect(r.quadrante).toBeNull();
-    const [ponto] = pontos360([r]);
-    expect(ponto).toMatchObject({
-      quadrante: null,
-      aguardandoValidacaoRh: true,
-      aguardandoAprovacao: false,
-      motivoNaoClassificado: 'potencial_sem_validacao',
-      motivoNaoClassificadoTexto: 'Potencial aguardando validação do RH.',
-    });
   });
 
   it('aprovado + validação vigente: classifica no quadrante (flags desligadas)', () => {

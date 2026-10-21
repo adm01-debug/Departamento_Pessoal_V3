@@ -2,13 +2,15 @@
  * ============================================================================
  * CARD DA FILA "AGUARDANDO GESTOR" — conjunto de controles padronizado.
  *
- * O que esta suíte fixa (regra de 19/10/2026):
- *   • Ver / Devolver / Aprovar existem SEMPRE na fila, em qualquer status;
- *   • quando a regra não permite, o botão fica DESABILITADO com o motivo no
- *     `title` — nunca desaparece;
+ * O que esta suíte fixa (regra de 19/10/2026, ajustada em 20/10/2026):
+ *   • Ver existe sempre; Devolver/Aprovar existem para o gestor (mesmo quando
+ *     bloqueados, com o motivo no `title`);
+ *   • RH/admin NÃO recebem Aprovar/Devolver — a etapa do gestor é somente leitura;
  *   • a autorização real continua no servidor: desabilitado ≠ liberado;
- *   • ENVIAR (RH/admin) e VALIDAR POTENCIAL (RH) aparecem para quem tem o
- *     papel — também com estado desabilitado quando fora da etapa.
+ *   • ENVIAR (RH/admin) aparece para quem tem o papel — também com estado
+ *     desabilitado quando fora da etapa.
+ *   • A aprovação do gestor é a decisão final; o controle legado de validação
+ *     do RH não é oferecido no fluxo novo.
  * ============================================================================
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -118,12 +120,12 @@ describe('fila de aprovação — controles padronizados por vínculo', () => {
 describe('fila de aprovação — ações por papel e por etapa', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it('o RH tem escopo de tenant: os MESMOS controles, Aprovar/Devolver habilitados', () => {
+  it('o RH NÃO vê aprovar nem devolver (decisão exclusiva do gestor responsável)', () => {
     renderizar(linha(), ['rh']);
     // Encaminhamento é AUTOMÁTICO nesta etapa: "Enviar" não ocupa a linha.
-    expect(rotulos()).toEqual(['Ver avaliação', 'Devolver para correção', 'Aprovar avaliação']);
-    expect(botao('Devolver para correção')).toBeEnabled();
-    expect(botao('Aprovar avaliação')).toBeEnabled();
+    expect(rotulos()).toEqual(['Ver avaliação']);
+    expect(consulta('Devolver para correção')).toBeNull();
+    expect(consulta('Aprovar avaliação')).toBeNull();
   });
 
   it('RH com o gestor identificado pode ENVIAR ao gestor', () => {
@@ -136,7 +138,7 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
       ['rh']
     );
     expect(botao('Enviar ao gestor')).toBeEnabled();
-    expect(botao('Aprovar avaliação')).toBeDisabled();
+    expect(consulta('Aprovar avaliação')).toBeNull();
   });
 
   it('sem gestor identificado o RH NÃO envia (impedimento explícito no title)', () => {
@@ -155,7 +157,7 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
     expect(botao('Enviar ao gestor')).toHaveAttribute('title', expect.stringContaining('não identificado'));
   });
 
-  it('aprovada pelo gestor: o RH recebe a Validação de Potencial HABILITADA', () => {
+  it('aprovada pelo gestor: NÃO existe terceira validação do RH', () => {
     renderizar(
       linha({
         status: 'aprovada_gestor',
@@ -167,11 +169,11 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
       }),
       ['rh']
     );
-    expect(botao('Validar Potencial')).toBeEnabled();
-    expect(botao('Aprovar avaliação')).toBeDisabled();
+    expect(consulta('Validar Potencial')).toBeNull();
+    expect(consulta('Aprovar avaliação')).toBeNull();
   });
 
-  it('T10: sem a avaliação do Gestor a pendência aparece e a decisão CONTINUA disponível', () => {
+  it('T10: sem a avaliação do Gestor a pendência aparece e a decisão fica BLOQUEADA', () => {
     renderizar(
       linha({
         avaliacaoGestorValida: false,
@@ -187,11 +189,12 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
     );
 
     expect(rotulos()).toEqual(['Ver avaliação', 'Devolver para correção', 'Aprovar avaliação']);
-    expect(botao('Aprovar avaliação')).toBeEnabled();
-    expect(botao('Devolver para correção')).toBeEnabled();
+    expect(botao('Aprovar avaliação')).toBeDisabled();
+    expect(botao('Devolver para correção')).toBeDisabled();
+    expect(botao('Aprovar avaliação')).toHaveAttribute('title', expect.stringMatching(/Desempenho e Potencial/i));
   });
 
-  it('`sem_gestor`: o RH/admin vê a pendência e PODE decidir (fallback sem vínculo)', () => {
+  it('`sem_gestor`: a aprovação é bloqueada para QUALQUER papel (inclusive RH/admin)', () => {
     renderizar(
       linha({
         status: 'sem_gestor',
@@ -206,17 +209,16 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
           validada: false,
           responsavel: false,
           gestorIdentificado: false,
-          autorizadoAmplo: true,
         }),
       }),
       ['rh']
     );
-    expect(rotulos()).toEqual(['Ver avaliação', 'Devolver para correção', 'Aprovar avaliação']);
-    // O status continua identificando a pendência de ATRIBUIÇÃO…
+    expect(rotulos()).toEqual(['Ver avaliação']);
+    // O status identifica a pendência de ATRIBUIÇÃO…
     expect(screen.getByText(/Gestor não atribuído/i)).toBeInTheDocument();
-    // …sem impedir a decisão de quem tem escopo (RH/admin).
-    expect(botao('Devolver para correção')).toBeEnabled();
-    expect(botao('Aprovar avaliação')).toBeEnabled();
+    // …e a decisão não é oferecida ao RH (exclusiva do gestor).
+    expect(consulta('Devolver para correção')).toBeNull();
+    expect(consulta('Aprovar avaliação')).toBeNull();
   });
 
   it('`sem_gestor` + gestor fora de escopo (sem vínculo): bloqueado com motivo', () => {
@@ -239,7 +241,7 @@ describe('fila de aprovação — ações por papel e por etapa', () => {
     );
     expect(botao('Devolver para correção')).toBeDisabled();
     expect(botao('Aprovar avaliação')).toBeDisabled();
-    expect(botao('Aprovar avaliação')).toHaveAttribute('title', expect.stringMatching(/RH\/admin/));
+    expect(botao('Aprovar avaliação')).toHaveAttribute('title', expect.stringMatching(/Gestor responsável não/i));
   });
 
   it('"Enviar ao gestor" só existe nas etapas em que o envio manual faz sentido', () => {

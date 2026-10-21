@@ -188,6 +188,11 @@ export interface SituacaoAprovacaoCanonica {
   avaliacaoGestorValida: boolean;
   /** O gestor responsável foi resolvido pelo vínculo (`supervisor_id`)? */
   gestorIdentificado: boolean;
+  /**
+   * Autorização confirmada pelo SERVIDOR (`pode_aprovar_colaborador`) — inclui
+   * exceção temporária de homologação. Não substitui a avaliação obrigatória.
+   */
+  autorizadoServidor: boolean;
   /** Por que a decisão NÃO pode ser executada (texto pronto; `null` = pode). */
   motivoBloqueio: string | null;
   justificativa: string | null;
@@ -202,6 +207,7 @@ export const APROVACAO_AUSENTE: SituacaoAprovacaoCanonica = {
   pendente: false,
   avaliacaoGestorValida: false,
   gestorIdentificado: false,
+  autorizadoServidor: false,
   motivoBloqueio: 'Sem consolidação para este colaborador e ciclo.',
   justificativa: null,
   enviadoEm: null,
@@ -223,8 +229,10 @@ export function situacaoDaPendencia(p: PendenciaAprovacao | null | undefined): S
        identificado` = pendência de atribuição. */
     gestorIdentificado:
       Boolean(p.gestorResponsavelId) || (Boolean(p.gestorResponsavel) && p.gestorResponsavel !== 'Não identificado'),
+    autorizadoServidor: p.estado?.autorizadoServidor === true || p.autorizadoServidor === true,
     /* O motivo vem da MESMA instância derivada. A ausência da avaliação do
-       gestor NÃO é bloqueio da aprovação (é um dado informativo). */
+       gestor OU do gestor responsável BLOQUEIA a aprovação (requisitos do
+       servidor), não é apenas informativa. */
     motivoBloqueio: p.estado?.motivoBloqueio ?? p.motivoBloqueioAprovacao ?? null,
     justificativa: p.justificativa ?? null,
     enviadoEm: p.enviadoEm ?? null,
@@ -280,6 +288,11 @@ interface OpcoesAcoes {
   papeis?: PapeisAvaliacao;
   /** Vínculo PROVADO (`pode_aprovar_colaborador` no front). Padrão: fail-closed. */
   responsavel?: boolean;
+  /**
+   * Autorização de CONCLUSÃO do registro (avaliador designado, gestor
+   * responsável, exceção ou RH/admin). Separada da aprovação consolidada.
+   */
+  autorizadoConcluir?: boolean;
   /** Escrita liberada (modo real ou demonstração com persistência local). */
   acoesHabilitadas?: boolean;
   /** Ação de navegação disponível? (filtro por colaborador na listagem) */
@@ -294,6 +307,7 @@ interface OpcoesAcoes {
 export function getFeedbackActions(registro: FeedbackCanonico, opcoes: OpcoesAcoes = {}): AcaoFeedback[] {
   const { papeis = null, acoesHabilitadas = false, podeVerColaborador = false } = opcoes;
   const responsavel = opcoes.responsavel === true;
+  const autorizadoConcluir = opcoes.autorizadoConcluir ?? responsavel;
   const caps = capacidadesAvaliacao(papeis);
   const aprov = registro.aprovacao;
   const escrita = registro.origemDemonstrativa || acoesHabilitadas;
@@ -302,36 +316,37 @@ export function getFeedbackActions(registro: FeedbackCanonico, opcoes: OpcoesAco
    * DECISÃO (Devolver/Aprovar) — visível SEMPRE que existe consolidação, para
    * que o conjunto de controles não mude entre ciclos/status.
    *
-   * HABILITAÇÃO (regra única):
-   *   • PAPEL: `gestor` OU RH/admin **quando não há gestor vinculado** (fallback
-   *     legítimo de escopo; o servidor aplica a mesma condição);
-   *   • ESCOPO: com vínculo, só o gestor vinculado (`responsavel`); sem vínculo,
-   *     o fallback acima. Um gestor sem vínculo e sem relação NÃO decide;
+   * HABILITAÇÃO (regra ÚNICA, a MESMA do servidor — `pode_aprovar_colaborador`
+   * + `decidir_aprovacao_gestor`):
+   *   • PAPEL: `gestor`. RH/admin NÃO aprovam nem devolvem (sem substituto);
+   *   • ESCOPO: ser o gestor vinculado (`responsavel`). Na vitrine, quando o
+   *     vínculo não é carregado, o PAPEL `gestor` decide;
+   *   • GESTOR: precisa existir gestor responsável resolvido (senão é pendência
+   *     de ATRIBUIÇÃO e a aprovação fica bloqueada);
+   *   • REQUISITO: a avaliação do GESTOR precisa existir e estar CONCLUÍDA;
    *   • ETAPA: a consolidação precisa estar pendente (`aguardando_gestor` ou
    *     `sem_gestor`) e a escrita liberada.
    *
-   * NÃO entram aqui: status do REGISTRO (`concluido`/`pendente`), TIPO da
-   * avaliação nem existência da avaliação do gestor — conclusão ≠ aprovação.
+   * NÃO entram aqui o status do REGISTRO (`concluido`/`pendente`) nem o TIPO da
+   * avaliação: conclusão ≠ aprovação e a aprovação é do CONJUNTO.
    */
-  const autorizadoAmplo = caps.podeGerirAvaliacoes;
-  const decidePorPapel = caps.podeDecidirAprovacao || autorizadoAmplo;
+  const decidePorPapel = caps.podeDecidirAprovacao;
   const motivosDecisao: string[] = [];
   if (!aprov.existe) motivosDecisao.push(MOTIVO.semConsolidacao);
-  if (!decidePorPapel) {
+  if (!aprov.gestorIdentificado && !aprov.autorizadoServidor) motivosDecisao.push(MOTIVO.semGestor);
+  if (!decidePorPapel && !aprov.autorizadoServidor) {
     motivosDecisao.push(MOTIVO.somenteGestor);
-  } else if (autorizadoAmplo) {
-    // RH/admin: autoridade de tenant — decide COM ou SEM vínculo.
-  } else if (aprov.gestorIdentificado) {
-    // Gestor: só o próprio time. Na vitrine o vínculo não é carregado
-    // (`responsavel` desconhecido), então o papel decide.
+  } else if (!aprov.autorizadoServidor && aprov.gestorIdentificado) {
+    // Gestor: só o próprio time. Na vitrine o vínculo pode não estar carregado
+    // (`responsavelDemonstrativo === null`) — aí o papel já foi exigido acima.
     if (registro.origemDemonstrativa) {
       if (registro.responsavelDemonstrativo === false) motivosDecisao.push(MOTIVO.semVinculo);
     } else if (!responsavel) {
       motivosDecisao.push(MOTIVO.semVinculo);
     }
-  } else {
-    // Sem vínculo e sem escopo amplo: gestor fora de escopo NÃO decide.
-    motivosDecisao.push(MOTIVO.semGestorFallback);
+  }
+  if (!aprov.avaliacaoGestorValida) {
+    motivosDecisao.push(MOTIVO.semAvaliacaoGestor);
   }
   if (aprov.existe && !aprov.pendente) {
     motivosDecisao.push(`${MOTIVO.naoAguardando} (${aprov.rotulo})`);
@@ -402,6 +417,7 @@ export function getFeedbackActions(registro: FeedbackCanonico, opcoes: OpcoesAco
     papel: null,
     perfis: perfisOperadorEfetivos(papeis, responsavel),
     responsavel,
+    autorizadoConcluir,
   });
   const rotuloStatus: Record<'concluir' | 'cancelar' | 'reabrir', string> = {
     concluir: 'Concluir avaliação',
@@ -441,21 +457,16 @@ export function getFeedbackActions(registro: FeedbackCanonico, opcoes: OpcoesAco
     escrita: true,
   });
 
-  /* VALIDAÇÃO DO POTENCIAL (RH) — visível só para o RH e só na etapa em que ela
-     existe (`aprovada_gestor`); depois de validada permanece visível e
-     desabilitada, para o estado não "sumir" da interface. */
-  if (caps.podeValidarPotencial && ['aprovada_gestor', 'concluida_validada'].includes(aprov.status)) {
-    const motivosValidacao: string[] = [];
-    if (aprov.status !== 'aprovada_gestor') {
-      motivosValidacao.push('Potencial já validado nesta versão.');
-    }
-    if (!escrita) motivosValidacao.push(MOTIVO.semEscrita);
+  /* VALIDAÇÃO DO POTENCIAL (RH) — controle LEGADO. O fluxo atual termina na
+     aprovação do gestor; o botão permanece no DOM (layout aprovado), porém
+     desabilitado. Nenhuma nova validação é exigida para classificar. */
+  if (caps.podeValidarPotencial && aprov.status === 'concluida_validada') {
     acoes.push({
       id: 'validarPotencial',
       rotulo: 'Validar Potencial',
       variante: 'outline',
-      habilitado: motivosValidacao.length === 0,
-      motivo: motivosValidacao[0] ?? null,
+      habilitado: false,
+      motivo: 'Fluxo atual: a aprovação do gestor já classifica; a validação posterior do RH não é necessária.',
       escrita: true,
     });
   }
@@ -532,6 +543,8 @@ export interface OpcoesCanonicas {
   /** Nome do gestor resolvido por vínculo quando não há linha de fila. */
   gestorResponsavel?: string | null;
   papeis?: PapeisAvaliacao;
+  /** Autorização efetiva para concluir (separada da aprovação). */
+  autorizadoConcluir?: boolean;
   /** Escrita liberada (modo real ou vitrine com persistência local). */
   acoesHabilitadas?: boolean;
   /** Navegação "Ver só deste colaborador" disponível. */
@@ -589,6 +602,7 @@ export function normalizarFeedback(item: FeedbackDerivado, opcoes: OpcoesCanonic
   const acoes = getFeedbackActions(base as FeedbackCanonico, {
     papeis: opcoes.papeis ?? null,
     responsavel: pendencia?.responsavel === true,
+    autorizadoConcluir: opcoes.autorizadoConcluir,
     acoesHabilitadas: opcoes.acoesHabilitadas === true,
     podeVerColaborador: opcoes.podeVerColaborador === true,
   });
@@ -618,6 +632,7 @@ export function resumoAprovacao(estado: EstadoAprovacao | null | undefined): Sit
     pendente: estado.pendente === true,
     avaliacaoGestorValida: estado.avaliacaoGestorValida === true,
     gestorIdentificado: estado.gestorIdentificado === true,
+    autorizadoServidor: estado.autorizadoServidor === true,
     motivoBloqueio: estado.motivoBloqueio ?? null,
     justificativa: estado.justificativa ?? null,
     enviadoEm: null,

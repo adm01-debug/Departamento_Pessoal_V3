@@ -237,7 +237,7 @@ export function CicloAtivoPanel({ ciclo, progresso, contadores, onNavigate, indi
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
             {ciclo?.tipo && <span className="capitalize">{ciclo.tipo}</span>}
             {ciclo?.tipo && <span className="h-1 w-1 rounded-full bg-muted-foreground/40" />}
-            <span className="font-mono">{formatarPeriodo(ciclo?.data_inicio, ciclo?.data_fim)}</span>
+            <span className="text-numeric">{formatarPeriodo(ciclo?.data_inicio, ciclo?.data_fim)}</span>
           </div>
         </div>
 

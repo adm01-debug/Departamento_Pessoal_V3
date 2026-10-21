@@ -1,0 +1,1149 @@
+{
+  "referencia": {
+    "titulo": "Fechar Pendências 1 tarefa de onboarding atrasada Alta Tarefas do plan",
+    "blocos": 4,
+    "fechamentoPrevistoMs": 1070,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 4993,
+      "inicioReal": 5006,
+      "amostras": 2991,
+      "amostrasVisiveis": 2938,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 5013,
+        "opacidade": 0.0655198
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 5898,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0207281,
+        "blocoY": 8
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 865,
+        "blocoNoLugarMs": 1172,
+        "blocoVisivelMs": 1212
+      }
+    },
+    "fechamento": {
+      "t0": 8402,
+      "inicioReal": 9217,
+      "amostras": 3440,
+      "amostrasVisiveis": 516,
+      "escalaInicial": {
+        "x": 0.987058,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 8402,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1133,
+      "blocoPrimeiro": {
+        "t": 8402,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false,
+    "focoAposFechar": {
+      "tag": "BODY",
+      "texto": "Pular para o conteúdo principal TIME | PROMO BRINDESGestão d"
+    }
+  },
+  "novaCampanha": {
+    "titulo": "Fechar Configurar Nova Campanha de Incentivo Defina o período, orçamen",
+    "blocos": 3,
+    "fechamentoPrevistoMs": 970,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 5864,
+      "inicioReal": 5884,
+      "amostras": 3198,
+      "amostrasVisiveis": 3183,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 5884,
+        "opacidade": 0.0255778
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 6768,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0101925,
+        "blocoY": 8
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 857,
+        "blocoNoLugarMs": 1165,
+        "blocoVisivelMs": 1207
+      }
+    },
+    "fechamento": {
+      "t0": 9182,
+      "inicioReal": 9929,
+      "amostras": 3407,
+      "amostrasVisiveis": 547,
+      "escalaInicial": {
+        "x": 0.987058,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 9182,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1127,
+      "blocoPrimeiro": {
+        "t": 9182,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false
+  },
+  "detalhesCampanha": {
+    "titulo": "Fechar Premiação de Inovação RASCUNHO Aprovação: Em revisão Reconhecim",
+    "blocos": 4,
+    "fechamentoPrevistoMs": 1070,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 14136,
+      "inicioReal": 14144,
+      "amostras": 2868,
+      "amostrasVisiveis": 2852,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 14151,
+        "opacidade": 0.0603408
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 15043,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0302191,
+        "blocoY": 7.92
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 872,
+        "blocoNoLugarMs": 1175,
+        "blocoVisivelMs": 1220
+      }
+    },
+    "fechamento": {
+      "t0": 17427,
+      "inicioReal": 18272,
+      "amostras": 3774,
+      "amostrasVisiveis": 728,
+      "escalaInicial": {
+        "x": 0.988682,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 17427,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1206,
+      "blocoPrimeiro": {
+        "t": 17427,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false
+  },
+  "listaAcoes": {
+    "titulo": "Fechar Próximas ações Acompanhe as ações pendentes relacionadas às cam",
+    "blocos": 6,
+    "fechamentoPrevistoMs": 1270,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 22251,
+      "inicioReal": 22262,
+      "amostras": 2828,
+      "amostrasVisiveis": 2809,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 22269,
+        "opacidade": 0.0577451
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 23156,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0169097,
+        "blocoY": 7.92
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 870,
+        "blocoNoLugarMs": 1171,
+        "blocoVisivelMs": 1214
+      }
+    },
+    "fechamento": {
+      "t0": 25423,
+      "inicioReal": 26443,
+      "amostras": 3053,
+      "amostrasVisiveis": 701,
+      "escalaInicial": {
+        "x": 0.987058,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 25423,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1386,
+      "blocoPrimeiro": {
+        "t": 25423,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false
+  },
+  "detalhesPagamento": {
+    "titulo": "Fechar Detalhes do pagamento Carlos Eduardo Lima · Campanha de Vendas ",
+    "blocos": 3,
+    "fechamentoPrevistoMs": 970,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 33666,
+      "inicioReal": 33673,
+      "amostras": 3550,
+      "amostrasVisiveis": 3282,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 33677,
+        "opacidade": 0.027569
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 34572,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0306917,
+        "blocoY": 7.92
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 872,
+        "blocoNoLugarMs": 1175,
+        "blocoVisivelMs": 1217
+      }
+    },
+    "fechamento": {
+      "t0": 37032,
+      "inicioReal": 37885,
+      "amostras": 3652,
+      "amostrasVisiveis": 629,
+      "escalaInicial": {
+        "x": 0.985509,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 37032,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1217,
+      "blocoPrimeiro": {
+        "t": 37032,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false
+  },
+  "aprovacao": {
+    "titulo": "Fechar Confirmar Aprovação Adicione um comentário opcional para este e",
+    "blocos": 3,
+    "fechamentoPrevistoMs": 970,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 42117,
+      "inicioReal": 42129,
+      "amostras": 3220,
+      "amostrasVisiveis": 3205,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 42142,
+        "opacidade": 0.0616371
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 43022,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0140367,
+        "blocoY": 7.92
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 864,
+        "blocoNoLugarMs": 1172,
+        "blocoVisivelMs": 1216
+      }
+    },
+    "fechamento": {
+      "t0": 45497,
+      "inicioReal": 46258,
+      "amostras": 3627,
+      "amostrasVisiveis": 677,
+      "escalaInicial": {
+        "x": 0.988682,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 45497,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1127,
+      "blocoPrimeiro": {
+        "t": 45497,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false
+  },
+  "conciliacao": {
+    "titulo": "Fechar Conciliação com a Folha Compare o valor aprovado com o lançamen",
+    "blocos": 3,
+    "fechamentoPrevistoMs": 970,
+    "a11y": {
+      "ariaModal": null,
+      "role": "dialog",
+      "temTitulo": true,
+      "botaoFechar": true
+    },
+    "abertura": {
+      "t0": 52302,
+      "inicioReal": 52315,
+      "amostras": 2919,
+      "amostrasVisiveis": 2844,
+      "escalaInicial": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaFinal": {
+        "x": 1,
+        "y": 1
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 52325,
+        "opacidade": 0.0635796
+      },
+      "tempoAteDesmontarMs": null,
+      "blocoPrimeiro": {
+        "t": 53206,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 0.0173877,
+        "blocoY": 8
+      },
+      "aindaNoFim": true,
+      "assinatura": {
+        "escalaCompletaMs": 868,
+        "blocoNoLugarMs": 1169,
+        "blocoVisivelMs": 1214
+      }
+    },
+    "fechamento": {
+      "t0": 55600,
+      "inicioReal": 56354,
+      "amostras": 3404,
+      "amostrasVisiveis": 625,
+      "escalaInicial": {
+        "x": 0.988682,
+        "y": 0.16
+      },
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": true,
+      "overlayInicio": {
+        "t": 55600,
+        "opacidade": 1
+      },
+      "tempoAteDesmontarMs": 1123,
+      "blocoPrimeiro": {
+        "t": 55600,
+        "presente": true,
+        "quantos": 1,
+        "escala": {
+          "x": 1,
+          "y": 1
+        },
+        "opacidadeCaixa": 1,
+        "overlay": 1,
+        "blocoOpacidade": 1,
+        "blocoY": 0
+      },
+      "aindaNoFim": false,
+      "assinatura": {
+        "escalaCompletaMs": null,
+        "blocoNoLugarMs": null,
+        "blocoVisivelMs": null
+      }
+    },
+    "saidaAindaPresente": false
+  },
+  "comparacao": {
+    "novaCampanha": {
+      "curvas": {
+        "janelaComparadaMs": 1500,
+        "deltaMaxEscalaX": 0.0514,
+        "deltaMaxEscalaY": 0.042,
+        "deltaMaxBlocoOpacidade": 0.0354,
+        "deltaMaxBlocoY": 0.32,
+        "igual": true
+      },
+      "assinatura": {
+        "referencia": {
+          "escalaCompletaMs": 865,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1212
+        },
+        "alvo": {
+          "escalaCompletaMs": 857,
+          "blocoNoLugarMs": 1165,
+          "blocoVisivelMs": 1207
+        },
+        "deltasMs": {
+          "escalaCompletaMs": 8,
+          "blocoNoLugarMs": 7,
+          "blocoVisivelMs": 5
+        },
+        "igual": true
+      },
+      "escalaInicialRef": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaInicialAlvo": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "overlay": {
+        "referencia": {
+          "t": 5013,
+          "opacidade": 0.0655198
+        },
+        "alvo": {
+          "t": 5884,
+          "opacidade": 0.0255778
+        }
+      },
+      "fechamento": {
+        "blocos": 3,
+        "previstoMs": 970,
+        "medidoAteDesmontarMs": 1127,
+        "escalaFinal": {
+          "x": 0,
+          "y": 0
+        },
+        "aindaPresente": false
+      },
+      "a11y": {
+        "ariaModal": null,
+        "role": "dialog",
+        "temTitulo": true,
+        "botaoFechar": true
+      }
+    },
+    "detalhesCampanha": {
+      "curvas": {
+        "janelaComparadaMs": 1500,
+        "deltaMaxEscalaX": 0.0276,
+        "deltaMaxEscalaY": 0.0329,
+        "deltaMaxBlocoOpacidade": 0.0307,
+        "deltaMaxBlocoY": 0.27,
+        "igual": true
+      },
+      "assinatura": {
+        "referencia": {
+          "escalaCompletaMs": 865,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1212
+        },
+        "alvo": {
+          "escalaCompletaMs": 872,
+          "blocoNoLugarMs": 1175,
+          "blocoVisivelMs": 1220
+        },
+        "deltasMs": {
+          "escalaCompletaMs": 7,
+          "blocoNoLugarMs": 3,
+          "blocoVisivelMs": 8
+        },
+        "igual": true
+      },
+      "escalaInicialRef": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaInicialAlvo": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "overlay": {
+        "referencia": {
+          "t": 5013,
+          "opacidade": 0.0655198
+        },
+        "alvo": {
+          "t": 14151,
+          "opacidade": 0.0603408
+        }
+      },
+      "fechamento": {
+        "blocos": 4,
+        "previstoMs": 1070,
+        "medidoAteDesmontarMs": 1206,
+        "escalaFinal": {
+          "x": 0,
+          "y": 0
+        },
+        "aindaPresente": false
+      },
+      "a11y": {
+        "ariaModal": null,
+        "role": "dialog",
+        "temTitulo": true,
+        "botaoFechar": true
+      }
+    },
+    "listaAcoes": {
+      "curvas": {
+        "janelaComparadaMs": 1500,
+        "deltaMaxEscalaX": 0.0187,
+        "deltaMaxEscalaY": 0.0218,
+        "deltaMaxBlocoOpacidade": 0.0176,
+        "deltaMaxBlocoY": 0.19,
+        "igual": true
+      },
+      "assinatura": {
+        "referencia": {
+          "escalaCompletaMs": 865,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1212
+        },
+        "alvo": {
+          "escalaCompletaMs": 870,
+          "blocoNoLugarMs": 1171,
+          "blocoVisivelMs": 1214
+        },
+        "deltasMs": {
+          "escalaCompletaMs": 5,
+          "blocoNoLugarMs": 1,
+          "blocoVisivelMs": 2
+        },
+        "igual": true
+      },
+      "escalaInicialRef": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaInicialAlvo": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "overlay": {
+        "referencia": {
+          "t": 5013,
+          "opacidade": 0.0655198
+        },
+        "alvo": {
+          "t": 22269,
+          "opacidade": 0.0577451
+        }
+      },
+      "fechamento": {
+        "blocos": 6,
+        "previstoMs": 1270,
+        "medidoAteDesmontarMs": 1386,
+        "escalaFinal": {
+          "x": 0,
+          "y": 0
+        },
+        "aindaPresente": false
+      },
+      "a11y": {
+        "ariaModal": null,
+        "role": "dialog",
+        "temTitulo": true,
+        "botaoFechar": true
+      }
+    },
+    "detalhesPagamento": {
+      "curvas": {
+        "janelaComparadaMs": 1500,
+        "deltaMaxEscalaX": 0.045,
+        "deltaMaxEscalaY": 0.0398,
+        "deltaMaxBlocoOpacidade": 0.0302,
+        "deltaMaxBlocoY": 0.34,
+        "igual": true
+      },
+      "assinatura": {
+        "referencia": {
+          "escalaCompletaMs": 865,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1212
+        },
+        "alvo": {
+          "escalaCompletaMs": 872,
+          "blocoNoLugarMs": 1175,
+          "blocoVisivelMs": 1217
+        },
+        "deltasMs": {
+          "escalaCompletaMs": 7,
+          "blocoNoLugarMs": 3,
+          "blocoVisivelMs": 5
+        },
+        "igual": true
+      },
+      "escalaInicialRef": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaInicialAlvo": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "overlay": {
+        "referencia": {
+          "t": 5013,
+          "opacidade": 0.0655198
+        },
+        "alvo": {
+          "t": 33677,
+          "opacidade": 0.027569
+        }
+      },
+      "fechamento": {
+        "blocos": 3,
+        "previstoMs": 970,
+        "medidoAteDesmontarMs": 1217,
+        "escalaFinal": {
+          "x": 0,
+          "y": 0
+        },
+        "aindaPresente": false
+      },
+      "a11y": {
+        "ariaModal": null,
+        "role": "dialog",
+        "temTitulo": true,
+        "botaoFechar": true
+      }
+    },
+    "aprovacao": {
+      "curvas": {
+        "janelaComparadaMs": 1500,
+        "deltaMaxEscalaX": 0.0172,
+        "deltaMaxEscalaY": 0.018,
+        "deltaMaxBlocoOpacidade": 0.0294,
+        "deltaMaxBlocoY": 0.21,
+        "igual": true
+      },
+      "assinatura": {
+        "referencia": {
+          "escalaCompletaMs": 865,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1212
+        },
+        "alvo": {
+          "escalaCompletaMs": 864,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1216
+        },
+        "deltasMs": {
+          "escalaCompletaMs": 1,
+          "blocoNoLugarMs": 0,
+          "blocoVisivelMs": 4
+        },
+        "igual": true
+      },
+      "escalaInicialRef": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaInicialAlvo": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "overlay": {
+        "referencia": {
+          "t": 5013,
+          "opacidade": 0.0655198
+        },
+        "alvo": {
+          "t": 42142,
+          "opacidade": 0.0616371
+        }
+      },
+      "fechamento": {
+        "blocos": 3,
+        "previstoMs": 970,
+        "medidoAteDesmontarMs": 1127,
+        "escalaFinal": {
+          "x": 0,
+          "y": 0
+        },
+        "aindaPresente": false
+      },
+      "a11y": {
+        "ariaModal": null,
+        "role": "dialog",
+        "temTitulo": true,
+        "botaoFechar": true
+      }
+    },
+    "conciliacao": {
+      "curvas": {
+        "janelaComparadaMs": 1500,
+        "deltaMaxEscalaX": 0.0209,
+        "deltaMaxEscalaY": 0.0324,
+        "deltaMaxBlocoOpacidade": 0.0112,
+        "deltaMaxBlocoY": 0.1,
+        "igual": true
+      },
+      "assinatura": {
+        "referencia": {
+          "escalaCompletaMs": 865,
+          "blocoNoLugarMs": 1172,
+          "blocoVisivelMs": 1212
+        },
+        "alvo": {
+          "escalaCompletaMs": 868,
+          "blocoNoLugarMs": 1169,
+          "blocoVisivelMs": 1214
+        },
+        "deltasMs": {
+          "escalaCompletaMs": 3,
+          "blocoNoLugarMs": 3,
+          "blocoVisivelMs": 2
+        },
+        "igual": true
+      },
+      "escalaInicialRef": {
+        "x": 0,
+        "y": 0
+      },
+      "escalaInicialAlvo": {
+        "x": 0,
+        "y": 0
+      },
+      "faseEsticaLargura": {
+        "referencia": true,
+        "alvo": true
+      },
+      "overlay": {
+        "referencia": {
+          "t": 5013,
+          "opacidade": 0.0655198
+        },
+        "alvo": {
+          "t": 52325,
+          "opacidade": 0.0635796
+        }
+      },
+      "fechamento": {
+        "blocos": 3,
+        "previstoMs": 970,
+        "medidoAteDesmontarMs": 1123,
+        "escalaFinal": {
+          "x": 0,
+          "y": 0
+        },
+        "aindaPresente": false
+      },
+      "a11y": {
+        "ariaModal": null,
+        "role": "dialog",
+        "temTitulo": true,
+        "botaoFechar": true
+      }
+    }
+  },
+  "comparacaoFechamento": {
+    "novaCampanha": {
+      "blocos": 3,
+      "previstoMs": 970,
+      "observadoMs": 1127,
+      "extraMs": 157,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true,
+      "igual": true
+    },
+    "detalhesCampanha": {
+      "blocos": 4,
+      "previstoMs": 1070,
+      "observadoMs": 1206,
+      "extraMs": 136,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true,
+      "igual": true
+    },
+    "listaAcoes": {
+      "blocos": 6,
+      "previstoMs": 1270,
+      "observadoMs": 1386,
+      "extraMs": 116,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true,
+      "igual": true
+    },
+    "detalhesPagamento": {
+      "blocos": 3,
+      "previstoMs": 970,
+      "observadoMs": 1217,
+      "extraMs": 247,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true,
+      "igual": true
+    },
+    "aprovacao": {
+      "blocos": 3,
+      "previstoMs": 970,
+      "observadoMs": 1127,
+      "extraMs": 157,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true,
+      "igual": true
+    },
+    "conciliacao": {
+      "blocos": 3,
+      "previstoMs": 970,
+      "observadoMs": 1123,
+      "extraMs": 153,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true,
+      "igual": true
+    },
+    "referencia": {
+      "blocos": 4,
+      "previstoMs": 1070,
+      "observadoMs": 1133,
+      "escalaFinal": {
+        "x": 0,
+        "y": 0
+      },
+      "desmontou": true
+    }
+  },
+  "acessibilidade": {
+    "ariaModal": null,
+    "focoInicialDentro": true,
+    "focusTrap": true,
+    "focoAposFechar": {
+      "tag": "BODY",
+      "texto": "Pular para o conteúdo principal TIME | PROMO BRINDESGestão d"
+    },
+    "focoAposFecharReferencia": {
+      "tag": "BODY",
+      "texto": "Pular para o conteúdo principal TIME | PROMO BRINDESGestão d"
+    },
+    "mesmoRetornoDeFocoQueReferencia": true,
+    "foraCliqueFechou": true
+  },
+  "movimentoReduzido": {
+    "prefereReduzido": true,
+    "escalaMinima": 1,
+    "escalaMaxima": 1,
+    "houveFade": true,
+    "opacidadeFinal": 1,
+    "fechouPeloX": true
+  },
+  "fechamentoPeloX": {
+    "desmontou": true,
+    "escalaFinal": {
+      "x": 0,
+      "y": 0
+    },
+    "tempoAteDesmontarMs": 1118
+  }
+}

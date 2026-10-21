@@ -3,38 +3,33 @@
  * NINE-BOX · MODO DE OPERAÇÃO (demonstração × real) — ATIVAÇÃO CONTROLADA.
  *
  * O design aprovado e os mocks são intencionais e permanecem intactos. Este
- * módulo apenas decide QUAL base alimenta a aba:
+ * módulo decide se as FIXTURES de demonstração são exibidas:
  *
- *   • `demonstracao` (PADRÃO): as listas fictícias de `nineBoxMock`/`desempenhoMock`
- *     continuam sendo usadas exatamente como hoje — nada muda na experiência.
- *   • `real`: somente registros persistidos e ELEGÍVEIS do Supabase, com
- *     `consolidarNineBox360` (metodologia aprovada) e as RPCs de finalização.
+ *   • `demonstracao` (PADRÃO no dev com `VITE_DESEMPENHO_MOCK=true`): a vitrine
+ *     aprovada continua visível e pode conviver com registros REAIS na mesma
+ *     tela (a escolha do serviço é POR REGISTRO: UUID → RPC; mock → local).
+ *   • `real`: as fixtures são desligadas; a aba usa somente registros do banco.
  *
- * ── POR QUE O PADRÃO É `false` ─────────────────────────────────────────────
- * A Fase E depende da migration `20261015090000_ninebox_finalizacao_e_potencial.sql`
- * aplicada (RPCs `finalizar_feedback`/`validar_potencial_avaliacao`, view de
- * versão). Enquanto ela não estiver aplicada e homologada, ligar o modo real
- * exibiria controles que NÃO persistem. Então:
- *   • o padrão é `demonstracao`;
- *   • qualquer tentativa de operar no modo real sem a flag ligada LANÇA ERRO —
- *     nunca simula sucesso de gravação.
+ * ── O QUE A FLAG **NÃO** FAZ ───────────────────────────────────────────────
+ * Ela não decide mais a persistência de um UUID: aprovação/validação de um
+ * registro REAL sempre passam pelas RPCs, mesmo com mocks exibidos ao lado.
+ * `exigirModoReal()` continua disponível como portão explícito para operações
+ * que, no futuro, só façam sentido com a vitrine desligada — mas não é chamado
+ * pelas leituras/escritas reais do fluxo.
  * ============================================================================
  */
 
 /**
- * Interruptor único do modo real — CONTROLADO POR AMBIENTE (local-only).
+ * Interruptor do modo real (desliga as fixtures) — CONTROLADO POR AMBIENTE.
  *
- * Liga SOMENTE quando as três condições valem:
+ * `true` somente quando:
  *   1. `import.meta.env.DEV`             — build de desenvolvimento;
  *   2. `import.meta.env.MODE !== 'test'` — nunca nos testes;
- *   3. `VITE_NINEBOX_MODO_REAL === 'true'` no `.env.local` (arquivo git-ignored).
+ *   3. `VITE_NINEBOX_MODO_REAL === 'true'` no `.env.local` (git-ignored).
  *
- * Em PRODUÇÃO a variável não existe, então o valor é `false` para todos os
- * usuários — o comportamento de hoje é preservado e ninguém liga o modo real
- * "sem querer" por variável de ambiente. O modo demonstração e os mocks
- * continuam intactos (nada é removido; a flag apenas escolhe a origem dos dados).
- * Para ligar no ambiente local de homologação: `VITE_NINEBOX_MODO_REAL=true`
- * no `.env.local` e reiniciar o `vite dev`.
+ * Em produção o valor é `false` (as fixtures também não existem), mas os
+ * registros reais continuam sendo gravados pelas RPCs — a flag não é um gate de
+ * escrita real. Para a vitrine local: `VITE_NINEBOX_MODO_REAL=false`.
  */
 export const NINEBOX_MODO_REAL_ATIVO =
   import.meta.env.DEV && import.meta.env.MODE !== 'test' && import.meta.env.VITE_NINEBOX_MODO_REAL === 'true';

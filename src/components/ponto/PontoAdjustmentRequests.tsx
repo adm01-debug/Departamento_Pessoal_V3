@@ -253,7 +253,7 @@ export function PontoAdjustmentRequests() {
                     </TableCell>
                     <TableCell>{format(parseISO(s.data_ponto), 'dd/MM/yyyy')}</TableCell>
                     <TableCell><Badge variant="outline" className="text-[10px]">{s.tipo_ponto}</Badge></TableCell>
-                    <TableCell className="font-mono text-xs">{s.hora_sugerida?.substring(0, 5)}</TableCell>
+                    <TableCell className="text-numeric text-xs">{s.hora_sugerida?.substring(0, 5)}</TableCell>
                     <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground" title={s.motivo}>{s.motivo}</TableCell>
                     <TableCell>
                       <TooltipProvider>
@@ -349,11 +349,11 @@ export function PontoAdjustmentRequests() {
                     </div>
                     <div className="p-3 rounded-xl border bg-card">
                       <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Hora Original</p>
-                      <p className="font-mono text-sm">{selectedRequest.hora_original || 'Original'}</p>
+                      <p className="text-numeric text-sm">{selectedRequest.hora_original || 'Original'}</p>
                     </div>
                     <div className="p-3 rounded-xl border bg-card">
                       <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Hora Sugerida</p>
-                      <p className="font-mono text-sm text-primary">{selectedRequest.hora_sugerida}</p>
+                      <p className="text-numeric text-sm text-primary">{selectedRequest.hora_sugerida}</p>
                     </div>
                   </div>
                   <div className="p-3 rounded-xl border bg-card">

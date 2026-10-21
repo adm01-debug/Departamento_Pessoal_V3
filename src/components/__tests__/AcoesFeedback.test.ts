@@ -7,9 +7,12 @@
 import { describe, it, expect } from 'vitest';
 import {
   acoesDisponiveis,
+  ehAvaliadorDesignado,
   ehGestorResponsavel,
   exigeJustificativa,
+  perfisOperadorEfetivos,
   perfilOperador,
+  podeConcluirFeedback,
   podeValidarPotencial,
   rotuloStatus,
   situacaoPotencial,
@@ -50,10 +53,13 @@ describe('podeValidarPotencial — exclusivo do RH', () => {
 });
 
 describe('acoesDisponiveis por status e papel', () => {
-  it('pendente + admin/rh: CANCELA, mas NÃO conclui (a conclusão não é do RH)', () => {
-    const acoes = acoesDisponiveis({ statusAtual: 'pendente', papel: 'rh' });
-    expect(acao(acoes, 'concluir').disponivel).toBe(false);
-    expect(acao(acoes, 'concluir').motivoBloqueio).toContain('perfil');
+  it('pendente + admin/rh: CANCELA e, com autorização efetiva, conclui', () => {
+    const semAutorizacao = acoesDisponiveis({ statusAtual: 'pendente', papel: 'rh' });
+    expect(acao(semAutorizacao, 'concluir').disponivel).toBe(false);
+    expect(acao(semAutorizacao, 'concluir').motivoBloqueio).toContain('autorização');
+
+    const acoes = acoesDisponiveis({ statusAtual: 'pendente', papel: 'rh', autorizadoConcluir: true });
+    expect(acao(acoes, 'concluir').disponivel).toBe(true);
     expect(acao(acoes, 'cancelar').disponivel).toBe(true);
     expect(acao(acoes, 'reabrir').disponivel).toBe(false);
     expect(acao(acoes, 'reabrir').motivoBloqueio).toBeTruthy();
@@ -69,17 +75,32 @@ describe('acoesDisponiveis por status e papel', () => {
     expect(acao(gestor, 'reabrir').disponivel).toBe(false);
   });
 
-  it('avaliador (user) NÃO conclui e não cancela', () => {
-    const acoes = acoesDisponiveis({ statusAtual: 'pendente', papel: 'user' });
-    expect(acao(acoes, 'concluir').disponivel).toBe(false);
-    expect(acao(acoes, 'cancelar').disponivel).toBe(false);
-    expect(acao(acoes, 'cancelar').motivoBloqueio).toContain('perfil');
+  it('avaliador (user) designado conclui; sem designação não vê o controle', () => {
+    const designado = acoesDisponiveis({
+      statusAtual: 'pendente',
+      papel: 'user',
+      autorizadoConcluir: true,
+    });
+    expect(acao(designado, 'concluir').disponivel).toBe(true);
+    expect(acao(designado, 'cancelar').disponivel).toBe(false);
+
+    const semDesignacao = acoesDisponiveis({ statusAtual: 'pendente', papel: 'user' });
+    expect(acao(semDesignacao, 'concluir').disponivel).toBe(false);
+    expect(acao(semDesignacao, 'cancelar').disponivel).toBe(false);
   });
 
-  it('gestor SEM o vínculo (responsável) não recebe a conclusão', () => {
-    const semVinculo = acoesDisponiveis({ statusAtual: 'pendente', papel: 'gestor' });
-    expect(acao(semVinculo, 'concluir').disponivel).toBe(false);
-    expect(acao(semVinculo, 'concluir').motivoBloqueio).toContain('gestor responsável');
+  it('gestor SEM supervisor ainda conclui quando é o avaliador designado', () => {
+    const semVinculo = acoesDisponiveis({
+      statusAtual: 'pendente',
+      papel: 'gestor',
+      autorizadoConcluir: true,
+    });
+    expect(acao(semVinculo, 'concluir').disponivel).toBe(true);
+    expect(acao(semVinculo, 'concluir').motivoBloqueio).toBeNull();
+
+    const semAutorizacao = acoesDisponiveis({ statusAtual: 'pendente', papel: 'gestor' });
+    expect(acao(semAutorizacao, 'concluir').disponivel).toBe(false);
+    expect(acao(semAutorizacao, 'concluir').motivoBloqueio).toContain('autorização');
   });
 
   it('gestor RESPONSÁVEL recebe a conclusão quando o estado permite', () => {
@@ -105,6 +126,100 @@ describe('acoesDisponiveis por status e papel', () => {
     expect(acao(acoes, 'cancelar').destrutiva).toBe(true);
     expect(exigeJustificativa('reabrir')).toBe(true);
     expect(exigeJustificativa('concluir')).toBe(false);
+  });
+});
+
+describe('conclusão — autorização do REGISTRO, não do tipo', () => {
+  const usuarioId = 'u-1';
+  const vinculos = [
+    { id: 'c-gestor', user_id: 'u-1', supervisor_id: 'c-diretor' },
+    { id: 'c-equipe', user_id: 'u-9', supervisor_id: 'c-gestor' },
+    { id: 'c-par', user_id: 'u-2', supervisor_id: 'c-outro' },
+  ];
+
+  it('avaliador designado conclui mesmo SEM supervisor atribuído', () => {
+    expect(
+      podeConcluirFeedback({
+        papeis: ['gestor'],
+        avaliadorId: 'c-gestor',
+        vinculos,
+        usuarioId,
+        responsavel: false,
+      })
+    ).toBe(true);
+    // O tipo não participa da decisão: o mesmo avaliador vale para Par/Auto/etc.
+    expect(ehAvaliadorDesignado({ avaliadorId: 'c-gestor', vinculos, usuarioId })).toBe(true);
+  });
+
+  it('gestor responsável conclui pelo vínculo de supervisão', () => {
+    expect(
+      podeConcluirFeedback({
+        papeis: ['gestor'],
+        avaliadorId: 'c-equipe',
+        vinculos,
+        usuarioId,
+        responsavel: true,
+      })
+    ).toBe(true);
+  });
+
+  it('RH/admin conclui pela capacidade administrativa', () => {
+    expect(
+      podeConcluirFeedback({
+        papeis: ['rh'],
+        avaliadorId: 'c-outro',
+        vinculos,
+        usuarioId,
+        responsavel: false,
+      })
+    ).toBe(true);
+    expect(
+      podeConcluirFeedback({
+        papeis: ['admin'],
+        avaliadorId: 'c-outro',
+        vinculos,
+        usuarioId,
+      })
+    ).toBe(true);
+  });
+
+  it('ser supervisor sem o papel gestor NÃO basta para concluir', () => {
+    expect(
+      podeConcluirFeedback({
+        papeis: ['user'],
+        avaliadorId: 'c-outro',
+        vinculos,
+        usuarioId,
+        responsavel: true,
+      })
+    ).toBe(false);
+  });
+
+  it('sem designação, sem vínculo e sem papel administrativo NÃO conclui', () => {
+    expect(
+      podeConcluirFeedback({
+        papeis: ['gestor'],
+        avaliadorId: 'c-par',
+        vinculos,
+        usuarioId,
+        responsavel: false,
+      })
+    ).toBe(false);
+    expect(
+      podeConcluirFeedback({
+        papeis: ['user'],
+        avaliadorId: 'c-par',
+        vinculos,
+        usuarioId,
+        responsavel: false,
+      })
+    ).toBe(false);
+  });
+
+  it('perfis efetivos mantêm gestor + admin/rh sem exigir supervisor', () => {
+    expect(perfisOperadorEfetivos(['admin', 'gestor'], false)).toEqual(['admin_rh', 'gestor']);
+    expect(perfisOperadorEfetivos(['gestor'], false)).toEqual(['gestor']);
+    expect(perfisOperadorEfetivos(['user'], false)).toEqual(['avaliador']);
   });
 });
 

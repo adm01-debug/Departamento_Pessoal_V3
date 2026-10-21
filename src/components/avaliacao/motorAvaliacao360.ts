@@ -176,6 +176,7 @@ export type MotivoNaoClassificado360 =
   | 'gestor_pendente'
   | 'gestor_sem_desempenho'
   | 'gestor_sem_potencial'
+  | 'aprovacao_sem_valores'
   | 'potencial_sem_validacao'
   | 'aprovacao_pendente'
   | 'aprovacao_devolvida'
@@ -213,6 +214,15 @@ export interface EntradaConsolidacao360 {
   /** Versão atual da avaliação do gestor (para validar a aprovação). */
   versaoGestor?: string | null;
   substituicaoDeConcluida?: boolean;
+  /**
+   * Snapshot APROVADO do conjunto (consolidação × ciclo). Quando `true`, o
+   * motor usa `desempenhoAprovado`/`potencialAprovado` como fonte oficial e
+   * NÃO exige validação posterior do RH. O chamador é responsável por provar
+   * que a decisão do gestor está vigente.
+   */
+  aprovado?: boolean;
+  desempenhoAprovado?: number | null;
+  potencialAprovado?: number | null;
 }
 
 /**
@@ -220,9 +230,11 @@ export interface EntradaConsolidacao360 {
  *
  * Ordem das verificações (todas obrigatórias, na ordem do documento):
  *   colaborador → ciclo → GESTOR (presença, status, nota) → desempenho ponderado
- *   → potencial do gestor → validação do RH da versão exata → quadrante.
- * Sem qualquer etapa, devolve `classificavel: false` com o MOTIVO — nunca uma
- * classificação aproximada e nunca redistribuindo os 60% do gestor.
+ *   → potencial do gestor → quadrante.
+ * Quando a avaliação já foi APROVADA pelo gestor, o snapshot aprovado
+ * (Desempenho + Potencial confirmados) é a fonte oficial e dispensa uma nova
+ * validação do RH. Sem qualquer etapa, devolve `classificavel: false` com o
+ * MOTIVO — nunca uma classificação aproximada e nunca redistribuindo os 60%.
  */
 export function consolidar360({
   empresaId,
@@ -234,6 +246,9 @@ export function consolidar360({
   validacaoPotencial = null,
   versaoGestor = null,
   substituicaoDeConcluida = false,
+  aprovado = false,
+  desempenhoAprovado = null,
+  potencialAprovado = null,
 }: EntradaConsolidacao360): Consolidacao360 {
   const base = {
     empresaId,
@@ -256,6 +271,36 @@ export function consolidar360({
 
   if (!colaboradorId) return recusar('sem_colaborador');
   if (!cicloId) return recusar('sem_ciclo');
+
+  /**
+   * (0) SNAPSHOT APROVADO — a decisão do gestor confirma Desempenho e Potencial.
+   * É a fonte oficial do fluxo novo: não existe validação posterior do RH.
+   * O snapshot só é usado quando o chamador já provou a aprovação vigente.
+   */
+  if (aprovado) {
+    const desempenhoAprovadoNum = Number(desempenhoAprovado);
+    const potencialAprovadoNum = Number(potencialAprovado);
+    const snapshotValido =
+      desempenhoAprovado !== null &&
+      desempenhoAprovado !== undefined &&
+      potencialAprovado !== null &&
+      potencialAprovado !== undefined &&
+      Number.isFinite(desempenhoAprovadoNum) &&
+      Number.isFinite(potencialAprovadoNum) &&
+      desempenhoAprovadoNum >= 1 &&
+      desempenhoAprovadoNum <= 5 &&
+      potencialAprovadoNum >= 1 &&
+      potencialAprovadoNum <= 5;
+    if (!snapshotValido) return recusar('aprovacao_sem_valores');
+    return {
+      ...base,
+      desempenho: desempenhoAprovadoNum,
+      potencial: potencialAprovadoNum,
+      classificavel: true,
+      motivo: null,
+      quadrante: `${classifyScore(desempenhoAprovadoNum)}-${classifyScore(potencialAprovadoNum)}` as QuadranteKey,
+    };
+  }
 
   // (1) Gestor OBRIGATÓRIO — presença, escala e status concluído.
   const notaGestor = notas.gestor;
@@ -297,18 +342,8 @@ export function consolidar360({
     potencialNum <= 5;
   if (!temPotencial) return { ...recusar('gestor_sem_potencial'), ...comDesempenho };
 
-  // (4) Validação do RH vinculada à versão EXATA da avaliação do gestor.
-  const aplicavel = validacaoAplicavel(validacaoPotencial, {
-    versaoAvaliacao: versaoGestor ?? '',
-    empresaId,
-    cicloId,
-    colaboradorId,
-  });
-  if (!aplicavel) {
-    return { ...recusar('potencial_sem_validacao'), ...comDesempenho, potencial: potencialNum };
-  }
-
-  // (5) Classificação determinística (limiares preservados).
+  // (4) Classificação determinística (limiares preservados). A aprovação do
+  // gestor é a decisão final do fluxo: não há nova validação do RH.
   const quadrante = `${classifyScore(desempenho)}-${classifyScore(potencialNum)}` as QuadranteKey;
   return {
     ...base,
@@ -331,7 +366,8 @@ export const MOTIVO_NAO_CLASSIFICADO_360: Readonly<Record<MotivoNaoClassificado3
   gestor_pendente: 'Avaliação do gestor ainda não concluída.',
   gestor_sem_desempenho: 'Avaliação do gestor sem nota de desempenho válida.',
   gestor_sem_potencial: 'Avaliação do gestor sem nota de potencial.',
-  potencial_sem_validacao: 'Potencial aguardando validação do RH.',
+  aprovacao_sem_valores: 'Aprovação sem Desempenho e Potencial válidos.',
+  potencial_sem_validacao: 'Potencial aguardando validação do RH (fluxo legado).',
   aprovacao_pendente: 'Aguardando aprovação do gestor.',
   aprovacao_devolvida: 'Avaliação devolvida para correção pelo gestor.',
   sem_notas_disponiveis: 'Nenhuma nota elegível para o cálculo.',

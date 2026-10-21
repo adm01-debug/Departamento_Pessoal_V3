@@ -1,0 +1,83 @@
+{
+  "quando": "2026-10-20T17:33:50.497Z",
+  "conta": "admin@teste.local",
+  "passos": {
+    "criacao_avaliacao_gestor": {
+      "colaborador": "Gustavo Henrique Alves",
+      "ciclo": "Ciclo Anual 2025",
+      "gestor": "Mariana Oliveira",
+      "aprovacaoBloqueadaSemConclusao": true,
+      "motivo": "Falta Desempenho e Potencial válidos na avaliação consolidada para este colaborador e ciclo."
+    },
+    "criacao_nao_classifica": {
+      "nomeVisivel": true,
+      "quadranteOficial": false,
+      "motivo": "aprovação do gestor pendente"
+    },
+    "conclusao_avaliacao_gestor": {
+      "status": "concluida",
+      "aprovacaoLiberada": true
+    },
+    "aprovacao_gestor": {
+      "status": "Aprovada pelo gestor",
+      "chaveLocal": "mock-4::mock-ciclo-1",
+      "versao": "demo:4b40dfa3:1"
+    },
+    "classificacao_apos_aprovacao": {
+      "quadrante": "Core Player",
+      "nomePresente": true,
+      "validacaoRhExigida": false
+    },
+    "persistencia_f5": {
+      "quadrante": "Core Player",
+      "nomePresente": true
+    },
+    "isolamento_ciclos_leitura": {
+      "ciclo": "Ciclo S1 2026",
+      "gustavoAusente": true
+    },
+    "segundo_ciclo": {
+      "ciclo": "Ciclo S1 2026",
+      "colaborador": "Fernanda Costa Ribeiro",
+      "quadrante": "Estrela",
+      "chavesDistintas": [
+        "mock-4::mock-ciclo-1",
+        "mock-3::mock-ciclo-2"
+      ]
+    },
+    "reabertura_invalida": {
+      "fernandaNoQuadrante": false,
+      "aprovacaoInvalidada": true
+    },
+    "rbac_rh_nao_aprova": {
+      "aprovarDesabilitado": true,
+      "devolverDesabilitado": true
+    },
+    "rbac_user_sem_controle": {
+      "botoesAprovar": 0
+    }
+  },
+  "evidencias": {
+    "antes": {
+      "cardsGustavo": 0,
+      "ciclo": "Ciclo Anual 2025"
+    },
+    "escritasNoBanco": [],
+    "outrasRequisicoes": [
+      "POST http://localhost:8080/functions/v1/auth-login",
+      "POST https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/rpc/get_user_roles",
+      "POST http://localhost:8080/functions/v1/external-db-bridge",
+      "POST https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/rpc/get_user_roles",
+      "POST https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/rpc/get_user_roles",
+      "POST http://localhost:8080/functions/v1/metricas",
+      "POST http://localhost:8080/functions/v1/external-db-bridge",
+      "POST https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/rpc/get_user_roles",
+      "POST https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/rpc/get_user_roles",
+      "POST http://localhost:8080/functions/v1/metricas"
+    ],
+    "cards": {
+      "gustavo": "GA Gustavo Henrique Alves Vendedor Externo · Comercial Ciclo Anual 2025 CONCLUÍDO Sem texto registrado. GESTOR RESPONSÁVEL MO Mariana Oliveira AVALIADO POR NI Não informado GESTOR Enviado 20/10/2026 DESEMPENHO 3,0 BOM POTENCIAL 2,0 BOM APROVADA PELO GESTOR Ver avaliação Devolver para correção Aprovar avaliação",
+      "fernanda": "FR Fernanda Costa Ribeiro Coordenadora Financeira · Financeiro Ciclo S1 2026 CONCLUÍDO Fortes: Visão financeira estratégica. Melhoria: Descentralizar decisões operacionais. Comentários: Destaque do semestre na área financeira. GESTOR RESPONSÁVEL MO Mariana Oliveira AVALIADO POR MO Mariana Oliveira GESTOR Enviado 22/06/2026 DESEMPENHO 5,0 EXCELENTE POTENCIAL 5,0 EXCELENTE AGUARDANDO GESTOR Ver avaliação Devolver para correção Aprovar avaliação"
+    }
+  }
+}

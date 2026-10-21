@@ -52,9 +52,9 @@ export default function BancoHorasPage() {
                     <TableCell className="font-medium">{(r as any).colaborador?.nome_completo || '—'}</TableCell>
                     <TableCell>{r.data}</TableCell>
                     <TableCell>{r.tipo === 'credito' ? <Badge className="bg-success/20 text-success"><TrendingUp className="h-3 w-3 mr-1" />Crédito</Badge> : <Badge variant="destructive"><TrendingDown className="h-3 w-3 mr-1" />Débito</Badge>}</TableCell>
-                    <TableCell className="font-mono">{r.horas}</TableCell>
-                    <TableCell className="font-mono text-muted-foreground">{r.saldo_anterior || '—'}</TableCell>
-                    <TableCell className="font-mono">{r.saldo_atual || '—'}</TableCell>
+                    <TableCell className="text-numeric">{r.horas}</TableCell>
+                    <TableCell className="text-numeric text-muted-foreground">{r.saldo_anterior || '—'}</TableCell>
+                    <TableCell className="text-numeric">{r.saldo_atual || '—'}</TableCell>
                     <TableCell className="max-w-[200px] truncate text-sm">{r.motivo || '—'}</TableCell>
                   </TableRow>
                 ))

@@ -21,6 +21,7 @@
 import type { ServicoAcoes } from './FeedbackAcoesRodape';
 import { atualizarRegistroDemo, lerRegistrosDemo, patchDe } from './desempenhoDemoStore';
 import { chaveLocal, lerEstadoLocal, validacoesLocais, validarPotencialLocal } from './aprovacaoLocal';
+import { feedbackDoGestor, versaoValidacaoDemo } from './aprovacaoGestor';
 
 /** Gestor de referência da vitrine (avaliador dos mocks de `desempenhoMock`). */
 export const GESTOR_DEMO_ID = 'mock-13';
@@ -36,6 +37,31 @@ export interface ContextoServicoDemo {
   feedbacks?: Record<string, unknown>[];
   /** Ids dos colaboradores visíveis (cenário de vínculos da demonstração). */
   colaboradoresIds?: string[];
+}
+
+/**
+ * CENÁRIO DE VÍNCULOS DA VITRINE — a MESMA identidade usada pelo rodapé e pela
+ * fila. O operador é o gestor de referência (`mock-13`) RESPONSÁVEL por todos os
+ * colaboradores visíveis, de modo que a fila resolva "Gestor responsável" e o
+ * vínculo (`supervisor_id` → `user_id`) exatamente como no modo real.
+ *
+ * Nada aqui toca o banco: é apenas a leitura fictícia de `colaboradores`.
+ */
+export function vinculosDemonstracao({
+  usuarioId,
+  colaboradoresIds = [],
+}: {
+  usuarioId: string | null;
+  colaboradoresIds?: string[];
+}): { id: string; user_id: string | null; supervisor_id: string | null }[] {
+  const eu = String(usuarioId ?? '').trim();
+  return [
+    { id: GESTOR_DEMO_ID, user_id: eu || null, supervisor_id: null },
+    ...colaboradoresIds
+      .map((id) => String(id ?? '').trim())
+      .filter((id) => Boolean(id) && id !== GESTOR_DEMO_ID)
+      .map((id) => ({ id, user_id: null, supervisor_id: GESTOR_DEMO_ID })),
+  ];
 }
 
 const texto = (v: unknown) => String(v ?? '').trim();
@@ -83,16 +109,31 @@ export function criarServicoDemo(contexto: ContextoServicoDemo): ServicoAcoes {
       const alvo = contexto.feedbackDe?.(params.feedbackId) ?? null;
       const colaboradorId = texto(alvo?.avaliado_id);
       const cicloId = texto(alvo?.ciclo_id);
-      /* A validação é da VERSÃO APROVADA (a mesma âncora da decisão do gestor),
-         não da versão isolada de um registro. Sem isso o `validarPotencialLocal`
-         recusaria por `versao_divergente` e o Nine-Box nunca classificaria. */
+      const alvoId = texto(params.feedbackId);
       const decisaoLocal = lerEstadoLocal().decisoes[chaveLocal(colaboradorId, cicloId)] ?? null;
-      const versao = decisaoLocal?.versaoAvaliacao || versaoDe(params.feedbackId);
+
+      /**
+       * A validação é ancorada na versão da AVALIAÇÃO DO GESTOR — a MESMA da
+       * decisão de versão? NÃO: a decisão usa a versão do CONJUNTO e a validação
+       * usa a versão canônica do feedback do gestor (`versao_avaliacao_feedback`),
+       * exatamente como `validar_potencial_avaliacao` e o motor do Nine-Box.
+       */
+      const grupo = (contexto.feedbacks ?? []).filter(
+        (f) => texto(f?.avaliado_id) === colaboradorId && texto(f?.ciclo_id) === cicloId
+      );
+      const gestor = feedbackDoGestor(grupo);
+      const versaoValidacao = versaoValidacaoDemo(grupo);
+      if (!gestor || texto(gestor.status).toLowerCase() !== 'concluido' || !versaoValidacao) {
+        throw new Error(
+          'O Potencial só pode ser validado com a avaliação do Gestor (obrigatória) concluída para este ciclo.'
+        );
+      }
 
       const { resultado } = validarPotencialLocal({
         colaboradorId,
         cicloId,
-        versaoAvaliacao: versao,
+        versaoAvaliacao: decisaoLocal?.versaoAvaliacao || '',
+        versaoValidacao,
         por,
         observacao: params.observacao ?? 'Validação registrada na demonstração',
       });
@@ -100,7 +141,7 @@ export function criarServicoDemo(contexto: ContextoServicoDemo): ServicoAcoes {
 
       atualizarRegistroDemo(
         'feedbacks',
-        params.feedbackId,
+        alvoId || params.feedbackId,
         { validado_em: new Date().toISOString(), validado_por: por },
         { por, operacao: 'validar_potencial', descricao: 'Potencial validado na demonstração' }
       );
@@ -108,7 +149,7 @@ export function criarServicoDemo(contexto: ContextoServicoDemo): ServicoAcoes {
       return {
         ok: true,
         validacao_id: `demo-validacao-${Date.now().toString(36)}`,
-        versao_avaliacao: versao,
+        versao_avaliacao: versaoValidacao,
         potencial_validado: alvo?.potencial ?? null,
         idempotente: false,
       };
@@ -142,12 +183,10 @@ export function criarServicoDemo(contexto: ContextoServicoDemo): ServicoAcoes {
      * banco: o modo real continua lendo `colaboradores` do Supabase.
      */
     async listarVinculos(_empresaId: string) {
-      const eu = texto(contexto.usuarioId);
-      const ids = (contexto.colaboradoresIds ?? []).filter(Boolean);
-      return [
-        { id: GESTOR_DEMO_ID, user_id: eu || null, supervisor_id: null },
-        ...ids.map((id) => ({ id, user_id: null, supervisor_id: GESTOR_DEMO_ID })),
-      ];
+      return vinculosDemonstracao({
+        usuarioId: contexto.usuarioId,
+        colaboradoresIds: contexto.colaboradoresIds ?? [],
+      });
     },
 
     async decidirAprovacaoGestor(params: {

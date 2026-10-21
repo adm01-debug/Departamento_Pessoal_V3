@@ -131,10 +131,10 @@ export function PainelAuditoriaRoi({
                   <td className="p-4">
                     <Badge variant="outline" className="text-[9px] font-medium border-border/50">{p.campanha?.nome}</Badge>
                   </td>
-                  <td className="p-4 font-mono font-medium text-xs">
+                  <td className="text-numeric p-4 font-medium text-xs">
                     {formatCurrency(Number(p.valor_aprovado || p.valor_calculado || 0))}
                   </td>
-                  <td className="p-4 font-mono font-medium text-xs text-muted-foreground">
+                  <td className="text-numeric p-4 font-medium text-xs text-muted-foreground">
                     {p.valor_folha_real ? formatCurrency(Number(p.valor_folha_real)) : '—'}
                   </td>
                   <td className="p-4">

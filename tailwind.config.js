@@ -14,8 +14,19 @@ export default {
         page: 'var(--space-page)',
       },
       fontFamily: {
+        // ─── FONTE OFICIAL DO DESIGN SYSTEM (não trocar sem autorização) ───
+        // `display`/`body` são o par aprovado nas telas: Plus Jakarta Sans nos
+        // valores/títulos de conteúdo e Outfit no shell/títulos. Os nomes seguem
+        // o contrato histórico do projeto — mexer neles inverteria a família em
+        // ~1.700 usos e mudaria a identidade visual aprovada.
         display: ['"Plus Jakarta Sans"', 'sans-serif'],
         body: ['"Outfit"', 'sans-serif'],
+        // `sans` explícito: sem ele, `font-sans` cairia no stack do navegador
+        // (system-ui) e criaria uma identidade tipográfica paralela.
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        // Monoespaçado SÓ para conteúdo técnico (hashes, códigos, JSON, logs,
+        // atalhos). É a fonte já carregada no index.html; não é família de UI.
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',

@@ -131,7 +131,7 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
                   <TableCell className="text-xs text-muted-foreground">{l.cargo_nome}</TableCell>
                   <TableCell><Badge variant="outline" className="text-[10px]">{l.grade_nome}</Badge></TableCell>
                   <TableCell className="text-right text-sm">{brl(l.salario_atual)}</TableCell>
-                  <TableCell className="text-right font-mono text-[11px] text-muted-foreground">
+                  <TableCell className="text-numeric text-right text-[11px] text-muted-foreground">
                     {brl(l.salario_min)} – {brl(l.salario_max)}
                   </TableCell>
                   <TableCell className="text-right text-sm">{Number(l.comparatio).toLocaleString('pt-BR')}</TableCell>

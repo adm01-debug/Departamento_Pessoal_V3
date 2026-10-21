@@ -1,0 +1,34 @@
+{
+  "quando": "2026-10-20T19:42:30.492Z",
+  "passos": {
+    "lixeira_no_hover": {
+      "opacidade": "1",
+      "screenshot": "tmp-integracao-ninebox/lixeira-seletor.png"
+    },
+    "clique_nao_seleciona": {
+      "antes": "TESTE LIXEIRA REAL 1792525351810 31/12/2026 - 29/06/2027",
+      "depois": "TESTE LIXEIRA REAL 1792525351810 31/12/2026 - 29/06/2027",
+      "dialogo": "Excluir ciclo Tem certeza que deseja excluir TESTE LIXEIRA REAL 1792525351810? Ciclos com avaliações, aprovações, metas,"
+    },
+    "exclusao_real_confirmada": {
+      "id": "e9704904-fdad-4190-b9ff-82e6948ca203"
+    },
+    "lixeira_de_outro_ciclo_nao_seleciona": {
+      "antes": "Ciclo S2 2026 (demonstração) 01/07/2026 - 30/12/2026",
+      "depois": "Ciclo S2 2026 (demonstração) 01/07/2026 - 30/12/2026"
+    },
+    "teclado_abre_confirmacao": {
+      "tabIndex": "0",
+      "dialogo": "Ocultar ciclo demonstrativo"
+    },
+    "demo_ocultado_e_persistente": {
+      "nome": "Ciclo Anual 2025 (demonstração)"
+    },
+    "dependencia_bloqueia_exclusao": {
+      "id": "b8f3f36f-b28c-43bb-9c51-a100dd9ccbf1"
+    },
+    "perfil_sem_permissao_sem_lixeira": {
+      "lixeiras": 0
+    }
+  }
+}

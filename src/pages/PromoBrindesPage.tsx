@@ -219,7 +219,7 @@ export default function PromoBrindesPage() {
                         </div>
                       </TableCell>
                       <TableCell>{item.categoria || 'Geral'}</TableCell>
-                      <TableCell className="text-right font-mono">
+                      <TableCell className="text-numeric text-right">
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.preco || 0)}
                       </TableCell>
                       <TableCell className="text-center">

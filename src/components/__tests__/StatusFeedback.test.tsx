@@ -53,16 +53,15 @@ describe('status — transições permitidas e proibidas', () => {
   const t = (statusAtual: unknown, acao: any, perfil: PerfilOperador) =>
     validarTransicao({ statusAtual, acao, perfil });
 
-  it('pendente → concluído é EXCLUSIVO do gestor (admin/RH e avaliador não concluem)', () => {
-    const gestor = t('pendente', 'concluir', 'gestor');
-    expect(gestor.permitido).toBe(true);
-    expect(gestor.para).toBe('concluido');
-
-    (['admin_rh', 'avaliador', 'desconhecido'] as PerfilOperador[]).forEach((perfil) => {
+  it('pendente → concluído é oferecido a gestor, RH/admin e avaliador designado', () => {
+    for (const perfil of ['gestor', 'admin_rh', 'avaliador'] as PerfilOperador[]) {
       const r = t('pendente', 'concluir', perfil);
-      expect(r.permitido).toBe(false);
-      expect(r.para).toBeNull();
-    });
+      expect(r.permitido).toBe(true);
+      expect(r.para).toBe('concluido');
+    }
+    const desconhecido = t('pendente', 'concluir', 'desconhecido');
+    expect(desconhecido.permitido).toBe(false);
+    expect(desconhecido.para).toBeNull();
   });
 
   it('TODA resposta exige validação no backend (autorização não é do frontend)', () => {

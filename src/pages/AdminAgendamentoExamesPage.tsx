@@ -269,7 +269,7 @@ export default function AdminAgendamentoExamesPage() {
                               </TableCell>
                               <TableCell className="px-2 py-1.5 text-[12.5px]">{c.cidade}/{c.uf}</TableCell>
                               <TableCell className="px-2 py-1.5 text-[12.5px]">{c.sla_medio_min ? `${c.sla_medio_min} min` : '—'}</TableCell>
-                              <TableCell className="px-2 py-1.5 text-[12.5px] text-right font-mono">{c.distancia_km} km</TableCell>
+                              <TableCell className="text-numeric px-2 py-1.5 text-[12.5px] text-right">{c.distancia_km} km</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
@@ -324,7 +324,7 @@ export default function AdminAgendamentoExamesPage() {
                       </TableCell>
                       <TableCell><Badge variant="outline">{TIPOS_EXAME.find(t => t.v === a.tipo_exame)?.l ?? a.tipo_exame}</Badge></TableCell>
                       <TableCell>{new Date(a.data_agendada).toLocaleString('pt-BR')}</TableCell>
-                      <TableCell className="font-mono">{a.distancia_km ? `${a.distancia_km} km` : '—'}</TableCell>
+                      <TableCell className="text-numeric">{a.distancia_km ? `${a.distancia_km} km` : '—'}</TableCell>
                       <TableCell><Badge variant={statusColor(a.status) as any}>{a.status}</Badge></TableCell>
                     </TableRow>
                   ))}

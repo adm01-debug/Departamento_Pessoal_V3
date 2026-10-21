@@ -193,7 +193,7 @@ export default function VinculosPromoPage() {
                           <span>{v.promo_brindes?.nome}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-center font-mono">
+                      <TableCell className="text-numeric text-center">
                         {v.quantidade_alocada}
                       </TableCell>
                       <TableCell className="text-right">

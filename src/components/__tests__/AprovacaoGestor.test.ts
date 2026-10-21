@@ -88,7 +88,7 @@ describe('situacaoAprovacao — espelho da função SQL', () => {
     );
   });
 
-  it('decisão vigente PREVALECE sobre a ausência de vínculo (sem_gestor não é terminal)', () => {
+  it('decisão SEM gestor identificado NÃO é aprovação (sem_gestor prevalece)', () => {
     expect(
       situacaoAprovacao({
         versaoGestor: 'v1',
@@ -96,7 +96,18 @@ describe('situacaoAprovacao — espelho da função SQL', () => {
         validada: false,
         gestorIdentificado: false,
       })
-    ).toBe('aprovada_gestor');
+    ).toBe('sem_gestor');
+  });
+
+  it('decisão SEM a avaliação do GESTOR concluída NÃO é aprovação', () => {
+    expect(
+      situacaoAprovacao({
+        versaoGestor: 'v1',
+        decisao: decisao('aprovado', 'v1'),
+        validada: false,
+        avaliacaoGestorValida: false,
+      })
+    ).toBe('aguardando_gestor');
   });
 
   it('SEM vínculo e SEM decisão ⇒ sem_gestor (pendência de ATRIBUIÇÃO, não de aprovação)', () => {
@@ -176,7 +187,7 @@ describe('derivarPendencias — fila de aprovação', () => {
     });
   });
 
-  it('a pendência APARECE sem a avaliação do gestor e a decisão CONTINUA disponível', () => {
+  it('a pendência APARECE sem a avaliação do gestor, mas a decisão fica BLOQUEADA', () => {
     const pendencias = derivarPendencias({
       ...base,
       feedbacks: [{ ...FEEDBACK_GESTOR, status: 'pendente' }],
@@ -184,13 +195,13 @@ describe('derivarPendencias — fila de aprovação', () => {
     expect(pendencias).toHaveLength(1);
     expect(pendencias[0].status).toBe('aguardando_gestor');
     expect(pendencias[0].avaliacaoGestorValida).toBe(false);
-    // A falta da avaliação do gestor é INFORMATIVA — não bloqueia a aprovação.
-    expect(pendencias[0].motivoBloqueioAprovacao).toBeNull();
-    expect(pendencias[0].estado.aprovacaoPermitida).toBe(true);
-    expect(pendencias[0].estado.podeDecidir).toBe(true);
+    // A falta de Desempenho/Potencial válidos é REQUISITO da aprovação.
+    expect(pendencias[0].motivoBloqueioAprovacao).toMatch(/Desempenho e Potencial/i);
+    expect(pendencias[0].estado.aprovacaoPermitida).toBe(false);
+    expect(pendencias[0].estado.podeDecidir).toBe(false);
   });
 
-  it('PAR concluído SEM gestor vinculado: a pendência aparece e RH/admin pode decidir', () => {
+  it('PAR concluído SEM gestor vinculado: a pendência aparece e a aprovação é BLOQUEADA', () => {
     const par = { ...FEEDBACK_GESTOR, id: 'fb-par-1', tipo: 'par', avaliador_id: 'c-2', status: 'concluido' };
     const pendencias = derivarPendencias({
       ...base,
@@ -206,10 +217,11 @@ describe('derivarPendencias — fila de aprovação', () => {
     expect(pendencias).toHaveLength(1);
     expect(pendencias[0].status).toBe('sem_gestor');
     expect(pendencias[0].gestorResponsavel).toBe('Não identificado');
-    expect(pendencias[0].avaliacaoGestorValida).toBe(false);
-    expect(pendencias[0].motivoBloqueioAprovacao).toBeNull();
+    expect(pendencias[0].avaliacaoGestorValida).toBe(true); // proposta tem os dois valores
+    expect(pendencias[0].motivoBloqueioAprovacao).toMatch(/Gestor responsável não atribuído/i);
     expect(pendencias[0].estado.pendente).toBe(true);
-    expect(pendencias[0].estado.podeDecidir).toBe(true);
+    expect(pendencias[0].estado.podeDecidir).toBe(false);
+    expect(pendencias[0].estado.aprovacaoPermitida).toBe(false);
   });
 
   it('PAR sem gestor vinculado + gestor fora de escopo: bloqueado com motivo (não inventa vínculo)', () => {
@@ -226,10 +238,10 @@ describe('derivarPendencias — fila de aprovação', () => {
 
     expect(pendencias[0].status).toBe('sem_gestor');
     expect(pendencias[0].estado.podeDecidir).toBe(false);
-    expect(pendencias[0].motivoBloqueioAprovacao).toMatch(/RH\/admin/);
+    expect(pendencias[0].motivoBloqueioAprovacao).toMatch(/Gestor responsável não atribuído/i);
   });
 
-  it('RH/admin decide também COM gestor vinculado (escopo de tenant)', () => {
+  it('RH/admin NÃO decidem mesmo COM gestor vinculado (a aprovação é do gestor)', () => {
     const pendencias = derivarPendencias({
       ...base,
       modo: 'real',
@@ -245,7 +257,8 @@ describe('derivarPendencias — fila de aprovação', () => {
 
     expect(pendencias[0].status).toBe('aguardando_gestor');
     expect(pendencias[0].gestorResponsavel).toBe('Bruno Lima');
-    expect(pendencias[0].estado.podeDecidir).toBe(true);
+    // A conta não é o gestor vinculado: o servidor recusa `perfil_nao_autorizado`.
+    expect(pendencias[0].estado.podeDecidir).toBe(false);
   });
 
   it('gestor vinculado a OUTRO colaborador não decide (fora de escopo)', () => {
@@ -267,7 +280,7 @@ describe('derivarPendencias — fila de aprovação', () => {
     expect(pendencias[0].estado.podeDecidir).toBe(false);
   });
 
-  it('decisão em consolidação SEM gestor é reconhecida (aprovada_gestor) e libera o RH', () => {
+  it('decisão SEM gestor e SEM avaliação do gestor NÃO libera o RH', () => {
     const par = { ...FEEDBACK_GESTOR, id: 'fb-par-1', tipo: 'par', status: 'concluido' };
     const versao = versaoConsolidadaDemo([par]);
     expect(versao).toBeTruthy();
@@ -289,9 +302,11 @@ describe('derivarPendencias — fila de aprovação', () => {
       ],
     });
 
-    expect(pendencias[0].status).toBe('aprovada_gestor');
-    expect(pendencias[0].estado.podeValidarPotencial).toBe(true);
-    expect(pendencias[0].estado.aprovacaoPermitida).toBe(false); // não repete a decisão
+    // A decisão histórica não é aprovação válida: sem gestor e sem avaliação
+    // obrigatória, o RH NÃO recebe o Potencial para validar.
+    expect(pendencias[0].status).toBe('sem_gestor');
+    expect(pendencias[0].estado.podeValidarPotencial).toBe(false);
+    expect(pendencias[0].estado.aprovacaoPermitida).toBe(false);
   });
 
   it('decisão de outra versão é INVALIDADA e a linha volta a aguardar o gestor', () => {
@@ -325,6 +340,182 @@ describe('derivarPendencias — fila de aprovação', () => {
     expect(pendencias[0].quadrante).toBe('Alto potencial');
     // O desempenho CONSOLIDADO do motor 360° prevalece sobre a nota crua.
     expect(pendencias[0].desempenho).toBe(4.25);
+  });
+
+  it('validação ancorada na versão do GESTOR (não na do conjunto) ⇒ concluida_validada', () => {
+    const par = { ...FEEDBACK_GESTOR, id: 'fb-par-1', tipo: 'par', nota_geral: 3, status: 'concluido' };
+    const grupo = [FEEDBACK_GESTOR, par];
+    const versaoConjunto = versaoConsolidadaDemo(grupo)!;
+    const versaoGestor = versaoConsolidadaDemo([FEEDBACK_GESTOR])!;
+    expect(versaoConjunto).not.toBe(versaoGestor);
+
+    const avaliar = (versaoDaValidacao: string) =>
+      derivarPendencias({
+        ...base,
+        modo: 'real',
+        feedbacks: grupo,
+        versoesPorFeedback: { 'fb-gestor-1': versaoGestor },
+        consolidacoes: [{ ciclo_id: 'ciclo-1', colaborador_id: 'c-1', versao_consolidada: versaoConjunto }],
+        vinculos: [
+          { id: 'c-1', user_id: 'u-ana', supervisor_id: 'c-2' },
+          { id: 'c-2', user_id: 'u-bruno', supervisor_id: null },
+        ],
+        usuarioId: 'u-ana',
+        aprovacoes: [
+          {
+            ciclo_id: 'ciclo-1',
+            colaborador_id: 'c-1',
+            decisao: 'aprovado',
+            versao_avaliacao: versaoConjunto,
+            decidido_em: '2026-10-04T10:00:00.000Z',
+          },
+        ],
+        validacoes: [{ ciclo_id: 'ciclo-1', colaborador_id: 'c-1', versao_avaliacao: versaoDaValidacao }],
+      })[0];
+
+    // Validação gravada na versão do CONJUNTO não casa com a âncora canônica.
+    expect(avaliar(versaoConjunto).status).toBe('aprovada_gestor');
+    // Na versão do GESTOR (a do banco/motor) o fluxo conclui.
+    expect(avaliar(versaoGestor).status).toBe('concluida_validada');
+  });
+
+  it('tela MISTA: grupo UUID usa estado REAL e grupo mock usa estado local', () => {
+    const colabReal = '11111111-1111-4111-8111-111111111111';
+    const cicloReal = '22222222-2222-4222-8222-222222222222';
+    const fbReal = '33333333-3333-4333-8333-333333333333';
+    const real = {
+      ...FEEDBACK_GESTOR,
+      id: fbReal,
+      avaliado_id: colabReal,
+      ciclo_id: cicloReal,
+      avaliador_id: '44444444-4444-4444-8444-444444444444',
+    };
+    const mock = { ...FEEDBACK_GESTOR, id: 'mock-fb-mix', avaliado_id: 'mock-colab-mix' };
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'demonstracao',
+      feedbacks: [real, mock],
+      colaboradores: [
+        ...COLABORADORES,
+        { id: colabReal, nome_completo: 'Real Um' },
+        { id: '44444444-4444-4444-8444-444444444444', nome_completo: 'Gestor Real' },
+        { id: 'mock-colab-mix', nome_completo: 'Mock Um' },
+      ],
+      versoesPorFeedback: { [fbReal]: 'v-real' },
+      consolidacoes: [{ ciclo_id: cicloReal, colaborador_id: colabReal, versao_consolidada: 'v-real' }],
+      aprovacoes: [
+        {
+          ciclo_id: cicloReal,
+          colaborador_id: colabReal,
+          decisao: 'aprovado',
+          versao_avaliacao: 'v-real',
+          decidido_em: '2026-10-04T10:00:00.000Z',
+        },
+      ],
+    });
+
+    const linhaReal = pendencias.find((p) => p.colaboradorId === colabReal)!;
+    const linhaMock = pendencias.find((p) => p.colaboradorId === 'mock-colab-mix')!;
+    expect(linhaReal.origem).toBe('real');
+    expect(linhaReal.status).toBe('aprovada_gestor');
+    expect(linhaReal.versaoAvaliacao).toBe('v-real');
+    expect(linhaMock.origem).toBe('demonstracao');
+    expect(linhaMock.versaoAvaliacao).toMatch(/^demo:/);
+    expect(linhaMock.status).toBe('aguardando_gestor');
+  });
+
+  it('exceção CONFIRMADA pelo servidor autoriza a decisão sem inventar gestor', () => {
+    const estado = estadoAprovacao({
+      versaoGestor: 'v1',
+      decisao: null,
+      validada: false,
+      gestorIdentificado: false,
+      avaliacaoGestorValida: true,
+      autorizadoServidor: true,
+    });
+    expect(estado.status).toBe('sem_gestor');
+    expect(estado.autorizadoServidor).toBe(true);
+    expect(estado.aprovacaoPermitida).toBe(true);
+    expect(estado.podeDecidir).toBe(true);
+    expect(estado.motivoBloqueio).toBeNull();
+    // O gestor oficial continua NÃO identificado — nada é inventado.
+    expect(estado.gestorIdentificado).toBe(false);
+  });
+
+  it('exceção autorizada: depois da decisão avança para aprovada/validada', () => {
+    const decisaoExcecao = { decisao: 'aprovado', versao_avaliacao: 'v1' };
+    expect(
+      situacaoAprovacao({
+        versaoGestor: 'v1',
+        decisao: decisaoExcecao,
+        validada: false,
+        gestorIdentificado: false,
+        autorizadoServidor: true,
+      })
+    ).toBe('aprovada_gestor');
+    expect(
+      situacaoAprovacao({
+        versaoGestor: 'v1',
+        decisao: decisaoExcecao,
+        validada: true,
+        gestorIdentificado: false,
+        autorizadoServidor: true,
+      })
+    ).toBe('concluida_validada');
+  });
+
+  it('exceção NÃO dispensa a avaliação obrigatória do gestor', () => {
+    const estado = estadoAprovacao({
+      versaoGestor: 'v1',
+      decisao: null,
+      validada: false,
+      gestorIdentificado: false,
+      avaliacaoGestorValida: false,
+      autorizadoServidor: true,
+    });
+    expect(estado.aprovacaoPermitida).toBe(false);
+    expect(estado.motivoBloqueio).toMatch(/Desempenho e Potencial/i);
+  });
+
+  it('sem vínculo e sem confirmação do servidor continua bloqueado', () => {
+    const estado = estadoAprovacao({
+      versaoGestor: 'v1',
+      decisao: null,
+      validada: false,
+      gestorIdentificado: false,
+      avaliacaoGestorValida: true,
+    });
+    expect(estado.aprovacaoPermitida).toBe(false);
+    expect(estado.podeDecidir).toBe(false);
+    expect(estado.motivoBloqueio).toMatch(/Gestor responsável não atribuído/i);
+  });
+
+  it('derivarPendencias reconhece a autorização excepcional somente no grupo REAL', () => {
+    const colabReal = '11111111-1111-4111-8111-111111111111';
+    const cicloReal = '22222222-2222-4222-8222-222222222222';
+    const gestor = {
+      ...FEEDBACK_GESTOR,
+      id: '33333333-3333-4333-8333-333333333333',
+      avaliado_id: colabReal,
+      ciclo_id: cicloReal,
+      avaliador_id: '44444444-4444-4444-8444-444444444444',
+    };
+    const pendencias = derivarPendencias({
+      ...base,
+      modo: 'real',
+      feedbacks: [gestor],
+      colaboradores: [{ id: colabReal, nome_completo: 'Real Um' }],
+      versoesPorFeedback: { [gestor.id]: 'v-real' },
+      consolidacoes: [{ ciclo_id: cicloReal, colaborador_id: colabReal, versao_consolidada: 'v-real' }],
+      autorizacoesAprovacao: { [colabReal]: true },
+    });
+
+    const linha = pendencias[0];
+    expect(linha.status).toBe('sem_gestor'); // gestor oficial NÃO inventado
+    expect(linha.autorizadoServidor).toBe(true);
+    expect(linha.estado.aprovacaoPermitida).toBe(true);
+    expect(linha.estado.podeDecidir).toBe(true);
+    expect(linha.motivoBloqueioAprovacao).toBeNull();
   });
 
   it('devolvido com justificativa registrada aparece na linha', () => {
@@ -489,7 +680,7 @@ describe('derivarPendencias — vínculo do gestor responsável e origem da linh
     expect(pendencias).toHaveLength(1);
     expect(pendencias[0].fontes).toEqual({ gestor: 0, par: 1, auto: 1, subordinado: 0 });
     expect(pendencias[0].status).toBe('sem_gestor');
-    expect(pendencias[0].avaliacaoGestorValida).toBe(false);
+    expect(pendencias[0].avaliacaoGestorValida).toBe(true); // proposta consolidada válida
     expect(pendencias[0].impedimentoEnvio).toMatch(/supervisor_id/);
     expect(pendencias[0].estado.podeDecidir).toBe(false);
   });
@@ -567,20 +758,20 @@ describe('estadoAprovacao — regra única de estado (§5 do pedido)', () => {
     expect(invalidada.aprovacaoInvalidada).toBe(true);
   });
 
-  it('6) o RH valida o Potencial SÓ depois do aval do gestor vigente', () => {
+  it('6) o RH NÃO valida Potencial no fluxo novo (aprovação do gestor é final)', () => {
     expect(estadoAprovacao({ versaoGestor: 'v1', decisao: null, validada: false }).podeValidarPotencial).toBe(false);
     expect(
       estadoAprovacao({ versaoGestor: 'v1', decisao: decisao('devolvido', 'v1'), validada: false }).podeValidarPotencial
     ).toBe(false);
     expect(
       estadoAprovacao({ versaoGestor: 'v1', decisao: decisao('aprovado', 'v1'), validada: false }).podeValidarPotencial
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it('7) o Nine-Box só é elegível com a validação VIGENTE (as duas aprovações)', () => {
+  it('7) o Nine-Box é elegível na aprovação VIGENTE, sem validação posterior', () => {
     expect(
       estadoAprovacao({ versaoGestor: 'v1', decisao: decisao('aprovado', 'v1'), validada: false }).elegivelNineBox
-    ).toBe(false);
+    ).toBe(true);
     const concluida = estadoAprovacao({ versaoGestor: 'v1', decisao: decisao('aprovado', 'v1'), validada: true });
     expect(concluida.elegivelNineBox).toBe(true);
     expect(concluida.status).toBe('concluida_validada');

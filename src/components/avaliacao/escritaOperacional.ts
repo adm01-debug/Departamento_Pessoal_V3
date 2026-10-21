@@ -61,7 +61,7 @@ export function idDemonstrativo(valor: unknown): boolean {
 /** Nomes dos campos que carregam identificador fictício (na ordem do objeto). */
 export function camposFicticios(campos: Record<string, unknown>): string[] {
   return Object.entries(campos ?? {})
-    .filter(([, valor]) => idFicticio(valor))
+    .filter(([, valor]) => idDemonstrativo(valor))
     .map(([nome]) => nome);
 }
 

@@ -27,7 +27,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { CascadeTableRow } from '@/components/ui/cascade-table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { UserAvatar } from '@/components/ui/user-avatar';
-import { entradaCard } from './premiacoesEntrada';
+import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/utils/format';
 import { indiceEntrada, tempoRelativo, type PagamentoHub } from './premiacoesComum';
@@ -289,7 +289,7 @@ export function PagamentosTabela({
               ))}
 
               {linhas.length === 0 && (
-                <CascadeTableRow index={0}>
+                <CascadeTableRow index={0} variants={linhaEntradaHubVariants}>
                   <td colSpan={COLUNAS.length + 1} className="px-4 py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
@@ -364,13 +364,16 @@ function LinhaPagamento({
   const valor = (v: number | string | null | undefined) => (v ? formatCurrency(Number(v)) : '—');
 
   return (
-    /* Linha da cascata compartilhada (`ui/cascade-table`): MESMA animação da
+    /* Linha da cascata compartilhada (`ui/cascade-table`): MESMO movimento da
        lista de Processos de Desligamentos — opacity + y(10px) + scaleX(0.94→1)
-       abrindo DO CENTRO, 0,8s, atraso `0,52s + índice × 0,04s`, ease
-       [0.22, 1, 0.36, 1]. Só opacity/transform animam (nenhum reflow, nenhuma
-       mudança de altura ou de largura de coluna). */
+       abrindo DO CENTRO, ease [0.22, 1, 0.36, 1]. A cadência é a do Hub
+       (`linhaEntradaHubVariants`): 0,8s por linha, atraso `0,46s + índice ×
+       0,08s` (intervalo maior que o global, para a cascata ficar perceptível).
+       Só opacity/transform animam (nenhum reflow, nenhuma mudança de altura ou
+       de largura de coluna). */
     <CascadeTableRow
       index={indice}
+      variants={linhaEntradaHubVariants}
       className={cn(
         'align-middle transition-colors duration-200 ease-in-out hover:bg-background',
         marcada && 'bg-accent/10',

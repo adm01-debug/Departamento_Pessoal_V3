@@ -1,5 +1,5 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { motion } from 'framer-motion';
@@ -11,14 +11,25 @@ import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Target, Users, TrendingUp, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
+import { Target, Users, TrendingUp, LayoutGrid, History, BarChart2, Calendar, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
 import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxTab } from '@/components/avaliacao/NineBoxTab';
 // Modo real + ponte de criação auditada (idempotência por operação).
-import { modoRealAtivo } from '@/components/avaliacao/nineBoxModo';
-import { normalizarPapeis } from '@/components/avaliacao/papeisAvaliacao';
+import { normalizarPapeis, capacidadesAvaliacao } from '@/components/avaliacao/papeisAvaliacao';
+import { vinculosDemonstracao } from '@/components/avaliacao/servicoDemo';
+import { idDemonstrativo } from '@/components/avaliacao/escritaOperacional';
 import {
   CHAVE_REGISTROS_DEMO,
   aplicarEstadoDemo,
@@ -109,6 +120,28 @@ export default function AvaliacaoPage() {
   // Ciclo em destaque no painel; `undefined` = usuário ainda não escolheu
   // (o padrão passa a ser o ciclo ativo detectado nos dados reais).
   const [cicloSelecionadoId, setCicloSelecionadoId] = useState<string | undefined>(undefined);
+  /** Seletor de ciclos: aberto/fechado controlado para a lixeira fechar antes do diálogo. */
+  const [seletorCiclosAberto, setSeletorCiclosAberto] = useState(false);
+  /** Ciclo aguardando confirmação de exclusão/ocultação no seletor. */
+  const [cicloParaExcluir, setCicloParaExcluir] = useState<any | null>(null);
+
+  /**
+   * O Radix Select mantém o foco no item (role=option) e não deixa o Tab
+   * alcançar controles internos. Este tratador leva o foco para a lixeira do
+   * item focado, permitindo abrir a confirmação com Enter/Espaço.
+   */
+  const focarLixeiraNoTab = (evento: ReactKeyboardEvent<HTMLDivElement>) => {
+    if (evento.key !== 'Tab') return;
+    const alvo = evento.target as HTMLElement;
+    if (alvo.closest('[data-acao-ciclo]')) return;
+    const opcaoAtual = alvo.closest('[role="option"]');
+    const acao = opcaoAtual?.querySelector<HTMLButtonElement>('[data-acao-ciclo]');
+    if (acao) {
+      evento.preventDefault();
+      evento.stopPropagation();
+      acao.focus();
+    }
+  };
 
   // === Queries ===
   // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Com o mock ligado, cada
@@ -160,19 +193,28 @@ export default function AvaliacaoPage() {
    * servindo de rótulo/precedência onde um único valor é esperado.
    */
   const papeisDoUsuario = useMemo(() => normalizarPapeis(user?.roles), [user]);
+  /** Exclusão de ciclo é operação administrativa (mesma capacidade do RH/admin). */
+  const podeExcluirCiclos = useMemo(() => capacidadesAvaliacao(papeisDoUsuario).podeGerirAvaliacoes, [papeisDoUsuario]);
   /**
    * Mocks (VISUALIZAÇÃO aprovada) + registros REAIS do banco, sem duplicar.
    * Os fictícios NUNCA são enviados ao banco (a guarda recusa `mock-*`); a leitura
    * real é best-effort — se indisponível, a tela aprovada permanece idêntica.
    */
-  const mesclar = async (mock: unknown[] | undefined, real: () => Promise<unknown[]>): Promise<any[]> => {
+  const mesclar = async (
+    mock: unknown[] | undefined,
+    real: () => Promise<unknown[]>,
+    { propagarErro = false }: { propagarErro?: boolean } = {}
+  ): Promise<any[]> => {
     const m = mock ?? [];
     if (!empresaAtual?.id) return m;
     try {
       const r = await real();
       const ids = new Set(m.map((x) => String((x as { id?: unknown })?.id ?? '')));
       return [...m, ...r.filter((x) => !ids.has(String((x as { id?: unknown })?.id ?? '')))];
-    } catch {
+    } catch (erro) {
+      // LISTA DE CICLOS: nunca trocar o banco por fixtures em silêncio — um erro
+      // de leitura não pode fazer um ciclo real "desaparecer" da tela.
+      if (propagarErro) throw erro;
       return m;
     }
   };
@@ -182,15 +224,51 @@ export default function AvaliacaoPage() {
    * vitrine, aplica as alterações de estado e ACRESCENTA os registros criados
    * localmente. Só age em modo demonstração — no modo real a lista é do banco.
    */
-  const comEstadoDemo = <T extends Record<string, unknown>>(lista: T[], entidade: EntidadeDemo): T[] =>
-    isDesempenhoMockEnabled() ? aplicarEstadoDemo(lista, entidade, lerRegistrosDemo()) : lista;
+  const comEstadoDemo = <T extends Record<string, unknown>>(lista: T[], entidade: EntidadeDemo): T[] => {
+    if (!isDesempenhoMockEnabled()) return lista;
+    /**
+     * A vitrine só pode alterar registros DEMONSTRATIVOS. Aplicar o estado local
+     * à lista inteira permitia que um patch/decisão antiga de um UUID real
+     * “corrigisse” o banco só no navegador (aprovação local apresentada como real).
+     */
+    const demonstrativos = lista.filter((x) => idDemonstrativo(x?.id));
+    const reais = lista.filter((x) => !idDemonstrativo(x?.id));
+    const aplicar =
+      entidade === 'ciclos'
+        ? (x: T): T => {
+            const demo = idDemonstrativo((x as { id?: unknown })?.id);
+            const nome = String((x as { nome?: unknown })?.nome ?? '').trim();
+            return {
+              ...x,
+              origem: demo ? 'demonstracao' : 'real',
+              ...(demo && nome && !/\(demonstração\)$/i.test(nome) ? { nome: `${nome} (demonstração)` } : {}),
+            } as T;
+          }
+        : (x: T): T => x;
+    return [...reais.map(aplicar), ...aplicarEstadoDemo(demonstrativos, entidade, lerRegistrosDemo()).map(aplicar)];
+  };
 
-  const { data: ciclos = [], isLoading: loadCiclos } = useQuery({
+  const {
+    data: ciclos = [],
+    isLoading: loadCiclos,
+    isError: erroCiclos,
+  } = useQuery({
     queryKey: ['ciclos_avaliacao', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
-      comEstadoDemo(await mesclar(getMockCiclos(), () => avaliacaoService.listarCiclos(empresaAtual!.id)), 'ciclos'),
+      comEstadoDemo(
+        await mesclar(getMockCiclos(), () => avaliacaoService.listarCiclos(empresaAtual!.id), {
+          propagarErro: true,
+        }),
+        'ciclos'
+      ),
     enabled: !!empresaAtual?.id || mockAtivo,
+    placeholderData: (anterior) => anterior,
   });
+  useEffect(() => {
+    if (erroCiclos) {
+      toast.error('Não foi possível carregar os ciclos do Supabase. A lista anterior foi preservada.');
+    }
+  }, [erroCiclos]);
   const { data: metas = [], isLoading: loadMetas } = useQuery({
     queryKey: ['metas_okrs', empresaAtual?.id],
     queryFn: async (): Promise<any[]> =>
@@ -272,36 +350,23 @@ export default function AvaliacaoPage() {
 
   const criarCiclo = useMutation({
     mutationFn: (d: any) => {
-      if (mockAtivo) {
-        // DEMONSTRAÇÃO: cria no armazenamento local (fixtures e banco intactos).
-        const { registro } = criarRegistroDemo(
-          'ciclos',
-          {
-            ...d,
-            empresa_id: empresaDaEscrita(),
-            criado_em_demo: new Date().toISOString(),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-          { por: user?.email ?? null, descricao: `Ciclo "${String(d?.nome ?? '')}" criado na demonstração` }
-        );
-        return Promise.resolve(registro);
-      }
-      return avaliacaoService.criarCiclo({ ...d, empresa_id: empresaDaEscrita() });
+      // REGRA: a flag de mock é só VISUAL. Ciclo criado por usuário autenticado
+      // vai SEMPRE para o Supabase; o ID fictício nunca é aceito.
+      return avaliacaoService.criarCiclo({ ...d, empresa_id: empresaDaEscrita() }).then((registro) => {
+        const id = String(registro?.id ?? '').trim();
+        if (!id || idDemonstrativo(id)) {
+          throw new Error('O servidor não retornou um ciclo REAL persistido.');
+        }
+        return registro;
+      });
     },
     onSuccess: (registro: any) => {
       qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] });
-      if (mockAtivo) {
-        // O ciclo criado já pode ser selecionado nas demais abas.
-        const id = String(registro?.id ?? '').trim();
-        if (id) setCicloSelecionadoId(id);
-        toast.success('Demonstração: ciclo criado e salvo localmente (nada foi enviado ao banco).');
-        return;
-      }
-      toast.success('Ciclo criado!');
+      const id = String(registro?.id ?? '').trim();
+      if (id) setCicloSelecionadoId(id);
+      toast.success('Ciclo criado e salvo no Supabase.');
     },
     onError: (erro: unknown) => {
-      if (isDesempenhoMockEnabled()) return; // o aviso de demonstração já apareceu
       toast.error(`Ciclo NÃO criado: ${mensagemDeErro(erro)}`);
     },
   });
@@ -335,12 +400,27 @@ export default function AvaliacaoPage() {
     },
   });
 
+  /**
+   * Criação é DEMONSTRATIVA quando QUALQUER ID do payload é fictício/ausente.
+   * Só um payload 100% UUID vai à RPC real — mesmo com mocks exibidos na tela.
+   */
+  const criacaoDemonstrativa = (d: Record<string, unknown>): boolean => {
+    const ids = [d?.avaliado_id, d?.avaliador_id, d?.ciclo_id].map((v) => String(v ?? '').trim());
+    return ids.some((id) => !id || idDemonstrativo(id));
+  };
+
   const criarFeedback = useMutation<any, unknown, any>({
     mutationFn: (d: any) => {
-      /* DEMONSTRAÇÃO: a avaliação é criada no armazenamento local da vitrine —
-         aparece na listagem, sobrevive ao F5 e NUNCA vai ao banco (nenhum id
-         fictício é enviado). */
-      if (mockAtivo) {
+      /* A flag de vitrine é apenas VISUAL. Um feedback com colaborador,
+         avaliador e ciclo REAIS (UUID) SEMPRE é gravado no Supabase, mesmo com
+         o mock ligado. Só um payload com algum ID fictício/ausente usa o
+         armazenamento demonstrativo local. */
+      if (criacaoDemonstrativa(d)) {
+        if (!mockAtivo) {
+          return Promise.reject(
+            new Error('Selecione colaborador, avaliador e ciclo REAIS (UUID) para registrar no banco.')
+          );
+        }
         const { registro } = criarRegistroDemo(
           'feedbacks',
           {
@@ -383,7 +463,7 @@ export default function AvaliacaoPage() {
       if (!params) return Promise.reject(new Error('Dados incompletos para registrar o feedback.'));
       return avaliacaoService.criarFeedbackSeguro(params);
     },
-    onSuccess: (_resposta: any, dadosEnviados: any) => {
+    onSuccess: (resposta: any, dadosEnviados: any) => {
       // Sucesso SÓ depois da resposta do servidor (ou da gravação local na
       // demonstração): a tentativa está confirmada, logo a próxima criação é uma
       // operação nova (chave nova). A atualização das listas acontece aqui.
@@ -393,8 +473,13 @@ export default function AvaliacaoPage() {
       const cicloCriado = String((dadosEnviados as { ciclo_id?: unknown })?.ciclo_id ?? '').trim();
       if (cicloCriado) setCicloSelecionadoId(cicloCriado);
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
+      qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
+      const criadoLocal = idDemonstrativo(resposta?.id ?? resposta?.feedback_id);
       toast.success(
-        mockAtivo
+        criadoLocal
           ? 'Demonstração: avaliação registrada e salva localmente (nada foi enviado ao banco).'
           : 'Feedback registrado!'
       );
@@ -402,7 +487,6 @@ export default function AvaliacaoPage() {
     onError: (erro: unknown) => {
       // Nada de sucesso falso: o motivo REAL (autorização, validação, rede) vai
       // para o aviso. A chave é MANTIDA — reenviar a mesma tentativa é seguro.
-      if (isDesempenhoMockEnabled()) return; // o aviso de demonstração já apareceu
       toast.error(`Feedback NÃO registrado: ${mensagemDeErro(erro)}`);
     },
   });
@@ -418,7 +502,11 @@ export default function AvaliacaoPage() {
     mutationFn: ({ id, dados }) => {
       const alvo = String(id ?? '').trim();
       if (!alvo) return Promise.reject(new Error('Registro sem identificador — não é possível editar.'));
-      if (mockAtivo) {
+      /**
+       * EDIÇÃO POR REGISTRO: só `mock-*`/`demo-*` vira patch local. Um UUID real
+       * SEMPRE passa pela RPC `editar_feedback_seguro`, mesmo com mocks na tela.
+       */
+      if (idDemonstrativo(alvo)) {
         const patch = {
           ...dados,
           status: 'pendente',
@@ -457,21 +545,23 @@ export default function AvaliacaoPage() {
         idOperacao,
       });
     },
-    onSuccess: (_r: any, { dados }) => {
+    onSuccess: (_r: any, { id, dados }) => {
       chaveEdicaoRef.current?.confirmar();
       const cicloEditado = String((dados as { ciclo_id?: unknown })?.ciclo_id ?? '').trim();
       if (cicloEditado) setCicloSelecionadoId(cicloEditado);
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
+      qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
       toast.success(
-        mockAtivo
+        idDemonstrativo(id)
           ? 'Demonstração: avaliação atualizada e salva localmente (nada foi enviado ao banco).'
           : 'Avaliação atualizada.'
       );
     },
-    onError: (erro: unknown) => {
-      if (isDesempenhoMockEnabled()) return;
+    onError: (erro: unknown, { id }) => {
+      if (idDemonstrativo(id)) return;
       toast.error(`Avaliação NÃO atualizada: ${mensagemDeErro(erro)}`);
     },
   });
@@ -509,23 +599,48 @@ export default function AvaliacaoPage() {
   });
 
   const excluirCiclo = useMutation({
-    mutationFn: (c: any) => {
+    mutationFn: async (c: any) => {
       const id = String(c?.id ?? '').trim();
-      if (mockAtivo) {
+      if (!id) throw new Error('Ciclo sem identificador.');
+      // DEMONSTRATIVO = pelo ID do próprio registro, nunca pela flag global.
+      if (idDemonstrativo(id)) {
         excluirRegistroDemo('ciclos', id, {
           por: user?.email ?? null,
           descricao: `Ciclo "${String(c?.nome ?? '')}" excluído na demonstração`,
         });
-        return Promise.resolve();
+        return;
       }
-      return avaliacaoService.excluirCiclo(c.id, empresaDaEscrita());
+      const empresaId = empresaDaEscrita();
+      const deps = await avaliacaoService.contarDependenciasCiclo(id, empresaId);
+      if (deps.total > 0) {
+        const detalhe = Object.entries(deps.porTabela)
+          .filter(([, n]) => Number(n) > 0)
+          .map(([tabela, n]) => `${tabela}: ${n}`)
+          .join(', ');
+        throw new Error(
+          `Exclusão bloqueada: o ciclo possui ${deps.total} dependência(s) (${detalhe}). ` +
+            'Nenhum dado foi apagado. Arquive o ciclo ou remova os vínculos com autorização.'
+        );
+      }
+      return avaliacaoService.excluirCiclo(id, empresaId);
     },
-    onSuccess: () => {
+    onSuccess: (_data, c) => {
       qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] });
-      toast.success(mockAtivo ? 'Demonstração: ciclo excluído localmente.' : 'Ciclo excluído!');
+      qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['metas_okrs'] });
+      const removido = String(c?.id ?? '').trim();
+      if (String(cicloParaExcluir?.id ?? '').trim() === removido) setCicloParaExcluir(null);
+      if (String(cicloSelecionadoId ?? '').trim() === removido) setCicloSelecionadoId(undefined);
+      toast.success(
+        idDemonstrativo(c?.id)
+          ? 'Demonstração: ciclo ocultado da lista (mocks originais intactos).'
+          : 'Ciclo excluído do Supabase.'
+      );
     },
     onError: (erro: unknown) => {
-      if (isDesempenhoMockEnabled()) return;
+      setCicloParaExcluir(null);
       toast.error(`Ciclo NÃO excluído: ${mensagemDeErro(erro)}`);
     },
   });
@@ -544,10 +659,10 @@ export default function AvaliacaoPage() {
       chaveEnvioRef.current?.confirmar();
       qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       toast.success('Avaliação enviada ao gestor para aprovação!');
     },
     onError: (erro: unknown) => {
-      if (isDesempenhoMockEnabled()) return;
       toast.error(`Envio NÃO realizado: ${mensagemDeErro(erro)}`);
     },
   });
@@ -566,12 +681,12 @@ export default function AvaliacaoPage() {
       chaveDecisaoRef.current?.confirmar();
       qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       toast.success(
         enviado?.decisao === 'devolvido' ? 'Avaliação devolvida para correção.' : 'Avaliação aprovada pelo gestor!'
       );
     },
     onError: (erro: unknown) => {
-      if (isDesempenhoMockEnabled()) return;
       toast.error(`Decisão NÃO registrada: ${mensagemDeErro(erro)}`);
     },
   });
@@ -586,10 +701,10 @@ export default function AvaliacaoPage() {
       chaveValidacaoRef.current?.confirmar();
       qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       toast.success('Potencial validado — o Nine-Box classifica automaticamente.');
     },
     onError: (erro: unknown) => {
-      if (isDesempenhoMockEnabled()) return;
       toast.error(`Potencial NÃO validado: ${mensagemDeErro(erro)}`);
     },
   });
@@ -601,6 +716,9 @@ export default function AvaliacaoPage() {
   // está `em_andamento` e, por fim, o mais recente — sem inventar seleção.
   const cicloAtivo = useMemo(
     () =>
+      ciclos.find((c: any) => !idDemonstrativo(c.id) && c.status === 'ativo') ??
+      ciclos.find((c: any) => !idDemonstrativo(c.id) && c.status === 'em_andamento') ??
+      ciclos.find((c: any) => !idDemonstrativo(c.id)) ??
       ciclos.find((c: any) => c.status === 'ativo') ??
       ciclos.find((c: any) => c.status === 'em_andamento') ??
       ciclos[0] ??
@@ -614,36 +732,93 @@ export default function AvaliacaoPage() {
   );
 
   /* ── ENTRADAS DO MODO REAL DO NINE-BOX ────────────────────────────────────
-     Só são buscadas quando a flag está ligada E a área NÃO está em modo
-     demonstração — nunca existe mistura de dados reais com fictícios. As duas
-     consultas dependem do modo real (o serviço lança de outra forma) e NÃO
-     entram no `isLoading` da página: com a flag desligada (padrão) nada é
-     buscado e a tela é exatamente a de hoje.                               */
-  const modoReal = modoRealAtivo() && !mockAtivo && !!empresaAtual?.id;
+     As leituras do fluxo são feitas sempre que existe empresa ativa; elas não
+     entram no `isLoading` da página.                                         */
+  /**
+   * DEMONSTRAÇÃO = o DATASET de fixtures está ativo (`VITE_DESEMPENHO_MOCK` e
+   * modo real desligado). A tela pode conter registros reais ao lado; por isso a
+   * decisão de gravar é POR REGISTRO (UUID → RPC; mock/demo → local), não por
+   * esta flag.
+   */
+  const demoAtivo = mockAtivo;
+
+  /**
+   * Registros da VITRINE que precisam cumprir o fluxo: criados (`demo-*`) ou
+   * fixtures com patch (editadas/reabertas). As fixtures originais intocadas
+   * continuam formando a vitrine aprovada; qualquer alteração suspende a
+   * classificação até nova aprovação + validação.
+   */
+  const idsFluxoDemo = useMemo<ReadonlySet<string>>(() => {
+    if (!demoAtivo) return new Set<string>();
+    // Gatilho de recarga após criar/editar (a query é invalidada e a lista muda).
+    void feedbacks;
+    const estado = lerRegistrosDemo();
+    return new Set<string>([
+      ...Object.keys(estado.criados.feedbacks ?? {}),
+      ...Object.keys(estado.patches.feedbacks ?? {}),
+    ]);
+  }, [demoAtivo, feedbacks]);
 
   const { data: validacoesPotencial = [] } = useQuery({
     queryKey: ['feedbacks_360_validacoes_potencial', empresaAtual?.id, cicloSelecionado?.id],
     queryFn: () => avaliacaoService.listarValidacoesPotencial(empresaAtual!.id, cicloSelecionado?.id || undefined),
-    enabled: modoReal,
+    enabled: !!empresaAtual?.id,
   });
   const { data: versoesAvaliacao = [] } = useQuery({
     queryKey: ['vw_feedbacks_360_versao', empresaAtual?.id, cicloSelecionado?.id],
     queryFn: () => avaliacaoService.listarVersoesAvaliacao(empresaAtual!.id, cicloSelecionado?.id || undefined),
-    enabled: modoReal,
+    enabled: !!empresaAtual?.id,
   });
-  /* ── APROVAÇÃO DO GESTOR (migration 20261017090000) ────────────────────────
-     Duas leituras a mais, só no MODO REAL (fora dele o serviço lança e a fila é
-     derivada dos dados já carregados). Nenhuma delas entra no `isLoading` da
-     página: com a flag desligada (padrão) a tela é exatamente a de hoje. */
+  /* ── LEITURAS DO FLUXO REAL ────────────────────────────────────────────────
+     São habilitadas sempre que existe empresa ativa, INDEPENDENTEMENTE do mock
+     de visualização: a tela é MISTA (fixtures + registros reais) e uma aprovação
+     real precisa aparecer na fila/Nine-Box mesmo com a vitrine ligada.
+     Os RPCs de escrita são escolhidos POR REGISTRO (UUID → real; mock → local). */
   const { data: consolidacoes = [] } = useQuery({
     queryKey: ['feedbacks_360_consolidacoes', empresaAtual?.id, cicloSelecionado?.id],
     queryFn: () => avaliacaoService.listarConsolidacoes(empresaAtual!.id, cicloSelecionado?.id || undefined),
-    enabled: modoReal,
+    enabled: !!empresaAtual?.id,
   });
   const { data: aprovacoesGestor = [] } = useQuery({
     queryKey: ['feedbacks_360_aprovacoes_gestor', empresaAtual?.id, cicloSelecionado?.id],
     queryFn: () => avaliacaoService.listarAprovacoesGestor(empresaAtual!.id, cicloSelecionado?.id || undefined),
-    enabled: modoReal,
+    enabled: !!empresaAtual?.id,
+  });
+
+  /**
+   * AUTORIZAÇÃO EXCEPCIONAL CONFIRMADA PELO SERVIDOR.
+   * Consulta `pode_aprovar_colaborador` para cada colaborador com avaliação REAL
+   * no ciclo. A interface não replica e-mails/allowlists; expiração e revogação
+   * valem imediatamente porque a RPC de decisão revalida na gravação.
+   */
+  const colaboradoresReaisAprovacao = useMemo(() => {
+    const ids = new Set<string>();
+    (feedbacks as Record<string, unknown>[]).forEach((f) => {
+      const colaborador = String(f?.avaliado_id ?? '').trim();
+      if (!colaborador || idDemonstrativo(colaborador)) return;
+      const ciclo = String(f?.ciclo_id ?? '').trim();
+      if (cicloSelecionado?.id && ciclo && ciclo !== String(cicloSelecionado.id)) return;
+      ids.add(colaborador);
+    });
+    return [...ids].sort();
+  }, [feedbacks, cicloSelecionado?.id]);
+
+  const { data: autorizacoesAprovacao = {} } = useQuery<Record<string, boolean>>({
+    queryKey: ['pode_aprovar_colaborador', empresaAtual?.id, cicloSelecionado?.id, colaboradoresReaisAprovacao],
+    queryFn: async () => {
+      const pares = await Promise.all(
+        colaboradoresReaisAprovacao.map(async (id) => {
+          const permitido = await avaliacaoService.podeAprovarColaborador(id);
+          return [id, permitido] as const;
+        })
+      );
+      return Object.fromEntries(pares);
+    },
+    enabled: !!empresaAtual?.id && colaboradoresReaisAprovacao.length > 0,
+    retry: false,
+    staleTime: 30_000,
+    // Expiração/revogação da exceção reflete sem F5 (e a RPC revalida na gravação).
+    refetchInterval: 30_000,
   });
 
   /* ── VÍNCULOS PARA A APROVAÇÃO (`id`, `user_id`, `supervisor_id`) ──────────
@@ -656,7 +831,7 @@ export default function AvaliacaoPage() {
   const { data: vinculos = [] } = useQuery({
     queryKey: ['colaboradores_vinculos', empresaAtual?.id],
     queryFn: () => avaliacaoService.listarVinculos(empresaAtual!.id),
-    enabled: modoReal && !!empresaAtual?.id,
+    enabled: !!empresaAtual?.id,
     retry: false,
   });
 
@@ -671,16 +846,15 @@ export default function AvaliacaoPage() {
   }, [versoesAvaliacao]);
 
   /* ── VITRINE (demonstração): decisões persistidas LOCALMENTE ───────────────
-     Fora do modo real não existe backend de aprovação: as decisões dos
-     registros fictícios vão para `localStorage` (chave própria, mocks
-     intactos) e alimentam as MESMAS derivações/fila/contadores/Nine-Box.
-     Persistem após F5 e em qualquer aba do mesmo perfil. */
-  const demoAtivo = !modoReal;
+     Apenas registros `mock-*`/`demo-*` vão para `localStorage` (chave própria,
+     mocks intactos). Registros UUID usam as RPCs reais, mesmo que a vitrine
+     esteja exibida ao lado. */
 
   /**
    * VITRINE: serviço demonstrativo. Presente, os MESMOS controles do rodapé do
    * modal (Concluir, Cancelar, Reabrir, Validar Potencial) executam a ação
-   * gravando no armazenamento local — nunca no banco. Ausente no modo real.
+   * gravando no armazenamento local — nunca no banco. Registros reais ignoram
+   * este serviço (seleção POR REGISTRO em `FeedbackAcoesRodape`).
    */
   const servicoDemo = useMemo(
     () =>
@@ -693,7 +867,7 @@ export default function AvaliacaoPage() {
             feedbacks: (feedbacks ?? []) as Record<string, unknown>[],
             colaboradoresIds: ((colaboradores ?? []) as { id?: unknown }[])
               .map((c) => String(c?.id ?? ''))
-              .filter(Boolean),
+              .filter((id) => Boolean(id) && idDemonstrativo(id)),
           })
         : undefined,
     [demoAtivo, user, feedbacks, colaboradores]
@@ -705,25 +879,66 @@ export default function AvaliacaoPage() {
   });
   const invalidarDemo = () => qc.invalidateQueries({ queryKey: [CHAVE_DEMO] });
 
-  /** Decisões efetivas: do BANCO no modo real; do armazenamento local na vitrine. */
-  const aprovacoesEfetivas = useMemo(
-    () => (demoAtivo ? aprovacoesLocais(estadoDemo) : aprovacoesGestor),
-    [demoAtivo, estadoDemo, aprovacoesGestor]
-  );
-  const validacoesEfetivas = useMemo(
-    () => (demoAtivo ? validacoesLocais(estadoDemo) : validacoesPotencial),
-    [demoAtivo, estadoDemo, validacoesPotencial]
-  );
+  /** Chaves (ciclo::colaborador) que possuem QUALQUER registro real. */
+  const chavesReais = useMemo(() => {
+    const chaves = new Set<string>();
+    (feedbacks as Record<string, unknown>[]).forEach((f) => {
+      if (!f || idDemonstrativo(f.id)) return;
+      const colaborador = String(f.avaliado_id ?? '').trim();
+      const ciclo = String(f.ciclo_id ?? '').trim();
+      if (colaborador && ciclo) chaves.add(`${ciclo}::${colaborador}`);
+    });
+    return chaves;
+  }, [feedbacks]);
+  const chaveDaTabela = (linha: Record<string, unknown>) =>
+    `${String(linha.ciclo_id ?? '').trim()}::${String(linha.colaborador_id ?? '').trim()}`;
+
+  /**
+   * DECISÕES EFETIVAS = banco + vitrine, SEPARADOS por chave:
+   *   • registros reais (UUID) usam SOMENTE `feedbacks_360_aprovacoes_gestor`;
+   *   • registros fictícios usam o armazenamento local.
+   * Uma decisão local antiga sobre a mesma chave real é DESCARTADA — ela nunca
+   * pode ser apresentada como aprovação real.
+   */
+  const aprovacoesEfetivas = useMemo(() => {
+    const locais = demoAtivo ? aprovacoesLocais(estadoDemo).filter((a) => !chavesReais.has(chaveDaTabela(a))) : [];
+    return [...aprovacoesGestor, ...locais];
+  }, [demoAtivo, estadoDemo, aprovacoesGestor, chavesReais]);
+  const validacoesEfetivas = useMemo(() => {
+    const locais = demoAtivo ? validacoesLocais(estadoDemo).filter((v) => !chavesReais.has(chaveDaTabela(v))) : [];
+    return [...validacoesPotencial, ...locais];
+  }, [demoAtivo, estadoDemo, validacoesPotencial, chavesReais]);
+  /**
+   * VÍNCULOS EFETIVOS — no modo real vêm do banco; na vitrine, do MESMO cenário
+   * do rodapé (`vinculosDemonstracao`): o operador é o gestor de referência e
+   * responde pelos colaboradores fictícios. Sem isto a fila não identificava o
+   * gestor (`Não identificado`) e a aprovação demonstrativa ficava inconsistente
+   * com o fluxo real.
+   */
+  const vinculosEfetivos = useMemo(() => {
+    const demo = demoAtivo
+      ? vinculosDemonstracao({
+          usuarioId: user?.id ?? null,
+          colaboradoresIds: ((colaboradores ?? []) as { id?: unknown }[])
+            .map((c) => String(c?.id ?? ''))
+            .filter((id) => Boolean(id) && idDemonstrativo(id)),
+        })
+      : [];
+    const reais = vinculos ?? [];
+    const idsReais = new Set(reais.map((v: { id?: unknown }) => String(v?.id ?? '')));
+    return [...reais, ...demo.filter((v) => !idsReais.has(v.id))];
+  }, [demoAtivo, vinculos, user?.id, colaboradores]);
   /** Encaminhamentos automáticos da vitrine (`chave → { em }`) — data do envio. */
   const encaminhamentosEfetivos = useMemo(() => {
     if (!demoAtivo) return {} as Record<string, { em?: string | null }>;
     const mapa: Record<string, { em?: string | null }> = {};
     Object.entries(estadoDemo.encaminhamentos ?? {}).forEach(([chave, encaminhamento]) => {
+      if (chavesReais.has(chave)) return;
       const em = encaminhamento?.encaminhadoEm;
       if (em) mapa[chave] = { em };
     });
     return mapa;
-  }, [demoAtivo, estadoDemo]);
+  }, [demoAtivo, estadoDemo, chavesReais]);
 
   /* ── Mutations da VITRINE (gravam no armazenamento local, nunca no banco) ── */
   const enviarAprovacaoDemo = useMutation({
@@ -785,11 +1000,17 @@ export default function AvaliacaoPage() {
   });
 
   const validarPotencialDemo = useMutation({
-    mutationFn: async (p: { colaboradorId: string; cicloId: string; versaoAvaliacao: string }) => {
+    mutationFn: async (p: {
+      colaboradorId: string;
+      cicloId: string;
+      versaoAvaliacao: string;
+      versaoValidacao: string;
+    }) => {
       const { resultado } = validarPotencialLocal({
         colaboradorId: p.colaboradorId,
         cicloId: p.cicloId,
         versaoAvaliacao: p.versaoAvaliacao,
+        versaoValidacao: p.versaoValidacao,
         por: user?.email ?? null,
       });
       if (!resultado.ok) throw new Error(resultado.descricao);
@@ -803,6 +1024,14 @@ export default function AvaliacaoPage() {
       toast.error(`Potencial NÃO validado: ${mensagemDeErro(erro)}`);
     },
   });
+
+  /**
+   * A linha é DEMONSTRATIVA? Decide a persistência POR LINHA (nunca pela tela):
+   * IDs `mock-*`/`demo-*` ou origem derivada do conjunto. Registros reais vão
+   * sempre para as RPCs.
+   */
+  const linhaDemonstrativa = (p: { origem?: string; feedbackId?: string }) =>
+    p.origem === 'demonstracao' || idDemonstrativo(p.feedbackId);
 
   return (
     <>
@@ -866,7 +1095,15 @@ export default function AvaliacaoPage() {
               </div>
 
               <div className="flex items-center gap-3 lg:shrink-0">
-                <Select value={cicloSelecionado?.id ?? ''} onValueChange={setCicloSelecionadoId}>
+                <Select
+                  open={seletorCiclosAberto}
+                  onOpenChange={setSeletorCiclosAberto}
+                  value={cicloSelecionado?.id ?? ''}
+                  onValueChange={(id) => {
+                    setCicloSelecionadoId(id);
+                    setSeletorCiclosAberto(false);
+                  }}
+                >
                   <SelectTrigger className="h-11 w-full gap-2 rounded-xl sm:w-[230px]">
                     <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                     {/* Duas linhas (nome + período do ciclo SELECIONADO, dado
@@ -890,14 +1127,40 @@ export default function AvaliacaoPage() {
                       </span>
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent onKeyDownCapture={focarLixeiraNoTab}>
                     {ciclos.length === 0 ? (
                       <SelectItem value="__vazio" disabled>
                         Nenhum ciclo cadastrado
                       </SelectItem>
                     ) : (
                       ciclos.map((c: any) => (
-                        <SelectItem key={c.id} value={c.id}>
+                        <SelectItem
+                          key={c.id}
+                          value={c.id}
+                          acao={
+                            podeExcluirCiclos ? (
+                              <button
+                                type="button"
+                                tabIndex={0}
+                                data-acao-ciclo
+                                aria-label={`Excluir ciclo ${c.nome}`}
+                                title="Excluir ciclo"
+                                className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground/70 opacity-0 transition-opacity hover:text-destructive-vivid focus-visible:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring group-hover/ciclo:text-destructive-vivid group-hover/ciclo:opacity-100 group-focus-within/ciclo:opacity-100"
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onPointerUp={(e) => e.stopPropagation()}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setSeletorCiclosAberto(false);
+                                  setCicloParaExcluir(c);
+                                }}
+                                onKeyDown={(e) => e.stopPropagation()}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                            ) : undefined
+                          }
+                        >
                           {c.nome}
                         </SelectItem>
                       ))
@@ -907,6 +1170,49 @@ export default function AvaliacaoPage() {
                 <NovoCicloDialog onSubmit={(dados) => criarCiclo.mutate(dados)} salvando={criarCiclo.isPending} />
               </div>
             </div>
+            <AlertDialog
+              open={!!cicloParaExcluir}
+              onOpenChange={(aberto) => {
+                if (!aberto && !excluirCiclo.isPending) setCicloParaExcluir(null);
+              }}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {idDemonstrativo(cicloParaExcluir?.id) ? 'Ocultar ciclo demonstrativo' : 'Excluir ciclo'}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {idDemonstrativo(cicloParaExcluir?.id) ? (
+                      <>
+                        O ciclo <strong>{cicloParaExcluir?.nome}</strong> será ocultado desta lista. Os mocks originais
+                        permanecem intactos e a alteração fica salva neste navegador.
+                      </>
+                    ) : (
+                      <>
+                        Tem certeza que deseja excluir <strong>{cicloParaExcluir?.nome}</strong>? Ciclos com avaliações,
+                        aprovações, metas, PDI ou histórico não serão apagados; nesse caso a operação será bloqueada.
+                      </>
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={excluirCiclo.isPending}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive-vivid text-white hover:bg-destructive-vivid/90"
+                    disabled={excluirCiclo.isPending}
+                    onClick={() => {
+                      if (cicloParaExcluir) excluirCiclo.mutate(cicloParaExcluir);
+                    }}
+                  >
+                    {excluirCiclo.isPending
+                      ? 'Processando...'
+                      : idDemonstrativo(cicloParaExcluir?.id)
+                        ? 'Ocultar'
+                        : 'Excluir'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
 
             <TabsContent value="ciclos" className="space-y-5">
               <PerformanceDashboard
@@ -924,6 +1230,7 @@ export default function AvaliacaoPage() {
                 onSelecionar={(c: any) => setCicloSelecionadoId(c.id)}
                 onExcluir={(c: any) => excluirCiclo.mutate(c)}
                 excluindo={excluirCiclo.isPending}
+                podeExcluir={podeExcluirCiclos}
                 indice={5}
               />
             </TabsContent>
@@ -971,14 +1278,15 @@ export default function AvaliacaoPage() {
                 papel={papel}
                 papeis={papeisDoUsuario}
                 servicoDemo={servicoDemo}
-                acoesAprovacaoHabilitadas={modoReal || demoAtivo}
+                acoesAprovacaoHabilitadas
                 modoAprovacao={demoAtivo ? 'demonstracao' : 'real'}
                 validacoesPotencial={validacoesEfetivas}
                 encaminhamentos={encaminhamentosEfetivos}
                 versoesPorFeedback={versoesPorFeedback}
                 consolidacoes={consolidacoes}
                 aprovacoesGestor={aprovacoesEfetivas}
-                vinculos={demoAtivo ? [] : vinculos}
+                vinculos={vinculosEfetivos}
+                autorizacoesAprovacao={autorizacoesAprovacao}
                 usuarioId={user?.id ?? null}
                 salvandoAprovacao={
                   enviarAprovacao.isPending ||
@@ -993,7 +1301,7 @@ export default function AvaliacaoPage() {
                     toast.error('Envio NÃO realizado: a avaliação está sem ciclo vinculado.');
                     return;
                   }
-                  if (demoAtivo) {
+                  if (linhaDemonstrativa(p)) {
                     enviarAprovacaoDemo.mutate({
                       colaboradorId: p.colaboradorId,
                       cicloId: p.cicloId,
@@ -1009,7 +1317,7 @@ export default function AvaliacaoPage() {
                     toast.error('Decisão NÃO registrada: a avaliação está sem ciclo vinculado.');
                     return;
                   }
-                  if (demoAtivo) {
+                  if (linhaDemonstrativa(p)) {
                     decidirAprovacaoDemo.mutate({
                       colaboradorId: p.colaboradorId,
                       cicloId: p.cicloId,
@@ -1027,11 +1335,12 @@ export default function AvaliacaoPage() {
                   });
                 }}
                 onValidarPotencial={(p) => {
-                  if (demoAtivo) {
+                  if (linhaDemonstrativa(p)) {
                     validarPotencialDemo.mutate({
                       colaboradorId: p.colaboradorId,
                       cicloId: String(p.cicloId ?? ''),
                       versaoAvaliacao: String(p.versaoAvaliacao ?? ''),
+                      versaoValidacao: String(p.versaoValidacao ?? ''),
                     });
                     return;
                   }
@@ -1068,6 +1377,7 @@ export default function AvaliacaoPage() {
                 validacoesPotencial={validacoesEfetivas}
                 versoesPorFeedback={versoesPorFeedback}
                 aprovacoesDemo={estadoDemo}
+                idsFluxoDemo={idsFluxoDemo}
                 /* MESMA fonte de aprovação/versão da fila: o Nine-Box não
                    classifica uma avaliação sem aprovação vigente do gestor. */
                 aprovacoesGestor={aprovacoesEfetivas}

@@ -28,8 +28,7 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
-import { entradaCard } from './premiacoesEntrada';
-import { linhaTabelaVariants } from '@/components/ui/table-row-reveal';
+import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
 import {
   indiceEntrada,
@@ -124,7 +123,7 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
                 <motion.li
                   key={acao.id}
                   custom={indiceAcao}
-                  variants={linhaTabelaVariants}
+                  variants={linhaEntradaHubVariants}
                   initial="hidden"
                   animate="visible"
                   className="origin-center"
@@ -206,7 +205,7 @@ export function CampanhaLateral({ acoes, eventos, onNavegar }: CampanhaLateralPr
                 <motion.li
                   key={evento.id}
                   custom={indiceEvento}
-                  variants={linhaTabelaVariants}
+                  variants={linhaEntradaHubVariants}
                   initial="hidden"
                   animate="visible"
                   className="flex origin-center items-center gap-3 px-1.5 py-2"

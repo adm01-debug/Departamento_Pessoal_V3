@@ -35,14 +35,13 @@ import { parseDateSafe } from '@/utils/format';
 /**
  * Bases de índice da cascata de entrada do Hub de Premiações.
  *
- * A ANIMAÇÃO não nasce aqui: ela é a MESMA dos KPI Cards do Dashboard Executivo
- * (fade + subida de 20px, ease `[0.25, 0.46, 0.45, 0.94]`, cascata por índice),
- * com a cadência própria do hub em `premiacoesEntrada.ts` (0.55s por item e
- * 0.10s por índice — a régua de referência com dois números escalados, porque o
- * Dashboard Executivo não pode ser alterado). Aqui só mora a ORDEM DE LEITURA
- * dos seis grupos visuais da tela — a base desloca cada grupo para que eles não
- * comecem todos no mesmo instante, sem inventar tempos novos (o intervalo entre
- * itens continua sendo o mesmo passo da cascata).
+ * A ANIMAÇÃO não nasce aqui: o movimento é o MESMO dos KPI Cards do Dashboard
+ * Executivo (fade + subida de 20px, ease `[0.25, 0.46, 0.45, 0.94]`, cascata
+ * por índice), com a cadência própria do hub em `premiacoesEntrada.ts`
+ * (0,42s por item, 0,10s por índice e 0,06s de atraso inicial — o movimento da
+ * referência, com o tempo ligeiramente mais lento para a cascata ficar
+ * perceptível). Aqui só mora a ORDEM DE LEITURA dos seis grupos visuais da tela
+ * — a base desloca cada grupo para que eles não comecem todos no mesmo instante.
  */
 export const ENTRADA_BASE = {
   cabecalho: 0,

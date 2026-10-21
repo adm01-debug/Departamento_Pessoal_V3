@@ -79,6 +79,14 @@
        24px/700 ao mesmo tempo). Ver plano de padronização tipográfica. */
     --text-heading: 1rem;
     --text-data: 1.5rem;
+    /* Escala semântica COMPLEMENTAR — mesmos pixels já usados nas telas
+       aprovadas, agora com nome. `control` = altura ótima dos controles
+       (Button/Input/Select); `body-sm` = texto secundário; `label` = rótulo de
+       campo; `badge` = selo compacto. Nenhuma delas inventa tamanho novo. */
+    --text-control: 0.8125rem;
+    --text-body-sm: 0.8125rem;
+    --text-label: 0.75rem;
+    --text-badge: 0.625rem;
     --chart-1: 68 100% 48%;
     --chart-2: 142 71% 38%;
     --chart-3: 38 92% 50%;
@@ -277,6 +285,56 @@
     font-weight: 500;
     letter-spacing: -0.025em;
     color: hsl(var(--data-foreground));
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ─── ESCALA SEMÂNTICA COMPLEMENTAR ──────────────────────────────────────
+     Ver `docs/DESIGN-SYSTEM-TIPOGRAFIA.md`. Todas as classes abaixo mantêm a
+     FAMÍLIA OFICIAL (Plus Jakarta Sans, a mesma do corpo) e não mudam os
+     tamanhos já aprovados — servem para eliminar `text-[13px]`/`text-[12px]`
+     soltos e para dar nome ao texto numérico. */
+
+  /** Controles (Button, Input, Select, Textarea) — 13 px, 1.5 de entrelinha. */
+  .text-control {
+    font-size: var(--text-control);
+    line-height: 1.5;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /** Texto secundário — 13 px. */
+  .text-body-sm {
+    font-size: var(--text-body-sm);
+    line-height: 1.45;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /** Rótulo de campo/controle — 12 px, peso 500. */
+  .text-label {
+    font-size: var(--text-label);
+    line-height: 1.4;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+  }
+
+  /** Selo/badge compacto — 10 px (mesma entrelinha herdada de antes). */
+  .text-badge {
+    font-size: var(--text-badge);
+    line-height: 1.5;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  /**
+   * VALOR NUMÉRICO DA INTERFACE (dinheiro, horas, percentuais, contagens).
+   *
+   * A família é a OFICIAL do sistema; o alinhamento vem de `tabular-nums`, não
+   * de uma família monoespaçada. Use esta classe no lugar de `font-mono` em
+   * qualquer número exibido ao usuário. `font-mono` fica reservado a conteúdo
+   * técnico (hash, código, JSON, log, protocolo, atalho de teclado).
+   */
+  .text-numeric {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
   }
 
   /* Focus ring - accessible.
@@ -718,3 +776,49 @@
     animation-delay: calc(var(--kanban-index, 0) * 80ms + var(--kanban-footer-delay-reduzido, 620ms));
   }
 }
+
+/* ─── Compare cenários: tabela compacta, sem cards e sem rolagem ───────────
+   A decisão de tipografia usa a largura do CARD (container query): 11px no
+   desktop e 9,5px apenas em cards muito estreitos, mantendo as 4 colunas. */
+.scenario-comparison {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.scenario-comparison__table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.scenario-comparison__table th {
+  padding: 6px 4px;
+  font-size: 10px;
+  line-height: 1.25;
+}
+.scenario-comparison__table td {
+  padding: 6px 4px;
+  font-size: 11px;
+  line-height: 1.35;
+}
+.scenario-comparison__table th:first-child,
+.scenario-comparison__table td:first-child {
+  padding-left: 0;
+}
+.scenario-comparison__table th:last-child,
+.scenario-comparison__table td:last-child {
+  padding-right: 0;
+}
+@container (max-width: 20rem) {
+  .scenario-comparison__table th {
+    padding: 5px 3px;
+    font-size: 9px;
+  }
+  .scenario-comparison__table td {
+    padding: 6px 3px;
+    font-size: 9.5px;
+  }
+}
+
+

@@ -370,7 +370,7 @@ export default function ProvisoesPage() {
                           </TableCell>
                           <TableCell className="text-muted-foreground">{log.duracao_ms ? `${log.duracao_ms}ms` : '-'}</TableCell>
                           <TableCell className="font-medium">{log.total_colaboradores || 0}</TableCell>
-                          <TableCell className="text-right font-mono font-medium text-primary">{formatCurrency(log.valor_total_provisionado || 0)}</TableCell>
+                          <TableCell className="text-numeric text-right font-medium text-primary">{formatCurrency(log.valor_total_provisionado || 0)}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -405,7 +405,7 @@ export default function ProvisoesPage() {
                   </div>
                   <div className="p-3 bg-muted/20 rounded-xl border border-border/30">
                     <p className="text-[10px] text-muted-foreground uppercase font-medium mb-1">Duração</p>
-                    <p className="text-sm font-mono">{selectedLog.duracao_ms || 0}ms</p>
+                    <p className="text-numeric text-sm">{selectedLog.duracao_ms || 0}ms</p>
                   </div>
                 </div>
                 

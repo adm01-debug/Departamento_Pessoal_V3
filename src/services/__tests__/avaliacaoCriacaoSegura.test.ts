@@ -43,7 +43,6 @@ vi.mock('@/mocks/desempenhoMock', () => ({
 }));
 
 import { avaliacaoService } from '../avaliacaoService';
-import { ModoRealIndisponivelError } from '@/components/avaliacao/nineBoxModo';
 import { EscritaBloqueadaError } from '@/components/avaliacao/escritaOperacional';
 
 const PARAMS = {
@@ -82,29 +81,26 @@ beforeEach(() => {
   cenario.demo = false;
 });
 
-describe('modo real DESLIGADO (padrão do código)', () => {
-  it('criarFeedbackSeguro lança e NÃO chama a RPC', async () => {
-    await expect(avaliacaoService.criarFeedbackSeguro(PARAMS)).rejects.toBeInstanceOf(ModoRealIndisponivelError);
-    expect(mockRpc).not.toHaveBeenCalled();
-    expect(mockFrom).not.toHaveBeenCalled();
+describe('flag do Nine-Box desligada NÃO bloqueia a escrita de UUID real', () => {
+  it('criarFeedbackSeguro chama a RPC com IDs reais', async () => {
+    mockRpc.mockResolvedValue({ data: RESPOSTA_CRIACAO, error: null });
+    await avaliacaoService.criarFeedbackSeguro(PARAMS);
+    expect(mockRpc).toHaveBeenCalledWith('criar_feedback_seguro', expect.objectContaining({ p_empresa_id: 'emp-1' }));
   });
 
-  it('finalizarFeedback lança e não grava', async () => {
-    await expect(
-      avaliacaoService.finalizarFeedback({ feedbackId: 'f1', acao: 'concluir', idOperacao: 'op-1' })
-    ).rejects.toBeInstanceOf(ModoRealIndisponivelError);
-    expect(mockRpc).not.toHaveBeenCalled();
+  it('finalizarFeedback chama a RPC com feedback real', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true, status_novo: 'concluido' }, error: null });
+    await avaliacaoService.finalizarFeedback({ feedbackId: 'f1', acao: 'concluir', idOperacao: 'op-1' });
+    expect(mockRpc).toHaveBeenCalledWith('finalizar_feedback', expect.objectContaining({ p_feedback_id: 'f1' }));
   });
 
-  it('validarPotencialAvaliacao lança e não grava', async () => {
-    await expect(
-      avaliacaoService.validarPotencialAvaliacao({ feedbackId: 'f1', idOperacao: 'op-1' })
-    ).rejects.toBeInstanceOf(ModoRealIndisponivelError);
-    expect(mockRpc).not.toHaveBeenCalled();
-  });
-
-  it('a mensagem deixa claro que nada foi simulado', async () => {
-    await expect(avaliacaoService.criarFeedbackSeguro(PARAMS)).rejects.toThrow(/Nenhuma gravação foi simulada/);
+  it('validarPotencialAvaliacao chama a RPC com feedback real', async () => {
+    mockRpc.mockResolvedValue({ data: { ok: true, versao_avaliacao: 'v1' }, error: null });
+    await avaliacaoService.validarPotencialAvaliacao({ feedbackId: 'f1', idOperacao: 'op-1' });
+    expect(mockRpc).toHaveBeenCalledWith(
+      'validar_potencial_avaliacao',
+      expect.objectContaining({ p_feedback_id: 'f1' })
+    );
   });
 });
 
@@ -253,17 +249,22 @@ describe('guarda de escrita operacional (id fictício / demonstração)', () => 
     expect(mockRpc).not.toHaveBeenCalled();
   });
 
-  it('modo demonstração ligado bloqueia tudo, com motivo próprio', async () => {
+  it('demonstração ligada NÃO bloqueia UUID real; `demo-*` é bloqueado', async () => {
     cenario.modoReal = true;
     cenario.demo = true;
+    mockRpc.mockResolvedValue({ data: RESPOSTA_CRIACAO, error: null });
+    await avaliacaoService.criarFeedbackSeguro(PARAMS);
+    expect(mockRpc).toHaveBeenCalledTimes(1);
+
     let erro: unknown = null;
     try {
-      await avaliacaoService.criarFeedbackSeguro(PARAMS);
+      await avaliacaoService.criarFeedbackSeguro({ ...PARAMS, avaliadoId: 'demo-colab-1' });
     } catch (e) {
       erro = e;
     }
-    expect((erro as EscritaBloqueadaError).motivo).toBe('demonstracao');
-    expect(mockRpc).not.toHaveBeenCalled();
+    expect(erro).toBeInstanceOf(EscritaBloqueadaError);
+    expect((erro as EscritaBloqueadaError).motivo).toBe('dado_ficticio');
+    expect(mockRpc).toHaveBeenCalledTimes(1);
   });
 
   it('INSERT direto legado (criarFeedback) também respeita a guarda', async () => {

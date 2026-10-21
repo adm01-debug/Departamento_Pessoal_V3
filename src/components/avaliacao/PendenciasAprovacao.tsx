@@ -29,9 +29,9 @@ import { CartaoFeedbackCanonico } from './CartaoFeedbackCanonico';
 import { DialogoDevolucao } from './DialogoDevolucao';
 import { formatarData } from './desempenhoComum';
 import { derivarFeedbacks } from './feedbacksComum';
-import { normalizarFeedback, type FeedbackCanonico } from './feedbackCanonico';
+import { normalizarFeedback, type FeedbackCanonico, type AcaoFeedbackId } from './feedbackCanonico';
 import { type PendenciaAprovacao } from './aprovacaoGestor';
-import { type PapeisAvaliacao } from './papeisAvaliacao';
+import { capacidadesAvaliacao, type PapeisAvaliacao } from './papeisAvaliacao';
 
 interface PendenciasAprovacaoProps {
   /** Fila derivada por `derivarPendencias` (nenhuma consulta nova). */
@@ -83,6 +83,12 @@ export function PendenciasAprovacao({
 
   /* Capacidades da CONTA (lista de papéis): ter `admin` não anula `gestor`. */
   const papeisEfetivos: PapeisAvaliacao = papeis ?? papel;
+  /**
+   * A decisão final é exclusiva do gestor (ou de uma exceção confirmada pelo
+   * servidor). RH/admin NÃO recebem Aprovar/Devolver: a fila fica somente
+   * leitura para esses perfis.
+   */
+  const decideAprovacao = capacidadesAvaliacao(papeisEfetivos).podeDecidirAprovacao;
 
   /**
    * MODELO CANÔNICO de cada linha — o MESMO que a listagem usa. A derivação lê
@@ -109,6 +115,7 @@ export function PendenciasAprovacao({
           pendencia: p,
           gestorResponsavel: p.gestorResponsavel,
           papeis: papeisEfetivos,
+          autorizadoConcluir: p.autorizadoConcluir === true,
           acoesHabilitadas,
           podeVerColaborador: false,
         });
@@ -137,7 +144,14 @@ export function PendenciasAprovacao({
             <CartaoFeedbackCanonico
               item={item}
               contexto="fila"
-              acoes={['ver', 'enviar', 'devolver', 'aprovar', 'validarPotencial']}
+              acoes={
+                [
+                  'ver',
+                  'enviar',
+                  ...(decideAprovacao || p.estado.autorizadoServidor ? (['devolver', 'aprovar'] as const) : []),
+                  'validarPotencial',
+                ] as AcaoFeedbackId[]
+              }
               previaTextos
               justificativa={p.justificativa}
               enviadoEm={p.enviadoEm ? formatarData(p.enviadoEm) : null}

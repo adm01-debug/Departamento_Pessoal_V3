@@ -57,6 +57,7 @@ import {
   acoesDisponiveis,
   ehGestorResponsavel,
   perfisOperadorEfetivos,
+  podeConcluirFeedback,
   podeValidarPotencial,
   situacaoPotencial,
   type AcaoDisponivel,
@@ -70,6 +71,8 @@ import { capacidadesAvaliacao } from './papeisAvaliacao';
 import { CHAVE_ARMAZENAMENTO as CHAVE_QUERY_DEMO, decidirLocal } from './aprovacaoLocal';
 import {
   MIN_CARACTERES_JUSTIFICATIVA_DEVOLUCAO,
+  MOTIVO_FALTA_AVALIACAO_GESTOR,
+  MOTIVO_GESTOR_NAO_ATRIBUIDO,
   validarJustificativaDevolucao,
   type EstadoAprovacao,
 } from './aprovacaoGestor';
@@ -199,19 +202,31 @@ export function FeedbackAcoesRodape({
   // Sem checagem de papel AQUI: quem já filtra por papel são os próprios botões
   // (`acoesDisponiveis` por perfil e `podeValidarAgora` só para RH). O servidor
   // revalida na RPC de qualquer forma.
-  const modoDemoLocal = !!servicoDemo;
+  /**
+   * SERVIÇO POR REGISTRO (correção do fluxo real):
+   *   • registro REAL (UUID) → SEMPRE `avaliacaoService`/RPC, mesmo que a tela
+   *     esteja exibindo mocks ao lado. Antes, `servicoDemo` era escolhido para a
+   *     página inteira e a decisão de um UUID era gravada só no navegador.
+   *   • registro FICTÍCIO (`mock-*`/`demo-*`) → `servicoDemo` (local).
+   */
+  const modoDemoLocal = !registroReal && !!servicoDemo;
   const modoRealOuPrevia = modoRealAtivo() || emPrevia || registroReal || modoDemoLocal;
-  const servico: ServicoAcoes = previa?.servico ?? servicoDemo ?? avaliacaoService;
+  const servico: ServicoAcoes =
+    registroReal && !emPrevia ? avaliacaoService : (previa?.servico ?? servicoDemo ?? avaliacaoService);
 
   /* ─── Papel do operador (o servidor revalida de qualquer forma) ─────────── */
   const roles = useMemo(() => (user?.roles ?? []).map((r) => String(r).toLowerCase().trim()), [user]);
+  const papeisConta = useMemo(
+    () => (isAdmin && !roles.includes('admin') ? [...roles, 'admin'] : roles),
+    [isAdmin, roles]
+  );
   /**
    * CAPACIDADES POR PAPEL (não por precedência). Uma conta pode ser `admin` E
    * `gestor` ao mesmo tempo (`user_roles` tem uma linha por papel): a leitura de
    * `papelStatus` continua existindo para rótulo/prévia, mas quem decide cada
    * controle são os papéis da CONTA — ter `admin` não anula `gestor`.
    */
-  const capacidades = useMemo(() => capacidadesAvaliacao(roles), [roles]);
+  const capacidades = useMemo(() => capacidadesAvaliacao(papeisConta), [papeisConta]);
   const temRh = capacidades.rh;
   // Requisito do fluxo: a checagem usa o `hasRole('gestor')` real do contexto
   // (lista de papéis da conta — ter `admin` não anula `gestor`). Na PRÉVIA DEV o
@@ -273,9 +288,16 @@ export function FeedbackAcoesRodape({
      aparece (fail-closed) — nem para `admin`/`rh`, que também não têm o perfil. */
   const avaliadoId = String(f?.avaliado_id ?? '').trim();
   const consultaVinculosAtiva =
-    modoRealOuPrevia && !emPrevia && !!avaliadoId && temGestor && (!!empresaId || modoDemoLocal);
+    modoRealOuPrevia &&
+    !emPrevia &&
+    !!avaliadoId &&
+    (temGestor || temRh || isAdmin || hasRole('user')) &&
+    (!!empresaId || modoDemoLocal);
   const { data: vinculos = [] } = useQuery({
-    queryKey: ['colaboradores_vinculos', empresaId],
+    // A chave separa o cenário DEMONSTRATIVO do banco REAL: sem o discriminante,
+    // um modal de mock poderia deixar vínculos fictícios no cache e liberar a
+    // aprovação de um registro UUID. O modo real mantém a MESMA chave da página.
+    queryKey: modoDemoLocal ? ['colaboradores_vinculos', 'demo', empresaId] : ['colaboradores_vinculos', empresaId],
     queryFn: () => servico.listarVinculos(empresaId),
     enabled: consultaVinculosAtiva,
     retry: false,
@@ -286,14 +308,31 @@ export function FeedbackAcoesRodape({
       : ehGestorResponsavel({ avaliadoId, vinculos, usuarioId: user?.id });
 
   /* ─── Elegibilidade dos controles ───────────────────────────────────────── */
+  /**
+   * CONCLUSÃO ≠ APROVAÇÃO. A conclusão usa a autorização do REGISTRO:
+   * avaliador designado, gestor responsável, exceção confirmada ou RH/admin.
+   * A ausência de `supervisor_id` não bloqueia um avaliador designado.
+   */
+  const avaliadorId = String(f?.avaliador_id ?? '').trim();
+  const papeisConclusao = (emPrevia && previa?.papel !== undefined ? [previa.papel] : papeisConta).filter(
+    (p): p is string => typeof p === 'string' && p.trim() !== ''
+  );
+  const autorizadoConcluir = podeConcluirFeedback({
+    papeis: papeisConclusao,
+    avaliadorId,
+    vinculos,
+    usuarioId: user?.id,
+    responsavel,
+    autorizadoServidor: estadoAprovacao?.autorizadoServidor === true,
+  });
   const acoes = acoesDisponiveis({
     statusAtual: f?.status,
     papel: papelStatus,
-    // Conta com vários papéis: cada ação pelo perfil que a concede (o gestor
-    // responsável CONCLUI; admin/RH REABRE/CANCELA). Sem vínculo, prevalece a
-    // leitura por precedência (admin/rh).
-    perfis: perfisOperadorEfetivos(emPrevia && previa?.papel !== undefined ? previa.papel : roles, responsavel),
+    // Conta com vários papéis: cada ação pelo perfil que a concede. A aprovação
+    // continua sendo decidida à parte (`decisaoPorVinculo`/servidor).
+    perfis: perfisOperadorEfetivos(emPrevia && previa?.papel !== undefined ? previa.papel : papeisConta, responsavel),
     responsavel,
+    autorizadoConcluir,
   });
   const conclusao = validarConclusao(f);
   const potencialValido = notaNaEscala(f?.potencial) !== null;
@@ -309,10 +348,9 @@ export function FeedbackAcoesRodape({
     statusAtual === 'concluido' &&
     potencialValido &&
     situacao !== 'validada' &&
-    // Com o estado da aprovação disponível, o RH só valida DEPOIS do aval do
-    // gestor vigente (mesma etapa da fila); sem o estado, a regra do servidor
-    // segue valendo sozinha.
-    (!aprovacao || aprovacao.podeValidarPotencial);
+    // Controle legado visível apenas na etapa em que ele existia (aprovada).
+    // No fluxo novo ele fica desabilitado; antes da aprovação não é oferecido.
+    (!aprovacao || aprovacao.status === 'aprovada_gestor' || aprovacao.status === 'concluida_validada');
   /**
    * O selo de situação só aparece para quem PODE consultar as validações (RH):
    * sem essa consulta não existe dado para afirmar "aguardando"/"validado" — e
@@ -343,36 +381,39 @@ export function FeedbackAcoesRodape({
    * REGISTRO REAL → exige o vínculo provado (`responsavel`), reconferido no
    * servidor por `pode_aprovar_colaborador`.
    * REGISTRO FICTÍCIO (vitrine `mock-*`) → a decisão é DEMONSTRATIVA: os botões
-   * existem para demonstrar o fluxo, mas NADA é gravado (nenhuma RPC é chamada)
-   * e a operação é anunciada como demonstração. Exige papel de gestão
-   * (`admin`/`gestor`) — o RH puro não aprova nem na vitrine.
+   * existem para demonstrar o fluxo, mas NADA é gravado no banco. O PAPEL é o
+   * MESMO do fluxo real (`gestor`) — rh/admin NÃO substituem a aprovação.
    */
-  const papelDeGestao = papelStatus === 'admin' || papelStatus === 'gestor';
+  const podeDecidirPorPapel =
+    emPrevia && previa?.papel !== undefined ? previa.papel === 'gestor' : capacidades.podeDecidirAprovacao;
   const decisaoDemonstrativa = aprovacaoPendente && !registroReal;
   /** Motivo derivado pela MESMA instância da fila (escopo sem vínculo). */
   const motivoBloqueioAprovacao = aprovacao?.motivoBloqueio ?? null;
   /**
-   * REGISTRO REAL — dois caminhos legítimos:
-   *   • ESCOPO AMPLO: RH/admin (`pode_gerir_avaliacoes`) têm autoridade de
-   *     tenant e decidem COM ou SEM vínculo;
-   *   • VÍNCULO: papel `gestor` + ser o gestor responsável (servidor reconfere).
+   * DECISÃO — a MESMA regra do servidor:
+   *   • requisitos obrigatórios: gestor identificado + proposta consolidada com
+   *     Desempenho/Potencial válidos (`motivoBloqueio` já traz o texto);
+   *   • ESCOPO real: ser o gestor vinculado (ou exceção confirmada pelo
+   *     servidor); RH/admin NÃO aprovam;
+   *   • VITRINE: papel `gestor`, com os mesmos requisitos.
    *
-   * A conclusão do REGISTRO e a existência da avaliação do gestor NÃO entram
-   * aqui: são processos distintos da aprovação gerencial.
+   * A conclusão do REGISTRO não entra aqui: conclusão ≠ aprovação.
    */
   const decisaoPorVinculo = temGestor && responsavel === true;
-  const decisaoPorAmplo = capacidades.podeGerirAvaliacoes;
-  const podeOferecerDecisao = registroReal ? decisaoPorVinculo || decisaoPorAmplo : papelDeGestao;
+  const decisaoPorServidor = aprovacao?.autorizadoServidor === true;
+  const podeOferecerDecisao = registroReal ? decisaoPorVinculo || decisaoPorServidor : podeDecidirPorPapel;
   const motivoDecisao = !aprovacao
     ? 'Sem consolidação para este colaborador e ciclo.'
     : !aprovacaoPendente
       ? `A avaliação não está aguardando decisão do gestor (${aprovacao.rotulo}).`
       : (motivoBloqueioAprovacao ??
-        (podeOferecerDecisao
-          ? null
-          : aprovacao.gestorIdentificado
-            ? 'Sua conta não é o gestor responsável por este colaborador.'
-            : 'Colaborador sem gestor vinculado — a aprovação está disponível ao RH/admin.'));
+        (!aprovacao.gestorIdentificado && !decisaoPorServidor
+          ? MOTIVO_GESTOR_NAO_ATRIBUIDO
+          : !aprovacao.avaliacaoGestorValida
+            ? MOTIVO_FALTA_AVALIACAO_GESTOR
+            : podeOferecerDecisao
+              ? null
+              : 'Somente o gestor responsável pela avaliação pode aprovar ou devolver.'));
   const chaveAprovacaoRef = useRef<ChaveIdempotente | null>(null);
   if (chaveAprovacaoRef.current == null) chaveAprovacaoRef.current = criarChaveIdempotente();
 
@@ -424,6 +465,7 @@ export function FeedbackAcoesRodape({
       // Fila, contador, versão e lista passam a refletir a MESMA decisão.
       qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
       qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
       setDevolucaoAberta(false);
@@ -455,6 +497,9 @@ export function FeedbackAcoesRodape({
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
       qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       setMotivoAberto(null);
       setMotivo('');
       const repetida = Boolean(resposta?.idempotente);
@@ -486,6 +531,10 @@ export function FeedbackAcoesRodape({
       qc.invalidateQueries({ queryKey: ['feedbacks_360_validacoes_potencial'] });
       qc.invalidateQueries({ queryKey: ['vw_feedbacks_360_versao'] });
       qc.invalidateQueries({ queryKey: ['feedbacks_360'] });
+      // A fila/Nine-Box releem a consolidação e as decisões na MESMA rodada.
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_consolidacoes'] });
+      qc.invalidateQueries({ queryKey: ['feedbacks_360_aprovacoes_gestor'] });
+      qc.invalidateQueries({ queryKey: ['pode_aprovar_colaborador'] });
       // VITRINE: a validação local entra no MESMO estado que a fila/Nine-Box leem.
       qc.invalidateQueries({ queryKey: [CHAVE_QUERY_DEMO] });
       toast.success(
@@ -545,7 +594,9 @@ export function FeedbackAcoesRodape({
     mostrarAcoesStatus && modoRealOuPrevia
       ? acoes.filter((a: AcaoDisponivel) => a.acao !== 'reabrir' && a.disponivel)
       : [];
-  const botoesDecisaoGestor = contexto === 'aguardando_gestor';
+  const botoesDecisaoGestor =
+    contexto === 'aguardando_gestor' &&
+    (capacidades.gestor || podeDecidirPorPapel || aprovacao?.autorizadoServidor === true);
   const botoesValidacaoRh = mostrarValidacaoRh && modoRealOuPrevia && podeValidarAgora;
   const seloVisivel = true;
   const temAcoes = acoesDaEtapa.length > 0 || botoesDecisaoGestor || botoesValidacaoRh;
@@ -660,7 +711,12 @@ export function FeedbackAcoesRodape({
                 variant="outline"
                 size="sm"
                 className="h-8 gap-1.5 text-xs"
-                disabled={emAndamento}
+                disabled={emAndamento || !aprovacao?.podeValidarPotencial}
+                title={
+                  aprovacao?.podeValidarPotencial
+                    ? undefined
+                    : 'Fluxo atual: a aprovação do gestor já classifica; a validação posterior do RH não é necessária.'
+                }
                 onClick={() => validarPotencial.mutate()}
               >
                 <ShieldCheck className="h-3.5 w-3.5" />

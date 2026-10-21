@@ -168,7 +168,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
                   <div className="flex items-center gap-3">
                     <div className="text-right hidden sm:block">
                       <p className="text-[10px] text-muted-foreground font-body uppercase">Próximo Envio</p>
-                      <p className="text-xs font-mono font-medium">
+                      <p className="text-numeric text-xs font-medium">
                         {a.proximo_envio ? new Date(a.proximo_envio).toLocaleString('pt-BR') : 'Aguardando...'}
                       </p>
                     </div>

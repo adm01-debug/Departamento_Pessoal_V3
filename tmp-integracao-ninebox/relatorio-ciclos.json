@@ -1,0 +1,35 @@
+{
+  "quando": "2026-10-20T19:19:40.233Z",
+  "conta": "admin@teste.local",
+  "passos": {
+    "criacao_real_ui": {
+      "id": "21710058-aad5-4b8f-ab1c-39704e480d98",
+      "nome": "TESTE UI PERSISTENCIA 1792523980949",
+      "empresa_id": "61e7d382-549f-4b17-afa4-4578ebc919f3",
+      "seletor": "TESTE UI PERSISTENCIA 1792523980949 19/10/2026 - 19/10/2026"
+    },
+    "f5_preserva": {
+      "id": "21710058-aad5-4b8f-ab1c-39704e480d98",
+      "visivel": true
+    },
+    "outra_sessao_autorizada": {
+      "id": "21710058-aad5-4b8f-ab1c-39704e480d98",
+      "visivel": true
+    },
+    "mocks_preservados": {
+      "demonstracoes_rotuladas": 5
+    },
+    "exclusao_ciclo_vazio": {
+      "id": "21710058-aad5-4b8f-ab1c-39704e480d98",
+      "removido": true
+    },
+    "exclusao_com_dependencia_bloqueada": {
+      "id": "54fb731f-b702-462f-8e7f-73ab14f51a39",
+      "toast": "Ciclo NÃO excluído: Exclusão bloqueada: o ciclo possui 1 dependência(s) (metas_okrs: 1). Nenhum dado foi apagado. Arquive o ciclo ou remova os vínculos com autorização."
+    },
+    "perfil_nao_autorizado_sem_exclusao": {
+      "visivel": false
+    }
+  },
+  "evidencias": {}
+}

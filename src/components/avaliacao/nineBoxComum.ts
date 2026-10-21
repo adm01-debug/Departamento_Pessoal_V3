@@ -533,8 +533,18 @@ export function lerInsightsEstruturados(
 
   /* PENDÊNCIAS DE FLUXO — usam o MESMO card de insights (sem novo componente):
      aprovado pelo gestor ainda não é classificação oficial; o RH precisa
-     validar o Potencial. A aprovação também pode estar pendente/invalidada. */
+     validar o Potencial. A aprovação também pode estar pendente/invalidada.
+     Os NOMES de quem está na etapa são exibidos (mesma leitura do banner). */
+  const nomes = (lista: string[] | undefined, limite = 3): string => {
+    const limpos = (lista ?? []).map((n) => String(n ?? '').trim()).filter(Boolean);
+    if (limpos.length === 0) return '';
+    return limpos.length <= limite
+      ? limpos.join(', ')
+      : `${limpos.slice(0, limite).join(', ')} e mais ${limpos.length - limite}`;
+  };
+
   if (atencao.aguardandoRh > 0) {
+    const lista = nomes(atencao.nomesAguardandoRh);
     itens.push({
       id: 'aguardando-rh',
       tipo: 'potencial',
@@ -543,12 +553,17 @@ export function lerInsightsEstruturados(
           texto: `${atencao.aguardandoRh} ${atencao.aguardandoRh === 1 ? 'avaliação' : 'avaliações'}`,
           forte: true,
         },
-        { texto: ' aprovada(s) pelo gestor aguardando a validação do Potencial pelo RH.' },
+        {
+          texto: lista
+            ? ` aprovada(s) pelo gestor aguardando a validação do Potencial pelo RH: ${lista}.`
+            : ' aprovada(s) pelo gestor aguardando a validação do Potencial pelo RH.',
+        },
       ],
     });
   }
 
   if (atencao.aguardandoAprovacao > 0) {
+    const lista = nomes(atencao.nomesAguardandoAprovacao);
     itens.push({
       id: 'aguardando-aprovacao',
       tipo: 'potencial',
@@ -557,7 +572,11 @@ export function lerInsightsEstruturados(
           texto: `${atencao.aguardandoAprovacao} ${atencao.aguardandoAprovacao === 1 ? 'avaliação' : 'avaliações'}`,
           forte: true,
         },
-        { texto: ' com aprovação do gestor pendente, devolvida ou invalidada.' },
+        {
+          texto: lista
+            ? ` com aprovação do gestor pendente, devolvida ou invalidada: ${lista}.`
+            : ' com aprovação do gestor pendente, devolvida ou invalidada.',
+        },
       ],
     });
   }

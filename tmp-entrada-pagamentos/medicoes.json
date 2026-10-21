@@ -1,0 +1,446 @@
+{
+  "pagamentos-desktop-1456": {
+    "largura": 1456,
+    "reduzido": false,
+    "erros": [],
+    "antes": "1",
+    "depois": "1",
+    "video": "C:\\Users\\artes03\\Desktop\\departamento-pessoal-v2-main\\tmp-entrada-pagamentos\\video\\page@60b9afe6c00eea5baa7313a6ba375409.webm",
+    "kpi": {
+      "w": 223,
+      "h": 105
+    },
+    "filtros": {
+      "w": 184,
+      "h": 40
+    },
+    "tabela": {
+      "w": 924,
+      "h": 538
+    },
+    "linhas": 6,
+    "rolagemHorizontal": false,
+    "classeRaiz": "dark",
+    "entrada": {
+      "quadros": 1168,
+      "alvos": {
+        "1.kpiAprovado": {
+          "inicio_ms": 1081,
+          "duracao_ms": 391,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 0
+        },
+        "2.kpiAguardando": {
+          "inicio_ms": 1176,
+          "duracao_ms": 408,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 95
+        },
+        "3.kpiDivergencias": {
+          "inicio_ms": 1287,
+          "duracao_ms": 375,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 206
+        },
+        "4.kpiPago": {
+          "inicio_ms": 1375,
+          "duracao_ms": 401,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 294
+        },
+        "5.fluxo": {
+          "inicio_ms": 1608,
+          "duracao_ms": 369,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 527
+        },
+        "6.busca": {
+          "inicio_ms": 1176,
+          "duracao_ms": 408,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 95
+        },
+        "7.tabela": {
+          "inicio_ms": 1287,
+          "duracao_ms": 375,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 206
+        },
+        "8.linha1": {
+          "inicio_ms": 1287,
+          "duracao_ms": 523,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 206
+        },
+        "9.linha2": {
+          "inicio_ms": 1363,
+          "duracao_ms": 506,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 282
+        },
+        "10.linha3": {
+          "inicio_ms": 1441,
+          "duracao_ms": 519,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 360
+        },
+        "11.resumo": {
+          "inicio_ms": 1375,
+          "duracao_ms": 401,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 294
+        },
+        "12.acoes": {
+          "inicio_ms": 1493,
+          "duracao_ms": 376,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 412
+        },
+        "13.acao1": {
+          "inicio_ms": 1287,
+          "duracao_ms": 523,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 206
+        },
+        "14.acao2": {
+          "inicio_ms": 1363,
+          "duracao_ms": 506,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 282
+        },
+        "15.atividade": {
+          "inicio_ms": 1685,
+          "duracao_ms": 389,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 604
+        },
+        "16.atividade1": {
+          "inicio_ms": 1287,
+          "duracao_ms": 523,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 206
+        },
+        "17.atividade2": {
+          "inicio_ms": 1363,
+          "duracao_ms": 506,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 282
+        }
+      }
+    },
+    "erroRecorder": null
+  },
+  "pagamentos-mobile-390": {
+    "largura": 390,
+    "reduzido": false,
+    "erros": [],
+    "antes": "1",
+    "depois": "1",
+    "video": null,
+    "kpi": {
+      "w": 342,
+      "h": 90
+    },
+    "filtros": {
+      "w": 308,
+      "h": 40
+    },
+    "tabela": {
+      "w": 900,
+      "h": 552
+    },
+    "linhas": 6,
+    "rolagemHorizontal": true,
+    "classeRaiz": "dark",
+    "entrada": {
+      "quadros": 404,
+      "alvos": {
+        "1.kpiAprovado": {
+          "inicio_ms": 789,
+          "duracao_ms": 389,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 0
+        },
+        "2.kpiAguardando": {
+          "inicio_ms": 888,
+          "duracao_ms": 401,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 99
+        },
+        "3.kpiDivergencias": {
+          "inicio_ms": 991,
+          "duracao_ms": 396,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 202
+        },
+        "4.kpiPago": {
+          "inicio_ms": 1096,
+          "duracao_ms": 400,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 307
+        },
+        "5.fluxo": {
+          "inicio_ms": 1299,
+          "duracao_ms": 401,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 510
+        },
+        "6.busca": {
+          "inicio_ms": 888,
+          "duracao_ms": 401,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 99
+        },
+        "7.tabela": {
+          "inicio_ms": 991,
+          "duracao_ms": 396,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 202
+        },
+        "8.linha1": {
+          "inicio_ms": 991,
+          "duracao_ms": 537,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 202
+        },
+        "9.linha2": {
+          "inicio_ms": 1073,
+          "duracao_ms": 548,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 284
+        },
+        "10.linha3": {
+          "inicio_ms": 1157,
+          "duracao_ms": 543,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 368
+        },
+        "11.resumo": {
+          "inicio_ms": 1096,
+          "duracao_ms": 400,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 307
+        },
+        "12.acoes": {
+          "inicio_ms": 1194,
+          "duracao_ms": 427,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 405
+        },
+        "13.acao1": {
+          "inicio_ms": 991,
+          "duracao_ms": 537,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 202
+        },
+        "14.acao2": {
+          "inicio_ms": 1073,
+          "duracao_ms": 548,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 284
+        },
+        "15.atividade": {
+          "inicio_ms": 1400,
+          "duracao_ms": 415,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 611
+        },
+        "16.atividade1": {
+          "inicio_ms": 991,
+          "duracao_ms": 537,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 202
+        },
+        "17.atividade2": {
+          "inicio_ms": 1073,
+          "duracao_ms": 548,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 284
+        }
+      }
+    },
+    "erroRecorder": null
+  },
+  "pagamentos-movimento-reduzido": {
+    "largura": 1456,
+    "reduzido": true,
+    "erros": [],
+    "antes": "1",
+    "depois": "1",
+    "video": null,
+    "kpi": {
+      "w": 223,
+      "h": 105
+    },
+    "filtros": {
+      "w": 184,
+      "h": 40
+    },
+    "tabela": {
+      "w": 924,
+      "h": 538
+    },
+    "linhas": 6,
+    "rolagemHorizontal": false,
+    "classeRaiz": "dark",
+    "entrada": {
+      "quadros": 1764,
+      "alvos": {
+        "1.kpiAprovado": {
+          "inicio_ms": 726,
+          "duracao_ms": 385,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 0
+        },
+        "2.kpiAguardando": {
+          "inicio_ms": 825,
+          "duracao_ms": 391,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 99
+        },
+        "3.kpiDivergencias": {
+          "inicio_ms": 927,
+          "duracao_ms": 384,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 201
+        },
+        "4.kpiPago": {
+          "inicio_ms": 1025,
+          "duracao_ms": 397,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 299
+        },
+        "5.fluxo": {
+          "inicio_ms": 1225,
+          "duracao_ms": 398,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 499
+        },
+        "6.busca": {
+          "inicio_ms": 825,
+          "duracao_ms": 391,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 99
+        },
+        "7.tabela": {
+          "inicio_ms": 927,
+          "duracao_ms": 384,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 201
+        },
+        "8.linha1": {
+          "inicio_ms": 924,
+          "duracao_ms": 520,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 198
+        },
+        "9.linha2": {
+          "inicio_ms": 1006,
+          "duracao_ms": 519,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 280
+        },
+        "10.linha3": {
+          "inicio_ms": 1083,
+          "duracao_ms": 531,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 357
+        },
+        "11.resumo": {
+          "inicio_ms": 1025,
+          "duracao_ms": 397,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 299
+        },
+        "12.acoes": {
+          "inicio_ms": 1123,
+          "duracao_ms": 393,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 397
+        },
+        "13.acao1": {
+          "inicio_ms": 924,
+          "duracao_ms": 520,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 198
+        },
+        "14.acao2": {
+          "inicio_ms": 1006,
+          "duracao_ms": 519,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 280
+        },
+        "15.atividade": {
+          "inicio_ms": 1328,
+          "duracao_ms": 389,
+          "y_entrada": 20,
+          "passagens": 1,
+          "atraso_rel_ms": 602
+        },
+        "16.atividade1": {
+          "inicio_ms": 924,
+          "duracao_ms": 520,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 198
+        },
+        "17.atividade2": {
+          "inicio_ms": 1006,
+          "duracao_ms": 519,
+          "y_entrada": 10,
+          "passagens": 1,
+          "atraso_rel_ms": 280
+        }
+      }
+    },
+    "erroRecorder": null
+  }
+}

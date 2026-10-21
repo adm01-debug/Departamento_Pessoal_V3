@@ -13,6 +13,7 @@ import { NovoFeedbackDialog } from './NovoFeedbackDialog';
 import { PendenciasAprovacao } from './PendenciasAprovacao';
 import { normalizarFeedback, type FeedbackCanonico } from './feedbackCanonico';
 import { capacidadesAvaliacao } from './papeisAvaliacao';
+import { podeConcluirFeedback } from './acoesFeedback';
 import { consolidarNineBox360, pontos360 } from './nineBox360';
 import type { ValidacaoPotencial } from './motorAvaliacao360';
 import {
@@ -123,6 +124,11 @@ interface FeedbacksTabProps {
    * gestores sem autorização. Vazio = ambiente sem vínculos (vitrine).
    */
   vinculos?: { id?: string | null; user_id?: string | null; supervisor_id?: string | null }[];
+  /**
+   * `colaborador_id` → `pode_aprovar_colaborador` confirmado no Supabase.
+   * Reconhece a exceção temporária de homologação sem replicar allowlist no front.
+   */
+  autorizacoesAprovacao?: Record<string, boolean>;
   /** Usuário autenticado — entra na prova de responsabilidade. */
   usuarioId?: string | null;
   /** VITRINE: encaminhamentos automáticos (`chave → { em }`) — data do envio. */
@@ -177,6 +183,7 @@ export function FeedbacksTab({
   consolidacoes = [],
   aprovacoesGestor = [],
   vinculos = [],
+  autorizacoesAprovacao = {},
   usuarioId = null,
   encaminhamentos = {},
   papel = null,
@@ -292,6 +299,10 @@ export function FeedbacksTab({
         cicloId: String(ciclo?.id ?? '') || null,
         validacoes: validacoesPotencial,
         versoesPorFeedback,
+        // A classificação exibida nos cards também exige a decisão vigente do
+        // gestor: `concluido` sozinho nunca vira quadrante.
+        aprovacoes: aprovacoesGestor,
+        consolidacoes,
       }),
       colaboradores,
       pdis
@@ -305,7 +316,16 @@ export function FeedbacksTab({
       };
     });
     return mapa;
-  }, [feedbacks, ciclo?.id, validacoesPotencial, versoesPorFeedback, colaboradores, pdis]);
+  }, [
+    feedbacks,
+    ciclo?.id,
+    validacoesPotencial,
+    versoesPorFeedback,
+    aprovacoesGestor,
+    consolidacoes,
+    colaboradores,
+    pdis,
+  ]);
 
   const pendencias = useMemo(
     () =>
@@ -323,11 +343,13 @@ export function FeedbacksTab({
         // PROVA DO GESTOR RESPONSÁVEL: vínculo (`supervisor_id`→`user_id`) + usuário
         // autenticado. Sem isto a pendência era atribuída ao AVALIADOR do registro.
         vinculos,
+        autorizacoesAprovacao,
         usuarioId,
         encaminhamentos,
-        // FALLBACK DE ESCOPO (sem vínculo): RH/admin decide a consolidação órfã
-        // de gestor — mesma condição do servidor (`pode_aprovar_colaborador`).
+        // RH/admin NÃO aprovam: o papel amplo serve ao encaminhamento e à
+        // conclusão da preparação; a decisão final é do gestor responsável.
         podeGerirAvaliacoes: capacidadesAvaliacao(papeis).podeGerirAvaliacoes,
+        papeis,
         // ORIGEM DA VERSÃO: `demonstracao` sintetiza a versão a partir da
         // avaliação concluída do gestor; `real` lê a view oficial. É o MODO DE
         // OPERAÇÃO (não "ações habilitadas") — na vitrine a fila continua
@@ -344,6 +366,7 @@ export function FeedbacksTab({
       validacoesPotencial,
       classificacoes,
       vinculos,
+      autorizacoesAprovacao,
       usuarioId,
       encaminhamentos,
       modoAprovacao,
@@ -415,11 +438,20 @@ export function FeedbacksTab({
         const cicloId = String(f.ciclo_id ?? '');
         const pendencia = pendenciaDe[`${colaboradorId}::${cicloId}`] ?? null;
         const supervisorId = supervisorPorColaborador.get(colaboradorId) ?? null;
+        const autorizadoConcluir = podeConcluirFeedback({
+          papeis,
+          avaliadorId: f.avaliador_id,
+          vinculos,
+          usuarioId,
+          responsavel: pendencia?.responsavel === true,
+          autorizadoServidor: pendencia?.autorizadoServidor === true,
+        });
         return normalizarFeedback(d, {
           cicloNome: nomePorCiclo.get(cicloId) ?? String(ciclo?.nome ?? ''),
           pendencia,
           gestorResponsavel: supervisorId ? (nomePorColaborador.get(supervisorId) ?? null) : null,
           papeis,
+          autorizadoConcluir,
           acoesHabilitadas: acoesAprovacaoHabilitadas,
           podeVerColaborador: true,
         });
@@ -432,6 +464,8 @@ export function FeedbacksTab({
       nomePorCiclo,
       ciclo?.nome,
       papeis,
+      vinculos,
+      usuarioId,
       acoesAprovacaoHabilitadas,
     ]
   );
@@ -467,11 +501,20 @@ export function FeedbacksTab({
   /**
    * ETAPA do modal aberto — decide o CONJUNTO de ações do rodapé (regra única):
    *  • aberto na listagem (Avaliações) → ações do STATUS do registro;
-   *  • aberto na fila, pendente do gestor → só Aprovar/Devolver;
-   *  • aberto na fila, aguardando o RH   → só Validar Potencial.
+   *  • aberto na fila, avaliação do GESTOR ainda NÃO concluída → etapa de
+   *    CONCLUSÃO (`avaliacoes`): sem ela a aprovação nem existe (o servidor
+   *    recusa), então o gestor responsável precisa concluir antes;
+   *  • aberto na fila, aprovado → só Validar Potencial (RH);
+   *  • aberto na fila, aguardando decisão → só Aprovar/Devolver.
    */
   const contextoDoDetalhe: ContextoAcoes =
-    visao !== 'aguardando' ? 'avaliacoes' : estadoDoDetalhe?.status === 'aprovada_gestor' ? 'rh' : 'aguardando_gestor';
+    visao !== 'aguardando'
+      ? 'avaliacoes'
+      : estadoDoDetalhe?.avaliacaoGestorValida === false
+        ? 'avaliacoes'
+        : estadoDoDetalhe?.status === 'aprovada_gestor'
+          ? 'rh'
+          : 'aguardando_gestor';
 
   const filtrosAtivos = (tipo ? 1 : 0) + (avaliador ? 1 : 0) + (somentePendentes ? 1 : 0);
 
@@ -534,6 +577,14 @@ export function FeedbacksTab({
         pendencia: p,
         gestorResponsavel: p.gestorResponsavel,
         papeis,
+        autorizadoConcluir: podeConcluirFeedback({
+          papeis,
+          avaliadorId: p.feedback?.avaliador_id,
+          vinculos,
+          usuarioId,
+          responsavel: p.responsavel === true,
+          autorizadoServidor: p.autorizadoServidor === true,
+        }),
         acoesHabilitadas: acoesAprovacaoHabilitadas,
         podeVerColaborador: true,
       })
@@ -671,7 +722,7 @@ export function FeedbacksTab({
           id: String(c?.id ?? ''),
           nome: String(c?.nome ?? 'Ciclo'),
         }))}
-        cicloIdPadrao={String((ciclosReais && ciclosReais.length ? ciclosReais[0] : ciclo)?.id ?? '')}
+        cicloIdPadrao={String(ciclo?.id || (ciclosReais && ciclosReais.length ? ciclosReais[0].id : '') || '')}
         registro={editando}
         onSubmit={(dados) => {
           if (editando) {

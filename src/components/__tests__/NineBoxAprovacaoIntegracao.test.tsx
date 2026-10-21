@@ -5,9 +5,9 @@ import { NineBoxFocoBanner } from '@/components/avaliacao/NineBoxFocoBanner';
 import { lerAtencao, type PontoNineBox } from '@/components/avaliacao/nineBoxComum';
 
 /**
- * APROVAÇÃO → NINE-BOX: o estado intermediário ("aprovado, aguardando RH")
- * precisa ser VISÍVEL usando o indicador existente — sem quadrante oficial e
- * sem esconder o colaborador. Estes testes cobrem a contagem e o banner.
+ * APROVAÇÃO → NINE-BOX: o estado de aprovação é aplicado pelo motor. O banner
+ * legado de “aguardando RH” permanece disponível para registros históricos, mas
+ * a aprovação vigente do gestor já classifica no quadrante.
  */
 function ponto(extra: Partial<PontoNineBox> = {}): PontoNineBox {
   return {
@@ -70,6 +70,22 @@ describe('Nine-Box × aprovação — estado intermediário visível', () => {
     expect(screen.getByText(/Beatriz Silva Cardoso/)).toBeInTheDocument();
     expect(screen.getByText(/validação do Potencial pelo RH/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Ver detalhes/i })).toBeNull();
+  });
+
+  it('o banner apresenta o nome e o CICLO de quem aguarda o RH', () => {
+    render(
+      <NineBoxFocoBanner
+        total={0}
+        emRisco={0}
+        semPdi={0}
+        aguardandoRh={1}
+        nomesAguardandoRh={['Beatriz Silva Cardoso']}
+        cicloNome="Ciclo Anual 2025"
+      />
+    );
+
+    expect(screen.getByText(/Beatriz Silva Cardoso/)).toBeInTheDocument();
+    expect(screen.getByText(/Ciclo Anual 2025/)).toBeInTheDocument();
   });
 
   it('sem pendências de fluxo nem risco, o banner continua ausente', () => {

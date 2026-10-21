@@ -358,14 +358,14 @@ export function GestaoRegistrosPonto() {
                         <TableCell className="text-[10px] text-muted-foreground whitespace-nowrap">
                           {r.entrada_esperada ? `${r.entrada_esperada} - ${r.saida_esperada}` : 'Não def.'}
                         </TableCell>
-                        <TableCell className={`font-mono text-sm ${temAtraso ? 'text-destructive font-medium' : ''}`}>
+                        <TableCell className={`text-numeric text-sm ${temAtraso ? 'text-destructive font-medium' : ''}`}>
                           {formatTime(r.entrada_1)}
                         </TableCell>
-                        <TableCell className="font-mono text-sm">{formatTime(r.saida_intervalo)}</TableCell>
-                        <TableCell className="font-mono text-sm">{formatTime(r.retorno_intervalo)}</TableCell>
-                        <TableCell className="font-mono text-sm">{formatTime(r.saida_1)}</TableCell>
+                        <TableCell className="text-numeric text-sm">{formatTime(r.saida_intervalo)}</TableCell>
+                        <TableCell className="text-numeric text-sm">{formatTime(r.retorno_intervalo)}</TableCell>
+                        <TableCell className="text-numeric text-sm">{formatTime(r.saida_1)}</TableCell>
                         <TableCell>
-                          <span className="font-mono text-sm font-medium text-success">{trabalhadas}</span>
+                          <span className="text-numeric text-sm font-medium text-success">{trabalhadas}</span>
                         </TableCell>
                         <TableCell>
                           {extras !== '00:00' ? (

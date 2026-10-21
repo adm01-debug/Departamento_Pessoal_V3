@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ArrowDownRight, ArrowUpRight, Minus, Users } from 'lucide-react';
 import { EntradaPresenca } from './entradaCards';
 import { NineBoxFiltros } from './NineBoxFiltros';
@@ -10,9 +10,9 @@ import { NineBoxQuadranteDialog } from './NineBoxQuadranteDialog';
 // ⚠️ TEMPORÁRIO — mock visual do Nine-Box. Remover este import junto com o
 // bloco marcado no corpo do componente e com `nineBoxMock.ts`.
 import { aplicarMockNineBox, MOCK_NINEBOX_COMPARAR_INICIAL } from './nineBoxMock';
-import { modoRealAtivo } from './nineBoxModo';
 import { consolidarNineBox360, pontos360 } from './nineBox360';
 import { aplicarAprovacaoLocal, estadoLocalVazio, type EstadoLocalDemo } from './aprovacaoLocal';
+import { idDemonstrativo } from './escritaOperacional';
 import type { ValidacaoPotencial } from './motorAvaliacao360';
 import type { PontoNineBox } from './nineBoxComum';
 import {
@@ -76,8 +76,9 @@ interface NineBoxTabProps {
   /**
    * Decisões do gestor e consolidações (`feedbacks_360_aprovacoes_gestor` /
    * `feedbacks_360_consolidacoes`) — usadas no modo real para que o Nine-Box
-   * aplique a MESMA versão aprovada da fila. Sem elas, o modo real mantém a
-   * leitura anterior (validação como âncora).
+   * aplique a MESMA versão aprovada da fila. O snapshot aprovado
+   * (`desempenho_aprovado`/`potencial_aprovado`) é a fonte oficial; a validação
+   * posterior do RH não é mais exigida.
    */
   aprovacoesGestor?: unknown[];
   consolidacoes?: unknown[];
@@ -89,6 +90,12 @@ interface NineBoxTabProps {
    * gestor + validação do Potencial vigentes, o colaborador não é classificado.
    */
   aprovacoesDemo?: EstadoLocalDemo;
+  /**
+   * IDs criados/editados na VITRINE (`demo-*` ou fixture com patch). Eles não
+   * podem ser classificados antes de aprovação + validação; as fixtures
+   * originais intocadas continuam formando a vitrine aprovada.
+   */
+  idsFluxoDemo?: ReadonlySet<string>;
 }
 
 export function NineBoxTab({
@@ -102,6 +109,7 @@ export function NineBoxTab({
   validacoesPotencial = [],
   versoesPorFeedback = {},
   aprovacoesDemo,
+  idsFluxoDemo = new Set<string>(),
   aprovacoesGestor,
   consolidacoes,
 }: NineBoxTabProps) {
@@ -149,20 +157,31 @@ export function NineBoxTab({
     [ciclos]
   );
 
-  /** Pessoas do ciclo em foco — uma por colaborador (ver `nineBoxComum`). */
-  /* ── MODO REAL (só com NINEBOX_MODO_REAL_ATIVO = true) ─────────────────────
-     A matriz passa a vir da CONSOLIDAÇÃO 360° OFICIAL sobre os feedbacks
-     PERSISTIDOS — sem nenhum mock. Com a flag desligada (padrão), a derivação
-     abaixo é exatamente a de sempre (`derivarPontos`), sem qualquer alteração
-     visual. `empresaId`, `validacoesPotencial` e `versoesPorFeedback` só são
-     usados no modo real.                                                   ── */
-  const pontos = useMemo<PontoNineBox[]>(
-    () =>
-      modoRealAtivo()
+  /** Nome do ciclo em foco — exibido junto das pendências de fluxo. */
+  const cicloAtualNome = ciclosOrdenados.find((c) => c.id === cicloId)?.nome ?? '';
+
+  /**
+   * PONTOS DE UM CICLO — HÍBRIDO POR REGISTRO.
+   *
+   * A tela pode exibir mocks (vitrine) E avaliações reais ao mesmo tempo. A
+   * escolha do motor é POR GRUPO, nunca pela página:
+   *   • registros REAIS (UUID) → `consolidarNineBox360` (aprovação/snapshot
+   *     reais do Supabase; sem etapa posterior do RH);
+   *   • registros `mock-*`/`demo-*` → `derivarPontos` + decisões locais.
+   * Antes, uma flag global escolhia um único motor; com a tela mista, a aprovação
+   * real nunca chegava à matriz.
+   */
+  const pontosDoCiclo = useCallback(
+    (id: string | null): PontoNineBox[] => {
+      const reais = feedbacksBase.filter((f) => !idDemonstrativo((f as { id?: unknown })?.id));
+      const demo = feedbacksBase.filter((f) => idDemonstrativo((f as { id?: unknown })?.id));
+      const ancoraDemo = feedbacks.filter((f) => idDemonstrativo((f as { id?: unknown })?.id));
+
+      const pontosReais = reais.length
         ? (pontos360(
             consolidarNineBox360({
-              feedbacks,
-              cicloId: cicloId || null,
+              feedbacks: reais,
+              cicloId: id,
               empresaId: empresaId ?? null,
               validacoes: validacoesPotencial,
               versoesPorFeedback,
@@ -174,34 +193,44 @@ export function NineBoxTab({
             colaboradores,
             pdis
           ) as unknown as PontoNineBox[])
-        : aplicarAprovacaoLocal(
-            derivarPontos({
-              feedbacks: feedbacksBase,
-              cicloId: cicloId || null,
-              colaboradores: colaboradoresBase,
-              pdis: pdisBase,
-            }),
-            aprovacoesDemo ?? estadoLocalVazio(),
-            cicloId || null,
-            // A versão do grupo vem da MESMA lista da aba Feedbacks (sem os
-            // mocks exclusivos desta aba) — é a âncora da invalidação.
-            feedbacks
-          ),
+        : [];
+
+      const pontosDemo = aplicarAprovacaoLocal(
+        derivarPontos({
+          feedbacks: demo,
+          cicloId: id,
+          colaboradores: colaboradoresBase,
+          pdis: pdisBase,
+        }),
+        aprovacoesDemo ?? estadoLocalVazio(),
+        id,
+        ancoraDemo,
+        idsFluxoDemo
+      );
+
+      return [...pontosReais, ...pontosDemo];
+    },
     [
       feedbacksBase,
-      cicloId,
+      feedbacks,
       colaboradoresBase,
       pdisBase,
-      feedbacks,
       colaboradores,
       pdis,
       empresaId,
       validacoesPotencial,
       versoesPorFeedback,
       aprovacoesDemo,
+      idsFluxoDemo,
       aprovacoesGestor,
       consolidacoes,
     ]
+  );
+
+  /** Pessoas do ciclo em foco — uma por colaborador (ver `nineBoxComum`). */
+  const pontos = useMemo<PontoNineBox[]>(
+    () => pontosDoCiclo(cicloId || null),
+    [pontosDoCiclo, cicloId]
   );
 
   /** Pessoas do ciclo ANTERIOR (base do comparativo). */
@@ -209,13 +238,8 @@ export function NineBoxTab({
     const i = ciclosOrdenados.findIndex((c) => c.id === cicloId);
     const anterior = i > 0 ? ciclosOrdenados[i - 1] : null;
     if (!anterior) return [];
-    return derivarPontos({
-      feedbacks: feedbacksBase,
-      cicloId: anterior.id,
-      colaboradores: colaboradoresBase,
-      pdis: pdisBase,
-    });
-  }, [ciclosOrdenados, cicloId, feedbacksBase, colaboradoresBase, pdisBase]);
+    return pontosDoCiclo(anterior.id);
+  }, [ciclosOrdenados, cicloId, pontosDoCiclo]);
 
   /** Recorte dos filtros (a matriz e os widgets olham este conjunto). */
   const filtrados = useMemo(() => {
@@ -321,6 +345,7 @@ export function NineBoxTab({
           nomesAguardandoRh={atencao.nomesAguardandoRh}
           aguardandoAprovacao={atencao.aguardandoAprovacao}
           nomesAguardandoAprovacao={atencao.nomesAguardandoAprovacao}
+          cicloNome={cicloAtualNome}
           ativo={emAtencao}
           /* Só há "detalhes" de risco a filtrar; pendência de fluxo é informativa. */
           onVerDetalhes={atencao.total > 0 ? () => setEmAtencao((v) => !v) : undefined}

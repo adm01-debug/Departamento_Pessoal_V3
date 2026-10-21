@@ -46,8 +46,9 @@ export type AcaoStatus = 'concluir' | 'cancelar' | 'reabrir';
 
 /**
  * Perfil do operador. `admin_rh` é o único que REABRE; a CONCLUSÃO é ato do
- * `gestor` responsável pela avaliação (regra de 16/10/2026) — o backend valida
- * papel E vínculo. `avaliador` e `desconhecido` não concluem.
+ * operador autorizado pelo registro (avaliador designado, gestor responsável,
+ * exceção ou RH/admin), com a prova concreta conferida por
+ * `podeConcluirFeedback` e revalidada no servidor. `desconhecido` não conclui.
  */
 export type PerfilOperador = 'admin_rh' | 'gestor' | 'avaliador' | 'desconhecido';
 
@@ -78,16 +79,16 @@ export interface Transicao {
  * `concluido → cancelado` é DELIBERADAMENTE proibida: exige reabrir primeiro,
  * para não apagar a nota de uma avaliação já concluída sem trilha.
  *
- * ── CONCLUSÃO = GESTOR (regra de 16/10/2026) ────────────────────────────────
- * `pendente → concluido` é exclusivo do perfil `gestor`; SOMENTE ele, e apenas
- * quando for o RESPONSÁVEL pela avaliação (vínculo conferido em
- * `acoesFeedback.ehGestorResponsavel` no front e por `pode_aprovar_colaborador`
- * no servidor). `admin`/`rh` sem papel `gestor` NÃO concluem — nem pela tela nem
- * por chamada direta à API (ver a migration aditiva da conclusão do gestor).
- * Cancelar segue administrativo (`admin_rh`/`gestor`) e reabrir é só `admin_rh`.
+ * ── CONCLUSÃO = AUTORIZAÇÃO DO REGISTRO (não do tipo) ──────────────────────
+ * `pendente → concluido` é oferecida a `gestor`, `admin_rh` e `avaliador`.
+ * A tabela apenas diz QUEM PODE TIPIFICAR a ação; a prova concreta (avaliador
+ * designado, gestor responsável, exceção ou RH/admin) é `autorizadoConcluir`,
+ * calculada por `podeConcluirFeedback` e revalidada no servidor. O `tipo` do
+ * feedback não concede nada. Cancelar segue administrativo
+ * (`admin_rh`/`gestor`) e reabrir é só `admin_rh`.
  */
 export const TRANSICOES: readonly Transicao[] = [
-  { de: 'pendente', para: 'concluido', acao: 'concluir', perfis: ['gestor'] },
+  { de: 'pendente', para: 'concluido', acao: 'concluir', perfis: ['gestor', 'admin_rh', 'avaliador'] },
   { de: 'pendente', para: 'cancelado', acao: 'cancelar', perfis: ['admin_rh', 'gestor'] },
   { de: 'concluido', para: 'cancelado', acao: 'cancelar', perfis: [] },
   { de: 'concluido', para: 'pendente', acao: 'reabrir', perfis: ['admin_rh'] },

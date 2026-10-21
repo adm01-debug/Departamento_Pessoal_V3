@@ -129,7 +129,7 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
                 <div className="space-y-2">
                   <p className="font-medium text-sm animate-pulse">Analisando layouts e cruzando dados...</p>
                   <Progress value={progress} className="h-1.5 w-64 mx-auto bg-primary/10" />
-                  <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">{progress}% COMPLETO</p>
+                  <p className="text-numeric text-[10px] text-muted-foreground uppercase tracking-widest">{progress}% COMPLETO</p>
                 </div>
               </motion.div>
             ) : (

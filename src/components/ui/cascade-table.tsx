@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { TableBody } from '@/components/ui/table';
 import { linhaTabelaVariants } from '@/components/ui/table-row-reveal';
 import { cn } from '@/lib/utils';
@@ -54,16 +54,23 @@ export function CascadeTableBody({ cascadeKey, children }: { cascadeKey: string;
 type CascadeTableRowProps = {
   /** Índice na lista — vira o `custom` do variant (base do stagger). */
   index: number;
+  /**
+   * Cadência opcional do módulo (ex.: Hub de Premiações, ver
+   * `premiacoes/premiacoesEntrada.ts`). O MOVIMENTO continua sendo o do
+   * `linhaTabelaVariants` — só o tempo muda. Sem a prop, vale a régua global.
+   */
+  variants?: Variants;
 } & Omit<React.ComponentProps<typeof motion.tr>, 'custom' | 'variants' | 'initial' | 'animate' | 'ref'>;
 
 /**
  * Uma linha da lista em cascata. O componente é DONO das props de animação
  * (`custom`/`variants`/`initial`/`animate`) e da classe `origin-center` — quem
  * consome só passa `index`, `key`, `className` (visual da tela) e o conteúdo.
- * Assim nenhum consumidor consegue alterar a animação por engano.
+ * A única exceção é `variants`: um módulo pode informar uma cadência própria
+ * (mesmo movimento), como o Hub de Premiações.
  */
 export const CascadeTableRow = React.forwardRef<HTMLTableRowElement, CascadeTableRowProps>(function CascadeTableRow(
-  { index, className, children, ...rest },
+  { index, variants = linhaTabelaVariants, className, children, ...rest },
   ref
 ) {
   return (
@@ -71,7 +78,7 @@ export const CascadeTableRow = React.forwardRef<HTMLTableRowElement, CascadeTabl
       ref={ref}
       {...rest}
       custom={index}
-      variants={linhaTabelaVariants}
+      variants={variants}
       initial="hidden"
       animate="visible"
       className={cn('origin-center', className)}

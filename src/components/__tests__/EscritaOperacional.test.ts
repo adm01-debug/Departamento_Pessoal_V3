@@ -77,18 +77,24 @@ describe('escritaOperacional.exigirEscritaOperacional', () => {
     expect(e.message).toContain('Nenhuma gravação');
   });
 
-  it('bloqueia TUDO quando a demonstração está ligada, mesmo com id real', () => {
+  it('NÃO bloqueia ids reais quando a vitrine está ligada (tela mista)', () => {
     mockDemo.ativo = true;
-    expect(demonstracaoEmUso()).toBe(true);
-    let erro: unknown = null;
-    try {
-      exigirEscritaOperacional('Criar feedback', { empresa_id: 'emp-1', avaliado_id: 'colab-1' });
-    } catch (e) {
-      erro = e;
-    }
-    expect(erro).toBeInstanceOf(EscritaBloqueadaError);
-    expect((erro as EscritaBloqueadaError).motivo).toBe('demonstracao');
-    expect((erro as EscritaBloqueadaError).message).toContain('modo demonstração');
+    // A demonstração é apenas visual: quem protege o banco é o ID fictício.
+    expect(demonstracaoEmUso()).toBe(false);
+    expect(() =>
+      exigirEscritaOperacional('Criar feedback', { empresa_id: 'emp-1', avaliado_id: 'colab-1' })
+    ).not.toThrow();
+  });
+
+  it('bloqueia registro criado na vitrine (`demo-*`) antes da rede', () => {
+    mockDemo.ativo = true;
+    expect(() =>
+      exigirEscritaOperacional('Aprovar avaliação', {
+        colaborador_id: 'demo-colaborador-1',
+        ciclo_id: 'demo-ciclo-1',
+      })
+    ).toThrow(EscritaBloqueadaError);
+    expect(camposFicticios({ colaborador_id: 'demo-colaborador-1' })).toEqual(['colaborador_id']);
   });
 
   it('a guarda de dado fictício não acusa campo vazio', () => {

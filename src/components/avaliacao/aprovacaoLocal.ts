@@ -22,8 +22,10 @@
  */
 
 import type { PontoNineBox } from './nineBoxComum';
+import { QUADRANTE_POR_CHAVE, classifyScore, type QuadranteKey } from './nineBoxComum';
 import {
   estadoAprovacao,
+  feedbackDoGestor,
   versaoConsolidadaDemo,
   type DecisaoAprovacaoLida,
   type EstadoAprovacao,
@@ -51,6 +53,10 @@ export interface DecisaoLocal {
 export interface ValidacaoLocal {
   colaboradorId: string;
   cicloId: string;
+  /**
+   * Versão da AVALIAÇÃO DO GESTOR (não a do conjunto) — a mesma âncora de
+   * `versao_avaliacao_feedback` no banco. É o que o motor do Nine-Box compara.
+   */
   versaoAvaliacao: string;
   validadoEm: string;
   validadoPor: string | null;
@@ -323,18 +329,23 @@ export function reenviarLocal({
 
 export interface ResultadoValidacaoLocal {
   ok: boolean;
-  motivo: 'ok' | 'sem_aprovacao' | 'versao_divergente';
+  motivo: 'ok' | 'sem_aprovacao' | 'sem_avaliacao_gestor' | 'versao_divergente';
   descricao: string;
 }
 
 /**
  * RH VALIDA O POTENCIAL na vitrine — SOMENTE depois da aprovação do gestor e
- * NA MESMA VERSÃO (senão recusa, como o servidor).
+ * com os DOIS vínculos de versão corretos:
+ *   • `versaoAvaliacao` = versão do CONJUNTO aprovada (âncora da decisão);
+ *   • `versaoValidacao` = versão da AVALIAÇÃO DO GESTOR (âncora da validação,
+ *     a MESMA do banco e do motor do Nine-Box).
+ * Sem a avaliação do gestor concluída nada é validado.
  */
 export function validarPotencialLocal({
   colaboradorId,
   cicloId,
   versaoAvaliacao,
+  versaoValidacao,
   por = null,
   observacao = null,
   estado = lerEstadoLocal(),
@@ -342,6 +353,7 @@ export function validarPotencialLocal({
   colaboradorId: string;
   cicloId: string;
   versaoAvaliacao: string;
+  versaoValidacao: string;
   por?: string | null;
   observacao?: string | null;
   estado?: EstadoLocalDemo;
@@ -359,6 +371,17 @@ export function validarPotencialLocal({
       },
     };
   }
+  if (!versaoValidacao) {
+    return {
+      estado,
+      resultado: {
+        ok: false,
+        motivo: 'sem_avaliacao_gestor',
+        descricao:
+          'O Potencial só pode ser validado com a avaliação do Gestor (obrigatória) concluída para este ciclo.',
+      },
+    };
+  }
   if (decisao.versaoAvaliacao !== versaoAvaliacao) {
     return {
       estado,
@@ -373,7 +396,7 @@ export function validarPotencialLocal({
   const validacao: ValidacaoLocal = {
     colaboradorId,
     cicloId,
-    versaoAvaliacao,
+    versaoAvaliacao: versaoValidacao,
     validadoEm: new Date().toISOString(),
     validadoPor: por,
     observacao,
@@ -385,7 +408,7 @@ export function validarPotencialLocal({
       operacao: 'validar_potencial',
       colaboradorId,
       cicloId,
-      versaoAvaliacao,
+      versaoAvaliacao: versaoValidacao,
       justificativa: null,
       por,
     }
@@ -439,15 +462,34 @@ export function estadoLocalDe(
     colaboradorId,
     cicloId,
     versaoGestor,
+    versaoValidacao = null,
     responsavel = false,
-  }: { colaboradorId: unknown; cicloId: unknown; versaoGestor: string | null; responsavel?: boolean }
+    gestorIdentificado = true,
+    avaliacaoGestorValida = true,
+  }: {
+    colaboradorId: unknown;
+    cicloId: unknown;
+    versaoGestor: string | null;
+    /** Versão da avaliação do GESTOR — âncora da validação do RH. */
+    versaoValidacao?: string | null;
+    responsavel?: boolean;
+    gestorIdentificado?: boolean;
+    avaliacaoGestorValida?: boolean;
+  }
 ): EstadoAprovacao {
   const chave = chaveLocal(colaboradorId, cicloId);
   const guardada = estado.decisoes[chave] ?? null;
   const decisao = guardada ? decisaoComoLinha(guardada) : null;
   const validacao = estado.validacoes[chave] ?? null;
-  const validada = !!validacao && !!versaoGestor && validacao.versaoAvaliacao === versaoGestor;
-  return estadoAprovacao({ versaoGestor, decisao, validada, responsavel });
+  const validada = !!validacao && !!versaoValidacao && validacao.versaoAvaliacao === versaoValidacao;
+  return estadoAprovacao({
+    versaoGestor,
+    decisao,
+    validada,
+    responsavel,
+    gestorIdentificado,
+    avaliacaoGestorValida,
+  });
 }
 
 /* ─── Nine-Box: o MESMO portão do motor oficial, aplicado à vitrine ──────── */
@@ -456,13 +498,13 @@ export function estadoLocalDe(
  * Aplica as decisões da vitrine sobre os pontos do Nine-Box (demonstração).
  *
  * Regra (a mesma do motor oficial):
- *   • decisão VIGENTE + validação do Potencial na MESMA versão → quadrante;
- *   • decisão vigente sem validação → segue no Nine-Box, mas FORA do quadrante,
- *     marcada como `aguardandoValidacaoRh` (o banner/insights mostram quem é);
+ *   • decisão VIGENTE + Desempenho/Potencial válidos → quadrante;
  *   • decisão de versão ANTIGA (a avaliação mudou) → aprovação invalidada:
  *     fora do quadrante, `aguardandoAprovacao`;
  *   • devolvida → fora do quadrante, `aguardandoAprovacao`;
- *   • SEM decisão local permanece intocado (a vitrine aprovada não muda).
+ *   • SEM decisão e SEM `idsComFluxo` → permanece intocado (vitrine aprovada);
+ *   • SEM decisão mas CRIADO/EDITADO na vitrine (`idsComFluxo`) → fora do
+ *     quadrante, `aguardandoAprovacao` (criar/concluir NÃO classifica).
  *
  * `feedbacks` é a MESMA lista da aba Feedbacks (sem os mocks exclusivos do
  * Nine-Box): é dela que sai a versão consolidada atual do grupo, a MESMA âncora
@@ -472,29 +514,42 @@ export function aplicarAprovacaoLocal(
   pontos: PontoNineBox[],
   estado: EstadoLocalDemo,
   cicloId: string | null,
-  feedbacks: unknown[] = []
+  feedbacks: unknown[] = [],
+  /**
+   * IDs criados/editados na vitrine que PRECISAM cumprir o fluxo. As fixtures
+   * originais (`mock-*` intocadas) continuam sendo a vitrine aprovada; qualquer
+   * registro novo ou reaberto passa a exigir aprovação + validação.
+   */
+  idsComFluxo: ReadonlySet<string> = new Set()
 ): PontoNineBox[] {
   if (!cicloId) return pontos;
 
-  const versaoDoGrupo = (colaboradorId: string): string | null => {
-    if (feedbacks.length === 0) return null;
-    const grupo = feedbacks.filter((bruto) => {
-      const f = (bruto ?? {}) as Record<string, unknown>;
-      return (
-        String(f.avaliado_id ?? '').trim() === colaboradorId &&
-        String(f.ciclo_id ?? '').trim() === cicloId &&
-        String(f.status ?? '')
-          .trim()
-          .toLowerCase() !== 'cancelado'
+  /** Registros do MESMO (colaborador × ciclo), sem cancelados — a base do conjunto. */
+  const grupoDo = (colaboradorId: string): Record<string, unknown>[] =>
+    feedbacks
+      .map((bruto) => (bruto ?? {}) as Record<string, unknown>)
+      .filter(
+        (f) =>
+          String(f.avaliado_id ?? '').trim() === colaboradorId &&
+          String(f.ciclo_id ?? '').trim() === cicloId &&
+          String(f.status ?? '')
+            .trim()
+            .toLowerCase() !== 'cancelado'
       );
-    });
-    return grupo.length > 0 ? versaoConsolidadaDemo(grupo) : null;
-  };
 
   return pontos.map((ponto) => {
     const chave = chaveLocal(ponto.colaboradorId, cicloId);
     const decisao = estado.decisoes[chave] ?? null;
-    if (!decisao) return ponto;
+
+    /**
+     * A lista de feedbacks é OBRIGATÓRIA para julgar o conjunto. Sem ela
+     * (chamadas antigas/testes) a checagem de requisitos é omitida e vale a
+     * comparação legada decisão × validação.
+     */
+    const grupo = feedbacks.length > 0 ? grupoDo(String(ponto.colaboradorId ?? '')) : [];
+    const exigeFluxo =
+      String(ponto.id ?? '').startsWith('demo-') ||
+      grupo.some((f) => idsComFluxo.has(String(f.id ?? '').trim()) || String(f.id ?? '').startsWith('demo-'));
 
     const semQuadrante = {
       quadrante: null,
@@ -503,8 +558,31 @@ export function aplicarAprovacaoLocal(
       pendencias: ponto.pendencias ?? ('sem_potencial' as const),
     };
 
+    /**
+     * CRIADO/EDITADO SEM DECISÃO — não é classificação oficial. O colaborador
+     * permanece no conjunto (nome/ciclo no banner) e avança quando o gestor
+     * aprovar a proposta consolidada.
+     */
+    if (!decisao) {
+      if (!exigeFluxo) return ponto;
+      const gestor = feedbackDoGestor(grupo);
+      const gestorConcluido = Boolean(gestor) && String(gestor?.status ?? '').toLowerCase() === 'concluido';
+      return {
+        ...ponto,
+        ...semQuadrante,
+        aguardandoValidacaoRh: false,
+        aguardandoAprovacao: true,
+        motivoNaoClassificado: gestorConcluido
+          ? 'Avaliação do Gestor concluída: aguardando aprovação do gestor responsável.'
+          : gestor
+            ? 'Avaliação do Gestor criada, mas ainda não concluída: aguardando conclusão antes da aprovação.'
+            : 'Aguardando a avaliação do Gestor (obrigatória) e a aprovação do gestor responsável.',
+      };
+    }
+
+    const versaoAtual = grupo.length > 0 ? versaoConsolidadaDemo(grupo) : null;
+
     // A avaliação mudou depois da decisão ⇒ a aprovação anterior não vale.
-    const versaoAtual = versaoDoGrupo(String(ponto.colaboradorId ?? ''));
     if (versaoAtual && decisao.versaoAvaliacao !== versaoAtual) {
       return {
         ...ponto,
@@ -526,18 +604,54 @@ export function aplicarAprovacaoLocal(
       };
     }
 
-    const validacao = estado.validacoes[chave] ?? null;
-    const liberado = !!validacao && validacao.versaoAvaliacao === decisao.versaoAvaliacao;
-    if (liberado) {
-      return { ...ponto, aguardandoValidacaoRh: false, aguardandoAprovacao: false, motivoNaoClassificado: null };
+    /**
+     * A APROVAÇÃO DO GESTOR É A DECISÃO FINAL. O gestor confirma Desempenho e
+     * Potencial da proposta consolidada; não existe etapa posterior do RH.
+     * O ponto já traz os valores derivados do conjunto — se eles não formarem
+     * quadrante, a linha permanece fora da matriz com motivo explícito.
+     */
+    const notaAprovada = Number(ponto.nota);
+    const potencialAprovado = Number(ponto.potencial);
+    // Compatibilidade com pontos já derivados (vitrine/fixtures) que não expõem
+    // `nota`/`potencial` brutos: o quadrante existente é preservado.
+    if ((ponto.nota == null || ponto.potencial == null) && ponto.quadrante) {
+      return {
+        ...ponto,
+        aguardandoValidacaoRh: false,
+        aguardandoAprovacao: false,
+        motivoNaoClassificado: null,
+      };
+    }
+    const valoresValidos =
+      ponto.nota !== null &&
+      ponto.potencial !== null &&
+      Number.isFinite(notaAprovada) &&
+      Number.isFinite(potencialAprovado) &&
+      notaAprovada >= 1 &&
+      notaAprovada <= 5 &&
+      potencialAprovado >= 1 &&
+      potencialAprovado <= 5;
+
+    if (!valoresValidos) {
+      return {
+        ...ponto,
+        ...semQuadrante,
+        aguardandoValidacaoRh: false,
+        aguardandoAprovacao: false,
+        motivoNaoClassificado: 'Aprovação sem Desempenho e Potencial válidos.',
+      };
     }
 
+    const quadrante = `${classifyScore(notaAprovada)}-${classifyScore(potencialAprovado)}` as QuadranteKey;
     return {
       ...ponto,
-      ...semQuadrante,
-      aguardandoValidacaoRh: true,
+      quadrante,
+      nomeQuadrante: QUADRANTE_POR_CHAVE[quadrante]?.nome ?? null,
+      pontuacao: notaAprovada + potencialAprovado,
+      pendencias: null,
+      aguardandoValidacaoRh: false,
       aguardandoAprovacao: false,
-      motivoNaoClassificado: 'Potencial aguardando validação do RH.',
+      motivoNaoClassificado: null,
     };
   });
 }

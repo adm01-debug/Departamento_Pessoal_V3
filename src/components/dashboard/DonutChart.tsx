@@ -1,5 +1,6 @@
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, type Transition } from 'framer-motion';
 import { useRef, useMemo } from 'react';
+import { useMovimentoReduzido } from '@/lib/motionMode';
 
 interface Segment {
   label: string;
@@ -23,6 +24,18 @@ interface DonutChartProps {
   formatValue?: (valor: number) => string;
   /** Classes do valor central (para o valor monetário caber no anel). */
   centerClassName?: string;
+  /**
+   * Duração do traçado de CADA segmento, em segundos (default 0.6 — a régua
+   * histórica do Dashboard Executivo). Quem precisa de um desenho mais lento
+   * (ex.: Resumo Financeiro de Pagamentos) informa o próprio valor.
+   */
+  animationDuration?: number;
+  /** Atraso antes do primeiro segmento, em segundos (default 0.2). */
+  animationDelay?: number;
+  /** Intervalo entre o início dos segmentos, em segundos (default 0.15). */
+  segmentStagger?: number;
+  /** Curva do traçado (default `'easeOut'`). */
+  animationEase?: Transition['ease'];
 }
 
 export function DonutChart({
@@ -33,9 +46,16 @@ export function DonutChart({
   showLegend = true,
   formatValue,
   centerClassName,
+  animationDuration = 0.6,
+  animationDelay = 0.2,
+  segmentStagger = 0.15,
+  animationEase = 'easeOut',
 }: DonutChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true });
+  // Movimento reduzido: o traçado aparece pronto (sem desenho animado) — o
+  // restante da tela continua com o fade normal do MotionConfig.
+  const reduzirMovimento = useMovimentoReduzido();
 
   const total = segments.reduce((sum, s) => sum + s.value, 0);
 
@@ -102,7 +122,11 @@ export function DonutChart({
               // círculo inteiro (um "flash" visível antes do traçado começar).
               initial={{ strokeDasharray: `0 ${circumference}` }}
               animate={{ strokeDasharray: isInView ? dashArray : `0 ${circumference}` }}
-              transition={{ duration: 0.6, delay: 0.2 + i * 0.15, ease: 'easeOut' }}
+              transition={{
+                duration: reduzirMovimento ? 0 : animationDuration,
+                delay: reduzirMovimento ? 0 : animationDelay + i * segmentStagger,
+                ease: animationEase,
+              }}
             />
           );
         })}

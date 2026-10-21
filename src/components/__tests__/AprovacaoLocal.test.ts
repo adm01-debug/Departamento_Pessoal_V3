@@ -89,7 +89,12 @@ describe('decisões do gestor na vitrine', () => {
 
   it('nova decisão INVALIDA a validação anterior do Potencial', () => {
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: 'v1' });
-    validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: 'v1' });
+    validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: 'v1',
+      versaoValidacao: 'v1',
+    });
     expect(lerEstadoLocal().validacoes[CHAVE]).toBeDefined();
 
     decidirLocal({
@@ -125,7 +130,12 @@ describe('decisões do gestor na vitrine', () => {
 
 describe('validação do Potencial (RH) — mesma régua do servidor', () => {
   it('recusa SEM aprovação do gestor', () => {
-    const { resultado } = validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: 'v1' });
+    const { resultado } = validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: 'v1',
+      versaoValidacao: 'v1',
+    });
     expect(resultado.ok).toBe(false);
     expect(resultado.motivo).toBe('sem_aprovacao');
     expect(lerEstadoLocal().validacoes).toEqual({});
@@ -133,9 +143,27 @@ describe('validação do Potencial (RH) — mesma régua do servidor', () => {
 
   it('recusa quando a VERSÃO mudou depois da aprovação', () => {
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: 'v1' });
-    const { resultado } = validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: 'v2' });
+    const { resultado } = validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: 'v2',
+      versaoValidacao: 'v2',
+    });
     expect(resultado.ok).toBe(false);
     expect(resultado.motivo).toBe('versao_divergente');
+  });
+
+  it('recusa quando não há avaliação do GESTOR (requisito obrigatório)', () => {
+    decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: 'v1' });
+    const { resultado } = validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: 'v1',
+      versaoValidacao: '',
+    });
+    expect(resultado.ok).toBe(false);
+    expect(resultado.motivo).toBe('sem_avaliacao_gestor');
+    expect(lerEstadoLocal().validacoes).toEqual({});
   });
 
   it('aceita na MESMA versão aprovada e registra quem validou', () => {
@@ -144,10 +172,15 @@ describe('validação do Potencial (RH) — mesma régua do servidor', () => {
       colaboradorId: COLAB,
       cicloId: CICLO,
       versaoAvaliacao: 'v1',
+      versaoValidacao: 'v-gestor',
       por: 'rh@teste',
     });
     expect(resultado.ok).toBe(true);
-    expect(lerEstadoLocal().validacoes[CHAVE]).toMatchObject({ versaoAvaliacao: 'v1', validadoPor: 'rh@teste' });
+    // A validação guarda a versão do GESTOR (âncora do RH), não a do conjunto.
+    expect(lerEstadoLocal().validacoes[CHAVE]).toMatchObject({
+      versaoAvaliacao: 'v-gestor',
+      validadoPor: 'rh@teste',
+    });
   });
 });
 
@@ -164,6 +197,9 @@ describe('integração com fila, modal e Nine-Box', () => {
     status: 'concluido',
     updated_at: '2026-10-01T10:00:00.000Z',
   };
+
+  /** Âncora da VALIDAÇÃO do RH: versão da avaliação do GESTOR. */
+  const VERSAO_VALIDACAO = versaoConsolidadaDemo([FEEDBACK]) as string;
 
   const pendenciaDe = (estado = lerEstadoLocal()) =>
     derivarPendencias({
@@ -190,7 +226,12 @@ describe('integração com fila, modal e Nine-Box', () => {
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: VERSAO });
     expect(pendenciaDe().status).toBe('aprovada_gestor');
 
-    validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: VERSAO });
+    validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: VERSAO,
+      versaoValidacao: VERSAO,
+    });
     const concluida = pendenciaDe();
     expect(concluida.status).toBe('concluida_validada');
     expect(concluida.estado.elegivelNineBox).toBe(true);
@@ -206,8 +247,20 @@ describe('integração com fila, modal e Nine-Box', () => {
 
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: VERSAO });
     expect(
-      estadoLocalDe(lerEstadoLocal(), { colaboradorId: COLAB, cicloId: CICLO, versaoGestor: VERSAO })
-        .podeValidarPotencial
+      estadoLocalDe(lerEstadoLocal(), {
+        colaboradorId: COLAB,
+        cicloId: CICLO,
+        versaoGestor: VERSAO,
+        versaoValidacao: VERSAO_VALIDACAO,
+      }).podeValidarPotencial
+    ).toBe(false);
+    expect(
+      estadoLocalDe(lerEstadoLocal(), {
+        colaboradorId: COLAB,
+        cicloId: CICLO,
+        versaoGestor: VERSAO,
+        versaoValidacao: VERSAO_VALIDACAO,
+      }).elegivelNineBox
     ).toBe(true);
   });
 
@@ -222,26 +275,16 @@ describe('integração com fila, modal e Nine-Box', () => {
       pendencias: null,
     }) as unknown as PontoNineBox;
 
-  it('clicar em Aprovar NÃO classifica: o quadrante só volta com a validação', () => {
+  it('clicar em Aprovar JÁ classifica: a decisão do gestor é final', () => {
     // Sem decisão local a vitrine aprovada segue intocada.
     expect(aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO)[0].quadrante).toBe('2-3');
 
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: VERSAO });
     expect(aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO)[0]).toMatchObject({
-      quadrante: null,
-      nomeQuadrante: null,
-      pontuacao: null,
-      pendencias: 'sem_potencial',
-      aguardandoValidacaoRh: true,
-      aguardandoAprovacao: false,
-      motivoNaoClassificado: 'Potencial aguardando validação do RH.',
-    });
-
-    validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: VERSAO });
-    expect(aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO)[0]).toMatchObject({
       quadrante: '2-3',
       aguardandoValidacaoRh: false,
       aguardandoAprovacao: false,
+      motivoNaoClassificado: null,
     });
   });
 
@@ -273,12 +316,121 @@ describe('integração com fila, modal e Nine-Box', () => {
     });
     expect(invalidado.motivoNaoClassificado).toMatch(/invalidada/i);
 
-    // Nova aprovação NA versão atual + validação ⇒ volta ao quadrante.
+    // Nova aprovação NA versão atual ⇒ volta ao quadrante, sem validação do RH.
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: versaoAtual! });
-    validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: versaoAtual! });
     const [ok] = aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO, feedbackAtual);
     expect(ok.quadrante).toBe('2-3');
     expect(ok.aguardandoAprovacao).toBe(false);
+  });
+
+  it('PAR aprovado com Desempenho/Potencial válidos classifica (sem gestor separado)', () => {
+    const par = [
+      {
+        id: 'mock-par-1',
+        avaliado_id: COLAB,
+        ciclo_id: CICLO,
+        tipo: 'par',
+        status: 'concluido',
+        nota_geral: 3,
+        potencial: 2,
+      },
+    ];
+    const versaoConjunto = versaoConsolidadaDemo(par) as string;
+    decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: versaoConjunto });
+    const [pontoAprovado] = aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO, par);
+    expect(pontoAprovado.aguardandoValidacaoRh).toBe(false);
+    expect(pontoAprovado.aguardandoAprovacao).toBe(false);
+    expect(pontoAprovado.quadrante).toBe('2-3');
+    expect(pontoAprovado.motivoNaoClassificado).toBeNull();
+  });
+
+  it('aprovação vigente classifica; validação legada não é necessária', () => {
+    const gestor = {
+      id: 'mock-gestor-1',
+      avaliado_id: COLAB,
+      ciclo_id: CICLO,
+      tipo: 'gestor',
+      status: 'concluido',
+      nota_geral: 4,
+      potencial: 4,
+    };
+    const par = {
+      id: 'mock-par-1',
+      avaliado_id: COLAB,
+      ciclo_id: CICLO,
+      tipo: 'par',
+      status: 'concluido',
+      nota_geral: 3,
+      potencial: 2,
+    };
+    const grupo = [gestor, par];
+    const versaoConjunto = versaoConsolidadaDemo(grupo) as string;
+    const versaoGestor = versaoConsolidadaDemo([gestor]) as string;
+    expect(versaoConjunto).not.toBe(versaoGestor);
+
+    decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: versaoConjunto });
+    validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: versaoConjunto,
+      versaoValidacao: versaoGestor,
+    });
+
+    const [classificado] = aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO, grupo);
+    expect(classificado.quadrante).toBe('2-3');
+    expect(classificado.aguardandoValidacaoRh).toBe(false);
+  });
+
+  it('registro CRIADO/EDITADO sem decisão NÃO recebe classificação oficial', () => {
+    const novo = [
+      {
+        id: 'demo-fb-novo',
+        avaliado_id: COLAB,
+        ciclo_id: CICLO,
+        tipo: 'gestor',
+        status: 'concluido',
+        nota_geral: 4,
+        potencial: 5,
+      },
+    ];
+    // Mesmo sem o conjunto de ids explícito, o prefixo `demo-` prova que é um
+    // registro criado na vitrine: não pode classificar antes da aprovação.
+    const [semIds] = aplicarAprovacaoLocal([ponto()], estadoLocalVazio(), CICLO, novo);
+    expect(semIds).toMatchObject({ quadrante: null, aguardandoAprovacao: true });
+    const [aguardando] = aplicarAprovacaoLocal([ponto()], estadoLocalVazio(), CICLO, novo, new Set(['demo-fb-novo']));
+    expect(aguardando).toMatchObject({
+      quadrante: null,
+      nomeQuadrante: null,
+      pontuacao: null,
+      aguardandoAprovacao: true,
+      aguardandoValidacaoRh: false,
+    });
+    expect(aguardando.motivoNaoClassificado).toMatch(/aprovação do gestor|avaliação do Gestor/i);
+
+    // Depois de aprovado, o MESMO registro volta ao quadrante (sem validação).
+    const versaoConjunto = versaoConsolidadaDemo(novo) as string;
+    decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: versaoConjunto });
+    const [classificado] = aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO, novo, new Set(['demo-fb-novo']));
+    expect(classificado.quadrante).toBe('2-3');
+    expect(classificado.aguardandoAprovacao).toBe(false);
+    expect(classificado.aguardandoValidacaoRh).toBe(false);
+  });
+
+  it('fixture INTOCADA continua formando a vitrine aprovada (sem exigir fluxo)', () => {
+    const fixture = [
+      {
+        id: 'mock-fb-1',
+        avaliado_id: COLAB,
+        ciclo_id: CICLO,
+        tipo: 'gestor',
+        status: 'concluido',
+        nota_geral: 4,
+        potencial: 5,
+      },
+    ];
+    const [pontoAprovado] = aplicarAprovacaoLocal([ponto()], estadoLocalVazio(), CICLO, fixture);
+    expect(pontoAprovado.quadrante).toBe('2-3');
+    expect(pontoAprovado.aguardandoAprovacao).toBeUndefined();
   });
 
   it('os MOCKS não são mutados pelo módulo', () => {
@@ -286,7 +438,12 @@ describe('integração com fila, modal e Nine-Box', () => {
     const copia = JSON.parse(JSON.stringify(mocks));
 
     decidirLocal({ colaboradorId: COLAB, cicloId: CICLO, decisao: 'aprovado', versaoAvaliacao: VERSAO });
-    validarPotencialLocal({ colaboradorId: COLAB, cicloId: CICLO, versaoAvaliacao: VERSAO });
+    validarPotencialLocal({
+      colaboradorId: COLAB,
+      cicloId: CICLO,
+      versaoAvaliacao: VERSAO,
+      versaoValidacao: VERSAO,
+    });
     aplicarAprovacaoLocal([ponto()], lerEstadoLocal(), CICLO);
 
     expect(mocks).toEqual(copia);

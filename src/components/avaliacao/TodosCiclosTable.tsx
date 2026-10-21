@@ -22,12 +22,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import {
-  GalleryVerticalEnd,
-  MoreHorizontal,
-  Search,
-  Trash2,
-} from 'lucide-react';
+import { GalleryVerticalEnd, MoreHorizontal, Search, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AppPagination } from '@/components/ui/app-pagination';
 import { useMovimentoReduzido } from '@/lib/motionMode';
@@ -69,6 +64,8 @@ interface TodosCiclosTableProps {
   onSelecionar: (ciclo: any) => void;
   onExcluir: (ciclo: any) => void;
   excluindo?: boolean;
+  /** Ação de exclusão visível apenas para quem tem autorização administrativa. */
+  podeExcluir?: boolean;
   /** Posição na cascata de entrada (mesma régua do Dashboard Executivo). */
   indice?: number;
 }
@@ -135,6 +132,7 @@ export function TodosCiclosTable({
   onSelecionar,
   onExcluir,
   excluindo,
+  podeExcluir = false,
   indice = 0,
 }: TodosCiclosTableProps) {
   const [busca, setBusca] = useState('');
@@ -148,7 +146,7 @@ export function TodosCiclosTable({
 
   const statusDisponiveis = useMemo(
     () => Array.from(new Set(ciclos.map((c) => String(c.status ?? '')))).filter(Boolean),
-    [ciclos],
+    [ciclos]
   );
 
   const progressoPorCiclo = useMemo(() => {
@@ -233,13 +231,21 @@ export function TodosCiclosTable({
         <Table>
           <TableHeader>
             <TableRow className="border-border/30 bg-muted/20 hover:bg-muted/20">
-              <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">Nome do Ciclo</TableHead>
-              <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">Descrição</TableHead>
+              <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">
+                Nome do Ciclo
+              </TableHead>
+              <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">
+                Descrição
+              </TableHead>
               <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">Tipo</TableHead>
               <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">Período</TableHead>
-              <TableHead className="h-10 w-[170px] text-[11px] uppercase tracking-wider text-muted-foreground">Progresso</TableHead>
+              <TableHead className="h-10 w-[170px] text-[11px] uppercase tracking-wider text-muted-foreground">
+                Progresso
+              </TableHead>
               <TableHead className="h-10 text-[11px] uppercase tracking-wider text-muted-foreground">Status</TableHead>
-              <TableHead className="h-10 w-[56px] text-right text-[11px] uppercase tracking-wider text-muted-foreground">Ações</TableHead>
+              <TableHead className="h-10 w-[56px] text-right text-[11px] uppercase tracking-wider text-muted-foreground">
+                Ações
+              </TableHead>
             </TableRow>
           </TableHeader>
           {/* Moldura da cascata: `AnimatePresence` local (devolve o keyframe
@@ -278,7 +284,7 @@ export function TodosCiclosTable({
                       // Design System — mesmo efeito para todas as linhas, cobrindo
                       // de "Nome do Ciclo" a "Ações". `duration-[220ms] ease-in-out`
                       // é a transição pedida.
-                      'border-border/20 transition-colors duration-[220ms] ease-in-out hover:bg-background',
+                      'border-border/20 transition-colors duration-[220ms] ease-in-out hover:bg-background'
                     )}
                   >
                     <TableCell className="py-2.5">
@@ -295,7 +301,7 @@ export function TodosCiclosTable({
                       </span>
                     </TableCell>
                     <TableCell className="py-2.5 text-xs capitalize text-muted-foreground">{c.tipo || '—'}</TableCell>
-                    <TableCell className="whitespace-nowrap py-2.5 font-mono text-xs text-muted-foreground">
+                    <TableCell className="text-numeric whitespace-nowrap py-2.5 text-xs text-muted-foreground">
                       {formatarPeriodo(c.data_inicio, c.data_fim)}
                     </TableCell>
                     <TableCell className="py-2.5">
@@ -333,13 +339,17 @@ export function TodosCiclosTable({
                           <DropdownMenuItem onClick={() => onSelecionar(c)}>
                             <GalleryVerticalEnd className="mr-2 h-3.5 w-3.5" /> Acompanhar no painel
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-destructive-vivid focus:text-destructive-vivid"
-                            onClick={() => setParaExcluir(c)}
-                          >
-                            <Trash2 className="mr-2 h-3.5 w-3.5" /> Excluir ciclo
-                          </DropdownMenuItem>
+                          {podeExcluir && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive-vivid focus:text-destructive-vivid"
+                                onClick={() => setParaExcluir(c)}
+                              >
+                                <Trash2 className="mr-2 h-3.5 w-3.5" /> Excluir ciclo
+                              </DropdownMenuItem>
+                            </>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -364,8 +374,11 @@ export function TodosCiclosTable({
             }}
             label={
               <>
-                Mostrando <span className="font-medium text-foreground">{inicio}-{fim}</span> de{' '}
-                <span className="font-medium text-foreground">{filtrados.length}</span>{' '}
+                Mostrando{' '}
+                <span className="font-medium text-foreground">
+                  {inicio}-{fim}
+                </span>{' '}
+                de <span className="font-medium text-foreground">{filtrados.length}</span>{' '}
                 {filtrados.length === 1 ? 'ciclo' : 'ciclos'}
               </>
             }

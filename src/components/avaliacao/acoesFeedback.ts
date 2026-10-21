@@ -71,7 +71,79 @@ export function temPerfilGestor(papeis: PapeisAvaliacao): boolean {
   return capacidadesAvaliacao(papeis).gestor;
 }
 
-/** Ação de status que exige texto obrigatório do operador. */
+/**
+ * O usuário autenticado é o AVALIADOR DESIGNADO do feedback?
+ *
+ * A designação (`avaliador_id`) é a autorização para CONCLUIR o registro, e é
+ * independente do `tipo` (gestor/par/auto/subordinado) e da existência de
+ * `supervisor_id`. O servidor revalida a mesma designação.
+ */
+export function ehAvaliadorDesignado({
+  avaliadorId,
+  vinculos = [],
+  usuarioId,
+}: {
+  avaliadorId: unknown;
+  vinculos?: VinculoGestor[];
+  usuarioId: unknown;
+}): boolean {
+  const alvo = String(avaliadorId ?? '').trim();
+  const uid = String(usuarioId ?? '').trim();
+  if (!alvo || !uid) return false;
+  const eu = vinculos.find((v) => String(v?.user_id ?? '').trim() === uid);
+  return Boolean(eu && String(eu.id ?? '').trim() === alvo);
+}
+
+/**
+ * Autorização de CONCLUSÃO do feedback — separada da aprovação consolidada.
+ *
+ * Fontes:
+ *   • RH/admin (`pode_gerir_avaliacoes()` no banco);
+ *   • avaliador designado (`avaliador_id`);
+ *   • gestor responsável (`supervisor_id`) ou exceção confirmada pelo servidor.
+ *
+ * O `tipo` do feedback NÃO entra na decisão. Sem qualquer vínculo/designação, o
+ * controle não é oferecido — não é liberação indiscriminada.
+ */
+export function podeConcluirFeedback({
+  papeis,
+  avaliadorId,
+  vinculos = [],
+  usuarioId,
+  responsavel = false,
+  autorizadoServidor = false,
+}: {
+  papeis: PapeisAvaliacao;
+  avaliadorId: unknown;
+  vinculos?: VinculoGestor[];
+  usuarioId: unknown;
+  responsavel?: boolean;
+  autorizadoServidor?: boolean;
+}): boolean {
+  const c = capacidadesAvaliacao(papeis);
+  if (c.admin || c.rh) return true;
+  if (ehAvaliadorDesignado({ avaliadorId, vinculos, usuarioId })) return true;
+  if (autorizadoServidor === true) return true;
+  // Ser supervisor só autoriza quando a conta também tem o papel `gestor`;
+  // um `user` que aparece como supervisor não recebe conclusão por engano.
+  return c.gestor && responsavel === true;
+}
+
+/**
+ * Perfis EFETIVOS do operador no fluxo de STATUS (uma conta pode ter VÁRIOS).
+ *
+ * Papéis são capacidades; o recurso/autorização é conferido à parte por
+ * `podeConcluirFeedback`. Um gestor continua sendo `gestor` mesmo quando o
+ * colaborador não tem supervisor — a conclusão do feedback não depende disso.
+ */
+export function perfisOperadorEfetivos(papeis: PapeisAvaliacao, _responsavel?: boolean): PerfilOperador[] {
+  const c = capacidadesAvaliacao(papeis);
+  const perfis: PerfilOperador[] = [];
+  if (c.admin || c.rh) perfis.push('admin_rh');
+  if (c.gestor) perfis.push('gestor');
+  if (perfis.length === 0) perfis.push(normalizarPapeis(papeis).includes('user') ? 'avaliador' : 'desconhecido');
+  return perfis;
+}
 export function exigeJustificativa(acao: AcaoStatus): boolean {
   return acao === 'cancelar' || acao === 'reabrir';
 }
@@ -140,23 +212,6 @@ export interface AcaoDisponivel {
 }
 
 /**
- * Perfis EFETIVOS do operador no fluxo de STATUS (uma conta pode ter VÁRIOS).
- *
- * `admin`+`gestor` não escolhe um perfil: as DUAS capacidades valem, cada ação
- * pela tabela de transições — o gestor responsável CONCLUI e o admin/RH REABRE.
- * O servidor reconfere tudo (`finalizar_feedback`/`pode_gerir_avaliacoes`).
- */
-export function perfisOperadorEfetivos(papeis: PapeisAvaliacao, responsavel: boolean): PerfilOperador[] {
-  const c = capacidadesAvaliacao(papeis);
-  const perfis: PerfilOperador[] = [];
-  if (c.admin || c.rh) perfis.push('admin_rh');
-  if (c.gestor && responsavel === true) perfis.push('gestor');
-  if (perfis.length === 0 && c.gestor) perfis.push('gestor');
-  if (perfis.length === 0) perfis.push(normalizarPapeis(papeis).includes('user') ? 'avaliador' : 'desconhecido');
-  return perfis;
-}
-
-/**
  * Perfil do fluxo de STATUS quando a conta tem VÁRIOS papéis.
  *
  * `admin`+`gestor` não pode virar só `admin_rh`: quem é o GESTOR RESPONSÁVEL
@@ -180,9 +235,10 @@ export function perfilOperadorComVinculo(
  * as `disponivel: false` (a proposta visual é explícita sobre isso).
  *
  * `responsavel` é a prova de que o usuário é o GESTOR RESPONSÁVEL pela avaliação
- * (`ehGestorResponsavel`). Ela é exigida SÓ para `concluir`: sem ela, o perfil
- * `gestor` não recebe o controle — muito menos `admin`/`rh`/`user`, que já não
- * têm o perfil autorizado na tabela de transições.
+ * (`ehGestorResponsavel`). Ela é uma das fontes de autorização para `concluir`;
+ * `autorizadoConcluir` é a prova completa (avaliador designado, responsável,
+ * exceção ou RH/admin) calculada por `podeConcluirFeedback`. A aprovação
+ * consolidada NÃO usa esta flag: continua exigindo o gestor autorizado.
  */
 export function acoesDisponiveis({
   statusAtual,
@@ -190,6 +246,7 @@ export function acoesDisponiveis({
   perfil,
   perfis,
   responsavel = false,
+  autorizadoConcluir,
 }: {
   statusAtual: unknown;
   papel: PapelApp;
@@ -205,15 +262,21 @@ export function acoesDisponiveis({
   perfis?: PerfilOperador[];
   /** `true` somente com o vínculo comprovado (ver `ehGestorResponsavel`). */
   responsavel?: boolean;
+  /**
+   * Autorização EFETIVA para concluir, independente de `supervisor_id`.
+   * Ausente = compatibilidade: usa `responsavel`.
+   */
+  autorizadoConcluir?: boolean;
 }): AcaoDisponivel[] {
   const efetivos: PerfilOperador[] = perfis?.length ? perfis : [perfil ?? perfilOperador(papel)];
   const ordem: AcaoStatus[] = ['concluir', 'cancelar', 'reabrir'];
+  const podeConcluir = autorizadoConcluir ?? responsavel;
 
   return ordem.map((acao) => {
     const tentativas = efetivos.map((p) => validarTransicao({ statusAtual, acao, perfil: p }));
     const r = tentativas.find((t) => t.permitido) ?? tentativas[0];
-    const exigeVinculo = acao === 'concluir';
-    const disponivel = r.permitido && (!exigeVinculo || responsavel === true);
+    const exigeAutorizacao = acao === 'concluir';
+    const disponivel = r.permitido && (!exigeAutorizacao || podeConcluir === true);
 
     return {
       acao,
@@ -223,8 +286,8 @@ export function acoesDisponiveis({
       disponivel,
       motivoBloqueio: disponivel
         ? null
-        : r.permitido && exigeVinculo
-          ? 'Somente o gestor responsável pela avaliação pode concluir.'
+        : r.permitido && exigeAutorizacao
+          ? 'Você não tem autorização para concluir esta avaliação.'
           : r.descricao,
     };
   });

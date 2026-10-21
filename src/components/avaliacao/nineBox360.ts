@@ -55,10 +55,10 @@ export interface OpcoesConsolidacao360 {
   versoesPorFeedback?: Record<string, string>;
   /**
    * Decisões do gestor (`feedbacks_360_aprovacoes_gestor`) e cabeçalhos
-   * (`feedbacks_360_consolidacoes`). Quando informados, a classificação exige a
-   * aprovação VIGENTE para a versão consolidada — a MESMA regra da fila.
-   * Omitidos = leitura anterior (validação como âncora), compatível com
-   * chamadas antigas e com o modo demonstrativo.
+   * (`feedbacks_360_consolidacoes`). A classificação oficial SEMPRE exige a
+   * decisão `aprovado` vigente para a versão consolidada. Os parâmetros são
+   * opcionais apenas para compatibilidade de leitura; omitidos equivalem a
+   * “sem aprovação” e NÃO classificam.
    */
   aprovacoes?: unknown[];
   consolidacoes?: unknown[];
@@ -134,7 +134,6 @@ export function consolidarNineBox360({
   feedbacks,
   cicloId,
   empresaId = null,
-  validacoes = [],
   versoesPorFeedback = {},
   aprovacoes,
   consolidacoes,
@@ -145,12 +144,6 @@ export function consolidarNineBox360({
     return true;
   });
 
-  // Validações do RH normalizadas para o contrato do motor (aceita a linha CRUA
-  // do banco e a forma camelCase). A lista chega ordenada por `validado_em desc`.
-  const validacoesNormalizadas = (validacoes as unknown[])
-    .map(normalizarValidacaoPotencial)
-    .filter((v): v is ValidacaoPotencial => v !== null);
-
   const porColaborador = new Map<string, typeof doCiclo>();
   doCiclo
     .filter((a) => a.colaboradorId !== null)
@@ -159,18 +152,22 @@ export function consolidarNineBox360({
       porColaborador.set(chave, [...(porColaborador.get(chave) ?? []), a]);
     });
 
-  /* ── APROVAÇÃO VIGENTE (mesma âncora da fila) ─────────────────────────────
+  /* ── APROVAÇÃO VIGENTE (decisão final do gestor) ─────────────────────────
      `feedbacks_360_aprovacoes_gestor` guarda a decisão com a versão do CONJUNTO;
      `feedbacks_360_consolidacoes` mantém a versão vigente. Só se classifica
      quando as duas casam — decisão antiga é invalidação, não aprovação. O gate
-     só é aplicado quando os arrays são INFORMADOS (compatibilidade). */
-  const gateAprovacao = aprovacoes !== undefined || consolidacoes !== undefined;
+     é OBRIGATÓRIO: concluir/salvar, sozinho, nunca classifica; sem arrays o
+     resultado também fica bloqueado (fail-closed). */
+  const gateAprovacao = true;
   const decisaoPorChave = new Map<string, { decisao: string; versao: string; decididoEm: number }>();
   (aprovacoes ?? []).forEach((bruto) => {
     const a = (bruto ?? {}) as Record<string, unknown>;
     const col = String(a.colaborador_id ?? '').trim();
     if (!col) return;
-    const chave = `${String(a.ciclo_id ?? '').trim()}::${col}`;
+    const cicloDaDecisao = String(a.ciclo_id ?? '').trim();
+    if (cicloId !== null && cicloDaDecisao !== String(cicloId)) return;
+    if (empresaId && a.empresa_id && String(a.empresa_id) !== empresaId) return;
+    const chave = `${cicloDaDecisao}::${col}`;
     const quando = Date.parse(String(a.decidido_em ?? '')) || 0;
     const atual = decisaoPorChave.get(chave);
     if (!atual || quando >= atual.decididoEm) {
@@ -184,12 +181,27 @@ export function consolidarNineBox360({
     }
   });
   const versaoConsolidadaPorChave = new Map<string, string>();
+  const aprovadoPorChave = new Map<string, { desempenho: number | null; potencial: number | null }>();
   (consolidacoes ?? []).forEach((bruto) => {
     const c = (bruto ?? {}) as Record<string, unknown>;
     const col = String(c.colaborador_id ?? '').trim();
+    if (!col) return;
+    const cicloDaConsolidacao = String(c.ciclo_id ?? '').trim();
+    if (cicloId !== null && cicloDaConsolidacao !== String(cicloId)) return;
+    if (empresaId && c.empresa_id && String(c.empresa_id) !== empresaId) return;
     const versao = String(c.versao_consolidada ?? '').trim();
-    if (!col || !versao) return;
-    versaoConsolidadaPorChave.set(`${String(c.ciclo_id ?? '').trim()}::${col}`, versao);
+    const chave = `${cicloDaConsolidacao}::${col}`;
+    if (versao) versaoConsolidadaPorChave.set(chave, versao);
+    const numero = (x: unknown) => {
+      if (x === null || x === undefined || x === '') return null;
+      const n = Number(x);
+      return Number.isFinite(n) && n >= 1 && n <= 5 ? n : null;
+    };
+    const desempenho = numero(c.desempenho_aprovado);
+    const potencial = numero(c.potencial_aprovado);
+    if (desempenho !== null && potencial !== null) {
+      aprovadoPorChave.set(chave, { desempenho, potencial });
+    }
   });
 
   return Array.from(porColaborador.entries()).map(([colaboradorId, registros]) => {
@@ -225,16 +237,6 @@ export function consolidarNineBox360({
 
     const gestor = categorias.find((c) => c.categoria === 'gestor');
     const versaoGestor = gestor?.feedbackId ? (versoesPorFeedback[gestor.feedbackId] ?? null) : null;
-    // A validação aplicável é a MAIS RECENTE (lista ordenada por `validado_em desc`)
-    // do colaborador cuja versão casa com a versão canônica ATUAL do gestor — a
-    // mesma regra do banco/`situacaoPotencial`. Sem versão atual (ou sem validação
-    // que case) devolve `null` ⇒ o motor recusa com `potencial_sem_validacao`.
-    const validacao =
-      versaoGestor === null
-        ? null
-        : (validacoesNormalizadas.find(
-            (v) => v.colaboradorId === colaboradorId && v.versaoAvaliacao === versaoGestor
-          ) ?? null);
 
     let consolidado = consolidar360({
       empresaId,
@@ -243,7 +245,6 @@ export function consolidarNineBox360({
       notas,
       status,
       potencialGestor: gestor?.potencial ?? null,
-      validacaoPotencial: validacao,
       versaoGestor,
       substituicaoDeConcluida: categorias.some((c) => c.substituicaoDeConcluida),
     });
@@ -269,6 +270,33 @@ export function consolidarNineBox360({
           quadrante: null,
           motivo: 'aprovacao_devolvida',
         };
+      } else {
+        /**
+         * FLUXO NOVO: a aprovação do gestor confirma os valores do conjunto.
+         * O snapshot `desempenho_aprovado`/`potencial_aprovado` é a fonte
+         * oficial; não há validação posterior do RH. Quando o snapshot não
+         * existe (legado), mantém-se a composição 360 já calculada acima.
+         */
+        const snapshot = aprovadoPorChave.get(chave) ?? null;
+        if (snapshot) {
+          consolidado = consolidar360({
+            empresaId,
+            cicloId,
+            colaboradorId,
+            notas,
+            status,
+            versaoGestor,
+            substituicaoDeConcluida: categorias.some((c) => c.substituicaoDeConcluida),
+            aprovado: true,
+            desempenhoAprovado: snapshot.desempenho,
+            potencialAprovado: snapshot.potencial,
+          });
+        } else if (!consolidado.classificavel && !consolidado.motivo) {
+          consolidado = {
+            ...consolidado,
+            motivo: 'aprovacao_sem_valores',
+          };
+        }
       }
     }
 

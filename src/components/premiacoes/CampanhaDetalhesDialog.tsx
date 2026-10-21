@@ -11,7 +11,10 @@
  * acontecem de verdade (`RewardsApprovalHub`).
  * ============================================================================
  */
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { motion } from 'framer-motion';
+import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CalendarDays, DollarSign, Target, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -65,10 +68,20 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
   const aparencia = aparenciaStatus(linha?.campanha.status);
 
   return (
-    <Dialog open={Boolean(linha)} onOpenChange={(aberto) => !aberto && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[720px]">
-        {linha && (
-          <>
+    /* MESMA janela de "Pendências": a moldura compartilhada
+       (`CascadeDialogFrame`) entrega véu com blur, caixa que abre de dentro
+       para fora, cascata dos quatro blocos e fechamento na ordem inversa.
+       Apenas a largura e o scroll interno são deste conteúdo. */
+    <CascadeDialogFrame
+      open={Boolean(linha)}
+      onOpenChange={(aberto) => !aberto && onClose()}
+      blocks={4}
+      className="sm:max-w-[720px]"
+      contentClassName="max-h-[85vh] overflow-y-auto p-5 space-y-3"
+    >
+      {linha && (
+        <>
+          <motion.div variants={cascadeItemVariants}>
             <DialogHeader>
               <DialogTitle className="flex flex-wrap items-center gap-2 text-base">
                 {linha.campanha.nome}
@@ -90,7 +103,9 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
                 {linha.campanha.descricao || 'Sem descrição cadastrada'}
               </DialogDescription>
             </DialogHeader>
+          </motion.div>
 
+          <motion.div variants={cascadeItemVariants}>
             <div className="grid gap-2 sm:grid-cols-2">
               <Bloco icone={CalendarDays} label="Período">
                 <span className="text-xs font-medium tabular-nums">
@@ -136,8 +151,10 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
                 </span>
               </Bloco>
             </div>
+          </motion.div>
 
-            {/* Pagamentos já carregados pela página — somente leitura. */}
+          {/* Pagamentos já carregados pela página — somente leitura. */}
+          <motion.div variants={cascadeItemVariants}>
             <div className="overflow-hidden rounded-lg border border-border/40">
               <table className="w-full text-left text-xs">
                 <thead>
@@ -180,7 +197,9 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
                 </tbody>
               </table>
             </div>
+          </motion.div>
 
+          <motion.div variants={cascadeItemVariants}>
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               <Button variant="outline" className="rounded-xl" onClick={onClose}>
                 Fechar
@@ -189,9 +208,9 @@ export function CampanhaDetalhesDialog({ linha, pagamentos, onClose, onVerPagame
                 Aprovar e conciliar na aba Pagamentos <ArrowRight className="h-3.5 w-3.5" />
               </Button>
             </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
+          </motion.div>
+        </>
+      )}
+    </CascadeDialogFrame>
   );
 }

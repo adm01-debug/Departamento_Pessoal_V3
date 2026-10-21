@@ -1,5 +1,8 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { motion } from 'framer-motion';
+import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -59,8 +62,17 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] rounded-2xl">
+    /* MESMA janela de "Pendências": a moldura `CascadeDialogFrame` é a fonte
+       única da coreografia (véu, caixa de dentro para fora, cascata dos blocos
+       e fechamento na ordem inversa). Só a largura e o conteúdo são deste
+       formulário — nenhuma animação nova. */
+    <CascadeDialogFrame
+      open={isOpen}
+      onOpenChange={(aberto) => !aberto && onClose()}
+      blocks={3}
+      className="sm:max-w-[600px]"
+    >
+      <motion.div variants={cascadeItemVariants}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Trophy className="h-5 w-5 text-primary" />
@@ -70,7 +82,9 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             Defina o período, orçamento e as regras de cálculo para este ciclo.
           </DialogDescription>
         </DialogHeader>
+      </motion.div>
 
+      <motion.div variants={cascadeItemVariants}>
         <div className="grid gap-4 py-4">
           {step === 1 ? (
             <div className="space-y-4">
@@ -146,7 +160,9 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             </div>
           )}
         </div>
+      </motion.div>
 
+      <motion.div variants={cascadeItemVariants}>
         <DialogFooter>
           {step === 1 ? (
             <Button className="w-full" onClick={() => setStep(2)}>Próximo: Regras de Pagamento</Button>
@@ -164,7 +180,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             </div>
           )}
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </motion.div>
+    </CascadeDialogFrame>
   );
 }

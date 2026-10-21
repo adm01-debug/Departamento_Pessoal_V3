@@ -35,6 +35,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { EntradaPresenca, entradaCard } from './premiacoesEntrada';
+import { cn } from '@/lib/utils';
 import { safeErrorMessage } from '@/utils/safeError';
 import { premiacoesService } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
@@ -137,7 +138,13 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
     setPagina(1);
   };
 
-  /** Existe algum filtro da BARRA fora do padrão? (ordenação e período não são filtros.) */
+  /**
+   * Detecta QUALQUER filtro da barra fora do padrão — fonte única usada pelo
+   * botão "Limpar filtros" e pelo próprio `limparFiltros` (sem duplicar regra):
+   * busca, etapa (inclui a seleção feita no Fluxo de Pagamento, que escreve no
+   * MESMO `filtros.etapa`), campanha e status. Ordenação ("Mais recentes") e
+   * período NÃO entram: não são filtros da barra e a limpeza os preserva.
+   */
   const temFiltrosAtivos =
     filtros.busca.trim() !== FILTROS_PAGAMENTO_INICIAIS.busca ||
     filtros.etapa !== FILTROS_PAGAMENTO_INICIAIS.etapa ||
@@ -435,8 +442,11 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
 
             {/* LIMPAR FILTROS — ao lado do seletor de ordenação, com a MESMA
                 altura (40px), raio e cores dos outros controles, para não criar
-                segunda linha nem crescer a barra. Desabilitado quando não há
-                filtro ativo (nada de atualização desnecessária). */}
+                segunda linha nem crescer a barra. Estado NEUTRO (desabilitado)
+                quando não há filtro ativo; com QUALQUER filtro aplicado recebe o
+                verde-limão oficial do Design System (`--primary`), com fundo
+                translúcido, borda e ícone na mesma tinta e hover mais intenso —
+                o usuário vê de imediato que existe recorte aplicado. */}
             <motion.div {...entradaCard(indiceEntrada('filtros', 5))} className="shrink-0">
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
@@ -448,7 +458,13 @@ export function PagamentosTab({ pagamentos, auditoria, campanhas, onNavegar }: P
                       onClick={limparFiltros}
                       disabled={!temFiltrosAtivos}
                       aria-label="Limpar filtros"
-                      className="h-10 w-10 rounded-xl border-border/50 bg-background text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground"
+                      data-filtros-ativos={temFiltrosAtivos}
+                      className={cn(
+                        'h-10 w-10 rounded-xl border transition-colors duration-200 ease-in-out',
+                        temFiltrosAtivos
+                          ? 'border-primary/60 bg-primary/10 text-primary hover:border-primary/80 hover:bg-primary/20 hover:text-primary'
+                          : 'border-border/50 bg-background text-muted-foreground hover:border-border hover:bg-accent hover:text-foreground',
+                      )}
                     >
                       <FilterX className="h-4 w-4" />
                     </Button>

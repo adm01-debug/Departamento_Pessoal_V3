@@ -133,6 +133,30 @@ describe('avaliação — RPCs reais de aprovação do gestor', () => {
     ).rejects.toMatchObject({ message: 'perfil_nao_autorizado' });
   });
 
+  it('autorização efetiva: consulta `pode_aprovar_colaborador` pelo UUID', async () => {
+    mockRpc.mockResolvedValue(ok(true));
+    await expect(
+      avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')
+    ).resolves.toBe(true);
+    expect(mockRpc).toHaveBeenCalledWith('pode_aprovar_colaborador', {
+      p_colaborador_id: '11111111-1111-4111-8111-111111111111',
+    });
+  });
+
+  it('autorização efetiva: `false` do servidor mantém a decisão bloqueada', async () => {
+    mockRpc.mockResolvedValue(ok(false));
+    await expect(
+      avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')
+    ).resolves.toBe(false);
+  });
+
+  it('autorização efetiva: erro do servidor é propagado (fail-closed no chamador)', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'permission denied' } });
+    await expect(
+      avaliacaoService.podeAprovarColaborador('11111111-1111-4111-8111-111111111111')
+    ).rejects.toMatchObject({ message: 'permission denied' });
+  });
+
   it('validar Potencial: chama a RPC com feedback + idempotência + observação', async () => {
     mockRpc.mockResolvedValue(ok({ ok: true, validacao_id: 'v1', versao_avaliacao: 'h1', potencial_validado: 4 }));
 

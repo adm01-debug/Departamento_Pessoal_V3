@@ -139,7 +139,7 @@ export function FeriasColetivasTab() {
                 const emitido = !!c.comunicado_gerado_em;
                 return (
                   <TableRow key={c.id}>
-                    <TableCell className="font-mono text-sm">
+                    <TableCell className="text-numeric text-sm">
                       {format(new Date(c.data_inicio), 'dd/MM/yy', { locale: ptBR })} →{' '}
                       {format(new Date(c.data_fim), 'dd/MM/yy', { locale: ptBR })}
                     </TableCell>

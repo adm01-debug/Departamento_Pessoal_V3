@@ -39,7 +39,7 @@ import { Button } from '@/components/ui/button';
 import { CascadeTableRow } from '@/components/ui/cascade-table';
 import { tomDoAvatar } from '@/lib/avatarTons';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { entradaCard } from './premiacoesEntrada';
+import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatDate } from '@/utils/format';
 import {
@@ -241,12 +241,15 @@ function LinhaCampanha({
     linha.pctOrcamento === null ? 'bg-muted' : linha.pctOrcamento > 100 ? 'bg-warning' : 'bg-info';
 
   return (
-    /* Linha da cascata compartilhada (`ui/cascade-table`) — a MESMA animação da
+    /* Linha da cascata compartilhada (`ui/cascade-table`) — o MESMO movimento da
        lista de Processos de Desligamentos: opacity + y(10px) + scaleX(0.94→1)
-       abrindo do centro, 0,8s, atraso `0,52s + índice × 0,04s`, ease
-       [0.22, 1, 0.36, 1]. O hover da linha (fundo escurecendo) continua igual. */
+       abrindo do centro, ease [0.22, 1, 0.36, 1]. A cadência é a do Hub
+       (`linhaEntradaHubVariants`): 0,8s por linha, atraso `0,46s + índice ×
+       0,08s` — intervalo maior que o global (0,04s) para a cascata ficar
+       perceptível. O hover da linha (fundo escurecendo) continua igual. */
     <CascadeTableRow
       index={indice}
+      variants={linhaEntradaHubVariants}
       className="align-middle transition-colors duration-200 ease-in-out hover:bg-background"
     >
       {/* Campanha */}
@@ -499,7 +502,7 @@ export function CampanhaTabela({
               ))}
 
               {exibidos === 0 && (
-                <CascadeTableRow index={0}>
+                <CascadeTableRow index={0} variants={linhaEntradaHubVariants}>
                   <td colSpan={COLUNAS.length} className="px-4 py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">

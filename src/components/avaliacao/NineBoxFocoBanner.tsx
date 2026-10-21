@@ -41,6 +41,8 @@ interface NineBoxFocoBannerProps {
   /** Aprovação do gestor pendente/devolvida/invalidada. */
   aguardandoAprovacao?: number;
   nomesAguardandoAprovacao?: string[];
+  /** Ciclo em foco — exibido junto das pendências (nome/ciclo corretos). */
+  cicloNome?: string;
   /** Posição na cascata (a referência coloca o banner como 2º item). */
   indice?: number;
   /** True quando o filtro de atenção do banner já está aplicado. */
@@ -66,6 +68,7 @@ export function NineBoxFocoBanner({
   nomesAguardandoRh = [],
   aguardandoAprovacao = 0,
   nomesAguardandoAprovacao = [],
+  cicloNome = '',
   indice = 1,
   ativo = false,
   onVerDetalhes,
@@ -101,7 +104,8 @@ export function NineBoxFocoBanner({
               <span className="font-medium text-foreground/80">{aguardandoRh}</span>{' '}
               {aguardandoRh === 1 ? 'aprovada pelo gestor aguardando' : 'aprovadas pelo gestor aguardando'} a validação
               do Potencial pelo RH
-              {listaRh ? `: ${listaRh}` : '.'}
+              {listaRh ? `: ${listaRh}.` : '.'}
+              {cicloNome ? ` Ciclo: ${cicloNome}.` : ''}
             </p>
           )}
           {aguardandoAprovacao > 0 && (
@@ -109,7 +113,8 @@ export function NineBoxFocoBanner({
               <span className="font-medium text-foreground/80">{aguardandoAprovacao}</span>{' '}
               {aguardandoAprovacao === 1 ? 'avaliação com' : 'avaliações com'} aprovação do gestor pendente, devolvida
               ou invalidada
-              {listaAprovacao ? `: ${listaAprovacao}` : '.'}
+              {listaAprovacao ? `: ${listaAprovacao}.` : '.'}
+              {cicloNome ? ` Ciclo: ${cicloNome}.` : ''}
             </p>
           )}
           {semClassificacao > 0 && (

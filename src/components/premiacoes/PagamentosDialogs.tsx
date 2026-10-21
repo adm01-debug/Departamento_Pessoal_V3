@@ -21,17 +21,18 @@
  * ============================================================================
  */
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { CheckCircle2, History, Search, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { CascadeDialogFrame } from '@/components/ui/cascade-dialog';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 import { type PagamentoHub } from './premiacoesComum';
 import { rotuloStatusPagamento, valorDoPagamento } from './pagamentosComum';
@@ -112,9 +113,16 @@ export function PagamentosDialogs({
 
   return (
     <>
-      {/* 1 · Aprovar / rejeitar / reiniciar */}
-      <Dialog open={!!aprovacao} onOpenChange={(aberto) => !aberto && fecharAprovacao()}>
-        <DialogContent className="sm:max-w-[425px]">
+      {/* 1 · Aprovar / rejeitar / reiniciar — MESMA moldura de "Pendências"
+          (`CascadeDialogFrame`): véu com blur, caixa de dentro para fora,
+          cascata dos três blocos e saída na ordem inversa. */}
+      <CascadeDialogFrame
+        open={!!aprovacao}
+        onOpenChange={(aberto) => !aberto && fecharAprovacao()}
+        blocks={3}
+        className="sm:max-w-[425px]"
+      >
+        <motion.div variants={cascadeItemVariants}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {textos.destrutivo ? (
@@ -126,6 +134,8 @@ export function PagamentosDialogs({
             </DialogTitle>
             <DialogDescription>{textos.descricao}</DialogDescription>
           </DialogHeader>
+        </motion.div>
+        <motion.div variants={cascadeItemVariants}>
           <div className="py-4">
             <div className="mb-4 rounded-2xl bg-muted/30 p-4">
               <p className="text-xs font-medium">{aprovacao?.pagamento.colaborador?.nome_completo}</p>
@@ -150,6 +160,8 @@ export function PagamentosDialogs({
               />
             </div>
           </div>
+        </motion.div>
+        <motion.div variants={cascadeItemVariants}>
           <DialogFooter>
             <Button variant="outline" onClick={fecharAprovacao} className="rounded-xl">
               Cancelar
@@ -164,12 +176,17 @@ export function PagamentosDialogs({
               {textos.botao}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </motion.div>
+      </CascadeDialogFrame>
 
-      {/* 2 · Conciliação com a folha */}
-      <Dialog open={!!conciliacao} onOpenChange={(aberto) => !aberto && fecharConciliacao()}>
-        <DialogContent className="sm:max-w-[425px]">
+      {/* 2 · Conciliação com a folha — mesma moldura compartilhada. */}
+      <CascadeDialogFrame
+        open={!!conciliacao}
+        onOpenChange={(aberto) => !aberto && fecharConciliacao()}
+        blocks={3}
+        className="sm:max-w-[425px]"
+      >
+        <motion.div variants={cascadeItemVariants}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Search className="h-5 w-5 text-primary" />
@@ -179,6 +196,8 @@ export function PagamentosDialogs({
               Compare o valor aprovado com o lançamento real na folha de pagamento.
             </DialogDescription>
           </DialogHeader>
+        </motion.div>
+        <motion.div variants={cascadeItemVariants}>
           <div className="grid gap-4 py-4">
             <div className="space-y-2 rounded-2xl border border-border/10 bg-muted/30 p-4">
               <div className="flex justify-between text-xs">
@@ -187,7 +206,7 @@ export function PagamentosDialogs({
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Valor Aprovado:</span>
-                <span className="font-mono font-medium">
+                <span className="text-numeric font-medium">
                   {formatCurrency(Number(conciliacao?.valor_aprovado ?? conciliacao?.valor_calculado ?? 0))}
                 </span>
               </div>
@@ -225,6 +244,8 @@ export function PagamentosDialogs({
               />
             </div>
           </div>
+        </motion.div>
+        <motion.div variants={cascadeItemVariants}>
           <DialogFooter>
             <Button variant="outline" onClick={fecharConciliacao} className="rounded-xl">
               Cancelar
@@ -237,12 +258,17 @@ export function PagamentosDialogs({
               Salvar Conciliação
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </motion.div>
+      </CascadeDialogFrame>
 
-      {/* 3 · Detalhes (leitura) */}
-      <Dialog open={!!detalhes} onOpenChange={(aberto) => !aberto && onFecharDetalhes()}>
-        <DialogContent className="sm:max-w-[520px]">
+      {/* 3 · Detalhes (leitura) — mesma moldura compartilhada. */}
+      <CascadeDialogFrame
+        open={!!detalhes}
+        onOpenChange={(aberto) => !aberto && onFecharDetalhes()}
+        blocks={3}
+        className="sm:max-w-[520px]"
+      >
+        <motion.div variants={cascadeItemVariants}>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <History className="h-5 w-5 text-primary" />
@@ -252,16 +278,18 @@ export function PagamentosDialogs({
               {detalhes?.colaborador?.nome_completo} · {detalhes?.campanha?.nome}
             </DialogDescription>
           </DialogHeader>
+        </motion.div>
+        <motion.div variants={cascadeItemVariants}>
           <div className="grid gap-3 py-3 text-xs">
             <dl className="grid grid-cols-2 gap-2 rounded-2xl border border-border/20 bg-muted/20 p-4">
               <dt className="text-muted-foreground">Valor calculado</dt>
-              <dd className="text-right font-mono">{formatCurrency(Number(detalhes?.valor_calculado ?? 0))}</dd>
+              <dd className="text-numeric text-right">{formatCurrency(Number(detalhes?.valor_calculado ?? 0))}</dd>
               <dt className="text-muted-foreground">Valor aprovado</dt>
-              <dd className="text-right font-mono">
+              <dd className="text-numeric text-right">
                 {detalhes?.valor_aprovado ? formatCurrency(Number(detalhes.valor_aprovado)) : '—'}
               </dd>
               <dt className="text-muted-foreground">Valor na folha</dt>
-              <dd className="text-right font-mono">
+              <dd className="text-numeric text-right">
                 {detalhes?.valor_folha_real ? formatCurrency(Number(detalhes.valor_folha_real)) : '—'}
               </dd>
               <dt className="text-muted-foreground">Status</dt>
@@ -309,13 +337,15 @@ export function PagamentosDialogs({
               )}
             </div>
           </div>
+        </motion.div>
+        <motion.div variants={cascadeItemVariants}>
           <DialogFooter>
             <Button variant="outline" onClick={onFecharDetalhes} className="rounded-xl">
               Fechar
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </motion.div>
+      </CascadeDialogFrame>
     </>
   );
 }

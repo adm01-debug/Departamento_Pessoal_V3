@@ -4,10 +4,13 @@ import { avaliacaoService } from '../avaliacaoService';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
+const { mockFrom, mockRpc } = vi.hoisted(() => ({ mockFrom: vi.fn(), mockRpc: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    rpc: (...a: unknown[]) => mockRpc(...a),
+  },
 }));
 
 function setupListChain(data: any[], error: any = null) {
@@ -79,6 +82,7 @@ describe('avaliacaoService.listarCiclos', () => {
 describe('avaliacaoService.criarCiclo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: true, error: null });
   });
 
   it('inserts and returns new ciclo', async () => {
@@ -89,15 +93,58 @@ describe('avaliacaoService.criarCiclo', () => {
     expect(result).toEqual(created);
   });
 
+  it('throws when the database does not confirm the inserted row', async () => {
+    setupInsertChain(null);
+    await expect(avaliacaoService.criarCiclo({ nome: 'Sem confirmação' })).rejects.toThrow(
+      /perfil_nao_autorizado|não confirmou/i
+    );
+  });
+
+  it('blocks creation for a profile without RH/admin permission', async () => {
+    mockRpc.mockResolvedValue({ data: false, error: null });
+    setupInsertChain({ id: 'nao-deveria' });
+    await expect(avaliacaoService.criarCiclo({ nome: 'Sem permissão' })).rejects.toThrow(/perfil_nao_autorizado/i);
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
     await expect(avaliacaoService.criarCiclo({})).rejects.toBeDefined();
   });
 });
 
+describe('avaliacaoService.contarDependenciasCiclo', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('soma as dependências reais por tabela (sem apagar nada)', async () => {
+    const counts: Record<string, number> = {
+      feedbacks_360: 2,
+      feedbacks_360_consolidacoes: 1,
+      feedbacks_360_aprovacoes_gestor: 1,
+      feedbacks_360_validacoes_potencial: 0,
+      metas_okrs: 3,
+    };
+    mockFrom.mockImplementation((tabela: string) => ({
+      select: () => {
+        const chain: any = {};
+        chain.eq = vi.fn().mockReturnValue(chain);
+        chain.then = (fn: any) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).then(fn);
+        chain.catch = (fn: any) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).catch(fn);
+        return chain;
+      },
+    }));
+    const deps = await avaliacaoService.contarDependenciasCiclo('ci-1', EMPRESA_ID);
+    expect(deps.total).toBe(7);
+    expect(deps.porTabela).toMatchObject({ feedbacks_360: 2, metas_okrs: 3 });
+  });
+});
+
 describe('avaliacaoService.excluirCiclo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: true, error: null });
   });
 
   it('deletes ciclo by id', async () => {
@@ -105,6 +152,13 @@ describe('avaliacaoService.excluirCiclo', () => {
     await avaliacaoService.excluirCiclo('ci1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'ci1');
+  });
+
+  it('blocks deletion for a profile without RH/admin permission', async () => {
+    mockRpc.mockResolvedValue({ data: false, error: null });
+    const { deleteFn } = setupDeleteChain();
+    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toThrow(/perfil_nao_autorizado/i);
+    expect(deleteFn).not.toHaveBeenCalled();
   });
 });
 
