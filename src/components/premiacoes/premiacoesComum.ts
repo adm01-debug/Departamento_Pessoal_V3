@@ -101,6 +101,11 @@ export interface AuditoriaHub {
   acao: string;
   motivo: string;
   created_at: string;
+  /** Autor real da linha (`premiacoes_auditoria.usuario_id`), quando gravado. */
+  usuario_id?: string | null;
+  /** Snapshots reais da trilha (JSONB), usados no detalhe e nos valores. */
+  dados_anteriores?: Record<string, unknown> | null;
+  dados_novos?: Record<string, unknown> | null;
 }
 
 /* ─── Vocabulário real do domínio ──────────────────────────────────────────── */

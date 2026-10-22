@@ -1,0 +1,296 @@
+{
+  "tabela": 900,
+  "ths": [
+    "Campanha",
+    "Período",
+    "Desempenho",
+    "Orçamento",
+    "Participantes",
+    "Status",
+    "Ações"
+  ],
+  "porColuna": [
+    {
+      "i": 0,
+      "rotulo": "Campanha",
+      "medidas": [
+        {
+          "tdW": 216,
+          "scrollW": 216,
+          "grupoW": 200,
+          "maiorTexto": {
+            "texto": "Premiação de Inovação",
+            "w": 154
+          }
+        },
+        {
+          "tdW": 216,
+          "scrollW": 216,
+          "grupoW": 200,
+          "maiorTexto": {
+            "texto": "Bônus por Meta de Produção",
+            "w": 154
+          }
+        },
+        {
+          "tdW": 216,
+          "scrollW": 216,
+          "grupoW": 200,
+          "maiorTexto": {
+            "texto": "Campanha de Vendas Q3 2026",
+            "w": 154
+          }
+        },
+        {
+          "tdW": 216,
+          "scrollW": 216,
+          "grupoW": 200,
+          "maiorTexto": {
+            "texto": "Programa Indique um Amigo",
+            "w": 154
+          }
+        }
+      ]
+    },
+    {
+      "i": 1,
+      "rotulo": "Período",
+      "medidas": [
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "01/10/2026",
+            "w": 73
+          }
+        },
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "01/08/2026",
+            "w": 73
+          }
+        },
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "01/07/2026",
+            "w": 73
+          }
+        },
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "01/03/2026",
+            "w": 73
+          }
+        }
+      ]
+    },
+    {
+      "i": 2,
+      "rotulo": "Desempenho",
+      "medidas": [
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "—",
+            "w": 107
+          }
+        },
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 2.700,00 / R$ 4.320,00",
+            "w": 107
+          }
+        },
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 3.950,00 / R$ 7.580,50",
+            "w": 107
+          }
+        },
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 1.300,00 / R$ 1.300,00",
+            "w": 107
+          }
+        }
+      ]
+    },
+    {
+      "i": 3,
+      "rotulo": "Orçamento",
+      "medidas": [
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 0,00 / R$ 30.000,00",
+            "w": 107
+          }
+        },
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 4.320,00 / R$ 42.000,00",
+            "w": 107
+          }
+        },
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 7.580,50 / R$ 85.000,00",
+            "w": 107
+          }
+        },
+        {
+          "tdW": 122,
+          "scrollW": 122,
+          "grupoW": 106,
+          "maiorTexto": {
+            "texto": "R$ 1.300,00 / R$ 18.000,00",
+            "w": 107
+          }
+        }
+      ]
+    },
+    {
+      "i": 4,
+      "rotulo": "Participantes",
+      "medidas": [
+        {
+          "tdW": 110,
+          "scrollW": 110,
+          "grupoW": 54,
+          "maiorTexto": {
+            "texto": "Sem dados",
+            "w": 55
+          }
+        },
+        {
+          "tdW": 110,
+          "scrollW": 110,
+          "grupoW": 94,
+          "maiorTexto": {
+            "texto": "4 participantes",
+            "w": 94
+          }
+        },
+        {
+          "tdW": 110,
+          "scrollW": 110,
+          "grupoW": 94,
+          "maiorTexto": {
+            "texto": "5 participantes",
+            "w": 94
+          }
+        },
+        {
+          "tdW": 110,
+          "scrollW": 110,
+          "grupoW": 94,
+          "maiorTexto": {
+            "texto": "1 participante",
+            "w": 94
+          }
+        }
+      ]
+    },
+    {
+      "i": 5,
+      "rotulo": "Status",
+      "medidas": [
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "Rascunho",
+            "w": 72
+          }
+        },
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "Ativa",
+            "w": 42
+          }
+        },
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "Ativa",
+            "w": 42
+          }
+        },
+        {
+          "tdW": 88,
+          "scrollW": 88,
+          "grupoW": 72,
+          "maiorTexto": {
+            "texto": "Finalizada",
+            "w": 72
+          }
+        }
+      ]
+    },
+    {
+      "i": 6,
+      "rotulo": "Ações",
+      "medidas": [
+        {
+          "tdW": 153,
+          "scrollW": 153,
+          "grupoW": 137,
+          "maiorTexto": null
+        },
+        {
+          "tdW": 153,
+          "scrollW": 153,
+          "grupoW": 137,
+          "maiorTexto": null
+        },
+        {
+          "tdW": 153,
+          "scrollW": 153,
+          "grupoW": 137,
+          "maiorTexto": null
+        },
+        {
+          "tdW": 153,
+          "scrollW": 153,
+          "grupoW": 137,
+          "maiorTexto": null
+        }
+      ]
+    }
+  ]
+}

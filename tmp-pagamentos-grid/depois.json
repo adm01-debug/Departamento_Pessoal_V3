@@ -1,0 +1,1004 @@
+[
+  {
+    "viewport": "1920x1080",
+    "grade": {
+      "left": 281,
+      "right": 1619,
+      "width": 1338
+    },
+    "rolagem": {
+      "scrollW": 1338,
+      "clientW": 1338
+    },
+    "pagina": {
+      "scrollW": 1920,
+      "clientW": 1920
+    },
+    "templates": {
+      "cabecalho": "40.1406px 227.516px 254.281px 147.219px 147.203px 133.828px 227.516px 160.609px",
+      "linha": "40.1406px 227.516px 254.281px 147.219px 147.203px 133.828px 227.516px 160.609px",
+      "iguais": true
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 321,
+          "width": 40
+        },
+        "td": {
+          "left": 281,
+          "right": 321,
+          "width": 40
+        },
+        "rotuloX": 281,
+        "conteudoX": 289,
+        "desalinhamento": -8,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 321,
+          "right": 549,
+          "width": 228
+        },
+        "td": {
+          "left": 321,
+          "right": 549,
+          "width": 228
+        },
+        "rotuloX": 329,
+        "conteudoX": 329,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 549,
+          "right": 803,
+          "width": 254
+        },
+        "td": {
+          "left": 549,
+          "right": 803,
+          "width": 254
+        },
+        "rotuloX": 557,
+        "conteudoX": 557,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 803,
+          "right": 950,
+          "width": 147
+        },
+        "td": {
+          "left": 803,
+          "right": 950,
+          "width": 147
+        },
+        "rotuloX": 811,
+        "conteudoX": 811,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 950,
+          "right": 1097,
+          "width": 147
+        },
+        "td": {
+          "left": 950,
+          "right": 1097,
+          "width": 147
+        },
+        "rotuloX": 958,
+        "conteudoX": 958,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 1097,
+          "right": 1231,
+          "width": 134
+        },
+        "td": {
+          "left": 1097,
+          "right": 1231,
+          "width": 134
+        },
+        "rotuloX": 1105,
+        "conteudoX": 1105,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 1231,
+          "right": 1459,
+          "width": 228
+        },
+        "td": {
+          "left": 1231,
+          "right": 1459,
+          "width": 228
+        },
+        "rotuloX": 1239,
+        "conteudoX": 1239,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1459,
+          "right": 1619,
+          "width": 161
+        },
+        "td": {
+          "left": 1459,
+          "right": 1619,
+          "width": 161
+        },
+        "rotuloX": 1467,
+        "conteudoX": 1467,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ]
+  },
+  {
+    "viewport": "1600x900",
+    "grade": {
+      "left": 281,
+      "right": 1349,
+      "width": 1068
+    },
+    "rolagem": {
+      "scrollW": 1068,
+      "clientW": 1068
+    },
+    "pagina": {
+      "scrollW": 1600,
+      "clientW": 1600
+    },
+    "templates": {
+      "cabecalho": "34px 181.203px 202.547px 117.25px 117.266px 106.594px 181.219px 127.922px",
+      "linha": "34px 181.203px 202.547px 117.25px 117.266px 106.594px 181.219px 127.922px",
+      "iguais": true
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "td": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "rotuloX": 281,
+        "conteudoX": 289,
+        "desalinhamento": -8,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 315,
+          "right": 496,
+          "width": 181
+        },
+        "td": {
+          "left": 315,
+          "right": 496,
+          "width": 181
+        },
+        "rotuloX": 323,
+        "conteudoX": 323,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 496,
+          "right": 699,
+          "width": 203
+        },
+        "td": {
+          "left": 496,
+          "right": 699,
+          "width": 203
+        },
+        "rotuloX": 504,
+        "conteudoX": 504,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 699,
+          "right": 816,
+          "width": 117
+        },
+        "td": {
+          "left": 699,
+          "right": 816,
+          "width": 117
+        },
+        "rotuloX": 707,
+        "conteudoX": 707,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 816,
+          "right": 933,
+          "width": 117
+        },
+        "td": {
+          "left": 816,
+          "right": 933,
+          "width": 117
+        },
+        "rotuloX": 824,
+        "conteudoX": 824,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 933,
+          "right": 1040,
+          "width": 107
+        },
+        "td": {
+          "left": 933,
+          "right": 1040,
+          "width": 107
+        },
+        "rotuloX": 941,
+        "conteudoX": 941,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 1040,
+          "right": 1221,
+          "width": 181
+        },
+        "td": {
+          "left": 1040,
+          "right": 1221,
+          "width": 181
+        },
+        "rotuloX": 1048,
+        "conteudoX": 1048,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1221,
+          "right": 1349,
+          "width": 128
+        },
+        "td": {
+          "left": 1221,
+          "right": 1349,
+          "width": 128
+        },
+        "rotuloX": 1229,
+        "conteudoX": 1229,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ]
+  },
+  {
+    "viewport": "1440x900",
+    "grade": {
+      "left": 281,
+      "right": 1189,
+      "width": 908
+    },
+    "rolagem": {
+      "scrollW": 908,
+      "clientW": 908
+    },
+    "pagina": {
+      "scrollW": 1440,
+      "clientW": 1440
+    },
+    "templates": {
+      "cabecalho": "34px 147.859px 165.266px 97px 97px 96px 147.875px 123px",
+      "linha": "34px 147.859px 165.266px 97px 97px 96px 147.875px 123px",
+      "iguais": true
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "td": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "rotuloX": 281,
+        "conteudoX": 289,
+        "desalinhamento": -8,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 315,
+          "right": 463,
+          "width": 148
+        },
+        "td": {
+          "left": 315,
+          "right": 463,
+          "width": 148
+        },
+        "rotuloX": 323,
+        "conteudoX": 323,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 463,
+          "right": 628,
+          "width": 165
+        },
+        "td": {
+          "left": 463,
+          "right": 628,
+          "width": 165
+        },
+        "rotuloX": 471,
+        "conteudoX": 471,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 628,
+          "right": 725,
+          "width": 97
+        },
+        "td": {
+          "left": 628,
+          "right": 725,
+          "width": 97
+        },
+        "rotuloX": 636,
+        "conteudoX": 636,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 725,
+          "right": 822,
+          "width": 97
+        },
+        "td": {
+          "left": 725,
+          "right": 822,
+          "width": 97
+        },
+        "rotuloX": 733,
+        "conteudoX": 733,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 822,
+          "right": 918,
+          "width": 96
+        },
+        "td": {
+          "left": 822,
+          "right": 918,
+          "width": 96
+        },
+        "rotuloX": 830,
+        "conteudoX": 830,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 918,
+          "right": 1066,
+          "width": 148
+        },
+        "td": {
+          "left": 918,
+          "right": 1066,
+          "width": 148
+        },
+        "rotuloX": 926,
+        "conteudoX": 926,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1066,
+          "right": 1189,
+          "width": 123
+        },
+        "td": {
+          "left": 1066,
+          "right": 1189,
+          "width": 123
+        },
+        "rotuloX": 1074,
+        "conteudoX": 1074,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ]
+  },
+  {
+    "viewport": "1366x768",
+    "grade": {
+      "left": 281,
+      "right": 1174,
+      "width": 893
+    },
+    "rolagem": {
+      "scrollW": 893,
+      "clientW": 834
+    },
+    "pagina": {
+      "scrollW": 1366,
+      "clientW": 1366
+    },
+    "templates": {
+      "cabecalho": "34px 146px 160px 97px 97px 96px 140px 123px",
+      "linha": "34px 146px 160px 97px 97px 96px 140px 123px",
+      "iguais": true
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "td": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "rotuloX": 281,
+        "conteudoX": 289,
+        "desalinhamento": -8,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 315,
+          "right": 461,
+          "width": 146
+        },
+        "td": {
+          "left": 315,
+          "right": 461,
+          "width": 146
+        },
+        "rotuloX": 323,
+        "conteudoX": 323,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 461,
+          "right": 621,
+          "width": 160
+        },
+        "td": {
+          "left": 461,
+          "right": 621,
+          "width": 160
+        },
+        "rotuloX": 469,
+        "conteudoX": 469,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 621,
+          "right": 718,
+          "width": 97
+        },
+        "td": {
+          "left": 621,
+          "right": 718,
+          "width": 97
+        },
+        "rotuloX": 629,
+        "conteudoX": 629,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 718,
+          "right": 815,
+          "width": 97
+        },
+        "td": {
+          "left": 718,
+          "right": 815,
+          "width": 97
+        },
+        "rotuloX": 726,
+        "conteudoX": 726,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 815,
+          "right": 911,
+          "width": 96
+        },
+        "td": {
+          "left": 815,
+          "right": 911,
+          "width": 96
+        },
+        "rotuloX": 823,
+        "conteudoX": 823,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 911,
+          "right": 1051,
+          "width": 140
+        },
+        "td": {
+          "left": 911,
+          "right": 1051,
+          "width": 140
+        },
+        "rotuloX": 919,
+        "conteudoX": 919,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1051,
+          "right": 1174,
+          "width": 123
+        },
+        "td": {
+          "left": 1051,
+          "right": 1174,
+          "width": 123
+        },
+        "rotuloX": 1059,
+        "conteudoX": 1059,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ]
+  },
+  {
+    "viewport": "1280x800",
+    "grade": {
+      "left": 281,
+      "right": 1174,
+      "width": 893
+    },
+    "rolagem": {
+      "scrollW": 893,
+      "clientW": 748
+    },
+    "pagina": {
+      "scrollW": 1280,
+      "clientW": 1280
+    },
+    "templates": {
+      "cabecalho": "34px 146px 160px 97px 97px 96px 140px 123px",
+      "linha": "34px 146px 160px 97px 97px 96px 140px 123px",
+      "iguais": true
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "td": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "rotuloX": 281,
+        "conteudoX": 289,
+        "desalinhamento": -8,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 315,
+          "right": 461,
+          "width": 146
+        },
+        "td": {
+          "left": 315,
+          "right": 461,
+          "width": 146
+        },
+        "rotuloX": 323,
+        "conteudoX": 323,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 461,
+          "right": 621,
+          "width": 160
+        },
+        "td": {
+          "left": 461,
+          "right": 621,
+          "width": 160
+        },
+        "rotuloX": 469,
+        "conteudoX": 469,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 621,
+          "right": 718,
+          "width": 97
+        },
+        "td": {
+          "left": 621,
+          "right": 718,
+          "width": 97
+        },
+        "rotuloX": 629,
+        "conteudoX": 629,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 718,
+          "right": 815,
+          "width": 97
+        },
+        "td": {
+          "left": 718,
+          "right": 815,
+          "width": 97
+        },
+        "rotuloX": 726,
+        "conteudoX": 726,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 815,
+          "right": 911,
+          "width": 96
+        },
+        "td": {
+          "left": 815,
+          "right": 911,
+          "width": 96
+        },
+        "rotuloX": 823,
+        "conteudoX": 823,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 911,
+          "right": 1051,
+          "width": 140
+        },
+        "td": {
+          "left": 911,
+          "right": 1051,
+          "width": 140
+        },
+        "rotuloX": 919,
+        "conteudoX": 919,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1051,
+          "right": 1174,
+          "width": 123
+        },
+        "td": {
+          "left": 1051,
+          "right": 1174,
+          "width": 123
+        },
+        "rotuloX": 1059,
+        "conteudoX": 1059,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ]
+  },
+  {
+    "viewport": "1024x768",
+    "grade": {
+      "left": 281,
+      "right": 1174,
+      "width": 893
+    },
+    "rolagem": {
+      "scrollW": 893,
+      "clientW": 718
+    },
+    "pagina": {
+      "scrollW": 1244,
+      "clientW": 1024
+    },
+    "templates": {
+      "cabecalho": "34px 146px 160px 97px 97px 96px 140px 123px",
+      "linha": "34px 146px 160px 97px 97px 96px 140px 123px",
+      "iguais": true
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "td": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "rotuloX": 281,
+        "conteudoX": 289,
+        "desalinhamento": -8,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 315,
+          "right": 461,
+          "width": 146
+        },
+        "td": {
+          "left": 315,
+          "right": 461,
+          "width": 146
+        },
+        "rotuloX": 323,
+        "conteudoX": 323,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 461,
+          "right": 621,
+          "width": 160
+        },
+        "td": {
+          "left": 461,
+          "right": 621,
+          "width": 160
+        },
+        "rotuloX": 469,
+        "conteudoX": 469,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 621,
+          "right": 718,
+          "width": 97
+        },
+        "td": {
+          "left": 621,
+          "right": 718,
+          "width": 97
+        },
+        "rotuloX": 629,
+        "conteudoX": 629,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 718,
+          "right": 815,
+          "width": 97
+        },
+        "td": {
+          "left": 718,
+          "right": 815,
+          "width": 97
+        },
+        "rotuloX": 726,
+        "conteudoX": 726,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 815,
+          "right": 911,
+          "width": 96
+        },
+        "td": {
+          "left": 815,
+          "right": 911,
+          "width": 96
+        },
+        "rotuloX": 823,
+        "conteudoX": 823,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 911,
+          "right": 1051,
+          "width": 140
+        },
+        "td": {
+          "left": 911,
+          "right": 1051,
+          "width": 140
+        },
+        "rotuloX": 919,
+        "conteudoX": 919,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1051,
+          "right": 1174,
+          "width": 123
+        },
+        "td": {
+          "left": 1051,
+          "right": 1174,
+          "width": 123
+        },
+        "rotuloX": 1059,
+        "conteudoX": 1059,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ]
+  }
+]

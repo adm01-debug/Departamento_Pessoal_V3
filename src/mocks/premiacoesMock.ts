@@ -186,14 +186,17 @@ export interface AuditoriaPremiacaoMock {
 }
 
 const AUDITORIA: AuditoriaPremiacaoMock[] = [
-  { id: 'mock-aud-p1', entidade_tipo: 'pagamento', entidade_id: 'a1b2c3d4-0001-4a2b-9c3d-000000000001', acao: 'aprovacao', motivo: 'Pagamento aprovado pelo financeiro e conciliado com a folha.', created_at: horasAtras(12) },
-  { id: 'mock-aud-p2', entidade_tipo: 'pagamento', entidade_id: 'a1b2c3d4-0008-4a2b-9c3d-000000000008', acao: 'alteracao', motivo: 'Divergência de R$ 70,00 identificada na conciliação (IRRF).', created_at: horasAtras(8) },
-  { id: 'mock-aud-p3', entidade_tipo: 'pagamento', entidade_id: 'a1b2c3d4-0004-4a2b-9c3d-000000000004', acao: 'alteracao', motivo: 'Enviado para revisão de comissões pelo gestor.', created_at: horasAtras(20) },
-  { id: 'mock-aud-c1', entidade_tipo: 'campanha', entidade_id: 'b7e2f1a0-0001-4c5d-8e9f-000000000001', acao: 'criacao', motivo: 'Campanha "Campanha de Vendas Q3 2026" criada com orçamento de R$ 85.000,00.', created_at: diasAtras(98) },
-  { id: 'mock-aud-c2', entidade_tipo: 'campanha', entidade_id: 'b7e2f1a0-0004-4c5d-8e9f-000000000004', acao: 'alteracao', motivo: 'Campanha "Premiação de Inovação" salva como rascunho para revisão.', created_at: diasAtras(2) },
-  { id: 'mock-aud-r1', entidade_tipo: 'regra', entidade_id: 'c3d4e5f6-0001-4f2a-8b9c-000000000001', acao: 'criacao', motivo: 'Regra "Bônus de Batimento" (valor fixo R$ 500,00) vinculada à campanha.', created_at: diasAtras(97) },
-  { id: 'mock-aud-p4', entidade_tipo: 'pagamento', entidade_id: 'a1b2c3d4-0010-4a2b-9c3d-000000000010', acao: 'alteracao', motivo: 'Pagamento rejeitado — meta de produção não atingida.', created_at: diasAtras(3) },
-  { id: 'mock-aud-p5', entidade_tipo: 'pagamento', entidade_id: 'a1b2c3d4-0009-4a2b-9c3d-000000000009', acao: 'aprovacao', motivo: 'Pagamento do ciclo de junho/2026 efetuado.', created_at: diasAtras(100) },
+  // Os IDs das fixtures são os MESMOS dos pagamentos/campanhas mock para que a
+  // timeline consiga resolver entidade, vínculo e responsável sem inventar nome
+  // nem valor. Nenhum evento novo é criado e nada disso é usado em produção.
+  { id: 'mock-aud-p1', entidade_tipo: 'pagamento', entidade_id: 'mock-pag-7', acao: 'aprovacao', motivo: 'Pagamento aprovado pelo financeiro e conciliado com a folha.', created_at: horasAtras(12) },
+  { id: 'mock-aud-p2', entidade_tipo: 'pagamento', entidade_id: 'mock-pag-8', acao: 'alteracao', motivo: 'Divergência de R$ 70,00 identificada na conciliação (IRRF).', created_at: horasAtras(8) },
+  { id: 'mock-aud-p3', entidade_tipo: 'pagamento', entidade_id: 'mock-pag-4', acao: 'alteracao', motivo: 'Enviado para revisão de comissões pelo gestor.', created_at: horasAtras(20) },
+  { id: 'mock-aud-c1', entidade_tipo: 'campanha', entidade_id: 'mock-camp-1', acao: 'criacao', motivo: 'Campanha "Campanha de Vendas Q3 2026" criada com orçamento de R$ 85.000,00.', created_at: diasAtras(98) },
+  { id: 'mock-aud-c2', entidade_tipo: 'campanha', entidade_id: 'mock-camp-4', acao: 'alteracao', motivo: 'Campanha "Premiação de Inovação" salva como rascunho para revisão.', created_at: diasAtras(2) },
+  { id: 'mock-aud-r1', entidade_tipo: 'regra', entidade_id: 'mock-regra-1', acao: 'criacao', motivo: 'Regra "Bônus de Batimento" (valor fixo R$ 500,00) vinculada à campanha.', created_at: diasAtras(97) },
+  { id: 'mock-aud-p4', entidade_tipo: 'pagamento', entidade_id: 'mock-pag-10', acao: 'alteracao', motivo: 'Pagamento rejeitado — meta de produção não atingida.', created_at: diasAtras(3) },
+  { id: 'mock-aud-p5', entidade_tipo: 'pagamento', entidade_id: 'mock-pag-9', acao: 'aprovacao', motivo: 'Pagamento do ciclo de junho/2026 efetuado.', created_at: diasAtras(100) },
 ];
 
 export function getMockAuditoriaPremiacoes(): AuditoriaPremiacaoMock[] | undefined {

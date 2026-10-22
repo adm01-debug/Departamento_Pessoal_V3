@@ -361,6 +361,39 @@
 }
 
 @layer utilities {
+  /**
+   * HUB DE PREMIAÇÕES → AUDITORIA — segunda faixa da barra de filtros.
+   *
+   * Duas áreas com responsabilidades distintas:
+   *   • ESQUERDA  — os 6 chips de categoria (`minmax(0,1fr)`, `min-width: 0`)
+   *                 podem encolher/quebrar DENTRO da própria área;
+   *   • DIREITA   — Ordenar por + Limpar filtros + CSV/PDF mantêm a largura
+   *                 necessária (`auto`) e nunca são empurrados para uma
+   *                 terceira linha.
+   *
+   * Abaixo de 1440 o gap cai para 12px e abaixo de 1280 a faixa passa a uma
+   * coluna (tablet/mobile): aí a reorganização é planejada, não um estouro.
+   */
+  .audit-filter-secondary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+  }
+
+  @media (max-width: 1439px) {
+    .audit-filter-secondary {
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 1279px) {
+    .audit-filter-secondary {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+  }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

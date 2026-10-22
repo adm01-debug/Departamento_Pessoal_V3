@@ -3,11 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import {
-  cascadeContainerVariants,
-  cascadeOverlayVariants,
-  cascadeShellVariants,
-} from './cascade-motion';
+import { cascadeContainerVariants, cascadeOverlayVariants, cascadeShellVariants } from './cascade-motion';
 
 /**
  * ============================================================================
@@ -44,6 +40,14 @@ export interface CascadeDialogFrameProps {
   className?: string;
   /** Classes do corpo interno que orquestra a cascata. */
   contentClassName?: string;
+  /**
+   * Hook OPCIONAL de foco ao fechar (Radix `onCloseAutoFocus`). Existe para
+   * telas cujo botão de origem não é um `Dialog.Trigger` controlado (ex.: o
+   * "Ver detalhes" da timeline da Auditoria): sem isso o Radix devolveria o
+   * foco ao `body`. Nenhum consumidor existente passa essa prop, então o
+   * comportamento do popup "Pendências" permanece idêntico.
+   */
+  onCloseAutoFocus?: (event: Event) => void;
   children: ReactNode;
 }
 
@@ -53,6 +57,7 @@ export function CascadeDialogFrame({
   blocks,
   className,
   contentClassName = 'p-5 space-y-3',
+  onCloseAutoFocus,
   children,
 }: CascadeDialogFrameProps) {
   return (
@@ -69,7 +74,7 @@ export function CascadeDialogFrame({
                 exit="closed"
               />
             </DialogPrimitive.Overlay>
-            <DialogPrimitive.Content asChild forceMount>
+            <DialogPrimitive.Content asChild forceMount onCloseAutoFocus={onCloseAutoFocus}>
               <motion.div
                 className={cn(
                   'fixed left-1/2 top-1/2 z-50 w-full max-w-[460px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-border/50 bg-background shadow-lg',

@@ -1,0 +1,2486 @@
+[
+  {
+    "viewport": "1920x1080",
+    "tabela": {
+      "left": 281,
+      "right": 1619,
+      "width": 1338
+    },
+    "rolagem": {
+      "scrollW": 1338,
+      "clientW": 1338
+    },
+    "pagina": {
+      "scrollW": 1920,
+      "clientW": 1920
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 331,
+          "width": 50
+        },
+        "rotuloX": 281,
+        "medidas": [
+          {
+            "tdW": 50,
+            "scrollW": 50,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 50,
+            "scrollW": 50,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 50,
+            "scrollW": 50,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 50,
+            "scrollW": 50,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 50,
+            "scrollW": 50,
+            "conteudoX": 289,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 331,
+          "right": 550,
+          "width": 219
+        },
+        "rotuloX": 339,
+        "medidas": [
+          {
+            "tdW": 219,
+            "scrollW": 219,
+            "conteudoX": 339,
+            "maiorTexto": {
+              "texto": "Carlos Eduardo Lima",
+              "w": 129
+            }
+          },
+          {
+            "tdW": 219,
+            "scrollW": 219,
+            "conteudoX": 339,
+            "maiorTexto": {
+              "texto": "William Nunes Cardoso",
+              "w": 144
+            }
+          },
+          {
+            "tdW": 219,
+            "scrollW": 219,
+            "conteudoX": 339,
+            "maiorTexto": {
+              "texto": "Vanessa Rodrigues Dias",
+              "w": 148
+            }
+          },
+          {
+            "tdW": 219,
+            "scrollW": 219,
+            "conteudoX": 339,
+            "maiorTexto": {
+              "texto": "Juliana Pereira Martins",
+              "w": 137
+            }
+          },
+          {
+            "tdW": 219,
+            "scrollW": 219,
+            "conteudoX": 339,
+            "maiorTexto": {
+              "texto": "Rafaela Cristina Gomes",
+              "w": 146
+            }
+          }
+        ]
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 550,
+          "right": 795,
+          "width": 245
+        },
+        "rotuloX": 558,
+        "medidas": [
+          {
+            "tdW": 245,
+            "scrollW": 245,
+            "conteudoX": 558,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 191
+            }
+          },
+          {
+            "tdW": 245,
+            "scrollW": 245,
+            "conteudoX": 558,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 191
+            }
+          },
+          {
+            "tdW": 245,
+            "scrollW": 245,
+            "conteudoX": 558,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 185
+            }
+          },
+          {
+            "tdW": 245,
+            "scrollW": 245,
+            "conteudoX": 558,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 191
+            }
+          },
+          {
+            "tdW": 245,
+            "scrollW": 245,
+            "conteudoX": 558,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 181
+            }
+          }
+        ]
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 795,
+          "right": 931,
+          "width": 137
+        },
+        "rotuloX": 803,
+        "medidas": [
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 795,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 795,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 795,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 795,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 795,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 931,
+          "right": 1068,
+          "width": 137
+        },
+        "rotuloX": 939,
+        "medidas": [
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 931,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 931,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 931,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 931,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 931,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 1068,
+          "right": 1204,
+          "width": 137
+        },
+        "rotuloX": 1076,
+        "medidas": [
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 1068,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 1068,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 1068,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 1068,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 137,
+            "scrollW": 137,
+            "conteudoX": 1068,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 1204,
+          "right": 1439,
+          "width": 234
+        },
+        "rotuloX": 1212,
+        "medidas": [
+          {
+            "tdW": 234,
+            "scrollW": 234,
+            "conteudoX": 1212,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 234,
+            "scrollW": 234,
+            "conteudoX": 1212,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 234,
+            "scrollW": 234,
+            "conteudoX": 1212,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 234,
+            "scrollW": 234,
+            "conteudoX": 1212,
+            "maiorTexto": {
+              "texto": "Enviado para revisão de comissõe",
+              "w": 219
+            }
+          },
+          {
+            "tdW": 234,
+            "scrollW": 234,
+            "conteudoX": 1212,
+            "maiorTexto": {
+              "texto": "Aprovado pelo gestor imediato.",
+              "w": 219
+            }
+          }
+        ]
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1439,
+          "right": 1619,
+          "width": 181
+        },
+        "rotuloX": 1572,
+        "medidas": [
+          {
+            "tdW": 181,
+            "scrollW": 181,
+            "conteudoX": 1447,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 181,
+            "scrollW": 181,
+            "conteudoX": 1447,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 181,
+            "scrollW": 181,
+            "conteudoX": 1447,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 181,
+            "scrollW": 181,
+            "conteudoX": 1447,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 46
+            }
+          },
+          {
+            "tdW": 181,
+            "scrollW": 181,
+            "conteudoX": 1447,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 46
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "viewport": "1600x900",
+    "tabela": {
+      "left": 281,
+      "right": 1349,
+      "width": 1068
+    },
+    "rolagem": {
+      "scrollW": 1068,
+      "clientW": 1068
+    },
+    "pagina": {
+      "scrollW": 1600,
+      "clientW": 1600
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 321,
+          "width": 40
+        },
+        "rotuloX": 281,
+        "medidas": [
+          {
+            "tdW": 40,
+            "scrollW": 40,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 40,
+            "scrollW": 40,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 40,
+            "scrollW": 40,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 40,
+            "scrollW": 40,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 40,
+            "scrollW": 40,
+            "conteudoX": 289,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 321,
+          "right": 496,
+          "width": 175
+        },
+        "rotuloX": 329,
+        "medidas": [
+          {
+            "tdW": 175,
+            "scrollW": 175,
+            "conteudoX": 329,
+            "maiorTexto": {
+              "texto": "Carlos Eduardo Lima",
+              "w": 122
+            }
+          },
+          {
+            "tdW": 175,
+            "scrollW": 175,
+            "conteudoX": 329,
+            "maiorTexto": {
+              "texto": "William Nunes Cardoso",
+              "w": 122
+            }
+          },
+          {
+            "tdW": 175,
+            "scrollW": 175,
+            "conteudoX": 329,
+            "maiorTexto": {
+              "texto": "Vanessa Rodrigues Dias",
+              "w": 122
+            }
+          },
+          {
+            "tdW": 175,
+            "scrollW": 175,
+            "conteudoX": 329,
+            "maiorTexto": {
+              "texto": "Juliana Pereira Martins",
+              "w": 122
+            }
+          },
+          {
+            "tdW": 175,
+            "scrollW": 175,
+            "conteudoX": 329,
+            "maiorTexto": {
+              "texto": "Rafaela Cristina Gomes",
+              "w": 122
+            }
+          }
+        ]
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 496,
+          "right": 691,
+          "width": 195
+        },
+        "rotuloX": 504,
+        "medidas": [
+          {
+            "tdW": 195,
+            "scrollW": 195,
+            "conteudoX": 504,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 195,
+            "scrollW": 195,
+            "conteudoX": 504,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 195,
+            "scrollW": 195,
+            "conteudoX": 504,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 195,
+            "scrollW": 195,
+            "conteudoX": 504,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 195,
+            "scrollW": 195,
+            "conteudoX": 504,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 142
+            }
+          }
+        ]
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 691,
+          "right": 800,
+          "width": 109
+        },
+        "rotuloX": 699,
+        "medidas": [
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 691,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 691,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 691,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 691,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 691,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 800,
+          "right": 909,
+          "width": 109
+        },
+        "rotuloX": 808,
+        "medidas": [
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 800,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 800,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 800,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 800,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 800,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 909,
+          "right": 1018,
+          "width": 109
+        },
+        "rotuloX": 917,
+        "medidas": [
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 909,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 909,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 909,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 909,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 109,
+            "scrollW": 109,
+            "conteudoX": 909,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 1018,
+          "right": 1205,
+          "width": 187
+        },
+        "rotuloX": 1026,
+        "medidas": [
+          {
+            "tdW": 187,
+            "scrollW": 187,
+            "conteudoX": 1026,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 187,
+            "scrollW": 187,
+            "conteudoX": 1026,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 187,
+            "scrollW": 187,
+            "conteudoX": 1026,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 187,
+            "scrollW": 187,
+            "conteudoX": 1026,
+            "maiorTexto": {
+              "texto": "Enviado para revisão de comissõe",
+              "w": 171
+            }
+          },
+          {
+            "tdW": 187,
+            "scrollW": 187,
+            "conteudoX": 1026,
+            "maiorTexto": {
+              "texto": "Aprovado pelo gestor imediato.",
+              "w": 171
+            }
+          }
+        ]
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1205,
+          "right": 1349,
+          "width": 144
+        },
+        "rotuloX": 1302,
+        "medidas": [
+          {
+            "tdW": 144,
+            "scrollW": 144,
+            "conteudoX": 1213,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 144,
+            "scrollW": 144,
+            "conteudoX": 1213,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 144,
+            "scrollW": 144,
+            "conteudoX": 1213,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 144,
+            "scrollW": 144,
+            "conteudoX": 1213,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 46
+            }
+          },
+          {
+            "tdW": 144,
+            "scrollW": 144,
+            "conteudoX": 1213,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 46
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "viewport": "1440x900",
+    "tabela": {
+      "left": 281,
+      "right": 1189,
+      "width": 908
+    },
+    "rolagem": {
+      "scrollW": 908,
+      "clientW": 908
+    },
+    "pagina": {
+      "scrollW": 1440,
+      "clientW": 1440
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 315,
+          "width": 34
+        },
+        "rotuloX": 281,
+        "medidas": [
+          {
+            "tdW": 34,
+            "scrollW": 34,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 34,
+            "scrollW": 34,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 34,
+            "scrollW": 34,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 34,
+            "scrollW": 34,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 34,
+            "scrollW": 34,
+            "conteudoX": 289,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 315,
+          "right": 464,
+          "width": 149
+        },
+        "rotuloX": 323,
+        "medidas": [
+          {
+            "tdW": 149,
+            "scrollW": 149,
+            "conteudoX": 323,
+            "maiorTexto": {
+              "texto": "Carlos Eduardo Lima",
+              "w": 95
+            }
+          },
+          {
+            "tdW": 149,
+            "scrollW": 149,
+            "conteudoX": 323,
+            "maiorTexto": {
+              "texto": "William Nunes Cardoso",
+              "w": 95
+            }
+          },
+          {
+            "tdW": 149,
+            "scrollW": 149,
+            "conteudoX": 323,
+            "maiorTexto": {
+              "texto": "Vanessa Rodrigues Dias",
+              "w": 95
+            }
+          },
+          {
+            "tdW": 149,
+            "scrollW": 149,
+            "conteudoX": 323,
+            "maiorTexto": {
+              "texto": "Juliana Pereira Martins",
+              "w": 95
+            }
+          },
+          {
+            "tdW": 149,
+            "scrollW": 149,
+            "conteudoX": 323,
+            "maiorTexto": {
+              "texto": "Rafaela Cristina Gomes",
+              "w": 95
+            }
+          }
+        ]
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 464,
+          "right": 630,
+          "width": 166
+        },
+        "rotuloX": 472,
+        "medidas": [
+          {
+            "tdW": 166,
+            "scrollW": 166,
+            "conteudoX": 472,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 113
+            }
+          },
+          {
+            "tdW": 166,
+            "scrollW": 166,
+            "conteudoX": 472,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 113
+            }
+          },
+          {
+            "tdW": 166,
+            "scrollW": 166,
+            "conteudoX": 472,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 113
+            }
+          },
+          {
+            "tdW": 166,
+            "scrollW": 166,
+            "conteudoX": 472,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 113
+            }
+          },
+          {
+            "tdW": 166,
+            "scrollW": 166,
+            "conteudoX": 472,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 113
+            }
+          }
+        ]
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 630,
+          "right": 722,
+          "width": 93
+        },
+        "rotuloX": 638,
+        "medidas": [
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 630,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 630,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 630,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 630,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 630,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 722,
+          "right": 815,
+          "width": 93
+        },
+        "rotuloX": 730,
+        "medidas": [
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 722,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 722,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 722,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 722,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 722,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 815,
+          "right": 908,
+          "width": 93
+        },
+        "rotuloX": 823,
+        "medidas": [
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 815,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 815,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 815,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 815,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 93,
+            "scrollW": 93,
+            "conteudoX": 815,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 908,
+          "right": 1066,
+          "width": 159
+        },
+        "rotuloX": 916,
+        "medidas": [
+          {
+            "tdW": 159,
+            "scrollW": 159,
+            "conteudoX": 916,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 159,
+            "scrollW": 159,
+            "conteudoX": 916,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 159,
+            "scrollW": 159,
+            "conteudoX": 916,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 159,
+            "scrollW": 159,
+            "conteudoX": 916,
+            "maiorTexto": {
+              "texto": "Enviado para revisão de comissõe",
+              "w": 143
+            }
+          },
+          {
+            "tdW": 159,
+            "scrollW": 159,
+            "conteudoX": 916,
+            "maiorTexto": {
+              "texto": "Aprovado pelo gestor imediato.",
+              "w": 143
+            }
+          }
+        ]
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1066,
+          "right": 1189,
+          "width": 123
+        },
+        "rotuloX": 1142,
+        "medidas": [
+          {
+            "tdW": 123,
+            "scrollW": 123,
+            "conteudoX": 1074,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 123,
+            "scrollW": 123,
+            "conteudoX": 1074,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 123,
+            "scrollW": 123,
+            "conteudoX": 1074,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 123,
+            "scrollW": 123,
+            "conteudoX": 1074,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 43
+            }
+          },
+          {
+            "tdW": 123,
+            "scrollW": 123,
+            "conteudoX": 1074,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 43
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "viewport": "1366x768",
+    "tabela": {
+      "left": 281,
+      "right": 1181,
+      "width": 900
+    },
+    "rolagem": {
+      "scrollW": 900,
+      "clientW": 834
+    },
+    "pagina": {
+      "scrollW": 1366,
+      "clientW": 1366
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 314,
+          "width": 33
+        },
+        "rotuloX": 281,
+        "medidas": [
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 314,
+          "right": 462,
+          "width": 148
+        },
+        "rotuloX": 322,
+        "medidas": [
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Carlos Eduardo Lima",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "William Nunes Cardoso",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Vanessa Rodrigues Dias",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Juliana Pereira Martins",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Rafaela Cristina Gomes",
+              "w": 94
+            }
+          }
+        ]
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 462,
+          "right": 627,
+          "width": 165
+        },
+        "rotuloX": 470,
+        "medidas": [
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 111
+            }
+          }
+        ]
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 627,
+          "right": 718,
+          "width": 92
+        },
+        "rotuloX": 635,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 718,
+          "right": 810,
+          "width": 92
+        },
+        "rotuloX": 726,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 810,
+          "right": 902,
+          "width": 92
+        },
+        "rotuloX": 818,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 902,
+          "right": 1060,
+          "width": 158
+        },
+        "rotuloX": 910,
+        "medidas": [
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Enviado para revisão de comissõe",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aprovado pelo gestor imediato.",
+              "w": 142
+            }
+          }
+        ]
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1060,
+          "right": 1181,
+          "width": 122
+        },
+        "rotuloX": 1134,
+        "medidas": [
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 42
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "viewport": "1280x800",
+    "tabela": {
+      "left": 281,
+      "right": 1181,
+      "width": 900
+    },
+    "rolagem": {
+      "scrollW": 900,
+      "clientW": 748
+    },
+    "pagina": {
+      "scrollW": 1280,
+      "clientW": 1280
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 314,
+          "width": 33
+        },
+        "rotuloX": 281,
+        "medidas": [
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 314,
+          "right": 462,
+          "width": 148
+        },
+        "rotuloX": 322,
+        "medidas": [
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Carlos Eduardo Lima",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "William Nunes Cardoso",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Vanessa Rodrigues Dias",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Juliana Pereira Martins",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Rafaela Cristina Gomes",
+              "w": 94
+            }
+          }
+        ]
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 462,
+          "right": 627,
+          "width": 165
+        },
+        "rotuloX": 470,
+        "medidas": [
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 111
+            }
+          }
+        ]
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 627,
+          "right": 718,
+          "width": 92
+        },
+        "rotuloX": 635,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 718,
+          "right": 810,
+          "width": 92
+        },
+        "rotuloX": 726,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 810,
+          "right": 902,
+          "width": 92
+        },
+        "rotuloX": 818,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 902,
+          "right": 1060,
+          "width": 158
+        },
+        "rotuloX": 910,
+        "medidas": [
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Enviado para revisão de comissõe",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aprovado pelo gestor imediato.",
+              "w": 142
+            }
+          }
+        ]
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1060,
+          "right": 1181,
+          "width": 122
+        },
+        "rotuloX": 1134,
+        "medidas": [
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 42
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "viewport": "1024x768",
+    "tabela": {
+      "left": 281,
+      "right": 1181,
+      "width": 900
+    },
+    "rolagem": {
+      "scrollW": 900,
+      "clientW": 718
+    },
+    "pagina": {
+      "scrollW": 1244,
+      "clientW": 1024
+    },
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "",
+        "th": {
+          "left": 281,
+          "right": 314,
+          "width": 33
+        },
+        "rotuloX": 281,
+        "medidas": [
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 33,
+            "scrollW": 33,
+            "conteudoX": 289,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 1,
+        "rotulo": "Colaborador",
+        "th": {
+          "left": 314,
+          "right": 462,
+          "width": 148
+        },
+        "rotuloX": 322,
+        "medidas": [
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Carlos Eduardo Lima",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "William Nunes Cardoso",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Vanessa Rodrigues Dias",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Juliana Pereira Martins",
+              "w": 94
+            }
+          },
+          {
+            "tdW": 148,
+            "scrollW": 148,
+            "conteudoX": 322,
+            "maiorTexto": {
+              "texto": "Rafaela Cristina Gomes",
+              "w": 94
+            }
+          }
+        ]
+      },
+      {
+        "i": 2,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 462,
+          "right": 627,
+          "width": 165
+        },
+        "rotuloX": 470,
+        "medidas": [
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Campanha de Vendas Q3 2026",
+              "w": 111
+            }
+          },
+          {
+            "tdW": 165,
+            "scrollW": 165,
+            "conteudoX": 470,
+            "maiorTexto": {
+              "texto": "Bônus por Meta de Produção",
+              "w": 111
+            }
+          }
+        ]
+      },
+      {
+        "i": 3,
+        "rotulo": "Valor Calculado",
+        "th": {
+          "left": 627,
+          "right": 718,
+          "width": 92
+        },
+        "rotuloX": 635,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 627,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 4,
+        "rotulo": "Valor Aprovado",
+        "th": {
+          "left": 718,
+          "right": 810,
+          "width": 92
+        },
+        "rotuloX": 726,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 718,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 5,
+        "rotulo": "Valor Pago",
+        "th": {
+          "left": 810,
+          "right": 902,
+          "width": 92
+        },
+        "rotuloX": 818,
+        "medidas": [
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          },
+          {
+            "tdW": 92,
+            "scrollW": 92,
+            "conteudoX": 810,
+            "maiorTexto": null
+          }
+        ]
+      },
+      {
+        "i": 6,
+        "rotulo": "Status / Etapa",
+        "th": {
+          "left": 902,
+          "right": 1060,
+          "width": 158
+        },
+        "rotuloX": 910,
+        "medidas": [
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aguardando gestor",
+              "w": 123
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Enviado para revisão de comissõe",
+              "w": 142
+            }
+          },
+          {
+            "tdW": 158,
+            "scrollW": 158,
+            "conteudoX": 910,
+            "maiorTexto": {
+              "texto": "Aprovado pelo gestor imediato.",
+              "w": 142
+            }
+          }
+        ]
+      },
+      {
+        "i": 7,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1060,
+          "right": 1181,
+          "width": 122
+        },
+        "rotuloX": 1134,
+        "medidas": [
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Revisar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 42
+            }
+          },
+          {
+            "tdW": 122,
+            "scrollW": 122,
+            "conteudoX": 1068,
+            "maiorTexto": {
+              "texto": "Aprovar",
+              "w": 42
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

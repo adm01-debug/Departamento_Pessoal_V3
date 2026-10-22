@@ -1,0 +1,179 @@
+{
+  "ths": [
+    "",
+    "Colaborador",
+    "Campanha",
+    "Valor Calculado",
+    "Valor Aprovado",
+    "Valor Pago",
+    "Status / Etapa",
+    "Ações"
+  ],
+  "nomes": [
+    {
+      "texto": "Carlos Eduardo Lima",
+      "w": 129
+    },
+    {
+      "texto": "William Nunes Cardoso",
+      "w": 144
+    },
+    {
+      "texto": "Vanessa Rodrigues Dias",
+      "w": 148
+    },
+    {
+      "texto": "Juliana Pereira Martins",
+      "w": 137
+    },
+    {
+      "texto": "Rafaela Cristina Gomes",
+      "w": 146
+    },
+    {
+      "texto": "Lucas Gabriel Fernandes",
+      "w": 154
+    }
+  ],
+  "campanhas": [
+    {
+      "texto": "Campanha de Vendas Q3 2026",
+      "w": 193
+    },
+    {
+      "texto": "Campanha de Vendas Q3 2026",
+      "w": 193
+    },
+    {
+      "texto": "Bônus por Meta de Produção",
+      "w": 181
+    },
+    {
+      "texto": "Campanha de Vendas Q3 2026",
+      "w": 193
+    },
+    {
+      "texto": "Bônus por Meta de Produção",
+      "w": 181
+    },
+    {
+      "texto": "Bônus por Meta de Produção",
+      "w": 181
+    }
+  ],
+  "valores": [
+    [
+      {
+        "texto": "R$ 1.250,00",
+        "w": 77
+      },
+      {
+        "texto": "R$ 980,50",
+        "w": 66
+      },
+      {
+        "texto": "R$ 720,00",
+        "w": 67
+      },
+      {
+        "texto": "R$ 1.400,00",
+        "w": 78
+      },
+      {
+        "texto": "R$ 1.100,00",
+        "w": 75
+      },
+      {
+        "texto": "R$ 1.600,00",
+        "w": 78
+      }
+    ],
+    [
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "R$ 1.100,00",
+        "w": 75
+      },
+      {
+        "texto": "R$ 1.600,00",
+        "w": 79
+      }
+    ],
+    [
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      },
+      {
+        "texto": "—",
+        "w": 13
+      }
+    ]
+  ],
+  "badges": [
+    {
+      "texto": "Aguardando gestor",
+      "w": 102
+    },
+    {
+      "texto": "Aguardando gestor",
+      "w": 102
+    },
+    {
+      "texto": "Aguardando gestor",
+      "w": 102
+    },
+    {
+      "texto": "Em revisão",
+      "w": 60
+    },
+    {
+      "texto": "Aguardando RH",
+      "w": 84
+    },
+    {
+      "texto": "Aguardando financeiro",
+      "w": 118
+    }
+  ],
+  "acoes": [
+    165,
+    165,
+    165,
+    165,
+    165,
+    165
+  ],
+  "checkbox": 16
+}

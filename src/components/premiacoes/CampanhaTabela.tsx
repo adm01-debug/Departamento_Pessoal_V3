@@ -36,9 +36,13 @@ import {
 import { AnimatePresence, motion } from 'framer-motion';
 import { AppPagination } from '@/components/ui/app-pagination';
 import { Button } from '@/components/ui/button';
-import { CascadeTableRow } from '@/components/ui/cascade-table';
 import { tomDoAvatar } from '@/lib/avatarTons';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
 import { formatCurrency, formatDate } from '@/utils/format';
@@ -146,7 +150,7 @@ const COLUNAS: { id: string; label: string; className: string; ordenavel?: boole
   { id: 'orcamento', label: 'Orçamento', className: 'text-left', ordenavel: true },
   { id: 'participantes', label: 'Participantes', className: 'text-left', ordenavel: true },
   { id: 'status', label: 'Status', className: 'text-left' },
-  { id: 'acoes', label: 'Ações', className: 'text-right' },
+  { id: 'acoes', label: 'Ações', className: 'text-left' },
 ];
 
 /** Barra horizontal compacta de percentual (null = sem dado: trilho vazio). */
@@ -192,7 +196,7 @@ function PilhaAvatares({ nomes, total }: { nomes: string[]; total: number }) {
             title={nome}
             className={cn(
               'flex h-5 w-5 items-center justify-center overflow-hidden rounded-full border-2 border-card text-[9px] font-semibold',
-              tomDoAvatar(nome),
+              tomDoAvatar(nome)
             )}
           >
             {iniciaisDe(nome)}
@@ -247,13 +251,17 @@ function LinhaCampanha({
        (`linhaEntradaHubVariants`): 0,8s por linha, atraso `0,46s + índice ×
        0,08s` — intervalo maior que o global (0,04s) para a cascata ficar
        perceptível. O hover da linha (fundo escurecendo) continua igual. */
-    <CascadeTableRow
-      index={indice}
+    <motion.div
+      role="row"
+      custom={indice}
       variants={linhaEntradaHubVariants}
-      className="align-middle transition-colors duration-200 ease-in-out hover:bg-background"
+      initial="hidden"
+      animate="visible"
+      style={{ gridTemplateColumns: GRID_COLUNAS }}
+      className="grid origin-center items-center transition-colors duration-200 ease-in-out hover:bg-background"
     >
       {/* Campanha */}
-      <td className="px-2 py-[26px]">
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
         <div className="flex items-center gap-2.5">
           <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-xl', paleta.caixa)}>
             <paleta.Icone className="h-[18px] w-[18px]" />
@@ -267,19 +275,25 @@ function LinhaCampanha({
             </p>
           </div>
         </div>
-      </td>
+      </div>
 
       {/* Período */}
-      <td className="px-2 py-[26px]">
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
         <div className="flex flex-col gap-1">
-          <span className="text-[10.5px] leading-[18px] font-medium tabular-nums">{formatDate(campanha.data_inicio)}</span>
-          <span className="text-[10.5px] leading-[18px] tabular-nums text-muted-foreground">{formatDate(campanha.data_fim)}</span>
-          <span className={cn('whitespace-nowrap text-[10.5px] leading-[18px] font-medium', situacao.classe)}>{situacao.texto}</span>
+          <span className="text-[10.5px] leading-[18px] font-medium tabular-nums">
+            {formatDate(campanha.data_inicio)}
+          </span>
+          <span className="text-[10.5px] leading-[18px] tabular-nums text-muted-foreground">
+            {formatDate(campanha.data_fim)}
+          </span>
+          <span className={cn('whitespace-nowrap text-[10.5px] leading-[18px] font-medium', situacao.classe)}>
+            {situacao.texto}
+          </span>
         </div>
-      </td>
+      </div>
 
       {/* Desempenho — % de LIQUIDAÇÃO do cálculo (não é o orçamento) */}
-      <td className="px-2 py-[26px]">
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
         <div className="flex min-w-0 flex-col gap-1.5">
           <span className="truncate text-[11px] font-semibold leading-5">
             {linha.pctAprovado === null ? (
@@ -305,10 +319,10 @@ function LinhaCampanha({
               : 'Sem cálculo'}
           </span>
         </div>
-      </td>
+      </div>
 
       {/* Orçamento */}
-      <td className="px-2 py-[26px]">
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
         <div className="flex min-w-0 flex-col gap-1.5">
           <span className="truncate text-[11px] font-semibold leading-5">
             {linha.orcamentoIndisponivel ? (
@@ -334,20 +348,20 @@ function LinhaCampanha({
               : `${formatCurrency(linha.valorComprometido)} / ${formatCurrency(linha.orcamentoTotal)}`}
           </span>
         </div>
-      </td>
+      </div>
 
       {/* Participantes */}
-      <td className="px-2 py-[26px]">
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
         <PilhaAvatares nomes={linha.participantes.nomes} total={linha.participantes.total} />
-      </td>
+      </div>
 
       {/* Status */}
-      <td className="px-2 py-[26px]">
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
         <div className="flex flex-col items-start gap-1.5">
           <span
             className={cn(
               'inline-flex h-6 items-center whitespace-nowrap rounded-full border px-1.5 text-[9.5px] font-semibold uppercase tracking-wide',
-              aparencia.badge,
+              aparencia.badge
             )}
           >
             {aparencia.label}
@@ -359,22 +373,18 @@ function LinhaCampanha({
             </span>
           )}
         </div>
-      </td>
+      </div>
 
-      {/* Ações — grupo alinhado à DIREITA, na MESMA borda do cabeçalho "AÇÕES"
-          (`w-full` + `justify-end`): botão principal e menu de três pontos ficam
-          colados à extremidade da tabela, com o espaçamento já existente entre
-          eles. */}
-      <td className="px-2 py-[26px]">
-        <div className="flex w-full items-center justify-end gap-1.5">
+      {/* Ações — título e conteúdo alinhados ao INÍCIO da coluna (mesmo padding
+          lateral das demais), em vez de empurrados para a extremidade direita:
+          é o que fazia "AÇÕES" parecer isolado no cabeçalho. */}
+      <div role="cell" className={cn(PAD_LATERAL, 'min-w-0 py-[26px]')}>
+        <div className="flex items-center justify-start gap-1.5">
           <Button
             variant="outline"
             size="sm"
             onClick={() => onAbrirDetalhes(linha)}
-            className={cn(
-              'h-9 gap-1 whitespace-nowrap rounded-xl px-1 text-[10px] font-medium',
-              TOM_BOTAO_ACOES,
-            )}
+            className={cn('h-9 gap-1 whitespace-nowrap rounded-xl px-1 text-[10px] font-medium', TOM_BOTAO_ACOES)}
           >
             {acao.label}
             <acao.Icone className="h-3 w-3" />
@@ -400,21 +410,29 @@ function LinhaCampanha({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </td>
-    </CascadeTableRow>
+      </div>
+    </motion.div>
   );
 }
 
 /**
- * Larguras das colunas — proporções da REFERÊNCIA (1122px): Campanha larga com o
- * nome inteiro, Participantes e Status com espaço para avatares/selos grandes e
- * Ações enxuta (botão + menu). Com `table-fixed` as porcentagens são respeitadas:
- * cada célula trunca o próprio conteúdo em vez de esticar a coluna.
+ * Template ÚNICO das colunas — usado pelo CABEÇALHO e por CADA LINHA (grid
+ * compartilhado). As proporções pedidas (22/12/14/14/12/12/14) valem quando há
+ * largura sobrando; os mínimos (`minmax`) vêm do conteúdo REAL de cada coluna e
+ * impedem compressão de títulos, valores e do botão de ação em telas menores:
+ *   Campanha 216 · Período 90 · Desempenho 123 · Orçamento 123 ·
+ *   Participantes 111 · Status 90 · Ações 153.
+ * A soma dos mínimos (906px) é o piso do grid — abaixo disso ele rola POR DENTRO
+ * do card, sem espremer as colunas.
  */
-const LARGURAS = ['24%', '9.8%', '13.6%', '13.6%', '12.2%', '9.8%', '17%'];
+const GRID_COLUNAS =
+  'minmax(216px,22fr) minmax(90px,12fr) minmax(123px,14fr) minmax(123px,14fr) minmax(111px,12fr) minmax(90px,12fr) minmax(153px,14fr)';
 
-/** Piso de largura da tabela: abaixo disso ela rola POR DENTRO do próprio card. */
-const LARGURA_MINIMA_TABELA = 'min-w-[900px]';
+/** Piso de largura do grid: abaixo disso ele rola por dentro do próprio card. */
+const LARGURA_MINIMA_GRADE = 'min-w-[906px]';
+
+/** Padding lateral único de cabeçalho e células (mesma origem em todas). */
+const PAD_LATERAL = 'px-2';
 
 export function CampanhaTabela({
   linhas,
@@ -433,9 +451,9 @@ export function CampanhaTabela({
 
   /**
    * Identidade da lista visível (página + ordenação + registros): é a `key` do
-   * `<tbody>`. Quando o conjunto/ordem muda a cascata toca de novo; hover,
-   * clique e re-render não mudam a chave, então a animação não reinicia à toa —
-   * o MESMO mecanismo da lista de Processos de Desligamentos.
+   * contêiner de linhas (`rowgroup`). Quando o conjunto/ordem muda a cascata toca
+   * de novo; hover, clique e re-render não mudam a chave, então a animação não
+   * reinicia à toa — o MESMO mecanismo da lista de Processos de Desligamentos.
    */
   const chaveCascata = [pagina, ordenacaoAtual, ...linhas.map((l) => l.campanha.id)].join('|');
 
@@ -444,25 +462,26 @@ export function CampanhaTabela({
       {...entradaCard(indiceEntrada('tabela', 0))}
       className="flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-border/50 bg-card/60"
     >
-      {/* Rolagem horizontal LOCALIZADA: em telas estreitas a tabela rola por
+      {/* Rolagem horizontal LOCALIZADA: em telas estreitas o grid rola por
           dentro em vez de esmagar as colunas; a página não rola na horizontal. */}
       <div className="overflow-x-auto">
-        <table className={cn('w-full table-fixed border-collapse text-left', LARGURA_MINIMA_TABELA)}>
-          <colgroup>
-            {LARGURAS.map((largura, indice) => (
-              <col key={COLUNAS[indice].id} style={{ width: largura }} />
-            ))}
-          </colgroup>
-          <thead>
-            {/* Cabeçalho NÃO anima (na referência só as linhas entram em cascata). */}
-            <tr className="border-b border-border/40 bg-muted/20">
+        <div role="table" aria-label="Campanhas" className={cn('w-full text-left', LARGURA_MINIMA_GRADE)}>
+          {/* Cabeçalho — MESMO `gridTemplateColumns` das linhas (grid compartilhado).
+              Não anima: na referência só as linhas entram em cascata. */}
+          <div role="rowgroup">
+            <div
+              role="row"
+              className="grid items-center border-b border-border/40 bg-muted/20"
+              style={{ gridTemplateColumns: GRID_COLUNAS }}
+            >
               {COLUNAS.map((coluna) => (
-                <th
+                <div
                   key={coluna.id}
-                  scope="col"
+                  role="columnheader"
                   className={cn(
-                    'h-11 whitespace-nowrap px-2 text-[11px] font-medium uppercase text-muted-foreground',
-                    coluna.className,
+                    'flex h-11 items-center whitespace-nowrap text-[11px] font-medium uppercase text-muted-foreground',
+                    PAD_LATERAL,
+                    coluna.className
                   )}
                 >
                   <span className="inline-flex items-center gap-0.5">
@@ -473,23 +492,21 @@ export function CampanhaTabela({
                           'h-2.5 w-2.5',
                           // Na referência o indicador ⇅ aparece em todas as colunas
                           // ordenáveis; o da ordenação ATIVA fica em verde-lima.
-                          coluna.id === colunaOrdenada ? 'text-primary' : 'text-muted-foreground/40',
+                          coluna.id === colunaOrdenada ? 'text-primary' : 'text-muted-foreground/40'
                         )}
-                        aria-label={
-                          coluna.id === colunaOrdenada ? 'Coluna da ordenação atual' : 'Coluna ordenável'
-                        }
+                        aria-label={coluna.id === colunaOrdenada ? 'Coluna da ordenação atual' : 'Coluna ordenável'}
                       />
                     )}
                   </span>
-                </th>
+                </div>
               ))}
-            </tr>
-          </thead>
+            </div>
+          </div>
           {/* Corpo em cascata — mesmo mecanismo de `CascadeTableBody`
               (Processos/Desligamentos): `AnimatePresence` local + `key` que muda
               quando a lista troca de identidade (página, ordenação, filtros). */}
           <AnimatePresence>
-            <tbody key={chaveCascata} className="divide-y divide-border/25">
+            <div key={chaveCascata} role="rowgroup" className="divide-y divide-border/25">
               {linhas.map((linha, indiceLinha) => (
                 <LinhaCampanha
                   key={linha.campanha.id}
@@ -502,20 +519,28 @@ export function CampanhaTabela({
               ))}
 
               {exibidos === 0 && (
-                <CascadeTableRow index={0} variants={linhaEntradaHubVariants}>
-                  <td colSpan={COLUNAS.length} className="px-4 py-12 text-center">
+                <motion.div
+                  role="row"
+                  custom={0}
+                  variants={linhaEntradaHubVariants}
+                  initial="hidden"
+                  animate="visible"
+                  style={{ gridTemplateColumns: GRID_COLUNAS }}
+                  className="grid origin-center"
+                >
+                  <div role="cell" style={{ gridColumn: '1 / -1' }} className="px-4 py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                         <Trophy className="h-4 w-4" />
                       </span>
                       <p className="text-xs font-medium">{mensagemVazia}</p>
                     </div>
-                  </td>
-                </CascadeTableRow>
+                  </div>
+                </motion.div>
               )}
-            </tbody>
+            </div>
           </AnimatePresence>
-        </table>
+        </div>
       </div>
 
       {/* Rodapé (§5.7): DUAS regiões independentes — a contagem de registros

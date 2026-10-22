@@ -19,13 +19,27 @@
  *    de "Aprovar selecionados", que avança um passo cada item elegível.
  * ============================================================================
  */
-import { AlertTriangle, ArrowUpDown, CheckCircle2, Eye, MoreVertical, RefreshCw, Search, Trophy, XCircle } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowUpDown,
+  CheckCircle2,
+  Eye,
+  MoreVertical,
+  RefreshCw,
+  Search,
+  Trophy,
+  XCircle,
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AppPagination } from '@/components/ui/app-pagination';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CascadeTableRow } from '@/components/ui/cascade-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { entradaCard, linhaEntradaHubVariants } from './premiacoesEntrada';
 import { cn } from '@/lib/utils';
@@ -141,7 +155,7 @@ const COLUNAS = [
   { id: 'valor_aprovado', label: 'Valor Aprovado', ordenavel: true, classe: '', quebra: true },
   { id: 'valor_pago', label: 'Valor Pago', ordenavel: true, classe: '', quebra: true },
   { id: 'status', label: 'Status / Etapa', ordenavel: false, classe: '', quebra: false },
-  { id: 'acoes', label: 'Ações', ordenavel: false, classe: 'text-right', quebra: false },
+  { id: 'acoes', label: 'Ações', ordenavel: false, classe: 'text-left', quebra: false },
 ] as const;
 
 /**
@@ -151,17 +165,19 @@ const COLUNAS = [
 const PAD_CELULA_X = 'px-2';
 
 /**
- * Larguras das colunas (seleção fixa e mínima + as sete da referência), medidas
- * sobre a largura REAL disponível no card (980px em 1512px de tela). O espaço vai
- * para quem carrega TEXTO (Colaborador, Campanha e Status/Etapa) e para a coluna
- * de Ações (botão + menu); as financeiras ficam com o tamanho do próprio valor.
- * Nenhuma coluna fica abaixo do necessário para LER: o texto que não couber em
- * uma linha QUEBRA em duas, não é cortado (ver `LinhaPagamento`).
+ * Template ÚNICO das colunas — usado pelo CABEÇALHO e por CADA LINHA (mesmo
+ * grid). As proporções de partida (3/17/19/11/11/10/17/12) valem quando há
+ * largura sobrando; os mínimos vêm do conteúdo REAL e impedem compressão:
+ *   Seleção 34 · Colaborador 146 · Campanha 160 · Calculado 97 ·
+ *   Aprovado 97 · Pago 96 · Status/Etapa 140 · Ações 123.
+ * A soma dos mínimos (893px) é o piso do grid: abaixo disso ele rola POR DENTRO
+ * do card, sem espremer nomes, valores ou o conjunto de botões.
  */
-const LARGURAS = ['32px', '16.4%', '18.3%', '10.2%', '10.2%', '10.2%', '17.5%', '13.5%'];
+const GRID_COLUNAS =
+  'minmax(34px,3fr) minmax(146px,17fr) minmax(160px,19fr) minmax(97px,11fr) minmax(97px,11fr) minmax(96px,10fr) minmax(140px,17fr) minmax(123px,12fr)';
 
-/** Piso de largura da tabela: abaixo disso ela rola POR DENTRO do próprio card. */
-const LARGURA_MINIMA_TABELA = 'min-w-[900px]';
+/** Piso de largura do grid: abaixo disso ele rola por dentro do próprio card. */
+const LARGURA_MINIMA_GRADE = 'min-w-[893px]';
 
 /**
  * Opções do seletor "Linhas por página". 6 é o PADRÃO da aba (`POR_PAGINA`, em
@@ -217,9 +233,9 @@ export function PagamentosTabela({
 
   /**
    * Identidade da LISTA visível (página + ordenação + registros). É a `key` do
-   * `<tbody>`: quando o conjunto/ordem muda — filtro, ordenação, paginação — o
-   * corpo remonta e a cascata de entrada toca de novo, exatamente como na lista
-   * de Processos de Desligamentos (`CascadeTableBody`). Hover, clique e
+   * contêiner de linhas (`rowgroup`): quando o conjunto/ordem muda — filtro,
+   * ordenação, paginação — o corpo remonta e a cascata de entrada toca de novo,
+   * exatamente como na lista de Processos de Desligamentos. Hover, clique e
    * re-render NÃO mudam esta chave, então a animação não reinicia à toa.
    */
   const chaveCascata = [pagina, ordenacaoAtual, ...linhas.map((l) => l.id)].join('|');
@@ -230,52 +246,51 @@ export function PagamentosTabela({
       className="flex min-w-0 flex-col overflow-hidden rounded-[14px] border border-border/50 bg-card/60"
     >
       <div className="overflow-x-auto">
-        {/* `table-fixed` + colgroup: as larguras da referência são respeitadas e o
-            conteúdo TRUNCA dentro da célula (a tabela rola por dentro do card em
-            telas estreitas, sem empurrar a página para a horizontal). */}
-        <table className={cn('w-full table-fixed border-collapse text-left', LARGURA_MINIMA_TABELA)}>
-          <colgroup>
-            {LARGURAS.map((largura, indice) => (
-              <col key={indice} style={{ width: largura }} />
-            ))}
-          </colgroup>
-          <thead>
-            {/* Cabeçalho NÃO anima: na referência (Processos/Desligamentos) só as
-                linhas entram em cascata — o cabeçalho aparece pronto. */}
-            <tr className="border-b border-border/40 bg-muted/20">
-              <th scope="col" className={cn('h-[38px]', PAD_CELULA_X)}>
+        {/* Grid compartilhado: MESMO `gridTemplateColumns` no cabeçalho e nas
+            linhas; abaixo do piso mínimo ele rola por dentro do card, sem
+            empurrar a página para a horizontal. */}
+        <div role="table" aria-label="Pagamentos" className={cn('w-full text-left', LARGURA_MINIMA_GRADE)}>
+          <div role="rowgroup">
+            <div
+              role="row"
+              className="grid items-center border-b border-border/40 bg-muted/20"
+              style={{ gridTemplateColumns: GRID_COLUNAS }}
+            >
+              <div role="columnheader" className={cn('flex h-[38px] items-center', PAD_CELULA_X)}>
                 <Checkbox
                   checked={todosMarcados}
                   onCheckedChange={(v) => onAlternarTodos(v === true)}
                   aria-label="Selecionar todos os pagamentos da página"
                   className="border-border/60"
                 />
-              </th>
+              </div>
               {COLUNAS.map((coluna) => (
-                <th
+                <div
                   key={coluna.id}
-                  scope="col"
+                  role="columnheader"
                   className={cn(
-                    'h-[38px] py-1 text-left text-[11px] font-medium uppercase leading-[14px] text-muted-foreground',
+                    'flex h-[38px] items-center py-1 text-left text-[11px] font-medium uppercase leading-[14px] text-muted-foreground',
                     PAD_CELULA_X,
                     coluna.quebra ? 'whitespace-normal' : 'whitespace-nowrap',
-                    coluna.classe,
+                    coluna.classe
                   )}
                 >
-                  <span className="inline-flex items-center gap-0.5">
+                  <span className="inline-flex min-w-0 items-center gap-0.5">
                     {coluna.label}
-                    {coluna.ordenavel && <ArrowUpDown className="h-2.5 w-2.5 shrink-0 text-muted-foreground/40" aria-hidden />}
+                    {coluna.ordenavel && (
+                      <ArrowUpDown className="h-2.5 w-2.5 shrink-0 text-muted-foreground/40" aria-hidden />
+                    )}
                   </span>
-                </th>
+                </div>
               ))}
-            </tr>
-          </thead>
+            </div>
+          </div>
           {/* Corpo da lista em cascata: `AnimatePresence` local (sem props) cria o
               contexto de presença que o `initial={false}` do `PageTransition`
               bloqueia, e a `key` remonta o corpo quando a lista troca de
               identidade — mesmo mecanismo de `CascadeTableBody`. */}
           <AnimatePresence>
-            <tbody key={chaveCascata} className="divide-y divide-border/25">
+            <div key={chaveCascata} role="rowgroup" className="divide-y divide-border/25">
               {linhas.map((linha, indiceLinha) => (
                 <LinhaPagamento
                   key={linha.id}
@@ -289,20 +304,28 @@ export function PagamentosTabela({
               ))}
 
               {linhas.length === 0 && (
-                <CascadeTableRow index={0} variants={linhaEntradaHubVariants}>
-                  <td colSpan={COLUNAS.length + 1} className="px-4 py-12 text-center">
+                <motion.div
+                  role="row"
+                  custom={0}
+                  variants={linhaEntradaHubVariants}
+                  initial="hidden"
+                  animate="visible"
+                  style={{ gridTemplateColumns: GRID_COLUNAS }}
+                  className="grid origin-center"
+                >
+                  <div role="cell" style={{ gridColumn: '1 / -1' }} className="px-4 py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center gap-1.5">
                       <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted/50 text-muted-foreground">
                         <Trophy className="h-4 w-4" />
                       </span>
                       <p className="text-xs font-medium">{mensagemVazia}</p>
                     </div>
-                  </td>
-                </CascadeTableRow>
+                  </div>
+                </motion.div>
               )}
-            </tbody>
+            </div>
           </AnimatePresence>
-        </table>
+        </div>
       </div>
 
       {/* Rodapé: contagem à esquerda, paginação à direita (padrão do sistema). */}
@@ -342,14 +365,7 @@ const ICONE_ACAO: Record<TipoAcaoPagamento, typeof CheckCircle2> = {
   reiniciar: RefreshCw,
 };
 
-function LinhaPagamento({
-  linha,
-  indice,
-  marcada,
-  onAlternarSelecao,
-  onAcaoPrincipal,
-  onAcao,
-}: LinhaPagamentoProps) {
+function LinhaPagamento({ linha, indice, marcada, onAlternarSelecao, onAcaoPrincipal, onAcao }: LinhaPagamentoProps) {
   const badge = TOM_STATUS[linha.status] ?? TOM_STATUS_PADRAO;
   const ponto = PONTO_STATUS[linha.status] ?? PONTO_STATUS_PADRAO;
   const tomCampanha = tomDaCampanha(linha.campanha?.nome ?? '—');
@@ -364,31 +380,33 @@ function LinhaPagamento({
   const valor = (v: number | string | null | undefined) => (v ? formatCurrency(Number(v)) : '—');
 
   return (
-    /* Linha da cascata compartilhada (`ui/cascade-table`): MESMO movimento da
-       lista de Processos de Desligamentos — opacity + y(10px) + scaleX(0.94→1)
+    /* Linha da cascata compartilhada (`linhaEntradaHubVariants`): MESMO movimento
+       da lista de Processos de Desligamentos — opacity + y(10px) + scaleX(0.94→1)
        abrindo DO CENTRO, ease [0.22, 1, 0.36, 1]. A cadência é a do Hub
-       (`linhaEntradaHubVariants`): 0,8s por linha, atraso `0,46s + índice ×
-       0,08s` (intervalo maior que o global, para a cascata ficar perceptível).
-       Só opacity/transform animam (nenhum reflow, nenhuma mudança de altura ou
-       de largura de coluna). */
-    <CascadeTableRow
-      index={indice}
+       (0,8s por linha, atraso `0,46s + índice × 0,08s`). Só opacity/transform
+       animam (nenhum reflow, nenhuma mudança de altura ou de largura de coluna). */
+    <motion.div
+      role="row"
+      custom={indice}
       variants={linhaEntradaHubVariants}
+      initial="hidden"
+      animate="visible"
+      style={{ gridTemplateColumns: GRID_COLUNAS }}
       className={cn(
-        'align-middle transition-colors duration-200 ease-in-out hover:bg-background',
-        marcada && 'bg-accent/10',
+        'grid origin-center items-center transition-colors duration-200 ease-in-out hover:bg-background',
+        marcada && 'bg-accent/10'
       )}
     >
-      <td className={cn(PAD_CELULA_X, PAD_CELULA)}>
+      <div role="cell" className={cn(PAD_CELULA_X, PAD_CELULA)}>
         <Checkbox
           checked={marcada}
           onCheckedChange={() => onAlternarSelecao(linha.id)}
           aria-label={`Selecionar pagamento de ${linha.colaborador?.nome_completo ?? 'colaborador'}`}
           className="border-border/60"
         />
-      </td>
+      </div>
 
-      <td className={cn(PAD_CELULA_X, PAD_CELULA)}>
+      <div role="cell" className={cn(PAD_CELULA_X, PAD_CELULA)}>
         <div className="flex min-w-0 items-center gap-2.5">
           {/* Sem foto no embed real (`colaboradores(nome_completo, salario_base)`):
               o avatar é o fallback de INICIAIS do próprio nome — nunca foto fictícia. */}
@@ -403,15 +421,13 @@ function LinhaPagamento({
             {linha.colaborador?.nome_completo ?? '—'}
           </span>
         </div>
-      </td>
+      </div>
 
-      <td className={cn(PAD_CELULA_X, PAD_CELULA)}>
+      <div role="cell" className={cn(PAD_CELULA_X, PAD_CELULA)}>
         <div className="flex min-w-0 items-start gap-2.5">
           {/* Ícone da campanha com o tom estável da própria campanha (não mais um
               selo igual para todas) — ícone, tamanho e posição preservados. */}
-          <span
-            className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg', tomCampanha)}
-          >
+          <span className={cn('flex h-7 w-7 shrink-0 items-center justify-center rounded-lg', tomCampanha)}>
             <Trophy className="h-3.5 w-3.5" />
           </span>
           {/* Nome da campanha + observação, AMBOS completos: o nome em 13px
@@ -432,7 +448,7 @@ function LinhaPagamento({
             )}
           </span>
         </div>
-      </td>
+      </div>
 
       {/* Colunas financeiras: mesma família tipográfica, 13px, `tabular-nums`, sem
           truncar valor. A HIERARQUIA de cor segue o significado real do número:
@@ -441,31 +457,36 @@ function LinhaPagamento({
           · pago = verde SÓ quando há valor lançado na folha;
           · ausência de valor continua com o mesmo indicador "—".
           Divergência (logo abaixo, no status) é a única em vermelho. */}
-      <td className={cn(PAD_CELULA_X, 'text-[13px] font-medium tabular-nums text-foreground/70', PAD_CELULA)}>
+      <div
+        role="cell"
+        className={cn(PAD_CELULA_X, 'text-[13px] font-medium tabular-nums text-foreground/70', PAD_CELULA)}
+      >
         {valor(linha.valor_calculado)}
-      </td>
-      <td
+      </div>
+      <div
+        role="cell"
         className={cn(
           PAD_CELULA_X,
           'text-[13px] font-semibold tabular-nums',
           linha.valor_aprovado ? 'text-success' : 'text-muted-foreground',
-          PAD_CELULA,
+          PAD_CELULA
         )}
       >
         {valor(linha.valor_aprovado)}
-      </td>
-      <td
+      </div>
+      <div
+        role="cell"
         className={cn(
           PAD_CELULA_X,
           'text-[13px] font-medium tabular-nums',
           linha.valor_folha_real ? 'text-success' : 'text-muted-foreground',
-          PAD_CELULA,
+          PAD_CELULA
         )}
       >
         {linha.valor_folha_real ? formatCurrency(Number(linha.valor_folha_real)) : '—'}
-      </td>
+      </div>
 
-      <td className={cn(PAD_CELULA_X, PAD_CELULA)}>
+      <div role="cell" className={cn(PAD_CELULA_X, PAD_CELULA)}>
         {/* Três níveis com respiro curto e constante (4px): badge, tempo e
             informação complementar (diferença ou comentário). O comentário quebra
             em quantas linhas precisar — antes ele era cortado com reticências. O
@@ -474,7 +495,7 @@ function LinhaPagamento({
           <span
             className={cn(
               'w-fit max-w-full rounded-full px-1 py-0.5 text-[10px] font-medium uppercase leading-[14px] tracking-normal',
-              badge,
+              badge
             )}
             title={rotuloStatusPagamento(linha.status)}
           >
@@ -496,10 +517,12 @@ function LinhaPagamento({
             </span>
           )}
         </div>
-      </td>
+      </div>
 
-      <td className={cn(PAD_CELULA_X, 'text-right', PAD_CELULA)}>
-        <div className="flex items-center justify-end gap-1.5">
+      <div role="cell" className={cn(PAD_CELULA_X, PAD_CELULA)}>
+        {/* Botões e menu alinhados ao INÍCIO da coluna — o título AÇÕES começa
+            na mesma coordenada (nada de grupo isolado na extremidade direita). */}
+        <div className="flex items-center justify-start gap-1.5">
           <Button
             size="sm"
             variant="outline"
@@ -556,7 +579,7 @@ function LinhaPagamento({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </td>
-    </CascadeTableRow>
+      </div>
+    </motion.div>
   );
 }

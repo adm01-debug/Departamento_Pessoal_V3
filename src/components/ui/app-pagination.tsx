@@ -73,6 +73,14 @@ export interface AppPaginationProps {
   isLoading?: boolean;
   /** Classes extras do rodapé (ex.: quando o card pai já tem borda/padding). */
   className?: string;
+  /**
+   * Posição do seletor de linhas dentro do grupo da direita:
+   * - `start` (padrão): rótulo + seletor ANTES de ‹ 1 › — comportamento
+   *   histórico, mantido para não alterar nenhuma tela existente.
+   * - `end`: ‹ 1 › primeiro e o seletor DEPOIS, como na referência do Hub de
+   *   Treinamentos ("‹ 1 ›  Itens por página  [10]").
+   */
+  selectorPosition?: 'start' | 'end';
 }
 
 export function AppPagination({
@@ -86,6 +94,7 @@ export function AppPagination({
   linhasPorPaginaLabel = ROTULO_LINHAS_POR_PAGINA,
   isLoading = false,
   className,
+  selectorPosition = 'start',
 }: AppPaginationProps) {
   const totalPaginas = Math.max(1, Math.ceil(total / Math.max(1, pageSize)));
   // Nunca exibe/emite uma página inexistente (ex.: trocar de 10→50 por página
@@ -108,7 +117,7 @@ export function AppPagination({
 
       <div className="flex flex-wrap items-center justify-end gap-1.5">
         {exibirSeletor && (
-          <div className="flex items-center gap-1.5">
+          <div className={cn('flex items-center gap-1.5', selectorPosition === 'end' && 'order-2')}>
             <span className="whitespace-nowrap text-xs text-muted-foreground">{linhasPorPaginaLabel}</span>
             <Select value={String(pageSize)} onValueChange={(v) => onPageSizeChange?.(Number(v))}>
               <SelectTrigger
@@ -129,7 +138,10 @@ export function AppPagination({
           </div>
         )}
 
-        <nav className="flex items-center gap-1.5" aria-label="Paginação">
+        <nav
+          className={cn('flex items-center gap-1.5', selectorPosition === 'end' && 'order-1')}
+          aria-label="Paginação"
+        >
           <Button
             variant="ghost"
             size="icon"

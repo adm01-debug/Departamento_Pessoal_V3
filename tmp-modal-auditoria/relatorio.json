@@ -1,0 +1,449 @@
+{
+  "pendencias": {
+    "abertura": {
+      "apareceuEmMs": -18,
+      "inicioCascaMs": 232,
+      "escalaMinima": 0,
+      "escalaMaximaX": 1,
+      "escalaMaximaY": 0.944398,
+      "msAteScaleX": 633,
+      "msAteScaleY": null,
+      "msAteVeu": 303,
+      "blocos": 2,
+      "blocosAnimados": 1,
+      "msAteCadaBloco": [
+        1236,
+        -18
+      ],
+      "quadros": [
+        {
+          "t": 5,
+          "sx": null,
+          "sy": null,
+          "opVeu": null,
+          "opItens": []
+        },
+        {
+          "t": 232,
+          "sx": 0,
+          "sy": 0,
+          "opVeu": 0.0401099,
+          "opItens": [
+            0,
+            1
+          ]
+        },
+        {
+          "t": 701,
+          "sx": 0.759008,
+          "sy": 0.16,
+          "opVeu": 1,
+          "opItens": [
+            0,
+            1
+          ]
+        },
+        {
+          "t": 949,
+          "sx": 1,
+          "sy": 0.326208,
+          "opVeu": 1,
+          "opItens": [
+            0,
+            1
+          ]
+        },
+        {
+          "t": 1234,
+          "sx": null,
+          "sy": null,
+          "opVeu": 1,
+          "opItens": [
+            0.45,
+            1
+          ]
+        }
+      ]
+    },
+    "titulo": "Fechar Pendências 1 tarefa de onboarding atrasada Alta Tarefas do plano de integ",
+    "saida": {
+      "desmontouEmMs": 1236,
+      "ultimaEscala": {
+        "t": 1184,
+        "sx": 0.0227118,
+        "sy": 0.0227118
+      },
+      "ultimoVeu": {
+        "t": 1184,
+        "op": 0
+      }
+    }
+  },
+  "auditoria": {
+    "abertura": {
+      "apareceuEmMs": -20,
+      "inicioCascaMs": 345,
+      "escalaMinima": 0,
+      "escalaMaximaX": 1,
+      "escalaMaximaY": 0.99447,
+      "msAteScaleX": 636,
+      "msAteScaleY": 925,
+      "msAteVeu": 231,
+      "blocos": 5,
+      "blocosAnimados": 5,
+      "msAteCadaBloco": [
+        1211,
+        1388,
+        1498,
+        1584,
+        1662
+      ],
+      "quadros": [
+        {
+          "t": 4,
+          "sx": null,
+          "sy": null,
+          "opVeu": null,
+          "opItens": []
+        }
+      ]
+    },
+    "blocosVisiveis": {
+      "total": 5,
+      "visiveis": 5,
+      "opacidades": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "saida": {
+      "desmontouEmMs": 1605,
+      "ultimaEscala": {
+        "t": 1534,
+        "sx": 0.0424046,
+        "sy": 0.0424046
+      },
+      "ultimoVeu": {
+        "t": 1534,
+        "op": 0
+      }
+    },
+    "focoAposFechar": {
+      "texto": "Ver detalhes",
+      "role": null
+    }
+  },
+  "ciclos": [
+    {
+      "ciclo": 1,
+      "ms": 3237,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 2,
+      "ms": 3209,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 3,
+      "ms": 3291,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 4,
+      "ms": 3277,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 5,
+      "ms": 3268,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 6,
+      "ms": 3312,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 7,
+      "ms": 3246,
+      "blocos": 5,
+      "invisiveis": 2
+    },
+    {
+      "ciclo": 8,
+      "ms": 3283,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 9,
+      "ms": 3260,
+      "blocos": 5,
+      "invisiveis": 3
+    },
+    {
+      "ciclo": 10,
+      "ms": 3245,
+      "blocos": 5,
+      "invisiveis": 3
+    }
+  ],
+  "categorias": [
+    {
+      "nome": "Campanhas",
+      "disponivel": true,
+      "titulo": "Fechar CAMPANHAS 20/10/2026, 10:12 Campanha atualizada Campanha \"Premi",
+      "msAteScaleY": null,
+      "blocos": 5,
+      "saida": {
+        "desmontouEmMs": 1331,
+        "ultimaEscala": {
+          "t": 1285,
+          "sx": 0.0587263,
+          "sy": 0.0587263
+        },
+        "ultimoVeu": {
+          "t": 1285,
+          "op": 0
+        }
+      }
+    },
+    {
+      "nome": "Pagamentos",
+      "disponivel": true,
+      "titulo": "Fechar PAGAMENTOS 21/10/2026, 14:12 Pagamento atualizado Enviado para ",
+      "msAteScaleY": 973,
+      "blocos": 5,
+      "saida": {
+        "desmontouEmMs": 1317,
+        "ultimaEscala": {
+          "t": 1250,
+          "sx": 0.053111,
+          "sy": 0.053111
+        },
+        "ultimoVeu": {
+          "t": 1250,
+          "op": 0
+        }
+      }
+    },
+    {
+      "nome": "Regras",
+      "disponivel": true,
+      "titulo": "Fechar REGRAS 17/07/2026, 10:12 Regra de premiação criada Regra \"Bônus",
+      "msAteScaleY": null,
+      "blocos": 5,
+      "saida": {
+        "desmontouEmMs": 1368,
+        "ultimaEscala": {
+          "t": 1324,
+          "sx": 0.0476262,
+          "sy": 0.0476262
+        },
+        "ultimoVeu": {
+          "t": 1324,
+          "op": 0
+        }
+      }
+    },
+    {
+      "nome": "Conciliação",
+      "disponivel": true,
+      "titulo": "Fechar CONCILIAÇÃO 22/10/2026, 02:12 Divergência identificada na conci",
+      "msAteScaleY": null,
+      "blocos": 5,
+      "saida": {
+        "desmontouEmMs": 1442,
+        "ultimaEscala": {
+          "t": 1376,
+          "sx": 0.00240169,
+          "sy": 0.00240169
+        },
+        "ultimoVeu": {
+          "t": 1376,
+          "op": 0
+        }
+      }
+    },
+    {
+      "nome": "Aprovações",
+      "disponivel": true,
+      "titulo": "Fechar APROVAÇÕES 21/10/2026, 22:12 Pagamento aprovado Pagamento aprov",
+      "msAteScaleY": 946,
+      "blocos": 5,
+      "saida": {
+        "desmontouEmMs": 1284,
+        "ultimaEscala": {
+          "t": 1215,
+          "sx": 0,
+          "sy": 0
+        },
+        "ultimoVeu": {
+          "t": 1215,
+          "op": 0
+        }
+      }
+    }
+  ],
+  "viewports": [
+    {
+      "w": 672,
+      "h": 519,
+      "top": 281,
+      "left": 624,
+      "bottom": 799,
+      "right": 1296,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "dentro": true,
+      "desvioCentroX": 0,
+      "desvioCentroY": 0
+    },
+    {
+      "w": 672,
+      "h": 519,
+      "top": 191,
+      "left": 384,
+      "bottom": 709,
+      "right": 1056,
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "dentro": true,
+      "desvioCentroX": 0,
+      "desvioCentroY": 0
+    },
+    {
+      "w": 672,
+      "h": 519,
+      "top": 125,
+      "left": 347,
+      "bottom": 643,
+      "right": 1019,
+      "viewport": {
+        "w": 1366,
+        "h": 768
+      },
+      "dentro": true,
+      "desvioCentroX": 0,
+      "desvioCentroY": 0
+    },
+    {
+      "w": 672,
+      "h": 519,
+      "top": 125,
+      "left": 176,
+      "bottom": 643,
+      "right": 848,
+      "viewport": {
+        "w": 1024,
+        "h": 768
+      },
+      "dentro": true,
+      "desvioCentroX": 0,
+      "desvioCentroY": 0
+    },
+    {
+      "w": 390,
+      "h": 743,
+      "top": 51,
+      "left": 0,
+      "bottom": 793,
+      "right": 390,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "dentro": true,
+      "desvioCentroX": 0,
+      "desvioCentroY": 0
+    }
+  ],
+  "reduzido": {
+    "abertura": {
+      "apareceuEmMs": 0,
+      "inicioCascaMs": 336,
+      "escalaMinima": null,
+      "escalaMaximaX": null,
+      "escalaMaximaY": null,
+      "msAteScaleX": null,
+      "msAteScaleY": null,
+      "msAteVeu": 257,
+      "blocos": 5,
+      "blocosAnimados": 5,
+      "msAteCadaBloco": [
+        1273,
+        1357,
+        1454,
+        null,
+        null
+      ],
+      "quadros": [
+        {
+          "t": 955,
+          "sx": null,
+          "sy": null,
+          "opVeu": 1,
+          "opItens": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "t": 1609,
+          "sx": null,
+          "sy": null,
+          "opVeu": 1,
+          "opItens": [
+            1,
+            0.91,
+            0.66,
+            0.29,
+            0
+          ]
+        }
+      ]
+    },
+    "estado": {
+      "classeHtml": "dark",
+      "presente": true,
+      "transform": "none",
+      "opacidades": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "saida": {
+      "desmontouEmMs": 1491,
+      "ultimaEscala": {
+        "t": 1405,
+        "sx": 0,
+        "sy": 0
+      },
+      "ultimoVeu": {
+        "t": 1405,
+        "op": 0
+      }
+    },
+    "dialogoAposFechar": 0
+  }
+}

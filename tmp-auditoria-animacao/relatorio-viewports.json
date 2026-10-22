@@ -1,0 +1,522 @@
+{
+  "viewports": [
+    {
+      "w": 1920,
+      "h": 1080,
+      "scrollWidth": 1920,
+      "clientWidth": 1920,
+      "overflowX": false,
+      "filtros": {
+        "top": 212,
+        "bottom": 328,
+        "left": 280,
+        "right": 1896
+      },
+      "filhosFiltro": [
+        {
+          "top": 225,
+          "bottom": 265,
+          "left": 293,
+          "right": 1883
+        },
+        {
+          "top": 275,
+          "bottom": 315,
+          "left": 293,
+          "right": 1883
+        }
+      ],
+      "grupos": 7,
+      "alturasGrupos": [
+        110,
+        187,
+        110,
+        110,
+        110,
+        110,
+        110
+      ],
+      "toposCabecalho": [
+        348,
+        468,
+        665,
+        785,
+        905,
+        1025,
+        1145
+      ],
+      "pontos": [
+        [
+          358
+        ],
+        [
+          358,
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ]
+      ],
+      "rows": 8,
+      "rowsInvisiveis": 0,
+      "rowsForaDaTela": 0,
+      "botoesDetalhes": 8
+    },
+    {
+      "w": 1440,
+      "h": 900,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "overflowX": false,
+      "filtros": {
+        "top": 212,
+        "bottom": 328,
+        "left": 280,
+        "right": 1416
+      },
+      "filhosFiltro": [
+        {
+          "top": 225,
+          "bottom": 265,
+          "left": 293,
+          "right": 1403
+        },
+        {
+          "top": 275,
+          "bottom": 315,
+          "left": 293,
+          "right": 1403
+        }
+      ],
+      "grupos": 7,
+      "alturasGrupos": [
+        110,
+        187,
+        110,
+        110,
+        110,
+        110,
+        110
+      ],
+      "toposCabecalho": [
+        348,
+        468,
+        665,
+        785,
+        905,
+        1025,
+        1145
+      ],
+      "pontos": [
+        [
+          358
+        ],
+        [
+          358,
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ]
+      ],
+      "rows": 8,
+      "rowsInvisiveis": 0,
+      "rowsForaDaTela": 0,
+      "botoesDetalhes": 8
+    },
+    {
+      "w": 1366,
+      "h": 768,
+      "scrollWidth": 1366,
+      "clientWidth": 1366,
+      "overflowX": false,
+      "filtros": {
+        "top": 212,
+        "bottom": 328,
+        "left": 280,
+        "right": 1342
+      },
+      "filhosFiltro": [
+        {
+          "top": 225,
+          "bottom": 265,
+          "left": 293,
+          "right": 1329
+        },
+        {
+          "top": 275,
+          "bottom": 315,
+          "left": 293,
+          "right": 1329
+        }
+      ],
+      "grupos": 7,
+      "alturasGrupos": [
+        110,
+        187,
+        110,
+        110,
+        110,
+        110,
+        110
+      ],
+      "toposCabecalho": [
+        348,
+        468,
+        665,
+        785,
+        905,
+        1025,
+        1145
+      ],
+      "pontos": [
+        [
+          358
+        ],
+        [
+          358,
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ]
+      ],
+      "rows": 8,
+      "rowsInvisiveis": 0,
+      "rowsForaDaTela": 0,
+      "botoesDetalhes": 8
+    },
+    {
+      "w": 1280,
+      "h": 800,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "overflowX": false,
+      "filtros": {
+        "top": 212,
+        "bottom": 328,
+        "left": 280,
+        "right": 1256
+      },
+      "filhosFiltro": [
+        {
+          "top": 225,
+          "bottom": 265,
+          "left": 293,
+          "right": 1243
+        },
+        {
+          "top": 275,
+          "bottom": 315,
+          "left": 293,
+          "right": 1243
+        }
+      ],
+      "grupos": 7,
+      "alturasGrupos": [
+        110,
+        187,
+        110,
+        110,
+        110,
+        110,
+        110
+      ],
+      "toposCabecalho": [
+        348,
+        468,
+        665,
+        785,
+        905,
+        1025,
+        1145
+      ],
+      "pontos": [
+        [
+          358
+        ],
+        [
+          358,
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ],
+        [
+          358
+        ]
+      ],
+      "rows": 8,
+      "rowsInvisiveis": 0,
+      "rowsForaDaTela": 0,
+      "botoesDetalhes": 8
+    },
+    {
+      "w": 1024,
+      "h": 768,
+      "scrollWidth": 1244,
+      "clientWidth": 1024,
+      "overflowX": true,
+      "filtros": {
+        "top": 212,
+        "bottom": 474,
+        "left": 280,
+        "right": 1000
+      },
+      "filhosFiltro": [
+        {
+          "top": 225,
+          "bottom": 363,
+          "left": 293,
+          "right": 987
+        },
+        {
+          "top": 373,
+          "bottom": 461,
+          "left": 293,
+          "right": 987
+        }
+      ],
+      "grupos": 7,
+      "alturasGrupos": [
+        110,
+        187,
+        110,
+        110,
+        110,
+        110,
+        110
+      ],
+      "toposCabecalho": [
+        494,
+        614,
+        811,
+        931,
+        1051,
+        1171,
+        1291
+      ],
+      "pontos": [
+        [
+          351
+        ],
+        [
+          351,
+          351
+        ],
+        [
+          351
+        ],
+        [
+          351
+        ],
+        [
+          351
+        ],
+        [
+          351
+        ],
+        [
+          351
+        ]
+      ],
+      "rows": 8,
+      "rowsInvisiveis": 0,
+      "rowsForaDaTela": 0,
+      "botoesDetalhes": 8
+    },
+    {
+      "w": 390,
+      "h": 844,
+      "scrollWidth": 548,
+      "clientWidth": 390,
+      "overflowX": true,
+      "filtros": {
+        "top": 292,
+        "bottom": 725,
+        "left": 24,
+        "right": 366
+      },
+      "filhosFiltro": [
+        {
+          "top": 305,
+          "bottom": 539,
+          "left": 37,
+          "right": 353
+        },
+        {
+          "top": 549,
+          "bottom": 712,
+          "left": 37,
+          "right": 353
+        }
+      ],
+      "grupos": 7,
+      "alturasGrupos": [
+        280,
+        512,
+        280,
+        280,
+        280,
+        280,
+        265
+      ],
+      "toposCabecalho": [
+        745,
+        1036,
+        1558,
+        1848,
+        2138,
+        2429,
+        2719
+      ],
+      "pontos": [
+        [
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0
+        ],
+        [
+          0
+        ],
+        [
+          0
+        ],
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ],
+      "rows": 8,
+      "rowsInvisiveis": 0,
+      "rowsForaDaTela": 0,
+      "botoesDetalhes": 8
+    }
+  ],
+  "f5": {
+    "url": "/premiacoes",
+    "op": 0,
+    "tr": "matrix(0.94, 0, 0, 1, 0, 10)",
+    "msAtePrimeiraLeitura": 11,
+    "urlAuditoriaAntes": "http://localhost:8080/premiacoes"
+  },
+  "reduzido": {
+    "classeHtml": "dark",
+    "painel": {
+      "op": 1,
+      "tr": "none"
+    },
+    "lista": {
+      "op": 1,
+      "tr": "none"
+    },
+    "rows": [
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      },
+      {
+        "op": 1,
+        "tr": "none"
+      }
+    ],
+    "todosVisiveis": true
+  },
+  "navegacao": [
+    {
+      "vindoDe": "Pagamentos",
+      "op": 0,
+      "tr": "matrix(0.94, 0, 0, 1, 0, 10)",
+      "ms": 5
+    },
+    {
+      "vindoDe": "Simulador ROI",
+      "op": 0,
+      "tr": "matrix(0.94, 0, 0, 1, 0, 10)",
+      "ms": 8
+    },
+    {
+      "vindoDe": "Campanhas",
+      "op": 0,
+      "tr": "matrix(0.94, 0, 0, 1, 0, 10)",
+      "ms": 10
+    }
+  ],
+  "botoes": null
+}

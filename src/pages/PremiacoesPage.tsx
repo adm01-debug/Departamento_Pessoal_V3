@@ -4,9 +4,7 @@ import { PageLayout } from '@/components/layout';
 import { PageTitle } from '@/components/PageTitle';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ColoredFilterChip } from '@/components/avaliacao/ColoredFilterChip';
@@ -21,7 +19,6 @@ import {
   ChevronRight,
   Clock,
   DollarSign,
-  History,
   Layers,
   Plus,
   Search,
@@ -40,7 +37,7 @@ import { CampanhaLateral } from '@/components/premiacoes/CampanhaLateral';
 import { CampanhaDetalhesDialog } from '@/components/premiacoes/CampanhaDetalhesDialog';
 import { Indicador } from '@/components/premiacoes/IndicadorPremiacoes';
 import { PagamentosTab } from '@/components/premiacoes/PagamentosTab';
-import { PainelAuditoriaRoi } from '@/components/premiacoes/PainelAuditoriaRoi';
+import { AuditoriaTab } from '@/components/premiacoes/AuditoriaTab';
 import {
   FILTROS_HUB_INICIAIS,
   ORDENACAO_ROTULOS,
@@ -63,7 +60,7 @@ import {
   type PagamentoHub,
 } from '@/components/premiacoes/premiacoesComum';
 import { cn } from '@/lib/utils';
-import { formatCurrency, formatDateTime } from '@/utils/format';
+import { formatCurrency } from '@/utils/format';
 import { toast } from 'sonner';
 // MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
 import {
@@ -142,9 +139,12 @@ export default function PremiacoesPage() {
   };
 
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [periodoFiltro, setPeriodoFiltro] = React.useState('Todos os Períodos');
-  const [unidadeFiltro, setUnidadeFiltro] = React.useState('Todas as Unidades');
-  const [faixaMetaFiltro, setFaixaMetaFiltro] = React.useState('Todas');
+  // O painel antigo de auditoria usava estes filtros; a exportação mantém o
+  // escopo histórico do relatório de pagamentos enquanto a nova timeline tem
+  // filtros próprios no componente `AuditoriaTab`.
+  const periodoFiltro = 'Todos os Períodos';
+  const unidadeFiltro = 'Todas as Unidades';
+  const faixaMetaFiltro = 'Todas';
 
   // Estado da aba Campanhas: filtros (busca/status/período/ordenação), página
   // local e a campanha aberta no diálogo de detalhes.
@@ -168,7 +168,12 @@ export default function PremiacoesPage() {
     enabled: !!empresaAtual?.id || mockAtivo
   });
 
-  const { data: auditoria = [], isLoading: loadAuditoria } = useQuery({
+  const {
+    data: auditoria = [],
+    isLoading: loadAuditoria,
+    isError: erroAuditoria,
+    refetch: recarregarAuditoria,
+  } = useQuery({
     queryKey: ['premiacoes_auditoria', empresaAtual?.id],
     queryFn: async (): Promise<any[]> => getMockAuditoriaPremiacoes() ?? (await premiacoesService.listarAuditoria(undefined, empresaAtual!.id)),
     enabled: !!empresaAtual?.id || mockAtivo
@@ -364,7 +369,7 @@ export default function PremiacoesPage() {
               Só nas abas que falam de CAMPANHAS: a aba Pagamentos tem a própria
               faixa de indicadores FINANCEIROS (IMAGEM 4 — quatro cartões do mesmo
               padrão dimensional), então a faixa genérica não é duplicada lá. */}
-          {activeTab !== 'pagamentos' && (
+          {activeTab !== 'pagamentos' && activeTab !== 'auditoria' && (
           <div className="grid min-w-0 grid-cols-1 gap-3 min-[640px]:grid-cols-2 min-[1024px]:grid-cols-3 min-[1440px]:grid-cols-5">
             <Indicador
               indice={indiceEntrada('kpis', 0)}
@@ -633,76 +638,19 @@ export default function PremiacoesPage() {
           </TabsContent>
 
           <TabsContent value="auditoria" className="space-y-6">
-            {/* Painel Gerencial de Auditoria & ROI v1.2 — REALOCADO da aba
-                Pagamentos para a aba de AUDITORIA (o lugar dele, ao lado da
-                trilha). A implementação é a MESMA (`PainelAuditoriaRoi`):
-                filtros de período/unidade/meta, exportação CSV/PDF e a tabela
-                consolidada sobre os pagamentos reais. */}
-            <PainelAuditoriaRoi
-              pagamentos={pagamentos}
-              periodoFiltro={periodoFiltro}
-              unidadeFiltro={unidadeFiltro}
-              faixaMetaFiltro={faixaMetaFiltro}
-              onPeriodoFiltroChange={setPeriodoFiltro}
-              onUnidadeFiltroChange={setUnidadeFiltro}
-              onFaixaMetaFiltroChange={setFaixaMetaFiltro}
+            {/* A aba Auditoria não usa mais o Painel Gerencial/tabela antigos.
+                A fonte continua sendo `premiacoes_auditoria`; o componente novo
+                só muda a representação: filtros, categorias, timeline por data,
+                detalhes e paginação. */}
+            <AuditoriaTab
+              auditoria={auditoria as AuditoriaHub[]}
+              pagamentos={pagamentos as PagamentoHub[]}
+              campanhas={campanhas as CampanhaHub[]}
+              carregando={loadAuditoria}
+              erro={erroAuditoria}
+              onTentarNovamente={() => void recarregarAuditoria()}
               onExportar={handleExport}
             />
-
-            <Card className="border-border/30 rounded-2xl overflow-hidden shadow-xs">
-              <CardHeader className="bg-muted/30 border-b border-border/30 py-4">
-                <div className="flex items-center gap-2">
-                  <History className="h-4 w-4 text-primary" />
-                  <CardTitle className="text-base">Trilha de Auditoria de Premiações</CardTitle>
-                </div>
-                <CardDescription className="text-xs">Histórico completo de alterações, aprovações e integrações</CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-muted/20 border-b border-border/10">
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Data/Hora</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Usuário</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Ação</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Entidade</th>
-                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Motivo/Detalhes</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/10">
-                      {auditoria.map((a: any) => (
-                        <tr key={a.id} className="hover:bg-accent/5 transition-colors">
-                          <td className="p-4 text-xs font-medium whitespace-nowrap">
-                            {formatDateTime(a.created_at)}
-                          </td>
-                          <td className="p-4 text-xs">
-                            RH / Admin
-                          </td>
-                          <td className="p-4">
-                            <Badge variant="outline" className="text-[9px] font-medium uppercase">
-                              {a.acao}
-                            </Badge>
-                          </td>
-                          <td className="p-4 text-xs text-muted-foreground">
-                            {a.entidade_tipo} ({a.entidade_id.substring(0, 8)})
-                          </td>
-                          <td className="p-4 text-xs italic">
-                            {a.motivo}
-                          </td>
-                        </tr>
-                      ))}
-                      {auditoria.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="p-8 text-center text-muted-foreground italic">
-                            Nenhum registro de auditoria encontrado.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
         </EntradaPresenca>

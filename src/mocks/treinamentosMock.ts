@@ -2,12 +2,12 @@
  * ============================================================================
  * MOCK VISUAL — área de Treinamentos (rota `/treinamentos`).
  *
- * ESCOPO: exclusivamente apresentação/validação de LAYOUT — os 6 KPIs
- * (Treinamentos, Cursos, Obrigatórios, Trilhas, Inscrições, Turmas) e as 6
- * abas (Treinamentos, Catálogo, Trilhas, Inscrições, Turmas/Instâncias,
- * Certificados). Nenhuma linha é lida do Supabase nesta área: os `useQuery`
- * de `TreinamentosPage` e de `TrilhaCursosSection` curto-circuitam com estes
- * registros fictícios.
+ * ESCOPO: exclusivamente apresentação/validação de LAYOUT — os 4 KPIs
+ * (Participação ativa, Conclusão no período, Pendências obrigatórias e
+ * Certificados emitidos) e as 6 abas (Treinamentos, Catálogo, Trilhas,
+ * Inscrições, Turmas/Instâncias, Certificados). Nenhuma linha é lida do
+ * Supabase nesta área: os `useQuery` de `TreinamentosPage` e de
+ * `TrilhaCursosSection` curto-circuitam com estes registros fictícios.
  *
  * ⚠️ SOMENTE LEITURA. Toda ação de ESCRITA (criar/excluir treinamento, curso,
  * trilha; vincular/desvincular curso a trilha; criar inscrição) é BLOQUEADA por
@@ -52,21 +52,125 @@ export interface TreinamentoMock {
   empresa_id: string;
   nome: string;
   descricao: string;
+  /** Campo adicional do mock — `treinamentos` não possui categoria real. */
+  categoria: string;
   data: string;
   carga_horaria: number;
+  /** Coluna real de `treinamentos` (TEXT, default `pendente`). */
+  status: string;
   created_at: string;
 }
 
 const TREINAMENTOS: TreinamentoMock[] = [
-  { id: 'mock-trein-1', empresa_id: EMPRESA, nome: 'Integração e Cultura Organizacional', descricao: 'Trilha de integração para novos colaboradores.', data: '2026-02-10', carga_horaria: 8, created_at: '2026-02-01T09:00:00Z' },
-  { id: 'mock-trein-2', empresa_id: EMPRESA, nome: 'NR-17 Ergonomia', descricao: 'Saúde e segurança no ambiente de trabalho.', data: '2026-08-20', carga_horaria: 4, created_at: '2026-08-10T09:00:00Z' },
-  { id: 'mock-trein-3', empresa_id: EMPRESA, nome: 'Comunicação Assertiva', descricao: 'Técnicas de comunicação e feedback.', data: '2026-04-15', carga_horaria: 6, created_at: '2026-04-05T09:00:00Z' },
-  { id: 'mock-trein-4', empresa_id: EMPRESA, nome: 'Liderança e Gestão de Equipes', descricao: 'Desenvolvimento de líderes e gestores.', data: '2025-11-05', carga_horaria: 12, created_at: '2025-10-28T09:00:00Z' },
-  { id: 'mock-trein-5', empresa_id: EMPRESA, nome: 'Diversidade e Inclusão', descricao: 'Cultura organizacional e boas práticas de D&I.', data: '2025-08-22', carga_horaria: 4, created_at: '2025-08-12T09:00:00Z' },
+  {
+    id: 'mock-trein-1',
+    empresa_id: EMPRESA,
+    nome: 'Integração e Cultura Organizacional',
+    descricao: 'Trilha de integração para novos colaboradores.',
+    categoria: 'Onboarding',
+    data: '2026-02-10',
+    carga_horaria: 8,
+    status: 'em_andamento',
+    created_at: '2026-02-01T09:00:00Z',
+  },
+  {
+    id: 'mock-trein-2',
+    empresa_id: EMPRESA,
+    nome: 'NR-17 Ergonomia',
+    descricao: 'Saúde e segurança no ambiente de trabalho.',
+    categoria: 'Segurança do Trabalho',
+    data: '2026-08-20',
+    carga_horaria: 4,
+    status: 'planejado',
+    created_at: '2026-08-10T09:00:00Z',
+  },
+  {
+    id: 'mock-trein-3',
+    empresa_id: EMPRESA,
+    nome: 'Comunicação Assertiva',
+    descricao: 'Técnicas de comunicação e feedback.',
+    categoria: 'Desenvolvimento Pessoal',
+    data: '2026-04-15',
+    carga_horaria: 6,
+    status: 'em_andamento',
+    created_at: '2026-04-05T09:00:00Z',
+  },
+  {
+    id: 'mock-trein-4',
+    empresa_id: EMPRESA,
+    nome: 'Liderança e Gestão de Equipes',
+    descricao: 'Desenvolvimento de líderes e gestores.',
+    categoria: 'Liderança',
+    data: '2025-11-05',
+    carga_horaria: 12,
+    status: 'concluido',
+    created_at: '2025-10-28T09:00:00Z',
+  },
+  {
+    id: 'mock-trein-5',
+    empresa_id: EMPRESA,
+    nome: 'LGPD — Proteção de Dados',
+    descricao: 'Boas práticas e conformidade com a LGPD.',
+    categoria: 'Compliance',
+    data: '2026-03-12',
+    carga_horaria: 4,
+    status: 'aguardando_inicio',
+    created_at: '2026-03-02T09:00:00Z',
+  },
+  {
+    id: 'mock-trein-6',
+    empresa_id: EMPRESA,
+    nome: 'Diversidade e Inclusão',
+    descricao: 'Construindo um ambiente mais plural.',
+    categoria: 'Cultura',
+    data: '2026-05-22',
+    carga_horaria: 4,
+    status: 'planejado',
+    created_at: '2026-05-12T09:00:00Z',
+  },
 ];
 
 export function getMockTreinamentosLista(): TreinamentoMock[] | undefined {
   return isTreinamentosMockEnabled() ? TREINAMENTOS : undefined;
+}
+
+/* ─── Participantes por treinamento (mock visual de ocupação) ──────────────── */
+
+/**
+ * A tabela real de participantes (`treinamento_participantes`) não é consultada
+ * no modo demonstração. Estes registros alimentam SOMENTE a coluna Participantes
+ * da listagem (avatares + "+N" + barra), com os números da referência aprovada:
+ * `inscritos` de `capacidade` na barra e `excedente` no chip "+N".
+ */
+export interface ParticipacaoTreinamentoMock {
+  inscritos: number;
+  capacidade: number;
+  excedente: number;
+  colaboradores: { id: string; nome: string; fotoUrl: string | null }[];
+}
+
+function avatares(inicio: number, quantidade: number) {
+  // `MOCK_COLABORADORES` é finito: o módulo evita que um índice fora da faixa
+  // devolva silenciosamente uma linha SEM avatares (só o chip "+N").
+  const total = MOCK_COLABORADORES.length;
+  return Array.from({ length: quantidade }, (_, i) => MOCK_COLABORADORES[(inicio + i) % total]).map((colaborador) => ({
+    id: colaborador.id,
+    nome: colaborador.nome_completo,
+    fotoUrl: colaborador.foto_url ?? null,
+  }));
+}
+
+const PARTICIPACAO: Record<string, ParticipacaoTreinamentoMock> = {
+  'mock-trein-1': { inscritos: 18, capacidade: 30, excedente: 12, colaboradores: avatares(0, 3) },
+  'mock-trein-2': { inscritos: 12, capacidade: 25, excedente: 8, colaboradores: avatares(3, 2) },
+  'mock-trein-3': { inscritos: 20, capacidade: 30, excedente: 15, colaboradores: avatares(5, 3) },
+  'mock-trein-4': { inscritos: 28, capacidade: 28, excedente: 28, colaboradores: avatares(8, 3) },
+  'mock-trein-5': { inscritos: 10, capacidade: 25, excedente: 10, colaboradores: avatares(11, 2) },
+  'mock-trein-6': { inscritos: 8, capacidade: 20, excedente: 6, colaboradores: avatares(6, 2) },
+};
+
+export function getMockParticipacaoTreinamentos(): Record<string, ParticipacaoTreinamentoMock> | undefined {
+  return isTreinamentosMockEnabled() ? PARTICIPACAO : undefined;
 }
 
 /* ─── Catálogo de cursos (`catalogo_cursos`) ───────────────────────────────── */
@@ -85,13 +189,90 @@ export interface CursoMock {
 }
 
 const CURSOS: CursoMock[] = [
-  { id: 'mock-curso-1', empresa_id: EMPRESA, nome: 'Integração e Cultura Organizacional', descricao: 'Onboarding institucional.', categoria: 'Onboarding', modalidade: 'online', carga_horaria: 8, obrigatorio: true, nr_relacionada: null, created_at: '2026-01-10T09:00:00Z' },
-  { id: 'mock-curso-2', empresa_id: EMPRESA, nome: 'NR-17 Ergonomia', descricao: 'Norma Regulamentadora 17.', categoria: 'Segurança do Trabalho', modalidade: 'presencial', carga_horaria: 4, obrigatorio: true, nr_relacionada: 'NR-17', created_at: '2026-01-12T09:00:00Z' },
-  { id: 'mock-curso-3', empresa_id: EMPRESA, nome: 'NR-35 Trabalho em Altura', descricao: 'Segurança em trabalho em altura.', categoria: 'Segurança do Trabalho', modalidade: 'presencial', carga_horaria: 8, obrigatorio: true, nr_relacionada: 'NR-35', created_at: '2026-01-15T09:00:00Z' },
-  { id: 'mock-curso-4', empresa_id: EMPRESA, nome: 'Comunicação Assertiva', descricao: 'Comunicação e relacionamento interpessoal.', categoria: 'Desenvolvimento Pessoal', modalidade: 'online', carga_horaria: 6, obrigatorio: false, nr_relacionada: null, created_at: '2026-02-02T09:00:00Z' },
-  { id: 'mock-curso-5', empresa_id: EMPRESA, nome: 'Liderança e Gestão de Equipes', descricao: 'Formação de líderes.', categoria: 'Liderança', modalidade: 'hibrido', carga_horaria: 12, obrigatorio: false, nr_relacionada: null, created_at: '2026-02-20T09:00:00Z' },
-  { id: 'mock-curso-6', empresa_id: EMPRESA, nome: 'LGPD — Proteção de Dados', descricao: 'Lei Geral de Proteção de Dados.', categoria: 'Compliance', modalidade: 'online', carga_horaria: 4, obrigatorio: true, nr_relacionada: null, created_at: '2026-03-01T09:00:00Z' },
-  { id: 'mock-curso-7', empresa_id: EMPRESA, nome: 'Diversidade e Inclusão', descricao: 'Cultura organizacional e D&I.', categoria: 'Cultura', modalidade: 'online', carga_horaria: 4, obrigatorio: false, nr_relacionada: null, created_at: '2026-03-08T09:00:00Z' },
+  {
+    id: 'mock-curso-1',
+    empresa_id: EMPRESA,
+    nome: 'Integração e Cultura Organizacional',
+    descricao: 'Onboarding institucional.',
+    categoria: 'Onboarding',
+    modalidade: 'online',
+    carga_horaria: 8,
+    obrigatorio: true,
+    nr_relacionada: null,
+    created_at: '2026-01-10T09:00:00Z',
+  },
+  {
+    id: 'mock-curso-2',
+    empresa_id: EMPRESA,
+    nome: 'NR-17 Ergonomia',
+    descricao: 'Norma Regulamentadora 17.',
+    categoria: 'Segurança do Trabalho',
+    modalidade: 'presencial',
+    carga_horaria: 4,
+    obrigatorio: true,
+    nr_relacionada: 'NR-17',
+    created_at: '2026-01-12T09:00:00Z',
+  },
+  {
+    id: 'mock-curso-3',
+    empresa_id: EMPRESA,
+    nome: 'NR-35 Trabalho em Altura',
+    descricao: 'Segurança em trabalho em altura.',
+    categoria: 'Segurança do Trabalho',
+    modalidade: 'presencial',
+    carga_horaria: 8,
+    obrigatorio: true,
+    nr_relacionada: 'NR-35',
+    created_at: '2026-01-15T09:00:00Z',
+  },
+  {
+    id: 'mock-curso-4',
+    empresa_id: EMPRESA,
+    nome: 'Comunicação Assertiva',
+    descricao: 'Comunicação e relacionamento interpessoal.',
+    categoria: 'Desenvolvimento Pessoal',
+    modalidade: 'online',
+    carga_horaria: 6,
+    obrigatorio: false,
+    nr_relacionada: null,
+    created_at: '2026-02-02T09:00:00Z',
+  },
+  {
+    id: 'mock-curso-5',
+    empresa_id: EMPRESA,
+    nome: 'Liderança e Gestão de Equipes',
+    descricao: 'Formação de líderes.',
+    categoria: 'Liderança',
+    modalidade: 'hibrido',
+    carga_horaria: 12,
+    obrigatorio: false,
+    nr_relacionada: null,
+    created_at: '2026-02-20T09:00:00Z',
+  },
+  {
+    id: 'mock-curso-6',
+    empresa_id: EMPRESA,
+    nome: 'LGPD — Proteção de Dados',
+    descricao: 'Lei Geral de Proteção de Dados.',
+    categoria: 'Compliance',
+    modalidade: 'online',
+    carga_horaria: 4,
+    obrigatorio: true,
+    nr_relacionada: null,
+    created_at: '2026-03-01T09:00:00Z',
+  },
+  {
+    id: 'mock-curso-7',
+    empresa_id: EMPRESA,
+    nome: 'Diversidade e Inclusão',
+    descricao: 'Cultura organizacional e D&I.',
+    categoria: 'Cultura',
+    modalidade: 'online',
+    carga_horaria: 4,
+    obrigatorio: false,
+    nr_relacionada: null,
+    created_at: '2026-03-08T09:00:00Z',
+  },
 ];
 
 export function getMockCursos(): CursoMock[] | undefined {
@@ -110,9 +291,30 @@ export interface TrilhaMock {
 }
 
 const TRILHAS: TrilhaMock[] = [
-  { id: 'mock-trilha-1', empresa_id: EMPRESA, titulo: 'Integração de Novos Colaboradores', descricao: 'Jornada de onboarding da empresa.', nivel: 'basico', created_at: '2026-01-20T09:00:00Z' },
-  { id: 'mock-trilha-2', empresa_id: EMPRESA, titulo: 'Liderança e Alta Performance', descricao: 'Trilha para gestores e líderes.', nivel: 'intermediario', created_at: '2026-02-25T09:00:00Z' },
-  { id: 'mock-trilha-3', empresa_id: EMPRESA, titulo: 'Especialista Técnico', descricao: 'Aprofundamento técnico e NRs.', nivel: 'avancado', created_at: '2026-03-15T09:00:00Z' },
+  {
+    id: 'mock-trilha-1',
+    empresa_id: EMPRESA,
+    titulo: 'Integração de Novos Colaboradores',
+    descricao: 'Jornada de onboarding da empresa.',
+    nivel: 'basico',
+    created_at: '2026-01-20T09:00:00Z',
+  },
+  {
+    id: 'mock-trilha-2',
+    empresa_id: EMPRESA,
+    titulo: 'Liderança e Alta Performance',
+    descricao: 'Trilha para gestores e líderes.',
+    nivel: 'intermediario',
+    created_at: '2026-02-25T09:00:00Z',
+  },
+  {
+    id: 'mock-trilha-3',
+    empresa_id: EMPRESA,
+    titulo: 'Especialista Técnico',
+    descricao: 'Aprofundamento técnico e NRs.',
+    nivel: 'avancado',
+    created_at: '2026-03-15T09:00:00Z',
+  },
 ];
 
 export function getMockTrilhas(): TrilhaMock[] | undefined {
@@ -137,7 +339,16 @@ const TRILHAS_CURSOS: Record<string, { curso_id: string; ordem: number; obrigato
 };
 
 /** Réplica do embed `curso:catalogo_cursos(id, nome, carga_horaria)`. */
-export function getMockTrilhasCursos(trilhaId: string): { id: string; trilha_id: string; curso_id: string; ordem: number; obrigatorio: boolean; curso: { id: string; nome: string; carga_horaria: number } }[] | undefined {
+export function getMockTrilhasCursos(trilhaId: string):
+  | {
+      id: string;
+      trilha_id: string;
+      curso_id: string;
+      ordem: number;
+      obrigatorio: boolean;
+      curso: { id: string; nome: string; carga_horaria: number };
+    }[]
+  | undefined {
   if (!isTreinamentosMockEnabled()) return undefined;
   return (TRILHAS_CURSOS[trilhaId] ?? []).map((v, i) => {
     const curso = CURSOS.find((c) => c.id === v.curso_id);
@@ -167,14 +378,78 @@ export interface InscricaoMock {
 }
 
 const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
-  { id: 'mock-insc-1', empresa_id: EMPRESA, colaborador_id: 'mock-2', curso_id: 'mock-curso-1', status: 'concluido', data_inicio: '2026-01-15', created_at: '2026-01-15T09:00:00Z' },
-  { id: 'mock-insc-2', empresa_id: EMPRESA, colaborador_id: 'mock-5', curso_id: 'mock-curso-6', status: 'concluido', data_inicio: '2026-03-05', created_at: '2026-03-05T09:00:00Z' },
-  { id: 'mock-insc-3', empresa_id: EMPRESA, colaborador_id: 'mock-3', curso_id: 'mock-curso-5', status: 'em_andamento', data_inicio: '2026-08-01', created_at: '2026-08-01T09:00:00Z' },
-  { id: 'mock-insc-4', empresa_id: EMPRESA, colaborador_id: 'mock-9', curso_id: 'mock-curso-4', status: 'em_andamento', data_inicio: '2026-08-10', created_at: '2026-08-10T09:00:00Z' },
-  { id: 'mock-insc-5', empresa_id: EMPRESA, colaborador_id: 'mock-6', curso_id: 'mock-curso-2', status: 'inscrito', data_inicio: '2026-09-01', created_at: '2026-08-25T09:00:00Z' },
-  { id: 'mock-insc-6', empresa_id: EMPRESA, colaborador_id: 'mock-11', curso_id: 'mock-curso-3', status: 'inscrito', data_inicio: '2026-09-15', created_at: '2026-09-02T09:00:00Z' },
-  { id: 'mock-insc-7', empresa_id: EMPRESA, colaborador_id: 'mock-12', curso_id: 'mock-curso-7', status: 'concluido', data_inicio: '2025-08-25', created_at: '2025-08-25T09:00:00Z' },
-  { id: 'mock-insc-8', empresa_id: EMPRESA, colaborador_id: 'mock-1', curso_id: 'mock-curso-1', status: 'concluido', data_inicio: '2025-06-10', created_at: '2025-06-10T09:00:00Z' },
+  {
+    id: 'mock-insc-1',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-2',
+    curso_id: 'mock-curso-1',
+    status: 'concluido',
+    data_inicio: '2026-01-15',
+    created_at: '2026-01-15T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-2',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-5',
+    curso_id: 'mock-curso-6',
+    status: 'concluido',
+    data_inicio: '2026-03-05',
+    created_at: '2026-03-05T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-3',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-3',
+    curso_id: 'mock-curso-5',
+    status: 'em_andamento',
+    data_inicio: '2026-08-01',
+    created_at: '2026-08-01T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-4',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-9',
+    curso_id: 'mock-curso-4',
+    status: 'em_andamento',
+    data_inicio: '2026-08-10',
+    created_at: '2026-08-10T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-5',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-6',
+    curso_id: 'mock-curso-2',
+    status: 'inscrito',
+    data_inicio: '2026-09-01',
+    created_at: '2026-08-25T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-6',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-11',
+    curso_id: 'mock-curso-3',
+    status: 'inscrito',
+    data_inicio: '2026-09-15',
+    created_at: '2026-09-02T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-7',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-12',
+    curso_id: 'mock-curso-7',
+    status: 'concluido',
+    data_inicio: '2025-08-25',
+    created_at: '2025-08-25T09:00:00Z',
+  },
+  {
+    id: 'mock-insc-8',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-1',
+    curso_id: 'mock-curso-1',
+    status: 'concluido',
+    data_inicio: '2025-06-10',
+    created_at: '2025-06-10T09:00:00Z',
+  },
 ];
 
 export function getMockInscricoes(): InscricaoMock[] | undefined {
@@ -201,11 +476,51 @@ export interface InstanciaMock {
 }
 
 const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
-  { id: 'mock-inst-1', empresa_id: EMPRESA, curso_id: 'mock-curso-2', instrutor_id: 'mock-4', data_inicio: '2026-09-01T12:00:00Z', status: 'planejado', capacidade_maxima: 20 },
-  { id: 'mock-inst-2', empresa_id: EMPRESA, curso_id: 'mock-curso-3', instrutor_id: 'mock-7', data_inicio: '2026-09-15T12:00:00Z', status: 'planejado', capacidade_maxima: 15 },
-  { id: 'mock-inst-3', empresa_id: EMPRESA, curso_id: 'mock-curso-5', instrutor_id: 'mock-9', data_inicio: '2026-08-01T12:00:00Z', status: 'em_curso', capacidade_maxima: 25 },
-  { id: 'mock-inst-4', empresa_id: EMPRESA, curso_id: 'mock-curso-1', instrutor_id: 'mock-3', data_inicio: '2026-02-05T12:00:00Z', status: 'concluido', capacidade_maxima: 30 },
-  { id: 'mock-inst-5', empresa_id: EMPRESA, curso_id: 'mock-curso-4', instrutor_id: 'mock-13', data_inicio: '2026-08-20T12:00:00Z', status: 'concluido', capacidade_maxima: 18 },
+  {
+    id: 'mock-inst-1',
+    empresa_id: EMPRESA,
+    curso_id: 'mock-curso-2',
+    instrutor_id: 'mock-4',
+    data_inicio: '2026-09-01T12:00:00Z',
+    status: 'planejado',
+    capacidade_maxima: 20,
+  },
+  {
+    id: 'mock-inst-2',
+    empresa_id: EMPRESA,
+    curso_id: 'mock-curso-3',
+    instrutor_id: 'mock-7',
+    data_inicio: '2026-09-15T12:00:00Z',
+    status: 'planejado',
+    capacidade_maxima: 15,
+  },
+  {
+    id: 'mock-inst-3',
+    empresa_id: EMPRESA,
+    curso_id: 'mock-curso-5',
+    instrutor_id: 'mock-9',
+    data_inicio: '2026-08-01T12:00:00Z',
+    status: 'em_curso',
+    capacidade_maxima: 25,
+  },
+  {
+    id: 'mock-inst-4',
+    empresa_id: EMPRESA,
+    curso_id: 'mock-curso-1',
+    instrutor_id: 'mock-3',
+    data_inicio: '2026-02-05T12:00:00Z',
+    status: 'concluido',
+    capacidade_maxima: 30,
+  },
+  {
+    id: 'mock-inst-5',
+    empresa_id: EMPRESA,
+    curso_id: 'mock-curso-4',
+    instrutor_id: 'mock-13',
+    data_inicio: '2026-08-20T12:00:00Z',
+    status: 'concluido',
+    capacidade_maxima: 18,
+  },
 ];
 
 export function getMockInstancias(): InstanciaMock[] | undefined {
@@ -235,12 +550,60 @@ export interface CertificadoMock {
 // `new Date(x).toLocaleDateString('pt-BR')`, e um 'YYYY-MM-DD' cru recuaria um
 // dia em UTC-3. O cert-6 tem validade já vencida (badge destructive).
 const CERTIFICADOS: Omit<CertificadoMock, 'curso' | 'colaborador'>[] = [
-  { id: 'mock-cert-1', empresa_id: EMPRESA, colaborador_id: 'mock-2', curso_id: 'mock-curso-1', data_emissao: '2026-01-20T12:00:00Z', data_validade: null, codigo_autenticacao: 'A1B2C3D4' },
-  { id: 'mock-cert-2', empresa_id: EMPRESA, colaborador_id: 'mock-5', curso_id: 'mock-curso-6', data_emissao: '2026-03-10T12:00:00Z', data_validade: '2027-03-10T12:00:00Z', codigo_autenticacao: 'E5F6A7B8' },
-  { id: 'mock-cert-3', empresa_id: EMPRESA, colaborador_id: 'mock-12', curso_id: 'mock-curso-7', data_emissao: '2025-08-28T12:00:00Z', data_validade: null, codigo_autenticacao: 'C9D0E1F2' },
-  { id: 'mock-cert-4', empresa_id: EMPRESA, colaborador_id: 'mock-3', curso_id: 'mock-curso-4', data_emissao: '2026-04-20T12:00:00Z', data_validade: null, codigo_autenticacao: '11223344' },
-  { id: 'mock-cert-5', empresa_id: EMPRESA, colaborador_id: 'mock-1', curso_id: 'mock-curso-1', data_emissao: '2025-06-15T12:00:00Z', data_validade: null, codigo_autenticacao: '55667788' },
-  { id: 'mock-cert-6', empresa_id: EMPRESA, colaborador_id: 'mock-9', curso_id: 'mock-curso-2', data_emissao: '2025-09-10T12:00:00Z', data_validade: '2026-09-10T12:00:00Z', codigo_autenticacao: '99AABBCC' },
+  {
+    id: 'mock-cert-1',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-2',
+    curso_id: 'mock-curso-1',
+    data_emissao: '2026-01-20T12:00:00Z',
+    data_validade: null,
+    codigo_autenticacao: 'A1B2C3D4',
+  },
+  {
+    id: 'mock-cert-2',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-5',
+    curso_id: 'mock-curso-6',
+    data_emissao: '2026-03-10T12:00:00Z',
+    data_validade: '2027-03-10T12:00:00Z',
+    codigo_autenticacao: 'E5F6A7B8',
+  },
+  {
+    id: 'mock-cert-3',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-12',
+    curso_id: 'mock-curso-7',
+    data_emissao: '2025-08-28T12:00:00Z',
+    data_validade: null,
+    codigo_autenticacao: 'C9D0E1F2',
+  },
+  {
+    id: 'mock-cert-4',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-3',
+    curso_id: 'mock-curso-4',
+    data_emissao: '2026-04-20T12:00:00Z',
+    data_validade: null,
+    codigo_autenticacao: '11223344',
+  },
+  {
+    id: 'mock-cert-5',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-1',
+    curso_id: 'mock-curso-1',
+    data_emissao: '2025-06-15T12:00:00Z',
+    data_validade: null,
+    codigo_autenticacao: '55667788',
+  },
+  {
+    id: 'mock-cert-6',
+    empresa_id: EMPRESA,
+    colaborador_id: 'mock-9',
+    curso_id: 'mock-curso-2',
+    data_emissao: '2025-09-10T12:00:00Z',
+    data_validade: '2026-09-10T12:00:00Z',
+    codigo_autenticacao: '99AABBCC',
+  },
 ];
 
 export function getMockCertificados(): CertificadoMock[] | undefined {

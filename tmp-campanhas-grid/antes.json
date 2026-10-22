@@ -1,0 +1,730 @@
+[
+  {
+    "viewport": "1920x1080",
+    "tabela": {
+      "left": 281,
+      "right": 1619,
+      "width": 1338
+    },
+    "scroll": {
+      "w": 1920,
+      "client": 1920
+    },
+    "ths": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 602,
+          "width": 321
+        },
+        "span": {
+          "left": 289,
+          "right": 364,
+          "width": 75
+        },
+        "dados": {
+          "left": 281,
+          "right": 602,
+          "width": 321
+        },
+        "conteudo": {
+          "left": 289,
+          "right": 594,
+          "width": 305
+        }
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 602,
+          "right": 733,
+          "width": 131
+        },
+        "span": {
+          "left": 610,
+          "right": 673,
+          "width": 63
+        },
+        "dados": {
+          "left": 602,
+          "right": 733,
+          "width": 131
+        },
+        "conteudo": {
+          "left": 610,
+          "right": 725,
+          "width": 115
+        }
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 733,
+          "right": 915,
+          "width": 182
+        },
+        "span": {
+          "left": 741,
+          "right": 831,
+          "width": 90
+        },
+        "dados": {
+          "left": 733,
+          "right": 915,
+          "width": 182
+        },
+        "conteudo": {
+          "left": 741,
+          "right": 907,
+          "width": 166
+        }
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 915,
+          "right": 1097,
+          "width": 182
+        },
+        "span": {
+          "left": 923,
+          "right": 1007,
+          "width": 84
+        },
+        "dados": {
+          "left": 915,
+          "right": 1097,
+          "width": 182
+        },
+        "conteudo": {
+          "left": 923,
+          "right": 1089,
+          "width": 166
+        }
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 1097,
+          "right": 1261,
+          "width": 163
+        },
+        "span": {
+          "left": 1105,
+          "right": 1200,
+          "width": 94
+        },
+        "dados": {
+          "left": 1097,
+          "right": 1261,
+          "width": 163
+        },
+        "conteudo": {
+          "left": 1105,
+          "right": 1159,
+          "width": 54
+        }
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 1261,
+          "right": 1392,
+          "width": 131
+        },
+        "span": {
+          "left": 1269,
+          "right": 1308,
+          "width": 40
+        },
+        "dados": {
+          "left": 1261,
+          "right": 1392,
+          "width": 131
+        },
+        "conteudo": {
+          "left": 1269,
+          "right": 1384,
+          "width": 115
+        }
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1392,
+          "right": 1619,
+          "width": 228
+        },
+        "span": {
+          "left": 1572,
+          "right": 1611,
+          "width": 39
+        },
+        "dados": {
+          "left": 1392,
+          "right": 1619,
+          "width": 228
+        },
+        "conteudo": {
+          "left": 1400,
+          "right": 1611,
+          "width": 212
+        }
+      }
+    ]
+  },
+  {
+    "viewport": "1440x900",
+    "tabela": {
+      "left": 281,
+      "right": 1189,
+      "width": 908
+    },
+    "scroll": {
+      "w": 1440,
+      "client": 1440
+    },
+    "ths": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 499,
+          "width": 218
+        },
+        "span": {
+          "left": 289,
+          "right": 364,
+          "width": 75
+        },
+        "dados": {
+          "left": 281,
+          "right": 499,
+          "width": 218
+        },
+        "conteudo": {
+          "left": 289,
+          "right": 491,
+          "width": 202
+        }
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 499,
+          "right": 588,
+          "width": 89
+        },
+        "span": {
+          "left": 507,
+          "right": 570,
+          "width": 63
+        },
+        "dados": {
+          "left": 499,
+          "right": 588,
+          "width": 89
+        },
+        "conteudo": {
+          "left": 507,
+          "right": 580,
+          "width": 73
+        }
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 588,
+          "right": 711,
+          "width": 123
+        },
+        "span": {
+          "left": 596,
+          "right": 686,
+          "width": 90
+        },
+        "dados": {
+          "left": 588,
+          "right": 711,
+          "width": 123
+        },
+        "conteudo": {
+          "left": 596,
+          "right": 703,
+          "width": 107
+        }
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 711,
+          "right": 835,
+          "width": 123
+        },
+        "span": {
+          "left": 719,
+          "right": 803,
+          "width": 84
+        },
+        "dados": {
+          "left": 711,
+          "right": 835,
+          "width": 123
+        },
+        "conteudo": {
+          "left": 719,
+          "right": 827,
+          "width": 107
+        }
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 835,
+          "right": 946,
+          "width": 111
+        },
+        "span": {
+          "left": 843,
+          "right": 937,
+          "width": 94
+        },
+        "dados": {
+          "left": 835,
+          "right": 946,
+          "width": 111
+        },
+        "conteudo": {
+          "left": 843,
+          "right": 897,
+          "width": 54
+        }
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 946,
+          "right": 1035,
+          "width": 89
+        },
+        "span": {
+          "left": 954,
+          "right": 993,
+          "width": 40
+        },
+        "dados": {
+          "left": 946,
+          "right": 1035,
+          "width": 89
+        },
+        "conteudo": {
+          "left": 954,
+          "right": 1027,
+          "width": 73
+        }
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1035,
+          "right": 1189,
+          "width": 154
+        },
+        "span": {
+          "left": 1142,
+          "right": 1181,
+          "width": 39
+        },
+        "dados": {
+          "left": 1035,
+          "right": 1189,
+          "width": 154
+        },
+        "conteudo": {
+          "left": 1043,
+          "right": 1181,
+          "width": 138
+        }
+      }
+    ]
+  },
+  {
+    "viewport": "1366x768",
+    "tabela": {
+      "left": 281,
+      "right": 1181,
+      "width": 900
+    },
+    "scroll": {
+      "w": 1366,
+      "client": 1366
+    },
+    "ths": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "span": {
+          "left": 289,
+          "right": 364,
+          "width": 75
+        },
+        "dados": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "conteudo": {
+          "left": 289,
+          "right": 489,
+          "width": 200
+        }
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 497,
+          "right": 585,
+          "width": 88
+        },
+        "span": {
+          "left": 505,
+          "right": 568,
+          "width": 63
+        },
+        "dados": {
+          "left": 497,
+          "right": 585,
+          "width": 88
+        },
+        "conteudo": {
+          "left": 505,
+          "right": 577,
+          "width": 72
+        }
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 585,
+          "right": 708,
+          "width": 122
+        },
+        "span": {
+          "left": 593,
+          "right": 683,
+          "width": 90
+        },
+        "dados": {
+          "left": 585,
+          "right": 708,
+          "width": 122
+        },
+        "conteudo": {
+          "left": 593,
+          "right": 700,
+          "width": 106
+        }
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 708,
+          "right": 830,
+          "width": 122
+        },
+        "span": {
+          "left": 716,
+          "right": 800,
+          "width": 84
+        },
+        "dados": {
+          "left": 708,
+          "right": 830,
+          "width": 122
+        },
+        "conteudo": {
+          "left": 716,
+          "right": 822,
+          "width": 106
+        }
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 830,
+          "right": 940,
+          "width": 110
+        },
+        "span": {
+          "left": 838,
+          "right": 932,
+          "width": 94
+        },
+        "dados": {
+          "left": 830,
+          "right": 940,
+          "width": 110
+        },
+        "conteudo": {
+          "left": 838,
+          "right": 892,
+          "width": 54
+        }
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 940,
+          "right": 1028,
+          "width": 88
+        },
+        "span": {
+          "left": 948,
+          "right": 988,
+          "width": 40
+        },
+        "dados": {
+          "left": 940,
+          "right": 1028,
+          "width": 88
+        },
+        "conteudo": {
+          "left": 948,
+          "right": 1020,
+          "width": 72
+        }
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1028,
+          "right": 1181,
+          "width": 153
+        },
+        "span": {
+          "left": 1134,
+          "right": 1173,
+          "width": 39
+        },
+        "dados": {
+          "left": 1028,
+          "right": 1181,
+          "width": 153
+        },
+        "conteudo": {
+          "left": 1036,
+          "right": 1173,
+          "width": 137
+        }
+      }
+    ]
+  },
+  {
+    "viewport": "1280x800",
+    "tabela": {
+      "left": 281,
+      "right": 1181,
+      "width": 900
+    },
+    "scroll": {
+      "w": 1280,
+      "client": 1280
+    },
+    "ths": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "span": {
+          "left": 289,
+          "right": 364,
+          "width": 75
+        },
+        "dados": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "conteudo": {
+          "left": 289,
+          "right": 489,
+          "width": 200
+        }
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 497,
+          "right": 585,
+          "width": 88
+        },
+        "span": {
+          "left": 505,
+          "right": 568,
+          "width": 63
+        },
+        "dados": {
+          "left": 497,
+          "right": 585,
+          "width": 88
+        },
+        "conteudo": {
+          "left": 505,
+          "right": 577,
+          "width": 72
+        }
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 585,
+          "right": 708,
+          "width": 122
+        },
+        "span": {
+          "left": 593,
+          "right": 683,
+          "width": 90
+        },
+        "dados": {
+          "left": 585,
+          "right": 708,
+          "width": 122
+        },
+        "conteudo": {
+          "left": 593,
+          "right": 700,
+          "width": 106
+        }
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 708,
+          "right": 830,
+          "width": 122
+        },
+        "span": {
+          "left": 716,
+          "right": 800,
+          "width": 84
+        },
+        "dados": {
+          "left": 708,
+          "right": 830,
+          "width": 122
+        },
+        "conteudo": {
+          "left": 716,
+          "right": 822,
+          "width": 106
+        }
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 830,
+          "right": 940,
+          "width": 110
+        },
+        "span": {
+          "left": 838,
+          "right": 932,
+          "width": 94
+        },
+        "dados": {
+          "left": 830,
+          "right": 940,
+          "width": 110
+        },
+        "conteudo": {
+          "left": 838,
+          "right": 892,
+          "width": 54
+        }
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 940,
+          "right": 1028,
+          "width": 88
+        },
+        "span": {
+          "left": 948,
+          "right": 988,
+          "width": 40
+        },
+        "dados": {
+          "left": 940,
+          "right": 1028,
+          "width": 88
+        },
+        "conteudo": {
+          "left": 948,
+          "right": 1020,
+          "width": 72
+        }
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1028,
+          "right": 1181,
+          "width": 153
+        },
+        "span": {
+          "left": 1134,
+          "right": 1173,
+          "width": 39
+        },
+        "dados": {
+          "left": 1028,
+          "right": 1181,
+          "width": 153
+        },
+        "conteudo": {
+          "left": 1036,
+          "right": 1173,
+          "width": 137
+        }
+      }
+    ]
+  }
+]

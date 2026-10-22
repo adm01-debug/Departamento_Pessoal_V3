@@ -1,0 +1,614 @@
+[
+  {
+    "viewport": "1920x1080",
+    "grade": {
+      "left": 281,
+      "right": 1619,
+      "width": 1338
+    },
+    "rolagem": {
+      "left": 281,
+      "right": 1619,
+      "width": 1338,
+      "scrollW": 1338,
+      "clientW": 1338
+    },
+    "templates": {
+      "cabecalho": "294.422px 160.594px 187.359px 187.375px 160.594px 160.594px 187.375px",
+      "linha": "294.422px 160.594px 187.359px 187.375px 160.594px 160.594px 187.375px",
+      "iguais": true
+    },
+    "totalColunas": 7,
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 575,
+          "width": 294
+        },
+        "td": {
+          "left": 281,
+          "right": 575,
+          "width": 294
+        },
+        "rotuloX": 289,
+        "conteudoX": 289,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 575,
+          "right": 736,
+          "width": 161
+        },
+        "td": {
+          "left": 575,
+          "right": 736,
+          "width": 161
+        },
+        "rotuloX": 583,
+        "conteudoX": 583,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 736,
+          "right": 923,
+          "width": 187
+        },
+        "td": {
+          "left": 736,
+          "right": 923,
+          "width": 187
+        },
+        "rotuloX": 744,
+        "conteudoX": 744,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 923,
+          "right": 1111,
+          "width": 187
+        },
+        "td": {
+          "left": 923,
+          "right": 1111,
+          "width": 187
+        },
+        "rotuloX": 931,
+        "conteudoX": 931,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 1111,
+          "right": 1271,
+          "width": 161
+        },
+        "td": {
+          "left": 1111,
+          "right": 1271,
+          "width": 161
+        },
+        "rotuloX": 1119,
+        "conteudoX": 1119,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 1271,
+          "right": 1432,
+          "width": 161
+        },
+        "td": {
+          "left": 1271,
+          "right": 1432,
+          "width": 161
+        },
+        "rotuloX": 1279,
+        "conteudoX": 1279,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1432,
+          "right": 1619,
+          "width": 187
+        },
+        "td": {
+          "left": 1432,
+          "right": 1619,
+          "width": 187
+        },
+        "rotuloX": 1440,
+        "conteudoX": 1440,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ],
+    "pagina": {
+      "scrollW": 1920,
+      "clientW": 1920
+    }
+  },
+  {
+    "viewport": "1440x900",
+    "grade": {
+      "left": 281,
+      "right": 1189,
+      "width": 908
+    },
+    "rolagem": {
+      "left": 281,
+      "right": 1189,
+      "width": 908,
+      "scrollW": 908,
+      "clientW": 908
+    },
+    "templates": {
+      "cabecalho": "216px 91px 123px 123px 111px 91px 153px",
+      "linha": "216px 91px 123px 123px 111px 91px 153px",
+      "iguais": true
+    },
+    "totalColunas": 7,
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "td": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "rotuloX": 289,
+        "conteudoX": 289,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 497,
+          "right": 588,
+          "width": 91
+        },
+        "td": {
+          "left": 497,
+          "right": 588,
+          "width": 91
+        },
+        "rotuloX": 505,
+        "conteudoX": 505,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 588,
+          "right": 711,
+          "width": 123
+        },
+        "td": {
+          "left": 588,
+          "right": 711,
+          "width": 123
+        },
+        "rotuloX": 596,
+        "conteudoX": 596,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 711,
+          "right": 834,
+          "width": 123
+        },
+        "td": {
+          "left": 711,
+          "right": 834,
+          "width": 123
+        },
+        "rotuloX": 719,
+        "conteudoX": 719,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 834,
+          "right": 945,
+          "width": 111
+        },
+        "td": {
+          "left": 834,
+          "right": 945,
+          "width": 111
+        },
+        "rotuloX": 842,
+        "conteudoX": 842,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 945,
+          "right": 1036,
+          "width": 91
+        },
+        "td": {
+          "left": 945,
+          "right": 1036,
+          "width": 91
+        },
+        "rotuloX": 953,
+        "conteudoX": 953,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1036,
+          "right": 1189,
+          "width": 153
+        },
+        "td": {
+          "left": 1036,
+          "right": 1189,
+          "width": 153
+        },
+        "rotuloX": 1044,
+        "conteudoX": 1044,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ],
+    "pagina": {
+      "scrollW": 1440,
+      "clientW": 1440
+    }
+  },
+  {
+    "viewport": "1366x768",
+    "grade": {
+      "left": 281,
+      "right": 1187,
+      "width": 906
+    },
+    "rolagem": {
+      "left": 281,
+      "right": 1115,
+      "width": 834,
+      "scrollW": 906,
+      "clientW": 834
+    },
+    "templates": {
+      "cabecalho": "216px 90px 123px 123px 111px 90px 153px",
+      "linha": "216px 90px 123px 123px 111px 90px 153px",
+      "iguais": true
+    },
+    "totalColunas": 7,
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "td": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "rotuloX": 289,
+        "conteudoX": 289,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 497,
+          "right": 587,
+          "width": 90
+        },
+        "td": {
+          "left": 497,
+          "right": 587,
+          "width": 90
+        },
+        "rotuloX": 505,
+        "conteudoX": 505,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 587,
+          "right": 710,
+          "width": 123
+        },
+        "td": {
+          "left": 587,
+          "right": 710,
+          "width": 123
+        },
+        "rotuloX": 595,
+        "conteudoX": 595,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 710,
+          "right": 833,
+          "width": 123
+        },
+        "td": {
+          "left": 710,
+          "right": 833,
+          "width": 123
+        },
+        "rotuloX": 718,
+        "conteudoX": 718,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 833,
+          "right": 944,
+          "width": 111
+        },
+        "td": {
+          "left": 833,
+          "right": 944,
+          "width": 111
+        },
+        "rotuloX": 841,
+        "conteudoX": 841,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 944,
+          "right": 1034,
+          "width": 90
+        },
+        "td": {
+          "left": 944,
+          "right": 1034,
+          "width": 90
+        },
+        "rotuloX": 952,
+        "conteudoX": 952,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1034,
+          "right": 1187,
+          "width": 153
+        },
+        "td": {
+          "left": 1034,
+          "right": 1187,
+          "width": 153
+        },
+        "rotuloX": 1042,
+        "conteudoX": 1042,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ],
+    "pagina": {
+      "scrollW": 1366,
+      "clientW": 1366
+    }
+  },
+  {
+    "viewport": "1280x800",
+    "grade": {
+      "left": 281,
+      "right": 1187,
+      "width": 906
+    },
+    "rolagem": {
+      "left": 281,
+      "right": 1029,
+      "width": 748,
+      "scrollW": 906,
+      "clientW": 748
+    },
+    "templates": {
+      "cabecalho": "216px 90px 123px 123px 111px 90px 153px",
+      "linha": "216px 90px 123px 123px 111px 90px 153px",
+      "iguais": true
+    },
+    "totalColunas": 7,
+    "colunas": [
+      {
+        "i": 0,
+        "rotulo": "Campanha",
+        "th": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "td": {
+          "left": 281,
+          "right": 497,
+          "width": 216
+        },
+        "rotuloX": 289,
+        "conteudoX": 289,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 1,
+        "rotulo": "Período",
+        "th": {
+          "left": 497,
+          "right": 587,
+          "width": 90
+        },
+        "td": {
+          "left": 497,
+          "right": 587,
+          "width": 90
+        },
+        "rotuloX": 505,
+        "conteudoX": 505,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 2,
+        "rotulo": "Desempenho",
+        "th": {
+          "left": 587,
+          "right": 710,
+          "width": 123
+        },
+        "td": {
+          "left": 587,
+          "right": 710,
+          "width": 123
+        },
+        "rotuloX": 595,
+        "conteudoX": 595,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 3,
+        "rotulo": "Orçamento",
+        "th": {
+          "left": 710,
+          "right": 833,
+          "width": 123
+        },
+        "td": {
+          "left": 710,
+          "right": 833,
+          "width": 123
+        },
+        "rotuloX": 718,
+        "conteudoX": 718,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 4,
+        "rotulo": "Participantes",
+        "th": {
+          "left": 833,
+          "right": 944,
+          "width": 111
+        },
+        "td": {
+          "left": 833,
+          "right": 944,
+          "width": 111
+        },
+        "rotuloX": 841,
+        "conteudoX": 841,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 5,
+        "rotulo": "Status",
+        "th": {
+          "left": 944,
+          "right": 1034,
+          "width": 90
+        },
+        "td": {
+          "left": 944,
+          "right": 1034,
+          "width": 90
+        },
+        "rotuloX": 952,
+        "conteudoX": 952,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      },
+      {
+        "i": 6,
+        "rotulo": "Ações",
+        "th": {
+          "left": 1034,
+          "right": 1187,
+          "width": 153
+        },
+        "td": {
+          "left": 1034,
+          "right": 1187,
+          "width": 153
+        },
+        "rotuloX": 1042,
+        "conteudoX": 1042,
+        "desalinhamento": 0,
+        "overflowCelula": 0
+      }
+    ],
+    "pagina": {
+      "scrollW": 1280,
+      "clientW": 1280
+    }
+  }
+]
