@@ -1,0 +1,72 @@
+{
+  "animacao": {
+    "inicio": {
+      "opacity": "1",
+      "transform": "none"
+    },
+    "fim": {
+      "opacity": "1",
+      "transform": "none"
+    }
+  },
+  "ordenacaoCarga": [
+    "Liderança e Gestão de Equipes",
+    "Integração e Cultura Organizacional",
+    "NR-35 Trabalho em Altura",
+    "Comunicação Assertiva",
+    "Diversidade e Inclusão",
+    "LGPD — Proteção de Dados",
+    "NR-17 Ergonomia"
+  ],
+  "modalidadePresencial": [
+    "NR-35 Trabalho em Altura",
+    "NR-17 Ergonomia"
+  ],
+  "opcional": [],
+  "afterLimpar": {
+    "cards": 7,
+    "label": "Mostrando 1–7 de 7 cursos"
+  },
+  "pagina6": {
+    "cards": 6,
+    "label": "Mostrando 1–6 de 7 cursos"
+  },
+  "pagina2": {
+    "cards": 1,
+    "label": "Mostrando 7–7 de 7 cursos"
+  },
+  "detalhes": [
+    "Comunicação Assertiva",
+    "",
+    "Técnicas de comunicação e feedback.",
+    "",
+    "Desenvolvimento Pessoal",
+    "Opcional",
+    "MODALIDADE",
+    "Online",
+    "CARGA HORÁRIA",
+    "6h",
+    "NR RELACIONADA",
+    "—"
+  ],
+  "confirmacaoExclusao": [
+    "Excluir curso?",
+    "",
+    "O curso “Comunicação Assertiva” será removido permanentemente do catálogo. Esta ação não pode ser desfeita.",
+    ""
+  ],
+  "novoCurso": [
+    "Novo Curso",
+    "Nome *",
+    "Categoria"
+  ],
+  "movimentoReduzido": {
+    "opacity": "1",
+    "transform": "none"
+  },
+  "erros": [],
+  "falhas403": [
+    "http://localhost:8080/functions/v1/external-db-bridge",
+    "http://localhost:8080/functions/v1/metricas"
+  ]
+}

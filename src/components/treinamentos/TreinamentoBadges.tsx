@@ -63,11 +63,19 @@ export function TreinamentoStatusBadge({ status, className }: { status?: string 
   );
 }
 
-interface EstiloCategoria {
+export interface EstiloCategoriaTreinamento {
   /** Selo pill — fundo/borda/texto na cor da família. */
   badge: string;
   /** Contêiner 42×42 do ícone — MESMA família do selo. */
   tile: string;
+  /**
+   * Fundo do placeholder de capa do card do Catálogo. Usa SOMENTE tokens do
+   * Design System (a mesma família cromática do selo) — `catalogo_cursos` não
+   * possui coluna de imagem.
+   */
+  capa: string;
+  /** Cor do texto/ícone sobre o placeholder de capa. */
+  capaTexto: string;
   icone: LucideIcon;
 }
 
@@ -81,38 +89,50 @@ interface EstiloCategoria {
  * que recebe um leve clareamento derivado do próprio token para atingir
  * contraste AA em texto de 10,5px sobre o navy.
  */
-const AZUL: Omit<EstiloCategoria, 'icone'> = {
+type FamiliaCategoria = Omit<EstiloCategoriaTreinamento, 'icone'>;
+
+const AZUL: FamiliaCategoria = {
   badge: 'border-info/25 bg-info/10 text-info',
   tile: 'border-info/25 bg-info/[0.12] text-info',
+  capa: 'bg-[radial-gradient(120%_120%_at_12%_0%,hsl(var(--info)/0.34),transparent_62%),linear-gradient(155deg,hsl(var(--info)/0.2),hsl(var(--background))_82%)]',
+  capaTexto: 'text-info',
 };
 
-const AMBAR: Omit<EstiloCategoria, 'icone'> = {
+const AMBAR: FamiliaCategoria = {
   badge: 'border-warning/25 bg-warning/10 text-warning',
   tile: 'border-warning/25 bg-warning/[0.12] text-warning',
+  capa: 'bg-[radial-gradient(120%_120%_at_12%_0%,hsl(var(--warning)/0.34),transparent_62%),linear-gradient(155deg,hsl(var(--warning)/0.2),hsl(var(--background))_82%)]',
+  capaTexto: 'text-warning',
 };
 
-const VIOLETA: Omit<EstiloCategoria, 'icone'> = {
+const VIOLETA: FamiliaCategoria = {
   // Texto levemente clareado com o próprio token (mistura com `foreground`):
   // em 10,5px o violeta puro não atinge contraste AA sobre o navy.
   badge:
     'border-[hsl(var(--chart-4)/0.25)] bg-[hsl(var(--chart-4)/0.1)] text-[color-mix(in_oklab,hsl(var(--chart-4))_78%,hsl(var(--foreground)))]',
   tile: 'border-[hsl(var(--chart-4)/0.25)] bg-[hsl(var(--chart-4)/0.12)] text-[color-mix(in_oklab,hsl(var(--chart-4))_78%,hsl(var(--foreground)))]',
+  capa: 'bg-[radial-gradient(120%_120%_at_12%_0%,hsl(var(--chart-4)/0.36),transparent_62%),linear-gradient(155deg,hsl(var(--chart-4)/0.22),hsl(var(--background))_82%)]',
+  capaTexto: 'text-[color-mix(in_oklab,hsl(var(--chart-4))_78%,hsl(var(--foreground)))]',
 };
 
-const CIANO: Omit<EstiloCategoria, 'icone'> = {
+const CIANO: FamiliaCategoria = {
   badge: 'border-[hsl(var(--aqua)/0.25)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]',
   tile: 'border-[hsl(var(--aqua)/0.25)] bg-[hsl(var(--aqua)/0.12)] text-[hsl(var(--aqua))]',
+  capa: 'bg-[radial-gradient(120%_120%_at_12%_0%,hsl(var(--aqua)/0.34),transparent_62%),linear-gradient(155deg,hsl(var(--aqua)/0.2),hsl(var(--background))_82%)]',
+  capaTexto: 'text-[hsl(var(--aqua))]',
 };
 
 /** Sem categoria: permanece neutro (sem identidade inventada). */
-const CATEGORIA_NEUTRA: EstiloCategoria = {
+const CATEGORIA_NEUTRA: EstiloCategoriaTreinamento = {
   badge: 'border-border/70 bg-muted/50 text-muted-foreground',
   tile: 'border-border/70 bg-muted/50 text-muted-foreground',
+  capa: 'bg-[radial-gradient(120%_120%_at_12%_0%,hsl(var(--muted)/0.9),transparent_62%),linear-gradient(155deg,hsl(var(--muted)/0.6),hsl(var(--background))_82%)]',
+  capaTexto: 'text-muted-foreground',
   icone: GraduationCap,
 };
 
-/** CONFIG ÚNICA: categoria → família (usada pelo selo E pelo ícone). */
-const CATEGORIAS: Record<string, EstiloCategoria> = {
+/** CONFIG ÚNICA: categoria → família (usada pelo selo, pelo ícone e pela capa). */
+const CATEGORIAS: Record<string, EstiloCategoriaTreinamento> = {
   onboarding: { ...AZUL, icone: UserPlus },
   seguranca_do_trabalho: { ...AMBAR, icone: ShieldCheck },
   desenvolvimento_pessoal: { ...VIOLETA, icone: Sparkles },
@@ -121,9 +141,19 @@ const CATEGORIAS: Record<string, EstiloCategoria> = {
   cultura: { ...VIOLETA, icone: HeartHandshake },
 };
 
-function estiloCategoria(categoria?: string | null): EstiloCategoria {
+/**
+ * Estilo da categoria para QUALQUER consumidor do módulo (selo, ícone 42×42 e
+ * placeholder de capa do Catálogo). Exportado para o card de curso não recriar
+ * o mapa de cores.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function estiloCategoriaTreinamento(categoria?: string | null): EstiloCategoriaTreinamento {
   if (!categoria) return CATEGORIA_NEUTRA;
   return CATEGORIAS[normalizarTexto(categoria).replace(/[\s-]+/g, '_')] ?? CATEGORIA_NEUTRA;
+}
+
+function estiloCategoria(categoria?: string | null): EstiloCategoriaTreinamento {
+  return estiloCategoriaTreinamento(categoria);
 }
 
 export function TreinamentoCategoriaBadge({ categoria, className }: { categoria?: string | null; className?: string }) {

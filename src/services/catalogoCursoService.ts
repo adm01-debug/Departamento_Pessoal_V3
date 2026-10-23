@@ -2,7 +2,10 @@ import { supabase } from '@/integrations/supabase/client';
 // MOCK VISUAL — ver src/mocks/treinamentosMock.ts.
 import { getMockTrilhasCursos } from '@/mocks/treinamentosMock';
 
-const ensure = <T>(d: T | null, e: string): T => { if (!d) throw new Error(`Nenhum registro de ${e} retornado.`); return d; };
+const ensure = <T>(d: T | null, e: string): T => {
+  if (!d) throw new Error(`Nenhum registro de ${e} retornado.`);
+  return d;
+};
 
 export const catalogoCursoService = {
   async listarCursos(empresaId: string) {
@@ -23,7 +26,13 @@ export const catalogoCursoService = {
   },
   async atualizarCurso(id: string, d: any, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('catalogo_cursos').update(d).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('catalogo_cursos')
+      .update(d)
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return ensure(data, 'curso');
   },
@@ -57,7 +66,9 @@ export const catalogoCursoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase
       .from('inscricoes_cursos')
-      .select('*, colaborador:colaboradores(nome_completo), curso:catalogo_cursos(nome)')
+      .select(
+        '*, colaborador:colaboradores(nome_completo, foto_url, cargo, departamento), curso:catalogo_cursos(nome, categoria)'
+      )
       .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false });
     if (cursoId) q = q.eq('curso_id', cursoId);
@@ -73,7 +84,13 @@ export const catalogoCursoService = {
   },
   async atualizarInscricao(id: string, d: any, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('inscricoes_cursos').update(d).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('inscricoes_cursos')
+      .update(d)
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return ensure(data, 'inscrição');
   },
@@ -85,7 +102,7 @@ export const catalogoCursoService = {
     if (mock) return mock;
     const { data, error } = await supabase
       .from('trilhas_cursos')
-      .select('*, curso:catalogo_cursos(id, nome, carga_horaria)')
+      .select('*, curso:catalogo_cursos(id, nome, carga_horaria, modalidade)')
       .eq('trilha_id', trilhaId)
       .order('ordem');
     if (error) throw error;
@@ -102,12 +119,23 @@ export const catalogoCursoService = {
     if (error) throw error;
   },
 
+  /**
+   * Instâncias (turmas) da empresa.
+   *
+   * `treinamento_instancias` NÃO possui `empresa_id` — o escopo real é o CURSO
+   * (`curso_id → catalogo_cursos.empresa_id`), como já definido na policy
+   * `treinamento_instancias_tenant`. Por isso o filtro é aplicado no recurso
+   * embutido (`!inner` + `curso.empresa_id`): devolve apenas turmas da empresa
+   * e mantém a ordenação por `data_inicio`.
+   */
   async listarInstancias(empresaId: string, cursoId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = (supabase as any)
       .from('treinamento_instancias')
-      .select('*, curso:catalogo_cursos!treinamento_instancias_curso_id_fkey(nome), instrutor:colaboradores!treinamento_instancias_instrutor_id_fkey(nome_completo)')
-      .eq('empresa_id', empresaId)
+      .select(
+        '*, curso:catalogo_cursos!treinamento_instancias_curso_id_fkey!inner(nome, empresa_id), instrutor:colaboradores!treinamento_instancias_instrutor_id_fkey(nome_completo)'
+      )
+      .eq('curso.empresa_id', empresaId)
       .order('data_inicio', { ascending: true });
     if (cursoId) q = q.eq('curso_id', cursoId);
     const { data, error } = await q;
@@ -122,12 +150,23 @@ export const catalogoCursoService = {
   },
   async atualizarInstancia(id: string, d: any, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any).from('treinamento_instancias').update(d).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await (supabase as any)
+      .from('treinamento_instancias')
+      .update(d)
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
 
-  async registrarFeedback(d: { inscricao_id: string; nota_satisfacao: number; comentario?: string; aplicabilidade_nota?: number }) {
+  async registrarFeedback(d: {
+    inscricao_id: string;
+    nota_satisfacao: number;
+    comentario?: string;
+    aplicabilidade_nota?: number;
+  }) {
     const { data, error } = await supabase.from('treinamento_feedback').insert(d).select().maybeSingle();
     if (error) throw error;
     return data;
@@ -153,5 +192,5 @@ export const catalogoCursoService = {
       .single();
     if (error) throw error;
     return data;
-  }
+  },
 };

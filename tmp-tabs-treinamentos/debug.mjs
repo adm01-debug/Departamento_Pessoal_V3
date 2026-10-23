@@ -1,0 +1,15 @@
+import { chromium } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+const state=JSON.parse(readFileSync('e2e/.auth/user.json','utf8'));
+const b=await chromium.launch();
+const c=await b.newContext({storageState:state,viewport:{width:1440,height:900}});
+const p=await c.newPage();
+const erros=[]; p.on('pageerror',e=>erros.push('pageerror '+e.message)); p.on('console',m=>m.type()==='error'&&erros.push(m.text()));
+await p.goto('http://localhost:8080/treinamentos',{waitUntil:'domcontentloaded'});
+await p.waitForTimeout(8000);
+console.log('url',p.url());
+console.log('tabs',await p.locator('[role=tab]').count(),'tablist',await p.locator('[data-treinamentos-tablist]').count());
+console.log('body',(await p.locator('body').innerText()).slice(0,1000));
+console.log('erros',JSON.stringify(erros.slice(0,10),null,2));
+await p.screenshot({path:'tmp-tabs-treinamentos/debug.png'});
+await b.close();

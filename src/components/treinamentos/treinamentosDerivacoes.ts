@@ -505,3 +505,240 @@ export function calcularIndicadoresTreinamentos({
     certificadosDisponiveis: certificados.length > 0,
   };
 }
+
+/* ─── Catálogo de cursos ───────────────────────────────────────────────────── */
+
+/**
+ * Linha mínima de `catalogo_cursos` usada pelos cards do Catálogo.
+ *
+ * HONESTIDADE DOS DADOS: a tabela real possui apenas nome, descrição, categoria,
+ * carga horária, modalidade, obrigatoriedade, NR relacionada, `ativo` e
+ * `created_at`. NÃO existe coluna de imagem/capa — por isso `imagem_url` é
+ * opcional e, quando ausente, o card usa o placeholder visual da categoria
+ * (nunca uma imagem inventada ou uma URL externa).
+ */
+export interface CursoCatalogo {
+  id: string;
+  nome: string;
+  descricao?: string | null;
+  categoria?: string | null;
+  modalidade?: string | null;
+  carga_horaria?: number | string | null;
+  obrigatorio?: boolean | null;
+  nr_relacionada?: string | null;
+  ativo?: boolean | null;
+  created_at?: string | null;
+  /** Só é preenchido se a fonte real passar a fornecer uma capa. */
+  imagem_url?: string | null;
+}
+
+/** Participação exibida no card: inscritos únicos + quem pode ser mostrado. */
+export interface ParticipacaoCurso {
+  /** Colaboradores únicos com inscrição no curso. */
+  inscritos: number;
+  colaboradores: ColaboradorParticipacao[];
+}
+
+export const CATALOGO_POR_PAGINA_PADRAO = 12;
+export const CATALOGO_OPCOES_POR_PAGINA = [6, 12, 24, 48] as const;
+
+/**
+ * Ordenações sustentadas pelos campos REAIS do catálogo. O padrão (`nome`) é o
+ * mesmo comportamento da listagem atual (`listarCursos` ordena por `nome`).
+ */
+export type OrdenacaoCatalogo = 'nome' | 'recentes' | 'carga' | 'obrigatorios';
+
+export const ORDENACAO_CATALOGO_OPCOES: readonly { value: OrdenacaoCatalogo; label: string }[] = [
+  { value: 'nome', label: 'Nome (A–Z)' },
+  { value: 'recentes', label: 'Mais recentes' },
+  { value: 'carga', label: 'Maior carga horária' },
+  { value: 'obrigatorios', label: 'Obrigatórios primeiro' },
+];
+
+export const ORDENACAO_CATALOGO_PADRAO: OrdenacaoCatalogo = 'nome';
+
+export type ObrigatoriedadeFiltro = 'todas' | 'obrigatorio' | 'opcional';
+
+export const OBRIGATORIEDADE_OPCOES: readonly { value: ObrigatoriedadeFiltro; label: string }[] = [
+  { value: 'todas', label: 'Todas' },
+  { value: 'obrigatorio', label: 'Obrigatório' },
+  { value: 'opcional', label: 'Opcional' },
+];
+
+/**
+ * Rótulos das modalidades REAIS do sistema (`online`, `presencial`, `hibrido`).
+ * Valores desconhecidos mantêm o texto cadastrado — nada é convertido por
+ * adivinhação, só a inicial é capitalizada para exibição.
+ */
+const MODALIDADE_ROTULOS: Record<string, string> = {
+  online: 'Online',
+  presencial: 'Presencial',
+  hibrido: 'Híbrido',
+  hibrida: 'Híbrido',
+  ead: 'Online',
+  remoto: 'Online',
+  semipresencial: 'Híbrido',
+};
+
+/** Chave comparável de modalidade (`Híbrido` → `hibrido`). */
+export function chaveModalidade(valor: string | null | undefined): string {
+  return chaveStatus(valor);
+}
+
+export function rotuloModalidade(valor: string | null | undefined): string {
+  const texto = String(valor ?? '').trim();
+  if (!texto) return 'Não informada';
+  const conhecido = MODALIDADE_ROTULOS[chaveModalidade(texto)];
+  if (conhecido) return conhecido;
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+export interface FiltrosCatalogo {
+  busca?: string;
+  /** `todas` (ou vazio) é curinga. */
+  categoria?: string;
+  /** `todas` (ou vazio) é curinga. */
+  modalidade?: string;
+  obrigatoriedade?: ObrigatoriedadeFiltro;
+  ordenacao?: OrdenacaoCatalogo;
+}
+
+/** Busca (nome/descrição/categoria/modalidade/NR) + categoria + modalidade + obrigatoriedade. */
+export function filtrarCursos<T extends CursoCatalogo>(lista: readonly T[], filtros: FiltrosCatalogo): T[] {
+  const termo = normalizarTexto(filtros.busca);
+  const categoriaAlvo = filtros.categoria && filtros.categoria !== 'todas' ? normalizarTexto(filtros.categoria) : null;
+  const modalidadeAlvo =
+    filtros.modalidade && filtros.modalidade !== 'todas' ? chaveModalidade(filtros.modalidade) : null;
+  const obrigatoriedade = filtros.obrigatoriedade ?? 'todas';
+
+  return lista.filter((item) => {
+    if (termo) {
+      const alvo = normalizarTexto(
+        [item.nome, item.descricao ?? '', item.categoria ?? '', item.modalidade ?? '', item.nr_relacionada ?? '']
+          .filter(Boolean)
+          .join(' ')
+      );
+      if (!alvo.includes(termo)) return false;
+    }
+
+    if (categoriaAlvo && normalizarTexto(item.categoria) !== categoriaAlvo) return false;
+    if (modalidadeAlvo && chaveModalidade(item.modalidade) !== modalidadeAlvo) return false;
+
+    if (obrigatoriedade === 'obrigatorio' && item.obrigatorio !== true) return false;
+    if (obrigatoriedade === 'opcional' && item.obrigatorio === true) return false;
+
+    return true;
+  });
+}
+
+/** Carga horária numérica para ordenação; valores inválidos viram 0. */
+function cargaNumerica(valor: number | string | null | undefined): number {
+  if (valor === null || valor === undefined || valor === '') return 0;
+  const numero = typeof valor === 'number' ? valor : Number(String(valor).replace(',', '.'));
+  return Number.isFinite(numero) && numero > 0 ? numero : 0;
+}
+
+function compararNome(a: CursoCatalogo, b: CursoCatalogo): number {
+  return a.nome.localeCompare(b.nome, 'pt-BR');
+}
+
+/** Ordena uma cópia da lista conforme a opção escolhida (nunca muta a origem). */
+export function ordenarCursos<T extends CursoCatalogo>(lista: readonly T[], ordenacao: OrdenacaoCatalogo): T[] {
+  const copia = [...lista];
+  switch (ordenacao) {
+    case 'recentes':
+      return copia.sort((a, b) => {
+        const dataA = parseDataTreinamento(a.created_at)?.getTime() ?? 0;
+        const dataB = parseDataTreinamento(b.created_at)?.getTime() ?? 0;
+        return dataB - dataA || compararNome(a, b);
+      });
+    case 'carga':
+      return copia.sort(
+        (a, b) => cargaNumerica(b.carga_horaria) - cargaNumerica(a.carga_horaria) || compararNome(a, b)
+      );
+    case 'obrigatorios':
+      return copia.sort(
+        (a, b) => Number(b.obrigatorio === true) - Number(a.obrigatorio === true) || compararNome(a, b)
+      );
+    default:
+      return copia.sort(compararNome);
+  }
+}
+
+/** Categorias REAIS do catálogo (nunca uma lista fixa da referência). */
+export function opcoesCategoriaCurso(lista: readonly CursoCatalogo[]): { value: string; label: string }[] {
+  const vistos = new Map<string, string>();
+  for (const item of lista) {
+    const rotulo = item.categoria?.trim();
+    if (!rotulo) continue;
+    const value = normalizarTexto(rotulo);
+    if (!vistos.has(value)) vistos.set(value, rotulo);
+  }
+  return Array.from(vistos, ([value, label]) => ({ value, label })).sort((a, b) =>
+    a.label.localeCompare(b.label, 'pt-BR')
+  );
+}
+
+/** Modalidades REAIS do catálogo, com o rótulo de exibição do sistema. */
+export function opcoesModalidadeCurso(lista: readonly CursoCatalogo[]): { value: string; label: string }[] {
+  const vistos = new Map<string, string>();
+  for (const item of lista) {
+    const value = chaveModalidade(item.modalidade);
+    if (!value) continue;
+    if (!vistos.has(value)) vistos.set(value, rotuloModalidade(item.modalidade));
+  }
+  return Array.from(vistos, ([value, label]) => ({ value, label })).sort((a, b) =>
+    a.label.localeCompare(b.label, 'pt-BR')
+  );
+}
+
+/** Linha mínima de `inscricoes_cursos` aceita pela agregação do catálogo. */
+export interface InscricaoCursoRegistro {
+  curso_id?: string | null;
+  colaborador_id?: string | null;
+  colaborador?: { nome_completo?: string | null; foto_url?: string | null } | null;
+}
+
+/** Colaborador mínimo (lista da empresa) para nome/foto das inscrições. */
+export interface ColaboradorCursoRegistro {
+  id: string;
+  nome_completo?: string | null;
+  foto_url?: string | null;
+}
+
+/**
+ * Agrupa `inscricoes_cursos` por curso, contando COLABORADORES ÚNICOS.
+ *
+ * A relação curso × participante do catálogo é `inscricoes_cursos` (não
+ * `treinamento_participantes`, que pertence à aba Treinamentos). Sem inscrição,
+ * o curso simplesmente não entra no mapa e o card omite o grupo — nenhum
+ * participante, quantidade ou foto é inventado.
+ */
+export function agruparInscricoesPorCurso(
+  inscricoes: readonly InscricaoCursoRegistro[],
+  colaboradores: readonly ColaboradorCursoRegistro[] = []
+): Record<string, ParticipacaoCurso> {
+  const porColaborador = new Map(colaboradores.map((c) => [c.id, c]));
+
+  const porCurso = new Map<string, Map<string, ColaboradorParticipacao>>();
+  inscricoes.forEach((inscricao, indice) => {
+    const cursoId = inscricao.curso_id;
+    if (!cursoId) return;
+
+    const cadastro = inscricao.colaborador_id ? porColaborador.get(inscricao.colaborador_id) : undefined;
+    const nome = cadastro?.nome_completo?.trim() || inscricao.colaborador?.nome_completo?.trim() || 'Colaborador';
+    const fotoUrl = cadastro?.foto_url ?? inscricao.colaborador?.foto_url ?? null;
+    const chave = inscricao.colaborador_id || `inscricao-${indice}`;
+
+    const mapa = porCurso.get(cursoId) ?? new Map<string, ColaboradorParticipacao>();
+    mapa.set(chave, { id: chave, nome, fotoUrl });
+    porCurso.set(cursoId, mapa);
+  });
+
+  return Object.fromEntries(
+    Array.from(porCurso, ([cursoId, mapa]) => {
+      const lista = Array.from(mapa.values());
+      return [cursoId, { inscritos: lista.length, colaboradores: lista }];
+    })
+  );
+}

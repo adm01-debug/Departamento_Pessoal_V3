@@ -1,0 +1,12 @@
+import { chromium } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+const state=JSON.parse(readFileSync('e2e/.auth/user.json','utf8'));
+const b=await chromium.launch();
+const c=await b.newContext({storageState:state,viewport:{width:1440,height:900}});
+const p=await c.newPage();
+p.on('response',r=>{if(r.status()>=400) console.log('HTTP',r.status(),r.url())});
+p.on('requestfailed',r=>console.log('FAIL',r.url(),r.failure()?.errorText));
+await p.goto('http://localhost:8080/treinamentos',{waitUntil:'domcontentloaded'});
+await p.waitForTimeout(6000);
+console.log('tabs',await p.locator('[role=tab]').count());
+await b.close();

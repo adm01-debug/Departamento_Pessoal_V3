@@ -44,7 +44,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -54,7 +59,9 @@ function setupDeleteChain(error: any = null) {
 // ─── Cursos ───────────────────────────────────────────────────────────────────
 
 describe('catalogoCursoService.listarCursos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns cursos without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Excel Avançado' }];
@@ -86,7 +93,9 @@ describe('catalogoCursoService.listarCursos', () => {
 });
 
 describe('catalogoCursoService.criarCurso', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new curso', async () => {
     const created = { id: 'c-new', nome: 'Python' };
@@ -103,7 +112,9 @@ describe('catalogoCursoService.criarCurso', () => {
 });
 
 describe('catalogoCursoService.atualizarCurso', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns curso', async () => {
     const updated = { id: 'c1', carga_horaria: 20 };
@@ -121,7 +132,9 @@ describe('catalogoCursoService.atualizarCurso', () => {
 });
 
 describe('catalogoCursoService.excluirCurso', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes curso by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -133,7 +146,9 @@ describe('catalogoCursoService.excluirCurso', () => {
 // ─── Trilhas ──────────────────────────────────────────────────────────────────
 
 describe('catalogoCursoService.listarTrilhas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns trilhas without empresa filter', async () => {
     const records = [{ id: 't1', titulo: 'Trilha Dev' }];
@@ -155,7 +170,9 @@ describe('catalogoCursoService.listarTrilhas', () => {
 });
 
 describe('catalogoCursoService.criarTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new trilha', async () => {
     const created = { id: 't-new', titulo: 'Liderança' };
@@ -171,7 +188,9 @@ describe('catalogoCursoService.criarTrilha', () => {
 });
 
 describe('catalogoCursoService.excluirTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes trilha by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -183,7 +202,9 @@ describe('catalogoCursoService.excluirTrilha', () => {
 // ─── Inscrições ───────────────────────────────────────────────────────────────
 
 describe('catalogoCursoService.listarInscricoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns inscricoes without filters', async () => {
     const records = [{ id: 'i1' }];
@@ -206,17 +227,15 @@ describe('catalogoCursoService.listarInscricoes', () => {
   it('includes colaborador and curso joins', async () => {
     const { selectFn } = setupListChain([]);
     await catalogoCursoService.listarInscricoes(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('curso:catalogo_cursos')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('curso:catalogo_cursos'));
   });
 });
 
 describe('catalogoCursoService.criarInscricao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new inscricao', async () => {
     const created = { id: 'i-new', curso_id: 'c1' };
@@ -232,7 +251,9 @@ describe('catalogoCursoService.criarInscricao', () => {
 });
 
 describe('catalogoCursoService.atualizarInscricao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns inscricao', async () => {
     const updated = { id: 'i1', status: 'concluida' };
@@ -247,7 +268,9 @@ describe('catalogoCursoService.atualizarInscricao', () => {
 // ─── Trilhas-Cursos (vinculação) ──────────────────────────────────────────────
 
 describe('catalogoCursoService.listarTrilhasCursos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns trilha cursos for given trilhaId', async () => {
     const orderFn = vi.fn().mockResolvedValue({ data: [{ id: 'tc1' }], error: null });
@@ -262,7 +285,9 @@ describe('catalogoCursoService.listarTrilhasCursos', () => {
 });
 
 describe('catalogoCursoService.vincularCursoTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns vinculo', async () => {
     const created = { id: 'v-new' };
@@ -274,7 +299,9 @@ describe('catalogoCursoService.vincularCursoTrilha', () => {
 });
 
 describe('catalogoCursoService.desvincularCursoTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes vinculo by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -286,7 +313,9 @@ describe('catalogoCursoService.desvincularCursoTrilha', () => {
 // ─── Feedback e Certificados ──────────────────────────────────────────────────
 
 describe('catalogoCursoService.registrarFeedback', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns feedback', async () => {
     const created = { id: 'fb-new', nota_satisfacao: 5 };
@@ -300,7 +329,9 @@ describe('catalogoCursoService.registrarFeedback', () => {
 });
 
 describe('catalogoCursoService.listarCertificados', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns certificados without filters', async () => {
     // listarCertificados: select → optional eq×2 → order → await
@@ -311,5 +342,45 @@ describe('catalogoCursoService.listarCertificados', () => {
 
     const result = await catalogoCursoService.listarCertificados(EMPRESA_ID);
     expect(result).toEqual([{ id: 'cert1' }]);
+  });
+});
+
+/**
+ * Regressão do achado da Fase 2: `listarInstancias` filtrava por `empresa_id`,
+ * coluna que NÃO existe em `treinamento_instancias`. O isolamento real é via
+ * `curso_id → catalogo_cursos.empresa_id`.
+ */
+describe('catalogoCursoService.listarInstancias (isolamento via curso)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('filtra pelo recurso embutido do curso e nunca por empresa_id direto', async () => {
+    const { selectFn, chain } = setupListChain([{ id: 'inst-1' }]);
+
+    const resultado = await catalogoCursoService.listarInstancias(EMPRESA_ID);
+
+    expect(mockFrom).toHaveBeenCalledWith('treinamento_instancias');
+    const select = selectFn.mock.calls[0][0] as string;
+    expect(select).toContain('curso:catalogo_cursos');
+    expect(select).toContain('!inner');
+    expect(chain.eq).toHaveBeenCalledWith('curso.empresa_id', EMPRESA_ID);
+    expect(chain.eq).not.toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.order).toHaveBeenCalledWith('data_inicio', { ascending: true });
+    expect(resultado).toEqual([{ id: 'inst-1' }]);
+  });
+
+  it('preserva o filtro opcional por curso', async () => {
+    const { chain } = setupListChain([{ id: 'inst-2' }]);
+
+    await catalogoCursoService.listarInstancias(EMPRESA_ID, 'curso-9');
+
+    expect(chain.eq).toHaveBeenCalledWith('curso.empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('curso_id', 'curso-9');
+  });
+
+  it('exige empresa antes de consultar', async () => {
+    await expect(catalogoCursoService.listarInstancias('')).rejects.toThrow(/empresa_id obrigatório/);
+    expect(mockFrom).not.toHaveBeenCalled();
   });
 });

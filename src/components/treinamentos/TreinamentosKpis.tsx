@@ -26,12 +26,12 @@ import type { IndicadoresTreinamentos } from './treinamentosDerivacoes';
 
 type TomKpi = 'info' | 'success' | 'warning' | 'accent';
 
-/** Chip do ícone — mesmo padrão plano (`bg-{cor}/10 text-{cor}`) do Dashboard. */
+/** Chip do ícone — mesmo padrão plano do Dashboard, em tile 44×44 do card. */
 const TOM_ICONE: Record<TomKpi, string> = {
-  info: 'bg-info/10 text-info',
-  success: 'bg-success/10 text-success',
-  warning: 'bg-warning/10 text-warning',
-  accent: 'bg-xp/10 text-xp',
+  info: 'border-info/20 bg-info/10 text-info',
+  success: 'border-success/20 bg-success/10 text-success',
+  warning: 'border-warning/20 bg-warning/10 text-warning',
+  accent: 'border-xp/20 bg-xp/10 text-xp',
 };
 
 interface TreinamentoKpiCardProps {
@@ -62,25 +62,25 @@ function TreinamentoKpiCard({
     <MotionCard
       {...entradaCard(index)}
       data-kpi={title}
-      className="h-full overflow-hidden rounded-xl border border-border/60 transition-colors duration-300 hover:border-primary/40"
+      className="h-full overflow-hidden rounded-xl border border-border/60 bg-card/60 transition-colors duration-300 hover:border-primary/40"
     >
-      <CardContent className="flex h-full items-center gap-2.5 p-3">
-        <div className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-full', TOM_ICONE[tone])}>
-          <Icon className="h-4 w-4" />
+      <CardContent className="flex h-full items-center gap-3 p-3.5">
+        <div className={cn('grid h-11 w-11 shrink-0 place-items-center rounded-xl border', TOM_ICONE[tone])}>
+          <Icon className="h-[18px] w-[18px]" />
         </div>
 
         <div className="min-w-0 flex-1">
           <p
-            className="flex items-center gap-1 truncate text-xs font-normal leading-snug tracking-wide text-muted-foreground"
+            className="flex items-center gap-1 truncate text-[11.5px] font-normal leading-snug tracking-wide text-muted-foreground"
             title={title}
           >
             <span className="truncate">{title}</span>
           </p>
 
-          <div className="mt-1.5 flex min-w-0 items-center gap-1.5">
+          <div className="mt-1 flex min-w-0 items-center gap-1.5">
             <span
               className={cn(
-                'truncate font-display text-2xl font-semibold leading-none',
+                'truncate font-display text-[26px] font-semibold leading-none',
                 disponivel ? 'text-foreground' : 'text-muted-foreground/60'
               )}
               title={disponivel ? undefined : (tooltip ?? 'Sem dados suficientes para calcular este indicador.')}
@@ -91,7 +91,7 @@ function TreinamentoKpiCard({
             {disponivel && trend !== null && trend !== undefined && trend !== 0 && (
               <span
                 className={cn(
-                  'inline-flex shrink-0 items-center gap-0.5 text-[10px] font-medium tabular-nums',
+                  'inline-flex shrink-0 items-center gap-0.5 text-[10.5px] font-medium tabular-nums',
                   trend >= 0 ? 'text-success' : 'text-destructive'
                 )}
                 title="Variação contra o ano anterior (certificados emitidos)"
@@ -102,7 +102,7 @@ function TreinamentoKpiCard({
             )}
           </div>
 
-          <p className="mt-1 truncate text-xs leading-snug text-muted-foreground" title={description}>
+          <p className="mt-1 truncate text-[11px] leading-snug text-muted-foreground" title={description}>
             {description}
           </p>
         </div>

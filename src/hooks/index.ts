@@ -1,4 +1,5 @@
 export { useDebounce } from "./useDebounce";
+export { useTrainingImages } from "./useTrainingImages";
 export { useLocalStorage } from "./useLocalStorage";
 export { useMediaQuery } from "./useMediaQuery";
 export { useToast } from "./useToast";

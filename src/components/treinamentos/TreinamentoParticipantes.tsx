@@ -28,25 +28,38 @@ const CORES_AVATAR = [
   'bg-[hsl(var(--chart-5)/0.15)] text-[hsl(var(--chart-5))]',
 ];
 
-function iniciais(nome: string): string {
+// eslint-disable-next-line react-refresh/only-export-components
+export function iniciaisColaborador(nome: string): string {
   const partes = nome.trim().split(/\s+/).filter(Boolean);
   if (partes.length === 0) return '?';
   if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
   return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
 }
 
-function corAvatar(id: string): string {
+// eslint-disable-next-line react-refresh/only-export-components
+export function corAvatarColaborador(id: string): string {
   let soma = 0;
   for (let i = 0; i < id.length; i += 1) soma = (soma + id.charCodeAt(i)) % 997;
   return CORES_AVATAR[soma % CORES_AVATAR.length];
 }
 
-function AvatarParticipante({ colaborador }: { colaborador: ColaboradorParticipacao }) {
+/**
+ * Avatar reutilizável do módulo (tabela de Treinamentos e cards do Catálogo).
+ * Sem foto real, cai nas iniciais com cor derivada do id — nunca numa imagem
+ * inventada.
+ */
+export function AvatarParticipante({
+  colaborador,
+  className,
+}: {
+  colaborador: ColaboradorParticipacao;
+  className?: string;
+}) {
   return (
-    <Avatar className="h-7 w-7 border-2 border-card ring-1 ring-border/40" title={colaborador.nome}>
+    <Avatar className={cn('h-7 w-7 border-2 border-card ring-1 ring-border/40', className)} title={colaborador.nome}>
       {colaborador.fotoUrl && <AvatarImage src={colaborador.fotoUrl} alt={colaborador.nome} />}
-      <AvatarFallback className={cn('text-[10px] font-semibold', corAvatar(colaborador.id))}>
-        {iniciais(colaborador.nome)}
+      <AvatarFallback className={cn('text-[10px] font-semibold', corAvatarColaborador(colaborador.id))}>
+        {iniciaisColaborador(colaborador.nome)}
       </AvatarFallback>
     </Avatar>
   );

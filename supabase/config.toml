@@ -3,3 +3,7 @@ project_id = "frjbfeamybqsejlvmqbl"
 [functions.auth-login]
 verify_jwt = false
 
+
+# Geração de capas: exige JWT (o usuário é validado na função e no vínculo com a empresa).
+[functions.training-image-generate]
+verify_jwt = true

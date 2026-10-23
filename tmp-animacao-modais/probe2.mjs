@@ -1,0 +1,11 @@
+import { chromium } from "@playwright/test";
+import { readFileSync } from "node:fs";
+const state = JSON.parse(readFileSync("e2e/.auth/user.json","utf8"));
+const b = await chromium.launch();
+const c = await b.newContext({ storageState: state, viewport:{width:1440,height:900} });
+const p = await c.newPage();
+await p.goto("http://localhost:8080/colaboradores", { waitUntil:"domcontentloaded" });
+await p.waitForTimeout(4000);
+const links = await p.locator("a").evaluateAll(as => as.map(a => a.getAttribute("href")).filter(h => h && h.includes("/colaboradores/")).slice(0,8));
+console.log(JSON.stringify({ url:p.url(), links, titulo: await p.title() }));
+await c.close(); await b.close();

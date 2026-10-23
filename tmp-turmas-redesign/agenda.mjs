@@ -1,0 +1,21 @@
+import { chromium } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+
+const state = JSON.parse(readFileSync('e2e/.auth/user.json', 'utf8'));
+const browser = await chromium.launch();
+const contexto = await browser.newContext({ storageState: state, viewport: { width: 1440, height: 900 } });
+const page = await contexto.newPage();
+await page.addInitScript(() => localStorage.setItem('dp-tour-completed', 'true'));
+await page.goto('http://localhost:8080/treinamentos', { waitUntil: 'domcontentloaded' });
+await page.getByRole('heading', { name: /^Treinamentos$/ }).waitFor();
+await page.getByRole('tab', { name: /Turmas \/ Instâncias/i }).click();
+await page.waitForTimeout(1800);
+await page.locator('[data-turmas-agenda]').scrollIntoViewIfNeeded();
+const evento = page.locator('[data-turmas-agenda] button[title]').first();
+const titulo = await evento.locator('span').first().textContent();
+await evento.click();
+await page.getByRole('dialog').waitFor({ state: 'visible' });
+const dialogo = (await page.getByRole('dialog').textContent())?.includes(titulo ?? '');
+console.log(JSON.stringify({ evento: titulo, dialogoAbertoComCurso: dialogo }));
+await contexto.close();
+await browser.close();

@@ -2,10 +2,10 @@ import { motion } from 'framer-motion';
 import { Eraser, Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { EntradaPresenca, entradaCard } from '@/components/ui/entrada-cards';
 import { cn } from '@/lib/utils';
+import { FiltroSelect, type OpcaoFiltro } from './treinamentosFiltrosComum';
 import { PERIODO_OPCOES, type PeriodoTreinamento } from './treinamentosDerivacoes';
 
 /**
@@ -19,51 +19,7 @@ import { PERIODO_OPCOES, type PeriodoTreinamento } from './treinamentosDerivacoe
  * fica desabilitado e explica o motivo — nada de opções inventadas.
  */
 
-interface Opcao {
-  value: string;
-  label: string;
-}
-
-function FiltroSelect({
-  label,
-  value,
-  onChange,
-  options,
-  disabled,
-  title,
-  className,
-}: {
-  label: string;
-  value: string;
-  onChange: (valor: string) => void;
-  options: readonly Opcao[];
-  disabled?: boolean;
-  title?: string;
-  className?: string;
-}) {
-  return (
-    <div className={cn('min-w-0', className)} title={title}>
-      <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger
-          aria-label={label}
-          className="h-11 w-full rounded-xl border-border/60 bg-card px-3 text-[12.5px] disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          <div className="flex min-w-0 flex-col items-start gap-0.5 text-left">
-            <span className="text-[9.5px] uppercase leading-none tracking-[0.08em] text-muted-foreground">{label}</span>
-            <SelectValue />
-          </div>
-        </SelectTrigger>
-        <SelectContent side="bottom" align="start">
-          {options.map((opcao) => (
-            <SelectItem key={opcao.value} value={opcao.value}>
-              {opcao.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
+type Opcao = OpcaoFiltro;
 
 export interface TreinamentosFiltrosProps {
   busca: string;

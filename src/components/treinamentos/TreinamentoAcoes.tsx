@@ -8,15 +8,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-  AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { TreinamentosCascadeAlertDialog } from './TreinamentosCascadeAlertDialog';
+import { TreinamentosCascadeItem } from './TreinamentosCascadeDialog';
 import { cn } from '@/lib/utils';
 
 /**
@@ -72,22 +72,24 @@ export function TreinamentoAcoes({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <AlertDialog open={confirmar} onOpenChange={setConfirmar}>
-        <AlertDialogContent>
+      <TreinamentosCascadeAlertDialog open={confirmar} onOpenChange={setConfirmar} blocks={2}>
+        <TreinamentosCascadeItem>
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir treinamento?</AlertDialogTitle>
             <AlertDialogDescription>
               O treinamento “{nome}” será removido permanentemente. Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
+        </TreinamentosCascadeItem>
+        <TreinamentosCascadeItem>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction className={cn(buttonVariants({ variant: 'destructive' }))} onClick={() => onExcluir()}>
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        </TreinamentosCascadeItem>
+      </TreinamentosCascadeAlertDialog>
     </>
   );
 }

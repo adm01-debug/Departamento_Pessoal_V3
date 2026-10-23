@@ -45,6 +45,21 @@ function nomeColaborador(id: string): string {
   return MOCK_COLABORADORES.find((c) => c.id === id)?.nome_completo ?? 'Colaborador Fictício';
 }
 
+/** Foto do colaborador fictício — o mesmo `foto_url` do mock de colaboradores. */
+function fotoColaborador(id: string): string | null {
+  return MOCK_COLABORADORES.find((c) => c.id === id)?.foto_url ?? null;
+}
+
+/** Cargo do colaborador fictício — alimenta a linha do instrutor no card. */
+function cargoColaborador(id: string): string | null {
+  return MOCK_COLABORADORES.find((c) => c.id === id)?.cargo ?? null;
+}
+
+/** Departamento do colaborador fictício — mesma fonte dos cadastros de demo. */
+function departamentoColaborador(id: string): string | null {
+  return MOCK_COLABORADORES.find((c) => c.id === id)?.departamento ?? null;
+}
+
 /* ─── Treinamentos (`treinamentos`) ────────────────────────────────────────── */
 
 export interface TreinamentoMock {
@@ -193,7 +208,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-1',
     empresa_id: EMPRESA,
     nome: 'Integração e Cultura Organizacional',
-    descricao: 'Onboarding institucional.',
+    descricao: 'Trilha de integração para novos colaboradores.',
     categoria: 'Onboarding',
     modalidade: 'online',
     carga_horaria: 8,
@@ -205,7 +220,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-2',
     empresa_id: EMPRESA,
     nome: 'NR-17 Ergonomia',
-    descricao: 'Norma Regulamentadora 17.',
+    descricao: 'Saúde e bem-estar no ambiente de trabalho.',
     categoria: 'Segurança do Trabalho',
     modalidade: 'presencial',
     carga_horaria: 4,
@@ -217,7 +232,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-3',
     empresa_id: EMPRESA,
     nome: 'NR-35 Trabalho em Altura',
-    descricao: 'Segurança em trabalho em altura.',
+    descricao: 'Procedimentos e boas práticas para atividades em altura.',
     categoria: 'Segurança do Trabalho',
     modalidade: 'presencial',
     carga_horaria: 8,
@@ -229,7 +244,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-4',
     empresa_id: EMPRESA,
     nome: 'Comunicação Assertiva',
-    descricao: 'Comunicação e relacionamento interpessoal.',
+    descricao: 'Técnicas de comunicação e feedback.',
     categoria: 'Desenvolvimento Pessoal',
     modalidade: 'online',
     carga_horaria: 6,
@@ -241,7 +256,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-5',
     empresa_id: EMPRESA,
     nome: 'Liderança e Gestão de Equipes',
-    descricao: 'Formação de líderes.',
+    descricao: 'Desenvolvimento de líderes e gestores.',
     categoria: 'Liderança',
     modalidade: 'hibrido',
     carga_horaria: 12,
@@ -253,7 +268,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-6',
     empresa_id: EMPRESA,
     nome: 'LGPD — Proteção de Dados',
-    descricao: 'Lei Geral de Proteção de Dados.',
+    descricao: 'Boas práticas e conformidade com a LGPD.',
     categoria: 'Compliance',
     modalidade: 'online',
     carga_horaria: 4,
@@ -265,7 +280,7 @@ const CURSOS: CursoMock[] = [
     id: 'mock-curso-7',
     empresa_id: EMPRESA,
     nome: 'Diversidade e Inclusão',
-    descricao: 'Cultura organizacional e D&I.',
+    descricao: 'Construindo um ambiente mais plural.',
     categoria: 'Cultura',
     modalidade: 'online',
     carga_horaria: 4,
@@ -279,6 +294,33 @@ export function getMockCursos(): CursoMock[] | undefined {
   return isTreinamentosMockEnabled() ? CURSOS : undefined;
 }
 
+/**
+ * Participação por CURSO — alimenta SOMENTE os cards do Catálogo (avatares,
+ * “+N” e “N inscritos”). Os números seguem a referência visual aprovada do
+ * Catálogo; nenhuma foto/nome é criado aqui: os avatares vêm de
+ * `MOCK_COLABORADORES`, o mesmo cadastro fictício do restante do modo demo.
+ * Com o mock desligado, a página usa `agruparInscricoesPorCurso` sobre
+ * `inscricoes_cursos` reais.
+ */
+export interface ParticipacaoCursoMock {
+  inscritos: number;
+  colaboradores: { id: string; nome: string; fotoUrl: string | null }[];
+}
+
+const PARTICIPACAO_CURSOS: Record<string, ParticipacaoCursoMock> = {
+  'mock-curso-1': { inscritos: 42, colaboradores: avatares(0, 3) },
+  'mock-curso-2': { inscritos: 28, colaboradores: avatares(3, 3) },
+  'mock-curso-3': { inscritos: 20, colaboradores: avatares(5, 3) },
+  'mock-curso-4': { inscritos: 50, colaboradores: avatares(8, 3) },
+  'mock-curso-5': { inscritos: 32, colaboradores: avatares(11, 3) },
+  'mock-curso-6': { inscritos: 46, colaboradores: avatares(6, 3) },
+  'mock-curso-7': { inscritos: 22, colaboradores: avatares(9, 3) },
+};
+
+export function getMockParticipacaoCursos(): Record<string, ParticipacaoCursoMock> | undefined {
+  return isTreinamentosMockEnabled() ? PARTICIPACAO_CURSOS : undefined;
+}
+
 /* ─── Trilhas (`trilhas_aprendizado`) + vínculos (`trilhas_cursos`) ────────── */
 
 export interface TrilhaMock {
@@ -287,6 +329,8 @@ export interface TrilhaMock {
   titulo: string;
   descricao: string;
   nivel: string;
+  /** Coluna real `trilhas_aprendizado.ativo` (boolean). */
+  ativo: boolean;
   created_at: string;
 }
 
@@ -297,6 +341,7 @@ const TRILHAS: TrilhaMock[] = [
     titulo: 'Integração de Novos Colaboradores',
     descricao: 'Jornada de onboarding da empresa.',
     nivel: 'basico',
+    ativo: true,
     created_at: '2026-01-20T09:00:00Z',
   },
   {
@@ -305,6 +350,7 @@ const TRILHAS: TrilhaMock[] = [
     titulo: 'Liderança e Alta Performance',
     descricao: 'Trilha para gestores e líderes.',
     nivel: 'intermediario',
+    ativo: true,
     created_at: '2026-02-25T09:00:00Z',
   },
   {
@@ -313,6 +359,7 @@ const TRILHAS: TrilhaMock[] = [
     titulo: 'Especialista Técnico',
     descricao: 'Aprofundamento técnico e NRs.',
     nivel: 'avancado',
+    ativo: true,
     created_at: '2026-03-15T09:00:00Z',
   },
 ];
@@ -338,7 +385,7 @@ const TRILHAS_CURSOS: Record<string, { curso_id: string; ordem: number; obrigato
   ],
 };
 
-/** Réplica do embed `curso:catalogo_cursos(id, nome, carga_horaria)`. */
+/** Réplica do embed `curso:catalogo_cursos(id, nome, carga_horaria, modalidade)`. */
 export function getMockTrilhasCursos(trilhaId: string):
   | {
       id: string;
@@ -346,7 +393,7 @@ export function getMockTrilhasCursos(trilhaId: string):
       curso_id: string;
       ordem: number;
       obrigatorio: boolean;
-      curso: { id: string; nome: string; carga_horaria: number };
+      curso: { id: string; nome: string; carga_horaria: number; modalidade: string | null };
     }[]
   | undefined {
   if (!isTreinamentosMockEnabled()) return undefined;
@@ -358,7 +405,12 @@ export function getMockTrilhasCursos(trilhaId: string):
       curso_id: v.curso_id,
       ordem: v.ordem,
       obrigatorio: v.obrigatorio,
-      curso: { id: v.curso_id, nome: curso?.nome ?? 'Curso', carga_horaria: curso?.carga_horaria ?? 0 },
+      curso: {
+        id: v.curso_id,
+        nome: curso?.nome ?? 'Curso',
+        carga_horaria: curso?.carga_horaria ?? 0,
+        modalidade: curso?.modalidade ?? null,
+      },
     };
   });
 }
@@ -372,8 +424,15 @@ export interface InscricaoMock {
   curso_id: string;
   status: string;
   data_inicio: string;
-  colaborador: { nome_completo: string };
-  curso: { nome: string };
+  /** Coluna real `inscricoes_cursos.data_conclusao` (DATE opcional). */
+  data_conclusao: string | null;
+  colaborador: {
+    nome_completo: string;
+    foto_url: string | null;
+    cargo: string | null;
+    departamento: string | null;
+  };
+  curso: { nome: string; categoria: string | null };
   created_at: string;
 }
 
@@ -385,6 +444,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-1',
     status: 'concluido',
     data_inicio: '2026-01-15',
+    data_conclusao: '2026-01-20',
     created_at: '2026-01-15T09:00:00Z',
   },
   {
@@ -394,6 +454,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-6',
     status: 'concluido',
     data_inicio: '2026-03-05',
+    data_conclusao: '2026-03-10',
     created_at: '2026-03-05T09:00:00Z',
   },
   {
@@ -403,6 +464,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-5',
     status: 'em_andamento',
     data_inicio: '2026-08-01',
+    data_conclusao: null,
     created_at: '2026-08-01T09:00:00Z',
   },
   {
@@ -412,6 +474,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-4',
     status: 'em_andamento',
     data_inicio: '2026-08-10',
+    data_conclusao: null,
     created_at: '2026-08-10T09:00:00Z',
   },
   {
@@ -421,6 +484,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-2',
     status: 'inscrito',
     data_inicio: '2026-09-01',
+    data_conclusao: null,
     created_at: '2026-08-25T09:00:00Z',
   },
   {
@@ -430,6 +494,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-3',
     status: 'inscrito',
     data_inicio: '2026-09-15',
+    data_conclusao: null,
     created_at: '2026-09-02T09:00:00Z',
   },
   {
@@ -439,6 +504,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-7',
     status: 'concluido',
     data_inicio: '2025-08-25',
+    data_conclusao: '2025-08-28',
     created_at: '2025-08-25T09:00:00Z',
   },
   {
@@ -448,6 +514,7 @@ const INSCRICOES: Omit<InscricaoMock, 'colaborador' | 'curso'>[] = [
     curso_id: 'mock-curso-1',
     status: 'concluido',
     data_inicio: '2025-06-10',
+    data_conclusao: '2025-06-15',
     created_at: '2025-06-10T09:00:00Z',
   },
 ];
@@ -456,8 +523,16 @@ export function getMockInscricoes(): InscricaoMock[] | undefined {
   if (!isTreinamentosMockEnabled()) return undefined;
   return INSCRICOES.map((i) => ({
     ...i,
-    colaborador: { nome_completo: nomeColaborador(i.colaborador_id) },
-    curso: { nome: CURSOS.find((c) => c.id === i.curso_id)?.nome ?? 'Curso' },
+    colaborador: {
+      nome_completo: nomeColaborador(i.colaborador_id),
+      foto_url: fotoColaborador(i.colaborador_id),
+      cargo: cargoColaborador(i.colaborador_id),
+      departamento: departamentoColaborador(i.colaborador_id),
+    },
+    curso: {
+      nome: CURSOS.find((c) => c.id === i.curso_id)?.nome ?? 'Curso',
+      categoria: CURSOS.find((c) => c.id === i.curso_id)?.categoria ?? null,
+    },
   }));
 }
 
@@ -471,8 +546,10 @@ export interface InstanciaMock {
   data_inicio: string;
   status: string;
   capacidade_maxima: number;
+  /** Coluna real `treinamento_instancias.local_link` (TEXT). */
+  local_link: string;
   curso: { nome: string };
-  instrutor: { nome_completo: string };
+  instrutor: { nome_completo: string; foto_url: string | null; cargo: string | null };
 }
 
 const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
@@ -484,6 +561,7 @@ const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
     data_inicio: '2026-09-01T12:00:00Z',
     status: 'planejado',
     capacidade_maxima: 20,
+    local_link: 'Sala 01',
   },
   {
     id: 'mock-inst-2',
@@ -493,6 +571,7 @@ const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
     data_inicio: '2026-09-15T12:00:00Z',
     status: 'planejado',
     capacidade_maxima: 15,
+    local_link: 'Sala 02',
   },
   {
     id: 'mock-inst-3',
@@ -502,6 +581,7 @@ const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
     data_inicio: '2026-08-01T12:00:00Z',
     status: 'em_curso',
     capacidade_maxima: 25,
+    local_link: 'Sala 03 + Online',
   },
   {
     id: 'mock-inst-4',
@@ -511,6 +591,7 @@ const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
     data_inicio: '2026-02-05T12:00:00Z',
     status: 'concluido',
     capacidade_maxima: 30,
+    local_link: 'Microsoft Teams',
   },
   {
     id: 'mock-inst-5',
@@ -520,6 +601,7 @@ const INSTANCIAS: Omit<InstanciaMock, 'curso' | 'instrutor'>[] = [
     data_inicio: '2026-08-20T12:00:00Z',
     status: 'concluido',
     capacidade_maxima: 18,
+    local_link: 'Microsoft Teams',
   },
 ];
 
@@ -528,7 +610,11 @@ export function getMockInstancias(): InstanciaMock[] | undefined {
   return INSTANCIAS.map((i) => ({
     ...i,
     curso: { nome: CURSOS.find((c) => c.id === i.curso_id)?.nome ?? 'Curso' },
-    instrutor: { nome_completo: nomeColaborador(i.instrutor_id) },
+    instrutor: {
+      nome_completo: nomeColaborador(i.instrutor_id),
+      foto_url: fotoColaborador(i.instrutor_id),
+      cargo: cargoColaborador(i.instrutor_id),
+    },
   }));
 }
 
@@ -543,12 +629,14 @@ export interface CertificadoMock {
   data_validade: string | null;
   codigo_autenticacao: string;
   curso: { nome: string; carga_horaria: number };
-  colaborador: { nome_completo: string };
+  colaborador: { nome_completo: string; foto_url: string | null; cargo: string | null };
 }
 
 // `data_emissao`/`data_validade` usam horário-meio-dia UTC: a página as exibe com
 // `new Date(x).toLocaleDateString('pt-BR')`, e um 'YYYY-MM-DD' cru recuaria um
 // dia em UTC-3. O cert-6 tem validade já vencida (badge destructive).
+// O cert-4 vence em ~29 dias: exercita o estado “A vencer” (janela de 30 dias
+// usada pelo sistema) sem alterar realização/contagem de certificados.
 const CERTIFICADOS: Omit<CertificadoMock, 'curso' | 'colaborador'>[] = [
   {
     id: 'mock-cert-1',
@@ -583,7 +671,7 @@ const CERTIFICADOS: Omit<CertificadoMock, 'curso' | 'colaborador'>[] = [
     colaborador_id: 'mock-3',
     curso_id: 'mock-curso-4',
     data_emissao: '2026-04-20T12:00:00Z',
-    data_validade: null,
+    data_validade: '2026-11-20T12:00:00Z',
     codigo_autenticacao: '11223344',
   },
   {
@@ -613,7 +701,11 @@ export function getMockCertificados(): CertificadoMock[] | undefined {
     return {
       ...c,
       curso: { nome: curso?.nome ?? 'Curso', carga_horaria: curso?.carga_horaria ?? 0 },
-      colaborador: { nome_completo: nomeColaborador(c.colaborador_id) },
+      colaborador: {
+        nome_completo: nomeColaborador(c.colaborador_id),
+        foto_url: fotoColaborador(c.colaborador_id),
+        cargo: cargoColaborador(c.colaborador_id),
+      },
     };
   });
 }
