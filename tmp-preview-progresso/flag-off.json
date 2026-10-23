@@ -1,0 +1,47 @@
+{
+  "linhas": 8,
+  "progresso": [
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    },
+    {
+      "texto": "Não informado",
+      "barras": 0
+    }
+  ],
+  "status": [
+    "Concluído",
+    "Concluído",
+    "Em andamento",
+    "Em andamento",
+    "Inscrito",
+    "Inscrito",
+    "Concluído",
+    "Concluído"
+  ]
+}

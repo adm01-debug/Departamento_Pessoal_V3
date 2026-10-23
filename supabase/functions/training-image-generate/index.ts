@@ -13,11 +13,15 @@
  *      chave ⇒ 503, SEM reivindicar trabalho e SEM custo.
  *   4. Vínculo real com a empresa (`user_empresas`) + papel autorizado
  *      (`admin`/`rh`). UUID do cliente nunca é confiado.
- *   5. Rate limit por usuário (proteção de custo).
- *   6. Pipeline: carrega o cadastro escopado, reconstrói briefing, faz o claim
+ *   5. Allowlist TEMPORÁRIA de teste (`TRAINING_IMAGE_ALLOWED_EMPRESA_ID` +
+ *      `TRAINING_IMAGE_ALLOWED_CONTENT_ID`): proteção ADICIONAL, server-side.
+ *      Sem os dois IDs configurados ⇒ 503; empresa/curso diferente ⇒ 403.
+ *      Aplicada ANTES de idempotência, quota, claim e provedor.
+ *   6. Rate limit por usuário (proteção de custo).
+ *   7. Pipeline: carrega o cadastro escopado, reconstrói briefing, faz o claim
  *      atômico, chama o provedor, valida, sobe no bucket privado e atualiza
  *      `training_images` para `succeeded` (ou `failed`, sem loop).
- *   7. Turmas e certificados NÃO geram: herdam a imagem do curso.
+ *   8. Turmas e certificados NÃO geram: herdam a imagem do curso.
  *
  * NÃO usa `waitUntil` para “deixar rodando”: o estado do trabalho vive na
  * tabela e a resposta só sai depois de concluído/recusado.
@@ -26,26 +30,30 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { createErrorResponse, getCorsHeaders, handlePreflight, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
-import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
-import { gerarCapaDeTreinamento, type DepsPipelineCapa } from '../_shared/trainingImages/pipeline.ts';
+import { checkRateLimitDuplo, rateLimitDuploResponse } from '../_shared/rateLimit.ts';
+import { validarAllowlist } from '../_shared/trainingImages/allowlist.ts';
+import { isUuid } from '../_shared/trainingImages/uuid.ts';
+import { gerarCapaDeTreinamento } from '../_shared/trainingImages/pipeline.ts';
 import {
   criarOpenAITrainingImageProvider,
   OPENAI_MODELO_PADRAO,
   OPENAI_TAMANHO_PADRAO,
 } from '../_shared/trainingImages/openaiProvider.ts';
-import { montarCaminhoImagem, TRAINING_IMAGES_BUCKET } from '../_shared/trainingImages/storagePath.ts';
-import type {
-  ClaimTrainingImageResult,
-  ConteudoTreinamento,
-  TrainingContentType,
-} from '../_shared/trainingImages/types.ts';
+import { criarDepsSupabase } from '../_shared/trainingImages/supabaseDeps.ts';
+import { consultarEstadoDaCapa } from '../_shared/trainingImages/estadoCapa.ts';
+import {
+  chaveEmpresa,
+  chaveUsuario,
+  envNumero,
+  JANELA_QUOTA_SEG,
+  LIMITE_EMPRESA_PADRAO,
+  LIMITE_USUARIO_PADRAO,
+} from '../_shared/trainingImages/quotas.ts';
+import type { TrainingContentType } from '../_shared/trainingImages/types.ts';
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 /** Só estes dois tipos geram imagem; os demais herdam do curso. */
 const TIPOS_COM_GERACAO: readonly TrainingContentType[] = ['course', 'learning_path'];
 const PAPEIS_AUTORIZADOS = new Set(['admin', 'rh']);
-const RATE_LIMIT_PADRAO = 5;
-const JANELA_RATE_LIMIT_SEG = 60 * 60;
 
 function json(payload: unknown, status: number, req: Request): Response {
   return new Response(JSON.stringify(payload), {
@@ -56,11 +64,6 @@ function json(payload: unknown, status: number, req: Request): Response {
       'Cache-Control': 'no-store',
     },
   });
-}
-
-function envNumero(nome: string, padrao: number): number {
-  const valor = Number(Deno.env.get(nome));
-  return Number.isFinite(valor) && valor > 0 ? valor : padrao;
 }
 
 interface CorpoGeracao {
@@ -75,142 +78,26 @@ function lerCorpo(body: unknown): CorpoGeracao | null {
   const empresaId = String(dados.empresa_id ?? '').trim();
   const contentType = String(dados.content_type ?? '').trim() as TrainingContentType;
   const contentId = String(dados.content_id ?? '').trim();
-  if (!UUID_RE.test(empresaId) || !UUID_RE.test(contentId)) return null;
+  if (!isUuid(empresaId) || !isUuid(contentId)) return null;
   if (!TIPOS_COM_GERACAO.includes(contentType)) return null;
   return { empresa_id: empresaId, content_type: contentType, content_id: contentId };
 }
 
 
-/* ─── Portas do pipeline (Supabase, service role) ─────────────────────────── */
-
-type Admin = ReturnType<typeof createClient>;
-
-async function carregarConteudo(admin: Admin, entrada: {
-  empresaId: string;
-  contentType: TrainingContentType;
-  contentId: string;
-}): Promise<ConteudoTreinamento | null> {
-  if (entrada.contentType === 'course') {
-    const { data } = await admin
-      .from('catalogo_cursos')
-      .select('id, nome, descricao, categoria, modalidade, carga_horaria, obrigatorio, empresa_id')
-      .eq('id', entrada.contentId)
-      .eq('empresa_id', entrada.empresaId)
-      .maybeSingle();
-    if (!data) return null;
-    return {
-      contentType: 'course',
-      contentId: String(data.id),
-      empresaId: String(data.empresa_id),
-      name: String(data.nome ?? ''),
-      description: data.descricao ?? null,
-      category: data.categoria ?? null,
-      modality: data.modalidade ?? null,
-      workloadHours: data.carga_horaria ?? null,
-      mandatory: data.obrigatorio ?? null,
-    };
-  }
-
-  if (entrada.contentType === 'learning_path') {
-    // Somente colunas existentes: `trilhas_aprendizado` tem `nome` (não
-    // `titulo` no schema gerado). Selecionar coluna inexistente derrubaria a
-    // consulta inteira.
-    const { data } = await admin
-      .from('trilhas_aprendizado')
-      .select('id, nome, descricao, nivel, empresa_id')
-      .eq('id', entrada.contentId)
-      .eq('empresa_id', entrada.empresaId)
-      .maybeSingle();
-    if (!data) return null;
-
-    const { data: vinculos } = await admin
-      .from('trilhas_cursos')
-      .select('ordem, curso:catalogo_cursos(nome)')
-      .eq('trilha_id', entrada.contentId)
-      .order('ordem', { ascending: true });
-
-    const nomes = ((vinculos ?? []) as Array<{ curso?: { nome?: string | null } | null }>)
-      .map((vinculo) => String(vinculo?.curso?.nome ?? '').trim())
-      .filter(Boolean);
-
-    return {
-      contentType: 'learning_path',
-      contentId: String(data.id),
-      empresaId: String(data.empresa_id),
-      name: String(data.nome ?? ''),
-      description: data.descricao ?? null,
-      level: data.nivel ?? null,
-      linkedCourseNames: nomes,
-    };
-  }
-
-  // Defesa: a função nunca gera para turma/certificado.
-  return null;
-}
-
-async function reivindicarTrabalho(admin: Admin, dados: {
-  empresaId: string;
-  contentType: TrainingContentType;
-  contentId: string;
-  contentHash: string;
-  promptVersion: string;
-  maxAttempts: number;
-}): Promise<ClaimTrainingImageResult> {
-  const { data, error } = await admin.rpc('claim_training_image', {
-    p_empresa_id: dados.empresaId,
-
-function depsDoPipeline(admin: Admin, provider: DepsPipelineCapa['provider']): DepsPipelineCapa {
-  return {
-    provider,
-    carregarConteudo: (entrada) => carregarConteudo(admin, entrada),
-    claim: (dados) => reivindicarTrabalho(admin, dados),
-
-    async enviarImagem({ empresaId, contentType, contentId, bytes, mimeType, extensao }) {
-      const caminho = montarCaminhoImagem({ empresaId, contentType, contentId, extensao });
-      const { error } = await admin.storage.from(TRAINING_IMAGES_BUCKET).upload(caminho, bytes, {
-        contentType: mimeType,
-        upsert: true,
-      });
-      if (error) throw error;
-      return caminho;
-    },
-
-    async atualizarSucesso({ id, storagePath, provider: providerId, model, promptVersion }) {
-      const { error } = await admin
-        .from('training_images')
-        .update({
-          status: 'succeeded',
-          storage_path: storagePath,
-          provider: providerId,
-          model,
-          prompt_version: promptVersion,
-          completed_at: new Date().toISOString(),
-          last_error: null,
-        })
-        .eq('id', id);
-      if (error) throw error;
-    },
-
-    async atualizarFalha({ id, erro, permanente }) {
-      const { error } = await admin
-        .from('training_images')
-        .update({
-          status: 'failed',
-          last_error: erro,
-          completed_at: new Date().toISOString(),
-          provider: provider.id,
-          // Erro permanente esgota as tentativas: repetir não resolveria.
-          ...(permanente ? { attempts: 3 } : {}),
-        })
-        .eq('id', id);
-      if (error) throw error;
-    },
-  };
-}
+/* ─── Portas do pipeline ──────────────────────────────────────────────────── */
+// Implementação compartilhada com o worker automático:
+// `_shared/trainingImages/supabaseDeps.ts`.
 
 function statusHttpParaResultado(motivo: string): number {
   if (motivo === 'conteudo_inexistente') return 404;
   if (motivo === 'em_processamento') return 202;
+  if (motivo === 'ja_processado') return 200;
+  if (motivo === 'limite_de_tentativas') return 409;
+  // Resultado pago desconhecido: NÃO é retentável automaticamente (custo).
+  if (motivo === 'resultado_desconhecido') return 409;
+  if (motivo === 'provedor_desativado') return 503;
+  return 502;
+}
 
 Deno.serve(async (req) => {
   const preflight = handlePreflight(req);
@@ -288,13 +175,72 @@ Deno.serve(async (req) => {
     );
     if (!autorizado) return json({ error: 'SEM_PERMISSAO_PARA_GERAR' }, 403, req);
 
-    // ── Rate limit por usuário (custo).
-    const rateLimit = await checkRateLimit(admin, {
-      key: `training-image-generate:${user.id}`,
-      limit: envNumero('TRAINING_IMAGE_RATE_LIMIT', RATE_LIMIT_PADRAO),
-      windowSec: JANELA_RATE_LIMIT_SEG,
+    // ── Allowlist TEMPORÁRIA de teste: proteção ADICIONAL, server-side.
+    //    Aplicada depois de JWT/vínculo/papel e ANTES de idempotência, quota,
+    //    claim e provedor. Sem os dois IDs configurados, nada é gerado.
+    const allowlist = validarAllowlist(
+      { empresaId: entrada.empresa_id, contentId: entrada.content_id },
+      {
+        empresaId: Deno.env.get('TRAINING_IMAGE_ALLOWED_EMPRESA_ID'),
+        contentId: Deno.env.get('TRAINING_IMAGE_ALLOWED_CONTENT_ID'),
+      }
+    );
+    if (!allowlist.ok) {
+      return json(
+        { ok: false, motivo: allowlist.motivo, detalhe: allowlist.detalhe },
+        allowlist.status,
+        req
+      );
+    }
+
+    /**
+     * ── IDEMPOTÊNCIA ANTES DA QUOTA (proteção de custo) ────────────────────
+     * Mesma decisão usada pelo worker automático (`consultarEstadoDaCapa`):
+     * capa concluída, trabalho em andamento, falha definitiva e resultado
+     * desconhecido são resolvidos aqui, sem consumir quota e sem chamar o
+     * provedor. O hash é o MESMO do pipeline (edição libera nova versão).
+     */
+    const estado = await consultarEstadoDaCapa(admin, {
+      empresaId: entrada.empresa_id,
+      contentType: entrada.content_type,
+      contentId: entrada.content_id,
     });
-    if (!rateLimit.allowed) return rateLimitResponse(rateLimit);
+    if (!estado) return json({ error: 'CONTEUDO_INEXISTENTE' }, 404, req);
+
+    if (estado.jaConcluida) {
+      return json({ ok: true, motivo: 'ja_processado' }, 200, req);
+    }
+    if (estado.emAndamento) {
+      return json({ ok: false, motivo: 'em_processamento' }, 202, req);
+    }
+    if (estado.incerto) {
+      return json(
+        {
+          ok: false,
+          motivo: 'resultado_desconhecido',
+          detalhe:
+            'A geração anterior pode ter sido concluída e cobrada; reconciliação manual necessária para evitar cobrança duplicada.',
+        },
+        409,
+        req
+      );
+    }
+    if (estado.esgotado) {
+      return json({ ok: false, motivo: 'limite_de_tentativas' }, 409, req);
+    }
+
+    // ── Rate limit DUPLO (empresa + usuário), atômico e persistente.
+    //    Só consome quota quando os DOIS baldes permitem: nenhum usuário
+    //    consegue ignorar o teto do tenant trocando de conta, e uma empresa não
+    //    consome a quota de outra.
+    const rateLimit = await checkRateLimitDuplo(admin, {
+      empresaKey: chaveEmpresa(entrada.empresa_id),
+      empresaLimit: envNumero('TRAINING_IMAGE_RATE_LIMIT_EMPRESA', LIMITE_EMPRESA_PADRAO),
+      usuarioKey: chaveUsuario(user.id),
+      usuarioLimit: envNumero('TRAINING_IMAGE_RATE_LIMIT', LIMITE_USUARIO_PADRAO),
+      windowSec: JANELA_QUOTA_SEG,
+    });
+    if (!rateLimit.allowed) return rateLimitDuploResponse(rateLimit);
 
     const provider = criarOpenAITrainingImageProvider({
       apiKey,
@@ -310,7 +256,7 @@ Deno.serve(async (req) => {
         contentType: entrada.content_type,
         contentId: entrada.content_id,
       },
-      depsDoPipeline(admin, provider)
+      criarDepsSupabase(admin, provider)
     );
 
     if (resultado.gerado) {
@@ -343,25 +289,3 @@ Deno.serve(async (req) => {
     );
   }
 });
-
-  if (motivo === 'ja_processado') return 200;
-  if (motivo === 'limite_de_tentativas') return 409;
-  if (motivo === 'provedor_desativado') return 503;
-  return 502;
-}
-
-    p_content_type: dados.contentType,
-    p_content_id: dados.contentId,
-    p_content_hash: dados.contentHash,
-    p_prompt_version: dados.promptVersion,
-    p_max_attempts: dados.maxAttempts,
-  });
-  if (error) throw error;
-  const linha = Array.isArray(data) ? data[0] : data;
-  return {
-    reclamado: Boolean(linha?.reclamado),
-    id: linha?.id ?? null,
-    status: linha?.status ?? null,
-    attempts: linha?.attempts ?? null,
-  };
-}

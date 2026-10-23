@@ -15,13 +15,13 @@
  * alguém tentar ligá-lo em produção.
  * ============================================================================
  */
-import { decodificarBase64 } from './imageValidation';
+import { decodificarBase64 } from './imageValidation.ts';
 import {
   TrainingImageProviderError,
   type GeneratedTrainingImage,
   type TrainingImageProvider,
   type TrainingImageRequest,
-} from './types';
+} from './types.ts';
 
 /** PNG 1×1 transparente (fixture local, não é imagem de IA). */
 export const FIXTURE_PNG_BASE64 =

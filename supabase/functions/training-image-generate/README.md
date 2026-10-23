@@ -30,7 +30,9 @@ Turmas e certificados **não** são aceitos: herdam a capa do curso.
 | `TRAINING_IMAGE_SIZE` | `1536x864` | Allowlist: `1536x864`, `1536x1024`, `1024x1536`, `1024x1024`, `auto`. |
 | `TRAINING_IMAGE_QUALITY` | `medium` | `low`/`medium`/`high`/`auto`. |
 | `TRAINING_IMAGE_TIMEOUT_MS` | `90000` | Timeout da chamada. |
-| `TRAINING_IMAGE_RATE_LIMIT` | `5` | Gerações por usuário por hora. |
+| `TRAINING_IMAGE_RATE_LIMIT` | `5` | Gerações por **usuário** por hora. |
+| `TRAINING_IMAGE_RATE_LIMIT_EMPRESA` | `20` | Gerações por **empresa** por hora (teto compartilhado). |
+| `TRAINING_IMAGE_AUTOQUEUE_ENABLED` | `false` | Liga o worker da fila automática (outra função). |
 
 ## Segurança
 
@@ -56,10 +58,31 @@ Turmas e certificados **não** são aceitos: herdam a capa do curso.
 | `400/422` | corpo inválido |
 | `401/403` | sem JWT, sem vínculo com a empresa ou sem papel autorizado |
 | `404` | conteúdo inexistente **ou de outra empresa** (não distingue) |
-| `409` | limite de tentativas atingido |
+| `409` | limite de tentativas atingido **ou** resultado pago desconhecido (`resultado_desconhecido`) |
 | `429` | rate limit do usuário |
 | `502` | falha do provedor/upload/registro |
 | `503` | integração desativada ou sem chave |
+
+## Controle de custo
+
+1. **Idempotência antes da quota** — capa concluída, trabalho em andamento,
+   falha permanente esgotada ou resultado desconhecido são resolvidos ANTES do
+   `checkRateLimit`: solicitação duplicada não consome o limite de 5/hora.
+2. **Resultado desconhecido não é reenviado** — timeout, falha de rede, 5xx e
+   falha ao baixar a imagem marcam `failed` com `last_error` iniciado por
+   `resultado_desconhecido` e `attempts` esgotado. `X-Client-Request-Id` /
+   `operationId` servem para rastreabilidade, **não** impedem cobrança
+   duplicada; a proteção real é não repetir automaticamente.
+3. **Upload/registro falhos** também não liberam nova tentativa automática: a
+   imagem já foi gerada e cobrada.
+4. O rate limit é **persistente** (`public.rate_limits` + RPC
+   `edge_rate_limit_check_dual` com advisory lock), compartilhado por todas as
+   instâncias da função e aplicado em **dois baldes**:
+   - empresa (`training-image-generate:empresa:<id>`, 20/hora) — impede que
+     usuários diferentes ignorem o teto do tenant;
+   - usuário (`training-image-generate:usuario:<id>`, 5/hora) — impede que uma
+     pessoa consuma a empresa toda.
+   A quota só é consumida quando os **dois** permitem (sem consumo parcial).
 
 ## Limites da plataforma (Supabase)
 
@@ -75,7 +98,17 @@ O fluxo completo é exercitado com o provedor simulado
 (`_shared/trainingImages/simulatedProvider.ts`), que devolve um PNG 1×1 local:
 
 ```bash
+# unidade + pipeline + guardrails (sem banco, sem rede)
 npx vitest run src/services/trainingImages/__tests__
+
+# PostgreSQL local ISOLADO: migration real, RLS, claim atômico e concorrência
+node scripts/training-images-local/run-tests.mjs
+
+# pipeline real + provedor simulado + claim SQL + arquivo local
+npx deno run -A scripts/training-images-local/pipeline-e2e.ts
+
+# HTTP no runtime Deno com stub local do Supabase (CORS/CSRF/auth/quota)
+node scripts/training-images-local/edge-http-test.mjs
 ```
 
 Testes cobrem: autorização, isolamento por empresa, concorrência, idempotência,

@@ -8,7 +8,7 @@
  * bytes), o tamanho mínimo/máximo e devolve o MIME correto.
  * ============================================================================
  */
-import { TrainingImageProviderError } from './types';
+import { TrainingImageProviderError } from './types.ts';
 
 /** Limite do bucket `training-images` (5 MB). */
 export const LIMITE_BYTES_IMAGEM = 5 * 1024 * 1024;

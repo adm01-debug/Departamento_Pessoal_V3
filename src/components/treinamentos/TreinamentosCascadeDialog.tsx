@@ -1,7 +1,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import {
   cascadeContainerVariants,
@@ -28,6 +28,12 @@ import {
  *
  * Toda a semântica continua no Radix: role/aria, focus trap, Escape, clique
  * no véu, restauração de foco e bloqueio de scroll.
+ *
+ * FOCO: o Radix só devolve o foco ao gatilho quando existe um `Dialog.Trigger`.
+ * Como as janelas do módulo são abertas por botões/itens de menu fora do Root,
+ * a moldura guarda o elemento focado no instante da abertura e o refoca quando
+ * a saída termina — a menos que o consumidor passe o próprio
+ * `onCloseAutoFocus` (casos com ref explícito).
  * ============================================================================
  */
 export interface TreinamentosCascadeDialogProps {
@@ -49,6 +55,8 @@ export function TreinamentosCascadeDialog({
   onCloseAutoFocus,
   children,
 }: TreinamentosCascadeDialogProps) {
+  const elementoDeOrigem = useRef<HTMLElement | null>(null);
+
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -63,7 +71,26 @@ export function TreinamentosCascadeDialog({
                 exit="closed"
               />
             </DialogPrimitive.Overlay>
-            <DialogPrimitive.Content asChild forceMount onCloseAutoFocus={onCloseAutoFocus}>
+            <DialogPrimitive.Content
+              asChild
+              forceMount
+              aria-modal="true"
+              onOpenAutoFocus={() => {
+                const ativo = document.activeElement;
+                elementoDeOrigem.current = ativo instanceof HTMLElement && ativo !== document.body ? ativo : null;
+              }}
+              onCloseAutoFocus={(event) => {
+                if (onCloseAutoFocus) {
+                  onCloseAutoFocus(event);
+                  return;
+                }
+                const alvo = elementoDeOrigem.current;
+                if (alvo?.isConnected) {
+                  event.preventDefault();
+                  alvo.focus();
+                }
+              }}
+            >
               <motion.div
                 className={cn(
                   'fixed left-[50%] top-[50%] z-50 grid w-full max-w-[460px] translate-x-[-50%] translate-y-[-50%] gap-3 border bg-background p-5 shadow-lg sm:rounded-lg',

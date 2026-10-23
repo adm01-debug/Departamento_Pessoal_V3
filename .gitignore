@@ -33,3 +33,8 @@ Thumbs.db
 /tmp-recuperacao-feedbacks/
 /tmp-auth-diag/
 /_tmp-*.mjs
+
+# Banco local isolado dos testes de imagens de treinamento
+/tmp-training-images-pg/
+/deno-check.log
+/deno.lock

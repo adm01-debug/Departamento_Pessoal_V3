@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MotionCard } from '@/components/ui/entrada-cards';
+import { cardVariants } from '@/components/dashboard/MetricCard';
 import { catalogoCursoService } from '@/services';
 import { cn } from '@/lib/utils';
 import { TrilhaBanner, tomBannerTrilha } from './TrilhaBanner';
@@ -41,22 +42,14 @@ import {
 } from './trilhasDerivacoes';
 
 /**
- * ENTRADA DO CARD — mesma CURVA do sistema (`cardVariants` do Dashboard:
- * ease [0.25, 0.46, 0.45, 0.94]) em ritmo de grade: 350 ms por card e 60 ms de
- * intervalo, com subida de 7 px. A `key` estável + o latch `animar` (ver
- * TrilhaCard) garantem que a cascata toca UMA vez ao acessar a aba: hover,
- * filtro, paginação e re-render não reanimam.
+ * ENTRADA DO CARD — o MESMO `cardVariants` dos KPI Cards do Dashboard Executivo
+ * (fade + subida de 20 px, 0.4 s, ease `[0.25, 0.46, 0.45, 0.94]` e stagger de
+ * 0.08 s por índice). O objeto é IMPORTADO da referência (não é uma cópia), então
+ * qualquer ajuste no Dashboard move esta aba junto.
+ *
+ * O latch `animar` (ver `TreinamentosPage`) mantém a cascata só na entrada da
+ * aba: filtro, paginação, hover e re-render não reiniciam a animação.
  */
-// eslint-disable-next-line react-refresh/only-export-components
-export const trilhaCardVariants: Variants = {
-  hidden: { opacity: 0, y: 7 },
-  visible: (index: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, delay: Math.min(Math.max(index, 0), 8) * 0.06, ease: [0.25, 0.46, 0.45, 0.94] },
-  }),
-};
-
 /** Depois da primeira apresentação, o mesmo card usa um variant sem transição. */
 // eslint-disable-next-line react-refresh/only-export-components
 export const trilhaCardVariantsEstaticas: Variants = {
@@ -203,7 +196,7 @@ export function TrilhaCard({ trilha, index, animar, inscricoes, onExplorar, onEx
   return (
     <MotionCard
       custom={index}
-      variants={animar ? trilhaCardVariants : trilhaCardVariantsEstaticas}
+      variants={animar ? cardVariants : trilhaCardVariantsEstaticas}
       initial="hidden"
       animate="visible"
       className={cn(

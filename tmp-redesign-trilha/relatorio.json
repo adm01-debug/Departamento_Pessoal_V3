@@ -1,0 +1,108 @@
+{
+  "conteudo": {
+    "paragrafos": [
+      "Básico · Jornada de onboarding da empresa.",
+      "Integração e Cultura Organizacional",
+      "8h · Online · Obrigatório",
+      "LGPD — Proteção de Dados",
+      "4h · Online · Obrigatório",
+      "Diversidade e Inclusão",
+      "4h · Online · Opcional",
+      "Passe o mouse sobre uma etapa para desvincular o curso.",
+      "Sobre a sequência",
+      "A sequência segue a ordem cadastrada. A conclusão individual das etapas ainda não é registrada pela plataforma."
+    ],
+    "pills": [
+      "3 cursos",
+      "16 horas",
+      "4 inscritos"
+    ],
+    "numeros": [
+      "01",
+      "02",
+      "03"
+    ],
+    "meta": [
+      "Integração e Cultura Organizacional",
+      "8h · Online · Obrigatório",
+      "LGPD — Proteção de Dados",
+      "4h · Online · Obrigatório",
+      "Diversidade e Inclusão",
+      "4h · Online · Opcional"
+    ],
+    "role": "dialog",
+    "ariaModal": null,
+    "labelledby": "radix-_r_aa_",
+    "overflowX": false,
+    "overflowY": false,
+    "largura": 800,
+    "altura": 507,
+    "pillsAltura": [
+      32,
+      32,
+      32
+    ]
+  },
+  "hoverRemover": {
+    "opacidade": 1,
+    "titulo": "Desvincular Integração e Cultura Organizacional da trilha",
+    "aria": "Desvincular Integração e Cultura Organizacional da trilha"
+  },
+  "animacao": {
+    "abertoEmMs": 879,
+    "overlayEmMs": 224,
+    "escalaInicial": {
+      "x": 1,
+      "y": 1
+    },
+    "blocos": [
+      {
+        "bloco": "Integração de Novos ColaboradoresB",
+        "inicioMs": 911
+      },
+      {
+        "bloco": "3 cursos16 horas4 inscritos",
+        "inicioMs": 1013
+      },
+      {
+        "bloco": "Jornada de aprendizagem(3)Adiciona",
+        "inicioMs": 1110
+      },
+      {
+        "bloco": "01Integração e Cultura Organizacio",
+        "inicioMs": 1209
+      },
+      {
+        "bloco": "02LGPD — Proteção de Dados4h · Onl",
+        "inicioMs": 1310
+      },
+      {
+        "bloco": "03Diversidade e Inclusão4h · Onlin",
+        "inicioMs": 1409
+      },
+      {
+        "bloco": "Passe o mouse sobre uma etapa para",
+        "inicioMs": 1512
+      },
+      {
+        "bloco": "Sobre a sequênciaA sequência segue",
+        "inicioMs": 1613
+      }
+    ]
+  },
+  "fechamento": {
+    "desmontouEmMs": 1687,
+    "foco": "Explorar trilha",
+    "abertos": 0
+  },
+  "adicionar": {
+    "dialogos": 2,
+    "titulo": "Adicionar curso à trilha",
+    "dialogosAposEscape": 1
+  },
+  "remover": {
+    "dialogoAindaAberto": true,
+    "toast": "Modo demonstração: \"Desvincular curso da trilha\" não é gravado — os dados de treinamentos exibidos são fictícios.",
+    "cursosNaTimeline": 3
+  }
+}

@@ -10,7 +10,6 @@ import {
   TreinamentosCascadeDialog,
   TreinamentosCascadeItem,
 } from '@/components/treinamentos/TreinamentosCascadeDialog';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,15 +26,9 @@ import { useEmpresas } from '@/hooks';
 import { useTrainingImages } from '@/hooks/useTrainingImages';
 import { usePermissions } from '@/hooks/usePermissions';
 import { toast } from 'sonner';
-import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
+import { motion, MotionConfig } from 'framer-motion';
 import { MOTION_REDUCED_MODE } from '@/lib/motionMode';
-import {
-  cascadeContainerVariants,
-  cascadeItemVariants,
-  cascadeOverlayVariants,
-  cascadeShellVariants,
-} from '@/components/ui/cascade-motion';
-import { Eraser, GraduationCap, Layers, Plus, Search, Trash2, Video, X } from 'lucide-react';
+import { Eraser, GraduationCap, Layers, Plus, Search, Trash2, Video } from 'lucide-react';
 import { TreinamentosFiltros } from '@/components/treinamentos/TreinamentosFiltros';
 import { TreinamentosKpis } from '@/components/treinamentos/TreinamentosKpis';
 import { TreinamentosTabela } from '@/components/treinamentos/TreinamentosTabela';
@@ -260,6 +253,7 @@ export default function TreinamentosPage() {
 
   // === Treinamentos ===
   const [openTrein, setOpenTrein] = useState(false);
+  const novoTreinamentoRef = useRef<HTMLButtonElement>(null);
   const [treinForm, setTreinForm] = useState({ nome: '', descricao: '', data: '', carga_horaria: '' });
   const criarTrein = useMutation({
     mutationFn: () =>
@@ -443,15 +437,33 @@ export default function TreinamentosPage() {
   const [trilhaDetalhe, setTrilhaDetalhe] = useState<TrilhaRegistro | null>(null);
 
   /**
-   * Latch da cascata: a entrada toca UMA vez ao acessar a aba e depois os cards
-   * passam a usar variants estáticas — filtrar, paginar, dar hover ou receber
-   * dados novos não reinicia a animação (mesmo mecanismo de TreinamentosTabela).
+   * Latch da cascata: a entrada toca a cada acesso à aba Trilhas e depois os
+   * cards passam a usar variants estáticas — filtrar, paginar, dar hover ou
+   * receber dados novos não reinicia a animação. O cronômetro só começa quando
+   * os cards já estão renderizados (carregamento lento não perde a entrada).
    */
   const [animarTrilhas, setAnimarTrilhas] = useState(true);
+  const [entradaTrilhasPendente, setEntradaTrilhasPendente] = useState(true);
+  const timerEntradaTrilhas = useRef<number | null>(null);
   useEffect(() => {
-    const timer = window.setTimeout(() => setAnimarTrilhas(false), 1400);
-    return () => window.clearTimeout(timer);
-  }, []);
+    if (tab !== 'trilhas' || loadTrilhas || !entradaTrilhasPendente) return;
+    if (timerEntradaTrilhas.current) window.clearTimeout(timerEntradaTrilhas.current);
+    timerEntradaTrilhas.current = window.setTimeout(() => {
+      setAnimarTrilhas(false);
+      setEntradaTrilhasPendente(false);
+    }, 1400);
+    return () => {
+      if (timerEntradaTrilhas.current) window.clearTimeout(timerEntradaTrilhas.current);
+    };
+  }, [tab, loadTrilhas, entradaTrilhasPendente]);
+
+  /** Troca de aba: ao ENTRAR em Trilhas, reabre o latch antes da montagem dos cards. */
+  const mudarAba = (valor: string) => {
+    setTab(valor);
+    if (valor !== 'trilhas') return;
+    setAnimarTrilhas(true);
+    setEntradaTrilhasPendente(true);
+  };
 
   const statusOpcoesTrilhas = useMemo(() => opcoesStatusTrilha(trilhas as TrilhaRegistro[]), [trilhas]);
 
@@ -624,6 +636,7 @@ export default function TreinamentosPage() {
               próprios; Turmas/Certificados mantêm o comportamento anterior.
             */}
               <Button
+                ref={novoTreinamentoRef}
                 variant={tab === 'catalogo' ? 'outline' : 'default'}
                 onClick={() => setOpenTrein(true)}
                 className={`${ACAO_CABECALHO_CLASS}${
@@ -641,110 +654,69 @@ export default function TreinamentosPage() {
                   Novo Curso
                 </Button>
               )}
-              <DialogPrimitive.Root open={openTrein} onOpenChange={setOpenTrein}>
-                {/* ANIMAÇÃO: MESMA coreografia do modal “Pendências”
-                (`cascade-motion.ts`): o véu entra em fade + blur, a caixa nasce
-                como um quadrado pequeno e estica (0,9 s, easeInOut) e só então o
-                conteúdo cascateia. Foco, ESC, clique fora e bloqueio de rolagem
-                continuam sendo do Radix. */}
-                <AnimatePresence>
-                  {openTrein && (
-                    <DialogPrimitive.Portal forceMount>
-                      <DialogPrimitive.Overlay asChild forceMount>
-                        <motion.div
-                          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-                          variants={cascadeOverlayVariants(BLOCOS_CASCATA_NOVO_TREINAMENTO)}
-                          initial="closed"
-                          animate="open"
-                          exit="closed"
-                        />
-                      </DialogPrimitive.Overlay>
+              <TreinamentosCascadeDialog
+                open={openTrein}
+                onOpenChange={setOpenTrein}
+                blocks={BLOCOS_CASCATA_NOVO_TREINAMENTO}
+                onCloseAutoFocus={(event) => {
+                  event.preventDefault();
+                  novoTreinamentoRef.current?.focus();
+                }}
+              >
+                <TreinamentosCascadeItem>
+                  <DialogHeader>
+                    <DialogTitle>Novo Treinamento</DialogTitle>
+                  </DialogHeader>
+                </TreinamentosCascadeItem>
 
-                      {/* CAIXA — MESMAS classes do DialogContent padrão (largura,
-                      padding, borda, raio, sombra). Só a animação é nova. */}
-                      <DialogPrimitive.Content asChild forceMount>
-                        <motion.div
-                          className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-[460px] translate-x-[-50%] translate-y-[-50%] gap-3 border bg-background p-5 shadow-lg sm:rounded-lg"
-                          style={{ transformOrigin: 'top center' }}
-                          variants={cascadeShellVariants(BLOCOS_CASCATA_NOVO_TREINAMENTO)}
-                          initial="closed"
-                          animate="open"
-                          exit="closed"
-                        >
-                          <DialogPrimitive.Close className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-md opacity-70 transition-colors hover:bg-accent hover:opacity-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset">
-                            <X className="h-4 w-4" />
-                            <span className="sr-only">Fechar</span>
-                          </DialogPrimitive.Close>
-
-                          {/* `contents`: o contêiner só orquestra a cascata e não cria
-                          caixa, então o grid do formulário permanece idêntico. */}
-                          <motion.div
-                            className="contents"
-                            variants={cascadeContainerVariants}
-                            initial="closed"
-                            animate="open"
-                            exit="closed"
-                          >
-                            <motion.div variants={cascadeItemVariants}>
-                              <DialogHeader>
-                                <DialogTitle>Novo Treinamento</DialogTitle>
-                              </DialogHeader>
-                            </motion.div>
-
-                            <motion.div variants={cascadeItemVariants} className="grid gap-3">
-                              <div>
-                                <Label>Nome *</Label>
-                                <Input
-                                  value={treinForm.nome}
-                                  onChange={(e) => setTreinForm((p) => ({ ...p, nome: e.target.value }))}
-                                />
-                              </div>
-                              <div className="grid grid-cols-2 gap-2">
-                                <div>
-                                  <Label>Data</Label>
-                                  <Input
-                                    type="date"
-                                    value={treinForm.data}
-                                    onChange={(e) => setTreinForm((p) => ({ ...p, data: e.target.value }))}
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Carga Horária (h)</Label>
-                                  <Input
-                                    type="number"
-                                    value={treinForm.carga_horaria}
-                                    onChange={(e) => setTreinForm((p) => ({ ...p, carga_horaria: e.target.value }))}
-                                  />
-                                </div>
-                              </div>
-                              <div>
-                                <Label>Descrição</Label>
-                                <Textarea
-                                  value={treinForm.descricao}
-                                  onChange={(e) => setTreinForm((p) => ({ ...p, descricao: e.target.value }))}
-                                />
-                              </div>
-                              <div className="flex justify-end pt-1">
-                                <Button
-                                  size="sm"
-                                  className="rounded-lg px-4"
-                                  onClick={() => {
-                                    if (bloquearEscritaTreinamentos('Criar treinamento')) return;
-                                    criarTrein.mutate();
-                                  }}
-                                  disabled={!treinForm.nome || criarTrein.isPending}
-                                >
-                                  {criarTrein.isPending ? 'Salvando...' : 'Salvar'}
-                                </Button>
-                              </div>
-                            </motion.div>
-                          </motion.div>
-                        </motion.div>
-                      </DialogPrimitive.Content>
-                    </DialogPrimitive.Portal>
-                  )}
-                </AnimatePresence>
-              </DialogPrimitive.Root>
+                <TreinamentosCascadeItem className="grid gap-3">
+                  <div>
+                    <Label>Nome *</Label>
+                    <Input
+                      value={treinForm.nome}
+                      onChange={(e) => setTreinForm((p) => ({ ...p, nome: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label>Data</Label>
+                      <Input
+                        type="date"
+                        value={treinForm.data}
+                        onChange={(e) => setTreinForm((p) => ({ ...p, data: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label>Carga Horária (h)</Label>
+                      <Input
+                        type="number"
+                        value={treinForm.carga_horaria}
+                        onChange={(e) => setTreinForm((p) => ({ ...p, carga_horaria: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Descrição</Label>
+                    <Textarea
+                      value={treinForm.descricao}
+                      onChange={(e) => setTreinForm((p) => ({ ...p, descricao: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex justify-end pt-1">
+                    <Button
+                      size="sm"
+                      className="rounded-lg px-4"
+                      onClick={() => {
+                        if (bloquearEscritaTreinamentos('Criar treinamento')) return;
+                        criarTrein.mutate();
+                      }}
+                      disabled={!treinForm.nome || criarTrein.isPending}
+                    >
+                      {criarTrein.isPending ? 'Salvando...' : 'Salvar'}
+                    </Button>
+                  </div>
+                </TreinamentosCascadeItem>
+              </TreinamentosCascadeDialog>
 
               {/* NOVO CURSO — ação PRÓPRIA do catálogo (`catalogo_cursos`), distinta
               de “Novo Treinamento”. O formulário e a mutation são os mesmos de
@@ -849,10 +821,10 @@ export default function TreinamentosPage() {
             <Spinner />
           </div>
         ) : (
-          <Tabs value={tab} onValueChange={setTab}>
+          <Tabs value={tab} onValueChange={mudarAba}>
             <EntradaPresenca>
               <motion.div {...entradaCard(4)}>
-                <TreinamentosTabsList value={tab} onValueChange={setTab} />
+                <TreinamentosTabsList value={tab} onValueChange={mudarAba} />
               </motion.div>
             </EntradaPresenca>
 
@@ -996,7 +968,7 @@ export default function TreinamentosPage() {
                           <TrilhaCard
                             key={trilha.id}
                             trilha={trilha}
-                            index={index}
+                            index={5 + index}
                             animar={animarTrilhas}
                             inscricoes={inscricoes as InscricaoTrilha[]}
                             onExplorar={() => setTrilhaDetalhe(trilha)}
@@ -1009,27 +981,31 @@ export default function TreinamentosPage() {
                       </div>
                     </EntradaPresenca>
 
-                    <AppPagination
-                      page={paginaTrilhas.pagina}
-                      total={paginaTrilhas.total}
-                      pageSize={porPaginaTrilhas}
-                      pageSizeOptions={TRILHAS_OPCOES_POR_PAGINA}
-                      onPageChange={setPaginaTrilhaAtual}
-                      onPageSizeChange={(tamanho) => {
-                        setPorPaginaTrilhas(tamanho);
-                        setPaginaTrilhaAtual(1);
-                      }}
-                      selectorPosition="end"
-                      linhasPorPaginaLabel="Itens por página"
-                      label={
-                        <>
-                          Mostrando <span className="font-semibold text-foreground">{paginaTrilhas.inicio}</span>–
-                          <span className="font-semibold text-foreground">{paginaTrilhas.fim}</span> de{' '}
-                          <span className="font-semibold text-foreground">{paginaTrilhas.total}</span>{' '}
-                          {paginaTrilhas.total === 1 ? 'trilha' : 'trilhas'}
-                        </>
-                      }
-                    />
+                    <EntradaPresenca>
+                      <motion.div {...entradaCard(5 + paginaTrilhas.itens.length)}>
+                        <AppPagination
+                          page={paginaTrilhas.pagina}
+                          total={paginaTrilhas.total}
+                          pageSize={porPaginaTrilhas}
+                          pageSizeOptions={TRILHAS_OPCOES_POR_PAGINA}
+                          onPageChange={setPaginaTrilhaAtual}
+                          onPageSizeChange={(tamanho) => {
+                            setPorPaginaTrilhas(tamanho);
+                            setPaginaTrilhaAtual(1);
+                          }}
+                          selectorPosition="end"
+                          linhasPorPaginaLabel="Itens por página"
+                          label={
+                            <>
+                              Mostrando <span className="font-semibold text-foreground">{paginaTrilhas.inicio}</span>–
+                              <span className="font-semibold text-foreground">{paginaTrilhas.fim}</span> de{' '}
+                              <span className="font-semibold text-foreground">{paginaTrilhas.total}</span>{' '}
+                              {paginaTrilhas.total === 1 ? 'trilha' : 'trilhas'}
+                            </>
+                          }
+                        />
+                      </motion.div>
+                    </EntradaPresenca>
                   </>
                 )}
               </div>

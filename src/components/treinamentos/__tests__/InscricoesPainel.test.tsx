@@ -109,6 +109,70 @@ describe('InscricoesPainel', () => {
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
+  it('aplica os três gradientes por faixa e mantém 0%–100% acessíveis', () => {
+    const valores = [100, 90, 75, 60, 45, 20, 10, 0];
+    const comProgresso = INSCRICOES.map((inscricao, indice) => ({
+      ...inscricao,
+      progresso: valores[indice],
+    }));
+
+    const { container } = renderizar(comProgresso);
+    const barras = Array.from(container.querySelectorAll<HTMLElement>('[data-inscricao-row] [role="progressbar"]'));
+
+    expect(barras).toHaveLength(8);
+    expect(barras.map((barra) => barra.getAttribute('aria-valuenow'))).toEqual(valores.map(String));
+
+    const fundos = barras.map((barra) => (barra.firstElementChild as HTMLElement).style.backgroundImage);
+
+    // 100%: verde → lime (mesmo par do Funil de Onboarding).
+    expect(fundos[0]).toContain('var(--success)');
+    expect(fundos[0]).toContain('var(--primary)');
+
+    // 90%, 75% e 60%: azul → ciano.
+    for (const indice of [1, 2, 3]) {
+      expect(fundos[indice]).toContain('var(--info)');
+      expect(fundos[indice]).toContain('var(--aqua)');
+    }
+
+    // 45%, 20%, 10% e 0%: âmbar → amarelo.
+    for (const indice of [4, 5, 6, 7]) {
+      expect(fundos[indice]).toContain('var(--warning)');
+      expect(fundos[indice]).toContain('var(--coins)');
+    }
+
+    for (const barra of barras) {
+      expect(barra.className).not.toMatch(/shadow|glow/);
+    }
+  });
+
+  it('atualiza o valor e o gradiente da barra sem remontar a linha', () => {
+    const antes = INSCRICOES.map((inscricao, indice) => ({
+      ...inscricao,
+      progresso: indice === 0 ? 45 : 0,
+    }));
+    const depois = antes.map((inscricao, indice) => (indice === 0 ? { ...inscricao, progresso: 80 } : inscricao));
+
+    const { container, rerender } = renderizar(antes);
+    const primeiraBarra = () =>
+      container.querySelector<HTMLElement>('[data-inscricao-row] [role="progressbar"]') as HTMLElement;
+
+    expect(primeiraBarra().getAttribute('aria-valuenow')).toBe('45');
+    expect((primeiraBarra().firstElementChild as HTMLElement).style.backgroundImage).toContain('var(--warning)');
+
+    rerender(
+      <InscricoesPainel
+        inscricoes={depois}
+        cursos={CURSOS}
+        colaboradores={COLABORADORES}
+        certificados={CERTIFICADOS}
+        onVerCertificado={vi.fn()}
+      />
+    );
+
+    expect(primeiraBarra().getAttribute('aria-valuenow')).toBe('80');
+    expect((primeiraBarra().firstElementChild as HTMLElement).style.backgroundImage).toContain('var(--info)');
+  });
+
   it('filtra pela badge e mantém o dropdown de status sincronizado', async () => {
     const { container } = renderizar();
     const badge = container.querySelector('[data-segmento="em_andamento"]') as HTMLElement;

@@ -1,0 +1,10 @@
+import { chromium } from '@playwright/test';
+const b=await chromium.launch(); const c=await b.newContext({storageState:'e2e/.auth/user.json',viewport:{width:1440,height:900}});
+await c.addInitScript(()=>{localStorage.setItem('dp-tour-completed','true');localStorage.setItem('ui-theme','dark');localStorage.setItem('dp-force-motion','on');});
+const p=await c.newPage(); await p.goto('http://localhost:8080/treinamentos',{waitUntil:'domcontentloaded'}); await p.waitForTimeout(2200);
+await p.getByRole('tab',{name:'Inscrições'}).click(); await p.waitForTimeout(1050);
+await p.locator('[role=table]').screenshot({path:'tmp-gradientes-progresso/animacao-parcial-1440.png'});
+await p.waitForTimeout(1500);
+const n=await p.evaluate(()=>({bars:document.querySelectorAll('[data-inscricao-row] [role=progressbar]').length, final:[...document.querySelectorAll('[data-inscricao-row]')].map(r=>{const t=r.querySelector('[role=progressbar]');const f=t?.firstElementChild;return t&&f?+(100*f.getBoundingClientRect().width/t.getBoundingClientRect().width).toFixed(0):null;})}));
+console.log(JSON.stringify(n));
+await p.locator('[role=table]').screenshot({path:'tmp-gradientes-progresso/tabela-final-1440.png'}); await b.close();

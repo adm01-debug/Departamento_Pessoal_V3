@@ -1,0 +1,327 @@
+{
+  "dimensoes": [
+    {
+      "viewport": "1920x1080",
+      "largura": 490,
+      "altura": 393.1,
+      "left": 715,
+      "right": 1205,
+      "top": 343.5,
+      "bottom": 736.5,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "overflowInternoX": false,
+      "scrollInternoY": false,
+      "titulo": "Comunicação Assertiva",
+      "descricao": "Técnicas de comunicação e feedback.",
+      "badges": [
+        "Desenvolvimento Pessoal",
+        "Desenvolvimento Pessoal",
+        "Opcional"
+      ],
+      "labels": [
+        "Modalidade",
+        "Carga horária",
+        "NR relacionada",
+        "Cadastrado em"
+      ],
+      "valores": [
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026"
+      ],
+      "colunasMetadados": "214px 214px",
+      "avatares": 8,
+      "badgeContagem": [
+        "Desenvolvimento Pessoal",
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026",
+        "50",
+        "",
+        "",
+        ""
+      ],
+      "textoParticipantes": "50 participantes vinculados"
+    },
+    {
+      "viewport": "1440x900",
+      "largura": 490,
+      "altura": 393.1,
+      "left": 475,
+      "right": 965,
+      "top": 253.5,
+      "bottom": 646.5,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "overflowInternoX": false,
+      "scrollInternoY": false,
+      "titulo": "Comunicação Assertiva",
+      "descricao": "Técnicas de comunicação e feedback.",
+      "badges": [
+        "Desenvolvimento Pessoal",
+        "Desenvolvimento Pessoal",
+        "Opcional"
+      ],
+      "labels": [
+        "Modalidade",
+        "Carga horária",
+        "NR relacionada",
+        "Cadastrado em"
+      ],
+      "valores": [
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026"
+      ],
+      "colunasMetadados": "214px 214px",
+      "avatares": 8,
+      "badgeContagem": [
+        "Desenvolvimento Pessoal",
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026",
+        "50",
+        "",
+        "",
+        ""
+      ],
+      "textoParticipantes": "50 participantes vinculados"
+    },
+    {
+      "viewport": "1366x768",
+      "largura": 490,
+      "altura": 393.1,
+      "left": 438,
+      "right": 928,
+      "top": 187.5,
+      "bottom": 580.5,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "overflowInternoX": false,
+      "scrollInternoY": false,
+      "titulo": "Comunicação Assertiva",
+      "descricao": "Técnicas de comunicação e feedback.",
+      "badges": [
+        "Desenvolvimento Pessoal",
+        "Desenvolvimento Pessoal",
+        "Opcional"
+      ],
+      "labels": [
+        "Modalidade",
+        "Carga horária",
+        "NR relacionada",
+        "Cadastrado em"
+      ],
+      "valores": [
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026"
+      ],
+      "colunasMetadados": "214px 214px",
+      "avatares": 8,
+      "badgeContagem": [
+        "Desenvolvimento Pessoal",
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026",
+        "50",
+        "",
+        "",
+        ""
+      ],
+      "textoParticipantes": "50 participantes vinculados"
+    },
+    {
+      "viewport": "1024x768",
+      "largura": 490,
+      "altura": 393.1,
+      "left": 267,
+      "right": 757,
+      "top": 187.5,
+      "bottom": 580.5,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "overflowInternoX": false,
+      "scrollInternoY": false,
+      "titulo": "Comunicação Assertiva",
+      "descricao": "Técnicas de comunicação e feedback.",
+      "badges": [
+        "Desenvolvimento Pessoal",
+        "Desenvolvimento Pessoal",
+        "Opcional"
+      ],
+      "labels": [
+        "Modalidade",
+        "Carga horária",
+        "NR relacionada",
+        "Cadastrado em"
+      ],
+      "valores": [
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026"
+      ],
+      "colunasMetadados": "214px 214px",
+      "avatares": 8,
+      "badgeContagem": [
+        "Desenvolvimento Pessoal",
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026",
+        "50",
+        "",
+        "",
+        ""
+      ],
+      "textoParticipantes": "50 participantes vinculados"
+    },
+    {
+      "viewport": "768x1024",
+      "largura": 490,
+      "altura": 393.1,
+      "left": 139,
+      "right": 629,
+      "top": 315.5,
+      "bottom": 708.5,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "overflowInternoX": false,
+      "scrollInternoY": false,
+      "titulo": "Comunicação Assertiva",
+      "descricao": "Técnicas de comunicação e feedback.",
+      "badges": [
+        "Desenvolvimento Pessoal",
+        "Desenvolvimento Pessoal",
+        "Opcional"
+      ],
+      "labels": [
+        "Modalidade",
+        "Carga horária",
+        "NR relacionada",
+        "Cadastrado em"
+      ],
+      "valores": [
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026"
+      ],
+      "colunasMetadados": "214px 214px",
+      "avatares": 8,
+      "badgeContagem": [
+        "Desenvolvimento Pessoal",
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026",
+        "50",
+        "",
+        "",
+        ""
+      ],
+      "textoParticipantes": "50 participantes vinculados"
+    },
+    {
+      "viewport": "390x844",
+      "largura": 358,
+      "altura": 391.7,
+      "left": 16,
+      "right": 374,
+      "top": 226.2,
+      "bottom": 617.8,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "overflowInternoX": false,
+      "scrollInternoY": false,
+      "titulo": "Comunicação Assertiva",
+      "descricao": "Técnicas de comunicação e feedback.",
+      "badges": [
+        "Desenvolvimento Pessoal",
+        "Desenvolvimento Pessoal",
+        "Opcional"
+      ],
+      "labels": [
+        "Modalidade",
+        "Carga horária",
+        "NR relacionada",
+        "Cadastrado em"
+      ],
+      "valores": [
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026"
+      ],
+      "colunasMetadados": "148px 148px",
+      "avatares": 8,
+      "badgeContagem": [
+        "Desenvolvimento Pessoal",
+        "Online",
+        "6h",
+        "Não informada",
+        "02/02/2026",
+        "50",
+        "",
+        "",
+        ""
+      ],
+      "textoParticipantes": "50 participantes vinculados"
+    }
+  ],
+  "conteudo": null,
+  "animacao": {
+    "abertoEmMs": 865,
+    "overlayEmMs": 220,
+    "escalaInicial": {
+      "x": 0,
+      "y": 0
+    },
+    "blocos": [
+      {
+        "bloco": "Comunicação AssertivaTécni",
+        "inicioMs": 908
+      },
+      {
+        "bloco": "Desenvolvimento PessoalOpc",
+        "inicioMs": 1008
+      },
+      {
+        "bloco": "ModalidadeOnlineCarga horá",
+        "inicioMs": 1106
+      },
+      {
+        "bloco": "Colaboradores inscritos505",
+        "inicioMs": 1210
+      }
+    ]
+  },
+  "fechamento": {
+    "desmontouEmMs": 1132,
+    "foco": "Ver curso Comunicação Assertiva",
+    "abertos": 0,
+    "xFecha": true
+  },
+  "scroll": {
+    "temScroll": false,
+    "scrollHeight": 390,
+    "clientHeight": 390,
+    "antes": 0,
+    "depois": 0,
+    "overflowX": false
+  }
+}

@@ -7,3 +7,7 @@ verify_jwt = false
 # Geração de capas: exige JWT (o usuário é validado na função e no vínculo com a empresa).
 [functions.training-image-generate]
 verify_jwt = true
+
+# Worker da fila automatica: autenticacao propria (X-Cron-Secret ou service role), nunca chamado pelo navegador.
+[functions.training-image-dispatch]
+verify_jwt = false

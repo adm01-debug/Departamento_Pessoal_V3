@@ -1,0 +1,106 @@
+{
+  "largura": 440,
+  "altura": 373.1,
+  "tile": {
+    "shadow": "none",
+    "filter": "none",
+    "textShadow": "none",
+    "backdrop": "none",
+    "borda": "oklab(0.682725 0.10784 -0.1167 / 0.6)",
+    "bg": "rgba(175, 87, 219, 0.12)",
+    "cor": "oklab(0.682725 0.10784 -0.1167)",
+    "before": "none",
+    "after": "none"
+  },
+  "tiles": [
+    {
+      "shadow": "none",
+      "filter": "none",
+      "textShadow": "none",
+      "backdrop": "none",
+      "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.35)",
+      "bg": "oklab(0.698371 -0.0806345 -0.129937 / 0.12)",
+      "cor": "oklab(0.723516 -0.0709533 -0.114342)",
+      "before": "none",
+      "after": "none"
+    },
+    {
+      "shadow": "none",
+      "filter": "none",
+      "textShadow": "none",
+      "backdrop": "none",
+      "borda": "oklab(0.913628 -0.104174 0.187812 / 0.35)",
+      "bg": "oklab(0.913628 -0.104174 0.187812 / 0.12)",
+      "cor": "oklab(0.912599 -0.0854154 0.154009)",
+      "before": "none",
+      "after": "none"
+    },
+    {
+      "shadow": "none",
+      "filter": "none",
+      "textShadow": "none",
+      "backdrop": "none",
+      "borda": "oklab(0.698371 -0.0806345 -0.129937 / 0.25)",
+      "bg": "oklab(0.698371 -0.0806345 -0.129937 / 0.07)",
+      "cor": "oklab(0.680685 -0.0362688 -0.0584642)",
+      "before": "none",
+      "after": "none"
+    },
+    {
+      "shadow": "none",
+      "filter": "none",
+      "textShadow": "none",
+      "backdrop": "none",
+      "borda": "rgba(175, 87, 219, 0.35)",
+      "bg": "rgba(175, 87, 219, 0.1)",
+      "cor": "oklab(0.662516 0.117515 -0.127174)",
+      "before": "none",
+      "after": "none"
+    }
+  ],
+  "cat": {
+    "shadow": "none",
+    "filter": "none",
+    "textShadow": "none",
+    "backdrop": "none",
+    "borda": "oklab(0.682725 0.10784 -0.1167 / 0.6)",
+    "bg": "oklab(0.682725 0.10784 -0.1167 / 0.16)",
+    "cor": "oklab(0.682725 0.10784 -0.1167)",
+    "before": "none",
+    "after": "none"
+  },
+  "obrig": {
+    "shadow": "none",
+    "filter": "none",
+    "textShadow": "none",
+    "backdrop": "none",
+    "borda": "oklab(0.265696 -0.00771903 -0.0372934 / 0.7)",
+    "bg": "oklab(0.252675 -0.00293687 -0.0143203 / 0.45)",
+    "cor": "oklab(0.907914 0.000041604 0.0000181198 / 0.75)",
+    "before": "none",
+    "after": "none"
+  },
+  "cont": {
+    "shadow": "none",
+    "filter": "none",
+    "textShadow": "none",
+    "backdrop": "none",
+    "borda": "oklab(0.673213 -0.157283 0.0942528 / 0.4)",
+    "bg": "oklab(0.673213 -0.157283 0.0942528 / 0.14)",
+    "cor": "rgb(24, 180, 81)",
+    "before": "none",
+    "after": "none"
+  },
+  "painel": {
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(224, 224, 224, 0.05) 0px 1px 0px 0px inset",
+    "filter": "none",
+    "textShadow": "none",
+    "backdrop": "none",
+    "borda": "oklab(0.265695 -0.00771902 -0.0372934 / 0.6)",
+    "bg": "rgba(0, 0, 0, 0)",
+    "cor": "rgb(224, 224, 224)",
+    "before": "none",
+    "after": "none"
+  },
+  "gradienteInternoIcone": "gradient"
+}

@@ -1,0 +1,25 @@
+import { chromium } from '@playwright/test';
+import { writeFileSync } from 'node:fs';
+const BASE='http://localhost:8080';
+const b=await chromium.launch();
+const c=await b.newContext({storageState:'e2e/.auth/user.json',viewport:{width:1440,height:900}});
+await c.addInitScript(()=>{localStorage.setItem('dp-tour-completed','true');localStorage.setItem('ui-theme','dark');});
+const p=await c.newPage();
+await p.goto(BASE+'/treinamentos',{waitUntil:'domcontentloaded'}); await p.waitForTimeout(2800);
+await p.getByRole('tab',{name:'Catálogo'}).click(); await p.waitForTimeout(900);
+await p.getByRole('button',{name:/^Ver curso/}).first().click(); await p.waitForTimeout(1800);
+const res=await p.evaluate(()=>{
+ const d=document.querySelector('[role=dialog]');const r=d.getBoundingClientRect();
+ const spans=[...d.querySelectorAll('span')];
+ const tile=d.querySelector('h2').parentElement.parentElement.querySelector('span[aria-hidden]');
+ const tiles=[...d.querySelectorAll('dd > span[aria-hidden]')];
+ const cat=spans.find(s=>s.textContent.trim()==='Desenvolvimento Pessoal'&&s.className.includes('rounded-full'));
+ const obrig=spans.find(s=>s.textContent.trim()==='Opcional');
+ const cont=spans.find(s=>s.textContent.trim()==='50'&&s.className.includes('rounded-full'));
+ const painel=[...d.querySelectorAll('div')].find(x=>String(x.className).includes('linear-gradient'));
+ const info=el=>{const s=getComputedStyle(el);const b1=getComputedStyle(el,'::before');const a1=getComputedStyle(el,'::after');return {shadow:s.boxShadow,filter:s.filter,textShadow:s.textShadow,backdrop:s.backdropFilter,borda:s.borderColor,bg:s.backgroundColor,cor:s.color,before:b1.content,after:a1.content};};
+ return {largura:+r.width.toFixed(1),altura:+r.height.toFixed(1),tile:info(tile),tiles:tiles.map(info),cat:info(cat),obrig:info(obrig),cont:info(cont),painel:info(painel),gradienteInternoIcone:(()=>{const g=tile.querySelector('span[aria-hidden]');return g?(getComputedStyle(g).backgroundImage==='none'?'none':'gradient'):'ausente';})()};
+});
+writeFileSync('tmp-redesign-curso/audit-final.json',JSON.stringify(res,null,2));
+console.log(JSON.stringify(res,null,2).slice(0,6000));
+await b.close();

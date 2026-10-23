@@ -8,7 +8,7 @@
  * escrita do backend passa por aqui e é validada de novo antes do upload.
  * ============================================================================
  */
-import type { TrainingContentType } from './types';
+import type { TrainingContentType } from './types.ts';
 
 export const TRAINING_IMAGES_BUCKET = 'training-images';
 

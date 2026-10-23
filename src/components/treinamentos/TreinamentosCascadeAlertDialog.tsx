@@ -1,6 +1,6 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { cascadeContainerVariants, cascadeOverlayVariants, cascadeShellVariants } from '@/components/ui/cascade-motion';
 
@@ -29,6 +29,8 @@ export function TreinamentosCascadeAlertDialog({
   onCloseAutoFocus,
   children,
 }: TreinamentosCascadeAlertDialogProps) {
+  const elementoDeOrigem = useRef<HTMLElement | null>(null);
+
   return (
     <AlertDialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <AnimatePresence>
@@ -43,7 +45,27 @@ export function TreinamentosCascadeAlertDialog({
                 exit="closed"
               />
             </AlertDialogPrimitive.Overlay>
-            <AlertDialogPrimitive.Content asChild forceMount onCloseAutoFocus={onCloseAutoFocus}>
+            <AlertDialogPrimitive.Content
+              asChild
+              forceMount
+              aria-modal="true"
+              onFocusOutside={(event) => event.preventDefault()}
+              onOpenAutoFocus={() => {
+                const ativo = document.activeElement;
+                elementoDeOrigem.current = ativo instanceof HTMLElement && ativo !== document.body ? ativo : null;
+              }}
+              onCloseAutoFocus={(event) => {
+                if (onCloseAutoFocus) {
+                  onCloseAutoFocus(event);
+                  return;
+                }
+                const alvo = elementoDeOrigem.current;
+                if (alvo?.isConnected) {
+                  event.preventDefault();
+                  alvo.focus();
+                }
+              }}
+            >
               <motion.div
                 className={cn(
                   'fixed left-[50%] top-[50%] z-50 grid w-full max-w-[460px] translate-x-[-50%] translate-y-[-50%] gap-3 border bg-background p-5 shadow-lg sm:rounded-lg',

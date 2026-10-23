@@ -302,3 +302,127 @@ Regressão coberta por 3 testes.
 8. Validar o arquivo no bucket e a exibição no card.
 9. Conferir o consumo no painel da OpenAI.
 10. Só então ligar o disparo automático no salvamento.
+
+---
+
+# Fase 3A.1 — homologação da infraestrutura de imagens
+
+## 1. Correções de schema (Turmas e Trilhas)
+
+| Operação | Divergência | Correção |
+|---|---|---|
+| `listarInstancias` | filtrava `empresa_id` (coluna inexistente) | embed `curso:catalogo_cursos!inner` + `.eq('curso.empresa_id')` |
+| `criarInstancia` | exigia e enviava `empresa_id` no INSERT | `empresa_id` removido do payload; curso lido antes e conferido; cross-tenant recusado |
+| `atualizarInstancia` | filtrava `empresa_id` no UPDATE | leitura escopada por `curso.empresa_id` antes do UPDATE |
+| `listarTrilhas` | `order('titulo')` | `order('nome')` |
+| `criarTrilha` | inseria `titulo` | normaliza `titulo` → `nome`; envia só colunas existentes |
+
+O formulário aprovado continua enviando `titulo`; a tradução é feita no serviço.
+Regressões em `src/services/__tests__/catalogoCursoService.test.ts`.
+
+> **Achado adicional (não corrigido):** `listarCertificados` filtra
+> `.eq('empresa_id', ...)` em `treinamento_certificados`, que NÃO tem essa coluna
+> (escopo real: `colaborador_id → colaboradores.empresa_id`). A aba roda com mock;
+> a correção exige decisão de escopo na 3B.
+
+## 2. Cobrança duplicada após timeout (política conservadora)
+
+`X-Client-Request-Id`/`operationId` são **rastreabilidade**, não idempotência
+financeira. Timeout, falha de rede, 5xx e falha ao baixar a imagem passam a ser
+tratados como **resultado desconhecido**:
+
+- `status = failed`, `last_error = 'resultado_desconhecido: ...'`,
+  `attempts` esgotado;
+- nenhuma nova chamada paga automática; `claim` recusa (`limite_de_tentativas`);
+- a Edge Function devolve `409 resultado_desconhecido` antes de consumir quota;
+- reconciliação é manual (sem loops).
+
+Falha de upload/registro também não libera nova tentativa: a imagem já foi
+gerada e cobrada.
+
+## 3. Controle de custo
+
+- Idempotência (capa concluída, trabalho em andamento, falha definitiva e
+  incerteza) resolvida **antes** do `checkRateLimit`.
+- Rate limit **persistente** (`rate_limits` + `edge_rate_limit_check` com
+  `pg_advisory_xact_lock`), compartilhado por instâncias, **por usuário**
+  (`training-image-generate:<user_id>`), 5 por hora.
+- Solicitação duplicada **não** consome quota; conteúdo editado (hash novo)
+  consome, porque é uma nova geração.
+
+## 4. Execuções locais (aprovadas)
+
+| Verificação | Comando | Resultado |
+|---|---|---|
+| Unidade + componentes + serviço | `npx vitest run …` | **292 testes / 21 arquivos** |
+| Migration real + RLS + constraints + trigger | `node scripts/training-images-local/run-tests.mjs` | 10 grupos RLS + 17 claim + 5 rate limit |
+| Concorrência SQL real | idem (S1–S4) | 1 reivindicação; empresas independentes; quota única |
+| Pipeline + provedor simulado | `npx deno run -A scripts/training-images-local/pipeline-e2e.ts` | **30 verificações** |
+| Edge Function no runtime Deno | `node scripts/training-images-local/edge-http-test.mjs` | **41 verificações HTTP** |
+| Type-check Deno | `npx deno check …/index.ts` | OK |
+| Build | `npm run build` | OK |
+
+## 5. Pendências de infraestrutura (não aprovadas)
+
+- `supabase start` / `supabase functions serve` **não** executam nesta máquina:
+  Docker Desktop está instalado, mas a engine Linux (WSL2) não inicia
+  (`docker info` → 500 / pipe indisponível).
+- Consequências: Storage real, PostgREST/Auth reais e o caminho HTTP `200`
+  autenticado ponta a ponta **não** foram validados em runtime Supabase.
+  Foram substituídos por: PostgreSQL local real + stub HTTP do Supabase +
+  arquivo local no lugar do bucket. O bucket continua validado por migration e
+  testes de RLS em PostgreSQL real.
+- Playwright público: 17 passaram, 3 falharam por motivos ambientais/externos
+  (API auth sem apikey e envio de e-mail de recuperação), 4 ignorados.
+
+## 6. Disparo automático (Fase 3B)
+
+A função aceita exatamente um curso/trilha e é idempotente, mas **não existe**
+chamada após `INSERT` de curso/trilha (nem no cliente, nem no banco). O disparo
+real permanece **desligado**. Para a 3B falta: gatilho server-side após o
+cadastro, `TRAINING_IMAGE_GENERATION_ENABLED=true` apenas no ambiente de teste e
+autorização explícita para uma geração real.
+
+---
+
+# Fase 3A.2 — resumo
+
+> Relatório completo: [`docs/treinamentos-imagens-fase3a2.md`](./treinamentos-imagens-fase3a2.md)
+
+- **Docker/WSL2:** engine Linux não inicia (hipervisor desligado; WSL ausente).
+  Impedimento documentado; Storage/Auth reais continuam pendentes.
+- **Certificados:** `listarCertificados` abandonou a coluna inexistente
+  `empresa_id` e filtra por `colaborador.empresa_id` (`!inner`).
+- **Disparo automático:** trigger `AFTER INSERT` → fila persistente
+  (`training_image_requests`) → worker `training-image-dispatch`
+  (`FOR UPDATE SKIP LOCKED`) → pipeline existente. **Desligado por padrão**
+  (`autoqueue_enabled=false` + `TRAINING_IMAGE_AUTOQUEUE_ENABLED=false`).
+- **Quotas:** RPC duplo atômico — 20/h por empresa **e** 5/h por usuário; só
+  consome quando ambos permitem; duplicata não consome.
+- **`attempts`:** reinicia em conteúdo editado; contadores separados
+  (`generations`, `failures`, `unknown_outcomes`); `operation_id` persistido.
+- **Resultado desconhecido:** `reconcile_training_image(...)` exige operador,
+  notas e estado de incerteza — impede zerar `attempts` sem verificação.
+
+
+---
+
+# Fase 3B — preparação final (resumo)
+
+> Relatório completo: [`docs/treinamentos-imagens-fase3b-prep.md`](./treinamentos-imagens-fase3b-prep.md)
+> Homologação sem Docker: [`docs/treinamentos-imagens-homologacao.md`](./treinamentos-imagens-homologacao.md)
+
+- **Worker** agora aplica o MESMO rate limit da geração manual (empresa 20/h +
+  usuário 5/h quando há `requested_by`), com adiamento de 5 min quando a quota
+  estoura — sem loop e sem provedor.
+- **Recuperação segura:** item reivindicado 2+ vezes com imagem em andamento é
+  marcado como `resultado_desconhecido` e encerrado, nunca repetindo chamada paga.
+- **Backfill idempotente** (`backfill_training_image_requests`) cobre cursos e
+  trilhas criados com a fila desligada.
+- **Agendamento** pg_cron/pg_net + Vault preparado em
+  `scripts/training-images-homolog/` (não executado).
+- **Homologação isolada** via projeto Supabase dedicado, script `homolog.mjs` e
+  spec Playwright gated (não executados).
+- Testes: **330 Vitest**, **50** pipeline, **71** HTTP Deno, **S1–S6** SQL,
+  build e Deno check OK. Nenhuma chamada à OpenAI.
+

@@ -130,12 +130,50 @@ describe('migration — reivindicação atômica e autorização do backend', ()
   it('reivindica em UMA instrução com ON CONFLICT (proteção real de concorrência)', () => {
     expect(SEM_COMENTARIOS).toMatch(/INSERT INTO public\.training_images AS t/);
     expect(SEM_COMENTARIOS).toMatch(/ON CONFLICT \(empresa_id, content_type, content_id\) DO UPDATE/);
-    expect(SEM_COMENTARIOS).toMatch(/attempts\s*=\s*t\.attempts \+ 1/);
+    expect(SEM_COMENTARIOS).toMatch(/attempts\s*=\s*CASE/);
+    expect(SEM_COMENTARIOS).toMatch(
+      /WHEN t\.content_hash IS DISTINCT FROM excluded\.content_hash THEN 1/
+    );
+    expect(SEM_COMENTARIOS).toMatch(/ELSE t\.attempts \+ 1/);
     expect(SEM_COMENTARIOS).toMatch(/t\.attempts < v_max/);
     expect(SEM_COMENTARIOS).toMatch(/requested_at < now\(\) - p_stale_after/);
     expect(SEM_COMENTARIOS).toMatch(/content_hash IS DISTINCT FROM excluded\.content_hash/);
     expect(SEM_COMENTARIOS).toMatch(/RETURN QUERY SELECT false/);
     expect(SEM_COMENTARIOS).toMatch(/RETURN QUERY SELECT true/);
+  });
+
+  it('separa tentativas de processamento, sucessos, falhas e incerteza', () => {
+    for (const coluna of [
+      'generations',
+      'failures',
+      'unknown_outcomes',
+      'last_attempt_at',
+      'operation_id',
+      'reconciled_at',
+      'reconciled_by',
+      'reconciliation_notes',
+    ]) {
+      expect(SEM_COMENTARIOS).toMatch(new RegExp(`\\b${coluna}\\b`));
+    }
+    expect(SEM_COMENTARIOS).toMatch(/CREATE TRIGGER track_training_images_outcomes/);
+    expect(SEM_COMENTARIOS).toMatch(/LIKE 'resultado_desconhecido%'/);
+  });
+
+  it('impede reconciliação sem operador, notas e estado de incerteza', () => {
+    expect(SEM_COMENTARIOS).toMatch(
+      /CREATE OR REPLACE FUNCTION public\.reconcile_training_image\(/
+    );
+    expect(SEM_COMENTARIOS).toMatch(/operador_obrigatorio/);
+    expect(SEM_COMENTARIOS).toMatch(/notas_obrigatorias/);
+    expect(SEM_COMENTARIOS).toMatch(/registro_nao_esta_em_estado_desconhecido/);
+    expect(SEM_COMENTARIOS).toMatch(/confirmar_nao_gerado/);
+    expect(SEM_COMENTARIOS).toMatch(/manter_bloqueado/);
+    expect(SEM_COMENTARIOS).toMatch(
+      /REVOKE EXECUTE ON FUNCTION public\.reconcile_training_image\([^)]*\) FROM anon, authenticated/
+    );
+    expect(SEM_COMENTARIOS).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.reconcile_training_image\([^)]*\) TO service_role/
+    );
   });
 
   it('restringe a execução ao service role', () => {
@@ -154,5 +192,101 @@ describe('migration — não destrutiva', () => {
     expect(SEM_COMENTARIOS).not.toMatch(/\bDELETE FROM\b/i);
     expect(SEM_COMENTARIOS).not.toMatch(/ALTER TABLE public\.(catalogo_cursos|trilhas_aprendizado|treinamento_)/);
     expect(SEM_COMENTARIOS).not.toMatch(/UPDATE public\.(catalogo_cursos|trilhas_aprendizado|treinamento_)/);
+  });
+});
+
+const AUTOQUEUE = readFileSync(
+  path.resolve(process.cwd(), 'supabase/migrations/20261023130000_training_image_autoqueue.sql'),
+  'utf8'
+).replace(/--[^\n]*/g, '');
+
+describe('migration — fila automática (desligada por padrão)', () => {
+  it('cria a flag de servidor DESLIGADA e inacessível ao navegador', () => {
+    expect(AUTOQUEUE).toMatch(/CREATE TABLE IF NOT EXISTS public\.training_image_settings/);
+    expect(AUTOQUEUE).toMatch(/autoqueue_enabled boolean NOT NULL DEFAULT false/);
+    expect(AUTOQUEUE).toMatch(/REVOKE ALL ON public\.training_image_settings FROM anon, authenticated/);
+  });
+
+  it('enfileira por TRIGGER após INSERT de curso e de trilha', () => {
+    expect(AUTOQUEUE).toMatch(/CREATE TABLE IF NOT EXISTS public\.training_image_requests/);
+    expect(AUTOQUEUE).toMatch(/UNIQUE \(empresa_id, content_type, content_id\)/);
+    expect(AUTOQUEUE).toMatch(/AFTER INSERT ON public\.catalogo_cursos/);
+    expect(AUTOQUEUE).toMatch(/AFTER INSERT ON public\.trilhas_aprendizado/);
+    expect(AUTOQUEUE).toMatch(/enqueue_training_image_request\('course'\)/);
+    expect(AUTOQUEUE).toMatch(/enqueue_training_image_request\('learning_path'\)/);
+  });
+
+  it('nunca bloqueia o cadastro (erro vira WARNING)', () => {
+    expect(AUTOQUEUE).toMatch(/EXCEPTION[\s\S]*?WHEN OTHERS THEN/);
+    expect(AUTOQUEUE).toMatch(/RAISE WARNING/);
+    expect(AUTOQUEUE).toMatch(/RETURN NEW;/);
+  });
+
+  it('reivindica lote com FOR UPDATE SKIP LOCKED e recupera trabalho travado', () => {
+    expect(AUTOQUEUE).toMatch(/claim_training_image_requests/);
+    expect(AUTOQUEUE).toMatch(/FOR UPDATE SKIP LOCKED/);
+    expect(AUTOQUEUE).toMatch(/interval '30 minutes'/);
+    expect(AUTOQUEUE).toMatch(/finish_training_image_request/);
+    expect(AUTOQUEUE).toMatch(/REVOKE EXECUTE ON FUNCTION public\.claim_training_image_requests\(integer\) FROM anon, authenticated/);
+    expect(AUTOQUEUE).toMatch(/GRANT EXECUTE ON FUNCTION public\.claim_training_image_requests\(integer\) TO service_role/);
+  });
+
+  it('registra responsável e adiamento sem loop de retentativa', () => {
+    expect(AUTOQUEUE).toMatch(/requested_by\s+uuid/);
+    expect(AUTOQUEUE).toMatch(/available_at\s+timestamptz NOT NULL DEFAULT now\(\)/);
+    expect(AUTOQUEUE).toMatch(/r\.available_at <= now\(\)/);
+    expect(AUTOQUEUE).toMatch(/p_retry_after_seconds integer DEFAULT NULL/);
+    expect(AUTOQUEUE).toMatch(/p_retry_after_seconds/);
+    expect(AUTOQUEUE).toMatch(/VALUES \(NEW\.empresa_id, TG_ARGV\[0\], NEW\.id, auth\.uid\(\)\)/);
+  });
+
+  it('oferece backfill idempotente para conteúdo sem capa', () => {
+    expect(AUTOQUEUE).toMatch(/CREATE OR REPLACE FUNCTION public\.backfill_training_image_requests\(/);
+    expect(AUTOQUEUE).toMatch(/ON CONFLICT \(empresa_id, content_type, content_id\) DO NOTHING/);
+    expect(AUTOQUEUE).toMatch(/NOT EXISTS \(\s*SELECT 1 FROM public\.training_images/);
+    expect(AUTOQUEUE).toMatch(/GET DIAGNOSTICS v_inseridos = ROW_COUNT/);
+    expect(AUTOQUEUE).toMatch(
+      /GRANT EXECUTE ON FUNCTION public\.backfill_training_image_requests\(integer\) TO service_role/
+    );
+  });
+
+  it('não agenda nada automaticamente nesta fase', () => {
+    expect(AUTOQUEUE).not.toMatch(/cron\.schedule\(/);
+    expect(AUTOQUEUE).not.toMatch(/net\.http_post\(/);
+  });
+});
+
+const RATE_LIMIT_DUAL = readFileSync(
+  path.resolve(process.cwd(), 'supabase/migrations/20261023140000_edge_rate_limit_dual.sql'),
+  'utf8'
+).replace(/--[^\n]*/g, '');
+
+describe('migration — rate limit duplo (empresa + usuário)', () => {
+  it('verifica os dois baldes em uma única função', () => {
+    expect(RATE_LIMIT_DUAL).toMatch(/CREATE OR REPLACE FUNCTION public\.edge_rate_limit_check_dual\(/);
+    expect(RATE_LIMIT_DUAL).toMatch(/p_empresa_key/);
+    expect(RATE_LIMIT_DUAL).toMatch(/p_usuario_key/);
+  });
+
+  it('adquire advisory locks em ordem determinística (sem deadlock)', () => {
+    expect(RATE_LIMIT_DUAL).toMatch(/pg_advisory_xact_lock\(hashtext\('rl:' \|\| least\(/);
+    expect(RATE_LIMIT_DUAL).toMatch(/pg_advisory_xact_lock\(hashtext\('rl:' \|\| greatest\(/);
+  });
+
+  it('só consome quota quando AMBOS permitem', () => {
+    expect(RATE_LIMIT_DUAL).toMatch(/IF v_reason IS NOT NULL THEN/);
+    expect(RATE_LIMIT_DUAL).toMatch(/INSERT INTO public\.rate_limits \(key, timestamp\)/);
+  });
+
+  it('permite modo empresa-only (worker sem usuário confiável)', () => {
+    expect(RATE_LIMIT_DUAL).toMatch(/v_tem_usuario\s+boolean/);
+    expect(RATE_LIMIT_DUAL).toMatch(/p_usuario_key IS NOT NULL/);
+    expect(RATE_LIMIT_DUAL).toMatch(/limite_usuario_invalido/);
+    expect(RATE_LIMIT_DUAL).toMatch(/ELSE\s+PERFORM pg_advisory_xact_lock\(hashtext\('rl:' \|\| p_empresa_key\)/);
+  });
+
+  it('é exclusivo do backend', () => {
+    expect(RATE_LIMIT_DUAL).toMatch(/FROM anon, authenticated/);
+    expect(RATE_LIMIT_DUAL).toMatch(/TO service_role/);
   });
 });

@@ -76,6 +76,7 @@ describe('nenhuma conexão com a OpenAI nesta fase', () => {
 
 describe('separação frontend × backend (Fase 3A)', () => {
   const FUNCAO = path.join(RAIZ, 'supabase/functions/training-image-generate/index.ts');
+  const DEPENDENCIAS = path.join(RAIZ, 'supabase/functions/_shared/trainingImages/supabaseDeps.ts');
   const ADAPTADOR = path.join(RAIZ, 'supabase/functions/_shared/trainingImages/openaiProvider.ts');
   const SIMULADO = path.join(RAIZ, 'supabase/functions/_shared/trainingImages/simulatedProvider.ts');
 
@@ -87,11 +88,12 @@ describe('separação frontend × backend (Fase 3A)', () => {
 
   it('a função exige autenticação, vínculo com a empresa e papel autorizado', () => {
     const funcao = readFileSync(FUNCAO, 'utf8');
+    const dependencias = readFileSync(DEPENDENCIAS, 'utf8');
     expect(funcao).toMatch(/supabase\.auth\.getUser\(\)/);
     expect(funcao).toMatch(/from\('user_empresas'\)/);
     expect(funcao).toMatch(/from\('user_roles'\)/);
-    expect(funcao).toMatch(/claim_training_image/);
-    expect(funcao).toMatch(/checkRateLimit/);
+    expect(dependencias).toMatch(/claim_training_image/);
+    expect(funcao).toMatch(/checkRateLimitDuplo/);
     expect(funcao).toMatch(/openssl|verifyCsrf/);
   });
 
@@ -118,9 +120,91 @@ describe('separação frontend × backend (Fase 3A)', () => {
   });
 
   it('a função consulta apenas colunas existentes em trilhas_aprendizado', () => {
-    const funcao = readFileSync(FUNCAO, 'utf8');
+    const dependencias = readFileSync(DEPENDENCIAS, 'utf8');
     // Schema gerado tem `nome`; `titulo` não existe e derrubaria a consulta.
-    expect(funcao).toMatch(/select\('id, nome, descricao, nivel, empresa_id'\)/);
-    expect(funcao).not.toMatch(/select\('id, titulo/);
+    expect(dependencias).toMatch(/select\('id, nome, descricao, nivel, empresa_id'\)/);
+    expect(dependencias).not.toMatch(/select\('id, titulo/);
   });
 });
+
+describe('worker automático e quota multiempresa (Fase 3A.2)', () => {
+  const DISPATCH = path.join(RAIZ, 'supabase/functions/training-image-dispatch/index.ts');
+  const DISPATCH_SRC = readFileSync(DISPATCH, 'utf8');
+
+  it('exige credencial de agendador/service role (nunca o navegador)', () => {
+    expect(DISPATCH_SRC).toMatch(/estaAutorizado/);
+    expect(DISPATCH_SRC).toMatch(/X-Cron-Secret/);
+    expect(DISPATCH_SRC).toMatch(/SUPABASE_SERVICE_ROLE_KEY/);
+    expect(DISPATCH_SRC).toMatch(/NAO_AUTORIZADO/);
+    expect(DISPATCH_SRC).toMatch(/iguaisEmTempoConstante/);
+  });
+
+  it('fica DESLIGADO por padrão e responde 503 antes de reivindicar a fila', () => {
+    expect(DISPATCH_SRC).toMatch(/TRAINING_IMAGE_AUTOQUEUE_ENABLED/);
+    expect(DISPATCH_SRC).toMatch(/TRAINING_IMAGE_GENERATION_ENABLED/);
+    expect(DISPATCH_SRC).toMatch(/fila_preservada: true/);
+
+    const posFlags = DISPATCH_SRC.indexOf('TRAINING_IMAGE_AUTOQUEUE_ENABLED');
+    const posClaim = DISPATCH_SRC.indexOf(".rpc('claim_training_image_requests'");
+    expect(posFlags).toBeGreaterThan(-1);
+    expect(posClaim).toBeGreaterThan(posFlags);
+  });
+
+  it('consome a fila persistente e fecha cada requisição', () => {
+    expect(DISPATCH_SRC).toMatch(/claim_training_image_requests/);
+    expect(DISPATCH_SRC).toMatch(/finish_training_image_request/);
+    expect(DISPATCH_SRC).toMatch(/criarDepsSupabase/);
+    expect(DISPATCH_SRC).toMatch(/gerarCapaDeTreinamento/);
+  });
+
+  it('aplica o MESMO rate limit e a MESMA idempotência da geração manual', () => {
+    expect(DISPATCH_SRC).toMatch(/checkRateLimitDuplo/);
+    expect(DISPATCH_SRC).toMatch(/consultarEstadoDaCapa/);
+    expect(DISPATCH_SRC).toMatch(/chaveEmpresa/);
+    expect(DISPATCH_SRC).toMatch(/chaveUsuario/);
+    expect(DISPATCH_SRC).toMatch(/requested_by/);
+    expect(DISPATCH_SRC).toMatch(/p_retry_after_seconds/);
+    expect(DISPATCH_SRC).toMatch(/STALE_FILA_MINUTOS/);
+
+    const quota = readFileSync(
+      path.join(RAIZ, 'supabase/functions/_shared/trainingImages/quotas.ts'),
+      'utf8'
+    );
+    expect(quota).toMatch(/LIMITE_EMPRESA_PADRAO = 20/);
+    expect(quota).toMatch(/LIMITE_USUARIO_PADRAO = 5/);
+    expect(quota).toMatch(/STALE_FILA_MINUTOS = 30/);
+  });
+
+  it('não repete chamada paga na recuperação de item interrompido', () => {
+    expect(DISPATCH_SRC).toMatch(/marcarResultadoDesconhecido/);
+    expect(DISPATCH_SRC).toMatch(/recuperacao_apos_interrupcao/);
+    expect(DISPATCH_SRC).toMatch(/pedido\.attempts > 1/);
+  });
+
+  it('não importa o provedor simulado nem expõe segredo na resposta', () => {
+    expect(DISPATCH_SRC).not.toMatch(/simulatedProvider/);
+    expect(DISPATCH_SRC).toMatch(/\[redigido\]/);
+  });
+
+  it('o frontend não chama o worker (fila é server-side)', () => {
+    expect(CODIGO).not.toMatch(/training-image-dispatch/);
+  });
+
+  it('a geração manual usa quota por empresa E por usuário', () => {
+    const funcao = readFileSync(
+      path.join(RAIZ, 'supabase/functions/training-image-generate/index.ts'),
+      'utf8'
+    );
+    const quota = readFileSync(
+      path.join(RAIZ, 'supabase/functions/_shared/trainingImages/quotas.ts'),
+      'utf8'
+    );
+    expect(funcao).toMatch(/checkRateLimitDuplo/);
+    expect(funcao).toMatch(/chaveEmpresa/);
+    expect(funcao).toMatch(/chaveUsuario/);
+    expect(funcao).toMatch(/TRAINING_IMAGE_RATE_LIMIT_EMPRESA/);
+    expect(quota).toMatch(/training-image-generate:empresa:/);
+    expect(quota).toMatch(/training-image-generate:usuario:/);
+  });
+});
+

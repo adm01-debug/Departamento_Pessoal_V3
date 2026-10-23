@@ -96,6 +96,23 @@ CREATE TABLE IF NOT EXISTS public.training_images (
   provider          text NOT NULL DEFAULT 'disabled',
   model             text,
   attempts          integer NOT NULL DEFAULT 0 CHECK (attempts >= 0 AND attempts <= 5),
+  -- Contadores SEPARADOS por conceito (Fase 3A.2):
+  --   attempts         = tentativas de processamento da VERSÃO ATUAL do conteúdo
+  --   generations      = capas concluídas com sucesso
+  --   failures         = falhas conhecidas (provedor/upload/registro)
+  --   unknown_outcomes = resultados pagos desconhecidos (timeout/rede/5xx)
+  -- `attempts` é reiniciado quando o `content_hash` muda (conteúdo editado), para
+  -- que falhas antigas não bloqueiem permanentemente uma versão nova.
+  generations       integer NOT NULL DEFAULT 0 CHECK (generations >= 0),
+  failures          integer NOT NULL DEFAULT 0 CHECK (failures >= 0),
+  unknown_outcomes  integer NOT NULL DEFAULT 0 CHECK (unknown_outcomes >= 0),
+  last_attempt_at   timestamptz,
+  -- Rastreabilidade da requisição paga (X-Client-Request-Id / operationId).
+  operation_id      text,
+  -- Procedimento administrativo de reconciliação (resultado desconhecido).
+  reconciled_at     timestamptz,
+  reconciled_by     text,
+  reconciliation_notes text,
   last_error        text,
   prompt_version    text,
   requested_at      timestamptz NOT NULL DEFAULT now(),
@@ -117,6 +134,14 @@ COMMENT ON COLUMN public.training_images.status IS
   'disabled = integração de geração desligada; pending/processing/succeeded/failed só existem com provedor configurado.';
 COMMENT ON COLUMN public.training_images.source_content_id IS
   'Curso de origem quando a capa é herdada por turma/certificado (evita geração duplicada).';
+COMMENT ON COLUMN public.training_images.attempts IS
+  'Tentativas de processamento da versão atual (content_hash). Reinicia quando o conteúdo é editado.';
+COMMENT ON COLUMN public.training_images.generations IS
+  'Quantidade de capas concluídas com sucesso (histórico, nunca reduz).';
+COMMENT ON COLUMN public.training_images.unknown_outcomes IS
+  'Resultados pagos desconhecidos (timeout/rede/5xx). Exige reconciliação manual; NÃO é retentado automaticamente.';
+COMMENT ON COLUMN public.training_images.operation_id IS
+  'Identificador estável da operação no provedor (rastreabilidade/suporte). Não impede cobrança duplicada por si só.';
 
 CREATE INDEX IF NOT EXISTS idx_training_images_empresa
   ON public.training_images (empresa_id);
@@ -130,6 +155,39 @@ DROP TRIGGER IF EXISTS update_training_images_updated_at ON public.training_imag
 CREATE TRIGGER update_training_images_updated_at
   BEFORE UPDATE ON public.training_images
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+-- ─── 3b. Contadores por conceito (tentativa × sucesso × falha × incerteza) ───
+-- Mantém os contadores sem depender de aritmética no cliente: qualquer UPDATE
+-- que transicione o status é contabilizado exatamente uma vez.
+CREATE OR REPLACE FUNCTION public.training_images_track_outcomes()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  IF NEW.status = 'succeeded' AND OLD.status IS DISTINCT FROM 'succeeded' THEN
+    NEW.generations := OLD.generations + 1;
+  ELSIF NEW.status = 'failed' AND OLD.status IS DISTINCT FROM 'failed' THEN
+    IF coalesce(NEW.last_error, '') LIKE 'resultado_desconhecido%' THEN
+      NEW.unknown_outcomes := OLD.unknown_outcomes + 1;
+    ELSE
+      NEW.failures := OLD.failures + 1;
+    END IF;
+  END IF;
+
+  IF NEW.status IN ('pending', 'processing') AND OLD.status IS DISTINCT FROM NEW.status THEN
+    NEW.last_attempt_at := now();
+  END IF;
+
+  RETURN NEW;
+END
+$$;
+
+DROP TRIGGER IF EXISTS track_training_images_outcomes ON public.training_images;
+CREATE TRIGGER track_training_images_outcomes
+  BEFORE UPDATE ON public.training_images
+  FOR EACH ROW EXECUTE FUNCTION public.training_images_track_outcomes();
 
 -- ─── 4. RLS: leitura por tenant; escrita apenas pelo backend ────────────────
 ALTER TABLE public.training_images ENABLE ROW LEVEL SECURITY;
@@ -249,18 +307,29 @@ BEGIN
   )
   ON CONFLICT (empresa_id, content_type, content_id) DO UPDATE
     SET status         = 'pending',
-        attempts       = t.attempts + 1,
+        -- Conteúdo editado (hash novo) começa uma NOVA versão: tentativas zeram.
+        -- Mesma versão: conta mais uma tentativa de processamento.
+        attempts       = CASE
+                           WHEN t.content_hash IS DISTINCT FROM excluded.content_hash THEN 1
+                           ELSE t.attempts + 1
+                         END,
         content_hash   = excluded.content_hash,
         prompt_version = excluded.prompt_version,
         requested_at   = now(),
         last_error     = NULL,
-        completed_at   = NULL
-    WHERE t.attempts < v_max
-      AND (
+        completed_at   = NULL,
+        operation_id   = NULL
+    WHERE (
         t.status = 'disabled'
         OR t.status = 'failed'
         OR (t.status IN ('pending', 'processing') AND t.requested_at < now() - p_stale_after)
         OR (t.status = 'succeeded' AND t.content_hash IS DISTINCT FROM excluded.content_hash)
+      )
+      AND (
+        -- Versão nova nunca é bloqueada por tentativas de uma versão antiga.
+        t.content_hash IS DISTINCT FROM excluded.content_hash
+        OR t.status = 'disabled'
+        OR t.attempts < v_max
       )
   RETURNING * INTO v_linha;
 
@@ -287,3 +356,89 @@ REVOKE ALL ON FUNCTION public.claim_training_image(uuid, text, uuid, text, text,
 REVOKE EXECUTE ON FUNCTION public.claim_training_image(uuid, text, uuid, text, text, integer, interval) FROM anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.claim_training_image(uuid, text, uuid, text, text, integer, interval) TO service_role;
 GRANT ALL ON public.training_images TO service_role;
+
+-- ─── 6. Reconciliação administrativa de RESULTADO DESCONHECIDO ──────────────
+-- Impede o "zerar attempts" sem verificação. Só aceita linhas em estado de
+-- incerteza (`last_error` iniciado por `resultado_desconhecido`) e exige:
+--   • decisão explícita;
+--   • operador identificado;
+--   • notas obrigatórias (ex.: id da operação + conferência no painel OpenAI).
+--
+-- DECISÕES
+--   'confirmar_nao_gerado' → o provedor NÃO processou/cobrou; a linha volta a
+--                            'disabled' com attempts = 0 e pode ser solicitada
+--                            novamente (uma única vez, por ação humana).
+--   'manter_bloqueado'     → o provedor PODE ter cobrado; mantém o bloqueio e
+--                            apenas registra a auditoria da análise.
+CREATE OR REPLACE FUNCTION public.reconcile_training_image(
+  p_empresa_id uuid,
+  p_content_type text,
+  p_content_id uuid,
+  p_decision text,
+  p_operator text,
+  p_notes text
+)
+RETURNS public.training_images
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_linha public.training_images;
+BEGIN
+  IF p_decision NOT IN ('confirmar_nao_gerado', 'manter_bloqueado') THEN
+    RAISE EXCEPTION 'decisao_invalida';
+  END IF;
+  IF coalesce(trim(p_operator), '') = '' THEN
+    RAISE EXCEPTION 'operador_obrigatorio';
+  END IF;
+  IF coalesce(trim(p_notes), '') = '' THEN
+    RAISE EXCEPTION 'notas_obrigatorias';
+  END IF;
+
+  SELECT * INTO v_linha
+  FROM public.training_images ti
+  WHERE ti.empresa_id = p_empresa_id
+    AND ti.content_type = p_content_type
+    AND ti.content_id = p_content_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'registro_inexistente';
+  END IF;
+
+  IF v_linha.status <> 'failed'
+     OR coalesce(v_linha.last_error, '') NOT LIKE 'resultado_desconhecido%' THEN
+    RAISE EXCEPTION 'registro_nao_esta_em_estado_desconhecido';
+  END IF;
+
+  IF p_decision = 'confirmar_nao_gerado' THEN
+    UPDATE public.training_images
+       SET status = 'disabled',
+           attempts = 0,
+           last_error = NULL,
+           completed_at = now(),
+           reconciled_at = now(),
+           reconciled_by = p_operator,
+           reconciliation_notes = p_notes
+     WHERE id = v_linha.id
+     RETURNING * INTO v_linha;
+  ELSE
+    UPDATE public.training_images
+       SET reconciled_at = now(),
+           reconciled_by = p_operator,
+           reconciliation_notes = p_notes
+     WHERE id = v_linha.id
+     RETURNING * INTO v_linha;
+  END IF;
+
+  RETURN v_linha;
+END
+$$;
+
+COMMENT ON FUNCTION public.reconcile_training_image(uuid, text, uuid, text, text, text) IS
+  'Reconciliação manual de resultado desconhecido. Exclusivo do backend (service role). Exige operador e notas; nunca zera attempts de estado conhecido.';
+
+REVOKE ALL ON FUNCTION public.reconcile_training_image(uuid, text, uuid, text, text, text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.reconcile_training_image(uuid, text, uuid, text, text, text) FROM anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.reconcile_training_image(uuid, text, uuid, text, text, text) TO service_role;

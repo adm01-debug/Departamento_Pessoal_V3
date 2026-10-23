@@ -4,8 +4,9 @@ import { AlertTriangle, Award, CalendarDays, RefreshCw, Users } from 'lucide-rea
 import { AppPagination } from '@/components/ui/app-pagination';
 import { Button } from '@/components/ui/button';
 import { EntradaPresenca, MAX_ENTRADA_INDEX, entradaCard } from '@/components/ui/entrada-cards';
-import { linhaEntradaHubVariants } from '@/components/premiacoes/premiacoesEntrada';
+import { LINHA_HUB_INICIO, linhaEntradaHubVariants } from '@/components/premiacoes/premiacoesEntrada';
 import { cn } from '@/lib/utils';
+import { useMovimentoReduzido } from '@/lib/motionMode';
 import { AvatarParticipante } from './TreinamentoParticipantes';
 import { TreinamentoIcone } from './TreinamentoBadges';
 import { InscricaoStatusBadge } from './InscricaoStatusBadge';
@@ -25,7 +26,6 @@ import {
   type CursoInscricao,
   type Inscricao,
   type InscricaoRegistro,
-  type TomInscricao,
 } from './inscricoesDerivacoes';
 import type { Certificado } from './certificadosDerivacoes';
 
@@ -43,17 +43,80 @@ export interface InscricoesPainelProps {
 
 const GRID_TABELA = 'grid grid-cols-[20%_20%_13%_13%_12%_11%_11%] items-center';
 
-const PROGRESSO_TOM: Record<TomInscricao, string> = {
-  sucesso: 'bg-success',
-  andamento: 'bg-info',
-  inscrito: 'bg-info/70',
-  alerta: 'bg-warning',
-  perigo: 'bg-[hsl(var(--destructive-vivid))]',
-  neutro: 'bg-muted-foreground/50',
+/**
+ * Barra da coluna PROGRESSO — mesmo acabamento do "Funil de Onboarding por
+ * Etapa" (`AdmissoesDashboard.tsx`): degradê horizontal, sem glow/sombra.
+ *
+ * Os degradês usam os tokens do Design System:
+ *   100%       → `--success` → `--primary` (verde → lime)
+ *   50%–99%    → `--info` (mais profundo no início) → `--aqua` (azul → ciano)
+ *   0%–49%     → `--warning` (mais profundo no início) → `--coins` (âmbar → amarelo)
+ */
+type TomBarra = 'sucesso' | 'andamento' | 'alerta';
+
+const GRADIENTE_BARRA: Record<TomBarra, string> = {
+  sucesso: 'linear-gradient(90deg, hsl(var(--success)) 0%, hsl(var(--primary)) 100%)',
+  andamento: 'linear-gradient(90deg, hsl(var(--info) / 0.55) 0%, hsl(var(--info)) 45%, hsl(var(--aqua)) 100%)',
+  alerta: 'linear-gradient(90deg, hsl(var(--warning) / 0.55) 0%, hsl(var(--warning)) 45%, hsl(var(--coins)) 100%)',
 };
 
-function ProgressoInscricao({ progresso, tom }: { progresso: number | null; tom: TomInscricao }) {
-  if (progresso === null) {
+function tomBarra(percentual: number): TomBarra {
+  if (percentual >= 100) return 'sucesso';
+  if (percentual >= 50) return 'andamento';
+  return 'alerta';
+}
+
+/** Parâmetros copiados do Funil de Onboarding por Etapa. */
+const DURACAO_PREENCHIMENTO = 0.6;
+const EASE_PREENCHIMENTO = [0.25, 0.46, 0.45, 0.94] as const;
+const PASSO_CASCATA_BARRA = 0.05;
+
+/**
+ * A linha já entra com `opacity + y + scaleX` a partir de 0,46 s
+ * (`linhaEntradaHubVariants`). A barra começa 0,45 s depois do início da linha
+ * — quando o fade já a deixou visível, sem esperar os 0,8 s completos — e
+ * mantém o passo de 0,05 s do Funil. Assim as duas animações não competem e a
+ * cascata não soma o delay da linha inteira.
+ */
+const ATRASO_BARRA_APOS_LINHA = 0.45;
+
+/**
+ * PREVIEW LOCAL (somente desenvolvimento) — preenche as barras de progresso da
+ * aba Inscrições com percentuais fictícios para validar o design.
+ *
+ * - Não altera `inscricao.progresso`, status, serviços, banco nem storage.
+ * - Ativa apenas com `import.meta.env.DEV` E
+ *   `VITE_TREINAMENTOS_PREVIEW_PROGRESSO=true` (nunca em produção).
+ * - Com a flag desligada, o percentual real (ou "Não informado") permanece.
+ */
+const PREVIEW_PROGRESSO_ATIVO =
+  import.meta.env.DEV &&
+  import.meta.env.MODE !== 'test' &&
+  import.meta.env.VITE_TREINAMENTOS_PREVIEW_PROGRESSO === 'true';
+
+const PREVIEW_PROGRESSO_PERCENTUAIS = [100, 100, 75, 45, 20, 10, 90, 60] as const;
+
+function percentualPreview(indice: number): number | null {
+  if (!PREVIEW_PROGRESSO_ATIVO) return null;
+  return PREVIEW_PROGRESSO_PERCENTUAIS[indice] ?? null;
+}
+
+function ProgressoInscricao({
+  progresso,
+  indice,
+  animar,
+}: {
+  progresso: number | null;
+  /** Posição visual da linha na página (0–7 no preview). */
+  indice: number;
+  /** A entrada da linha ainda está acontecendo? Coordena o início da barra. */
+  animar: boolean;
+}) {
+  const movimentoReduzido = useMovimentoReduzido();
+  const percentualSimulado = percentualPreview(indice);
+  const percentual = percentualSimulado ?? progresso;
+
+  if (percentual === null) {
     return (
       <div
         className="flex min-w-0 items-center gap-2"
@@ -64,20 +127,36 @@ function ProgressoInscricao({ progresso, tom }: { progresso: number | null; tom:
       </div>
     );
   }
+
+  const gradiente = GRADIENTE_BARRA[tomBarra(percentual)];
+  const atraso = animar
+    ? LINHA_HUB_INICIO + ATRASO_BARRA_APOS_LINHA + Math.min(indice, MAX_ENTRADA_INDEX) * PASSO_CASCATA_BARRA
+    : 0;
+
   return (
     <div className="flex min-w-0 items-center gap-2">
       <span
         role="progressbar"
-        aria-label={`Progresso da inscrição: ${progresso}%`}
+        aria-label={`Progresso da inscrição: ${percentual}%`}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={progresso}
+        aria-valuenow={percentual}
         className="h-1.5 min-w-[36px] flex-1 overflow-hidden rounded-full bg-muted/60"
       >
-        <span className={cn('block h-full rounded-full', PROGRESSO_TOM[tom])} style={{ width: `${progresso}%` }} />
+        <motion.span
+          className="block h-full rounded-full"
+          style={{ backgroundImage: gradiente }}
+          initial={animar && !movimentoReduzido ? { width: 0 } : false}
+          animate={{ width: `${percentual}%` }}
+          transition={
+            movimentoReduzido
+              ? { duration: 0 }
+              : { duration: DURACAO_PREENCHIMENTO, delay: atraso, ease: EASE_PREENCHIMENTO }
+          }
+        />
       </span>
       <span className="w-[30px] shrink-0 text-right text-[10px] font-medium tabular-nums text-foreground">
-        {progresso}%
+        {percentual}%
       </span>
     </div>
   );
@@ -211,7 +290,7 @@ function LinhaTabela({
         <CursoCelula inscricao={inscricao} />
       </div>
       <div role="cell" className="min-w-0 pr-3">
-        <ProgressoInscricao progresso={inscricao.progresso} tom={inscricao.statusTom} />
+        <ProgressoInscricao progresso={inscricao.progresso} indice={index} animar={animar} />
       </div>
       <div role="cell" className="min-w-0 pr-3">
         <InscricaoStatusBadge
@@ -290,7 +369,7 @@ function CartaoInscricao({
       </div>
       <div className="mt-3">
         <p className="mb-1 text-[9px] uppercase tracking-[0.08em] text-muted-foreground">Progresso</p>
-        <ProgressoInscricao progresso={inscricao.progresso} tom={inscricao.statusTom} />
+        <ProgressoInscricao progresso={inscricao.progresso} indice={index} animar={animar} />
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border/30 pt-3">
         <div className="min-w-0">

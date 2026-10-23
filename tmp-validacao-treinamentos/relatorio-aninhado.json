@@ -1,0 +1,13 @@
+{
+  "aninhado": {
+    "abertoEmMs": 828,
+    "escalaInicial": 1,
+    "dialogosDurante": 2,
+    "foco": "Escolha um curso do catálogo",
+    "aposEscape": 1,
+    "focoAposEscape": "Adicionar Curso"
+  },
+  "excluirTreinamento": {
+    "alerta": 0
+  }
+}

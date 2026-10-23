@@ -1,0 +1,133 @@
+{
+  "entrada": {
+    "busca": 1208,
+    "categoria": 1,
+    "nivel": 1355,
+    "status": 1,
+    "limpar": 1,
+    "paginacao": 228,
+    "cards": [
+      1592,
+      1672,
+      1753
+    ]
+  },
+  "final": {
+    "busca": {
+      "o": 1,
+      "y": 0
+    },
+    "cards": [
+      {
+        "o": 1,
+        "y": 0
+      },
+      {
+        "o": 1,
+        "y": 0
+      },
+      {
+        "o": 1,
+        "y": 0
+      }
+    ],
+    "paginacao": {
+      "o": 1,
+      "y": 0
+    },
+    "cardsY": [
+      0,
+      0,
+      0
+    ]
+  },
+  "filtros": {
+    "antesFiltro": {
+      "buscaO": 1,
+      "cardO": 1
+    },
+    "depoisFiltro": {
+      "buscaO": 1,
+      "cardO": 1
+    }
+  },
+  "modal": {
+    "modalAberto": true,
+    "buscaO": 1,
+    "cardsO": [
+      1,
+      1,
+      1
+    ]
+  },
+  "retorno": {
+    "busca": 313,
+    "categoria": 1,
+    "nivel": 472,
+    "status": 548,
+    "limpar": 1,
+    "paginacao": 1,
+    "cards": [
+      710,
+      789,
+      868
+    ]
+  },
+  "responsivo": [
+    {
+      "viewport": "1920x1080",
+      "overflowX": false,
+      "filtrosOk": true,
+      "cards": 3,
+      "primeira": 456
+    },
+    {
+      "viewport": "1600x900",
+      "overflowX": false,
+      "filtrosOk": true,
+      "cards": 3,
+      "primeira": 421.328125
+    },
+    {
+      "viewport": "1366x768",
+      "overflowX": false,
+      "filtrosOk": true,
+      "cards": 3,
+      "primeira": 343.328125
+    },
+    {
+      "viewport": "1024x768",
+      "overflowX": true,
+      "filtrosOk": true,
+      "cards": 3,
+      "primeira": 352
+    },
+    {
+      "viewport": "768x1024",
+      "overflowX": true,
+      "filtrosOk": true,
+      "cards": 3,
+      "primeira": 224
+    },
+    {
+      "viewport": "390x844",
+      "overflowX": true,
+      "filtrosOk": true,
+      "cards": 3,
+      "primeira": 342
+    }
+  ],
+  "reduced": {
+    "buscaO": 1,
+    "cardsO": [
+      1,
+      1,
+      1
+    ],
+    "cardsTransform": [
+      "none",
+      "none",
+      "none"
+    ]
+  }
+}

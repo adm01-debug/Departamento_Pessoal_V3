@@ -1,0 +1,138 @@
+{
+  "t500": {
+    "busca": {
+      "o": 1,
+      "top": 325.9,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    },
+    "cards": [
+      {
+        "o": 0.753682,
+        "top": 386.7,
+        "transform": "matrix(1.00195, 0, 0, 0.998048, 0, 0.292272)",
+        "inline": "opacity: 0; transform: translateY(4.80713px); animation-delay: 0ms;"
+      },
+      {
+        "o": 0.503119,
+        "top": 385.9,
+        "transform": "matrix(0.999999, 0, 0, 1, 0, -0.000217033)",
+        "inline": "opacity: 0; transform: translateY(9.75821px); animation-delay: 60ms;"
+      },
+      {
+        "o": 0.152472,
+        "top": 382.5,
+        "transform": "matrix(0.991601, 0, 0, 1.0084, 0, -1.27039)",
+        "inline": "opacity: 0; transform: translateY(16.7297px); animation-delay: 120ms;"
+      }
+    ],
+    "pag": {
+      "o": 0,
+      "top": 935.6,
+      "transform": "matrix(1, 0, 0, 1, 0, 20)",
+      "inline": "opacity: 0; transform: translateY(20px);"
+    }
+  },
+  "t830": {
+    "busca": {
+      "o": 1,
+      "top": 325.9,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    },
+    "cards": [
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 0ms;"
+      },
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 60ms;"
+      },
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 120ms;"
+      }
+    ],
+    "pag": {
+      "o": 1,
+      "top": 915.6,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    }
+  },
+  "t1130": {
+    "busca": {
+      "o": 1,
+      "top": 325.9,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    },
+    "cards": [
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 0ms;"
+      },
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 60ms;"
+      },
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 120ms;"
+      }
+    ],
+    "pag": {
+      "o": 1,
+      "top": 915.6,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    }
+  },
+  "final": {
+    "busca": {
+      "o": 1,
+      "top": 325.9,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    },
+    "cards": [
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 0ms;"
+      },
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 60ms;"
+      },
+      {
+        "o": 1,
+        "top": 385.9,
+        "transform": "none",
+        "inline": "opacity: 1; transform: none; animation-delay: 120ms;"
+      }
+    ],
+    "pag": {
+      "o": 1,
+      "top": 915.6,
+      "transform": "none",
+      "inline": "opacity: 1; transform: none;"
+    }
+  }
+}

@@ -7,7 +7,7 @@
  * cliente. O teste de paridade compara as duas implementações.
  * ============================================================================
  */
-import type { TrainingContentType } from './types';
+import type { TrainingContentType } from './types.ts';
 
 /** Versão do template — registrada em `training_images.prompt_version`. */
 export const PROMPT_VERSION = 'v2';

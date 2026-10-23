@@ -1,0 +1,169 @@
+{
+  "fechamentoNovoTreinamento": {
+    "x": {
+      "antes": 1,
+      "durante": 1,
+      "depois": 0,
+      "foco": {
+        "tag": "BUTTON",
+        "aria": null,
+        "texto": "Novo Treinamento"
+      }
+    },
+    "escape": {
+      "antes": 1,
+      "durante": 1,
+      "depois": 0,
+      "foco": {
+        "tag": "BUTTON",
+        "aria": null,
+        "texto": "Novo Treinamento"
+      }
+    },
+    "backdrop": {
+      "antes": 1,
+      "durante": 1,
+      "depois": 0,
+      "foco": {
+        "tag": "BUTTON",
+        "aria": null,
+        "texto": "Novo Treinamento"
+      }
+    }
+  },
+  "repeticaoNovoTreinamento": [
+    {
+      "aberto": 1,
+      "overlays": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1,
+      "overlays": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1,
+      "overlays": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1,
+      "overlays": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1,
+      "overlays": 1
+    },
+    {
+      "fechado": 0
+    }
+  ],
+  "focoVerCurso": {
+    "dentro": {
+      "tag": "BUTTON",
+      "aria": null,
+      "texto": "Fechar"
+    },
+    "depois": {
+      "tag": "BUTTON",
+      "aria": "Ver curso Comunicação Assertiva",
+      "texto": "Ver curso"
+    },
+    "dialogosRestantes": 0
+  },
+  "fechamentoCertificadoRodape": {
+    "durante": 1,
+    "depois": 0,
+    "foco": {
+      "tag": "BUTTON",
+      "aria": "Visualizar certificado de Fernanda Costa Ribeiro",
+      "texto": "Visualizar certificado"
+    }
+  },
+  "repeticaoCertificado": [
+    {
+      "aberto": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1
+    },
+    {
+      "fechado": 0
+    },
+    {
+      "aberto": 1
+    },
+    {
+      "fechado": 0
+    }
+  ],
+  "overflow": [
+    {
+      "viewport": "1024x768",
+      "antes": {
+        "scrollWidth": 1221,
+        "innerWidth": 1024,
+        "overflow": true
+      },
+      "depois": {
+        "scrollWidth": 1221,
+        "innerWidth": 1024,
+        "overflow": true,
+        "modalDentro": true
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "antes": {
+        "scrollWidth": 1168,
+        "innerWidth": 768,
+        "overflow": true
+      },
+      "depois": {
+        "scrollWidth": 1168,
+        "innerWidth": 768,
+        "overflow": true,
+        "modalDentro": true
+      }
+    },
+    {
+      "viewport": "390x844",
+      "antes": {
+        "scrollWidth": 548,
+        "innerWidth": 390,
+        "overflow": true
+      },
+      "depois": {
+        "scrollWidth": 548,
+        "innerWidth": 390,
+        "overflow": true,
+        "modalDentro": true
+      }
+    }
+  ]
+}

@@ -1,108 +1,130 @@
+import { motion } from 'framer-motion';
 import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
 import { cn } from '@/lib/utils';
+import { estiloCategoriaTreinamento } from './TreinamentoBadges';
 import { metaEtapa, ordenarVinculos, type TrilhaCursoVinculo } from './trilhasDerivacoes';
 
 /**
- * Sequência de aprendizagem da trilha — a ordem REAL de `trilhas_cursos.ordem`.
+ * Sequência de aprendizagem da trilha — timeline vertical numerada.
  *
- * O QUE NÃO É FEITO AQUI: nenhuma etapa recebe ✓ / estado "concluída" / destaque
- * de "etapa atual". O schema não guarda progresso POR PESSOA dentro da trilha
- * (`inscricoes_cursos` é por curso do catálogo, sem vínculo de ordem), então
- * qualquer marco seria inventado. A timeline é numerada e neutra; quando o
- * produto passar a ter acompanhamento individual, o estado entra no lugar do
- * círculo neutro.
+ * A ORDEM é a real de `trilhas_cursos.ordem` (ver `ordenarVinculos`): o número
+ * exibido (`01`, `02`…) representa apenas a POSIÇÃO da etapa, nunca conclusão.
+ * O schema não guarda progresso por pessoa dentro da trilha, então nenhuma
+ * etapa recebe ✓, estado "atual" ou cor de concluída.
+ *
+ * Cada `<motion.li>` herda `cascadeItemVariants` do corpo do diálogo: as etapas
+ * entram progressivamente junto com o cabeçalho e a nota, usando a MESMA
+ * coreografia do modal Pendências (sem uma segunda configuração de animação).
+ *
+ * A linha conectora é um elemento de fluxo (`flex-1` dentro da coluna do
+ * número), não um absoluto: ela acompanha a altura real do card mesmo quando o
+ * nome do curso ocupa duas linhas.
  */
 export function TrilhaSequencia({
   vinculos,
   carregando = false,
   onRemover,
+  categoriaPorCurso,
   className,
 }: {
   vinculos: readonly TrilhaCursoVinculo[];
   carregando?: boolean;
   /** Quando presente, cada etapa ganha a ação real de desvincular o curso. */
   onRemover?: (vinculoId: string) => void;
+  /** Categoria real do curso (catálogo) para reutilizar o ícone do Design System. */
+  categoriaPorCurso?: ReadonlyMap<string, string | null>;
   className?: string;
 }) {
   if (carregando) {
     return (
-      <div className={cn('space-y-2.5', className)} aria-hidden>
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex items-center gap-3">
-            <span className="h-[22px] w-[22px] shrink-0 animate-pulse rounded-full bg-muted/50" />
-            <div className="min-w-0 flex-1 space-y-1.5">
-              <span className="block h-2.5 w-3/4 animate-pulse rounded-full bg-muted/50" />
-              <span className="block h-2 w-1/2 animate-pulse rounded-full bg-muted/30" />
-            </div>
+      <motion.div variants={cascadeItemVariants} className={cn('mt-3 space-y-2.5', className)} aria-hidden>
+        {[0, 1].map((i) => (
+          <div key={i} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3">
+            <span className="mx-auto mt-1 h-8 w-8 animate-pulse rounded-full bg-muted/50" />
+            <span className="block h-[60px] animate-pulse rounded-xl border border-border/40 bg-muted/20" />
           </div>
         ))}
-      </div>
+      </motion.div>
     );
   }
 
   if (vinculos.length === 0) {
     return (
-      <div
+      <motion.div
+        variants={cascadeItemVariants}
         className={cn(
-          'rounded-xl border border-dashed border-border/70 bg-muted/10 px-3 py-4 text-center text-[11px] text-muted-foreground',
+          'mt-3 rounded-xl border border-dashed border-border/60 bg-muted/10 px-3 py-4 text-center text-[11.5px] text-muted-foreground',
           className
         )}
       >
-        Nenhum curso vinculado a esta trilha ainda.
-      </div>
+        Esta trilha ainda não possui cursos.
+      </motion.div>
     );
   }
 
   const ordenados = ordenarVinculos(vinculos);
 
   return (
-    <ol className={cn('min-w-0', className)}>
+    <ol className={cn('mt-3 min-w-0', className)} aria-label="Jornada de aprendizagem">
       {ordenados.map((vinculo, index) => {
         const ultimo = index === ordenados.length - 1;
-        const nome = vinculo.curso?.nome || 'Curso';
-        return (
-          <li key={vinculo.id} className="relative flex gap-3">
-            {!ultimo && (
-              <span aria-hidden className="absolute left-[10.5px] top-[24px] h-[calc(100%-18px)] w-px bg-border/70" />
-            )}
+        const nome = vinculo.curso?.nome || 'Curso sem nome';
+        const categoria = categoriaPorCurso?.get(vinculo.curso_id) ?? null;
+        const estilo = estiloCategoriaTreinamento(categoria);
+        const Icone = estilo.icone;
 
-            <span
-              aria-hidden
+        return (
+          <motion.li
+            key={vinculo.id}
+            variants={cascadeItemVariants}
+            className="group grid grid-cols-[32px_minmax(0,1fr)] gap-3"
+          >
+            <div className="flex flex-col items-center">
+              <span
+                aria-hidden
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--aqua)/0.3)] bg-background text-[10.5px] font-semibold tabular-nums text-[hsl(var(--aqua))]"
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              {!ultimo && <span aria-hidden data-conector className="mt-1 w-px flex-1 bg-border/60" />}
+            </div>
+
+            <div
               className={cn(
-                'relative z-10 mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full',
-                'border border-border/70 bg-background text-[10px] font-semibold tabular-nums text-muted-foreground'
+                'min-w-0 rounded-xl border border-border/50 bg-muted/20 px-3.5 py-3',
+                ultimo ? 'mb-0' : 'mb-2.5'
               )}
             >
-              {index + 1}
-            </span>
-
-            <div className={cn('flex min-w-0 flex-1 items-start gap-1.5', ultimo ? 'pb-0' : 'pb-3')}>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[12px] font-medium leading-tight text-foreground" title={nome}>
-                  {nome}
-                </p>
-                <p
-                  className="mt-0.5 truncate text-[10.5px] leading-snug text-muted-foreground"
-                  title={metaEtapa(vinculo)}
+              <div className="flex items-start gap-2.5">
+                <span
+                  aria-hidden
+                  className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border', estilo.tile)}
                 >
-                  {metaEtapa(vinculo)}
-                </p>
+                  <Icone className="h-4 w-4" />
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <p className="line-clamp-2 text-[12.5px] font-semibold leading-snug text-foreground">{nome}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{metaEtapa(vinculo)}</p>
+                </div>
+
+                {onRemover && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`Desvincular ${nome} da trilha`}
+                    title={`Desvincular ${nome} da trilha`}
+                    onClick={() => onRemover(vinculo.id)}
+                    className="mt-0.5 h-7 w-7 shrink-0 rounded-md text-muted-foreground/60 opacity-100 transition-[opacity,color,background-color] hover:bg-destructive/10 hover:text-destructive focus-visible:opacity-100 group-focus-within:opacity-100 sm:text-muted-foreground/70 sm:opacity-0 sm:group-hover:opacity-100"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                )}
               </div>
-
-              {onRemover && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={`Desvincular ${nome} da trilha`}
-                  className="h-6 w-6 shrink-0 rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive focus-visible:opacity-100 group-hover:opacity-100"
-                  onClick={() => onRemover(vinculo.id)}
-                >
-                  <Trash2 className="h-3 w-3" />
-                </Button>
-              )}
             </div>
-          </li>
+          </motion.li>
         );
       })}
     </ol>

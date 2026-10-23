@@ -59,7 +59,13 @@ function criarAmbiente(
   } = {}
 ) {
   const linha: { atual: LinhaFake | null } = { atual: null };
-  const chamadas = { upload: 0, sucesso: 0, falha: 0 };
+  const chamadas = {
+    upload: 0,
+    sucesso: 0,
+    falha: 0,
+    operacoes: [] as string[],
+    operacoesRegistradas: [] as string[],
+  };
   const provider = opcoes.provider ?? criarProvedorSimulado();
 
   const claim = async (dados: { contentHash: string; maxAttempts: number }): Promise<ClaimTrainingImageResult> => {
@@ -105,6 +111,10 @@ function criarAmbiente(
 
     claim: async (dados) => claim({ contentHash: dados.contentHash, maxAttempts: dados.maxAttempts }),
 
+    registrarOperacao: async ({ operationId }) => {
+      chamadas.operacoesRegistradas.push(operationId);
+    },
+
     enviarImagem: async ({ empresaId, contentType, contentId, bytes, mimeType, extensao }) => {
       chamadas.upload += 1;
       if (opcoes.falhaUpload) throw new Error('storage indisponível');
@@ -114,8 +124,9 @@ function criarAmbiente(
       return `${empresaId}/${pasta}/${contentId}/cover.${extensao}`;
     },
 
-    atualizarSucesso: async ({ storagePath }) => {
+    atualizarSucesso: async ({ storagePath, operationId }) => {
       chamadas.sucesso += 1;
+      chamadas.operacoes.push(operationId);
       if (opcoes.falhaSucesso) throw new Error('update falhou');
       if (linha.atual) {
         linha.atual.status = 'succeeded';
@@ -123,8 +134,9 @@ function criarAmbiente(
       }
     },
 
-    atualizarFalha: async ({ erro, permanente }) => {
+    atualizarFalha: async ({ erro, permanente, operationId }) => {
       chamadas.falha += 1;
+      chamadas.operacoes.push(operationId);
       if (linha.atual) {
         linha.atual.status = 'failed';
         linha.atual.erro = erro;
@@ -151,6 +163,10 @@ describe('fluxo completo (provedor simulado)', () => {
     expect(ambiente.linha.atual?.status).toBe('succeeded');
     expect(ambiente.chamadas.upload).toBe(1);
     expect(ambiente.chamadas.sucesso).toBe(1);
+    // Rastreabilidade: o operationId calculado no servidor é persistido.
+    expect(ambiente.chamadas.operacoes).toHaveLength(1);
+    expect(ambiente.chamadas.operacoes[0]).toMatch(/^ti_[0-9a-f]{32}$/);
+    expect(ambiente.chamadas.operacoesRegistradas).toEqual(ambiente.chamadas.operacoes);
   });
 
   it('envia ao provedor o briefing reconstruído no servidor e os identificadores', async () => {
@@ -294,16 +310,35 @@ describe('falhas sem quebrar o cadastro', () => {
     expect(provider.generate).not.toHaveBeenCalled();
   });
 
-  it('falha transitória do provedor registra erro seguro e mantém tentativas', async () => {
+  it('timeout NÃO é reenviado automaticamente (resultado pago desconhecido)', async () => {
     const provider = criarProvedorSimulado({ falha: 'timeout' });
     const ambiente = criarAmbiente({ provider });
 
     const resultado = await gerarCapaDeTreinamento(ENTRADA, ambiente.deps);
 
-    expect(resultado).toMatchObject({ gerado: false, motivo: 'falha_no_provedor' });
+    expect(resultado).toMatchObject({ gerado: false, motivo: 'resultado_desconhecido' });
     expect(ambiente.linha.atual?.status).toBe('failed');
-    expect(ambiente.linha.atual?.erro).toMatch(/tempo limite/);
+    expect(ambiente.linha.atual?.erro).toMatch(/^resultado_desconhecido: .*tempo limite/);
+    expect(ambiente.linha.atual?.attempts).toBe(TENTATIVAS_MAX_PIPELINE);
+    // O operationId também é registrado na falha (suporte/reconciliação).
+    expect(ambiente.chamadas.operacoes[0]).toMatch(/^ti_[0-9a-f]{32}$/);
+
+    // Segunda chamada NÃO reenvia: o resultado anterior pode ter sido cobrado.
+    const segunda = await gerarCapaDeTreinamento(ENTRADA, ambiente.deps);
+    expect(segunda).toEqual({ gerado: false, motivo: 'limite_de_tentativas' });
+    expect(provider.chamadas).toBe(1);
+  });
+
+  it('429 (resultado conhecido) continua retentável e não esgota tentativas', async () => {
+    const provider = criarProvedorSimulado({ falha: 'rate_limit' });
+    const ambiente = criarAmbiente({ provider });
+
+    const resultado = await gerarCapaDeTreinamento(ENTRADA, ambiente.deps);
+
+    expect(resultado).toMatchObject({ gerado: false, motivo: 'falha_no_provedor' });
     expect(ambiente.linha.atual?.attempts).toBe(1);
+    await gerarCapaDeTreinamento(ENTRADA, ambiente.deps);
+    expect(provider.chamadas).toBe(2);
   });
 
   it('falha permanente do provedor esgota tentativas e não repete', async () => {
@@ -337,6 +372,17 @@ describe('falhas sem quebrar o cadastro', () => {
     expect(resultado).toMatchObject({ gerado: false, motivo: 'falha_no_upload' });
     expect(ambiente.chamadas.sucesso).toBe(0);
     expect(ambiente.linha.atual?.status).toBe('failed');
+  });
+
+  it('falha no upload não gera nova cobrança: próxima tentativa é recusada', async () => {
+    const provider = criarProvedorSimulado();
+    const ambiente = criarAmbiente({ provider, falhaUpload: true });
+
+    await gerarCapaDeTreinamento(ENTRADA, ambiente.deps);
+    const segunda = await gerarCapaDeTreinamento(ENTRADA, ambiente.deps);
+
+    expect(segunda).toEqual({ gerado: false, motivo: 'limite_de_tentativas' });
+    expect(provider.chamadas).toBe(1);
   });
 
   it('falha ao gravar o sucesso devolve falha_no_registro', async () => {

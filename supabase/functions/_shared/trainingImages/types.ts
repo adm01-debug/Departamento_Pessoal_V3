@@ -126,6 +126,13 @@ export type TrainingImagePipelineResult =
         | 'imagem_invalida'
         | 'falha_no_provedor'
         | 'falha_no_upload'
-        | 'falha_no_registro';
+        | 'falha_no_registro'
+        /**
+         * A requisição paga pode ter sido processada pelo provedor, mas a
+         * resposta não chegou (timeout/rede/5xx/download). NUNCA é reenviada
+         * automaticamente: repetir poderia cobrar duas vezes. Exige
+         * reconciliação manual.
+         */
+        | 'resultado_desconhecido';
       erro?: string;
     };

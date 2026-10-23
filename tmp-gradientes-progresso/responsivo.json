@@ -1,0 +1,487 @@
+[
+  {
+    "viewport": "1920x1080",
+    "tableVisible": true,
+    "overflow": 0,
+    "bars": [
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "75%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 75,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "45%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 45,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "20%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 20,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "10%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 10,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "90%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 90,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "60%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 60,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      }
+    ],
+    "statuses": [
+      "Concluído",
+      "Concluído",
+      "Em andamento",
+      "Em andamento",
+      "Inscrito",
+      "Inscrito",
+      "Concluído",
+      "Concluído"
+    ]
+  },
+  {
+    "viewport": "1440x900",
+    "tableVisible": true,
+    "overflow": 0,
+    "bars": [
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "75%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 75,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "45%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 45,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "20%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 20,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "10%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 10,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "90%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 90,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "60%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 60,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      }
+    ],
+    "statuses": [
+      "Concluído",
+      "Concluído",
+      "Em andamento",
+      "Em andamento",
+      "Inscrito",
+      "Inscrito",
+      "Concluído",
+      "Concluído"
+    ]
+  },
+  {
+    "viewport": "1366x768",
+    "tableVisible": true,
+    "overflow": 0,
+    "bars": [
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "75%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 75,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "45%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 45,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "20%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 20,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "10%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 10,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "90%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 90,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "60%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 60,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      }
+    ],
+    "statuses": [
+      "Concluído",
+      "Concluído",
+      "Em andamento",
+      "Em andamento",
+      "Inscrito",
+      "Inscrito",
+      "Concluído",
+      "Concluído"
+    ]
+  },
+  {
+    "viewport": "1024x768",
+    "tableVisible": false,
+    "overflow": 197,
+    "bars": [
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "75%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 75,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "45%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 45,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "20%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 20,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "10%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 10,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "90%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 90,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "60%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 60,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      }
+    ],
+    "statuses": [
+      "Concluído",
+      "Concluído",
+      "Em andamento",
+      "Em andamento",
+      "Inscrito",
+      "Inscrito",
+      "Concluído",
+      "Concluído"
+    ]
+  },
+  {
+    "viewport": "390x844",
+    "tableVisible": false,
+    "overflow": 158,
+    "bars": [
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "100%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 100,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "75%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 75,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "45%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 45,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "20%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 20,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "10%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 10,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "90%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 90,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      },
+      {
+        "pct": "60%",
+        "bh": 6,
+        "fh": 6,
+        "ratio": 60,
+        "within": true,
+        "pctWithin": true,
+        "shadow": "none",
+        "bg": true
+      }
+    ],
+    "statuses": [
+      "Concluído",
+      "Concluído",
+      "Em andamento",
+      "Em andamento",
+      "Inscrito",
+      "Inscrito",
+      "Concluído",
+      "Concluído"
+    ]
+  }
+]

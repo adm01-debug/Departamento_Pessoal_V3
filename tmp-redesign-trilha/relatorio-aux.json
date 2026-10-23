@@ -1,0 +1,114 @@
+{
+  "conectores": [
+    {
+      "item": 1,
+      "temLinha": true,
+      "largura": 1,
+      "altura": 30.3,
+      "cor": "oklab(0.893571 0.00205195 -0.00688064 / 0.6)",
+      "conectaAteProximo": true
+    },
+    {
+      "item": 2,
+      "temLinha": true,
+      "largura": 1,
+      "altura": 30.3,
+      "cor": "oklab(0.893571 0.00205195 -0.00688064 / 0.6)",
+      "conectaAteProximo": true
+    },
+    {
+      "item": 3,
+      "temLinha": false,
+      "largura": null,
+      "altura": null,
+      "cor": null,
+      "conectaAteProximo": null
+    }
+  ],
+  "responsivo": [
+    {
+      "viewport": "1920x1080",
+      "dentro": true,
+      "largura": 800,
+      "altura": 507,
+      "overflowInternoX": false,
+      "scrollY": false,
+      "pillsLinhas": 1,
+      "numeros": 3,
+      "botaoAdicionar": true
+    },
+    {
+      "viewport": "1600x900",
+      "dentro": true,
+      "largura": 800,
+      "altura": 507,
+      "overflowInternoX": false,
+      "scrollY": false,
+      "pillsLinhas": 1,
+      "numeros": 3,
+      "botaoAdicionar": true
+    },
+    {
+      "viewport": "1366x768",
+      "dentro": true,
+      "largura": 800,
+      "altura": 507,
+      "overflowInternoX": false,
+      "scrollY": false,
+      "pillsLinhas": 1,
+      "numeros": 3,
+      "botaoAdicionar": true
+    },
+    {
+      "viewport": "1024x768",
+      "dentro": true,
+      "largura": 800,
+      "altura": 507,
+      "overflowInternoX": false,
+      "scrollY": false,
+      "pillsLinhas": 1,
+      "numeros": 3,
+      "botaoAdicionar": true
+    },
+    {
+      "viewport": "768x1024",
+      "dentro": true,
+      "largura": 768,
+      "altura": 507,
+      "overflowInternoX": false,
+      "scrollY": false,
+      "pillsLinhas": 1,
+      "numeros": 3,
+      "botaoAdicionar": true
+    },
+    {
+      "viewport": "390x844",
+      "dentro": true,
+      "largura": 390,
+      "altura": 608,
+      "overflowInternoX": false,
+      "scrollY": false,
+      "pillsLinhas": 1,
+      "numeros": 3,
+      "botaoAdicionar": true
+    }
+  ],
+  "temas": {
+    "escuroAtivo": false
+  },
+  "reduced": {
+    "presente": true,
+    "opacidades": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "transform": "none",
+    "numeros": 3
+  }
+}

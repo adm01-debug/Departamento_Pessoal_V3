@@ -1,11 +1,23 @@
 import { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { ArrowRight, CheckCircle2, Circle, Clock, Laptop, MapPin, Monitor, UserRound, Users } from 'lucide-react';
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  Circle,
+  Clock,
+  Laptop,
+  MapPin,
+  Monitor,
+  ShieldCheck,
+  UserRound,
+  Users,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { TreinamentosCascadeDialog, TreinamentosCascadeItem } from './TreinamentosCascadeDialog';
 import { cn } from '@/lib/utils';
-import { TreinamentoCategoriaBadge } from './TreinamentoBadges';
+import { estiloCategoriaTreinamento, TreinamentoCategoriaBadge } from './TreinamentoBadges';
 import { TrainingCover } from './TrainingCover';
 import { TreinamentoCursoAcoes } from './TreinamentoCursoAcoes';
 import { AvatarParticipante } from './TreinamentoParticipantes';
@@ -117,18 +129,50 @@ function CursoParticipantes({ participacao, className }: { participacao: Partici
   );
 }
 
-function LinhaDetalhe({ rotulo, children }: { rotulo: string; children: React.ReactNode }) {
+/**
+ * Metadado da ficha do curso: label discreto + valor com ícone real do sistema.
+ * Não é KPI Card: sem fundo próprio, sem destaque numérico.
+ */
+function Metadado({
+  icone: Icone,
+  rotulo,
+  valor,
+  tom,
+}: {
+  icone: LucideIcon;
+  rotulo: string;
+  valor: string;
+  /** Cores semânticas do Design System para o tile do ícone. */
+  tom: string;
+}) {
   return (
     <div className="min-w-0">
-      <dt className="text-[10px] uppercase tracking-[0.08em] text-muted-foreground">{rotulo}</dt>
-      <dd className="mt-1 truncate text-[12.5px] font-medium text-foreground">{children}</dd>
+      <dt className="text-[10px] font-medium uppercase leading-none tracking-[0.08em] text-muted-foreground">
+        {rotulo}
+      </dt>
+      <dd className="mt-1 flex min-h-[30px] min-w-0 items-center gap-2">
+        <span
+          aria-hidden
+          className={cn('flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg border', tom)}
+        >
+          <Icone className="h-4 w-4" aria-hidden />
+        </span>
+        <span className="min-w-0 truncate text-[12.5px] font-semibold text-foreground" title={valor}>
+          {valor}
+        </span>
+      </dd>
     </div>
   );
 }
 
 /**
- * Visualização do curso — a única leitura detalhada disponível no módulo.
- * Usa SOMENTE campos reais do cadastro + inscrições; não cria rota fictícia.
+ * Visualização do curso — ficha compacta de consulta.
+ *
+ * Usa SOMENTE campos reais do cadastro + inscrições; não cria rota fictícia,
+ * não inventa participantes e não exibe progresso por etapa.
+ *
+ * A cascata é a de Pendências (`cascade-motion.ts` via
+ * `TreinamentosCascadeDialog`): cabeçalho → badges → metadados → inscritos.
  */
 function CursoDetalhesDialog({
   curso,
@@ -141,63 +185,145 @@ function CursoDetalhesDialog({
   aberto: boolean;
   onOpenChange: (aberto: boolean) => void;
 }) {
-  const Icone = ICONE_MODALIDADE[chaveModalidade(curso.modalidade)] ?? Monitor;
+  const IconeModalidade = ICONE_MODALIDADE[chaveModalidade(curso.modalidade)] ?? Monitor;
+  const estilo = estiloCategoriaTreinamento(curso.categoria);
+  const IconeCurso = estilo.icone;
+  const descricao = curso.descricao?.trim();
+
+  const inscritos = participacao?.inscritos ?? 0;
+  const colaboradores = participacao?.colaboradores ?? [];
+  const visiveis = colaboradores.slice(0, AVATARES_VISIVEIS);
+  const obrigatorio = curso.obrigatorio === true;
+  const rotuloParticipantes = `${inscritos} ${inscritos === 1 ? 'participante vinculado' : 'participantes vinculados'}`;
 
   return (
-    <TreinamentosCascadeDialog open={aberto} onOpenChange={onOpenChange} blocks={4} className="max-w-[520px]">
+    <TreinamentosCascadeDialog
+      open={aberto}
+      onOpenChange={onOpenChange}
+      blocks={4}
+      className="max-h-[90dvh] w-[calc(100vw_-_2rem)] max-w-[440px] gap-3.5 overflow-y-auto p-5"
+    >
       <TreinamentosCascadeItem>
-        <DialogHeader>
-          <DialogTitle className="pr-6 text-left text-base leading-snug">{curso.nome}</DialogTitle>
-          <DialogDescription className="text-left text-xs leading-relaxed">
-            {curso.descricao?.trim() || 'Este curso não possui descrição cadastrada.'}
-          </DialogDescription>
-        </DialogHeader>
+        <div className="relative">
+          <DialogHeader className="relative pr-8 text-left">
+            <div className="flex items-start gap-3">
+              <span
+                aria-hidden
+                style={{ borderColor: 'color-mix(in oklab, currentColor 60%, transparent)' }}
+                className={cn(
+                  'relative flex h-[42px] w-[42px] shrink-0 items-center justify-center overflow-hidden rounded-xl border',
+                  estilo.tile
+                )}
+              >
+                <span
+                  aria-hidden
+                  className="absolute inset-0 bg-[linear-gradient(135deg,currentColor,transparent_74%)] opacity-[0.18]"
+                />
+                <IconeCurso className="relative h-[18px] w-[18px]" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <DialogTitle className="line-clamp-2 text-left text-[17px] font-semibold leading-snug tracking-tight text-foreground sm:text-[18px]">
+                  {curso.nome}
+                </DialogTitle>
+                <DialogDescription
+                  className="mt-1 line-clamp-3 text-left text-[12.5px] leading-relaxed text-foreground/70"
+                  title={descricao || undefined}
+                >
+                  {descricao || 'Este curso não possui descrição cadastrada.'}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+        </div>
       </TreinamentosCascadeItem>
 
       <TreinamentosCascadeItem>
         <div className="flex flex-wrap items-center gap-2">
-          <TreinamentoCategoriaBadge categoria={curso.categoria} />
-          <BadgeObrigatoriedade obrigatorio={curso.obrigatorio === true} />
+          <TreinamentoCategoriaBadge
+            categoria={curso.categoria}
+            className="h-6 cursor-default border-[color:color-mix(in_oklab,currentColor_60%,transparent)] bg-[color:color-mix(in_oklab,currentColor_16%,transparent)] px-2.5 text-[11px] font-semibold transition-colors duration-200 hover:bg-[color:color-mix(in_oklab,currentColor_22%,transparent)]"
+          />
+          <BadgeObrigatoriedade
+            obrigatorio={obrigatorio}
+            className={cn(
+              'h-6 px-2.5 text-[11px] transition-colors duration-200',
+              obrigatorio
+                ? 'border-success/40 bg-success/[0.14] text-success'
+                : 'border-border/70 bg-muted/45 text-foreground/75'
+            )}
+          />
         </div>
       </TreinamentosCascadeItem>
 
-      <TreinamentosCascadeItem className="mt-1">
-        <dl className="grid grid-cols-2 gap-3 rounded-xl border border-border/50 bg-muted/20 p-3">
-          <LinhaDetalhe rotulo="Modalidade">
-            <span className="inline-flex items-center gap-1.5">
-              <Icone className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-              {rotuloModalidade(curso.modalidade)}
-            </span>
-          </LinhaDetalhe>
-          <LinhaDetalhe rotulo="Carga horária">{formatarCargaHoraria(curso.carga_horaria)}</LinhaDetalhe>
-          <LinhaDetalhe rotulo="NR relacionada">{curso.nr_relacionada?.trim() || '—'}</LinhaDetalhe>
-          <LinhaDetalhe rotulo="Cadastrado em">{formatarDataTreinamento(curso.created_at)}</LinhaDetalhe>
+      <TreinamentosCascadeItem>
+        <div className="h-px bg-gradient-to-r from-transparent via-border/70 to-transparent" />
+        <dl className="mt-3.5 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2">
+          <Metadado
+            icone={IconeModalidade}
+            rotulo="Modalidade"
+            valor={rotuloModalidade(curso.modalidade)}
+            tom="border-info/35 bg-info/[0.12] text-[color:color-mix(in_oklab,hsl(var(--info))_88%,hsl(var(--foreground)))]"
+          />
+          <Metadado
+            icone={Clock}
+            rotulo="Carga horária"
+            valor={formatarCargaHoraria(curso.carga_horaria)}
+            tom="border-primary/35 bg-primary/[0.12] text-[color:color-mix(in_oklab,hsl(var(--primary))_82%,hsl(var(--foreground)))]"
+          />
+          <Metadado
+            icone={ShieldCheck}
+            rotulo="NR relacionada"
+            valor={curso.nr_relacionada?.trim() || 'Não informada'}
+            tom="border-info/25 bg-info/[0.07] text-[color:color-mix(in_oklab,hsl(var(--info))_45%,hsl(var(--muted-foreground)))]"
+          />
+          <Metadado
+            icone={CalendarDays}
+            rotulo="Cadastrado em"
+            valor={formatarDataTreinamento(curso.created_at)}
+            tom="border-[hsl(var(--chart-4)/0.35)] bg-[hsl(var(--chart-4)/0.10)] text-[color:color-mix(in_oklab,hsl(var(--chart-4))_85%,hsl(var(--foreground)))]"
+          />
         </dl>
       </TreinamentosCascadeItem>
 
-      <TreinamentosCascadeItem className="mt-1">
-        {participacao && participacao.inscritos > 0 ? (
-          <div className="rounded-xl border border-border/50 bg-muted/20 p-3">
-            <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.08em] text-muted-foreground">
-              <Users className="h-3 w-3" />
-              Colaboradores inscritos
+      <TreinamentosCascadeItem>
+        <div className="h-px bg-gradient-to-r from-transparent via-border/70 to-transparent" />
+        <div className="mt-3.5 rounded-xl border border-border/60 bg-[linear-gradient(135deg,hsl(var(--info)/0.07),hsl(var(--background))_52%,hsl(var(--success)/0.055))] px-3 py-3 shadow-[inset_0_1px_0_hsl(var(--foreground)/0.05)]">
+          <div className="flex items-center justify-between gap-2">
+            <p className="flex min-w-0 items-center gap-1.5 text-[10.5px] font-medium uppercase tracking-[0.08em] text-muted-foreground">
+              <Users className="h-3.5 w-3.5 shrink-0 text-info" aria-hidden />
+              <span className="truncate">Colaboradores inscritos</span>
             </p>
-            <div className="mt-2 flex items-center gap-2">
-              <div className="flex -space-x-2">
-                {participacao.colaboradores.slice(0, 5).map((colaborador) => (
-                  <AvatarParticipante key={colaborador.id} colaborador={colaborador} className="h-7 w-7" />
-                ))}
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {participacao.inscritos} {participacao.inscritos === 1 ? 'inscrito' : 'inscritos'}
+            {inscritos > 0 && (
+              <span
+                title={`${rotuloParticipantes}`}
+                className="inline-flex h-5 min-w-6 shrink-0 items-center justify-center rounded-full border border-success/40 bg-success/[0.14] px-1.5 text-[10.5px] font-semibold tabular-nums text-success"
+              >
+                {inscritos}
               </span>
-            </div>
+            )}
           </div>
-        ) : (
-          <p className="rounded-xl border border-dashed border-border/50 bg-muted/10 p-3 text-xs text-muted-foreground">
-            Nenhuma inscrição registrada para este curso.
-          </p>
-        )}
+
+          {inscritos > 0 ? (
+            <div className="mt-2 flex items-center gap-2.5">
+              {visiveis.length > 0 && (
+                <div className="flex shrink-0 -space-x-2">
+                  {visiveis.map((colaborador) => (
+                    <AvatarParticipante
+                      key={colaborador.id}
+                      colaborador={colaborador}
+                      className="h-8 w-8 border-2 border-background shadow-sm"
+                    />
+                  ))}
+                </div>
+              )}
+              <p className="min-w-0 text-[11.5px] leading-snug text-foreground/70">{rotuloParticipantes}</p>
+            </div>
+          ) : (
+            <p className="mt-2 text-[11.5px] leading-snug text-foreground/70">
+              Nenhuma inscrição registrada para este curso.
+            </p>
+          )}
+        </div>
       </TreinamentosCascadeItem>
     </TreinamentosCascadeDialog>
   );

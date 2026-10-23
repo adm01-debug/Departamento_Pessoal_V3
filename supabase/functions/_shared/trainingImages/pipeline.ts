@@ -20,9 +20,9 @@
  *   • não depende de `waitUntil`/memória: o estado vive em `training_images`.
  * ============================================================================
  */
-import { DESCRICAO_MAX, montarBriefingVisual, sanearTexto } from './briefing';
-import { sha256Hex } from './hash';
-import { mensagemSegura, validarImagemGerada } from './imageValidation';
+import { DESCRICAO_MAX, montarBriefingVisual, sanearTexto } from './briefing.ts';
+import { sha256Hex } from './hash.ts';
+import { mensagemSegura, validarImagemGerada } from './imageValidation.ts';
 import {
   TRAINING_CONTENT_TYPES,
   TrainingImageProviderError,
@@ -31,7 +31,7 @@ import {
   type TrainingContentType,
   type TrainingImagePipelineResult,
   type TrainingImageProvider,
-} from './types';
+} from './types.ts';
 
 export interface EntradaGeracaoCapa {
   empresaId: string;
@@ -67,11 +67,35 @@ export interface DepsPipelineCapa {
     provider: string;
     model: string;
     promptVersion: string;
+    /** Rastreabilidade da requisição paga (X-Client-Request-Id / operationId). */
+    operationId: string;
   }) => Promise<void>;
-  atualizarFalha: (dados: { id: string; erro: string; permanente: boolean }) => Promise<void>;
+  atualizarFalha: (dados: {
+    id: string;
+    erro: string;
+    permanente: boolean;
+    operationId: string;
+  }) => Promise<void>;
+  /**
+   * Persiste o `operation_id` ANTES da chamada paga. Se o processo morrer no
+   * meio, a linha já contém o identificador necessário para a reconciliação.
+   */
+  registrarOperacao?: (dados: { id: string; operationId: string }) => Promise<void>;
 }
 
 export const TENTATIVAS_MAX_PIPELINE = 3;
+
+/**
+ * Erro cujo RESULTADO no provedor é DESCONHECIDO: a requisição pode ter sido
+ * aceita e cobrada, mesmo sem resposta. `operationId`/`X-Client-Request-Id`
+ * ajudam no suporte, mas não impedem cobrança duplicada — só a não-repetição
+ * automática impede.
+ */
+export function resultadoDesconhecido(erro: unknown): boolean {
+  if (!(erro instanceof TrainingImageProviderError)) return false;
+  if (erro.code === 'timeout' || erro.code === 'rede' || erro.code === 'download_falhou') return true;
+  return typeof erro.status === 'number' && erro.status >= 500;
+}
 
 /** Hash canônico do conteúdo — MESMA regra do cliente (`hashConteudo`). */
 export function hashConteudoServidor(conteudo: ConteudoTreinamento): string {
@@ -133,8 +157,22 @@ export async function gerarCapaDeTreinamento(
   // Provedor desligado: libera o trabalho como falha imediata (sem custo) em
   // vez de deixar uma linha “pending” eterna.
   if (!deps.provider.configured) {
-    await deps.atualizarFalha({ id: claim.id, erro: 'provedor_desativado', permanente: true });
+    await deps.atualizarFalha({
+      id: claim.id,
+      erro: 'provedor_desativado',
+      permanente: true,
+      operationId,
+    });
     return { gerado: false, motivo: 'provedor_desativado' };
+  }
+
+  // Rastreabilidade ANTES do gasto: falha aqui não impede a geração.
+  if (deps.registrarOperacao) {
+    try {
+      await deps.registrarOperacao({ id: claim.id, operationId });
+    } catch {
+      // best-effort: o operationId também é gravado no sucesso/falha
+    }
   }
 
   let artefato;
@@ -167,10 +205,30 @@ export async function gerarCapaDeTreinamento(
       },
     });
   } catch (erro) {
+    /**
+     * POLÍTICA CONSERVADORA DE COBRANÇA (Fase 3A.1)
+     *
+     * `X-Client-Request-Id`/`operationId` servem para RASTREABILIDADE — não são
+     * garantia de que o provedor não cobrou. Quando a resposta se perde
+     * (timeout, falha de rede, 5xx, download da imagem), o resultado é
+     * DESCONHECIDO: a geração anterior pode ter sido concluída e cobrada.
+     *
+     * Nesse caso marcamos a linha como falha PERMANENTE (`attempts` esgotado),
+     * registrando o estado de incerteza em `last_error`. Nenhuma nova chamada
+     * paga é disparada automaticamente; a reconciliação é manual.
+     */
+    const incerto = resultadoDesconhecido(erro);
     const permanente = erro instanceof TrainingImageProviderError ? erro.retryable === false : false;
     const mensagem = mensagemSegura(erro);
-    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente });
-    return { gerado: false, motivo: 'falha_no_provedor', erro: mensagem };
+    await deps.atualizarFalha({
+      id: claim.id,
+      erro: incerto ? `resultado_desconhecido: ${mensagem}` : mensagem,
+      permanente: incerto || permanente,
+      operationId,
+    });
+    return incerto
+      ? { gerado: false, motivo: 'resultado_desconhecido', erro: mensagem }
+      : { gerado: false, motivo: 'falha_no_provedor', erro: mensagem };
   }
 
   let imagem;
@@ -178,7 +236,7 @@ export async function gerarCapaDeTreinamento(
     imagem = validarImagemGerada(artefato.bytes);
   } catch (erro) {
     const mensagem = mensagemSegura(erro);
-    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente: true });
+    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente: true, operationId });
     return { gerado: false, motivo: 'imagem_invalida', erro: mensagem };
   }
 
@@ -193,8 +251,11 @@ export async function gerarCapaDeTreinamento(
       extensao: imagem.extensao,
     });
   } catch (erro) {
+    // A imagem JÁ foi gerada (e cobrada). Repetir geraria NOVA cobrança, então
+    // a falha de upload é tratada como definitiva para novas tentativas
+    // automáticas; o registro permite reconciliação/manual.
     const mensagem = mensagemSegura(erro);
-    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente: false });
+    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente: true, operationId });
     return { gerado: false, motivo: 'falha_no_upload', erro: mensagem };
   }
 
@@ -205,10 +266,12 @@ export async function gerarCapaDeTreinamento(
       provider: artefato.providerId,
       model: artefato.model,
       promptVersion: artefato.promptVersion,
+      operationId,
     });
   } catch (erro) {
+    // Imagem JÁ gerada e enviada ao Storage; repetir custaria outra geração.
     const mensagem = mensagemSegura(erro);
-    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente: false });
+    await deps.atualizarFalha({ id: claim.id, erro: mensagem, permanente: true, operationId });
     return { gerado: false, motivo: 'falha_no_registro', erro: mensagem };
   }
 

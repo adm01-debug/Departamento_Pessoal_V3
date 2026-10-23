@@ -1,0 +1,76 @@
+{
+  "estilos": {
+    "largura": 440,
+    "altura": 373.06,
+    "icone": {
+      "bg": "rgba(175, 87, 219, 0.12)",
+      "bgImage": "none",
+      "border": "rgba(175, 87, 219, 0.25)",
+      "cor": "oklab(0.682725 0.10784 -0.1167)",
+      "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+    },
+    "badgeCategoria": {
+      "bg": "oklab(0.682725 0.10784 -0.1167 / 0.16)",
+      "bgImage": "none",
+      "border": "oklab(0.682725 0.10784 -0.1167 / 0.6)",
+      "cor": "oklab(0.682725 0.10784 -0.1167)",
+      "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+    },
+    "badgeObrigatoria": {
+      "bg": "oklab(0.252675 -0.00293687 -0.0143203 / 0.45)",
+      "bgImage": "none",
+      "border": "oklab(0.265696 -0.00771903 -0.0372934 / 0.7)",
+      "cor": "oklab(0.907914 0.000041604 0.0000181198 / 0.75)",
+      "sombra": "none"
+    },
+    "tiles": [
+      {
+        "bg": "oklab(0.698371 -0.0806345 -0.129937 / 0.12)",
+        "bgImage": "none",
+        "border": "oklab(0.698371 -0.0806345 -0.129937 / 0.35)",
+        "cor": "oklab(0.723516 -0.0709533 -0.114342)",
+        "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+      },
+      {
+        "bg": "oklab(0.913628 -0.104174 0.187812 / 0.12)",
+        "bgImage": "none",
+        "border": "oklab(0.913628 -0.104174 0.187812 / 0.35)",
+        "cor": "oklab(0.912599 -0.0854154 0.154009)",
+        "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+      },
+      {
+        "bg": "oklab(0.698371 -0.0806345 -0.129937 / 0.07)",
+        "bgImage": "none",
+        "border": "oklab(0.698371 -0.0806345 -0.129937 / 0.25)",
+        "cor": "oklab(0.680685 -0.0362688 -0.0584642)",
+        "sombra": "none"
+      },
+      {
+        "bg": "rgba(175, 87, 219, 0.1)",
+        "bgImage": "none",
+        "border": "rgba(175, 87, 219, 0.35)",
+        "cor": "oklab(0.662516 0.117515 -0.127174)",
+        "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+      }
+    ],
+    "divisor": {
+      "bgImage": "gradient"
+    },
+    "painel": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "bgImage": "gradient",
+      "border": "oklab(0.265695 -0.00771902 -0.0372934 / 0.6)",
+      "cor": "rgb(224, 224, 224)",
+      "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+    },
+    "contador": {
+      "bg": "oklab(0.673213 -0.157283 0.0942528 / 0.14)",
+      "bgImage": "none",
+      "border": "oklab(0.673213 -0.157283 0.0942528 / 0.4)",
+      "cor": "rgb(24, 180, 81)",
+      "sombra": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0"
+    },
+    "descricaoCor": "oklab(0.907914 0.000041604 0.0000181198 / 0.7)",
+    "largos": 0
+  }
+}

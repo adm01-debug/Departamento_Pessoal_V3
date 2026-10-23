@@ -18,14 +18,14 @@
  * 400/401/403/404 → permanentes; 408/409/425/429/5xx/rede/timeout → recuperáveis.
  * ============================================================================
  */
-import { montarPromptDeImagem } from './briefing';
-import { decodificarBase64, mensagemSegura, validarImagemGerada } from './imageValidation';
+import { montarPromptDeImagem } from './briefing.ts';
+import { decodificarBase64, mensagemSegura, validarImagemGerada } from './imageValidation.ts';
 import {
   TrainingImageProviderError,
   type GeneratedTrainingImage,
   type TrainingImageProvider,
   type TrainingImageRequest,
-} from './types';
+} from './types.ts';
 
 export const OPENAI_IMAGES_ENDPOINT = 'https://api.openai.com/v1/images/generations';
 export const OPENAI_MODELO_PADRAO = 'gpt-image-2.5-flare';

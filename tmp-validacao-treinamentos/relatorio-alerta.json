@@ -1,0 +1,18 @@
+{
+  "abertoEmMs": 1093,
+  "escalaInicial": {
+    "x": 1,
+    "y": 1
+  },
+  "focoInicial": "Cancelar",
+  "focoAposCancelar": {
+    "aria": null,
+    "texto": "Pular para o conteúdo principa"
+  },
+  "fechouPorCancelar": true,
+  "escapeFecha": true,
+  "backdrop": {
+    "elementoNoPonto": "DIV.fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
+    "fechou": false
+  }
+}

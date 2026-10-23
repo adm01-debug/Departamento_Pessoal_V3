@@ -1,0 +1,10 @@
+import { chromium } from '@playwright/test';
+const BASE='http://localhost:8080'; const b=await chromium.launch();
+const c=await b.newContext({storageState:'e2e/.auth/user.json',viewport:{width:1440,height:900},reducedMotion:'reduce'});
+await c.addInitScript(()=>{localStorage.setItem('dp-tour-completed','true');localStorage.setItem('ui-theme','dark');localStorage.setItem('dp-force-motion','off');});
+const p=await c.newPage(); await p.goto(BASE+'/treinamentos',{waitUntil:'domcontentloaded'}); await p.waitForTimeout(2200);
+await p.getByRole('tab',{name:'Inscrições'}).click(); await p.waitForTimeout(320);
+const r=await p.evaluate(()=>[...document.querySelectorAll('[data-inscricao-row]')].map(row=>{const bar=row.querySelector('[role=progressbar]');const fill=bar?.firstElementChild;const br=bar?.getBoundingClientRect();const fr=fill?.getBoundingClientRect();return {pct:[...row.querySelectorAll('span')].map(s=>s.textContent.trim()).find(x=>/^\d+%$/.test(x)),ratio:br&&fr?+(100*fr.width/br.width).toFixed(1):null,bg:fill?getComputedStyle(fill).backgroundImage.includes('linear-gradient'):null};}));
+console.log(JSON.stringify(r));
+await p.screenshot({path:'tmp-gradientes-progresso/reduced-1440.png'});
+await b.close();

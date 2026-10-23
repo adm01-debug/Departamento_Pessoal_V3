@@ -1,0 +1,238 @@
+{
+  "dimensoes": [
+    {
+      "viewport": "1920x1080",
+      "largura": 720,
+      "altura": 519.3,
+      "left": 600,
+      "right": 1320,
+      "top": 280.4,
+      "bottom": 799.6,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "scrollInternoY": false,
+      "overflowInternoX": false,
+      "pillsNaMesmaLinha": true,
+      "pills": [
+        "3 cursos",
+        "16 horas",
+        "4 inscritos"
+      ],
+      "numeros": [
+        "01",
+        "02",
+        "03"
+      ],
+      "nota": true,
+      "adicionar": true,
+      "remover": 3,
+      "titulo": "Integração de Novos Colaboradores"
+    },
+    {
+      "viewport": "1440x900",
+      "largura": 720,
+      "altura": 519.3,
+      "left": 360,
+      "right": 1080,
+      "top": 190.4,
+      "bottom": 709.6,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "scrollInternoY": false,
+      "overflowInternoX": false,
+      "pillsNaMesmaLinha": true,
+      "pills": [
+        "3 cursos",
+        "16 horas",
+        "4 inscritos"
+      ],
+      "numeros": [
+        "01",
+        "02",
+        "03"
+      ],
+      "nota": true,
+      "adicionar": true,
+      "remover": 3,
+      "titulo": "Integração de Novos Colaboradores"
+    },
+    {
+      "viewport": "1366x768",
+      "largura": 720,
+      "altura": 519.3,
+      "left": 323,
+      "right": 1043,
+      "top": 124.4,
+      "bottom": 643.6,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "scrollInternoY": false,
+      "overflowInternoX": false,
+      "pillsNaMesmaLinha": true,
+      "pills": [
+        "3 cursos",
+        "16 horas",
+        "4 inscritos"
+      ],
+      "numeros": [
+        "01",
+        "02",
+        "03"
+      ],
+      "nota": true,
+      "adicionar": true,
+      "remover": 3,
+      "titulo": "Integração de Novos Colaboradores"
+    },
+    {
+      "viewport": "1024x768",
+      "largura": 720,
+      "altura": 519.3,
+      "left": 152,
+      "right": 872,
+      "top": 124.4,
+      "bottom": 643.6,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "scrollInternoY": false,
+      "overflowInternoX": false,
+      "pillsNaMesmaLinha": true,
+      "pills": [
+        "3 cursos",
+        "16 horas",
+        "4 inscritos"
+      ],
+      "numeros": [
+        "01",
+        "02",
+        "03"
+      ],
+      "nota": true,
+      "adicionar": true,
+      "remover": 3,
+      "titulo": "Integração de Novos Colaboradores"
+    },
+    {
+      "viewport": "768x1024",
+      "largura": 720,
+      "altura": 519.3,
+      "left": 24,
+      "right": 744,
+      "top": 252.4,
+      "bottom": 771.6,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "scrollInternoY": false,
+      "overflowInternoX": false,
+      "pillsNaMesmaLinha": true,
+      "pills": [
+        "3 cursos",
+        "16 horas",
+        "4 inscritos"
+      ],
+      "numeros": [
+        "01",
+        "02",
+        "03"
+      ],
+      "nota": true,
+      "adicionar": true,
+      "remover": 3,
+      "titulo": "Integração de Novos Colaboradores"
+    },
+    {
+      "viewport": "390x844",
+      "largura": 358,
+      "altura": 657.3,
+      "left": 16,
+      "right": 374,
+      "top": 93.3,
+      "bottom": 750.7,
+      "centralizado": true,
+      "dentroViewport": true,
+      "maxHeightRespeitado": true,
+      "scrollInternoY": false,
+      "overflowInternoX": false,
+      "pillsNaMesmaLinha": true,
+      "pills": [
+        "3 cursos",
+        "16 horas",
+        "4 inscritos"
+      ],
+      "numeros": [
+        "01",
+        "02",
+        "03"
+      ],
+      "nota": true,
+      "adicionar": true,
+      "remover": 3,
+      "titulo": "Integração de Novos Colaboradores"
+    }
+  ],
+  "scroll": {
+    "temScroll": true,
+    "scrollHeight": 655,
+    "clientHeight": 538,
+    "antes": 0,
+    "depois": 117,
+    "overflowX": false,
+    "notaVisivelAposRolar": true
+  },
+  "animacao": {
+    "abertoEmMs": 877,
+    "overlayEmMs": 223,
+    "escalaInicial": {
+      "x": 1,
+      "y": 1
+    },
+    "blocos": [
+      {
+        "bloco": "Integração de Novos Cola",
+        "inicioMs": 913
+      },
+      {
+        "bloco": "3 cursos16 horas4 inscri",
+        "inicioMs": 1011
+      },
+      {
+        "bloco": "Jornada de aprendizagem(",
+        "inicioMs": 1110
+      },
+      {
+        "bloco": "01Integração e Cultura O",
+        "inicioMs": 1211
+      },
+      {
+        "bloco": "02LGPD — Proteção de Dad",
+        "inicioMs": 1312
+      },
+      {
+        "bloco": "03Diversidade e Inclusão",
+        "inicioMs": 1412
+      },
+      {
+        "bloco": "Use o ícone de lixeira n",
+        "inicioMs": 1510
+      },
+      {
+        "bloco": "Sobre a sequênciaA sequê",
+        "inicioMs": 1610
+      }
+    ]
+  },
+  "funcional": {
+    "dialogosAdicionar": 2,
+    "dialogosAposFecharAdd": 1,
+    "removerVisivelNoHover": 1,
+    "toast": "Modo demonstração: \"Desvincular curso da trilha\" não é gravado — os dados de treinamentos exibidos são fictícios.",
+    "etapas": 3,
+    "focoAposFechar": "Explorar trilha",
+    "abertosAposFechar": 0
+  }
+}

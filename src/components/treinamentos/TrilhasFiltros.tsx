@@ -24,7 +24,14 @@ interface Opcao {
   label: string;
 }
 
+/**
+ * Botão animado com os MESMOS parâmetros dos KPI Cards (via `entradaCard`).
+ * `motion.create` mantém as classes, variantes e comportamento do Button.
+ */
+const MotionButton = motion.create(Button);
+
 function FiltroSelect({
+  index,
   label,
   value,
   onChange,
@@ -32,6 +39,8 @@ function FiltroSelect({
   disabled,
   title,
 }: {
+  /** Slot da cascata (entrada de referência do Dashboard Executivo). */
+  index: number;
   label: string;
   value: string;
   onChange: (valor: string) => void;
@@ -40,7 +49,7 @@ function FiltroSelect({
   title?: string;
 }) {
   return (
-    <div className="min-w-0" title={title}>
+    <motion.div {...entradaCard(index)} className="min-w-0" title={title}>
       <Select value={value} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger
           aria-label={label}
@@ -59,7 +68,7 @@ function FiltroSelect({
           ))}
         </SelectContent>
       </Select>
-    </div>
+    </motion.div>
   );
 }
 
@@ -92,8 +101,8 @@ export function TrilhasFiltros({
 
   return (
     <EntradaPresenca>
-      <motion.div {...entradaCard(5)} className="flex flex-col gap-2 min-[1100px]:flex-row min-[1100px]:items-center">
-        <div className="relative min-w-0 min-[1100px]:w-[38%]">
+      <div className="flex flex-col gap-2 min-[1100px]:flex-row min-[1100px]:items-center">
+        <motion.div {...entradaCard(0)} className="relative min-w-0 min-[1100px]:w-[38%]">
           <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={busca}
@@ -112,10 +121,11 @@ export function TrilhasFiltros({
               <X className="h-3.5 w-3.5" />
             </button>
           )}
-        </div>
+        </motion.div>
 
         <div className="grid min-w-0 flex-1 grid-cols-1 gap-2 sm:grid-cols-3">
           <FiltroSelect
+            index={1}
             label="Categoria"
             value="todas"
             onChange={() => undefined}
@@ -123,8 +133,9 @@ export function TrilhasFiltros({
             disabled
             title="A tabela trilhas_aprendizado não possui coluna de categoria. Nada de categoria fictícia."
           />
-          <FiltroSelect label="Nível" value={nivel} onChange={onNivel} options={OPCOES_NIVEL} />
+          <FiltroSelect index={2} label="Nível" value={nivel} onChange={onNivel} options={OPCOES_NIVEL} />
           <FiltroSelect
+            index={3}
             label="Status"
             value={statusIndisponivel ? 'todos' : status}
             onChange={onStatus}
@@ -142,7 +153,8 @@ export function TrilhasFiltros({
           />
         </div>
 
-        <Button
+        <MotionButton
+          {...entradaCard(4)}
           type="button"
           variant="outline"
           onClick={onLimpar}
@@ -156,8 +168,8 @@ export function TrilhasFiltros({
         >
           <Eraser className="h-4 w-4" />
           Limpar filtros
-        </Button>
-      </motion.div>
+        </MotionButton>
+      </div>
     </EntradaPresenca>
   );
 }
