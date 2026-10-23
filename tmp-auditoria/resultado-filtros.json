@@ -1,0 +1,72 @@
+[
+  {
+    "id": "FIL-01",
+    "descricao": "Filtro Concluído reduz os cards",
+    "status": "APROVADO",
+    "esperado": {
+      "cards": 2,
+      "range": "14 set – 20 set 2026",
+      "eventos": 0
+    },
+    "obtido": {
+      "cards": 2,
+      "range": "14 set – 20 set 2026",
+      "eventos": 0
+    }
+  },
+  {
+    "id": "FIL-02",
+    "descricao": "Agenda mantém a semana calculada sem filtros (14–20/09)",
+    "status": "APROVADO",
+    "esperado": "14 set – 20 set 2026",
+    "obtido": "14 set – 20 set 2026"
+  },
+  {
+    "id": "FIL-03",
+    "descricao": "Calendário abre em setembro e respeita o filtro (vazio)",
+    "status": "APROVADO",
+    "esperado": {
+      "mes": "Setembro de 2026",
+      "chips": 0,
+      "vazio": true
+    },
+    "obtido": {
+      "mes": "Setembro de 2026",
+      "chips": 0,
+      "vazio": true
+    }
+  },
+  {
+    "id": "FIL-04",
+    "descricao": "Limpar filtros restaura os cinco cards",
+    "status": "APROVADO",
+    "esperado": 5,
+    "obtido": 5
+  },
+  {
+    "id": "FIL-05",
+    "descricao": "Busca NR-35 deixa um card e um evento",
+    "status": "APROVADO",
+    "esperado": {
+      "cards": 1,
+      "range": "14 set – 20 set 2026",
+      "eventos": 1
+    },
+    "obtido": {
+      "cards": 1,
+      "range": "14 set – 20 set 2026",
+      "eventos": 1
+    }
+  },
+  {
+    "id": "FIL-06",
+    "descricao": "Calendário reflete a busca (apenas NR-35)",
+    "status": "APROVADO",
+    "esperado": [
+      "mock-inst-2"
+    ],
+    "obtido": [
+      "mock-inst-2"
+    ]
+  }
+]

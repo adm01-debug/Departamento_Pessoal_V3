@@ -62,7 +62,7 @@ describe('MaisTurmasCard', () => {
     expect(card).not.toBeNull();
     expect(card).toHaveClass('border-dashed');
     expect(card).toHaveClass('rounded-xl');
-    expect(card).toHaveClass('min-h-[232px]');
+    expect(card).toHaveClass('min-h-[240px]');
     expect(card).toHaveClass('w-full');
     expect(card?.className).not.toMatch(/\bw-\[\d/);
   });

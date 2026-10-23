@@ -99,6 +99,12 @@ export interface Turma {
   data: Date | null;
   /** `HH:mm` somente quando o registro realmente traz horário. */
   hora: string | null;
+  /** `HH:mm` de `data_fim` SOMENTE quando ela traz horário — nunca deduzido. */
+  horaFim: string | null;
+  /** Carga horária real do curso em horas (`4 horas`); `null` sem valor válido. */
+  duracao: string | null;
+  /** Complemento temporal real da data de início (ex.: `Em 7 dias`). */
+  referencia: string | null;
   local: string | null;
   capacidade: number | null;
   status: string | null;
@@ -144,6 +150,62 @@ export function formatarDataTurma(valor: string | null | undefined): string {
   const data = lerDataTurma(valor);
   if (!data) return '—';
   return data.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+/**
+ * Carga horária do curso como DURAÇÃO legível (`4 horas`, `1 hora`).
+ *
+ * Vem exclusivamente de `catalogo_cursos.carga_horaria`: não é usada para
+ * deduzir o horário final de uma turma (a turma só tem `data_fim`).
+ */
+export function formatarDuracaoTurma(valor: number | string | null | undefined): string | null {
+  if (valor === null || valor === undefined || valor === '') return null;
+  const numero = typeof valor === 'number' ? valor : Number(String(valor).replace(',', '.'));
+  if (!Number.isFinite(numero) || numero <= 0) return null;
+  const texto = Number.isInteger(numero) ? String(numero) : numero.toFixed(1).replace('.', ',');
+  return `${texto} ${numero === 1 ? 'hora' : 'horas'}`;
+}
+
+/**
+ * Complemento temporal exibido sob a data de início — SEMPRE calculado a partir
+ * de uma data real e de uma regra explícita por situação:
+ *
+ *   • próximas  → dias até o início (`Hoje`, `Amanhã`, `Em 7 dias`);
+ *   • andamento → dias desde o início (`Iniciada hoje`, `Iniciada há 12 dias`);
+ *   • concluídas→ data real de término (`Concluída em 20/02/2026`).
+ *
+ * Sem data, ou em situações que a regra não cobre (turma “planejada” com data
+ * no passado, turma “em andamento” que ainda não começou), devolve `null` em vez
+ * de inventar um texto.
+ */
+export function referenciaTemporalTurma(
+  dataInicio: Date | null,
+  grupo: GrupoTurma,
+  dataFim: string | null | undefined,
+  referencia: Date = new Date()
+): string | null {
+  if (!dataInicio) return null;
+  const inicio = new Date(dataInicio.getFullYear(), dataInicio.getMonth(), dataInicio.getDate()).getTime();
+  const hoje = new Date(referencia.getFullYear(), referencia.getMonth(), referencia.getDate()).getTime();
+  const dias = Math.round((inicio - hoje) / 86_400_000);
+
+  if (grupo === 'proximas') {
+    if (dias === 0) return 'Hoje';
+    if (dias === 1) return 'Amanhã';
+    return dias > 1 ? `Em ${dias} dias` : null;
+  }
+
+  if (grupo === 'andamento') {
+    if (dias === 0) return 'Iniciada hoje';
+    if (dias < 0) return `Iniciada há ${Math.abs(dias)} ${Math.abs(dias) === 1 ? 'dia' : 'dias'}`;
+    return null;
+  }
+
+  const fim = lerDataTurma(dataFim) ?? dataInicio;
+  const mesmoAno = fim.getFullYear() === dataInicio.getFullYear();
+  const dia = String(fim.getDate()).padStart(2, '0');
+  const mes = String(fim.getMonth() + 1).padStart(2, '0');
+  return `Concluída em ${dia}/${mes}${mesmoAno ? '' : `/${fim.getFullYear()}`}`;
 }
 
 /** Meia-noite local da data informada. */
@@ -287,7 +349,9 @@ export function calcularOcupacaoTurma(
 export function montarTurmas(
   instancias: readonly TurmaRegistro[],
   cursos: readonly CursoTurma[],
-  colaboradores: readonly ColaboradorTurma[] = []
+  colaboradores: readonly ColaboradorTurma[] = [],
+  /** Data de referência dos complementos temporais (testes passam uma fixa). */
+  referencia: Date = new Date()
 ): Turma[] {
   const cursoPorId = new Map(cursos.map((curso) => [curso.id, curso]));
   const colaboradorPorId = new Map(colaboradores.map((colaborador) => [colaborador.id, colaborador]));
@@ -299,6 +363,8 @@ export function montarTurmas(
     const modalidade = curso?.modalidade ?? null;
     const local = instancia.local_link?.trim() ? String(instancia.local_link).trim() : null;
     const nomeInstrutor = instrutor?.nome_completo ?? instancia.instrutor?.nome_completo ?? null;
+    const data = lerDataTurma(instancia.data_inicio);
+    const grupo = grupoDaTurma(instancia.status);
 
     return {
       id: String(instancia.id),
@@ -316,13 +382,16 @@ export function montarTurmas(
       instrutorCargo: instrutor?.cargo ?? instancia.instrutor?.cargo ?? null,
       dataInicio: instancia.data_inicio ?? null,
       dataFim: instancia.data_fim ?? null,
-      data: lerDataTurma(instancia.data_inicio),
+      data,
       hora: formatarHoraTurma(instancia.data_inicio),
+      horaFim: formatarHoraTurma(instancia.data_fim),
+      duracao: curso?.carga_horaria != null ? formatarDuracaoTurma(curso.carga_horaria) : null,
+      referencia: referenciaTemporalTurma(data, grupo, instancia.data_fim, referencia),
       local,
       capacidade,
       status: instancia.status ?? null,
       statusInfo: statusTreinamento(instancia.status),
-      grupo: grupoDaTurma(instancia.status),
+      grupo,
       ocupacao: calcularOcupacaoTurma(instancia.inscritos, capacidade),
     };
   });

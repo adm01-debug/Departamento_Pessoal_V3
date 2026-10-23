@@ -1,14 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Check, Copy, Eye, MoreVertical } from 'lucide-react';
+import { ArrowRight, Check, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { CertificadoStatusBadge } from './CertificadoStatusBadge';
 import { TrainingCover } from './TrainingCover';
@@ -97,7 +91,7 @@ export function CertificadoCard({ certificado, onVisualizar }: CertificadoCardPr
       <div className="flex min-w-0 gap-3">
         <MiniaturaCertificado certificado={certificado} />
 
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div className="@container flex min-w-0 flex-1 flex-col">
           <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
             <CertificadoStatusBadge situacao={certificado.situacao} />
             <span className="whitespace-nowrap text-[9px] leading-none text-muted-foreground">
@@ -108,7 +102,7 @@ export function CertificadoCard({ certificado, onVisualizar }: CertificadoCardPr
           <h3
             id={`certificado-${certificado.id}`}
             title={certificado.cursoNome}
-            className="mt-1.5 line-clamp-2 text-[13px] font-semibold leading-snug text-foreground"
+            className="mt-1.5 line-clamp-2 text-[13px] font-semibold leading-snug text-foreground @max-[200px]:min-h-[36px]"
           >
             {certificado.cursoNome}
           </h3>
@@ -151,29 +145,47 @@ export function CertificadoCard({ certificado, onVisualizar }: CertificadoCardPr
         </div>
       </div>
 
-      <dl className="mt-2.5 grid grid-cols-3 gap-x-2 gap-y-1 rounded-lg border-y border-border/40 py-2">
-        <div className="min-w-0">
-          <dt className="text-[8.5px] uppercase tracking-[0.07em] text-muted-foreground">Emissão</dt>
-          <dd className="mt-0.5 truncate text-[10.5px] font-medium tabular-nums text-foreground/90">
+      <dl
+        data-certificado-metadados
+        className="mt-2.5 grid grid-cols-[minmax(0,0.87fr)_minmax(0,1.12fr)_minmax(0,1.11fr)] items-start gap-x-2.5 rounded-lg border-y border-border/40 px-3 py-3"
+      >
+        <div data-meta="emissao" className="min-w-0">
+          <dt className="text-[10px] font-medium uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+            Emissão
+          </dt>
+          <dd
+            className="mt-1.5 truncate text-[12px] font-medium leading-tight tabular-nums text-foreground/90"
+            title={formatarDataTreinamento(certificado.dataEmissao)}
+          >
             {formatarDataTreinamento(certificado.dataEmissao)}
           </dd>
         </div>
-        <div className="min-w-0">
-          <dt className="text-[8.5px] uppercase tracking-[0.07em] text-muted-foreground">Validade</dt>
-          <dd className="mt-0.5 min-w-0 text-[10.5px] font-medium tabular-nums text-foreground/90">
-            <span className="block truncate">{certificado.validadeTexto}</span>
-            {certificado.detalheValidade && detalheValidade ? (
-              <span className={cn('mt-0.5 block truncate text-[9px] leading-tight', detalheValidade)}>
-                {certificado.detalheValidade}
-              </span>
-            ) : null}
+
+        <div data-meta="validade" className="min-w-0">
+          <dt className="text-[10px] font-medium uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+            Validade
+          </dt>
+          <dd className="mt-1.5 min-w-0 text-[12px] font-medium leading-tight tabular-nums text-foreground/90">
+            <span className="block truncate" title={certificado.validadeTexto}>
+              {certificado.validadeTexto}
+            </span>
+            <span
+              data-validade-detalhe
+              aria-hidden={!detalheValidade}
+              className={cn('mt-1 block min-h-[14px] truncate text-[10px] leading-tight', detalheValidade)}
+            >
+              {certificado.detalheValidade && detalheValidade ? certificado.detalheValidade : null}
+            </span>
           </dd>
         </div>
-        <div className="min-w-0">
-          <dt className="text-[8.5px] uppercase tracking-[0.07em] text-muted-foreground">Código</dt>
-          <dd className="mt-0.5 flex min-w-0 items-center gap-1">
+
+        <div data-meta="codigo" className="min-w-0">
+          <dt className="text-[10px] font-medium uppercase leading-tight tracking-[0.08em] text-muted-foreground">
+            Código
+          </dt>
+          <dd className="mt-1.5 flex min-w-0 items-center gap-2">
             <span
-              className="truncate font-mono text-[10.5px] font-medium text-primary"
+              className="min-w-0 truncate whitespace-nowrap font-mono text-[12px] font-semibold leading-tight text-primary"
               title={certificado.codigo ?? 'Código não informado'}
             >
               {certificado.codigo ?? '—'}
@@ -184,51 +196,26 @@ export function CertificadoCard({ certificado, onVisualizar }: CertificadoCardPr
                 onClick={() => void copiarCodigo()}
                 aria-label={`Copiar código de autenticação do certificado ${certificado.codigo}`}
                 title={copiado ? 'Código copiado' : 'Copiar código'}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+                className="flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
               >
-                {copiado ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
+                {copiado ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
               </button>
             )}
           </dd>
         </div>
       </dl>
 
-      <div className="mt-2.5 flex items-center gap-1.5">
+      <div className="mt-auto flex items-center pt-2.5">
         <Button
           type="button"
           variant="outline"
           onClick={() => onVisualizar(certificado)}
           aria-label={`Visualizar certificado de ${certificado.colaboradorNome}`}
-          className="h-9 min-w-0 flex-1 gap-1.5 rounded-lg border-border/60 px-3 text-[11.5px] font-semibold transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          className="h-9 w-full min-w-0 gap-1.5 rounded-lg border-border/60 px-3 text-[11.5px] font-semibold transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span className="truncate">Visualizar certificado</span>
           <ArrowRight className="h-3.5 w-3.5 shrink-0" />
         </Button>
-
-        {certificado.codigo && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label={`Ações do certificado de ${certificado.colaboradorNome}`}
-                className="h-9 w-9 shrink-0 rounded-lg text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem className="gap-2" onSelect={() => onVisualizar(certificado)}>
-                <Eye className="h-4 w-4" />
-                Visualizar
-              </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2" onSelect={() => void copiarCodigo()}>
-                <Copy className="h-4 w-4" />
-                Copiar código
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
       </div>
     </article>
   );

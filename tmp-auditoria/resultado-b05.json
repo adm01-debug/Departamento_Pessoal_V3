@@ -1,0 +1,106 @@
+[
+  {
+    "id": "B05-01",
+    "status": "APROVADO",
+    "esperado": {
+      "quantidade": 1,
+      "texto": "+3 outras turmas"
+    },
+    "obtido": {
+      "quantidade": 1,
+      "texto": "+3 outras turmas"
+    }
+  },
+  {
+    "id": "B05-02",
+    "status": "APROVADO",
+    "esperado": 5,
+    "obtido": 5
+  },
+  {
+    "id": "B05-03",
+    "status": "APROVADO",
+    "esperado": 5,
+    "obtido": 5
+  },
+  {
+    "id": "B05-04",
+    "status": "APROVADO",
+    "esperado": {
+      "nomes": 5,
+      "planejado": true,
+      "andamento": true,
+      "concluido": true,
+      "horarios": true,
+      "botoes": true,
+      "nomeLongo": true
+    },
+    "obtido": {
+      "nomes": 5,
+      "planejado": true,
+      "andamento": true,
+      "concluido": true,
+      "horarios": true,
+      "botoes": true,
+      "nomeLongo": true
+    }
+  },
+  {
+    "id": "B05-05",
+    "status": "APROVADO",
+    "esperado": 0,
+    "obtido": 0
+  },
+  {
+    "id": "B05-06",
+    "status": "APROVADO",
+    "esperado": {
+      "quantidade": 1,
+      "texto": "+3 turma(s)"
+    },
+    "obtido": {
+      "quantidade": 1,
+      "texto": "+3 turma(s)"
+    }
+  },
+  {
+    "id": "B05-07",
+    "status": "APROVADO",
+    "esperado": 5,
+    "obtido": 5
+  },
+  {
+    "id": "B05-08",
+    "status": "APROVADO",
+    "esperado": 5,
+    "obtido": 5
+  },
+  {
+    "id": "B05-09",
+    "status": "APROVADO",
+    "esperado": {
+      "semOverflowHorizontal": true,
+      "listaAcessivel": true
+    },
+    "obtido": {
+      "semOverflowHorizontal": true,
+      "listaAcessivel": true
+    }
+  },
+  {
+    "id": "B05-10",
+    "status": "APROVADO",
+    "esperado": {
+      "itens": 5,
+      "cabeNaTela": true,
+      "overflowX": 0,
+      "gatilhoClicavel": true
+    },
+    "obtido": {
+      "itens": 5,
+      "cabeNaTela": true,
+      "overflowX": 0,
+      "gatilhoClicavel": true
+    }
+  }
+]

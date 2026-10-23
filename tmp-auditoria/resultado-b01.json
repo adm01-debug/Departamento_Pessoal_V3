@@ -1,0 +1,228 @@
+[
+  {
+    "id": "B01-00",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "14 set – 20 set 2026",
+      "cards": 5
+    },
+    "obtido": {
+      "range": "14 set – 20 set 2026",
+      "cards": 5,
+      "eventos": [
+        "mock-inst-2"
+      ],
+      "vazio": false
+    }
+  },
+  {
+    "id": "B01-01",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "17 ago – 23 ago 2026",
+      "cards": 2,
+      "eventos": [
+        "mock-inst-5"
+      ]
+    },
+    "obtido": {
+      "range": "17 ago – 23 ago 2026",
+      "cards": 2,
+      "eventos": [
+        "mock-inst-5"
+      ]
+    }
+  },
+  {
+    "id": "B01-02",
+    "status": "APROVADO",
+    "esperado": "24 ago – 30 ago 2026",
+    "obtido": "24 ago – 30 ago 2026"
+  },
+  {
+    "id": "B01-03",
+    "status": "APROVADO",
+    "esperado": "17 ago – 23 ago 2026",
+    "obtido": "17 ago – 23 ago 2026"
+  },
+  {
+    "id": "B01-04",
+    "status": "APROVADO",
+    "esperado": {
+      "mes": "Agosto de 2026",
+      "chips": [
+        "mock-inst-5"
+      ]
+    },
+    "obtido": {
+      "mes": "Agosto de 2026",
+      "chips": [
+        "mock-inst-5"
+      ]
+    }
+  },
+  {
+    "id": "B01-05",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "27 jul – 02 ago 2026",
+      "cards": 1,
+      "eventos": [
+        "mock-inst-3"
+      ]
+    },
+    "obtido": {
+      "range": "27 jul – 02 ago 2026",
+      "cards": 1,
+      "eventos": [
+        "mock-inst-3"
+      ]
+    }
+  },
+  {
+    "id": "B01-06",
+    "status": "APROVADO",
+    "esperado": {
+      "mes": "Agosto de 2026",
+      "chips": [
+        "mock-inst-3"
+      ]
+    },
+    "obtido": {
+      "mes": "Agosto de 2026",
+      "chips": [
+        "mock-inst-3"
+      ]
+    }
+  },
+  {
+    "id": "B01-07",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "14 set – 20 set 2026",
+      "cards": 2
+    },
+    "obtido": {
+      "range": "14 set – 20 set 2026",
+      "cards": 2,
+      "eventos": [
+        "mock-inst-2"
+      ],
+      "vazio": false
+    }
+  },
+  {
+    "id": "B01-08",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "14 set – 20 set 2026",
+      "cards": 1,
+      "eventos": [
+        "mock-inst-2"
+      ]
+    },
+    "obtido": {
+      "range": "14 set – 20 set 2026",
+      "cards": 1,
+      "eventos": [
+        "mock-inst-2"
+      ],
+      "vazio": false
+    }
+  },
+  {
+    "id": "B01-09",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "31 ago – 06 set 2026",
+      "cards": 1,
+      "eventos": [
+        "mock-inst-1"
+      ]
+    },
+    "obtido": {
+      "range": "31 ago – 06 set 2026",
+      "cards": 1,
+      "eventos": [
+        "mock-inst-1"
+      ],
+      "vazio": false
+    }
+  },
+  {
+    "id": "B01-10",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "19 out – 25 out 2026",
+      "cards": 0,
+      "vazio": true
+    },
+    "obtido": {
+      "range": "19 out – 25 out 2026",
+      "cards": 0,
+      "vazio": true
+    }
+  },
+  {
+    "id": "B01-11",
+    "status": "APROVADO",
+    "esperado": {
+      "mes": "Outubro de 2026",
+      "chips": [],
+      "vazio": true
+    },
+    "obtido": {
+      "mes": "Outubro de 2026",
+      "chips": [],
+      "vazio": true
+    }
+  },
+  {
+    "id": "B01-12",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "14 set – 20 set 2026",
+      "cards": 5
+    },
+    "obtido": {
+      "range": "14 set – 20 set 2026",
+      "cards": 5,
+      "eventos": [
+        "mock-inst-2"
+      ],
+      "vazio": false
+    }
+  },
+  {
+    "id": "B01-13",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "17 ago – 23 ago 2026",
+      "cards": 2
+    },
+    "obtido": {
+      "range": "17 ago – 23 ago 2026",
+      "cards": 2,
+      "eventos": [
+        "mock-inst-5"
+      ],
+      "vazio": false
+    }
+  },
+  {
+    "id": "B01-14",
+    "status": "APROVADO",
+    "esperado": {
+      "mes": "Agosto de 2026",
+      "chips": [
+        "mock-inst-5"
+      ]
+    },
+    "obtido": {
+      "mes": "Agosto de 2026",
+      "chips": [
+        "mock-inst-5"
+      ]
+    }
+  }
+]

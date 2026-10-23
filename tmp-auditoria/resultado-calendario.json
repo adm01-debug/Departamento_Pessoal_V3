@@ -1,0 +1,305 @@
+[
+  {
+    "id": "CAL-01",
+    "descricao": "Abre no mês da agenda",
+    "status": "APROVADO",
+    "esperado": "Setembro de 2026",
+    "obtido": "Setembro de 2026"
+  },
+  {
+    "id": "CAL-02",
+    "descricao": "Células da grade sem duplicatas",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "CAL-03",
+    "descricao": "Setembro tem 30 dias",
+    "status": "APROVADO",
+    "esperado": 30,
+    "obtido": 30
+  },
+  {
+    "id": "CAL-04",
+    "descricao": "Duas turmas em setembro, sem duplicatas por dia",
+    "status": "APROVADO",
+    "esperado": {
+      "total": 2,
+      "unicos": 2,
+      "datasDistintas": 2
+    },
+    "obtido": {
+      "total": 2,
+      "unicos": 2,
+      "datasDistintas": 2
+    }
+  },
+  {
+    "id": "CAL-05",
+    "descricao": "Evento de 15/09 é a mesma turma da agenda",
+    "status": "APROVADO",
+    "esperado": "mock-inst-2",
+    "obtido": "mock-inst-2"
+  },
+  {
+    "id": "CAL-06",
+    "descricao": "Evento mantém horário e local da agenda",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "CAL-07",
+    "descricao": "Calendário permanece aberto sob o detalhe",
+    "status": "APROVADO",
+    "esperado": 2,
+    "obtido": 2
+  },
+  {
+    "id": "CAL-08",
+    "descricao": "Detalhe contém data, horário e local",
+    "status": "APROVADO",
+    "esperado": [
+      "NR-35 Trabalho em Altura",
+      "15/09/2026",
+      "09:00",
+      "Sala 02"
+    ],
+    "obtido": [
+      "NR-35 Trabalho em Altura",
+      "15/09/2026",
+      "09:00",
+      "Sala 02"
+    ]
+  },
+  {
+    "id": "CAL-09",
+    "descricao": "Fechar detalhe mantém o calendário",
+    "status": "APROVADO",
+    "esperado": 1,
+    "obtido": 1
+  },
+  {
+    "id": "CAL-10",
+    "descricao": "Navegação para outubro",
+    "status": "APROVADO",
+    "esperado": "Outubro de 2026",
+    "obtido": "Outubro de 2026"
+  },
+  {
+    "id": "CAL-11",
+    "descricao": "Mês sem turmas explica o vazio",
+    "status": "APROVADO",
+    "esperado": {
+      "chips": 0,
+      "mensagem": true
+    },
+    "obtido": {
+      "chips": 0,
+      "mensagem": true
+    }
+  },
+  {
+    "id": "CAL-12",
+    "descricao": "Agosto exibe duas turmas do mês com status distintos",
+    "status": "APROVADO",
+    "esperado": {
+      "total": 2,
+      "unicos": 2,
+      "pontosDiferentes": true
+    },
+    "obtido": {
+      "total": 2,
+      "unicos": 2,
+      "pontosDiferentes": true
+    }
+  },
+  {
+    "id": "CAL-12B",
+    "descricao": "Dia adjacente (01/09) aparece na grade de agosto sem duplicar no dia 01/08",
+    "status": "APROVADO",
+    "esperado": {
+      "adjacentes": 1,
+      "id": "mock-inst-1",
+      "semDuplicataNoMes": true
+    },
+    "obtido": {
+      "adjacentes": 1,
+      "id": "mock-inst-1",
+      "semDuplicataNoMes": true
+    }
+  },
+  {
+    "id": "CAL-13",
+    "descricao": "Nome longo truncado no chip",
+    "status": "APROVADO",
+    "esperado": {
+      "truncado": true,
+      "classeTruncate": true
+    },
+    "obtido": {
+      "truncado": true,
+      "classeTruncate": true
+    }
+  },
+  {
+    "id": "CAL-14-2026-1",
+    "descricao": "Janeiro/2026 tem 31 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 31,
+      "primeiro": 1,
+      "ultimo": 31,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 31,
+      "primeiro": 1,
+      "ultimo": 31,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-14-2026-2",
+    "descricao": "Fevereiro/2026 tem 28 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 28,
+      "primeiro": 1,
+      "ultimo": 28,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 28,
+      "primeiro": 1,
+      "ultimo": 28,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-14-2026-4",
+    "descricao": "Abril/2026 tem 30 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 30,
+      "primeiro": 1,
+      "ultimo": 30,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 30,
+      "primeiro": 1,
+      "ultimo": 30,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-14-2026-5",
+    "descricao": "Maio/2026 tem 31 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 31,
+      "primeiro": 1,
+      "ultimo": 31,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 31,
+      "primeiro": 1,
+      "ultimo": 31,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-14-2026-9",
+    "descricao": "Setembro/2026 tem 30 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 30,
+      "primeiro": 1,
+      "ultimo": 30,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 30,
+      "primeiro": 1,
+      "ultimo": 30,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-14-2028-2",
+    "descricao": "Fevereiro/2028 tem 29 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 29,
+      "primeiro": 1,
+      "ultimo": 29,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 29,
+      "primeiro": 1,
+      "ultimo": 29,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-14-2028-12",
+    "descricao": "Dezembro/2028 tem 31 dias",
+    "status": "APROVADO",
+    "esperado": {
+      "dias": 31,
+      "primeiro": 1,
+      "ultimo": 31,
+      "celulasUnicas": true
+    },
+    "obtido": {
+      "dias": 31,
+      "primeiro": 1,
+      "ultimo": 31,
+      "celulasUnicas": true
+    }
+  },
+  {
+    "id": "CAL-15",
+    "descricao": "Virada dezembro → janeiro atualiza o ano",
+    "status": "APROVADO",
+    "esperado": "Janeiro de 2029",
+    "obtido": "Janeiro de 2029"
+  },
+  {
+    "id": "CAL-16",
+    "descricao": "Modal cabe na tela de 390 px, sem overflow horizontal",
+    "status": "APROVADO",
+    "esperado": {
+      "cabeNaTela": true,
+      "overflowX": 0
+    },
+    "obtido": {
+      "cabeNaTela": true,
+      "overflowX": 0
+    }
+  },
+  {
+    "id": "CAL-17",
+    "descricao": "Lista “Turmas do mês” visível no mobile",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "CAL-18",
+    "descricao": "Conteúdo do modal acessível (cabe ou rola), sem corte silencioso",
+    "status": "APROVADO",
+    "esperado": {
+      "conteudoAcessivel": true,
+      "overflowY": "auto"
+    },
+    "obtido": {
+      "conteudoAcessivel": true,
+      "overflowY": "auto"
+    }
+  }
+]

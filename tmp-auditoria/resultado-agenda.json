@@ -1,0 +1,149 @@
+[
+  {
+    "id": "CARDS-01",
+    "descricao": "Cards de turmas renderizados",
+    "status": "APROVADO",
+    "esperado": {
+      "total": 5,
+      "porColuna": {
+        "proximas": 2,
+        "andamento": 1,
+        "concluidas": 2
+      }
+    },
+    "obtido": {
+      "total": 5,
+      "porColuna": {
+        "proximas": 2,
+        "andamento": 1,
+        "concluidas": 2
+      }
+    }
+  },
+  {
+    "id": "AG-01",
+    "descricao": "Intervalo inicial da agenda",
+    "status": "APROVADO",
+    "esperado": "14 set – 20 set 2026",
+    "obtido": "14 set – 20 set 2026"
+  },
+  {
+    "id": "AG-02",
+    "descricao": "Sete dias exibidos",
+    "status": "APROVADO",
+    "esperado": 7,
+    "obtido": 7
+  },
+  {
+    "id": "AG-03",
+    "descricao": "Dias e datas na ordem seg→dom",
+    "status": "APROVADO",
+    "esperado": [
+      "SEG 14",
+      "TER 15",
+      "QUA 16",
+      "QUI 17",
+      "SEX 18",
+      "SÁB 19",
+      "DOM 20"
+    ],
+    "obtido": [
+      "SEG 14",
+      "TER 15",
+      "QUA 16",
+      "QUI 17",
+      "SEX 18",
+      "SÁB 19",
+      "DOM 20"
+    ]
+  },
+  {
+    "id": "AG-04",
+    "descricao": "NR-35 na terça 15/09 às 09:00 · Sala 02",
+    "status": "APROVADO",
+    "esperado": {
+      "dia": "2026-09-15",
+      "id": "mock-inst-2",
+      "texto": "NR-35 Trabalho em Altura · 09:00 · Sala 02"
+    },
+    "obtido": {
+      "dia": "2026-09-15",
+      "id": "mock-inst-2",
+      "texto": "NR-35 Trabalho em Altura · 09:00 · Sala 02"
+    }
+  },
+  {
+    "id": "AG-05",
+    "descricao": "Dias vazios com mensagem (6 de 7)",
+    "status": "APROVADO",
+    "esperado": 6,
+    "obtido": 6
+  },
+  {
+    "id": "AG-06",
+    "descricao": "Clique no evento abre os detalhes corretos",
+    "status": "APROVADO",
+    "esperado": [
+      "NR-35 Trabalho em Altura",
+      "15/09/2026",
+      "09:00",
+      "Sala 02",
+      "Planejado"
+    ],
+    "obtido": [
+      "NR-35 Trabalho em Altura",
+      "15/09/2026",
+      "09:00",
+      "Sala 02",
+      "Planejado"
+    ]
+  },
+  {
+    "id": "AG-07",
+    "descricao": "Próxima semana",
+    "status": "APROVADO",
+    "esperado": "21 set – 27 set 2026",
+    "obtido": "21 set – 27 set 2026"
+  },
+  {
+    "id": "AG-08",
+    "descricao": "Semana sem turmas mostra sete mensagens de vazio",
+    "status": "APROVADO",
+    "esperado": {
+      "eventos": 0,
+      "mensagens": 7
+    },
+    "obtido": {
+      "eventos": 0,
+      "mensagens": 7
+    }
+  },
+  {
+    "id": "AG-09",
+    "descricao": "Duas semanas anteriores",
+    "status": "APROVADO",
+    "esperado": "07 set – 13 set 2026",
+    "obtido": "07 set – 13 set 2026"
+  },
+  {
+    "id": "AG-10",
+    "descricao": "Transição entre meses (31/08 a 06/09)",
+    "status": "APROVADO",
+    "esperado": "31 ago – 06 set 2026",
+    "obtido": "31 ago – 06 set 2026"
+  },
+  {
+    "id": "AG-11",
+    "descricao": "Segunda transição de mês (28/09 a 04/10)",
+    "status": "APROVADO",
+    "esperado": "28 set – 04 out 2026",
+    "obtido": "28 set – 04 out 2026"
+  },
+  {
+    "id": "AG-12",
+    "descricao": "Transição entre anos",
+    "status": "APROVADO",
+    "esperado": "28 dez 2026 – 03 jan 2027",
+    "obtido": "28 dez 2026 – 03 jan 2027"
+  }
+]

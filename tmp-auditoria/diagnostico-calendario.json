@@ -1,0 +1,166 @@
+SETEMBRO {
+  "dialogs": [
+    {
+      "titulo": "Calendário de turmas",
+      "visivel": true
+    }
+  ],
+  "mes": "Setembro de 2026",
+  "chips": [
+    {
+      "id": "mock-inst-1",
+      "texto": "NR-17 Ergonomia · 09:00 · Sala 01",
+      "dia": "2026-09-01",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-2",
+      "texto": "NR-35 Trabalho em Altura · 09:00 · Sala 02",
+      "dia": "2026-09-15",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-1",
+      "texto": "TER01NR-17 Ergonomia09:00 · Sala 01",
+      "dia": null,
+      "naListaMobile": true,
+      "visivel": false
+    },
+    {
+      "id": "mock-inst-2",
+      "texto": "TER15NR-35 Trabalho em Altura09:00 · Sala 02",
+      "dia": null,
+      "naListaMobile": true,
+      "visivel": false
+    }
+  ]
+}
+DETALHE ABERTO {
+  "dialogs": [
+    {
+      "titulo": "Calendário de turmas",
+      "visivel": true
+    },
+    {
+      "titulo": "NR-35 Trabalho em Altura",
+      "visivel": true
+    }
+  ],
+  "mes": null,
+  "chips": []
+}
+APOS ESCAPE +300 {
+  "dialogs": [
+    {
+      "titulo": "Calendário de turmas",
+      "visivel": true
+    },
+    {
+      "titulo": "NR-35 Trabalho em Altura",
+      "visivel": true
+    }
+  ],
+  "mes": null,
+  "chips": []
+}
+APOS ESCAPE +700 {
+  "dialogs": [
+    {
+      "titulo": "Calendário de turmas",
+      "visivel": true
+    },
+    {
+      "titulo": "NR-35 Trabalho em Altura",
+      "visivel": true
+    }
+  ],
+  "mes": null,
+  "chips": []
+}
+APOS ESCAPE +1500 {
+  "dialogs": [
+    {
+      "titulo": "Calendário de turmas",
+      "visivel": true
+    }
+  ],
+  "mes": "Setembro de 2026",
+  "chips": [
+    {
+      "id": "mock-inst-1",
+      "texto": "NR-17 Ergonomia · 09:00 · Sala 01",
+      "dia": "2026-09-01",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-2",
+      "texto": "NR-35 Trabalho em Altura · 09:00 · Sala 02",
+      "dia": "2026-09-15",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-1",
+      "texto": "TER01NR-17 Ergonomia09:00 · Sala 01",
+      "dia": null,
+      "naListaMobile": true,
+      "visivel": false
+    },
+    {
+      "id": "mock-inst-2",
+      "texto": "TER15NR-35 Trabalho em Altura09:00 · Sala 02",
+      "dia": null,
+      "naListaMobile": true,
+      "visivel": false
+    }
+  ]
+}
+AGOSTO {
+  "dialogs": [
+    {
+      "titulo": "Calendário de turmas",
+      "visivel": true
+    }
+  ],
+  "mes": "Agosto de 2026",
+  "chips": [
+    {
+      "id": "mock-inst-3",
+      "texto": "Liderança e Gestão de Equipes · 09:00 · Sala 03 + Online",
+      "dia": "2026-08-01",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-5",
+      "texto": "Comunicação Assertiva · 09:00 · Microsoft Teams",
+      "dia": "2026-08-20",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-1",
+      "texto": "NR-17 Ergonomia · 09:00 · Sala 01",
+      "dia": "2026-09-01",
+      "naListaMobile": false,
+      "visivel": true
+    },
+    {
+      "id": "mock-inst-3",
+      "texto": "SÁB01Liderança e Gestão de Equipes09:00 · Sala 03 + Online",
+      "dia": null,
+      "naListaMobile": true,
+      "visivel": false
+    },
+    {
+      "id": "mock-inst-5",
+      "texto": "QUI20Comunicação Assertiva09:00 · Microsoft Teams",
+      "dia": null,
+      "naListaMobile": true,
+      "visivel": false
+    }
+  ]
+}

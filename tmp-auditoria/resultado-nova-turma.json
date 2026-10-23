@@ -1,0 +1,110 @@
+[
+  {
+    "id": "NT-00",
+    "descricao": "CTA “Nova Turma” disponível para o perfil admin",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "NT-01",
+    "descricao": "Campos existentes no formulário",
+    "status": "APROVADO",
+    "esperado": [
+      "nova-turma-capacidade",
+      "nova-turma-curso",
+      "nova-turma-data",
+      "nova-turma-hora",
+      "nova-turma-instrutor",
+      "nova-turma-local"
+    ],
+    "obtido": [
+      "nova-turma-capacidade",
+      "nova-turma-curso",
+      "nova-turma-data",
+      "nova-turma-hora",
+      "nova-turma-instrutor",
+      "nova-turma-local"
+    ]
+  },
+  {
+    "id": "NT-02",
+    "descricao": "Sem campos de data de término, modalidade e status",
+    "status": "APROVADO",
+    "esperado": {
+      "termino": false,
+      "modalidade": false,
+      "status": false
+    },
+    "obtido": {
+      "termino": false,
+      "modalidade": false,
+      "status": false
+    }
+  },
+  {
+    "id": "NT-03",
+    "descricao": "Salvar desabilitado sem curso/data/horário",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "NT-04",
+    "descricao": "Salvar habilitado com dados válidos",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "NT-05",
+    "descricao": "Modo mock bloqueia a escrita com aviso explícito",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "NT-06",
+    "descricao": "Nenhum card é criado no modo mock",
+    "status": "APROVADO",
+    "esperado": 5,
+    "obtido": 5
+  },
+  {
+    "id": "NT-07",
+    "descricao": "Agenda permanece inalterada no modo mock",
+    "status": "APROVADO",
+    "esperado": {
+      "range": "14 set – 20 set 2026",
+      "eventos": 1
+    },
+    "obtido": {
+      "range": "14 set – 20 set 2026",
+      "eventos": 1
+    }
+  },
+  {
+    "id": "NT-08",
+    "descricao": "Modal permanece aberto após o bloqueio (nada foi salvo)",
+    "status": "APROVADO",
+    "esperado": true,
+    "obtido": true
+  },
+  {
+    "id": "NT-09",
+    "descricao": "Reabrir o formulário começa limpo",
+    "status": "APROVADO",
+    "esperado": {
+      "data": "Selecionar data",
+      "hora": "",
+      "local": "",
+      "capacidade": ""
+    },
+    "obtido": {
+      "data": "Selecionar data",
+      "hora": "",
+      "local": "",
+      "capacidade": ""
+    }
+  }
+]

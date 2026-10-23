@@ -1,0 +1,15 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+page.goto: Page crashed
+Call log:
+[2m  - navigating to "http://localhost:8080/treinamentos", waiting until "domcontentloaded"[22m
+
+    at C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-agenda-align\medir-distribuicao.mjs:25:14 {
+  log: [
+    '  - navigating to "http://localhost:8080/treinamentos", waiting until "domcontentloaded"'
+  ]
+}
+
+Node.js v24.20.0

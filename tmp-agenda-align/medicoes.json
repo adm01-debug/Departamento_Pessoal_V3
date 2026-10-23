@@ -1,0 +1,492 @@
+[
+  {
+    "viewport": "1920x1080",
+    "grid": {
+      "top": 381.9,
+      "bottom": 917.1,
+      "h": 535.1,
+      "w": 1400
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 363.7
+        },
+        "cards": 2,
+        "ultimoCardBottom": 917.1
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 363.7
+        },
+        "cards": 1,
+        "ultimoCardBottom": 665.1
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 363.7
+        },
+        "cards": 2,
+        "ultimoCardBottom": 917.1
+      }
+    ],
+    "agendaWrapper": {
+      "top": 381.9,
+      "bottom": 917.1,
+      "h": 535.1,
+      "w": 272.8
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 381.9,
+      "bottom": 792.2,
+      "h": 410.3,
+      "w": 272.8
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 433.7,
+      "bottom": 779.2,
+      "h": 345.5,
+      "w": 246.8
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 917.1,
+    "diferenca": 124.9,
+    "overflowDoc": 0
+  },
+  {
+    "viewport": "1600x900",
+    "grid": {
+      "top": 381.9,
+      "bottom": 917.1,
+      "h": 535.1,
+      "w": 1296
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 336
+        },
+        "cards": 2,
+        "ultimoCardBottom": 917.1
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 336
+        },
+        "cards": 1,
+        "ultimoCardBottom": 665.1
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 336
+        },
+        "cards": 2,
+        "ultimoCardBottom": 917.1
+      }
+    ],
+    "agendaWrapper": {
+      "top": 381.9,
+      "bottom": 917.1,
+      "h": 535.1,
+      "w": 252
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 381.9,
+      "bottom": 792.2,
+      "h": 410.3,
+      "w": 252
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 433.7,
+      "bottom": 779.2,
+      "h": 345.5,
+      "w": 226
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 917.1,
+    "diferenca": 124.9,
+    "overflowDoc": 0
+  },
+  {
+    "viewport": "1440x900",
+    "grid": {
+      "top": 381.9,
+      "bottom": 919.4,
+      "h": 537.4,
+      "w": 1136
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 919.4,
+          "h": 537.4,
+          "w": 286.7
+        },
+        "cards": 2,
+        "ultimoCardBottom": 919.4
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 381.9,
+          "bottom": 919.4,
+          "h": 537.4,
+          "w": 286.7
+        },
+        "cards": 1,
+        "ultimoCardBottom": 666.2
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 919.4,
+          "h": 537.4,
+          "w": 286.7
+        },
+        "cards": 2,
+        "ultimoCardBottom": 918.2
+      }
+    ],
+    "agendaWrapper": {
+      "top": 381.9,
+      "bottom": 919.4,
+      "h": 537.4,
+      "w": 240
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 381.9,
+      "bottom": 792.2,
+      "h": 410.3,
+      "w": 240
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 433.7,
+      "bottom": 779.2,
+      "h": 345.5,
+      "w": 214
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 919.4,
+    "diferenca": 127.2,
+    "overflowDoc": 0
+  },
+  {
+    "viewport": "1366x768",
+    "grid": {
+      "top": 381.9,
+      "bottom": 1339.3,
+      "h": 957.4,
+      "w": 1062
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 346
+        },
+        "cards": 2,
+        "ultimoCardBottom": 917.1
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 346
+        },
+        "cards": 1,
+        "ultimoCardBottom": 665.1
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 381.9,
+          "bottom": 917.1,
+          "h": 535.1,
+          "w": 346
+        },
+        "cards": 2,
+        "ultimoCardBottom": 917.1
+      }
+    ],
+    "agendaWrapper": {
+      "top": 929.1,
+      "bottom": 1339.3,
+      "h": 410.3,
+      "w": 1062
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 929.1,
+      "bottom": 1339.3,
+      "h": 410.3,
+      "w": 1062
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 980.8,
+      "bottom": 1326.3,
+      "h": 345.5,
+      "w": 1036
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 917.1,
+    "diferenca": -422.3,
+    "overflowDoc": 0
+  },
+  {
+    "viewport": "1280x800",
+    "grid": {
+      "top": 537.9,
+      "bottom": 1495.3,
+      "h": 957.4,
+      "w": 976
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 537.9,
+          "bottom": 1073.1,
+          "h": 535.1,
+          "w": 317.3
+        },
+        "cards": 2,
+        "ultimoCardBottom": 1073.1
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 537.9,
+          "bottom": 1073.1,
+          "h": 535.1,
+          "w": 317.3
+        },
+        "cards": 1,
+        "ultimoCardBottom": 821.1
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 537.9,
+          "bottom": 1073.1,
+          "h": 535.1,
+          "w": 317.3
+        },
+        "cards": 2,
+        "ultimoCardBottom": 1073.1
+      }
+    ],
+    "agendaWrapper": {
+      "top": 1085.1,
+      "bottom": 1495.3,
+      "h": 410.3,
+      "w": 976
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 1085.1,
+      "bottom": 1495.3,
+      "h": 410.3,
+      "w": 976
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 1136.8,
+      "bottom": 1482.3,
+      "h": 345.5,
+      "w": 950
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 1073.1,
+    "diferenca": -422.3,
+    "overflowDoc": 0
+  },
+  {
+    "viewport": "1024x768",
+    "grid": {
+      "top": 712.9,
+      "bottom": 1965.4,
+      "h": 1252.5,
+      "w": 720
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 712.9,
+          "bottom": 1248,
+          "h": 535.1,
+          "w": 354
+        },
+        "cards": 2,
+        "ultimoCardBottom": 1248
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 712.9,
+          "bottom": 1248,
+          "h": 535.1,
+          "w": 354
+        },
+        "cards": 1,
+        "ultimoCardBottom": 996
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 1260,
+          "bottom": 1543.1,
+          "h": 283.1,
+          "w": 720
+        },
+        "cards": 2,
+        "ultimoCardBottom": 1543.1
+      }
+    ],
+    "agendaWrapper": {
+      "top": 1555.1,
+      "bottom": 1965.4,
+      "h": 410.3,
+      "w": 720
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 1555.1,
+      "bottom": 1965.4,
+      "h": 410.3,
+      "w": 720
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 1606.9,
+      "bottom": 1952.4,
+      "h": 345.5,
+      "w": 694
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 1543.1,
+    "diferenca": -422.3,
+    "overflowDoc": 197
+  },
+  {
+    "viewport": "390x844",
+    "grid": {
+      "top": 700.3,
+      "bottom": 2751.9,
+      "h": 2051.6,
+      "w": 342
+    },
+    "gridAlignItems": "normal",
+    "colunas": [
+      {
+        "chave": "proximas",
+        "rect": {
+          "top": 700.3,
+          "bottom": 1235.4,
+          "h": 535.1,
+          "w": 342
+        },
+        "cards": 2,
+        "ultimoCardBottom": 1235.4
+      },
+      {
+        "chave": "andamento",
+        "rect": {
+          "top": 1247.4,
+          "bottom": 1782.5,
+          "h": 535.1,
+          "w": 342
+        },
+        "cards": 1,
+        "ultimoCardBottom": 1530.5
+      },
+      {
+        "chave": "concluidas",
+        "rect": {
+          "top": 1794.5,
+          "bottom": 2329.6,
+          "h": 535.1,
+          "w": 342
+        },
+        "cards": 2,
+        "ultimoCardBottom": 2329.6
+      }
+    ],
+    "agendaWrapper": {
+      "top": 2341.6,
+      "bottom": 2751.9,
+      "h": 410.3,
+      "w": 342
+    },
+    "agendaWrapperDisplay": "block",
+    "agenda": {
+      "top": 2341.6,
+      "bottom": 2751.9,
+      "h": 410.3,
+      "w": 342
+    },
+    "agendaDisplay": "flex",
+    "agendaFlex": "0 1 auto",
+    "agendaUl": {
+      "top": 2393.4,
+      "bottom": 2738.9,
+      "h": 345.5,
+      "w": 316
+    },
+    "cardsVisiveis": 5,
+    "baseMaisBaixa": 2329.6,
+    "diferenca": -422.3,
+    "overflowDoc": 158
+  }
+]

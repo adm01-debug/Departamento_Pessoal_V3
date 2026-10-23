@@ -8,6 +8,7 @@ import {
   diasDaSemanaComTurmas,
   filtrarTurmas,
   formatarDataTurma,
+  formatarDuracaoTurma,
   formatarHoraTurma,
   formatarIntervaloSemana,
   grupoDaTurma,
@@ -20,6 +21,7 @@ import {
   opcoesModalidadeTurma,
   opcoesStatusTurma,
   ordenarTurmas,
+  referenciaTemporalTurma,
   semanaSugeridaAgenda,
   type CursoTurma,
   type TurmaRegistro,
@@ -172,6 +174,61 @@ describe('turmasDerivacoes — modelo e agrupamento', () => {
     expect(calcularOcupacaoTurma(12, null)).toBeNull();
     expect(calcularOcupacaoTurma(undefined, 20)).toBeNull();
     expect(calcularOcupacaoTurma('invalido', 20)).toBeNull();
+  });
+});
+
+describe('turmasDerivacoes — metadados complementares', () => {
+  const REF = new Date(2026, 7, 25); // 25/08/2026
+
+  it('formata a carga horária real como duração', () => {
+    expect(formatarDuracaoTurma(4)).toBe('4 horas');
+    expect(formatarDuracaoTurma(1)).toBe('1 hora');
+    expect(formatarDuracaoTurma('1.5')).toBe('1,5 horas');
+    expect(formatarDuracaoTurma(0)).toBeNull();
+    expect(formatarDuracaoTurma('invalido')).toBeNull();
+    expect(formatarDuracaoTurma(null)).toBeNull();
+  });
+
+  it('calcula o complemento temporal por situação, sem inventar datas', () => {
+    expect(referenciaTemporalTurma(new Date(2026, 8, 1), 'proximas', null, REF)).toBe('Em 7 dias');
+    expect(referenciaTemporalTurma(new Date(2026, 7, 26), 'proximas', null, REF)).toBe('Amanhã');
+    expect(referenciaTemporalTurma(new Date(2026, 7, 25), 'proximas', null, REF)).toBe('Hoje');
+    expect(referenciaTemporalTurma(new Date(2026, 7, 20), 'proximas', null, REF)).toBeNull();
+    expect(referenciaTemporalTurma(new Date(2026, 7, 14), 'andamento', null, REF)).toBe('Iniciada há 11 dias');
+    expect(referenciaTemporalTurma(new Date(2026, 1, 5), 'concluidas', '2026-02-20', REF)).toBe(
+      'Concluída em 20/02'
+    );
+    expect(referenciaTemporalTurma(null, 'proximas', null, REF)).toBeNull();
+  });
+
+  it('expõe hora final e duração somente quando os dados existem', () => {
+    const [comFim] = montarTurmas(
+      [
+        {
+          id: 'inst-fim',
+          curso_id: 'curso-1',
+          data_inicio: '2026-09-01T11:00:00Z',
+          data_fim: '2026-09-01T15:00:00Z',
+          status: 'planejado',
+          capacidade_maxima: 20,
+        },
+      ],
+      CURSOS,
+      [],
+      REF
+    );
+    expect(comFim.hora).not.toBeNull();
+    expect(comFim.horaFim).not.toBeNull();
+    expect(comFim.duracao).toBe('4 horas');
+    expect(comFim.referencia).toBe('Em 7 dias');
+
+    const [semFim] = montarTurmas(
+      [{ id: 'inst-sem-fim', curso_id: 'curso-1', data_inicio: '2026-09-01T11:00:00Z', status: 'planejado' }],
+      CURSOS,
+      [],
+      REF
+    );
+    expect(semFim.horaFim).toBeNull();
   });
 });
 

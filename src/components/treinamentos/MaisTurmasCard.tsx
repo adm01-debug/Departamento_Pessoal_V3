@@ -50,7 +50,7 @@ export function MaisTurmasCard({ onNovaTurma, podeCriarTurma = false, className 
       data-mais-turmas-em-breve
       aria-labelledby={TITULO_ID}
       className={cn(
-        'flex h-full min-h-[232px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[hsl(var(--info)/0.3)] bg-card/20 px-5 py-6 text-center @[900px]:min-h-[240px]',
+        'flex h-full min-h-[240px] w-full min-w-0 flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[hsl(var(--info)/0.3)] bg-card/20 px-5 py-5 text-center',
         className
       )}
     >

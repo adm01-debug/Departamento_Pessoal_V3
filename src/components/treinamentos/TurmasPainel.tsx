@@ -7,6 +7,8 @@ import { EntradaPresenca, MAX_ENTRADA_INDEX, entradaCard } from '@/components/ui
 import { linhaEntradaHubVariants } from '@/components/premiacoes/premiacoesEntrada';
 import { cn } from '@/lib/utils';
 import { AgendaSemanal } from './AgendaSemanal';
+import { CabecalhoColunaTurma, type TomCabecalhoTurma } from './CabecalhoColunaTurma';
+import { CalendarioTurmasDialog } from './CalendarioTurmasDialog';
 import { MaisTurmasCard } from './MaisTurmasCard';
 import { TurmaCard } from './TurmaCard';
 import { TurmaDetalheDialog } from './TurmaDetalheDialog';
@@ -19,6 +21,7 @@ import {
   contarTurmas,
   filtrarTurmas,
   indicesEntradaTurmas,
+  inicioSemana,
   montarTurmas,
   opcoesModalidadeTurma,
   opcoesStatusTurma,
@@ -65,6 +68,11 @@ export interface TurmasPainelProps {
   onNovaTurma?: () => void;
   /** Autorização real (matriz `permissions`) já verificada pelo chamador. */
   podeCriarTurma?: boolean;
+  /**
+   * Data de referência para sugerir a semana da agenda. Produção usa `new Date()`;
+   * testes passam uma data fixa. A sugestão considera SOMENTE as turmas filtradas.
+   */
+  referencia?: Date;
 }
 
 interface ColunaTurma {
@@ -72,8 +80,7 @@ interface ColunaTurma {
   titulo: string;
   descricao: string;
   icone: LucideIcon;
-  tile: string;
-  badge: string;
+  tom: TomCabecalhoTurma;
 }
 
 const COLUNAS: readonly ColunaTurma[] = [
@@ -82,24 +89,36 @@ const COLUNAS: readonly ColunaTurma[] = [
     titulo: 'Próximas turmas',
     descricao: 'Turmas que iniciarão em breve',
     icone: CalendarClock,
-    tile: 'border-info/25 bg-info/10 text-info',
-    badge: 'border-info/25 bg-info/10 text-info',
+    tom: {
+      icone: 'text-info',
+      superficie: 'border-info/20 bg-info/[0.07]',
+      contador: 'border-info/30 bg-info/10 text-info',
+      acento: 'bg-info/80',
+    },
   },
   {
     chave: 'andamento',
     titulo: 'Em andamento',
     descricao: 'Turmas em execução no momento',
     icone: PlayCircle,
-    tile: 'border-[hsl(var(--aqua)/0.25)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]',
-    badge: 'border-[hsl(var(--aqua)/0.25)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]',
+    tom: {
+      icone: 'text-[hsl(var(--aqua))]',
+      superficie: 'border-[hsl(var(--aqua)/0.2)] bg-[hsl(var(--aqua)/0.07)]',
+      contador: 'border-[hsl(var(--aqua)/0.3)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]',
+      acento: 'bg-[hsl(var(--aqua)/0.8)]',
+    },
   },
   {
     chave: 'concluidas',
     titulo: 'Turmas concluídas',
     descricao: 'Turmas finalizadas recentemente',
     icone: CheckCircle2,
-    tile: 'border-success/25 bg-success/10 text-success',
-    badge: 'border-success/25 bg-success/10 text-success',
+    tom: {
+      icone: 'text-success',
+      superficie: 'border-success/20 bg-success/[0.07]',
+      contador: 'border-success/30 bg-success/10 text-success',
+      acento: 'bg-success/80',
+    },
   },
 ];
 
@@ -134,14 +153,20 @@ function ColunaVazia({ coluna }: { coluna: ColunaTurma }) {
 function TurmasSkeleton() {
   return (
     <div
-      className="grid grid-cols-1 gap-3 @[620px]:grid-cols-2 @[940px]:grid-cols-3 @[1180px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(240px,0.75fr)]"
+      className="grid grid-cols-1 gap-3 @[620px]:grid-cols-2 @[940px]:grid-cols-3 @[1120px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(240px,0.75fr)]"
       aria-hidden
     >
       {Array.from({ length: 3 }, (_, coluna) => (
         <div key={coluna} className="flex min-w-0 flex-col gap-2">
-          <div className="mb-1 flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-muted/50 motion-safe:animate-pulse" />
-            <div className="h-3 w-32 rounded bg-muted/50 motion-safe:animate-pulse" />
+          {/* Placeholder da faixa de status: mesma altura/raio do cabeçalho real,
+              para a coluna não “pular” quando os dados chegam. */}
+          <div className="flex h-[58px] items-center gap-2.5 rounded-xl border border-border/40 bg-muted/20 px-3 py-2.5">
+            <div className="h-[18px] w-[18px] shrink-0 rounded bg-muted/50 motion-safe:animate-pulse" />
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <div className="h-3 w-32 rounded bg-muted/50 motion-safe:animate-pulse" />
+              <div className="h-3 w-40 max-w-full rounded bg-muted/40 motion-safe:animate-pulse" />
+            </div>
+            <div className="h-5 min-w-[22px] shrink-0 rounded-full bg-muted/50 motion-safe:animate-pulse" />
           </div>
           {Array.from({ length: 2 }, (_, card) => (
             <div
@@ -171,6 +196,7 @@ export function TurmasPainel({
   carregando = false,
   onNovaTurma,
   podeCriarTurma = false,
+  referencia,
 }: TurmasPainelProps) {
   const [busca, setBusca] = useState('');
   const [status, setStatus] = useState('todos');
@@ -178,6 +204,14 @@ export function TurmasPainel({
   const [periodo, setPeriodo] = useState<PeriodoTurma>('todas');
   const [ordenacao, setOrdenacao] = useState<OrdenacaoTurma>(ORDENACAO_TURMA_PADRAO);
   const [detalhe, setDetalhe] = useState<Turma | null>(null);
+  const [calendarioAberto, setCalendarioAberto] = useState(false);
+  const [mesCalendario, setMesCalendario] = useState<Date>(() => new Date());
+  /**
+   * Cada abertura remonta o calendário (key), garantindo que ele já abra no mês
+   * da semana exibida — sem efeito de sincronização nem flash do mês anterior.
+   * Fechar não muda a chave, então a animação de saída continua funcionando.
+   */
+  const [aberturaCalendario, setAberturaCalendario] = useState(0);
 
   const turmas = useMemo(() => montarTurmas(instancias, cursos, colaboradores), [instancias, cursos, colaboradores]);
 
@@ -200,6 +234,8 @@ export function TurmasPainel({
   }, [turmas, busca, status, modalidade, periodo, ordenacao]);
 
   const grupos = useMemo(() => agruparTurmas(filtradas), [filtradas]);
+  /** Mesma coleção ordenada entregue à agenda e ao calendário mensal. */
+  const turmasAgenda = useMemo(() => ordenarTurmas(filtradas, 'data_asc'), [filtradas]);
   const contagens = useMemo(() => contarTurmas(grupos), [grupos]);
   const indices = useMemo(() => indicesEntradaTurmas(grupos), [grupos]);
   /**
@@ -208,7 +244,20 @@ export function TurmasPainel({
    * por último na coluna Em andamento e nunca “furar” a cascata.
    */
   const indiceMaisTurmas = Math.min(indices.size, MAX_ENTRADA_INDEX);
-  const semanaInicial = useMemo(() => semanaSugeridaAgenda(ordenarTurmas(turmas, 'data_asc')), [turmas]);
+  /**
+   * B-01: a semana sugerida considera SOMENTE as turmas filtradas. Se o filtro
+   * não tiver nenhuma turma, abre na semana de referência (hoje em produção).
+   * A `key` abaixo remonta a agenda apenas quando o RECORTE muda — navegar com
+   * as setas não altera a chave e, portanto, não reposiciona a semana.
+   */
+  const semanaInicial = useMemo(() => {
+    const base = referencia ?? new Date();
+    return semanaSugeridaAgenda(turmasAgenda, base) ?? inicioSemana(base);
+  }, [turmasAgenda, referencia]);
+  const chaveFiltrosAgenda = useMemo(
+    () => JSON.stringify([busca, status, modalidade, periodo]),
+    [busca, status, modalidade, periodo]
+  );
 
   const limparFiltros = () => {
     setBusca('');
@@ -260,10 +309,9 @@ export function TurmasPainel({
         <EntradaPresenca>
           <div
             data-turmas-grid
-            className="grid grid-cols-1 gap-3 @[620px]:grid-cols-2 @[940px]:grid-cols-3 @[1180px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(240px,0.75fr)]"
+            className="grid grid-cols-1 gap-3 @[620px]:grid-cols-2 @[940px]:grid-cols-3 @[1120px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(240px,0.75fr)]"
           >
             {COLUNAS.map((coluna, indiceColuna) => {
-              const Icone = coluna.icone;
               const lista = grupos[coluna.chave];
               return (
                 <motion.section
@@ -273,38 +321,14 @@ export function TurmasPainel({
                   data-turmas-coluna={coluna.chave}
                   className={cn('min-w-0', coluna.chave === 'concluidas' && '@[620px]:col-span-2 @[940px]:col-span-1')}
                 >
-                  <header className="mb-2 flex min-h-8 items-start gap-2.5">
-                    <span
-                      className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border', coluna.tile)}
-                    >
-                      <Icone className="h-4 w-4" aria-hidden />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex min-w-0 items-center gap-1.5">
-                        <h2
-                          id={`turmas-coluna-${coluna.chave}`}
-                          className="truncate text-[13px] font-semibold leading-tight text-foreground"
-                        >
-                          {coluna.titulo}
-                        </h2>
-                        <span
-                          className={cn(
-                            'inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full border px-1.5 text-[10px] font-semibold tabular-nums leading-none',
-                            coluna.badge
-                          )}
-                          title={`${contagens[coluna.chave]} turma(s)`}
-                        >
-                          {contagens[coluna.chave]}
-                        </span>
-                      </div>
-                      <p
-                        className="mt-0.5 truncate text-[10.5px] leading-tight text-muted-foreground"
-                        title={coluna.descricao}
-                      >
-                        {coluna.descricao}
-                      </p>
-                    </div>
-                  </header>
+                  <CabecalhoColunaTurma
+                    id={`turmas-coluna-${coluna.chave}`}
+                    titulo={coluna.titulo}
+                    descricao={coluna.descricao}
+                    contagem={contagens[coluna.chave]}
+                    icone={coluna.icone}
+                    tom={coluna.tom}
+                  />
 
                   <div
                     className={cn(
@@ -349,16 +373,31 @@ export function TurmasPainel({
               );
             })}
 
-            <div className="@[620px]:col-span-2 @[940px]:col-span-3 @[1180px]:col-span-1">
+            <div className="@[620px]:col-span-2 @[940px]:col-span-3 @[1120px]:col-span-1 flex min-w-0 flex-col">
               <AgendaSemanal
-                turmas={ordenarTurmas(filtradas, 'data_asc')}
+                key={chaveFiltrosAgenda}
+                turmas={turmasAgenda}
                 semanaInicial={semanaInicial}
                 onAbrir={setDetalhe}
+                onVerCalendarioCompleto={(semana) => {
+                  setMesCalendario(semana);
+                  setAberturaCalendario((atual) => atual + 1);
+                  setCalendarioAberto(true);
+                }}
               />
             </div>
           </div>
         </EntradaPresenca>
       )}
+
+      <CalendarioTurmasDialog
+        key={aberturaCalendario}
+        open={calendarioAberto}
+        onOpenChange={setCalendarioAberto}
+        mesInicial={mesCalendario}
+        turmas={turmasAgenda}
+        onAbrirTurma={setDetalhe}
+      />
 
       <TurmaDetalheDialog
         turma={detalhe}

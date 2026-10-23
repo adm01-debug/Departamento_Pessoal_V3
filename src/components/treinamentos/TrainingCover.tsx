@@ -3,6 +3,7 @@ import { Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { TrainingContentType, TrainingCoverFormat } from '@/services/trainingImages';
 import { estiloCategoriaTreinamento, type EstiloCategoriaTreinamento } from './TreinamentoBadges';
+import { normalizarTexto } from './treinamentosDerivacoes';
 
 /**
  * ============================================================================
@@ -76,14 +77,89 @@ function CapaQuadrada({ estilo, categoria }: { estilo: EstiloCategoriaTreinament
   );
 }
 
-function CapaFaixa({ estilo }: { estilo: EstiloCategoriaTreinamento }) {
+/**
+ * Cena provisória por FAMÍLIA de categoria — silhuetas vetoriais (SVG), nunca
+ * uma fotografia. Existe apenas quando o curso não possui capa cadastrada;
+ * a imagem real, quando houver, substitui tudo isso.
+ */
+function CenaFaixa({ categoria }: { categoria?: string | null }) {
+  const chave = normalizarTexto(categoria).replace(/[\s-]+/g, '_');
+
+  if (chave === 'seguranca_do_trabalho') {
+    return (
+      <svg
+        viewBox="0 0 320 104"
+        preserveAspectRatio="xMaxYMax slice"
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full text-white"
+      >
+        <path d="M140 104 L204 34 L246 80 L268 54 L320 104 Z" fill="currentColor" opacity="0.1" />
+        <path d="M184 104 L232 62 L276 104 Z" fill="currentColor" opacity="0.08" />
+        <path d="M222 80c0-15 11-26 26-26s26 11 26 26z" fill="currentColor" opacity="0.2" />
+        <rect x="216" y="81" width="64" height="5" rx="2.5" fill="currentColor" opacity="0.26" />
+        <path d="M234 60c4-4 9-6 14-6s10 2 14 6" fill="none" stroke="currentColor" strokeOpacity="0.18" strokeWidth="2" />
+      </svg>
+    );
+  }
+
+  if (['lideranca', 'onboarding', 'cultura'].includes(chave)) {
+    return (
+      <svg
+        viewBox="0 0 320 104"
+        preserveAspectRatio="xMaxYMax slice"
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full text-white"
+      >
+        <g fill="currentColor">
+          <circle cx="214" cy="56" r="9" opacity="0.16" />
+          <path d="M198 104c0-10 7-17 16-17s16 7 16 17z" opacity="0.16" />
+          <circle cx="286" cy="58" r="8" opacity="0.14" />
+          <path d="M272 104c0-9 6-15 14-15s14 6 14 15z" opacity="0.14" />
+          <circle cx="248" cy="40" r="14" opacity="0.26" />
+          <path d="M224 104c0-14 11-24 24-24s24 10 24 24z" opacity="0.26" />
+          <circle cx="270" cy="32" r="10" opacity="0.2" />
+          <path d="M252 104c0-10 8-18 18-18s18 8 18 18z" opacity="0.2" />
+        </g>
+      </svg>
+    );
+  }
+
+  return null;
+}
+
+function CapaFaixa({ estilo, categoria }: { estilo: EstiloCategoriaTreinamento; categoria?: string | null }) {
   const Icone = estilo.icone;
+  const chave = normalizarTexto(categoria).replace(/[\s-]+/g, '_');
+  /** Categorias com cena própria dispensam o ícone solto sobre a arte. */
+  const temCena = chave === 'seguranca_do_trabalho' || ['lideranca', 'onboarding', 'cultura'].includes(chave);
   return (
     <div aria-hidden className={cn('relative isolate h-full w-full overflow-hidden', estilo.capa)}>
-      <span className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full border border-white/10" />
-      <span className="pointer-events-none absolute -bottom-12 -left-6 h-24 w-24 rounded-full border border-white/[0.08]" />
+      {/* Halo da família cromática à direita: dá profundidade à faixa sem
+          inventar uma imagem que o curso não possui. */}
+      <span
+        className={cn(
+          'pointer-events-none absolute -right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-current opacity-[0.08] blur-2xl',
+          estilo.capaTexto
+        )}
+      />
+      {/* Malha de pontos discreta (textura, não ilustração). */}
+      <span className="pointer-events-none absolute inset-0 opacity-[0.13] [background-image:radial-gradient(rgba(255,255,255,0.4)_1px,transparent_1px)] [background-size:14px_14px]" />
+      {/* Feixes diagonais: mesma linguagem geométrica do banner de trilhas. */}
+      <span className="pointer-events-none absolute -right-20 -top-12 h-[220%] w-44 rotate-[24deg] border-l border-white/[0.07]" />
+      <span className="pointer-events-none absolute -right-10 -top-12 h-[220%] w-32 rotate-[24deg] border-l border-white/[0.05]" />
+      <span className="pointer-events-none absolute -right-5 top-4 h-20 w-20 rounded-full border border-white/10" />
+      <span className="pointer-events-none absolute -bottom-14 -left-8 h-24 w-24 rounded-full border border-white/[0.08]" />
       <span className="pointer-events-none absolute inset-x-3 top-1/2 h-px bg-white/[0.06]" />
-      <Icone className={cn('absolute right-3 top-1/2 h-9 w-9 -translate-y-1/2 opacity-25', estilo.capaTexto)} />
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/25 to-transparent" />
+      <CenaFaixa categoria={categoria} />
+      {!temCena && (
+        <Icone
+          className={cn(
+            'absolute right-3 top-1/2 h-12 w-12 -translate-y-1/2 opacity-[0.26] drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]',
+            estilo.capaTexto
+          )}
+        />
+      )}
     </div>
   );
 }
@@ -178,7 +254,7 @@ export function TrainingCover({
       ) : (
         (fallback ?? (
           <>
-            {formato === 'faixa' && <CapaFaixa estilo={estilo} />}
+            {formato === 'faixa' && <CapaFaixa estilo={estilo} categoria={categoria} />}
             {formato === 'miniatura' && <MiniaturaCertificado estilo={estilo} rotulo={rotulo} subrotulo={subrotulo} />}
             {formato === 'quadrada' && <CapaQuadrada estilo={estilo} categoria={categoria} />}
           </>

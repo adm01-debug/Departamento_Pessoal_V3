@@ -1,0 +1,37 @@
+[
+  {
+    "id": "SYNC-01",
+    "descricao": "Agenda navega para outubro",
+    "status": "APROVADO",
+    "esperado": "05 out – 11 out 2026",
+    "obtido": "05 out – 11 out 2026"
+  },
+  {
+    "id": "SYNC-02",
+    "descricao": "Calendário abre no mês da semana exibida",
+    "status": "APROVADO",
+    "esperado": "Outubro de 2026",
+    "obtido": "Outubro de 2026"
+  },
+  {
+    "id": "SYNC-03",
+    "descricao": "Botão Fechar encerra o modal",
+    "status": "APROVADO",
+    "esperado": 0,
+    "obtido": 0
+  },
+  {
+    "id": "SYNC-04",
+    "descricao": "Reabrir volta ao mês da semana atual (não lembra o mês anterior)",
+    "status": "APROVADO",
+    "esperado": "Setembro de 2026",
+    "obtido": "Setembro de 2026"
+  },
+  {
+    "id": "SYNC-05",
+    "descricao": "Reabrir reinicia no mês da agenda (não em novembro)",
+    "status": "APROVADO",
+    "esperado": "Setembro de 2026",
+    "obtido": "Setembro de 2026"
+  }
+]

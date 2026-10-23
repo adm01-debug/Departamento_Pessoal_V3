@@ -1,0 +1,419 @@
+[
+  {
+    "chave": "proximas",
+    "coluna": {
+      "tag": "SECTION",
+      "cls": "min-w-0",
+      "top": 382,
+      "bottom": 942,
+      "h": 560,
+      "mt": "0px",
+      "mb": "0px",
+      "pt": "0px",
+      "pb": "0px",
+      "flex": "0 1 auto",
+      "minH": "auto"
+    },
+    "filhos": [
+      {
+        "tag": "HEADER",
+        "cls": "relative mb-2 grid w-full min-w-0 grid-cols-[18px_minmax(0,1",
+        "top": 382,
+        "bottom": 440,
+        "h": 58,
+        "mt": "0px",
+        "mb": "8px",
+        "pt": "10px",
+        "pb": "10px",
+        "flex": "0 1 auto",
+        "minH": "0px",
+        "netos": [
+          {
+            "tag": "svg",
+            "cls": "[object SVGAnimatedString]",
+            "top": 394,
+            "bottom": 412,
+            "h": 18,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 0 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "H2",
+            "cls": "col-start-2 row-start-1 min-w-0 truncate text-[13px] font-se",
+            "top": 395,
+            "bottom": 411,
+            "h": 16,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "SPAN",
+            "cls": "col-start-3 row-start-1 inline-flex h-5 min-w-[22px] shrink-",
+            "top": 393,
+            "bottom": 413,
+            "h": 20,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 0 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "P",
+            "cls": "col-span-2 col-start-2 row-start-2 truncate text-[11px] lead",
+            "top": 415,
+            "bottom": 429,
+            "h": 14,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "SPAN",
+            "cls": "pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-inf",
+            "top": 437,
+            "bottom": 439,
+            "h": 2,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "0px"
+          }
+        ]
+      },
+      {
+        "tag": "DIV",
+        "cls": "flex flex-col gap-3",
+        "top": 448,
+        "bottom": 942,
+        "h": 494,
+        "mt": "0px",
+        "mb": "0px",
+        "pt": "0px",
+        "pb": "0px",
+        "flex": "0 1 auto",
+        "minH": "0px",
+        "netos": [
+          {
+            "tag": "DIV",
+            "cls": "min-w-0 origin-center",
+            "top": 448,
+            "bottom": 689,
+            "h": 241,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "DIV",
+            "cls": "min-w-0 origin-center",
+            "top": 701,
+            "bottom": 942,
+            "h": 241,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "chave": "andamento",
+    "coluna": {
+      "tag": "SECTION",
+      "cls": "min-w-0",
+      "top": 382,
+      "bottom": 942,
+      "h": 560,
+      "mt": "0px",
+      "mb": "0px",
+      "pt": "0px",
+      "pb": "0px",
+      "flex": "0 1 auto",
+      "minH": "auto"
+    },
+    "filhos": [
+      {
+        "tag": "HEADER",
+        "cls": "relative mb-2 grid w-full min-w-0 grid-cols-[18px_minmax(0,1",
+        "top": 382,
+        "bottom": 440,
+        "h": 58,
+        "mt": "0px",
+        "mb": "8px",
+        "pt": "10px",
+        "pb": "10px",
+        "flex": "0 1 auto",
+        "minH": "0px",
+        "netos": [
+          {
+            "tag": "svg",
+            "cls": "[object SVGAnimatedString]",
+            "top": 394,
+            "bottom": 412,
+            "h": 18,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 0 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "H2",
+            "cls": "col-start-2 row-start-1 min-w-0 truncate text-[13px] font-se",
+            "top": 395,
+            "bottom": 411,
+            "h": 16,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "SPAN",
+            "cls": "col-start-3 row-start-1 inline-flex h-5 min-w-[22px] shrink-",
+            "top": 393,
+            "bottom": 413,
+            "h": 20,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 0 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "P",
+            "cls": "col-span-2 col-start-2 row-start-2 truncate text-[11px] lead",
+            "top": 415,
+            "bottom": 429,
+            "h": 14,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "SPAN",
+            "cls": "pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-[hs",
+            "top": 437,
+            "bottom": 439,
+            "h": 2,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "0px"
+          }
+        ]
+      },
+      {
+        "tag": "DIV",
+        "cls": "flex flex-col gap-3",
+        "top": 448,
+        "bottom": 941,
+        "h": 493,
+        "mt": "0px",
+        "mb": "0px",
+        "pt": "0px",
+        "pb": "0px",
+        "flex": "0 1 auto",
+        "minH": "0px",
+        "netos": [
+          {
+            "tag": "DIV",
+            "cls": "min-w-0 origin-center",
+            "top": 448,
+            "bottom": 689,
+            "h": 241,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "DIV",
+            "cls": "min-w-0 origin-center",
+            "top": 701,
+            "bottom": 941,
+            "h": 240,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "chave": "concluidas",
+    "coluna": {
+      "tag": "SECTION",
+      "cls": "min-w-0 @[620px]:col-span-2 @[940px]:col-span-1",
+      "top": 382,
+      "bottom": 942,
+      "h": 560,
+      "mt": "0px",
+      "mb": "0px",
+      "pt": "0px",
+      "pb": "0px",
+      "flex": "0 1 auto",
+      "minH": "auto"
+    },
+    "filhos": [
+      {
+        "tag": "HEADER",
+        "cls": "relative mb-2 grid w-full min-w-0 grid-cols-[18px_minmax(0,1",
+        "top": 382,
+        "bottom": 440,
+        "h": 58,
+        "mt": "0px",
+        "mb": "8px",
+        "pt": "10px",
+        "pb": "10px",
+        "flex": "0 1 auto",
+        "minH": "0px",
+        "netos": [
+          {
+            "tag": "svg",
+            "cls": "[object SVGAnimatedString]",
+            "top": 394,
+            "bottom": 412,
+            "h": 18,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 0 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "H2",
+            "cls": "col-start-2 row-start-1 min-w-0 truncate text-[13px] font-se",
+            "top": 395,
+            "bottom": 411,
+            "h": 16,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "SPAN",
+            "cls": "col-start-3 row-start-1 inline-flex h-5 min-w-[22px] shrink-",
+            "top": 393,
+            "bottom": 413,
+            "h": 20,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 0 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "P",
+            "cls": "col-span-2 col-start-2 row-start-2 truncate text-[11px] lead",
+            "top": 415,
+            "bottom": 429,
+            "h": 14,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "SPAN",
+            "cls": "pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-suc",
+            "top": 437,
+            "bottom": 439,
+            "h": 2,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "0px"
+          }
+        ]
+      },
+      {
+        "tag": "DIV",
+        "cls": "flex flex-col gap-3 @[620px]:grid @[620px]:grid-cols-2 @[940",
+        "top": 448,
+        "bottom": 941,
+        "h": 493,
+        "mt": "0px",
+        "mb": "0px",
+        "pt": "0px",
+        "pb": "0px",
+        "flex": "0 1 auto",
+        "minH": "0px",
+        "netos": [
+          {
+            "tag": "DIV",
+            "cls": "min-w-0 origin-center",
+            "top": 448,
+            "bottom": 689,
+            "h": 241,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          },
+          {
+            "tag": "DIV",
+            "cls": "min-w-0 origin-center",
+            "top": 701,
+            "bottom": 941,
+            "h": 240,
+            "mt": "0px",
+            "mb": "0px",
+            "pt": "0px",
+            "pb": "0px",
+            "flex": "0 1 auto",
+            "minH": "auto"
+          }
+        ]
+      }
+    ]
+  }
+]

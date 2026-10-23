@@ -1,0 +1,81 @@
+{
+  "painel": {
+    "h": 560,
+    "top": 24
+  },
+  "lista": {
+    "h": 451,
+    "rows": "57.9062px 103.75px 57.9219px 57.9219px 57.9062px 57.9219px 57.9219px"
+  },
+  "dias": [
+    {
+      "data": "2026-09-14",
+      "h": 58,
+      "top": 76,
+      "bottom": 134,
+      "conteudoH": 21,
+      "conteudoScroll": 21,
+      "overflow": 0
+    },
+    {
+      "data": "2026-09-15",
+      "h": 104,
+      "top": 134,
+      "bottom": 237,
+      "conteudoH": 91,
+      "conteudoScroll": 91,
+      "overflow": 0
+    },
+    {
+      "data": "2026-09-16",
+      "h": 58,
+      "top": 237,
+      "bottom": 295,
+      "conteudoH": 21,
+      "conteudoScroll": 21,
+      "overflow": 0
+    },
+    {
+      "data": "2026-09-17",
+      "h": 58,
+      "top": 295,
+      "bottom": 353,
+      "conteudoH": 21,
+      "conteudoScroll": 21,
+      "overflow": 0
+    },
+    {
+      "data": "2026-09-18",
+      "h": 58,
+      "top": 353,
+      "bottom": 411,
+      "conteudoH": 21,
+      "conteudoScroll": 21,
+      "overflow": 0
+    },
+    {
+      "data": "2026-09-19",
+      "h": 58,
+      "top": 411,
+      "bottom": 469,
+      "conteudoH": 21,
+      "conteudoScroll": 21,
+      "overflow": 0
+    },
+    {
+      "data": "2026-09-20",
+      "h": 58,
+      "top": 469,
+      "bottom": 527,
+      "conteudoH": 21,
+      "conteudoScroll": 21,
+      "overflow": 0
+    }
+  ],
+  "gatilho": {
+    "top": 219,
+    "bottom": 230,
+    "h": 11
+  },
+  "elementoNoCentro": "<button type=\"button\" data-dia-popover-trigger=\"true\" aria-label=\"+3 outras turmas em 15/09\" class=\"inline-flex w-fit items-center rounded-sm transition-colors "
+}

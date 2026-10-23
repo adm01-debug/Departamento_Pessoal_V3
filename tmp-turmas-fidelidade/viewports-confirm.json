@@ -1,0 +1,14 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('tab', { name: 'Turmas' })[22m
+
+    at C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-turmas-fidelidade\viewports.mjs:24:48 {
+  log: [ "  - waiting for getByRole('tab', { name: 'Turmas' })" ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.20.0

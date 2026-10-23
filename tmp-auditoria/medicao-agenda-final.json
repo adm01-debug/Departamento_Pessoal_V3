@@ -1,0 +1,74 @@
+[
+  {
+    "largura": 1440,
+    "viewport": {
+      "largura": 1440,
+      "altura": 900
+    },
+    "painel": {
+      "top": 382,
+      "h": 560
+    },
+    "wrapper": {
+      "h": 560
+    },
+    "header": {
+      "h": 31
+    },
+    "lista": {
+      "h": 451
+    },
+    "dias": [
+      {
+        "data": "2026-09-14",
+        "h": 64,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-15",
+        "h": 64,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-16",
+        "h": 64,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-17",
+        "h": 64,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-18",
+        "h": 64,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-19",
+        "h": 64,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-20",
+        "h": 64,
+        "overflow": 0
+      }
+    ],
+    "alturaMin": 64,
+    "alturaMax": 64,
+    "ultimoDiaH": 64,
+    "sobraAbaixoDoUltimoDia": 57,
+    "baseCards": 942,
+    "baseAgenda": 942,
+    "diferencaBases": 0,
+    "alturaColunas": [
+      560,
+      560,
+      560
+    ],
+    "cards": 5,
+    "overflowPainel": 0,
+    "overflowDocumento": 0
+  }
+]

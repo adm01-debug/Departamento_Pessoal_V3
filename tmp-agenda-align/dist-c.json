@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.click: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('tab', { name: 'Turmas' })[22m
+[2m    - waiting for "http://localhost:8080/treinamentos" navigation to finish...[22m
+
+    at C:\Users\artes03\Desktop\departamento-pessoal-v2-main\tmp-agenda-align\medir-distribuicao.mjs:27:51 {
+  log: [
+    "  - waiting for getByRole('tab', { name: 'Turmas' })",
+    '    - waiting for "http://localhost:8080/treinamentos" navigation to finish...'
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.20.0

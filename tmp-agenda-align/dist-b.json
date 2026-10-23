@@ -1,0 +1,218 @@
+[
+  {
+    "largura": 1280,
+    "viewport": {
+      "largura": 1280,
+      "altura": 900
+    },
+    "painel": {
+      "top": 1108,
+      "h": 411
+    },
+    "wrapper": {
+      "h": 411
+    },
+    "header": {
+      "h": 31
+    },
+    "lista": {
+      "h": 347
+    },
+    "dias": [
+      {
+        "data": "2026-09-14",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-15",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-16",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-17",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-18",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-19",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-20",
+        "h": 50,
+        "overflow": 0
+      }
+    ],
+    "alturaMin": 50,
+    "alturaMax": 50,
+    "ultimoDiaH": 50,
+    "sobraAbaixoDoUltimoDia": 13,
+    "baseCards": 1096,
+    "baseAgenda": 1519,
+    "diferencaBases": 423,
+    "alturaColunas": [
+      558,
+      558,
+      558
+    ],
+    "cards": 5,
+    "overflowPainel": 0,
+    "overflowDocumento": 0
+  },
+  {
+    "largura": 1120,
+    "viewport": {
+      "largura": 1120,
+      "altura": 900
+    },
+    "painel": {
+      "top": 1600,
+      "h": 411
+    },
+    "wrapper": {
+      "h": 411
+    },
+    "header": {
+      "h": 31
+    },
+    "lista": {
+      "h": 347
+    },
+    "dias": [
+      {
+        "data": "2026-09-14",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-15",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-16",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-17",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-18",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-19",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-20",
+        "h": 50,
+        "overflow": 0
+      }
+    ],
+    "alturaMin": 50,
+    "alturaMax": 50,
+    "ultimoDiaH": 50,
+    "sobraAbaixoDoUltimoDia": 13,
+    "baseCards": 1588,
+    "baseAgenda": 2012,
+    "diferencaBases": 423,
+    "alturaColunas": [
+      558,
+      558,
+      306
+    ],
+    "cards": 5,
+    "overflowPainel": 0,
+    "overflowDocumento": 101
+  },
+  {
+    "largura": 1024,
+    "viewport": {
+      "largura": 1024,
+      "altura": 768
+    },
+    "painel": {
+      "top": 1600,
+      "h": 411
+    },
+    "wrapper": {
+      "h": 411
+    },
+    "header": {
+      "h": 31
+    },
+    "lista": {
+      "h": 347
+    },
+    "dias": [
+      {
+        "data": "2026-09-14",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-15",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-16",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-17",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-18",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-19",
+        "h": 50,
+        "overflow": 0
+      },
+      {
+        "data": "2026-09-20",
+        "h": 50,
+        "overflow": 0
+      }
+    ],
+    "alturaMin": 50,
+    "alturaMax": 50,
+    "ultimoDiaH": 50,
+    "sobraAbaixoDoUltimoDia": 13,
+    "baseCards": 1588,
+    "baseAgenda": 2012,
+    "diferencaBases": 423,
+    "alturaColunas": [
+      558,
+      558,
+      306
+    ],
+    "cards": 5,
+    "overflowPainel": 0,
+    "overflowDocumento": 197
+  }
+]

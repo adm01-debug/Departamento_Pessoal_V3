@@ -1,0 +1,126 @@
+{
+  "classeLinhas": "grid-rows-[repeat(7,minmax(auto,1fr))]",
+  "snapshots": [
+    {
+      "rotulo": "estado atual",
+      "gridH": 560,
+      "painelH": 560,
+      "wrapperH": 560,
+      "listaH": 495,
+      "linhas": [
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        71
+      ]
+    },
+    {
+      "rotulo": "sem min-h-0 no painel",
+      "gridH": 560,
+      "painelH": 560,
+      "wrapperH": 560,
+      "listaH": 495,
+      "linhas": [
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        71
+      ]
+    },
+    {
+      "rotulo": "sem min-h-0 no wrapper",
+      "gridH": 560,
+      "painelH": 560,
+      "wrapperH": 560,
+      "listaH": 495,
+      "linhas": [
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        71
+      ]
+    },
+    {
+      "rotulo": "sem grid-rows-7",
+      "gridH": 560,
+      "painelH": 560,
+      "wrapperH": 560,
+      "listaH": 495,
+      "linhas": [
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        70
+      ]
+    },
+    {
+      "rotulo": "sem min-h-0 na lista",
+      "gridH": 560,
+      "painelH": 560,
+      "wrapperH": 560,
+      "listaH": 495,
+      "linhas": [
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        70
+      ]
+    },
+    {
+      "rotulo": "sem shrink-0 no cabeçalho",
+      "gridH": 560,
+      "painelH": 560,
+      "wrapperH": 560,
+      "listaH": 495,
+      "linhas": [
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        70
+      ]
+    }
+  ],
+  "colunas": [
+    {
+      "chave": "proximas",
+      "h": 560,
+      "conteudoH": 494
+    },
+    {
+      "chave": "andamento",
+      "h": 560,
+      "conteudoH": 493
+    },
+    {
+      "chave": "concluidas",
+      "h": 560,
+      "conteudoH": 493
+    }
+  ],
+  "agendaInterno": {
+    "painelScroll": 558,
+    "painelOffset": 560,
+    "painelFlex": "1 1 0%",
+    "painelMinHeight": "auto",
+    "wrapperFlex": "0 1 auto",
+    "listaScroll": 495
+  }
+}

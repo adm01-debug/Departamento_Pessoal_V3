@@ -1,0 +1,306 @@
+[
+  {
+    "width": 1920,
+    "height": 1080,
+    "overflowDoc": 0,
+    "cols": "363.719px 363.734px 363.734px 272.812px",
+    "cardW": 363.71875,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 273,
+      "h": 410,
+      "top": 382,
+      "ladoACards": true
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 302,
+        "h": 34
+      },
+      {
+        "w": 302,
+        "h": 34
+      },
+      {
+        "w": 302,
+        "h": 34
+      },
+      {
+        "w": 302,
+        "h": 34
+      },
+      {
+        "w": 302,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 1600,
+    "height": 900,
+    "overflowDoc": 0,
+    "cols": "336px 336px 336px 252px",
+    "cardW": 336,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 252,
+      "h": 410,
+      "top": 382,
+      "ladoACards": true
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 274,
+        "h": 34
+      },
+      {
+        "w": 274,
+        "h": 34
+      },
+      {
+        "w": 274,
+        "h": 34
+      },
+      {
+        "w": 274,
+        "h": 34
+      },
+      {
+        "w": 274,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "overflowDoc": 0,
+    "cols": "286.656px 286.672px 286.656px 240px",
+    "cardW": 286.65625,
+    "cardH": 241.15625,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 240,
+      "h": 410,
+      "top": 382,
+      "ladoACards": true
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 225,
+        "h": 34
+      },
+      {
+        "w": 225,
+        "h": 34
+      },
+      {
+        "w": 225,
+        "h": 34
+      },
+      {
+        "w": 225,
+        "h": 34
+      },
+      {
+        "w": 225,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 1366,
+    "height": 768,
+    "overflowDoc": 0,
+    "cols": "346px 346px 346px",
+    "cardW": 346,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 1062,
+      "h": 410,
+      "top": 929,
+      "ladoACards": false
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 284,
+        "h": 34
+      },
+      {
+        "w": 284,
+        "h": 34
+      },
+      {
+        "w": 284,
+        "h": 34
+      },
+      {
+        "w": 284,
+        "h": 34
+      },
+      {
+        "w": 284,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "height": 800,
+    "overflowDoc": 0,
+    "cols": "317.328px 317.328px 317.344px",
+    "cardW": 317.328125,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 976,
+      "h": 410,
+      "top": 1085,
+      "ladoACards": false
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 255,
+        "h": 34
+      },
+      {
+        "w": 255,
+        "h": 34
+      },
+      {
+        "w": 255,
+        "h": 34
+      },
+      {
+        "w": 255,
+        "h": 34
+      },
+      {
+        "w": 255,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 1024,
+    "height": 768,
+    "overflowDoc": 220,
+    "cols": "354px 354px",
+    "cardW": 354,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 720,
+      "h": 410,
+      "top": 1555,
+      "ladoACards": false
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 292,
+        "h": 34
+      },
+      {
+        "w": 292,
+        "h": 34
+      },
+      {
+        "w": 292,
+        "h": 34
+      },
+      {
+        "w": 292,
+        "h": 34
+      },
+      {
+        "w": 292,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "height": 1024,
+    "overflowDoc": 400,
+    "cols": "464px",
+    "cardW": 464,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 464,
+      "h": 410,
+      "top": 2426,
+      "ladoACards": false
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 402,
+        "h": 34
+      },
+      {
+        "w": 402,
+        "h": 34
+      },
+      {
+        "w": 402,
+        "h": 34
+      },
+      {
+        "w": 402,
+        "h": 34
+      },
+      {
+        "w": 402,
+        "h": 34
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "overflowDoc": 158,
+    "cols": "342px",
+    "cardW": 342,
+    "cardH": 240,
+    "metaOverflow": 0,
+    "agenda": {
+      "w": 342,
+      "h": 410,
+      "top": 2322,
+      "ladoACards": false
+    },
+    "maisTurmasH": 240,
+    "botoes": [
+      {
+        "w": 280,
+        "h": 34
+      },
+      {
+        "w": 280,
+        "h": 34
+      },
+      {
+        "w": 280,
+        "h": 34
+      },
+      {
+        "w": 280,
+        "h": 34
+      },
+      {
+        "w": 280,
+        "h": 34
+      }
+    ]
+  }
+]
