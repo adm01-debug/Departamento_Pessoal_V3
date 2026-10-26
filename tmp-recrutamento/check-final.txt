@@ -1,0 +1,208 @@
+1440x900 {
+  "boardH": 640,
+  "colunas": [
+    {
+      "id": "triagem",
+      "top": 322,
+      "bottom": 950,
+      "h": 628,
+      "rodape": 949,
+      "scroll": false,
+      "client": 541,
+      "scrollH": 541
+    },
+    {
+      "id": "entrevista",
+      "top": 322,
+      "bottom": 950,
+      "h": 628,
+      "rodape": 949,
+      "scroll": false,
+      "client": 541,
+      "scrollH": 541
+    },
+    {
+      "id": "teste",
+      "top": 322,
+      "bottom": 950,
+      "h": 628,
+      "rodape": 949,
+      "scroll": false,
+      "client": 541,
+      "scrollH": 541
+    },
+    {
+      "id": "proposta",
+      "top": 322,
+      "bottom": 950,
+      "h": 628,
+      "rodape": 949,
+      "scroll": false,
+      "client": 541,
+      "scrollH": 541
+    },
+    {
+      "id": "contratado",
+      "top": 322,
+      "bottom": 950,
+      "h": 628,
+      "rodape": 949,
+      "scroll": false,
+      "client": 542,
+      "scrollH": 542
+    }
+  ],
+  "cards": [
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130
+  ]
+}
+1366x768 {
+  "boardH": 560,
+  "colunas": [
+    {
+      "id": "triagem",
+      "top": 322,
+      "bottom": 870,
+      "h": 548,
+      "rodape": 869,
+      "scroll": true,
+      "client": 461,
+      "scrollH": 540
+    },
+    {
+      "id": "entrevista",
+      "top": 322,
+      "bottom": 870,
+      "h": 548,
+      "rodape": 869,
+      "scroll": false,
+      "client": 461,
+      "scrollH": 461
+    },
+    {
+      "id": "teste",
+      "top": 322,
+      "bottom": 870,
+      "h": 548,
+      "rodape": 869,
+      "scroll": false,
+      "client": 461,
+      "scrollH": 461
+    },
+    {
+      "id": "proposta",
+      "top": 322,
+      "bottom": 870,
+      "h": 548,
+      "rodape": 869,
+      "scroll": false,
+      "client": 461,
+      "scrollH": 461
+    },
+    {
+      "id": "contratado",
+      "top": 322,
+      "bottom": 870,
+      "h": 548,
+      "rodape": 869,
+      "scroll": false,
+      "client": 462,
+      "scrollH": 462
+    }
+  ],
+  "cards": [
+    130,
+    130,
+    130,
+    130,
+    130,
+    152,
+    152,
+    130,
+    130,
+    130,
+    130,
+    130
+  ]
+}
+390x844 {
+  "boardH": 520,
+  "colunas": [
+    {
+      "id": "triagem",
+      "top": 466,
+      "bottom": 974,
+      "h": 508,
+      "rodape": 973,
+      "scroll": true,
+      "client": 421,
+      "scrollH": 484
+    },
+    {
+      "id": "entrevista",
+      "top": 466,
+      "bottom": 974,
+      "h": 508,
+      "rodape": 973,
+      "scroll": false,
+      "client": 421,
+      "scrollH": 421
+    },
+    {
+      "id": "teste",
+      "top": 466,
+      "bottom": 974,
+      "h": 508,
+      "rodape": 973,
+      "scroll": false,
+      "client": 421,
+      "scrollH": 421
+    },
+    {
+      "id": "proposta",
+      "top": 466,
+      "bottom": 974,
+      "h": 508,
+      "rodape": 973,
+      "scroll": false,
+      "client": 421,
+      "scrollH": 421
+    },
+    {
+      "id": "contratado",
+      "top": 466,
+      "bottom": 974,
+      "h": 508,
+      "rodape": 973,
+      "scroll": false,
+      "client": 422,
+      "scrollH": 422
+    }
+  ],
+  "cards": [
+    116,
+    116,
+    116,
+    116,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130
+  ]
+}
+BUSCA { cards: 5, alturas: [ 628, 628, 628, 628, 628 ] }

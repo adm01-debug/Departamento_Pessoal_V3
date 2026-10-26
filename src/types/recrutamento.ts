@@ -18,6 +18,8 @@ export type CandidaturaRow = Tables['candidaturas']['Row'];
 export interface VagaResumo {
   titulo: string | null;
   departamento: string | null;
+  /** Requisitos reais da vaga — alimentam as tags de habilidades do card. */
+  requisitos?: string | null;
 }
 
 /**

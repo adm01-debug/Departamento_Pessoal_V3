@@ -1,0 +1,112 @@
+DESKTOP {
+  "gapTabsBoard": 24,
+  "board": {
+    "h": 700,
+    "client": 1136,
+    "scroll": 1136
+  },
+  "colunas": [
+    {
+      "id": "triagem",
+      "h": 688,
+      "w": 221,
+      "n": 4
+    },
+    {
+      "id": "entrevista",
+      "h": 559,
+      "w": 221,
+      "n": 3
+    },
+    {
+      "id": "teste",
+      "h": 388,
+      "w": 221,
+      "n": 2
+    },
+    {
+      "id": "proposta",
+      "h": 409,
+      "w": 221,
+      "n": 2
+    },
+    {
+      "id": "contratado",
+      "h": 238,
+      "w": 221,
+      "n": 1
+    }
+  ],
+  "cards": [
+    144,
+    144,
+    144,
+    144,
+    165,
+    144,
+    144,
+    144,
+    144,
+    144,
+    165,
+    144
+  ],
+  "cardTexto": "MR · Mariana Alves Rodrigues · Desenvolvedor(a) Full Stack Sênior · Novo · LinkedIn · 03 de ago · S/N · React · TypeScript · +3 · Triagem inicial · Avaliar currículo até 12/08",
+  "footerTop": 1034
+}
+MOBILE {
+  "gapTabsBoard": 20,
+  "board": {
+    "h": 700,
+    "client": 342,
+    "scroll": 1292
+  },
+  "colunas": [
+    {
+      "id": "triagem",
+      "h": 688,
+      "w": 252,
+      "n": 4
+    },
+    {
+      "id": "entrevista",
+      "h": 538,
+      "w": 252,
+      "n": 3
+    },
+    {
+      "id": "teste",
+      "h": 388,
+      "w": 252,
+      "n": 2
+    },
+    {
+      "id": "proposta",
+      "h": 388,
+      "w": 252,
+      "n": 2
+    },
+    {
+      "id": "contratado",
+      "h": 238,
+      "w": 252,
+      "n": 1
+    }
+  ],
+  "cards": [
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144,
+    144
+  ],
+  "cardTexto": "MR · Mariana Alves Rodrigues · Desenvolvedor(a) Full Stack Sênior · Novo · LinkedIn · 03 de ago · S/N · React · TypeScript · +3 · Triagem inicial · Avaliar currículo até 12/08",
+  "footerTop": 1056
+}

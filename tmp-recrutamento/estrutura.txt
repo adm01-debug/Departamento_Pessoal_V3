@@ -1,0 +1,346 @@
+1600x900 {
+  "gapTabsBoard": 24,
+  "boardHeight": 640,
+  "alturas": [
+    628,
+    628,
+    628,
+    628,
+    628
+  ],
+  "uniforme": true,
+  "topoUniforme": true,
+  "rodapesUniformes": true,
+  "basesRodape": [
+    949,
+    949,
+    949,
+    949,
+    949
+  ],
+  "rolagem": [
+    {
+      "id": "triagem",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "entrevista",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "teste",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "proposta",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "contratado",
+      "rolagem": false,
+      "client": 542,
+      "scroll": 542
+    }
+  ],
+  "cards": [
+    116,
+    116,
+    116,
+    116,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130
+  ],
+  "gapBoardFooter": 12,
+  "footer": "Mostrando 12 candidatos · Última atualização: 06/09/2026 às 09:00 · Ver etapas arquivadas · (0)"
+}
+1440x900 {
+  "gapTabsBoard": 24,
+  "boardHeight": 640,
+  "alturas": [
+    628,
+    628,
+    628,
+    628,
+    628
+  ],
+  "uniforme": true,
+  "topoUniforme": true,
+  "rodapesUniformes": true,
+  "basesRodape": [
+    949,
+    949,
+    949,
+    949,
+    949
+  ],
+  "rolagem": [
+    {
+      "id": "triagem",
+      "rolagem": true,
+      "client": 541,
+      "scroll": 548
+    },
+    {
+      "id": "entrevista",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "teste",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "proposta",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "contratado",
+      "rolagem": false,
+      "client": 542,
+      "scroll": 542
+    }
+  ],
+  "cards": [
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130
+  ],
+  "gapBoardFooter": 12,
+  "footer": "Mostrando 12 candidatos · Última atualização: 06/09/2026 às 09:00 · Ver etapas arquivadas · (0)"
+}
+1366x768 {
+  "gapTabsBoard": 24,
+  "boardHeight": 560,
+  "alturas": [
+    548,
+    548,
+    548,
+    548,
+    548
+  ],
+  "uniforme": true,
+  "topoUniforme": true,
+  "rodapesUniformes": true,
+  "basesRodape": [
+    869,
+    869,
+    869,
+    869,
+    869
+  ],
+  "rolagem": [
+    {
+      "id": "triagem",
+      "rolagem": true,
+      "client": 461,
+      "scroll": 548
+    },
+    {
+      "id": "entrevista",
+      "rolagem": false,
+      "client": 461,
+      "scroll": 461
+    },
+    {
+      "id": "teste",
+      "rolagem": false,
+      "client": 461,
+      "scroll": 461
+    },
+    {
+      "id": "proposta",
+      "rolagem": false,
+      "client": 461,
+      "scroll": 461
+    },
+    {
+      "id": "contratado",
+      "rolagem": false,
+      "client": 462,
+      "scroll": 462
+    }
+  ],
+  "cards": [
+    130,
+    130,
+    130,
+    130,
+    130,
+    152,
+    152,
+    130,
+    130,
+    130,
+    130,
+    130
+  ],
+  "gapBoardFooter": 12,
+  "footer": "Mostrando 12 candidatos · Última atualização: 06/09/2026 às 09:00 · Ver etapas arquivadas · (0)"
+}
+390x844 {
+  "gapTabsBoard": 20,
+  "boardHeight": 520,
+  "alturas": [
+    508,
+    508,
+    508,
+    508,
+    508
+  ],
+  "uniforme": true,
+  "topoUniforme": true,
+  "rodapesUniformes": true,
+  "basesRodape": [
+    973,
+    973,
+    973,
+    973,
+    973
+  ],
+  "rolagem": [
+    {
+      "id": "triagem",
+      "rolagem": true,
+      "client": 421,
+      "scroll": 492
+    },
+    {
+      "id": "entrevista",
+      "rolagem": false,
+      "client": 421,
+      "scroll": 421
+    },
+    {
+      "id": "teste",
+      "rolagem": false,
+      "client": 421,
+      "scroll": 421
+    },
+    {
+      "id": "proposta",
+      "rolagem": false,
+      "client": 421,
+      "scroll": 421
+    },
+    {
+      "id": "contratado",
+      "rolagem": false,
+      "client": 422,
+      "scroll": 422
+    }
+  ],
+  "cards": [
+    116,
+    116,
+    116,
+    116,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130,
+    130
+  ],
+  "gapBoardFooter": 12,
+  "footer": "Mostrando 12 candidatos · Última atualização: 06/09/2026 às 09:00 · Ver etapas arquivadas · (0)"
+}
+ROLAGEM_INTERNA {"triagem":{"id":"triagem","top":322,"bottom":870,"h":548,"rodapeBottom":869,"listaClient":461,"listaScroll":548,"rolagem":true,"vazia":false},"cards":[130,130,130,130,130,152,152,130,130,130,130,130]}
+ROLAGEM_APLICADA {"scrollTop":87,"antesRodape":869,"depoisRodape":869,"headerVisivel":true}
+FILTRO_ANALISTA_DADOS {
+  "gapTabsBoard": 24,
+  "boardHeight": 640,
+  "alturas": [
+    628,
+    628,
+    628,
+    628,
+    628
+  ],
+  "uniforme": true,
+  "topoUniforme": false,
+  "rodapesUniformes": false,
+  "basesRodape": [
+    949,
+    949,
+    949,
+    949,
+    952
+  ],
+  "rolagem": [
+    {
+      "id": "triagem",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "entrevista",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "teste",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "proposta",
+      "rolagem": false,
+      "client": 541,
+      "scroll": 541
+    },
+    {
+      "id": "contratado",
+      "rolagem": false,
+      "client": 542,
+      "scroll": 542
+    }
+  ],
+  "cards": [
+    130,
+    130
+  ],
+  "gapBoardFooter": 12,
+  "footer": "Mostrando 2 candidatos · Última atualização: 06/09/2026 às 09:00 · Ver etapas arquivadas · (0)"
+}
+file:///C:/Users/artes03/Desktop/departamento-pessoal-v2-main/tmp-recrutamento/estrutura.mjs:88
+    throw new Error(`${nome}: colunas/rodapés desalinhados`);
+          ^
+
+Error: FILTRO_ANALISTA_DADOS: colunas/rodapés desalinhados
+    at conferir (file:///C:/Users/artes03/Desktop/departamento-pessoal-v2-main/tmp-recrutamento/estrutura.mjs:88:11)
+    at file:///C:/Users/artes03/Desktop/departamento-pessoal-v2-main/tmp-recrutamento/estrutura.mjs:131:1
+
+Node.js v24.20.0

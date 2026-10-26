@@ -1,0 +1,10 @@
+﻿import { chromium } from '@playwright/test';
+const b=await chromium.launch();
+const c=await b.newContext({storageState:'e2e/.auth/user.json',viewport:{width:1280,height:900}});
+await c.addInitScript(()=>{localStorage.setItem('dp-tour-completed','true');localStorage.setItem('ui-theme','dark');localStorage.setItem('dp-force-motion','on')});
+const p=await c.newPage();
+await p.goto('http://localhost:8080/recrutamento',{waitUntil:'domcontentloaded'});await p.waitForTimeout(1800);await p.getByRole('tab',{name:'Vagas',exact:true}).click();await p.waitForTimeout(4000);
+const dados=await p.evaluate(()=>[...document.querySelectorAll('[data-vaga-funil] .grid > div')].slice(0,5).map(d=>{const s=d.querySelector('span');const range=document.createRange();range.selectNodeContents(s);const rects=[...range.getClientRects()].map(r=>({w:Math.round(r.width),h:Math.round(r.height),top:Math.round(r.top)}));return {texto:s.textContent,rects,textH:Math.round(s.getBoundingClientRect().height),colW:Math.round(d.getBoundingClientRect().width)}}));
+console.log(JSON.stringify(dados,null,2));
+await p.locator('[data-vagas-grid]').screenshot({path:'tmp-turmas-fidelidade/vagas-refino-1280.png'});
+await c.close();await b.close();

@@ -1,0 +1,60 @@
+{
+  "info": [
+    {
+      "id": "mock-vaga-5",
+      "titulo": "Analista de Dados",
+      "status": "Aberta",
+      "w": 441,
+      "h": 323,
+      "backgroundImage": "radial-gradient(92% 84% at 14% -12%, rgba(14, 165, 233, 0.56) 0%, rgba(14, 165, 233, 0.17) 35%, rgba(0, 0, 0, 0) 70%), radial-gradient(88% 72% at 92% -14%, rgba(34, 211, 238, 0.44) 0%, rgba(34, 211, 238, 0.12) 40%, rgba(0, 0, 0, 0) 73%), linear-gradient(170deg, rgba(14, 165, 233, 0.16) 0%, rgba(14, 165, 233, 0.05) 22%, rgb(14, 26, 39) 51%, rgb(6, 19, 31) 100%)",
+      "backgroundBase": "rgb(18, 29, 43)",
+      "border": "rgba(34, 211, 238, 0.44)",
+      "shadow": "none"
+    },
+    {
+      "id": "mock-vaga-2",
+      "titulo": "Analista de RH Pleno",
+      "status": "Aberta",
+      "w": 441,
+      "h": 323,
+      "backgroundImage": "radial-gradient(95% 88% at 20% -12%, rgba(168, 85, 247, 0.58) 0%, rgba(192, 132, 252, 0.18) 36%, rgba(0, 0, 0, 0) 70%), radial-gradient(88% 74% at 100% -12%, rgba(168, 85, 247, 0.42) 0%, rgba(192, 132, 252, 0.12) 42%, rgba(0, 0, 0, 0) 74%), linear-gradient(170deg, rgba(168, 85, 247, 0.16) 0%, rgba(168, 85, 247, 0.05) 22%, rgb(16, 20, 35) 50%, rgb(13, 11, 24) 100%)",
+      "backgroundBase": "rgb(18, 29, 43)",
+      "border": "rgba(192, 132, 252, 0.44)",
+      "shadow": "none"
+    },
+    {
+      "id": "mock-vaga-1",
+      "titulo": "Desenvolvedor(a) Full Stack Sênior",
+      "status": "Aberta",
+      "w": 441,
+      "h": 323,
+      "backgroundImage": "radial-gradient(92% 82% at 14% -12%, rgba(56, 189, 248, 0.58) 0%, rgba(56, 189, 248, 0.17) 34%, rgba(0, 0, 0, 0) 69%), radial-gradient(88% 72% at 94% -16%, rgba(56, 189, 248, 0.44) 0%, rgba(56, 189, 248, 0.11) 40%, rgba(0, 0, 0, 0) 73%), linear-gradient(170deg, rgba(56, 189, 248, 0.15) 0%, rgba(56, 189, 248, 0.05) 22%, rgb(15, 25, 38) 52%, rgb(8, 19, 31) 100%)",
+      "backgroundBase": "rgb(18, 29, 43)",
+      "border": "rgba(56, 189, 248, 0.42)",
+      "shadow": "none"
+    },
+    {
+      "id": "mock-vaga-3",
+      "titulo": "Assistente Administrativo",
+      "status": "Aberta",
+      "w": 441,
+      "h": 323,
+      "backgroundImage": "radial-gradient(90% 82% at 12% -12%, rgba(245, 158, 11, 0.54) 0%, rgba(245, 158, 11, 0.16) 34%, rgba(0, 0, 0, 0) 69%), radial-gradient(87% 70% at 94% -16%, rgba(245, 158, 11, 0.4) 0%, rgba(245, 158, 11, 0.1) 40%, rgba(0, 0, 0, 0) 73%), linear-gradient(168deg, rgba(245, 158, 11, 0.16) 0%, rgba(245, 158, 11, 0.05) 22%, rgb(16, 24, 34) 50%, rgb(18, 13, 8) 100%)",
+      "backgroundBase": "rgb(18, 29, 43)",
+      "border": "rgba(245, 158, 11, 0.42)",
+      "shadow": "none"
+    },
+    {
+      "id": "mock-vaga-4",
+      "titulo": "Vendedor(a) Interno",
+      "status": "Fechada",
+      "w": 441,
+      "h": 323,
+      "backgroundImage": "radial-gradient(92% 84% at 18% -12%, rgba(16, 185, 129, 0.56) 0%, rgba(52, 211, 153, 0.17) 35%, rgba(0, 0, 0, 0) 70%), radial-gradient(88% 72% at 94% -16%, rgba(16, 185, 129, 0.42) 0%, rgba(52, 211, 153, 0.11) 40%, rgba(0, 0, 0, 0) 74%), linear-gradient(168deg, rgba(16, 185, 129, 0.16) 0%, rgba(16, 185, 129, 0.05) 22%, rgb(15, 25, 36) 51%, rgb(5, 20, 16) 100%)",
+      "backgroundBase": "rgb(18, 29, 43)",
+      "border": "rgba(52, 211, 153, 0.42)",
+      "shadow": "none"
+    }
+  ],
+  "erros": []
+}

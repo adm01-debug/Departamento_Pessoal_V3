@@ -1,0 +1,2 @@
+FILTRO_300MS {"alturas":[628,628,628,628,628],"topos":[322,322,322,322,322],"rodapes":[949,949,949,949,949],"vazias":["triagem","entrevista","contratado"]}
+UNIFORME true RODAPES true
