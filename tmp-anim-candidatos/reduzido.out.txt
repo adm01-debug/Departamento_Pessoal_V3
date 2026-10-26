@@ -1,0 +1,26 @@
+{
+  "referencia": {
+    "inicioOpacidadeMs": 525,
+    "opacidadeEm50ms": 0,
+    "opacidadeFinal": 1,
+    "transformNaoNeutro": false,
+    "amostraTransform": [
+      "none",
+      "none",
+      "none",
+      "none"
+    ]
+  },
+  "destino": {
+    "inicioOpacidadeMs": 519,
+    "opacidadeEm50ms": 0,
+    "opacidadeFinal": 1,
+    "transformNaoNeutro": false,
+    "amostraTransform": [
+      "none",
+      "none",
+      "none",
+      "none"
+    ]
+  }
+}

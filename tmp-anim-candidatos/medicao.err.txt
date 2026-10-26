@@ -1,0 +1,238 @@
+[anim] abrir /desligamentos
+[anim] abrir /recrutamento
+[anim] {
+  "referencia": {
+    "rota": "/desligamentos",
+    "animacao": {
+      "mountAt": 3462,
+      "totalQuadros": 153,
+      "porLinha": [
+        {
+          "indice": 0,
+          "inicioMs": 565,
+          "fimMs": 1198,
+          "duracaoMs": 633,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 61
+        },
+        {
+          "indice": 1,
+          "inicioMs": 648,
+          "fimMs": 1231,
+          "duracaoMs": 583,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 61
+        },
+        {
+          "indice": 2,
+          "inicioMs": 648,
+          "fimMs": 1281,
+          "duracaoMs": 633,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 61
+        },
+        {
+          "indice": 3,
+          "inicioMs": 665,
+          "fimMs": 1315,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 55
+        },
+        {
+          "indice": 4,
+          "inicioMs": 698,
+          "fimMs": 1348,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 68
+        }
+      ],
+      "staggerMs": 83,
+      "colunasConstantes": false,
+      "alturasConstantes": false,
+      "tabelaFinal": {
+        "largura": 1134,
+        "altura": 354,
+        "colunas": [
+          40,
+          205,
+          178,
+          100,
+          133,
+          123,
+          168,
+          115,
+          72
+        ]
+      },
+      "primeiraColuna": "42,215,186,105,140,129,176,121,76"
+    }
+  },
+  "destino": {
+    "rota": "/recrutamento?tab=candidatos",
+    "animacao": {
+      "mountAt": 3572,
+      "totalQuadros": 163,
+      "porLinha": [
+        {
+          "indice": 0,
+          "inicioMs": 1044,
+          "fimMs": 1694,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 1,
+          "inicioMs": 1077,
+          "fimMs": 1727,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 2,
+          "inicioMs": 1111,
+          "fimMs": 1777,
+          "duracaoMs": 667,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 3,
+          "inicioMs": 1161,
+          "fimMs": 1811,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 4,
+          "inicioMs": 1194,
+          "fimMs": 1861,
+          "duracaoMs": 667,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 5,
+          "inicioMs": 1244,
+          "fimMs": 1894,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 6,
+          "inicioMs": 1277,
+          "fimMs": 1927,
+          "duracaoMs": 650,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        },
+        {
+          "indice": 7,
+          "inicioMs": 1311,
+          "fimMs": 1977,
+          "duracaoMs": 667,
+          "opacidadeInicial": 0,
+          "yInicial": 10,
+          "escalaXInicial": 0.94,
+          "opacidadeFinal": 1,
+          "yFinal": 0,
+          "escalaXFinal": 1,
+          "alturaFinal": 56
+        }
+      ],
+      "staggerMs": 33,
+      "colunasConstantes": true,
+      "alturasConstantes": false,
+      "tabelaFinal": {
+        "largura": 1134,
+        "altura": 484,
+        "colunas": [
+          36,
+          219,
+          219,
+          119,
+          91,
+          102,
+          96,
+          136,
+          116
+        ]
+      },
+      "primeiraColuna": "36,219,219,119,91,102,96,136,116"
+    },
+    "erro": null
+  },
+  "comparacao": {
+    "mesmoYInicial": true,
+    "mesmaEscalaInicial": true,
+    "mesmaOpacidadeInicial": true,
+    "mesmoStagger": false,
+    "duracaoRef": 633,
+    "duracaoDst": 650
+  }
+}

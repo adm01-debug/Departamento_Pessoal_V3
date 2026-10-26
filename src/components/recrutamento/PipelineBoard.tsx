@@ -54,11 +54,23 @@ export interface PipelineBoardProps {
   onMoverEtapa: MoverEtapaHandler;
   onContatar: (cand: CandidaturaComRelacoes) => void;
   onSimular: (acao: string) => void;
+  /**
+   * A aba Pipeline está ativa? Mesmo contrato de `AdmissoesKanban`: a entrada
+   * (CSS) só é disparada quando o board está realmente em cena.
+   */
+  isActive?: boolean;
 }
 
 type EtapasLocais = Record<string, EtapaPipelineId>;
 
-export function PipelineBoard({ candidaturas, onAbrir, onMoverEtapa, onContatar, onSimular }: PipelineBoardProps) {
+export function PipelineBoard({
+  candidaturas,
+  onAbrir,
+  onMoverEtapa,
+  onContatar,
+  onSimular,
+  isActive = true,
+}: PipelineBoardProps) {
   const sensores = useSensors(
     useSensor(PointerSensor, {
       // Mesmo sensor/constraint do Kanban de Admissão.
@@ -196,11 +208,13 @@ export function PipelineBoard({ candidaturas, onAbrir, onMoverEtapa, onContatar,
         onDragCancel={aoCancelarArraste}
       >
         <div data-pipeline-board className="-mx-2 flex items-end gap-3 overflow-x-auto overflow-y-hidden px-2 pb-4">
-          {ETAPAS.map((etapa) => (
+          {ETAPAS.map((etapa, indice) => (
             <PipelineColumn
-              key={etapa.id}
+              key={`${etapa.id}-${isActive ? 'ativa' : 'inativa'}`}
               etapa={etapa}
               items={grupos[etapa.id]}
+              indice={indice}
+              isActive={isActive}
               onAdicionar={(alvo) => onSimular(`adicionar candidato em ${alvo.label}`)}
               onAbrir={onAbrir}
               onMoverEtapa={onMoverEtapa}

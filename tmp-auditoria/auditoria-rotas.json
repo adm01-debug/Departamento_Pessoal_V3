@@ -1,0 +1,1642 @@
+{
+  "total": 99,
+  "falhas": 0,
+  "results": [
+    {
+      "path": "/ponto/kiosk",
+      "componente": "PontoKioskPage",
+      "arquivo": "PontoKioskPage",
+      "url": "http://localhost:8080/ponto/kiosk",
+      "estado": {
+        "url": "http://localhost:8080/ponto/kiosk",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "/verificar-contrato",
+      "componente": "VerificarContratoPage",
+      "arquivo": "VerificarContratoPage",
+      "url": "http://localhost:8080/verificar-contrato",
+      "estado": {
+        "url": "http://localhost:8080/verificar-contrato",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "dashboard-executivo",
+      "componente": "DashboardExecutivoPage",
+      "arquivo": "DashboardExecutivoPage",
+      "url": "http://localhost:8080/dashboard-executivo",
+      "estado": {
+        "url": "http://localhost:8080/dashboard-executivo",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "colaboradores",
+      "componente": "ColaboradoresPage",
+      "arquivo": "ColaboradoresPage",
+      "url": "http://localhost:8080/colaboradores",
+      "estado": {
+        "url": "http://localhost:8080/colaboradores",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "colaboradores/novo",
+      "componente": "ColaboradorFormPage",
+      "arquivo": "ColaboradorFormPage",
+      "url": "http://localhost:8080/colaboradores/novo",
+      "estado": {
+        "url": "http://localhost:8080/colaboradores/novo",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admissoes",
+      "componente": "AdmissoesPage",
+      "arquivo": "AdmissoesPage",
+      "url": "http://localhost:8080/admissoes",
+      "estado": {
+        "url": "http://localhost:8080/admissoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "afastamentos",
+      "componente": "AfastamentosPage",
+      "arquivo": "AfastamentosPage",
+      "url": "http://localhost:8080/afastamentos",
+      "estado": {
+        "url": "http://localhost:8080/afastamentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "desligamentos",
+      "componente": "DesligamentosPage",
+      "arquivo": "DesligamentosPage",
+      "url": "http://localhost:8080/desligamentos",
+      "estado": {
+        "url": "http://localhost:8080/desligamentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "ferias",
+      "componente": "FeriasPage",
+      "arquivo": "FeriasPage",
+      "url": "http://localhost:8080/ferias",
+      "estado": {
+        "url": "http://localhost:8080/ferias",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "ferias/programacao",
+      "componente": "FeriasProgramacaoPage",
+      "arquivo": "FeriasProgramacaoPage",
+      "url": "http://localhost:8080/ferias/programacao",
+      "estado": {
+        "url": "http://localhost:8080/ferias/programacao",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "ponto",
+      "componente": "PontoPage",
+      "arquivo": "PontoPage",
+      "url": "http://localhost:8080/ponto",
+      "estado": {
+        "url": "http://localhost:8080/ponto",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "beneficios",
+      "componente": "BeneficiosPage",
+      "arquivo": "BeneficiosPage",
+      "url": "http://localhost:8080/beneficios",
+      "estado": {
+        "url": "http://localhost:8080/beneficios",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "beneficios/novo",
+      "componente": "BeneficioFormPage",
+      "arquivo": "BeneficioFormPage",
+      "url": "http://localhost:8080/beneficios/novo",
+      "estado": {
+        "url": "http://localhost:8080/beneficios/novo",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "folha",
+      "componente": "FolhaPage",
+      "arquivo": "FolhaPage",
+      "url": "http://localhost:8080/folha",
+      "estado": {
+        "url": "http://localhost:8080/folha",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "folha/calcular",
+      "componente": "FolhaPagamentoPage",
+      "arquivo": "FolhaPagamentoPage",
+      "url": "http://localhost:8080/folha/calcular",
+      "estado": {
+        "url": "http://localhost:8080/folha/calcular",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "folha/compliance",
+      "componente": "FolhaCompliancePage",
+      "arquivo": "FolhaCompliancePage",
+      "url": "http://localhost:8080/folha/compliance",
+      "estado": {
+        "url": "http://localhost:8080/folha/compliance",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "rubricas",
+      "componente": "RubricasPage",
+      "arquivo": "RubricasPage",
+      "url": "http://localhost:8080/rubricas",
+      "estado": {
+        "url": "http://localhost:8080/rubricas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "provisoes",
+      "componente": "ProvisoesPage",
+      "arquivo": "ProvisoesPage",
+      "url": "http://localhost:8080/provisoes",
+      "estado": {
+        "url": "http://localhost:8080/provisoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "passivo-trabalhista",
+      "componente": "PassivoTrabalhistaPage",
+      "arquivo": "PassivoTrabalhistaPage",
+      "url": "http://localhost:8080/passivo-trabalhista",
+      "estado": {
+        "url": "http://localhost:8080/passivo-trabalhista",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "financeiro-bancario",
+      "componente": "FinanceiroBancarioPage",
+      "arquivo": "FinanceiroBancarioPage",
+      "url": "http://localhost:8080/financeiro-bancario",
+      "estado": {
+        "url": "http://localhost:8080/financeiro-bancario",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "contabilidade",
+      "componente": "ContabilidadePage",
+      "arquivo": "ContabilidadePage",
+      "url": "http://localhost:8080/contabilidade",
+      "estado": {
+        "url": "http://localhost:8080/contabilidade",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "contabilidade/canal",
+      "componente": "CanalContabilidadePage",
+      "arquivo": "CanalContabilidadePage",
+      "url": "http://localhost:8080/contabilidade/canal",
+      "estado": {
+        "url": "http://localhost:8080/contabilidade/canal",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "empresas",
+      "componente": "EmpresasPage",
+      "arquivo": "EmpresasPage",
+      "url": "http://localhost:8080/empresas",
+      "estado": {
+        "url": "http://localhost:8080/empresas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "empresas/novo",
+      "componente": "EmpresaFormPage",
+      "arquivo": "EmpresaFormPage",
+      "url": "http://localhost:8080/empresas/novo",
+      "estado": {
+        "url": "http://localhost:8080/empresas/novo",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "cargos",
+      "componente": "CargosPage",
+      "arquivo": "CargosPage",
+      "url": "http://localhost:8080/cargos",
+      "estado": {
+        "url": "http://localhost:8080/cargos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "cargos-salarios",
+      "componente": "PlanoCargosSalariosPage",
+      "arquivo": "PlanoCargosSalariosPage",
+      "url": "http://localhost:8080/cargos-salarios",
+      "estado": {
+        "url": "http://localhost:8080/cargos-salarios",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "departamentos",
+      "componente": "DepartamentosPage",
+      "arquivo": "DepartamentosPage",
+      "url": "http://localhost:8080/departamentos",
+      "estado": {
+        "url": "http://localhost:8080/departamentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "lotacoes",
+      "componente": "LotacoesPage",
+      "arquivo": "LotacoesPage",
+      "url": "http://localhost:8080/lotacoes",
+      "estado": {
+        "url": "http://localhost:8080/lotacoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "locais-trabalho",
+      "componente": "LocaisTrabalhoPage",
+      "arquivo": "LocaisTrabalhoPage",
+      "url": "http://localhost:8080/locais-trabalho",
+      "estado": {
+        "url": "http://localhost:8080/locais-trabalho",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "times",
+      "componente": "TimesPage",
+      "arquivo": "TimesPage",
+      "url": "http://localhost:8080/times",
+      "estado": {
+        "url": "http://localhost:8080/times",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "centros-custo",
+      "componente": "CentrosCustoPage",
+      "arquivo": "CentrosCustoPage",
+      "url": "http://localhost:8080/centros-custo",
+      "estado": {
+        "url": "http://localhost:8080/centros-custo",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "promo-brindes",
+      "componente": "PromoBrindesPage",
+      "arquivo": "PromoBrindesPage",
+      "url": "http://localhost:8080/promo-brindes",
+      "estado": {
+        "url": "http://localhost:8080/promo-brindes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "promo-brindes/vinculos",
+      "componente": "VinculosPromoPage",
+      "arquivo": "VinculosPromoPage",
+      "url": "http://localhost:8080/promo-brindes/vinculos",
+      "estado": {
+        "url": "http://localhost:8080/promo-brindes/vinculos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "organograma",
+      "componente": "OrganogramaPage",
+      "arquivo": "OrganogramaPage",
+      "url": "http://localhost:8080/organograma",
+      "estado": {
+        "url": "http://localhost:8080/organograma",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "avaliacao",
+      "componente": "AvaliacaoPage",
+      "arquivo": "AvaliacaoPage",
+      "url": "http://localhost:8080/avaliacao",
+      "estado": {
+        "url": "http://localhost:8080/avaliacao",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "treinamentos",
+      "componente": "TreinamentosPage",
+      "arquivo": "TreinamentosPage",
+      "url": "http://localhost:8080/treinamentos",
+      "estado": {
+        "url": "http://localhost:8080/treinamentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "recrutamento",
+      "componente": "RecrutamentoPage",
+      "arquivo": "RecrutamentoPage",
+      "url": "http://localhost:8080/recrutamento",
+      "estado": {
+        "url": "http://localhost:8080/recrutamento",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "onboarding",
+      "componente": "OnboardingPage",
+      "arquivo": "OnboardingPage",
+      "url": "http://localhost:8080/onboarding",
+      "estado": {
+        "url": "http://localhost:8080/onboarding",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "pesquisas-clima",
+      "componente": "PesquisasClimaPage",
+      "arquivo": "PesquisasClimaPage",
+      "url": "http://localhost:8080/pesquisas-clima",
+      "estado": {
+        "url": "http://localhost:8080/pesquisas-clima",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "documentos",
+      "componente": "DocumentosPage",
+      "arquivo": "DocumentosPage",
+      "url": "http://localhost:8080/documentos",
+      "estado": {
+        "url": "http://localhost:8080/documentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "gerador-documentos",
+      "componente": "GeradorDocumentosPage",
+      "arquivo": "GeradorDocumentosPage",
+      "url": "http://localhost:8080/gerador-documentos",
+      "estado": {
+        "url": "http://localhost:8080/gerador-documentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "assinaturas",
+      "componente": "AssinaturasPage",
+      "arquivo": "AssinaturasPage",
+      "url": "http://localhost:8080/assinaturas",
+      "estado": {
+        "url": "http://localhost:8080/assinaturas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "esocial",
+      "componente": "ESocialPage",
+      "arquivo": "ESocialPage",
+      "url": "http://localhost:8080/esocial",
+      "estado": {
+        "url": "http://localhost:8080/esocial",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "obrigacoes-fiscais",
+      "componente": "ObrigacoesFiscaisPage",
+      "arquivo": "ObrigacoesFiscaisPage",
+      "url": "http://localhost:8080/obrigacoes-fiscais",
+      "estado": {
+        "url": "http://localhost:8080/obrigacoes-fiscais",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "sst",
+      "componente": "SSTPage",
+      "arquivo": "SSTPage",
+      "url": "http://localhost:8080/sst",
+      "estado": {
+        "url": "http://localhost:8080/sst",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "auditoria",
+      "componente": "AuditoriaPage",
+      "arquivo": "AuditoriaPage",
+      "url": "http://localhost:8080/auditoria",
+      "estado": {
+        "url": "http://localhost:8080/auditoria",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "canal-etica",
+      "componente": "CanalEticaPage",
+      "arquivo": "CanalEticaPage",
+      "url": "http://localhost:8080/canal-etica",
+      "estado": {
+        "url": "http://localhost:8080/canal-etica",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "lgpd",
+      "componente": "LGPDPage",
+      "arquivo": "LGPDPage",
+      "url": "http://localhost:8080/lgpd",
+      "estado": {
+        "url": "http://localhost:8080/lgpd",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "seguranca",
+      "componente": "SegurancaPage",
+      "arquivo": "SegurancaPage",
+      "url": "http://localhost:8080/seguranca",
+      "estado": {
+        "url": "http://localhost:8080/seguranca",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "assistente-ia",
+      "componente": "AssistenteIAPage",
+      "arquivo": "AssistenteIAPage",
+      "url": "http://localhost:8080/assistente-ia",
+      "estado": {
+        "url": "http://localhost:8080/assistente-ia",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "calculadora-rescisao",
+      "componente": "CalculadoraRescisaoPage",
+      "arquivo": "CalculadoraRescisaoPage",
+      "url": "http://localhost:8080/calculadora-rescisao",
+      "estado": {
+        "url": "http://localhost:8080/calculadora-rescisao",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "importacao",
+      "componente": "ImportacaoPage",
+      "arquivo": "ImportacaoPage",
+      "url": "http://localhost:8080/importacao",
+      "estado": {
+        "url": "http://localhost:8080/importacao",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "backup",
+      "componente": "BackupPage",
+      "arquivo": "BackupPage",
+      "url": "http://localhost:8080/backup",
+      "estado": {
+        "url": "http://localhost:8080/backup",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "notificacoes",
+      "componente": "NotificacoesPage",
+      "arquivo": "NotificacoesPage",
+      "url": "http://localhost:8080/notificacoes",
+      "estado": {
+        "url": "http://localhost:8080/notificacoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "usuarios",
+      "componente": "UsuariosPage",
+      "arquivo": "UsuariosPage",
+      "url": "http://localhost:8080/usuarios",
+      "estado": {
+        "url": "http://localhost:8080/usuarios",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "perfil",
+      "componente": "PerfilPage",
+      "arquivo": "PerfilPage",
+      "url": "http://localhost:8080/perfil",
+      "estado": {
+        "url": "http://localhost:8080/perfil",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "configuracoes",
+      "componente": "ConfiguracoesPage",
+      "arquivo": "ConfiguracoesPage",
+      "url": "http://localhost:8080/configuracoes",
+      "estado": {
+        "url": "http://localhost:8080/configuracoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/telemetria",
+      "componente": "AdminTelemetriaPage",
+      "arquivo": "AdminTelemetriaPage",
+      "url": "http://localhost:8080/admin/telemetria",
+      "estado": {
+        "url": "http://localhost:8080/admin/telemetria",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/idempotencia",
+      "componente": "AdminIdempotenciaPage",
+      "arquivo": "AdminIdempotenciaPage",
+      "url": "http://localhost:8080/admin/idempotencia",
+      "estado": {
+        "url": "http://localhost:8080/admin/idempotencia",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/operacao",
+      "componente": "AdminOperacaoPage",
+      "arquivo": "AdminOperacaoPage",
+      "url": "http://localhost:8080/admin/operacao",
+      "estado": {
+        "url": "http://localhost:8080/admin/operacao",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/security",
+      "componente": "AdminSecurityPage",
+      "arquivo": "AdminSecurityPage",
+      "url": "http://localhost:8080/admin/security",
+      "estado": {
+        "url": "http://localhost:8080/admin/security",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/ponto/divergencias",
+      "componente": "AdminPontoDivergenciasPage",
+      "arquivo": "AdminPontoDivergenciasPage",
+      "url": "http://localhost:8080/admin/ponto/divergencias",
+      "estado": {
+        "url": "http://localhost:8080/admin/ponto/divergencias",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/clinicas",
+      "componente": "AdminClinicasPartnersPage",
+      "arquivo": "AdminClinicasPartnersPage",
+      "url": "http://localhost:8080/admin/sst/clinicas",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/clinicas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/agendamentos",
+      "componente": "AdminAgendamentoExamesPage",
+      "arquivo": "AdminAgendamentoExamesPage",
+      "url": "http://localhost:8080/admin/sst/agendamentos",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/agendamentos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/aso",
+      "componente": "AdminAsoWorkflowPage",
+      "arquivo": "AdminAsoWorkflowPage",
+      "url": "http://localhost:8080/admin/sst/aso",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/aso",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/epis",
+      "componente": "AdminEpisFichasPage",
+      "arquivo": "AdminEpisFichasPage",
+      "url": "http://localhost:8080/admin/sst/epis",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/epis",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/extintores",
+      "componente": "AdminExtintoresPage",
+      "arquivo": "AdminExtintoresPage",
+      "url": "http://localhost:8080/admin/sst/extintores",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/extintores",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/dashboard",
+      "componente": "AdminSstDashboardPage",
+      "arquivo": "AdminSstDashboardPage",
+      "url": "http://localhost:8080/admin/sst/dashboard",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/dashboard",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/cat",
+      "componente": "AdminCatPage",
+      "arquivo": "AdminCatPage",
+      "url": "http://localhost:8080/admin/sst/cat",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/cat",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/sst/regimento",
+      "componente": "AdminRegimentoInternoPage",
+      "arquivo": "AdminRegimentoInternoPage",
+      "url": "http://localhost:8080/admin/sst/regimento",
+      "estado": {
+        "url": "http://localhost:8080/admin/sst/regimento",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "admin/diagnostico-migracao",
+      "componente": "AdminDiagnosticoMigracaoPage",
+      "arquivo": "AdminDiagnosticoMigracaoPage",
+      "url": "http://localhost:8080/admin/diagnostico-migracao",
+      "estado": {
+        "url": "http://localhost:8080/admin/diagnostico-migracao",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "horas-extras",
+      "componente": "HorasExtrasPage",
+      "arquivo": "HorasExtrasPage",
+      "url": "http://localhost:8080/horas-extras",
+      "estado": {
+        "url": "http://localhost:8080/horas-extras",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "feriados",
+      "componente": "FeriadosPage",
+      "arquivo": "FeriadosPage",
+      "url": "http://localhost:8080/feriados",
+      "estado": {
+        "url": "http://localhost:8080/feriados",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "jornadas",
+      "componente": "JornadasPage",
+      "arquivo": "JornadasPage",
+      "url": "http://localhost:8080/jornadas",
+      "estado": {
+        "url": "http://localhost:8080/jornadas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "turnos",
+      "componente": "TurnosPage",
+      "arquivo": "TurnosPage",
+      "url": "http://localhost:8080/turnos",
+      "estado": {
+        "url": "http://localhost:8080/turnos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "escalas",
+      "componente": "EscalasPage",
+      "arquivo": "EscalasPage",
+      "url": "http://localhost:8080/escalas",
+      "estado": {
+        "url": "http://localhost:8080/escalas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "comunicacao-interna",
+      "componente": "ComunicacaoInternaPage",
+      "arquivo": "ComunicacaoInternaPage",
+      "url": "http://localhost:8080/comunicacao-interna",
+      "estado": {
+        "url": "http://localhost:8080/comunicacao-interna",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "despesas",
+      "componente": "DespesasPage",
+      "arquivo": "DespesasPage",
+      "url": "http://localhost:8080/despesas",
+      "estado": {
+        "url": "http://localhost:8080/despesas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "controle-acesso",
+      "componente": "ControleAcessoPage",
+      "arquivo": "ControleAcessoPage",
+      "url": "http://localhost:8080/controle-acesso",
+      "estado": {
+        "url": "http://localhost:8080/controle-acesso",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "medidas-disciplinares",
+      "componente": "MedidasDisciplinaresPage",
+      "arquivo": "MedidasDisciplinaresPage",
+      "url": "http://localhost:8080/medidas-disciplinares",
+      "estado": {
+        "url": "http://localhost:8080/medidas-disciplinares",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "movimentacoes",
+      "componente": "MovimentacoesPage",
+      "arquivo": "MovimentacoesPage",
+      "url": "http://localhost:8080/movimentacoes",
+      "estado": {
+        "url": "http://localhost:8080/movimentacoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "sindicatos",
+      "componente": "SindicatosPage",
+      "arquivo": "SindicatosPage",
+      "url": "http://localhost:8080/sindicatos",
+      "estado": {
+        "url": "http://localhost:8080/sindicatos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "planos-saude",
+      "componente": "PlanosSaudePage",
+      "arquivo": "PlanosSaudePage",
+      "url": "http://localhost:8080/planos-saude",
+      "estado": {
+        "url": "http://localhost:8080/planos-saude",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "convenios",
+      "componente": "ConveniosPage",
+      "arquivo": "ConveniosPage",
+      "url": "http://localhost:8080/convenios",
+      "estado": {
+        "url": "http://localhost:8080/convenios",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "seguros-vida",
+      "componente": "SegurosVidaPage",
+      "arquivo": "SegurosVidaPage",
+      "url": "http://localhost:8080/seguros-vida",
+      "estado": {
+        "url": "http://localhost:8080/seguros-vida",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "pensoes",
+      "componente": "PensoesPage",
+      "arquivo": "PensoesPage",
+      "url": "http://localhost:8080/pensoes",
+      "estado": {
+        "url": "http://localhost:8080/pensoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "vales",
+      "componente": "ValesPage",
+      "arquivo": "ValesPage",
+      "url": "http://localhost:8080/vales",
+      "estado": {
+        "url": "http://localhost:8080/vales",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "descontos",
+      "componente": "DescontosPage",
+      "arquivo": "DescontosPage",
+      "url": "http://localhost:8080/descontos",
+      "estado": {
+        "url": "http://localhost:8080/descontos",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "exames",
+      "componente": "ExamesPage",
+      "arquivo": "ExamesPage",
+      "url": "http://localhost:8080/exames",
+      "estado": {
+        "url": "http://localhost:8080/exames",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "holerites",
+      "componente": "HoleritesPage",
+      "arquivo": "HoleritesPage",
+      "url": "http://localhost:8080/holerites",
+      "estado": {
+        "url": "http://localhost:8080/holerites",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "portal",
+      "componente": "PortalPage",
+      "arquivo": "PortalPage",
+      "url": "http://localhost:8080/portal",
+      "estado": {
+        "url": "http://localhost:8080/portal",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "workflows",
+      "componente": "WorkflowsPage",
+      "arquivo": "WorkflowsPage",
+      "url": "http://localhost:8080/workflows",
+      "estado": {
+        "url": "http://localhost:8080/workflows",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "design-system",
+      "componente": "DesignSystemPage",
+      "arquivo": "DesignSystemPage",
+      "url": "http://localhost:8080/design-system",
+      "estado": {
+        "url": "http://localhost:8080/design-system",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "integracoes",
+      "componente": "IntegracoesPage",
+      "arquivo": "IntegracoesPage",
+      "url": "http://localhost:8080/integracoes",
+      "estado": {
+        "url": "http://localhost:8080/integracoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "banco-horas",
+      "componente": "BancoHorasPage",
+      "arquivo": "BancoHorasPage",
+      "url": "http://localhost:8080/banco-horas",
+      "estado": {
+        "url": "http://localhost:8080/banco-horas",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "relatorios",
+      "componente": "RelatoriosPage",
+      "arquivo": "RelatoriosPage",
+      "url": "http://localhost:8080/relatorios",
+      "estado": {
+        "url": "http://localhost:8080/relatorios",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "premiacoes",
+      "componente": "PremiacoesPage",
+      "arquivo": "PremiacoesPage",
+      "url": "http://localhost:8080/premiacoes",
+      "estado": {
+        "url": "http://localhost:8080/premiacoes",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "path": "configuracoes/contratos-templates",
+      "componente": "ContratoTemplatesPage",
+      "arquivo": "ContratoTemplatesPage",
+      "url": "http://localhost:8080/configuracoes/contratos-templates",
+      "estado": {
+        "url": "http://localhost:8080/configuracoes/contratos-templates",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    },
+    {
+      "path": "contratos-gerados",
+      "componente": "ContratosGeradosPage",
+      "arquivo": "ContratosGeradosPage",
+      "url": "http://localhost:8080/contratos-gerados",
+      "estado": {
+        "url": "http://localhost:8080/contratos-gerados",
+        "instabilidade": false,
+        "erro400": false
+      },
+      "navError": null,
+      "falhaModulo": false,
+      "modulosNao200": [],
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+      ],
+      "pageErrors": []
+    }
+  ]
+}

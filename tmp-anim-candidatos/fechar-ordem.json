@@ -1,0 +1,27 @@
+{
+  "perfil": {
+    "abriu": true,
+    "fechou": true,
+    "reanimouAoFechar": false,
+    "minOpacidade": 1
+  },
+  "ordenacao": {
+    "reanimou": true,
+    "ordemNomes": [
+      "BM\n\nBruno Carvalho Mendes\n\nIndeed",
+      "BM\n\nBruno Carvalho Mendes\n\nIndeed",
+      "CS\n\nCamila Ferreira Santos\n\nSite",
+      "DL\n\nDiego Nascimento Lima\n\nIndicação"
+    ]
+  },
+  "tamanhoPagina": {
+    "reanimou": true,
+    "linhas": 12,
+    "rodape": "Mostrando 1–12 de 12 candidatos"
+  },
+  "f5": {
+    "opacidadeLogoAposMontar": 0,
+    "opacidadeFinal": 1,
+    "semInstabilidade": true
+  }
+}

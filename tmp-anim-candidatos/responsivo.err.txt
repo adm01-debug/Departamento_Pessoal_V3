@@ -1,0 +1,8 @@
+[resp] 1920 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":true,"docOverflow":0}
+[resp] 1600 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":true,"docOverflow":0}
+[resp] 1440 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":true,"docOverflow":0}
+[resp] 1366 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":false,"docOverflow":0}
+[resp] 1280 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":false,"docOverflow":0}
+[resp] 1024 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":false,"docOverflow":220}
+[resp] 768 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":false,"docOverflow":400}
+[resp] 390 {"colunasIguais":true,"alturasIguais":true,"semOverflowTabela":true,"docOverflow":158}

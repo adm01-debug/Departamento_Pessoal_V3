@@ -1,0 +1,546 @@
+[
+  {
+    "viewport": "1920x1080",
+    "meio": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1398,
+      "wrapClient": 1398,
+      "wrapScroll": 1398,
+      "colunas": [
+        45,
+        270,
+        270,
+        147,
+        112,
+        126,
+        119,
+        168,
+        143
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1398,
+      "wrapClient": 1398,
+      "wrapScroll": 1398,
+      "colunas": [
+        45,
+        270,
+        270,
+        147,
+        112,
+        126,
+        119,
+        168,
+        143
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": true,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "1600x900",
+    "meio": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1294,
+      "wrapClient": 1294,
+      "wrapScroll": 1294,
+      "colunas": [
+        41,
+        250,
+        250,
+        136,
+        104,
+        116,
+        110,
+        155,
+        132
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1294,
+      "wrapClient": 1294,
+      "wrapScroll": 1294,
+      "colunas": [
+        41,
+        250,
+        250,
+        136,
+        104,
+        116,
+        110,
+        155,
+        132
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": true,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "1440x900",
+    "meio": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1134,
+      "wrapClient": 1134,
+      "wrapScroll": 1134,
+      "colunas": [
+        36,
+        219,
+        219,
+        119,
+        91,
+        102,
+        96,
+        136,
+        116
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1134,
+      "wrapClient": 1134,
+      "wrapScroll": 1134,
+      "colunas": [
+        36,
+        219,
+        219,
+        119,
+        91,
+        102,
+        96,
+        136,
+        116
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": true,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "1366x768",
+    "meio": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 1060,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 1060,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": false,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "1280x800",
+    "meio": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 974,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 0,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 974,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": false,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "1024x768",
+    "meio": {
+      "docOverflow": 220,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 718,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 220,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 718,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": false,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "768x1024",
+    "meio": {
+      "docOverflow": 400,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 462,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 400,
+      "tabelaVisivel": true,
+      "tabelaW": 1120,
+      "wrapClient": 462,
+      "wrapScroll": 1120,
+      "colunas": [
+        36,
+        216,
+        216,
+        118,
+        90,
+        101,
+        95,
+        134,
+        114
+      ],
+      "linhas": 8,
+      "alturas": [
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56,
+        56
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": false,
+    "erros": [],
+    "semInstabilidade": true
+  },
+  {
+    "viewport": "390x844",
+    "meio": {
+      "docOverflow": 158,
+      "tabelaVisivel": false,
+      "tabelaW": 0,
+      "wrapClient": 0,
+      "wrapScroll": 0,
+      "colunas": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "linhas": 8,
+      "alturas": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cards": 0
+    },
+    "fim": {
+      "docOverflow": 158,
+      "tabelaVisivel": false,
+      "tabelaW": 0,
+      "wrapClient": 0,
+      "wrapScroll": 0,
+      "colunas": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "linhas": 8,
+      "alturas": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cards": 0
+    },
+    "colunasIguais": true,
+    "alturasIguais": true,
+    "semOverflowTabela": true,
+    "erros": [],
+    "semInstabilidade": true
+  }
+]

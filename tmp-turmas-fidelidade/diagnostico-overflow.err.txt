@@ -1,0 +1,3 @@
+[overflow] width 1024 doc {"scrollWidth":1221,"clientWidth":1024,"bodyScrollWidth":1221} rodapeScroll 718 718
+[overflow] width 768 doc {"scrollWidth":1168,"clientWidth":768,"bodyScrollWidth":1168} rodapeScroll 462 462
+[overflow] width 390 doc {"scrollWidth":548,"clientWidth":390,"bodyScrollWidth":548} rodapeScroll 340 340

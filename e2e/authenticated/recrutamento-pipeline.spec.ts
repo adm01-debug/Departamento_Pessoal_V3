@@ -26,7 +26,12 @@ async function abrirPipeline(page: Page) {
   await page.goto('/recrutamento');
   await expect(page.locator('[data-pipeline-board]')).toBeVisible({ timeout: 20_000 });
   await expect(page.locator('[data-candidato-card]').first()).toBeVisible({ timeout: 20_000 });
-  await page.waitForTimeout(1200);
+  // Espera a coreografia de entrada (a MESMA da Admissão) terminar antes de
+  // medir/arrastar: coluna cresce → degradê → cabeçalho → cards → rodapé.
+  await expect(page.locator('[data-pipeline-coluna] .kanban-coluna-concluida')).toHaveCount(5, {
+    timeout: 25_000,
+  });
+  await page.waitForTimeout(250);
 }
 
 async function zerarScroll(page: Page) {
@@ -290,7 +295,7 @@ test.describe('Pipeline — estrutura e scroll no padrão de Admissão', () => {
 
     await card.click();
     await expect(page.getByRole('dialog')).toBeVisible();
-    await expect(page.getByRole('dialog')).toContainText('Timeline do Processo Seletivo');
+    await expect(page.getByRole('dialog')).toContainText('Histórico do processo');
     expect(await page.locator('[data-pipeline-arrastado]').count()).toBe(0);
     await page.keyboard.press('Escape');
     await expect(page.getByRole('dialog')).toBeHidden();
@@ -443,6 +448,15 @@ test.describe('Pipeline — mobile (toque)', () => {
     }
     await page.waitForTimeout(250);
     await expect(page.locator('[data-pipeline-arrastado]')).toHaveCount(1);
+    // O board pode auto-rolar durante o arraste: reposiciona no centro ATUAL da
+    // coluna de destino e espera o `over` do dnd-kit antes de soltar.
+    const alvoAtual = await page.locator(LISTA('entrevista')).boundingBox();
+    await mover(
+      Math.min(alvoAtual!.x + 24, viewportToque.width - 20),
+      Math.min(alvoAtual!.y + 60, viewportToque.height - 40)
+    );
+    await page.waitForTimeout(400);
+    await expect(page.locator(COLUNA('entrevista'))).toHaveAttribute('data-pipeline-drop', 'true');
     await soltar();
     await expect(page.locator('[data-pipeline-arrastado]')).toHaveCount(0);
     await expect(page.locator(`${COLUNA('entrevista')} [data-candidato-card="${idToque}"]`)).toHaveCount(1);

@@ -1,0 +1,10 @@
+p = 'src/components/recrutamento/__tests__/CandidatosPainel.test.tsx'
+s = open(p, encoding='utf-8').read()
+s = s.replace("String(10 + i).padStart(2, '0')", "String(28 - i).padStart(2, '0')")
+s = s.replace(r"/Todos\s+10/", r"/Todos\s*10/")
+s = s.replace(r"/Em processo\s+8/", r"/Em processo\s*8/")
+s = s.replace(r"/Contratados\s+1/", r"/Contratados\s*1/")
+s = s.replace(r"/Reprovados\s+1/", r"/Reprovados\s*1/")
+s = s.replace(r"/Arquivados\s+0/", r"/Arquivados\s*0/")
+open(p, 'w', encoding='utf-8').write(s)
+print('ok')

@@ -1,0 +1,212 @@
+[
+  {
+    "width": 1650,
+    "ui": {
+      "overflowDoc": 0,
+      "rodape": {
+        "x": 281,
+        "right": 1625,
+        "w": 1344
+      },
+      "contador": {
+        "x": 293,
+        "cy": 910
+      },
+      "grupo": {
+        "x": 1286,
+        "right": 1613,
+        "w": 327,
+        "cy": 910
+      },
+      "nav": {
+        "right": 1422,
+        "h": 28
+      },
+      "seletor": {
+        "x": 1446
+      },
+      "gapNavSeletor": 24,
+      "gapBotoes": 8
+    },
+    "textoAntes": "Mostrando 1–8 de 12 candidatos",
+    "textoDepois": "Mostrando 9–12 de 12 candidatos",
+    "paginaAtiva": null,
+    "erros": [],
+    "ok": true
+  },
+  {
+    "width": 1280,
+    "ui": {
+      "overflowDoc": 0,
+      "rodape": {
+        "x": 281,
+        "right": 1255,
+        "w": 974
+      },
+      "contador": {
+        "x": 293,
+        "cy": 910
+      },
+      "grupo": {
+        "x": 916,
+        "right": 1243,
+        "w": 327,
+        "cy": 910
+      },
+      "nav": {
+        "right": 1052,
+        "h": 28
+      },
+      "seletor": {
+        "x": 1076
+      },
+      "gapNavSeletor": 24,
+      "gapBotoes": 8
+    },
+    "textoAntes": "Mostrando 1–8 de 12 candidatos",
+    "textoDepois": "Mostrando 9–12 de 12 candidatos",
+    "paginaAtiva": null,
+    "erros": [],
+    "ok": true
+  },
+  {
+    "width": 1024,
+    "ui": {
+      "overflowDoc": 197,
+      "rodape": {
+        "x": 281,
+        "right": 999,
+        "w": 718
+      },
+      "contador": {
+        "x": 293,
+        "cy": 1042
+      },
+      "grupo": {
+        "x": 660,
+        "right": 987,
+        "w": 327,
+        "cy": 1042
+      },
+      "nav": {
+        "right": 796,
+        "h": 28
+      },
+      "seletor": {
+        "x": 820
+      },
+      "gapNavSeletor": 24,
+      "gapBotoes": 8
+    },
+    "textoAntes": "Mostrando 1–8 de 12 candidatos",
+    "textoDepois": "Mostrando 9–12 de 12 candidatos",
+    "paginaAtiva": null,
+    "erros": [],
+    "ok": false
+  },
+  {
+    "width": 768,
+    "ui": {
+      "overflowDoc": 400,
+      "rodape": {
+        "x": 281,
+        "right": 743,
+        "w": 462
+      },
+      "contador": {
+        "x": 293,
+        "cy": 1170
+      },
+      "grupo": {
+        "x": 460,
+        "right": 731,
+        "w": 271,
+        "cy": 1170
+      },
+      "nav": {
+        "right": 731,
+        "h": 28
+      },
+      "seletor": {
+        "x": 564
+      },
+      "gapNavSeletor": -167,
+      "gapBotoes": 8
+    },
+    "textoAntes": "Mostrando 1–8 de 12 candidatos",
+    "textoDepois": "Mostrando 9–12 de 12 candidatos",
+    "paginaAtiva": null,
+    "erros": [],
+    "ok": false
+  },
+  {
+    "width": 390,
+    "ui": {
+      "overflowDoc": 158,
+      "rodape": {
+        "x": 25,
+        "right": 365,
+        "w": 340
+      },
+      "contador": {
+        "x": 37,
+        "cy": 2249
+      },
+      "grupo": {
+        "x": 37,
+        "right": 353,
+        "w": 316,
+        "cy": 2300
+      },
+      "nav": {
+        "right": 353,
+        "h": 28
+      },
+      "seletor": {
+        "x": 186
+      },
+      "gapNavSeletor": -167,
+      "gapBotoes": 8
+    },
+    "textoAntes": "Mostrando 1–8 de 12 candidatos",
+    "textoDepois": "Mostrando 9–12 de 12 candidatos",
+    "paginaAtiva": null,
+    "erros": [],
+    "ok": false
+  },
+  {
+    "width": 375,
+    "ui": {
+      "overflowDoc": 173,
+      "rodape": {
+        "x": 25,
+        "right": 350,
+        "w": 325
+      },
+      "contador": {
+        "x": 37,
+        "cy": 2273
+      },
+      "grupo": {
+        "x": 37,
+        "right": 338,
+        "w": 301,
+        "cy": 2324
+      },
+      "nav": {
+        "right": 338,
+        "h": 28
+      },
+      "seletor": {
+        "x": 171
+      },
+      "gapNavSeletor": -167,
+      "gapBotoes": 8
+    },
+    "textoAntes": "Mostrando 1–8 de 12 candidatos",
+    "textoDepois": "Mostrando 9–12 de 12 candidatos",
+    "paginaAtiva": null,
+    "erros": [],
+    "ok": false
+  }
+]

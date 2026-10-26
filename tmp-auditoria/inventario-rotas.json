@@ -1,0 +1,1032 @@
+{
+  "totalRotas": 106,
+  "testaveis": [
+    {
+      "path": "/ponto/kiosk",
+      "componente": "PontoKioskPage",
+      "arquivo": "PontoKioskPage"
+    },
+    {
+      "path": "/verificar-contrato",
+      "componente": "VerificarContratoPage",
+      "arquivo": "VerificarContratoPage"
+    },
+    {
+      "path": "dashboard-executivo",
+      "componente": "DashboardExecutivoPage",
+      "arquivo": "DashboardExecutivoPage"
+    },
+    {
+      "path": "colaboradores",
+      "componente": "ColaboradoresPage",
+      "arquivo": "ColaboradoresPage"
+    },
+    {
+      "path": "colaboradores/novo",
+      "componente": "ColaboradorFormPage",
+      "arquivo": "ColaboradorFormPage"
+    },
+    {
+      "path": "admissoes",
+      "componente": "AdmissoesPage",
+      "arquivo": "AdmissoesPage"
+    },
+    {
+      "path": "afastamentos",
+      "componente": "AfastamentosPage",
+      "arquivo": "AfastamentosPage"
+    },
+    {
+      "path": "desligamentos",
+      "componente": "DesligamentosPage",
+      "arquivo": "DesligamentosPage"
+    },
+    {
+      "path": "ferias",
+      "componente": "FeriasPage",
+      "arquivo": "FeriasPage"
+    },
+    {
+      "path": "ferias/programacao",
+      "componente": "FeriasProgramacaoPage",
+      "arquivo": "FeriasProgramacaoPage"
+    },
+    {
+      "path": "ponto",
+      "componente": "PontoPage",
+      "arquivo": "PontoPage"
+    },
+    {
+      "path": "beneficios",
+      "componente": "BeneficiosPage",
+      "arquivo": "BeneficiosPage"
+    },
+    {
+      "path": "beneficios/novo",
+      "componente": "BeneficioFormPage",
+      "arquivo": "BeneficioFormPage"
+    },
+    {
+      "path": "folha",
+      "componente": "FolhaPage",
+      "arquivo": "FolhaPage"
+    },
+    {
+      "path": "folha/calcular",
+      "componente": "FolhaPagamentoPage",
+      "arquivo": "FolhaPagamentoPage"
+    },
+    {
+      "path": "folha/compliance",
+      "componente": "FolhaCompliancePage",
+      "arquivo": "FolhaCompliancePage"
+    },
+    {
+      "path": "rubricas",
+      "componente": "RubricasPage",
+      "arquivo": "RubricasPage"
+    },
+    {
+      "path": "provisoes",
+      "componente": "ProvisoesPage",
+      "arquivo": "ProvisoesPage"
+    },
+    {
+      "path": "passivo-trabalhista",
+      "componente": "PassivoTrabalhistaPage",
+      "arquivo": "PassivoTrabalhistaPage"
+    },
+    {
+      "path": "financeiro-bancario",
+      "componente": "FinanceiroBancarioPage",
+      "arquivo": "FinanceiroBancarioPage"
+    },
+    {
+      "path": "contabilidade",
+      "componente": "ContabilidadePage",
+      "arquivo": "ContabilidadePage"
+    },
+    {
+      "path": "contabilidade/canal",
+      "componente": "CanalContabilidadePage",
+      "arquivo": "CanalContabilidadePage"
+    },
+    {
+      "path": "empresas",
+      "componente": "EmpresasPage",
+      "arquivo": "EmpresasPage"
+    },
+    {
+      "path": "empresas/novo",
+      "componente": "EmpresaFormPage",
+      "arquivo": "EmpresaFormPage"
+    },
+    {
+      "path": "cargos",
+      "componente": "CargosPage",
+      "arquivo": "CargosPage"
+    },
+    {
+      "path": "cargos-salarios",
+      "componente": "PlanoCargosSalariosPage",
+      "arquivo": "PlanoCargosSalariosPage"
+    },
+    {
+      "path": "departamentos",
+      "componente": "DepartamentosPage",
+      "arquivo": "DepartamentosPage"
+    },
+    {
+      "path": "lotacoes",
+      "componente": "LotacoesPage",
+      "arquivo": "LotacoesPage"
+    },
+    {
+      "path": "locais-trabalho",
+      "componente": "LocaisTrabalhoPage",
+      "arquivo": "LocaisTrabalhoPage"
+    },
+    {
+      "path": "times",
+      "componente": "TimesPage",
+      "arquivo": "TimesPage"
+    },
+    {
+      "path": "centros-custo",
+      "componente": "CentrosCustoPage",
+      "arquivo": "CentrosCustoPage"
+    },
+    {
+      "path": "promo-brindes",
+      "componente": "PromoBrindesPage",
+      "arquivo": "PromoBrindesPage"
+    },
+    {
+      "path": "promo-brindes/vinculos",
+      "componente": "VinculosPromoPage",
+      "arquivo": "VinculosPromoPage"
+    },
+    {
+      "path": "organograma",
+      "componente": "OrganogramaPage",
+      "arquivo": "OrganogramaPage"
+    },
+    {
+      "path": "avaliacao",
+      "componente": "AvaliacaoPage",
+      "arquivo": "AvaliacaoPage"
+    },
+    {
+      "path": "treinamentos",
+      "componente": "TreinamentosPage",
+      "arquivo": "TreinamentosPage"
+    },
+    {
+      "path": "recrutamento",
+      "componente": "RecrutamentoPage",
+      "arquivo": "RecrutamentoPage"
+    },
+    {
+      "path": "onboarding",
+      "componente": "OnboardingPage",
+      "arquivo": "OnboardingPage"
+    },
+    {
+      "path": "pesquisas-clima",
+      "componente": "PesquisasClimaPage",
+      "arquivo": "PesquisasClimaPage"
+    },
+    {
+      "path": "documentos",
+      "componente": "DocumentosPage",
+      "arquivo": "DocumentosPage"
+    },
+    {
+      "path": "gerador-documentos",
+      "componente": "GeradorDocumentosPage",
+      "arquivo": "GeradorDocumentosPage"
+    },
+    {
+      "path": "assinaturas",
+      "componente": "AssinaturasPage",
+      "arquivo": "AssinaturasPage"
+    },
+    {
+      "path": "esocial",
+      "componente": "ESocialPage",
+      "arquivo": "ESocialPage"
+    },
+    {
+      "path": "obrigacoes-fiscais",
+      "componente": "ObrigacoesFiscaisPage",
+      "arquivo": "ObrigacoesFiscaisPage"
+    },
+    {
+      "path": "sst",
+      "componente": "SSTPage",
+      "arquivo": "SSTPage"
+    },
+    {
+      "path": "auditoria",
+      "componente": "AuditoriaPage",
+      "arquivo": "AuditoriaPage"
+    },
+    {
+      "path": "canal-etica",
+      "componente": "CanalEticaPage",
+      "arquivo": "CanalEticaPage"
+    },
+    {
+      "path": "lgpd",
+      "componente": "LGPDPage",
+      "arquivo": "LGPDPage"
+    },
+    {
+      "path": "seguranca",
+      "componente": "SegurancaPage",
+      "arquivo": "SegurancaPage"
+    },
+    {
+      "path": "assistente-ia",
+      "componente": "AssistenteIAPage",
+      "arquivo": "AssistenteIAPage"
+    },
+    {
+      "path": "calculadora-rescisao",
+      "componente": "CalculadoraRescisaoPage",
+      "arquivo": "CalculadoraRescisaoPage"
+    },
+    {
+      "path": "importacao",
+      "componente": "ImportacaoPage",
+      "arquivo": "ImportacaoPage"
+    },
+    {
+      "path": "backup",
+      "componente": "BackupPage",
+      "arquivo": "BackupPage"
+    },
+    {
+      "path": "notificacoes",
+      "componente": "NotificacoesPage",
+      "arquivo": "NotificacoesPage"
+    },
+    {
+      "path": "usuarios",
+      "componente": "UsuariosPage",
+      "arquivo": "UsuariosPage"
+    },
+    {
+      "path": "perfil",
+      "componente": "PerfilPage",
+      "arquivo": "PerfilPage"
+    },
+    {
+      "path": "configuracoes",
+      "componente": "ConfiguracoesPage",
+      "arquivo": "ConfiguracoesPage"
+    },
+    {
+      "path": "admin/telemetria",
+      "componente": "AdminTelemetriaPage",
+      "arquivo": "AdminTelemetriaPage"
+    },
+    {
+      "path": "admin/idempotencia",
+      "componente": "AdminIdempotenciaPage",
+      "arquivo": "AdminIdempotenciaPage"
+    },
+    {
+      "path": "admin/operacao",
+      "componente": "AdminOperacaoPage",
+      "arquivo": "AdminOperacaoPage"
+    },
+    {
+      "path": "admin/security",
+      "componente": "AdminSecurityPage",
+      "arquivo": "AdminSecurityPage"
+    },
+    {
+      "path": "admin/ponto/divergencias",
+      "componente": "AdminPontoDivergenciasPage",
+      "arquivo": "AdminPontoDivergenciasPage"
+    },
+    {
+      "path": "admin/sst/clinicas",
+      "componente": "AdminClinicasPartnersPage",
+      "arquivo": "AdminClinicasPartnersPage"
+    },
+    {
+      "path": "admin/sst/agendamentos",
+      "componente": "AdminAgendamentoExamesPage",
+      "arquivo": "AdminAgendamentoExamesPage"
+    },
+    {
+      "path": "admin/sst/aso",
+      "componente": "AdminAsoWorkflowPage",
+      "arquivo": "AdminAsoWorkflowPage"
+    },
+    {
+      "path": "admin/sst/epis",
+      "componente": "AdminEpisFichasPage",
+      "arquivo": "AdminEpisFichasPage"
+    },
+    {
+      "path": "admin/sst/extintores",
+      "componente": "AdminExtintoresPage",
+      "arquivo": "AdminExtintoresPage"
+    },
+    {
+      "path": "admin/sst/dashboard",
+      "componente": "AdminSstDashboardPage",
+      "arquivo": "AdminSstDashboardPage"
+    },
+    {
+      "path": "admin/sst/cat",
+      "componente": "AdminCatPage",
+      "arquivo": "AdminCatPage"
+    },
+    {
+      "path": "admin/sst/regimento",
+      "componente": "AdminRegimentoInternoPage",
+      "arquivo": "AdminRegimentoInternoPage"
+    },
+    {
+      "path": "admin/diagnostico-migracao",
+      "componente": "AdminDiagnosticoMigracaoPage",
+      "arquivo": "AdminDiagnosticoMigracaoPage"
+    },
+    {
+      "path": "horas-extras",
+      "componente": "HorasExtrasPage",
+      "arquivo": "HorasExtrasPage"
+    },
+    {
+      "path": "feriados",
+      "componente": "FeriadosPage",
+      "arquivo": "FeriadosPage"
+    },
+    {
+      "path": "jornadas",
+      "componente": "JornadasPage",
+      "arquivo": "JornadasPage"
+    },
+    {
+      "path": "turnos",
+      "componente": "TurnosPage",
+      "arquivo": "TurnosPage"
+    },
+    {
+      "path": "escalas",
+      "componente": "EscalasPage",
+      "arquivo": "EscalasPage"
+    },
+    {
+      "path": "comunicacao-interna",
+      "componente": "ComunicacaoInternaPage",
+      "arquivo": "ComunicacaoInternaPage"
+    },
+    {
+      "path": "despesas",
+      "componente": "DespesasPage",
+      "arquivo": "DespesasPage"
+    },
+    {
+      "path": "controle-acesso",
+      "componente": "ControleAcessoPage",
+      "arquivo": "ControleAcessoPage"
+    },
+    {
+      "path": "medidas-disciplinares",
+      "componente": "MedidasDisciplinaresPage",
+      "arquivo": "MedidasDisciplinaresPage"
+    },
+    {
+      "path": "movimentacoes",
+      "componente": "MovimentacoesPage",
+      "arquivo": "MovimentacoesPage"
+    },
+    {
+      "path": "sindicatos",
+      "componente": "SindicatosPage",
+      "arquivo": "SindicatosPage"
+    },
+    {
+      "path": "planos-saude",
+      "componente": "PlanosSaudePage",
+      "arquivo": "PlanosSaudePage"
+    },
+    {
+      "path": "convenios",
+      "componente": "ConveniosPage",
+      "arquivo": "ConveniosPage"
+    },
+    {
+      "path": "seguros-vida",
+      "componente": "SegurosVidaPage",
+      "arquivo": "SegurosVidaPage"
+    },
+    {
+      "path": "pensoes",
+      "componente": "PensoesPage",
+      "arquivo": "PensoesPage"
+    },
+    {
+      "path": "vales",
+      "componente": "ValesPage",
+      "arquivo": "ValesPage"
+    },
+    {
+      "path": "descontos",
+      "componente": "DescontosPage",
+      "arquivo": "DescontosPage"
+    },
+    {
+      "path": "exames",
+      "componente": "ExamesPage",
+      "arquivo": "ExamesPage"
+    },
+    {
+      "path": "holerites",
+      "componente": "HoleritesPage",
+      "arquivo": "HoleritesPage"
+    },
+    {
+      "path": "portal",
+      "componente": "PortalPage",
+      "arquivo": "PortalPage"
+    },
+    {
+      "path": "workflows",
+      "componente": "WorkflowsPage",
+      "arquivo": "WorkflowsPage"
+    },
+    {
+      "path": "design-system",
+      "componente": "DesignSystemPage",
+      "arquivo": "DesignSystemPage"
+    },
+    {
+      "path": "integracoes",
+      "componente": "IntegracoesPage",
+      "arquivo": "IntegracoesPage"
+    },
+    {
+      "path": "banco-horas",
+      "componente": "BancoHorasPage",
+      "arquivo": "BancoHorasPage"
+    },
+    {
+      "path": "relatorios",
+      "componente": "RelatoriosPage",
+      "arquivo": "RelatoriosPage"
+    },
+    {
+      "path": "premiacoes",
+      "componente": "PremiacoesPage",
+      "arquivo": "PremiacoesPage"
+    },
+    {
+      "path": "configuracoes/contratos-templates",
+      "componente": "ContratoTemplatesPage",
+      "arquivo": "ContratoTemplatesPage"
+    },
+    {
+      "path": "contratos-gerados",
+      "componente": "ContratosGeradosPage",
+      "arquivo": "ContratosGeradosPage"
+    }
+  ],
+  "todas": [
+    {
+      "path": "/ponto/kiosk",
+      "componente": "PontoKioskPage",
+      "arquivo": "PontoKioskPage"
+    },
+    {
+      "path": "/assinar-contrato/:token",
+      "componente": "AssinarContratoPage",
+      "arquivo": "AssinarContratoPage"
+    },
+    {
+      "path": "/verificar-contrato",
+      "componente": "VerificarContratoPage",
+      "arquivo": "VerificarContratoPage"
+    },
+    {
+      "path": "/verificar-contrato/:hash",
+      "componente": "VerificarContratoPage",
+      "arquivo": "VerificarContratoPage"
+    },
+    {
+      "path": "/ciencia-medida/:token",
+      "componente": "CienciaMedidaPage",
+      "arquivo": "CienciaMedidaPage"
+    },
+    {
+      "path": "dashboard-executivo",
+      "componente": "DashboardExecutivoPage",
+      "arquivo": "DashboardExecutivoPage"
+    },
+    {
+      "path": "colaboradores",
+      "componente": "ColaboradoresPage",
+      "arquivo": "ColaboradoresPage"
+    },
+    {
+      "path": "colaboradores/novo",
+      "componente": "ColaboradorFormPage",
+      "arquivo": "ColaboradorFormPage"
+    },
+    {
+      "path": "colaboradores/editar/:id",
+      "componente": "ColaboradorFormPage",
+      "arquivo": "ColaboradorFormPage"
+    },
+    {
+      "path": "colaboradores/:id",
+      "componente": "ColaboradorDetalhesPage",
+      "arquivo": "ColaboradorDetalhesPage"
+    },
+    {
+      "path": "admissoes",
+      "componente": "AdmissoesPage",
+      "arquivo": "AdmissoesPage"
+    },
+    {
+      "path": "afastamentos",
+      "componente": "AfastamentosPage",
+      "arquivo": "AfastamentosPage"
+    },
+    {
+      "path": "desligamentos",
+      "componente": "DesligamentosPage",
+      "arquivo": "DesligamentosPage"
+    },
+    {
+      "path": "ferias",
+      "componente": "FeriasPage",
+      "arquivo": "FeriasPage"
+    },
+    {
+      "path": "ferias/programacao",
+      "componente": "FeriasProgramacaoPage",
+      "arquivo": "FeriasProgramacaoPage"
+    },
+    {
+      "path": "ponto",
+      "componente": "PontoPage",
+      "arquivo": "PontoPage"
+    },
+    {
+      "path": "beneficios",
+      "componente": "BeneficiosPage",
+      "arquivo": "BeneficiosPage"
+    },
+    {
+      "path": "beneficios/novo",
+      "componente": "BeneficioFormPage",
+      "arquivo": "BeneficioFormPage"
+    },
+    {
+      "path": "folha",
+      "componente": "FolhaPage",
+      "arquivo": "FolhaPage"
+    },
+    {
+      "path": "folha/calcular",
+      "componente": "FolhaPagamentoPage",
+      "arquivo": "FolhaPagamentoPage"
+    },
+    {
+      "path": "folha/compliance",
+      "componente": "FolhaCompliancePage",
+      "arquivo": "FolhaCompliancePage"
+    },
+    {
+      "path": "rubricas",
+      "componente": "RubricasPage",
+      "arquivo": "RubricasPage"
+    },
+    {
+      "path": "provisoes",
+      "componente": "ProvisoesPage",
+      "arquivo": "ProvisoesPage"
+    },
+    {
+      "path": "passivo-trabalhista",
+      "componente": "PassivoTrabalhistaPage",
+      "arquivo": "PassivoTrabalhistaPage"
+    },
+    {
+      "path": "financeiro-bancario",
+      "componente": "FinanceiroBancarioPage",
+      "arquivo": "FinanceiroBancarioPage"
+    },
+    {
+      "path": "contabilidade",
+      "componente": "ContabilidadePage",
+      "arquivo": "ContabilidadePage"
+    },
+    {
+      "path": "contabilidade/canal",
+      "componente": "CanalContabilidadePage",
+      "arquivo": "CanalContabilidadePage"
+    },
+    {
+      "path": "empresas",
+      "componente": "EmpresasPage",
+      "arquivo": "EmpresasPage"
+    },
+    {
+      "path": "empresas/novo",
+      "componente": "EmpresaFormPage",
+      "arquivo": "EmpresaFormPage"
+    },
+    {
+      "path": "empresas/editar/:id",
+      "componente": "EmpresaFormPage",
+      "arquivo": "EmpresaFormPage"
+    },
+    {
+      "path": "cargos",
+      "componente": "CargosPage",
+      "arquivo": "CargosPage"
+    },
+    {
+      "path": "cargos-salarios",
+      "componente": "PlanoCargosSalariosPage",
+      "arquivo": "PlanoCargosSalariosPage"
+    },
+    {
+      "path": "departamentos",
+      "componente": "DepartamentosPage",
+      "arquivo": "DepartamentosPage"
+    },
+    {
+      "path": "lotacoes",
+      "componente": "LotacoesPage",
+      "arquivo": "LotacoesPage"
+    },
+    {
+      "path": "locais-trabalho",
+      "componente": "LocaisTrabalhoPage",
+      "arquivo": "LocaisTrabalhoPage"
+    },
+    {
+      "path": "times",
+      "componente": "TimesPage",
+      "arquivo": "TimesPage"
+    },
+    {
+      "path": "centros-custo",
+      "componente": "CentrosCustoPage",
+      "arquivo": "CentrosCustoPage"
+    },
+    {
+      "path": "promo-brindes",
+      "componente": "PromoBrindesPage",
+      "arquivo": "PromoBrindesPage"
+    },
+    {
+      "path": "promo-brindes/vinculos",
+      "componente": "VinculosPromoPage",
+      "arquivo": "VinculosPromoPage"
+    },
+    {
+      "path": "organograma",
+      "componente": "OrganogramaPage",
+      "arquivo": "OrganogramaPage"
+    },
+    {
+      "path": "avaliacao",
+      "componente": "AvaliacaoPage",
+      "arquivo": "AvaliacaoPage"
+    },
+    {
+      "path": "treinamentos",
+      "componente": "TreinamentosPage",
+      "arquivo": "TreinamentosPage"
+    },
+    {
+      "path": "recrutamento",
+      "componente": "RecrutamentoPage",
+      "arquivo": "RecrutamentoPage"
+    },
+    {
+      "path": "onboarding",
+      "componente": "OnboardingPage",
+      "arquivo": "OnboardingPage"
+    },
+    {
+      "path": "pesquisas-clima",
+      "componente": "PesquisasClimaPage",
+      "arquivo": "PesquisasClimaPage"
+    },
+    {
+      "path": "documentos",
+      "componente": "DocumentosPage",
+      "arquivo": "DocumentosPage"
+    },
+    {
+      "path": "gerador-documentos",
+      "componente": "GeradorDocumentosPage",
+      "arquivo": "GeradorDocumentosPage"
+    },
+    {
+      "path": "assinaturas",
+      "componente": "AssinaturasPage",
+      "arquivo": "AssinaturasPage"
+    },
+    {
+      "path": "esocial",
+      "componente": "ESocialPage",
+      "arquivo": "ESocialPage"
+    },
+    {
+      "path": "obrigacoes-fiscais",
+      "componente": "ObrigacoesFiscaisPage",
+      "arquivo": "ObrigacoesFiscaisPage"
+    },
+    {
+      "path": "sst",
+      "componente": "SSTPage",
+      "arquivo": "SSTPage"
+    },
+    {
+      "path": "auditoria",
+      "componente": "AuditoriaPage",
+      "arquivo": "AuditoriaPage"
+    },
+    {
+      "path": "canal-etica",
+      "componente": "CanalEticaPage",
+      "arquivo": "CanalEticaPage"
+    },
+    {
+      "path": "lgpd",
+      "componente": "LGPDPage",
+      "arquivo": "LGPDPage"
+    },
+    {
+      "path": "seguranca",
+      "componente": "SegurancaPage",
+      "arquivo": "SegurancaPage"
+    },
+    {
+      "path": "assistente-ia",
+      "componente": "AssistenteIAPage",
+      "arquivo": "AssistenteIAPage"
+    },
+    {
+      "path": "calculadora-rescisao",
+      "componente": "CalculadoraRescisaoPage",
+      "arquivo": "CalculadoraRescisaoPage"
+    },
+    {
+      "path": "importacao",
+      "componente": "ImportacaoPage",
+      "arquivo": "ImportacaoPage"
+    },
+    {
+      "path": "backup",
+      "componente": "BackupPage",
+      "arquivo": "BackupPage"
+    },
+    {
+      "path": "notificacoes",
+      "componente": "NotificacoesPage",
+      "arquivo": "NotificacoesPage"
+    },
+    {
+      "path": "usuarios",
+      "componente": "UsuariosPage",
+      "arquivo": "UsuariosPage"
+    },
+    {
+      "path": "perfil",
+      "componente": "PerfilPage",
+      "arquivo": "PerfilPage"
+    },
+    {
+      "path": "configuracoes",
+      "componente": "ConfiguracoesPage",
+      "arquivo": "ConfiguracoesPage"
+    },
+    {
+      "path": "admin/telemetria",
+      "componente": "AdminTelemetriaPage",
+      "arquivo": "AdminTelemetriaPage"
+    },
+    {
+      "path": "admin/idempotencia",
+      "componente": "AdminIdempotenciaPage",
+      "arquivo": "AdminIdempotenciaPage"
+    },
+    {
+      "path": "admin/operacao",
+      "componente": "AdminOperacaoPage",
+      "arquivo": "AdminOperacaoPage"
+    },
+    {
+      "path": "admin/security",
+      "componente": "AdminSecurityPage",
+      "arquivo": "AdminSecurityPage"
+    },
+    {
+      "path": "admin/ponto/divergencias",
+      "componente": "AdminPontoDivergenciasPage",
+      "arquivo": "AdminPontoDivergenciasPage"
+    },
+    {
+      "path": "admin/sst/clinicas",
+      "componente": "AdminClinicasPartnersPage",
+      "arquivo": "AdminClinicasPartnersPage"
+    },
+    {
+      "path": "admin/sst/agendamentos",
+      "componente": "AdminAgendamentoExamesPage",
+      "arquivo": "AdminAgendamentoExamesPage"
+    },
+    {
+      "path": "admin/sst/aso",
+      "componente": "AdminAsoWorkflowPage",
+      "arquivo": "AdminAsoWorkflowPage"
+    },
+    {
+      "path": "admin/sst/epis",
+      "componente": "AdminEpisFichasPage",
+      "arquivo": "AdminEpisFichasPage"
+    },
+    {
+      "path": "admin/sst/extintores",
+      "componente": "AdminExtintoresPage",
+      "arquivo": "AdminExtintoresPage"
+    },
+    {
+      "path": "admin/sst/dashboard",
+      "componente": "AdminSstDashboardPage",
+      "arquivo": "AdminSstDashboardPage"
+    },
+    {
+      "path": "admin/sst/cat",
+      "componente": "AdminCatPage",
+      "arquivo": "AdminCatPage"
+    },
+    {
+      "path": "admin/sst/regimento",
+      "componente": "AdminRegimentoInternoPage",
+      "arquivo": "AdminRegimentoInternoPage"
+    },
+    {
+      "path": "admin/diagnostico-migracao",
+      "componente": "AdminDiagnosticoMigracaoPage",
+      "arquivo": "AdminDiagnosticoMigracaoPage"
+    },
+    {
+      "path": "horas-extras",
+      "componente": "HorasExtrasPage",
+      "arquivo": "HorasExtrasPage"
+    },
+    {
+      "path": "feriados",
+      "componente": "FeriadosPage",
+      "arquivo": "FeriadosPage"
+    },
+    {
+      "path": "jornadas",
+      "componente": "JornadasPage",
+      "arquivo": "JornadasPage"
+    },
+    {
+      "path": "turnos",
+      "componente": "TurnosPage",
+      "arquivo": "TurnosPage"
+    },
+    {
+      "path": "escalas",
+      "componente": "EscalasPage",
+      "arquivo": "EscalasPage"
+    },
+    {
+      "path": "comunicacao-interna",
+      "componente": "ComunicacaoInternaPage",
+      "arquivo": "ComunicacaoInternaPage"
+    },
+    {
+      "path": "despesas",
+      "componente": "DespesasPage",
+      "arquivo": "DespesasPage"
+    },
+    {
+      "path": "controle-acesso",
+      "componente": "ControleAcessoPage",
+      "arquivo": "ControleAcessoPage"
+    },
+    {
+      "path": "medidas-disciplinares",
+      "componente": "MedidasDisciplinaresPage",
+      "arquivo": "MedidasDisciplinaresPage"
+    },
+    {
+      "path": "movimentacoes",
+      "componente": "MovimentacoesPage",
+      "arquivo": "MovimentacoesPage"
+    },
+    {
+      "path": "sindicatos",
+      "componente": "SindicatosPage",
+      "arquivo": "SindicatosPage"
+    },
+    {
+      "path": "planos-saude",
+      "componente": "PlanosSaudePage",
+      "arquivo": "PlanosSaudePage"
+    },
+    {
+      "path": "convenios",
+      "componente": "ConveniosPage",
+      "arquivo": "ConveniosPage"
+    },
+    {
+      "path": "seguros-vida",
+      "componente": "SegurosVidaPage",
+      "arquivo": "SegurosVidaPage"
+    },
+    {
+      "path": "pensoes",
+      "componente": "PensoesPage",
+      "arquivo": "PensoesPage"
+    },
+    {
+      "path": "vales",
+      "componente": "ValesPage",
+      "arquivo": "ValesPage"
+    },
+    {
+      "path": "descontos",
+      "componente": "DescontosPage",
+      "arquivo": "DescontosPage"
+    },
+    {
+      "path": "exames",
+      "componente": "ExamesPage",
+      "arquivo": "ExamesPage"
+    },
+    {
+      "path": "holerites",
+      "componente": "HoleritesPage",
+      "arquivo": "HoleritesPage"
+    },
+    {
+      "path": "portal",
+      "componente": "PortalPage",
+      "arquivo": "PortalPage"
+    },
+    {
+      "path": "workflows",
+      "componente": "WorkflowsPage",
+      "arquivo": "WorkflowsPage"
+    },
+    {
+      "path": "design-system",
+      "componente": "DesignSystemPage",
+      "arquivo": "DesignSystemPage"
+    },
+    {
+      "path": "integracoes",
+      "componente": "IntegracoesPage",
+      "arquivo": "IntegracoesPage"
+    },
+    {
+      "path": "banco-horas",
+      "componente": "BancoHorasPage",
+      "arquivo": "BancoHorasPage"
+    },
+    {
+      "path": "relatorios",
+      "componente": "RelatoriosPage",
+      "arquivo": "RelatoriosPage"
+    },
+    {
+      "path": "premiacoes",
+      "componente": "PremiacoesPage",
+      "arquivo": "PremiacoesPage"
+    },
+    {
+      "path": "configuracoes/contratos-templates",
+      "componente": "ContratoTemplatesPage",
+      "arquivo": "ContratoTemplatesPage"
+    },
+    {
+      "path": "contratos-gerados",
+      "componente": "ContratosGeradosPage",
+      "arquivo": "ContratosGeradosPage"
+    },
+    {
+      "path": "*",
+      "componente": "NotFoundPage",
+      "arquivo": "NotFoundPage"
+    }
+  ]
+}

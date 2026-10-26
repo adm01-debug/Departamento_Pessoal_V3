@@ -1,0 +1,4 @@
+npm notice run departamento-pessoal@18.0.1 npx
+npm notice run prettier --check src/components/recrutamento/CandidatosPainel.tsx
+Checking formatting...
+All matched files use Prettier code style!

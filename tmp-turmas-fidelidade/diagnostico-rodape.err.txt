@@ -1,0 +1,11 @@
+[diag] start 2026-10-26T14:26:09.855Z
+[diag] launched
+[diag] page
+[diag] commit
+[diag] title Sistema DP - Departamento Pessoal
+[diag] url http://localhost:8080/recrutamento
+[diag] tabs []
+[diag] clicked
+[diag] mostrando Mostrando 1–8 de 12 candidatos
+[diag] ui {"overflowDoc":0,"rodape":{"x":281,"right":1625},"contador":{"x":293,"cy":910},"grupo":{"x":1285.953125,"right":1613,"cy":910},"nav":{"right":1421.953125},"seletor":{"x":1445.953125},"gap":24}
+[diag] done

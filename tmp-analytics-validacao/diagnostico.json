@@ -1,0 +1,257 @@
+{
+  "overflow": {
+    "analytics-768": {
+      "vw": 768,
+      "docScrollWidth": 1168,
+      "mainScrollWidth": 512,
+      "lista": [
+        {
+          "tag": "div",
+          "cls": "flex items-center gap-3",
+          "left": 597,
+          "right": 1168,
+          "width": 572,
+          "texto": "DB Conectado370ms[E2E-SEED] NAO É UMA EMPRESA REAL0000000000"
+        },
+        {
+          "tag": "div",
+          "cls": "flex items-center gap-1.5",
+          "left": 597,
+          "right": 1168,
+          "width": 572,
+          "texto": "[E2E-SEED] NAO É UMA EMPRESA REAL00000000000191Aadmin@teste."
+        },
+        {
+          "tag": "button",
+          "cls": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium focus-v",
+          "left": 996,
+          "right": 1168,
+          "width": 172,
+          "texto": "Aadmin@teste.localadmin@teste.local"
+        },
+        {
+          "tag": "div",
+          "cls": "hidden md:flex flex-col items-start",
+          "left": 1046,
+          "right": 1160,
+          "width": 114,
+          "texto": "admin@teste.localadmin@teste.local"
+        },
+        {
+          "tag": "span",
+          "cls": "text-sm font-medium font-body leading-tight",
+          "left": 1046,
+          "right": 1160,
+          "width": 114,
+          "texto": "admin@teste.local"
+        },
+        {
+          "tag": "span",
+          "cls": "text-[11px] text-muted-foreground font-body leading-tight",
+          "left": 1046,
+          "right": 1136,
+          "width": 89,
+          "texto": "admin@teste.local"
+        },
+        {
+          "tag": "div",
+          "cls": "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success border-2 border-card",
+          "left": 1026,
+          "right": 1038,
+          "width": 12,
+          "texto": ""
+        },
+        {
+          "tag": "div",
+          "cls": "relative",
+          "left": 1004,
+          "right": 1036,
+          "width": 32,
+          "texto": "A"
+        },
+        {
+          "tag": "span",
+          "cls": "relative flex shrink-0 overflow-hidden rounded-full h-8 w-8 ring-2 ring-border/50 transiti",
+          "left": 1004,
+          "right": 1036,
+          "width": 32,
+          "texto": "A"
+        },
+        {
+          "tag": "span",
+          "cls": "flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-primary",
+          "left": 1004,
+          "right": 1036,
+          "width": 32,
+          "texto": "A"
+        },
+        {
+          "tag": "button",
+          "cls": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transit",
+          "left": 954,
+          "right": 990,
+          "width": 36,
+          "texto": ""
+        },
+        {
+          "tag": "svg",
+          "cls": "[object SVGAnimatedString]",
+          "left": 962,
+          "right": 982,
+          "width": 20,
+          "texto": ""
+        }
+      ]
+    },
+    "analytics-390": {
+      "vw": 390,
+      "docScrollWidth": 548,
+      "mainScrollWidth": 390,
+      "lista": [
+        {
+          "tag": "div",
+          "cls": "flex items-center gap-3",
+          "left": 100,
+          "right": 548,
+          "width": 448,
+          "texto": "DB Conectado370ms[E2E-SEED] NAO É UMA EMPRESA REAL0000000000"
+        },
+        {
+          "tag": "div",
+          "cls": "flex items-center gap-1.5",
+          "left": 100,
+          "right": 548,
+          "width": 448,
+          "texto": "[E2E-SEED] NAO É UMA EMPRESA REAL00000000000191Aadmin@teste."
+        },
+        {
+          "tag": "button",
+          "cls": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium focus-v",
+          "left": 500,
+          "right": 548,
+          "width": 48,
+          "texto": "Aadmin@teste.localadmin@teste.local"
+        },
+        {
+          "tag": "div",
+          "cls": "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success border-2 border-card",
+          "left": 530,
+          "right": 542,
+          "width": 12,
+          "texto": ""
+        },
+        {
+          "tag": "div",
+          "cls": "relative",
+          "left": 508,
+          "right": 540,
+          "width": 32,
+          "texto": "A"
+        },
+        {
+          "tag": "span",
+          "cls": "relative flex shrink-0 overflow-hidden rounded-full h-8 w-8 ring-2 ring-border/50 transiti",
+          "left": 508,
+          "right": 540,
+          "width": 32,
+          "texto": "A"
+        },
+        {
+          "tag": "span",
+          "cls": "flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-primary",
+          "left": 508,
+          "right": 540,
+          "width": 32,
+          "texto": "A"
+        },
+        {
+          "tag": "button",
+          "cls": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transit",
+          "left": 458,
+          "right": 494,
+          "width": 36,
+          "texto": ""
+        },
+        {
+          "tag": "svg",
+          "cls": "[object SVGAnimatedString]",
+          "left": 466,
+          "right": 486,
+          "width": 20,
+          "texto": ""
+        },
+        {
+          "tag": "path",
+          "cls": "[object SVGAnimatedString]",
+          "left": 468,
+          "right": 483,
+          "width": 15,
+          "texto": ""
+        },
+        {
+          "tag": "path",
+          "cls": "[object SVGAnimatedString]",
+          "left": 474,
+          "right": 477,
+          "width": 3,
+          "texto": ""
+        },
+        {
+          "tag": "button",
+          "cls": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transit",
+          "left": 416,
+          "right": 452,
+          "width": 36,
+          "texto": ""
+        }
+      ]
+    }
+  },
+  "metricasFinais": {
+    "paineis": [
+      {
+        "titulo": "Funil de recrutamento",
+        "top": 42,
+        "height": 343,
+        "width": 505
+      },
+      {
+        "titulo": "Evolução de candidaturas",
+        "top": 42,
+        "height": 343,
+        "width": 331
+      },
+      {
+        "titulo": "Principais origens",
+        "top": 42,
+        "height": 343,
+        "width": 268
+      },
+      {
+        "titulo": "Tempo médio por etapa",
+        "top": 401,
+        "height": 314,
+        "width": 359
+      },
+      {
+        "titulo": "Pontos de atenção",
+        "top": 401,
+        "height": 314,
+        "width": 394
+      },
+      {
+        "titulo": "Desempenho por vaga",
+        "top": 401,
+        "height": 314,
+        "width": 352
+      },
+      {
+        "titulo": "Principais indicadores",
+        "top": 731,
+        "height": 145,
+        "width": 1136
+      }
+    ],
+    "rolagemHorizontal": false
+  }
+}

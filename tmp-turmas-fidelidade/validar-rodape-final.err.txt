@@ -1,0 +1,12 @@
+[validar] viewport 1650
+[validar] resultado 1650 true
+[validar] viewport 1280
+[validar] resultado 1280 true
+[validar] viewport 1024
+[validar] resultado 1024 false
+[validar] viewport 768
+[validar] resultado 768 false
+[validar] viewport 390
+[validar] resultado 390 false
+[validar] viewport 375
+[validar] resultado 375 false

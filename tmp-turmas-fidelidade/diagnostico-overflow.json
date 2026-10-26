@@ -1,0 +1,527 @@
+[
+  {
+    "width": 1024,
+    "vw": 1024,
+    "doc": {
+      "scrollWidth": 1221,
+      "clientWidth": 1024,
+      "bodyScrollWidth": 1221
+    },
+    "rodape": {
+      "tag": "DIV",
+      "classe": "flex w-full flex-col gap-3 border-t border-border/40 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between",
+      "right": 999,
+      "width": 718,
+      "scrollWidth": 718,
+      "clientWidth": 718,
+      "overflowX": "visible"
+    },
+    "grupo": {
+      "tag": "DIV",
+      "classe": "flex min-w-0 flex-wrap items-center justify-end gap-x-6 gap-y-2",
+      "right": 987,
+      "width": 327,
+      "scrollWidth": 327,
+      "clientWidth": 327,
+      "overflowX": "visible",
+      "flexWrap": "wrap",
+      "altura": 28
+    },
+    "nav": {
+      "width": 136,
+      "right": 796
+    },
+    "seletor": {
+      "width": 167,
+      "x": 820,
+      "right": 987
+    },
+    "culpados": [
+      {
+        "tag": "DIV",
+        "classe": "flex items-center gap-3",
+        "right": 1221,
+        "width": 450,
+        "scrollWidth": 450,
+        "clientWidth": 450,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "flex items-center gap-1.5",
+        "right": 1221,
+        "width": 256,
+        "scrollWidth": 256,
+        "clientWidth": 256,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transition-all focus-visible:outline-",
+        "right": 1043,
+        "width": 36,
+        "scrollWidth": 36,
+        "clientWidth": 36,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "svg",
+        "classe": "[object SVGAnimatedString]",
+        "right": 1035,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 1027,
+        "width": 3,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 1033,
+        "width": 15,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium focus-visible:outline-hidden focus-vi",
+        "right": 1221,
+        "width": 172,
+        "scrollWidth": 172,
+        "clientWidth": 172,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "relative",
+        "right": 1089,
+        "width": 32,
+        "scrollWidth": 34,
+        "clientWidth": 32,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "relative flex shrink-0 overflow-hidden rounded-full h-8 w-8 ring-2 ring-border/50 transition-all group-hover:ring-primar",
+        "right": 1089,
+        "width": 32,
+        "scrollWidth": 32,
+        "clientWidth": 32,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary-glow text-primary-",
+        "right": 1089,
+        "width": 32,
+        "scrollWidth": 32,
+        "clientWidth": 32,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success border-2 border-card",
+        "right": 1091,
+        "width": 12,
+        "scrollWidth": 8,
+        "clientWidth": 8,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "hidden md:flex flex-col items-start",
+        "right": 1213,
+        "width": 114,
+        "scrollWidth": 114,
+        "clientWidth": 114,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-sm font-medium font-body leading-tight",
+        "right": 1213,
+        "width": 114,
+        "scrollWidth": 114,
+        "clientWidth": 114,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "SPAN",
+        "classe": "text-[11px] text-muted-foreground font-body leading-tight",
+        "right": 1189,
+        "width": 89,
+        "scrollWidth": 89,
+        "clientWidth": 89,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "TABLE",
+        "classe": "w-full min-w-[1120px] table-fixed border-collapse text-left",
+        "right": 1401,
+        "width": 1120,
+        "scrollWidth": 1120,
+        "clientWidth": 1120,
+        "overflowX": "visible"
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "vw": 768,
+    "doc": {
+      "scrollWidth": 1168,
+      "clientWidth": 768,
+      "bodyScrollWidth": 1168
+    },
+    "rodape": {
+      "tag": "DIV",
+      "classe": "flex w-full flex-col gap-3 border-t border-border/40 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between",
+      "right": 743,
+      "width": 462,
+      "scrollWidth": 462,
+      "clientWidth": 462,
+      "overflowX": "visible"
+    },
+    "grupo": {
+      "tag": "DIV",
+      "classe": "flex min-w-0 flex-wrap items-center justify-end gap-x-6 gap-y-2",
+      "right": 731,
+      "width": 271,
+      "scrollWidth": 271,
+      "clientWidth": 271,
+      "overflowX": "visible",
+      "flexWrap": "wrap",
+      "altura": 64
+    },
+    "nav": {
+      "width": 136,
+      "right": 731
+    },
+    "seletor": {
+      "width": 167,
+      "x": 564,
+      "right": 731
+    },
+    "culpados": [
+      {
+        "tag": "DIV",
+        "classe": "flex items-center gap-3",
+        "right": 1168,
+        "width": 572,
+        "scrollWidth": 572,
+        "clientWidth": 572,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "flex items-center gap-1.5",
+        "right": 1168,
+        "width": 572,
+        "scrollWidth": 572,
+        "clientWidth": 572,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "lg:hidden",
+        "right": 906,
+        "width": 310,
+        "scrollWidth": 310,
+        "clientWidth": 310,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "px-3 pt-3 pb-1",
+        "right": 906,
+        "width": 310,
+        "scrollWidth": 310,
+        "clientWidth": 310,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200 bg-sidebar-accent/60 hover:bg-sideba",
+        "right": 894,
+        "width": 286,
+        "scrollWidth": 284,
+        "clientWidth": 284,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "flex-1 min-w-0 text-left",
+        "right": 881,
+        "width": 218,
+        "scrollWidth": 218,
+        "clientWidth": 218,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "P",
+        "classe": "text-xs font-body font-medium text-foreground truncate",
+        "right": 881,
+        "width": 218,
+        "scrollWidth": 218,
+        "clientWidth": 218,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "P",
+        "classe": "text-[10px] text-muted-foreground font-body",
+        "right": 881,
+        "width": 218,
+        "scrollWidth": 218,
+        "clientWidth": 218,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transition-all focus-visible:outline-",
+        "right": 948,
+        "width": 36,
+        "scrollWidth": 36,
+        "clientWidth": 36,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "DIV",
+        "classe": "",
+        "right": 940,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "svg",
+        "classe": "[object SVGAnimatedString]",
+        "right": 940,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 938,
+        "width": 15,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transition-all focus-visible:outline-",
+        "right": 990,
+        "width": 36,
+        "scrollWidth": 36,
+        "clientWidth": 36,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "svg",
+        "classe": "[object SVGAnimatedString]",
+        "right": 982,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 974,
+        "width": 3,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "vw": 390,
+    "doc": {
+      "scrollWidth": 548,
+      "clientWidth": 390,
+      "bodyScrollWidth": 548
+    },
+    "rodape": {
+      "tag": "DIV",
+      "classe": "flex w-full flex-col gap-3 border-t border-border/40 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between",
+      "right": 365,
+      "width": 340,
+      "scrollWidth": 340,
+      "clientWidth": 340,
+      "overflowX": "visible"
+    },
+    "grupo": {
+      "tag": "DIV",
+      "classe": "flex min-w-0 flex-wrap items-center justify-end gap-x-6 gap-y-2",
+      "right": 353,
+      "width": 316,
+      "scrollWidth": 316,
+      "clientWidth": 316,
+      "overflowX": "visible",
+      "flexWrap": "wrap",
+      "altura": 64
+    },
+    "nav": {
+      "width": 136,
+      "right": 353
+    },
+    "seletor": {
+      "width": 167,
+      "x": 186,
+      "right": 353
+    },
+    "culpados": [
+      {
+        "tag": "DIV",
+        "classe": "flex items-center gap-3",
+        "right": 548,
+        "width": 448,
+        "scrollWidth": 448,
+        "clientWidth": 448,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "flex items-center gap-1.5",
+        "right": 548,
+        "width": 448,
+        "scrollWidth": 448,
+        "clientWidth": 448,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "lg:hidden",
+        "right": 410,
+        "width": 310,
+        "scrollWidth": 310,
+        "clientWidth": 310,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "px-3 pt-3 pb-1",
+        "right": 410,
+        "width": 310,
+        "scrollWidth": 310,
+        "clientWidth": 310,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200 bg-sidebar-accent/60 hover:bg-sideba",
+        "right": 398,
+        "width": 286,
+        "scrollWidth": 284,
+        "clientWidth": 284,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transition-all focus-visible:outline-",
+        "right": 452,
+        "width": 36,
+        "scrollWidth": 36,
+        "clientWidth": 36,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "DIV",
+        "classe": "",
+        "right": 444,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "svg",
+        "classe": "[object SVGAnimatedString]",
+        "right": 444,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 441,
+        "width": 15,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium transition-all focus-visible:outline-",
+        "right": 494,
+        "width": 36,
+        "scrollWidth": 36,
+        "clientWidth": 36,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "svg",
+        "classe": "[object SVGAnimatedString]",
+        "right": 486,
+        "width": 20,
+        "scrollWidth": 20,
+        "clientWidth": 20,
+        "overflowX": "hidden"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 477,
+        "width": 3,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "path",
+        "classe": "[object SVGAnimatedString]",
+        "right": 483,
+        "width": 15,
+        "scrollWidth": 0,
+        "clientWidth": 0,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "BUTTON",
+        "classe": "inline-flex items-center justify-center whitespace-nowrap text-control font-medium focus-visible:outline-hidden focus-vi",
+        "right": 548,
+        "width": 48,
+        "scrollWidth": 48,
+        "clientWidth": 48,
+        "overflowX": "visible"
+      },
+      {
+        "tag": "DIV",
+        "classe": "relative",
+        "right": 540,
+        "width": 32,
+        "scrollWidth": 34,
+        "clientWidth": 32,
+        "overflowX": "visible"
+      }
+    ]
+  }
+]

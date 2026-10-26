@@ -1,0 +1,16 @@
+{
+  "antes": {
+    "coluna": "triagem",
+    "etapa": "Triagem",
+    "avanco": "Avançar para Entrevista"
+  },
+  "depois": {
+    "etapa": "Entrevista",
+    "avanco": "Avançar para Teste Técnico",
+    "badge": "Fechar\nMR\nMariana Alves Rodrigues\n\nDetalhes do processo seletivo de Mariana Alves Rodrigues\n\nDesenvolvedor(a) Full Stack Sênior\n\nTecnologia\nEntrevista\nmariana.alves@email.com\n(11) 98811-2233\nETAPAS DO PROCESSO\n\nEtapa atual\nEntrevista\n\nTriagem\nEntrevista\nTeste Técnico\nProposta\nContratado\nHistórico do processo\n2 registros\n26 OUT\n11:35\nANOTAÇÃO\n\nEtapa avançada de \"Triagem\" para \"Entrevista\".\n\n03 AGO\n09:00\nANOTAÇÃO\n\nTriagem concluída: 7 anos de experiência, currículo aderente à vaga sênior.\n\nFechar\nAvançar para Teste Técnico"
+  },
+  "kanban": {
+    "coluna": "entrevista",
+    "totalCards": 12
+  }
+}

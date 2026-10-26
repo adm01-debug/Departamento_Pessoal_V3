@@ -1,0 +1,79 @@
+[
+  {
+    "path": "/assinar-contrato/token-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/assinar-contrato/token-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  },
+  {
+    "path": "/verificar-contrato/hash-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/verificar-contrato/hash-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  },
+  {
+    "path": "/ciencia-medida/token-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/ciencia-medida/token-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  },
+  {
+    "path": "/colaboradores/editar/id-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/colaboradores/editar/id-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  },
+  {
+    "path": "/colaboradores/id-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/colaboradores/id-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  },
+  {
+    "path": "/empresas/editar/id-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/empresas/editar/id-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  },
+  {
+    "path": "/rota-inexistente-e2e",
+    "estado": {
+      "url": "http://localhost:8080/rota-inexistente-e2e",
+      "instabilidade": false
+    },
+    "navError": null,
+    "falha": false,
+    "modulos": [],
+    "erros": []
+  }
+]

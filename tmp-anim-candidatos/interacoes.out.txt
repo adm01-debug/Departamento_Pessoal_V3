@@ -1,0 +1,93 @@
+{
+  "resultados": [
+    {
+      "nome": "hover na linha",
+      "esperaReanimar": false,
+      "minOpacidade": 1,
+      "maxOpacidade": 1,
+      "reanimou": false,
+      "amostras": 103
+    },
+    {
+      "nome": "checkbox da linha",
+      "esperaReanimar": false,
+      "minOpacidade": 1,
+      "maxOpacidade": 1,
+      "reanimou": false,
+      "amostras": 95
+    },
+    {
+      "nome": "abrir menu de ações",
+      "esperaReanimar": false,
+      "minOpacidade": 1,
+      "maxOpacidade": 1,
+      "reanimou": false,
+      "amostras": 93
+    },
+    {
+      "nome": "abrir perfil",
+      "esperaReanimar": false,
+      "minOpacidade": 1,
+      "maxOpacidade": 1,
+      "reanimou": false,
+      "amostras": 20
+    },
+    {
+      "nome": "retorno do perfil",
+      "esperaReanimar": false,
+      "minOpacidade": 1,
+      "maxOpacidade": 1,
+      "reanimou": false,
+      "amostras": 62
+    },
+    {
+      "nome": "filtro Contratados",
+      "esperaReanimar": true,
+      "minOpacidade": 0,
+      "maxOpacidade": 1,
+      "reanimou": true,
+      "amostras": 92
+    },
+    {
+      "nome": "filtro Todos",
+      "esperaReanimar": true,
+      "minOpacidade": 0,
+      "maxOpacidade": 1,
+      "reanimou": true,
+      "amostras": 85
+    },
+    {
+      "nome": "paginação próxima",
+      "esperaReanimar": true,
+      "minOpacidade": 0,
+      "maxOpacidade": 1,
+      "reanimou": true,
+      "amostras": 94
+    },
+    {
+      "nome": "paginação anterior",
+      "esperaReanimar": true,
+      "minOpacidade": 0,
+      "maxOpacidade": 1,
+      "reanimou": true,
+      "amostras": 89
+    },
+    {
+      "nome": "retorno à aba Candidatos",
+      "esperaReanimar": true,
+      "minOpacidade": 0,
+      "maxOpacidade": 0.999,
+      "reanimou": true,
+      "amostras": 72
+    }
+  ],
+  "dialogoAberto": true,
+  "dialogoFechado": false,
+  "ordemPreservada": true,
+  "cabecalho": {
+    "opacidade": 1,
+    "transform": "none"
+  },
+  "semErro": true,
+  "errosRelevantes": []
+}

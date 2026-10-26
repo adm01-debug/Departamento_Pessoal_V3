@@ -36,48 +36,13 @@
  * nenhuma classe entra e a coluna fica em `height: 0`. A `key` no board remonta a
  * coluna a cada entrada na aba — as keyframes tocam de novo do zero.
  */
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useEntradaKanbanColuna } from '@/components/kanban/entradaKanban';
 import { DraggableCard, type KanbanAcoes } from './KanbanCard';
 import { TOM_KANBAN, type AdmissaoKanban, type ColunaKanban } from './kanbanComum';
-
-/** ms entre colunas (MESMO valor do `animation-delay` em `index.css`). */
-const PASSO_COLUNA_MS = 180;
-/** Teto do stagger dos cards (igual ao usado no `calc(...)` do CSS). */
-const MAX_CARDS_ESCALONADOS = 8;
-/** Início do rodapé (ms) dado o nº de cards — casa com o `calc(... + 1300ms + i*100ms)`. */
-const delayRodapeMs = (cards: number) => 1300 + (Math.min(cards, MAX_CARDS_ESCALONADOS) + 1) * 100;
-/** Passo entre colunas no `prefers-reduced-motion` (casa com o `calc(… * 80ms)`). */
-const PASSO_COLUNA_REDUZIDO_MS = 80;
-/** Rodapé no `prefers-reduced-motion` (casa com o `calc(… + 620ms + i*50ms)`). */
-const delayRodapeReduzidoMs = (cards: number) => 620 + (Math.min(cards, MAX_CARDS_ESCALONADOS) + 1) * 50;
-
-/**
- * O elemento está REALMENTE visível/pintado? Percorre a CADEIA de ancestrais e
- * pega `display: none` / `visibility: hidden` / `opacity: 0` (ex.: a transição de
- * página/aba) que esconderiam o Kanban — a keyframe não pode rodar atrás disso,
- * senão o usuário só vê o resultado final.
- */
-function estaVisivel(el: HTMLElement | null): boolean {
-  if (!el || el.getBoundingClientRect().height <= 0) return false;
-  let no: HTMLElement | null = el;
-  while (no) {
-    const cs = window.getComputedStyle(no);
-    if (cs.display === 'none' || cs.visibility === 'hidden') return false;
-    // `opacity` só conta quando o browser informa um número (jsdom devolve '').
-    if (cs.opacity !== '' && Number(cs.opacity) === 0) return false;
-    no = no.parentElement;
-  }
-  return true;
-}
-
-/** CSS custom properties usadas pelas keyframes (tipadas sem `any`). */
-type VarsEntrada = CSSProperties &
-  Record<'--kanban-index' | '--kanban-footer-delay', string | number> &
-  Partial<Record<'--kanban-final-height' | '--kanban-footer-delay-reduzido', string>>;
 
 export interface KanbanColumnProps {
   coluna: ColunaKanban;
@@ -94,90 +59,16 @@ export interface KanbanColumnProps {
 
 export function KanbanColumn({ coluna, items, indice, isActive, acoes, onAdicionar }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id: coluna.key });
-  /** Nó do SLOT: mede a altura final e é o nó do dnd-kit. */
-  const slotRef = useRef<HTMLDivElement | null>(null);
-  /** Altura FINAL em px (medida do slot) — vira `--kanban-final-height`. */
-  const [alturaFinal, setAlturaFinal] = useState<number | null>(null);
-  /** Só fica `true` depois de a coluna estar visível/pintada + DOIS frames. */
-  const [podeAnimar, setPodeAnimar] = useState(false);
-  /** Marca "as keyframes terminaram" (o JS só troca classe — quem anima é o CSS). */
-  const [entradaConcluida, setEntradaConcluida] = useState(false);
   const tom = TOM_KANBAN[coluna.tom];
   const Icone = coluna.icon;
-
-  /** Ref combinada: o MESMO nó (slot) serve à medição e ao dnd-kit. */
-  const refColuna = useCallback(
-    (no: HTMLDivElement | null) => {
-      slotRef.current = no;
-      setNodeRef(no);
-    },
-    [setNodeRef]
-  );
-
-  /**
-   * GATILHO — a keyframe NÃO pode começar antes de a coluna existir de verdade na
-   * tela (senão ela roda "escondida" e o usuário só vê o resultado final):
-   *   1. espera o slot estar VISÍVEL/PINTADO (`estaVisivel`: display, visibility,
-   *      opacity de TODA a cadeia + altura > 0 — pega a transição de página/aba);
-   *   2. mede a altura FINAL do slot em px → `--kanban-final-height`;
-   *   3. espera DOIS `requestAnimationFrame`;
-   *   4. só então liga `kanban-em-entrada`.
-   * Antes disso, os frames A/B são `height: 0` e SEM `animation-name` — o navegador
-   * tem um estado inicial real para animar.
-   */
-  useEffect(() => {
-    if (!isActive) return;
-    let r1 = 0;
-    let r2 = 0;
-    let t = 0;
-    let vivo = true;
-    const tentar = () => {
-      if (!vivo) return;
-      const no = slotRef.current;
-      if (!estaVisivel(no)) {
-        t = window.setTimeout(tentar, 32);
-        return;
-      }
-      setAlturaFinal(Math.round(no!.getBoundingClientRect().height));
-      r1 = window.requestAnimationFrame(() => {
-        r2 = window.requestAnimationFrame(() => {
-          if (vivo) setPodeAnimar(true);
-        });
-      });
-    };
-    r1 = window.requestAnimationFrame(tentar);
-    return () => {
-      vivo = false;
-      window.cancelAnimationFrame(r1);
-      window.cancelAnimationFrame(r2);
-      window.clearTimeout(t);
-    };
-  }, [isActive]);
-
-  /**
-   * Depois que a coreografia termina, troca `kanban-em-entrada` por
-   * `kanban-coluna-concluida`: altura final estável (100% responsivo) e cards
-   * adicionados/movidos depois entram JÁ visíveis.
-   */
-  useEffect(() => {
-    if (!isActive || !podeAnimar) return;
-    // `prefers-reduced-motion` encurta TUDO (ver o bloco do Kanban no `index.css`).
-    const reduzido = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-    const total = reduzido
-      ? indice * PASSO_COLUNA_REDUZIDO_MS + delayRodapeReduzidoMs(items.length) + 240 + 150
-      : indice * PASSO_COLUNA_MS + delayRodapeMs(items.length) + 380 + 150;
-    const id = window.setTimeout(() => setEntradaConcluida(true), total);
-    return () => window.clearTimeout(id);
-  }, [isActive, podeAnimar, indice, items.length]);
-
-  const emEntrada = podeAnimar && !entradaConcluida;
-  const concluida = podeAnimar && entradaConcluida;
-  const estilo: VarsEntrada = {
-    '--kanban-index': indice,
-    '--kanban-footer-delay': `${delayRodapeMs(items.length)}ms`,
-    '--kanban-footer-delay-reduzido': `${delayRodapeReduzidoMs(items.length)}ms`,
-  };
-  if (alturaFinal != null) estilo['--kanban-final-height'] = `${alturaFinal}px`;
+  // MESMO gatilho do Pipeline (mecanismo compartilhado em `components/kanban`):
+  // mede o slot, liga `kanban-em-entrada` e depois `kanban-coluna-concluida`.
+  const { refColuna, emEntrada, concluida, estilo } = useEntradaKanbanColuna({
+    isActive,
+    indice,
+    totalCards: items.length,
+    setNodeRef,
+  });
 
   return (
     <div

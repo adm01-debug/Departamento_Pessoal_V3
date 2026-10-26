@@ -1,0 +1,848 @@
+{
+  "cenarios": {
+    "umEvento": {
+      "width": 940,
+      "height": 416,
+      "top": 242,
+      "bottom": 658,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 243,
+          "bottom": 354,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 354,
+          "bottom": 394,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 394,
+          "bottom": 475,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 476,
+          "bottom": 600,
+          "height": 125,
+          "scrollH": 125,
+          "clientH": 125,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 603,
+          "bottom": 660,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 19,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    },
+    "etapa-triagem": {
+      "width": 940,
+      "height": 416,
+      "top": 242,
+      "bottom": 658,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 243,
+          "bottom": 354,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 354,
+          "bottom": 394,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 394,
+          "bottom": 475,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 476,
+          "bottom": 600,
+          "height": 125,
+          "scrollH": 125,
+          "clientH": 125,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 602,
+          "bottom": 659,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 18,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    },
+    "etapa-entrevista": {
+      "width": 940,
+      "height": 521,
+      "top": 190,
+      "bottom": 710,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 191,
+          "bottom": 302,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 302,
+          "bottom": 341,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 341,
+          "bottom": 423,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 424,
+          "bottom": 654,
+          "height": 230,
+          "scrollH": 230,
+          "clientH": 230,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 656,
+          "bottom": 713,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 18,
+      "registros": "2",
+      "etapaAtual": "Entrevista",
+      "avanco": "Avançar para Teste Técnico",
+      "score": true,
+      "overflowX": false
+    },
+    "etapa-teste": {
+      "width": 940,
+      "height": 649,
+      "top": 125,
+      "bottom": 775,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 126,
+          "bottom": 237,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 237,
+          "bottom": 277,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 278,
+          "bottom": 359,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 361,
+          "bottom": 719,
+          "height": 358,
+          "scrollH": 358,
+          "clientH": 358,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 722,
+          "bottom": 779,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 19,
+      "registros": "3",
+      "etapaAtual": "Teste Técnico",
+      "avanco": "Avançar para Proposta",
+      "score": true,
+      "overflowX": false
+    },
+    "etapa-proposta": {
+      "width": 940,
+      "height": 589,
+      "top": 155,
+      "bottom": 745,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 156,
+          "bottom": 267,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 267,
+          "bottom": 307,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 308,
+          "bottom": 389,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 391,
+          "bottom": 689,
+          "height": 298,
+          "scrollH": 298,
+          "clientH": 298,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 692,
+          "bottom": 749,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 19,
+      "registros": "3",
+      "etapaAtual": "Proposta",
+      "avanco": "Avançar para Contratado",
+      "score": true,
+      "overflowX": false
+    },
+    "etapa-contratado": {
+      "width": 940,
+      "height": 664,
+      "top": 118,
+      "bottom": 782,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 119,
+          "bottom": 230,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 230,
+          "bottom": 270,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 271,
+          "bottom": 352,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 354,
+          "bottom": 727,
+          "height": 373,
+          "scrollH": 373,
+          "clientH": 373,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 729,
+          "bottom": 786,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 18,
+      "registros": "4",
+      "etapaAtual": "Contratado",
+      "avanco": null,
+      "score": true,
+      "overflowX": false
+    },
+    "multiplosEventos": {
+      "width": 940,
+      "height": 664,
+      "top": 118,
+      "bottom": 782,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 119,
+          "bottom": 230,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 230,
+          "bottom": 270,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 270,
+          "bottom": 351,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 353,
+          "bottom": 726,
+          "height": 373,
+          "scrollH": 373,
+          "clientH": 373,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 728,
+          "bottom": 785,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 18,
+      "registros": "4",
+      "etapaAtual": "Contratado",
+      "avanco": null,
+      "score": true,
+      "overflowX": false
+    },
+    "multiplosEventosTablet": {
+      "width": 748,
+      "height": 664,
+      "top": 180,
+      "bottom": 844,
+      "maxHeight": "921.6px",
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 181,
+          "bottom": 292,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 292,
+          "bottom": 332,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 332,
+          "bottom": 413,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 413,
+          "bottom": 786,
+          "height": 373,
+          "scrollH": 373,
+          "clientH": 373,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 786,
+          "bottom": 843,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 16,
+      "registros": "4",
+      "etapaAtual": "Contratado",
+      "avanco": null,
+      "score": true,
+      "overflowX": false
+    },
+    "multiplosEventosBaixo": {
+      "width": 940,
+      "height": 558,
+      "top": 31,
+      "bottom": 589,
+      "maxHeight": "558px",
+      "viewport": {
+        "w": 1366,
+        "h": 620
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 32,
+          "bottom": 143,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 143,
+          "bottom": 183,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 183,
+          "bottom": 264,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 264,
+          "bottom": 531,
+          "height": 267,
+          "scrollH": 373,
+          "clientH": 267,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 531,
+          "bottom": 588,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": -90,
+      "registros": "4",
+      "etapaAtual": "Contratado",
+      "avanco": null,
+      "score": true,
+      "overflowX": false,
+      "scrollDoHistorico": {
+        "scrollTop": 106,
+        "scrollH": 373,
+        "clientH": 267
+      }
+    }
+  },
+  "viewports": {
+    "1920x1080": {
+      "width": 940,
+      "height": 416,
+      "top": 332,
+      "bottom": 748,
+      "maxHeight": "972px",
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 333,
+          "bottom": 444,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 444,
+          "bottom": 484,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 484,
+          "bottom": 565,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 565,
+          "bottom": 690,
+          "height": 125,
+          "scrollH": 125,
+          "clientH": 125,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 690,
+          "bottom": 747,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 16,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    },
+    "1600x900": {
+      "width": 940,
+      "height": 416,
+      "top": 242,
+      "bottom": 658,
+      "maxHeight": "810px",
+      "viewport": {
+        "w": 1600,
+        "h": 900
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 243,
+          "bottom": 354,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 354,
+          "bottom": 394,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 394,
+          "bottom": 475,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 475,
+          "bottom": 600,
+          "height": 125,
+          "scrollH": 125,
+          "clientH": 125,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 600,
+          "bottom": 657,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 16,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    },
+    "1366x768": {
+      "width": 940,
+      "height": 416,
+      "top": 176,
+      "bottom": 592,
+      "maxHeight": "691.2px",
+      "viewport": {
+        "w": 1366,
+        "h": 768
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 177,
+          "bottom": 288,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 288,
+          "bottom": 328,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 328,
+          "bottom": 409,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 409,
+          "bottom": 534,
+          "height": 125,
+          "scrollH": 125,
+          "clientH": 125,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 534,
+          "bottom": 591,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 16,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    },
+    "768x1024": {
+      "width": 748,
+      "height": 416,
+      "top": 304,
+      "bottom": 720,
+      "maxHeight": "921.6px",
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 305,
+          "bottom": 416,
+          "height": 111,
+          "scrollH": 110,
+          "clientH": 110,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 416,
+          "bottom": 456,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 456,
+          "bottom": 537,
+          "height": 81,
+          "scrollH": 80,
+          "clientH": 80,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 537,
+          "bottom": 662,
+          "height": 125,
+          "scrollH": 125,
+          "clientH": 125,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 662,
+          "bottom": 719,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 16,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    },
+    "390x844": {
+      "width": 370,
+      "height": 458,
+      "top": 193,
+      "bottom": 651,
+      "maxHeight": "759.6px",
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "faixas": {
+        "cabecalho": {
+          "top": 194,
+          "bottom": 333,
+          "height": 139,
+          "scrollH": 138,
+          "clientH": 138,
+          "overflowY": "visible"
+        },
+        "contato": {
+          "top": 333,
+          "bottom": 373,
+          "height": 40,
+          "scrollH": 39,
+          "clientH": 39,
+          "overflowY": "visible"
+        },
+        "etapas": {
+          "top": 373,
+          "bottom": 453,
+          "height": 80,
+          "scrollH": 79,
+          "clientH": 79,
+          "overflowY": "visible"
+        },
+        "historico": {
+          "top": 453,
+          "bottom": 593,
+          "height": 140,
+          "scrollH": 140,
+          "clientH": 140,
+          "overflowY": "auto"
+        },
+        "rodape": {
+          "top": 593,
+          "bottom": 650,
+          "height": 57,
+          "scrollH": 56,
+          "clientH": 56,
+          "overflowY": "visible"
+        }
+      },
+      "vaoUltimoEventoRodape": 16,
+      "registros": "1",
+      "etapaAtual": "Triagem",
+      "avanco": "Avançar para Entrevista",
+      "score": false,
+      "overflowX": false
+    }
+  },
+  "erros": [
+    "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "fechouPeloX": true,
+  "kanbanDepois": {
+    "cards": 12,
+    "scrollAntes": 0,
+    "scrollDepois": 102,
+    "scrollFunciona": true
+  }
+}

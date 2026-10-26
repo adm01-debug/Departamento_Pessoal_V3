@@ -15,7 +15,7 @@
  * `bg-background/85` com borda discreta e sombra curta — nunca branco/cinza.
  * ============================================================================
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { ArrowRight, CalendarDays, ExternalLink, Mail, MoreVertical, Star, UserRound } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -308,12 +308,15 @@ export function PipelineCard({ cand, etapa, dragging, onAbrir, onMoverEtapa, onC
 export function DraggablePipelineCard({
   cand,
   etapa,
+  cardIndex,
   onAbrir,
   onMoverEtapa,
   onContatar,
 }: {
   cand: CandidaturaComRelacoes;
   etapa: EtapaPipeline;
+  /** Posição do card NA COLUNA — vira `--card-index` (stagger de 100ms no CSS). */
+  cardIndex: number;
   onAbrir: (cand: CandidaturaComRelacoes) => void;
   onMoverEtapa: MoverEtapaHandler;
   onContatar: (cand: CandidaturaComRelacoes) => void;
@@ -323,28 +326,33 @@ export function DraggablePipelineCard({
     id: cand.id,
     disabled: !arrastavel,
   });
+  // `--card-index` alimenta o stagger `kanban-card-in` (100ms por card). O wrapper
+  // EXTERNO anima; o nó do dnd-kit é o INTERNO — os dois transforms não competem.
+  const estiloCard = { '--card-index': cardIndex } as CSSProperties & Record<'--card-index', number>;
 
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      data-candidato-card={cand.id}
-      data-pipeline-arrastavel={arrastavel ? 'true' : 'false'}
-      onClick={(event) => {
-        // Cliques nos botões internos (menu de ações) são do Radix: não abrem o
-        // dossiê. O card em si continua sendo a área de clique/drag.
-        if ((event.target as HTMLElement).closest('button')) return;
-        onAbrir(cand);
-      }}
-      className={cn(
-        // `pan-y`: rolagem vertical (página/lista) continua nativa; o arraste
-        // horizontal intencional inicia o DnD, sem "roubar" o scroll no toque.
-        'touch-pan-y rounded-xl outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50',
-        isDragging && 'opacity-30'
-      )}
-    >
-      <PipelineCard cand={cand} etapa={etapa} onAbrir={onAbrir} onMoverEtapa={onMoverEtapa} onContatar={onContatar} />
+    <div className="kanban-card" style={estiloCard}>
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        data-candidato-card={cand.id}
+        data-pipeline-arrastavel={arrastavel ? 'true' : 'false'}
+        onClick={(event) => {
+          // Cliques nos botões internos (menu de ações) são do Radix: não abrem o
+          // dossiê. O card em si continua sendo a área de clique/drag.
+          if ((event.target as HTMLElement).closest('button')) return;
+          onAbrir(cand);
+        }}
+        className={cn(
+          // `pan-y`: rolagem vertical (página/lista) continua nativa; o arraste
+          // horizontal intencional inicia o DnD, sem "roubar" o scroll no toque.
+          'touch-pan-y rounded-xl outline-hidden focus-visible:ring-2 focus-visible:ring-primary/50',
+          isDragging && 'opacity-30'
+        )}
+      >
+        <PipelineCard cand={cand} etapa={etapa} onAbrir={onAbrir} onMoverEtapa={onMoverEtapa} onContatar={onContatar} />
+      </div>
     </div>
   );
 }

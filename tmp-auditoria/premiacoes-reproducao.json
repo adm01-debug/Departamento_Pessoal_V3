@@ -1,0 +1,35 @@
+{
+  "estado": {
+    "url": "http://localhost:8080/premiacoes",
+    "titulo": "Premiações & Renda Variável 10/10 | Sistema DP",
+    "instabilidade": false,
+    "login": false,
+    "textoInicial": "Pular para o conteúdo principal\nTIME | PROMO BRINDES\n\nGestão de Pessoas\n\n[E2E-SEED] NAO É UMA EMPRESA REAL\nBuscar...\n⌘\nK\nMeu Portal\nPrincipal\nDashboard\nDashboard Executivo\nPassivo Trabalhista\nColaboradores\n15\nOrganograma\nAssistente IA\nGestão de Pessoas\nAdmissões\nOnboarding\nDesligamentos\nAvaliação & Performance\nPremiações 10/10\nTreinamentos\nRecrutamento\nPesquisas Clima\nTempo & Ausências\nPonto\nHoras"
+  },
+  "pageErrors": [],
+  "consoleErrors": [
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. ",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "falhas": [
+    {
+      "url": "https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/security_alerts?select=*&resolved=eq.false",
+      "metodo": "HEAD",
+      "erro": "net::ERR_ABORTED",
+      "tipo": "fetch"
+    },
+    {
+      "url": "https://frjbfeamybqsejlvmqbl.supabase.co/rest/v1/colaboradores?select=*&status=eq.ativo",
+      "metodo": "HEAD",
+      "erro": "net::ERR_ABORTED",
+      "tipo": "fetch"
+    }
+  ],
+  "modulosNao200": []
+}

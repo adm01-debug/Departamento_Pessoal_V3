@@ -59,3 +59,17 @@ export const linhaTabelaVariants: Variants = {
     },
   }),
 };
+
+/**
+ * Variante ESTÁTICA para `prefers-reduced-motion`: as linhas já nascem
+ * visíveis, sem deslocamento, escala, atraso ou cascata.
+ *
+ * Fica ao lado da variante animada porque é o mesmo mecanismo de linha, mas NÃO
+ * substitui `linhaTabelaVariants`: Desligamentos continua com o comportamento
+ * existente. Consumidores que precisam cumprir acessibilidade (Recrutamento →
+ * Candidatos) optam por esta variante quando `useMovimentoReduzido()` é true.
+ */
+export const linhaTabelaVariantsReduzido: Variants = {
+  hidden: { opacity: 1, y: 0, scaleX: 1 },
+  visible: { opacity: 1, y: 0, scaleX: 1, transition: { duration: 0 } },
+};

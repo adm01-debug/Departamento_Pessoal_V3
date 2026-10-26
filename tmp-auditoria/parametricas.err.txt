@@ -1,0 +1,7 @@
+[parametricas] /assinar-contrato/token-inexistente-e2e ok http://localhost:8080/assinar-contrato/token-inexistente-e2e
+[parametricas] /verificar-contrato/hash-inexistente-e2e ok http://localhost:8080/verificar-contrato/hash-inexistente-e2e
+[parametricas] /ciencia-medida/token-inexistente-e2e ok http://localhost:8080/ciencia-medida/token-inexistente-e2e
+[parametricas] /colaboradores/editar/id-inexistente-e2e ok http://localhost:8080/colaboradores/editar/id-inexistente-e2e
+[parametricas] /colaboradores/id-inexistente-e2e ok http://localhost:8080/colaboradores/id-inexistente-e2e
+[parametricas] /empresas/editar/id-inexistente-e2e ok http://localhost:8080/empresas/editar/id-inexistente-e2e
+[parametricas] /rota-inexistente-e2e ok http://localhost:8080/rota-inexistente-e2e

@@ -1,0 +1,672 @@
+{
+  "viewports": {
+    "1920x1080": {
+      "root": {
+        "top": 232,
+        "height": 1055,
+        "width": 1400
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 453,
+          "height": 343,
+          "width": 625
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 453,
+          "height": 343,
+          "width": 410
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 453,
+          "height": 343,
+          "width": 332
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 812,
+          "height": 314,
+          "width": 444
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 812,
+          "height": 314,
+          "width": 488
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 812,
+          "height": 314,
+          "width": 436
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 1142,
+          "height": 145,
+          "width": 1400
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 289,
+          "height": 148,
+          "width": 338
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 289,
+          "height": 148,
+          "width": 338
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 289,
+          "height": 148,
+          "width": 338
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 289,
+          "height": 148,
+          "width": 338
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 545,
+        "height": 234,
+        "width": 376
+      },
+      "rolagemHorizontal": false,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 1920,
+        "h": 1080
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas TRIAGEM 4 100% da entrada ENTREVISTA 3 75% da entrada TESTE 2 50% da entrada PROPOSTA 2 50% da entrada CONTRATADO 1 25% da entrada CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIO"
+    },
+    "1600x900": {
+      "root": {
+        "top": 232,
+        "height": 1055,
+        "width": 1296
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 453,
+          "height": 343,
+          "width": 578
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 453,
+          "height": 343,
+          "width": 379
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 453,
+          "height": 343,
+          "width": 307
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 812,
+          "height": 314,
+          "width": 411
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 812,
+          "height": 314,
+          "width": 451
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 812,
+          "height": 314,
+          "width": 403
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 1142,
+          "height": 145,
+          "width": 1296
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 289,
+          "height": 148,
+          "width": 312
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 289,
+          "height": 148,
+          "width": 312
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 289,
+          "height": 148,
+          "width": 312
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 289,
+          "height": 148,
+          "width": 312
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 545,
+        "height": 234,
+        "width": 345
+      },
+      "rolagemHorizontal": false,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 1600,
+        "h": 900
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas TRIAGEM 4 100% da entrada ENTREVISTA 3 75% da entrada TESTE 2 50% da entrada PROPOSTA 2 50% da entrada CONTRATADO 1 25% da entrada CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIO"
+    },
+    "1440x900": {
+      "root": {
+        "top": 232,
+        "height": 1055,
+        "width": 1136
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 453,
+          "height": 343,
+          "width": 505
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 453,
+          "height": 343,
+          "width": 331
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 453,
+          "height": 343,
+          "width": 268
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 812,
+          "height": 314,
+          "width": 359
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 812,
+          "height": 314,
+          "width": 394
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 812,
+          "height": 314,
+          "width": 352
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 1142,
+          "height": 145,
+          "width": 1136
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 289,
+          "height": 148,
+          "width": 272
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 289,
+          "height": 148,
+          "width": 272
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 289,
+          "height": 148,
+          "width": 272
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 289,
+          "height": 148,
+          "width": 272
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 545,
+        "height": 234,
+        "width": 297
+      },
+      "rolagemHorizontal": false,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 1440,
+        "h": 900
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas TRIAGEM 4 100% da entrada ENTREVISTA 3 75% da entrada TESTE 2 50% da entrada PROPOSTA 2 50% da entrada CONTRATADO 1 25% da entrada CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIO"
+    },
+    "1366x768": {
+      "root": {
+        "top": 232,
+        "height": 1083,
+        "width": 1062
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 467,
+          "height": 343,
+          "width": 471
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 467,
+          "height": 343,
+          "width": 309
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 467,
+          "height": 343,
+          "width": 250
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 826,
+          "height": 329,
+          "width": 335
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 826,
+          "height": 329,
+          "width": 367
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 826,
+          "height": 329,
+          "width": 328
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 1170,
+          "height": 145,
+          "width": 1062
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 289,
+          "height": 162,
+          "width": 254
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 289,
+          "height": 162,
+          "width": 254
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 289,
+          "height": 162,
+          "width": 254
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 289,
+          "height": 162,
+          "width": 254
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 559,
+        "height": 234,
+        "width": 275
+      },
+      "rolagemHorizontal": false,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 1366,
+        "h": 768
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas TRIAGEM 4 100% da entrada ENTREVISTA 3 75% da entrada TESTE 2 50% da entrada PROPOSTA 2 50% da entrada CONTRATADO 1 25% da entrada CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIO"
+    },
+    "1280x800": {
+      "root": {
+        "top": 232,
+        "height": 1086,
+        "width": 976
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 467,
+          "height": 343,
+          "width": 432
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 467,
+          "height": 343,
+          "width": 283
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 467,
+          "height": 343,
+          "width": 229
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 826,
+          "height": 332,
+          "width": 307
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 826,
+          "height": 332,
+          "width": 337
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 826,
+          "height": 332,
+          "width": 301
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 1174,
+          "height": 145,
+          "width": 976
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 289,
+          "height": 162,
+          "width": 232
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 289,
+          "height": 162,
+          "width": 232
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 289,
+          "height": 162,
+          "width": 232
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 289,
+          "height": 162,
+          "width": 232
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 582,
+        "height": 211,
+        "width": 249
+      },
+      "rolagemHorizontal": false,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 1280,
+        "h": 800
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas TRIAGEM 4 100% da entrada ENTREVISTA 3 75% da entrada TESTE 2 50% da entrada PROPOSTA 2 50% da entrada CONTRATADO 1 25% da entrada CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIO"
+    },
+    "768x1024": {
+      "root": {
+        "top": 288,
+        "height": 2199,
+        "width": 464
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 729,
+          "height": 343,
+          "width": 464
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 1088,
+          "height": 352,
+          "width": 224
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 1088,
+          "height": 352,
+          "width": 224
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 1456,
+          "height": 464,
+          "width": 224
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 1456,
+          "height": 464,
+          "width": 224
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 1936,
+          "height": 314,
+          "width": 464
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 2266,
+          "height": 221,
+          "width": 464
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 373,
+          "height": 162,
+          "width": 224
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 373,
+          "height": 162,
+          "width": 224
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 551,
+          "height": 162,
+          "width": 224
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 551,
+          "height": 162,
+          "width": 224
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 1233,
+        "height": 190,
+        "width": 190
+      },
+      "rolagemHorizontal": true,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 768,
+        "h": 1024
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas TRIAGEM 4 100% da entrada ENTREVISTA 3 75% da entrada TESTE 2 50% da entrada PROPOSTA 2 50% da entrada CONTRATADO 1 25% da entrada CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIO"
+    },
+    "390x844": {
+      "root": {
+        "top": 332,
+        "height": 3416,
+        "width": 342
+      },
+      "paineis": [
+        {
+          "titulo": "Funil de recrutamento",
+          "top": 1058,
+          "height": 588,
+          "width": 342
+        },
+        {
+          "titulo": "Evolução de candidaturas",
+          "top": 1657,
+          "height": 299,
+          "width": 342
+        },
+        {
+          "titulo": "Principais origens",
+          "top": 1968,
+          "height": 300,
+          "width": 342
+        },
+        {
+          "titulo": "Tempo médio por etapa",
+          "top": 2282,
+          "height": 380,
+          "width": 342
+        },
+        {
+          "titulo": "Pontos de atenção",
+          "top": 2674,
+          "height": 332,
+          "width": 342
+        },
+        {
+          "titulo": "Desempenho por vaga",
+          "top": 3017,
+          "height": 329,
+          "width": 342
+        },
+        {
+          "titulo": "Principais indicadores",
+          "top": 3360,
+          "height": 388,
+          "width": 342
+        }
+      ],
+      "kpis": [
+        {
+          "id": "vagas",
+          "texto": "VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas",
+          "top": 415,
+          "height": 148,
+          "width": 342
+        },
+        {
+          "id": "candidatos",
+          "texto": "TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação",
+          "top": 575,
+          "height": 148,
+          "width": 342
+        },
+        {
+          "id": "processos",
+          "texto": "PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído",
+          "top": 735,
+          "height": 148,
+          "width": 342
+        },
+        {
+          "id": "conversao",
+          "texto": "TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas",
+          "top": 895,
+          "height": 148,
+          "width": 342
+        }
+      ],
+      "temGrafico": true,
+      "grafico": {
+        "top": 1749,
+        "height": 190,
+        "width": 308
+      },
+      "rolagemHorizontal": true,
+      "rootOverflowX": false,
+      "viewport": {
+        "w": 390,
+        "h": 844
+      },
+      "texto": "Visão analítica do recrutamento Funil, origens e desempenho derivados da base atual do módulo. Base de referência: 06 set 2026 VAGAS ABERTAS 4 +200% novas vagas vs. 45 dias anteriores 4 de 5 vagas cadastradas TOTAL DE CANDIDATOS 10 +250% novos candidatos vs. 45 dias anteriores 5 origens de captação PROCESSOS ATIVOS 11 +350% novos processos vs. 45 dias anteriores 1 processo concluído TAXA DE CONVERSÃO 8,3% +11,1 p.p. conversão vs. 45 dias anteriores 1 de 12 candidaturas Funil de recrutamento Volume, retenção e conversão entre as etapas 12 candidaturas RETENÇÃO SOBRE A ENTRADA DO FUNIL Triagem 100% 4 Entrevista 75% 3 Teste Técnico 50% 2 Proposta 50% 2 Contratado 25% 1 CONVERSÃO ENTRE ETAPAS etapa seguinte ÷ anterior Triagem → Entrevista 75% Entrevista → Teste Técnico 66,7% Teste Técnico → Proposta 100% Proposta → Contratado 50% MAIOR RETENÇÃO Teste Técnico → Proposta 100% MAIOR QUEDA Propo"
+    }
+  },
+  "periodos": {
+    "dozeMeses": {
+      "subtitulo": "Evolução de candidaturas Candidaturas e contratações · 12 meses Candidaturas Contratações 12 meses JUL Candidaturas: 2 Contratações: 0 out nov dez jan fev mar a",
+      "temGrafico": true
+    }
+  },
+  "erros": [
+    "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ]
+}

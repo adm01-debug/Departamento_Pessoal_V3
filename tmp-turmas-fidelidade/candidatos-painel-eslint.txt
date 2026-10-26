@@ -1,0 +1,2 @@
+npm notice run departamento-pessoal@18.0.1 npx
+npm notice run eslint src/components/recrutamento/CandidatosPainel.tsx

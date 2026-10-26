@@ -1,8 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { recrutamentoService } from '@/services/recrutamentoService';
@@ -14,9 +12,6 @@ import {
   Users,
   Filter,
   BarChart3,
-  Mail,
-  Phone,
-  Clock,
   Search,
   X,
   LayoutGrid,
@@ -41,7 +36,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 // ENTRADA DE CARD — MESMO mecanismo do Dashboard Executivo (`cardVariants` de
 // `components/dashboard/MetricCard.tsx`, empacotado aqui): fade + subida de
 // 20px, 0.4s, ease `[0.25, 0.46, 0.45, 0.94]` e stagger de 0.08s por índice
@@ -49,9 +43,11 @@ import { cn } from '@/lib/utils';
 // usam `MotionCard`/`entradaCard(i)` e os blocos que NÃO são `Card` (card do
 // kanban, cabeçalho de coluna, item da timeline) usam `motion.*` com o MESMO
 // `{...entradaCard(i)}` — a cascata inteira sai de um único lugar.
-import { EntradaPresenca, MotionCard, entradaCard } from '@/components/ui/entrada-cards';
-import { CandidatoTimeline } from '@/components/recrutamento/CandidatoTimeline';
+import { EntradaPresenca } from '@/components/ui/entrada-cards';
+import { CandidatoDetalhesDialog } from '@/components/recrutamento/CandidatoDetalhesDialog';
+import { AnalyticsRecrutamento } from '@/components/recrutamento/AnalyticsRecrutamento';
 import { VagasPainel } from '@/components/recrutamento/VagasPainel';
+import { CandidatosPainel } from '@/components/recrutamento/CandidatosPainel';
 import { PipelineBoard } from '@/components/recrutamento/PipelineBoard';
 import { ETAPAS, filtrarCandidaturas } from '@/components/recrutamento/pipelineEtapas';
 import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
@@ -75,10 +71,6 @@ const TABS_PIPELINE = [
   { value: 'analytics', label: 'Analytics', icone: BarChart3 },
 ] as const;
 
-/** Alturas (px) das barras do gráfico "Distribuição por Etapa". */
-const ALTURA_MAX_BARRA = 120;
-const ALTURA_MIN_BARRA = 12;
-
 export default function RecrutamentoPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
@@ -87,6 +79,14 @@ export default function RecrutamentoPage() {
   const [busca, setBusca] = useState('');
   const buscaRef = useRef<HTMLInputElement>(null);
   const [selectedCandidatura, setSelectedCandidatura] = useState<CandidaturaComRelacoes | null>(null);
+  /**
+   * `selectedCandidatura` guarda o DOSSÊ do candidato (dados) e `detalhesAbertos`
+   * é quem manda no `open` do diálogo — o mesmo par usado pela janela de
+   * Detalhes da Admissão (`admissaoDoModal` + `selectedAdmissao`). Fechar NÃO
+   * descarta os dados: assim o conteúdo permanece na tela durante a animação de
+   * saída do `AnimatePresence` e o próximo clique só troca o candidato.
+   */
+  const [detalhesAbertos, setDetalhesAbertos] = useState(false);
   // "Nova Vaga": diálogo CONTROLADO (o card "Criar Nova Vaga" do grid abre o
   // mesmo diálogo do cabeçalho) + campos do formulário.
   const [novaVagaAberta, setNovaVagaAberta] = useState(false);
@@ -142,7 +142,12 @@ export default function RecrutamentoPage() {
    * processo — sem esta leitura separada, filtrar o Pipeline mudava os KPIs das
    * outras abas.
    */
-  const { data: candidaturasTodas = [], isLoading: loadCandidaturasTodas } = useQuery<CandidaturaComRelacoes[]>({
+  const {
+    data: candidaturasTodas = [],
+    isLoading: loadCandidaturasTodas,
+    isError: erroCandidaturasTodas,
+    refetch: recarregarCandidaturasTodas,
+  } = useQuery<CandidaturaComRelacoes[]>({
     queryKey: ['candidaturas-todas', empresaAtual?.id],
     queryFn: async () =>
       (getMockCandidaturas() as CandidaturaComRelacoes[] | undefined) ??
@@ -164,6 +169,12 @@ export default function RecrutamentoPage() {
     },
     onError: () => toast.error('Não foi possível mover o candidato de etapa. Tente novamente.'),
   });
+
+  /** Abre o dossiê do candidato (card do kanban e listagem de candidatos). */
+  const abrirDetalhes = (cand: CandidaturaComRelacoes) => {
+    setSelectedCandidatura(cand);
+    setDetalhesAbertos(true);
+  };
 
   /**
    * Move a candidatura (menu do card E arrastar-e-soltar). No modo demonstração
@@ -246,19 +257,6 @@ export default function RecrutamentoPage() {
 
   const isLoading = loadVagas || loadCandidaturas || loadCandidatos || loadCandidaturasTodas;
 
-  /**
-   * Contagem por etapa do funil — fonte única do kanban, do estado vazio de cada
-   * coluna e do gráfico "Distribuição por Etapa" (as três filtravam a mesma
-   * lista de novo, várias vezes por render).
-   */
-  const contarPorEtapa = (lista: CandidaturaComRelacoes[]) => {
-    const base: Record<string, number> = Object.fromEntries(ETAPAS.map((e) => [e.id, 0]));
-    for (const c of lista) {
-      const etapa = c.etapa || 'triagem';
-      base[etapa] = (base[etapa] ?? 0) + 1;
-    }
-    return base;
-  };
   // Kanban: respeita o filtro da vaga (query) + a busca do topo (client-side).
   // As habilidades vêm da vaga já carregada pela página (sem consulta nova).
   const candidaturasPipeline = useMemo(() => {
@@ -271,14 +269,6 @@ export default function RecrutamentoPage() {
     }));
     return filtrarCandidaturas(enriquecidas, busca);
   }, [candidaturas, vagas, busca]);
-  // Analytics/gráfico: processo inteiro, sem o filtro do kanban.
-  const contagemPorEtapaTotal = useMemo(() => contarPorEtapa(candidaturasTodas), [candidaturasTodas]);
-
-  const contratados = contagemPorEtapaTotal.contratado ?? 0;
-  // KPI das Analytics derivado das próprias linhas (mock em demonstração, banco
-  // fora dele) — antes era um "4.2%" chumbado na tela.
-  const taxaConversao =
-    candidaturasTodas.length > 0 ? ((contratados / candidaturasTodas.length) * 100).toFixed(1) : '0.0';
 
   return (
     // `reducedMotion` vem da FONTE ÚNICA (`src/lib/motionMode.ts`): em produção
@@ -470,7 +460,8 @@ export default function RecrutamentoPage() {
                 <TabsContent value="pipeline" className="mt-5 sm:mt-6">
                   <PipelineBoard
                     candidaturas={candidaturasPipeline}
-                    onAbrir={setSelectedCandidatura}
+                    isActive={activeTab === 'pipeline'}
+                    onAbrir={abrirDetalhes}
                     onMoverEtapa={moverEtapa}
                     onContatar={(cand) =>
                       simularAcaoRecrutamento(
@@ -495,260 +486,42 @@ export default function RecrutamentoPage() {
                   />
                 </TabsContent>
                 {/* CANDIDATOS */}
-                <TabsContent value="candidatos" className="mt-0">
-                  <Card className="rounded-3xl border-border/40 overflow-hidden shadow-xs">
-                    <CardContent className="p-0">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="bg-muted/30 border-b">
-                              <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Candidato
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Contato
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Experiência
-                              </th>
-                              <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Pretensão
-                              </th>
-                              <th className="px-6 py-4 text-right font-medium text-[11px] uppercase tracking-wider text-muted-foreground">
-                                Ações
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-border/30">
-                            {candidatos.map((cand: CandidatoRow) => (
-                              <tr key={cand.id} className="hover:bg-primary/[0.02] transition-colors group">
-                                <td className="px-6 py-4">
-                                  <div className="flex items-center gap-3">
-                                    <div className="h-9 w-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-medium">
-                                      {cand.nome?.charAt(0)}
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-sm text-foreground">{cand.nome}</p>
-                                      <p className="text-[10px] text-muted-foreground">{cand.origem || 'Website'}</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <div className="flex flex-col gap-0.5">
-                                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                      <Mail className="h-3 w-3" /> {cand.email}
-                                    </span>
-                                    {cand.telefone && (
-                                      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                        <Phone className="h-3 w-3" /> {cand.telefone}
-                                      </span>
-                                    )}
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                  <Badge variant="secondary" className="rounded-lg bg-slate-100 font-medium">
-                                    {cand.experiencia_anos} anos
-                                  </Badge>
-                                </td>
-                                <td className="px-6 py-4 font-display font-medium text-success">
-                                  {cand.pretensao_salarial
-                                    ? `R$ ${cand.pretensao_salarial.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-                                    : 'N/D'}
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    aria-label="Adicionar"
-                                    className="rounded-xl hover:bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all"
-                                    onClick={() => simularAcaoRecrutamento(`inclusão de ${cand.nome} em outra vaga`)}
-                                  >
-                                    <Plus className="h-4 w-4" />
-                                  </Button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </CardContent>
-                  </Card>
+                <TabsContent value="candidatos" className="mt-4">
+                  <CandidatosPainel
+                    candidaturas={candidaturasTodas}
+                    vagas={vagas}
+                    onVerPerfil={abrirDetalhes}
+                    onMoverEtapa={moverEtapa}
+                    erro={erroCandidaturasTodas}
+                    onTentarNovamente={() => void recarregarCandidaturasTodas()}
+                  />
                 </TabsContent>
 
-                {/* ANALYTICS */}
-                <TabsContent value="analytics" className="mt-0">
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                    {/* RESUMO/KPI DA ABA — `MotionCard` com o índice do mapa, mesma
-                        cascata do Dashboard Executivo (os KPI dele são exatamente
-                        isto: `cardVariants` com `custom={i}`). Antes estes quatro
-                        cards apareciam prontos, sem nenhuma entrada. */}
-                    {[
-                      {
-                        label: 'Vagas Abertas',
-                        value: vagas.filter((v: VagaRow) => v.status === 'aberta').length,
-                        icon: Briefcase,
-                        color: 'text-success',
-                      },
-                      { label: 'Total Candidatos', value: candidatos.length, icon: Users, color: 'text-info' },
-                      {
-                        label: 'Processos Ativos',
-                        value: candidaturasTodas.length,
-                        icon: UserSearch,
-                        color: 'text-primary',
-                      },
-                      {
-                        label: 'Taxa de Conversão',
-                        value: `${taxaConversao}%`,
-                        icon: BarChart3,
-                        color: 'text-warning',
-                      },
-                    ].map((stat, i) => (
-                      <MotionCard key={i} {...entradaCard(i)} className="rounded-2xl border-border/40 shadow-xs">
-                        <CardContent className="p-6 flex items-center gap-4">
-                          <div
-                            className={cn(
-                              'h-12 w-12 rounded-xl bg-muted/30 flex items-center justify-center',
-                              stat.color
-                            )}
-                          >
-                            <stat.icon className="h-6 w-6" />
-                          </div>
-                          <div>
-                            <p className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">
-                              {stat.label}
-                            </p>
-                            <p className="text-2xl font-display font-medium">{stat.value}</p>
-                          </div>
-                        </CardContent>
-                      </MotionCard>
-                    ))}
-                  </div>
-
-                  {/* Card do gráfico — entra como o 5º item da aba (depois dos 4
-                      KPI), fechando a MESMA cascata. As barras continuam
-                      estáticas (só a cor muda no hover): o gráfico entra como um
-                      card, não como uma segunda animação de dados. */}
-                  <MotionCard {...entradaCard(4)} className="rounded-3xl border-border/40 overflow-hidden shadow-xs">
-                    <CardHeader className="pb-0">
-                      <CardTitle className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-                        Distribuição por Etapa
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex items-end gap-2 px-8 pb-8 pt-4">
-                      {ETAPAS.map((e) => {
-                        const count = contagemPorEtapaTotal[e.id] ?? 0;
-                        // Altura em PIXELS: com `height: %` dentro de um pai de
-                        // altura automática a barra resolvia para 0px (gráfico vazio).
-                        const altura = (count / (candidaturasTodas.length || 1)) * ALTURA_MAX_BARRA + ALTURA_MIN_BARRA;
-                        return (
-                          <div key={e.id} className="flex-1 flex flex-col items-center justify-end gap-2">
-                            <div
-                              className={cn(
-                                'w-full rounded-t-lg transition-all duration-500 bg-primary/20 hover:bg-primary/40'
-                              )}
-                              style={{ height: `${altura}px` }}
-                            />
-                            <span className="text-[10px] uppercase font-medium opacity-60">{e.label}</span>
-                          </div>
-                        );
-                      })}
-                    </CardContent>
-                  </MotionCard>
+                {/* ANALYTICS — dashboard completo; toda a matemática e os
+                    painéis vivem em `components/recrutamento/Analytics*`. A
+                    página só entrega as listas que já carregou (sem consulta
+                    nova e sem filtro do kanban). */}
+                <TabsContent value="analytics" className="mt-4">
+                  <AnalyticsRecrutamento
+                    candidaturas={candidaturasTodas}
+                    vagas={vagas}
+                    candidatos={candidatos}
+                  />
                 </TabsContent>
               </>
             )}
           </EntradaPresenca>
         </Tabs>
 
-        {/* Detalhes do Candidato */}
-        <Dialog
-          open={!!selectedCandidatura}
-          onOpenChange={(o) => {
-            if (!o) setSelectedCandidatura(null);
-          }}
-        >
-          <DialogContent className="max-w-2xl rounded-3xl h-[85vh] flex flex-col p-0 overflow-hidden border-none shadow-elevated">
-            {selectedCandidatura && (
-              <>
-                <DialogHeader className="p-5 border-b bg-muted/20">
-                  <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-medium text-xl">
-                      {selectedCandidatura.candidato?.nome?.charAt(0)}
-                    </div>
-                    <div>
-                      <DialogTitle className="font-display">{selectedCandidatura.candidato?.nome}</DialogTitle>
-                      <p className="text-sm text-muted-foreground font-medium">
-                        {selectedCandidatura.vaga?.titulo} • {selectedCandidatura.vaga?.departamento}
-                      </p>
-                    </div>
-                  </div>
-                </DialogHeader>
-                {/* CORPO DO DOSSIÊ — `EntradaPresenca` (sem DOM) para que os
-                    blocos de conteúdo cascateiem quando a janela abre, com o
-                    mesmo `entradaCard` do resto do módulo: contato (0), status
-                    (1) e, em seguida, os itens da timeline dentro do
-                    `CandidatoTimeline`. A moldura da janela continua com a
-                    animação de entrada do próprio diálogo do design system —
-                    aqui só o conteúdo entra em cascata, sem segunda animação no
-                    container. */}
-                <EntradaPresenca>
-                  <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
-                    <div className="grid grid-cols-2 gap-4">
-                      <MotionCard {...entradaCard(0)} className="border-border/40 bg-muted/10 shadow-none">
-                        <CardContent className="p-4 flex flex-col gap-1">
-                          <span className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">
-                            Contato
-                          </span>
-                          <p className="text-sm flex items-center gap-2">
-                            <Mail className="h-3.5 w-3.5" /> {selectedCandidatura.candidato?.email}
-                          </p>
-                          <p className="text-sm flex items-center gap-2">
-                            <Phone className="h-3.5 w-3.5" /> {selectedCandidatura.candidato?.telefone || 'N/A'}
-                          </p>
-                        </CardContent>
-                      </MotionCard>
-                      <MotionCard {...entradaCard(1)} className="border-border/40 bg-muted/10 shadow-none">
-                        <CardContent className="p-4 flex flex-col gap-1">
-                          <span className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">
-                            Status Atual
-                          </span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge className="rounded-lg px-2 bg-primary/10 text-primary border-primary/20 capitalize font-medium">
-                              {ETAPAS.find((e) => e.id === (selectedCandidatura.etapa || 'triagem'))?.label}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground font-medium">
-                              Score: {selectedCandidatura.nota_geral || 'N/D'}
-                            </span>
-                          </div>
-                        </CardContent>
-                      </MotionCard>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-medium uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary" /> Timeline do Processo Seletivo
-                      </h3>
-                      <CandidatoTimeline candidaturaId={selectedCandidatura.id} />
-                    </div>
-                  </div>
-                </EntradaPresenca>
-                <div className="p-5 border-t bg-muted/10 flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-lg font-medium"
-                    onClick={() => setSelectedCandidatura(null)}
-                  >
-                    Fechar Janela
-                  </Button>
-                  <Button size="sm" className="rounded-lg font-medium" onClick={avancarEtapa}>
-                    Avançar para Próxima Etapa
-                  </Button>
-                </div>
-              </>
-            )}
-          </DialogContent>
-        </Dialog>
+        {/* Detalhes do Candidato — janela compacta em faixas. O componente
+            concentra a apresentação; a página continua dona dos dados, do
+            fechamento e de `avancarEtapa` (nenhuma regra de etapa é duplicada). */}
+        <CandidatoDetalhesDialog
+          open={detalhesAbertos}
+          candidatura={selectedCandidatura}
+          onClose={() => setDetalhesAbertos(false)}
+          onAvancar={avancarEtapa}
+        />
       </PageLayout>
     </MotionConfig>
   );
