@@ -151,7 +151,8 @@ jobs:
             20261022000000_qa5_db_fixes.sql \
             20261023000000_qa_r3_fixes.sql \
             20261024000000_qa_r4_fixes.sql \
-            20261027000000_revoke_orphan_secdef.sql
+            20261027000000_revoke_orphan_secdef.sql \
+            20261027120000_qa_r5_fixes.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -265,7 +266,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 25 &&
+              Number(r.ledger_count) === 26 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
