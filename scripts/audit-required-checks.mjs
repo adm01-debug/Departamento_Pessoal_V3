@@ -79,7 +79,24 @@ if (process.env.GITHUB_TOKEN) {
       console.warn(`⚠  W17: não foi possível buscar ruleset vivo (HTTP ${res.status}) — usando apenas baseline.`);
     } else {
       const live = await res.json();
-      const divergent = FULL ? divergentSections(live, baselineRules) : [];
+      // GITHUB_TOKEN (sem admin no repo) recebe `bypass_actors` como null —
+      // a seção só é visível para admins. É a ÚNICA seção conhecidamente
+      // filtrada pela permissão do token: null em qualquer outra é drift
+      // real (ou campo apagado) e deve reprovar, não ser ignorado.
+      const PERMISSION_FILTERED = new Set(['bypass_actors']);
+      const invisible = FULL
+        ? Object.keys(SECTIONS).filter((k) => live[k] == null && PERMISSION_FILTERED.has(k))
+        : [];
+      if (invisible.length > 0) {
+        console.warn(
+          `⚠  seções filtradas pela permissão do token (${invisible.join(', ')}) — não comparadas com o baseline.`
+        );
+      }
+      const divergent = FULL
+        ? divergentSections(live, baselineRules).filter(
+            (k) => !(live[k] == null && PERMISSION_FILTERED.has(k))
+          )
+        : [];
       if (divergent.length > 0) {
         console.error(`❌ ruleset vivo diverge de infra/github/ruleset-main.json em: ${divergent.join(', ')}.`);
         process.exit(1);
