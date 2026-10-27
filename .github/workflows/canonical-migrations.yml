@@ -150,7 +150,8 @@ jobs:
             20261021010000_default_privs_for_role.sql \
             20261022000000_qa5_db_fixes.sql \
             20261023000000_qa_r3_fixes.sql \
-            20261024000000_qa_r4_fixes.sql
+            20261024000000_qa_r4_fixes.sql \
+            20261027000000_revoke_orphan_secdef.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -264,7 +265,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 24 &&
+              Number(r.ledger_count) === 25 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -334,6 +335,7 @@ jobs:
               r.folha_delete_blocks_paga === true &&
               r.contas_admin_bypass === true &&
               r.anonimizar_latest === true &&
+              r.orphan_secdef_revoked === true &&
               r.decrypt_wrapper_ok === true &&
               r.ferias_chk_wide === true &&
               r.qa3_stmts_recorded === true &&

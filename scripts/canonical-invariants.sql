@@ -1,7 +1,7 @@
 SELECT jsonb_build_object(
   'ledger_count', (
     SELECT count(*) FROM supabase_migrations.schema_migrations
-    WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000','20261023000000','20261024000000')
+    WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000','20261023000000','20261024000000','20261027000000')
   ),
   'notificacoes_chk_wide', EXISTS (
     SELECT 1 FROM pg_constraint
@@ -332,6 +332,19 @@ jsonb_build_object(
       'sec-verify-seals-weekly'
     )
   ) = 3,
+  'orphan_secdef_revoked', NOT EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.proname IN (
+        'versao_consolidada_avaliacao',
+        'training_images_track_outcomes'
+      )
+      AND (
+        has_function_privilege('anon', p.oid, 'EXECUTE')
+        OR has_function_privilege('authenticated', p.oid, 'EXECUTE')
+      )
+  ),
   'sec_fns_ok', (
     SELECT count(*) FROM pg_proc p
     JOIN pg_namespace n ON n.oid = p.pronamespace

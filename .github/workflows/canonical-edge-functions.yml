@@ -278,6 +278,18 @@ jobs:
             --use-api \
             --jobs 4
 
+      - name: Garantir origem extra do E2E local (EXTRA_ALLOWED_ORIGINS)
+        run: |
+          set -euo pipefail
+          # E2E autenticado (e2e.yml em main) roda um preview local em
+          # http://127.0.0.1:4173 contra as edges de produção. Sem esta
+          # origem na allowlist do csrf.ts, TODA chamada POST ao bridge
+          # volta 403 e o E2E quebra — mecanismo documentado em
+          # supabase/functions/_shared/csrf.ts e contract.ts.
+          supabase secrets set \
+            EXTRA_ALLOWED_ORIGINS="http://127.0.0.1:4173" \
+            --project-ref "$CANONICAL_REF"
+
       - name: Verificar inventário remoto pós-deploy
         run: |
           set -euo pipefail
