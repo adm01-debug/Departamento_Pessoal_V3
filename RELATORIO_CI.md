@@ -73,11 +73,21 @@ Executado em `/home/ubuntu/repos/Departamento_Pessoal_V3` (Node v22.23.3):
 
 - Corrigido em produção via API: `can_approve_pull_request_reviews` → `true` (permissão do workflow padrão do repo). Sem mudança de código.
 
+### 3.9 E2E autenticado — specs escritas contra UI que divergiu (3 rounds)
+
+- A suíte nunca tinha rodado verde: com login TOTP (#291/#292) e CORS (#293) resolvidos, restaram 12 fails de seletores/rotas desatualizados — corrigidos sem afrouxar asserções:
+  - `#294` (8 fails): `/contratos` → `/contratos-gerados`; página de Operação sem h1 (PageTitle é Helmet) → botão Atualizar + KPIs; headings ambíguos → `.first()`; dropzone só `.xlsx`; KPI real "Não resolvidas"; `networkidle` impossível em página com polling → badge `OK N`; filtro de `BRIDGE_SCHEMA_ERROR` esperado de `user_roles` (denylist intencional sondada pelo diagnóstico).
+  - `#295` (4 fails): empty-states reais (`Nenhum contrato/férias encontrado`) — a `<table>` só existe com dados; listagem de férias mora na aba "Solicitações" (default = Dashboard); badge `enviad|S-1200` duplicado → `.first()`; redirect anônimo precisava de janela > 10s do safety-net de auth-init.
+  - `#296` (1 fail): `browser.newContext()` travava o auth-init (contenção de `navigator.locks` do supabase-js entre contextos da mesma origem — comprovado no trace: spinner 30s+). Trocado pelo mecanismo de `session-expiration.spec.ts` (limpar storage `sb-*` no mesmo contexto → redirect em ~3s).
+- **Resultado: run [40547473599](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/40547473599) — 40 passed, conclusion=success na main.**
+
 ## 4. Gaps e melhorias registradas (baixo risco implementado)
 
 - Invariantes canônicas agora vivem em `scripts/canonical-invariants.sql` (PR #274) — novas invariantes não devem inflar o YAML (limite de expressão do Actions = 21k chars).
 - `workflows-report` depende da permissão de PR do GITHUB_TOKEN — agora habilitada; se voltar a falhar, checar o setting `actions/permissions/workflow`.
 - E2E autenticado depende do secret `E2E_TOTP_SECRET` (seed do fator TOTP de `admin@teste.local`) — se o fator for recriado, atualizar o secret.
+- Contexto anônimo novo (`browser.newContext()`) trava o auth-init do supabase-js — usar sempre o padrão de `session-expiration.spec.ts` (limpar storage `sb-*` no mesmo contexto) para cenários deslogados.
+- `post-deploy-smoke` e `Integridade do banco canônico (live)` continuam vermelhos até: (a) env vars `VITE_SUPABASE_*` na Vercel (Joaquim — `PENDENCIAS.md`) e (b) apply do `canonical-migrations` rodar (na fila do runner — congestionamento de runners da conta, não erro do workflow).
 
 ## 5. Anti-regressão
 
