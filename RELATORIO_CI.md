@@ -65,7 +65,7 @@ Executado em `/home/ubuntu/repos/Departamento_Pessoal_V3` (Node v22.23.3):
 
 ### 3.8 Post-deploy smoke — app de produção sem env vars do Supabase
 
-- Após o fallback para o domínio de produção, os testes públicos Playwright falharam: o deploy da Vercel sai **sem** `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` — o app renderiza a tela de erro de configuração (`#root` vazio) e o formulário de login nunca aparece.
+- Após o fallback para o domínio de produção, os testes públicos Playwright falharam: o deploy da Vercel sai **sem** `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` — `src/integrations/supabase/client.ts` lança exceção já na importação do módulo, o React nunca monta e `#root` permanece vazio (tela branca, sem banner) — verificado em navegador real.
 - Correção depende de variável de ambiente na Vercel (só o Joaquim configura) — instruções detalhadas em `PENDENCIAS.md`. Não é um defeito de código: o build falha fechado de propósito quando as vars faltam.
 
 ### 3.6 Workflows report — Actions sem permissão de abrir PR
