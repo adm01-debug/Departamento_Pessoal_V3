@@ -210,12 +210,20 @@ async function login(page: Page, file: string) {
     }
     await totpInput.fill(totpCode(TOTP_SECRET));
     await page.getByRole('button', { name: /verificar/i }).click();
-    if ((await leftLogin) !== 'navigated') {
-      // Segunda chance: o código pode ter expirado na janela de 30s entre
-      // gerar e submeter — regenera e tenta mais uma vez.
+    // Não esperamos o timeout de navegação para decidir retry: em código
+    // inválido o formulário mostra alerta "Código inválido" na hora —
+    // regenere imediatamente para não consumir o budget do setup.
+    const mfaError = page
+      .locator('form [role="alert"]')
+      .waitFor({ state: 'visible', timeout: 20_000 })
+      .then(() => 'error')
+      .catch(() => 'no-error');
+    if ((await Promise.race([leftLogin, mfaError])) === 'error') {
       await totpInput.fill(totpCode(TOTP_SECRET));
       await page.getByRole('button', { name: /verificar/i }).click();
-      await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 15_000 });
+    }
+    if ((await leftLogin) !== 'navigated') {
+      throw new Error('Desafio TOTP não completou — a página não saiu de /login.');
     }
   } else if ((await leftLogin) !== 'navigated') {
     throw new Error('Login não saiu de /login e o desafio TOTP não apareceu.');
