@@ -20,4 +20,4 @@ Data: 2026-10-27 · Contexto: correção dos workflows em falha na main
 
 ## Nota
 
-Nenhum workflow ficou sem tratamento: todos os que falhavam na main têm correção em código (este PR) ou correção de configuração já aplicada (ruleset, permissão de PR do Actions), exceto os dois itens acima que dependem apenas da execução dos deploys após o merge.
+Nenhum workflow ficou sem tratamento: todos os que falhavam na main têm correção em código (este PR) ou correção de configuração já aplicada (ruleset, permissão de PR do Actions). Restam os dois itens da primeira tabela (aguardando os deploys pós-merge rodarem) e os itens da segunda tabela, que só o Joaquim executa — em especial as **env vars do Supabase na Vercel**, que bloqueiam o `post-deploy-smoke` e o E2E público.
