@@ -289,7 +289,7 @@ Deno.serve(async (req) => {
       empresa_id,
       competencia,
       tipo: PAYROLL_TYPE,
-      status: 'calculada',
+      status: 'calculada' as const,
       total_proventos: totais.bruto,
       total_descontos: totais.descontos,
       total_liquido: totais.liquido,
