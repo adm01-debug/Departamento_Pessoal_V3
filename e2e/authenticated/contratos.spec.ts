@@ -7,7 +7,12 @@ test.describe('Módulo Contratos e Assinaturas', () => {
   test('renderiza listagem de contratos', async ({ page }) => {
     await page.goto('/contratos-gerados');
     await expect(page.getByRole('heading', { name: /contrato/i })).toBeVisible({ timeout: 10_000 });
-    const list = page.locator('table, [role="grid"], [data-testid="contratos-list"]').first();
+    // A listagem só renderiza <table> quando há contratos; vazio mostra o
+    // empty-state "Nenhum contrato encontrado…" — ambos provam que carregou.
+    const list = page
+      .locator('table, [role="grid"], [data-testid="contratos-list"]')
+      .or(page.getByText(/nenhum contrato/i))
+      .first();
     await expect(list).toBeVisible({ timeout: 8_000 });
   });
 
