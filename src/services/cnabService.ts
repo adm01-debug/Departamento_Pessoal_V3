@@ -126,13 +126,25 @@ async function claimRemessa(remessaId: string, bancoCodigo: string): Promise<Cna
     .eq('banco_codigo', bancoCodigo);
   const freshRows = (fresh.data ?? []) as CnabRemessaRecord[];
   if (freshRows.length > 0) return freshRows[0];
+  // O bridge rejeita filtros não-eq em writes — o claim stale fazia
+  // .lt('updated_at') num UPDATE e falhava sempre, travando a remessa em
+  // 'processando' para sempre. Em dois passos: SELECT stale (leitura aceita
+  // .lt) → UPDATE por eq, com o updated_at lido como lock otimista.
   const staleBefore = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const staleFound = await table()
+    .select('id, updated_at')
+    .eq('id', remessaId)
+    .eq('status', 'processando')
+    .eq('banco_codigo', bancoCodigo)
+    .lt('updated_at', staleBefore);
+  const staleRow = ((staleFound.data ?? []) as { id: string; updated_at: string }[])[0];
+  if (!staleRow) return null;
   const stale = await table()
     .update(payload)
     .eq('id', remessaId)
     .eq('status', 'processando')
     .eq('banco_codigo', bancoCodigo)
-    .lt('updated_at', staleBefore);
+    .eq('updated_at', staleRow.updated_at);
   const staleRows = (stale.data ?? []) as CnabRemessaRecord[];
   return staleRows[0] ?? null;
 }
@@ -587,10 +599,13 @@ export const cnabService = {
       let query = (supabase.from('cnab_itens') as unknown as QueryBuilderType).select(
         'id, remessa_id, folha_item_id, nome_favorecido, seu_numero'
       );
+      // Bancos ecoam seu_numero em caixa diferente do gravado — ilike é
+      // case-insensitive nos dois lados (240: eq case-insensitive; 400:
+      // prefixo case-insensitive). O match final também normaliza caixa.
       if (is240) {
-        query = query.eq('seu_numero', candidatos[0]);
+        query = query.ilike('seu_numero', candidatos[0]);
       } else {
-        query = query.or(candidatos.map((c) => `seu_numero.like.${c}%`).join(','));
+        query = query.or(candidatos.map((c) => `seu_numero.ilike.${c}%`).join(','));
       }
       const { data: itens, error: findError } = await query;
       // Tenant ANTES do match: dois tenants podem compartilhar o mesmo
@@ -621,10 +636,11 @@ export const cnabService = {
       // candidato de 10 posições completas (fragmento de padding do nome nunca
       // casa — evita creditar o pagamento de outro favorecido/remessa).
       const matchFor = (cand: string) => {
-        const exact = itemList.filter((i) => i.seu_numero === cand);
+        const candUp = cand.toUpperCase();
+        const exact = itemList.filter((i) => i.seu_numero.toUpperCase() === candUp);
         if (exact.length === 1) return exact[0];
         if (exact.length > 1 || cand.length !== 10) return undefined;
-        const prefix = itemList.filter((i) => i.seu_numero.startsWith(cand));
+        const prefix = itemList.filter((i) => i.seu_numero.toUpperCase().startsWith(candUp));
         return prefix.length === 1 ? prefix[0] : undefined;
       };
       const item = is240
