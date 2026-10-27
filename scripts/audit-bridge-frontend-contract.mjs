@@ -180,7 +180,12 @@ for (const rpc of forbidden) {
 
 const vite = readFileSync(vitePath, 'utf8');
 const contract = readFileSync(contractPath, 'utf8');
-const proxyOrigin = vite.match(/proxyReq\.setHeader\(['"]origin['"],\s*['"]([^'"]+)['"]\)/)?.[1];
+// O Origin reescrito pode ser literal no setHeader ou vir do default de
+// VITE_PROXY_FUNCTIONS_ORIGIN (override por env é escape hatch de quem
+// configura outro projeto — a allowlist exigida é a do default).
+const proxyOrigin =
+  vite.match(/proxyReq\.setHeader\(['"]origin['"],\s*['"]([^'"]+)['"]\)/)?.[1] ??
+  vite.match(/VITE_PROXY_FUNCTIONS_ORIGIN\s*\|\|\s*['"]([^'"]+)['"]/)?.[1];
 if (!proxyOrigin) failures.push('Origin do proxy Vite não pôde ser determinada');
 else if (!contract.includes(`'${proxyOrigin}'`) && !contract.includes(`"${proxyOrigin}"`)) {
   failures.push(`Origin do proxy Vite não pertence à allowlist CORS: ${proxyOrigin}`);
