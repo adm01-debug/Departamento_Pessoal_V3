@@ -4,10 +4,10 @@ Data: 2026-10-27 · Contexto: correção dos workflows em falha na main
 
 ## Dependências já endereçadas por código (aguardando apenas execução)
 
-| Item                                                 | O que falta                                                               | Como concluir                                                                                                                                        |
-| ---------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Gate `Integridade do banco canônico (live)` (ci.yml) | Aplicar a migration `20261027000000_revoke_orphan_secdef.sql` no canônico | Mergear o PR `fix/ci-workflows` e rodar Actions → `canonical-migrations.yml` → `mode=apply`, `confirm_project_ref=frjbfeamybqsejlvmqbl`              |
-| E2E autenticado (e2e.yml)                            | Aplicar `EXTRA_ALLOWED_ORIGINS` nas edges de produção                     | Após o merge, dispatch de `canonical-edge-functions.yml` (o novo passo configura o secret automaticamente); o próximo run do E2E na main deve passar |
+| Item                                                 | O que falta                                                               | Como concluir                                                                                                                                                  |
+| ---------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gate `Integridade do banco canônico (live)` (ci.yml) | Aplicar a migration `20261027000000_revoke_orphan_secdef.sql` no canônico | Mergear o PR `fix/ci-workflows` e rodar Actions → `canonical-migrations.yml` → `mode=apply`, `confirm_project_ref=frjbfeamybqsejlvmqbl`                        |
+| E2E autenticado (e2e.yml)                            | Nada — causa real era a conta de teste sem MFA, já corrigida              | TOTP cadastrado em `admin@teste.local` (seed no secret `E2E_TOTP_SECRET`) e `auth.setup.ts` eleva a sessão para aal2; o próximo run do E2E na main deve passar |
 
 ## Dependências que só o Joaquim executa
 

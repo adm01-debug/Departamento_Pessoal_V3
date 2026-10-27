@@ -8,7 +8,7 @@ Data: 2026-10-27 · Branch: `fix/ci-workflows`
 | ------------------------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Continuous Integration & Delivery (ci.yml)  | ❌ failure     | `npm audit (produção)`: 3 CVEs (dompurify, zod, undici); `Integridade do banco canônico (live)`: 2 funções SECURITY DEFINER órfãs executáveis por `anon`/`authenticated` |
 | Security Scan & Code Quality (security.yml) | ❌ failure     | Mesmos 3 CVEs de dependência                                                                                                                                             |
-| E2E Tests (Playwright)                      | ❌ failure     | Bridge de produção rejeita a origem `http://127.0.0.1:4173` (CSRF/CORS fail-closed em `csrf.ts`/`contract.ts`)                                                           |
+| E2E Tests (Playwright)                      | ❌ failure     | `admin-operacao.spec.ts`: `AdminRoute` exige MFA e a conta de teste não tinha TOTP verificado → sessão ficava em aal1 e o app desviava para a tela de verificação        |
 | Post-deploy smoke                           | ❌ failure     | Preview da Vercel protegido por SSO (302 → vercel.com/sso); healthcheck batia na URL de deployment em vez do domínio de produção                                         |
 | Ruleset sync                                | ❌ failure     | Drift no ruleset: `bypass_actors` apagado no GitHub                                                                                                                      |
 | Workflows report                            | ❌ failure     | Permissão do repo: "GitHub Actions is not permitted to create or approve pull requests" (`can_approve_pull_request_reviews=false`)                                       |
@@ -49,10 +49,11 @@ Executado em `/home/ubuntu/repos/Departamento_Pessoal_V3` (Node v22.23.3):
 - `DEPLOYMENT_URL` (preview da Vercel) responde 302 para `vercel.com/sso` — o healthcheck nunca passaria.
 - Correção: `post-deploy-smoke.yml` agora detecta o redirect para SSO e faz fallback para o domínio de produção (`https://departamento-pessoal-v3.vercel.app`, que responde 200).
 
-### 3.4 E2E autenticado — CORS/CSRF das edges
+### 3.4 E2E autenticado — conta de teste sem MFA (causa real)
 
-- O E2E serve um preview local (`http://127.0.0.1:4173`) que chama as edge functions de produção; `verifyCsrf`/`getCorsHeaders` rejeitam a origem → todo POST no bridge retorna 403.
-- Correção: passo no `canonical-edge-functions.yml` que garante `EXTRA_ALLOWED_ORIGINS=http://127.0.0.1:4173` no projeto canônico (`supabase secrets set`), mecanismo documentado no próprio `csrf.ts`. Entra em vigor no próximo deploy/dispatch.
+- Diagnóstico inicial (CORS/`EXTRA_ALLOWED_ORIGINS`) estava **errado**: o único spec vermelho era `e2e/authenticated/admin-operacao.spec.ts`. `AdminRoute` chama `getAuthenticatorAssuranceLevel`; sem TOTP verificado a sessão fica aal1 e o app renderiza a tela de verificação — o heading "Operação" nunca aparecia.
+- As chamadas às edges **não** saem do browser para o Supabase: `playwright.config.ts` roda `VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1` e o proxy do Vite (`vite.config.ts`) reescreve `Origin`/`Referer` para `https://departamento-pessoal-v3.vercel.app` — origem já permitida. O passo `EXTRA_ALLOWED_ORIGINS` foi **revertido** (desnecessário e sobrescrevia a lista de origens das edges).
+- Correção: TOTP cadastrado e verificado na conta `admin@teste.local` via GoTrue; seed salvo como secret `E2E_TOTP_SECRET`; `e2e/auth.setup.ts` completa `challenge`+`verify` com o token da sessão do browser e grava os tokens aal2 no storageState.
 
 ### 3.5 Ruleset sync — drift de `bypass_actors`
 
@@ -76,7 +77,7 @@ Executado em `/home/ubuntu/repos/Departamento_Pessoal_V3` (Node v22.23.3):
 
 - Invariantes canônicas agora vivem em `scripts/canonical-invariants.sql` (PR #274) — novas invariantes não devem inflar o YAML (limite de expressão do Actions = 21k chars).
 - `workflows-report` depende da permissão de PR do GITHUB_TOKEN — agora habilitada; se voltar a falhar, checar o setting `actions/permissions/workflow`.
-- E2E depende de `EXTRA_ALLOWED_ORIGINS` aplicado no canônico — codificado no workflow de deploy para não depender de passo manual.
+- E2E autenticado depende do secret `E2E_TOTP_SECRET` (seed do fator TOTP de `admin@teste.local`) — se o fator for recriado, atualizar o secret.
 
 ## 5. Anti-regressão
 
