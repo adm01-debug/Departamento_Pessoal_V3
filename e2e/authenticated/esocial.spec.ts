@@ -6,7 +6,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Módulo eSocial', () => {
   test('renderiza dashboard esocial com contadores de status', async ({ page }) => {
     await page.goto('/esocial');
-    await expect(page.getByRole('heading', { name: /esocial/i })).toBeVisible({ timeout: 10_000 });
+    // Página tem "Central eSocial" (h1) + "Eventos eSocial" (h3) — primeira ocorrência.
+    await expect(page.getByRole('heading', { name: /esocial/i }).first()).toBeVisible({ timeout: 10_000 });
 
     // Contadores: enviados, pendentes, erros
     const sentBadge = page.getByText(/enviad/i).or(page.getByText(/s-1200/i));
@@ -29,9 +30,11 @@ test.describe('Módulo eSocial', () => {
   test('exibe linha do tempo de envio (timeline)', async ({ page }) => {
     await page.goto('/esocial');
     const timeline = page.locator('[class*="timeline"], [class*="historico"], [data-testid="timeline"]').first();
-    await expect(timeline).toBeVisible({ timeout: 8_000 }).catch(() => {
-      // Timeline pode não existir em todos os statuses
-    });
+    await expect(timeline)
+      .toBeVisible({ timeout: 8_000 })
+      .catch(() => {
+        // Timeline pode não existir em todos os statuses
+      });
   });
 
   test('retry de evento com erro — fluxo completo', async ({ page }) => {
@@ -41,19 +44,24 @@ test.describe('Módulo eSocial', () => {
       await retryButton.click();
       // Deve aparecer toast de sucesso ou loading
       const toast = page.locator('[class*="toast"], [role="status"]').first();
-      await expect(toast).toBeVisible({ timeout: 8_000 }).catch(() => {
-        // Toast pode não aparecer em todas as implementações
-      });
+      await expect(toast)
+        .toBeVisible({ timeout: 8_000 })
+        .catch(() => {
+          // Toast pode não aparecer em todas as implementações
+        });
     }
   });
 
-  test('proteção: rota esocial requer autenticação', async ({ page }) => {
-    // Executar em contexto anônimo
-    const context2 = await page.context().newPage();
-    await context2.goto('/esocial');
-    const onLogin = context2.waitForURL(/\/login/i, { timeout: 5_000 });
-    await expect(context2).toHaveURL(/\/login/i, { timeout: 8_000 });
-    await onLogin;
-    await context2.close();
+  test('proteção: rota esocial requer autenticação', async ({ browser }) => {
+    // page.context() herda o storageState autenticado do projeto — para o
+    // cenário anônimo é preciso um contexto novo, sem storage.
+    const context2 = await browser.newContext();
+    const anon = await context2.newPage();
+    try {
+      await anon.goto('/esocial');
+      await expect(anon).toHaveURL(/\/login/i, { timeout: 10_000 });
+    } finally {
+      await context2.close();
+    }
   });
 });

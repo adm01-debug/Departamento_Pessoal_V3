@@ -36,15 +36,18 @@ test.describe('Post-cutover smoke', () => {
     await page.goto('/folha');
     await page.waitForLoadState('networkidle', { timeout: 15_000 });
 
-    // 4. Diagnóstico da migração — todos os checks devem terminar
+    // 4. Diagnóstico da migração — todos os checks devem terminar.
+    // A página faz polling contínuo (health/telemetria), então `networkidle`
+    // nunca é atingido — esperamos diretamente o badge que prova que run()
+    // completou ao menos uma vez.
     await page.goto('/admin/diagnostico-migracao');
-    await page.waitForLoadState('networkidle', { timeout: 30_000 });
-    // Espera badges de contagem aparecerem (indica que run() completou pelo menos uma vez)
-    await expect(page.getByText(/OK \d+/).first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(/OK \d+/).first()).toBeVisible({ timeout: 30_000 });
 
-    // 5. Sem erros de console críticos (ignoramos ruído previsível)
+    // 5. Sem erros de console críticos (ignoramos ruído previsível).
+    // BRIDGE_SCHEMA_ERROR em `user_roles` é esperado: a denylist da bridge
+    // bloqueia essa tabela intencionalmente e o diagnóstico a sonda.
     const critical = consoleErrors.filter(
-      (m) => !/favicon|ResizeObserver|non-passive|preload/i.test(m),
+      (m) => !/favicon|ResizeObserver|non-passive|preload/i.test(m) && !/BRIDGE_SCHEMA_ERROR.*user_roles/i.test(m)
     );
     expect(critical, `Erros críticos no console:\n${critical.join('\n')}`).toEqual([]);
   });
