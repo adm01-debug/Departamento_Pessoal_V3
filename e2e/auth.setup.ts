@@ -190,7 +190,36 @@ async function login(page: Page, file: string) {
     .first()
     .click();
 
-  await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 20_000 });
+  // Com fator TOTP verificado, o signIn lança `mfa_required` e a LoginPage
+  // mostra o formulário de código SEM sair de /login — esperar só a
+  // navegação estouraria o timeout. Corremos as duas possibilidades e, se
+  // o desafio aparecer, completamos pela UI (fluxo real do usuário).
+  const totpInput = page.locator('#totp');
+  const leftLogin = page
+    .waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 20_000 })
+    .then(() => 'navigated')
+    .catch(() => 'nav-failed');
+  const mfaShown = totpInput
+    .waitFor({ state: 'visible', timeout: 20_000 })
+    .then(() => 'mfa')
+    .catch(() => 'mfa-timeout');
+
+  if ((await Promise.race([leftLogin, mfaShown])) === 'mfa') {
+    if (!TOTP_SECRET) {
+      throw new Error('Login caiu no desafio TOTP mas E2E_TOTP_SECRET não está configurado.');
+    }
+    await totpInput.fill(totpCode(TOTP_SECRET));
+    await page.getByRole('button', { name: /verificar/i }).click();
+    if ((await leftLogin) !== 'navigated') {
+      // Segunda chance: o código pode ter expirado na janela de 30s entre
+      // gerar e submeter — regenera e tenta mais uma vez.
+      await totpInput.fill(totpCode(TOTP_SECRET));
+      await page.getByRole('button', { name: /verificar/i }).click();
+      await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 15_000 });
+    }
+  } else if ((await leftLogin) !== 'navigated') {
+    throw new Error('Login não saiu de /login e o desafio TOTP não apareceu.');
+  }
 
   // Aguarda a sessão Supabase ser gravada no localStorage antes de persisti-la
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.startsWith('sb-')), undefined, {
