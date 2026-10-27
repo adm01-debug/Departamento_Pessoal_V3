@@ -50,7 +50,7 @@ jobs:
           echo "WORKFLOW_LINT_OK"
 
       - name: Analisar segurança dos workflows (zizmor W86)
-        uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        uses: zizmorcore/zizmor-action@53290badfa369cb0bf7ad16342cb62c2fa47ac7b # v0.8.0
         with:
           advanced-security: false  # sem security-events:write → plain output, sem SARIF upload
         # contrato: triagem inicial — não bloqueia CI até achados serem avaliados (remover quando W86 atingir estabilidade)
