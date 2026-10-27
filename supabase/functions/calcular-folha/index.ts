@@ -36,6 +36,23 @@ const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 1
 // IN RFB 2110/2022: contribuições previdenciárias e IR truncam centavos
 const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 
+// Interval do Postgres ("HH:MM:SS" ou {hours,minutes,seconds}) → horas decimais.
+// Mesmo parser do front (pontoIntegracaoUtils.intervalToDecimal).
+const intervalParaHoras = (v: unknown): number => {
+  if (!v) return 0;
+  if (typeof v === 'string') {
+    const parts = v.split(':');
+    if (parts.length >= 2) {
+      return (parseInt(parts[0], 10) || 0) + (parseInt(parts[1], 10) || 0) / 60 + (parseInt(parts[2], 10) || 0) / 3600;
+    }
+  }
+  if (typeof v === 'object') {
+    const o = v as { hours?: number; minutes?: number; seconds?: number };
+    return (o.hours || 0) + (o.minutes || 0) / 60 + (o.seconds || 0) / 3600;
+  }
+  return 0;
+};
+
 
 
 function calcIRRF(bruto: number, dependentes = 0, competencia: string): number {
@@ -81,6 +98,11 @@ Deno.serve(async (req) => {
     const { data, errorResponse } = await validateRequest(req, calcularFolhaSchema);
     if (errorResponse) return errorResponse;
     const { empresa_id, competencia } = data!;
+    // Intervalo de datas da competência (AAAA-MM) para a apuração de ponto.
+    const [anoComp, mesComp] = competencia.split('-').map(Number);
+    const dataInicio = `${competencia}-01`;
+    const dataFim = new Date(Date.UTC(anoComp, mesComp, 0)).toISOString().slice(0, 10);
+    const diasNoMes = Number(dataFim.slice(8, 10));
     // Extrai a chave de idempotência DEPOIS de parsear o body — permite fallback via body
     // (alguns navegadores/proxies removem headers custom em preflights antigos).
     const idempotencyKey = extractIdempotencyKey(req, data);
@@ -206,6 +228,28 @@ Deno.serve(async (req) => {
       return createErrorResponse(`Limite excedido (${MAX_COLABORADORES})`, 413, 'PAYLOAD_TOO_LARGE');
     }
 
+    // DSR real da competência: domingos + feriados (empresa ou nacionais) —
+    // mesmo cômputo do cálculo em lote do front (calculoLoteService).
+    const { data: feriadosMes, error: feriadosErr } = await admin
+      .from('feriados')
+      .select('data, empresa_id')
+      .gte('data', dataInicio)
+      .lte('data', dataFim);
+    if (feriadosErr) throw feriadosErr;
+    // Set único de datas DSR — feriado em domingo conta uma vez só.
+    const dsrDatas = new Set<string>(
+      (feriadosMes ?? [])
+        .filter((f) => f.empresa_id === null || f.empresa_id === empresa_id)
+        .map((f) => f.data),
+    );
+    for (let d = 1; d <= diasNoMes; d++) {
+      if (new Date(Date.UTC(anoComp, mesComp - 1, d)).getUTCDay() === 0) {
+        dsrDatas.add(`${competencia}-${String(d).padStart(2, '0')}`);
+      }
+    }
+    const domingosFeriados = dsrDatas.size;
+    const diasUteis = Math.max(0, diasNoMes - domingosFeriados);
+
     // Chunked fetch
     interface FolhaItemCalculado {
       colaborador_id: string;
@@ -219,12 +263,14 @@ Deno.serve(async (req) => {
       salario_liquido: number;
     }
     const itens: FolhaItemCalculado[] = [];
+    const eventosPorColaborador = new Map<string, Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }>>();
+    const salarioBasePorColaborador = new Map<string, number>();
     const totais = { bruto: 0, descontos: 0, liquido: 0, fgts: 0, inss: 0, irrf: 0 };
 
     for (let offset = 0; offset < totalColabs; offset += CHUNK_SIZE) {
       const { data: colabs, error: e } = await admin
         .from('colaboradores')
-        .select('id, nome_completo, salario_base, cargo, departamento')
+        .select('id, nome_completo, salario_base, cargo, departamento, jornada_horas_mensais')
         .eq('empresa_id', empresa_id)
         .eq('status', 'ativo')
         .range(offset, offset + CHUNK_SIZE - 1);
@@ -257,14 +303,75 @@ Deno.serve(async (req) => {
         dependentesPorColaborador.set(key, (dependentesPorColaborador.get(key) ?? 0) + 1);
       }
 
+      // Apuração de ponto aprovada da competência (HE 50%/100%, adicional
+      // noturno) — uma query em lote por chunk. Fonte: registros_ponto
+      // aprovado (mesmo critério do cálculo em lote do front);
+      // solicitacoes_hora_extra é só a pré-aprovação, não entra aqui para
+      // não duplicar horas já apuradas.
+      const { data: pontoRows, error: pontoErr } = await admin
+        .from('registros_ponto')
+        .select('colaborador_id, horas_extras, horas_extras_50, horas_extras_100, horas_noturnas, he_banco_horas')
+        .eq('empresa_id', empresa_id)
+        .eq('aprovado', true)
+        .gte('data', dataInicio)
+        .lte('data', dataFim)
+        .in('colaborador_id', colabIds);
+      if (pontoErr) throw pontoErr;
+      const variaveisPorColaborador = new Map<string, { he50: number; he100: number; noturno: number }>();
+      for (const r of pontoRows ?? []) {
+        const acc = variaveisPorColaborador.get(r.colaborador_id) ?? { he50: 0, he100: 0, noturno: 0 };
+        // Legado = colunas da onda 5 NULL (registro anterior a elas): o total
+        // de horas_extras vira HE 50%, como o front faz. '00:00' gravado é
+        // zero explícito, não legado — senão horas já enviadas ao banco de
+        // horas seriam pagas de novo.
+        const legado = r.horas_extras_50 === null && r.horas_extras_100 === null && r.he_banco_horas === null;
+        if (legado) {
+          acc.he50 += intervalParaHoras(r.horas_extras);
+        } else {
+          acc.he50 += intervalParaHoras(r.horas_extras_50);
+          acc.he100 += intervalParaHoras(r.horas_extras_100);
+        }
+        acc.noturno += intervalParaHoras(r.horas_noturnas);
+        variaveisPorColaborador.set(r.colaborador_id, acc);
+      }
+
       for (const c of colabs) {
-        const bruto = Number(c.salario_base) || 0;
+        const salarioBase = Number(c.salario_base) || 0;
+        const jornadaInformada = Number(c.jornada_horas_mensais);
+        const jornada = Number.isFinite(jornadaInformada) && jornadaInformada > 0 ? jornadaInformada : 220;
+        const variaveis = variaveisPorColaborador.get(c.id) ?? { he50: 0, he100: 0, noturno: 0 };
+
+        // Mesmas fórmulas do motor do front (trabalhista-base.ts +
+        // folhaCalc.processar): HE a 50%/100% sobre a hora contratual,
+        // adicional noturno 20% com hora reduzida (52min30s) e DSR só
+        // sobre as HE. Tudo integra a base tributável (INSS/IRRF/FGTS).
+        const valorHora = jornada > 0 ? salarioBase / jornada : 0;
+        const he50Valor = trunc2(valorHora * 1.5 * variaveis.he50);
+        const he100Valor = trunc2(valorHora * 2 * variaveis.he100);
+        const noturnoValor = round2(valorHora * variaveis.noturno * (60 / 52.5) * 0.2);
+        const dsrValor = diasUteis > 0 && domingosFeriados > 0
+          ? trunc2(((he50Valor + he100Valor) / diasUteis) * domingosFeriados)
+          : 0;
+
+        const eventos: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }> = [
+          { codigo: '1000', descricao: 'Salário Base', tipo: 'provento', valor: salarioBase },
+        ];
+        if (he50Valor > 0) eventos.push({ codigo: '1001', descricao: 'Horas Extras 50%', tipo: 'provento', valor: he50Valor });
+        if (he100Valor > 0) eventos.push({ codigo: '1002', descricao: 'Horas Extras 100%', tipo: 'provento', valor: he100Valor });
+        if (noturnoValor > 0) eventos.push({ codigo: '1004', descricao: 'Adicional Noturno 20%', tipo: 'provento', valor: noturnoValor });
+        if (dsrValor > 0) eventos.push({ codigo: '1003', descricao: 'DSR sobre Horas Extras', tipo: 'provento', valor: dsrValor });
+
+        const bruto = round2(salarioBase + he50Valor + he100Valor + noturnoValor + dsrValor);
         const inss = calcularINSS(bruto, competencia);
         const dependentes = dependentesPorColaborador.get(c.id as string) ?? 0;
         const irrf = calcIRRF(bruto, dependentes, competencia);
         const fgts = trunc2(bruto * 0.08);
         const descontos = round2(inss + irrf);
         const liquido = round2(bruto - descontos);
+        eventos.push({ codigo: '5000', descricao: 'Desconto INSS', tipo: 'desconto', valor: inss });
+        if (irrf > 0) eventos.push({ codigo: '5001', descricao: 'Desconto IRRF', tipo: 'desconto', valor: irrf });
+        eventosPorColaborador.set(c.id, eventos);
+        salarioBasePorColaborador.set(c.id, salarioBase);
 
         itens.push({
           colaborador_id: c.id,
@@ -358,7 +465,7 @@ Deno.serve(async (req) => {
     const itemRows = itens.map((item) => ({
       folha_id: upserted.id,
       colaborador_id: item.colaborador_id,
-      salario_base: item.salario_bruto,
+      salario_base: salarioBasePorColaborador.get(item.colaborador_id) ?? item.salario_bruto,
       total_proventos: item.salario_bruto,
       total_descontos: item.total_descontos,
       total_liquido: item.salario_liquido,
@@ -369,6 +476,7 @@ Deno.serve(async (req) => {
         inss: item.inss,
         irrf: item.irrf,
         fgts: item.fgts,
+        detalheEventos: eventosPorColaborador.get(item.colaborador_id) ?? [],
       },
     }));
     const { error: itemUpsertError } = await admin
