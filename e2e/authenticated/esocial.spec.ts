@@ -9,13 +9,15 @@ test.describe('Módulo eSocial', () => {
     // Página tem "Central eSocial" (h1) + "Eventos eSocial" (h3) — primeira ocorrência.
     await expect(page.getByRole('heading', { name: /esocial/i }).first()).toBeVisible({ timeout: 10_000 });
 
-    // Contadores: enviados, pendentes, erros — há vários elementos com
-    // "enviad"/"S-1200" na tela; a primeira ocorrência basta.
-    const sentBadge = page
-      .getByText(/enviad/i)
-      .or(page.getByText(/s-1200/i))
+    // O rótulo "Enviados" (<p>) é estático — visível já durante o loading.
+    // O valor do contador só existe quando o Skeleton resolve (.text-3xl) —
+    // assim verificamos a contagem de fato, não o placeholder.
+    const sentCounter = page
+      .locator('p', { hasText: /^Enviados$/i })
+      .locator('..')
+      .locator('.text-3xl')
       .first();
-    await expect(sentBadge).toBeVisible({ timeout: 8_000 });
+    await expect(sentCounter).toBeVisible({ timeout: 8_000 });
   });
 
   test('filtra eventos por tipo (S-1200, S-1210, etc.)', async ({ page }) => {

@@ -23,16 +23,18 @@ test.describe('Módulo Férias', () => {
   });
 
   test('filtra férias por status (pendente/aprovada/concluida)', async ({ page }) => {
-    const statusFilter = page.getByLabel(/status/i).or(page.getByPlaceholder(/status/i));
-    if (await statusFilter.isVisible()) {
-      await statusFilter.click();
-      await page.getByRole('option', { name: /pendente/i }).click();
-      await expect(page)
-        .toHaveURL(/status=pendente/i, { timeout: 5_000 })
-        .catch(() => {
-          // Fallback: filtro pode funcionar via reload — não falha o teste
-        });
-    }
+    // O filtro de status mora na aba "Solicitações" (DataTableToolbar → Select "Status").
+    await page.getByRole('tab', { name: /solicitações/i }).click();
+    const statusSelect = page.getByRole('combobox').filter({ hasText: /status/i });
+    await expect(statusSelect).toBeVisible({ timeout: 10_000 });
+    await statusSelect.click();
+    await page.getByRole('option', { name: /pendente/i }).click();
+    // Lista reflete o filtro sem quebrar: tabela ou empty-state.
+    const list = page
+      .locator('table, [role="grid"]')
+      .or(page.getByText(/nenhum.*férias/i))
+      .first();
+    await expect(list).toBeVisible({ timeout: 10_000 });
   });
 
   test('navega para página de编程ação de férias', async ({ page }) => {
@@ -46,13 +48,15 @@ test.describe('Módulo Férias', () => {
   });
 
   test('exibe mensagem quando não há férias registradas', async ({ page }) => {
-    // Ir para URL que provavelmente retorna vazio
-    await page.goto('/ferias?status=nenhuma&t=' + Date.now());
-    const emptyState = page.getByText(/nenhum/i).or(page.getByText(/vazio/i));
-    await expect(emptyState)
-      .toBeVisible({ timeout: 8_000 })
-      .catch(() => {
-        // Se houver dados, o teste não falha — o cenário vazio é raro
-      });
+    // O empty-state (EmptyList "solicitação de férias") e os controles de
+    // busca/filtro moram na aba "Solicitações" — na aba Dashboard este teste
+    // passava vacuamente.
+    await page.getByRole('tab', { name: /solicitações/i }).click();
+    await expect(page.getByPlaceholder(/buscar colaborador/i)).toBeVisible({ timeout: 10_000 });
+    const emptyOrTable = page
+      .getByText(/nenhum.*férias/i)
+      .or(page.locator('table, [role="grid"]'))
+      .first();
+    await expect(emptyOrTable).toBeVisible({ timeout: 10_000 });
   });
 });
