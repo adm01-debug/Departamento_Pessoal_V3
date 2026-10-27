@@ -62,10 +62,22 @@ function calcIRRF(bruto: number, dependentes = 0, competencia: string): number {
   const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
   const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
   if (base <= 0) return 0;
+  // Mesma convenção do INSS e do front (impostos.ts): centavos inteiros por
+  // faixa com truncamento único — IN RFB 2110/2022. O atalho base*aliquota-deducao
+  // divergia ~1 centavo do acúmulo progressivo.
+  const baseCents = BigInt(Math.round(base * 100));
+  let impostoMilesimos = 0n;
+  let anteriorIrrf = 0n;
   for (const f of FAIXAS_IRRF) {
-    if (base <= f.limite) return Math.max(0, trunc2(base * f.aliquota - f.deducao));
+    if (baseCents <= anteriorIrrf) break;
+    const limite = f.limite === Infinity ? baseCents : BigInt(Math.round(f.limite * 100));
+    const aliquota = BigInt(Math.round(f.aliquota * 1000));
+    const faixaCents = (baseCents < limite ? baseCents : limite) - anteriorIrrf;
+    impostoMilesimos += faixaCents * aliquota;
+    anteriorIrrf = limite;
+    if (baseCents <= limite) break;
   }
-  return 0;
+  return Math.max(0, Number(impostoMilesimos / 1000n) / 100);
 }
 
 Deno.serve(async (req) => {
