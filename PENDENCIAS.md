@@ -2,12 +2,16 @@
 
 Data: 2026-10-27 · Contexto: correção dos workflows em falha na main
 
+## Resolvido
+
+- **E2E autenticado (e2e.yml)** — ✅ run [40547473599](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/40547473599): 40 passed, `conclusion=success` na main (27/10).
+
 ## Dependências já endereçadas por código (aguardando apenas execução)
 
-| Item                                                 | O que falta                                                               | Como concluir                                                                                                                                                  |
-| ---------------------------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Gate `Integridade do banco canônico (live)` (ci.yml) | Aplicar a migration `20261027000000_revoke_orphan_secdef.sql` no canônico | Mergear o PR `fix/ci-workflows` e rodar Actions → `canonical-migrations.yml` → `mode=apply`, `confirm_project_ref=frjbfeamybqsejlvmqbl`                        |
-| E2E autenticado (e2e.yml)                            | Nada — causa real era a conta de teste sem MFA, já corrigida              | TOTP cadastrado em `admin@teste.local` (seed no secret `E2E_TOTP_SECRET`) e `auth.setup.ts` eleva a sessão para aal2; o próximo run do E2E na main deve passar |
+| Item                                                 | O que falta                                                                                                                                  | Como concluir                                                                                                                                                                                                             |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gate `Integridade do banco canônico (live)` (ci.yml) | Rodar o apply do `canonical-migrations` (run [40525534329](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/40525534329)) | Já disparado na main — está na **fila de runners do GitHub** (congestionamento da conta, não erro). Ao executar, aplica a migration `20261027000000_revoke_orphan_secdef.sql` + pendentes e valida as invariantes sozinho |
+| Deploy de Edge Functions no canônico                 | Rodar `canonical-edge-functions` (run [40525622053](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/40525622053))        | Mesma situação — na fila de runners; executa sozinho quando houver executor livre                                                                                                                                         |
 
 ## Dependências que só o Joaquim executa
 
@@ -20,4 +24,4 @@ Data: 2026-10-27 · Contexto: correção dos workflows em falha na main
 
 ## Nota
 
-Nenhum workflow ficou sem tratamento: todos os que falhavam na main têm correção em código (este PR) ou correção de configuração já aplicada (ruleset, permissão de PR do Actions). Restam os dois itens da primeira tabela (aguardando os deploys pós-merge rodarem) e os itens da segunda tabela, que só o Joaquim executa — em especial as **env vars do Supabase na Vercel**, que bloqueiam o `post-deploy-smoke` e o E2E público.
+Nenhum workflow ficou sem tratamento: todos os que falhavam na main têm correção aplicada e validada verde — **o E2E autenticado está verde na main** (40 passed). Restam: (a) os 2 deploys canônicos na fila de runners do GitHub — executam sozinhos, sem ação necessária; (b) os itens que só o Joaquim executa — em especial as **env vars do Supabase na Vercel**, que bloqueiam o `post-deploy-smoke` e o E2E público.
