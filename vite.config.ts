@@ -1,134 +1,142 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { imagetools } from 'vite-imagetools';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: '::',
-    // E2E usa uma porta dedicada para nunca reaproveitar acidentalmente outro
-    // serviço local. `strictPort` transforma conflito em falha explícita.
-    port: Number(process.env.VITE_DEV_PORT ?? 4173),
-    strictPort: true,
-    proxy: {
-      // Dev local: encaminha chamadas de edge functions para o Supabase remoto.
-      // O gate estrito rejeita Origin localhost. O proxy reescreve
-      // Origin/Referer para o deployment Vercel canônico da allowlist (somente
-      // dev/E2E); isso testa a mesma política usada em produção sem liberar
-      // localhost na Edge Function publicada.
-      '/functions/v1': {
-        target: 'https://frjbfeamybqsejlvmqbl.supabase.co',
-        changeOrigin: true,
-        secure: true,
-        configure(proxy) {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('origin', 'https://departamento-pessoal-v3.vercel.app');
-            proxyReq.setHeader('referer', 'https://departamento-pessoal-v3.vercel.app/');
-          });
+export default defineConfig(({ mode }) => {
+  // O proxy de functions segue o projeto Supabase configurado — sem isso, um
+  // dev apontando VITE_SUPABASE_URL para staging teria as invocations enviadas
+  // ao projeto canônico (Devin Review #293).
+  const env = loadEnv(mode, process.cwd(), '');
+  const functionsProxyTarget = env.VITE_SUPABASE_URL || 'https://frjbfeamybqsejlvmqbl.supabase.co';
+  const functionsProxyOrigin = env.VITE_PROXY_FUNCTIONS_ORIGIN || 'https://departamento-pessoal-v3.vercel.app';
+  return {
+    server: {
+      host: '::',
+      // E2E usa uma porta dedicada para nunca reaproveitar acidentalmente outro
+      // serviço local. `strictPort` transforma conflito em falha explícita.
+      port: Number(process.env.VITE_DEV_PORT ?? 4173),
+      strictPort: true,
+      proxy: {
+        // Dev local: encaminha chamadas de edge functions para o Supabase remoto.
+        // O gate estrito rejeita Origin localhost. O proxy reescreve
+        // Origin/Referer para o deployment Vercel canônico da allowlist (somente
+        // dev/E2E); isso testa a mesma política usada em produção sem liberar
+        // localhost na Edge Function publicada.
+        '/functions/v1': {
+          target: functionsProxyTarget,
+          changeOrigin: true,
+          secure: true,
+          configure(proxy) {
+            proxy.on('proxyReq', (proxyReq) => {
+              proxyReq.setHeader('origin', functionsProxyOrigin);
+              proxyReq.setHeader('referer', `${functionsProxyOrigin}/`);
+            });
+          },
         },
       },
     },
-  },
-  plugins: [
-    // CSP do <meta> em index.html protege o build de produção em hosts sem
-    // headers (Vercel/Netlify já os enviam). Em dev ela bloquearia o preamble
-    // inline do react-refresh e quebraria o HMR — removemos só em `vite dev`.
-    {
-      name: 'strip-csp-meta-in-dev',
-      apply: 'serve',
-      transformIndexHtml: (html: string) => html.replace(/\s*<meta http-equiv="Content-Security-Policy"[^>]*>/, ''),
-    },
-    // W91a: injeta <meta name="build-sha"> no HTML publicado para o
-    // healthcheck comparar o deploy em produção com o commit esperado.
-    // Prioridade: VITE_GIT_SHA (setado explicitamente, ex. deploy.yml) →
-    // VERCEL_GIT_COMMIT_SHA (system env var da Vercel, auto-exposta se o
-    // projeto tiver "Automatically expose System Environment Variables"
-    // ligado) → GITHUB_SHA (fallback para builds feitos em CI puro, sem
-    // Vercel). Se nenhuma estiver presente (ex. build local), a tag não é
-    // emitida — scripts/healthcheck.sh já trata a ausência como aviso, nunca
-    // como falha.
-    {
-      name: 'inject-build-sha-meta',
-      transformIndexHtml(html: string) {
-        const sha = process.env.VITE_GIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || '';
-        if (!sha) return html;
-        const tag = `    <meta name="build-sha" content="${sha}" />\n`;
-        return html.includes('</head>') ? html.replace('</head>', `${tag}  </head>`) : html + tag;
+    plugins: [
+      // CSP do <meta> em index.html protege o build de produção em hosts sem
+      // headers (Vercel/Netlify já os enviam). Em dev ela bloquearia o preamble
+      // inline do react-refresh e quebraria o HMR — removemos só em `vite dev`.
+      {
+        name: 'strip-csp-meta-in-dev',
+        apply: 'serve',
+        transformIndexHtml: (html: string) => html.replace(/\s*<meta http-equiv="Content-Security-Policy"[^>]*>/, ''),
       },
-    },
-    // P1-022: Babel-based plugin required for React Compiler
-    react({
-      // React Compiler: compila automaticamente components/hooks com dependências
-      // estáveis — elimina useMemo/useCallback redundantes automaticamente.
-      // babel-plugin-react-compiler@^1.0.0. Experimental — ativar com:
-      //   VITE_REACT_COMPILER=1 npm run build
-      babel: {
-        plugins: process.env.VITE_REACT_COMPILER === '1' ? [['babel-plugin-react-compiler', { target: '19' }]] : [],
+      // W91a: injeta <meta name="build-sha"> no HTML publicado para o
+      // healthcheck comparar o deploy em produção com o commit esperado.
+      // Prioridade: VITE_GIT_SHA (setado explicitamente, ex. deploy.yml) →
+      // VERCEL_GIT_COMMIT_SHA (system env var da Vercel, auto-exposta se o
+      // projeto tiver "Automatically expose System Environment Variables"
+      // ligado) → GITHUB_SHA (fallback para builds feitos em CI puro, sem
+      // Vercel). Se nenhuma estiver presente (ex. build local), a tag não é
+      // emitida — scripts/healthcheck.sh já trata a ausência como aviso, nunca
+      // como falha.
+      {
+        name: 'inject-build-sha-meta',
+        transformIndexHtml(html: string) {
+          const sha = process.env.VITE_GIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || '';
+          if (!sha) return html;
+          const tag = `    <meta name="build-sha" content="${sha}" />\n`;
+          return html.includes('</head>') ? html.replace('</head>', `${tag}  </head>`) : html + tag;
+        },
       },
-    }),
-    imagetools(),
-    // P3-053: source maps upload automático para Sentry em builds de prod
-    mode === 'production' &&
-      process.env.VITE_SENTRY_DSN &&
-      sentryVitePlugin({
-        org: process.env.VITE_SENTRY_ORG ?? 'dp-team',
-        project: process.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
-        authToken: process.env.SENTRY_AUTH_TOKEN,
-        telemetries: 'debug',
-        setCommits: { auto: true },
-        deploy: { env: mode },
+      // P1-022: Babel-based plugin required for React Compiler
+      react({
+        // React Compiler: compila automaticamente components/hooks com dependências
+        // estáveis — elimina useMemo/useCallback redundantes automaticamente.
+        // babel-plugin-react-compiler@^1.0.0. Experimental — ativar com:
+        //   VITE_REACT_COMPILER=1 npm run build
+        babel: {
+          plugins: process.env.VITE_REACT_COMPILER === '1' ? [['babel-plugin-react-compiler', { target: '19' }]] : [],
+        },
       }),
-    // Service worker único: public/sw-custom.js (allowlist E-037, fail-closed).
-    // O vite-plugin-pwa gerava um segundo SW (workbox sw.js) + registerSW.js —
-    // os dois disputavam o escopo '/' e o sw-custom vencia sempre, então o
-    // workbox nunca ativava (REDUNDANT) e seu cache de imagens era código
-    // morto. Plugin removido: um SW só, registrado por main.tsx.
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      '@': path.resolve(import.meta.dirname, './src'),
-    },
-    dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
-  },
-  optimizeDeps: {
-    // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
-  },
-  build: {
-    // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI
-    sourcemap: !!process.env.VITE_SENTRY_DSN,
-    // P2-038: Vite 8 usa minifier oxc (mais rápido que terser). esbuild.drop
-    // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
-    // `minify: { compress: { drop_console: true } }` — habilitada abaixo.
-    // console.error/warn são MANTIDOS para integração com Sentry (P3-053).
-    // Forma de objeto: além de selecionar o minifier oxc, remove chamadas de
-    // console.log/debug/info do bundle de produção (a string 'oxc' sozinha
-    // não aplica nenhum `compress`). console.error/warn permanecem para o Sentry.
-    minify: {
-      type: 'oxc',
-      compress: {
-        dropConsole: ['log', 'debug', 'info', 'trace'],
+      imagetools(),
+      // P3-053: source maps upload automático para Sentry em builds de prod
+      mode === 'production' &&
+        process.env.VITE_SENTRY_DSN &&
+        sentryVitePlugin({
+          org: process.env.VITE_SENTRY_ORG ?? 'dp-team',
+          project: process.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          telemetries: 'debug',
+          setCommits: { auto: true },
+          deploy: { env: mode },
+        }),
+      // Service worker único: public/sw-custom.js (allowlist E-037, fail-closed).
+      // O vite-plugin-pwa gerava um segundo SW (workbox sw.js) + registerSW.js —
+      // os dois disputavam o escopo '/' e o sw-custom vencia sempre, então o
+      // workbox nunca ativava (REDUNDANT) e seu cache de imagens era código
+      // morto. Plugin removido: um SW só, registrado por main.tsx.
+    ].filter(Boolean),
+    resolve: {
+      alias: {
+        '@': path.resolve(import.meta.dirname, './src'),
       },
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime'],
     },
-    rollupOptions: {
-      output: {
-        // Forma de função exigida pelo Vite 8 (rolldown). A forma de objeto
-        // dispara "manualChunks is not a function" durante o build.
-        manualChunks(id: string) {
-          if (!id.includes('node_modules')) return undefined;
-          if (/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/.test(id))
-            return 'vendor-react';
-          if (/[\\/]node_modules[\\/]@radix-ui[\\/]/.test(id)) return 'vendor-ui';
-          if (/[\\/]node_modules[\\/]@tanstack[\\/]/.test(id)) return 'vendor-query';
-          if (/[\\/]node_modules[\\/]recharts[\\/]/.test(id)) return 'vendor-charts';
-          if (/[\\/]node_modules[\\/]@supabase[\\/]/.test(id)) return 'vendor-supabase';
-          if (/[\\/]node_modules[\\/]framer-motion[\\/]/.test(id)) return 'vendor-motion';
-          if (/[\\/]node_modules[\\/](react-hook-form|@hookform[\\/]resolvers|zod)[\\/]/.test(id))
-            return 'vendor-forms';
-          // jspdf, jspdf-autotable, xlsx são carregados sob demanda via import dinâmico
-          return undefined;
+    optimizeDeps: {
+      // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
+    },
+    build: {
+      // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI
+      sourcemap: !!process.env.VITE_SENTRY_DSN,
+      // P2-038: Vite 8 usa minifier oxc (mais rápido que terser). esbuild.drop
+      // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
+      // `minify: { compress: { drop_console: true } }` — habilitada abaixo.
+      // console.error/warn são MANTIDOS para integração com Sentry (P3-053).
+      // Forma de objeto: além de selecionar o minifier oxc, remove chamadas de
+      // console.log/debug/info do bundle de produção (a string 'oxc' sozinha
+      // não aplica nenhum `compress`). console.error/warn permanecem para o Sentry.
+      minify: {
+        type: 'oxc',
+        compress: {
+          dropConsole: ['log', 'debug', 'info', 'trace'],
+        },
+      },
+      rollupOptions: {
+        output: {
+          // Forma de função exigida pelo Vite 8 (rolldown). A forma de objeto
+          // dispara "manualChunks is not a function" durante o build.
+          manualChunks(id: string) {
+            if (!id.includes('node_modules')) return undefined;
+            if (/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/.test(id))
+              return 'vendor-react';
+            if (/[\\/]node_modules[\\/]@radix-ui[\\/]/.test(id)) return 'vendor-ui';
+            if (/[\\/]node_modules[\\/]@tanstack[\\/]/.test(id)) return 'vendor-query';
+            if (/[\\/]node_modules[\\/]recharts[\\/]/.test(id)) return 'vendor-charts';
+            if (/[\\/]node_modules[\\/]@supabase[\\/]/.test(id)) return 'vendor-supabase';
+            if (/[\\/]node_modules[\\/]framer-motion[\\/]/.test(id)) return 'vendor-motion';
+            if (/[\\/]node_modules[\\/](react-hook-form|@hookform[\\/]resolvers|zod)[\\/]/.test(id))
+              return 'vendor-forms';
+            // jspdf, jspdf-autotable, xlsx são carregados sob demanda via import dinâmico
+            return undefined;
+          },
         },
       },
     },
-  },
-}));
+  };
+});

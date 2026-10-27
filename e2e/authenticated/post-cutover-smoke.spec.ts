@@ -39,9 +39,11 @@ test.describe('Post-cutover smoke', () => {
     // 4. Diagnóstico da migração — todos os checks devem terminar.
     // A página faz polling contínuo (health/telemetria), então `networkidle`
     // nunca é atingido — esperamos diretamente o badge que prova que run()
-    // completou ao menos uma vez.
+    // completou ao menos uma vez. `OK 0` já renderiza no mount inicial
+    // (counts.ok=0) — exigimos ≥1 para garantir que run() de fato terminou
+    // (o check 'env' fica 'ok' sempre que a página monta com VITE_SUPABASE_URL).
     await page.goto('/admin/diagnostico-migracao');
-    await expect(page.getByText(/OK \d+/).first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/OK [1-9]\d*/).first()).toBeVisible({ timeout: 30_000 });
 
     // 5. Sem erros de console críticos (ignoramos ruído previsível).
     // BRIDGE_SCHEMA_ERROR em `user_roles` é esperado: a denylist da bridge
