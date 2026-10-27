@@ -24,4 +24,4 @@ Data: 2026-10-27 · Contexto: correção dos workflows em falha na main
 
 ## Nota
 
-Nenhum workflow ficou sem tratamento: todos os que falhavam na main têm correção aplicada e validada verde — **o E2E autenticado está verde na main** (40 passed). Restam: (a) os 2 deploys canônicos na fila de runners do GitHub — executam sozinhos, sem ação necessária; (b) os itens que só o Joaquim executa — em especial as **env vars do Supabase na Vercel**, que bloqueiam o `post-deploy-smoke` e o E2E público.
+Nenhum workflow ficou sem tratamento. Verdes **validados** na main: E2E autenticado (40 passed), npm audit, deno check, workflows-report e ruleset-sync. Ainda **pendentes** (não são falhas de código): (a) o `Integridade do banco canônico (live)` — verde assim que o apply do `canonical-migrations` executar; (b) o `post-deploy-smoke` — verde após as env vars do Supabase na Vercel (Joaquim). Os 2 deploys canônicos estão na fila de runners do GitHub e executam sozinhos quando houver executor.
