@@ -14,9 +14,10 @@ test.describe('Admin — Painel de Operação', () => {
     await page.goto('/admin/operacao');
     await expect(page).toHaveURL(/\/admin\/operacao/);
 
-    // Título da página
-    await expect(page.getByRole('heading', { name: /Opera[çc][ãa]o/i }).first())
-      .toBeVisible({ timeout: 15_000 });
+    // A página não renderiza h1 próprio — o título vive só no <title> do
+    // documento (PageTitle é Helmet). O que identifica a tela é o botão
+    // "Atualizar" + os KPIs do painel consolidado.
+    await expect(page.getByRole('button', { name: /Atualizar/i })).toBeVisible({ timeout: 15_000 });
 
     // KPIs no topo (DLQ, Conflitos, Endpoints com falha)
     await expect(page.getByText(/DLQ.*fila morta/i).first()).toBeVisible({ timeout: 10_000 });

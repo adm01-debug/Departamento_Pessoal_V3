@@ -15,13 +15,12 @@ test.describe('Importação em Massa (autenticado)', () => {
   });
 
   test('exibe interface de upload com dropzone e colunas reconhecidas', async ({ page }) => {
-    await expect(
-      page.getByRole('heading', { name: /importa[cç][aã]o/i }).first()
-    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: /importa[cç][aã]o/i }).first()).toBeVisible();
 
     // Dropzone
     await expect(page.getByText(/arraste ou clique para selecionar/i)).toBeVisible();
-    await expect(page.getByText(/formatos.*\.xlsx.*\.csv/i)).toBeVisible();
+    // A dropzone aceita somente .xlsx — a cópia real é "Formato: .xlsx".
+    await expect(page.getByText(/formato:\s*\.xlsx/i)).toBeVisible();
 
     // Colunas reconhecidas (badges)
     for (const col of ['Nome', 'CPF', 'Email', 'Cargo', 'Salário', 'PIS']) {

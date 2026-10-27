@@ -23,10 +23,29 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   );
 }
 
+// supabase.functions.invoke monta internamente `${SUPABASE_URL}/functions/v1`
+// (absoluta) e ignoraria VITE_SUPABASE_FUNCTIONS_BASE — em dev/E2E a chamada
+// saía direta para a edge function e a CORS denylist derrubava tudo. Quando
+// FUNCTIONS_BASE é relativo, o fetch do client reescreve só esse prefixo para
+// o caminho local, fazendo functions.invoke passar pelo mesmo proxy do Vite
+// que o callBridge usa. Em produção (base absoluta) é o fetch padrão.
+const ABSOLUTE_FUNCTIONS_BASE = `${SUPABASE_URL}/functions/v1`;
+const functionsAwareFetch: typeof fetch = FUNCTIONS_BASE.startsWith('/')
+  ? (input, init) => {
+      const raw = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
+      if (!raw.startsWith(ABSOLUTE_FUNCTIONS_BASE)) return fetch(input, init);
+      const rebased = `${FUNCTIONS_BASE}${raw.slice(ABSOLUTE_FUNCTIONS_BASE.length)}`;
+      return typeof input === 'string' || input instanceof URL
+        ? fetch(rebased, init)
+        : fetch(new Request(rebased, input), init);
+    }
+  : fetch;
+
 // Base client usado para Auth/Storage. Toda I/O de dados vai pela bridge.
 // Exportado também como `supabaseBase` para uso em casos especiais (ex.: client.base.ts)
 // onde o proxy de bridge não deve mediar (Auth, Storage e Realtime).
 export const supabaseBase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  global: { fetch: functionsAwareFetch },
   auth: {
     storage: brokeredPreviewStorage(),
     persistSession: true,

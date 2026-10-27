@@ -23,17 +23,18 @@ test.describe('Ponto — AFDT & Assinatura de Espelho', () => {
     await expect(page).toHaveURL(/\/ponto/);
 
     // Triggers principais visíveis no header
-    await expect(page.getByRole('button', { name: /Importar AFDT/i }).first())
-      .toBeVisible({ timeout: 15_000 });
-    await expect(page.getByRole('button', { name: /AEJ|Gerar AEJ/i }).first())
-      .toBeVisible();
+    await expect(page.getByRole('button', { name: /Importar AFDT/i }).first()).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('button', { name: /AEJ|Gerar AEJ/i }).first()).toBeVisible();
 
     expect(errs, `Runtime errors: ${errs.join('\n')}`).toHaveLength(0);
   });
 
   test('dialog de importação AFDT abre com seletor de tipo', async ({ page }) => {
     await page.goto('/ponto');
-    await page.getByRole('button', { name: /Importar AFDT/i }).first().click();
+    await page
+      .getByRole('button', { name: /Importar AFDT/i })
+      .first()
+      .click();
 
     await expect(page.getByRole('dialog')).toBeVisible();
     await expect(page.getByText(/Portaria MTP 671/i)).toBeVisible();
@@ -51,12 +52,11 @@ test.describe('Ponto — AFDT & Assinatura de Espelho', () => {
     await expect(page).toHaveURL(/\/admin\/ponto\/divergencias/);
 
     // Heading da página
-    await expect(page.getByRole('heading', { name: /Diverg[êe]ncias/i }).first())
-      .toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: /Diverg[êe]ncias/i }).first()).toBeVisible({ timeout: 15_000 });
 
     // KPIs esperados (4 cards)
     await expect(page.getByText(/Total/i).first()).toBeVisible();
-    await expect(page.getByText(/Pendentes/i).first()).toBeVisible();
+    await expect(page.getByText(/Não resolvidas/i).first()).toBeVisible();
     await expect(page.getByText(/Sem colaborador/i).first()).toBeVisible();
     await expect(page.getByText(/Sem batida/i).first()).toBeVisible();
 

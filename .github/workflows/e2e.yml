@@ -139,6 +139,9 @@ jobs:
       MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
       MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
       MAILOSAUR_INBOX_DOMAIN: ${{ secrets.MAILOSAUR_INBOX_DOMAIN }}
+      # Seed TOTP da conta de teste — auth.setup completa o challenge e
+      # eleva a sessão para aal2 (rotas /admin/* exigem MFA).
+      E2E_TOTP_SECRET: ${{ secrets.E2E_TOTP_SECRET }}
       E2E_BASE_URL: http://127.0.0.1:4173
       CI: true
       CI_BRANCH: ${{ github.ref_name }}
