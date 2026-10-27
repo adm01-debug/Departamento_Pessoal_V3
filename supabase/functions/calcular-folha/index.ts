@@ -285,20 +285,72 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { data: upserted, error: upErr } = await admin
-      .from('folhas_pagamento')
-      .upsert({
-        empresa_id, competencia, tipo: PAYROLL_TYPE, status: 'calculada',
-        total_proventos: totais.bruto,
-        total_descontos: totais.descontos,
-        total_liquido: totais.liquido,
-        total_fgts: totais.fgts,
-        total_colaboradores: totalColabs,
-        data_calculo: new Date().toISOString(),
-      }, { onConflict: 'empresa_id,competencia,tipo' })
-      .select('id')
-      .single();
-    if (upErr) throw upErr;
+    const folhaPayload = {
+      empresa_id,
+      competencia,
+      tipo: PAYROLL_TYPE,
+      status: 'calculada',
+      total_proventos: totais.bruto,
+      total_descontos: totais.descontos,
+      total_liquido: totais.liquido,
+      total_fgts: totais.fgts,
+      total_colaboradores: totalColabs,
+      data_calculo: new Date().toISOString(),
+    };
+
+    // Lock otimista na versão lida no início: se outra execução concorrente
+    // (idempotency key diferente — outro usuário/dispositivo) gravou primeiro,
+    // o update casa 0 linhas e viramos 409 em vez de last-writer-wins
+    // silencioso, que misturava itens de duas execuções com totais de uma só.
+    let upserted: { id: string } | null = null;
+    if (folhaExistente) {
+      const expectedVersion = Number(folhaExistente.version ?? 1);
+      const res = await admin
+        .from('folhas_pagamento')
+        .update({ ...folhaPayload, version: expectedVersion + 1 })
+        .eq('id', folhaExistente.id as string)
+        .eq('version', expectedVersion)
+        .select('id');
+      if (res.error) throw res.error;
+      upserted = res.data?.[0] ?? null;
+      if (!upserted) {
+        try {
+          await admin.from('folha_lock_conflicts').insert({
+            folha_id: folhaExistente.id,
+            empresa_id,
+            competencia,
+            version_esperada: expectedVersion,
+            version_atual: expectedVersion + 1,
+            user_id: userId,
+          });
+        } catch { /* auditoria best-effort */ }
+        await failIdempotency(admin, idempotencyId);
+        return createErrorResponse(
+          'Recálculo concorrente detectado nesta competência — aguarde e tente novamente',
+          409,
+          'PAYROLL_RACE'
+        );
+      }
+    } else {
+      const res = await admin
+        .from('folhas_pagamento')
+        .insert({ ...folhaPayload, version: 1 })
+        .select('id')
+        .single();
+      // Duas execuções novas na mesma competência: a segunda perde na unique
+      // (empresa_id,competencia,tipo) → 409 em vez de corrida silenciosa.
+      if (res.error && String((res.error as { code?: string }).code) === '23505') {
+        await failIdempotency(admin, idempotencyId);
+        return createErrorResponse(
+          'Recálculo concorrente detectado nesta competência — aguarde e tente novamente',
+          409,
+          'PAYROLL_RACE'
+        );
+      }
+      if (res.error) throw res.error;
+      upserted = res.data;
+    }
+    if (!upserted) throw new Error('Falha ao gravar cabeçalho da folha');
 
     // Persist the same canonical item-level result returned to the caller.
     // The compound unique constraint and conflict target make retries and
