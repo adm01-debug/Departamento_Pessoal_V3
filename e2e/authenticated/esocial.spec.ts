@@ -56,18 +56,22 @@ test.describe('Módulo eSocial', () => {
     }
   });
 
-  test('proteção: rota esocial requer autenticação', async ({ browser }) => {
-    // page.context() herda o storageState autenticado do projeto — para o
-    // cenário anônimo é preciso um contexto novo, sem storage.
-    const context2 = await browser.newContext();
-    const anon = await context2.newPage();
-    try {
-      await anon.goto('/esocial');
-      // Dev-mode: o primeiro carregamento do Vite leva vários segundos e o
-      // safety-net de auth-init do app é 10s — a janela precisa ser maior.
-      await expect(anon).toHaveURL(/\/login/i, { timeout: 30_000 });
-    } finally {
-      await context2.close();
-    }
+  test('proteção: rota esocial requer autenticação', async ({ page, context }) => {
+    // Mesmo mecanismo de session-expiration.spec.ts (provado em CI): limpa a
+    // sessão sb-* no MESMO contexto. Um browser.newContext() paralelo fica
+    // preso no spinner de auth-init (contenção de navigator.locks do
+    // supabase-js entre contextos da mesma origem).
+    await page.goto('/esocial');
+    await context.clearCookies();
+    await page.evaluate(() => {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith('sb-') || k.includes('supabase'))
+        .forEach((k) => localStorage.removeItem(k));
+      Object.keys(sessionStorage)
+        .filter((k) => k.startsWith('sb-') || k.includes('supabase'))
+        .forEach((k) => sessionStorage.removeItem(k));
+    });
+    await page.goto('/esocial');
+    await expect(page).toHaveURL(/\/login/i, { timeout: 15_000 });
   });
 });
