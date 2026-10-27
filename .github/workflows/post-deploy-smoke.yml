@@ -38,8 +38,18 @@ jobs:
           E2E_NON_ADMIN_PASSWORD: ${{ secrets.E2E_NON_ADMIN_PASSWORD }}
         run: |
           set -euo pipefail
-          echo "APP_URL=${DEPLOYMENT_URL:-$FALLBACK_APP_URL}" >> "$GITHUB_ENV"
-          APP_URL="${DEPLOYMENT_URL:-$FALLBACK_APP_URL}" bash scripts/healthcheck.sh
+          # O environment_url da Vercel pode ser a URL efêmera do deployment
+          # (protegida por SSO → 302 para vercel.com/sso-api), não o domínio
+          # de produção. O smoke é um canário de produção: se o deployment
+          # redireciona para o SSO da Vercel, usa o domínio de produção.
+          APP_URL="${DEPLOYMENT_URL:-$FALLBACK_APP_URL}"
+          location="$(curl -sS -o /dev/null -w '%{redirect_url}' --max-time 15 "$APP_URL" || true)"
+          if printf '%s' "$location" | grep -q 'vercel\.com/sso'; then
+            echo "deployment protegido por SSO ($APP_URL) — usando domínio de produção $FALLBACK_APP_URL"
+            APP_URL="$FALLBACK_APP_URL"
+          fi
+          echo "APP_URL=$APP_URL" >> "$GITHUB_ENV"
+          APP_URL="$APP_URL" bash scripts/healthcheck.sh
 
       # W64: fecha o buraco entre o merge e o healthcheck de 6h — roda a
       # suíte pública de verdade contra o deployment recém-publicado, não só
