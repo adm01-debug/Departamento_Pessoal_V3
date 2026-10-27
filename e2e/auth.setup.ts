@@ -1,4 +1,5 @@
 import { test as setup, expect, type Page } from '@playwright/test';
+import { createHmac } from 'node:crypto';
 import path from 'node:path';
 
 const AUTH_FILE = path.resolve('e2e/.auth/user.json');
@@ -6,6 +7,104 @@ const AUTH_FILE_MOBILE = path.resolve('e2e/.auth/user-mobile.json');
 
 const EMAIL = process.env.E2E_USER_EMAIL ?? 'admin@teste.local';
 const PASSWORD = process.env.E2E_USER_PASSWORD ?? 'Admin@2026!';
+const TOTP_SECRET = process.env.E2E_TOTP_SECRET;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+/** TOTP RFC 6238 (SHA-1, 30s, 6 dígitos) a partir de seed base32. */
+function totpCode(seed: string): string {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const bytes: number[] = [];
+  let bits = 0;
+  let value = 0;
+  for (const c of seed.replace(/=+$/, '').toUpperCase()) {
+    const idx = alphabet.indexOf(c);
+    if (idx === -1) throw new Error('E2E_TOTP_SECRET não é base32 válido');
+    value = (value << 5) | idx;
+    bits += 5;
+    if (bits >= 8) {
+      bytes.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  const counter = Buffer.alloc(8);
+  counter.writeBigUInt64BE(BigInt(Math.floor(Date.now() / 30_000)));
+  const hmac = createHmac('sha1', Buffer.from(bytes)).update(counter).digest();
+  const offset = hmac[hmac.length - 1] & 0x0f;
+  return String((hmac.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).padStart(6, '0');
+}
+
+/**
+ * Eleva a sessão do browser para aal2 quando a conta de teste tem TOTP
+ * verificado. Rotas /admin/* exigem MFA (AdminRoute →
+ * getAuthenticatorAssuranceLevel): com aal1 e fator verificado o app desvia
+ * para a tela de challenge e nenhum heading de admin renderiza. Completa
+ * challenge+verify no GoTrue com o token DA SESSÃO DO BROWSER e grava os
+ * novos tokens (aal2) de volta no localStorage antes do storageState.
+ * No-op sem E2E_TOTP_SECRET ou se a sessão já estiver em aal2.
+ */
+async function elevateToAal2IfNeeded(page: Page): Promise<void> {
+  if (!TOTP_SECRET || !SUPABASE_URL || !SUPABASE_KEY) return;
+
+  const stored = await page.evaluate(() => {
+    const key = Object.keys(localStorage).find((k) => k.startsWith('sb-') && k.endsWith('-auth-token'));
+    return key ? { key, raw: localStorage.getItem(key) ?? '' } : null;
+  });
+  if (!stored) return;
+
+  const session = JSON.parse(stored.raw) as {
+    access_token?: string;
+    refresh_token?: string;
+    expires_at?: number;
+    expires_in?: number;
+  };
+  if (!session.access_token) return;
+
+  const claims = JSON.parse(Buffer.from(session.access_token.split('.')[1] ?? '', 'base64url').toString()) as {
+    aal?: string;
+  };
+  if (claims.aal === 'aal2') return;
+
+  const headers = {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${session.access_token}`,
+    'Content-Type': 'application/json',
+  };
+  const base = `${SUPABASE_URL}/auth/v1`;
+
+  const me = (await (await fetch(`${base}/user`, { headers })).json()) as {
+    factors?: Array<{ id: string; factor_type: string; status: string }>;
+  };
+  const factor = me.factors?.find((f) => f.factor_type === 'totp' && f.status === 'verified');
+  if (!factor) return; // conta sem TOTP verificado — permanece aal1
+
+  const challenge = (await (
+    await fetch(`${base}/factors/${factor.id}/challenge`, { method: 'POST', headers, body: '{}' })
+  ).json()) as { id: string };
+
+  const verified = (await (
+    await fetch(`${base}/factors/${factor.id}/verify`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ challenge_id: challenge.id, code: totpCode(TOTP_SECRET) }),
+    })
+  ).json()) as Partial<typeof session>;
+
+  if (!verified.access_token) {
+    throw new Error(`MFA verify do E2E falhou: ${JSON.stringify(verified)}`);
+  }
+
+  Object.assign(session, {
+    access_token: verified.access_token,
+    refresh_token: verified.refresh_token ?? session.refresh_token,
+    expires_at: verified.expires_at ?? session.expires_at,
+    expires_in: verified.expires_in ?? session.expires_in,
+  });
+  await page.evaluate(
+    ([k, v]) => localStorage.setItem(k as string, v as string),
+    [stored.key, JSON.stringify(session)]
+  );
+}
 
 /**
  * Aguarda o store Zustand (empresa-storage) persistir um empresaAtualId
@@ -72,6 +171,7 @@ async function login(page: Page, file: string) {
 
   // Caso a sessão já esteja persistida pelo dev, o app redireciona para /dashboard.
   if (page.url().includes('/dashboard')) {
+    await elevateToAal2IfNeeded(page);
     await waitForEmpresaStorage(page);
     await page.context().storageState({ path: file });
     return;
@@ -96,6 +196,9 @@ async function login(page: Page, file: string) {
   await page.waitForFunction(() => Object.keys(localStorage).some((k) => k.startsWith('sb-')), undefined, {
     timeout: 10_000,
   });
+
+  // Eleva a sessão para aal2 antes de navegar — rotas /admin/* exigem MFA.
+  await elevateToAal2IfNeeded(page);
 
   // Aguarda empresa ser selecionada e persistida (empresa-storage.empresaAtualId)
   // antes de salvar o storageState — sem isso cada spec começa sem empresa e
