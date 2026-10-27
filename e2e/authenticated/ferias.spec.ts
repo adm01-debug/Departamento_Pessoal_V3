@@ -12,9 +12,14 @@ test.describe('Módulo Férias', () => {
   test('renderiza listagem de férias com colaboradores', async ({ page }) => {
     // A página tem 4 headings com "Férias" (título + seções) — primeira ocorrência.
     await expect(page.getByRole('heading', { name: /férias/i }).first()).toBeVisible();
-    // Assumindo que a listagem usa uma tabela ou cards
-    const table = page.locator('table, [role="grid"], [data-testid="ferias-list"]').first();
-    await expect(table).toBeVisible({ timeout: 10_000 });
+    // A listagem mora na aba "Solicitações" (a aba default é "Dashboard").
+    await page.getByRole('tab', { name: /solicitações/i }).click();
+    // Com dados aparece a tabela; vazio renderiza "Nenhum … férias encontrado".
+    const list = page
+      .locator('table, [role="grid"], [data-testid="ferias-list"]')
+      .or(page.getByText(/nenhum.*férias/i))
+      .first();
+    await expect(list).toBeVisible({ timeout: 10_000 });
   });
 
   test('filtra férias por status (pendente/aprovada/concluida)', async ({ page }) => {

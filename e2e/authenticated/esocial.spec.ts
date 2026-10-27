@@ -9,8 +9,12 @@ test.describe('Módulo eSocial', () => {
     // Página tem "Central eSocial" (h1) + "Eventos eSocial" (h3) — primeira ocorrência.
     await expect(page.getByRole('heading', { name: /esocial/i }).first()).toBeVisible({ timeout: 10_000 });
 
-    // Contadores: enviados, pendentes, erros
-    const sentBadge = page.getByText(/enviad/i).or(page.getByText(/s-1200/i));
+    // Contadores: enviados, pendentes, erros — há vários elementos com
+    // "enviad"/"S-1200" na tela; a primeira ocorrência basta.
+    const sentBadge = page
+      .getByText(/enviad/i)
+      .or(page.getByText(/s-1200/i))
+      .first();
     await expect(sentBadge).toBeVisible({ timeout: 8_000 });
   });
 
@@ -59,7 +63,9 @@ test.describe('Módulo eSocial', () => {
     const anon = await context2.newPage();
     try {
       await anon.goto('/esocial');
-      await expect(anon).toHaveURL(/\/login/i, { timeout: 10_000 });
+      // Dev-mode: o primeiro carregamento do Vite leva vários segundos e o
+      // safety-net de auth-init do app é 10s — a janela precisa ser maior.
+      await expect(anon).toHaveURL(/\/login/i, { timeout: 30_000 });
     } finally {
       await context2.close();
     }
