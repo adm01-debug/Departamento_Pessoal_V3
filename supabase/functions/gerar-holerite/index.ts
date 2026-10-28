@@ -92,7 +92,7 @@ serve(async (req: Request): Promise<Response> => {
     // Buscar benefícios ativos
     const { data: beneficios } = await supabase
       .from('beneficios_colaborador')
-      .select('*, tipo:tipo_beneficio_id(nome, tipo)')
+      .select('*, tipo:tipo_beneficio_id(nome, codigo)')
       .eq('colaborador_id', colaboradorId)
       .eq('ativo', true);
 
@@ -117,7 +117,7 @@ serve(async (req: Request): Promise<Response> => {
     // Descontos de benefícios — regra do canônico: VT limitado a 6% do
     // salário-base; demais benefícios valem o campo `desconto`.
     const beneficioDesconto = (b: any): number => {
-      if (b.tipo?.tipo === 'VT') return Math.min(Number(b.valor ?? 0), salarioBase * 0.06);
+      if (b.tipo?.codigo === 'VT') return Math.min(Number(b.valor ?? 0), salarioBase * 0.06);
       return Number(b.desconto ?? 0);
     };
     const totalDescontosBeneficios = (beneficios || []).reduce((acc: number, b: any) => acc + beneficioDesconto(b), 0);

@@ -50,7 +50,7 @@ interface EventoVariavelRow {
 interface BeneficioVinculo {
   valor: number;
   desconto: number | null;
-  beneficio: { tipo?: string; nome: string } | null;
+  beneficio: { codigo?: string; nome: string } | null;
 }
 
 interface PensaoRow {
@@ -281,7 +281,7 @@ export const calculoLoteService = {
           if (beneficiosVinculos && beneficiosVinculos.length > 0) {
             beneficiosVinculos.forEach((v) => {
               if (v.beneficio) {
-                if (v.beneficio.tipo === 'VT') {
+                if (v.beneficio.codigo === 'VT') {
                   const custoVT = Number(v.valor || 0);
                   const descontoMaximoVT = Number(colab.salario_base || 0) * 0.06;
                   const valorDescontoVT = Math.min(custoVT, descontoMaximoVT);
@@ -294,7 +294,7 @@ export const calculoLoteService = {
                     });
                   }
                 }
-                if (v.desconto && v.beneficio.tipo !== 'VT') {
+                if (v.desconto && v.beneficio.codigo !== 'VT') {
                   beneficiosEventos.push({
                     codigo: '5020',
                     descricao: `Coparticipação ${v.beneficio.nome}`,

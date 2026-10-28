@@ -347,7 +347,7 @@ Deno.serve(async (req) => {
       // tabela unificada.
       const { data: beneficiosRows, error: beneficiosErr } = await admin
         .from('beneficios_colaborador')
-        .select('colaborador_id, valor, desconto, beneficio:tipos_beneficio(nome, tipo)')
+        .select('colaborador_id, valor, desconto, beneficio:tipos_beneficio(nome, codigo)')
         .in('colaborador_id', colabIds)
         .eq('ativo', true);
       if (beneficiosErr) throw beneficiosErr;
@@ -369,9 +369,10 @@ Deno.serve(async (req) => {
         .in('colaborador_id', colabIds)
         .eq('ativo', true);
       if (vaErr) throw vaErr;
-      const vtPorColaborador = new Map((vtRows ?? []).map((v) => [v.colaborador_id, v]));
+      const vtPorColaborador = new Map((vtRows ?? []).filter((v) => v.colaborador_id).map((v) => [v.colaborador_id as string, v]));
       const vaPorColaborador = new Map<string, NonNullable<typeof vaRows>>();
       for (const v of vaRows ?? []) {
+        if (!v.colaborador_id) continue;
         const lista = vaPorColaborador.get(v.colaborador_id) ?? [];
         lista.push(v);
         vaPorColaborador.set(v.colaborador_id, lista);
@@ -389,6 +390,7 @@ Deno.serve(async (req) => {
       if (pensoesErr) throw pensoesErr;
       const pensoesPorColaborador = new Map<string, NonNullable<typeof pensoesRows>>();
       for (const p of pensoesRows ?? []) {
+        if (!p.colaborador_id) continue;
         const lista = pensoesPorColaborador.get(p.colaborador_id) ?? [];
         lista.push(p);
         pensoesPorColaborador.set(p.colaborador_id, lista);
@@ -402,6 +404,7 @@ Deno.serve(async (req) => {
       if (consignadosErr) throw consignadosErr;
       const consignadosPorColaborador = new Map<string, NonNullable<typeof consignadosRows>>();
       for (const e of consignadosRows ?? []) {
+        if (!e.colaborador_id) continue;
         if ((e.parcelas_pagas ?? 0) >= (e.numero_parcelas ?? 0)) continue;
         const lista = consignadosPorColaborador.get(e.colaborador_id) ?? [];
         lista.push(e);
@@ -417,6 +420,7 @@ Deno.serve(async (req) => {
       if (adiantamentosErr) throw adiantamentosErr;
       const adiantamentosPorColaborador = new Map<string, NonNullable<typeof adiantamentosRows>>();
       for (const a of adiantamentosRows ?? []) {
+        if (!a.colaborador_id) continue;
         const lista = adiantamentosPorColaborador.get(a.colaborador_id) ?? [];
         lista.push(a);
         adiantamentosPorColaborador.set(a.colaborador_id, lista);
@@ -471,9 +475,9 @@ Deno.serve(async (req) => {
         const vinculos = beneficiosPorColaborador.get(c.id) ?? [];
         if (vinculos.length > 0) {
           for (const v of vinculos) {
-            const beneficio = v.beneficio as { nome: string; tipo: string } | null;
+            const beneficio = v.beneficio as { nome: string; codigo: string } | null;
             if (!beneficio) continue;
-            if (beneficio.tipo === 'VT') {
+            if (beneficio.codigo === 'VT') {
               const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);
               if (descontoVT > 0) {
                 descontosVariaveis.push({ codigo: '5010', descricao: 'Desconto Vale Transporte (Portaria 671)', tipo: 'desconto', valor: trunc2(descontoVT) });
