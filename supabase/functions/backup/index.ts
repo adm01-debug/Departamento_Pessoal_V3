@@ -8,6 +8,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 
 const TABLES = [
   'colaboradores', 'folhas_pagamento', 'itens_folha', 'ferias',
@@ -38,6 +39,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Sessão inválida' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },

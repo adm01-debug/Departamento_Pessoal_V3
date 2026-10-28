@@ -72,3 +72,18 @@ jobs:
         with:
           sarif_file: scorecard-results.sarif
           category: ossf-scorecard
+
+  sbom:
+    name: SBOM (Syft) + upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Gerar SBOM (npm)
+        uses: anchore/sbom-action@8e94d7dd8b36657ba54885f0087e110228cf3284 # v0.20.9
+        with:
+          format: spdx-json
+          output-file: sbom.spdx.json
+          upload-artifact: true

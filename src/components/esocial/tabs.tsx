@@ -248,12 +248,12 @@ export function ESocialConfigTab({
                       adicionarCertificado({
                         empresa_id: empresaAtual.id,
                         subject: (formData.get('subject') as string) || file.name,
-                        issuer: 'Autoridade Certificadora',
-                        valid_from: new Date().toISOString(),
-                        valid_to: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+                        issuer: formData.get('issuer') as string,
+                        valid_from: formData.get('valid_from') as string,
+                        valid_to: formData.get('valid_to') as string,
                         arquivo_base64: base64,
-                        senha_encriptada: formData.get('password') as string,
-                        cnpj_cpf: empresaAtual.cnpj || '',
+                        senha: formData.get('password') as string,
+                        cnpj: empresaAtual.cnpj || '',
                       });
                     }
                   };
@@ -268,6 +268,20 @@ export function ESocialConfigTab({
                 <div className="space-y-2">
                   <Label>Senha do Certificado</Label>
                   <Input name="password" type="password" autoComplete="off" placeholder="Sua senha" required />
+                </div>
+                <div className="space-y-2">
+                  <Label>Emissor (ex.: AC Certisign)</Label>
+                  <Input name="issuer" placeholder="Autoridade certificadora" required />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Válido de</Label>
+                    <Input name="valid_from" type="date" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Válido até</Label>
+                    <Input name="valid_to" type="date" required />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Identificação (Ex: e-CNPJ Empresa)</Label>

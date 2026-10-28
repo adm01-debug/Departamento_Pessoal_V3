@@ -235,3 +235,139 @@ export function isSafeFilterColumn(c: unknown): c is string {
   if (DANGEROUS_TOKENS.test(c)) return false;
   return /^[A-Za-z0-9_.,"()>\s-]+$/.test(c);
 }
+
+// -------------------- Colunas secretas — nunca trafegam pela ponte ----
+// Credenciais/segredos que pertencem exclusivamente ao servidor. `select *`
+// continua permitido, mas essas colunas são REMOVIDAS do resultado antes de
+// responder — pedir a coluna explicitamente retorna 403. Writes com valor
+// real são igualmente bloqueados (a ponte não é caminho de credencial).
+// Quem precisa ler/escrever esses campos usa edge dedicada com service_role.
+import { TABLE_ALLOWLIST } from "./tableCatalog.ts";
+
+export const SECRET_COLUMNS: Record<string, ReadonlySet<string>> = {
+  certificados_digitais: new Set(["senha_encriptada", "arquivo_base64"]),
+  contas_bancarias: new Set([
+    "agencia_encrypted", "conta_encrypted", "digito_encrypted", "pix_chave_encrypted",
+  ]),
+  pix_itens: new Set(["chave_pix_encrypted"]),
+  user_mfa: new Set(["mfa_secret", "backup_codes"]),
+  user_sessions: new Set(["session_token"]),
+  admissao_tokens: new Set(["token"]),
+  contrato_assinatura_tokens: new Set(["token_hash"]),
+  medidas_ciencia_tokens: new Set(["token_hash"]),
+  idempotency_keys: new Set(["key_hash", "request_hash", "response_body"]),
+  password_history: new Set(["password_hash"]),
+  auth_gov_br_sessions: new Set(["access_token", "id_token"]),
+  configuracoes: new Set(["vapid_private_key"]),
+  webhooks: new Set(["secret"]),
+  webhooks_config: new Set(["secret"]),
+  whatsapp_config: new Set(["api_key"]),
+  esocial_eventos: new Set(["transmission_claim_token"]),
+  relatorios_agendados: new Set(["dispatch_claim_token"]),
+  report_dispatch_attempts: new Set(["dispatch_key_hash", "request_hash", "response_body"]),
+};
+
+// Tokeniza a expressão de colunas do PostgREST em itens de primeiro nível,
+// respeitando parênteses de embeds/funções: "id, emb(col), alias:x, *".
+function topLevelSelectTokens(expr: string): string[] {
+  const tokens: string[] = [];
+  let depth = 0;
+  let token = "";
+  for (const ch of expr) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth = Math.max(0, depth - 1);
+    if (ch === "," && depth === 0) {
+      if (token.trim()) tokens.push(token.trim());
+      token = "";
+    } else {
+      token += ch;
+    }
+  }
+  if (token.trim()) tokens.push(token.trim());
+  return tokens;
+}
+
+export interface SelectColumnsVerdict {
+  ok: boolean;
+  code?: string;
+  message?: string;
+}
+
+// Valida a projeção de um SELECT genérico:
+//  - coluna secreta pedida explicitamente: negada (`*` é respondido com as
+//    colunas secretas removidas — não é erro);
+//  - embeds `tabela(col,...)`: a tabela embutida passa pelas mesmas regras
+//    (denylist + allowlist + secret columns), fechando o desvio via join.
+export function checkSelectColumns(
+  table: string,
+  columns: string | undefined,
+  isAllowedTable: (t: string) => boolean,
+  isDeniedTable: (t: string) => boolean,
+): SelectColumnsVerdict {
+  const secrets = SECRET_COLUMNS[table];
+  const expr = columns ?? "*";
+  for (const token of topLevelSelectTokens(expr)) {
+    const embedMatch = token.match(/^([a-zA-Z_][a-zA-Z0-9_]*)(?:!hint|![a-z_]+)?\((.*)\)$/s);
+    if (embedMatch) {
+      const embedTable = embedMatch[1].toLowerCase();
+      const embedCols = embedMatch[2];
+      if (isDeniedTable(embedTable)) {
+        return { ok: false, code: "TABLE_DENIED", message: `Recurso embutido '${embedTable}' não é acessível via bridge` };
+      }
+      if (!isAllowedTable(embedTable)) {
+        return { ok: false, code: "TABLE_NOT_CATALOGED", message: `Recurso embutido '${embedTable}' fora do catálogo` };
+      }
+      const embedVerdict = checkSelectColumns(embedTable, embedCols, isAllowedTable, isDeniedTable);
+      if (!embedVerdict.ok) return embedVerdict;
+      continue;
+    }
+    // Remove hints (`col!inner`), aliases PostgREST (`alias:col`) e casts
+    const name = token.split("!")[0].split(":").pop()!.replace(/["'`]/g, "").trim();
+    if (name === "*") continue;
+    if (secrets?.has(name.toLowerCase())) {
+      return { ok: false, code: "SECRET_COLUMN", message: `Coluna '${name}' de '${table}' não é acessível via bridge` };
+    }
+  }
+  return { ok: true };
+}
+
+// Exceções controladas — o client precisa ESCREVER o valor (a leitura segue
+// bloqueada/removida): token de admissão gerado no onboarding, segredo de
+// webhook e api_key do WhatsApp configurados na tela de integrações.
+export const WRITEABLE_SECRET_COLUMNS: Record<string, ReadonlySet<string>> = {
+  admissao_tokens: new Set(["token"]),
+  webhooks_config: new Set(["secret"]),
+  whatsapp_config: new Set(["api_key"]),
+};
+
+// Bloqueia writes genéricos que carreguem coluna secreta com valor real.
+// Escrever NULL (limpeza, ex.: MFASetup desmarcando mfa_secret) é permitido.
+export function findSecretWriteColumn(table: string, row: Record<string, unknown>): string | null {
+  const secrets = SECRET_COLUMNS[table];
+  if (!secrets) return null;
+  const writable = WRITEABLE_SECRET_COLUMNS[table];
+  for (const [key, value] of Object.entries(row)) {
+    if (value === null || value === undefined) continue;
+    const k = key.toLowerCase();
+    if (secrets.has(k) && !writable?.has(k)) return key;
+  }
+  return null;
+}
+
+// Remove colunas secretas das linhas devolvidas por select e por writes
+// (o `.select()` pós-write do PostgREST retorna a linha inteira por default).
+// Colunas write-allowed permanecem — o chamador as acabou de enviar.
+export function stripSecretColumns<T>(table: string, rows: T): T {
+  const secrets = SECRET_COLUMNS[table];
+  if (!secrets || !Array.isArray(rows)) return rows;
+  const writable = WRITEABLE_SECRET_COLUMNS[table];
+  for (const row of rows) {
+    if (row && typeof row === "object") {
+      for (const key of Object.keys(row as Record<string, unknown>)) {
+        const k = key.toLowerCase();
+        if (secrets.has(k) && !writable?.has(k)) delete (row as Record<string, unknown>)[key];
+      }
+    }
+  }
+  return rows;
+}
