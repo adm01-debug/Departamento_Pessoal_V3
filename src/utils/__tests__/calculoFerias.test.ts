@@ -7,7 +7,7 @@ describe('calculoFerias', () => {
       salarioBase: 3000,
       diasFerias: 30,
       diasAbono: 0,
-      dependentesIrrf: 0
+      dependentesIrrf: 0,
     };
 
     const result = calculoFerias.calcular(params);
@@ -19,15 +19,15 @@ describe('calculoFerias', () => {
     expect(result.valorAbono).toBe(0);
     expect(result.tercoAbono).toBe(0);
     expect(result.bruto).toBe(4000);
-    
+
     // INSS 2026 (Progressivo) — ~368.60 (floating point may give 368.59 or 368.60)
     expect(result.inss).toBeCloseTo(368.6, 0);
 
-    // IRRF — simplificado 133.84
-    expect(result.irrf).toBeCloseTo(133.84, 1);
+    // IRRF — Lei 15.270/2025: rendimento ≤ R$ 5.000 zera o imposto em 2026
+    expect(result.irrf).toBe(0);
 
-    // Líquido: bruto - INSS - IRRF ≈ 3497.56
-    expect(result.liquido).toBeCloseTo(3497.56, 0);
+    // Líquido: bruto - INSS - IRRF ≈ 3631.4
+    expect(result.liquido).toBeCloseTo(3631.4, 0);
   });
 
   it('deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono)', () => {
@@ -35,7 +35,7 @@ describe('calculoFerias', () => {
       salarioBase: 3000,
       diasFerias: 20,
       diasAbono: 10,
-      dependentesIrrf: 0
+      dependentesIrrf: 0,
     };
 
     const result = calculoFerias.calcular(params);
@@ -49,7 +49,7 @@ describe('calculoFerias', () => {
     expect(result.valorAbono).toBe(1000);
     // 1/3 abono: 333.33
     expect(result.tercoAbono).toBe(333.33);
-    
+
     expect(result.bruto).toBe(4000);
   });
 
@@ -58,7 +58,7 @@ describe('calculoFerias', () => {
       salarioBase: 3000,
       diasFerias: 15,
       diasAbono: 15, // Tentando 15 dias de abono
-      dependentesIrrf: 0
+      dependentesIrrf: 0,
     };
 
     const result = calculoFerias.calcular(params);
