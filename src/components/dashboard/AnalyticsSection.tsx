@@ -137,7 +137,7 @@ export function AnalyticsSection({
 
     // Subscribe to new notifications (Toast only, data refresh is handled by useRealTimeSubscription)
     const channel = supabase
-      .channel('notif-toast')
+      .channel(`notif-toast-${empresaId}-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notificacoes', filter: `empresa_id=eq.${empresaId}` },
@@ -178,7 +178,7 @@ export function AnalyticsSection({
   useEffect(() => {
     if (!empresaId) return;
     const channel = supabase
-      .channel('ponto-changes')
+      .channel(`ponto-changes-${empresaId}-${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'solicitacoes_ajuste_ponto', filter: `empresa_id=eq.${empresaId}` },
