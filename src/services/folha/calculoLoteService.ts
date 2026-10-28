@@ -1,6 +1,7 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Json, TablesInsert } from '@/integrations/supabase/types';
 import { folhaCalc } from '@/utils/folhaCalc';
+import { SALARIO_FAMILIA_TETO, SALARIO_FAMILIA_VALOR } from '@/calculators/tabelas';
 import { toast } from 'sonner';
 import { pontoIntegracaoUtils } from '@/utils/folha/pontoIntegracaoUtils';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -29,12 +30,12 @@ interface ColaboradorFolha {
   salario_base: number | null;
   jornada_horas_mensais?: string | null;
   tipo_contrato?: string | null;
-  dependentes?: Array<{ id: string; para_irrf?: boolean | null }> | null;
+  dependentes?: Array<{ id: string; para_irrf?: boolean | null; para_salario_familia?: boolean | null }> | null;
 }
 
 export const COLABORADOR_FOLHA_SELECT = `
   *,
-  dependentes (id, para_irrf)
+  dependentes (id, para_irrf, para_salario_familia)
 `;
 
 // Código, descrição e natureza do evento vêm da rubrica, não do lançamento.
@@ -49,7 +50,27 @@ interface EventoVariavelRow {
 interface BeneficioVinculo {
   valor: number;
   desconto: number | null;
-  beneficio: { tipo?: string; nome: string } | null;
+  beneficio: { codigo?: string; nome: string } | null;
+}
+
+interface PensaoRow {
+  colaborador_id: string;
+  percentual: number | string | null;
+  valor_fixo: number | string | null;
+  beneficiario: string | null;
+}
+
+interface ConsignadoRow {
+  colaborador_id: string;
+  valor_parcela: number | string | null;
+  numero_parcelas: number | null;
+  parcelas_pagas: number | null;
+  instituicao_financeira: string | null;
+}
+
+interface AdiantamentoRow {
+  colaborador_id: string;
+  valor_solicitado: number | string | null;
 }
 
 export const calculoLoteService = {
@@ -158,6 +179,43 @@ export const calculoLoteService = {
         eventosPorColaborador.set(ev.colaborador_id, lista);
       }
 
+      // Cadastros que alimentam o cálculo (pensão, consignado e adiantamento
+      // aprovado na competência) — mesma ponte da edge calcular-folha.
+      const { data: pensoesRows } = await (supabase.from('pensoes') as unknown as QueryBuilderType)
+        .select('colaborador_id, percentual, valor_fixo, beneficiario')
+        .eq('empresa_id', empresaId)
+        .eq('ativo', true);
+      const pensoesPorColaborador = new Map<string, PensaoRow[]>();
+      for (const p of (pensoesRows ?? []) as unknown as PensaoRow[]) {
+        const lista = pensoesPorColaborador.get(p.colaborador_id) ?? [];
+        lista.push(p);
+        pensoesPorColaborador.set(p.colaborador_id, lista);
+      }
+      const { data: consignadosRows } = await (supabase.from('emprestimos_consignados') as unknown as QueryBuilderType)
+        .select('colaborador_id, valor_parcela, numero_parcelas, parcelas_pagas, instituicao_financeira')
+        .eq('empresa_id', empresaId)
+        .eq('status', 'ativo');
+      const consignadosPorColaborador = new Map<string, ConsignadoRow[]>();
+      for (const e of (consignadosRows ?? []) as unknown as ConsignadoRow[]) {
+        if ((e.parcelas_pagas ?? 0) >= (e.numero_parcelas ?? 0)) continue;
+        const lista = consignadosPorColaborador.get(e.colaborador_id) ?? [];
+        lista.push(e);
+        consignadosPorColaborador.set(e.colaborador_id, lista);
+      }
+      const { data: adiantamentosRows } = await (
+        supabase.from('adiantamentos_salariais') as unknown as QueryBuilderType
+      )
+        .select('colaborador_id, valor_solicitado')
+        .eq('empresa_id', empresaId)
+        .eq('status', 'aprovado')
+        .eq('competencia_desconto', competencia);
+      const adiantamentosPorColaborador = new Map<string, AdiantamentoRow[]>();
+      for (const a of (adiantamentosRows ?? []) as unknown as AdiantamentoRow[]) {
+        const lista = adiantamentosPorColaborador.get(a.colaborador_id) ?? [];
+        lista.push(a);
+        adiantamentosPorColaborador.set(a.colaborador_id, lista);
+      }
+
       const progress: BatchProgress = {
         total: colaboradores.length,
         current: 0,
@@ -223,7 +281,7 @@ export const calculoLoteService = {
           if (beneficiosVinculos && beneficiosVinculos.length > 0) {
             beneficiosVinculos.forEach((v) => {
               if (v.beneficio) {
-                if (v.beneficio.tipo === 'VT') {
+                if (v.beneficio.codigo === 'VT') {
                   const custoVT = Number(v.valor || 0);
                   const descontoMaximoVT = Number(colab.salario_base || 0) * 0.06;
                   const valorDescontoVT = Math.min(custoVT, descontoMaximoVT);
@@ -236,7 +294,7 @@ export const calculoLoteService = {
                     });
                   }
                 }
-                if (v.desconto && v.beneficio.tipo !== 'VT') {
+                if (v.desconto && v.beneficio.codigo !== 'VT') {
                   beneficiosEventos.push({
                     codigo: '5020',
                     descricao: `Coparticipação ${v.beneficio.nome}`,
@@ -290,9 +348,58 @@ export const calculoLoteService = {
             }
           }
 
-          const res = folhaCalc.processar(Number(colab.salario_base || 0), {
+          // Cadastros → eventos (mesma regra da edge calcular-folha):
+          // pensão (também deduz a base do IRRF), consignado e adiantamento
+          // aprovado; salário-família por dependente marcado.
+          const salarioBase = Number(colab.salario_base || 0);
+          const cadastroEventos: EventoFolha[] = [];
+          let pensaoValor = 0;
+          for (const p of pensoesPorColaborador.get(colab.id) ?? []) {
+            const valor = p.percentual ? salarioBase * (Number(p.percentual) / 100) : Number(p.valor_fixo ?? 0);
+            if (valor > 0) {
+              pensaoValor += Math.round(valor * 100) / 100;
+              cadastroEventos.push({
+                codigo: '5015',
+                descricao: `Pensão Alimentícia${p.beneficiario ? ` — ${p.beneficiario}` : ''}`,
+                tipo: 'desconto',
+                valor: Math.round(valor * 100) / 100,
+              });
+            }
+          }
+          for (const e of consignadosPorColaborador.get(colab.id) ?? []) {
+            const valor = Number(e.valor_parcela ?? 0);
+            if (valor > 0) {
+              cadastroEventos.push({
+                codigo: '5016',
+                descricao: `Consignado${e.instituicao_financeira ? ` — ${e.instituicao_financeira}` : ''}`,
+                tipo: 'desconto',
+                valor,
+              });
+            }
+          }
+          for (const a of adiantamentosPorColaborador.get(colab.id) ?? []) {
+            const valor = Number(a.valor_solicitado ?? 0);
+            if (valor > 0) {
+              cadastroEventos.push({ codigo: '5017', descricao: 'Adiantamento Salarial', tipo: 'desconto', valor });
+            }
+          }
+          const salFamiliaDeps = colab.dependentes?.filter((d) => d.para_salario_familia === true).length || 0;
+          const salarioFamilia =
+            salFamiliaDeps > 0 && salarioBase <= SALARIO_FAMILIA_TETO
+              ? Math.round(SALARIO_FAMILIA_VALOR * salFamiliaDeps * 100) / 100
+              : 0;
+          if (salarioFamilia > 0) {
+            cadastroEventos.push({
+              codigo: '1010',
+              descricao: 'Salário-Família',
+              tipo: 'provento',
+              valor: salarioFamilia,
+            });
+          }
+
+          const res = folhaCalc.processar(salarioBase, {
             dependentes: dependentesCount,
-            eventos: [...eventosVariaveis, ...beneficiosEventos],
+            eventos: [...eventosVariaveis, ...beneficiosEventos, ...cadastroEventos],
             horasExtras50: totalHE,
             horasExtras100: totalHE100,
             horasNoturnas: totalNoturno,
@@ -301,6 +408,8 @@ export const calculoLoteService = {
             horasFalta: totalFaltas,
             jornada,
             descontosExtras: 0,
+            deducoesIrrf: pensaoValor,
+            ano: Number(ano),
           });
 
           // Salva o item da folha

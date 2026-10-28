@@ -2,6 +2,13 @@
 
 Data: 2026-10-27 · Contexto: correção dos workflows em falha na main
 
+## PR aberto aguardando merge (deploy de app em produção)
+
+- **[PR #311](https://github.com/adm01-debug/Departamento_Pessoal_V3/pull/311)** — fix(folha): 10 gaps Folha/Fiscal (Lei 15.270/2025 no IRRF, motores lote/edge/holerite alinhados, cadastros pensão/consignado/adiantamento/salário-família no cálculo, LancamentosDialog de eventos variáveis, emitirPDF real, Importar Ponto → /importacao). CI 19/19 verde; E2E de UI no comentário do PR. **Não mergeado** porque o merge dispara deploy de produção do app — pronto para merge quando o Joaquim decidir. Pós-merge: rodar `canonical-edge-functions` (deploy de `calcular-folha`, `gerar-holerite`, `_shared/irrf`).
+- **Login admin@teste.local agora exige TOTP** — browser tests só passam com `user@teste.local / User@2026!`. Para restaurar o caminho admin, salvar o seed `E2E_TOTP_SECRET` (GitHub) como secret de sessão/org.
+- **Ledger canônico (migrations ≥ 20261012120000)** — confirmação pendente: `canonical-sql-diag` falha por infra (`permission denied to set role "ci_auditor"`); um apply do `canonical-migrations` está na fila/aguardando. Enquanto não aplicar, holerites seguem sem espelho em produção.
+- **Achados preexistentes (não do PR, para backlog)**: bridge `.maybeSingle()` falha em `folhas_pagamento` (bloqueia wizard de cálculo); "Nova Rubrica" omite `empresa_id` e sempre falha na UI.
+
 ## Resolvido
 
 - **E2E autenticado (e2e.yml)** — ✅ run [40547473599](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/40547473599): 40 passed, `conclusion=success` na main (27/10).
