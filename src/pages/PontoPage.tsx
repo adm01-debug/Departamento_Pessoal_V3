@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { ImportarAFDTDialog } from '@/components/ponto/ImportarAFDTDialog';
 import { GerarAEJDialog } from '@/components/ponto/GerarAEJDialog';
+import { GerarAFDDialog } from '@/components/ponto/GerarAFDDialog';
 import { AssinarEspelhoDialog } from '@/components/ponto/AssinarEspelhoDialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -61,6 +62,22 @@ export default function PontoPage() {
   const { user } = useAuth();
   const { addOffline, offlineBatidasCount } = usePontoOffline();
   const { empresaAtual } = useEmpresas();
+
+  // configuracoes_ponto.exige_reconhecimento_facial — alimenta
+  // PontoClockRegister (o switch da aba Configurações agora tem efeito).
+  const { data: pontoCfg } = useQuery({
+    queryKey: ['configuracoes-ponto-clock', empresaAtual?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('configuracoes_ponto')
+        .select('exige_reconhecimento_facial')
+        .eq('empresa_id', empresaAtual!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!empresaAtual?.id,
+  });
 
   const { data: locaisTrabalho } = useQuery({
     queryKey: ['locais-trabalho-ponto', empresaAtual?.id],
@@ -354,6 +371,7 @@ export default function PontoPage() {
             )}
             <ImportarAFDTDialog />
             <GerarAEJDialog />
+            <GerarAFDDialog />
             <Button
               size="sm"
               variant="outline"
@@ -451,6 +469,7 @@ export default function PontoPage() {
                 geoStatus={geoStatus}
                 onRegistrar={registrar}
                 ultimoRegistro={batidasHoje?.[0]}
+                exigeBiometria={pontoCfg?.exige_reconhecimento_facial ?? true}
               />
               <PontoTodayCard registroHoje={registroHoje ?? null} />
               <div className="flex flex-col gap-6">

@@ -39,6 +39,3 @@ export {
   calcularPLR,
 } from './rescisao';
 export type { TipoRescisao } from './rescisao';
-// §8.3: folhaCompleta (calcularFolhaCompleta/calcularSalarioLiquido) não tem
-// chamador real — o caminho vivo é a edge `calcular-folha`. Sem re-export morto;
-// o arquivo segue existindo com seus testes.

@@ -1,4 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { CalculoResultado } from '@/utils/folhaCalc';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
@@ -289,8 +291,67 @@ export const folhaPagamentoService = {
     }
   },
 
+  /**
+   * Gera o PDF real dos holerites da folha (uma página por colaborador) e
+   * devolve uma blob URL para abrir numa aba nova. O arquivo não sobe ao
+   * storage — é gerado no cliente a partir dos folha_itens calculados.
+   */
   emitirPDF: async (folhaId: string): Promise<string> => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    return `https://storage.lovable.dev/holerites/holerite_${folhaId}.pdf`;
+    const { data: itens, error } = await supabase
+      .from('folha_itens')
+      .select('*, colaborador:colaboradores(nome_completo, cpf, cargo), folha:folhas_pagamento(*)')
+      .eq('folha_id', folhaId)
+      .order('colaborador_id');
+    if (error) throw error;
+    if (!itens?.length) throw new Error('Nenhum holerite calculado nesta folha.');
+
+    const folha = (itens[0] as FolhaItemComRelacoes).folha;
+    const { data: emp } = folha?.empresa_id
+      ? await supabase.from('empresas').select('razao_social, cnpj').eq('id', folha.empresa_id).single()
+      : { data: null };
+    const fmt = (v: number | string | null) =>
+      Number(v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    const doc = new jsPDF();
+    (itens as FolhaItemComRelacoes[]).forEach((item, idx) => {
+      if (idx > 0) doc.addPage();
+      const detalhes = item.detalhes as FolhaItemDetalhes | null;
+      const colab = item.colaborador;
+
+      doc.setFontSize(13);
+      doc.text(emp?.razao_social ?? 'Empresa', 14, 16);
+      doc.setFontSize(9);
+      doc.text(`CNPJ: ${emp?.cnpj ?? 'N/A'}`, 14, 21);
+      doc.text(`Competência: ${folha?.competencia ?? ''}`, 14, 26);
+      doc.text(`Colaborador: ${colab?.nome_completo ?? ''}`, 14, 33);
+      doc.text(`CPF: ${colab?.cpf ?? 'N/A'}  |  Cargo: ${colab?.cargo ?? 'Não informado'}`, 14, 38);
+
+      const linhas = (detalhes?.detalheEventos ?? []).map((e) => [
+        e.codigo,
+        e.descricao,
+        e.tipo === 'provento' ? fmt(e.valor) : '',
+        e.tipo === 'desconto' ? fmt(e.valor) : '',
+      ]);
+      autoTable(doc, {
+        startY: 43,
+        head: [['Código', 'Evento', 'Provento', 'Desconto']],
+        body: linhas.length ? linhas : [['—', 'Demonstrativo', fmt(item.total_proventos), fmt(item.total_descontos)]],
+        styles: { fontSize: 8 },
+        headStyles: { fontSize: 8 },
+      });
+
+      const y = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY ?? 45;
+      doc.setFontSize(10);
+      doc.text(`Total Proventos: ${fmt(item.total_proventos)}`, 14, y + 8);
+      doc.text(`Total Descontos: ${fmt(item.total_descontos)}`, 14, y + 14);
+      doc.text(`Líquido a Receber: ${fmt(item.total_liquido)}`, 14, y + 20);
+      doc.text(
+        `INSS: ${fmt(item.inss_mes)}  |  IRRF: ${fmt(item.irrf_mes)}  |  FGTS: ${fmt(item.fgts_mes)}`,
+        14,
+        y + 28
+      );
+    });
+
+    return URL.createObjectURL(doc.output('blob'));
   },
 };
