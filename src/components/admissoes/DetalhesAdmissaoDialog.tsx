@@ -20,7 +20,8 @@ import { ptBR } from 'date-fns/locale';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { contratacaoService } from '@/services/contratacaoService';
-import { useContratoTemplates } from '@/hooks/useContratoTemplates';
+import { contratoTemplateService } from '@/services/contratoTemplateService';
+import { queryClient } from '@/lib/queryClient';
 import { safeErrorMessage } from '@/utils/safeError';
 
 interface DetalhesAdmissaoDialogProps {
@@ -34,8 +35,23 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   const { validarDocumento } = useContratacaoDigital();
   const { workflow } = useAdmissaoWorkflow(admissao?.id);
   const { empresaAtual } = useEmpresas();
-  const { gerarContrato } = useContratoTemplates();
-  const qc = useQueryClient();
+  const [gerandoContrato, setGerandoContrato] = useState(false);
+  // Sem useMutation: o dialog também renderiza fora de QueryClientProvider
+  // (testes unitários). gerarPdf sem template_id resolve o template ativo
+  // pela RPC contrato_resolver_template na edge.
+  const handleGerarContrato = async () => {
+    if (!admissao) return;
+    setGerandoContrato(true);
+    try {
+      const contrato = await contratoTemplateService.gerarPdf(admissao.id);
+      toast.success(`Contrato gerado (${contrato.template_nome} v${contrato.template_versao}).`);
+      if (contrato.signed_url) window.open(contrato.signed_url, '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Falha ao gerar o contrato.'));
+    } finally {
+      setGerandoContrato(false);
+    }
+  };
   const [savingDados, setSavingDados] = useState(false);
   const [dados, setDados] = useState({ cpf: '', data_nascimento: '', nome_mae: '', sexo: '' });
   const [dadosLoaded, setDadosLoaded] = useState('');
@@ -76,7 +92,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
         },
         empresaAtual.id
       );
-      await qc.invalidateQueries({ queryKey: ['admissoes'] });
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
       toast.success('Dados pessoais salvos.');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Falha ao salvar dados.');
@@ -97,11 +113,11 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     try {
       await contratacaoService.transmitirESocial(admissao.id, empresaAtual.id);
       toast.success('Evento S-2200 transmitido e confirmado.');
-      await qc.invalidateQueries({ queryKey: ['admissoes'] });
-      await qc.invalidateQueries({ queryKey: ['esocial-eventos'] });
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
+      await queryClient.invalidateQueries({ queryKey: ['esocial-eventos'] });
     } catch (e) {
       toast.error(safeErrorMessage(e, 'Falha ao transmitir para o eSocial.'));
-      await qc.invalidateQueries({ queryKey: ['admissoes'] });
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
     } finally {
       setEnviandoESocial(false);
     }
@@ -358,11 +374,11 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                     size="sm"
                     variant="outline"
                     className="rounded-xl border-info/30 text-info hover:bg-info/10 h-10 gap-2 font-bold"
-                    onClick={() => gerarContrato.mutate({ admissao_id: admissao.id })}
-                    disabled={gerarContrato.isPending || terminal}
+                    onClick={handleGerarContrato}
+                    disabled={gerandoContrato || terminal}
                   >
                     <FileText className="w-4 h-4" />
-                    {gerarContrato.isPending ? 'Gerando...' : 'Gerar Contrato'}
+                    {gerandoContrato ? 'Gerando...' : 'Gerar Contrato'}
                   </Button>
                 </div>
 
