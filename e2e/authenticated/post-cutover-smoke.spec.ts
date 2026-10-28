@@ -43,7 +43,12 @@ test.describe('Post-cutover smoke', () => {
     // (counts.ok=0) — exigimos ≥1 para garantir que run() de fato terminou
     // (o check 'env' fica 'ok' sempre que a página monta com VITE_SUPABASE_URL).
     await page.goto('/admin/diagnostico-migracao');
+    // Dois sinais, na ordem: `OK ≥1` prova que run() começou (o check 'env'
+    // fica 'ok' assim que a página monta com VITE_SUPABASE_URL); o botão
+    // "Rodar novamente" fica disabled durante run() e só reabilita quando
+    // TODOS os checks terminam — é ele que prova a conclusão.
     await expect(page.getByText(/OK [1-9]\d*/).first()).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByRole('button', { name: /rodar novamente/i })).toBeEnabled({ timeout: 30_000 });
 
     // 5. Sem erros de console críticos (ignoramos ruído previsível).
     // BRIDGE_SCHEMA_ERROR em `user_roles` é esperado: a denylist da bridge

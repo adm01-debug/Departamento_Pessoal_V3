@@ -152,7 +152,8 @@ jobs:
             20261023000000_qa_r3_fixes.sql \
             20261024000000_qa_r4_fixes.sql \
             20261027000000_revoke_orphan_secdef.sql \
-            20261027120000_qa_r5_fixes.sql
+            20261027120000_qa_r5_fixes.sql \
+            20261028120000_qa_r5_review_fixes.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then

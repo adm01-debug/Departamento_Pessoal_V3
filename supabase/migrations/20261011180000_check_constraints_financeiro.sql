@@ -12,6 +12,20 @@
 -- convenção documentada (0-6 vs 1-7) e não tem writer no app.
 -- ============================================================================
 
+-- Replay-order repair (Devin Review #301): no replay sequencial, folha_itens
+-- pode nascer no formato reduzido (003_folha_ferias_ponto.sql) e o CHECK
+-- folha_itens_valores_nao_negativos exigiria salario_base antes da convergência.
+-- No canônico esta versão já está no ledger → este bloco nunca re-executa lá.
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS salario_base numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS total_proventos numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS total_descontos numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS total_liquido numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS fgts_mes numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS inss_mes numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS irrf_mes numeric(12,2) DEFAULT 0;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS detalhes jsonb DEFAULT '[]'::jsonb;
+ALTER TABLE public.folha_itens ADD COLUMN IF NOT EXISTS status_pagamento text DEFAULT 'pendente';
+
 DO $$
 DECLARE
   r RECORD;
