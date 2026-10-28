@@ -25,7 +25,6 @@ import {
   Shield,
   Loader2,
   Zap,
-  CloudSync,
   Calculator,
   Key,
 } from 'lucide-react';
@@ -245,14 +244,6 @@ export default function ObrigacoesFiscaisPage() {
             >
               {gerandoServidor ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
               <span className="hidden sm:inline">Auto</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="rounded-xl font-body gap-1.5 border-info/30 text-info hover:bg-info/5"
-              onClick={() => toast.success('Sincronizando com FGTS Digital API...')}
-            >
-              <CloudSync className="h-4 w-4" />
-              <span className="hidden sm:inline">Sincronizar API</span>
             </Button>
             <Dialog open={openGuia} onOpenChange={setOpenGuia}>
               <DialogTrigger asChild>

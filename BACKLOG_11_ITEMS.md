@@ -14,7 +14,7 @@
 | **P5-083** | Workflow editor (BPMN) | UX design + design system | ~3 dias |
 | **P5-084** | Integração contábil (Domínio/Alterdata) | Credenciais API + acesso sandbox | ~2 dias |
 
-> **P5-086 (Metabase embed)** foi coberto pelo commit `feat(bi): Metabase embed com fallback recharts + validators` — implementável com credenciais reais quando disponível.
+> **P5-086 (Metabase embed)** — o service `metabaseService.ts` foi removido na limpeza de 11/10 (#201); resta o componente `MetabaseEmbed` e a edge `metabase-embed`, sem tela consumidora. A recriar quando houver instância Metabase real.
 
 ---
 
@@ -38,7 +38,7 @@
 
 ## 🟠 P5-084 — Integração Contábil (2 dias)
 
-**Escopo:** `src/services/dominioAlterdataService.ts` (já criado em commit)
+**Escopo:** `src/services/dominioAlterdataService.ts` (removido na limpeza de 11/10, #201 — a recriar)
 
 ### O que falta
 1. **Credenciais reais**: API keys de produção para Domínio e Alterdata
