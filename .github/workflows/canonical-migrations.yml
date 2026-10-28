@@ -331,8 +331,8 @@ jobs:
               r.qa5_stmts_recorded === true &&
               r.espelho_guard_fn === true &&
               r.qa_r4_stmts_recorded === true &&
-              Number(r.sec_cron_jobs_ok) === 3 &&
-              Number(r.sec_fns_ok) === 6 &&
+              r.sec_cron_jobs_ok === true &&
+              r.sec_fns_ok === true &&
               r.registros_ponto_gated === true &&
               r.desl_delete_blocks_pago === true &&
               r.folha_delete_blocks_paga === true &&
