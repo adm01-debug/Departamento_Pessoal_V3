@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: gitleaks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   gitleaks:
     name: Secret scanning (gitleaks)
@@ -19,7 +23,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Scan segredos no histórico
-        uses: gitleaks/gitleaks-action@ff2a7cb455c2e402f752fd4c0e2379df05cbc31c # v2.3.9
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
           GITLEAKS_ENABLE_COMMENTS: 'true'
           GITLEAKS_ENABLE_SUMMARY: 'true'
