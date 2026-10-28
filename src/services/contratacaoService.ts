@@ -191,6 +191,33 @@ export const contratacaoService = {
     return data;
   },
 
+  // Envia o link de pré-admissão por e-mail de verdade via edge
+  // `enviar-email-admissao` (Resend — RESEND_API_KEY/EMAIL_FROM no servidor).
+  // Quando o provedor não está configurado, devolve { sent:false,
+  // motivo:'email_provider_not_configured' } para o front exibir o link
+  // copiável em vez de fingir envio.
+  async enviarEmailLinkCandidato(
+    admissaoId: string,
+    empresaId: string,
+    email: string,
+    nomeCandidato: string,
+    token: string
+  ): Promise<{ sent: boolean; motivo?: string }> {
+    const link = `${window.location.origin}/contratacao?token=${token}`;
+    const { data, error } = await supabase.functions.invoke('enviar-email-admissao', {
+      body: {
+        empresa_id: empresaId,
+        admissao_id: admissaoId,
+        email,
+        nome_candidato: nomeCandidato,
+        link,
+      },
+    });
+    if (error) throw error;
+    const result = (data ?? {}) as { sent?: boolean; motivo?: string; error?: string };
+    return { sent: result.sent === true, motivo: result.motivo ?? result.error ?? undefined };
+  },
+
   async enviarWhatsApp(admissaoId: string, telefone: string, token: string): Promise<void> {
     try {
       const baseUrl = window.location.origin;

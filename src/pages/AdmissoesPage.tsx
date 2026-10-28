@@ -81,8 +81,31 @@ export default function AdmissoesPage() {
     }
     setSendingLink(admissao.id);
     try {
-      await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email);
-      toast.success('Link de contratação enviado com sucesso!');
+      if (!admissao.empresa_id) {
+        toast.error('Admissão sem empresa vinculada — impossível enviar e-mail.');
+        return;
+      }
+      const tokenData = await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email);
+      const link = `${window.location.origin}/contratacao?token=${tokenData.token}`;
+      const result = await contratacaoService.enviarEmailLinkCandidato(
+        admissao.id,
+        admissao.empresa_id,
+        admissao.email,
+        admissao.nome ?? 'Candidato',
+        tokenData.token
+      );
+      if (result.sent) {
+        toast.success('Link de contratação enviado por e-mail!');
+      } else {
+        // Sem provedor configurado: entrega o link para o RH enviar por conta
+        // própria — nunca finge que o e-mail saiu.
+        await navigator.clipboard.writeText(link).catch(() => {});
+        toast.info(
+          result.motivo === 'email_provider_not_configured'
+            ? 'Provedor de e-mail não configurado — link copiado para envio manual.'
+            : 'E-mail não enviado — link copiado para envio manual.'
+        );
+      }
     } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao enviar link.'));
     } finally {
