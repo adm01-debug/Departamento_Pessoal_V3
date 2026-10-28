@@ -25,8 +25,8 @@ React 19.2 · TypeScript 6.0 · Vite 8.1 · npm · Tailwind 4 · Supabase 2.x ·
 ## Quick Start
 
 ```bash
-git clone https://github.com/adm01-debug/departamento-pessoal-v2.git
-cd departamento-pessoal-v2
+git clone https://github.com/adm01-debug/Departamento_Pessoal_V3.git
+cd Departamento_Pessoal_V3
 npm ci
 cp .env.example .env.local
 npm run dev
