@@ -23,6 +23,11 @@ const CHUNK_SIZE = 500;
 const MAX_COLABORADORES = 50_000;
 const PAYROLL_TYPE = 'mensal';
 
+// Salário-família 2026 (Decreto 3.048/99) — mesmos valores de
+// src/calculators/tabelas.ts.
+const SALARIO_FAMILIA_TETO = 1980.38;
+const SALARIO_FAMILIA_VALOR = 67.54;
+
 const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 // IN RFB 2110/2022: contribuições previdenciárias e IR truncam centavos
 const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
@@ -271,14 +276,17 @@ Deno.serve(async (req) => {
       const colabIds = colabs.map((c) => c.id);
       const { data: depsRows, error: depsErr } = await admin
         .from('dependentes')
-        .select('colaborador_id')
-        .in('colaborador_id', colabIds)
-        .eq('para_irrf', true);
+        .select('colaborador_id, para_irrf, para_salario_familia')
+        .in('colaborador_id', colabIds);
       if (depsErr) throw depsErr;
       const dependentesPorColaborador = new Map<string, number>();
+      const salFamiliaDepsPorColaborador = new Map<string, number>();
       for (const d of depsRows ?? []) {
         const key = d.colaborador_id as string;
-        dependentesPorColaborador.set(key, (dependentesPorColaborador.get(key) ?? 0) + 1);
+        if (d.para_irrf === true) dependentesPorColaborador.set(key, (dependentesPorColaborador.get(key) ?? 0) + 1);
+        if (d.para_salario_familia === true) {
+          salFamiliaDepsPorColaborador.set(key, (salFamiliaDepsPorColaborador.get(key) ?? 0) + 1);
+        }
       }
 
       // Apuração de ponto aprovada da competência (HE 50%/100%, adicional
@@ -288,16 +296,16 @@ Deno.serve(async (req) => {
       // não duplicar horas já apuradas.
       const { data: pontoRows, error: pontoErr } = await admin
         .from('registros_ponto')
-        .select('colaborador_id, horas_extras, horas_extras_50, horas_extras_100, horas_noturnas, he_banco_horas')
+        .select('colaborador_id, horas_extras, horas_extras_50, horas_extras_100, horas_noturnas, he_banco_horas, horas_falta')
         .eq('empresa_id', empresa_id)
         .eq('aprovado', true)
         .gte('data', dataInicio)
         .lte('data', dataFim)
         .in('colaborador_id', colabIds);
       if (pontoErr) throw pontoErr;
-      const variaveisPorColaborador = new Map<string, { he50: number; he100: number; noturno: number }>();
+      const variaveisPorColaborador = new Map<string, { he50: number; he100: number; noturno: number; faltas: number }>();
       for (const r of pontoRows ?? []) {
-        const acc = variaveisPorColaborador.get(r.colaborador_id) ?? { he50: 0, he100: 0, noturno: 0 };
+        const acc = variaveisPorColaborador.get(r.colaborador_id) ?? { he50: 0, he100: 0, noturno: 0, faltas: 0 };
         // Legado = colunas da onda 5 NULL (registro anterior a elas): o total
         // de horas_extras vira HE 50%, como o front faz. '00:00' gravado é
         // zero explícito, não legado — senão horas já enviadas ao banco de
@@ -310,19 +318,121 @@ Deno.serve(async (req) => {
           acc.he100 += intervalParaHoras(r.horas_extras_100);
         }
         acc.noturno += intervalParaHoras(r.horas_noturnas);
+        acc.faltas += intervalParaHoras(r.horas_falta);
         variaveisPorColaborador.set(r.colaborador_id, acc);
+      }
+
+      // Eventos variáveis lançados — mesma leitura do lote do front
+      // (calculoLoteService): competência 'YYYY-MM' (manual) ou 'YYYY-MM-01'
+      // (geração automática de férias), com a rubrica embutida.
+      const { data: eventosRows, error: eventosErr } = await admin
+        .from('eventos_variaveis')
+        .select('colaborador_id, valor, rubrica:rubricas_folha(codigo, descricao, tipo)')
+        .eq('empresa_id', empresa_id)
+        .in('competencia', [competencia, dataInicio])
+        .in('colaborador_id', colabIds);
+      if (eventosErr) throw eventosErr;
+      const eventosVariaveisPorColaborador = new Map<string, Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }>>();
+      for (const ev of eventosRows ?? []) {
+        const rubrica = ev.rubrica as { codigo: string; descricao: string; tipo: string } | null;
+        const tipo = rubrica?.tipo;
+        if (!rubrica || (tipo !== 'provento' && tipo !== 'desconto')) continue;
+        const lista = eventosVariaveisPorColaborador.get(ev.colaborador_id) ?? [];
+        lista.push({ codigo: rubrica.codigo, descricao: rubrica.descricao, tipo, valor: Number(ev.valor) });
+        eventosVariaveisPorColaborador.set(ev.colaborador_id, lista);
+      }
+
+      // Benefícios ativos (VT / coparticipação) — mesma regra do lote do
+      // front. Fallback legacy só quando o colaborador não tem vínculo na
+      // tabela unificada.
+      const { data: beneficiosRows, error: beneficiosErr } = await admin
+        .from('beneficios_colaborador')
+        .select('colaborador_id, valor, desconto, beneficio:tipos_beneficio(nome, tipo)')
+        .in('colaborador_id', colabIds)
+        .eq('ativo', true);
+      if (beneficiosErr) throw beneficiosErr;
+      const beneficiosPorColaborador = new Map<string, NonNullable<typeof beneficiosRows>>();
+      for (const b of beneficiosRows ?? []) {
+        const lista = beneficiosPorColaborador.get(b.colaborador_id) ?? [];
+        lista.push(b);
+        beneficiosPorColaborador.set(b.colaborador_id, lista);
+      }
+      const { data: vtRows, error: vtErr } = await admin
+        .from('vales_transporte')
+        .select('colaborador_id, valor_mensal')
+        .in('colaborador_id', colabIds)
+        .eq('optante', true);
+      if (vtErr) throw vtErr;
+      const { data: vaRows, error: vaErr } = await admin
+        .from('vales_alimentacao')
+        .select('colaborador_id, valor_mensal, tipo')
+        .in('colaborador_id', colabIds)
+        .eq('ativo', true);
+      if (vaErr) throw vaErr;
+      const vtPorColaborador = new Map((vtRows ?? []).map((v) => [v.colaborador_id, v]));
+      const vaPorColaborador = new Map<string, NonNullable<typeof vaRows>>();
+      for (const v of vaRows ?? []) {
+        const lista = vaPorColaborador.get(v.colaborador_id) ?? [];
+        lista.push(v);
+        vaPorColaborador.set(v.colaborador_id, lista);
+      }
+
+      // Cadastros que alimentam o cálculo — ponte cadastros→folha
+      // (pensão alimentícia, consignado e adiantamento aprovado). Mesma
+      // agregação aplicada no lote do front (calculoLoteService).
+      const { data: pensoesRows, error: pensoesErr } = await admin
+        .from('pensoes')
+        .select('colaborador_id, percentual, valor_fixo, beneficiario')
+        .eq('empresa_id', empresa_id)
+        .eq('ativo', true)
+        .in('colaborador_id', colabIds);
+      if (pensoesErr) throw pensoesErr;
+      const pensoesPorColaborador = new Map<string, NonNullable<typeof pensoesRows>>();
+      for (const p of pensoesRows ?? []) {
+        const lista = pensoesPorColaborador.get(p.colaborador_id) ?? [];
+        lista.push(p);
+        pensoesPorColaborador.set(p.colaborador_id, lista);
+      }
+      const { data: consignadosRows, error: consignadosErr } = await admin
+        .from('emprestimos_consignados')
+        .select('colaborador_id, valor_parcela, numero_parcelas, parcelas_pagas, instituicao_financeira')
+        .eq('empresa_id', empresa_id)
+        .eq('status', 'ativo')
+        .in('colaborador_id', colabIds);
+      if (consignadosErr) throw consignadosErr;
+      const consignadosPorColaborador = new Map<string, NonNullable<typeof consignadosRows>>();
+      for (const e of consignadosRows ?? []) {
+        if ((e.parcelas_pagas ?? 0) >= (e.numero_parcelas ?? 0)) continue;
+        const lista = consignadosPorColaborador.get(e.colaborador_id) ?? [];
+        lista.push(e);
+        consignadosPorColaborador.set(e.colaborador_id, lista);
+      }
+      const { data: adiantamentosRows, error: adiantamentosErr } = await admin
+        .from('adiantamentos_salariais')
+        .select('colaborador_id, valor_solicitado')
+        .eq('empresa_id', empresa_id)
+        .eq('status', 'aprovado')
+        .eq('competencia_desconto', competencia)
+        .in('colaborador_id', colabIds);
+      if (adiantamentosErr) throw adiantamentosErr;
+      const adiantamentosPorColaborador = new Map<string, NonNullable<typeof adiantamentosRows>>();
+      for (const a of adiantamentosRows ?? []) {
+        const lista = adiantamentosPorColaborador.get(a.colaborador_id) ?? [];
+        lista.push(a);
+        adiantamentosPorColaborador.set(a.colaborador_id, lista);
       }
 
       for (const c of colabs) {
         const salarioBase = Number(c.salario_base) || 0;
         const jornadaInformada = Number(c.jornada_horas_mensais);
         const jornada = Number.isFinite(jornadaInformada) && jornadaInformada > 0 ? jornadaInformada : 220;
-        const variaveis = variaveisPorColaborador.get(c.id) ?? { he50: 0, he100: 0, noturno: 0 };
+        const variaveis = variaveisPorColaborador.get(c.id) ?? { he50: 0, he100: 0, noturno: 0, faltas: 0 };
 
         // Mesmas fórmulas do motor do front (trabalhista-base.ts +
         // folhaCalc.processar): HE a 50%/100% sobre a hora contratual,
-        // adicional noturno 20% com hora reduzida (52min30s) e DSR só
-        // sobre as HE. Tudo integra a base tributável (INSS/IRRF/FGTS).
+        // adicional noturno 20% com hora reduzida (52min30s), DSR só
+        // sobre as HE e faltas descontadas pela hora contratual. Tudo
+        // integra a base tributável (INSS/IRRF/FGTS).
         const valorHora = jornada > 0 ? salarioBase / jornada : 0;
         const he50Valor = trunc2(valorHora * 1.5 * variaveis.he50);
         const he100Valor = trunc2(valorHora * 2 * variaveis.he100);
@@ -330,6 +440,7 @@ Deno.serve(async (req) => {
         const dsrValor = diasUteis > 0 && domingosFeriados > 0
           ? trunc2(((he50Valor + he100Valor) / diasUteis) * domingosFeriados)
           : 0;
+        const valorFaltas = round2(valorHora * variaveis.faltas);
 
         const eventos: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }> = [
           { codigo: '1000', descricao: 'Salário Base', tipo: 'provento', valor: salarioBase },
@@ -339,12 +450,90 @@ Deno.serve(async (req) => {
         if (noturnoValor > 0) eventos.push({ codigo: '1004', descricao: 'Adicional Noturno 20%', tipo: 'provento', valor: noturnoValor });
         if (dsrValor > 0) eventos.push({ codigo: '1003', descricao: 'DSR sobre Horas Extras', tipo: 'provento', valor: dsrValor });
 
-        const bruto = round2(salarioBase + he50Valor + he100Valor + noturnoValor + dsrValor);
-        const inss = calcularINSS(bruto, competencia);
+        // Salário-família (Decreto 3.048/99): dependentes marcados para o
+        // benefício e remuneração até o teto — mesmo cálculo do lote.
+        const salFamiliaDeps = salFamiliaDepsPorColaborador.get(c.id as string) ?? 0;
+        const salarioFamilia = salFamiliaDeps > 0 && salarioBase <= SALARIO_FAMILIA_TETO
+          ? round2(SALARIO_FAMILIA_VALOR * salFamiliaDeps)
+          : 0;
+        if (salarioFamilia > 0) {
+          eventos.push({ codigo: '1010', descricao: 'Salário-Família', tipo: 'provento', valor: salarioFamilia });
+        }
+
+        // Eventos variáveis lançados (comissão, bônus, adicionais por
+        // rubrica etc.) — o código já vem da rubrica cadastrada.
+        const eventosVariaveis = eventosVariaveisPorColaborador.get(c.id) ?? [];
+        for (const ev of eventosVariaveis) eventos.push(ev);
+
+        // Descontos cadastrais: benefícios (VT 6% + coparticipação),
+        // pensão, consignado e adiantamento aprovado na competência.
+        const descontosVariaveis: Array<{ codigo: string; descricao: string; tipo: 'desconto'; valor: number }> = [];
+        const vinculos = beneficiosPorColaborador.get(c.id) ?? [];
+        if (vinculos.length > 0) {
+          for (const v of vinculos) {
+            const beneficio = v.beneficio as { nome: string; tipo: string } | null;
+            if (!beneficio) continue;
+            if (beneficio.tipo === 'VT') {
+              const descontoVT = Math.min(Number(v.valor ?? 0), salarioBase * 0.06);
+              if (descontoVT > 0) {
+                descontosVariaveis.push({ codigo: '5010', descricao: 'Desconto Vale Transporte (Portaria 671)', tipo: 'desconto', valor: trunc2(descontoVT) });
+              }
+            } else if (v.desconto) {
+              descontosVariaveis.push({ codigo: '5020', descricao: `Coparticipação ${beneficio.nome}`, tipo: 'desconto', valor: Number(v.desconto) });
+            }
+          }
+        } else {
+          const vtLegacy = vtPorColaborador.get(c.id);
+          if (vtLegacy) {
+            const descontoVT = Math.min(Number(vtLegacy.valor_mensal ?? 0), salarioBase * 0.06);
+            if (descontoVT > 0) {
+              descontosVariaveis.push({ codigo: '5010', descricao: 'Desconto Vale Transporte (Legacy)', tipo: 'desconto', valor: trunc2(descontoVT) });
+            }
+          }
+          for (const v of vaPorColaborador.get(c.id) ?? []) {
+            const desc = v.valor_mensal ? Number(v.valor_mensal) * 0.2 : 0;
+            if (desc > 0) {
+              descontosVariaveis.push({ codigo: '5020', descricao: `Coparticipação ${v.tipo || 'Ticket'} (Legacy)`, tipo: 'desconto', valor: trunc2(desc) });
+            }
+          }
+        }
+        let pensaoValor = 0;
+        for (const p of pensoesPorColaborador.get(c.id) ?? []) {
+          const valor = p.percentual ? salarioBase * (Number(p.percentual) / 100) : Number(p.valor_fixo ?? 0);
+          if (valor > 0) {
+            pensaoValor = round2(pensaoValor + valor);
+            descontosVariaveis.push({ codigo: '5015', descricao: `Pensão Alimentícia${p.beneficiario ? ` — ${p.beneficiario}` : ''}`, tipo: 'desconto', valor: round2(valor) });
+          }
+        }
+        for (const e of consignadosPorColaborador.get(c.id) ?? []) {
+          const valor = Number(e.valor_parcela ?? 0);
+          if (valor > 0) {
+            descontosVariaveis.push({ codigo: '5016', descricao: `Consignado${e.instituicao_financeira ? ` — ${e.instituicao_financeira}` : ''}`, tipo: 'desconto', valor });
+          }
+        }
+        for (const a of adiantamentosPorColaborador.get(c.id) ?? []) {
+          const valor = Number(a.valor_solicitado ?? 0);
+          if (valor > 0) {
+            descontosVariaveis.push({ codigo: '5017', descricao: 'Adiantamento Salarial', tipo: 'desconto', valor });
+          }
+        }
+        if (valorFaltas > 0) {
+          descontosVariaveis.push({ codigo: '5005', descricao: 'Faltas e Atrasos', tipo: 'desconto', valor: valorFaltas });
+        }
+        for (const d of descontosVariaveis) eventos.push(d);
+
+        // Base tributável = proventos − faltas (mesma convenção do front).
+        const proventos = eventos
+          .filter((e) => e.tipo === 'provento')
+          .reduce((acc, e) => acc + e.valor, 0);
+        const baseTributavel = Math.max(0, round2(proventos - valorFaltas));
+        const bruto = round2(proventos);
+        const inss = calcularINSS(baseTributavel, competencia);
         const dependentes = dependentesPorColaborador.get(c.id as string) ?? 0;
-        const irrf = calcIRRF(bruto, dependentes, competencia);
-        const fgts = trunc2(bruto * 0.08);
-        const descontos = round2(inss + irrf);
+        // Pensão deduz da base legal do IRRF (outrasDeducoes).
+        const irrf = calcIRRF(baseTributavel, dependentes, competencia, pensaoValor);
+        const fgts = trunc2(baseTributavel * 0.08);
+        const descontos = round2(inss + irrf + descontosVariaveis.reduce((acc, d) => acc + d.valor, 0));
         const liquido = round2(bruto - descontos);
         eventos.push({ codigo: '5000', descricao: 'Desconto INSS', tipo: 'desconto', valor: inss });
         if (irrf > 0) eventos.push({ codigo: '5001', descricao: 'Desconto IRRF', tipo: 'desconto', valor: irrf });

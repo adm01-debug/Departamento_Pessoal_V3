@@ -40,6 +40,11 @@ export interface CalculoParams {
   horasFalta?: number;
   diasUteis?: number;
   domingosFeriados?: number;
+  // Deduções adicionais da base legal do IRRF que NÃO viram linha de desconto
+  // genérica (ex.: pensão alimentícia — já aparece como evento próprio).
+  deducoesIrrf?: number;
+  // Ano-calendário da competência — seleciona a tabela INSS/IRRF correta.
+  ano?: number;
   eventos?: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }>;
 }
 
@@ -65,8 +70,8 @@ function descreverFaixaIrrf(base: number): string {
 }
 
 export const folhaCalc = {
-  calcularINSS: (salarioBruto: number): { valor: number; faixa: string } => ({
-    valor: _inss(salarioBruto),
+  calcularINSS: (salarioBruto: number, ano: number = 2026): { valor: number; faixa: string } => ({
+    valor: _inss(salarioBruto, ano),
     faixa: descreverFaixaInss(salarioBruto),
   }),
 
@@ -74,9 +79,10 @@ export const folhaCalc = {
     salarioBruto: number,
     inss: number,
     dependentes: number = 0,
-    outrasDeducoes: number = 0
+    outrasDeducoes: number = 0,
+    ano: number = 2026
   ): { valor: number; faixa: string } => {
-    const valor = _irrf(salarioBruto, dependentes, outrasDeducoes);
+    const valor = _irrf(salarioBruto, dependentes, outrasDeducoes, false, ano);
     const base = salarioBruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF - outrasDeducoes;
     return { valor, faixa: descreverFaixaIrrf(base) };
   },
@@ -101,6 +107,8 @@ export const folhaCalc = {
       horasFalta = 0,
       diasUteis = 26,
       domingosFeriados = 4,
+      deducoesIrrf = 0,
+      ano = 2026,
       eventos = [],
     } = params;
 
@@ -179,14 +187,15 @@ export const folhaCalc = {
     // 8. Cálculo de Impostos
     const baseTributavel = Decimal.max(0, new Decimal(proventos).minus(valorFaltas)).toNumber();
 
-    const { valor: inss, faixa: faixaInss } = folhaCalc.calcularINSS(baseTributavel);
+    const { valor: inss, faixa: faixaInss } = folhaCalc.calcularINSS(baseTributavel, ano);
     detalheEventos.push({ codigo: '5000', descricao: 'Desconto INSS', tipo: 'desconto', valor: inss });
 
     const { valor: irrf, faixa: faixaIrrf } = folhaCalc.calcularIRRF(
       baseTributavel,
       inss,
       dependentes,
-      descontosExtras
+      descontosExtras + deducoesIrrf,
+      ano
     );
     if (irrf > 0) detalheEventos.push({ codigo: '5001', descricao: 'Desconto IRRF', tipo: 'desconto', valor: irrf });
 
