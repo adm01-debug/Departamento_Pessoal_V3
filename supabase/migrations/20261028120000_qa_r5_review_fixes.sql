@@ -1,17 +1,41 @@
 -- ================================================================
--- QA round-5 — achados do Devin Review (PR #301)
+-- QA round-5 — achados do Devin Review (PR #301) + review round 2 (#305)
 --
 -- BUG-2: INSERT em lgpd_solicitacoes sem empresa_id → a listagem LGPD
 --        filtra por empresa e a conclusão nunca aparecia no histórico.
+--        + backfill das conclusões antigas órfãs de empresa_id.
 -- SEC-1: anonimização deixava PII no cadastro (nascimento, endereço,
---        documentos, dados bancários do próprio cadastro, dados
---        sensíveis do art. 11 e vínculos familiares/sociais) — a fila
---        marcava sucesso com a pessoa ainda identificável.
--- SEC-2: esocial_eventos vinculados via dados.colaborador.id ou
---        admissao_id não eram encontrados, e o JSON `dados` mantinha
---        nome e CPF em claro mesmo nos eventos encontrados.
+--        documentos civis, dados bancários do próprio cadastro, dados
+--        sensíveis do art. 11, vínculos familiares/sociais, observações
+--        e metadata anterior). Para apagar de verdade, os NOT NULL de
+--        data_nascimento/sexo/estado_civil (colaboradores) e
+--        data_nascimento (dependentes) precisam cair — não existe valor
+--        anônimo válido nos enums (sexo só tem masculino/feminino).
+-- SEC-2: esocial_eventos vinculados por dados.colaborador.id,
+--        dados.colaboradorId, admissao_id (via admissoes.cpf) ou a
+--        coluna legada colaborador_id (replay) passavam batido, e o
+--        JSON `dados` mantinha PII. Agora dados/xml são anulados por
+--        completo — scrub parcial sempre deixaria algum campo.
+-- SEC-3: admissoes vinculadas (mesmo CPF) mantinham nome/CPF/nascimento.
 -- ================================================================
 
+-- (0) NOT NULL que impedia a anonimização real (abortava a função e a
+--     fila LGPD marcava eternamente pendente). Dropping NOT NULL é
+--     relaxação segura — writers não dependem dele.
+ALTER TABLE public.colaboradores ALTER COLUMN data_nascimento DROP NOT NULL;
+ALTER TABLE public.colaboradores ALTER COLUMN sexo DROP NOT NULL;
+ALTER TABLE public.colaboradores ALTER COLUMN estado_civil DROP NOT NULL;
+ALTER TABLE public.dependentes   ALTER COLUMN data_nascimento DROP NOT NULL;
+
+-- (0b) Reconcilia o histórico LGPD: conclusões gravadas antes do fix do
+--      empresa_id ficam visíveis na listagem por empresa.
+UPDATE public.lgpd_solicitacoes s
+SET empresa_id = c.empresa_id
+FROM public.colaboradores c
+WHERE s.colaborador_id = c.id
+  AND s.empresa_id IS NULL;
+
+-- (1) anonimizar_dados_pessoais — reescrita completa
 CREATE OR REPLACE FUNCTION public.anonimizar_dados_pessoais(target_id UUID)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -21,27 +45,18 @@ AS $function$
 DECLARE
   v_anon_cpf TEXT;
   v_cpf TEXT;
-  v_cpf_fmt TEXT;
-  v_nome TEXT;
-  v_email TEXT;
   v_empresa UUID;
 BEGIN
   IF auth.uid() IS NOT NULL AND NOT public.is_admin(auth.uid()) THEN
     RAISE EXCEPTION 'Apenas administradores podem executar apagamento LGPD' USING ERRCODE = '42501';
   END IF;
 
-  -- Captura a identidade ANTES da anonimização: o CPF/nome originais são
-  -- necessários para localizar e limpar os eventos eSocial vinculados e
-  -- para casar a admissão (que não tem colaborador_id no canônico).
-  SELECT cpf, nome_completo, empresa_id, COALESCE(email_corporativo, email)
-    INTO v_cpf, v_nome, v_empresa, v_email
-  FROM public.colaboradores
-  WHERE id = target_id;
-
+  -- Captura CPF/empresa ANTES da anonimização: o CPF original localiza os
+  -- eventos eSocial e a admissão (admissoes não tem colaborador_id no
+  -- canônico — o vínculo é por cpf).
+  SELECT cpf, empresa_id INTO v_cpf, v_empresa
+  FROM public.colaboradores WHERE id = target_id;
   v_cpf := NULLIF(regexp_replace(COALESCE(v_cpf, ''), '[^0-9]', '', 'g'), '');
-  v_cpf_fmt := CASE WHEN v_cpf ~ '^\d{11}$' THEN
-      substr(v_cpf, 1, 3) || '.' || substr(v_cpf, 4, 3) || '.' || substr(v_cpf, 7, 3) || '-' || substr(v_cpf, 10, 2)
-    ELSE NULL END;
 
   -- CPF determinístico por registro: a versão canônica antiga gravava a
   -- constante '000.000.000-00' e violava o UNIQUE na 2ª anonimização.
@@ -94,7 +109,9 @@ BEGIN
     tipo_conta = NULL, pix_tipo = NULL, pix_chave = NULL,
     -- biometria/imagem
     foto_url = NULL, foto_referencia_url = NULL,
-    metadata = jsonb_set(COALESCE(metadata, '{}'::jsonb), '{lgpd_anonimizado}', 'true'),
+    -- texto livre e metadata: substituídos (não mergeados) — podiam conter PII
+    observacoes = NULL,
+    metadata = '{"lgpd_anonimizado": true}'::jsonb,
     updated_at = now()
   WHERE id = target_id;
 
@@ -104,29 +121,19 @@ BEGIN
   WHERE colaborador_id = target_id;
 
   UPDATE public.dependentes
-  SET nome = 'DEPENDENTE ANONIMIZADO (LGPD)', cpf = NULL, data_nascimento = NULL
+  SET nome = 'DEPENDENTE ANONIMIZADO (LGPD)', cpf = NULL, data_nascimento = NULL,
+      escolaridade = NULL, grau_parentesco = NULL,
+      incapacidade_fisica_mental = NULL, deficiente = NULL
   WHERE colaborador_id = target_id;
 
   DELETE FROM public.documentos_colaborador WHERE colaborador_id = target_id;
 
-  -- esocial_eventos não tem colaborador_id nem mensagem_retorno no
-  -- canônico: os eventos se ligam ao colaborador por `dados->>'colaborador_id'`,
-  -- `dados->>'colaboradorId'`, `dados->'colaborador'->>'id'` ou pela admissão
-  -- (admissao_id → admissoes.cpf). Além de anular os XMLs, o JSON `dados`
-  -- precisa ser varrido — nome e CPF permaneciam em claro nele.
+  -- esocial_eventos: vínculo por dados->>'colaborador_id',
+  -- dados->>'colaboradorId', dados->'colaborador'->>'id' ou admissao_id
+  -- (via admissoes.cpf). XMLs e o JSON dados são anulados por completo —
+  -- scrub parcial sempre deixava PII residual (rg, pis, nascimento...).
   UPDATE public.esocial_eventos e
-  SET xml_envio = NULL,
-      xml_retorno = NULL,
-      xml = NULL,
-      dados = CASE
-        WHEN e.dados IS NULL THEN NULL
-        ELSE replace(
-               replace(
-                 replace(e.dados::text,
-                         COALESCE(v_cpf_fmt, '⟂'), 'ANONIMIZADO'),
-                 COALESCE(v_cpf, '⟂'), 'ANONIMIZADO'),
-               COALESCE(v_nome, '⟂'), 'ANONIMIZADO')::jsonb
-      END
+  SET xml_envio = NULL, xml_retorno = NULL, xml = NULL, dados = NULL
   WHERE e.dados->>'colaborador_id' = target_id::text
      OR e.dados->>'colaboradorId' = target_id::text
      OR e.dados->'colaborador'->>'id' = target_id::text
@@ -141,17 +148,24 @@ BEGIN
              WHERE table_schema = 'public' AND table_name = 'esocial_eventos'
                AND column_name = 'colaborador_id') THEN
     EXECUTE $u$
-      UPDATE public.esocial_eventos e
-      SET xml_envio = NULL, xml_retorno = NULL, xml = NULL,
-          dados = CASE WHEN e.dados IS NULL THEN NULL ELSE replace(
-            replace(
-              replace(e.dados::text, $1, 'ANONIMIZADO'),
-              $2, 'ANONIMIZADO'),
-            $3, 'ANONIMIZADO')::jsonb END
-      WHERE e.colaborador_id = $4
-    $u$
-    USING COALESCE(v_cpf_fmt, '⟂'), COALESCE(v_cpf, '⟂'), COALESCE(v_nome, '⟂'), target_id;
+      UPDATE public.esocial_eventos
+      SET xml_envio = NULL, xml_retorno = NULL, xml = NULL, dados = NULL
+      WHERE colaborador_id = $1
+    $u$ USING target_id;
   END IF;
+
+  -- Admissões vinculadas pelo mesmo CPF: nome/CPF/nascimento/contato saem.
+  -- `nome`, `cargo`, `departamento`, `etapa` são NOT NULL no canônico →
+  -- nome recebe placeholder; cargo/departamento/etapa são dados da vaga,
+  -- não da pessoa (mantidos).
+  UPDATE public.admissoes
+  SET nome = 'ADMISSAO ANONIMIZADA (LGPD)',
+      cpf = NULL, data_nascimento = NULL, sexo = NULL,
+      email = NULL, telefone = NULL, estado_civil = NULL, nome_mae = NULL,
+      observacoes = NULL,
+      metadata = '{"lgpd_anonimizado": true}'::jsonb
+  WHERE v_cpf IS NOT NULL
+    AND regexp_replace(COALESCE(cpf, ''), '[^0-9]', '', 'g') = v_cpf;
 
   UPDATE public.cnab_itens
   SET nome_favorecido = 'ANONIMIZADO (LGPD)', cpf_cnpj_favorecido = v_anon_cpf
