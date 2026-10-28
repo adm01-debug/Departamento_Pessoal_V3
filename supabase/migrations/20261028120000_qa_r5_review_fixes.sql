@@ -46,6 +46,7 @@ DECLARE
   v_anon_cpf TEXT;
   v_cpf TEXT;
   v_empresa UUID;
+  v_esocial_retidos BIGINT := 0;
 BEGIN
   IF auth.uid() IS NOT NULL AND NOT public.is_admin(auth.uid()) THEN
     RAISE EXCEPTION 'Apenas administradores podem executar apagamento LGPD' USING ERRCODE = '42501';
@@ -130,17 +131,36 @@ BEGIN
 
   -- esocial_eventos: vínculo por dados->>'colaborador_id',
   -- dados->>'colaboradorId', dados->'colaborador'->>'id' ou admissao_id
-  -- (via admissoes.cpf). XMLs e o JSON dados são anulados por completo —
-  -- scrub parcial sempre deixava PII residual (rg, pis, nascimento...).
+  -- (via admissoes.cpf DO MESMO tenant). XMLs e o JSON dados são anulados
+  -- por completo — scrub parcial sempre deixava PII residual.
+  -- Eventos já transmitidos (recibo/id_recibo) são imutáveis por trigger
+  -- `impedir_alteracao_esocial_transmitido` e retidos por obrigação fiscal
+  -- (LGPD art. 16 III) — contados, pulados, nunca abortamos a fila.
+  SELECT count(*) INTO v_esocial_retidos
+  FROM public.esocial_eventos e
+  WHERE (e.recibo IS NOT NULL OR e.id_recibo IS NOT NULL)
+    AND (e.empresa_id IS NULL OR e.empresa_id = v_empresa)
+    AND (e.dados->>'colaborador_id' = target_id::text
+         OR e.dados->>'colaboradorId' = target_id::text
+         OR e.dados->'colaborador'->>'id' = target_id::text
+         OR (v_cpf IS NOT NULL AND e.admissao_id IN (
+              SELECT a.id FROM public.admissoes a
+              WHERE regexp_replace(COALESCE(a.cpf, ''), '[^0-9]', '', 'g') = v_cpf
+                AND (a.empresa_id IS NULL OR a.empresa_id = v_empresa)
+            )));
+
   UPDATE public.esocial_eventos e
   SET xml_envio = NULL, xml_retorno = NULL, xml = NULL, dados = NULL
-  WHERE e.dados->>'colaborador_id' = target_id::text
-     OR e.dados->>'colaboradorId' = target_id::text
-     OR e.dados->'colaborador'->>'id' = target_id::text
-     OR (v_cpf IS NOT NULL AND e.admissao_id IN (
-          SELECT a.id FROM public.admissoes a
-          WHERE regexp_replace(COALESCE(a.cpf, ''), '[^0-9]', '', 'g') = v_cpf
-        ));
+  WHERE e.recibo IS NULL AND e.id_recibo IS NULL
+    AND (e.empresa_id IS NULL OR e.empresa_id = v_empresa)
+    AND (e.dados->>'colaborador_id' = target_id::text
+         OR e.dados->>'colaboradorId' = target_id::text
+         OR e.dados->'colaborador'->>'id' = target_id::text
+         OR (v_cpf IS NOT NULL AND e.admissao_id IN (
+              SELECT a.id FROM public.admissoes a
+              WHERE regexp_replace(COALESCE(a.cpf, ''), '[^0-9]', '', 'g') = v_cpf
+                AND (a.empresa_id IS NULL OR a.empresa_id = v_empresa)
+            )));
 
   -- Shape legada do replay (005_esocial_auditoria): colaborador_id em coluna.
   -- Guardada para não quebrar no canônico, onde a coluna não existe.
@@ -151,13 +171,16 @@ BEGIN
       UPDATE public.esocial_eventos
       SET xml_envio = NULL, xml_retorno = NULL, xml = NULL, dados = NULL
       WHERE colaborador_id = $1
-    $u$ USING target_id;
+        AND (empresa_id IS NULL OR empresa_id = $2)
+    $u$ USING target_id, v_empresa;
   END IF;
 
   -- Admissões vinculadas pelo mesmo CPF: nome/CPF/nascimento/contato saem.
   -- `nome`, `cargo`, `departamento`, `etapa` são NOT NULL no canônico →
   -- nome recebe placeholder; cargo/departamento/etapa são dados da vaga,
   -- não da pessoa (mantidos).
+  -- Escopo por empresa: só pulamos admissões provadamente de outro
+  -- tenant (empresa_id diferente); NULL é legado nosso → anonimiza.
   UPDATE public.admissoes
   SET nome = 'ADMISSAO ANONIMIZADA (LGPD)',
       cpf = NULL, data_nascimento = NULL, sexo = NULL,
@@ -165,7 +188,8 @@ BEGIN
       observacoes = NULL,
       metadata = '{"lgpd_anonimizado": true}'::jsonb
   WHERE v_cpf IS NOT NULL
-    AND regexp_replace(COALESCE(cpf, ''), '[^0-9]', '', 'g') = v_cpf;
+    AND regexp_replace(COALESCE(cpf, ''), '[^0-9]', '', 'g') = v_cpf
+    AND (empresa_id IS NULL OR empresa_id = v_empresa);
 
   UPDATE public.cnab_itens
   SET nome_favorecido = 'ANONIMIZADO (LGPD)', cpf_cnpj_favorecido = v_anon_cpf
@@ -174,6 +198,11 @@ BEGIN
   -- empresa_id é obrigatório para a conclusão aparecer no histórico LGPD
   -- (a listagem filtra por empresa).
   INSERT INTO public.lgpd_solicitacoes (colaborador_id, empresa_id, tipo, status, descricao, concluida_em)
-  VALUES (target_id, v_empresa, 'exclusao', 'concluida', 'Anonimização automática por política de retenção', now());
+  VALUES (target_id, v_empresa, 'exclusao', 'concluida',
+          'Anonimização automática por política de retenção.'
+          || CASE WHEN v_esocial_retidos > 0
+                  THEN ' ' || v_esocial_retidos || ' evento(s) eSocial já transmitidos retidos por obrigação fiscal (LGPD art. 16).'
+                  ELSE '' END,
+          now());
 END;
 $function$;
