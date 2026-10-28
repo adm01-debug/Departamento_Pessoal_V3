@@ -16,18 +16,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
-import {
-  Receipt,
-  DollarSign,
-  Building2,
-  Plus,
-  FileText,
-  Shield,
-  Loader2,
-  Zap,
-  Calculator,
-  Key,
-} from 'lucide-react';
+import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, Calculator, Key } from 'lucide-react';
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
