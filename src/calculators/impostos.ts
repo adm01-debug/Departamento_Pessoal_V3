@@ -14,14 +14,15 @@ import {
 // 1 centavo em bases com centavos na fronteira da faixa (ex.: 1.700,50).
 // Mesma convenção das edge functions (_shared/inss.ts). `ano` seleciona a
 // tabela por ano-calendário (default: mais recente); ano sem tabela cai na
-// mais próxima anterior, senão na mais recente.
+// mais próxima (a mais antiga quando abaixo do intervalo, a mais recente
+// quando acima — simulador; a edge falha fechado em ambos os casos).
 export function calcularINSS(salarioBruto: number, ano: number = 2026): number {
   if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos
 
   const anos = Object.keys(INSS_POR_ANO)
     .map(Number)
     .sort((a, b) => a - b);
-  const anoTabela = anos.filter((a) => a <= ano).pop() ?? anos[anos.length - 1];
+  const anoTabela = anos.filter((a) => a <= ano).pop() ?? anos[0];
   const { faixas, teto } = INSS_POR_ANO[anoTabela];
 
   const baseCents = BigInt(Math.round(salarioBruto * 100));
