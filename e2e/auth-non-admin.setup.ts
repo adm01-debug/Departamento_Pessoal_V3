@@ -4,8 +4,10 @@ import path from 'node:path';
 const AUTH_FILE = path.resolve('e2e/.auth/user-non-admin.json');
 
 const EMAIL = process.env.E2E_NON_ADMIN_EMAIL ?? 'user@teste.local';
-const PASSWORD = process.env.E2E_NON_ADMIN_PASSWORD;
-if (!PASSWORD) throw new Error('E2E_NON_ADMIN_PASSWORD não definido — configure o secret (senha não fica no repo).');
+const PASSWORD_ENV = process.env.E2E_NON_ADMIN_PASSWORD;
+if (!PASSWORD_ENV)
+  throw new Error('E2E_NON_ADMIN_PASSWORD não definido — configure o secret (senha não fica no repo).');
+const PASSWORD: string = PASSWORD_ENV;
 
 /**
  * Autentica um SEGUNDO usuário SEM privilégios de admin.

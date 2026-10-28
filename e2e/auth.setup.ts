@@ -6,8 +6,9 @@ const AUTH_FILE = path.resolve('e2e/.auth/user.json');
 const AUTH_FILE_MOBILE = path.resolve('e2e/.auth/user-mobile.json');
 
 const EMAIL = process.env.E2E_USER_EMAIL ?? 'admin@teste.local';
-const PASSWORD = process.env.E2E_USER_PASSWORD;
-if (!PASSWORD) throw new Error('E2E_USER_PASSWORD não definido — configure o secret (senha não fica no repo).');
+const PASSWORD_ENV = process.env.E2E_USER_PASSWORD;
+if (!PASSWORD_ENV) throw new Error('E2E_USER_PASSWORD não definido — configure o secret (senha não fica no repo).');
+const PASSWORD: string = PASSWORD_ENV;
 const TOTP_SECRET = process.env.E2E_TOTP_SECRET;
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
