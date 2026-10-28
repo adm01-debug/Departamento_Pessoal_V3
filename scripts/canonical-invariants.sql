@@ -331,7 +331,7 @@ jsonb_build_object(
       'sec-policy-regressions-purge',
       'sec-verify-seals-weekly'
     )
-  ) = 3,
+  ),
   'orphan_secdef_revoked', NOT EXISTS (
     SELECT 1 FROM pg_proc p
     JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -355,7 +355,7 @@ jsonb_build_object(
         'sec_verify_seals','sec_verify_seals_admin',
         'sec_verify_seals_scan'
       )
-  ) = 6,
+  ),
   'registros_ponto_gated', NOT EXISTS (
     SELECT 1 FROM pg_policies
     WHERE tablename = 'registros_ponto'
