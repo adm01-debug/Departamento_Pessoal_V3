@@ -154,7 +154,8 @@ jobs:
             20261027000000_revoke_orphan_secdef.sql \
             20261027120000_qa_r5_fixes.sql \
             20261028120000_qa_r5_review_fixes.sql \
-            20261028130000_revoke_orphan_secdef_v2.sql
+            20261028130000_revoke_orphan_secdef_v2.sql \
+            20261029000000_gaps_v2_verificacao.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -268,7 +269,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 28 &&
+              Number(r.ledger_count) === 29 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -346,7 +347,10 @@ jobs:
               r.onda4e_stmts_recorded === true &&
               r.ci_auditor_role === true &&
               r.idem_dup_job_gone === true &&
-              r.idem_hourly_job_ok === true;
+              r.idem_hourly_job_ok === true &&
+              r.gaps_v2_parametros_manage === true &&
+              r.gaps_v2_faltas_trigger === true &&
+              r.gaps_v2_afd_table === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCHEMA_INVARIANTS_OK'
