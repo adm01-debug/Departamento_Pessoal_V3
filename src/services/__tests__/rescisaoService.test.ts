@@ -263,32 +263,37 @@ describe('rescisaoService', () => {
       checklist_homologacao: true,
     };
 
-    function mockPagamentoCalls(opts: { deslig?: unknown; updateRow?: unknown; colabError?: unknown } = {}) {
+    function mockPagamentoCalls(opts: { deslig?: unknown; rpcRow?: unknown; rpcError?: unknown } = {}) {
       const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      const desligUpdate = vi.fn().mockReturnThis();
-      const colabUpdate = vi.fn().mockReturnThis();
-      const colabEq2 = vi.fn().mockResolvedValue({ data: null, error: opts.colabError ?? null });
-      const colabEq1 = vi.fn().mockReturnValue({ eq: colabEq2 });
-      fromMock
-        // 1) fetch do desligamento
-        .mockReturnValueOnce(fetchChain(opts.deslig ?? desligRow))
-        // 2) update do desligamento → pago
-        .mockReturnValueOnce(updateChain(desligUpdate, opts.updateRow ?? { id: 'd1', status: 'pago' }))
-        // 3) update do colaborador → desligado
-        .mockReturnValueOnce({ update: colabUpdate, eq: colabEq1 });
-      return { desligUpdate, colabUpdate };
+      const rpcMock = supabase.rpc as unknown as ReturnType<typeof vi.fn>;
+      // 1) fetch do desligamento (validações client-side: assinaturas + homologação)
+      fromMock.mockReturnValueOnce(fetchChain(opts.deslig ?? desligRow));
+      // 2) RPC pagar_desligamento: transação atômica server-side (desligamento
+      //    pago + colaborador desativado sob FOR UPDATE — migration 20261028220000).
+      //    Não enfileirar quando o teste falha na validação 1): o mockResolvedValueOnce
+      //    não consumido vazaria para o rpc() do teste seguinte.
+      const deslig = (opts.deslig ?? desligRow) as {
+        assinado_empresa?: boolean;
+        assinado_colaborador?: boolean;
+        checklist_homologacao?: boolean;
+      };
+      if (deslig.assinado_empresa && deslig.assinado_colaborador && deslig.checklist_homologacao) {
+        rpcMock.mockResolvedValueOnce({
+          data: opts.rpcRow ?? { id: 'd1', status: 'pago', etapa: 'finalizado' },
+          error: opts.rpcError ?? null,
+        });
+      }
+      return { rpcMock };
     }
 
-    it('marca pago, finaliza etapa e desativa colaborador', async () => {
-      const { desligUpdate, colabUpdate } = mockPagamentoCalls();
+    it('marca pago via RPC transacional (desligamento + colaborador no banco)', async () => {
+      const { rpcMock } = mockPagamentoCalls();
       const result = await rescisaoService.processarPagamento('d1', EMP);
       expect(result.status).toBe('pago');
-      expect(desligUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'pago', etapa: 'finalizado', checklist_pagamento: true })
-      );
-      expect(colabUpdate).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'desligado', data_desligamento: '2026-06-01' })
-      );
+      expect(rpcMock).toHaveBeenCalledWith('pagar_desligamento', {
+        _desligamento_id: 'd1',
+        _comprovante_url: null,
+      });
     });
 
     it('bloqueia sem assinatura das duas partes', async () => {
@@ -303,15 +308,9 @@ describe('rescisaoService', () => {
       await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(/homologação não foi concluída/);
     });
 
-    it('falha na desativação do colaborador loga mas não impede o pagamento', async () => {
-      mockPagamentoCalls({ colabError: { message: 'update denied' } });
-      const result = await rescisaoService.processarPagamento('d1', EMP);
-      expect(result.status).toBe('pago');
-      expect(mockLoggerError).toHaveBeenCalledWith(
-        'Erro ao desativar colaborador',
-        { colaboradorId: 'c1', desligamentoId: 'd1' },
-        { message: 'update denied' }
-      );
+    it('erro da RPC aborta o pagamento (transação faz rollback no banco)', async () => {
+      mockPagamentoCalls({ rpcError: { message: 'check_violation' } });
+      await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow();
     });
 
     it('exige empresa_id', async () => {
