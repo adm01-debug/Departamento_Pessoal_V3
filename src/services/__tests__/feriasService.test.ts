@@ -1,15 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
+import { makeChain } from '@/test/chain';
 import { feriasService } from '../feriasService';
 
 const EMPRESA_ID = 'test-empresa-id';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
-const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
+const { mockFrom, mockGetUser } = vi.hoisted(() => ({ mockFrom: vi.fn(), mockGetUser: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    auth: { getUser: mockGetUser },
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
+  },
 }));
 
 // Helper: build select → eq/ilike → order → range chain for listSolicitacoes
@@ -385,5 +390,98 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
     mockFrom.mockReturnValue({ delete: deleteFn });
 
     await expect(feriasService.excluirPeriodoAquisitivo('pa-2', EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
+// ─── criar — gatilho do motor de workflow (§4.29) ─────────────────────────────
+
+type Chain = ReturnType<typeof makeChain>;
+
+/** Cada `from(tabela)` consome o próximo chain da fila daquela tabela. */
+function queueTables(queues: Record<string, Chain[]>) {
+  mockFrom.mockImplementation((table: string) => {
+    const q = queues[table];
+    return q && q.length > 0 ? q.shift() : makeChain({ data: null, error: null });
+  });
+}
+
+const ok = (data: unknown) => makeChain({ data, error: null });
+
+const EMPRESA_UUID = '00000000-0000-4000-8000-000000000001';
+const COLAB_ID = '00000000-0000-4000-8000-000000000010';
+const WF_ID = '00000000-0000-4000-8000-000000000020';
+const USER_ID = '00000000-0000-4000-8000-000000000030';
+
+const PAYLOAD_CRIAR = {
+  colaborador_id: COLAB_ID,
+  data_inicio: '2026-11-02',
+  data_fim: '2026-11-16',
+  dias_gozo: 15,
+  empresa_id: EMPRESA_UUID,
+};
+
+const FERIAS_ROW = {
+  id: 'fer-1',
+  colaborador_id: COLAB_ID,
+  empresa_id: EMPRESA_UUID,
+  data_inicio: '2026-11-02',
+  data_fim: '2026-11-16',
+  dias_gozo: 15,
+  status: 'pendente',
+};
+
+describe('feriasService.criar — gatilho de workflow', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetUser.mockResolvedValue({ data: { user: { id: USER_ID } }, error: null });
+  });
+
+  it('com definição ativa do tipo ferias → cria execução na primeira etapa', async () => {
+    const insertExec = ok({ id: 'ex-1', status: 'em_andamento' });
+    queueTables({
+      ferias: [ok(FERIAS_ROW)],
+      workflows_definicoes: [ok({ id: WF_ID }), ok({ id: WF_ID, ativo: true })],
+      workflows_execucoes: [ok(null), insertExec],
+      workflows_etapas: [ok({ id: 'et-1', workflow_id: WF_ID, ordem: 1 })],
+      workflows_historico: [ok(null)],
+    });
+
+    const r = await feriasService.criar(PAYLOAD_CRIAR);
+
+    expect(r).toEqual(FERIAS_ROW);
+    expect(insertExec.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workflow_id: WF_ID,
+        entidade_tipo: 'ferias',
+        entidade_id: 'fer-1',
+        empresa_id: EMPRESA_UUID,
+        solicitante_id: USER_ID,
+        status: 'em_andamento',
+      })
+    );
+  });
+
+  it('sem definição ativa → cria a solicitação normalmente e nenhuma execução', async () => {
+    queueTables({
+      ferias: [ok(FERIAS_ROW)],
+      workflows_definicoes: [ok(null)],
+    });
+
+    const r = await feriasService.criar(PAYLOAD_CRIAR);
+
+    expect(r).toEqual(FERIAS_ROW);
+    const tablesChamadas = mockFrom.mock.calls.map((c: unknown[]) => c[0]);
+    expect(tablesChamadas).not.toContain('workflows_execucoes');
+  });
+
+  it('falha na engine de workflow não derruba a criação da solicitação', async () => {
+    queueTables({
+      ferias: [ok(FERIAS_ROW)],
+      workflows_definicoes: [makeChain({ data: null, error: { message: 'boom' } })],
+    });
+
+    const r = await feriasService.criar(PAYLOAD_CRIAR);
+
+    expect(r).toEqual(FERIAS_ROW);
   });
 });

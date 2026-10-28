@@ -652,3 +652,55 @@ describe('workflowService.execucoesComSLAVencido', () => {
     expect(chain.not).toHaveBeenCalledWith('sla_iniciado_em', 'is', null);
   });
 });
+
+describe('workflowService.executarPorTipo', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('exige empresa_id', async () => {
+    await expect(workflowService.executarPorTipo('ferias', 'fer-1', '', 'u-1')).rejects.toThrow('empresa_id');
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+
+  it('retorna null sem definição ativa para o tipo — sem tocar em execuções', async () => {
+    const defChain = ok(null);
+    queueTables({ workflows_definicoes: [defChain] });
+    const r = await workflowService.executarPorTipo('ferias', 'fer-1', EMPRESA_ID, 'u-1');
+    expect(r).toBeNull();
+    expect(defChain.eq).toHaveBeenCalledWith('tipo', 'ferias');
+    expect(defChain.eq).toHaveBeenCalledWith('ativo', true);
+    const tablesChamadas = mockFrom.mock.calls.map((c: unknown[]) => c[0]);
+    expect(tablesChamadas).not.toContain('workflows_execucoes');
+  });
+
+  it('propaga erro da consulta de definição', async () => {
+    queueTables({ workflows_definicoes: [makeChain({ data: null, error: { message: 'boom' } })] });
+    await expect(workflowService.executarPorTipo('ferias', 'fer-1', EMPRESA_ID, 'u-1')).rejects.toEqual({
+      message: 'boom',
+    });
+  });
+
+  it('com definição ativa → delega a executarWorkflow e cria a execução', async () => {
+    const insertExec = ok(EXEC);
+    queueTables({
+      workflows_definicoes: [ok({ id: WF }), ok({ id: WF, ativo: true })],
+      workflows_execucoes: [ok(null), insertExec],
+      workflows_etapas: [ok(ETAPA1)],
+      workflows_historico: [ok(null)],
+    });
+    const r = await workflowService.executarPorTipo('ferias', 'fer-1', EMPRESA_ID, 'u-1', { dias: 10 });
+    expect(r).toEqual(EXEC);
+    expect(insertExec.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        workflow_id: WF,
+        entidade_tipo: 'ferias',
+        entidade_id: 'fer-1',
+        empresa_id: EMPRESA_ID,
+        solicitante_id: 'u-1',
+        status: 'em_andamento',
+        dados: { dias: 10 },
+      })
+    );
+  });
+});
