@@ -155,7 +155,8 @@ jobs:
             20261027120000_qa_r5_fixes.sql \
             20261028120000_qa_r5_review_fixes.sql \
             20261028130000_revoke_orphan_secdef_v2.sql \
-            20261029000000_whatsapp_pending_trigger_retire.sql
+            20261029000000_gaps_v2_verificacao.sql \
+            20261029120000_whatsapp_pending_trigger_retire.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -269,7 +270,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 29 &&
+              Number(r.ledger_count) === 30 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -348,6 +349,9 @@ jobs:
               r.ci_auditor_role === true &&
               r.idem_dup_job_gone === true &&
               r.idem_hourly_job_ok === true &&
+              r.gaps_v2_parametros_manage === true &&
+              r.gaps_v2_faltas_trigger === true &&
+              r.gaps_v2_afd_table === true &&
               r.wa_trigger_gone === true &&
               r.wa_fn_gone === true &&
               r.wa_backlog_drained === true &&
