@@ -64,12 +64,23 @@ export const jornadaHorariosService = {
       if (error) throw error;
 
       // Remove dias no longer in the new grade (trim, not blind wipe).
-      const diasNovos = horarios.map((h) => h.dia_semana);
-      await supabase
+      // Bridge only allows eq filters on delete — list ids client-side
+      // instead of `.not('dia_semana','in',...)`, and surface errors.
+      const diasNovos = new Set(horarios.map((h) => h.dia_semana));
+      const { data: existentes, error: listErr } = await supabase
         .from('jornadas_horarios')
-        .delete()
-        .eq('jornada_id', jornadaId)
-        .not('dia_semana', 'in', `(${diasNovos.join(',')})`);
+        .select('id,dia_semana')
+        .eq('jornada_id', jornadaId);
+      if (listErr) throw listErr;
+      for (const row of existentes || []) {
+        if (diasNovos.has(row.dia_semana)) continue;
+        const { error: delErr } = await supabase
+          .from('jornadas_horarios')
+          .delete()
+          .eq('id', row.id)
+          .eq('jornada_id', jornadaId);
+        if (delErr) throw delErr;
+      }
 
       return data || [];
     } catch (e) {
