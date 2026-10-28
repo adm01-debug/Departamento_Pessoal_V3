@@ -1,22 +1,30 @@
 import type { Tables } from '@/integrations/supabase/types';
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  ZAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-  CartesianGrid,
-} from 'recharts';
 import { Navigation, Compass } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 export type BatidaGeo = Tables<'batidas_ponto'> & { colaborador?: { nome_completo?: string | null } | null };
+
+// Mapa real (tiles OpenStreetMap, projeção Web-Mercator) — substitui o
+// "Fake Map Grid" + scatter artificial (achado §6.4). Sem dependência nova:
+// a grade de tiles e os marcadores são calculados na projeção.
+const TILE = 256;
+const mercX = (lng: number, z: number) => ((lng + 180) / 360) * TILE * 2 ** z;
+const mercY = (lat: number, z: number) => {
+  const rad = (lat * Math.PI) / 180;
+  return ((1 - Math.log(Math.tan(rad) + 1 / Math.cos(rad)) / Math.PI) / 2) * TILE * 2 ** z;
+};
+
+function escolherZoom(minLng: number, maxLng: number, minLat: number, maxLat: number, w = 640, h = 320) {
+  for (let z = 17; z >= 5; z--) {
+    const dx = Math.abs(mercX(maxLng, z) - mercX(minLng, z));
+    const dy = Math.abs(mercY(maxLat, z) - mercY(minLat, z));
+    if (dx <= w * 0.7 && dy <= h * 0.7) return z;
+  }
+  return 5;
+}
 
 export function PontoGeoAnalytics({ batidas }: { batidas: BatidaGeo[] }) {
   const geoStats = useMemo(() => {
@@ -64,53 +72,71 @@ export function PontoGeoAnalytics({ batidas }: { batidas: BatidaGeo[] }) {
           </CardHeader>
           <CardContent className="pt-6">
             <div className="h-80 relative">
-              {/* Fake Map Grid Background */}
-              <div
-                className="absolute inset-0 opacity-5 pointer-events-none"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)',
-                  backgroundSize: '20px 20px',
-                }}
-              />
-
-              <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
-                  <XAxis type="number" dataKey="x" name="Longitude" hide />
-                  <YAxis type="number" dataKey="y" name="Latitude" hide />
-                  <ZAxis type="number" range={[60, 400]} />
-                  <Tooltip
-                    cursor={{ strokeDasharray: '3 3' }}
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-background border border-border p-3 rounded-xl shadow-xl">
-                            <p className="text-xs font-bold mb-1">{data.name}</p>
-                            <p className="text-[10px] text-muted-foreground">Hora: {data.hora}</p>
-                            <p className="text-[10px] text-muted-foreground">
-                              Distância: {Math.round(data.distancia)}m
-                            </p>
-                            <Badge variant={data.dentro ? 'outline' : 'destructive'} className="mt-2 text-[9px]">
-                              {data.dentro ? 'Dentro do Raio' : 'Fora do Raio'}
-                            </Badge>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Scatter name="Batidas" data={geoStats.validPoints}>
-                    {geoStats.validPoints.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={entry.dentro ? 'hsl(var(--primary))' : 'hsl(var(--destructive))'}
-                        className="animate-in fade-in zoom-in duration-500"
-                      />
-                    ))}
-                  </Scatter>
-                </ScatterChart>
-              </ResponsiveContainer>
+              {geoStats.validPoints.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                  Sem batidas com coordenadas no período.
+                </div>
+              ) : (
+                (() => {
+                  const W = 640;
+                  const H = 320;
+                  const lats = geoStats.validPoints.map((p) => p.y);
+                  const lngs = geoStats.validPoints.map((p) => p.x);
+                  const minLat = Math.min(...lats);
+                  const maxLat = Math.max(...lats);
+                  const minLng = Math.min(...lngs);
+                  const maxLng = Math.max(...lngs);
+                  const zoom = escolherZoom(minLng, maxLng, minLat, maxLat);
+                  const cx = (mercX(minLng, zoom) + mercX(maxLng, zoom)) / 2;
+                  const cy = (mercY(minLat, zoom) + mercY(maxLat, zoom)) / 2;
+                  const tileCount = Math.ceil(Math.max(W / TILE, H / TILE)) + 1;
+                  const tiles: { x: number; y: number; left: number; top: number }[] = [];
+                  const x0 = Math.floor((cx - W / 2) / TILE);
+                  const y0 = Math.floor((cy - H / 2) / TILE);
+                  for (let ty = y0; ty < y0 + tileCount; ty++) {
+                    for (let tx = x0; tx < x0 + tileCount; tx++) {
+                      const maxTile = 2 ** zoom;
+                      if (tx < 0 || ty < 0 || tx >= maxTile || ty >= maxTile) continue;
+                      tiles.push({ x: tx, y: ty, left: tx * TILE - (cx - W / 2), top: ty * TILE - (cy - H / 2) });
+                    }
+                  }
+                  return (
+                    <div className="absolute inset-0 overflow-hidden rounded-xl border border-border/30 bg-muted/20">
+                      <div
+                        className="absolute"
+                        style={{ width: W, height: H, left: '50%', top: '50%', transform: 'translate(-50%,-50%)' }}
+                      >
+                        {tiles.map((t) => (
+                          <img
+                            key={`${t.x}-${t.y}`}
+                            src={`https://tile.openstreetmap.org/${zoom}/${t.x}/${t.y}.png`}
+                            alt=""
+                            width={TILE}
+                            height={TILE}
+                            draggable={false}
+                            className="absolute select-none"
+                            style={{ left: t.left, top: t.top }}
+                          />
+                        ))}
+                        {geoStats.validPoints.map((p, i) => (
+                          <div
+                            key={`pt-${i}`}
+                            title={`${p.name} · ${p.hora ?? ''} · ${Math.round(p.distancia)}m ${p.dentro ? '(dentro do raio)' : '(fora do raio)'}`}
+                            className={cn(
+                              'absolute -ml-1.5 -mt-1.5 h-3 w-3 rounded-full border-2 border-background shadow',
+                              p.dentro ? 'bg-primary' : 'bg-destructive'
+                            )}
+                            style={{ left: mercX(p.x, zoom) - (cx - W / 2), top: mercY(p.y, zoom) - (cy - H / 2) }}
+                          />
+                        ))}
+                      </div>
+                      <div className="absolute bottom-1 right-2 bg-background/80 backdrop-blur-xs px-1.5 py-0.5 rounded text-[9px] text-muted-foreground">
+                        © OpenStreetMap contributors
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
 
               <div className="absolute bottom-4 right-4 flex flex-col gap-2">
                 <div className="flex items-center gap-2 bg-background/80 backdrop-blur-xs p-2 rounded-lg border text-[10px]">

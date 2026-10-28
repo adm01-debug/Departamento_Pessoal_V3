@@ -35,6 +35,9 @@ interface PontoClockRegisterProps {
     options?: { foto_biometria_url?: string | null; foto_base64?: string | null }
   ) => Promise<{ biometriaValida?: boolean } | undefined>;
   ultimoRegistro?: Tables<'batidas_ponto'>;
+  // configuracoes_ponto.exige_reconhecimento_facial — antes o switch da
+  // aba de Configurações não era consultado: a câmera abria sempre.
+  exigeBiometria?: boolean;
 }
 
 const buttons = [
@@ -44,7 +47,14 @@ const buttons = [
   { tipo: 'saida' as const, label: 'Saída', icon: LogOut, gradient: 'from-destructive to-destructive/70/70' },
 ];
 
-export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ultimoRegistro }: PontoClockRegisterProps) {
+export function PontoClockRegister({
+  time,
+  loading,
+  geoStatus,
+  onRegistrar,
+  ultimoRegistro,
+  exigeBiometria = true,
+}: PontoClockRegisterProps) {
   const { user } = useAuth();
   const [offlineQueueSize, setOfflineQueueSize] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -93,6 +103,16 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
 
   const startScan = async (tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida') => {
     setSelectedTipo(tipo);
+    // Biometria opcional por empresa: sem a flag configurada, o registro é
+    // direto — a câmera nunca abre (antes o switch era decorativo, achado §6.4).
+    if (!exigeBiometria) {
+      try {
+        await onRegistrar(tipo);
+      } catch (e) {
+        toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
+      }
+      return;
+    }
     setShowFaceScan(true);
     setScanProgress(0);
     setScanStage('Posicione seu rosto...');
