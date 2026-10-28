@@ -1,6 +1,29 @@
 # PENDENCIAS.md — Itens que dependem do Joaquim ou de ação externa
 
-Data: 2026-10-28 · Contexto: verificação exaustiva dos docs (5 agentes V1–V5) contra a main + estado do canônico
+Data: 2026-10-28 · Contexto: verificação exaustiva dos docs (5 agentes V1–V5) contra a main + estado do canônico; + execução dos gaps V3 (PRs #309, #313, #317)
+
+## Depois de mergear os PRs V3 — ações pendentes
+
+| Item                                                                                                            | Por quê                                                                                          | Ação                                                                                                            |
+| --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| Aplicar migrations `20261028220000_pagar_desligamento_transacional` e `20261028230000_govbr_auth_state_user_id` | As RPCs/telas novas quebram sem elas                                                             | Rodar `canonical-migrations.yml` (dispatch manual) após o merge dos PRs #313 e #317                             |
+| Deploy das edges `enviar-email-admissao`, `auth-gov-br`, `enviar-esocial`                                       | Mudanças de edge só valem após deploy no canônico                                                | `canonical-edge-functions.yml` roda sozinho no push que tocar `supabase/functions/` — conferir o run após merge |
+| Secret `RESEND_API_KEY` no Supabase                                                                             | Sem ela o e-mail de pré-admissão não sai — o app copia o link e avisa "provedor não configurado" | Criar conta gratuita em resend.com → API key → Supabase Dashboard → Edge Functions → Secrets → `RESEND_API_KEY` |
+| Secrets `GOVBR_CLIENT_ID` + `GOVBR_CLIENT_SECRET`                                                               | Sem credenciais o login gov.br responde 503 "não configurado"                                    | Cadastrar o sistema no [gov.br/servicos](https://sso.acesso.gov.br/) e criar os dois secrets no Supabase        |
+| `LOVABLE_API_KEY` (OCR) e Evolution API (WhatsApp)                                                              | OCR e envio WhatsApp dependem de credenciais externas já existentes no projeto                   | Confirmar se os secrets estão configurados no Supabase do canônico                                              |
+
+## Não implementado — depende de fornecedor/escopo maior
+
+| Item                                  | Situação                                                                                                                                                                          |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Assinatura ICP-Brasil no contrato     | Hoje a assinatura é hash+CPF+IP (válida como assinatura eletrônica simples). ICP-Brasil exige provedor pago (ex.: Clicksign, D4Sign, DocuSign) — decisão de fornecedor do Joaquim |
+| API bancária / conciliação de extrato | PIX continua CSV-only e CNAB segue envio manual ao banco. Integração exige escolha de PSP (ex.: API PIX do banco, Belvo/Pluggy para extrato) e contrato                           |
+| Edges `cnab-remessa`/`pix-lote` órfãs | A geração de remessa é client-side hoje; as edges existem sem chamador — candidatas a remoção ou a wiring quando houver API bancária. Não deletei nesta rodada                    |
+| Guia de seguro-desemprego             | O motor informa elegibilidade/parcelas; o requerimento em si é feito no portal gov.br/CTPS Digital — registrado como gap documental                                               |
+| TRCT modelo Homolognet                | O PDF gerado tem todas as rubricas e selo de auditoria, mas não replica o formulário oficial Homolognet — a tabela `trct` agora registra a emissão no pagamento                   |
+| GRRF (guia física)                    | A tabela `grrf` agora registra a obrigação pendente no pagamento; emitir a guia segue manual na Caixa/FGTS Digital                                                                |
+
+---
 
 ## URGENTE — bloqueia deploy de edge functions
 
@@ -37,19 +60,19 @@ Consolidado dos 5 agentes de verificação (V1 Folha/Fiscal, V2 Ponto/Férias, V
 
 **Rescisão/eSocial (V3)**
 
-- `DesligamentoDetailSheet.handleCalcular` chama o motor com defaults fixos (`aviso_trabalhado:false`, `ferias_vencidas:false`, `saldo_fgts:0`) — pede os dados reais do colaborador
-- RPC `pagar_desligamento` existe mas revogada de `authenticated` e sem caller — decidir ligar ou remover
-- TRCT não segue layout Homolognet
-- GRRF: tabela existe mas órfã (sem gerador)
-- S-2299: XML serializer cai no fallback CDATA
-- ⚠️ Botão `DetalhesAdmissaoDialog.tsx` chama `enviarEvento({eventoId: admissao.id})` — sempre falha
+- `DesligamentoDetailSheet.handleCalcular` chama o motor com defaults fixos (`aviso_trabalhado:false`, `ferias_vencidas:false`, `saldo_fgts:0`) — **corrigido no PR #313** (card "Parâmetros do Cálculo")
+- RPC `pagar_desligamento` existe mas revogada de `authenticated` e sem caller — **corrigido no PR #313** (migration nova + chamada no `processarPagamento`)
+- TRCT não segue layout Homolognet — `trct` passa a registrar a emissão no PR #313; layout Homolognet segue pendente
+- GRRF: tabela existe mas órfã — passa a registrar a obrigação pendente no PR #313; guia física segue manual
+- S-2299: XML serializer cai no fallback CDATA — **corrigido no PR #317** (leiaute real)
+- ⚠️ Botão `DetalhesAdmissaoDialog.tsx` chama `enviarEvento({eventoId: admissao.id})` — sempre falha → **corrigido no PR #309** (fluxo claim-based)
 
 **Pagamentos/integrações (V3/V5)**
 
-- ⚠️ Pré-admissão: e-mail nunca é enviado (toast mente "enviado")
-- ⚠️ gov.br login quebrado (edge exige JWT + `data.profile.nivel` vs `data.nivel` no AuthCallbackPage)
-- `gerar-contrato-pdf`: `gerarPdf` sem caller — infra existe, nada invoca
-- Edges `cnab-remessa`/`pix-lote` órfãs; PIX é CSV-only
+- ⚠️ Pré-admissão: e-mail nunca é enviado (toast mente "enviado") — **corrigido no PR #309** (edge `enviar-email-admissao`, Resend + fallback honesto)
+- ⚠️ gov.br login quebrado (edge exige JWT + `data.profile.nivel` vs `data.nivel` no AuthCallbackPage) — **corrigido no PR #317** (login anônimo + campo correto)
+- `gerar-contrato-pdf`: `gerarPdf` sem caller — **corrigido no PR #309** (botão no diálogo da admissão)
+- Edges `cnab-remessa`/`pix-lote` órfãs; PIX é CSV-only — mantido, documentado acima em "Não implementado"
 - OCR de documentos depende de `LOVABLE_API_KEY` (não provisionada)
 - ~~Filas sem consumidor~~ → **resolvido na [#323](https://github.com/adm01-debug/Departamento_Pessoal_V3/pull/323)** (drenar fila_notificacoes via Resend, holerite por e-mail/whatsapp com status honesto, `pending_trigger` aposentado). Restam: remetente Resend `onboarding@resend.dev` (domínio de teste) e ausência de push VAPID
 - 0 `net.http_post` no banco — nenhuma automação dispara HTTP do DB
