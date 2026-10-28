@@ -323,6 +323,45 @@ function montarXMLEvento(
         `<infoContrato><codCargo>${xe(d.codCargo ?? '001')}</codCargo>` +
         `<dtAdm>${xe(d.dtAdm ?? new Date().toISOString().split('T')[0])}</dtAdm></infoContrato></vinculo>`;
       break;
+    case 'S-2299': {
+      // Desligamento — leiaute real: ideVinculo + infoDeslig com motivo
+      // (Tabela 19), data e aviso prévio indenizado. Verbas rescisórias
+      // seguem o agrupador dmDev do layout quando `verbasResc` vier no
+      // payload; campos seguem a mesma validação de validarS2299 no front.
+      let infoDeslig =
+        `<mtvDeslig>${xe(d.mtvDeslig ?? d.mTvDeslig ?? '01')}</mtvDeslig>` +
+        `<dtDeslig>${xe(d.dtDeslig ?? new Date().toISOString().split('T')[0])}</dtDeslig>` +
+        `<indPagtoAPI>${xe(d.indPagtoAPI ?? 'N')}</indPagtoAPI>`;
+      if (d.indPagtoAPI === 'S' && d.dtProjFimAPI) {
+        infoDeslig += `<dtProjFimAPI>${xe(d.dtProjFimAPI)}</dtProjFimAPI>`;
+      }
+      if (d.pensAlim !== undefined && d.pensAlim !== null) {
+        infoDeslig += `<pensAlim>${xe(d.pensAlim)}</pensAlim>`;
+        if (d.percAliment !== undefined && d.percAliment !== null) infoDeslig += `<percAliment>${xe(d.percAliment)}</percAliment>`;
+        if (d.vrAlim !== undefined && d.vrAlim !== null) infoDeslig += `<vrAlim>${xe(d.vrAlim)}</vrAlim>`;
+      }
+      if (d.nrCertObito) infoDeslig += `<nrCertObito>${xe(d.nrCertObito)}</nrCertObito>`;
+
+      let verbasResc = '';
+      if (Array.isArray(d.verbasResc)) {
+        verbasResc = '<verbasResc>' + (d.verbasResc as Array<Record<string, unknown>>).map((dm) => {
+          const detVerbas = Array.isArray(dm.detVerbas)
+            ? (dm.detVerbas as Array<Record<string, unknown>>).map((vb) =>
+                `<detVerbas><codRubr>${xe(vb.codRubr ?? '')}</codRubr>` +
+                `<ideTabRubr>${xe(vb.ideTabRubr ?? '1')}</ideTabRubr>` +
+                `<qtdRubr>${xe(vb.qtdRubr ?? '1')}</qtdRubr>` +
+                `<vrRubr>${xe(vb.vrRubr ?? '0')}</vrRubr></detVerbas>`).join('')
+            : '';
+          return `<dmDev><ideDmDev>${xe(dm.ideDmDev ?? '1')}</ideDmDev>${detVerbas}</dmDev>`;
+        }).join('') + '</verbasResc>';
+      }
+
+      conteudoEvento =
+        `<ideVinculo><cpfTrab>${xe(d.cpfTrab ?? '')}</cpfTrab>` +
+        `<matricula>${xe(d.matricula ?? timestamp)}</matricula></ideVinculo>` +
+        `<infoDeslig>${infoDeslig}</infoDeslig>` + verbasResc;
+      break;
+    }
     default:
       // Fallback seguro: serializa como CDATA para nunca injetar tags externas
       conteudoEvento = `<dados><![CDATA[${JSON.stringify(dados ?? {}).replace(/]]>/g, ']]]]><![CDATA[>')}]]></dados>`;

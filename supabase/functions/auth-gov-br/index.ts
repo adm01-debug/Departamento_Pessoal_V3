@@ -71,31 +71,6 @@ serve(async (req: Request): Promise<Response> => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 
-    // JWT auth required for both actions
-    const authHeader = req.headers.get('Authorization') ?? '';
-    if (!authHeader.startsWith('Bearer ')) {
-      return json(req, { success: false, error: 'Autenticação obrigatória' }, 401);
-    }
-
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData?.user) {
-      return json(req, { success: false, error: 'Sessão inválida' }, 401);
-    }
-    const userId = userData.user.id;
-
-    const supabase = createClient(supabaseUrl, serviceKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-
-    // Rate limit: 5 auth attempts per minute per user
-    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
-    const rl = await checkRateLimit(supabase, { key: `govbr:${userId}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl, req);
-
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
     const raw = _pb;
@@ -104,6 +79,35 @@ serve(async (req: Request): Promise<Response> => {
       return json(req, { success: false, error: 'Payload inválido' }, 422);
     }
     const body = parsed.data;
+
+    // JWT é OPCIONAL: o botão "Entrar com gov.br" na tela de login chama
+    // get_auth_url sem sessão, e o callback completa o login (modo anônimo,
+    // state.user_id NULL). Com sessão ativa, o fluxo vincula a conta gov.br
+    // ao perfil logado (state.user_id = userId).
+    const authHeader = req.headers.get('Authorization') ?? '';
+    let userId: string | null = null;
+    if (authHeader.startsWith('Bearer ')) {
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data: userData } = await userClient.auth.getUser();
+      userId = userData?.user?.id ?? null;
+    }
+
+    const supabase = createClient(supabaseUrl, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+
+    // Rate limit: 5 tentativas/min por usuário ou por IP (fluxo anônimo).
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rl = await checkRateLimit(supabase, {
+      key: userId ? `govbr:${userId}` : `govbr:anon:${ip}`,
+      limit: 5,
+      windowSec: 60,
+    });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     if (body.action === 'get_auth_url') {
       if (!isAllowedRedirectUri(body.redirectUri)) {
@@ -118,13 +122,14 @@ serve(async (req: Request): Promise<Response> => {
       const newState = crypto.randomUUID();
       const nonce = crypto.randomUUID();
 
-      await supabase.from('govbr_auth_state').insert({
+      const { error: stateErr } = await supabase.from('govbr_auth_state').insert({
         state: newState,
         nonce,
         redirect_uri: body.redirectUri,
-        user_id: userId,
+        user_id: userId, // null = fluxo de login (anônimo); uuid = vinculação
         expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10min TTL
       });
+      if (stateErr) throw stateErr;
 
       const params = new URLSearchParams({
         response_type: 'code',
@@ -139,15 +144,19 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (body.action === 'callback') {
+      // O state é consultado só pelo valor (não por user_id): o request do
+      // callback pode chegar com ou sem sessão conforme o modo do fluxo.
       const { data: authState } = await supabase
         .from('govbr_auth_state')
         .select('*')
         .eq('state', body.state)
-        .eq('user_id', userId)
         .maybeSingle();
 
       if (!authState) {
         return json(req, { success: false, error: 'Estado de autenticação inválido ou expirado' }, 400);
+      }
+      if (authState.user_id && authState.user_id !== userId) {
+        return json(req, { success: false, error: 'Estado pertence a outra sessão' }, 403);
       }
 
       // Check expiry
@@ -189,16 +198,68 @@ serve(async (req: Request): Promise<Response> => {
       }
       const userInfo = await userResponse.json();
 
+      // gov.br: o claim `sub` É o CPF do titular na identidade gov.br.
+      const govbrCpf = String(userInfo.sub ?? '').replace(/\D/g, '');
+
+      await supabase.from('govbr_auth_state').delete().eq('id', authState.id);
+
+      // Modo vinculação: usuário logado vinculando a conta gov.br ao perfil.
+      if (userId) {
+        await supabase.from('profiles').update({
+          govbr_uid: userInfo.sub,
+          govbr_nivel_autenticacao: userInfo.nivel || 'Bronze',
+          cpf_validado_govbr: true,
+          nome_completo: userInfo.name,
+        }).eq('user_id', userId);
+
+        return json(req, { success: true, mode: 'link', nivel: userInfo.nivel || 'Bronze' });
+      }
+
+      // Modo login: sem sessão — localizar a conta pelo CPF verificado pelo
+      // gov.br e emitir um token de verificação (magiclink) que o front troca
+      // por uma sessão via supabase.auth.verifyOtp.
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('user_id')
+        .eq('cpf', govbrCpf)
+        .maybeSingle();
+
+      if (!profile?.user_id) {
+        // 200 + success:false para o toast exibir a mensagem real (respostas
+        // não-2xx chegam ao front como FunctionsHttpError genérico).
+        return json(req, {
+          success: false,
+          error: 'Nenhuma conta vinculada a este CPF gov.br. Entre com e-mail e senha e vincule sua conta gov.br nas configurações.',
+        });
+      }
+
+      const { data: targetUser, error: targetErr } = await supabase.auth.admin.getUserById(profile.user_id);
+      if (targetErr || !targetUser?.user?.email) {
+        return json(req, { success: false, error: 'Conta encontrada mas sem e-mail cadastrado' });
+      }
+
+      const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: targetUser.user.email,
+        options: { redirectTo: authState.redirect_uri },
+      });
+      if (linkErr || !linkData?.properties?.hashed_token) {
+        return json(req, { success: false, error: 'Falha ao gerar verificação de login' }, 502);
+      }
+
       await supabase.from('profiles').update({
         govbr_uid: userInfo.sub,
         govbr_nivel_autenticacao: userInfo.nivel || 'Bronze',
         cpf_validado_govbr: true,
-        nome_completo: userInfo.name,
-      }).eq('user_id', userId);
+      }).eq('user_id', profile.user_id);
 
-      await supabase.from('govbr_auth_state').delete().eq('id', authState.id);
-
-      return json(req, { success: true, nivel: userInfo.nivel || 'Bronze' });
+      return json(req, {
+        success: true,
+        mode: 'login',
+        nivel: userInfo.nivel || 'Bronze',
+        token_hash: linkData.properties.hashed_token,
+        email: targetUser.user.email,
+      });
     }
 
     return json(req, { success: false, error: 'Ação inválida' }, 400);
