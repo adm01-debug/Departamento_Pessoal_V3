@@ -169,8 +169,9 @@ describe('Motor de Cálculo de Folha (folhaCalc)', () => {
   });
 
   it('deve calcular IRRF com dependentes', () => {
-    const semDependente = folhaCalc.processar(5000.0, { dependentes: 0 });
-    const comDependente = folhaCalc.processar(5000.0, { dependentes: 1 });
+    // Lei 15.270/2025: salários até R$7.350 têm redução total/parcial do IRRF em 2026.
+    const semDependente = folhaCalc.processar(10000.0, { dependentes: 0 });
+    const comDependente = folhaCalc.processar(10000.0, { dependentes: 1 });
 
     expect(comDependente.irrf).toBeLessThan(semDependente.irrf);
   });
@@ -192,7 +193,7 @@ describe('Motor de Cálculo de Folha (folhaCalc)', () => {
   });
 
   it('deve incluir IRRF como evento de desconto quando positivo', () => {
-    const resultado = folhaCalc.processar(5000.0);
+    const resultado = folhaCalc.processar(10000.0);
 
     expect(resultado.irrf).toBeGreaterThan(0);
     expect(resultado.detalheEventos).toContainEqual(expect.objectContaining({ codigo: '5001', tipo: 'desconto' }));

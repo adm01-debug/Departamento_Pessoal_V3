@@ -122,7 +122,7 @@ describe('calculoLoteService.processarLote', () => {
     // dependentes não tem coluna `tipo` e eventos_variaveis não tem codigo/descricao/tipo
     // (vêm da rubrica): o embed antigo dava 42703 e derrubava o lote inteiro.
     expect(COLABORADOR_FOLHA_SELECT).not.toContain('eventos_variaveis');
-    expect(COLABORADOR_FOLHA_SELECT).toContain('dependentes (id, para_irrf)');
+    expect(COLABORADOR_FOLHA_SELECT).toContain('dependentes (id, para_irrf, para_salario_familia)');
     expect(EVENTO_VARIAVEL_SELECT).toContain('rubrica:rubricas_folha(codigo, descricao, tipo)');
   });
 

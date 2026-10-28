@@ -1,5 +1,6 @@
 [
   "adicionais",
+  "afd_geracoes",
   "atrasos",
   "auditoria_acesso_bancario",
   "avaliacoes",
@@ -56,7 +57,6 @@
   "ponto_escalas",
   "ponto_registros",
   "pontos",
-  "recibos_ferias",
   "recibos_rescisao",
   "rescisao_homologacoes",
   "rescisao_simulacoes",

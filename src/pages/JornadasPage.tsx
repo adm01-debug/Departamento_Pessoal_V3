@@ -13,10 +13,105 @@ import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import { useJornadaHorarios, useSalvarGradeHorarios } from '@/hooks/useNovasTabelas';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, CalendarClock } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+
+const DIAS_SEMANA = [
+  { value: 0, label: 'Dom' },
+  { value: 1, label: 'Seg' },
+  { value: 2, label: 'Ter' },
+  { value: 3, label: 'Qua' },
+  { value: 4, label: 'Qui' },
+  { value: 5, label: 'Sex' },
+  { value: 6, label: 'Sáb' },
+];
+
+// Editor da grade semanal (jornadas_horarios) — alimenta o resolverJornada
+// do processar-ponto (dia_util=false = folga configurada → HE 100%). Antes
+// a grade só podia ser escrita via SQL; serviço/hook já existiam sem UI.
+function GradeJornadaDialog({ jornadaId, nome }: { jornadaId: string; nome: string }) {
+  const [open, setOpen] = useState(false);
+  const { data: horarios = [] } = useJornadaHorarios(open ? jornadaId : '');
+  const salvarGrade = useSalvarGradeHorarios();
+  // draft por dia_semana sobrepõe o servidor enquanto o usuário edita.
+  const [draft, setDraft] = useState<Record<number, { entrada: string; saida: string; dia_util: boolean }>>({});
+
+  const linha = (dia: number) => {
+    if (draft[dia]) return draft[dia];
+    const h = horarios.find((x) => x.dia_semana === dia);
+    return h
+      ? { entrada: (h.entrada || '').slice(0, 5), saida: (h.saida || '').slice(0, 5), dia_util: h.dia_util !== false }
+      : { entrada: '', saida: '', dia_util: false };
+  };
+
+  const salvar = () => {
+    const registros: TablesInsert<'jornadas_horarios'>[] = DIAS_SEMANA.map(({ value }) => {
+      const l = linha(value);
+      return {
+        jornada_id: jornadaId,
+        dia_semana: value,
+        dia_util: l.dia_util,
+        entrada: l.dia_util && l.entrada ? l.entrada : null,
+        saida: l.dia_util && l.saida ? l.saida : null,
+      };
+    });
+    salvarGrade.mutate({ jornadaId, horarios: registros }, { onSuccess: () => setOpen(false) });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="icon" variant="ghost" aria-label={`Editar grade de ${nome}`}>
+          <CalendarClock className="h-4 w-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Grade semanal — {nome}</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-2">
+          {DIAS_SEMANA.map(({ value, label }) => {
+            const l = linha(value);
+            return (
+              <div key={value} className="grid grid-cols-[3rem_1fr_1fr_auto] items-center gap-2">
+                <Label className="font-medium">{label}</Label>
+                <Input
+                  type="time"
+                  value={l.entrada}
+                  disabled={!l.dia_util}
+                  onChange={(e) => setDraft((d) => ({ ...d, [value]: { ...linha(value), entrada: e.target.value } }))}
+                />
+                <Input
+                  type="time"
+                  value={l.saida}
+                  disabled={!l.dia_util}
+                  onChange={(e) => setDraft((d) => ({ ...d, [value]: { ...linha(value), saida: e.target.value } }))}
+                />
+                <label className="flex items-center gap-1 text-xs">
+                  <input
+                    type="checkbox"
+                    checked={l.dia_util}
+                    onChange={(e) =>
+                      setDraft((d) => ({ ...d, [value]: { ...linha(value), dia_util: e.target.checked } }))
+                    }
+                  />
+                  Útil
+                </label>
+              </div>
+            );
+          })}
+        </div>
+        <Button className="w-full mt-2" onClick={salvar} disabled={salvarGrade.isPending}>
+          {salvarGrade.isPending ? 'Salvando...' : 'Salvar grade'}
+        </Button>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default function JornadasPage() {
   const { empresaAtual } = useEmpresas();
@@ -206,9 +301,12 @@ export default function JornadasPage() {
                     <TableCell>{j.carga_horaria_semanal}h/sem</TableCell>
                     <TableCell>{j.intervalo_minutos}min</TableCell>
                     <TableCell>
-                      <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(j.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                      <div className="flex gap-1">
+                        <GradeJornadaDialog jornadaId={j.id} nome={j.nome} />
+                        <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(j.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
