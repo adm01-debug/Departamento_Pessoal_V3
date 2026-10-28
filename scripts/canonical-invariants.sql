@@ -380,5 +380,29 @@ jsonb_build_object(
   ),
   'anonimizar_latest', pg_get_functiondef(
     'public.anonimizar_dados_pessoais(uuid)'::regprocedure
-  ) LIKE '%lgpd-anon%'
+  ) LIKE '%lgpd-anon%',
+  'wa_trigger_gone', NOT EXISTS (
+    SELECT 1 FROM pg_trigger t
+    JOIN pg_class c ON c.oid = t.tgrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relname = 'colaboradores'
+      AND t.tgname = 'tr_whatsapp_on_new_hiring'
+      AND NOT t.tgisinternal
+  ),
+  'wa_fn_gone', NOT EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.proname = 'fn_trigger_whatsapp_on_event'
+  ),
+  'wa_backlog_drained', NOT EXISTS (
+    SELECT 1 FROM public.whatsapp_mensagens_logs
+    WHERE status = 'pending_trigger'
+  ),
+  'wa_retire_stmts_recorded', EXISTS (
+    SELECT 1 FROM supabase_migrations.schema_migrations
+    WHERE version = '20261029000000'
+      AND statements IS NOT NULL AND cardinality(statements) > 0
+  )
 );
