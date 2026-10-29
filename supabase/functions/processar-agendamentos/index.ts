@@ -10,6 +10,7 @@ import {
   summarizeScheduleResults,
   type ScheduleResult,
 } from "./scheduleContract.ts";
+import { drenarFilaNotificacoes } from "./filaNotificacoes.ts";
 
 serve(async (req: Request): Promise<Response> => {
   const preflight = handlePreflight(req);
@@ -285,10 +286,21 @@ serve(async (req: Request): Promise<Response> => {
       resultados.push(...results);
     }
 
+    // Dreno das filas de comunicação (e-mail/push). Best-effort: uma falha
+    // aqui não invalida o processamento dos agendamentos de relatório.
+    const filas = await drenarFilaNotificacoes(supabase).catch((e) => {
+      console.error("[processar-agendamentos] dreno de fila_notificacoes falhou:", e);
+      try {
+        captureException(e, { fn: "processar-agendamentos:filas" });
+      } catch { /* noop */ }
+      return null;
+    });
+
     const resumo = summarizeScheduleResults(resultados);
     return new Response(
       JSON.stringify({
         ...resumo,
+        filas: filas ? { fila_notificacoes: filas } : { fila_notificacoes: "erro_no_dreno" },
         resultados,
       }),
       {

@@ -1,7 +1,7 @@
 SELECT jsonb_build_object(
   'ledger_count', (
     SELECT count(*) FROM supabase_migrations.schema_migrations
-    WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000','20261023000000','20261024000000','20261027000000','20261027120000','20261028120000','20261028130000')
+    WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000','20261014160000','20261014170000','20261015160000','20261015170000','20261018120000','20261018130000','20261018140000','20261018150000','20261018160000','20261018170000','20261018200000','20261019000000','20261020000000','20261021000000','20261021010000','20261022000000','20261023000000','20261024000000','20261027000000','20261027120000','20261028120000','20261028130000','20261029000000','20261029120000')
   ),
   'notificacoes_chk_wide', EXISTS (
     SELECT 1 FROM pg_constraint
@@ -380,5 +380,45 @@ jsonb_build_object(
   ),
   'anonimizar_latest', pg_get_functiondef(
     'public.anonimizar_dados_pessoais(uuid)'::regprocedure
-  ) LIKE '%lgpd-anon%'
+  ) LIKE '%lgpd-anon%',
+  'gaps_v2_parametros_manage', EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'parametros_sistema'
+      AND policyname = 'parametros_sistema_tenant_manage'
+      AND qual LIKE '%rls_tenant_or_admin%'
+  ),
+  'gaps_v2_faltas_trigger', EXISTS (
+    SELECT 1 FROM pg_trigger
+    WHERE tgrelid = 'public.faltas'::regclass
+      AND tgname = 'trg_faltas_sync_faltas_periodo'
+  ),
+  'gaps_v2_afd_table', EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'afd_geracoes'
+      AND policyname = 'afd_geracoes_insert_membros'
+  ),
+  'wa_trigger_gone', NOT EXISTS (
+    SELECT 1 FROM pg_trigger t
+    JOIN pg_class c ON c.oid = t.tgrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relname = 'colaboradores'
+      AND t.tgname = 'tr_whatsapp_on_new_hiring'
+      AND NOT t.tgisinternal
+  ),
+  'wa_fn_gone', NOT EXISTS (
+    SELECT 1 FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.proname = 'fn_trigger_whatsapp_on_event'
+  ),
+  'wa_backlog_drained', NOT EXISTS (
+    SELECT 1 FROM public.whatsapp_mensagens_logs
+    WHERE status = 'pending_trigger'
+  ),
+  'wa_retire_stmts_recorded', EXISTS (
+    SELECT 1 FROM supabase_migrations.schema_migrations
+    WHERE version = '20261029120000'
+      AND statements IS NOT NULL AND cardinality(statements) > 0
+  )
 );

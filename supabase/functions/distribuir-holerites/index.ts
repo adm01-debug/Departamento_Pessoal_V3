@@ -10,6 +10,7 @@ import {
   extractIdempotencyKey,
   failIdempotency,
 } from '../_shared/idempotency.ts';
+import { sendEmailResend, sendWhatsappEvolution } from '../_shared/outboundDelivery.ts';
 
 
 /**
@@ -93,7 +94,7 @@ serve(async (req: Request): Promise<Response> => {
   // Já distribuídos (idempotência)
   const { data: jaDist } = await admin
     .from('holerite_distribuicoes')
-    .select('holerite_id, canal, status')
+    .select('id, holerite_id, colaborador_id, canal, status')
     .eq('folha_id', folhaId)
     .in('canal', canais);
 
@@ -158,7 +159,7 @@ serve(async (req: Request): Promise<Response> => {
   const { data: distIns, error: distErr } = await admin
     .from('holerite_distribuicoes')
     .insert(inserts)
-    .select('id, canal');
+    .select('id, canal, colaborador_id, holerite_id');
   if (distErr) {
     await failIdempotency(admin, idem.id);
     return createErrorResponse(distErr.message, 500, 'DB_ERROR');
@@ -177,12 +178,97 @@ serve(async (req: Request): Promise<Response> => {
     await admin.from('notificacoes').insert(notifs);
   }
 
+  // Dreno real dos canais assíncronos: e-mail (Resend) e WhatsApp (Evolution)
+  // saem na mesma invocação; cada linha sai de 'enfileirado' para
+  // 'enviado'/'falhou' com o motivo persistido — nada fica enfileirado para
+  // sempre. Também reprocessa linhas 'enfileirado' de invocações antigas.
+  const pendentes: Array<{ id: string; canal: string; colaborador_id: string; holerite_id: string }> = [
+    ...(distIns ?? []).filter((d) => d.canal !== 'portal'),
+    ...(jaDist ?? []).filter(
+      (d) => d.status === 'enfileirado' && d.canal !== 'portal',
+    ),
+  ];
+
+  const entregas: Record<string, { enviados: number; falhas: number }> = {};
+  if (pendentes.length) {
+    const colabIds = [...new Set(pendentes.map((p) => p.colaborador_id))];
+    const { data: contatos } = await admin
+      .from('colaboradores')
+      .select('id, nome_completo, email, email_corporativo, email_pessoal, whatsapp, celular, telefone')
+      .in('id', colabIds);
+    const contatoPorId = new Map((contatos ?? []).map((c) => [c.id, c]));
+    const nomePorHolerite = new Map(holerites.map((h) => [h.id, h.colaborador_nome]));
+
+    const primeiroValido = (...vals: Array<string | null | undefined>): string | null => {
+      for (const v of vals) {
+        const t = (v ?? '').trim();
+        if (t) return t;
+      }
+      return null;
+    };
+
+    await Promise.all(pendentes.map(async (p) => {
+      const contato = contatoPorId.get(p.colaborador_id);
+      const nome = nomePorHolerite.get(p.holerite_id) ?? contato?.nome_completo ?? 'colaborador(a)';
+      const mensagem = `Olá ${nome}, seu holerite da competência ${folha.competencia} está disponível no portal do colaborador.`;
+      let status = 'enviado';
+      let erro: string | null = null;
+
+      if (p.canal === 'email') {
+        const destinatario = primeiroValido(contato?.email, contato?.email_corporativo, contato?.email_pessoal);
+        if (!destinatario) {
+          status = 'falhou';
+          erro = 'sem_email';
+        } else {
+          const envio = await sendEmailResend({
+            to: destinatario,
+            subject: `Holerite ${folha.competencia} disponível`,
+            text: mensagem,
+            idempotencyKey: `holerite-dist/${p.id}`,
+          });
+          if (!envio.ok) {
+            status = 'falhou';
+            erro = envio.error;
+          }
+        }
+      } else {
+        const telefone = primeiroValido(contato?.whatsapp, contato?.celular, contato?.telefone);
+        if (!telefone) {
+          status = 'falhou';
+          erro = 'sem_telefone';
+        } else {
+          const envio = await sendWhatsappEvolution(admin, {
+            empresaId: folha.empresa_id,
+            telefone,
+            mensagem,
+          });
+          if (envio.status !== 'sent') {
+            status = 'falhou';
+            erro = envio.errorMessage;
+          }
+        }
+      }
+
+      const bucket = (entregas[p.canal] ??= { enviados: 0, falhas: 0 });
+      if (status === 'enviado') bucket.enviados++; else bucket.falhas++;
+
+      const { error: upErr } = await admin
+        .from('holerite_distribuicoes')
+        .update({ status, erro })
+        .eq('id', p.id);
+      if (upErr) {
+        captureException(upErr, { fn: 'distribuir-holerites:update', canal: p.canal });
+      }
+    }));
+  }
+
   const successBody = {
     ok: true,
     total: holerites.length,
     novos: inserts.length,
     ja_distribuidos: existentes.size,
     canais,
+    entregas,
     folha_id: folhaId,
   };
   await completeIdempotency(admin, idem.id, 200, successBody);
