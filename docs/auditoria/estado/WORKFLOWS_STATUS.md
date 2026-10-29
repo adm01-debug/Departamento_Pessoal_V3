@@ -26,27 +26,27 @@ comita e abre um PR com `gh pr create` — nunca abre PR vazio.
 
 <!-- REPORT:START -->
 
-> Última execução automática: 2026-10-27 (workflows-report.yml)
+> Última execução automática: 2026-10-28 (workflows-report.yml)
 
 # Relatório de Workflows
 
 | Workflow | Median (min) | P95 (min) | Runs |
 |----------|-------------|-----------|------|
-| Canonical Supabase — Edge Functions | 4 | 28 | 19 |
-| Canonical database — scoped migrations | 7074 ⚠️ | 17408 | 44 |
+| Canonical Supabase — Edge Functions | 2 | 26 | 21 |
+| Canonical database — scoped migrations | 7021 ⚠️ | 17386 | 41 |
 | Canonical database — read-only security probes | 34217 ⚠️ | 40415 | 11 |
 | Canonical database — read-only SQL diagnostic | 6983 ⚠️ | 7123 | 35 |
-| Continuous Integration & Delivery | 7 | 14 | 43 |
+| Continuous Integration & Delivery | 6 | 17 | 45 |
 | DB Migration Tests (PLANO_100) | 0 | 7 | 34 |
-| Manual & Preview Deploy | 1 | 8 | 47 |
-| E2E Tests (Playwright) | 3 | 14 | 50 |
+| Manual & Preview Deploy | 1 | 8 | 50 |
+| E2E Tests (Playwright) | 5 | 13 | 45 |
 | Environment Healthcheck | 0 | 1 | 50 |
 | OSSF Scorecard | 1 | 1 | 2 |
-| Post-deploy smoke | 3 | 7 | 5 |
-| Ruleset sync | 0 | 0 | 3 |
-| Security Scan & Code Quality | 3 | 10 | 47 |
-| Workflow lint (actionlint) | 4 | 23 | 30 |
-| Workflows report | 1 | 1 | 1 |
+| Post-deploy smoke | 7 | 13 | 19 |
+| Ruleset sync | 0 | 0 | 4 |
+| Security Scan & Code Quality | 3 | 7 | 43 |
+| Workflow lint (actionlint) | 2 | 23 | 33 |
+| Workflows report | 1 | 1 | 2 |
 | Dependabot Updates | 2 | 6 | 50 |
 
 <!-- REPORT:END -->
