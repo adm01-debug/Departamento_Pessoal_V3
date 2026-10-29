@@ -88,6 +88,59 @@ export function NotificacoesTab() {
 }
 
 export function FolhaConfigTab() {
+  const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
+  // Edições do usuário sobre o que veio do servidor (estado derivado — sem
+  // setState em render nem em effect).
+  const [draft, setDraft] = useState<Record<string, string>>({});
+
+  // Parâmetros por empresa em parametros_sistema (empresa_id, nome, valor).
+  const PARAM_KEYS = ['folha.dia_fechamento', 'folha.dia_pagamento', 'folha.calculo_automatico'] as const;
+
+  const { data: params = [] } = useQuery({
+    queryKey: ['parametros-folha', empresaAtual?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parametros_sistema')
+        .select('nome, valor')
+        .eq('empresa_id', empresaAtual!.id)
+        .in('nome', [...PARAM_KEYS]);
+      if (error) throw error;
+      return (data || []) as { nome: string; valor: string | null }[];
+    },
+    enabled: !!empresaAtual?.id,
+  });
+
+  const server = Object.fromEntries(params.map((p) => [p.nome, p.valor ?? '']));
+  const val = (k: string, def: string) => draft[k] ?? server[k] ?? def;
+  const form = {
+    dia_fechamento: val('folha.dia_fechamento', '25'),
+    dia_pagamento: val('folha.dia_pagamento', '5'),
+    calculo_automatico: val('folha.calculo_automatico', 'true') !== 'false',
+  };
+
+  const salvar = useMutation({
+    mutationFn: async () => {
+      if (!empresaAtual?.id) throw new Error('Nenhuma empresa selecionada');
+      const rows = [
+        { nome: 'folha.dia_fechamento', valor: form.dia_fechamento },
+        { nome: 'folha.dia_pagamento', valor: form.dia_pagamento },
+        { nome: 'folha.calculo_automatico', valor: String(form.calculo_automatico) },
+      ].map((r) => ({ ...r, empresa_id: empresaAtual.id }));
+      const { error } = await supabase
+        .from('parametros_sistema')
+        .upsert(validateTablePayload('parametros_sistema', rows, 'InlineTabs:parametros_sistema'), {
+          onConflict: 'empresa_id,nome',
+        });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['parametros-folha'] });
+      toast.success('Parâmetros de folha salvos.');
+    },
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro ao salvar configurações.')),
+  });
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden bg-card">
@@ -98,13 +151,37 @@ export function FolhaConfigTab() {
         </CardHeader>
         <CardContent className="space-y-6 pt-2">
           <div className="grid gap-4 md:grid-cols-2">
-            <FormField label="Dia de Fechamento" type="number" defaultValue="25" />
-            <FormField label="Dia de Pagamento" type="number" defaultValue="5" />
+            <FormField
+              label="Dia de Fechamento"
+              type="number"
+              value={form.dia_fechamento}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setDraft((d) => ({ ...d, 'folha.dia_fechamento': e.target.value }))
+              }
+            />
+            <FormField
+              label="Dia de Pagamento"
+              type="number"
+              value={form.dia_pagamento}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setDraft((d) => ({ ...d, 'folha.dia_pagamento': e.target.value }))
+              }
+            />
           </div>
           <div className="p-4 rounded-2xl bg-muted/30 border border-border/20">
-            <FormSwitch label="Cálculo Automático" description="Processar rubricas básicas no dia do fechamento" />
+            <FormSwitch
+              label="Cálculo Automático"
+              description="Processar rubricas básicas no dia do fechamento"
+              checked={form.calculo_automatico}
+              onCheckedChange={(v: boolean) => setDraft((d) => ({ ...d, 'folha.calculo_automatico': String(v) }))}
+            />
           </div>
-          <Button className="rounded-xl bg-gradient-to-r from-primary-glow to-primary hover:opacity-90 shadow-lg font-body px-8 h-11">
+          <Button
+            onClick={() => salvar.mutate()}
+            disabled={salvar.isPending || !empresaAtual?.id}
+            className="rounded-xl bg-gradient-to-r from-primary-glow to-primary hover:opacity-90 shadow-lg font-body px-8 h-11"
+          >
+            {salvar.isPending ? <Spinner size="sm" className="mr-2" /> : null}
             Salvar Configurações
           </Button>
         </CardContent>
@@ -116,11 +193,59 @@ export function FolhaConfigTab() {
 export function PontoConfigTab() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
+  const [draft, setDraft] = useState<Record<string, string>>({});
 
-  // E50-33: único switch desta aba com persistência real (os demais campos
-  // abaixo — Tolerância de Atraso, Exigir Geolocalização, Reconhecimento
-  // Facial, Ponto Offline — não gravam nada hoje; achado ainda sem item
-  // dedicado no PLANO_50.md).
+  // Os switches de Tolerância/Geo/Facial/Offline agora persistem em
+  // configuracoes_ponto (a mesma tabela que pontoService.getSettings lê
+  // para geofence/raio). Antes os campos eram decorativos (achado #24).
+  const { data: cfgRow } = useQuery({
+    queryKey: ['configuracoes-ponto', empresaAtual?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('configuracoes_ponto')
+        .select('tolerancia_minutos, exige_geolocalizacao, exige_reconhecimento_facial, permite_ponto_offline')
+        .eq('empresa_id', empresaAtual!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!empresaAtual?.id,
+  });
+
+  const cval = (k: string, def: string) => draft[k] ?? String((cfgRow as Record<string, unknown> | null)?.[k] ?? def);
+  const cfg = {
+    tolerancia_minutos: cval('tolerancia_minutos', '10'),
+    exige_geolocalizacao: cval('exige_geolocalizacao', 'false') === 'true',
+    exige_reconhecimento_facial: cval('exige_reconhecimento_facial', 'false') === 'true',
+    permite_ponto_offline: cval('permite_ponto_offline', 'true') === 'true',
+  };
+
+  const salvarConfig = useMutation({
+    mutationFn: async () => {
+      if (!empresaAtual?.id) throw new Error('Nenhuma empresa selecionada');
+      const { error } = await supabase.from('configuracoes_ponto').upsert(
+        validateTablePayload(
+          'configuracoes_ponto',
+          {
+            empresa_id: empresaAtual.id,
+            tolerancia_minutos: Number(cfg.tolerancia_minutos) || 10,
+            exige_geolocalizacao: cfg.exige_geolocalizacao,
+            exige_reconhecimento_facial: cfg.exige_reconhecimento_facial,
+            permite_ponto_offline: cfg.permite_ponto_offline,
+          },
+          'InlineTabs:configuracoes_ponto'
+        ),
+        { onConflict: 'empresa_id' }
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['configuracoes-ponto'] });
+      toast.success('Regras de ponto atualizadas.');
+    },
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro ao salvar regras.')),
+  });
+
   const definirExigirPin = useMutation({
     mutationFn: async (exigir: boolean) => {
       if (!empresaAtual?.id) throw new Error('Nenhuma empresa selecionada');
@@ -147,11 +272,33 @@ export function PontoConfigTab() {
         </CardHeader>
         <CardContent className="space-y-6 pt-2">
           <div className="max-w-md space-y-4">
-            <FormField label="Tolerância de Atraso (min)" type="number" defaultValue="10" />
+            <FormField
+              label="Tolerância de Atraso (min)"
+              type="number"
+              value={cfg.tolerancia_minutos}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setDraft((d) => ({ ...d, tolerancia_minutos: e.target.value }))
+              }
+            />
             <div className="space-y-4 p-4 rounded-2xl bg-muted/30 border border-border/20">
-              <FormSwitch label="Exigir Geolocalização" description="Obriga o uso de GPS para bater ponto" />
-              <FormSwitch label="Reconhecimento Facial" description="Capturar foto em cada registro de jornada" />
-              <FormSwitch label="Ponto Offline" description="Permitir batidas sem conexão com internet" />
+              <FormSwitch
+                label="Exigir Geolocalização"
+                description="Obriga o uso de GPS para bater ponto"
+                checked={cfg.exige_geolocalizacao}
+                onCheckedChange={(v: boolean) => setDraft((d) => ({ ...d, exige_geolocalizacao: String(v) }))}
+              />
+              <FormSwitch
+                label="Reconhecimento Facial"
+                description="Capturar foto em cada registro de jornada"
+                checked={cfg.exige_reconhecimento_facial}
+                onCheckedChange={(v: boolean) => setDraft((d) => ({ ...d, exige_reconhecimento_facial: String(v) }))}
+              />
+              <FormSwitch
+                label="Ponto Offline"
+                description="Permitir batidas sem conexão com internet"
+                checked={cfg.permite_ponto_offline}
+                onCheckedChange={(v: boolean) => setDraft((d) => ({ ...d, permite_ponto_offline: String(v) }))}
+              />
             </div>
             <div className="p-4 rounded-2xl bg-warning/5 border border-warning/20">
               <FormSwitch
@@ -163,7 +310,12 @@ export function PontoConfigTab() {
               />
             </div>
           </div>
-          <Button className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/90 hover:opacity-90 shadow-lg font-body px-8 h-11">
+          <Button
+            onClick={() => salvarConfig.mutate()}
+            disabled={salvarConfig.isPending || !empresaAtual?.id}
+            className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/90 hover:opacity-90 shadow-lg font-body px-8 h-11"
+          >
+            {salvarConfig.isPending ? <Spinner size="sm" className="mr-2" /> : null}
             Atualizar Regras
           </Button>
         </CardContent>
