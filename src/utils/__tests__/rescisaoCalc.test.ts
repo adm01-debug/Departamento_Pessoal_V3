@@ -106,8 +106,10 @@ describe('calcIRRF — Tabela Progressiva 2026', () => {
 
   describe('valores positivos e monotonicidade', () => {
     it('IRRF cresce com a base', () => {
-      expect(calcIRRF(5000)).toBeGreaterThan(calcIRRF(3000));
+      // Lei 15.270/2025: bases ≤ R$ 7.350 têm imposto zerado/reduzido em 2026.
+      expect(calcIRRF(5000)).toBe(0);
       expect(calcIRRF(10000)).toBeGreaterThan(calcIRRF(5000));
+      expect(calcIRRF(50000)).toBeGreaterThan(calcIRRF(10000));
     });
     it('IRRF nunca é negativo', () => {
       [1000, 2500, 3500, 5000, 10000, 50000].forEach((b) => expect(calcIRRF(b)).toBeGreaterThanOrEqual(0));

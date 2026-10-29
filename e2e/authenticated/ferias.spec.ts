@@ -28,13 +28,24 @@ test.describe('Módulo Férias', () => {
     const statusSelect = page.getByRole('combobox').filter({ hasText: /status/i });
     await expect(statusSelect).toBeVisible({ timeout: 10_000 });
     await statusSelect.click();
-    await page.getByRole('option', { name: /pendente/i }).click();
-    // Lista reflete o filtro sem quebrar: tabela ou empty-state.
-    const list = page
-      .locator('table, [role="grid"]')
-      .or(page.getByText(/nenhum.*férias/i))
-      .first();
-    await expect(list).toBeVisible({ timeout: 10_000 });
+    // "Rejeitada" é o status mais raro — maximiza a chance de provar a filtragem.
+    await page.getByRole('option', { name: /rejeitada/i }).click();
+    // A filtragem é server-side (useFerias): esperamos o resultado aplicar —
+    // ou aparece uma linha Rejeitada, ou o empty-state do filtro.
+    const rows = page.locator('table tbody tr, [role="grid"] [role="row"]');
+    const rejeitadaRow = rows.filter({ hasText: /rejeitada/i }).first();
+    await expect(
+      page
+        .getByText(/nenhum.*férias/i)
+        .first()
+        .or(rejeitadaRow)
+    ).toBeVisible({ timeout: 10_000 });
+    // Toda linha visível precisa ter o status escolhido — uma lista
+    // não-filtrada com status mistos falharia aqui.
+    const rowCount = await rows.count();
+    for (let i = 0; i < rowCount; i++) {
+      await expect(rows.nth(i), `linha ${i} deveria ser Rejeitada`).toContainText(/rejeitada/i);
+    }
   });
 
   test('navega para página de编程ação de férias', async ({ page }) => {
@@ -52,11 +63,11 @@ test.describe('Módulo Férias', () => {
     // busca/filtro moram na aba "Solicitações" — na aba Dashboard este teste
     // passava vacuamente.
     await page.getByRole('tab', { name: /solicitações/i }).click();
-    await expect(page.getByPlaceholder(/buscar colaborador/i)).toBeVisible({ timeout: 10_000 });
-    const emptyOrTable = page
-      .getByText(/nenhum.*férias/i)
-      .or(page.locator('table, [role="grid"]'))
-      .first();
-    await expect(emptyOrTable).toBeVisible({ timeout: 10_000 });
+    const busca = page.getByPlaceholder(/buscar colaborador/i);
+    await expect(busca).toBeVisible({ timeout: 10_000 });
+    // Busca por colaborador inexistente (≥3 chars dispara o filtro) — gera
+    // o estado vazio de forma determinística, independente dos dados do tenant.
+    await busca.fill('zzzqxxk-colaborador-inexistente');
+    await expect(page.getByText(/nenhum.*férias/i).first()).toBeVisible({ timeout: 10_000 });
   });
 });

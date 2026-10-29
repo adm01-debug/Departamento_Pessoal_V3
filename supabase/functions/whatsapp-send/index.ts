@@ -6,7 +6,7 @@ import { uuidPg } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh, type AdminClient } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { safePost } from '../_shared/safe-fetch.ts';
+import { sendWhatsappEvolution } from '../_shared/outboundDelivery.ts';
 import type { Database } from '../../../src/integrations/supabase/types.ts';
 
 // Envio real de WhatsApp via Evolution API (instancia_url/api_key/instancia_nome
@@ -25,18 +25,6 @@ const bodySchema = z.object({
   (v) => v.mensagem !== undefined || v.template_id !== undefined,
   { message: 'mensagem ou template_id obrigatório' },
 );
-
-function normalizarTelefone(telefone: string): string {
-  const digits = telefone.replace(/\D/g, '');
-  // DDI 55 implícito para números BR sem código de país (10-11 dígitos).
-  return digits.length <= 11 ? `55${digits}` : digits;
-}
-
-// Erros de fetch carregam a URL configurada (que pode conter credenciais em
-// query params) — nunca persistimos/retornamos URLs em mensagens de erro.
-function sanitizarErro(msg: string, maxLen = 300): string {
-  return msg.replace(/https?:\/\/\S+/g, '[url]').slice(0, maxLen);
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -101,13 +89,6 @@ serve(async (req) => {
   };
 
   try {
-    const { data: config, error: cfgErr } = await admin
-      .from('whatsapp_config')
-      .select('instancia_url, api_key, instancia_nome')
-      .eq('empresa_id', empresa_id)
-      .maybeSingle();
-    if (cfgErr) throw cfgErr;
-
     let mensagem = body!.mensagem;
     if (template_id) {
       const { data: tpl, error: tplErr } = await admin
@@ -122,10 +103,11 @@ serve(async (req) => {
       mensagem = tpl.conteudo;
     }
 
-    if (!config?.instancia_url || !config.api_key || !config.instancia_nome) {
+    const envio = await sendWhatsappEvolution(admin, { empresaId: empresa_id, telefone, mensagem: mensagem! });
+    if (!envio.configured) {
       const logId = await registrarLog({
         status: 'failed',
-        error_message: 'WhatsApp não configurado para a empresa (instância Evolution API ausente)',
+        error_message: envio.errorMessage,
       }).catch(() => null);
       return new Response(
         JSON.stringify({ success: false, status: 'failed', log_id: logId, motivo: 'not_configured' }),
@@ -133,43 +115,9 @@ serve(async (req) => {
       );
     }
 
-    const url = `${config.instancia_url.replace(/\/+$/, '')}/message/sendText/${encodeURIComponent(config.instancia_nome)}`;
-    let status: 'sent' | 'failed' = 'sent';
-    let mensagemIdExterno: string | null = null;
-    let errorMessage: string | null = null;
-
-    try {
-      const res = await safePost(
-        url,
-        { number: normalizarTelefone(telefone), text: mensagem },
-        {
-          tag: 'whatsapp',
-          headers: { apikey: config.api_key },
-        },
-      );
-      if (res.ok) {
-        const raw = await res.text().catch(() => '');
-        let payload: { key?: { id?: string } } | null = null;
-        try {
-          payload = raw ? (JSON.parse(raw) as { key?: { id?: string } }) : null;
-        } catch { /* resposta não-JSON com status 2xx — tratada como falha abaixo */ }
-        if (payload?.key?.id) {
-          mensagemIdExterno = payload.key.id;
-        } else {
-          // HTTP 2xx sem o envelope de sucesso documentado ({key:{id}}) — a
-          // instância rejeitou ou respondeu algo inesperado; não é 'sent'.
-          status = 'failed';
-          errorMessage = `Evolution API respondeu ${res.status} sem confirmação de envio${raw ? `: ${sanitizarErro(raw, 200)}` : ''}`;
-        }
-      } else {
-        status = 'failed';
-        const detail = await res.text().catch(() => '');
-        errorMessage = `Evolution API respondeu ${res.status}${detail ? `: ${sanitizarErro(detail, 200)}` : ''}`;
-      }
-    } catch (e) {
-      status = 'failed';
-      errorMessage = e instanceof Error ? sanitizarErro(e.message) : 'Falha de rede ao chamar Evolution API';
-    }
+    const status = envio.status;
+    const mensagemIdExterno = envio.mensagemIdExterno;
+    const errorMessage = envio.errorMessage;
 
     // Entrega à Evolution e persistência do log são desfechos independentes:
     // se o insert falhar depois de 'sent', a mensagem JÁ foi entregue — devolver
