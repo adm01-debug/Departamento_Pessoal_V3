@@ -10,27 +10,48 @@ test.describe('Módulo Férias', () => {
   });
 
   test('renderiza listagem de férias com colaboradores', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: /férias/i })).toBeVisible();
-    // Assumindo que a listagem usa uma tabela ou cards
-    const table = page.locator('table, [role="grid"], [data-testid="ferias-list"]').first();
-    await expect(table).toBeVisible({ timeout: 10_000 });
+    // A página tem 4 headings com "Férias" (título + seções) — primeira ocorrência.
+    await expect(page.getByRole('heading', { name: /férias/i }).first()).toBeVisible();
+    // A listagem mora na aba "Solicitações" (a aba default é "Dashboard").
+    await page.getByRole('tab', { name: /solicitações/i }).click();
+    // Com dados aparece a tabela; vazio renderiza "Nenhum … férias encontrado".
+    const list = page
+      .locator('table, [role="grid"], [data-testid="ferias-list"]')
+      .or(page.getByText(/nenhum.*férias/i))
+      .first();
+    await expect(list).toBeVisible({ timeout: 10_000 });
   });
 
   test('filtra férias por status (pendente/aprovada/concluida)', async ({ page }) => {
-    const statusFilter = page.getByLabel(/status/i).or(page.getByPlaceholder(/status/i));
-    if (await statusFilter.isVisible()) {
-      await statusFilter.click();
-      await page.getByRole('option', { name: /pendente/i }).click();
-      await expect(page).toHaveURL(/status=pendente/i, { timeout: 5_000 }).catch(() => {
-        // Fallback: filtro pode funcionar via reload — não falha o teste
-      });
+    // O filtro de status mora na aba "Solicitações" (DataTableToolbar → Select "Status").
+    await page.getByRole('tab', { name: /solicitações/i }).click();
+    const statusSelect = page.getByRole('combobox').filter({ hasText: /status/i });
+    await expect(statusSelect).toBeVisible({ timeout: 10_000 });
+    await statusSelect.click();
+    // "Rejeitada" é o status mais raro — maximiza a chance de provar a filtragem.
+    await page.getByRole('option', { name: /rejeitada/i }).click();
+    // A filtragem é server-side (useFerias): esperamos o resultado aplicar —
+    // ou aparece uma linha Rejeitada, ou o empty-state do filtro.
+    const rows = page.locator('table tbody tr, [role="grid"] [role="row"]');
+    const rejeitadaRow = rows.filter({ hasText: /rejeitada/i }).first();
+    await expect(
+      page
+        .getByText(/nenhum.*férias/i)
+        .first()
+        .or(rejeitadaRow)
+    ).toBeVisible({ timeout: 10_000 });
+    // Toda linha visível precisa ter o status escolhido — uma lista
+    // não-filtrada com status mistos falharia aqui.
+    const rowCount = await rows.count();
+    for (let i = 0; i < rowCount; i++) {
+      await expect(rows.nth(i), `linha ${i} deveria ser Rejeitada`).toContainText(/rejeitada/i);
     }
   });
 
   test('navega para página de编程ação de férias', async ({ page }) => {
-    const programmingLink = page.getByRole('link', { name: /programação/i }).or(
-      page.getByRole('button', { name: /programação/i })
-    );
+    const programmingLink = page
+      .getByRole('link', { name: /programação/i })
+      .or(page.getByRole('button', { name: /programação/i }));
     if (await programmingLink.isVisible()) {
       await programmingLink.click();
       await expect(page).toHaveURL(/ferias.*programacao|programacao.*ferias/i, { timeout: 5_000 });
@@ -38,11 +59,15 @@ test.describe('Módulo Férias', () => {
   });
 
   test('exibe mensagem quando não há férias registradas', async ({ page }) => {
-    // Ir para URL que provavelmente retorna vazio
-    await page.goto('/ferias?status=nenhuma&t=' + Date.now());
-    const emptyState = page.getByText(/nenhum/i).or(page.getByText(/vazio/i));
-    await expect(emptyState).toBeVisible({ timeout: 8_000 }).catch(() => {
-      // Se houver dados, o teste não falha — o cenário vazio é raro
-    });
+    // O empty-state (EmptyList "solicitação de férias") e os controles de
+    // busca/filtro moram na aba "Solicitações" — na aba Dashboard este teste
+    // passava vacuamente.
+    await page.getByRole('tab', { name: /solicitações/i }).click();
+    const busca = page.getByPlaceholder(/buscar colaborador/i);
+    await expect(busca).toBeVisible({ timeout: 10_000 });
+    // Busca por colaborador inexistente (≥3 chars dispara o filtro) — gera
+    // o estado vazio de forma determinística, independente dos dados do tenant.
+    await busca.fill('zzzqxxk-colaborador-inexistente');
+    await expect(page.getByText(/nenhum.*férias/i).first()).toBeVisible({ timeout: 10_000 });
   });
 });

@@ -346,13 +346,16 @@ export function calcularRescisaoCore(params: RescisaoParams): RescisaoResult {
       multa477
   );
 
-  const inssSaldo = calcularINSS(saldoSalario);
-  const inss13 = calcularINSS(decimoTerceiro);
+  // Tabela do ano do desligamento — rescisão de ano anterior divergia da
+  // edge (que é year-aware) quando a tabela mudava.
+  const anoDesligamento = desligamento.getFullYear();
+  const inssSaldo = calcularINSS(saldoSalario, anoDesligamento);
+  const inss13 = calcularINSS(decimoTerceiro, anoDesligamento);
   // Soma em inteiros de centavos para não perder 1 centavo em drift IEEE754.
   const inss = (Math.round(inssSaldo * 100) + Math.round(inss13 * 100)) / 100;
 
-  const irrfSaldo = calcularIRRF(saldoSalario, dependentes, 0);
-  const irrf13 = calcularIRRF(decimoTerceiro, 0, 0);
+  const irrfSaldo = calcularIRRF(saldoSalario, dependentes, 0, false, anoDesligamento);
+  const irrf13 = calcularIRRF(decimoTerceiro, 0, 0, false, anoDesligamento);
   const irrf = (Math.round(irrfSaldo * 100) + Math.round(irrf13 * 100)) / 100;
 
   // Descontos incluem o aviso não cumprido (487 §2º) e a indenização do

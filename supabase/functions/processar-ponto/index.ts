@@ -51,6 +51,9 @@ interface BatidaDia {
 
 // Resolve a jornada do colaborador para o dia (em ordem de precedência — os
 // horários próprios do colaborador vencem qualquer grade da empresa):
+// 0) escala do dia: escalas_trabalho(colaborador_id, data) → turnos
+//    (a atribuição explícita para a data é a regra mais específica — antes
+//    era gravada pela tela de Turnos e ignorada pelo motor)
 // 1) campos próprios do colaborador (horario_entrada/saida/intervalo)
 // 2) jornada_semanal do colaborador (assume 6 dias úteis CLT)
 // 3) jornadas_horarios do dia da semana — inclusive dia_util=false = folga
@@ -62,11 +65,43 @@ const resolverJornada = async (
   empresaId: string,
   colab: any,
   diaSemana: number,
+  dataRef?: string,
 ): Promise<JornadaDia> => {
   const tolerancia = 10;
   const entradaColab = colab?.horario_entrada ? timeToMin(colab.horario_entrada) : null;
   const saidaColab = colab?.horario_saida ? timeToMin(colab.horario_saida) : null;
   const intervaloColab = Number(colab?.intervalo_minutos) || 0;
+
+  // (0) Escala do dia — escalas_trabalho vincula (colaborador, data) a um
+  // turno com horario_inicio/fim/intervalo_minutos. Sem esta consulta a
+  // tabela era gravada pela UI e nunca consumida (achado §6.4/#24).
+  // Erro propagado como no fetchDia: silenciar viraria "sem escala" e
+  // apagaria o turno atribuído.
+  if (dataRef && colab?.id) {
+    const { data: escala, error: escErr } = await supabase
+      .from('escalas_trabalho')
+      .select('turno_id, turnos!inner(horario_inicio, horario_fim, intervalo_minutos, ativo)')
+      .eq('colaborador_id', colab.id)
+      .eq('empresa_id', empresaId)
+      .eq('data', dataRef)
+      .eq('turnos.ativo', true)
+      .order('id')
+      .limit(1)
+      .maybeSingle();
+    if (escErr) throw escErr;
+    const turno = (escala as any)?.turnos;
+    if (turno?.horario_inicio && turno?.horario_fim) {
+      const entradaT = timeToMin(turno.horario_inicio);
+      const saidaT = timeToMin(turno.horario_fim);
+      let span = saidaT - entradaT;
+      if (span <= 0) span += 1440; // turno de escala cruza meia-noite
+      const int = Number(turno.intervalo_minutos) || 0;
+      const minutos = Math.max(0, span - int);
+      if (minutos > 0) {
+        return { minutos, entradaEsperada: entradaT, intervaloMin: int, toleranciaMin: tolerancia };
+      }
+    }
+  }
   // Grade do dia em jornadas_horarios — colunas reais: entrada, saida,
   // intervalo_inicio, intervalo_fim (o intervalo é um período, não minutos).
   // Query limitada ao dia (sem paginação) e erro propagado — silenciar erro
@@ -487,7 +522,7 @@ serve(async (req) => {
       if (colabError) throw colabError;
 
       const diaSemana = new Date(`${dataRef}T12:00:00`).getDay();
-      const jornada = await resolverJornada(supabase, empresaId, colab, diaSemana);
+      const jornada = await resolverJornada(supabase, empresaId, colab, diaSemana, dataRef);
       // DSR = domingo, feriado ou folga marcada na grade (dia_util=false).
       const ehDsr = diaSemana === 0 || feriados.has(dataRef) || jornada.folga === true;
       const r = apurarDia(batidas, dataRef, jornada, ehDsr, dataRef === hojeISO);

@@ -16,19 +16,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
-import {
-  Receipt,
-  DollarSign,
-  Building2,
-  Plus,
-  FileText,
-  Shield,
-  Loader2,
-  Zap,
-  CloudSync,
-  Calculator,
-  Key,
-} from 'lucide-react';
+import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, Calculator, Key } from 'lucide-react';
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
@@ -245,14 +233,6 @@ export default function ObrigacoesFiscaisPage() {
             >
               {gerandoServidor ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
               <span className="hidden sm:inline">Auto</span>
-            </Button>
-            <Button
-              variant="outline"
-              className="rounded-xl font-body gap-1.5 border-info/30 text-info hover:bg-info/5"
-              onClick={() => toast.success('Sincronizando com FGTS Digital API...')}
-            >
-              <CloudSync className="h-4 w-4" />
-              <span className="hidden sm:inline">Sincronizar API</span>
             </Button>
             <Dialog open={openGuia} onOpenChange={setOpenGuia}>
               <DialogTrigger asChild>

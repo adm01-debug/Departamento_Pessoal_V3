@@ -6,6 +6,10 @@ import { feriasPDF } from '@/utils/feriasPDF';
 import { AssinarAvisoDialog } from './AssinarAvisoDialog';
 import { useAssinarAvisoFerias } from '@/hooks/useAssinarAvisoFerias';
 import { useSolicitarAdiantamento13 } from '@/hooks/ferias/useAdiantamento13';
+import { supabase } from '@/integrations/supabase/client';
+import { validateTablePayload } from '@/schemas/validate';
+import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import type { Ferias } from '@/types/entities';
 
 interface FeriasActionsProps {
@@ -24,6 +28,26 @@ export function FeriasActions(props: FeriasActionsProps) {
   const solicitarAdiant13 = useSolicitarAdiantamento13();
 
   if (solicitacao.cancelado || solicitacao.status === 'rejeitada') return null;
+
+  // Baixa o PDF e persiste o recibo em recibos_ferias (a tabela era órfã:
+  // o recibo existia só no PDF client-side — §6.2).
+  const baixarRecibo = async () => {
+    feriasPDF.gerarRecibo(solicitacao);
+    const { error } = await supabase.from('recibos_ferias').insert(
+      validateTablePayload(
+        'recibos_ferias',
+        {
+          colaborador_id: solicitacao.colaborador_id,
+          empresa_id: solicitacao.empresa_id,
+          descricao: `Recibo de férias ${solicitacao.data_inicio} a ${solicitacao.data_fim}`,
+          data_inicio: solicitacao.data_inicio,
+          data_fim: solicitacao.data_fim,
+        },
+        'FeriasActions:recibos_ferias'
+      )
+    );
+    if (error) toast.error(safeErrorMessage(error, 'Recibo baixado, mas não foi gravado no servidor.'));
+  };
 
   const podeAprovarGestor = !solicitacao.aprovado_gestor;
   const podeAssinarRH = solicitacao.aprovado_gestor && !solicitacao.aprovado_rh;
@@ -118,7 +142,7 @@ export function FeriasActions(props: FeriasActionsProps) {
               variant="ghost"
               size="icon"
               className="h-7 w-7 rounded-lg hover:bg-primary/10 text-primary"
-              onClick={() => feriasPDF.gerarRecibo(solicitacao)}
+              onClick={() => void baixarRecibo()}
             >
               <FileDown className="h-3.5 w-3.5" />
             </Button>

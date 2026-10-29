@@ -97,20 +97,3 @@ export const rubricasFolhaService = {
     if (error) throw error;
   },
 };
-
-export const parametrosFiscaisService = {
-  listar: async (): Promise<Tables<'parametros_fiscais'>[]> => {
-    const { data, error } = await supabase
-      .from('parametros_fiscais')
-      .select('*')
-      .order('vigencia_inicio', { ascending: false });
-    if (error) throw error;
-    return (data as Tables<'parametros_fiscais'>[] | null) || [];
-  },
-  criar: async (d: Insertable<'parametros_fiscais'>): Promise<void> => {
-    const { error } = await supabase
-      .from('parametros_fiscais')
-      .insert(validateTablePayload('parametros_fiscais', d, 'folhaService:parametros_fiscais'));
-    if (error) throw error;
-  },
-};

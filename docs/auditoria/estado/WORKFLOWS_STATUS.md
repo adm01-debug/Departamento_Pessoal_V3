@@ -26,7 +26,28 @@ comita e abre um PR com `gh pr create` — nunca abre PR vazio.
 
 <!-- REPORT:START -->
 
-_(ainda sem execução automática — a primeira run de `workflows-report.yml` preenche esta seção)_
+> Última execução automática: 2026-10-27 (workflows-report.yml)
+
+# Relatório de Workflows
+
+| Workflow | Median (min) | P95 (min) | Runs |
+|----------|-------------|-----------|------|
+| Canonical Supabase — Edge Functions | 4 | 28 | 19 |
+| Canonical database — scoped migrations | 7074 ⚠️ | 17408 | 44 |
+| Canonical database — read-only security probes | 34217 ⚠️ | 40415 | 11 |
+| Canonical database — read-only SQL diagnostic | 6983 ⚠️ | 7123 | 35 |
+| Continuous Integration & Delivery | 7 | 14 | 43 |
+| DB Migration Tests (PLANO_100) | 0 | 7 | 34 |
+| Manual & Preview Deploy | 1 | 8 | 47 |
+| E2E Tests (Playwright) | 3 | 14 | 50 |
+| Environment Healthcheck | 0 | 1 | 50 |
+| OSSF Scorecard | 1 | 1 | 2 |
+| Post-deploy smoke | 3 | 7 | 5 |
+| Ruleset sync | 0 | 0 | 3 |
+| Security Scan & Code Quality | 3 | 10 | 47 |
+| Workflow lint (actionlint) | 4 | 23 | 30 |
+| Workflows report | 1 | 1 | 1 |
+| Dependabot Updates | 2 | 6 | 50 |
 
 <!-- REPORT:END -->
 

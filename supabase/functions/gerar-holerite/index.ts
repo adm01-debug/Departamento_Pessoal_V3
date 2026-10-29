@@ -6,15 +6,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { requireSelfOrRh } from '../_shared/authz.ts';
 import { calcularInssEmpregado } from './inss.ts';
-
-const calcularIRRF = (base: number, dependentes: number = 0): number => {
-  const baseCalculo = base - (dependentes * 189.59);
-  if (baseCalculo <= 2259.20) return 0;
-  if (baseCalculo <= 2826.65) return Number(Math.max(0, baseCalculo * 0.075 - 169.44).toFixed(2));
-  if (baseCalculo <= 3751.05) return Number(Math.max(0, baseCalculo * 0.15 - 381.44).toFixed(2));
-  if (baseCalculo <= 4664.68) return Number(Math.max(0, baseCalculo * 0.225 - 662.77).toFixed(2));
-  return Number(Math.max(0, baseCalculo * 0.275 - 896.00).toFixed(2));
-};
+import { calcIRRF } from '../_shared/irrf.ts';
 
 serve(async (req: Request): Promise<Response> => {
   const __pf = handlePreflight(req); if (__pf) return __pf;
@@ -100,24 +92,37 @@ serve(async (req: Request): Promise<Response> => {
     // Buscar benefícios ativos
     const { data: beneficios } = await supabase
       .from('beneficios_colaborador')
-      .select('*, tipo:tipo_beneficio_id(nome)')
+      .select('*, tipo:tipo_beneficio_id(nome, codigo)')
       .eq('colaborador_id', colaboradorId)
       .eq('ativo', true);
 
-    // Calcular proventos
+    // Dependentes para IRRF (para_irrf) — mesmo critério do motor canônico.
+    const { count: dependentes } = await supabase
+      .from('dependentes')
+      .select('id', { count: 'exact', head: true })
+      .eq('colaborador_id', colaboradorId)
+      .eq('para_irrf', true);
+
+    // Proventos: salário-base integral — mesmo tratamento do motor canônico
+    // (lote/edge), sem proporcionalidade por dias de registro de ponto.
     const salarioBase = colaborador.salario_base;
     const diasTrabalhados = registrosPonto?.length || 30;
-    const salarioProporcional = Number(((salarioBase / 30) * diasTrabalhados).toFixed(2));
 
-    // Calcular descontos
-    const inss = calcularInssEmpregado(salarioProporcional, competencia);
-    const irrf = calcularIRRF(salarioProporcional - inss);
-    const fgts = Number((salarioProporcional * 0.08).toFixed(2));
+    // Descontos canônicos: INSS progressivo por competência + IRRF com
+    // deduções legais x desconto simplificado e Lei 15.270 (_shared/irrf.ts).
+    const inss = calcularInssEmpregado(salarioBase, competencia);
+    const irrf = calcIRRF(salarioBase, dependentes ?? 0, competencia);
+    const fgts = Number((salarioBase * 0.08).toFixed(2));
 
-    // Descontos de benefícios
-    const totalDescontosBeneficios = (beneficios || []).reduce((acc: number, b: any) => acc + (b.desconto || 0), 0);
+    // Descontos de benefícios — regra do canônico: VT limitado a 6% do
+    // salário-base; demais benefícios valem o campo `desconto`.
+    const beneficioDesconto = (b: any): number => {
+      if (b.tipo?.codigo === 'VT') return Math.min(Number(b.valor ?? 0), salarioBase * 0.06);
+      return Number(b.desconto ?? 0);
+    };
+    const totalDescontosBeneficios = (beneficios || []).reduce((acc: number, b: any) => acc + beneficioDesconto(b), 0);
 
-    const totalProventos = salarioProporcional;
+    const totalProventos = salarioBase;
     const totalDescontos = Number((inss + irrf + totalDescontosBeneficios).toFixed(2));
     const liquido = Number((totalProventos - totalDescontos).toFixed(2));
 
@@ -134,23 +139,25 @@ serve(async (req: Request): Promise<Response> => {
       },
       competencia,
       proventos: [
-        { codigo: '001', descricao: 'Salário Base', referencia: diasTrabalhados, valor: salarioProporcional },
+        { codigo: '001', descricao: 'Salário Base', referencia: diasTrabalhados, valor: salarioBase },
       ],
       descontos: [
         { codigo: '101', descricao: 'INSS', referencia: null, valor: inss },
         { codigo: '102', descricao: 'IRRF', referencia: null, valor: irrf },
-        ...(beneficios || []).filter((b: any) => b.desconto > 0).map((b: any, i: number) => ({
-          codigo: `1${10 + i}`, descricao: b.tipo?.nome || 'Benefício', referencia: null, valor: b.desconto,
-        })),
+        ...(beneficios || []).map((b: any) => ({ b, valor: beneficioDesconto(b) }))
+          .filter((x) => x.valor > 0)
+          .map((x, i: number) => ({
+            codigo: `1${10 + i}`, descricao: x.b.tipo?.nome || 'Benefício', referencia: null, valor: x.valor,
+          })),
       ],
       totais: {
         totalProventos,
         totalDescontos,
         liquido,
         fgts,
-        baseINSS: salarioProporcional,
-        baseIRRF: Number((salarioProporcional - inss).toFixed(2)),
-        baseFGTS: salarioProporcional,
+        baseINSS: salarioBase,
+        baseIRRF: Number((salarioBase - inss).toFixed(2)),
+        baseFGTS: salarioBase,
       },
       geradoEm: new Date().toISOString(),
     };
