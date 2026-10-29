@@ -91,8 +91,7 @@ export default function AdmissoesPage() {
         admissao.id,
         admissao.empresa_id,
         admissao.email,
-        admissao.nome ?? 'Candidato',
-        tokenData.token
+        tokenData.id
       );
       if (result.sent) {
         toast.success('Link de contratação enviado por e-mail!');
