@@ -281,7 +281,7 @@ export const workflowService = {
     entidadeTipo: string,
     entidadeId: string,
     empresaId: string,
-    solicitanteId: string,
+    solicitanteId: string | null,
     dados: Record<string, unknown> = {},
     idempotencyKey?: string
   ): Promise<Execucao> {
@@ -311,12 +311,14 @@ export const workflowService = {
     if (!definicao) throw new Error('Workflow não encontrado.');
     if (!definicao.ativo) throw new Error('Workflow está desativado.');
 
-    // Primeira etapa (ordem = 1)
+    // Primeira etapa pela ordem (não assume que a numeração começa em 1 —
+    // etapas podem ter sido removidas/reordenadas no designer).
     const { data: primeiraEtapa } = await supabase
       .from('workflows_etapas')
       .select('*')
       .eq('workflow_id', workflowId)
-      .eq('ordem', 1)
+      .order('ordem', { ascending: true })
+      .limit(1)
       .maybeSingle();
     if (!primeiraEtapa) throw new Error('Workflow não tem etapas configuradas.');
 
@@ -364,6 +366,34 @@ export const workflowService = {
     );
 
     return execucao as unknown as Execucao;
+  },
+
+  /**
+   * Gatilho por tipo de entidade: encontra a definição ATIVA mais recente
+   * cujo `tipo` corresponde à entidade e inicia a execução.
+   * Retorna null quando a empresa não configurou workflow para o tipo —
+   * nesse caso o chamador preserva o fluxo atual (feature gate natural).
+   */
+  async executarPorTipo(
+    entidadeTipo: string,
+    entidadeId: string,
+    empresaId: string,
+    solicitanteId: string | null,
+    dados: Record<string, unknown> = {}
+  ): Promise<Execucao | null> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data: definicao, error } = await supabase
+      .from('workflows_definicoes')
+      .select('id')
+      .eq('empresa_id', empresaId)
+      .eq('tipo', entidadeTipo)
+      .eq('ativo', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    if (!definicao) return null;
+    return this.executarWorkflow(definicao.id, entidadeTipo, entidadeId, empresaId, solicitanteId, dados);
   },
 
   /**

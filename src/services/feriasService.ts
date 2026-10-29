@@ -5,6 +5,8 @@ import type { Insertable, Tables, Updatable } from '@/integrations/supabase/data
 import { parseCursor } from '@/lib/cursor';
 import { feriasSchema } from '@/schemas/ferias';
 import { validateInput, validateTablePayload } from '@/schemas/validate';
+import { loggerService } from './loggerService';
+import { workflowService } from './workflowService';
 
 type PeriodoAquisitivo = Tables<'periodos_aquisitivos'>;
 type PeriodoAquisitivoInsert = Insertable<'periodos_aquisitivos'>;
@@ -21,7 +23,30 @@ class FeriasService extends BaseService<Ferias> {
 
   async criar(payload: Record<string, unknown>): Promise<Ferias> {
     validateInput(feriasSchema, payload, 'feriasService.criar');
-    return super.criar(payload);
+    const ferias = await super.criar(payload);
+
+    // §4.29 — gatilho real do motor de workflow: com definição ATIVA do tipo
+    // 'ferias' na empresa, inicia a execução da cadeia de aprovação. Sem
+    // definição ativa, executarPorTipo retorna null e o fluxo não muda.
+    // Best-effort: falha na engine não pode derrubar a solicitação já criada.
+    try {
+      const empresaId = ferias.empresa_id ?? (payload.empresa_id as string | undefined);
+      const { data: auth } = await supabase.auth.getUser();
+      await workflowService.executarPorTipo('ferias', ferias.id, empresaId, auth.user?.id ?? null, {
+        colaborador_id: ferias.colaborador_id,
+        data_inicio: ferias.data_inicio,
+        data_fim: ferias.data_fim,
+        dias_gozo: ferias.dias_gozo,
+      });
+    } catch (e) {
+      void loggerService.error(
+        'Falha ao iniciar workflow de aprovação da solicitação de férias',
+        { ferias_id: ferias.id },
+        e as Error
+      );
+    }
+
+    return ferias;
   }
 
   async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Ferias> {
