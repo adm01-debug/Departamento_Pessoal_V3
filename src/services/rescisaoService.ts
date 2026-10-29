@@ -318,16 +318,19 @@ export const rescisaoService = {
         throw new Error('Pagamento bloqueado: homologação não foi concluída.');
       }
 
-      // Transação atômica server-side (migration 20261028220000): um único
-      // UPDATE em desligamentos + UPDATE em colaboradores sob FOR UPDATE.
-      // Antes eram dois writes no cliente e uma falha do segundo deixava o
-      // desligamento 'pago' com o colaborador ainda 'ativo'.
-      const { data, error } = await supabase.rpc('pagar_desligamento', {
-        _desligamento_id: id,
-        _comprovante_url: comprovanteUrl ?? null,
+      // Edge `pagar-desligamento` (CSRF + RH na empresa + rate limit) chama a
+      // RPC transacional pagar_desligamento (migration 20261028220000), que é
+      // só service_role por decisão de 20260722125517: desligamento 'pago' +
+      // colaborador 'desligado' + audit_log numa única transação. Antes eram
+      // dois writes no cliente e uma falha do segundo deixava o desligamento
+      // 'pago' com o colaborador ainda 'ativo'.
+      const { data: resp, error } = await supabase.functions.invoke('pagar-desligamento', {
+        body: { empresaId, desligamentoId: id, comprovanteUrl: comprovanteUrl ?? null },
       });
 
       if (error) throw error;
+      const data = (resp as { desligamento?: unknown } | null)?.desligamento;
+      if (!data) throw new Error('Pagamento não confirmado pelo servidor');
       const pago = (Array.isArray(data) ? data[0] : data) as Tables<'desligamentos'>;
 
       await auditLogger.log({

@@ -7,6 +7,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(),
     rpc: vi.fn(),
+    functions: { invoke: vi.fn() },
     auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }) },
   },
 }));
@@ -265,11 +266,11 @@ describe('rescisaoService', () => {
 
     function mockPagamentoCalls(opts: { deslig?: unknown; rpcRow?: unknown; rpcError?: unknown } = {}) {
       const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      const rpcMock = supabase.rpc as unknown as ReturnType<typeof vi.fn>;
+      const rpcMock = supabase.functions.invoke as unknown as ReturnType<typeof vi.fn>;
       // 1) fetch do desligamento (validações client-side: assinaturas + homologação)
       fromMock.mockReturnValueOnce(fetchChain(opts.deslig ?? desligRow));
-      // 2) RPC pagar_desligamento: transação atômica server-side (desligamento
-      //    pago + colaborador desativado sob FOR UPDATE — migration 20261028220000).
+      // 2) edge pagar-desligamento -> RPC transacional (desligamento pago +
+      //    colaborador desativado sob FOR UPDATE — migration 20261028220000).
       //    Não enfileirar quando o teste falha na validação 1): o mockResolvedValueOnce
       //    não consumido vazaria para o rpc() do teste seguinte.
       const deslig = (opts.deslig ?? desligRow) as {
@@ -279,21 +280,29 @@ describe('rescisaoService', () => {
       };
       if (deslig.assinado_empresa && deslig.assinado_colaborador && deslig.checklist_homologacao) {
         rpcMock.mockResolvedValueOnce({
-          data: opts.rpcRow ?? { id: 'd1', status: 'pago', etapa: 'finalizado' },
+          data: opts.rpcError ? null : { ok: true, desligamento: opts.rpcRow ?? { id: 'd1', status: 'pago', etapa: 'finalizado' } },
           error: opts.rpcError ?? null,
         });
       }
       return { rpcMock };
     }
 
-    it('marca pago via RPC transacional (desligamento + colaborador no banco)', async () => {
+    it('marca pago pela edge pagar-desligamento (RPC transacional só service_role)', async () => {
       const { rpcMock } = mockPagamentoCalls();
-      const result = await rescisaoService.processarPagamento('d1', EMP);
+      const result = await rescisaoService.processarPagamento('d1', EMP, 'https://x/c.pdf');
       expect(result.status).toBe('pago');
-      expect(rpcMock).toHaveBeenCalledWith('pagar_desligamento', {
-        _desligamento_id: 'd1',
-        _comprovante_url: null,
+      expect(rpcMock).toHaveBeenCalledWith('pagar-desligamento', {
+        body: { empresaId: EMP, desligamentoId: 'd1', comprovanteUrl: 'https://x/c.pdf' },
       });
+      // nunca chama a RPC direto do navegador (EXECUTE revogado de authenticated)
+      expect(supabase.rpc).not.toHaveBeenCalledWith('pagar_desligamento', expect.anything());
+    });
+
+    it('resposta sem desligamento não é tratada como pagamento', async () => {
+      const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
+      fromMock.mockReturnValueOnce(fetchChain(desligRow));
+      (supabase.functions.invoke as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ data: { ok: true }, error: null });
+      await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(/não confirmado/);
     });
 
     it('bloqueia sem assinatura das duas partes', async () => {
