@@ -7,7 +7,7 @@ Data: 2026-10-28 · Contexto: verificação exaustiva dos docs (5 agentes V1–V
 - **`SUPABASE_ACCESS_TOKEN` expirado** — todo deploy de edges no canônico falha com `401: Invalid access token` (último: run [40768419757](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/runs/40768419757)). Sem isso as edges novas/atualizadas não sobem (`gerar-afd`, `calcular-folha` com Lei 15.270, `calcular-ferias` com médias, `processar-ponto`). **Ação:**
   1. Gerar token novo em https://supabase.com/dashboard/account/tokens
   2. GitHub → Departamento_Pessoal_V3 → **Settings → Environments → production** → atualizar o secret `SUPABASE_ACCESS_TOKEN`
-  3. Avisar que o deploy é re-disparado — sem mexer em código.
+  3. **Re-disparar o deploy**: Actions → "Canonical Supabase — Edge Functions" → Run workflow (branch main) — ou me avisar que eu disparo. Atualizar o secret **não** republica nada sozinho; sem re-dispatch as edges pendentes não sobem.
 
 ## Resolvido nesta rodada (28/10)
 
@@ -16,7 +16,8 @@ Data: 2026-10-28 · Contexto: verificação exaustiva dos docs (5 agentes V1–V
 - ✅ **PR #312** — 5 gaps ponto/férias (configs gravando, escalas alimentam o motor, férias c/ médias+art.130+persistência, recibos_ferias, AFD novo + mapa real + flag facial)
 - ✅ **PR #310** — docs fantasma removidos + toast falso FGTS
 - ✅ **PR #324/#325** — assert do canônico alinhado ao contrato count(); `salvarGrade` bridge-safe
-- ✅ **PR #326** — este arquivo
+- ✅ **PR #323** — consumidores reais das 3 filas de comunicação (drenar fila_notificacoes via Resend, holerite por e-mail/whatsapp com status honesto, `pending_trigger` aposentado)
+- ✅ **PR #326/#327** — este arquivo
 
 ## Dependências que só o Joaquim executa
 
@@ -24,10 +25,13 @@ Data: 2026-10-28 · Contexto: verificação exaustiva dos docs (5 agentes V1–V
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Env vars do Supabase na Vercel             | Build de produção sai sem `VITE_SUPABASE_URL`/`VITE_SUPABASE_PUBLISHABLE_KEY` → `client.ts` lança exceção no import e o React nunca monta (tela branca para todos os usuários) | 1) GitHub → Settings → Secrets and variables → Actions → aba Variables — copiar os 2 valores. 2) Vercel → projeto `departamento-pessoal-v3` → Settings → Environment Variables — criar as duas (Production). 3) Redeploy. Depois disso `post-deploy-smoke` e o site voltam |
 | `E2E_TOTP_SECRET` desatualizado            | `admin@teste.local` agora exige TOTP e o seed do secret não bate → E2E autenticado falha no login                                                                              | GitHub → Settings → Secrets → Actions → atualizar `E2E_TOTP_SECRET` com o seed atual da conta                                                                                                                                                                              |
-| Vincular `admin@teste.local` a uma empresa | Sem empresa, writes do E2E retornam 403 — caminho de escrita não provado                                                                                                       | Vincular a conta a uma empresa com papel admin/rh                                                                                                                                                                                                                          |
+| Vincular `admin@teste.local` a uma empresa | Sem empresa, writes do E2E retornam 403. O `ensure-fixtures` do e2e.yml pressupõe vínculo permanente (W58/W59)                                                                 | **Verificar primeiro** se o vínculo segue ativo; se perdido, re-vincular a conta a uma empresa com papel admin/rh                                                                                                                                                          |
+| `canonical-sql-diag`                       | Último erro conhecido: `permission denied to set role "ci_auditor"` — saiu da lista sem confirmação de correção                                                                | Rodar um dispatch de teste do workflow para confirmar se segue quebrado                                                                                                                                                                                                    |
 | Chaves Turnstile, pen test, 2º CODEOWNER   | Administrativo, fora do repo                                                                                                                                                   | Conforme combinado em sessões anteriores                                                                                                                                                                                                                                   |
 
-## Gaps reais restantes do levantamento (backlog de engenharia — não bloqueiam operação)
+## Gaps reais restantes do levantamento (backlog de engenharia)
+
+> Itens marcados com ⚠️ **quebram um fluxo visível ao usuário** — não são cosméticos.
 
 Consolidado dos 5 agentes de verificação (V1 Folha/Fiscal, V2 Ponto/Férias, V3 Admissão/Rescisão/Pagamentos, V4 Segurança/LGPD, V5 UI/Comunicação/Infra):
 
@@ -38,16 +42,16 @@ Consolidado dos 5 agentes de verificação (V1 Folha/Fiscal, V2 Ponto/Férias, V
 - TRCT não segue layout Homolognet
 - GRRF: tabela existe mas órfã (sem gerador)
 - S-2299: XML serializer cai no fallback CDATA
-- Botão `DetalhesAdmissaoDialog.tsx` chama `enviarEvento({eventoId: admissao.id})` — sempre falha
+- ⚠️ Botão `DetalhesAdmissaoDialog.tsx` chama `enviarEvento({eventoId: admissao.id})` — sempre falha
 
 **Pagamentos/integrações (V3/V5)**
 
-- Pré-admissão: e-mail nunca é enviado (toast mente "enviado")
-- gov.br login quebrado (edge exige JWT + `data.profile.nivel` vs `data.nivel` no AuthCallbackPage)
+- ⚠️ Pré-admissão: e-mail nunca é enviado (toast mente "enviado")
+- ⚠️ gov.br login quebrado (edge exige JWT + `data.profile.nivel` vs `data.nivel` no AuthCallbackPage)
 - `gerar-contrato-pdf`: `gerarPdf` sem caller — infra existe, nada invoca
 - Edges `cnab-remessa`/`pix-lote` órfãs; PIX é CSV-only
 - OCR de documentos depende de `LOVABLE_API_KEY` (não provisionada)
-- Filas sem consumidor: `fila_notificacoes`, `whatsapp_mensagens_logs` (pending_trigger), holerite por e-mail/whatsapp; Resend real mas remetente `onboarding@resend.dev`; sem VAPID push
+- ~~Filas sem consumidor~~ → **resolvido na [#323](https://github.com/adm01-debug/Departamento_Pessoal_V3/pull/323)** (drenar fila_notificacoes via Resend, holerite por e-mail/whatsapp com status honesto, `pending_trigger` aposentado). Restam: remetente Resend `onboarding@resend.dev` (domínio de teste) e ausência de push VAPID
 - 0 `net.http_post` no banco — nenhuma automação dispara HTTP do DB
 - `executarWorkflow` sem caller; backup real mas sem agendamento
 - `aplicar_medida_folha_ponto` só no baseline (3 buckets sem migration)
@@ -64,8 +68,8 @@ Consolidado dos 5 agentes de verificação (V1 Folha/Fiscal, V2 Ponto/Férias, V
 
 **Outros (V1/V2/V5)**
 
-- Wizard de cálculo: bridge `.maybeSingle()` falha em `folhas_pagamento` (bug antigo)
-- "Nova Rubrica" omite `empresa_id` — sempre erro na UI
+- ⚠️ Wizard de cálculo: bridge `.maybeSingle()` falha em `folhas_pagamento` (bug antigo)
+- ⚠️ "Nova Rubrica" omite `empresa_id` — sempre erro na UI
 - Biometria: só `foto_biometria_url` (sem WebAuthn)
 - Órfãos §8.3: esocialEventosPeriodicos/SST, esocialValidators, MetabaseEmbed, LanguageSelector, evaluationPDF, provisoesService, automacaoService, cnabLayoutService, dominioService, calcularFolhaCompleta, specs e2e fuzz/audit
 - Docs mentirosos §10: docs/api (37), README clones v2, netlify.toml, nginx.conf → api:3001
