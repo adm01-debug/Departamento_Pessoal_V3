@@ -14,6 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { faltasService } from '@/services';
+import type { Insertable } from '@/integrations/supabase/database.types';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
@@ -56,8 +57,8 @@ export default function FaltasPage() {
     enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
-    mutationFn: (d: any) => {
-      const payload: any = {
+    mutationFn: (d: typeof initialForm) => {
+      const payload: Insertable<'faltas'> & { horas_falta_raw?: unknown } = {
         ...d,
         empresa_id: empresaAtual?.id,
         horas_falta: d.horas_falta ? `${d.horas_falta} hours` : null,
@@ -100,14 +101,14 @@ export default function FaltasPage() {
 
   if (isLoading) return <PageLayout title="Faltas"><Spinner /></PageLayout>;
 
-  const filtered = statusFilter === 'todos' ? faltas : faltas.filter((f: any) => f.status === statusFilter);
+  const filtered = statusFilter === 'todos' ? faltas : faltas.filter((f) => f.status === statusFilter);
 
   const stats = {
     total: faltas.length,
-    justificadas: faltas.filter((f: any) => f.tipo === 'justificada' || f.tipo === 'atestado_medico').length,
-    injustificadas: faltas.filter((f: any) => f.tipo === 'injustificada').length,
-    pendentes: faltas.filter((f: any) => f.status === 'registrada').length,
-    descontadas: faltas.filter((f: any) => f.desconto_aplicado).length};
+    justificadas: faltas.filter((f) => f.tipo === 'justificada' || f.tipo === 'atestado_medico').length,
+    injustificadas: faltas.filter((f) => f.tipo === 'injustificada').length,
+    pendentes: faltas.filter((f) => f.status === 'registrada').length,
+    descontadas: faltas.filter((f) => f.desconto_aplicado).length};
 
   const needsMedicalInfo = ['atestado_medico', 'acidente_trabalho', 'consulta_prenatal', 'acompanhamento_filho'].includes(form.tipo);
 
@@ -187,7 +188,7 @@ export default function FaltasPage() {
                     <Label>Colaborador *</Label>
                     <Select value={form.colaborador_id} onValueChange={v => setForm(p => ({ ...p, colaborador_id: v }))}>
                       <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                      <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
+                      <SelectContent>{colaboradores.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
@@ -241,7 +242,7 @@ export default function FaltasPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map((f: any) => (
+              {filtered.map((f) => (
                 <TableRow key={f.id} className="hover:bg-accent/30 transition-colors">
                   <TableCell className="font-body font-medium">{f.colaborador?.nome_completo || '—'}</TableCell>
                   <TableCell className="font-body text-sm">
@@ -250,12 +251,12 @@ export default function FaltasPage() {
                   <TableCell className="font-body">{f.dias_total || 1}</TableCell>
                   <TableCell>
                     <Badge variant={f.tipo === 'injustificada' ? 'destructive' : 'secondary'} className="text-xs">
-                      {tipoLabels[f.tipo] || f.tipo}
+                      {tipoLabels[f.tipo ?? ''] || f.tipo}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={statusVariant[f.status] || 'outline'} className="text-xs">
-                      {statusLabels[f.status] || f.status || 'Registrada'}
+                    <Badge variant={statusVariant[f.status ?? ''] || 'outline'} className="text-xs">
+                      {statusLabels[f.status ?? ''] || f.status || 'Registrada'}
                     </Badge>
                   </TableCell>
                   <TableCell className="font-body text-sm">{f.cid || '—'}</TableCell>
