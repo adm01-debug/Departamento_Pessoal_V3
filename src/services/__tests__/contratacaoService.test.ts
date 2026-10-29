@@ -8,15 +8,16 @@ import { deepChain } from '@/test/deepChain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom, mockLog, mockClaimEvento, mockCompleteEvento, mockFailEvento, mockEnviarEvento, mockInvoke } = vi.hoisted(() => ({
-  mockFrom: vi.fn(),
-  mockLog: vi.fn(),
-  mockClaimEvento: vi.fn(),
-  mockCompleteEvento: vi.fn(),
-  mockFailEvento: vi.fn(),
-  mockEnviarEvento: vi.fn(),
-  mockInvoke: vi.fn(),
-}));
+const { mockFrom, mockLog, mockClaimEvento, mockCompleteEvento, mockFailEvento, mockEnviarEvento, mockInvoke } =
+  vi.hoisted(() => ({
+    mockFrom: vi.fn(),
+    mockLog: vi.fn(),
+    mockClaimEvento: vi.fn(),
+    mockCompleteEvento: vi.fn(),
+    mockFailEvento: vi.fn(),
+    mockEnviarEvento: vi.fn(),
+    mockInvoke: vi.fn(),
+  }));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -252,8 +253,8 @@ describe('contratacaoService.enviarEmailLinkCandidato', () => {
 
   it('provedor não configurado devolve o motivo sem lançar', async () => {
     mockInvoke.mockResolvedValue({ data: { sent: false, motivo: 'email_provider_not_configured' }, error: null });
-    await expect(
-      contratacaoService.enviarEmailLinkCandidato('adm-1', EMPRESA_ID, 'a@b.com', 'tok-1')
-    ).resolves.toEqual({ sent: false, motivo: 'email_provider_not_configured' });
+    await expect(contratacaoService.enviarEmailLinkCandidato('adm-1', EMPRESA_ID, 'a@b.com', 'tok-1')).resolves.toEqual(
+      { sent: false, motivo: 'email_provider_not_configured' }
+    );
   });
 });
