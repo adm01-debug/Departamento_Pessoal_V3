@@ -280,7 +280,9 @@ describe('rescisaoService', () => {
       };
       if (deslig.assinado_empresa && deslig.assinado_colaborador && deslig.checklist_homologacao) {
         rpcMock.mockResolvedValueOnce({
-          data: opts.rpcError ? null : { ok: true, desligamento: opts.rpcRow ?? { id: 'd1', status: 'pago', etapa: 'finalizado' } },
+          data: opts.rpcError
+            ? null
+            : { ok: true, desligamento: opts.rpcRow ?? { id: 'd1', status: 'pago', etapa: 'finalizado' } },
           error: opts.rpcError ?? null,
         });
       }
@@ -301,7 +303,10 @@ describe('rescisaoService', () => {
     it('resposta sem desligamento não é tratada como pagamento', async () => {
       const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
       fromMock.mockReturnValueOnce(fetchChain(desligRow));
-      (supabase.functions.invoke as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({ data: { ok: true }, error: null });
+      (supabase.functions.invoke as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        data: { ok: true },
+        error: null,
+      });
       await expect(rescisaoService.processarPagamento('d1', EMP)).rejects.toThrow(/não confirmado/);
     });
 
