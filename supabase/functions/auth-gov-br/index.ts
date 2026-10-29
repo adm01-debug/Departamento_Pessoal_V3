@@ -5,6 +5,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { enforceOrigin, getCorsHeaders, handlePreflight, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetch, safeGet } from '../_shared/safe-fetch.ts';
+import { cpfDoSub, type GovbrLookups, resolverLogin, validarVinculo } from './govbrIdentity.ts';
 
 const GOVBR_BASE_URL = Deno.env.get('GOVBR_BASE_URL') ?? 'https://sso.acesso.gov.br';
 const GOVBR_AUTH_URL = `${GOVBR_BASE_URL}/authorize`;
@@ -198,40 +199,68 @@ serve(async (req: Request): Promise<Response> => {
       }
       const userInfo = await userResponse.json();
 
-      // gov.br: o claim `sub` É o CPF do titular na identidade gov.br.
-      const govbrCpf = String(userInfo.sub ?? '').replace(/\D/g, '');
+      // gov.br: o claim `sub` É o CPF do titular. Sem sub válido não há
+      // identidade — recusa antes de tocar em qualquer conta.
+      const govbrSub = typeof userInfo?.sub === 'string' ? userInfo.sub.trim() : '';
+      const govbrCpf = cpfDoSub(govbrSub);
+      if (!govbrSub || !govbrCpf) {
+        return json(req, { success: false, error: 'Gov.br não retornou um CPF válido' }, 502);
+      }
+      const nivel = typeof userInfo.nivel === 'string' && userInfo.nivel ? userInfo.nivel : 'Bronze';
 
       await supabase.from('govbr_auth_state').delete().eq('id', authState.id);
 
+      const lookups: GovbrLookups = {
+        async profilesPorGovbrUid(sub) {
+          const { data, error } = await supabase.from('profiles').select('user_id').eq('govbr_uid', sub).limit(5);
+          if (error) throw error;
+          return (data ?? []).map((r: { user_id: string }) => r.user_id);
+        },
+        async usuariosPorCpf(cpf, cpfHash) {
+          const fmt = `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-${cpf.slice(9)}`;
+          const { data, error } = await supabase
+            .from('colaboradores')
+            .select('user_id')
+            .not('user_id', 'is', null)
+            .or(`cpf_hash.eq.${cpfHash},cpf.eq.${cpf},cpf.eq."${fmt}"`)
+            .limit(5);
+          if (error) throw error;
+          return (data ?? []).map((r: { user_id: string | null }) => r.user_id ?? '');
+        },
+        async cpfHashesDoUsuario(uid) {
+          const { data, error } = await supabase.from('colaboradores').select('cpf_hash').eq('user_id', uid).limit(5);
+          if (error) throw error;
+          return (data ?? []).map((r: { cpf_hash: string | null }) => r.cpf_hash ?? '');
+        },
+      };
+
+      const govbrCampos = {
+        govbr_uid: govbrSub,
+        govbr_nivel_autenticacao: nivel,
+        cpf_validado_govbr: true,
+        gov_br_vinculado: true,
+      };
+
       // Modo vinculação: usuário logado vinculando a conta gov.br ao perfil.
       if (userId) {
-        await supabase.from('profiles').update({
-          govbr_uid: userInfo.sub,
-          govbr_nivel_autenticacao: userInfo.nivel || 'Bronze',
-          cpf_validado_govbr: true,
-          nome_completo: userInfo.name,
-        }).eq('user_id', userId);
-
-        return json(req, { success: true, mode: 'link', nivel: userInfo.nivel || 'Bronze' });
+        const vinculo = await validarVinculo(userId, govbrSub, govbrCpf, lookups);
+        // 200 + success:false: o toast do front só mostra a mensagem real em 2xx.
+        if (!vinculo.ok) return json(req, { success: false, error: vinculo.erro, code: vinculo.status });
+        const { error: upErr } = await supabase.from('profiles').update(govbrCampos).eq('user_id', userId);
+        if (upErr) throw upErr;
+        return json(req, { success: true, mode: 'link', nivel });
       }
 
-      // Modo login: sem sessão — localizar a conta pelo CPF verificado pelo
-      // gov.br e emitir um token de verificação (magiclink) que o front troca
-      // por uma sessão via supabase.auth.verifyOtp.
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('user_id')
-        .eq('cpf', govbrCpf)
-        .maybeSingle();
-
-      if (!profile?.user_id) {
+      // Modo login: sem sessão — localizar a conta pelo gov.br (govbr_uid ou
+      // CPF do colaborador) e emitir um token de verificação (magiclink) que
+      // o front troca por uma sessão via supabase.auth.verifyOtp.
+      const alvo = await resolverLogin(govbrSub, govbrCpf, lookups);
+      if (!alvo.ok) {
         // 200 + success:false para o toast exibir a mensagem real (respostas
         // não-2xx chegam ao front como FunctionsHttpError genérico).
-        return json(req, {
-          success: false,
-          error: 'Nenhuma conta vinculada a este CPF gov.br. Entre com e-mail e senha e vincule sua conta gov.br nas configurações.',
-        });
+        return json(req, { success: false, error: alvo.erro, code: alvo.status });
       }
+      const profile = { user_id: alvo.userId };
 
       const { data: targetUser, error: targetErr } = await supabase.auth.admin.getUserById(profile.user_id);
       if (targetErr || !targetUser?.user?.email) {
@@ -247,16 +276,13 @@ serve(async (req: Request): Promise<Response> => {
         return json(req, { success: false, error: 'Falha ao gerar verificação de login' }, 502);
       }
 
-      await supabase.from('profiles').update({
-        govbr_uid: userInfo.sub,
-        govbr_nivel_autenticacao: userInfo.nivel || 'Bronze',
-        cpf_validado_govbr: true,
-      }).eq('user_id', profile.user_id);
+      const { error: upErr } = await supabase.from('profiles').update(govbrCampos).eq('user_id', profile.user_id);
+      if (upErr) throw upErr;
 
       return json(req, {
         success: true,
         mode: 'login',
-        nivel: userInfo.nivel || 'Bronze',
+        nivel,
         token_hash: linkData.properties.hashed_token,
         email: targetUser.user.email,
       });
