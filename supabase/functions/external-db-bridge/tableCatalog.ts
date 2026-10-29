@@ -68,6 +68,7 @@ export const TABLE_ALLOWLIST = new Set<string>([
   "premiacoes_regras", "premiacoes_roi_cenarios", "profiles", "promo_brindes", "promocoes",
   "prorrogacoes_afastamento", "provisao_auditoria", "provisao_logs", "provisoes_folha",
   "provisoes_mensais", "push_subscriptions", "query_telemetry", "rate_limits", "recargas_vale",
+  "recibos_ferias", // FeriasActions.tsx grava o recibo (§6.2) — sem isto a bridge dava 403
   "recrutamento_agendamentos", "recrutamento_anotacoes", "recrutamento_entrevistas",
   "recrutamento_testes", "registros_ponto", "relacionamentos_contato_emergencia",
   "relacionamentos_dependentes", "relatorios_agendados", "report_dispatch_attempts",

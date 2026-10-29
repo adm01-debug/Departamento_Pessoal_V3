@@ -10,9 +10,11 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import {
   createErrorResponse,
   enforceOrigin,
+  getCorsHeaders,
   handlePreflight,
   parseJsonBody,
 } from '../_shared/contract.ts';
+import { linhaCertificado } from './certRow.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { requireAal2 } from '../_shared/aal2.ts';
@@ -70,12 +72,12 @@ serve(async (req: Request): Promise<Response> => {
     const authz = await requireRh(admin, user.id, body.empresaId, req);
     if (authz.denied) return authz.denied;
 
-    const { data: senhaEnc, error: encErr1 } = await admin.rpc('encrypt_dados_bancarios', { plain: body.senha });
+    const { data: senhaEnc, error: encErr1 } = await admin.rpc('encrypt_dados_bancarios', { plaintext: body.senha });
     if (encErr1 || !senhaEnc) {
       captureException(encErr1, { fn: 'upload-certificado', step: 'encrypt_senha' });
       return createErrorResponse('Falha ao proteger credencial', 500, 'ENCRYPT_FAILED', undefined, req);
     }
-    const { data: arquivoEnc, error: encErr2 } = await admin.rpc('encrypt_dados_bancarios', { plain: body.arquivoBase64 });
+    const { data: arquivoEnc, error: encErr2 } = await admin.rpc('encrypt_dados_bancarios', { plaintext: body.arquivoBase64 });
     if (encErr2 || !arquivoEnc) {
       captureException(encErr2, { fn: 'upload-certificado', step: 'encrypt_arquivo' });
       return createErrorResponse('Falha ao proteger arquivo', 500, 'ENCRYPT_FAILED', undefined, req);
@@ -83,18 +85,8 @@ serve(async (req: Request): Promise<Response> => {
 
     const { data: cert, error: insErr } = await admin
       .from('certificados_digitais')
-      .insert({
-        empresa_id: body.empresaId,
-        nome: body.nome,
-        cnpj: body.cnpj ?? null,
-        tipo: 'A1',
-        issuer: body.issuer,
-        valid_from: body.validFrom,
-        valid_to: body.validTo,
-        senha_encriptada: senhaEnc as string,
-        arquivo_base64: arquivoEnc as string,
-      })
-      .select('id, nome, issuer, valid_from, valid_to, created_at')
+      .insert(linhaCertificado(body, senhaEnc as string, arquivoEnc as string))
+      .select('id, empresa_id, subject, cnpj_cpf, issuer, valid_from, valid_to, ativo, created_at')
       .single();
     if (insErr || !cert) {
       captureException(insErr, { fn: 'upload-certificado', step: 'insert' });
@@ -103,7 +95,7 @@ serve(async (req: Request): Promise<Response> => {
 
     return new Response(JSON.stringify({ ok: true, certificado: cert }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     });
   } catch (err) {
     captureException(err, { fn: 'upload-certificado' });
