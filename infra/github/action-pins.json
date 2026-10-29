@@ -57,6 +57,14 @@
     "ff98106e4c7b2bc287b24eaf42907196329070c7": {
       "action": "gitleaks/gitleaks-action",
       "version": "v2.3.9"
+    },
+    "9b3254085494b55a0f7c4c2b3d2d52cc712ce370": {
+      "action": "github/codeql-action/*",
+      "version": "v4.39.1"
+    },
+    "53290badfa369cb0bf7ad16342cb62c2fa47ac7b": {
+      "action": "zizmorcore/zizmor-action",
+      "version": "v0.8.0"
     }
   }
 }
