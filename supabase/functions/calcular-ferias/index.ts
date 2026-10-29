@@ -51,6 +51,9 @@ const BodySchema = z.object({
   competencia: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
   colaborador_id: z.string().uuid().optional(),
   empresa_id: z.string().uuid().optional(),
+  // Quando informado, o resultado é persistido na solicitação de férias
+  // (antes o cálculo ia só para audit_log e a tela guardava nada — §6.2).
+  ferias_id: z.string().uuid().optional(),
 }).refine((d) => d.dias_ferias + d.dias_abono <= 30, {
   message: 'Soma de férias + abono não pode exceder 30 dias',
   path: ['dias_abono'],
@@ -88,7 +91,8 @@ Deno.serve(async (req) => {
 
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
-    const { salario_base, dias_ferias, dias_abono, dependentes_irrf, colaborador_id, empresa_id, competencia } = parsed.data;
+    const { salario_base, dias_abono, dependentes_irrf, colaborador_id, empresa_id, competencia, ferias_id } = parsed.data;
+    let { dias_ferias } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -119,8 +123,52 @@ Deno.serve(async (req) => {
     }
     }
 
+    // ==== Art. 130 CLT + médias de variáveis (só com colaborador) ====
+    // dias_direito do período aquisitivo vigente limita os dias de férias
+    // (redução automática por faltas injustificadas). Médias: HE apuradas
+    // no período aquisitivo (registros_ponto) valorizadas à hora do salário.
+    let diasDireito: number | null = null;
+    let faltasPeriodo = 0;
+    let mediaVariaveis = 0;
+    if (colaborador_id) {
+      const { data: pa } = await admin
+        .from('periodos_aquisitivos')
+        .select('dias_direito, faltas_periodo, data_inicio, data_fim')
+        .eq('colaborador_id', colaborador_id)
+        .order('data_inicio', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (pa) {
+        diasDireito = Number((pa as Record<string, unknown>).dias_direito) || null;
+        faltasPeriodo = Number((pa as Record<string, unknown>).faltas_periodo) || 0;
+        if (diasDireito !== null && diasDireito < dias_ferias) dias_ferias = Math.max(0, diasDireito);
+        // Média de variáveis (HE 50/100 + noturno) do período aquisitivo.
+        const { data: regs } = await admin
+          .from('registros_ponto')
+          .select('horas_extras_50, horas_extras_100, horas_noturnas')
+          .eq('colaborador_id', colaborador_id)
+          .gte('data', (pa as Record<string, unknown>).data_inicio as string)
+          .lte('data', (pa as Record<string, unknown>).data_fim as string);
+        const rows = (regs ?? []) as { horas_extras_50: number | null; horas_extras_100: number | null; horas_noturnas: number | null }[];
+        if (rows.length > 0) {
+          const valorHora = salario_base / 220; // divisor mensal CLT
+          const meses = Math.max(1, Math.ceil(rows.length / 30));
+          const soma = rows.reduce(
+            (acc, r) =>
+              acc +
+              (Number(r.horas_extras_50) || 0) * 1.5 +
+              (Number(r.horas_extras_100) || 0) * 2 +
+              (Number(r.horas_noturnas) || 0) * 0.2,
+            0,
+          );
+          mediaVariaveis = round2((soma * valorHora) / meses);
+        }
+      }
+    }
+
     // ==== Cálculo ====
-    const vd = salario_base / 30;
+    const baseRemuneracao = salario_base + mediaVariaveis;
+    const vd = baseRemuneracao / 30;
     const vf = round2(vd * dias_ferias);
     const tc = round2(vf / 3);
     const va = round2(vd * dias_abono);
@@ -135,6 +183,27 @@ Deno.serve(async (req) => {
     const inss = calcularINSS(baseTributavel, inssRef);
     const irrf = calcIRRF(baseTributavel, dependentes_irrf, inssRef);
     const liquido = round2(bruto - inss - irrf);
+
+    // Persistência: quando ferias_id vem, o cálculo fica gravado na
+    // solicitação (escopo empresa+colaborador já validados acima).
+    if (ferias_id && colaborador_id && empresaIdFinal) {
+      const { error: upErr } = await admin
+        .from('ferias')
+        .update({
+          valor_ferias: vf,
+          valor_terco: tc,
+          valor_abono: va,
+          valor_terco_abono: ta,
+          valor_total: bruto,
+          descontos_inss: inss,
+          descontos_irrf: irrf,
+          valor_liquido: liquido,
+        })
+        .eq('id', ferias_id)
+        .eq('colaborador_id', colaborador_id)
+        .eq('empresa_id', empresaIdFinal);
+      if (upErr) throw upErr;
+    }
 
     // Auditoria (não-bloqueante)
     admin.from('audit_log').insert({
@@ -161,6 +230,10 @@ Deno.serve(async (req) => {
         bruto,
         base_tributavel: baseTributavel,
         inss, irrf, liquido,
+        media_variaveis: mediaVariaveis,
+        dias_direito: diasDireito,
+        faltas_periodo: faltasPeriodo,
+        persistido: Boolean(ferias_id),
       }),
       { status: 200, headers: noStore },
     );

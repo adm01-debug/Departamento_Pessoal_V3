@@ -1,5 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,6 +19,7 @@ import { Upload, RefreshCw, Shield, Loader2, Banknote, Lock } from 'lucide-react
 import { edgeFunctionsService, isDefinitiveIdempotencyFailure } from '@/services/edgeFunctionsService';
 import { folhaPagamentoService } from '@/services/folhaPagamentoService';
 import { PageLayout } from '@/components/layout';
+import { LancamentosDialog } from '@/components/folha/LancamentosDialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -107,6 +109,7 @@ function useFolhaResumo(competencia: string, empresaId?: string) {
 /* ─── Main Page ─── */
 export default function FolhaPagamentoPage() {
   const { empresaAtual } = useEmpresas();
+  const navigate = useNavigate();
   const competencias = useMemo(() => gerarCompetencias(), []);
   const [competencia, setCompetencia] = useState(getCompetenciaAtual());
   const { data: resumo, isLoading, refetch } = useFolhaResumo(competencia, empresaAtual?.id);
@@ -116,6 +119,8 @@ export default function FolhaPagamentoPage() {
   useDataAccessLog('folhas_pagamento', resumo?.id, empresaAtual?.id);
 
   const { key: idemKey, reset: idemReset } = useIdempotencyKey();
+  const [mesComp, anoComp] = competencia.split('/');
+  const competenciaDB = `${anoComp}-${mesComp}`;
   const calcularFolhaServidor = async () => {
     const empresaId = empresaAtual?.id;
     if (!empresaId) {
@@ -189,7 +194,12 @@ export default function FolhaPagamentoPage() {
             >
               <RefreshCw className={cn('h-4 w-4', isLoading && 'animate-spin')} />
             </Button>
-            <Button variant="outline" size="sm" className="rounded-xl gap-1.5 font-body">
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-xl gap-1.5 font-body"
+              onClick={() => navigate('/importacao')}
+            >
               <Upload className="h-4 w-4" />
               <span className="hidden sm:inline">Importar Ponto</span>
             </Button>
@@ -205,6 +215,7 @@ export default function FolhaPagamentoPage() {
               <span className="hidden sm:inline">Servidor</span>
             </Button>
             <RubricasDialog />
+            <LancamentosDialog empresaId={empresaAtual?.id} competencia={competenciaDB} />
             <Simulador13Dialog />
             <SimuladorWhatIf />
             <AlertDialog>

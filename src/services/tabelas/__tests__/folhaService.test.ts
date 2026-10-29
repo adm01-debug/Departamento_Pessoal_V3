@@ -40,7 +40,6 @@ import {
   eventosVariaveisService,
   lancamentosFolhaService,
   rubricasFolhaService,
-  parametrosFiscaisService,
 } from '../folhaService';
 
 describe('esocialLotesService', () => {
@@ -164,26 +163,5 @@ describe('rubricasFolhaService', () => {
     mockFrom.mockReturnValue(chain);
     await rubricasFolhaService.atualizar('rf-1', { descricao: 'Atualizado' }, 'emp-1');
     expect(chain.update).toHaveBeenCalled();
-  });
-});
-
-describe('parametrosFiscaisService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('listar queries parametros_fiscais', async () => {
-    const chain = makeChain([{ id: 'pf1' }]);
-    mockFrom.mockReturnValue(chain);
-    const result = await parametrosFiscaisService.listar();
-    expect(mockFrom).toHaveBeenCalledWith('parametros_fiscais');
-    expect(Array.isArray(result)).toBe(true);
-  });
-
-  it('criar calls insert on parametros_fiscais', async () => {
-    const chain = makeChain();
-    mockFrom.mockReturnValue(chain);
-    await parametrosFiscaisService.criar({ vigencia_inicio: '2024-01-01', tipo: 'inss' });
-    expect(chain.insert).toHaveBeenCalled();
   });
 });

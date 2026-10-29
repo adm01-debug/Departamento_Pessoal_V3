@@ -16630,6 +16630,69 @@ export type Database = {
           },
         ]
       }
+      recibos_ferias: {
+        Row: {
+          ativo: boolean | null
+          colaborador_id: string | null
+          created_at: string | null
+          created_by: string | null
+          data_fim: string | null
+          data_inicio: string | null
+          descricao: string | null
+          empresa_id: string | null
+          id: string
+          observacoes: string | null
+          updated_at: string | null
+          updated_by: string | null
+          valor: number | null
+        }
+        Insert: {
+          ativo?: boolean | null
+          colaborador_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
+          descricao?: string | null
+          empresa_id?: string | null
+          id?: string
+          observacoes?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+          valor?: number | null
+        }
+        Update: {
+          ativo?: boolean | null
+          colaborador_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data_fim?: string | null
+          data_inicio?: string | null
+          descricao?: string | null
+          empresa_id?: string | null
+          id?: string
+          observacoes?: string | null
+          updated_at?: string | null
+          updated_by?: string | null
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recibos_ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recibos_ferias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       registros_ponto: {
         Row: {
           aprovado: boolean | null
