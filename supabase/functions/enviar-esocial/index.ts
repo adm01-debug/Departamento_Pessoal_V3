@@ -19,6 +19,7 @@ import {
 } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
   beginIdempotency,
@@ -28,7 +29,6 @@ import {
 } from '../_shared/idempotency.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
 import { assertSandboxAmbiente, transmissionHttpStatus } from './transmissionStatus.ts';
-import { montarS2299 } from './s2299.ts';
 
 const BodySchema = z.object({
   empresaId: z.string().uuid(),
@@ -83,6 +83,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     const userId = claimsData.user.id;
 
@@ -323,11 +324,6 @@ function montarXMLEvento(
         `<infoRegime><regTrab><tpRegJor>1</tpRegJor></regTrab></infoRegime>` +
         `<infoContrato><codCargo>${xe(d.codCargo ?? '001')}</codCargo>` +
         `<dtAdm>${xe(d.dtAdm ?? new Date().toISOString().split('T')[0])}</dtAdm></infoContrato></vinculo>`;
-      break;
-    case 'S-2299':
-      // Desligamento — leiaute S-1.2 em ./s2299.ts (verbasResc dentro de
-      // infoDeslig; detVerbas em dmDev > infoPerApur > ideEstabLot).
-      conteudoEvento = montarS2299(xe, d, timestamp);
       break;
     default:
       // Fallback seguro: serializa como CDATA para nunca injetar tags externas
