@@ -35,7 +35,7 @@ const SENSIVEIS = new Set([
   'exportacao', 'importacao', 'enviar-relatorio', 'enviar-esocial',
   'cnab-remessa', 'pix-lote', 'adiantamento-salarial', 'emprestimo-consignado',
   'dctfweb', 'fgts-digital', 'gerar-contrato-pdf', 'gerar-medida-disciplinar-pdf',
-  'auditoria', 'backup', 'backup-automatico',
+  'auditoria', 'backup', 'backup-automatico', 'pagar-desligamento',
 ]);
 
 /**

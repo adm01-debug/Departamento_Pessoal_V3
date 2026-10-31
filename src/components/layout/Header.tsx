@@ -4,6 +4,7 @@ import { Menu, Search, Cloud } from 'lucide-react';
 import { NotificationCenter } from '@/components/ui/notification-center';
 import { UserProfileMenu } from '@/components/ui/user-profile-menu';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { LanguageSelector } from '@/components/i18n/LanguageSelector';
 import { Breadcrumbs } from './Breadcrumbs';
 import { BackButton } from './BackButton';
 import { EmpresaSelector } from './EmpresaSelector';
@@ -101,6 +102,7 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
             />
           </div>
           <ThemeToggle />
+          <LanguageSelector />
           <NotificationCenter />
           <UserProfileMenu user={user} />
         </div>

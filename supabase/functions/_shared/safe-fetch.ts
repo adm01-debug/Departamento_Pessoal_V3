@@ -179,7 +179,6 @@ const TIMEOUT_BY_TAG: Record<string, number> = {
   gotenberg: 30_000,
   webhook:    8_000,
   dbbridge:  15_000,
-  metabase:  10_000,
 };
 
 /**

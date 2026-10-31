@@ -8,9 +8,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { avaliacaoService } from '@/services/avaliacaoService';
+import { gerarPDIPDF } from '@/utils/evaluationPDF';
 import { useEmpresas } from '@/hooks';
-import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
+import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar, FileDown } from 'lucide-react';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
@@ -266,6 +268,22 @@ export default function AvaliacaoPage() {
                       >
                         {(p.status || 'em_andamento').replace('_', ' ')}
                       </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-xl gap-1.5"
+                        onClick={() =>
+                          gerarPDIPDF(p.colaborador?.nome_completo ?? 'Colaborador', {
+                            titulo: p.titulo,
+                            competencia: p.competencia_foco,
+                            acao: p.acao_desenvolvimento,
+                            prazo: p.prazo,
+                            status: p.status,
+                          })
+                        }
+                      >
+                        <FileDown className="h-4 w-4" /> PDF
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

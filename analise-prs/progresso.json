@@ -1,0 +1,56 @@
+{
+  "objetivo": "Reconstrução e consolidação — reconciliação de cópia local, branches, commits, auditorias e PRs",
+  "sessao_inicio": "2026-10-31",
+  "main_sha_inicio": "7db8ba84a6fc785b65225249dd5692923bc9bc89",
+  "main_sha_fim": "54652ab993eb8fd8f239bec7ed16ebd46a8ff0f3",
+  "etapas": {
+    "0_identificar_repositorio": "CONCLUÍDO — adm01-debug/Departamento_Pessoal_V3, banco frjbfeamybqsejlvmqbl",
+    "1_baseline": "CONCLUÍDO — CI real de PRs #330/#331/#332; typecheck/lint/build SUCCESS; falhas de negócio documentadas em analise-prs/baseline/estado.md",
+    "2_auditorias": "CONCLUÍDO — D-01 a D-41 lidos; reconciliação em analise-prs/auditorias-anteriores.md + §SUPLEMENTO",
+    "3_inventario_prs": "CONCLUÍDO — 6 PRs iniciais + 5 PRs de rastreamento; 1 aberta (Rule 8); 2 fechadas (Rule 8); branch muri investigada",
+    "4_reconstrucao_fluxos": "CONCLUÍDO — 20 funcionalidades mapeadas em funcionalidades.csv; 14 regras de negócio em regras-de-negocio.md",
+    "5_analise_diffs": "CONCLUÍDO — todas as 6 PRs iniciais analisadas com diff real",
+    "6_merge_sequencial": "CONCLUÍDO — 7 PRs operacionais mergeadas + 5 PRs de documentação; #315 bloqueada (Rule 8)",
+    "7_verificacao_deploy": "CONCLUÍDO — Vercel CI success confirmado; deploy validado após cada merge",
+    "8_atualizacao_pasta": "CONCLUÍDO — todos os 9 arquivos requeridos criados em analise-prs/"
+  },
+  "arquivos_requeridos": {
+    "baseline/estado.md": "CRIADO",
+    "fontes.json": "CRIADO",
+    "auditorias-anteriores.md": "CRIADO (PRs #330 + #331)",
+    "regras-de-negocio.md": "CRIADO",
+    "funcionalidades.csv": "CRIADO",
+    "prs.json": "CRIADO",
+    "prs.csv": "CRIADO",
+    "progresso.json": "CRIADO (esta versão)",
+    "decisoes.md": "CRIADO",
+    "dossies/PR-315.md": "CRIADO",
+    "RELATORIO_PRS.md": "CRIADO"
+  },
+  "prs_total_inicial": 6,
+  "prs_analisadas": 6,
+  "prs_mergeadas": 12,
+  "prs_abertas": 1,
+  "prs_decisao_humana": 1,
+  "branches_investigadas": ["devin/1793220119-security-gaps", "claude/fix-rotinas-agendadas-261012-0737", "adm01-debug-patch-1", "muri", "codex/e50-preflight-20260910", "claude/great-rubin-c50zcx", "claude/happy-cori-3z9h7f"],
+  "pendencias_bloqueadas": [
+    "PR #315 — revisão humana obrigatória (.github/workflows)",
+    "Branch muri — 54 commits únicos sem PR, 355 atrás do main; DECISÃO HUMANA",
+    "Migration 20261012130000_rotinas_agendadas_falhando.sql não aplicada (PR #209 fechada com Rule 8)",
+    "LEV-01: crash em calculoLoteService.ts:38-39",
+    "LEV-02: status mismatch folhaPagamentoService",
+    "LEV-04: tabelas fiscais INSS/IRRF desatualizadas",
+    "LEV-06: PDF holerite URL inexistente",
+    "W73: migration ledger 44 itens pendentes"
+  ],
+  "escrita_remota": [
+    {"pr": 309, "sha": "3d2f0d5e", "tipo": "squash-merge"},
+    {"pr": 313, "sha": "219c2f93", "tipo": "squash-merge"},
+    {"pr": 317, "sha": "271d5b5e", "tipo": "squash-merge"},
+    {"pr": 319, "sha": "e1a18efd", "tipo": "squash-merge"},
+    {"pr": 322, "sha": "7db8ba84", "tipo": "squash-merge"},
+    {"pr": 330, "sha": "199c855e", "tipo": "squash-merge"},
+    {"pr": 331, "sha": "49bcf8f2", "tipo": "squash-merge"},
+    {"pr": 332, "sha": "54652ab9", "tipo": "squash-merge"}
+  ]
+}
