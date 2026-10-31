@@ -430,6 +430,9 @@ export async function listarCertificados(empresaId: string): Promise<Tables<'cer
   return data || [];
 }
 
+// #8: o upload de certificado NÃO passa pela bridge — a edge
+// `upload-certificado` cifra senha e arquivo server-side (AES-256/vault)
+// com service_role + RH + aal2. Senha em claro nunca toca o banco.
 export async function adicionarCertificado(cert: {
   empresa_id: string;
   subject: string;
@@ -437,18 +440,24 @@ export async function adicionarCertificado(cert: {
   valid_from: string;
   valid_to: string;
   arquivo_base64: string;
-  senha_encriptada: string;
-  cnpj_cpf: string;
+  senha: string;
+  cnpj: string;
 }): Promise<Tables<'certificados_digitais'>> {
-  const { data, error } = await supabase
-    .from('certificados_digitais')
-    .insert(
-      validateTablePayload('certificados_digitais', [{ ...cert, ativo: true }], 'esocialService:certificados_digitais')
-    )
-    .select()
-    .single();
+  const { data, error } = await supabase.functions.invoke('upload-certificado', {
+    body: {
+      empresaId: cert.empresa_id,
+      nome: cert.subject,
+      cnpj: cert.cnpj || undefined,
+      issuer: cert.issuer,
+      validFrom: cert.valid_from,
+      validTo: cert.valid_to,
+      arquivoBase64: cert.arquivo_base64,
+      senha: cert.senha,
+    },
+  });
   if (error) throw error;
-  return data;
+  if (!data?.ok) throw new Error(data?.error ?? 'Falha no upload do certificado');
+  return data.certificado as Tables<'certificados_digitais'>;
 }
 
 export async function listarTransmissaoLogs(
