@@ -6,23 +6,12 @@ const AUTH_FILE = path.resolve('e2e/.auth/user.json');
 const AUTH_FILE_MOBILE = path.resolve('e2e/.auth/user-mobile.json');
 
 const EMAIL = process.env.E2E_USER_EMAIL ?? 'admin@teste.local';
-const PASSWORD = process.env.E2E_USER_PASSWORD ?? 'Admin@2026!';
+const PASSWORD_ENV = process.env.E2E_USER_PASSWORD;
+if (!PASSWORD_ENV) throw new Error('E2E_USER_PASSWORD não definido — configure o secret (senha não fica no repo).');
+const PASSWORD: string = PASSWORD_ENV;
 const TOTP_SECRET = process.env.E2E_TOTP_SECRET;
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-/**
- * Espera o início da próxima janela TOTP de 30s quando faltam poucos
- * segundos para a virada. Um código gerado nos últimos ~4s da janela pode
- * expirar em trânsito (CI lento) e o GoTrue rejeita como "Código inválido"
- * — flake observado no auth.setup da main.
- */
-async function waitForFreshTotpWindow(minRemainingMs = 4_000): Promise<void> {
-  const msToNextWindow = 30_000 - (Date.now() % 30_000);
-  if (msToNextWindow < minRemainingMs) {
-    await new Promise((r) => setTimeout(r, msToNextWindow + 250));
-  }
-}
 
 /** TOTP RFC 6238 (SHA-1, 30s, 6 dígitos) a partir de seed base32. */
 function totpCode(seed: string): string {
@@ -95,7 +84,6 @@ async function elevateToAal2IfNeeded(page: Page): Promise<void> {
     await fetch(`${base}/factors/${factor.id}/challenge`, { method: 'POST', headers, body: '{}' })
   ).json()) as { id: string };
 
-  await waitForFreshTotpWindow();
   const verified = (await (
     await fetch(`${base}/factors/${factor.id}/verify`, {
       method: 'POST',
@@ -222,14 +210,8 @@ async function login(page: Page, file: string) {
     if (!TOTP_SECRET) {
       throw new Error('Login caiu no desafio TOTP mas E2E_TOTP_SECRET não está configurado.');
     }
-    // Cada tentativa usa código de uma janela TOTP "fresca" para não expirar
-    // em trânsito (o GoTrue rejeita com "Código inválido").
-    const submitTotp = async () => {
-      await waitForFreshTotpWindow();
-      await totpInput.fill(totpCode(TOTP_SECRET));
-      await page.getByRole('button', { name: /verificar/i }).click();
-    };
-    await submitTotp();
+    await totpInput.fill(totpCode(TOTP_SECRET));
+    await page.getByRole('button', { name: /verificar/i }).click();
     // Não esperamos o timeout de navegação para decidir retry: em código
     // inválido o formulário mostra alerta "Código inválido" na hora —
     // regenere imediatamente para não consumir o budget do setup.
@@ -239,16 +221,10 @@ async function login(page: Page, file: string) {
       .then(() => 'error')
       .catch(() => 'no-error');
     if ((await Promise.race([leftLogin, mfaError])) === 'error') {
-      await submitTotp();
+      await totpInput.fill(totpCode(TOTP_SECRET));
+      await page.getByRole('button', { name: /verificar/i }).click();
     }
-    // O retry ganha wait próprio: `leftLogin` expira 20s após o clique inicial
-    // de login e pode já ter resolvido 'nav-failed' enquanto o segundo
-    // verificar ainda estava em trânsito — flake observado no CI.
-    const navigated = await page
-      .waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 20_000 })
-      .then(() => true)
-      .catch(() => false);
-    if (!navigated) {
+    if ((await leftLogin) !== 'navigated') {
       throw new Error('Desafio TOTP não completou — a página não saiu de /login.');
     }
   } else if ((await leftLogin) !== 'navigated') {
