@@ -13,7 +13,9 @@ import { getClientIp } from '../_shared/clientIp.ts';
 import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, ADMIN_ONLY_WRITE_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
+  checkSelectColumns, findSecretWriteColumn, stripSecretColumns,
 } from "./validation.ts";
+import { TABLE_ALLOWLIST } from "./tableCatalog.ts";
 import { BodySchema, toUpsertOptions } from "./request-schema.ts";
 import { extractTenantWriteScope, hasCompleteTenantWriteScope, preservesTenantOnUpdate } from './tenantScope.ts';
 import {
@@ -462,8 +464,39 @@ Deno.serve(async (req) => {
     if (TABLE_DENYLIST.has(table!.toLowerCase())) {
       return jsonError(403, "TABLE_DENIED", `Table '${table}' is not accessible via bridge`);
     }
+    // Deny-by-default: só relações do catálogo (tables + views usadas pelo app)
+    // trafegam pela ponte. Tabela nova/desconhecida = negada até ser catalogada.
+    if (!TABLE_ALLOWLIST.has(table!.toLowerCase())) {
+      return jsonError(403, "TABLE_NOT_CATALOGED", `Table '${table}' is not in the bridge catalog`);
+    }
     if (columns !== undefined && !isSafeColumnsExpr(columns)) {
       return jsonError(400, "INVALID_COLUMNS", "Columns expression is invalid");
+    }
+    // Projeção: `*` negada em tabelas com colunas secretas; coluna secreta ou
+    // embed de tabela negada/desconhecida = fail-closed.
+    if (action === "select") {
+      const verdict = checkSelectColumns(
+        table!,
+        columns,
+        (t) => TABLE_ALLOWLIST.has(t),
+        (t) => TABLE_DENYLIST.has(t),
+      );
+      if (!verdict.ok) {
+        return jsonError(403, verdict.code!, verdict.message!);
+      }
+    }
+    // Write payloads com coluna secreta não trafegam pela ponte (credencial
+    // só entra/sai via edge dedicada com service_role).
+    if (isWrite) {
+      const rows = (Array.isArray(data) ? data : [data]).filter(
+        (r): r is Record<string, unknown> => r !== null && typeof r === "object",
+      );
+      for (const row of rows) {
+        const secret = findSecretWriteColumn(table!, row);
+        if (secret) {
+          return jsonError(403, "SECRET_COLUMN", `Coluna '${secret}' de '${table}' não é acessível via bridge`);
+        }
+      }
     }
   }
 
@@ -656,7 +689,7 @@ Deno.serve(async (req) => {
         traceId, // P3-064
       });
       if (error) { console.error('[bridge] QUERY_ERROR:', error.message, error.hint); return jsonError(400, "QUERY_ERROR", "Falha na consulta"); }
-      return jsonOk({ data: selectData, count, duration_ms: durationMs });
+      return jsonOk({ data: stripSecretColumns(table!, selectData), count, duration_ms: durationMs });
     }
 
     // -------- INSERT --------
@@ -670,7 +703,7 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: stripSecretColumns(table!, r), duration_ms: durationMs });
     }
 
     // -------- UPSERT --------
@@ -681,6 +714,7 @@ Deno.serve(async (req) => {
         .from(table!)
         .upsert(upsertData, toUpsertOptions(body.onConflict))
         .select();
+      stripSecretColumns(table!, r);
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
@@ -706,7 +740,7 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: stripSecretColumns(table!, r), duration_ms: durationMs });
     }
 
     // -------- DELETE --------
@@ -727,7 +761,7 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: stripSecretColumns(table!, r), duration_ms: durationMs });
     }
 
     // -------- RPC --------

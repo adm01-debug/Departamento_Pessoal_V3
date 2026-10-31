@@ -7,6 +7,7 @@ import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJ
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { requireRh } from '../_shared/authz.ts';
+import { requireAal2 } from '../_shared/aal2.ts';
 
 const HARD_CAP = 10_000;
 
@@ -79,6 +80,7 @@ serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    const aal = requireAal2(req); if (!aal.ok) return aal.response!;
     if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     const userId = claimsData.user.id;
 

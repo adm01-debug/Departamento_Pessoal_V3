@@ -23,6 +23,9 @@ import { parseLockoutState } from './lockoutContract.ts';
 const BodySchema = z.object({
   email: z.string().email().max(254).toLowerCase(),
   password: z.string().min(1).max(128),
+  // Cloudflare Turnstile — opcional, ativado quando TURNSTILE_SECRET_KEY
+  // está configurada. Sem a env, o campo é ignorado (comportamento atual).
+  turnstileToken: z.string().max(4096).optional(),
 });
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
@@ -66,7 +69,25 @@ serve(async (req: Request): Promise<Response> => {
     if (!parsed.success) {
       return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR', undefined, req);
     }
-    const { email, password } = parsed.data;
+    const { email, password, turnstileToken } = parsed.data;
+
+    // Turnstile (CAPTCHA) — verificação server-side. Só ativa quando a
+    // secret está configurada; ausente, o login segue o fluxo atual.
+    const turnstileSecret = Deno.env.get('TURNSTILE_SECRET_KEY');
+    if (turnstileSecret) {
+      if (!turnstileToken) {
+        return createErrorResponse('Verificação de segurança necessária', 403, 'CAPTCHA_REQUIRED', undefined, req);
+      }
+      const verify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ secret: turnstileSecret, response: turnstileToken, remoteip: ip }),
+      });
+      const outcome = await verify.json().catch(() => null) as { success?: boolean } | null;
+      if (!outcome?.success) {
+        return createErrorResponse('Falha na verificação de segurança', 403, 'CAPTCHA_FAILED', undefined, req);
+      }
+    }
 
     // 3. Per-email rate limit — more granular than IP (catches credential stuffing).
     const emailKey = `login:email:${email}`;
