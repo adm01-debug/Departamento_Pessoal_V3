@@ -17,9 +17,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User, FileText, History, CheckCircle2, Clock, ExternalLink, ShieldCheck, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useESocial } from '@/hooks/useESocial';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePiiMask } from '@/hooks/usePiiMask';
+import { contratacaoService } from '@/services/contratacaoService';
+import { contratoTemplateService } from '@/services/contratoTemplateService';
+import { queryClient } from '@/lib/queryClient';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface DetalhesAdmissaoDialogProps {
   admissao: Tables<'admissoes'> | null;
@@ -31,9 +34,24 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
   const pii = usePiiMask();
   const { validarDocumento } = useContratacaoDigital();
   const { workflow } = useAdmissaoWorkflow(admissao?.id);
-  const { enviarEvento } = useESocial();
   const { empresaAtual } = useEmpresas();
-  const qc = useQueryClient();
+  const [gerandoContrato, setGerandoContrato] = useState(false);
+  // Sem useMutation: o dialog também renderiza fora de QueryClientProvider
+  // (testes unitários). gerarPdf sem template_id resolve o template ativo
+  // pela RPC contrato_resolver_template na edge.
+  const handleGerarContrato = async () => {
+    if (!admissao) return;
+    setGerandoContrato(true);
+    try {
+      const contrato = await contratoTemplateService.gerarPdf(admissao.id);
+      toast.success(`Contrato gerado (${contrato.template_nome} v${contrato.template_versao}).`);
+      if (contrato.signed_url) window.open(contrato.signed_url, '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Falha ao gerar o contrato.'));
+    } finally {
+      setGerandoContrato(false);
+    }
+  };
   const [savingDados, setSavingDados] = useState(false);
   const [dados, setDados] = useState({ cpf: '', data_nascimento: '', nome_mae: '', sexo: '' });
   const [dadosLoaded, setDadosLoaded] = useState('');
@@ -74,7 +92,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
         },
         empresaAtual.id
       );
-      await qc.invalidateQueries({ queryKey: ['admissoes'] });
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
       toast.success('Dados pessoais salvos.');
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Falha ao salvar dados.');
@@ -83,13 +101,26 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     }
   };
 
-  const handleEnvioESocial = () => {
-    if (!empresaAtual?.id || !admissao) return;
+  const [enviandoESocial, setEnviandoESocial] = useState(false);
 
-    enviarEvento({
-      eventoId: admissao.id,
-      empresaId: empresaAtual.id,
-    });
+  // Fluxo correto: claim_admission_esocial_event cria/reutiliza o evento S-2200
+  // vinculado à admissão (esocial_eventos.admissao_id) e devolve o evento_id
+  // real + concessão exclusiva. O botão antigo enviava admissao.id como
+  // eventoId e o lookup em esocial_eventos falhava sempre.
+  const handleEnvioESocial = async () => {
+    if (!empresaAtual?.id || !admissao) return;
+    setEnviandoESocial(true);
+    try {
+      await contratacaoService.transmitirESocial(admissao.id, empresaAtual.id);
+      toast.success('Evento S-2200 transmitido e confirmado.');
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
+      await queryClient.invalidateQueries({ queryKey: ['esocial-eventos'] });
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Falha ao transmitir para o eSocial.'));
+      await queryClient.invalidateQueries({ queryKey: ['admissoes'] });
+    } finally {
+      setEnviandoESocial(false);
+    }
   };
 
   if (!admissao) return null;
@@ -327,6 +358,30 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                   </div>
                 </div>
 
+                <div className="bg-info/5 p-4 rounded-2xl border border-info/10 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-info/20 flex items-center justify-center">
+                      <FileText className="w-6 h-6 text-info" />
+                    </div>
+                    <div>
+                      <h5 className="text-sm font-bold text-info">Contrato de Trabalho</h5>
+                      <p className="text-xs text-muted-foreground">
+                        Gere o contrato em PDF (template ativo) para assinatura digital.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-xl border-info/30 text-info hover:bg-info/10 h-10 gap-2 font-bold"
+                    onClick={handleGerarContrato}
+                    disabled={gerandoContrato || terminal}
+                  >
+                    <FileText className="w-4 h-4" />
+                    {gerandoContrato ? 'Gerando...' : 'Gerar Contrato'}
+                  </Button>
+                </div>
+
                 <div className="bg-success/5 p-4 rounded-2xl border border-success/10 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center">
@@ -353,10 +408,14 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                     variant="outline"
                     className="rounded-xl border-success/30 text-success hover:bg-success/10 h-10 gap-2 font-bold"
                     onClick={handleEnvioESocial}
-                    disabled={admissao.status_esocial === 'enviado'}
+                    disabled={admissao.status_esocial === 'enviado' || enviandoESocial}
                   >
                     <Send className="w-4 h-4" />
-                    {admissao.status_esocial === 'enviado' ? 'Transmitido' : 'Transmitir Agora'}
+                    {admissao.status_esocial === 'enviado'
+                      ? 'Transmitido'
+                      : enviandoESocial
+                        ? 'Transmitindo...'
+                        : 'Transmitir Agora'}
                   </Button>
                 </div>
               </TabsContent>

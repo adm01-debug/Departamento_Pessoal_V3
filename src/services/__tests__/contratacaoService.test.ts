@@ -8,17 +8,22 @@ import { deepChain } from '@/test/deepChain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom, mockLog, mockClaimEvento, mockCompleteEvento, mockFailEvento, mockEnviarEvento } = vi.hoisted(() => ({
-  mockFrom: vi.fn(),
-  mockLog: vi.fn(),
-  mockClaimEvento: vi.fn(),
-  mockCompleteEvento: vi.fn(),
-  mockFailEvento: vi.fn(),
-  mockEnviarEvento: vi.fn(),
-}));
+const { mockFrom, mockLog, mockClaimEvento, mockCompleteEvento, mockFailEvento, mockEnviarEvento, mockInvoke } =
+  vi.hoisted(() => ({
+    mockFrom: vi.fn(),
+    mockLog: vi.fn(),
+    mockClaimEvento: vi.fn(),
+    mockCompleteEvento: vi.fn(),
+    mockFailEvento: vi.fn(),
+    mockEnviarEvento: vi.fn(),
+    mockInvoke: vi.fn(),
+  }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    functions: { invoke: (...a: unknown[]) => mockInvoke(...a) },
+  },
 }));
 
 vi.mock('@/utils/auditLogger', () => ({
@@ -227,5 +232,29 @@ describe('contratacaoService.transmitirESocial', () => {
     mockEnviarEvento.mockRejectedValueOnce(new Error('timeout'));
     mockFailEvento.mockResolvedValueOnce('already_sent');
     await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).resolves.toBe(true);
+  });
+});
+
+// ─── enviarEmailLinkCandidato ─────────────────────────────────────────────────
+
+describe('contratacaoService.enviarEmailLinkCandidato', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('manda só o id do token — link e destinatário são montados no servidor', async () => {
+    mockInvoke.mockResolvedValue({ data: { sent: true }, error: null });
+    const r = await contratacaoService.enviarEmailLinkCandidato('adm-1', EMPRESA_ID, 'a@b.com', 'tok-1');
+    expect(r).toEqual({ sent: true, motivo: undefined });
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-email-admissao', {
+      body: { empresa_id: EMPRESA_ID, admissao_id: 'adm-1', token_id: 'tok-1', email: 'a@b.com' },
+    });
+    const body = (mockInvoke.mock.calls[0][1] as { body: Record<string, unknown> }).body;
+    expect(body).not.toHaveProperty('link');
+  });
+
+  it('provedor não configurado devolve o motivo sem lançar', async () => {
+    mockInvoke.mockResolvedValue({ data: { sent: false, motivo: 'email_provider_not_configured' }, error: null });
+    await expect(contratacaoService.enviarEmailLinkCandidato('adm-1', EMPRESA_ID, 'a@b.com', 'tok-1')).resolves.toEqual(
+      { sent: false, motivo: 'email_provider_not_configured' }
+    );
   });
 });
