@@ -3,7 +3,6 @@
  * Canonico: src/schemas/common.ts
  * Re-exportado por:
  *   - supabase/functions/_shared/schemas/common.ts (via copy)
- *   - src/validators/esocialValidators.ts (backward compat)
  */
 import { z } from 'zod';
 
