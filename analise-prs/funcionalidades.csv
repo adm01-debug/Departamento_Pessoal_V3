@@ -1,0 +1,21 @@
+id,nome,modulo,estado_codigo,estado_producao,evidencia_gap,pr_relacionada
+F-01,Admissao de Funcionario,admissao,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"S-2200 fix em PR #309; sem dados em prod",309
+F-02,Email Pre-Admissao,admissao,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"Fix em PR #309",309
+F-03,Rescisao de Contrato,rescisao,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"Modalidades e RPC fix em PR #313",313
+F-04,Calculo de Folha de Pagamento,folha,CRASH_RUNTIME,NAO_FUNCIONAL,"LEV-01: calculoLoteService.ts:38-39 colunas inexistentes",
+F-05,Fechamento de Folha,folha,CRASH_RUNTIME,NAO_FUNCIONAL,"LEV-02: status mismatch calculada vs aberta",
+F-06,Emissao de Holerite PDF,holerite,QUEBRADO,NAO_FUNCIONAL,"LEV-06: URL storage.lovable.dev inexistente; 0 holerites em prod",
+F-07,Envio de Eventos eSocial,esocial,CORRIGIDO_PARCIAL,NAO_VERIFICADO_EM_PROD,"XML S-2299 fix em PR #317; 0 eventos transmitidos em prod",317
+F-08,Login Gov.BR,auth,CORRIGIDO,NAO_VERIFICADO_EM_PROD,"Login anonimo bloqueado em PR #317",317
+F-09,Ferias,ferias,NAO_VERIFICADO,NAO_FUNCIONAL,"Sem evidencia de implementacao completa",
+F-10,Afastamentos,afastamentos,NAO_VERIFICADO,NAO_FUNCIONAL,"Sem evidencia de implementacao completa",
+F-11,CNAB/Remessa PIX,cnab,NAO_VERIFICADO,NAO_FUNCIONAL,"Edge function cnab-remessa existe; sem dados de teste em prod",
+F-12,Backup de Dados,infra,IMPLEMENTADO,NAO_VERIFICADO_EM_PROD,"Edge function backup existe; AAL2 pendente (PR #315)",315
+F-13,Tabelas Fiscais INSS/IRRF,fiscal,DESATUALIZADO,NAO_FUNCIONAL,"LEV-04: tabelas fiscais desatualizadas",
+F-14,External DB Bridge,infra/seguranca,HARDENING_PENDENTE,NAO_VERIFICADO_EM_PROD,"PR #315 bloqueada por workflows",315
+F-15,AAL2 MFA Enforcement,auth/seguranca,PENDENTE,NAO_IMPLEMENTADO,"PR #315 bloqueada; helper aal2.ts aguardando merge",315
+F-16,Upload de Certificado Digital,certificados,PENDENTE_EDGE,NAO_VERIFICADO_EM_PROD,"Migracao para edge function em PR #315 bloqueada",315
+F-17,Rotinas Agendadas,infra,QUEBRADO,NAO_FUNCIONAL,"Migration PR #209 nunca aplicada; 4 rotinas falhando desde 12/10/2026",209
+F-18,Recrutamento e Selecao,recrutamento,EM_BRANCH_MURI,NAO_IMPLEMENTADO_EM_PROD,"Branch muri 54 commits ahead, sem PR; DECISAO HUMANA",
+F-19,Nine-Box / Desempenho,desempenho,EM_BRANCH_MURI,NAO_IMPLEMENTADO_EM_PROD,"Branch muri 54 commits ahead, sem PR; DECISAO HUMANA",
+F-20,Exportacao de Dados,exportacao,NAO_VERIFICADO,NAO_VERIFICADO_EM_PROD,"Edge function exportacao existe; AAL2 pendente",315
