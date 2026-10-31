@@ -118,8 +118,22 @@ export const rescisaoService = {
       // completo do motor para o TRCT/PDF reproduzir todas as rubricas
       // (INSS/IRRF, arts. 479/480, desconto do aviso, multa 477, saldo devedor);
       // os campos decompostos abaixo seguem como fonte para relatórios/filtros.
+      // _parametros guarda as entradas das modalidades (aviso trabalhado,
+      // férias vencidas, saldo FGTS, dias de aviso não cumpridos, término de
+      // contrato) para o recálculo repreencher o formulário e para auditoria.
       const dadosAtualizados: Partial<Tables<'desligamentos'>> = {
-        detalhes_calculo: resultado as unknown as Tables<'desligamentos'>['detalhes_calculo'],
+        detalhes_calculo: {
+          ...resultado,
+          _parametros: {
+            aviso_trabalhado: params.aviso_trabalhado ?? false,
+            ferias_vencidas: params.ferias_vencidas ?? false,
+            saldo_fgts: params.saldo_fgts ?? 0,
+            dias_aviso_nao_cumpridos: params.dias_aviso_nao_cumpridos ?? null,
+            data_fim_contrato: params.data_fim_contrato ?? null,
+            termino_iniciativa: params.termino_iniciativa ?? null,
+            indenizacao_art_480_prejuizo: params.indenizacao_art_480_prejuizo ?? null,
+          },
+        } as unknown as Tables<'desligamentos'>['detalhes_calculo'],
         saldo_salario: resultado.saldoSalario,
         decimo_terceiro: resultado.decimoTerceiro,
         ferias_proporcionais: resultado.feriasProporcionais,
@@ -282,11 +296,7 @@ export const rescisaoService = {
     }
   },
 
-  // `comprovanteUrl` nunca foi persistido pela versão anterior desta função
-  // (parâmetro aceito e nunca lido); preservado assim deliberadamente — não é
-  // escopo desta limpeza de tipos decidir se isso é um bug.
   async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<Tables<'desligamentos'>> {
-    void comprovanteUrl;
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
@@ -308,58 +318,30 @@ export const rescisaoService = {
         throw new Error('Pagamento bloqueado: homologação não foi concluída.');
       }
 
-      const { data, error } = await supabase
-        .from('desligamentos')
-        .update(
-          validateTablePayload(
-            'desligamentos',
-            {
-              status: 'pago',
-              etapa: 'finalizado',
-              checklist_pagamento: true,
-              data_pagamento: new Date().toISOString(),
-            },
-            'rescisaoService:desligamentos'
-          )
-        )
-        .eq('id', id)
-        .eq('empresa_id', empresaId)
-        .select()
-        .single();
+      // Edge `pagar-desligamento` (CSRF + RH na empresa + rate limit) chama a
+      // RPC transacional pagar_desligamento (migration 20261028220000), que é
+      // só service_role por decisão de 20260722125517: desligamento 'pago' +
+      // colaborador 'desligado' + audit_log numa única transação. Antes eram
+      // dois writes no cliente e uma falha do segundo deixava o desligamento
+      // 'pago' com o colaborador ainda 'ativo'.
+      const { data: resp, error } = await supabase.functions.invoke('pagar-desligamento', {
+        body: { empresaId, desligamentoId: id, comprovanteUrl: comprovanteUrl ?? null },
+      });
 
       if (error) throw error;
-
-      const { error: colabError } = await supabase
-        .from('colaboradores')
-        .update(
-          validateTablePayload(
-            'colaboradores',
-            {
-              status: 'desligado',
-              data_desligamento: d.data_desligamento,
-            },
-            'rescisaoService:colaboradores'
-          )
-        )
-        .eq('id', d.colaborador_id)
-        .eq('empresa_id', empresaId);
-
-      if (colabError)
-        loggerService.error(
-          'Erro ao desativar colaborador',
-          { colaboradorId: d.colaborador_id, desligamentoId: id },
-          colabError
-        );
+      const data = (resp as { desligamento?: unknown } | null)?.desligamento;
+      if (!data) throw new Error('Pagamento não confirmado pelo servidor');
+      const pago = (Array.isArray(data) ? data[0] : data) as Tables<'desligamentos'>;
 
       await auditLogger.log({
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'UPDATE',
         empresa_id: empresaId,
-        dados_novos: { status: 'pago', etapa: 'concluido', colaborador_desativado: true },
+        dados_novos: { status: 'pago', etapa: 'finalizado', colaborador_desativado: true },
       });
 
-      return data;
+      return pago;
     } catch (e: unknown) {
       if (e instanceof Error) throw e;
       throw new Error(String(e), { cause: e });
