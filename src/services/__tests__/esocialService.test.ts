@@ -573,9 +573,8 @@ describe('configurações, certificados e logs', () => {
     expect(await listarCertificados(EMPRESA_ID)).toEqual([]);
   });
 
-  it('adicionarCertificado insere com ativo:true e retorna a linha', async () => {
-    const chain = makeChain({ data: { id: 'cert-1', ativo: true }, error: null });
-    mockFrom.mockReturnValue(chain);
+  it('adicionarCertificado vai pela edge upload-certificado (senha nunca pela bridge)', async () => {
+    mockInvoke.mockResolvedValue({ data: { ok: true, certificado: { id: 'cert-1' } }, error: null });
     const cert = {
       empresa_id: EMPRESA_ID,
       subject: 'CN=X',
@@ -583,12 +582,14 @@ describe('configurações, certificados e logs', () => {
       valid_from: '2026-01-01',
       valid_to: '2027-01-01',
       arquivo_base64: 'AAAA',
-      senha_encriptada: 'enc',
-      cnpj_cpf: '11222333000181',
+      senha: 'segredo',
+      cnpj: '11222333000181',
     };
     const r = await adicionarCertificado(cert);
     expect(r).toMatchObject({ id: 'cert-1' });
-    expect(chain.insert).toHaveBeenCalledWith([expect.objectContaining({ ativo: true })]);
+    expect(mockInvoke).toHaveBeenCalledWith('upload-certificado', {
+      body: expect.objectContaining({ empresaId: EMPRESA_ID, senha: 'segredo' }),
+    });
   });
 
   it('listarTransmissaoLogs ordena desc, limita 50 e filtra eventoId', async () => {
