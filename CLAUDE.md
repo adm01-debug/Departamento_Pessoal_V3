@@ -245,9 +245,9 @@ POST-only gateway (781 lines)
 
 🔑 E48 — Secrets E2E atualizados para credenciais conhecidas
 │   E2E_USER_EMAIL=admin@teste.local
-│   E2E_USER_PASSWORD=Admin@2026!
+│   E2E_USER_PASSWORD=<secret GitHub>
 │   E2E_NON_ADMIN_EMAIL=user@teste.local
-│   E2E_NON_ADMIN_PASSWORD=User@2026!
+│   E2E_NON_ADMIN_PASSWORD=<secret GitHub>
 │   (coincidem com os fallbacks de auth.setup.ts / auth-non-admin.setup.ts)
 │   ⚠️  Usuários devem existir em frjbfeamybqsejlvmqbl.supabase.co Auth
 │       — verificar na dashboard Supabase se E2E ainda falhar
@@ -281,7 +281,7 @@ POST-only gateway (781 lines)
 
 ⛔ MELHORIA 1 — BLOQUEADA (ação manual obrigatória)
 │   Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth:
-│   admin@teste.local / Admin@2026! · user@teste.local / User@2026!
+│   credenciais via secrets E2E_* (não publicadas)
 └── MCP Departamento Pessoal somente leitura — sem supabase_auth_create_user
 ```
 
@@ -308,7 +308,7 @@ POST-only gateway (781 lines)
 
 ⛔ BLOQUEADO — ação manual obrigatória
 │   Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth:
-│   admin@teste.local / Admin@2026! · user@teste.local / User@2026!
+│   credenciais via secrets E2E_* (não publicadas)
 └── MCP Departamento Pessoal V3 somente leitura — sem supabase_auth_create_user
 ```
 
