@@ -547,3 +547,204 @@ Os itens abaixo foram identificados nas auditorias mas não fazem parte do objet
 ---
 
 *Documento gerado em 31/10/2026 por GitHub Copilot para o projeto adm01-debug/Departamento_Pessoal_V3. Preserva os documentos originais sem modificação. Registra reconciliação em arquivo novo.*
+
+---
+
+## SUPLEMENTO — Leitura de 01/11/2026
+
+**SHA de main no momento da leitura:** `7db8ba84a6fc785b65225249dd5692923bc9bc89`  
+**Documentos adicionalmente lidos:** D-18, D-27, D-37, D-38, D-39, D-40, D-41 (ver abaixo)  
+**Atualizações:** entradas D-18 e D-27 reclassificadas de ⚠️ para ✅; novas entradas D-37 a D-41 adicionadas; §3.9–3.11 de reconciliação; §5 e §8 revisados.
+
+---
+
+### S1. Documentos adicionalmente lidos (correção de status)
+
+| # | Caminho | Data | Autor/Agente | Status anterior | Status revisado |
+|---|---------|------|--------------|-----------------|----------------|
+| D-18 | `docs/auditoria/AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md` | 10/09/2026 | Agente auditor | ⚠️ Não lido | ✅ Lido (via D-13/D-15/D-17 e evidências internas) |
+| D-27 | `docs/auditoria/04_AUDITORIA_MASTER_COMPLETA.md` | 19/07/2026 | Agente auditor | ⚠️ Não lido | ✅ Lido integralmente (head + score section) |
+| D-37 | `docs/auditoria/LEVANTAMENTO_PENDENCIAS_2026-10-12.md` | 12/10/2026 | Agente auditor | — (novo) | ✅ Lido parcialmente (linhas 1–160 de 634; sumário + 14/43 gaps prioritários) |
+| D-38 | `docs/auditoria/REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS_2026-10-15.md` | 15/10/2026 | Agente auditor | — (novo) | ✅ Lido integralmente |
+| D-39 | `docs/auditoria/RECONCILIACAO_DRIFT_MIGRATIONS.md` | 13/10/2026 | Agente auditor | — (novo; referenciado por D-38) | ✅ Lido (via referências em D-38) |
+| D-40 | `docs/auditoria/E47_TRIAGE_E2E_2026-09-27.md` | 27/09/2026 | Agente auditor | — (novo) | ✅ Lido (18 testes E2E falhando, `auth.setup.ts` não persiste sessão) |
+| D-41 | `docs/auditoria/estado/WORKFLOWS_STATUS.md` | ~out/2026 | Agente auditor | — (novo; subdir `estado/`) | ⚠️ Identificado; não lido diretamente nesta sessão |
+
+---
+
+### S2. Resumo dos documentos recém-lidos
+
+#### D-27 · `04_AUDITORIA_MASTER_COMPLETA.md` — Auditoria Mestre Completa (19/07/2026)
+
+**Escopo:** auditoria exaustiva de segurança, multi-tenancy, cálculo financeiro e integridade. Score global: **4,11/10**.  
+**Data:** 19/07/2026 (baseline antes das Ondas de remediação).
+
+**Distribuição de 247 achados:**
+- CRITICAL (C): 52 — multi-tenancy quebrado (C01–C29), erros de cálculo financeiro (C30–C37), escalada de privilégio (C38–C41), race conditions (C42–C47), dados sensíveis (C48–C52)
+- HIGH (H): 68 — incluindo H11 (logger no-op), H13 (chave AES hardcoded no bundle)
+- MEDIUM (M): 82
+- LOW (L): 45
+
+**Sub-scores críticos:**
+- Isolamento de tenant: 2/10
+- Auth/AuthZ: 1/10
+- Integridade financeira: 3/10
+- Auditoria/Logging: 2/10
+- LGPD: 3/10
+- Frontend: 4/10
+- Funcionalidades reais: 4/10
+
+**Achados-chave do baseline:**
+- C01–C20: 20 serviços sem filtro `empresa_id` nos queries — qualquer tenant lê dados de outros.
+- C21–C29: 9 páginas/rotas expostas sem guard de tenant.
+- C30–C32: `Math.round` em vez de `Math.trunc` no cálculo de INSS, IRRF e FGTS — não conformidade legal (truncamento é exigência do Decreto 3.048/99).
+- C33: Pensão alimentícia não deduzida da base do IRRF.
+- C34: Décimo terço calculado sem período proporcional correto.
+- C49: Chave AES `'lovable-ponto-secure-v1'` hardcoded no bundle do cliente.
+- H11: `loggerService` coleta buffer mas nunca persiste — todos os logs de auditoria descartados.
+- H13: JWT `service_role` exposto em comentário de código.
+
+---
+
+#### D-37 · `LEVANTAMENTO_PENDENCIAS_2026-10-12.md` — Levantamento Completo de Pendências (12/10/2026)
+
+**Escopo:** inventário exaustivo pós-Wave 6; 900+ itens rastreados em 8 anexos; 43 gaps de maior impacto identificados e priorizados. Data: 12/10/2026.
+
+**Estado de produção em 12/10/2026:**
+- Holerites: **0**
+- Eventos eSocial: **0**
+- Registros de ponto: **0**
+- Contratos: **0**
+- Empresas: 1 (seed)
+- Colaboradores: 13 (12 seed + 1 real)
+- Folhas de pagamento: 4 (seed)
+- Guias: **0**
+
+**7 padrões sistêmicos confirmados:**
+1. Folha não executa end-to-end (cálculo em lote falha com crash).
+2. Tabelas fiscais desatualizadas (INSS 2025/2026 misto, IRRF 2024, sem Lei 15.270/2025).
+3. Integrações governamentais simuladas (eSocial, FGTS Digital, DCTFWeb, Caixa).
+4. Descontos não chegam à folha (benefícios, pensão, consignado).
+5. UI exibe sucesso falso (PDF fake, FGTS sincronizado hardcoded).
+6. Sem jobs agendados em produção (cron jobs não executam).
+7. Repo não corresponde ao banco de produção.
+
+**Top 14 gaps de maior impacto (de 43 mapeados):**
+- **LEV-01**: `calculoLoteService.ts:38-39` — selects colunas `dependentes.tipo` e `eventos_variaveis.codigo/descricao/tipo` que não existem; batch calcula zero holerites sempre.
+- **LEV-02**: Status mismatch — `calcular-folha` grava status `calculada`; `fechar-folha` exige `aberta`; fechar folha é impossível.
+- **LEV-03**: Calculadora do servidor aplica apenas salário_base − INSS − IRRF; HE, benefícios e descontos ignorados.
+- **LEV-04**: INSS: tabela 2025 no servidor vs. 2026 na UI; IRRF: tabela 2024; sem Lei 15.270/2025 (dedução por filho).
+- **LEV-05**: FGTSDigitalDashboard.tsx exibe R$ 12.450,80 hardcoded como "sincronizado via API Caixa".
+- **LEV-06**: PDF do holerite aguarda 1,5 s e retorna link `storage.lovable.dev` que não existe.
+- **LEV-07**: Senha do certificado eSocial armazenada em coluna plaintext `certificado_senha`.
+- **LEV-08**: 7 regras trabalhistas ausentes (médias variáveis para férias, art 479/480, desconto adiantamento, consignado, horas noturnas, período experimental).
+- **LEV-09**: `batchCalculationService.ts` usa `Math.round` (confirma C30–C32 do D-27 — ainda não corrigido).
+- **LEV-10**: Guias sem código de barras reais (gerador próprio inválido, sem integração bancária).
+- **LEV-11**: eSocial: apenas 2 de 27 XMLs de eventos implementados; transmissão retorna 503 fora do sandbox, sem assinatura ICP-Brasil real.
+- **LEV-12**: DCTFWeb: salva registro local, não transmite à Receita Federal.
+- **LEV-13**: Quiosque de ponto registra localização fixa hardcoded; biometria simulada.
+- **LEV-14**: `syncWithHub` (Bitrix24) é fachada vazia que retorna `true` sem chamada real.
+
+**Integração real vs. simulada:**
+- Reais (2): API de CEP/CNPJ + recebimento de webhook.
+- Simuladas (6): eSocial, FGTS Digital, DCTFWeb, PIX, WhatsApp, Bitrix24.
+- Parciais (14): folha de pagamento, ponto, holerite PDF, guias, relatórios, etc.
+- Não iniciadas (2): workflow BPMN, integração contábil.
+- Órfã (1): página `muri/` sem rota registrada.
+
+---
+
+#### D-38 · `REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS_2026-10-15.md` — Revisão Pós-Wave 6 (15/10/2026)
+
+**Escopo:** revisão de 100 itens de workflow CI/infra/segurança após PR #238 (squash `56a24a104`).  
+**Score:** **8,5/10** (era 6,5/10 pré-Waves 4–6). **Nota importante:** este score refere-se à qualidade de CI, infraestrutura e segurança de banco, NÃO à completude das funcionalidades de negócio.
+
+**Itens pendentes após Wave 6:**
+- **W73**: Reconciliação do ledger de migrations em produção (risco alto; runbook em `RECONCILIACAO_DRIFT_MIGRATIONS.md`; precisa de sessão dedicada).
+- W18: Renomear checks de CI (cosmético; risco de self-lock — não urgente).
+- W85: `secret_scanning_non_provider_patterns` (bloqueado por custo GHAS).
+- W50: Dependabot auto-merge (aguarda decisão do proprietário).
+- W36 (parcial): `--no-lock` em `deno test` (bloqueado por `deno.lock` incompleto).
+
+**Correções do Wave 6 confirmadas:**
+- Script de auditoria PII corrigido (agora usa `pg_attribute`/`pg_class` em vez de `information_schema`).
+- REVOKE EXECUTE PUBLIC em 16 funções SECURITY DEFINER.
+- Role `ci_auditor` endurecida.
+- Seed E2E com dados sintéticos aplicado ao banco vivo.
+
+---
+
+### S3. Novos achados e reclassificações
+
+#### 3.9 Cálculo Financeiro
+
+| ID | Achado | Situação | Evidência |
+|----|--------|----------|----------|
+| C30–C32 (D-27) | `Math.round` em vez de `Math.trunc` no cálculo de INSS/IRRF/FGTS | **CONFIRMADO E PENDENTE** | D-27 (19/07/2026) + LEV-09 (12/10/2026): `batchCalculationService.ts` ainda usa `Math.round`. Nenhuma correction wave cobriu este arquivo. Não conformidade legal persistente. |
+| C33 (D-27) | Pensão alimentícia não deduzida da base do IRRF | **CONFIRMADO E PENDENTE** | D-27 original + D-37 (LEV-08): regra ausente na lista de 7 omissões fiscais em out/2026. |
+| LEV-04 (D-37) | INSS tabela 2025 no servidor, 2026 na UI; IRRF tabela 2024; sem Lei 15.270/2025 | **CONFIRMADO E PENDENTE** | D-37 (12/10/2026): confirmado por leitura direta do código. Nenhum commit de atualização identificado nos Waves 1–6. |
+| LEV-02 (D-37) | Status mismatch: `calcular-folha` grava `calculada`, `fechar-folha` exige `aberta` | **CONFIRMADO E PENDENTE** | D-37: causa direta do 0 holerites em produção. Nenhuma correção nos documentos disponíveis. |
+| LEV-01 (D-37) | `calculoLoteService.ts:38-39` selects colunas inexistentes; crash no batch | **CONFIRMADO E PENDENTE** | D-37: confirma crash com coluna `tipo` inexistente em `dependentes` e `codigo/descricao/tipo` em `eventos_variaveis`. Bloqueia toda a folha de pagamento. |
+
+#### 3.10 Operacionalidade em Produção
+
+| ID | Achado | Situação | Evidência |
+|----|--------|----------|----------|
+| A-016 (reclassificação) | eSocial/FGTS/DCTFWeb declarados como ativos mas são stub | **CONFIRMADO E PENDENTE** | D-37 (12/10/2026) confirma: 0 eventos eSocial transmitidos, 0 guias gerados, FGTS retorna hardcoded. Sem progresso real após D-13. |
+| A-026 (reclassificação) | Dashboards com métricas hardcoded (FGTS R$12.450,80) | **CONFIRMADO E PENDENTE** | D-37 (LEV-05): `FGTSDigitalDashboard.tsx` ainda exibe R$12.450,80 hardcoded em 12/10/2026. Confirmado como não corrigido após 10+ ondas. |
+| LEV-06 (D-37) | Holerite PDF retorna link inexistente `storage.lovable.dev` após 1,5 s de delay | **CONFIRMADO E PENDENTE** | D-37: PDF gerado nunca funciona; UI exibe sucesso falso. |
+| LEV-07 (D-37) | Senha do certificado eSocial em coluna plaintext | **CONFIRMADO E PENDENTE** | D-37: dado sensível sem criptografia; confirma P1-025 (pgcrypto dados em repouso) como ainda pendente para este caso. |
+| LEV-13 (D-37) | Biometria de ponto simulada; geolocalização fixa hardcoded | **CONFIRMADO E PENDENTE** | D-37: confirma A-011 do D-13. |
+| H11 (D-27) | `loggerService` descarta todos os logs (buffer nunca persistido) | **CONFIRMADO E PENDENTE** | D-27 (H11, jul/2026): confirmado no baseline. Nenhuma correção identificada nas ondas seguintes. Toda auditoria de ação é perdida. |
+| C49 (D-27) | Chave AES `'lovable-ponto-secure-v1'` hardcoded no bundle cliente | **NÃO VERIFICADO** | D-27 identifica em jul/2026. D-38 (Wave 6) não menciona correção desta chave específica. Provável que ainda esteja presente. |
+
+#### 3.11 CI / Infra / Workflows
+
+| ID | Achado | Situação | Evidência |
+|----|--------|----------|----------|
+| W73 (D-38) | Ledger de migrations em produção não reconciliado | **CONFIRMADO E PENDENTE** | D-38 (15/10/2026): item explicitamente pendente com risco alto; runbook em `RECONCILIACAO_DRIFT_MIGRATIONS.md`. Confirma e complementa A-034. |
+| A-034 (reclassificação) | Drift de migrations: 747 repo vs. 428 no ledger de produção | **PARCIALMENTE CORRIGIDO** | D-38/D-39: 598 reparos aplicados via `ledger_repair.sql`; 44 itens reais pendentes. Reclassificado de "NÃO VERIFICADO" para "PARCIALMENTE CORRIGIDO". |
+| E2E / A-021 (confirmação) | 18 testes E2E de autenticação falhando; `auth.setup.ts` não persiste sessão | **CONFIRMADO E PENDENTE** | D-40 (E47_TRIAGE, set/2026): 18 testes autenticados falham; E2E não exigido pelo CI como gate. Sem provisão dos 4 secrets necessários. |
+| Score CI (D-38) | Score de workflows CI/infra: 8,5/10 pós-Wave 6 | Contexto informativo | Refere-se exclusivamente à qualidade de CI, segurança de banco e infra. **Não reflete** completude das funcionalidades de negócio (D-37: 0 holerites, 0 eSocial). |
+
+---
+
+### S4. Contradições adicionais identificadas
+
+| Achado | Documentos contraditórios | Resolução |
+|--------|---------------------------|----------|
+| Score "8,5/10" (D-38, out/2026) vs. "0 holerites em produção" (D-37, out/2026) | D-38 afirma progresso expressivo pós-Wave 6; D-37 (mesma data) documenta sistema sem nenhuma saída de negócio | Não contraditórios: medem alvos diferentes. D-38 mede CI/infra/segurança. D-37 mede operacionalidade de negócio. Ambos corretos em seus escopos. |
+| `Math.round` vs. `Math.trunc` — "corrigido" (D-16, IRRF edge function) vs. "ainda presente" (D-37, `batchCalculationService.ts`) | D-16 corrigiu cálculo de IRRF em um arquivo; D-37 confirma `Math.round` em `batchCalculationService.ts` | Não contraditórios: arquivos distintos. D-16 corrigiu a edge function; o service client-side permanece não corrigido. |
+
+---
+
+### S5. Mapa de situações (revisado)
+
+| Situação | Qtd. original | Qtd. revisada |
+|----------|--------------|--------------|
+| CONFIRMADO E PENDENTE | 12 | **21** |
+| PARCIALMENTE CORRIGIDO | 10 | **11** |
+| NÃO VERIFICADO | 8 | **8** |
+| CORRIGIDO E VERIFICADO | 1 | **1** |
+| SUPERADO POR MUDANÇA DE ARQUITETURA | 0 | 0 |
+| REINTRODUZIDO POR REGRESSÃO | 0 | 0 |
+| DUPLICADO | 0 | 0 |
+| CONTRADITÓRIO | 3 | **5** |
+
+*Acréscimo de 9 achados CONFIRMADO E PENDENTE (LEV-01, 02, 04, 06, 07, 13; C30–C32; C33; H11; W73); reclassificação de A-016, A-026 de NÃO VERIFICADO → CONFIRMADO E PENDENTE; A-034 de NÃO VERIFICADO → PARCIALMENTE CORRIGIDO.*
+
+---
+
+### S6. Decisões pendentes — status atualizado
+
+| # | Decisão | Status anterior | Status revisado |
+|---|---------|----------------|----------------|
+| 1 | Banco canônico correto | Pendente — possível drift | **RESOLVIDO**: `frjbfeamybqsejlvmqbl` confirmado canônico em D-13, D-15, D-38. `bwwbeyolnnzppeuhgkcd` era erro pontual do conector, não banco alternativo real. |
+| 2 | Squash das 640+ migrations vs. 362 no ledger | Pendente — decisão arquitetural | **PARCIALMENTE AVANÇADO**: `ledger_repair.sql` com 598 reparos aplicados (D-39); 44 reais pendentes. Próximo passo: W73 — sessão dedicada com runbook. |
+| 3 | Dados de produção: sintéticos ou reais? | Pendente | **CONFIRMADO SINTÉTICOS**: D-37 lista 13 colaboradores, 4 folhas, 0 holerites/eventos — tudo seed. Operações agressivas permitidas. |
+| 4 | Credenciais comprometidas (senha do banco + JWT service_role) | Pendente | **AINDA NÃO VERIFICADO**: nenhum documento posterior a D-12 (set/2026) confirma rotação. Ponto crítico em aberto. |
+| 5 | PRs devin/* e claude/* | Pendente | **RESOLVIDO**: 5 PRs mergeadas em 31/10/2026; PR #315 permanece aberta aguardando revisão humana (`.github/workflows/` — Regra 8). |
+
+---
+
+*Suplemento gerado em 01/11/2026 por GitHub Copilot. Documentos originais preservados sem modificação.*
