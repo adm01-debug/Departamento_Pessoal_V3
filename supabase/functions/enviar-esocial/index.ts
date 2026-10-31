@@ -28,6 +28,7 @@ import {
 } from '../_shared/idempotency.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
 import { assertSandboxAmbiente, transmissionHttpStatus } from './transmissionStatus.ts';
+import { montarS2299 } from './s2299.ts';
 
 const BodySchema = z.object({
   empresaId: z.string().uuid(),
@@ -322,6 +323,11 @@ function montarXMLEvento(
         `<infoRegime><regTrab><tpRegJor>1</tpRegJor></regTrab></infoRegime>` +
         `<infoContrato><codCargo>${xe(d.codCargo ?? '001')}</codCargo>` +
         `<dtAdm>${xe(d.dtAdm ?? new Date().toISOString().split('T')[0])}</dtAdm></infoContrato></vinculo>`;
+      break;
+    case 'S-2299':
+      // Desligamento — leiaute S-1.2 em ./s2299.ts (verbasResc dentro de
+      // infoDeslig; detVerbas em dmDev > infoPerApur > ideEstabLot).
+      conteudoEvento = montarS2299(xe, d, timestamp);
       break;
     default:
       // Fallback seguro: serializa como CDATA para nunca injetar tags externas

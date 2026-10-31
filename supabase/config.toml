@@ -21,6 +21,16 @@ project_id = "frjbfeamybqsejlvmqbl"
 [functions.auth-login]
 verify_jwt = false
 
+# auth-gov-br: o botão "Entrar com gov.br" da tela de login chama a função
+# SEM sessão (get_auth_url e callback anônimos). Com a chave publishable
+# (sb_publishable_*, não é JWT) o gateway com verify_jwt = true recusaria a
+# chamada antes do código. O JWT, quando presente, é validado na própria
+# função (auth.getUser) e decide o modo vinculação vs. login. Proteções
+# próprias: CORS/Origin allowlist, CSRF por Origin, rate limit 5/min por
+# usuário ou IP, state uuid com TTL 10 min de uso único.
+[functions.auth-gov-br]
+verify_jwt = false
+
 # E-029: healthcheck/metrics servem probes de monitoramento (Prometheus/
 # uptime) que não carregam JWT. Mantidos públicos de forma explícita e
 # documentada; expõem apenas status agregado, sem PII nem dados de negócio.
