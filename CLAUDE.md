@@ -1,5 +1,9 @@
 # AI Context — Departamento Pessoal v3
 
+> Regras de trabalho do dono (como trabalhar, Git, PR, comunicação): `AGENTS.md`, importado abaixo.
+
+@AGENTS.md
+
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
 > Última atualização: 19/10/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
