@@ -164,7 +164,7 @@ const RE = {
   exp: /export\s+(?:async\s+)?(?:const|let|var|function\*?|class|enum|interface|type|abstract\s+class)\s+([A-Za-z_$][\w$]*)/g,
   expList: /export\s*\{([^}]+)\}/g,
   expDefault: /export\s+default\s+(?:async\s+)?(?:function\s*\*?\s*|class\s+)?([A-Za-z_$][\w$]*)?/g,
-  storage: /storage\.from\(\s*['"`]([\w-]+)['"`]/g,
+  storage: /\bstorage\s*\.from\(\s*['"`]([\w-]+)['"`]/g,
   channel: /\.channel\(\s*['"`]([^'"`]+)['"`]/g,
   urlHost: /https?:\/\/([a-z0-9.-]+\.[a-z]{2,})(?=[/'"`\s)?]|$)/gi,
   flag: /(?:isFeatureEnabled|useFeatureFlag|useFlag|useFeature|getFlag|featureFlag|isEnabled)\(\s*['"`]([\w.:-]+)['"`]/g,

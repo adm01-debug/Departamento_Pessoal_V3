@@ -322,6 +322,25 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
         self.assertIn("api.edge_functions", s.CARRIED)
         self.assertTrue(readme.exists(), "falha de coleta apagou o README da edge")
 
+    def test_failed_first_edge_function_listing_is_unavailable_not_empty(self):
+        s = self.snapshot
+        s.ERRORS.clear()
+        s.CARRIED.clear()
+        with mock.patch.object(s, "PROJECT_REF", "ref"), mock.patch.object(s, "ACCESS_TOKEN", "x"), \
+                mock.patch.object(s, "api_section", return_value=None), contextlib.redirect_stdout(io.StringIO()):
+            out, _stats = s.introspect_api(None)
+        self.assertIsNone(out["edge_functions"])
+        self.assertNotIn("api.edge_functions", s.CARRIED)
+
+    def test_failed_db_stats_renders_storage_as_unavailable(self):
+        s = self.snapshot
+        self.out.mkdir(parents=True, exist_ok=True)
+        with mock.patch.object(s, "OUT", self.out):
+            s.render_stats({"db_stats": None}, {}, {})
+            self.assertIn("_indisponível nesta coleta", (self.out / "stats.md").read_text().split("## Storage", 1)[1])
+            s.render_stats({"db_stats": {"storage": []}}, {}, {})
+            self.assertIn("_nenhum_", (self.out / "stats.md").read_text().split("## Storage", 1)[1].split("##", 1)[0])
+
 
 class SnapshotFailureMatrixTests(SnapshotFixture):
     """24 sequências: seção × histórico/SQL disponível × repetição × recuperação."""

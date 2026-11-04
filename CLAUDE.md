@@ -43,9 +43,10 @@ Ler sem trocar de branch: `git fetch origin contexto && git show origin/contexto
 - Testes offline: `node --test scripts/tests/contexto-*.test.mjs scripts/tests/inventario-*.test.mjs`
   (rodam no job `security-config` do `ci.yml`).
 - Sessão na nuvem: `.claude/hooks/session-start.sh` instala o graphify e gera o grafo em segundo plano
-  (log em `graphify-out/.session-start.log`; clone sem `graph.json` faz build completo). Os versionados
-  `GRAPH_REPORT.md`/`manifest.json` voltam ao commitado depois do build (`git status` limpo); o relatório
-  fresco fica em `graphify-out/GRAPH_REPORT.sessao.md`.
+  (log em `graphify-out/.session-start.log`; clone sem `graph.json` faz build completo). Se os versionados
+  `GRAPH_REPORT.md`/`manifest.json` estavam limpos, voltam ao commitado depois de um build bem-sucedido
+  (`git status` limpo) e o relatório fresco fica em `graphify-out/GRAPH_REPORT.sessao.md`; se já estavam
+  editados, o hook não mexe neles.
 
 ## 📋 Sumário
 

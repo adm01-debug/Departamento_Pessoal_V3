@@ -935,7 +935,8 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     if edges_falhou and previous_api and previous_api.get("edge_functions") is not None:
         edge_functions = previous_api["edge_functions"]
         CARRIED.append("api.edge_functions")
-    out["edge_functions"] = edge_functions or []
+    # Sem coleta anterior para reaproveitar, a falha fica None ("indisponível"), não [] ("nenhuma edge").
+    out["edge_functions"] = edge_functions
     out["secrets_names"] = api_section("secrets", f"/projects/{ref}/secrets", lambda s: sorted(x.get("name") for x in s if isinstance(x, dict)))
     out["auth_config"] = api_section("auth_config", f"/projects/{ref}/config/auth", redact)
     out["postgrest_config"] = api_section("postgrest_config", f"/projects/{ref}/postgrest", redact)
@@ -956,7 +957,7 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     # o fonte canônico é supabase/functions/<slug>/ no repo.
     fn_dir = OUT / "edge-functions"
     current = set()
-    for f in out["edge_functions"]:
+    for f in out["edge_functions"] or []:
         s = f["slug"]
         current.add(s)
         md = [f"# Edge Function `{s}`\n", md_table(["campo", "valor"], [
@@ -1533,8 +1534,9 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
     if api_.get("enabled"):
         md = ["# Edge Functions\n", f"URL base: `{api_['url']}/functions/v1/<slug>`. Metadados por função em `edge-functions/<slug>/README.md`. "
               "A Management API devolve só o bundle compilado; o fonte canônico é `supabase/functions/<slug>/` no repo.\n",
-              md_table(["slug", "nome", "status", "versão", "verify_jwt", "entrypoint"],
-                       [[f["slug"], f["name"], f["status"], f["version"], f["verify_jwt"], f["entrypoint_path"]] for f in api_.get("edge_functions") or []])]
+              ("_indisponível nesta coleta (ver errors.md)_\n" if api_.get("edge_functions") is None else
+               md_table(["slug", "nome", "status", "versão", "verify_jwt", "entrypoint"],
+                        [[f["slug"], f["name"], f["status"], f["version"], f["verify_jwt"], f["entrypoint_path"]] for f in api_.get("edge_functions") or []]))]
         md.append("\n## Secrets (apenas nomes)\n\n" + md_table(["nome"], [[s] for s in api_.get("secrets_names") or []]))
         write(OUT / "edge-functions.md", "\n".join(md))
         cfg = {k: api_.get(k) for k in ("project", "url", "postgrest_config", "postgres_config", "pooler_config", "network_restrictions",
@@ -1566,7 +1568,8 @@ def render_stats(stats: dict, api_stats: dict, db: dict) -> None:
           "\n## Índices nunca usados (candidatos a remoção; ignore PK/UNIQUE)\n",
           md_table(["índice", "tabela", "tamanho"], [[i["name"], f"{i['schema']}.{i['table']}", human_bytes(i["bytes"])]
                                                      for i in ist if i["scans"] == 0 and not i["is_unique"] and not i["is_primary"] and i["bytes"] > 65536]),
-          "\n## Storage\n", ("_indisponível nesta coleta (ver errors.md)_\n" if ds and ds.get("storage") is None else
+          # db_stats inteiro falhou (None) ou só o storage falhou: nos dois casos não é "nenhum bucket".
+          "\n## Storage\n", ("_indisponível nesta coleta (ver errors.md)_\n" if stats.get("db_stats") is None or ds.get("storage") is None else
                              md_table(["bucket", "objetos (~)", "tamanho"], [[s["bucket_id"], approx(s["objects"]), human_bytes(s["bytes"])] for s in ds.get("storage") or []])),
           "\n## Auth (agregados)\n"]
     a = ds.get("auth") or {}
@@ -1605,9 +1608,9 @@ def render_readme(snap: dict, api_: dict, caller_sources: dict[str, str] | None 
         ["tabelas", len(db.get("tables") or [])], ["colunas", len(db.get("columns") or [])], ["views", len(db.get("views") or [])],
         ["functions", len(db["functions"]) if db.get("functions") is not None else "n/d"], ["triggers", len(db.get("triggers") or [])], ["policies (RLS)", len(db.get("policies") or [])],
         ["índices", len(db.get("indexes") or [])], ["tipos/enums", len(db.get("types") or [])], ["extensões", len(db.get("extensions") or [])],
-        ["cron jobs", len(cron.get("jobs") or [])], ["filas pgmq", len(((db.get("queues") or {}).get("queues")) or [])],
-        ["migrations", len(db["migrations"]) if db.get("migrations") is not None else "n/d"], ["buckets", len(db.get("storage") or [])],
-        ["edge functions", len(api_.get("edge_functions") or []) if api_.get("enabled") else "n/d"], ["webhooks", len(db.get("webhooks") or [])],
+        ["cron jobs", len(cron.get("jobs") or []) if db.get("cron") is not None else "n/d"], ["filas pgmq", len(((db.get("queues") or {}).get("queues")) or [])],
+        ["migrations", len(db["migrations"]) if db.get("migrations") is not None else "n/d"], ["buckets", len(db.get("storage") or []) if db.get("storage") is not None else "n/d"],
+        ["edge functions", len(api_["edge_functions"]) if api_.get("enabled") and api_.get("edge_functions") is not None else "n/d"], ["webhooks", len(db.get("webhooks") or [])],
         ["lints ALTA", sum(1 for l in lints if l["severity"] == "ALTA")], ["lints total", len(lints)],
     ]
     server = db.get("server") or {}
