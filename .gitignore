@@ -57,3 +57,9 @@ assertion-results.json
 # Worktrees locais de subagentes (checkouts isolados em paralelo) -- scratch
 # de execução, nunca conteúdo do repositório.
 .claude/worktrees/
+
+# gerado pelo contexto.yml na branch contexto (nunca em main); manual/ é texto humano e fica em main
+docs/contexto/*
+!docs/contexto/regras/
+docs/contexto/regras/*
+!docs/contexto/regras/manual/

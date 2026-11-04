@@ -160,3 +160,7 @@ retorna 403 em write; `git push` e `gh` só funcionam quando o repo é fonte aut
 ## 8. Específico deste repositório
 
 Conteúdo técnico (banco, deploy, CI, regras de domínio) em [`CLAUDE.md`](CLAUDE.md).
+
+**Antes de qualquer tarefa ou planejamento:** leia o contexto gerado para agentes — `docs/contexto/00-INDEX.md`
+na branch `contexto` (`git show origin/contexto:docs/contexto/00-INDEX.md`) e `inventario/estado/` na `main`.
+Detalhes em `CLAUDE.md`, seção "Contexto e inventário para agentes de IA".

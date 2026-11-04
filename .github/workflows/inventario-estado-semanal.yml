@@ -1,0 +1,167 @@
+# docs:
+#   gatilho: agendado (seg 10:23 UTC) e dispatch sobre main
+#   prova: inventario/estado (banco, rotas, edges) regerado do banco canônico (role ci_auditor) e do código
+#   falha: o job fica vermelho e o inventário não é atualizado
+#   avisa: PR automation/inventario-estado com o inventário novo (auto-merge habilitado)
+#   origem: pacote "scripts autônomos" do Zapp Web V2 (inventario-estado-semanal.yml), adaptado ao DP V3
+# nao-e-bug:
+#   - sem-pr: "Inventário sem mudança de conteúdo" = só datas/telemetria/estimativas mudaram (ver mudou-conteudo.mjs)
+#   - coleta-parcial: o ci_auditor não lê histórico do cron nem o ledger; o alerta coleta_parcial registra isso
+name: Inventário do estado real (semanal)
+
+# Refaz inventario/estado/ (banco, edge functions, rotas do front) a partir do banco canônico
+# (somente leitura) e do código, e abre PR se algo mudou. Nunca faz push direto em main.
+# Scripts: scripts/inventario/gerar-banco.mjs, gerar-rotas.mjs, gerar-repo.mjs e mudou-conteudo.mjs.
+#
+# Diferenças em relação ao Zapp Web V2:
+#   - credencial: secret de repositório SUPABASE_DB_URL_READONLY (role ci_auditor, o mesmo do
+#     db-integrity-live do ci.yml). SUPABASE_ACCESS_TOKEN/SUPABASE_DB_URL vivem no environment
+#     Production, com revisor obrigatório — o job semanal travaria esperando aprovação.
+#   - PR aberto com git + gh (sem peter-evans/create-pull-request, fora da allowlist de actions),
+#     mesmo desenho do workflows-report.yml.
+#   - PR aberto com GITHUB_TOKEN nasce com os checks do Actions em action_required (política anti-loop);
+#     o passo "Destravar os checks" os aprova com actions:write — desenho provado no types-sync do Zapp
+#     (run 36134562996). Se nada aparecer para aprovar, o PR fica aberto esperando um humano.
+
+on:
+  schedule:
+    - cron: '23 10 * * 1' # segunda 10:23 UTC (07:23 BRT): fora de ruleset-sync (07:41), healthcheck (:17) e Dependabot (12:00)
+  workflow_dispatch:
+
+concurrency:
+  group: inventario-estado-semanal
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  gerar:
+    name: Refazer inventario/estado
+    # O dispatch não deve executar código de uma ref arbitrária com token de escrita.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:  # zizmor: ignore[excessive-permissions]
+      contents: write       # branch do PR
+      pull-requests: write  # abrir/atualizar o PR
+      actions: write        # liberar os checks do PR aberto com GITHUB_TOKEN
+    env:
+      BRANCH_PR: automation/inventario-estado
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Instalar psql e ripgrep
+        # Versão major fixa do cliente, como no db-integrity-live (W41).
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client-16 ripgrep
+
+      - name: Inventário do banco (somente leitura, ci_auditor)
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL_READONLY }}
+        run: |
+          if [ -z "${DATABASE_URL:-}" ]; then
+            echo "::error::Secret SUPABASE_DB_URL_READONLY ausente."
+            exit 1
+          fi
+          node scripts/inventario/gerar-banco.mjs
+
+      - name: Inventário do repositório (rotas e edge functions)
+        run: |
+          node scripts/inventario/gerar-rotas.mjs
+          # < /dev/null: sem lista de tabelas no stdin o script só grava edges.json (o uso de tabelas sai no banco.json)
+          node scripts/inventario/gerar-repo.mjs < /dev/null
+
+      - name: Decidir se vale PR
+        id: mudou
+        # Compara o JSON sem carimbos de data, telemetria do cron e estimativas de linhas/bytes,
+        # arquivo a arquivo contra o HEAD (o edges.json é gravado numa linha só, com a data).
+        run: |
+          valor="$(node scripts/inventario/mudou-conteudo.mjs)"
+          echo "valor=$valor" >> "$GITHUB_OUTPUT"
+          if [ "$valor" != "true" ]; then
+            echo "Inventário sem mudança de conteúdo — nenhum PR a abrir."
+          fi
+
+      - name: Abrir ou atualizar PR do inventário
+        id: pr
+        if: steps.mudou.outputs.valor == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HUSKY: '0'
+          ORIGEM: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # Branch de uso exclusivo deste workflow: recriada a partir da main a cada run e enviada com
+          # --force, então o PR aberto é atualizado no lugar em vez de ganhar um concorrente.
+          git checkout -B "$BRANCH_PR"
+          git add inventario/estado/banco.json inventario/estado/rotas.json inventario/estado/edges.json
+          git commit --quiet -m 'chore: inventario do estado real [auto]'
+          git push --quiet --force "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/$BRANCH_PR"
+          numero="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH_PR" --state open --json number --jq '.[0].number // empty')"
+          if [ -z "$numero" ]; then
+            # shellcheck disable=SC2016 # crases do Markdown, não expansão
+            corpo="$(printf 'Inventário refeito automaticamente por `.github/workflows/inventario-estado-semanal.yml`: banco canônico (somente leitura, role ci_auditor) + código. Só arquivos em `inventario/estado/`.\n\n- main de origem: `%s`\n- run: %s\n' "$ORIGEM" "$RUN_URL")"
+            gh pr create --repo "$GITHUB_REPOSITORY" --base main --head "$BRANCH_PR" \
+              --title 'chore: inventário do estado real (semanal)' --body "$corpo"
+            numero="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH_PR" --state open --json number --jq '.[0].number // empty')"
+          fi
+          echo "numero=$numero" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "PR #$numero @ $(git rev-parse --short HEAD)"
+
+      - name: Destravar os checks do PR do inventário
+        if: steps.pr.outputs.sha != ''
+        # contrato: melhor esforço — sem a liberação os checks esperam aprovação manual na aba Actions e o PR fica aberto
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_SHA: ${{ steps.pr.outputs.sha }}
+        run: |
+          ids=""
+          for tentativa in 1 2 3 4 5 6; do
+            ids="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$PR_SHA&status=action_required&per_page=20" --jq '.workflow_runs[].id')"
+            if [ -n "$ids" ]; then break; fi
+            echo "tentativa $tentativa: nenhum run em action_required ainda"
+            sleep 10
+          done
+          liberados=0
+          for id in $ids; do
+            if gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/approve" >/dev/null; then
+              liberados=$((liberados + 1))
+            else
+              echo "::warning::não foi possível liberar o run $id — aprovar na aba Actions"
+            fi
+          done
+          echo "### Checks do PR do inventário: $liberados liberado(s) (head $PR_SHA)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Habilitar auto-merge no PR do inventário
+        if: steps.pr.outputs.numero != ''
+        # contrato: melhor esforço — sem auto-merge o PR fica aberto esperando merge manual
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.numero }}
+        run: gh pr merge --auto --squash "$PR_NUMBER" --repo "$GITHUB_REPOSITORY"
+
+      - name: Upload do inventário
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: inventario-estado-${{ github.run_id }}
+          path: inventario/estado/
+          retention-days: 14
