@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "173dc0cac07292a3f965ffce4fcc69a52a4e88ef",
+  "commit": "a82cc073669db9d3079386bbba595522aebf2166",
   "branch": "main",
-  "data_commit": "2026-11-04T10:16:31-03:00",
+  "data_commit": "2026-11-04T13:25:48Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a82cc07",
+    "data": "2026-11-04",
+    "assunto": "chore: inventario do estado real [auto] (#346)"
+   },
    {
     "sha": "173dc0c",
     "data": "2026-11-04",
@@ -126,14 +131,9 @@
     "sha": "210650e",
     "data": "2026-10-28",
     "assunto": "docs(pendencias): atualizar status pós-merge do PR #311 (#326)"
-   },
-   {
-    "sha": "1d88cff",
-    "data": "2026-10-28",
-    "assunto": "docs: pendências V4 — PR #315, rotação senhas E2E, Turnstile, deploy edges (#318)"
    }
   ],
-  "arquivos_mudados_7d": 245,
+  "arquivos_mudados_7d": 246,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/services/__tests__",
@@ -141,15 +141,15 @@
    },
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 87
+    "mudancas": 83
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 52
+    "mudancas": 51
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 43
+    "mudancas": 42
    },
    {
     "pasta": "CLAUDE.md",
@@ -160,14 +160,6 @@
     "mudancas": 19
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 18
-   },
-   {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 18
-   },
-   {
     "pasta": "src/utils/__tests__",
     "mudancas": 17
    },
@@ -176,11 +168,15 @@
     "mudancas": 16
    },
    {
-    "pasta": "PENDENCIAS.md",
-    "mudancas": 12
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 16
    },
    {
-    "pasta": "src/integrations/supabase",
+    "pasta": "supabase/functions/external-db-bridge",
+    "mudancas": 13
+   },
+   {
+    "pasta": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
@@ -192,18 +188,22 @@
     "mudancas": 11
    },
    {
-    "pasta": "src/services/cnabService.ts",
+    "pasta": "src/integrations/supabase",
     "mudancas": 10
+   },
+   {
+    "pasta": ".github/workflows/ci.yml",
+    "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 105
+    "mudancas": 104
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 98
+    "mudancas": 97
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 100
+    "commits": 97
    },
    {
     "autor": "adm01-debug",
@@ -313,7 +313,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 2
+    "commits": 3
    },
    {
     "autor": "Claude",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2776,
+  "arquivos_total": 2777,
   "arquivos_codigo": 1507,
   "linhas_codigo": 260341,
   "rotas": 113,

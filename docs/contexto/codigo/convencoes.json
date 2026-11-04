@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: inventario do estado real [auto] (#346)",
    "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)",
    "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)",
    "fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)",
-   "feat: security hardening - cherry-pick PR 315 sem workflows (#334)",
-   "fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)"
+   "feat: security hardening - cherry-pick PR 315 sem workflows (#334)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

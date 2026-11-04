@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "173dc0cac07292a3f965ffce4fcc69a52a4e88ef",
+  "sha": "a82cc073669db9d3079386bbba595522aebf2166",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-04 13:18 UTC",
-  "files_total": 2796,
+  "generated_at": "2026-11-04 20:28 UTC",
+  "files_total": 2797,
   "code_files": 2322,
   "code_lines": 308232
  },
@@ -274301,10 +274301,20 @@
   }
  },
  "git": {
-  "sha": "173dc0cac07292a3f965ffce4fcc69a52a4e88ef",
+  "sha": "a82cc073669db9d3079386bbba595522aebf2166",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a82cc07",
+    "date": "2026-11-04",
+    "author": "github-actions[bot]",
+    "subject": "chore: inventario do estado real [auto] (#346)",
+    "files": [
+     "inventario/estado/banco.json",
+     "inventario/estado/edges.json"
+    ]
+   },
    {
     "sha": "173dc0c",
     "date": "2026-11-04",
@@ -274760,58 +274770,6 @@
      "supabase/functions/processar-ponto/index.ts",
      "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
     ]
-   },
-   {
-    "sha": "4e2e522",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(docs+ui): remove docs fantasma e toast falso de sync FGTS (#310)",
-    "files": [
-     "AGENTS.md",
-     "BACKLOG_11_ITEMS.md",
-     "CLAUDE.md",
-     "README.md",
-     "docs/api/admissoes.md",
-     "docs/api/alertas.md",
-     "docs/api/aprovacoes.md",
-     "docs/api/auditoria.md",
-     "docs/api/autenticacao.md",
-     "docs/api/beneficios.md",
-     "docs/api/calculos.md",
-     "docs/api/cargos.md",
-     "docs/api/colaboradores.md",
-     "docs/api/comentarios.md",
-     "docs/api/configuracoes.md",
-     "docs/api/dashboard.md",
-     "docs/api/departamentos.md",
-     "docs/api/documentos.md",
-     "docs/api/empresas.md",
-     "docs/api/esocial.md",
-     "docs/api/exportacao.md",
-     "docs/api/ferias.md",
-     "docs/api/folhaPagamento.md",
-     "docs/api/guias.md",
-     "docs/api/historico.md",
-     "docs/api/importacao.md",
-     "docs/api/integracao.md",
-     "docs/api/integracoes.md",
-     "docs/api/kpis.md",
-     "docs/api/notificacoes.md",
-     "docs/api/permissoes.md",
-     "docs/api/ponto.md",
-     "docs/api/relatorios.md",
-     "docs/api/rescisoes.md",
-     "docs/api/sst.md",
-     "docs/api/tarefas.md",
-     "docs/api/treinamentos.md",
-     "docs/api/upload.md",
-     "docs/api/usuarios.md",
-     "docs/api/webhooks.md",
-     "docs/api/workflow.md",
-     "netlify.toml",
-     "nginx.conf",
-     "src/pages/ObrigacoesFiscaisPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -274821,11 +274779,11 @@
    ],
    [
     "AGENTS.md",
-    4
+    3
    ],
    [
     "CLAUDE.md",
-    4
+    3
    ],
    [
     "e2e/auth.setup.ts",
@@ -274840,15 +274798,15 @@
     3
    ],
    [
+    "inventario/estado/edges.json",
+    2
+   ],
+   [
     "infra/github/action-pins.json",
     2
    ],
    [
     ".github/workflows/security.yml",
-    2
-   ],
-   [
-    "nginx.conf",
     2
    ],
    [
@@ -274866,6 +274824,10 @@
    [
     "scripts/canonical-invariants.sql",
     2
+   ],
+   [
+    "inventario/estado/banco.json",
+    1
    ],
    [
     ".claude/hooks/session-start.sh",
@@ -274889,10 +274851,6 @@
    ],
    [
     ".gitignore",
-    1
-   ],
-   [
-    "ai-context.config.json",
     1
    ]
   ]
