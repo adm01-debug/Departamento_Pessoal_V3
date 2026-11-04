@@ -1,0 +1,33 @@
+{
+  "carried": [],
+  "entrada": "README.md",
+  "erros": [
+    {
+      "error": "cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável",
+      "section": "cron"
+    },
+    {
+      "error": "permission denied for schema supabase_migrations",
+      "section": "migrations"
+    },
+    {
+      "error": "permission denied for schema storage",
+      "section": "storage"
+    },
+    {
+      "error": "permission denied for schema vault",
+      "section": "vault"
+    },
+    {
+      "error": "permission denied for schema storage",
+      "section": "db_stats.storage"
+    },
+    {
+      "error": "permission denied for schema auth",
+      "section": "db_stats.auth"
+    }
+  ],
+  "gerado_em": "2026-11-04T13:18:40Z",
+  "gerador": "scripts/supabase_snapshot/snapshot.py",
+  "produtor": "supabase-snapshot"
+}

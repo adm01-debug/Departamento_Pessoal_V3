@@ -1,0 +1,109 @@
+# public.promo_brindes
+
+| propriedade | valor |
+|---|---|
+| tipo | table |
+| owner | postgres |
+| RLS habilitado | sim |
+| RLS forçado (owner) | não |
+| policies | 4 |
+| realtime (publication) | não |
+| replica identity | default |
+| vem de extensão | não |
+
+
+## Colunas
+
+| # | coluna | tipo | nullable | default | identity/generated | comentário |
+|---|---|---|---|---|---|---|
+| 1 | `id` | `uuid` | não | `gen_random_uuid()` |  |  |
+| 2 | `nome` | `text` | não |  |  |  |
+| 3 | `descricao` | `text` | sim |  |  |  |
+| 4 | `preco` | `numeric(10,2)` | sim | `0` |  |  |
+| 5 | `estoque` | `integer` | sim | `0` |  |  |
+| 6 | `categoria` | `text` | sim |  |  |  |
+| 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
+
+
+## Constraints
+
+| nome | tipo | definição | on delete | on update | validada |
+|---|---|---|---|---|---|
+| promo_brindes_nome_key | UNIQUE | `UNIQUE (nome)` |  |  | sim |
+| promo_brindes_pkey | PRIMARY KEY | `PRIMARY KEY (id)` |  |  | sim |
+
+
+## Referenciada por (FKs de outras tabelas)
+
+| tabela | constraint | colunas | on delete |
+|---|---|---|---|
+| public.times_brindes | times_brindes_brinde_id_fkey | brinde_id | CASCADE |
+
+
+## Índices
+
+| nome | método | colunas | único | válido | predicado | definição |
+|---|---|---|---|---|---|---|
+| promo_brindes_nome_key | btree | nome | sim | sim |  | `CREATE UNIQUE INDEX promo_brindes_nome_key ON public.promo_brindes USING btree (nome)` |
+| promo_brindes_pkey | btree | id | sim | sim |  | `CREATE UNIQUE INDEX promo_brindes_pkey ON public.promo_brindes USING btree (id)` |
+
+
+## Policies (RLS)
+
+### `Enable read access for all users`
+
+| campo | valor |
+|---|---|
+| comando | SELECT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `true` |
+| WITH CHECK |  |
+
+### `Promo brindes admin delete`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `has_role(auth.uid(), 'admin'::app_role)` |
+| WITH CHECK |  |
+
+### `Promo brindes admin update`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `has_role(auth.uid(), 'admin'::app_role)` |
+| WITH CHECK | `has_role(auth.uid(), 'admin'::app_role)` |
+
+### `Promo brindes admin write`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `has_role(auth.uid(), 'admin'::app_role)` |
+
+
+## Triggers
+
+| nome | timing | eventos | nível | status | função |
+|---|---|---|---|---|---|
+| update_promo_brindes_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |
+
+
+## Grants
+
+| role | privilégios |
+|---|---|
+| anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| dp_mcp_role | SELECT |
+| service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
