@@ -372,6 +372,11 @@ jobs:
           node scripts/tests/rebaseline-artifact.test.mjs
           node scripts/tests/validate-canonical-db-url.test.mjs
           node scripts/tests/workflows-contract.test.mjs
+      - name: Contexto e inventário para agentes de IA (offline)
+        # Suítes dos scripts autônomos portados do Zapp Web V2 (sem banco, rede ou credencial):
+        # geradores de contexto (codigo/, supabase/, regras/), publicação real da branch contexto
+        # com git local, índice único, inventário do banco/rotas e rotas.json em dia com o código.
+        run: node --test scripts/tests/contexto-*.test.mjs scripts/tests/inventario-*.test.mjs
       - name: Lockfile único npm (W03)
         run: bash scripts/tests/lockfile-single.test.sh
       - name: Paridade package.json ↔ package-lock.json (W98)
