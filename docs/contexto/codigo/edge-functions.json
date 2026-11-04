@@ -1,0 +1,2602 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "pasta": "supabase/functions",
+ "total": 65,
+ "verify_jwt_false": [
+  "admissao-publica",
+  "auth-gov-br",
+  "auth-login",
+  "healthcheck",
+  "metrics",
+  "webhook"
+ ],
+ "shared": [
+  "supabase/functions/_shared/aal2.test.ts",
+  "supabase/functions/_shared/aal2.ts",
+  "supabase/functions/_shared/authz.ts",
+  "supabase/functions/_shared/cache.ts",
+  "supabase/functions/_shared/clientIp.test.ts",
+  "supabase/functions/_shared/clientIp.ts",
+  "supabase/functions/_shared/contract.test.ts",
+  "supabase/functions/_shared/contract.ts",
+  "supabase/functions/_shared/csrf.ts",
+  "supabase/functions/_shared/folhaIntegrity.ts",
+  "supabase/functions/_shared/idempotency.test.ts",
+  "supabase/functions/_shared/idempotency.ts",
+  "supabase/functions/_shared/inss.test.ts",
+  "supabase/functions/_shared/inss.ts",
+  "supabase/functions/_shared/integrityHash.test.ts",
+  "supabase/functions/_shared/integrityHash.ts",
+  "supabase/functions/_shared/irrf.test.ts",
+  "supabase/functions/_shared/irrf.ts",
+  "supabase/functions/_shared/logger.ts",
+  "supabase/functions/_shared/monitor.ts",
+  "supabase/functions/_shared/originSecurity.test.ts",
+  "supabase/functions/_shared/outboundDelivery.test.ts",
+  "supabase/functions/_shared/outboundDelivery.ts",
+  "supabase/functions/_shared/rateLimit.test.ts",
+  "supabase/functions/_shared/rateLimit.ts",
+  "supabase/functions/_shared/resendDelivery.test.ts",
+  "supabase/functions/_shared/resendDelivery.ts",
+  "supabase/functions/_shared/rpc-error-logging.ts",
+  "supabase/functions/_shared/safe-fetch.ts",
+  "supabase/functions/_shared/schemas/colaborador.ts",
+  "supabase/functions/_shared/schemas/common.ts",
+  "supabase/functions/_shared/sentry.ts",
+  "supabase/functions/_shared/ssrf-guard.test.ts",
+  "supabase/functions/_shared/ssrf-guard.ts",
+  "supabase/functions/_shared/trace.ts"
+ ],
+ "edges": [
+  {
+   "nome": "OCR",
+   "entrada": "supabase/functions/OCR/index.ts",
+   "arquivos": 1,
+   "linhas": 162,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "LOVABLE_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.lovable.dev"
+   ],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "adiantamento-salarial",
+   "entrada": "supabase/functions/adiantamento-salarial/index.ts",
+   "arquivos": 1,
+   "linhas": 171,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "adiantamentos_salariais",
+    "auditoria",
+    "colaboradores",
+    "parametros_sistema"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "admissao-publica",
+   "entrada": "supabase/functions/admissao-publica/index.ts",
+   "arquivos": 1,
+   "linhas": 126,
+   "verify_jwt": false,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "admissao_tokens"
+   ],
+   "rpcs": [
+    "admissao_registrar_documento"
+   ],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/pages/ContratacaoPage.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "alertas-dp",
+   "entrada": "supabase/functions/alertas-dp/index.ts",
+   "arquivos": 2,
+   "linhas": 534,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "asos",
+    "colaboradores",
+    "notificacoes",
+    "user_empresas",
+    "user_roles",
+    "v_login_anomalies"
+   ],
+   "rpcs": [
+    "get_company_rh_recipient_emails"
+   ],
+   "env": [
+    "RESEND_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "resendDelivery.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "alertas-preditivos",
+   "entrada": "supabase/functions/alertas-preditivos/index.ts",
+   "arquivos": 1,
+   "linhas": 428,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "afastamentos",
+    "colaboradores",
+    "desligamentos",
+    "faltas",
+    "notificacoes",
+    "registros_ponto"
+   ],
+   "rpcs": [],
+   "env": [
+    "AI_GATEWAY_API_KEY",
+    "AI_GATEWAY_URL",
+    "LOVABLE_API_KEY",
+    "OPENAI_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.openai.com"
+   ],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "assinaturaDigital",
+   "entrada": "supabase/functions/assinaturaDigital/index.ts",
+   "arquivos": 1,
+   "linhas": 165,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "admissao_tokens",
+    "audit_log"
+   ],
+   "rpcs": [
+    "is_admin"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "assistente-ia",
+   "entrada": "supabase/functions/assistente-ia/index.ts",
+   "arquivos": 1,
+   "linhas": 166,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "LOVABLE_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "ai-gateway.lovable.dev"
+   ],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "auditoria",
+   "entrada": "supabase/functions/auditoria/index.ts",
+   "arquivos": 1,
+   "linhas": 163,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "auditoria"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "clientIp.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "auth-gov-br",
+   "entrada": "supabase/functions/auth-gov-br/index.ts",
+   "arquivos": 2,
+   "linhas": 373,
+   "verify_jwt": false,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "govbr_auth_state",
+    "profiles"
+   ],
+   "rpcs": [],
+   "env": [
+    "ALLOWED_REDIRECT_ORIGINS",
+    "GOVBR_BASE_URL",
+    "GOVBR_CLIENT_ID",
+    "GOVBR_CLIENT_SECRET",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "departamento-pessoal-v3.vercel.app",
+    "sso.acesso.gov.br"
+   ],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/pages/AuthCallbackPage.tsx",
+    "src/pages/LoginPage.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "auth-login",
+   "entrada": "supabase/functions/auth-login/index.ts",
+   "arquivos": 2,
+   "linhas": 222,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [
+    "check_account_lockout",
+    "record_login_attempt"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL",
+    "TURNSTILE_SECRET_KEY"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "challenges.cloudflare.com"
+   ],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "backup",
+   "entrada": "supabase/functions/backup/index.ts",
+   "arquivos": 1,
+   "linhas": 119,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "audit_log",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "backup-automatico",
+   "entrada": "supabase/functions/backup-automatico/index.ts",
+   "arquivos": 4,
+   "linhas": 395,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "audit_log"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [
+    "backups"
+   ],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "cache",
+   "entrada": "supabase/functions/cache/index.ts",
+   "arquivos": 1,
+   "linhas": 250,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "calcular-13-salario",
+   "entrada": "supabase/functions/calcular-13-salario/index.ts",
+   "arquivos": 2,
+   "linhas": 259,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "inss.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/hooks/useCalcular13Salario.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "calcular-ferias",
+   "entrada": "supabase/functions/calcular-ferias/index.ts",
+   "arquivos": 2,
+   "linhas": 262,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "audit_log",
+    "colaboradores",
+    "ferias",
+    "periodos_aquisitivos",
+    "registros_ponto"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "inss.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "calcular-folha",
+   "entrada": "supabase/functions/calcular-folha/index.ts",
+   "arquivos": 2,
+   "linhas": 732,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "adiantamentos_salariais",
+    "audit_log",
+    "beneficios_colaborador",
+    "colaboradores",
+    "dependentes",
+    "emprestimos_consignados",
+    "eventos_variaveis",
+    "feriados",
+    "folha_itens",
+    "folha_lock_conflicts",
+    "folhas_pagamento",
+    "pensoes",
+    "registros_ponto",
+    "vales_alimentacao",
+    "vales_transporte"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "idempotency.ts",
+    "inss.ts",
+    "integrityHash.ts",
+    "irrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 2
+  },
+  {
+   "nome": "calcular-provisoes",
+   "entrada": "supabase/functions/calcular-provisoes/index.ts",
+   "arquivos": 1,
+   "linhas": 249,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "provisao_logs"
+   ],
+   "rpcs": [
+    "replace_monthly_provisions"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "calcular-rescisao",
+   "entrada": "supabase/functions/calcular-rescisao/index.ts",
+   "arquivos": 3,
+   "linhas": 522,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "audit_log",
+    "colaboradores"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "inss.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "cnab-remessa",
+   "entrada": "supabase/functions/cnab-remessa/index.ts",
+   "arquivos": 1,
+   "linhas": 214,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "auditoria",
+    "cnab_itens",
+    "cnab_remessas"
+   ],
+   "rpcs": [
+    "next_cnab_sequencial"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "idempotency.ts",
+    "integrityHash.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "consultarCEP",
+   "entrada": "supabase/functions/consultarCEP/index.ts",
+   "arquivos": 1,
+   "linhas": 94,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "brasilapi.com.br",
+    "viacep.com.br"
+   ],
+   "usa_shared": [
+    "cache.ts",
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/ui/cep-input.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "consultarCNPJ",
+   "entrada": "supabase/functions/consultarCNPJ/index.ts",
+   "arquivos": 1,
+   "linhas": 89,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "brasilapi.com.br"
+   ],
+   "usa_shared": [
+    "cache.ts",
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/ui/cnpj-input.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "criptografia",
+   "entrada": "supabase/functions/criptografia/index.ts",
+   "arquivos": 1,
+   "linhas": 180,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "ENCRYPTION_MASTER_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "dctfweb",
+   "entrada": "supabase/functions/dctfweb/index.ts",
+   "arquivos": 1,
+   "linhas": 175,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "auditoria",
+    "dctfweb_declaracoes"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "distribuir-holerites",
+   "entrada": "supabase/functions/distribuir-holerites/index.ts",
+   "arquivos": 1,
+   "linhas": 284,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "colaboradores",
+    "folhas_pagamento",
+    "holerite_distribuicoes",
+    "holerites",
+    "notificacoes"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "idempotency.ts",
+    "outboundDelivery.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/folha/DistribuirHoleritesButton.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "emprestimo-consignado",
+   "entrada": "supabase/functions/emprestimo-consignado/index.ts",
+   "arquivos": 1,
+   "linhas": 205,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "auditoria",
+    "colaboradores",
+    "convenios",
+    "emprestimos_consignados"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "enviar-email-admissao",
+   "entrada": "supabase/functions/enviar-email-admissao/index.ts",
+   "arquivos": 2,
+   "linhas": 215,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "admissao_tokens",
+    "admissoes",
+    "audit_log",
+    "notificacoes_admissao"
+   ],
+   "rpcs": [],
+   "env": [
+    "EMAIL_FROM",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "outboundDelivery.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/contratacaoService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "enviar-esocial",
+   "entrada": "supabase/functions/enviar-esocial/index.ts",
+   "arquivos": 5,
+   "linhas": 528,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "configuracoes_esocial",
+    "esocial_eventos",
+    "esocial_transmissao_logs"
+   ],
+   "rpcs": [],
+   "env": [
+    "ESOCIAL_SIMULATE",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "www.esocial.gov.br"
+   ],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "idempotency.ts",
+    "integrityHash.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/esocialService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 2
+  },
+  {
+   "nome": "enviar-relatorio",
+   "entrada": "supabase/functions/enviar-relatorio/index.ts",
+   "arquivos": 6,
+   "linhas": 789,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "afastamentos",
+    "audit_log",
+    "colaboradores",
+    "ferias",
+    "folhas_pagamento",
+    "log_envio_relatorios",
+    "relatorios_agendados",
+    "report_dispatch_attempts"
+   ],
+   "rpcs": [
+    "report_destination_is_allowed"
+   ],
+   "env": [
+    "REPORT_SCHEDULER_SECRET",
+    "RESEND_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.resend.com"
+   ],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "resendDelivery.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [
+    "processar-agendamentos"
+   ],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 4
+  },
+  {
+   "nome": "exportacao",
+   "entrada": "supabase/functions/exportacao/index.ts",
+   "arquivos": 1,
+   "linhas": 192,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "colaboradores",
+    "folhas_pagamento"
+   ],
+   "rpcs": [
+    "is_admin"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "external-db-bridge",
+   "entrada": "supabase/functions/external-db-bridge/index.ts",
+   "arquivos": 6,
+   "linhas": 1497,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "query_telemetry"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "BRIDGE_QUERY_TIMEOUT_MS",
+    "EXTERNAL_DB_KEY",
+    "EXTERNAL_DB_PUBLISHABLE_KEY",
+    "EXTERNAL_DB_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "rpc-error-logging.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 3
+  },
+  {
+   "nome": "fechar-folha",
+   "entrada": "supabase/functions/fechar-folha/index.ts",
+   "arquivos": 1,
+   "linhas": 250,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "folhas_pagamento",
+    "provisoes_mensais"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "folhaIntegrity.ts",
+    "idempotency.ts",
+    "integrityHash.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/folhaPagamentoService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "fgts-digital",
+   "entrada": "supabase/functions/fgts-digital/index.ts",
+   "arquivos": 1,
+   "linhas": 185,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "auditoria",
+    "fgts_digital_logs",
+    "guias_fgts_digital"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "folha-metrics",
+   "entrada": "supabase/functions/folha-metrics/index.ts",
+   "arquivos": 2,
+   "linhas": 152,
+   "verify_jwt": true,
+   "metodos": [
+    "GET",
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "idempotency_keys"
+   ],
+   "rpcs": [
+    "get_user_roles"
+   ],
+   "env": [
+    "FOLHA_ALERT_CONFLICT_THRESHOLD",
+    "FOLHA_ALERT_FAILED_THRESHOLD",
+    "SLACK_WEBHOOK_URL",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/folha/MetricasFolhaDashboard.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "gerar-aej",
+   "entrada": "supabase/functions/gerar-aej/index.ts",
+   "arquivos": 1,
+   "linhas": 291,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "aej_geracoes",
+    "batidas_ponto",
+    "colaboradores",
+    "empresas",
+    "pii_access_logs",
+    "registros_ponto"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "clientIp.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/ponto/GerarAEJDialog.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "gerar-afd",
+   "entrada": "supabase/functions/gerar-afd/index.ts",
+   "arquivos": 1,
+   "linhas": 259,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "afd_geracoes",
+    "batidas_ponto",
+    "colaboradores",
+    "empresas",
+    "pii_access_logs"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "clientIp.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/ponto/GerarAFDDialog.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "gerar-contrato-pdf",
+   "entrada": "supabase/functions/gerar-contrato-pdf/index.ts",
+   "arquivos": 1,
+   "linhas": 231,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "admissoes",
+    "contrato_templates",
+    "contratos_gerados"
+   ],
+   "rpcs": [
+    "contrato_montar_variaveis",
+    "contrato_resolver_template"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [
+    "contratos-trabalho"
+   ],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/contratoTemplateService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "gerar-guias",
+   "entrada": "supabase/functions/gerar-guias/index.ts",
+   "arquivos": 2,
+   "linhas": 319,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "colaboradores",
+    "logs_integracoes"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "inss.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "gerar-holerite",
+   "entrada": "supabase/functions/gerar-holerite/index.ts",
+   "arquivos": 3,
+   "linhas": 198,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "audit_log",
+    "beneficios_colaborador",
+    "colaboradores",
+    "dependentes",
+    "registros_ponto"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "inss.ts",
+    "irrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "gerar-ltcat-os",
+   "entrada": "supabase/functions/gerar-ltcat-os/index.ts",
+   "arquivos": 1,
+   "linhas": 332,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "empresas",
+    "sst_ltcat_laudos",
+    "sst_ordens_servico",
+    "user_empresas"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [
+    "sst-programas"
+   ],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/sst/GerarLtcatOsButton.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "gerar-medida-disciplinar-pdf",
+   "entrada": "supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
+   "arquivos": 1,
+   "linhas": 246,
+   "verify_jwt": true,
+   "metodos": [],
+   "tabelas": [
+    "audit_log",
+    "colaboradores",
+    "empresas",
+    "medidas_disciplinares"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [
+    "medidas-disciplinares"
+   ],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "gerar-pgr",
+   "entrada": "supabase/functions/gerar-pgr/index.ts",
+   "arquivos": 1,
+   "linhas": 280,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "empresas",
+    "sst_programas",
+    "sst_riscos_ambientais",
+    "user_empresas"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [
+    "sst-programas"
+   ],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/sst/GerarPgrButton.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "healthcheck",
+   "entrada": "supabase/functions/healthcheck/index.ts",
+   "arquivos": 1,
+   "linhas": 72,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "health_checks",
+    "query_telemetry"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "importacao",
+   "entrada": "supabase/functions/importacao/index.ts",
+   "arquivos": 1,
+   "linhas": 273,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 6
+  },
+  {
+   "nome": "integracao",
+   "entrada": "supabase/functions/integracao/index.ts",
+   "arquivos": 1,
+   "linhas": 152,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "integracao_logs",
+    "integracoes"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "limpeza",
+   "entrada": "supabase/functions/limpeza/index.ts",
+   "arquivos": 1,
+   "linhas": 173,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "auditoria",
+    "blocked_ips",
+    "login_attempts",
+    "rate_limit_logs",
+    "user_roles",
+    "user_sessions",
+    "verification_tokens"
+   ],
+   "rpcs": [
+    "drenar_fila_limpeza_lgpd",
+    "run_lgpd_purge"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "metricas",
+   "entrada": "supabase/functions/metricas/index.ts",
+   "arquivos": 1,
+   "linhas": 308,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "esocial_eventos",
+    "metricas_processamento",
+    "mv_folha_summary",
+    "mv_telemetry_dashboard",
+    "query_telemetry"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts",
+    "trace.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/hooks/useSystemHealth.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "metrics",
+   "entrada": "supabase/functions/metrics/index.ts",
+   "arquivos": 2,
+   "linhas": 317,
+   "verify_jwt": false,
+   "metodos": [
+    "GET"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "health_checks",
+    "mv_telemetry_dashboard",
+    "query_telemetry"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "contract.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "notificacao",
+   "entrada": "supabase/functions/notificacao/index.ts",
+   "arquivos": 2,
+   "linhas": 238,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "fila_notificacoes",
+    "notificacoes",
+    "user_empresas"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "pagar-desligamento",
+   "entrada": "supabase/functions/pagar-desligamento/index.ts",
+   "arquivos": 2,
+   "linhas": 122,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "desligamentos"
+   ],
+   "rpcs": [
+    "pagar_desligamento"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/rescisaoService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "parse-afdt",
+   "entrada": "supabase/functions/parse-afdt/index.ts",
+   "arquivos": 1,
+   "linhas": 215,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "afdt_importacoes",
+    "afdt_registros_raw",
+    "user_empresas"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/ponto/ImportarAFDTDialog.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "pix-lote",
+   "entrada": "supabase/functions/pix-lote/index.ts",
+   "arquivos": 1,
+   "linhas": 326,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "auditoria",
+    "pix_itens",
+    "pix_lotes"
+   ],
+   "rpcs": [],
+   "env": [
+    "PIX_APROVACAO_DUPLA_CENTAVOS",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "idempotency.ts",
+    "integrityHash.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "process-document-ocr",
+   "entrada": "supabase/functions/process-document-ocr/index.ts",
+   "arquivos": 1,
+   "linhas": 149,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "LOVABLE_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "api.lovable.dev"
+   ],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/hooks/useDocumentOCR.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "processar-agendamentos",
+   "entrada": "supabase/functions/processar-agendamentos/index.ts",
+   "arquivos": 4,
+   "linhas": 637,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "fila_notificacoes",
+    "log_envio_relatorios"
+   ],
+   "rpcs": [
+    "claim_due_report_schedules",
+    "finish_report_schedule_claim",
+    "is_admin"
+   ],
+   "env": [
+    "CRON_SECRET",
+    "REPORT_SCHEDULER_SECRET",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [
+    "enviar-relatorio"
+   ],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "outboundDelivery.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "processar-ponto",
+   "entrada": "supabase/functions/processar-ponto/index.ts",
+   "arquivos": 2,
+   "linhas": 715,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "banco_horas",
+    "banco_horas_config",
+    "batidas_ponto",
+    "colaboradores",
+    "escalas_trabalho",
+    "feriados",
+    "jornadas",
+    "jornadas_horarios",
+    "registros_ponto"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "idempotency.ts",
+    "integrityHash.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "processar-ponto-offline",
+   "entrada": "supabase/functions/processar-ponto-offline/index.ts",
+   "arquivos": 1,
+   "linhas": 325,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "batidas_ponto",
+    "colaboradores",
+    "user_empresas"
+   ],
+   "rpcs": [
+    "has_role"
+   ],
+   "env": [
+    "PONTO_HASH_SECRET",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [
+    "ponto-biometria"
+   ],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "integrityHash.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/pontoOfflineService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "rateLimit",
+   "entrada": "supabase/functions/rateLimit/index.ts",
+   "arquivos": 1,
+   "linhas": 110,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 1
+  },
+  {
+   "nome": "reabrir-folha",
+   "entrada": "supabase/functions/reabrir-folha/index.ts",
+   "arquivos": 1,
+   "linhas": 278,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "folhas_pagamento"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "folhaIntegrity.ts",
+    "idempotency.ts",
+    "integrityHash.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/folhaPagamentoService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "relatorio",
+   "entrada": "supabase/functions/relatorio/index.ts",
+   "arquivos": 1,
+   "linhas": 312,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "auditoria_logs",
+    "colaboradores",
+    "ferias_solicitacoes",
+    "folhas_pagamento",
+    "registros_ponto"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "sincronizar-bitrix",
+   "entrada": "supabase/functions/sincronizar-bitrix/index.ts",
+   "arquivos": 2,
+   "linhas": 236,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "audit_log",
+    "bitrix24_config",
+    "bitrix24_sync_logs",
+    "colaboradores",
+    "departamentos"
+   ],
+   "rpcs": [
+    "is_admin",
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts",
+    "ssrf-guard.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/components/integracoes/ConfigPanels.tsx"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  },
+  {
+   "nome": "tabelas-dominio",
+   "entrada": "supabase/functions/tabelas-dominio/index.ts",
+   "arquivos": 1,
+   "linhas": 219,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "cache.ts",
+    "clientIp.ts",
+    "contract.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "upload-certificado",
+   "entrada": "supabase/functions/upload-certificado/index.ts",
+   "arquivos": 2,
+   "linhas": 134,
+   "verify_jwt": true,
+   "metodos": [
+    "POST"
+   ],
+   "tabelas": [
+    "certificados_digitais"
+   ],
+   "rpcs": [
+    "encrypt_dados_bancarios"
+   ],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "aal2.ts",
+    "authz.ts",
+    "contract.ts",
+    "csrf.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/esocialService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "validar-biometria",
+   "entrada": "supabase/functions/validar-biometria/index.ts",
+   "arquivos": 1,
+   "linhas": 204,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [
+    "batidas_ponto",
+    "colaboradores"
+   ],
+   "rpcs": [
+    "user_belongs_to_empresa"
+   ],
+   "env": [
+    "LOVABLE_API_KEY",
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [
+    "ai-gateway.lovable.dev"
+   ],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "safe-fetch.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "warmup",
+   "entrada": "supabase/functions/warmup/index.ts",
+   "arquivos": 1,
+   "linhas": 62,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS",
+    "POST"
+   ],
+   "tabelas": [],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "contract.ts",
+    "csrf.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": true,
+   "testes": 0
+  },
+  {
+   "nome": "webhook",
+   "entrada": "supabase/functions/webhook/index.ts",
+   "arquivos": 3,
+   "linhas": 356,
+   "verify_jwt": false,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "webhook_logs"
+   ],
+   "rpcs": [],
+   "env": [
+    "RUN_LOCAL_EDGE_TESTS",
+    "WEBHOOK_REQUIRE_TIMESTAMP",
+    "WEBHOOK_SECRET"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "clientIp.ts",
+    "common.ts",
+    "contract.ts",
+    "monitor.ts",
+    "rateLimit.ts"
+   ],
+   "chamada_pelo_front": [],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 1
+  },
+  {
+   "nome": "whatsapp-send",
+   "entrada": "supabase/functions/whatsapp-send/index.ts",
+   "arquivos": 1,
+   "linhas": 140,
+   "verify_jwt": true,
+   "metodos": [
+    "OPTIONS"
+   ],
+   "tabelas": [
+    "whatsapp_mensagens_logs",
+    "whatsapp_templates"
+   ],
+   "rpcs": [],
+   "env": [
+    "SUPABASE_ANON_KEY",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "buckets": [],
+   "chama_edges": [],
+   "hosts_externos": [],
+   "usa_shared": [
+    "authz.ts",
+    "common.ts",
+    "contract.ts",
+    "csrf.ts",
+    "outboundDelivery.ts",
+    "rateLimit.ts",
+    "sentry.ts"
+   ],
+   "chamada_pelo_front": [
+    "src/services/whatsappService.ts"
+   ],
+   "chamada_por_edges": [],
+   "chamada_por_sql_ou_cron": false,
+   "orfa": false,
+   "testes": 0
+  }
+ ],
+ "chamadas_sem_pasta": []
+}

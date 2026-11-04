@@ -1,0 +1,7164 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 429,
+ "orfaos": 21,
+ "nomes_duplicados": {
+  "AlertasRHWidget": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "CadastroIncompletoWidget": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "ESocialMonitorWidget": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "EmpresaSelector": [
+   "src/components/empresa/EmpresaSelector.tsx",
+   "src/components/layout/EmpresaSelector.tsx"
+  ],
+  "FormField": [
+   "src/components/forms/FormField.tsx",
+   "src/components/ui/form.tsx"
+  ],
+  "IndicatorRow": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "MotionCard": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "NotificationCenter": [
+   "src/components/notifications/NotificationCenter.tsx",
+   "src/components/ui/notification-center.tsx"
+  ],
+  "PageHeader": [
+   "src/components/layout/PageHeader.tsx",
+   "src/components/ui/page-header.tsx"
+  ],
+  "PendenciaItem": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "QuickStat": [
+   "src/components/dashboard/analytics/widgets.tsx",
+   "src/components/dashboard/AnalyticsSection.tsx"
+  ],
+  "SectionHeader": [
+   "src/components/dashboard/SectionHeader.tsx",
+   "src/components/layout/SectionHeader.tsx"
+  ],
+  "SidebarFooter": [
+   "src/components/layout/SidebarFooter.tsx",
+   "src/components/ui/sidebar.tsx"
+  ],
+  "SignaturePad": [
+   "src/components/admissao/SignaturePad.tsx",
+   "src/components/sst/SignaturePad.tsx"
+  ],
+  "StatusBadge": [
+   "src/components/desligamentos/DesligamentoStatusBadge.tsx",
+   "src/components/ui/status-badge.tsx"
+  ],
+  "ToastProvider": [
+   "src/components/ui/toast.tsx",
+   "src/providers/ToastProvider.tsx"
+  ],
+  "Toaster": [
+   "src/components/ui/sonner.tsx",
+   "src/components/ui/toaster.tsx"
+  ]
+ },
+ "componentes": [
+  {
+   "arquivo": "src/App.tsx",
+   "exports": [
+    "App"
+   ],
+   "export_default": "App",
+   "linhas": 499,
+   "dominio": null,
+   "hooks_locais": [
+    "useSecureVisibility",
+    "useSecurityMonitor",
+    "useSessionTimeout"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/HealthTrendCard.tsx",
+   "exports": [
+    "HealthTrendCard"
+   ],
+   "export_default": null,
+   "linhas": 144,
+   "dominio": "components/admin",
+   "hooks_locais": [
+    "useSystemHealthHistory"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/telemetry/TelemetryCharts.tsx",
+   "exports": [
+    "TelemetryCharts"
+   ],
+   "export_default": null,
+   "linhas": 275,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/telemetry/TelemetryFilters.tsx",
+   "exports": [
+    "TelemetryFilters"
+   ],
+   "export_default": null,
+   "linhas": 90,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/telemetry/TelemetryStatsCards.tsx",
+   "exports": [
+    "TelemetryStatsCards"
+   ],
+   "export_default": null,
+   "linhas": 66,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/telemetry/TelemetryTable.tsx",
+   "exports": [
+    "TelemetryTable"
+   ],
+   "export_default": null,
+   "linhas": 128,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/telemetry/TelemetryTopOffenders.tsx",
+   "exports": [
+    "TelemetryTopOffenders"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admin/UnifiedAuditSection.tsx",
+   "exports": [
+    "AUDIT_UNIFIED_LIMIT",
+    "AuditRow",
+    "UnifiedAuditSection"
+   ],
+   "export_default": null,
+   "linhas": 132,
+   "dominio": "components/admin",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/AdminRoute.tsx",
+   "exports": [
+    "AdminRoute"
+   ],
+   "export_default": null,
+   "linhas": 207,
+   "dominio": "components",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissao/AdmissaoChecklist.tsx",
+   "exports": [
+    "AdmissaoChecklist",
+    "Documento"
+   ],
+   "export_default": null,
+   "linhas": 145,
+   "dominio": "components/admissao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissao/SignaturePad.tsx",
+   "exports": [
+    "SignaturePad"
+   ],
+   "export_default": null,
+   "linhas": 116,
+   "dominio": "components/admissao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/AdmissoesKanban.tsx",
+   "exports": [
+    "AdmissoesKanban"
+   ],
+   "export_default": null,
+   "linhas": 213,
+   "dominio": "components/admissoes",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+   "exports": [
+    "DetalhesAdmissaoDialog"
+   ],
+   "export_default": null,
+   "linhas": 464,
+   "dominio": "components/admissoes",
+   "hooks_locais": [
+    "useAdmissaoWorkflow",
+    "useContratacaoDigital",
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/NovaAdmissaoDialog.tsx",
+   "exports": [
+    "NovaAdmissaoDialog"
+   ],
+   "export_default": null,
+   "linhas": 253,
+   "dominio": "components/admissoes",
+   "hooks_locais": [
+    "useAdmissoes"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/OnboardingDashboard.tsx",
+   "exports": [
+    "OnboardingDashboard"
+   ],
+   "export_default": null,
+   "linhas": 141,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/admissoes/OnboardingPageContent.tsx",
+   "exports": [
+    "OnboardingPageContent"
+   ],
+   "export_default": "OnboardingPageContent",
+   "linhas": 164,
+   "dominio": "components/admissoes",
+   "hooks_locais": [],
+   "tabelas": [
+    "admissoes",
+    "tarefas_onboarding"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
+   "exports": [
+    "AfastamentoDocumentManager"
+   ],
+   "export_default": null,
+   "linhas": 224,
+   "dominio": "components/afastamentos",
+   "hooks_locais": [
+    "useDocumentosAfastamento"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/afastamentos/AfastamentoForm.tsx",
+   "exports": [
+    "AfastamentoForm"
+   ],
+   "export_default": null,
+   "linhas": 449,
+   "dominio": "components/afastamentos",
+   "hooks_locais": [
+    "useAfastamentos",
+    "useColaboradores",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/afastamentos/AfastamentoStats.tsx",
+   "exports": [
+    "AfastamentoStats"
+   ],
+   "export_default": null,
+   "linhas": 91,
+   "dominio": "components/afastamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/afastamentos/AfastamentoTable.tsx",
+   "exports": [
+    "AfastamentoTable"
+   ],
+   "export_default": null,
+   "linhas": 241,
+   "dominio": "components/afastamentos",
+   "hooks_locais": [
+    "useAfastamentos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/afastamentos/AfastamentoTimeline.tsx",
+   "exports": [
+    "AfastamentoTimeline"
+   ],
+   "export_default": null,
+   "linhas": 250,
+   "dominio": "components/afastamentos",
+   "hooks_locais": [
+    "useAfastamentos",
+    "useProrrogacoesAfastamento"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/auth/LoginForm.tsx",
+   "exports": [
+    "LoginForm"
+   ],
+   "export_default": "LoginForm",
+   "linhas": 64,
+   "dominio": "components/auth",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxMatrix.tsx",
+   "exports": [
+    "NineBoxMatrix"
+   ],
+   "export_default": null,
+   "linhas": 171,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PerformanceAuditTimeline.tsx",
+   "exports": [
+    "PerformanceAuditTimeline"
+   ],
+   "export_default": null,
+   "linhas": 92,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PerformanceDashboard.tsx",
+   "exports": [
+    "PerformanceDashboard"
+   ],
+   "export_default": null,
+   "linhas": 160,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/beneficios/BeneficioHistorico.tsx",
+   "exports": [
+    "BeneficioHistorico"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "dominio": "components/beneficios",
+   "hooks_locais": [],
+   "tabelas": [
+    "beneficio_movimentacoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/beneficios/BeneficiosDashboard.tsx",
+   "exports": [
+    "BeneficioComAdesao",
+    "BeneficiosDashboard"
+   ],
+   "export_default": null,
+   "linhas": 163,
+   "dominio": "components/beneficios",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/AnotacoesTab.tsx",
+   "exports": [
+    "AnotacoesTab"
+   ],
+   "export_default": null,
+   "linhas": 125,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useAnotacoes",
+    "useCriarAnotacao",
+    "useExcluirAnotacao"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/AquisitivosTab.tsx",
+   "exports": [
+    "AquisitivosTab"
+   ],
+   "export_default": null,
+   "linhas": 54,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "usePeriodosAquisitivos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/ASOTab.tsx",
+   "exports": [
+    "ASOTab"
+   ],
+   "export_default": null,
+   "linhas": 186,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useASOs",
+    "useCriarASO"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/BeneficiosTab.tsx",
+   "exports": [
+    "BeneficiosTab"
+   ],
+   "export_default": null,
+   "linhas": 217,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useBeneficiosColaborador"
+   ],
+   "tabelas": [
+    "tipos_beneficio"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+   "exports": [
+    "ColaboradorDocuments"
+   ],
+   "export_default": null,
+   "linhas": 231,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useDocumentos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
+   "exports": [
+    "ContasBancariasTab"
+   ],
+   "export_default": null,
+   "linhas": 214,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useContasBancarias",
+    "useCriarContaBancaria",
+    "useExcluirContaBancaria",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/DependentesTab.tsx",
+   "exports": [
+    "DependentesTab"
+   ],
+   "export_default": null,
+   "linhas": 198,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCriarDependente",
+    "useDependentes",
+    "useExcluirDependente",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+   "exports": [
+    "DocumentosPessoaisTab"
+   ],
+   "export_default": null,
+   "linhas": 205,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCriarDocumentoPessoal",
+    "useDocumentosPessoais",
+    "useExcluirDocumentoPessoal",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+   "exports": [
+    "EmergenciaTab"
+   ],
+   "export_default": null,
+   "linhas": 152,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useContatosEmergencia",
+    "useCriarContatoEmergencia",
+    "useExcluirContatoEmergencia",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/EstagiarioTab.tsx",
+   "exports": [
+    "EstagiarioTab"
+   ],
+   "export_default": null,
+   "linhas": 118,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useDadosEstagiario",
+    "useSalvarDadosEstagiario",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/EstrangeiroTab.tsx",
+   "exports": [
+    "EstrangeiroTab"
+   ],
+   "export_default": null,
+   "linhas": 131,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useDadosEstrangeiro",
+    "useSalvarDadosEstrangeiro",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/ExperienciaTab.tsx",
+   "exports": [
+    "ExperienciaTab"
+   ],
+   "export_default": null,
+   "linhas": 146,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "usePeriodoExperiencia",
+    "useSalvarPeriodoExperiencia"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/FormacaoTab.tsx",
+   "exports": [
+    "FormacaoTab"
+   ],
+   "export_default": null,
+   "linhas": 157,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCriarFormacao",
+    "useExcluirFormacao",
+    "useFormacoes"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
+   "exports": [
+    "HistoricoContratosTab"
+   ],
+   "export_default": null,
+   "linhas": 163,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useHistoricoContratos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
+   "exports": [
+    "HistoricoSalarialTab"
+   ],
+   "export_default": null,
+   "linhas": 155,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCriarRegistroSalarial",
+    "useHistoricoSalarial"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/PCDTab.tsx",
+   "exports": [
+    "PCDTab"
+   ],
+   "export_default": null,
+   "linhas": 140,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useDeficiencia",
+    "useSalvarDeficiencia",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaboradores/ColaboradorFilters.tsx",
+   "exports": [
+    "ColaboradorFilters"
+   ],
+   "export_default": null,
+   "linhas": 87,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaboradores/ColaboradorHistory.tsx",
+   "exports": [
+    "ColaboradorHistory"
+   ],
+   "export_default": null,
+   "linhas": 139,
+   "dominio": "components/colaboradores",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/contratacao/TokenInput.tsx",
+   "exports": [
+    "TokenInput"
+   ],
+   "export_default": null,
+   "linhas": 102,
+   "dominio": "components/contratacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/contratos/ContratosAssinaturaKPICard.tsx",
+   "exports": [
+    "ContratosAssinaturaKPICard"
+   ],
+   "export_default": null,
+   "linhas": 200,
+   "dominio": "components/contratos",
+   "hooks_locais": [
+    "useContratosAssinaturaKPI"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/contratos/ContratosVencendoPanel.tsx",
+   "exports": [
+    "ContratosVencendoPanel"
+   ],
+   "export_default": null,
+   "linhas": 141,
+   "dominio": "components/contratos",
+   "hooks_locais": [
+    "useContratosVencendo"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/contratos/ContratoTokenTimelineDialog.tsx",
+   "exports": [
+    "ContratoTokenTimelineDialog"
+   ],
+   "export_default": null,
+   "linhas": 123,
+   "dominio": "components/contratos",
+   "hooks_locais": [
+    "useContratoTokenTimeline"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/analytics/NotificationsDialog.tsx",
+   "exports": [
+    "Notificacao",
+    "NotificationsDialog"
+   ],
+   "export_default": null,
+   "linhas": 116,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
+   "exports": [
+    "PendenciaListItem",
+    "PendenciasDetailDialog"
+   ],
+   "export_default": null,
+   "linhas": 554,
+   "dominio": "components/dashboard",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/analytics/widgets.tsx",
+   "exports": [
+    "AlertasRHWidget",
+    "CadastroIncompletoWidget",
+    "ESocialMonitorWidget",
+    "IndicatorRow",
+    "MotionCard",
+    "PendenciaItem",
+    "PendenciaSummary",
+    "QuickStat"
+   ],
+   "export_default": null,
+   "linhas": 333,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
+   "exports": [
+    "AlertasRHWidget",
+    "AnalyticsSection",
+    "CadastroIncompletoWidget",
+    "ESocialMonitorWidget",
+    "IndicatorRow",
+    "MotionCard",
+    "PendenciaItem",
+    "QuickStat"
+   ],
+   "export_default": null,
+   "linhas": 797,
+   "dominio": "components/dashboard",
+   "hooks_locais": [
+    "usePendencias",
+    "usePontoMelhorado",
+    "useRealTimeSubscription"
+   ],
+   "tabelas": [
+    "notificacoes"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/AnimatedNumber.tsx",
+   "exports": [
+    "AnimatedNumber"
+   ],
+   "export_default": null,
+   "linhas": 47,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 8,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/BarChartWidget.tsx",
+   "exports": [
+    "BarChartWidget"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/DashboardHeader.tsx",
+   "exports": [
+    "DashboardHeader"
+   ],
+   "export_default": null,
+   "linhas": 110,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/DonutChart.tsx",
+   "exports": [
+    "DonutChart"
+   ],
+   "export_default": null,
+   "linhas": 98,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/EventTimeline.tsx",
+   "exports": [
+    "EventTimeline",
+    "TimelineEvent"
+   ],
+   "export_default": null,
+   "linhas": 235,
+   "dominio": "components/dashboard",
+   "hooks_locais": [
+    "useRealTimeSubscription"
+   ],
+   "tabelas": [
+    "conformidade_ponto_logs"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/MetricCard.tsx",
+   "exports": [
+    "MetricCard"
+   ],
+   "export_default": null,
+   "linhas": 110,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/MiniSparkline.tsx",
+   "exports": [
+    "MiniSparkline"
+   ],
+   "export_default": null,
+   "linhas": 70,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/MorningBriefing.tsx",
+   "exports": [
+    "MorningBriefing"
+   ],
+   "export_default": null,
+   "linhas": 457,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [
+    "admissoes",
+    "afastamentos",
+    "batidas_ponto",
+    "colaboradores",
+    "esocial_eventos",
+    "exames",
+    "ferias"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/QuickActionsGrid.tsx",
+   "exports": [
+    "QuickActionsGrid"
+   ],
+   "export_default": null,
+   "linhas": 66,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/dashboard/SectionHeader.tsx",
+   "exports": [
+    "SectionHeader"
+   ],
+   "export_default": null,
+   "linhas": 34,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/dashboard/WorkforceHealthScore.tsx",
+   "exports": [
+    "WorkforceHealthScore"
+   ],
+   "export_default": null,
+   "linhas": 159,
+   "dominio": "components/dashboard",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/departamentos/NovoDepartamentoDialog.tsx",
+   "exports": [
+    "NovoDepartamentoDialog"
+   ],
+   "export_default": null,
+   "linhas": 104,
+   "dominio": "components/departamentos",
+   "hooks_locais": [
+    "useDepartamentos",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/descontos/AdiantamentosTable.tsx",
+   "exports": [
+    "AdiantamentosTable"
+   ],
+   "export_default": null,
+   "linhas": 87,
+   "dominio": "components/descontos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/descontos/EmprestimosTable.tsx",
+   "exports": [
+    "EmprestimosTable"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "dominio": "components/descontos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/descontos/FinancialSummaryCards.tsx",
+   "exports": [
+    "FinancialSummaryCards"
+   ],
+   "export_default": null,
+   "linhas": 80,
+   "dominio": "components/descontos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/descontos/NewAdvanceDialog.tsx",
+   "exports": [
+    "NewAdvanceDialog"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "dominio": "components/descontos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/descontos/NewLoanDialog.tsx",
+   "exports": [
+    "NewLoanDialog"
+   ],
+   "export_default": null,
+   "linhas": 201,
+   "dominio": "components/descontos",
+   "hooks_locais": [],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/DesligamentoChecklist.tsx",
+   "exports": [
+    "DesligamentoChecklist"
+   ],
+   "export_default": null,
+   "linhas": 82,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+   "exports": [
+    "DesligamentoDetailSheet"
+   ],
+   "export_default": null,
+   "linhas": 495,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/DesligamentoFilters.tsx",
+   "exports": [
+    "DesligamentoFilters"
+   ],
+   "export_default": null,
+   "linhas": 71,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/DesligamentoKPIs.tsx",
+   "exports": [
+    "DesligamentoKPIs"
+   ],
+   "export_default": null,
+   "linhas": 82,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/DesligamentoStatusBadge.tsx",
+   "exports": [
+    "StatusBadge",
+    "TipoBadge"
+   ],
+   "export_default": null,
+   "linhas": 29,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/NovoDesligamentoDialog.tsx",
+   "exports": [
+    "NovoDesligamentoDialog"
+   ],
+   "export_default": null,
+   "linhas": 274,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/desligamentos/TurnoverChart.tsx",
+   "exports": [
+    "TurnoverChart"
+   ],
+   "export_default": null,
+   "linhas": 99,
+   "dominio": "components/desligamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/documents/DocumentoPreview.tsx",
+   "exports": [
+    "DocumentoPreview"
+   ],
+   "export_default": null,
+   "linhas": 85,
+   "dominio": "components/documents",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/documents/DocumentoTimeline.tsx",
+   "exports": [
+    "DocumentoTimeline"
+   ],
+   "export_default": null,
+   "linhas": 81,
+   "dominio": "components/documents",
+   "hooks_locais": [],
+   "tabelas": [
+    "documentos_historico"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/empresa/EmpresaSelector.tsx",
+   "exports": [
+    "EmpresaSelector"
+   ],
+   "export_default": null,
+   "linhas": 106,
+   "dominio": "components/empresa",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/epis/EpiCatalogoTable.tsx",
+   "exports": [
+    "EpiCatalogoTable"
+   ],
+   "export_default": null,
+   "linhas": 187,
+   "dominio": "components/epis",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/epis/EpiCategoryChart.tsx",
+   "exports": [
+    "EpiCategoryChart"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "dominio": "components/epis",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/epis/EpiEntregasTable.tsx",
+   "exports": [
+    "EpiEntregasTable"
+   ],
+   "export_default": null,
+   "linhas": 198,
+   "dominio": "components/epis",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/epis/EpiKPIs.tsx",
+   "exports": [
+    "EpiKPIs"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "dominio": "components/epis",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/ESocialAIInsights.tsx",
+   "exports": [
+    "ESocialAIInsights"
+   ],
+   "export_default": null,
+   "linhas": 64,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/ESocialAuditDialog.tsx",
+   "exports": [
+    "ESocialAuditDialog"
+   ],
+   "export_default": null,
+   "linhas": 226,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/ESocialComplianceScore.tsx",
+   "exports": [
+    "ESocialComplianceScore"
+   ],
+   "export_default": null,
+   "linhas": 108,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/ESocialConciliacao.tsx",
+   "exports": [
+    "ESocialConciliacao"
+   ],
+   "export_default": null,
+   "linhas": 161,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/ESocialEventViewer.tsx",
+   "exports": [
+    "ESocialEventViewer"
+   ],
+   "export_default": null,
+   "linhas": 47,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/ESocialTimeline.tsx",
+   "exports": [
+    "ESocialTimeline"
+   ],
+   "export_default": null,
+   "linhas": 107,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/NaoPeriodicos.tsx",
+   "exports": [
+    "S2200Admissao",
+    "S2230Afastamento"
+   ],
+   "export_default": null,
+   "linhas": 156,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/Periodicos.tsx",
+   "exports": [
+    "S1200Remuneracao",
+    "S1210Pagamentos"
+   ],
+   "export_default": null,
+   "linhas": 128,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2205AlteracaoCadastral.tsx",
+   "exports": [
+    "S2205AlteracaoCadastral"
+   ],
+   "export_default": null,
+   "linhas": 91,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2206AlteracaoContratual.tsx",
+   "exports": [
+    "S2206AlteracaoContratual"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2210SST.tsx",
+   "exports": [
+    "S2210SST"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2299Desligamento.tsx",
+   "exports": [
+    "S2299Desligamento"
+   ],
+   "export_default": null,
+   "linhas": 79,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2300TSVInicio.tsx",
+   "exports": [
+    "S2300TSVInicio"
+   ],
+   "export_default": null,
+   "linhas": 67,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2306TSVAlteracao.tsx",
+   "exports": [
+    "S2306TSVAlteracao"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2399TSVTermino.tsx",
+   "exports": [
+    "S2399TSVTermino"
+   ],
+   "export_default": null,
+   "linhas": 60,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/S2400CDP.tsx",
+   "exports": [
+    "S2400CDP"
+   ],
+   "export_default": null,
+   "linhas": 69,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/SSTEvents.tsx",
+   "exports": [
+    "S2220ASO",
+    "S2240AgentesNocivos"
+   ],
+   "export_default": null,
+   "linhas": 118,
+   "dominio": "components/esocial",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/esocial/tabs.tsx",
+   "exports": [
+    "CertificadoItem",
+    "ESocialConfigTab",
+    "ESocialConfigTabProps",
+    "ESocialEventDetailsDialog",
+    "ESocialEventDetailsDialogProps",
+    "ESocialLogItem",
+    "ESocialLogsTab",
+    "ESocialLogsTabProps"
+   ],
+   "export_default": null,
+   "linhas": 541,
+   "dominio": "components/esocial",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/exames/ExameFormDialog.tsx",
+   "exports": [
+    "ExameFormDialog"
+   ],
+   "export_default": null,
+   "linhas": 169,
+   "dominio": "components/exames",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/exames/ExameKPIs.tsx",
+   "exports": [
+    "ExameKPIs"
+   ],
+   "export_default": null,
+   "linhas": 165,
+   "dominio": "components/exames",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/exames/ExameTable.tsx",
+   "exports": [
+    "ExameTable"
+   ],
+   "export_default": null,
+   "linhas": 213,
+   "dominio": "components/exames",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/exames/ExameTipoChart.tsx",
+   "exports": [
+    "ExameTipoChart"
+   ],
+   "export_default": null,
+   "linhas": 83,
+   "dominio": "components/exames",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/AssinarAvisoDialog.tsx",
+   "exports": [
+    "AssinarAvisoDialog"
+   ],
+   "export_default": null,
+   "linhas": 86,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useAssinarAvisoFerias",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/CalendarioFerias.tsx",
+   "exports": [
+    "CalendarioFerias",
+    "FeriasItem"
+   ],
+   "export_default": null,
+   "linhas": 220,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useFerias"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasActions.tsx",
+   "exports": [
+    "FeriasActions"
+   ],
+   "export_default": null,
+   "linhas": 216,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useAssinarAvisoFerias",
+    "useSolicitarAdiantamento13"
+   ],
+   "tabelas": [
+    "recibos_ferias"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasAlertasPagamentoCard.tsx",
+   "exports": [
+    "FeriasAlertasPagamentoCard"
+   ],
+   "export_default": null,
+   "linhas": 135,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useAlertasPagamentoD2",
+    "useConfirmarPagamentoFerias"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasAuditTimeline.tsx",
+   "exports": [
+    "FeriasAuditTimeline"
+   ],
+   "export_default": null,
+   "linhas": 191,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasColetivasTab.tsx",
+   "exports": [
+    "FeriasColetivasTab"
+   ],
+   "export_default": null,
+   "linhas": 251,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useEmpresas",
+    "useGerarComunicadoColetivas"
+   ],
+   "tabelas": [
+    "ferias_coletivas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasDashboard.tsx",
+   "exports": [
+    "FeriasDashboard"
+   ],
+   "export_default": null,
+   "linhas": 172,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasInsights.tsx",
+   "exports": [
+    "FeriasInsights"
+   ],
+   "export_default": null,
+   "linhas": 186,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasKPIs.tsx",
+   "exports": [
+    "FeriasKPIs"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasReconciliacaoCard.tsx",
+   "exports": [
+    "FeriasReconciliacaoCard"
+   ],
+   "export_default": null,
+   "linhas": 69,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useReconciliacaoFolha"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
+   "exports": [
+    "FeriasReconciliacaoHistoricoCard"
+   ],
+   "export_default": null,
+   "linhas": 115,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useReconciliacaoLogs"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasRelatorioDialog.tsx",
+   "exports": [
+    "FeriasRelatorioDialog"
+   ],
+   "export_default": null,
+   "linhas": 165,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasSaldoReport.tsx",
+   "exports": [
+    "FeriasSaldoReport"
+   ],
+   "export_default": null,
+   "linhas": 86,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useColaboradores"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasTable.tsx",
+   "exports": [
+    "FeriasTable"
+   ],
+   "export_default": null,
+   "linhas": 192,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/FeriasWorkflowStepper.tsx",
+   "exports": [
+    "FeriasWorkflowStepper"
+   ],
+   "export_default": null,
+   "linhas": 74,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/GerenciamentoPeriodos.tsx",
+   "exports": [
+    "GerenciamentoPeriodos"
+   ],
+   "export_default": null,
+   "linhas": 372,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/programacao/CardProgramacao.tsx",
+   "exports": [
+    "CardProgramacao"
+   ],
+   "export_default": null,
+   "linhas": 172,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/programacao/KanbanMes.tsx",
+   "exports": [
+    "KanbanMes"
+   ],
+   "export_default": null,
+   "linhas": 123,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
+   "exports": [
+    "NovaProgramacaoDialog"
+   ],
+   "export_default": null,
+   "linhas": 152,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useColaboradores",
+    "usePeriodosAquisitivos",
+    "useProgramacaoMutations"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ferias/programacao/RejeitarDialog.tsx",
+   "exports": [
+    "RejeitarDialog"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "dominio": "components/ferias",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/CalculoFolhaWizard.tsx",
+   "exports": [
+    "CalculoFolhaWizard"
+   ],
+   "export_default": null,
+   "linhas": 454,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useCalculoFolha",
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "folha_auditoria",
+    "folha_itens",
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/CNABDialog.tsx",
+   "exports": [
+    "CNABDialog"
+   ],
+   "export_default": null,
+   "linhas": 353,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/DistribuirHoleritesButton.tsx",
+   "exports": [
+    "DistribuirHoleritesButton"
+   ],
+   "export_default": null,
+   "linhas": 170,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "folhas_pagamento",
+    "holerite_distribuicoes"
+   ],
+   "edges": [
+    "distribuir-holerites"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaAuditoriaTable.tsx",
+   "exports": [
+    "FolhaAuditoriaTable"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useFolhaAuditoria"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaAuditTimeline.tsx",
+   "exports": [
+    "FolhaAuditTimeline"
+   ],
+   "export_default": null,
+   "linhas": 82,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [
+    "folha_auditoria"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaComposicao.tsx",
+   "exports": [
+    "FolhaComposicao"
+   ],
+   "export_default": null,
+   "linhas": 107,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaDashboard.tsx",
+   "exports": [
+    "FolhaDashboard"
+   ],
+   "export_default": null,
+   "linhas": 211,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [
+    "folhas_pagamento"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaESocialSync.tsx",
+   "exports": [
+    "FolhaESocialSync"
+   ],
+   "export_default": null,
+   "linhas": 270,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaKPIs.tsx",
+   "exports": [
+    "FolhaKPIs"
+   ],
+   "export_default": null,
+   "linhas": 95,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaPipeline.tsx",
+   "exports": [
+    "FolhaPipeline"
+   ],
+   "export_default": null,
+   "linhas": 101,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/FolhaValidationAlerts.tsx",
+   "exports": [
+    "FolhaValidationAlerts"
+   ],
+   "export_default": null,
+   "linhas": 138,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/LancamentosDialog.tsx",
+   "exports": [
+    "LancamentosDialog"
+   ],
+   "export_default": null,
+   "linhas": 248,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/MetricasFolhaDashboard.tsx",
+   "exports": [
+    "MetricasFolhaDashboard"
+   ],
+   "export_default": null,
+   "linhas": 155,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [
+    "folha-metrics"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/PagamentoBancarioWizard.tsx",
+   "exports": [
+    "PagamentoBancarioWizard"
+   ],
+   "export_default": null,
+   "linhas": 249,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/RelatorioContabilDialog.tsx",
+   "exports": [
+    "RelatorioContabilDialog"
+   ],
+   "export_default": null,
+   "linhas": 160,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "folha_itens"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/RubricasDialog.tsx",
+   "exports": [
+    "RubricasDialog"
+   ],
+   "export_default": null,
+   "linhas": 362,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [
+    "rubricas_folha"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/Simulador13Dialog.tsx",
+   "exports": [
+    "Simulador13Dialog"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useCalcular13Salario"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/folha/SimuladorWhatIf.tsx",
+   "exports": [
+    "SimuladorWhatIf"
+   ],
+   "export_default": null,
+   "linhas": 282,
+   "dominio": "components/folha",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "simulacoes_fiscais"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/forms/FormField.tsx",
+   "exports": [
+    "FormField"
+   ],
+   "export_default": null,
+   "linhas": 28,
+   "dominio": "components/forms",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/forms/FormSection.tsx",
+   "exports": [
+    "FormActions",
+    "FormDivider",
+    "FormSection"
+   ],
+   "export_default": null,
+   "linhas": 36,
+   "dominio": "components/forms",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/forms/FormSelect.tsx",
+   "exports": [
+    "FormSelect"
+   ],
+   "export_default": null,
+   "linhas": 43,
+   "dominio": "components/forms",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/forms/FormSwitch.tsx",
+   "exports": [
+    "FormSwitch"
+   ],
+   "export_default": null,
+   "linhas": 29,
+   "dominio": "components/forms",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/i18n/LanguageSelector.tsx",
+   "exports": [
+    "LanguageSelector"
+   ],
+   "export_default": null,
+   "linhas": 77,
+   "dominio": "components/i18n",
+   "hooks_locais": [
+    "useTranslation"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/integracoes/ConfigPanels.tsx",
+   "exports": [
+    "Bitrix24ConfigPanel",
+    "CnabConfigPanel",
+    "WebhookConfigPanel",
+    "WhatsAppConfigPanel"
+   ],
+   "export_default": null,
+   "linhas": 611,
+   "dominio": "components/integracoes",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [
+    "sincronizar-bitrix"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/AppSidebar.tsx",
+   "exports": [
+    "AppSidebar"
+   ],
+   "export_default": null,
+   "linhas": 743,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useAuth",
+    "usePWA"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/BackButton.tsx",
+   "exports": [
+    "BackButton"
+   ],
+   "export_default": null,
+   "linhas": 56,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/Breadcrumb.tsx",
+   "exports": [
+    "Breadcrumb"
+   ],
+   "export_default": "Breadcrumb",
+   "linhas": 19,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useBreadcrumb"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Breadcrumbs.tsx",
+   "exports": [
+    "Breadcrumbs"
+   ],
+   "export_default": null,
+   "linhas": 138,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/Column.tsx",
+   "exports": [
+    "Column"
+   ],
+   "export_default": "Column",
+   "linhas": 122,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Container.tsx",
+   "exports": [
+    "Container"
+   ],
+   "export_default": "Container",
+   "linhas": 98,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/EmpresaSelector.tsx",
+   "exports": [
+    "EmpresaSelector"
+   ],
+   "export_default": null,
+   "linhas": 115,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/EmpresaSwitcher.tsx",
+   "exports": [
+    "EmpresaSwitcher"
+   ],
+   "export_default": null,
+   "linhas": 220,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useEmpresas",
+    "useGrupo"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/EntityGridPageContainer.tsx",
+   "exports": [
+    "EntityGridPageContainer"
+   ],
+   "export_default": null,
+   "linhas": 140,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/EntityPageContainer.tsx",
+   "exports": [
+    "EntityPageContainer"
+   ],
+   "export_default": null,
+   "linhas": 155,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/Flex.tsx",
+   "exports": [
+    "Flex"
+   ],
+   "export_default": null,
+   "linhas": 6,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Footer.tsx",
+   "exports": [
+    "Footer"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Grid.tsx",
+   "exports": [
+    "Grid"
+   ],
+   "export_default": "Grid",
+   "linhas": 105,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Header.tsx",
+   "exports": [
+    "Header"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useAuth",
+    "useEmpresas",
+    "useSystemHealth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/MainLayout.tsx",
+   "exports": [
+    "MainLayout"
+   ],
+   "export_default": null,
+   "linhas": 87,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useAuth",
+    "useBackGesture"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/MobileBottomNav.tsx",
+   "exports": [
+    "MobileBottomNav"
+   ],
+   "export_default": null,
+   "linhas": 81,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/MobileQuickActions.tsx",
+   "exports": [
+    "MobileQuickActions"
+   ],
+   "export_default": null,
+   "linhas": 185,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/NavItem.tsx",
+   "exports": [
+    "NavItem"
+   ],
+   "export_default": "NavItem",
+   "linhas": 95,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/PageContainer.tsx",
+   "exports": [
+    "PageContainer"
+   ],
+   "export_default": "PageContainer",
+   "linhas": 128,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/PageHeader.tsx",
+   "exports": [
+    "PageHeader"
+   ],
+   "export_default": null,
+   "linhas": 6,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/PageLayout.tsx",
+   "exports": [
+    "PageLayout"
+   ],
+   "export_default": null,
+   "linhas": 109,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/PageTransition.tsx",
+   "exports": [
+    "PageTransition",
+    "PageTransitionConfig",
+    "TransitionDirection",
+    "TransitionEffect"
+   ],
+   "export_default": null,
+   "linhas": 190,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/layout/Row.tsx",
+   "exports": [
+    "Row"
+   ],
+   "export_default": "Row",
+   "linhas": 110,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Section.tsx",
+   "exports": [
+    "Section"
+   ],
+   "export_default": "Section",
+   "linhas": 133,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/SectionHeader.tsx",
+   "exports": [
+    "SectionHeader"
+   ],
+   "export_default": null,
+   "linhas": 6,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/SidebarFooter.tsx",
+   "exports": [
+    "SidebarFooter"
+   ],
+   "export_default": null,
+   "linhas": 67,
+   "dominio": "components/layout",
+   "hooks_locais": [
+    "useGuidedTour"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/layout/Stack.tsx",
+   "exports": [
+    "Stack"
+   ],
+   "export_default": null,
+   "linhas": 6,
+   "dominio": "components/layout",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/login/LockoutMessage.tsx",
+   "exports": [
+    "LockoutMessage"
+   ],
+   "export_default": null,
+   "linhas": 44,
+   "dominio": "components/login",
+   "hooks_locais": [
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/GerarLinkCienciaDialog.tsx",
+   "exports": [
+    "GerarLinkCienciaDialog"
+   ],
+   "export_default": null,
+   "linhas": 130,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidaContestacaoDialog.tsx",
+   "exports": [
+    "MedidaContestacaoDialog"
+   ],
+   "export_default": null,
+   "linhas": 287,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [
+    "useAuth",
+    "useNow"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidasGravityScale.tsx",
+   "exports": [
+    "MedidasGravityScale"
+   ],
+   "export_default": null,
+   "linhas": 80,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidasKanban.tsx",
+   "exports": [
+    "MedidasKanban"
+   ],
+   "export_default": null,
+   "linhas": 326,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidasKPIs.tsx",
+   "exports": [
+    "MedidasKPIs"
+   ],
+   "export_default": null,
+   "linhas": 125,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidasTable.tsx",
+   "exports": [
+    "MedidasTable"
+   ],
+   "export_default": null,
+   "linhas": 371,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidasTimeline.tsx",
+   "exports": [
+    "MedidasTimeline"
+   ],
+   "export_default": null,
+   "linhas": 130,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/medidas-disciplinares/MedidaWorkflowTimeline.tsx",
+   "exports": [
+    "MedidaWorkflowTimeline"
+   ],
+   "export_default": null,
+   "linhas": 122,
+   "dominio": "components/medidas-disciplinares",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/notifications/NotificationBell.tsx",
+   "exports": [
+    "NotificationBell"
+   ],
+   "export_default": "NotificationBell",
+   "linhas": 81,
+   "dominio": "components/notifications",
+   "hooks_locais": [
+    "useNotificacoes"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/notifications/NotificationCenter.tsx",
+   "exports": [
+    "NotificationCenter"
+   ],
+   "export_default": "NotificationCenter",
+   "linhas": 34,
+   "dominio": "components/notifications",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/notifications/NotificationItem.tsx",
+   "exports": [
+    "NotificationItem"
+   ],
+   "export_default": "NotificationItem",
+   "linhas": 34,
+   "dominio": "components/notifications",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/notifications/NotificationList.tsx",
+   "exports": [
+    "NotificationList"
+   ],
+   "export_default": "NotificationList",
+   "linhas": 34,
+   "dominio": "components/notifications",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/obrigacoes/DarfTab.tsx",
+   "exports": [
+    "DarfTab"
+   ],
+   "export_default": null,
+   "linhas": 51,
+   "dominio": "components/obrigacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/obrigacoes/DeclaracoesTable.tsx",
+   "exports": [
+    "DctfTable",
+    "SefipTable"
+   ],
+   "export_default": null,
+   "linhas": 123,
+   "dominio": "components/obrigacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/obrigacoes/GuiasTable.tsx",
+   "exports": [
+    "GuiaLinha",
+    "GuiaTabela",
+    "GuiasTable"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "dominio": "components/obrigacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/obrigacoes/ObrigacoesKPIs.tsx",
+   "exports": [
+    "ObrigacoesKPIs"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "dominio": "components/obrigacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/onboarding/GuidedTour.tsx",
+   "exports": [
+    "GuidedTour"
+   ],
+   "export_default": null,
+   "linhas": 234,
+   "dominio": "components/onboarding",
+   "hooks_locais": [
+    "useGuidedTour"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/organograma/OrganogramaNode.tsx",
+   "exports": [
+    "OrganogramaNode"
+   ],
+   "export_default": null,
+   "linhas": 131,
+   "dominio": "components/organograma",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/PageTitle.tsx",
+   "exports": [
+    "PageTitle"
+   ],
+   "export_default": null,
+   "linhas": 18,
+   "dominio": "components",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 87,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pcs/PcsAvaliacaoTab.tsx",
+   "exports": [
+    "PcsAvaliacaoTab"
+   ],
+   "export_default": null,
+   "linhas": 154,
+   "dominio": "components/pcs",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePcsAvaliacoes",
+    "usePcsFatores"
+   ],
+   "tabelas": [
+    "cargos"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pcs/PcsBenchmarkTab.tsx",
+   "exports": [
+    "PcsBenchmarkTab"
+   ],
+   "export_default": null,
+   "linhas": 156,
+   "dominio": "components/pcs",
+   "hooks_locais": [
+    "usePcsBenchmark"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pcs/PcsEquidadeTab.tsx",
+   "exports": [
+    "PcsEquidadeTab"
+   ],
+   "export_default": null,
+   "linhas": 172,
+   "dominio": "components/pcs",
+   "hooks_locais": [
+    "usePcsEquidade"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pcs/PcsFatoresTab.tsx",
+   "exports": [
+    "PcsFatoresTab"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "dominio": "components/pcs",
+   "hooks_locais": [
+    "usePcsFatores"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pcs/PcsGradesTab.tsx",
+   "exports": [
+    "PcsGradesTab"
+   ],
+   "export_default": null,
+   "linhas": 118,
+   "dominio": "components/pcs",
+   "hooks_locais": [
+    "usePcsGrades"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/pcs/PcsPlanoHeader.tsx",
+   "exports": [
+    "PcsPlanoHeader"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "dominio": "components/pcs",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/AssinarEspelhoDialog.tsx",
+   "exports": [
+    "AssinarEspelhoDialog"
+   ],
+   "export_default": null,
+   "linhas": 177,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/DefinirPinQuiosqueDialog.tsx",
+   "exports": [
+    "DefinirPinQuiosqueDialog"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/GerarAEJDialog.tsx",
+   "exports": [
+    "GerarAEJDialog"
+   ],
+   "export_default": null,
+   "linhas": 112,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [
+    "gerar-aej"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/GerarAFDDialog.tsx",
+   "exports": [
+    "GerarAFDDialog"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [
+    "gerar-afd"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/GestaoPontoAnalytics.tsx",
+   "exports": [
+    "GestaoPontoAnalytics"
+   ],
+   "export_default": null,
+   "linhas": 401,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/GestaoRegistrosPonto.tsx",
+   "exports": [
+    "GestaoRegistrosPonto"
+   ],
+   "export_default": null,
+   "linhas": 506,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "batidas_ponto",
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/ImportarAFDTDialog.tsx",
+   "exports": [
+    "ImportarAFDTDialog"
+   ],
+   "export_default": null,
+   "linhas": 256,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [
+    "parse-afdt"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoAdjustmentRequests.tsx",
+   "exports": [
+    "PontoAdjustmentRequests"
+   ],
+   "export_default": null,
+   "linhas": 564,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "solicitacoes_ajuste_ponto",
+    "trilha_auditoria_ponto"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoAuditTimeline.tsx",
+   "exports": [
+    "PontoAuditTimeline"
+   ],
+   "export_default": null,
+   "linhas": 186,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoCharts.tsx",
+   "exports": [
+    "PontoCharts"
+   ],
+   "export_default": null,
+   "linhas": 176,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoClockRegister.tsx",
+   "exports": [
+    "PontoClockRegister"
+   ],
+   "export_default": null,
+   "linhas": 455,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useAuth",
+    "useOnMount"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoGeoAnalytics.tsx",
+   "exports": [
+    "BatidaGeo",
+    "PontoGeoAnalytics"
+   ],
+   "export_default": null,
+   "linhas": 224,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoInconsistencyPanel.tsx",
+   "exports": [
+    "PontoInconsistencyPanel",
+    "RegistroComColaborador"
+   ],
+   "export_default": null,
+   "linhas": 330,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoLeaderboard.tsx",
+   "exports": [
+    "PontoLeaderboard"
+   ],
+   "export_default": null,
+   "linhas": 75,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoStreakCard.tsx",
+   "exports": [
+    "PontoStreakCard"
+   ],
+   "export_default": null,
+   "linhas": 167,
+   "dominio": "components/ponto",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoTodayCard.tsx",
+   "exports": [
+    "PontoTodayCard"
+   ],
+   "export_default": null,
+   "linhas": 235,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ponto/PontoWeekSummary.tsx",
+   "exports": [
+    "PontoWeekSummary"
+   ],
+   "export_default": null,
+   "linhas": 79,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/portal/PortalDocumentosTab.tsx",
+   "exports": [
+    "PortalDocumentosTab"
+   ],
+   "export_default": null,
+   "linhas": 418,
+   "dominio": "components/portal",
+   "hooks_locais": [],
+   "tabelas": [
+    "documentos_assinatura"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/portal/PortalFinanceiroTab.tsx",
+   "exports": [
+    "PortalFinanceiroTab"
+   ],
+   "export_default": null,
+   "linhas": 93,
+   "dominio": "components/portal",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/portal/PortalMeusDadosTab.tsx",
+   "exports": [
+    "PortalMeusDadosTab"
+   ],
+   "export_default": null,
+   "linhas": 233,
+   "dominio": "components/portal",
+   "hooks_locais": [],
+   "tabelas": [
+    "portal_notificacoes_settings",
+    "profiles"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/portal/PortalOverviewTab.tsx",
+   "exports": [
+    "PortalOverviewTab"
+   ],
+   "export_default": null,
+   "linhas": 355,
+   "dominio": "components/portal",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/portal/PortalRegimentoCard.tsx",
+   "exports": [
+    "PortalRegimentoCard"
+   ],
+   "export_default": "PortalRegimentoCard",
+   "linhas": 244,
+   "dominio": "components/portal",
+   "hooks_locais": [
+    "useAuth",
+    "useColaboradorVinculo",
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "sst_regimento_assinaturas",
+    "sst_regimento_documentos"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/CampaignWizard.tsx",
+   "exports": [
+    "CampaignWizard"
+   ],
+   "export_default": null,
+   "linhas": 171,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/RewardsApprovalHub.tsx",
+   "exports": [
+    "PagamentoComColaborador",
+    "RewardsApprovalHub"
+   ],
+   "export_default": null,
+   "linhas": 373,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/premiacoes/RewardsSimulator.tsx",
+   "exports": [
+    "RewardsSimulator"
+   ],
+   "export_default": null,
+   "linhas": 388,
+   "dominio": "components/premiacoes",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ProtectedRoute.tsx",
+   "exports": [
+    "ProtectedRoute"
+   ],
+   "export_default": null,
+   "linhas": 230,
+   "dominio": "components",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/recrutamento/CandidatoTimeline.tsx",
+   "exports": [
+    "CandidatoTimeline"
+   ],
+   "export_default": null,
+   "linhas": 161,
+   "dominio": "components/recrutamento",
+   "hooks_locais": [],
+   "tabelas": [
+    "recrutamento_anotacoes",
+    "recrutamento_entrevistas",
+    "recrutamento_testes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/relatorios/RelatoriosAgendadosTab.tsx",
+   "exports": [
+    "RelatoriosAgendadosTab"
+   ],
+   "export_default": null,
+   "linhas": 390,
+   "dominio": "components/relatorios",
+   "hooks_locais": [],
+   "tabelas": [
+    "log_envio_relatorios",
+    "relatorios_agendados"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/relatorios/RelatoriosAnalyticsTab.tsx",
+   "exports": [
+    "RelatoriosAnalyticsTab"
+   ],
+   "export_default": null,
+   "linhas": 234,
+   "dominio": "components/relatorios",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/relatorios/RelatoriosExportTab.tsx",
+   "exports": [
+    "RelatoriosExportTab",
+    "ReportDef"
+   ],
+   "export_default": null,
+   "linhas": 99,
+   "dominio": "components/relatorios",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/RouteErrorBoundary.tsx",
+   "exports": [
+    "RouteErrorBoundary"
+   ],
+   "export_default": null,
+   "linhas": 90,
+   "dominio": "components",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/seguranca/PolicyAuditPanel.tsx",
+   "exports": [
+    "PolicyAuditPanel",
+    "PolicyAuditRow"
+   ],
+   "export_default": "PolicyAuditPanel",
+   "linhas": 134,
+   "dominio": "components/seguranca",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/BeneficiosSettingsTab.tsx",
+   "exports": [
+    "BeneficiosSettingsTab"
+   ],
+   "export_default": null,
+   "linhas": 199,
+   "dominio": "components/settings",
+   "hooks_locais": [],
+   "tabelas": [
+    "beneficios"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/CamposCustomizadosTab.tsx",
+   "exports": [
+    "CamposCustomizadosTab"
+   ],
+   "export_default": null,
+   "linhas": 324,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "campos_customizados"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/ConfiguracoesGeraisTab.tsx",
+   "exports": [
+    "ConfiguracoesGeraisTab"
+   ],
+   "export_default": null,
+   "linhas": 213,
+   "dominio": "components/settings",
+   "hooks_locais": [],
+   "tabelas": [
+    "configuracoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/EmpresaSettingsTab.tsx",
+   "exports": [
+    "EmpresaSettingsTab"
+   ],
+   "export_default": null,
+   "linhas": 279,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "useEmpresas",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/GlobalAuditLogTab.tsx",
+   "exports": [
+    "GlobalAuditLogTab"
+   ],
+   "export_default": null,
+   "linhas": 219,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/InlineTabs.tsx",
+   "exports": [
+    "AlertasKpiTab",
+    "FolhaConfigTab",
+    "IntegracoesTab",
+    "NotificacoesTab",
+    "PontoConfigTab",
+    "PreferenciasTab",
+    "WebhooksLogsTab"
+   ],
+   "export_default": null,
+   "linhas": 821,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "config_alertas_indicadores",
+    "configuracoes_ponto",
+    "empresas",
+    "integracoes",
+    "parametros_sistema",
+    "webhooks_config",
+    "webhooks_logs"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/IPBlockingTab.tsx",
+   "exports": [
+    "IPBlockingTab"
+   ],
+   "export_default": null,
+   "linhas": 265,
+   "dominio": "components/settings",
+   "hooks_locais": [],
+   "tabelas": [
+    "blocked_ips"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/LogsIntegracoesTab.tsx",
+   "exports": [
+    "LogsIntegracoesTab"
+   ],
+   "export_default": null,
+   "linhas": 87,
+   "dominio": "components/settings",
+   "hooks_locais": [],
+   "tabelas": [
+    "logs_integracoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/MFASetup.tsx",
+   "exports": [
+    "MFASetup"
+   ],
+   "export_default": null,
+   "linhas": 425,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "user_mfa"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/SystemHealthTab.tsx",
+   "exports": [
+    "BackupResult",
+    "CleanupResult",
+    "HealthServiceStatus",
+    "HealthcheckResult",
+    "SystemHealthTab"
+   ],
+   "export_default": null,
+   "linhas": 376,
+   "dominio": "components/settings",
+   "hooks_locais": [
+    "useEmpresaStore"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/settings/UserRolesTab.tsx",
+   "exports": [
+    "UserRolesTab"
+   ],
+   "export_default": null,
+   "linhas": 146,
+   "dominio": "components/settings",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/GerarLtcatOsButton.tsx",
+   "exports": [
+    "GerarLtcatOsButton"
+   ],
+   "export_default": null,
+   "linhas": 156,
+   "dominio": "components/sst",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [
+    "gerar-ltcat-os"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/GerarPgrButton.tsx",
+   "exports": [
+    "GerarPgrButton"
+   ],
+   "export_default": null,
+   "linhas": 142,
+   "dominio": "components/sst",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "sst_programas"
+   ],
+   "edges": [
+    "gerar-pgr"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SignaturePad.tsx",
+   "exports": [
+    "SignaturePad"
+   ],
+   "export_default": null,
+   "linhas": 94,
+   "dominio": "components/sst",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTEPIsTab.tsx",
+   "exports": [
+    "EpiResumo",
+    "SSTEPIsTab"
+   ],
+   "export_default": null,
+   "linhas": 112,
+   "dominio": "components/sst",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTExamesTab.tsx",
+   "exports": [
+    "SSTExamesTab"
+   ],
+   "export_default": null,
+   "linhas": 157,
+   "dominio": "components/sst",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTIncidentesTab.tsx",
+   "exports": [
+    "SSTIncidentesTab"
+   ],
+   "export_default": null,
+   "linhas": 198,
+   "dominio": "components/sst",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [
+    "sst_incidentes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTKPIs.tsx",
+   "exports": [
+    "SSTKPIs"
+   ],
+   "export_default": null,
+   "linhas": 120,
+   "dominio": "components/sst",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [
+    "sst_incidentes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTNRsTab.tsx",
+   "exports": [
+    "SSTNRsTab"
+   ],
+   "export_default": null,
+   "linhas": 44,
+   "dominio": "components/sst",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTProgramasTab.tsx",
+   "exports": [
+    "SSTProgramasTab"
+   ],
+   "export_default": null,
+   "linhas": 204,
+   "dominio": "components/sst",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [
+    "sst_programas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/sst/SSTRiscosTab.tsx",
+   "exports": [
+    "SSTRiscosTab"
+   ],
+   "export_default": null,
+   "linhas": 119,
+   "dominio": "components/sst",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [
+    "sst_riscos_ambientais"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrilhaCursosSection.tsx",
+   "exports": [
+    "TrilhaCursosSection"
+   ],
+   "export_default": null,
+   "linhas": 139,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/alert-dialog.tsx",
+   "exports": [
+    "AlertDialog",
+    "AlertDialogAction",
+    "AlertDialogCancel",
+    "AlertDialogContent",
+    "AlertDialogDescription",
+    "AlertDialogFooter",
+    "AlertDialogHeader",
+    "AlertDialogOverlay",
+    "AlertDialogPortal",
+    "AlertDialogTitle",
+    "AlertDialogTrigger"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/alert.tsx",
+   "exports": [
+    "Alert",
+    "AlertDescription",
+    "AlertTitle"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 10,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/avatar.tsx",
+   "exports": [
+    "Avatar",
+    "AvatarFallback",
+    "AvatarImage"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 9,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "exports": [
+    "Badge",
+    "BadgeProps"
+   ],
+   "export_default": null,
+   "linhas": 48,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 194,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "exports": [
+    "Button",
+    "ButtonProps"
+   ],
+   "export_default": null,
+   "linhas": 54,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 250,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/calendar.tsx",
+   "exports": [
+    "Calendar",
+    "CalendarProps"
+   ],
+   "export_default": null,
+   "linhas": 68,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "exports": [
+    "Card",
+    "CardContent",
+    "CardDescription",
+    "CardFooter",
+    "CardHeader",
+    "CardProps",
+    "CardTitle"
+   ],
+   "export_default": null,
+   "linhas": 82,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 256,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/cep-input.tsx",
+   "exports": [
+    "Address",
+    "CEPInput"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useToast"
+   ],
+   "tabelas": [],
+   "edges": [
+    "consultarCEP"
+   ],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "exports": [
+    "Checkbox"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 12,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/cnpj-input.tsx",
+   "exports": [
+    "CNPJInput"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useToast"
+   ],
+   "tabelas": [],
+   "edges": [
+    "consultarCNPJ"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/command-palette.tsx",
+   "exports": [
+    "CommandPalette"
+   ],
+   "export_default": null,
+   "linhas": 686,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useDebounce",
+    "useEmpresa",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "empresas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/command.tsx",
+   "exports": [
+    "Command",
+    "CommandDialog",
+    "CommandEmpty",
+    "CommandGroup",
+    "CommandInput",
+    "CommandItem",
+    "CommandList",
+    "CommandSeparator",
+    "CommandShortcut"
+   ],
+   "export_default": null,
+   "linhas": 121,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/cpf-input.tsx",
+   "exports": [
+    "CPFInput"
+   ],
+   "export_default": null,
+   "linhas": 53,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/currency-input.tsx",
+   "exports": [
+    "CurrencyInput"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/data-table-pagination.tsx",
+   "exports": [
+    "DataTablePagination"
+   ],
+   "export_default": null,
+   "linhas": 103,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/data-table-toolbar.tsx",
+   "exports": [
+    "DataTableToolbar"
+   ],
+   "export_default": null,
+   "linhas": 173,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 9,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/data-table.tsx",
+   "exports": [
+    "DataTable"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/dialog.tsx",
+   "exports": [
+    "Dialog",
+    "DialogClose",
+    "DialogContent",
+    "DialogDescription",
+    "DialogFooter",
+    "DialogHeader",
+    "DialogOverlay",
+    "DialogPortal",
+    "DialogTitle",
+    "DialogTrigger"
+   ],
+   "export_default": null,
+   "linhas": 91,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 124,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "exports": [
+    "DropdownMenu",
+    "DropdownMenuContent",
+    "DropdownMenuGroup",
+    "DropdownMenuItem",
+    "DropdownMenuLabel",
+    "DropdownMenuPortal",
+    "DropdownMenuSeparator",
+    "DropdownMenuSub",
+    "DropdownMenuTrigger"
+   ],
+   "export_default": null,
+   "linhas": 74,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 15,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/empty-state.tsx",
+   "exports": [
+    "EmptyList",
+    "EmptySearch",
+    "EmptyState"
+   ],
+   "export_default": null,
+   "linhas": 77,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 15,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/form.tsx",
+   "exports": [
+    "Form",
+    "FormControl",
+    "FormDescription",
+    "FormField",
+    "FormItem",
+    "FormLabel",
+    "FormMessage"
+   ],
+   "export_default": null,
+   "linhas": 131,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useFormField"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "exports": [
+    "Label"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 137,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/masked-input.tsx",
+   "exports": [
+    "MaskedInput",
+    "MaskedInputProps"
+   ],
+   "export_default": null,
+   "linhas": 55,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/module-skeleton.tsx",
+   "exports": [
+    "CardSkeleton",
+    "ChartSkeleton",
+    "DashboardSkeleton",
+    "GridCardSkeleton",
+    "KPICardSkeleton",
+    "ListPageSkeleton",
+    "StatCardSkeleton",
+    "TableRowSkeleton",
+    "TableSkeleton"
+   ],
+   "export_default": null,
+   "linhas": 210,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 15,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/notification-center.tsx",
+   "exports": [
+    "NotificationCenter"
+   ],
+   "export_default": null,
+   "linhas": 142,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useNotificacoes"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/page-header.tsx",
+   "exports": [
+    "PageHeader"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/phone-input.tsx",
+   "exports": [
+    "PhoneInput"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/popover.tsx",
+   "exports": [
+    "Popover",
+    "PopoverContent",
+    "PopoverTrigger"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 7,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "exports": [
+    "Progress"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 19,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/radio-group.tsx",
+   "exports": [
+    "RadioGroup",
+    "RadioGroupItem"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/scroll-area.tsx",
+   "exports": [
+    "ScrollArea",
+    "ScrollBar"
+   ],
+   "export_default": null,
+   "linhas": 10,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 18,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/search-input.tsx",
+   "exports": [
+    "SearchInput"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useDebounce",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "exports": [
+    "Select",
+    "SelectContent",
+    "SelectGroup",
+    "SelectItem",
+    "SelectTrigger",
+    "SelectValue"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 91,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/separator.tsx",
+   "exports": [
+    "Separator"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 8,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/sheet.tsx",
+   "exports": [
+    "Sheet",
+    "SheetClose",
+    "SheetContent",
+    "SheetDescription",
+    "SheetFooter",
+    "SheetHeader",
+    "SheetOverlay",
+    "SheetPortal",
+    "SheetTitle",
+    "SheetTrigger"
+   ],
+   "export_default": null,
+   "linhas": 25,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "exports": [
+    "Sidebar",
+    "SidebarContent",
+    "SidebarFooter",
+    "SidebarGroup",
+    "SidebarGroupAction",
+    "SidebarGroupContent",
+    "SidebarGroupLabel",
+    "SidebarHeader",
+    "SidebarInput",
+    "SidebarInset",
+    "SidebarMenu",
+    "SidebarMenuAction",
+    "SidebarMenuBadge",
+    "SidebarMenuButton",
+    "SidebarMenuItem",
+    "SidebarMenuSkeleton",
+    "SidebarMenuSub",
+    "SidebarMenuSubButton",
+    "SidebarMenuSubItem",
+    "SidebarProvider",
+    "SidebarRail",
+    "SidebarSeparator",
+    "SidebarTrigger"
+   ],
+   "export_default": null,
+   "linhas": 642,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useIsMobile",
+    "useSidebar"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/signature/SignatureCanvas.tsx",
+   "exports": [
+    "SignatureCanvas"
+   ],
+   "export_default": null,
+   "linhas": 139,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "exports": [
+    "Skeleton"
+   ],
+   "export_default": null,
+   "linhas": 7,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 22,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/slider.tsx",
+   "exports": [
+    "Slider"
+   ],
+   "export_default": null,
+   "linhas": 27,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/sonner.tsx",
+   "exports": [
+    "Toaster"
+   ],
+   "export_default": null,
+   "linhas": 8,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useTheme"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/spinner.tsx",
+   "exports": [
+    "LoadingSpinner",
+    "PageLoader",
+    "Spinner"
+   ],
+   "export_default": null,
+   "linhas": 44,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 92,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/stat-card.tsx",
+   "exports": [
+    "StatCard"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/status-badge.tsx",
+   "exports": [
+    "ColaboradorStatus",
+    "FolhaStatus",
+    "StatusBadge"
+   ],
+   "export_default": null,
+   "linhas": 84,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 11,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/switch.tsx",
+   "exports": [
+    "Switch"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 12,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/sync-error-state.tsx",
+   "exports": [
+    "SyncErrorState"
+   ],
+   "export_default": null,
+   "linhas": 101,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
+   "exports": [
+    "Table",
+    "TableBody",
+    "TableCell",
+    "TableFooter",
+    "TableHead",
+    "TableHeader",
+    "TableRow"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 107,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/tabs.tsx",
+   "exports": [
+    "Tabs",
+    "TabsContent",
+    "TabsList",
+    "TabsTrigger"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 49,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "exports": [
+    "Textarea",
+    "TextareaProps"
+   ],
+   "export_default": null,
+   "linhas": 2,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 38,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/theme-toggle.tsx",
+   "exports": [
+    "ThemeToggle"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useTheme"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/toast.tsx",
+   "exports": [
+    "Toast",
+    "ToastAction",
+    "ToastClose",
+    "ToastDescription",
+    "ToastProvider",
+    "ToastTitle",
+    "ToastViewport"
+   ],
+   "export_default": null,
+   "linhas": 24,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/toaster.tsx",
+   "exports": [
+    "Toaster"
+   ],
+   "export_default": null,
+   "linhas": 15,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useToast"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/tooltip.tsx",
+   "exports": [
+    "Tooltip",
+    "TooltipContent",
+    "TooltipProvider",
+    "TooltipTrigger"
+   ],
+   "export_default": null,
+   "linhas": 11,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 32,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/user-avatar.tsx",
+   "exports": [
+    "UserAvatar"
+   ],
+   "export_default": null,
+   "linhas": 52,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/user-profile-menu.tsx",
+   "exports": [
+    "UserProfileMenu"
+   ],
+   "export_default": null,
+   "linhas": 128,
+   "dominio": "components/ui",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/workflows/NodeInspector.tsx",
+   "exports": [
+    "NodeInspector"
+   ],
+   "export_default": null,
+   "linhas": 193,
+   "dominio": "components/workflows",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
+   "exports": [
+    "WfConnection",
+    "WfDesignerProps",
+    "WfNode",
+    "WfNodeType",
+    "WorkflowDesigner"
+   ],
+   "export_default": null,
+   "linhas": 824,
+   "dominio": "components/workflows",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "exports": [
+    "AppRole",
+    "AuthContext",
+    "AuthContextType",
+    "AuthProvider",
+    "User"
+   ],
+   "export_default": null,
+   "linhas": 377,
+   "dominio": "contexts",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "empresas"
+   ],
+   "edges": [],
+   "usado_por": 16,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/contexts/EmpresaContext.tsx",
+   "exports": [
+    "EmpresaProvider"
+   ],
+   "export_default": null,
+   "linhas": 68,
+   "dominio": "contexts",
+   "hooks_locais": [
+    "useEmpresa",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/contexts/NotificationContext.tsx",
+   "exports": [
+    "NotificationProvider"
+   ],
+   "export_default": null,
+   "linhas": 51,
+   "dominio": "contexts",
+   "hooks_locais": [
+    "useNotificacoes",
+    "useNotification"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/errors/ErrorBoundary.tsx",
+   "exports": [
+    "ErrorBoundary"
+   ],
+   "export_default": null,
+   "linhas": 73,
+   "dominio": "errors",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminAgendamentoExamesPage.tsx",
+   "exports": [
+    "AdminAgendamentoExamesPage"
+   ],
+   "export_default": "AdminAgendamentoExamesPage",
+   "linhas": 444,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "exames_agendamentos"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminAsoWorkflowPage.tsx",
+   "exports": [
+    "AdminAsoWorkflowPage"
+   ],
+   "export_default": "AdminAsoWorkflowPage",
+   "linhas": 375,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "asos"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminCatPage.tsx",
+   "exports": [
+    "AdminCatPage"
+   ],
+   "export_default": "AdminCatPage",
+   "linhas": 371,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "sst_cat"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminClinicasPartnersPage.tsx",
+   "exports": [
+    "AdminClinicasPartnersPage"
+   ],
+   "export_default": "AdminClinicasPartnersPage",
+   "linhas": 489,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "clinicas_partners"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminDiagnosticoMigracaoPage.tsx",
+   "exports": [
+    "AdminDiagnosticoMigracaoPage"
+   ],
+   "export_default": "AdminDiagnosticoMigracaoPage",
+   "linhas": 397,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useOnMount",
+    "useSystemHealthHistory"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminEpisFichasPage.tsx",
+   "exports": [
+    "AdminEpisFichasPage"
+   ],
+   "export_default": "AdminEpisFichasPage",
+   "linhas": 187,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "epis_fichas",
+    "epis_fichas_assinaturas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminExtintoresPage.tsx",
+   "exports": [
+    "AdminExtintoresPage"
+   ],
+   "export_default": "AdminExtintoresPage",
+   "linhas": 419,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "sst_extintores",
+    "sst_extintores_inspecoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminIdempotenciaPage.tsx",
+   "exports": [
+    "AdminIdempotenciaPage"
+   ],
+   "export_default": "AdminIdempotenciaPage",
+   "linhas": 188,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminOperacaoPage.tsx",
+   "exports": [
+    "AdminOperacaoPage"
+   ],
+   "export_default": "AdminOperacaoPage",
+   "linhas": 471,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminPontoDivergenciasPage.tsx",
+   "exports": [
+    "AdminPontoDivergenciasPage"
+   ],
+   "export_default": "AdminPontoDivergenciasPage",
+   "linhas": 470,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "afdt_divergencias",
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminRegimentoInternoPage.tsx",
+   "exports": [
+    "AdminRegimentoInternoPage"
+   ],
+   "export_default": "AdminRegimentoInternoPage",
+   "linhas": 421,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "sst_regimento_documentos"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminSecurityPage.tsx",
+   "exports": [
+    "AdminSecurityPage"
+   ],
+   "export_default": "AdminSecurityPage",
+   "linhas": 211,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [
+    "security_alerts"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminSstDashboardPage.tsx",
+   "exports": [
+    "AdminSstDashboardPage"
+   ],
+   "export_default": "AdminSstDashboardPage",
+   "linhas": 132,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdminTelemetriaPage.tsx",
+   "exports": [
+    "AdminTelemetriaPage"
+   ],
+   "export_default": "AdminTelemetriaPage",
+   "linhas": 164,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [
+    "query_telemetry"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AdmissoesPage.tsx",
+   "exports": [
+    "AdmissoesPage"
+   ],
+   "export_default": "AdmissoesPage",
+   "linhas": 395,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAdmissoes"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AfastamentosPage.tsx",
+   "exports": [
+    "AfastamentosPage"
+   ],
+   "export_default": "AfastamentosPage",
+   "linhas": 523,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAfastamentos",
+    "useEmpresas",
+    "useProrrogacoesAfastamento"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AssinarContratoPage.tsx",
+   "exports": [
+    "AssinarContratoPage"
+   ],
+   "export_default": "AssinarContratoPage",
+   "linhas": 398,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AssinaturasPage.tsx",
+   "exports": [
+    "AssinaturasPage"
+   ],
+   "export_default": "AssinaturasPage",
+   "linhas": 193,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAssinaturas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AssistenteIAPage.tsx",
+   "exports": [
+    "AssistenteIAPage"
+   ],
+   "export_default": "AssistenteIAPage",
+   "linhas": 279,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AuditoriaPage.tsx",
+   "exports": [
+    "AuditoriaPage"
+   ],
+   "export_default": "AuditoriaPage",
+   "linhas": 347,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useExcelExport",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AuthCallbackPage.tsx",
+   "exports": [
+    "AuthCallbackPage"
+   ],
+   "export_default": "AuthCallbackPage",
+   "linhas": 66,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [
+    "auth-gov-br"
+   ],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/AvaliacaoPage.tsx",
+   "exports": [
+    "AvaliacaoPage"
+   ],
+   "export_default": "AvaliacaoPage",
+   "linhas": 306,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/BackupPage.tsx",
+   "exports": [
+    "BackupPage"
+   ],
+   "export_default": "BackupPage",
+   "linhas": 187,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/BancoHorasPage.tsx",
+   "exports": [
+    "BancoHorasPage"
+   ],
+   "export_default": "BancoHorasPage",
+   "linhas": 132,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "banco_horas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/BeneficioFormPage.tsx",
+   "exports": [
+    "BeneficioFormPage"
+   ],
+   "export_default": "BeneficioFormPage",
+   "linhas": 134,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useBeneficios"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/BeneficiosPage.tsx",
+   "exports": [
+    "BeneficiosPage"
+   ],
+   "export_default": "BeneficiosPage",
+   "linhas": 206,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
+   "exports": [
+    "CalculadoraRescisaoPage"
+   ],
+   "export_default": "CalculadoraRescisaoPage",
+   "linhas": 646,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useDataAccessLog",
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "desligamentos",
+    "historico_rescisoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/CanalContabilidadePage.tsx",
+   "exports": [
+    "CanalContabilidadePage"
+   ],
+   "export_default": "CanalContabilidadePage",
+   "linhas": 506,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/CanalEticaPage.tsx",
+   "exports": [
+    "CanalEticaPage"
+   ],
+   "export_default": "CanalEticaPage",
+   "linhas": 187,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "canal_etica"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/CargosPage.tsx",
+   "exports": [
+    "CargosPage"
+   ],
+   "export_default": "CargosPage",
+   "linhas": 115,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useCargos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/CentrosCustoPage.tsx",
+   "exports": [
+    "CentrosCustoPage"
+   ],
+   "export_default": "CentrosCustoPage",
+   "linhas": 170,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "centros_custo"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/CienciaMedidaPage.tsx",
+   "exports": [
+    "CienciaMedidaPage"
+   ],
+   "export_default": "CienciaMedidaPage",
+   "linhas": 326,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
+   "exports": [
+    "ColaboradorDetalhesPage"
+   ],
+   "export_default": "ColaboradorDetalhesPage",
+   "linhas": 436,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useDataAccessLog",
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ColaboradoresPage.tsx",
+   "exports": [
+    "ColaboradoresPage"
+   ],
+   "export_default": "ColaboradoresPage",
+   "linhas": 384,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useCargos",
+    "useColaboradores",
+    "useDepartamentos",
+    "useEmpresas",
+    "useExcelExport",
+    "usePDFExport",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ColaboradorFormPage.tsx",
+   "exports": [
+    "ColaboradorFormPage"
+   ],
+   "export_default": "ColaboradorFormPage",
+   "linhas": 488,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useCargos",
+    "useDepartamentos",
+    "useEmpresas",
+    "useFormGuard",
+    "useNotification"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ComunicacaoInternaPage.tsx",
+   "exports": [
+    "ComunicacaoInternaPage"
+   ],
+   "export_default": "ComunicacaoInternaPage",
+   "linhas": 509,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "comunicados_leituras"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ConfiguracoesPage.tsx",
+   "exports": [
+    "ConfiguracoesPage"
+   ],
+   "export_default": "ConfiguracoesPage",
+   "linhas": 101,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ContabilidadePage.tsx",
+   "exports": [
+    "ContabilidadePage"
+   ],
+   "export_default": "ContabilidadePage",
+   "linhas": 340,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ContratacaoPage.tsx",
+   "exports": [
+    "ContratacaoPage"
+   ],
+   "export_default": "ContratacaoPage",
+   "linhas": 734,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useDocumentOCR"
+   ],
+   "tabelas": [],
+   "edges": [
+    "admissao-publica"
+   ],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ContratosGeradosPage.tsx",
+   "exports": [
+    "ContratosGeradosPage"
+   ],
+   "export_default": "ContratosGeradosPage",
+   "linhas": 527,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useSyncedState"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ContratoTemplatesPage.tsx",
+   "exports": [
+    "ContratoTemplatesPage"
+   ],
+   "export_default": "ContratoTemplatesPage",
+   "linhas": 177,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useContratoTemplates"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ControleAcessoPage.tsx",
+   "exports": [
+    "ControleAcessoPage"
+   ],
+   "export_default": "ControleAcessoPage",
+   "linhas": 242,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ConveniosPage.tsx",
+   "exports": [
+    "ConveniosPage"
+   ],
+   "export_default": "ConveniosPage",
+   "linhas": 383,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "convenios",
+    "convenios_colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DashboardExecutivoPage.tsx",
+   "exports": [
+    "DashboardExecutivoPage"
+   ],
+   "export_default": "DashboardExecutivoPage",
+   "linhas": 591,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useExecutiveKPIs",
+    "useRealTimeSubscription",
+    "useStrategicFinancials"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DashboardPage.tsx",
+   "exports": [
+    "DashboardPage"
+   ],
+   "export_default": "DashboardPage",
+   "linhas": 438,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "usePendencias",
+    "useRealtimeDashboard"
+   ],
+   "tabelas": [
+    "admissoes",
+    "afastamentos",
+    "banco_horas",
+    "colaboradores",
+    "desligamentos",
+    "documentos_assinatura",
+    "ferias",
+    "folhas_pagamento",
+    "solicitacoes_ajuste_ponto",
+    "vw_kpi_absenteismo",
+    "vw_kpi_turnover"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DepartamentosPage.tsx",
+   "exports": [
+    "DepartamentosPage"
+   ],
+   "export_default": "DepartamentosPage",
+   "linhas": 155,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useDepartamentos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DescontosPage.tsx",
+   "exports": [
+    "DescontosPage"
+   ],
+   "export_default": "DescontosPage",
+   "linhas": 212,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "adiantamentos_salariais",
+    "colaboradores",
+    "emprestimos_consignados"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DesignSystemPage.tsx",
+   "exports": [
+    "DesignSystemPage"
+   ],
+   "export_default": "DesignSystemPage",
+   "linhas": 313,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DesligamentosPage.tsx",
+   "exports": [
+    "DesligamentosPage"
+   ],
+   "export_default": "DesligamentosPage",
+   "linhas": 375,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useDataAccessLog",
+    "useDesligamentos",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DespesasPage.tsx",
+   "exports": [
+    "DespesasPage"
+   ],
+   "export_default": "DespesasPage",
+   "linhas": 474,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/DocumentosPage.tsx",
+   "exports": [
+    "DocumentosPage"
+   ],
+   "export_default": "DocumentosPage",
+   "linhas": 608,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask",
+    "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/EmpresaFormPage.tsx",
+   "exports": [
+    "EmpresaFormPage"
+   ],
+   "export_default": "EmpresaFormPage",
+   "linhas": 327,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useFormGuard",
+    "useNotification"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/EmpresasPage.tsx",
+   "exports": [
+    "EmpresasPage"
+   ],
+   "export_default": "EmpresasPage",
+   "linhas": 101,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useTodasEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/EPIsPage.tsx",
+   "exports": [
+    "EPIsPage"
+   ],
+   "export_default": "EPIsPage",
+   "linhas": 425,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/EscalasPage.tsx",
+   "exports": [
+    "EscalasPage"
+   ],
+   "export_default": "EscalasPage",
+   "linhas": 230,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "escalas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ESocialPage.tsx",
+   "exports": [
+    "ESocialPage"
+   ],
+   "export_default": "ESocialPage",
+   "linhas": 790,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useESocial",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ExamesPage.tsx",
+   "exports": [
+    "ExamesPage"
+   ],
+   "export_default": "ExamesPage",
+   "linhas": 172,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "exames"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FaltasPage.tsx",
+   "exports": [
+    "FaltasPage"
+   ],
+   "export_default": "FaltasPage",
+   "linhas": 486,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FeriadosPage.tsx",
+   "exports": [
+    "FeriadosPage"
+   ],
+   "export_default": "FeriadosPage",
+   "linhas": 171,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [
+    "feriados"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FeriasPage.tsx",
+   "exports": [
+    "FeriasPage"
+   ],
+   "export_default": "FeriasPage",
+   "linhas": 473,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useDataAccessLog",
+    "useEmpresas",
+    "useFerias",
+    "useFeriasAprovacao"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FeriasProgramacaoPage.tsx",
+   "exports": [
+    "FeriasProgramacaoPage"
+   ],
+   "export_default": "FeriasProgramacaoPage",
+   "linhas": 158,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useColaboradores",
+    "useProgramacaoFerias",
+    "useProgramacaoMutations"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FinanceiroBancarioPage.tsx",
+   "exports": [
+    "FinanceiroBancarioPage"
+   ],
+   "export_default": "FinanceiroBancarioPage",
+   "linhas": 603,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FolhaCompliancePage.tsx",
+   "exports": [
+    "FolhaCompliancePage"
+   ],
+   "export_default": "FolhaCompliancePage",
+   "linhas": 297,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "vw_folha_compliance"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FolhaPagamentoPage.tsx",
+   "exports": [
+    "FolhaPagamentoPage"
+   ],
+   "export_default": "FolhaPagamentoPage",
+   "linhas": 298,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useDataAccessLog",
+    "useEmpresas",
+    "useIdempotencyKey"
+   ],
+   "tabelas": [
+    "folhas_pagamento"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/FolhaPage.tsx",
+   "exports": [
+    "FolhaPage"
+   ],
+   "export_default": "FolhaPage",
+   "linhas": 319,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useExcelExport",
+    "useFolha",
+    "usePDFExport"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/GeradorDocumentosPage.tsx",
+   "exports": [
+    "GeradorDocumentosPage"
+   ],
+   "export_default": "GeradorDocumentosPage",
+   "linhas": 461,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresa",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/HoleritesPage.tsx",
+   "exports": [
+    "HoleritesPage"
+   ],
+   "export_default": "HoleritesPage",
+   "linhas": 266,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "folha_itens"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/HorasExtrasPage.tsx",
+   "exports": [
+    "HorasExtrasPage"
+   ],
+   "export_default": "HorasExtrasPage",
+   "linhas": 165,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useColaboradores",
+    "useHorasExtras"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ImportacaoPage.tsx",
+   "exports": [
+    "ImportacaoPage"
+   ],
+   "export_default": "ImportacaoPage",
+   "linhas": 306,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useImportacaoColaboradores",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/IntegracoesPage.tsx",
+   "exports": [
+    "IntegracoesPage"
+   ],
+   "export_default": "IntegracoesPage",
+   "linhas": 282,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/JornadasPage.tsx",
+   "exports": [
+    "JornadasPage"
+   ],
+   "export_default": "JornadasPage",
+   "linhas": 328,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useJornadaHorarios",
+    "useSalvarGradeHorarios"
+   ],
+   "tabelas": [
+    "jornadas"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/LGPDPage.tsx",
+   "exports": [
+    "LGPDPage"
+   ],
+   "export_default": "LGPDPage",
+   "linhas": 620,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useNow"
+   ],
+   "tabelas": [
+    "documentos",
+    "lgpd_politicas_retencao"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/LocaisTrabalhoPage.tsx",
+   "exports": [
+    "LocaisTrabalhoPage"
+   ],
+   "export_default": "LocaisTrabalhoPage",
+   "linhas": 197,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useLocaisTrabalho"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/LoginPage.tsx",
+   "exports": [
+    "LoginPage"
+   ],
+   "export_default": "LoginPage",
+   "linhas": 603,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useBruteForceProtection"
+   ],
+   "tabelas": [],
+   "edges": [
+    "auth-gov-br"
+   ],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/LotacoesPage.tsx",
+   "exports": [
+    "LotacoesPage"
+   ],
+   "export_default": "LotacoesPage",
+   "linhas": 157,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "lotacoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/MedidasDisciplinaresPage.tsx",
+   "exports": [
+    "MedidasDisciplinaresPage"
+   ],
+   "export_default": "MedidasDisciplinaresPage",
+   "linhas": 529,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/MovimentacoesPage.tsx",
+   "exports": [
+    "MovimentacoesPage"
+   ],
+   "export_default": "MovimentacoesPage",
+   "linhas": 489,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "cargos",
+    "departamentos",
+    "promocoes",
+    "transferencias"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/NotFoundPage.tsx",
+   "exports": [
+    "NotFoundPage"
+   ],
+   "export_default": "NotFoundPage",
+   "linhas": 21,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/NotificacoesPage.tsx",
+   "exports": [
+    "NotificacoesPage"
+   ],
+   "export_default": "NotificacoesPage",
+   "linhas": 451,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useNotificacoes"
+   ],
+   "tabelas": [
+    "historico_alertas",
+    "notificacoes"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ObrigacoesFiscaisPage.tsx",
+   "exports": [
+    "ObrigacoesFiscaisPage"
+   ],
+   "export_default": "ObrigacoesFiscaisPage",
+   "linhas": 446,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "certificados_digitais",
+    "dctfweb_declaracoes",
+    "guias_fgts",
+    "guias_inss",
+    "sefip_arquivos",
+    "simulacoes_fiscais"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/OnboardingPage.tsx",
+   "exports": [
+    "OnboardingPage"
+   ],
+   "export_default": "OnboardingPage",
+   "linhas": 211,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [
+    "admissoes",
+    "tarefas_onboarding"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/OrganogramaPage.tsx",
+   "exports": [
+    "OrganogramaPage"
+   ],
+   "export_default": "OrganogramaPage",
+   "linhas": 109,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useOrganograma"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PassivoTrabalhistaPage.tsx",
+   "exports": [
+    "PassivoTrabalhistaPage"
+   ],
+   "export_default": "PassivoTrabalhistaPage",
+   "linhas": 624,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "ferias",
+    "folhas_pagamento",
+    "provisoes_mensais"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PensoesPage.tsx",
+   "exports": [
+    "PensoesPage"
+   ],
+   "export_default": "PensoesPage",
+   "linhas": 272,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "pensoes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PerfilPage.tsx",
+   "exports": [
+    "PerfilPage"
+   ],
+   "export_default": "PerfilPage",
+   "linhas": 394,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "profiles"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PesquisasClimaPage.tsx",
+   "exports": [
+    "PesquisasClimaPage"
+   ],
+   "export_default": "PesquisasClimaPage",
+   "linhas": 252,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PlanoCargosSalariosPage.tsx",
+   "exports": [
+    "PlanoCargosSalariosPage"
+   ],
+   "export_default": "PlanoCargosSalariosPage",
+   "linhas": 72,
+   "dominio": "pages",
+   "hooks_locais": [
+    "usePcsPlanos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PlanosSaudePage.tsx",
+   "exports": [
+    "PlanosSaudePage"
+   ],
+   "export_default": "PlanosSaudePage",
+   "linhas": 525,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "planos_saude",
+    "seguros_vida"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PontoKioskPage.tsx",
+   "exports": [
+    "PontoKioskPage"
+   ],
+   "export_default": "PontoKioskPage",
+   "linhas": 470,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useOnMount"
+   ],
+   "tabelas": [
+    "colaboradores"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PontoPage.tsx",
+   "exports": [
+    "PontoPage"
+   ],
+   "export_default": "PontoPage",
+   "linhas": 671,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useEmpresas",
+    "usePontoOffline"
+   ],
+   "tabelas": [
+    "banco_horas",
+    "colaboradores",
+    "configuracoes_ponto",
+    "locais_trabalho",
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PortalPage.tsx",
+   "exports": [
+    "PortalPage"
+   ],
+   "export_default": "PortalPage",
+   "linhas": 233,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useAuth",
+    "useColaboradorVinculo",
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "beneficios",
+    "comunicados",
+    "ferias",
+    "holerites",
+    "notificacoes",
+    "profiles",
+    "registros_ponto"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PremiacoesPage.tsx",
+   "exports": [
+    "PremiacoesPage"
+   ],
+   "export_default": "PremiacoesPage",
+   "linhas": 574,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/PromoBrindesPage.tsx",
+   "exports": [
+    "PromoBrindesPage"
+   ],
+   "export_default": "PromoBrindesPage",
+   "linhas": 284,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [
+    "promo_brindes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ProvisoesPage.tsx",
+   "exports": [
+    "ProvisoesPage"
+   ],
+   "export_default": "ProvisoesPage",
+   "linhas": 581,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "provisao_logs"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/RecrutamentoPage.tsx",
+   "exports": [
+    "RecrutamentoPage"
+   ],
+   "export_default": "RecrutamentoPage",
+   "linhas": 634,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/RelatoriosPage.tsx",
+   "exports": [
+    "RelatoriosPage"
+   ],
+   "export_default": "RelatoriosPage",
+   "linhas": 485,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useExcelExport",
+    "usePDFExport",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "admissoes",
+    "colaboradores",
+    "desligamentos",
+    "ferias",
+    "folhas_pagamento"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/RubricasPage.tsx",
+   "exports": [
+    "RubricasPage"
+   ],
+   "export_default": "RubricasPage",
+   "linhas": 427,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "rubricas_folha"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/SegurancaPage.tsx",
+   "exports": [
+    "SegurancaPage"
+   ],
+   "export_default": "SegurancaPage",
+   "linhas": 506,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/SegurosVidaPage.tsx",
+   "exports": [
+    "SegurosVidaPage"
+   ],
+   "export_default": "SegurosVidaPage",
+   "linhas": 716,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "usePiiMask"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "seguros_vida",
+    "sinistros_seguro"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/SindicatosPage.tsx",
+   "exports": [
+    "SindicatosPage"
+   ],
+   "export_default": "SindicatosPage",
+   "linhas": 166,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "sindicatos"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/SSTPage.tsx",
+   "exports": [
+    "SSTPage"
+   ],
+   "export_default": "SSTPage",
+   "linhas": 288,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresa"
+   ],
+   "tabelas": [
+    "asos",
+    "epis",
+    "epis_entregas",
+    "sst_incidentes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/TimesPage.tsx",
+   "exports": [
+    "TimesPage"
+   ],
+   "export_default": "TimesPage",
+   "linhas": 195,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "times"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/TreinamentosPage.tsx",
+   "exports": [
+    "TreinamentosPage"
+   ],
+   "export_default": "TreinamentosPage",
+   "linhas": 863,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "treinamentos"
+   ],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/TurnosPage.tsx",
+   "exports": [
+    "TurnosPage"
+   ],
+   "export_default": "TurnosPage",
+   "linhas": 270,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/UsuariosPage.tsx",
+   "exports": [
+    "UsuariosPage"
+   ],
+   "export_default": "UsuariosPage",
+   "linhas": 73,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/ValesPage.tsx",
+   "exports": [
+    "ValesPage"
+   ],
+   "export_default": "ValesPage",
+   "linhas": 343,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "recargas_vale",
+    "vales_alimentacao",
+    "vales_transporte"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/VerificarContratoPage.tsx",
+   "exports": [
+    "VerificarContratoPage"
+   ],
+   "export_default": "VerificarContratoPage",
+   "linhas": 176,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/VinculosPromoPage.tsx",
+   "exports": [
+    "VinculosPromoPage"
+   ],
+   "export_default": "VinculosPromoPage",
+   "linhas": 251,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [
+    "promo_brindes",
+    "times",
+    "times_brindes"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/WorkflowsPage.tsx",
+   "exports": [
+    "WorkflowsPage"
+   ],
+   "export_default": "WorkflowsPage",
+   "linhas": 747,
+   "dominio": "pages",
+   "hooks_locais": [
+    "useEmpresas",
+    "useNow"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/providers/QueryProvider.tsx",
+   "exports": [
+    "QueryProvider"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "dominio": "providers",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/providers/ThemeProvider.tsx",
+   "exports": [
+    "ThemeProvider"
+   ],
+   "export_default": null,
+   "linhas": 21,
+   "dominio": "providers",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/providers/ToastProvider.tsx",
+   "exports": [
+    "ToastProvider"
+   ],
+   "export_default": null,
+   "linhas": 7,
+   "dominio": "providers",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  }
+ ]
+}

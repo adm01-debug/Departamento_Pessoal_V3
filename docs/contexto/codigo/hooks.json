@@ -1,0 +1,2804 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 102,
+ "hooks": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "hooks_exportados": [
+    "useA",
+    "useB",
+    "useC",
+    "useX"
+   ],
+   "linhas": 173,
+   "dominio": null,
+   "tabelas": [
+    "a",
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "rpcs": [
+    "r1"
+   ],
+   "edges": [
+    "inexistente",
+    "other",
+    "tick"
+   ],
+   "hooks_internos": [
+    "useFeatureFlag"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/layout/Breadcrumb.tsx",
+   "hooks_exportados": [
+    "useBreadcrumb"
+   ],
+   "linhas": 19,
+   "dominio": "components/layout",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLocation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/onboarding/GuidedTour.tsx",
+   "hooks_exportados": [
+    "useGuidedTour"
+   ],
+   "linhas": 234,
+   "dominio": "components/onboarding",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx",
+    "src/components/layout/SidebarFooter.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/components/ui/form.tsx",
+   "hooks_exportados": [
+    "useFormField"
+   ],
+   "linhas": 131,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useFormContext",
+    "useId"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "hooks_exportados": [
+    "useSidebar"
+   ],
+   "linhas": 642,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useIsMobile",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/use-toast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 71,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "hooks_exportados": [
+    "useAuth"
+   ],
+   "linhas": 377,
+   "dominio": "contexts",
+   "tabelas": [
+    "colaboradores",
+    "empresas"
+   ],
+   "rpcs": [
+    "get_user_roles"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 16,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx",
+    "src/components/portal/PortalRegimentoCard.tsx",
+    "src/components/settings/MFASetup.tsx",
+    "src/components/ui/user-profile-menu.tsx",
+    "src/contexts/index.ts",
+    "src/hooks/useAuth.ts",
+    "src/hooks/useColaboradorVinculo.ts",
+    "src/hooks/useEmpresas.ts",
+    "src/hooks/usePiiMask.ts",
+    "src/pages/AssistenteIAPage.tsx",
+    "src/pages/ComunicacaoInternaPage.tsx",
+    "src/pages/DashboardPage.tsx",
+    "src/pages/LoginPage.tsx",
+    "src/pages/NotificacoesPage.tsx",
+    "src/pages/PerfilPage.tsx",
+    "src/pages/PortalPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/contexts/EmpresaContext.tsx",
+   "hooks_exportados": [
+    "useEmpresa"
+   ],
+   "linhas": 68,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEmpresas",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/contexts/index.ts",
+    "src/hooks/useFeriados.ts",
+    "src/hooks/usePonto.ts",
+    "src/pages/BackupPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/contexts/index.ts",
+   "hooks_exportados": [
+    "useAuth",
+    "useEmpresa",
+    "useNotification"
+   ],
+   "linhas": 5,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 19,
+   "usado_por_arquivos": [
+    "src/components/ferias/FeriasTable.tsx",
+    "src/components/ponto/PontoCharts.tsx",
+    "src/components/ponto/PontoClockRegister.tsx",
+    "src/components/ponto/PontoStreakCard.tsx",
+    "src/components/sst/SSTIncidentesTab.tsx",
+    "src/components/sst/SSTKPIs.tsx",
+    "src/components/sst/SSTProgramasTab.tsx",
+    "src/components/sst/SSTRiscosTab.tsx",
+    "src/components/ui/command-palette.tsx",
+    "src/hooks/useAssinarAvisoFerias.ts",
+    "src/hooks/useFeriasAprovacao.ts",
+    "src/hooks/useImportacaoColaboradores.ts",
+    "src/main.tsx",
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/EmpresaFormPage.tsx",
+    "src/pages/FeriadosPage.tsx",
+    "src/pages/GeradorDocumentosPage.tsx",
+    "src/pages/PontoPage.tsx",
+    "src/pages/SSTPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/contexts/NotificationContext.tsx",
+   "hooks_exportados": [
+    "useNotification",
+    "useNotifications"
+   ],
+   "linhas": 51,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useNotificacoes"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/contexts/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/ferias/useAdiantamento13.ts",
+   "hooks_exportados": [
+    "useSolicitarAdiantamento13"
+   ],
+   "linhas": 45,
+   "dominio": "hooks/ferias",
+   "tabelas": [],
+   "rpcs": [
+    "solicitar_adiantamento_13_ferias"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ferias/FeriasActions.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/ferias/useAlertasPagamentoD2.ts",
+   "hooks_exportados": [
+    "useAlertasPagamentoD2",
+    "useConfirmarPagamentoFerias"
+   ],
+   "linhas": 83,
+   "dominio": "hooks/ferias",
+   "tabelas": [
+    "v_ferias_alerta_pagamento_d2"
+   ],
+   "rpcs": [
+    "registrar_pagamento_ferias"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ferias/FeriasAlertasPagamentoCard.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/ferias/useGerarComunicadoColetivas.ts",
+   "hooks_exportados": [
+    "useGerarComunicadoColetivas"
+   ],
+   "linhas": 95,
+   "dominio": "hooks/ferias",
+   "tabelas": [
+    "colaboradores",
+    "empresas",
+    "ferias_coletivas"
+   ],
+   "rpcs": [
+    "registrar_comunicado_ferias_coletivas"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ferias/FeriasColetivasTab.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/ferias/useProgramacaoFerias.ts",
+   "hooks_exportados": [
+    "useProgramacaoFerias",
+    "useProgramacaoMutations"
+   ],
+   "linhas": 227,
+   "dominio": "hooks/ferias",
+   "tabelas": [
+    "ferias_programacao"
+   ],
+   "rpcs": [
+    "programacao_ferias_aprovar_gestor",
+    "programacao_ferias_aprovar_rh",
+    "programacao_ferias_converter",
+    "programacao_ferias_mover",
+    "programacao_ferias_rejeitar"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/ferias/programacao/CardProgramacao.tsx",
+    "src/components/ferias/programacao/KanbanMes.tsx",
+    "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
+    "src/pages/FeriasProgramacaoPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/ferias/useReconciliacaoFolha.ts",
+   "hooks_exportados": [
+    "useReconciliacaoFolha"
+   ],
+   "linhas": 52,
+   "dominio": "hooks/ferias",
+   "tabelas": [
+    "v_ferias_folha_reconciliacao"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ferias/FeriasReconciliacaoCard.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/ferias/useReconciliacaoLogs.ts",
+   "hooks_exportados": [
+    "useReconciliacaoLogs"
+   ],
+   "linhas": 29,
+   "dominio": "hooks/ferias",
+   "tabelas": [
+    "ferias_reconciliacao_logs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/index.ts",
+   "hooks_exportados": [
+    "useASOs",
+    "useAdmissaoWorkflow",
+    "useAdmissoes",
+    "useAfastamentos",
+    "useAnotacoes",
+    "useAssinaturaDigital",
+    "useAtualizarCentroCusto",
+    "useAtualizarContaBancaria",
+    "useAtualizarDependente",
+    "useAtualizarEpi",
+    "useAtualizarFalta",
+    "useAtualizarFeriasAprovacao",
+    "useAtualizarMedidaDisciplinar",
+    "useAuth",
+    "useBancoHorasConfig",
+    "useBatidasPonto",
+    "useBatidasPontoDia",
+    "useBeneficios",
+    "useBeneficiosColaborador",
+    "useCamposCustomizados",
+    "useCargos",
+    "useCategoriasTrabalhador",
+    "useCentrosCusto",
+    "useColaboradores",
+    "useCondicoesIngresso",
+    "useConfiguracoesIntervalo",
+    "useContasBancarias",
+    "useContatosEmergencia",
+    "useContratacaoDigital",
+    "useContratos",
+    "useCriarASO",
+    "useCriarAnotacao",
+    "useCriarCentroCusto",
+    "useCriarContaBancaria",
+    "useCriarContatoEmergencia",
+    "useCriarDependente",
+    "useCriarDocumentoPessoal",
+    "useCriarEpi",
+    "useCriarEpiEntrega",
+    "useCriarFalta",
+    "useCriarFeriasAprovacao",
+    "useCriarFeriasArquivo",
+    "useCriarFeriasColetivas",
+    "useCriarFormacao",
+    "useCriarMedidaDisciplinar",
+    "useCriarRegistroSalarial",
+    "useCriarWebhook",
+    "useDadosEstagiario",
+    "useDadosEstrangeiro",
+    "useDebounce",
+    "useDeficiencia",
+    "useDepartamentos",
+    "useDependentes",
+    "useDependentesBeneficios",
+    "useDescricoesLogradouro",
+    "useDesligamentos",
+    "useDesvincularDependenteBeneficio",
+    "useDevolverEpi",
+    "useDocumentos",
+    "useDocumentosPessoais",
+    "useESocial",
+    "useEmpresas",
+    "useEpis",
+    "useEpisEntregas",
+    "useEpisEntregasColaborador",
+    "useEtnias",
+    "useExcelExport",
+    "useExcluirAnotacao",
+    "useExcluirCentroCusto",
+    "useExcluirContaBancaria",
+    "useExcluirContatoEmergencia",
+    "useExcluirDependente",
+    "useExcluirDocumentoPessoal",
+    "useExcluirEpi",
+    "useExcluirFalta",
+    "useExcluirFormacao",
+    "useFaltas",
+    "useFaltasColaborador",
+    "useFeriados",
+    "useFerias",
+    "useFeriasAprovacoes",
+    "useFeriasArquivos",
+    "useFeriasColetivas",
+    "useFolha",
+    "useFormacoes",
+    "useGenerosDocumento",
+    "useHistoricoContratos",
+    "useHistoricoSalarial",
+    "useHorasExtras",
+    "useIdentidadesGenero",
+    "useIsMobile",
+    "useJornadaHorarios",
+    "useLocaisTrabalho",
+    "useLocalStorage",
+    "useMediaQuery",
+    "useMedidasDisciplinares",
+    "useMedidasDisciplinaresColaborador",
+    "useMotivosAfastamento",
+    "useNacionalidades",
+    "useNavigationGuard",
+    "useNotificacoes",
+    "useNow",
+    "usePDFExport",
+    "usePaises",
+    "usePeriodoExperiencia",
+    "usePeriodosAquisitivos",
+    "usePonto",
+    "usePontoOffline",
+    "usePontosAbertos",
+    "useRegistrarBatida",
+    "useRelacionamentosContatoEmergencia",
+    "useRelacionamentosDependentes",
+    "useSalvarBancoHorasConfig",
+    "useSalvarDadosEstagiario",
+    "useSalvarDadosEstrangeiro",
+    "useSalvarDeficiencia",
+    "useSalvarGradeHorarios",
+    "useSalvarPeriodoExperiencia",
+    "useTemposResidencia",
+    "useTimes",
+    "useTiposAdmissao",
+    "useTiposAvisoPrevio",
+    "useTiposDeficiencia",
+    "useTiposDesligamento",
+    "useTiposEstabilidade",
+    "useTiposPagamento",
+    "useTiposSalario",
+    "useTiposVisto",
+    "useToast",
+    "useValeTransporte",
+    "useVincularDependenteBeneficio",
+    "useWebhookLogs",
+    "useWebhooks",
+    "useWebhooksAvancados"
+   ],
+   "linhas": 85,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 43,
+   "usado_por_arquivos": [
+    "scripts/ai-context/cenarios.mjs",
+    "src/components/ferias/FeriasSaldoReport.tsx",
+    "src/components/folha/FolhaESocialSync.tsx",
+    "src/components/medidas-disciplinares/MedidaContestacaoDialog.tsx",
+    "src/components/ponto/GestaoRegistrosPonto.tsx",
+    "src/components/ponto/PontoAdjustmentRequests.tsx",
+    "src/components/premiacoes/RewardsApprovalHub.tsx",
+    "src/components/settings/CamposCustomizadosTab.tsx",
+    "src/pages/AvaliacaoPage.tsx",
+    "src/pages/BancoHorasPage.tsx",
+    "src/pages/CanalContabilidadePage.tsx",
+    "src/pages/CanalEticaPage.tsx",
+    "src/pages/CentrosCustoPage.tsx",
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/ComunicacaoInternaPage.tsx",
+    "src/pages/ControleAcessoPage.tsx",
+    "src/pages/ConveniosPage.tsx",
+    "src/pages/DescontosPage.tsx",
+    "src/pages/DespesasPage.tsx",
+    "src/pages/EPIsPage.tsx",
+    "src/pages/EscalasPage.tsx",
+    "src/pages/ExamesPage.tsx",
+    "src/pages/FaltasPage.tsx",
+    "src/pages/JornadasPage.tsx",
+    "src/pages/LGPDPage.tsx",
+    "src/pages/LotacoesPage.tsx",
+    "src/pages/MedidasDisciplinaresPage.tsx",
+    "src/pages/MovimentacoesPage.tsx",
+    "src/pages/ObrigacoesFiscaisPage.tsx",
+    "src/pages/PensoesPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/use-mobile.tsx",
+   "hooks_exportados": [
+    "useIsMobile",
+    "useMobile"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useOnMount"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/ui/sidebar.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useAdmissaoWorkflow.ts",
+   "hooks_exportados": [
+    "useAdmissaoWorkflow"
+   ],
+   "linhas": 197,
+   "dominio": "hooks",
+   "tabelas": [
+    "admissao_tokens",
+    "admissoes",
+    "workflows_etapas",
+    "workflows_execucoes",
+    "workflows_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useAdmissoes.ts",
+   "hooks_exportados": [
+    "useAdmissoes"
+   ],
+   "linhas": 50,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/admissoes/NovaAdmissaoDialog.tsx",
+    "src/hooks/index.ts",
+    "src/pages/AdmissoesPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useAfastamentos.ts",
+   "hooks_exportados": [
+    "useAfastamentos",
+    "useDocumentosAfastamento",
+    "useProrrogacoesAfastamento"
+   ],
+   "linhas": 134,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/afastamentos/AfastamentoDocumentManager.tsx",
+    "src/components/afastamentos/AfastamentoForm.tsx",
+    "src/components/afastamentos/AfastamentoTable.tsx",
+    "src/components/afastamentos/AfastamentoTimeline.tsx",
+    "src/hooks/index.ts",
+    "src/pages/AfastamentosPage.tsx"
+   ],
+   "coberto_por_testes": 4
+  },
+  {
+   "arquivo": "src/hooks/useAssinarAvisoFerias.ts",
+   "hooks_exportados": [
+    "useAssinarAvisoFerias"
+   ],
+   "linhas": 85,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [
+    "assinar_aviso_ferias"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEmpresas",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/ferias/AssinarAvisoDialog.tsx",
+    "src/components/ferias/FeriasActions.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useAssinaturaDigital.ts",
+   "hooks_exportados": [
+    "useAssinaturaDigital"
+   ],
+   "linhas": 42,
+   "dominio": "hooks",
+   "tabelas": [
+    "admissao_tokens"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useAssinaturas.ts",
+   "hooks_exportados": [
+    "useAssinaturas"
+   ],
+   "linhas": 82,
+   "dominio": "hooks",
+   "tabelas": [
+    "admissao_tokens"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/AssinaturasPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useAuth.ts",
+   "hooks_exportados": [
+    "useAuth"
+   ],
+   "linhas": 3,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 13,
+   "usado_por_arquivos": [
+    "src/components/AdminRoute.tsx",
+    "src/components/ProtectedRoute.tsx",
+    "src/components/layout/AppSidebar.tsx",
+    "src/components/layout/Header.tsx",
+    "src/components/layout/MobileBottomNav.tsx",
+    "src/hooks/index.ts",
+    "src/hooks/useAssinaturas.ts",
+    "src/hooks/useHorasExtras.ts",
+    "src/hooks/usePcs.ts",
+    "src/pages/AdminAsoWorkflowPage.tsx",
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    "src/pages/ConfiguracoesPage.tsx",
+    "src/pages/FeriasProgramacaoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useBackGesture.ts",
+   "hooks_exportados": [
+    "useBackGesture"
+   ],
+   "linhas": 54,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useLocation",
+    "useNavigate"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/MainLayout.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useBeneficios.ts",
+   "hooks_exportados": [
+    "useBeneficios"
+   ],
+   "linhas": 49,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/BeneficioFormPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useBeneficiosColaborador.ts",
+   "hooks_exportados": [
+    "useBeneficiosColaborador"
+   ],
+   "linhas": 82,
+   "dominio": "hooks",
+   "tabelas": [
+    "beneficios_colaborador"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/BeneficiosTab.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useBruteForceProtection.ts",
+   "hooks_exportados": [
+    "useBruteForceProtection"
+   ],
+   "linhas": 140,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/LoginPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useCalcular13Salario.ts",
+   "hooks_exportados": [
+    "useCalcular13Salario"
+   ],
+   "linhas": 70,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "calcular-13-salario"
+   ],
+   "hooks_internos": [
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/folha/Simulador13Dialog.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useCalculoFolha.ts",
+   "hooks_exportados": [
+    "useCalculoFolha"
+   ],
+   "linhas": 163,
+   "dominio": "hooks",
+   "tabelas": [
+    "folha_auditoria",
+    "folha_itens",
+    "folhas_pagamento"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/folha/CalculoFolhaWizard.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useCargos.ts",
+   "hooks_exportados": [
+    "useCargos"
+   ],
+   "linhas": 29,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/CargosPage.tsx",
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/ColaboradoresPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useColaboradorDetalhes.ts",
+   "hooks_exportados": [
+    "useASOs",
+    "useAnotacoes",
+    "useAtualizarDependente",
+    "useCamposCustomizados",
+    "useContatosEmergencia",
+    "useCriarASO",
+    "useCriarAnotacao",
+    "useCriarContatoEmergencia",
+    "useCriarDependente",
+    "useCriarFeriasColetivas",
+    "useCriarFormacao",
+    "useCriarRegistroSalarial",
+    "useCriarWebhook",
+    "useDadosEstrangeiro",
+    "useDeficiencia",
+    "useDependentes",
+    "useEtnias",
+    "useExcluirAnotacao",
+    "useExcluirContatoEmergencia",
+    "useExcluirDependente",
+    "useExcluirFormacao",
+    "useFeriasColetivas",
+    "useFormacoes",
+    "useHistoricoSalarial",
+    "useIdentidadesGenero",
+    "usePeriodoExperiencia",
+    "usePeriodosAquisitivos",
+    "useSalvarDadosEstrangeiro",
+    "useSalvarDeficiencia",
+    "useSalvarPeriodoExperiencia",
+    "useTimes",
+    "useTiposAdmissao",
+    "useTiposEstabilidade",
+    "useWebhooks"
+   ],
+   "linhas": 296,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 11,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/ASOTab.tsx",
+    "src/components/colaborador-detalhes/AnotacoesTab.tsx",
+    "src/components/colaborador-detalhes/AquisitivosTab.tsx",
+    "src/components/colaborador-detalhes/DependentesTab.tsx",
+    "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+    "src/components/colaborador-detalhes/EstrangeiroTab.tsx",
+    "src/components/colaborador-detalhes/ExperienciaTab.tsx",
+    "src/components/colaborador-detalhes/FormacaoTab.tsx",
+    "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
+    "src/components/colaborador-detalhes/PCDTab.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 11
+  },
+  {
+   "arquivo": "src/hooks/useColaboradores.ts",
+   "hooks_exportados": [
+    "useColaboradores"
+   ],
+   "linhas": 54,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/afastamentos/AfastamentoForm.tsx",
+    "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
+    "src/hooks/index.ts",
+    "src/pages/ColaboradoresPage.tsx",
+    "src/pages/FeriasProgramacaoPage.tsx",
+    "src/pages/HorasExtrasPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useColaboradorVinculo.ts",
+   "hooks_exportados": [
+    "useColaboradorVinculo"
+   ],
+   "linhas": 74,
+   "dominio": "hooks",
+   "tabelas": [
+    "colaboradores"
+   ],
+   "rpcs": [
+    "vincular_colaborador_ao_usuario"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/portal/PortalRegimentoCard.tsx",
+    "src/pages/PortalPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useConfiguracoesIntervalo.ts",
+   "hooks_exportados": [
+    "useConfiguracoesIntervalo"
+   ],
+   "linhas": 57,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useContratacaoDigital.ts",
+   "hooks_exportados": [
+    "useContratacaoDigital"
+   ],
+   "linhas": 65,
+   "dominio": "hooks",
+   "tabelas": [
+    "admissao_tokens"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useContratos.ts",
+   "hooks_exportados": [
+    "useContratos"
+   ],
+   "linhas": 37,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useContratosAssinaturaKPI.ts",
+   "hooks_exportados": [
+    "useContratosAssinaturaKPI"
+   ],
+   "linhas": 128,
+   "dominio": "hooks",
+   "tabelas": [
+    "v_contratos_assinatura_kpi",
+    "v_contratos_tokens_pendentes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/contratos/ContratosAssinaturaKPICard.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useContratosVencendo.ts",
+   "hooks_exportados": [
+    "useContratosVencendo"
+   ],
+   "linhas": 94,
+   "dominio": "hooks",
+   "tabelas": [
+    "v_contratos_vencendo"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/contratos/ContratosVencendoPanel.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useContratoTemplates.ts",
+   "hooks_exportados": [
+    "useContratoTemplates"
+   ],
+   "linhas": 60,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/ContratoTemplatesPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useContratoTokenTimeline.ts",
+   "hooks_exportados": [
+    "useContratoTokenTimeline"
+   ],
+   "linhas": 45,
+   "dominio": "hooks",
+   "tabelas": [
+    "v_contrato_token_timeline"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/contratos/ContratoTokenTimelineDialog.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useDataAccessLog.ts",
+   "hooks_exportados": [
+    "useDataAccessLog"
+   ],
+   "linhas": 44,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [
+    "registrar_auditoria"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/pages/CalculadoraRescisaoPage.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    "src/pages/DesligamentosPage.tsx",
+    "src/pages/FeriasPage.tsx",
+    "src/pages/FolhaPagamentoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useDebounce.ts",
+   "hooks_exportados": [
+    "useDebounce"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/ui/command-palette.tsx",
+    "src/components/ui/search-input.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useDepartamentos.ts",
+   "hooks_exportados": [
+    "useDepartamentos"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/departamentos/NovoDepartamentoDialog.tsx",
+    "src/hooks/index.ts",
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/ColaboradoresPage.tsx",
+    "src/pages/DepartamentosPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useDesligamentos.ts",
+   "hooks_exportados": [
+    "useDesligamentos"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/DesligamentosPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useDocumentOCR.ts",
+   "hooks_exportados": [
+    "useDocumentOCR"
+   ],
+   "linhas": 72,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "process-document-ocr"
+   ],
+   "hooks_internos": [
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/ContratacaoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useDocumentos.ts",
+   "hooks_exportados": [
+    "useDocumentos"
+   ],
+   "linhas": 79,
+   "dominio": "hooks",
+   "tabelas": [
+    "documentos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useEmpresas.ts",
+   "hooks_exportados": [
+    "useEmpresaStore",
+    "useEmpresas"
+   ],
+   "linhas": 353,
+   "dominio": "hooks",
+   "tabelas": [
+    "empresas"
+   ],
+   "rpcs": [
+    "admin_associar_usuario_empresa",
+    "get_my_user_empresas",
+    "set_own_default_empresa"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 106,
+   "usado_por_arquivos": [
+    "src/components/admissoes/AdmissoesKanban.tsx",
+    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "src/components/afastamentos/AfastamentoForm.tsx",
+    "src/components/avaliacao/PerformanceAuditTimeline.tsx",
+    "src/components/colaboradores/ColaboradorHistory.tsx",
+    "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
+    "src/components/desligamentos/NovoDesligamentoDialog.tsx",
+    "src/components/empresa/EmpresaSelector.tsx",
+    "src/components/ferias/AssinarAvisoDialog.tsx",
+    "src/components/ferias/FeriasAuditTimeline.tsx",
+    "src/components/ferias/FeriasColetivasTab.tsx",
+    "src/components/ferias/FeriasRelatorioDialog.tsx",
+    "src/components/ferias/GerenciamentoPeriodos.tsx",
+    "src/components/folha/CNABDialog.tsx",
+    "src/components/folha/CalculoFolhaWizard.tsx",
+    "src/components/folha/DistribuirHoleritesButton.tsx",
+    "src/components/folha/LancamentosDialog.tsx",
+    "src/components/folha/PagamentoBancarioWizard.tsx",
+    "src/components/folha/RelatorioContabilDialog.tsx",
+    "src/components/folha/SimuladorWhatIf.tsx",
+    "src/components/integracoes/ConfigPanels.tsx",
+    "src/components/layout/EmpresaSwitcher.tsx",
+    "src/components/layout/Header.tsx",
+    "src/components/medidas-disciplinares/MedidasKanban.tsx",
+    "src/components/pcs/PcsAvaliacaoTab.tsx",
+    "src/components/ponto/GerarAEJDialog.tsx",
+    "src/components/ponto/GerarAFDDialog.tsx",
+    "src/components/ponto/ImportarAFDTDialog.tsx",
+    "src/components/ponto/PontoAuditTimeline.tsx",
+    "src/components/portal/PortalRegimentoCard.tsx"
+   ],
+   "coberto_por_testes": 5
+  },
+  {
+   "arquivo": "src/hooks/useESocial.ts",
+   "hooks_exportados": [
+    "useESocial"
+   ],
+   "linhas": 136,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useServerValidation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/ESocialPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useExcelExport.ts",
+   "hooks_exportados": [
+    "useExcelExport"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/AuditoriaPage.tsx",
+    "src/pages/ColaboradoresPage.tsx",
+    "src/pages/FolhaPage.tsx",
+    "src/pages/RelatoriosPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useExecutiveDashboard.ts",
+   "hooks_exportados": [
+    "useExecutiveKPIs",
+    "useStrategicFinancials"
+   ],
+   "linhas": 185,
+   "dominio": "hooks",
+   "tabelas": [
+    "afastamentos",
+    "batidas_ponto",
+    "colaboradores",
+    "desligamentos",
+    "ferias",
+    "folhas_pagamento",
+    "personnel_budget",
+    "solicitacoes_ajuste_ponto"
+   ],
+   "rpcs": [
+    "get_personnel_cost_projection"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/DashboardExecutivoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useFeriados.ts",
+   "hooks_exportados": [
+    "useFeriados"
+   ],
+   "linhas": 58,
+   "dominio": "hooks",
+   "tabelas": [
+    "feriados"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresa",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useFerias.ts",
+   "hooks_exportados": [
+    "useFerias"
+   ],
+   "linhas": 120,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/ferias/CalendarioFerias.tsx",
+    "src/hooks/index.ts",
+    "src/pages/FeriasPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useFeriasAprovacao.ts",
+   "hooks_exportados": [
+    "useFeriasAprovacao"
+   ],
+   "linhas": 98,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEmpresas",
+    "useMutation",
+    "useNotificacoes",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/FeriasPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useFolha.ts",
+   "hooks_exportados": [
+    "useFolha"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/FolhaPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useFolhaAuditoria.ts",
+   "hooks_exportados": [
+    "useFolhaAuditoria"
+   ],
+   "linhas": 73,
+   "dominio": "hooks",
+   "tabelas": [
+    "folha_auditoria"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/folha/FolhaAuditoriaTable.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useFormGuard.ts",
+   "hooks_exportados": [
+    "useFormGuard"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/EmpresaFormPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useGenericCrud.ts",
+   "hooks_exportados": [
+    "useGenericCrud"
+   ],
+   "linhas": 191,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 10,
+   "usado_por_arquivos": [
+    "src/hooks/useAfastamentos.ts",
+    "src/hooks/useBeneficios.ts",
+    "src/hooks/useCargos.ts",
+    "src/hooks/useColaboradores.ts",
+    "src/hooks/useDepartamentos.ts",
+    "src/hooks/useDesligamentos.ts",
+    "src/hooks/useFolha.ts",
+    "src/hooks/useLocaisTrabalho.ts",
+    "src/hooks/useTodasEmpresas.ts",
+    "src/hooks/useWebhooksAvancados.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useGrupo.ts",
+   "hooks_exportados": [
+    "useGrupo"
+   ],
+   "linhas": 114,
+   "dominio": "hooks",
+   "tabelas": [
+    "empresas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/EmpresaSwitcher.tsx"
+   ],
+   "coberto_por_testes": 3
+  },
+  {
+   "arquivo": "src/hooks/useHistoricoContratos.ts",
+   "hooks_exportados": [
+    "useHistoricoContratos"
+   ],
+   "linhas": 49,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useHorasExtras.ts",
+   "hooks_exportados": [
+    "useHorasExtras"
+   ],
+   "linhas": 70,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/HorasExtrasPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useIdempotencyKey.ts",
+   "hooks_exportados": [
+    "useIdempotencyKey"
+   ],
+   "linhas": 47,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/FolhaPagamentoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useImportacaoColaboradores.ts",
+   "hooks_exportados": [
+    "useImportacaoColaboradores"
+   ],
+   "linhas": 80,
+   "dominio": "hooks",
+   "tabelas": [
+    "colaboradores"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEmpresa",
+    "useQueryClient",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/ImportacaoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useLocaisTrabalho.ts",
+   "hooks_exportados": [
+    "useLocaisTrabalho"
+   ],
+   "linhas": 29,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/LocaisTrabalhoPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useLocalStorage.ts",
+   "hooks_exportados": [
+    "useLocalStorage"
+   ],
+   "linhas": 49,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useMediaQuery.ts",
+   "hooks_exportados": [
+    "useBreakpoint",
+    "useIsMobile",
+    "useMediaQuery",
+    "usePrefersDarkMode",
+    "usePrefersReducedMotion"
+   ],
+   "linhas": 55,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useOnMount",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useMountEffects.ts",
+   "hooks_exportados": [
+    "useOnMount"
+   ],
+   "linhas": 29,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/components/ponto/PontoClockRegister.tsx",
+    "src/hooks/use-mobile.tsx",
+    "src/hooks/useMediaQuery.ts",
+    "src/hooks/usePWA.ts",
+    "src/hooks/usePontoOffline.ts",
+    "src/pages/AdminDiagnosticoMigracaoPage.tsx",
+    "src/pages/PontoKioskPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useNavigationGuard.tsx",
+   "hooks_exportados": [
+    "useNavigationGuard"
+   ],
+   "linhas": 82,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useBlocker",
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useNotificacoes.ts",
+   "hooks_exportados": [
+    "useNotificacoes"
+   ],
+   "linhas": 336,
+   "dominio": "hooks",
+   "tabelas": [
+    "colaboradores",
+    "ferias",
+    "notificacoes",
+    "periodos_aquisitivos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/notifications/NotificationBell.tsx",
+    "src/components/ui/notification-center.tsx",
+    "src/contexts/NotificationContext.tsx",
+    "src/hooks/index.ts",
+    "src/hooks/useFeriasAprovacao.ts",
+    "src/pages/NotificacoesPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useNovasTabelas.ts",
+   "hooks_exportados": [
+    "useAtualizarEpi",
+    "useAtualizarFalta",
+    "useAtualizarMedidaDisciplinar",
+    "useBancoHorasConfig",
+    "useBatidasPonto",
+    "useBatidasPontoDia",
+    "useCriarEpi",
+    "useCriarEpiEntrega",
+    "useCriarFalta",
+    "useCriarMedidaDisciplinar",
+    "useDevolverEpi",
+    "useEpis",
+    "useEpisEntregas",
+    "useEpisEntregasColaborador",
+    "useExcluirEpi",
+    "useExcluirFalta",
+    "useFaltas",
+    "useFaltasColaborador",
+    "useJornadaHorarios",
+    "useMedidasDisciplinares",
+    "useMedidasDisciplinaresColaborador",
+    "useRegistrarBatida",
+    "useSalvarBancoHorasConfig",
+    "useSalvarGradeHorarios"
+   ],
+   "linhas": 286,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/JornadasPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useNow.ts",
+   "hooks_exportados": [
+    "useNow"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/LGPDPage.tsx",
+    "src/pages/WorkflowsPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useOrganograma.ts",
+   "hooks_exportados": [
+    "useOrganograma"
+   ],
+   "linhas": 69,
+   "dominio": "hooks",
+   "tabelas": [
+    "colaboradores",
+    "departamentos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/organograma/OrganogramaNode.tsx",
+    "src/pages/OrganogramaPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/usePcs.ts",
+   "hooks_exportados": [
+    "usePcsAvaliacoes",
+    "usePcsBenchmark",
+    "usePcsEquidade",
+    "usePcsFatores",
+    "usePcsGrades",
+    "usePcsPlanos"
+   ],
+   "linhas": 225,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/pcs/PcsAvaliacaoTab.tsx",
+    "src/components/pcs/PcsBenchmarkTab.tsx",
+    "src/components/pcs/PcsEquidadeTab.tsx",
+    "src/components/pcs/PcsFatoresTab.tsx",
+    "src/components/pcs/PcsGradesTab.tsx",
+    "src/pages/PlanoCargosSalariosPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePDFExport.ts",
+   "hooks_exportados": [
+    "usePDFExport"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/pages/ColaboradoresPage.tsx",
+    "src/pages/FolhaPage.tsx",
+    "src/pages/RelatoriosPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePendencias.ts",
+   "hooks_exportados": [
+    "usePendencias"
+   ],
+   "linhas": 69,
+   "dominio": "hooks",
+   "tabelas": [
+    "pendencias"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/dashboard/AnalyticsSection.tsx",
+    "src/components/dashboard/analytics/PendenciasDetailDialog.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePeriodosAquisitivos.ts",
+   "hooks_exportados": [
+    "usePeriodosAquisitivos"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [
+    "periodos_aquisitivos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePiiMask.ts",
+   "hooks_exportados": [
+    "usePiiMask"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 35,
+   "usado_por_arquivos": [
+    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
+    "src/components/colaborador-detalhes/DependentesTab.tsx",
+    "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+    "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+    "src/components/esocial/NaoPeriodicos.tsx",
+    "src/components/esocial/Periodicos.tsx",
+    "src/components/esocial/S2205AlteracaoCadastral.tsx",
+    "src/components/esocial/S2206AlteracaoContratual.tsx",
+    "src/components/esocial/S2210SST.tsx",
+    "src/components/esocial/S2299Desligamento.tsx",
+    "src/components/esocial/S2300TSVInicio.tsx",
+    "src/components/esocial/S2306TSVAlteracao.tsx",
+    "src/components/esocial/S2399TSVTermino.tsx",
+    "src/components/esocial/S2400CDP.tsx",
+    "src/components/esocial/SSTEvents.tsx",
+    "src/components/folha/RelatorioContabilDialog.tsx",
+    "src/components/organograma/OrganogramaNode.tsx",
+    "src/components/settings/GlobalAuditLogTab.tsx",
+    "src/components/ui/command-palette.tsx",
+    "src/pages/AdminPontoDivergenciasPage.tsx",
+    "src/pages/AdminRegimentoInternoPage.tsx",
+    "src/pages/AuditoriaPage.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    "src/pages/ColaboradoresPage.tsx",
+    "src/pages/DocumentosPage.tsx",
+    "src/pages/FolhaCompliancePage.tsx",
+    "src/pages/GeradorDocumentosPage.tsx",
+    "src/pages/HoleritesPage.tsx",
+    "src/pages/ImportacaoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePonto.ts",
+   "hooks_exportados": [
+    "usePonto"
+   ],
+   "linhas": 85,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresa",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePontoMelhorado.ts",
+   "hooks_exportados": [
+    "usePontoMelhorado"
+   ],
+   "linhas": 155,
+   "dominio": "hooks",
+   "tabelas": [
+    "solicitacoes_ajuste_ponto"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/dashboard/AnalyticsSection.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePontoOffline.ts",
+   "hooks_exportados": [
+    "usePontoOffline"
+   ],
+   "linhas": 105,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useOnMount",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePontosAbertos.ts",
+   "hooks_exportados": [
+    "usePontosAbertos"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/usePWA.ts",
+   "hooks_exportados": [
+    "usePWA"
+   ],
+   "linhas": 60,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useOnMount",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppSidebar.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useRealtimeDashboard.ts",
+   "hooks_exportados": [
+    "useRealtimeDashboard"
+   ],
+   "linhas": 75,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useEmpresas",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/DashboardPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useRealTimeSubscription.ts",
+   "hooks_exportados": [
+    "useRealTimeSubscription"
+   ],
+   "linhas": 63,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/dashboard/AnalyticsSection.tsx",
+    "src/components/dashboard/EventTimeline.tsx",
+    "src/pages/DashboardExecutivoPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useSecureVisibility.ts",
+   "hooks_exportados": [
+    "useSecureVisibility"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/App.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useSecurityMonitor.ts",
+   "hooks_exportados": [
+    "useSecurityMonitor"
+   ],
+   "linhas": 87,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/App.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useServerValidation.ts",
+   "hooks_exportados": [
+    "useServerValidation"
+   ],
+   "linhas": 67,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/hooks/useESocial.ts",
+    "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/EmpresaFormPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useSessionTimeout.ts",
+   "hooks_exportados": [
+    "useSessionTimeout"
+   ],
+   "linhas": 55,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/App.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useSyncedState.ts",
+   "hooks_exportados": [
+    "useSyncedState"
+   ],
+   "linhas": 41,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 9,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/EstagiarioTab.tsx",
+    "src/components/colaborador-detalhes/EstrangeiroTab.tsx",
+    "src/components/colaborador-detalhes/PCDTab.tsx",
+    "src/components/departamentos/NovoDepartamentoDialog.tsx",
+    "src/components/login/LockoutMessage.tsx",
+    "src/components/settings/EmpresaSettingsTab.tsx",
+    "src/components/ui/search-input.tsx",
+    "src/pages/ContratosGeradosPage.tsx",
+    "src/pages/DocumentosPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useSystemHealth.ts",
+   "hooks_exportados": [
+    "useSystemHealth"
+   ],
+   "linhas": 76,
+   "dominio": "hooks",
+   "tabelas": [
+    "versao_banco"
+   ],
+   "rpcs": [],
+   "edges": [
+    "metricas"
+   ],
+   "hooks_internos": [
+    "useEffect",
+    "useEmpresas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/Header.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useSystemHealthHistory.ts",
+   "hooks_exportados": [
+    "useSystemHealthHistory"
+   ],
+   "linhas": 65,
+   "dominio": "hooks",
+   "tabelas": [
+    "versao_banco"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/admin/HealthTrendCard.tsx",
+    "src/pages/AdminDiagnosticoMigracaoPage.tsx"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/hooks/useTabelasReferencia.ts",
+   "hooks_exportados": [
+    "useAtualizarCentroCusto",
+    "useAtualizarContaBancaria",
+    "useAtualizarFeriasAprovacao",
+    "useCategoriasTrabalhador",
+    "useCentrosCusto",
+    "useCondicoesIngresso",
+    "useContasBancarias",
+    "useCriarCentroCusto",
+    "useCriarContaBancaria",
+    "useCriarDocumentoPessoal",
+    "useCriarFeriasAprovacao",
+    "useCriarFeriasArquivo",
+    "useDadosEstagiario",
+    "useDependentesBeneficios",
+    "useDescricoesLogradouro",
+    "useDesvincularDependenteBeneficio",
+    "useDocumentosPessoais",
+    "useExcluirCentroCusto",
+    "useExcluirContaBancaria",
+    "useExcluirDocumentoPessoal",
+    "useFeriasAprovacoes",
+    "useFeriasArquivos",
+    "useGenerosDocumento",
+    "useMotivosAfastamento",
+    "useNacionalidades",
+    "usePaises",
+    "useRelacionamentosContatoEmergencia",
+    "useRelacionamentosDependentes",
+    "useSalvarDadosEstagiario",
+    "useTemposResidencia",
+    "useTiposAvisoPrevio",
+    "useTiposDeficiencia",
+    "useTiposDesligamento",
+    "useTiposPagamento",
+    "useTiposSalario",
+    "useTiposVisto",
+    "useVincularDependenteBeneficio"
+   ],
+   "linhas": 264,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useResultQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
+    "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+    "src/components/colaborador-detalhes/EstagiarioTab.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 4
+  },
+  {
+   "arquivo": "src/hooks/useToast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 92,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/ui/cep-input.tsx",
+    "src/components/ui/cnpj-input.tsx",
+    "src/components/ui/toaster.tsx",
+    "src/hooks/index.ts",
+    "src/hooks/usePendencias.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useTodasEmpresas.ts",
+   "hooks_exportados": [
+    "useTodasEmpresas"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/EmpresasPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useTranslation.ts",
+   "hooks_exportados": [
+    "useTranslation"
+   ],
+   "linhas": 221,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/i18n/LanguageSelector.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useValeTransporte.ts",
+   "hooks_exportados": [
+    "useValeTransporte"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useWebhooksAvancados.ts",
+   "hooks_exportados": [
+    "useWebhookLogs",
+    "useWebhooksAvancados"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 2
+  },
+  {
+   "arquivo": "src/i18n/useTranslation.ts",
+   "hooks_exportados": [
+    "useTranslation"
+   ],
+   "linhas": 85,
+   "dominio": "i18n",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/lib/cursor.ts",
+   "hooks_exportados": [
+    "useCursorPagination"
+   ],
+   "linhas": 116,
+   "dominio": "lib",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/services/feriasService.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/providers/index.ts",
+   "hooks_exportados": [
+    "useTheme"
+   ],
+   "linhas": 5,
+   "dominio": "providers",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/main.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/providers/ThemeProvider.tsx",
+   "hooks_exportados": [
+    "useTheme"
+   ],
+   "linhas": 21,
+   "dominio": "providers",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/ui/sonner.tsx",
+    "src/components/ui/theme-toggle.tsx",
+    "src/providers/index.ts"
+   ],
+   "coberto_por_testes": 0
+  }
+ ]
+}

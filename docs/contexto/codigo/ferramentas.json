@@ -1,0 +1,2030 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "stack": {
+  "linguagens": [
+   "TypeScript (1418)",
+   "SQL (817)",
+   "Markdown (278)",
+   "JavaScript (85)",
+   "YAML (52)",
+   "Shell (44)",
+   "JSON (37)",
+   "Python (5)"
+  ],
+  "linguagem_principal": "TypeScript",
+  "framework": "React",
+  "backend_http": [],
+  "bundler": "Vite",
+  "roteador": "react-router",
+  "banco": "Supabase",
+  "testes": [
+   "vitest",
+   "playwright"
+  ],
+  "ui": [
+   "tailwind",
+   "radix/shadcn"
+  ],
+  "estado": [
+   "react-query",
+   "zustand"
+  ],
+  "gerenciador_pacotes": "npm",
+  "node": "22",
+  "python": null,
+  "deploy": [
+   "vercel",
+   "docker",
+   "compose/swarm"
+  ],
+  "monorepo": null,
+  "pastas_fonte": [
+   "src"
+  ]
+ },
+ "workspaces": [],
+ "package": {
+  "nome": "departamento-pessoal",
+  "versao": "18.0.1",
+  "scripts": {
+   "audit:bridge-contract": "node scripts/audit-bridge-frontend-contract.mjs",
+   "audit:bundle": "node scripts/check-bundle-budget.mjs",
+   "audit:canonical-db-url": "node scripts/validate-canonical-db-url.mjs",
+   "audit:canonical-project": "node scripts/audit-canonical-project.mjs",
+   "audit:edge-audit-log": "node scripts/audit-edge-audit-log-contract.mjs",
+   "audit:edge-syntax": "node scripts/audit-edge-syntax.mjs",
+   "audit:embeds": "node scripts/audit-embed-hints.mjs",
+   "audit:pdf": "node scripts/generate-audit-pdf.js",
+   "audit:plan50": "node scripts/validate-plan-50.mjs",
+   "audit:ratchet-any": "node scripts/ratchet-any.mjs",
+   "audit:ratchet-any-tests": "node scripts/ratchet-any-tests.mjs",
+   "audit:ratchet-warnings": "node scripts/ratchet-lint-warnings.mjs",
+   "audit:rls-pii": "node scripts/audit-rls-pii.mjs",
+   "audit:rls-roles": "node scripts/audit-rls-least-privilege.mjs",
+   "audit:rls-tenant": "node scripts/audit-rls-tenant-open.mjs",
+   "audit:search-path": "node scripts/audit-db-search-path.mjs",
+   "audit:secdef": "node scripts/audit-secdef-authz.mjs",
+   "audit:types-drift": "node scripts/audit-types-drift.mjs",
+   "build": "node scripts/check-dependencies.js && node scripts/generate-audit-pdf.js && vite build",
+   "build:dev": "vite build --mode development",
+   "build:mobile": "./scripts/capacitor-build.sh",
+   "build:mobile:android": "./scripts/capacitor-build.sh --apk",
+   "cap:check": "./scripts/capacitor-build.sh --check",
+   "ci:verify": "npm run audit:plan50 && npm run audit:canonical-project && npm run audit:bridge-contract && npm run audit:edge-audit-log && npm run audit:edge-syntax && npm run typecheck:edge && npm run test:rebaseline && npm run typecheck && npm run typecheck:tests && npm run typecheck:e2e && npm run lint:ci && npm run audit:ratchet-any && npm run audit:types-drift && npm run format:check:changed",
+   "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
+   "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
+   "dev": "vite",
+   "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
+   "format:check:changed": "bash scripts/format-check-changed.sh",
+   "format:write": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",
+   "gen:table-columns": "node scripts/gen-table-columns.mjs",
+   "graph:rebuild": "graphify update . --force",
+   "graph:update": "graphify update .",
+   "inventario:rotas": "node scripts/inventario/gerar-rotas.mjs",
+   "lint": "eslint src --ext ts,tsx",
+   "lint:ci": "eslint src --ext ts,tsx --max-warnings=1",
+   "lint:edge": "eslint supabase/functions --ext ts --no-warn-ignored --max-warnings=0",
+   "prepare": "husky",
+   "preview": "vite preview",
+   "smoke:selos": "node scripts/smoke-hash-triggers.mjs",
+   "test": "vitest",
+   "test:canonical-db-url": "node scripts/tests/validate-canonical-db-url.test.mjs",
+   "test:coverage": "vitest run --coverage",
+   "test:db-audit-contract": "bash scripts/tests/db-audit-fail-closed.sh",
+   "test:e2e": "playwright test",
+   "test:e2e:auth": "playwright test --project=authenticated",
+   "test:e2e:mobile": "playwright test --project=mobile-smoke",
+   "test:e2e:public": "playwright test --project=public",
+   "test:e2e:report": "playwright show-report",
+   "test:e2e:ui": "playwright test --ui",
+   "test:lighthouse": "npm run build && ./node_modules/.bin/lhci autorun",
+   "test:migrations": "bash scripts/tests/migrations-plano100.sh",
+   "test:migrations:p0": "bash scripts/tests/migrations-p0-hash-search-path.sh",
+   "test:migrations:p0:auth": "bash scripts/tests/migrations-p0-auth-lockout.sh",
+   "test:migrations:pcs": "bash scripts/tests/migrations-p1-pcs-contract.sh",
+   "test:migrations:security-cron": "bash scripts/tests/migrations-p1-security-cron-contract.sh",
+   "test:rebaseline": "node scripts/tests/rebaseline-artifact.test.mjs",
+   "typecheck": "tsc --noEmit",
+   "typecheck:e2e": "tsc --noEmit -p tsconfig.e2e.json",
+   "typecheck:edge": "bash scripts/typecheck-edge.sh",
+   "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json"
+  },
+  "dependencias": 62,
+  "dev_dependencias": 34,
+  "principais": {
+   "@supabase/supabase-js": "^2.118.0",
+   "@tanstack/react-query": "^5.104.5",
+   "@tanstack/react-query-devtools": "5.104.5",
+   "date-fns": "^4.4.0",
+   "framer-motion": "14.4.0",
+   "react": "19.3.1",
+   "react-day-picker": "^10.0.2",
+   "react-dom": "19.3.1",
+   "react-helmet-async": "3.0.0",
+   "react-hook-form": "^7.90.0",
+   "react-router-dom": "^7.18.4",
+   "react-webcam": "7.2.0",
+   "recharts": "^3.10.1",
+   "tailwindcss-animate": "^1.0.7",
+   "zod": "^4.6.5",
+   "zustand": "^5.0.15"
+  },
+  "engines": {
+   "node": "22.x",
+   "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.x"
+ },
+ "python": {
+  "dependencias": [
+   "psycopg"
+  ]
+ },
+ "configs": [
+  ".editorconfig",
+  ".github/CODEOWNERS",
+  ".github/PULL_REQUEST_TEMPLATE.md",
+  ".github/dependabot.yml",
+  ".husky/pre-commit",
+  ".nvmrc",
+  ".prettierrc",
+  "Dockerfile",
+  "Dockerfile.prod",
+  "ai-context.config.json",
+  "commitlint.config.js",
+  "components.json",
+  "docker-compose.dev.yml",
+  "docker-compose.prod.yml",
+  "eslint.config.js",
+  "package.json",
+  "playwright.config.ts",
+  "postcss.config.js",
+  "renovate.json",
+  "supabase/config.toml",
+  "tailwind.config.js",
+  "tsconfig.build.json",
+  "tsconfig.e2e.json",
+  "tsconfig.json",
+  "tsconfig.node.json",
+  "tsconfig.tests.json",
+  "vercel.json",
+  "vite.config.ts",
+  "vitest.config.ts"
+ ],
+ "workflows": [
+  {
+   "arquivo": ".github/workflows/canonical-edge-functions.yml",
+   "nome": "Canonical Supabase — Edge Functions",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "dry-run",
+    "deploy"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/healthcheck.sh",
+    "scripts/typecheck-edge.sh"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "E2E_USER_EMAIL",
+    "E2E_USER_PASSWORD",
+    "GITHUB_TOKEN",
+    "SUPABASE_ACCESS_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "denoland/setup-deno",
+    "supabase/setup-cli"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/canonical-migrations.yml",
+   "nome": "Canonical database — scoped migrations",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "scoped-migrations"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/validate-canonical-db-url.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/checkout"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/canonical-probes.yml",
+   "nome": "Canonical database — read-only security probes",
+   "gatilhos": [
+    "schedule",
+    "workflow_call",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 6 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "security-probes"
+   ],
+   "permissoes": [
+    "contents: read",
+    "issues: write"
+   ],
+   "scripts_usados": [
+    "scripts/probes/print-summary.mjs",
+    "scripts/probes/run-probes.mjs",
+    "scripts/validate-canonical-db-url.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "GITHUB_TOKEN",
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/canonical-sql-diag.yml",
+   "nome": "Canonical database — read-only SQL diagnostic",
+   "gatilhos": [
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "sql-diag"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/diag/run-sql-diag.mjs",
+    "scripts/validate-canonical-db-url.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/ci.yml",
+   "nome": "Continuous Integration & Delivery",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "changes",
+    "typecheck",
+    "lint",
+    "test",
+    "rls-live",
+    "lighthouse",
+    "edge-functions",
+    "security-config",
+    "p0-database-migrations",
+    "db-integrity",
+    "db-integrity-live",
+    "npm-audit",
+    "dependency-review"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/audit-bridge-frontend-contract.mjs",
+    "scripts/audit-canonical-project.mjs",
+    "scripts/audit-db-search-path.mjs",
+    "scripts/audit-embed-hints.mjs",
+    "scripts/audit-migration-style.mjs",
+    "scripts/audit-required-checks.mjs",
+    "scripts/audit-rls-least-privilege.mjs",
+    "scripts/audit-rls-pii.mjs",
+    "scripts/audit-rls-tenant-open.mjs",
+    "scripts/audit-secdef-authz.mjs",
+    "scripts/audit-security-config.mjs",
+    "scripts/smoke-hash-triggers.mjs",
+    "scripts/tests/audit-edge-audit-log-contract.test.mjs",
+    "scripts/tests/lockfile-parity.test.sh",
+    "scripts/tests/lockfile-single.test.sh",
+    "scripts/tests/rebaseline-artifact.test.mjs",
+    "scripts/tests/run-shard.sh",
+    "scripts/tests/validate-canonical-db-url.test.mjs",
+    "scripts/tests/workflows-contract.test.mjs",
+    "scripts/typecheck-edge.sh",
+    "scripts/validate-plan-50.mjs"
+   ],
+   "npm_scripts": [
+    "audit:bundle",
+    "audit:edge-audit-log",
+    "audit:ratchet-any",
+    "audit:ratchet-any-tests",
+    "audit:ratchet-warnings",
+    "audit:types-drift",
+    "build",
+    "format:check:changed",
+    "gen:table-columns",
+    "lint:ci",
+    "lint:edge",
+    "test:coverage",
+    "test:db-audit-contract",
+    "typecheck",
+    "typecheck:e2e",
+    "typecheck:tests"
+   ],
+   "secrets": [
+    "GITHUB_TOKEN",
+    "SUPABASE_DB_URL_READONLY"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/dependency-review-action",
+    "actions/setup-node",
+    "actions/upload-artifact",
+    "denoland/setup-deno",
+    "dorny/paths-filter"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/contexto.yml",
+   "nome": "Contexto para agentes de IA (10 min)",
+   "gatilhos": [
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "3-59/10 * * * *"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "gate",
+    "codigo",
+    "banco",
+    "regras",
+    "publicar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/ai-context/gerar.mjs",
+    "scripts/regras_negocio/generate.py",
+    "scripts/regras_negocio/indice.py",
+    "scripts/supabase_snapshot/snapshot.py"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL_READONLY"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/download-artifact",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/deploy.yml",
+   "nome": "Manual & Preview Deploy",
+   "gatilhos": [
+    "pull_request",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "build-preview"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/check-bundle-budget.mjs"
+   ],
+   "npm_scripts": [
+    "build"
+   ],
+   "secrets": [],
+   "actions": [
+    "actions/attest-build-provenance",
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/e2e.yml",
+   "nome": "E2E Tests (Playwright)",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "playwright-public",
+    "playwright"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/e2e/ensure-fixtures.mjs"
+   ],
+   "npm_scripts": [
+    "test:e2e",
+    "test:e2e:public"
+   ],
+   "secrets": [
+    "E2E_NON_ADMIN_EMAIL",
+    "E2E_NON_ADMIN_PASSWORD",
+    "E2E_TOTP_SECRET",
+    "E2E_USER_EMAIL",
+    "E2E_USER_PASSWORD",
+    "GITHUB_TOKEN",
+    "MAILOSAUR_API_KEY",
+    "MAILOSAUR_INBOX_DOMAIN",
+    "MAILOSAUR_SERVER_ID"
+   ],
+   "actions": [
+    "actions/cache",
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/gitleaks.yml",
+   "nome": "Gitleaks",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "gitleaks"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "gitleaks/gitleaks-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/healthcheck.yml",
+   "nome": "Environment Healthcheck",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "17 */6 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "healthcheck"
+   ],
+   "permissoes": [
+    "contents: read",
+    "issues: write"
+   ],
+   "scripts_usados": [
+    "scripts/healthcheck.sh"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "E2E_NON_ADMIN_EMAIL",
+    "E2E_NON_ADMIN_PASSWORD",
+    "GITHUB_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/inventario-estado-semanal.yml",
+   "nome": "Inventário do estado real (semanal)",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "23 10 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "gerar"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/inventario/gerar-banco.mjs",
+    "scripts/inventario/gerar-repo.mjs",
+    "scripts/inventario/gerar-rotas.mjs",
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [
+    "SUPABASE_DB_URL_READONLY"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/ossf-scorecard.yml",
+   "nome": "OSSF Scorecard",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "15 7 * * 2"
+   ],
+   "branches": [],
+   "jobs": [
+    "analysis"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/upload-artifact",
+    "github/codeql-action/upload-sarif",
+    "ossf/scorecard-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/post-deploy-smoke.yml",
+   "nome": "Post-deploy smoke",
+   "gatilhos": [
+    "deployment_status"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "smoke"
+   ],
+   "permissoes": [
+    "contents: read",
+    "issues: write"
+   ],
+   "scripts_usados": [
+    "scripts/healthcheck.sh"
+   ],
+   "npm_scripts": [
+    "dev",
+    "test:e2e:public"
+   ],
+   "secrets": [
+    "E2E_NON_ADMIN_EMAIL",
+    "E2E_NON_ADMIN_PASSWORD",
+    "GITHUB_TOKEN"
+   ],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/ruleset-sync.yml",
+   "nome": "Ruleset sync",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "41 7 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "sync"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/audit-required-checks.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/security.yml",
+   "nome": "Security Scan & Code Quality",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "47 6 * * 4",
+    "2 13 * * 1"
+   ],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "security",
+    "scorecard",
+    "sbom"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node",
+    "anchore/sbom-action",
+    "github/codeql-action/analyze",
+    "github/codeql-action/init",
+    "github/codeql-action/upload-sarif",
+    "ossf/scorecard-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/workflow-lint.yml",
+   "nome": "Workflow lint (actionlint)",
+   "gatilhos": [
+    "pull_request",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [],
+   "jobs": [
+    "actionlint"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "zizmorcore/zizmor-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/workflows-report.yml",
+   "nome": "Workflows report",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "10 8 * * 3"
+   ],
+   "branches": [],
+   "jobs": [
+    "report"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/report-workflows.mjs",
+    "scripts/update-workflows-status.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  }
+ ],
+ "hooks_git": [
+  {
+   "arquivo": ".husky/pre-commit",
+   "comandos": [
+    "npx lint-staged"
+   ]
+  }
+ ],
+ "docs_raiz": [
+  {
+   "arquivo": ".github/PULL_REQUEST_TEMPLATE.md",
+   "titulo": "cole aqui o trecho do log, resultado de query ou request que prova que funciona",
+   "linhas": 29
+  },
+  {
+   "arquivo": "AGENTS.md",
+   "titulo": "AGENTS.md — Departamento_Pessoal_V3",
+   "linhas": 167
+  },
+  {
+   "arquivo": "ARCHITECTURE.md",
+   "titulo": "Arquitetura e Fluxo de Dados - RH ERP",
+   "linhas": 125
+  },
+  {
+   "arquivo": "AUDITORIA.md",
+   "titulo": "Auditoria total — Departamento Pessoal V3",
+   "linhas": 414
+  },
+  {
+   "arquivo": "AUDIT_REPORT.md",
+   "titulo": "Auditoria Enterprise e Inventário de Funcionalidades - Sistema de Gestão de RH",
+   "linhas": 69
+  },
+  {
+   "arquivo": "BACKLOG_11_ITEMS.md",
+   "titulo": "BACKLOG — 2 Itens Restantes",
+   "linhas": 70
+  },
+  {
+   "arquivo": "BUILD_INSTRUCTIONS.md",
+   "titulo": "🚀 Instruções de Build - Sistema Departamento Pessoal",
+   "linhas": 81
+  },
+  {
+   "arquivo": "CHANGELOG.md",
+   "titulo": "Changelog - Sistema Departamento Pessoal",
+   "linhas": 128
+  },
+  {
+   "arquivo": "CLAUDE.md",
+   "titulo": "AI Context — Departamento Pessoal v3",
+   "linhas": 1215
+  },
+  {
+   "arquivo": "CODE_OF_CONDUCT.md",
+   "titulo": "Código de Conduta",
+   "linhas": 24
+  },
+  {
+   "arquivo": "CODE_REVIEW.md",
+   "titulo": "📋 Code Review Automatizado — Cline",
+   "linhas": 121
+  },
+  {
+   "arquivo": "CODE_TODOS.md",
+   "titulo": "Code TODO",
+   "linhas": 162
+  },
+  {
+   "arquivo": "CONTRACT_AUDIT_REPORT.md",
+   "titulo": "Relatório de Auditoria Técnica e Conformidade de Contratos",
+   "linhas": 61
+  },
+  {
+   "arquivo": "CONTRIBUTING.md",
+   "titulo": "Contribuindo",
+   "linhas": 42
+  },
+  {
+   "arquivo": "CRUD_README.md",
+   "titulo": "🚀 CRUD Toolkit - DP System",
+   "linhas": 182
+  },
+  {
+   "arquivo": "DOCS_GOVBR.md",
+   "titulo": "Guia Definitivo: Integração Gov.br (SERPRO) - 10/10",
+   "linhas": 42
+  },
+  {
+   "arquivo": "DOCS_MONITORING.md",
+   "titulo": "Monitoramento e Alertas de Performance",
+   "linhas": 178
+  },
+  {
+   "arquivo": "ESTADO_ATUAL.md",
+   "titulo": "ESTADO ATUAL DO SISTEMA — Departamento Pessoal V3",
+   "linhas": 370
+  },
+  {
+   "arquivo": "MIGRATION_GUIDE.md",
+   "titulo": "📚 Guia de Migração - Breaking Changes V18",
+   "linhas": 313
+  },
+  {
+   "arquivo": "PENDENCIAS.md",
+   "titulo": "PENDENCIAS.md — Itens que dependem do Joaquim ou de ação externa",
+   "linhas": 108
+  },
+  {
+   "arquivo": "PLANO_100.md",
+   "titulo": "Plano de correção — Departamento Pessoal V3",
+   "linhas": 1233
+  },
+  {
+   "arquivo": "PLANO_50.md",
+   "titulo": "Plano de correção em 50 etapas — Departamento Pessoal V3",
+   "linhas": 893
+  },
+  {
+   "arquivo": "PLANO_MELHORIAS.md",
+   "titulo": "🎯 PLANO MESTRE DE MELHORIAS — Departamento Pessoal v2",
+   "linhas": 1875
+  },
+  {
+   "arquivo": "PLANO_REFATORACAO_TIPOS.md",
+   "titulo": "📐 Plano de Refatoração: Eliminar `any` em TypeScript",
+   "linhas": 249
+  },
+  {
+   "arquivo": "PLANO_REFATORACAO_TIPOS_FASE2.md",
+   "titulo": "📐 Plano Fase 2 — Atacar os 1077 `any` restantes",
+   "linhas": 113
+  },
+  {
+   "arquivo": "QA_SIMULATION_REPORT.md",
+   "titulo": "Relatório de QA — Simulação e Auditoria Exaustiva",
+   "linhas": 103
+  },
+  {
+   "arquivo": "README.md",
+   "titulo": "Sistema Departamento Pessoal",
+   "linhas": 36
+  },
+  {
+   "arquivo": "RELATORIO_CI.md",
+   "titulo": "RELATORIO_CI.md — Correção de workflows em falha na main",
+   "linhas": 97
+  },
+  {
+   "arquivo": "ROADMAP.md",
+   "titulo": "Roadmap - Sistema Departamento Pessoal",
+   "linhas": 31
+  },
+  {
+   "arquivo": "SCRIPTS_GUIDE.md",
+   "titulo": "📦 Guia de Scripts - Package.json",
+   "linhas": 147
+  },
+  {
+   "arquivo": "SECURITY.md",
+   "titulo": "Política de Segurança",
+   "linhas": 21
+  },
+  {
+   "arquivo": "SECURITY_AUDIT_REPORT.md",
+   "titulo": "🔐 Relatório de Auditoria de Segurança e Backend",
+   "linhas": 801
+  },
+  {
+   "arquivo": "docs/ACCESSIBILITY.md",
+   "titulo": "♿ ACCESSIBILITY.md - Guia de Acessibilidade",
+   "linhas": 22
+  },
+  {
+   "arquivo": "docs/ANALISE_BACKEND_VS_FRONTEND.md",
+   "titulo": "Análise Exaustiva: Backend vs Frontend",
+   "linhas": 105
+  },
+  {
+   "arquivo": "docs/ANALISE_FUNCIONALIDADES_PENDENTES.md",
+   "titulo": "🔍 ANÁLISE EXAUSTIVA - FUNCIONALIDADES SUGERIDAS MAS NÃO IMPLEMENTADAS",
+   "linhas": 57
+  },
+  {
+   "arquivo": "docs/AUDITORIA_SISTEMA_COMPLETA.md",
+   "titulo": "📋 Auditoria Completa do Sistema — Departamento Pessoal",
+   "linhas": 311
+  },
+  {
+   "arquivo": "docs/AUDIT_APIS_EXTERNAS.md",
+   "titulo": "P1-015: Auditoria de Chamadas a APIs Externas",
+   "linhas": 170
+  },
+  {
+   "arquivo": "docs/AUDIT_REPORT.md",
+   "titulo": "📋 RELATÓRIO DE AUDITORIA - DEPARTAMENTO PESSOAL",
+   "linhas": 116
+  },
+  {
+   "arquivo": "docs/AUDIT_REPORT_GITHUB.md",
+   "titulo": "🔍 RELATÓRIO DE AUDITORIA GITHUB - DEPARTAMENTO-PESSOAL",
+   "linhas": 185
+  },
+  {
+   "arquivo": "docs/AUDIT_REPORT_V7.md",
+   "titulo": "🔍 RELATÓRIO DE AUDITORIA COMPLETA V7",
+   "linhas": 179
+  },
+  {
+   "arquivo": "docs/BACKUP.md",
+   "titulo": "💾 BACKUP.md - Estratégia de Backup",
+   "linhas": 23
+  },
+  {
+   "arquivo": "docs/CALCULO_FOLHA.md",
+   "titulo": "Cálculo de Folha de Pagamento",
+   "linhas": 38
+  },
+  {
+   "arquivo": "docs/CALCULO_RESCISAO.md",
+   "titulo": "Cálculo de Rescisão Trabalhista",
+   "linhas": 44
+  },
+  {
+   "arquivo": "docs/CHANGELOG.md",
+   "titulo": "Changelog",
+   "linhas": 24
+  },
+  {
+   "arquivo": "docs/CHANGELOG_QA_V8.1.md",
+   "titulo": "CHANGELOG - Análise QA V8.1",
+   "linhas": 157
+  },
+  {
+   "arquivo": "docs/CODE_REVIEW.md",
+   "titulo": "Protocolo de Code Review e Excelência Técnica",
+   "linhas": 24
+  },
+  {
+   "arquivo": "docs/COMPONENTES.md",
+   "titulo": "Documentação de Componentes",
+   "linhas": 39
+  },
+  {
+   "arquivo": "docs/COMPONENTS.md",
+   "titulo": "Components",
+   "linhas": 19
+  },
+  {
+   "arquivo": "docs/CUTOVER_10_DE_10.md",
+   "titulo": "Cutover 10/10 — Certificado de conclusão",
+   "linhas": 90
+  },
+  {
+   "arquivo": "docs/CUTOVER_VALIDACAO.md",
+   "titulo": "Checklist de Validação Pós-Cutover",
+   "linhas": 62
+  },
+  {
+   "arquivo": "docs/DATABASE.md",
+   "titulo": "DATABASE",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/DESENVOLVIMENTO.md",
+   "titulo": "Guia de Desenvolvimento",
+   "linhas": 36
+  },
+  {
+   "arquivo": "docs/DEVELOPMENT.md",
+   "titulo": "Guia de Desenvolvimento",
+   "linhas": 52
+  },
+  {
+   "arquivo": "docs/E2E_TESTING.md",
+   "titulo": "Testes End-to-End (E2E) — Playwright",
+   "linhas": 119
+  },
+  {
+   "arquivo": "docs/ENVIRONMENT.md",
+   "titulo": "🔑 ENVIRONMENT.md",
+   "linhas": 24
+  },
+  {
+   "arquivo": "docs/ESOCIAL.md",
+   "titulo": "Integração eSocial",
+   "linhas": 28
+  },
+  {
+   "arquivo": "docs/ESOCIAL_EVENTOS.md",
+   "titulo": "eSocial - Eventos",
+   "linhas": 34
+  },
+  {
+   "arquivo": "docs/EXECUCAO_PLANO_100_2026-08-30.md",
+   "titulo": "Execução do PLANO_100 — Relatório de 30/08/2026",
+   "linhas": 158
+  },
+  {
+   "arquivo": "docs/FAQ.md",
+   "titulo": "FAQ - Perguntas Frequentes",
+   "linhas": 34
+  },
+  {
+   "arquivo": "docs/FEATURES.md",
+   "titulo": "Funcionalidades",
+   "linhas": 36
+  },
+  {
+   "arquivo": "docs/FERIAS.md",
+   "titulo": "Férias — Matriz de Conformidade CLT (v31)",
+   "linhas": 80
+  },
+  {
+   "arquivo": "docs/FERIAS_PROGRAMACAO.md",
+   "titulo": "Programação Anual de Férias",
+   "linhas": 53
+  },
+  {
+   "arquivo": "docs/FOLHA.md",
+   "titulo": "Folha de Pagamento",
+   "linhas": 26
+  },
+  {
+   "arquivo": "docs/GLOSSARY.md",
+   "titulo": "Glossário",
+   "linhas": 28
+  },
+  {
+   "arquivo": "docs/GUIAS_IMPOSTOS.md",
+   "titulo": "Guias e Impostos",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/HOOKS.md",
+   "titulo": "Custom Hooks",
+   "linhas": 20
+  },
+  {
+   "arquivo": "docs/INDEX.md",
+   "titulo": "Central de Documentação — Sistema DP",
+   "linhas": 45
+  },
+  {
+   "arquivo": "docs/INTEGRACOES.md",
+   "titulo": "Integracoes Externas - Sistema DP V18",
+   "linhas": 25
+  },
+  {
+   "arquivo": "docs/INTEGRATION.md",
+   "titulo": "🔗 INTEGRATION.md - Guia de Integrações",
+   "linhas": 24
+  },
+  {
+   "arquivo": "docs/INTEGRATIONS.md",
+   "titulo": "INTEGRATIONS",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/LEVANTAMENTO_FUNCIONALIDADES.md",
+   "titulo": "📋 LEVANTAMENTO COMPLETO DE FUNCIONALIDADES E FERRAMENTAS",
+   "linhas": 739
+  },
+  {
+   "arquivo": "docs/LISTA_ARQUIVOS_PENDENTES_V13.md",
+   "titulo": "📁 LISTA DETALHADA DE ARQUIVOS PENDENTES - V13",
+   "linhas": 447
+  },
+  {
+   "arquivo": "docs/MAPA_API.md",
+   "titulo": "Mapa de API — E-094",
+   "linhas": 55
+  },
+  {
+   "arquivo": "docs/MIGRATION.md",
+   "titulo": "🔄 MIGRATION.md - Guia de Migração",
+   "linhas": 22
+  },
+  {
+   "arquivo": "docs/MONITORING.md",
+   "titulo": "📊 Monitoring & Observability — Departamento Pessoal v2",
+   "linhas": 256
+  },
+  {
+   "arquivo": "docs/P2-037_TABELAS_DUPLICADAS_ANALISE.md",
+   "titulo": "P2-037: Consolidação de Tabelas Duplicadas — Análise e Runbook",
+   "linhas": 53
+  },
+  {
+   "arquivo": "docs/PERFORMANCE.md",
+   "titulo": "⚡ PERFORMANCE.md - Guia de Performance",
+   "linhas": 27
+  },
+  {
+   "arquivo": "docs/PONTO.md",
+   "titulo": "⏰ PONTO.md - Guia de Ponto",
+   "linhas": 23
+  },
+  {
+   "arquivo": "docs/QA_EXHAUSTIVE_REPORT_V26.md",
+   "titulo": "🔬 QA Exaustivo V26 — Relatório Final",
+   "linhas": 146
+  },
+  {
+   "arquivo": "docs/QA_EXHAUSTIVE_REPORT_V27.md",
+   "titulo": "QA Exaustivo V27 — Relatório Final",
+   "linhas": 87
+  },
+  {
+   "arquivo": "docs/QA_EXHAUSTIVE_REPORT_V28.md",
+   "titulo": "QA Exaustivo V28 — Etapa 8 (Hardening Final Sustentado)",
+   "linhas": 83
+  },
+  {
+   "arquivo": "docs/QA_FERIAS_V31.md",
+   "titulo": "QA Férias v31 — Etapa 10",
+   "linhas": 81
+  },
+  {
+   "arquivo": "docs/QA_FINAL_REPORT_V8.5.md",
+   "titulo": "🏆 RELATÓRIO FINAL QA V8.5 - MISSÃO COMPLETA",
+   "linhas": 176
+  },
+  {
+   "arquivo": "docs/README.md",
+   "titulo": "Sistema Departamento Pessoal",
+   "linhas": 30
+  },
+  {
+   "arquivo": "docs/README_FINAL.md",
+   "titulo": "README_FINAL",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/RELATORIOS.md",
+   "titulo": "📊 RELATORIOS.md - Guia de Relatórios",
+   "linhas": 26
+  },
+  {
+   "arquivo": "docs/RELEASE_NOTES.md",
+   "titulo": "Release Notes",
+   "linhas": 27
+  },
+  {
+   "arquivo": "docs/RESCISAO.md",
+   "titulo": "Rescisão",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/ROADMAP.md",
+   "titulo": "Roadmap - Departamento Pessoal",
+   "linhas": 26
+  },
+  {
+   "arquivo": "docs/ROLLBACK_DRILL.md",
+   "titulo": "Rollback Drill — Cutover Supabase",
+   "linhas": 58
+  },
+  {
+   "arquivo": "docs/SAUDE_OCUPACIONAL.md",
+   "titulo": "Saúde Ocupacional",
+   "linhas": 34
+  },
+  {
+   "arquivo": "docs/SECURITY.md",
+   "titulo": "Security",
+   "linhas": 21
+  },
+  {
+   "arquivo": "docs/SETUP.md",
+   "titulo": "Setup",
+   "linhas": 14
+  },
+  {
+   "arquivo": "docs/SIMULACAO_FOLHA_CENARIOS.md",
+   "titulo": "Simulação Exaustiva — Fluxo de Folha de Pagamento",
+   "linhas": 155
+  },
+  {
+   "arquivo": "docs/SLO.md",
+   "titulo": "SLOs e Mapa Alerta → Runbook",
+   "linhas": 44
+  },
+  {
+   "arquivo": "docs/STYLE_GUIDE.md",
+   "titulo": "🎨 STYLE_GUIDE.md - Guia de Estilo",
+   "linhas": 33
+  },
+  {
+   "arquivo": "docs/TESTING.md",
+   "titulo": "Testing",
+   "linhas": 14
+  },
+  {
+   "arquivo": "docs/TESTING_GUIDE.md",
+   "titulo": "🧪 Guia de Testes - V15",
+   "linhas": 54
+  },
+  {
+   "arquivo": "docs/TROUBLESHOOTING.md",
+   "titulo": "🔧 TROUBLESHOOTING.md",
+   "linhas": 27
+  },
+  {
+   "arquivo": "docs/UTILS.md",
+   "titulo": "Documentação de Utilitários",
+   "linhas": 29
+  },
+  {
+   "arquivo": "docs/V17_CHECKLIST.md",
+   "titulo": "✅ V17 CHECKLIST - IMPLEMENTAÇÃO CONCLUÍDA",
+   "linhas": 176
+  },
+  {
+   "arquivo": "docs/V17_INDEX.md",
+   "titulo": "📚 V17 - ÍNDICE DE DOCUMENTAÇÃO",
+   "linhas": 48
+  },
+  {
+   "arquivo": "docs/VISAO_FUTURA.md",
+   "titulo": "Visão futura — E-100",
+   "linhas": 59
+  },
+  {
+   "arquivo": "docs/WORKFLOWS.md",
+   "titulo": "🔄 WORKFLOWS.md - Fluxos de Trabalho",
+   "linhas": 26
+  }
+ ],
+ "docs_em_subpastas": [
+  {
+   "pasta": "docs/auditoria",
+   "arquivos_md": 48
+  },
+  {
+   "pasta": "docs/_archive",
+   "arquivos_md": 41
+  },
+  {
+   "pasta": "docs/guides",
+   "arquivos_md": 33
+  },
+  {
+   "pasta": "docs/adr",
+   "arquivos_md": 7
+  },
+  {
+   "pasta": "docs/contexto",
+   "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/lgpd",
+   "arquivos_md": 2
+  },
+  {
+   "pasta": "docs/contratos",
+   "arquivos_md": 1
+  },
+  {
+   "pasta": "docs/seguranca",
+   "arquivos_md": 1
+  }
+ ],
+ "changelog_topo": "[22.0.0] - 2026-07-27",
+ "env": {
+  "declaradas_no_env_example": [
+   "VITE_API_URL",
+   "VITE_SENTRY_DSN",
+   "VITE_SENTRY_ORG",
+   "VITE_SENTRY_PROJECT",
+   "VITE_SENTRY_RELEASE",
+   "VITE_SUPABASE_FUNCTIONS_BASE",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "usadas_no_front": [
+   "CI",
+   "DEV",
+   "GITHUB_ACTIONS",
+   "GITHUB_ACTOR",
+   "GITHUB_HEAD_REF",
+   "MODE",
+   "PROD",
+   "REQUIRE_LIVE_RLS",
+   "RUN_LIVE_RLS_TESTS",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_URL",
+   "VITE_SENTRY_DSN",
+   "VITE_SENTRY_RELEASE",
+   "VITE_SUPABASE_FUNCTIONS_BASE",
+   "VITE_SUPABASE_PUBLISHABLE_KEY",
+   "VITE_SUPABASE_URL"
+  ],
+  "usadas_nas_edges": [
+   "AI_GATEWAY_API_KEY",
+   "AI_GATEWAY_URL",
+   "ALLOWED_REDIRECT_ORIGINS",
+   "BRIDGE_LOG_LEVEL",
+   "BRIDGE_QUERY_TIMEOUT_MS",
+   "BRIDGE_URL",
+   "CRON_SECRET",
+   "E2E_ANON_KEY",
+   "E2E_COLABORADOR_ID",
+   "E2E_COMPETENCIA",
+   "E2E_CONCURRENCY",
+   "E2E_EMPRESA_ID",
+   "E2E_FOLHA_ID",
+   "E2E_JWT",
+   "E2E_MOTIVO",
+   "E2E_ORIGIN",
+   "E2E_PONTO_DATA",
+   "E2E_PONTO_HASH_SECRET",
+   "E2E_SUPABASE_URL",
+   "EMAIL_FROM",
+   "ENCRYPTION_MASTER_KEY",
+   "ESOCIAL_SIMULATE",
+   "EXTERNAL_DB_KEY",
+   "EXTERNAL_DB_PUBLISHABLE_KEY",
+   "EXTERNAL_DB_URL",
+   "EXTRA_ALLOWED_LOCAL_PORTS",
+   "EXTRA_ALLOWED_ORIGINS",
+   "FOLHA_ALERT_CONFLICT_THRESHOLD",
+   "FOLHA_ALERT_FAILED_THRESHOLD",
+   "GOVBR_BASE_URL",
+   "GOVBR_CLIENT_ID",
+   "GOVBR_CLIENT_SECRET",
+   "LOVABLE_API_KEY",
+   "OPENAI_API_KEY",
+   "PIX_APROVACAO_DUPLA_CENTAVOS",
+   "PONTO_HASH_SECRET",
+   "REPORT_SCHEDULER_SECRET",
+   "RESEND_API_KEY",
+   "RUN_LOCAL_EDGE_TESTS",
+   "SENTRY_DSN",
+   "SENTRY_ENVIRONMENT",
+   "SENTRY_RELEASE",
+   "SLACK_WEBHOOK_URL",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_ENV",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_SERVICE_ROLE_KEY",
+   "SUPABASE_URL",
+   "TURNSTILE_SECRET_KEY",
+   "WEBHOOK_REQUIRE_TIMESTAMP",
+   "WEBHOOK_SECRET"
+  ],
+  "usadas_no_python": [
+   "AI_CONTEXT_INDEX",
+   "AI_CONTEXT_MODEL",
+   "AI_CONTEXT_PROFILE",
+   "AI_CONTEXT_SCHEMA_SNAPSHOT",
+   "ANTHROPIC_API_KEY",
+   "CODE_SCAN_DIRS",
+   "CODE_SCAN_MAX_FILES",
+   "CRON_RUNS_PER_JOB",
+   "GEN_TYPES",
+   "PGDUMP",
+   "PGDUMP_SCHEMAS",
+   "REPO_ROOT",
+   "SNAPSHOT_DIR",
+   "SNAPSHOT_EXCLUDE_SCHEMAS",
+   "SNAPSHOT_INCLUDE_SCHEMAS",
+   "STAT_STATEMENTS_TOP",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_URL",
+   "SUPABASE_PROJECT_REF",
+   "SUPABASE_SNAPSHOT_PUBLICACAO"
+  ],
+  "usadas_mas_nao_declaradas": [
+   "CI",
+   "DEV",
+   "GITHUB_ACTIONS",
+   "GITHUB_ACTOR",
+   "GITHUB_HEAD_REF",
+   "MODE",
+   "PROD",
+   "REQUIRE_LIVE_RLS",
+   "RUN_LIVE_RLS_TESTS",
+   "SUPABASE_ANON_KEY",
+   "SUPABASE_PUBLISHABLE_KEY",
+   "SUPABASE_URL"
+  ],
+  "secrets_em_workflows": [
+   "E2E_NON_ADMIN_EMAIL",
+   "E2E_NON_ADMIN_PASSWORD",
+   "E2E_TOTP_SECRET",
+   "E2E_USER_EMAIL",
+   "E2E_USER_PASSWORD",
+   "GITHUB_TOKEN",
+   "MAILOSAUR_API_KEY",
+   "MAILOSAUR_INBOX_DOMAIN",
+   "MAILOSAUR_SERVER_ID",
+   "SUPABASE_ACCESS_TOKEN",
+   "SUPABASE_DB_URL",
+   "SUPABASE_DB_URL_READONLY"
+  ]
+ },
+ "deploy": {
+  "alvos": [
+   "vercel",
+   "docker",
+   "compose/swarm"
+  ],
+  "dockerfiles": [
+   {
+    "arquivo": "Dockerfile",
+    "base": [
+     "nginx:alpine",
+     "node:22-alpine"
+    ],
+    "portas": [
+     "80"
+    ]
+   },
+   {
+    "arquivo": "Dockerfile.prod",
+    "base": [
+     "nginx:alpine",
+     "node:22-alpine"
+    ],
+    "portas": [
+     "80"
+    ]
+   },
+   {
+    "arquivo": "docker/Dockerfile",
+    "base": [],
+    "portas": []
+   }
+  ],
+  "compose": [
+   {
+    "arquivo": "docker-compose.dev.yml",
+    "servicos": [
+     "app"
+    ]
+   },
+   {
+    "arquivo": "docker-compose.prod.yml",
+    "servicos": [
+     "app",
+     "redis",
+     "redis_data"
+    ]
+   },
+   {
+    "arquivo": "docker/docker-compose.dev.yml",
+    "servicos": []
+   },
+   {
+    "arquivo": "docker/docker-compose.prod.yml",
+    "servicos": []
+   },
+   {
+    "arquivo": "docker/docker-compose.yml",
+    "servicos": []
+   }
+  ],
+  "vercel": {
+   "framework": null,
+   "build": null,
+   "rewrites": 0,
+   "redirects": 0,
+   "headers": 3,
+   "ignore_command": null,
+   "crons": []
+  }
+ },
+ "integracoes": {
+  "sdks": [
+   {
+    "pacote": "@tanstack/react-query",
+    "servico": "react-query",
+    "versao": "^5.104.5"
+   },
+   {
+    "pacote": "@sentry/react",
+    "servico": "Sentry",
+    "versao": "11.8.0"
+   },
+   {
+    "pacote": "@supabase/supabase-js",
+    "servico": "Supabase",
+    "versao": "^2.118.0"
+   },
+   {
+    "pacote": "zod",
+    "servico": "zod",
+    "versao": "^4.6.5"
+   }
+  ],
+  "hosts_externos": [
+   {
+    "host": "departamento-pessoal-v3.vercel.app",
+    "arquivos": 7
+   },
+   {
+    "host": "lovable.app",
+    "arquivos": 5
+   },
+   {
+    "host": "test.supabase.co",
+    "arquivos": 5
+   },
+   {
+    "host": "api.resend.com",
+    "arquivos": 4
+   },
+   {
+    "host": "unified-harmony-hub.lovable.app",
+    "arquivos": 4
+   },
+   {
+    "host": "ai-gateway.lovable.dev",
+    "arquivos": 2
+   },
+   {
+    "host": "api.lovable.dev",
+    "arquivos": 2
+   },
+   {
+    "host": "brasilapi.com.br",
+    "arquivos": 2
+   },
+   {
+    "host": "example.test",
+    "arquivos": 2
+   },
+   {
+    "host": "frjbfeamybqsejlvmqbl.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app",
+    "arquivos": 2
+   },
+   {
+    "host": "signed.url",
+    "arquivos": 2
+   },
+   {
+    "host": "viacep.com.br",
+    "arquivos": 2
+   },
+   {
+    "host": "www.esocial.gov.br",
+    "arquivos": 2
+   },
+   {
+    "host": "x.supabase.co",
+    "arquivos": 2
+   },
+   {
+    "host": "abc.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "another-project.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "api.openai.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.pwnedpasswords.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.supabase.com",
+    "arquivos": 1
+   },
+   {
+    "host": "api.x.com",
+    "arquivos": 1
+   },
+   {
+    "host": "app.dp.example",
+    "arquivos": 1
+   },
+   {
+    "host": "app.exemplo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "app.test",
+    "arquivos": 1
+   },
+   {
+    "host": "cdn.test",
+    "arquivos": 1
+   },
+   {
+    "host": "challenges.cloudflare.com",
+    "arquivos": 1
+   },
+   {
+    "host": "ciziytrrjjotlsjzshnm.supabase.co",
+    "arquivos": 1
+   },
+   {
+    "host": "edge.test",
+    "arquivos": 1
+   },
+   {
+    "host": "editor.lovable.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "evil.unified-harmony-hub.lovable.app.evil.com",
+    "arquivos": 1
+   },
+   {
+    "host": "evo.exemplo.com",
+    "arquivos": 1
+   },
+   {
+    "host": "example.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "fonts.gstatic.com",
+    "arquivos": 1
+   },
+   {
+    "host": "functions.example.test",
+    "arquivos": 1
+   },
+   {
+    "host": "hook.io",
+    "arquivos": 1
+   },
+   {
+    "host": "hooks.test",
+    "arquivos": 1
+   },
+   {
+    "host": "lovable.dev",
+    "arquivos": 1
+   },
+   {
+    "host": "mailosaur.com",
+    "arquivos": 1
+   },
+   {
+    "host": "myapp.lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "o123.ingest.sentry.io",
+    "arquivos": 1
+   },
+   {
+    "host": "seu-bitrix.bitrix24.com.br",
+    "arquivos": 1
+   },
+   {
+    "host": "signed.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "sistema-dp.lovable.app",
+    "arquivos": 1
+   },
+   {
+    "host": "sso.acesso.gov.br",
+    "arquivos": 1
+   },
+   {
+    "host": "sua-api.com",
+    "arquivos": 1
+   },
+   {
+    "host": "tile.openstreetmap.org",
+    "arquivos": 1
+   },
+   {
+    "host": "wa.me",
+    "arquivos": 1
+   },
+   {
+    "host": "x.com",
+    "arquivos": 1
+   },
+   {
+    "host": "xn--unifed-harmony-hub-abc.lovable.app",
+    "arquivos": 1
+   }
+  ],
+  "env_de_integracao": [
+   "AI_GATEWAY_API_KEY",
+   "CRON_SECRET",
+   "E2E_PONTO_HASH_SECRET",
+   "GOVBR_CLIENT_ID",
+   "GOVBR_CLIENT_SECRET",
+   "LOVABLE_API_KEY",
+   "OPENAI_API_KEY",
+   "PONTO_HASH_SECRET",
+   "REPORT_SCHEDULER_SECRET",
+   "RESEND_API_KEY",
+   "SENTRY_DSN",
+   "SENTRY_ENVIRONMENT",
+   "SENTRY_RELEASE",
+   "SLACK_WEBHOOK_URL",
+   "TURNSTILE_SECRET_KEY",
+   "VITE_SENTRY_DSN",
+   "VITE_SENTRY_ORG",
+   "VITE_SENTRY_PROJECT",
+   "VITE_SENTRY_RELEASE",
+   "WEBHOOK_REQUIRE_TIMESTAMP",
+   "WEBHOOK_SECRET"
+  ],
+  "webhooks_recebidos": [
+   "admissao-publica",
+   "auth-gov-br",
+   "auth-login",
+   "healthcheck",
+   "metrics",
+   "webhook"
+  ],
+  "realtime": [
+   "afdt-div-${empresaId}",
+   "comunicados-realtime",
+   "notif-toast-${empresaId}-${Math.random().toString(36).slice(2)}",
+   "notificacoes-realtime-page",
+   "ponto-changes-${empresaId}-${Math.random().toString(36).slice(2)}",
+   "sidebar-security-alerts-${Math.random().toString(36).slice(2)}"
+  ]
+ },
+ "permissoes": {
+  "papeis_no_codigo": [
+   {
+    "papel": "dialog",
+    "ocorrencias": 33
+   },
+   {
+    "papel": "alert",
+    "ocorrencias": 11
+   },
+   {
+    "papel": "user",
+    "ocorrencias": 9
+   },
+   {
+    "papel": "admin",
+    "ocorrencias": 8
+   },
+   {
+    "papel": "tablist",
+    "ocorrencias": 5
+   },
+   {
+    "papel": "tab",
+    "ocorrencias": 4
+   },
+   {
+    "papel": "menuitem",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "progressbar",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "rh",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "service_role",
+    "ocorrencias": 3
+   },
+   {
+    "papel": "grid",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "list",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "row",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "switch",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "system",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "agent",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "anon",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "assistant",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "banner",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "ci_auditor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "combobox",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "gestor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "heading",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "listitem",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "main",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "status",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "sup",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "supabase_admin",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "super_admin",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "tooltip",
+    "ocorrencias": 1
+   }
+  ],
+  "enums_de_papel": [
+   {
+    "enum": "app_role",
+    "valores": [
+     "admin",
+     "moderator",
+     "user"
+    ]
+   },
+   {
+    "enum": "dp_user_role",
+    "valores": [
+     "colaborador",
+     "gestor",
+     "rh",
+     "auditoria",
+     "admin",
+     "dpo"
+    ]
+   }
+  ],
+  "rpcs_de_autorizacao": [
+   "admin_associar_usuario_empresa",
+   "admin_definir_pin_quiosque",
+   "admin_list_profiles",
+   "admin_list_user_roles",
+   "admin_set_user_role",
+   "associar_pis_colaborador_afdt",
+   "get_empresa_admin_ids",
+   "get_user_roles",
+   "has_role",
+   "is_admin",
+   "report_destination_is_allowed"
+  ],
+  "guards": [
+   "src/components/ProtectedRoute.tsx"
+  ],
+  "rotas_protegidas": 107,
+  "rotas_publicas": [
+   "/assinar-contrato/:token",
+   "/ciencia-medida/:token",
+   "/contratacao",
+   "/login",
+   "/verificar-contrato",
+   "/verificar-contrato/:hash"
+  ],
+  "menu_com_papeis": [],
+  "tabelas_sem_rls": [
+   "cbo",
+   "cnae",
+   "config_retencao",
+   "curriculos_arquivos",
+   "faixas_inss",
+   "faixas_irrf",
+   "lgpd_purge_log",
+   "medidas_ciencia_tokens",
+   "migration_naming_audit",
+   "mv_refresh_log",
+   "onboarding_documentos_obrigatorios",
+   "onboarding_kits",
+   "triagem_notas",
+   "vaga_entrevistas",
+   "vaga_etapas"
+  ]
+ },
+ "feature_flags": {
+  "total": 3,
+  "flags": [
+   {
+    "flag": "FEATURE_X",
+    "arquivos": 1
+   },
+   {
+    "flag": "nova-tela",
+    "arquivos": 1
+   },
+   {
+    "flag": "novo-inbox",
+    "arquivos": 1
+   }
+  ],
+  "tabelas_de_flag": [
+   "portal_notificacoes_settings"
+  ]
+ },
+ "providers": {
+  "entrada": "src/main.tsx",
+  "providers": [
+   "AuthProvider",
+   "BrowserRouter",
+   "EmpresaProvider",
+   "ErrorBoundary",
+   "HelmetProvider",
+   "NotificationProvider",
+   "QueryClientProvider",
+   "QueryProvider",
+   "RouteErrorBoundary",
+   "ThemeContext.Provider",
+   "ThemeProvider",
+   "ToastProvider"
+  ]
+ },
+ "i18n": {
+  "arquivos": 5,
+  "idiomas": [
+   "en-US",
+   "es-ES",
+   "pt-BR"
+  ],
+  "lib": []
+ }
+}

@@ -1,0 +1,5897 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "frameworks": [
+  "vitest",
+  "playwright"
+ ],
+ "total": 572,
+ "por_tipo": {
+  "contrato": 4,
+  "e2e": 30,
+  "pytest": 2,
+  "unit": 534
+ },
+ "onde_ficam": [
+  {
+   "padrao": "co-localizado (__tests__)",
+   "arquivos": 468
+  },
+  {
+   "padrao": "co-localizado (*.test)",
+   "arquivos": 62
+  },
+  {
+   "padrao": "e2e/",
+   "arquivos": 27
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 13
+  }
+ ],
+ "arquivos": [
+  {
+   "arquivo": "e2e/auth-non-admin.setup.ts",
+   "tipo": "e2e",
+   "linhas": 89,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "e2e/auth.setup.ts",
+   "tipo": "e2e",
+   "linhas": 257,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",
+   "tipo": "e2e",
+   "linhas": 38,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "e2e/authenticated/admin-operacao.spec.ts",
+   "tipo": "e2e",
+   "linhas": 53,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/audit-checklist.spec.ts",
+   "tipo": "e2e",
+   "linhas": 27,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/authenticated/auth-empresa-dashboard-flow.spec.ts",
+   "tipo": "e2e",
+   "linhas": 101,
+   "testa": [],
+   "casos": 8
+  },
+  {
+   "arquivo": "e2e/authenticated/calculadora-rescisao.spec.ts",
+   "tipo": "e2e",
+   "linhas": 23,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/authenticated/contratos.spec.ts",
+   "tipo": "e2e",
+   "linhas": 61,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "e2e/authenticated/dashboard.spec.ts",
+   "tipo": "e2e",
+   "linhas": 32,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/esocial.spec.ts",
+   "tipo": "e2e",
+   "linhas": 80,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "e2e/authenticated/ferias.spec.ts",
+   "tipo": "e2e",
+   "linhas": 74,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "e2e/authenticated/fuzz-testing.spec.ts",
+   "tipo": "e2e",
+   "linhas": 27,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/authenticated/importacao.spec.ts",
+   "tipo": "e2e",
+   "linhas": 38,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/modulos-criticos.spec.ts",
+   "tipo": "e2e",
+   "linhas": 44,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 48,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/authenticated/ponto-afdt-espelho.spec.ts",
+   "tipo": "e2e",
+   "linhas": 66,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "e2e/authenticated/post-cutover-smoke.spec.ts",
+   "tipo": "e2e",
+   "linhas": 92,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "e2e/authenticated/session-expiration.spec.ts",
+   "tipo": "e2e",
+   "linhas": 50,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/cleanup/logout.spec.ts",
+   "tipo": "e2e",
+   "linhas": 39,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/cleanup/seed-cleanup.spec.ts",
+   "tipo": "e2e",
+   "linhas": 79,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/mobile/ponto.spec.ts",
+   "tipo": "e2e",
+   "linhas": 23,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "e2e/public/api-auth-errors.spec.ts",
+   "tipo": "e2e",
+   "linhas": 85,
+   "testa": [],
+   "casos": 9
+  },
+  {
+   "arquivo": "e2e/public/login.spec.ts",
+   "tipo": "e2e",
+   "linhas": 31,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "e2e/public/protected-routes.spec.ts",
+   "tipo": "e2e",
+   "linhas": 29,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "e2e/public/rbac-authorization.spec.ts",
+   "tipo": "e2e",
+   "linhas": 35,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/public/reset-password-callback.spec.ts",
+   "tipo": "e2e",
+   "linhas": 88,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "e2e/public/reset-password.spec.ts",
+   "tipo": "e2e",
+   "linhas": 74,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tipo": "unit",
+   "linhas": 376,
+   "testa": [
+    "src/components/ui/index.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "scripts/e2e/ensure-fixtures.mjs",
+   "tipo": "e2e",
+   "linhas": 128,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/e2e/seed.mjs",
+   "tipo": "e2e",
+   "linhas": 311,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/e2e/verify-seed.mjs",
+   "tipo": "e2e",
+   "linhas": 150,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "tipo": "pytest",
+   "linhas": 164,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "tipo": "pytest",
+   "linhas": 918,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/audit-edge-audit-log-contract.test.mjs",
+   "tipo": "contrato",
+   "linhas": 66,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/contexto-ai-context.test.mjs",
+   "tipo": "unit",
+   "linhas": 3,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/contexto-indice.test.mjs",
+   "tipo": "unit",
+   "linhas": 135,
+   "testa": [],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/tests/contexto-publicacao.test.mjs",
+   "tipo": "unit",
+   "linhas": 374,
+   "testa": [],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/tests/contexto-regras-negocio.test.mjs",
+   "tipo": "unit",
+   "linhas": 11,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "scripts/tests/contexto-supabase-snapshot.test.mjs",
+   "tipo": "unit",
+   "linhas": 19,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "scripts/tests/inventario-banco.test.mjs",
+   "tipo": "unit",
+   "linhas": 185,
+   "testa": [
+    "scripts/inventario/gerar-banco.mjs"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "scripts/tests/inventario-mudou.test.mjs",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "scripts/inventario/mudou-conteudo.mjs"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "scripts/tests/inventario-rotas.test.mjs",
+   "tipo": "unit",
+   "linhas": 147,
+   "testa": [
+    "scripts/inventario/gerar-rotas.mjs",
+    "src/components/layout/index.ts",
+    "src/hooks/useFolha.ts",
+    "src/pages/FolhaPage.tsx",
+    "src/pages/LoginPage.tsx",
+    "src/pages/NotFoundPage.tsx",
+    "src/pages/UsuariosPage.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "scripts/tests/rebaseline-artifact.test.mjs",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "scripts/tests/sw-routing.test.mjs",
+   "tipo": "unit",
+   "linhas": 145,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/validate-canonical-db-url.test.mjs",
+   "tipo": "unit",
+   "linhas": 32,
+   "testa": [
+    "scripts/validate-canonical-db-url.mjs"
+   ],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/workflows-contract.test.mjs",
+   "tipo": "contrato",
+   "linhas": 269,
+   "testa": [],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/calculators/__tests__/auditHelper.test.ts",
+   "tipo": "unit",
+   "linhas": 95,
+   "testa": [
+    "src/calculators/auditHelper.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/calculators/__tests__/beneficios.test.ts",
+   "tipo": "unit",
+   "linhas": 281,
+   "testa": [
+    "src/calculators/beneficios.ts"
+   ],
+   "casos": 42
+  },
+  {
+   "arquivo": "src/calculators/__tests__/calculatorExtra.test.ts",
+   "tipo": "unit",
+   "linhas": 192,
+   "testa": [
+    "src/calculators/rescisao.ts",
+    "src/calculators/trabalhista-base.ts"
+   ],
+   "casos": 32
+  },
+  {
+   "arquivo": "src/calculators/__tests__/impostos.test.ts",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/calculators/impostos.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/calculators/__tests__/rescisao.test.ts",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/calculators/rescisao.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/calculators/__tests__/scenarios.test.ts",
+   "tipo": "unit",
+   "linhas": 416,
+   "testa": [
+    "src/calculators/beneficios.ts",
+    "src/calculators/impostos.ts",
+    "src/calculators/rescisao.ts"
+   ],
+   "casos": 52
+  },
+  {
+   "arquivo": "src/calculators/__tests__/tabelas.test.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "src/calculators/tabelas.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/calculators/__tests__/trabalhista-base.test.ts",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/calculators/trabalhista-base.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/components/__tests__/AdiantamentosTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/components/descontos/AdiantamentosTable.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/AdminRoute.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/components/AdminRoute.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/AdmissaoChecklist.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/admissao/AdmissaoChecklist.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/AdmissoesKanban.test.tsx",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/components/admissoes/AdmissoesKanban.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AfastamentoDocumentManager.test.tsx",
+   "tipo": "unit",
+   "linhas": 119,
+   "testa": [
+    "src/components/afastamentos/AfastamentoDocumentManager.tsx",
+    "src/hooks/useAfastamentos.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AfastamentoForm.test.tsx",
+   "tipo": "unit",
+   "linhas": 192,
+   "testa": [
+    "src/components/afastamentos/AfastamentoForm.tsx"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/components/__tests__/AfastamentoStats.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/afastamentos/AfastamentoStats.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AfastamentoTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/afastamentos/AfastamentoTable.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AfastamentoTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/components/afastamentos/AfastamentoTimeline.tsx",
+    "src/hooks/useAfastamentos.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AnalyticsSection.test.tsx",
+   "tipo": "unit",
+   "linhas": 211,
+   "testa": [
+    "src/components/dashboard/AnalyticsSection.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AnimatedNumber.test.tsx",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/components/dashboard/AnimatedNumber.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AnotacoesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/colaborador-detalhes/AnotacoesTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/AquisitivosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [
+    "src/components/colaborador-detalhes/AquisitivosTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ASOTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/components/colaborador-detalhes/ASOTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AssinarAvisoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/components/ferias/AssinarAvisoDialog.tsx",
+    "src/types/entities.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/AssinarEspelhoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/components/ponto/AssinarEspelhoDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/BarChartWidget.test.tsx",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/components/dashboard/BarChartWidget.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/BeneficioHistorico.test.tsx",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [
+    "src/components/beneficios/BeneficioHistorico.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/BeneficiosDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/beneficios/BeneficiosDashboard.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/components/settings/BeneficiosSettingsTab.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/BeneficiosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/components/colaborador-detalhes/BeneficiosTab.tsx",
+    "src/hooks/useBeneficiosColaborador.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/Breadcrumbs.test.tsx",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/components/layout/Breadcrumbs.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/CalculoFolhaWizard.test.tsx",
+   "tipo": "unit",
+   "linhas": 339,
+   "testa": [
+    "src/components/folha/CalculoFolhaWizard.tsx"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/components/__tests__/CalendarioFerias.test.tsx",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/components/ferias/CalendarioFerias.tsx",
+    "src/hooks/useFerias.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/CampaignWizard.test.tsx",
+   "tipo": "unit",
+   "linhas": 115,
+   "testa": [
+    "src/components/premiacoes/CampaignWizard.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/CamposCustomizadosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/components/settings/CamposCustomizadosTab.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/CandidatoTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/components/recrutamento/CandidatoTimeline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/CardProgramacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 246,
+   "testa": [
+    "src/components/ferias/programacao/CardProgramacao.tsx",
+    "src/hooks/ferias/useProgramacaoFerias.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/components/__tests__/CNABDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 388,
+   "testa": [
+    "src/components/folha/CNABDialog.tsx",
+    "src/services/cnabService.ts",
+    "src/services/loggerService.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/components/__tests__/ColaboradorDocuments.test.tsx",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+    "src/hooks/useDocumentos.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/ColaboradorFilters.test.tsx",
+   "tipo": "unit",
+   "linhas": 70,
+   "testa": [
+    "src/components/colaboradores/ColaboradorFilters.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/ColaboradorHistory.test.tsx",
+   "tipo": "unit",
+   "linhas": 134,
+   "testa": [
+    "src/components/colaboradores/ColaboradorHistory.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ConfiguracoesGeraisTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/components/settings/ConfiguracoesGeraisTab.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/Container.test.tsx",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/components/layout/Container.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ContasBancariasTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
+    "src/hooks/useTabelasReferencia.ts",
+    "src/utils/piiMask.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ContratosAssinaturaKPICard.test.tsx",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/components/contratos/ContratosAssinaturaKPICard.tsx",
+    "src/hooks/useContratosAssinaturaKPI.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ContratosVencendoPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/components/contratos/ContratosVencendoPanel.tsx",
+    "src/hooks/useContratosVencendo.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ContratoTokenTimelineDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 118,
+   "testa": [
+    "src/components/contratos/ContratoTokenTimelineDialog.tsx",
+    "src/hooks/useContratoTokenTimeline.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/CPFInput.test.tsx",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/components/ui/cpf-input.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/CurrencyInput.test.tsx",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/components/ui/currency-input.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/DarfTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 47,
+   "testa": [
+    "src/components/obrigacoes/DarfTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DashboardHeader.test.tsx",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/components/dashboard/DashboardHeader.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DashboardWidgets.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/dashboard/QuickActionsGrid.tsx",
+    "src/components/dashboard/SectionHeader.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/DeclaracoesTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/components/obrigacoes/DeclaracoesTable.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/DependentesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/components/colaborador-detalhes/DependentesTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts",
+    "src/utils/piiMask.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/desligamento-badges.test.tsx",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/components/desligamentos/DesligamentoStatusBadge.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoBadges.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/desligamentos/DesligamentoStatusBadge.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoChecklist.test.tsx",
+   "tipo": "unit",
+   "linhas": 89,
+   "testa": [
+    "src/components/desligamentos/DesligamentoChecklist.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoDetailSheet.test.tsx",
+   "tipo": "unit",
+   "linhas": 134,
+   "testa": [
+    "src/components/desligamentos/DesligamentoDetailSheet.tsx",
+    "src/services/desligamentoService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoFilters.test.tsx",
+   "tipo": "unit",
+   "linhas": 45,
+   "testa": [
+    "src/components/desligamentos/DesligamentoFilters.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 69,
+   "testa": [
+    "src/components/desligamentos/DesligamentoKPIs.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/DesligamentoStatusBadge.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/desligamentos/DesligamentoStatusBadge.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 146,
+   "testa": [
+    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
+   "tipo": "unit",
+   "linhas": 89,
+   "testa": [
+    "src/components/folha/DistribuirHoleritesButton.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DocumentoPreview.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/components/documents/DocumentoPreview.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 95,
+   "testa": [
+    "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
+    "src/hooks/useTabelasReferencia.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/DocumentoTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [
+    "src/components/documents/DocumentoTimeline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/DonutChart.test.tsx",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/components/dashboard/DonutChart.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/EmergenciaTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/components/colaborador-detalhes/EmergenciaTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/EmpresaSelector.test.tsx",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/components/empresa/EmpresaSelector.tsx",
+    "src/hooks/useEmpresas.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/EmpresaSettingsTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 166,
+   "testa": [
+    "src/components/settings/EmpresaSettingsTab.tsx",
+    "src/hooks/useEmpresas.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/EmpresaSwitcher.test.tsx",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/components/layout/EmpresaSwitcher.tsx",
+    "src/hooks/useEmpresas.ts",
+    "src/hooks/useGrupo.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/EmprestimosFinanceiros.test.tsx",
+   "tipo": "unit",
+   "linhas": 91,
+   "testa": [
+    "src/components/descontos/EmprestimosTable.tsx",
+    "src/components/descontos/FinancialSummaryCards.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/EmprestimosTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/components/descontos/EmprestimosTable.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/EntityPageContainer.test.tsx",
+   "tipo": "unit",
+   "linhas": 244,
+   "testa": [
+    "src/components/layout/EntityPageContainer.tsx"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/__tests__/EpiCatalogoTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/components/epis/EpiCatalogoTable.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/EpiCategoryChart.test.tsx",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/components/epis/EpiCategoryChart.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/EpiEntregasTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/components/epis/EpiEntregasTable.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/EpiKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/components/epis/EpiKPIs.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialAIInsights.test.tsx",
+   "tipo": "unit",
+   "linhas": 50,
+   "testa": [
+    "src/components/esocial/ESocialAIInsights.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
+   "tipo": "unit",
+   "linhas": 112,
+   "testa": [
+    "src/components/esocial/NaoPeriodicos.tsx",
+    "src/components/esocial/S2205AlteracaoCadastral.tsx",
+    "src/components/esocial/S2206AlteracaoContratual.tsx"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialAuditDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/components/esocial/ESocialAuditDialog.tsx",
+    "src/services/esocialService.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialComplianceScore.test.tsx",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [
+    "src/components/esocial/ESocialComplianceScore.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialConciliacao.test.tsx",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/components/esocial/ESocialConciliacao.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialDesligamentoCDP.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/components/esocial/S2299Desligamento.tsx",
+    "src/components/esocial/S2400CDP.tsx"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialEventComponents.test.tsx",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [
+    "src/components/esocial/NaoPeriodicos.tsx",
+    "src/components/esocial/Periodicos.tsx",
+    "src/components/esocial/SSTEvents.tsx"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialEventViewer.test.tsx",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [
+    "src/components/esocial/ESocialEventViewer.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialNaoPeriodicos.test.tsx",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/components/esocial/NaoPeriodicos.tsx"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialPagamentosAndSST.test.tsx",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/components/esocial/Periodicos.tsx",
+    "src/components/esocial/SSTEvents.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialPeriodicos.test.tsx",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/components/esocial/Periodicos.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialSSTandTSVTermino.test.tsx",
+   "tipo": "unit",
+   "linhas": 82,
+   "testa": [
+    "src/components/esocial/S2210SST.tsx",
+    "src/components/esocial/S2399TSVTermino.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialTabs.test.tsx",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/components/esocial/tabs.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 89,
+   "testa": [
+    "src/components/esocial/ESocialTimeline.tsx",
+    "src/services/esocialService.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/ESocialTSVComponents.test.tsx",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/components/esocial/S2300TSVInicio.tsx",
+    "src/components/esocial/S2306TSVAlteracao.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/EstagiarioTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 70,
+   "testa": [
+    "src/components/colaborador-detalhes/EstagiarioTab.tsx",
+    "src/hooks/useTabelasReferencia.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/EstrangeiroTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [
+    "src/components/colaborador-detalhes/EstrangeiroTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/EventTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 118,
+   "testa": [
+    "src/components/dashboard/EventTimeline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ExameFormDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 140,
+   "testa": [
+    "src/components/exames/ExameFormDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ExameKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/components/exames/ExameKPIs.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/ExameTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/components/exames/ExameTable.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ExameTipoChart.test.tsx",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/components/exames/ExameTipoChart.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/ExperienciaTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/components/colaborador-detalhes/ExperienciaTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasActions.test.tsx",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/components/ferias/FeriasActions.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasAlertasPagamentoCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/components/ferias/FeriasAlertasPagamentoCard.tsx",
+    "src/hooks/ferias/useAlertasPagamentoD2.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasAuditTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/components/ferias/FeriasAuditTimeline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasColetivasTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 210,
+   "testa": [
+    "src/components/ferias/FeriasColetivasTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 89,
+   "testa": [
+    "src/components/ferias/FeriasDashboard.tsx",
+    "src/types/entities.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasInsights.test.tsx",
+   "tipo": "unit",
+   "linhas": 57,
+   "testa": [
+    "src/components/ferias/FeriasInsights.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/components/ferias/FeriasKPIs.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasReconciliacaoCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 170,
+   "testa": [
+    "src/components/ferias/FeriasReconciliacaoCard.tsx",
+    "src/hooks/ferias/useReconciliacaoFolha.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 144,
+   "testa": [
+    "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx",
+    "src/hooks/ferias/useReconciliacaoLogs.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasRelatorioDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/components/ferias/FeriasRelatorioDialog.tsx",
+    "src/types/entities.ts",
+    "src/utils/feriasPDF.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasSaldoReport.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/components/ferias/FeriasSaldoReport.tsx",
+    "src/hooks/index.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/components/ferias/FeriasTable.tsx",
+    "src/types/entities.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FeriasWorkflowStepper.test.tsx",
+   "tipo": "unit",
+   "linhas": 36,
+   "testa": [
+    "src/components/ferias/FeriasWorkflowStepper.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/FinancialSummaryCards.test.tsx",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [
+    "src/components/descontos/FinancialSummaryCards.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaAuditoriaTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 91,
+   "testa": [
+    "src/components/folha/FolhaAuditoriaTable.tsx",
+    "src/hooks/useFolhaAuditoria.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaAuditTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/components/folha/FolhaAuditTimeline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaComposicao.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/folha/FolhaComposicao.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/folha/FolhaDashboard.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaESocialSync.test.tsx",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/components/folha/FolhaESocialSync.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/components/folha/FolhaKPIs.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaPipeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 71,
+   "testa": [
+    "src/components/folha/FolhaPipeline.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/FolhaValidationAlerts.test.tsx",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/components/folha/FolhaValidationAlerts.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/FormacaoTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/components/colaborador-detalhes/FormacaoTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/forms.test.tsx",
+   "tipo": "unit",
+   "linhas": 160,
+   "testa": [
+    "src/components/forms/FormField.tsx",
+    "src/components/forms/FormSection.tsx",
+    "src/components/forms/FormSelect.tsx",
+    "src/components/forms/FormSwitch.tsx"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/components/__tests__/GerarAEJDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/components/ponto/GerarAEJDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/GerarLtcatOsButton.test.tsx",
+   "tipo": "unit",
+   "linhas": 156,
+   "testa": [
+    "src/components/sst/GerarLtcatOsButton.tsx",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/GerarPgrButton.test.tsx",
+   "tipo": "unit",
+   "linhas": 184,
+   "testa": [
+    "src/components/sst/GerarPgrButton.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/GerenciamentoPeriodos.test.tsx",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/components/ferias/GerenciamentoPeriodos.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/ponto/GestaoPontoAnalytics.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+   "tipo": "unit",
+   "linhas": 146,
+   "testa": [
+    "src/components/ponto/GestaoRegistrosPonto.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/GlobalAuditLogTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/components/settings/GlobalAuditLogTab.tsx",
+    "src/utils/piiMask.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/GuiasTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/components/obrigacoes/GuiasTable.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/GuidedTour.test.tsx",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/components/onboarding/GuidedTour.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/HealthTrendCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/components/admin/HealthTrendCard.tsx",
+    "src/hooks/useSystemHealthHistory.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/HistoricoContratosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 123,
+   "testa": [
+    "src/components/colaborador-detalhes/HistoricoContratosTab.tsx",
+    "src/hooks/useHistoricoContratos.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/HistoricoSalarialTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ImportarAFDTDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/components/ponto/ImportarAFDTDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/InlineTabs.test.tsx",
+   "tipo": "unit",
+   "linhas": 473,
+   "testa": [
+    "src/components/settings/InlineTabs.tsx",
+    "src/integrations/supabase/client.ts",
+    "src/services/edgeFunctionsService.ts"
+   ],
+   "casos": 38
+  },
+  {
+   "arquivo": "src/components/__tests__/IPBlockingTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/components/settings/IPBlockingTab.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/layout.test.tsx",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/components/layout/BackButton.tsx",
+    "src/components/layout/PageHeader.tsx",
+    "src/components/layout/SectionHeader.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/LayoutGridSection.test.tsx",
+   "tipo": "unit",
+   "linhas": 291,
+   "testa": [
+    "src/components/layout/Column.tsx",
+    "src/components/layout/Grid.tsx",
+    "src/components/layout/Row.tsx",
+    "src/components/layout/Section.tsx"
+   ],
+   "casos": 39
+  },
+  {
+   "arquivo": "src/components/__tests__/LayoutPrimitives.test.tsx",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/components/layout/Flex.tsx",
+    "src/components/layout/Footer.tsx",
+    "src/components/layout/NavItem.tsx",
+    "src/components/layout/PageContainer.tsx",
+    "src/components/layout/Stack.tsx"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/components/__tests__/LockoutMessage.test.tsx",
+   "tipo": "unit",
+   "linhas": 42,
+   "testa": [
+    "src/components/login/LockoutMessage.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/LoginForm.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/auth/LoginForm.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/LogsIntegracoesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 105,
+   "testa": [
+    "src/components/settings/LogsIntegracoesTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidaContestacaoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 237,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidaContestacaoDialog.tsx",
+    "src/types/medidasDisciplinares.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidasDisciplinares.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidasGravityScale.tsx",
+    "src/components/medidas-disciplinares/MedidasKPIs.tsx",
+    "src/types/medidasDisciplinares.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidasGravityScale.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidasGravityScale.tsx",
+    "src/types/medidasDisciplinares.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidasKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidasKPIs.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidasTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidasTable.tsx",
+    "src/types/medidasDisciplinares.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidasTableTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidasTable.tsx",
+    "src/components/medidas-disciplinares/MedidasTimeline.tsx",
+    "src/types/medidasDisciplinares.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidasTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 117,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidasTimeline.tsx",
+    "src/types/medidasDisciplinares.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/MedidaWorkflowTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/components/medidas-disciplinares/MedidaWorkflowTimeline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MetricasFolhaDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/components/folha/MetricasFolhaDashboard.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MetricCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 112,
+   "testa": [
+    "src/components/dashboard/MetricCard.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MFASetup.test.tsx",
+   "tipo": "unit",
+   "linhas": 273,
+   "testa": [
+    "src/components/settings/MFASetup.tsx",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/components/__tests__/MiniSparkline.test.tsx",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/components/dashboard/MiniSparkline.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/MobileBottomNav.test.tsx",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/components/layout/MobileBottomNav.tsx",
+    "src/hooks/useAuth.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/MobileQuickActions.test.tsx",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/components/layout/MobileQuickActions.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/MorningBriefing.test.tsx",
+   "tipo": "unit",
+   "linhas": 144,
+   "testa": [
+    "src/components/dashboard/MorningBriefing.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/components/__tests__/NewAdvanceDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/components/descontos/NewAdvanceDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NewLoanDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 146,
+   "testa": [
+    "src/components/descontos/NewLoanDialog.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/NineBoxMatrix.test.tsx",
+   "tipo": "unit",
+   "linhas": 57,
+   "testa": [
+    "src/components/avaliacao/NineBoxMatrix.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/NotificationBell.test.tsx",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/components/notifications/NotificationBell.tsx",
+    "src/hooks/useNotificacoes.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NotificationCenter.test.tsx",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/components/notifications/NotificationCenter.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NotificationItem.test.tsx",
+   "tipo": "unit",
+   "linhas": 41,
+   "testa": [
+    "src/components/notifications/NotificationItem.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/NotificationList.test.tsx",
+   "tipo": "unit",
+   "linhas": 54,
+   "testa": [
+    "src/components/notifications/NotificationList.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/Notifications.test.tsx",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/components/notifications/NotificationItem.tsx",
+    "src/components/notifications/NotificationList.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NovaAdmissaoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 123,
+   "testa": [
+    "src/components/admissoes/NovaAdmissaoDialog.tsx"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/components/__tests__/NovaProgramacaoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 145,
+   "testa": [
+    "src/components/ferias/programacao/NovaProgramacaoDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NovoDepartamentoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/components/departamentos/NovoDepartamentoDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/components/desligamentos/NovoDesligamentoDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/ObrigacoesKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "src/components/obrigacoes/ObrigacoesKPIs.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/OnboardingDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/components/admissoes/OnboardingDashboard.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/OnboardingPageContent.test.tsx",
+   "tipo": "unit",
+   "linhas": 133,
+   "testa": [
+    "src/components/admissoes/OnboardingPageContent.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/OrganogramaNode.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/components/organograma/OrganogramaNode.tsx",
+    "src/hooks/useOrganograma.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
+   "tipo": "unit",
+   "linhas": 105,
+   "testa": [
+    "src/components/folha/PagamentoBancarioWizard.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PageContainer.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/components/layout/PageContainer.tsx"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/components/__tests__/PageTitle.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/PageTitle.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PCDTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/components/colaborador-detalhes/PCDTab.tsx",
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/PerformanceAuditTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/components/avaliacao/PerformanceAuditTimeline.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/PerformanceDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/components/avaliacao/PerformanceDashboard.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoAdjustmentRequests.test.tsx",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [
+    "src/components/ponto/PontoAdjustmentRequests.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoAuditTimeline.test.tsx",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/components/ponto/PontoAuditTimeline.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoCharts.test.tsx",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/components/ponto/PontoCharts.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoClockRegister.test.tsx",
+   "tipo": "unit",
+   "linhas": 260,
+   "testa": [
+    "src/components/ponto/PontoClockRegister.tsx",
+    "src/integrations/supabase/types.ts",
+    "src/services/pontoOfflineService.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoGeoAnalytics.test.tsx",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [
+    "src/components/ponto/PontoGeoAnalytics.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/ponto/PontoInconsistencyPanel.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoLeaderboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 47,
+   "testa": [
+    "src/components/ponto/PontoLeaderboard.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoStreakCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/components/ponto/PontoStreakCard.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoTodayCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 78,
+   "testa": [
+    "src/components/ponto/PontoTodayCard.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/PontoWeekSummary.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/ponto/PontoWeekSummary.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/PortalDocumentosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 376,
+   "testa": [
+    "src/components/portal/PortalDocumentosTab.tsx",
+    "src/services/documentoService.ts",
+    "src/services/index.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/components/__tests__/PortalFinanceiroTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/components/portal/PortalFinanceiroTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PortalMeusDadosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/components/portal/PortalMeusDadosTab.tsx",
+    "src/integrations/supabase/types.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PortalOverviewTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 67,
+   "testa": [
+    "src/components/portal/PortalOverviewTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/PortalRegimentoCard.test.tsx",
+   "tipo": "unit",
+   "linhas": 189,
+   "testa": [
+    "src/components/portal/PortalRegimentoCard.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/ProtectedRoute.test.tsx",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/components/ProtectedRoute.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/__tests__/QuickActionsGrid.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/components/dashboard/QuickActionsGrid.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/RejeitarDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 118,
+   "testa": [
+    "src/components/ferias/programacao/RejeitarDialog.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/RelatorioContabilDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/components/folha/RelatorioContabilDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/RelatoriosAgendadosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 171,
+   "testa": [
+    "src/components/relatorios/RelatoriosAgendadosTab.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/RelatoriosAnalyticsTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/components/relatorios/RelatoriosAnalyticsTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/RelatoriosExportTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "src/components/relatorios/RelatoriosExportTab.tsx"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/components/__tests__/RewardsApprovalHub.test.tsx",
+   "tipo": "unit",
+   "linhas": 99,
+   "testa": [
+    "src/components/premiacoes/RewardsApprovalHub.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/RewardsSimulator.test.tsx",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/components/premiacoes/RewardsSimulator.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/RouteErrorBoundary.test.tsx",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/components/RouteErrorBoundary.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/__tests__/RubricasDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/components/folha/RubricasDialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SectionHeader.test.tsx",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/components/dashboard/SectionHeader.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SidebarFooter.test.tsx",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/components/layout/SidebarFooter.tsx"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/components/__tests__/SignaturePad.test.tsx",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/components/admissao/SignaturePad.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/Simulador13Dialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 95,
+   "testa": [
+    "src/components/folha/Simulador13Dialog.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SimuladorWhatIf.test.tsx",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [
+    "src/components/folha/SimuladorWhatIf.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTEPIsTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/components/sst/SSTEPIsTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTExamesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/components/sst/SSTExamesTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTIncidentesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 77,
+   "testa": [
+    "src/components/sst/SSTIncidentesTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTKPIs.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/components/sst/SSTKPIs.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTNRsTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [
+    "src/components/sst/SSTNRsTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTProgramasTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "src/components/sst/SSTProgramasTab.tsx",
+    "src/contexts/index.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SSTRiscosTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/components/sst/SSTRiscosTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/SystemHealthTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/components/settings/SystemHealthTab.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TelemetryCharts.test.tsx",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/components/admin/telemetry/TelemetryCharts.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TelemetryFilters.test.tsx",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/components/admin/telemetry/TelemetryFilters.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TelemetryStatsCards.test.tsx",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/components/admin/telemetry/TelemetryStatsCards.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TelemetryTable.test.tsx",
+   "tipo": "unit",
+   "linhas": 78,
+   "testa": [
+    "src/components/admin/telemetry/TelemetryTable.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TelemetryTopOffenders.test.tsx",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/components/admin/telemetry/TelemetryTopOffenders.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TokenInput.test.tsx",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/components/contratacao/TokenInput.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/TurnoverChart.test.tsx",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [
+    "src/components/desligamentos/TurnoverChart.tsx",
+    "src/services/desligamentoService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/__tests__/UnifiedAuditSection.test.tsx",
+   "tipo": "unit",
+   "linhas": 127,
+   "testa": [
+    "src/components/admin/UnifiedAuditSection.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/UserRolesTab.test.tsx",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/components/settings/UserRolesTab.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/__tests__/WorkforceHealthScore.test.tsx",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/components/dashboard/WorkforceHealthScore.tsx"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/components/admin/__tests__/UnifiedAuditSection.test.tsx",
+   "tipo": "unit",
+   "linhas": 177,
+   "testa": [
+    "src/components/admin/UnifiedAuditSection.tsx",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/components/folha/__tests__/folhaDashboardData.test.ts",
+   "tipo": "unit",
+   "linhas": 36,
+   "testa": [
+    "src/components/folha/folhaDashboardData.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/relatorios/reportScheduleContract.test.ts",
+   "tipo": "unit",
+   "linhas": 43,
+   "testa": [
+    "src/components/relatorios/reportScheduleContract.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/seguranca/__tests__/PolicyAuditPanel.test.tsx",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/components/seguranca/PolicyAuditPanel.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/workflows/__tests__/ordenarEtapas.test.ts",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/components/workflows/WorkflowDesigner.tsx",
+    "src/components/workflows/ordenarEtapas.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/components/workflows/__tests__/WorkflowDesigner.test.tsx",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "src/components/workflows/WorkflowDesigner.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/constants/__tests__/regimes.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/constants/regimes.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/constants/__tests__/rubricas.test.ts",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/constants/rubricas.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/constants/__tests__/workflow-status.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/constants/workflow-status.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/contexts/__tests__/AuthContext.test.tsx",
+   "tipo": "unit",
+   "linhas": 266,
+   "testa": [
+    "src/contexts/AuthContext.tsx"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/contexts/__tests__/EmpresaContext.test.tsx",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/contexts/EmpresaContext.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/contexts/__tests__/NotificationContext.test.tsx",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/contexts/NotificationContext.tsx"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/hooks/__tests__/empresaQueryScope.test.ts",
+   "tipo": "unit",
+   "linhas": 43,
+   "testa": [
+    "src/hooks/useEmpresas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/use-mobile.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "src/hooks/use-mobile.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useAdmissaoWorkflow.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/hooks/useAdmissaoWorkflow.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useAdmissoes.test.ts",
+   "tipo": "unit",
+   "linhas": 179,
+   "testa": [
+    "src/hooks/useAdmissoes.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useAfastamentos.test.ts",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/hooks/useAfastamentos.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useAssinarAvisoFerias.test.ts",
+   "tipo": "unit",
+   "linhas": 95,
+   "testa": [
+    "src/hooks/useAssinarAvisoFerias.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useAssinaturaDigital.test.ts",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/hooks/useAssinaturaDigital.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useAssinaturas.test.ts",
+   "tipo": "unit",
+   "linhas": 153,
+   "testa": [
+    "src/hooks/useAssinaturas.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useBackGesture.test.ts",
+   "tipo": "unit",
+   "linhas": 103,
+   "testa": [
+    "src/hooks/useBackGesture.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useBeneficios.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/hooks/useBeneficios.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useBeneficiosColaborador.test.ts",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/hooks/useBeneficiosColaborador.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useBruteForceProtection.test.ts",
+   "tipo": "unit",
+   "linhas": 247,
+   "testa": [
+    "src/hooks/useBruteForceProtection.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useCalcular13Salario.test.ts",
+   "tipo": "unit",
+   "linhas": 145,
+   "testa": [
+    "src/hooks/useCalcular13Salario.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useCalcular13Salario.test.tsx",
+   "tipo": "unit",
+   "linhas": 183,
+   "testa": [
+    "src/hooks/useCalcular13Salario.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useCalculoFolha.test.ts",
+   "tipo": "unit",
+   "linhas": 198,
+   "testa": [
+    "src/hooks/useCalculoFolha.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useCargos.test.ts",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [
+    "src/hooks/useCargos.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useColaboradorDetalhes.test.ts",
+   "tipo": "unit",
+   "linhas": 766,
+   "testa": [
+    "src/hooks/useColaboradorDetalhes.ts"
+   ],
+   "casos": 46
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useColaboradores.test.ts",
+   "tipo": "unit",
+   "linhas": 70,
+   "testa": [
+    "src/hooks/useColaboradores.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useColaboradorVinculo.test.ts",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/hooks/useColaboradorVinculo.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useConfiguracoesIntervalo.test.ts",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/hooks/useConfiguracoesIntervalo.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useContratacaoDigital.test.ts",
+   "tipo": "unit",
+   "linhas": 100,
+   "testa": [
+    "src/hooks/useContratacaoDigital.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useContratos.test.ts",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/hooks/useContratos.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useContratosAssinaturaKPI.test.ts",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/hooks/useContratosAssinaturaKPI.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useContratosVencendo.test.ts",
+   "tipo": "unit",
+   "linhas": 124,
+   "testa": [
+    "src/hooks/useContratosVencendo.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useContratoTemplates.test.ts",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/hooks/useContratoTemplates.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useContratoTokenTimeline.test.ts",
+   "tipo": "unit",
+   "linhas": 69,
+   "testa": [
+    "src/hooks/useContratoTokenTimeline.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDataAccessLog.test.ts",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/hooks/useDataAccessLog.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDebounce.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/hooks/useDebounce.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDepartamentos.test.ts",
+   "tipo": "unit",
+   "linhas": 50,
+   "testa": [
+    "src/hooks/useDepartamentos.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDesligamentos.test.ts",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/hooks/useDesligamentos.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDocumentOCR.test.ts",
+   "tipo": "unit",
+   "linhas": 147,
+   "testa": [
+    "src/hooks/useDocumentOCR.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useDocumentos.test.ts",
+   "tipo": "unit",
+   "linhas": 182,
+   "testa": [
+    "src/hooks/useDocumentos.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useEmpresas.test.ts",
+   "tipo": "unit",
+   "linhas": 216,
+   "testa": [
+    "src/hooks/useEmpresas.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useESocial.test.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "src/hooks/useESocial.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useExcelExport.test.ts",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/hooks/useExcelExport.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+   "tipo": "unit",
+   "linhas": 115,
+   "testa": [
+    "src/hooks/useExecutiveDashboard.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useFeriados.test.ts",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/hooks/useFeriados.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useFerias.test.ts",
+   "tipo": "unit",
+   "linhas": 158,
+   "testa": [
+    "src/hooks/useFerias.ts",
+    "src/integrations/supabase/database.types.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useFeriasAprovacao.test.ts",
+   "tipo": "unit",
+   "linhas": 168,
+   "testa": [
+    "src/hooks/useFeriasAprovacao.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useFolha.test.ts",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [
+    "src/hooks/useFolha.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useFolhaAuditoria.test.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/hooks/useFolhaAuditoria.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useFormGuard.test.ts",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "src/hooks/useFormGuard.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useGenericCrud.test.ts",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/hooks/useGenericCrud.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useGenericCrud.test.tsx",
+   "tipo": "unit",
+   "linhas": 278,
+   "testa": [
+    "src/hooks/useGenericCrud.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useGenericCrudHooks.test.ts",
+   "tipo": "unit",
+   "linhas": 173,
+   "testa": [
+    "src/hooks/useCargos.ts",
+    "src/hooks/useDepartamentos.ts",
+    "src/hooks/useDesligamentos.ts",
+    "src/hooks/useLocaisTrabalho.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useGrupo.test.ts",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/hooks/useGrupo.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useGrupo.test.tsx",
+   "tipo": "unit",
+   "linhas": 191,
+   "testa": [
+    "src/hooks/useGrupo.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useHistoricoContratos.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [
+    "src/hooks/useHistoricoContratos.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useHorasExtras.test.ts",
+   "tipo": "unit",
+   "linhas": 152,
+   "testa": [
+    "src/hooks/useHorasExtras.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useIdempotencyKey.test.ts",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/hooks/useIdempotencyKey.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useImportacaoColaboradores.test.ts",
+   "tipo": "unit",
+   "linhas": 156,
+   "testa": [
+    "src/hooks/useImportacaoColaboradores.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useLocaisTrabalho.test.ts",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/hooks/useLocaisTrabalho.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useLocalStorage.test.ts",
+   "tipo": "unit",
+   "linhas": 125,
+   "testa": [
+    "src/hooks/useLocalStorage.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useMediaQuery.test.ts",
+   "tipo": "unit",
+   "linhas": 128,
+   "testa": [
+    "src/hooks/useMediaQuery.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useMoreGenericCrudHooks.test.ts",
+   "tipo": "unit",
+   "linhas": 214,
+   "testa": [
+    "src/hooks/useAfastamentos.ts",
+    "src/hooks/useBeneficios.ts",
+    "src/hooks/useColaboradores.ts",
+    "src/hooks/useWebhooksAvancados.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useMountEffects.test.ts",
+   "tipo": "unit",
+   "linhas": 21,
+   "testa": [
+    "src/hooks/useMountEffects.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useNavigationGuard.test.tsx",
+   "tipo": "unit",
+   "linhas": 79,
+   "testa": [
+    "src/hooks/useNavigationGuard.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useNotificacoes.test.ts",
+   "tipo": "unit",
+   "linhas": 319,
+   "testa": [
+    "src/hooks/useNotificacoes.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useNovasTabelas.test.ts",
+   "tipo": "unit",
+   "linhas": 734,
+   "testa": [
+    "src/hooks/useNovasTabelas.ts"
+   ],
+   "casos": 43
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useNow.test.ts",
+   "tipo": "unit",
+   "linhas": 88,
+   "testa": [
+    "src/hooks/useNow.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useOrganograma.test.ts",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/hooks/useOrganograma.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePcs.test.ts",
+   "tipo": "unit",
+   "linhas": 216,
+   "testa": [
+    "src/hooks/usePcs.ts",
+    "src/types/pcs.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePDFExport.test.ts",
+   "tipo": "unit",
+   "linhas": 88,
+   "testa": [
+    "src/hooks/usePDFExport.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePendencias.test.tsx",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "src/hooks/usePendencias.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePeriodosAquisitivos.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/hooks/usePeriodosAquisitivos.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePiiMask.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/contexts/AuthContext.tsx",
+    "src/hooks/usePiiMask.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePonto.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/hooks/usePonto.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePontoMelhorado.test.ts",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/hooks/usePontoMelhorado.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePontoOffline.test.ts",
+   "tipo": "unit",
+   "linhas": 126,
+   "testa": [
+    "src/hooks/usePontoOffline.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePontosAbertos.test.ts",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/hooks/usePontosAbertos.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/usePWA.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/hooks/usePWA.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useRealtimeDashboard.test.ts",
+   "tipo": "unit",
+   "linhas": 71,
+   "testa": [
+    "src/hooks/useRealtimeDashboard.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useRealTimeSubscription.test.tsx",
+   "tipo": "unit",
+   "linhas": 149,
+   "testa": [
+    "src/hooks/useRealTimeSubscription.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSecureVisibility.test.ts",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [
+    "src/hooks/useSecureVisibility.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSecurityMonitor.test.ts",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/hooks/useSecurityMonitor.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useServerValidation.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/hooks/useServerValidation.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSessionTimeout.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/hooks/useSessionTimeout.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSyncedState.test.tsx",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/hooks/useSyncedState.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSystemHealth.test.ts",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/hooks/useSystemHealth.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useSystemHealthHistory.test.ts",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/hooks/useSystemHealthHistory.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useTabelasReferencia.test.ts",
+   "tipo": "unit",
+   "linhas": 628,
+   "testa": [
+    "src/hooks/useTabelasReferencia.ts"
+   ],
+   "casos": 31
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useToast.test.ts",
+   "tipo": "unit",
+   "linhas": 160,
+   "testa": [
+    "src/hooks/useToast.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useTodasEmpresas.test.ts",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [
+    "src/hooks/useTodasEmpresas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useTranslation.test.tsx",
+   "tipo": "unit",
+   "linhas": 27,
+   "testa": [
+    "src/hooks/useTranslation.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useValeTransporte.test.ts",
+   "tipo": "unit",
+   "linhas": 69,
+   "testa": [
+    "src/hooks/useValeTransporte.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/hooks/__tests__/useWebhooksAvancados.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/hooks/useWebhooksAvancados.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/validators.test.ts",
+   "tipo": "unit",
+   "linhas": 88,
+   "testa": [
+    "src/hooks/validators.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/hooks/ferias/__tests__/useAdiantamento13.test.ts",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [
+    "src/hooks/ferias/useAdiantamento13.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/ferias/__tests__/useAlertasPagamentoD2.test.ts",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/hooks/ferias/useAlertasPagamentoD2.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/ferias/__tests__/useGerarComunicadoColetivas.test.ts",
+   "tipo": "unit",
+   "linhas": 104,
+   "testa": [
+    "src/hooks/ferias/useGerarComunicadoColetivas.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/hooks/ferias/__tests__/useProgramacaoFerias.test.ts",
+   "tipo": "unit",
+   "linhas": 178,
+   "testa": [
+    "src/hooks/ferias/useProgramacaoFerias.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/hooks/ferias/__tests__/useReconciliacaoFolha.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/hooks/ferias/useReconciliacaoFolha.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/ferias/__tests__/useReconciliacaoLogs.test.ts",
+   "tipo": "unit",
+   "linhas": 62,
+   "testa": [
+    "src/hooks/ferias/useReconciliacaoLogs.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/integrations/supabase/__tests__/clientBridge.test.ts",
+   "tipo": "unit",
+   "linhas": 168,
+   "testa": [
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts",
+   "tipo": "unit",
+   "linhas": 46,
+   "testa": [
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/integrations/supabase/__tests__/idempotency.test.ts",
+   "tipo": "unit",
+   "linhas": 98,
+   "testa": [
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/integrations/supabase/__tests__/previewAuthStorage.test.ts",
+   "tipo": "unit",
+   "linhas": 123,
+   "testa": [
+    "src/integrations/supabase/previewAuthStorage.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/lib/__tests__/circuitBreaker.test.ts",
+   "tipo": "unit",
+   "linhas": 154,
+   "testa": [
+    "src/lib/circuitBreaker.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/lib/__tests__/masks.test.ts",
+   "tipo": "unit",
+   "linhas": 293,
+   "testa": [
+    "src/lib/masks.ts"
+   ],
+   "casos": 55
+  },
+  {
+   "arquivo": "src/lib/__tests__/queryClient.test.ts",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/lib/queryClient.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/lib/__tests__/reciboAssinaturaPdf.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/lib/reciboAssinaturaPdf.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/lib/__tests__/retry.test.ts",
+   "tipo": "unit",
+   "linhas": 103,
+   "testa": [
+    "src/lib/retry.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/lib/__tests__/utils.test.ts",
+   "tipo": "unit",
+   "linhas": 105,
+   "testa": [
+    "src/lib/utils.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/lib/cursor.test.ts",
+   "tipo": "unit",
+   "linhas": 183,
+   "testa": [
+    "src/lib/cursor.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/pages/__tests__/CienciaMedidaPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 107,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/pages/CienciaMedidaPage.tsx"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/pages/__tests__/folhaResumo.test.ts",
+   "tipo": "unit",
+   "linhas": 58,
+   "testa": [
+    "src/pages/folhaResumo.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/pages/__tests__/ImportacaoPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 170,
+   "testa": [
+    "src/pages/ImportacaoPage.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/schemas/__tests__/validate.test.ts",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/schemas/common.ts",
+    "src/schemas/ferias.ts",
+    "src/schemas/validate.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/schemas/esocial/__tests__/crossFieldValidators.test.ts",
+   "tipo": "unit",
+   "linhas": 173,
+   "testa": [
+    "src/schemas/esocial/naoPeriodicosValidators.ts",
+    "src/schemas/esocial/sstValidators.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/schemas/esocial/__tests__/helpers.test.ts",
+   "tipo": "unit",
+   "linhas": 243,
+   "testa": [
+    "src/schemas/esocial/helpers.ts"
+   ],
+   "casos": 33
+  },
+  {
+   "arquivo": "src/schemas/esocial/__tests__/naoPeriodicosValidators.test.ts",
+   "tipo": "unit",
+   "linhas": 204,
+   "testa": [
+    "src/schemas/esocial/naoPeriodicosValidators.ts"
+   ],
+   "casos": 28
+  },
+  {
+   "arquivo": "src/schemas/esocial/__tests__/periodicosValidators.test.ts",
+   "tipo": "unit",
+   "linhas": 644,
+   "testa": [
+    "src/schemas/esocial/periodicosValidators.ts"
+   ],
+   "casos": 80
+  },
+  {
+   "arquivo": "src/schemas/esocial/__tests__/rubricaValidator.test.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "src/schemas/esocial/rubricaValidator.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/schemas/esocial/__tests__/sstValidators.test.ts",
+   "tipo": "unit",
+   "linhas": 164,
+   "testa": [
+    "src/schemas/esocial/sstValidators.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/services/__tests__/admissaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 326,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/admissaoService.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/services/__tests__/afastamentoService.test.ts",
+   "tipo": "unit",
+   "linhas": 592,
+   "testa": [
+    "src/services/afastamentoService.ts",
+    "src/types/afastamentos.ts"
+   ],
+   "casos": 49
+  },
+  {
+   "arquivo": "src/services/__tests__/assistenteIAService.test.ts",
+   "tipo": "unit",
+   "linhas": 112,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/assistenteIAService.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/services/__tests__/auditoriaService.test.ts",
+   "tipo": "unit",
+   "linhas": 309,
+   "testa": [
+    "src/services/auditoriaService.ts"
+   ],
+   "casos": 25
+  },
+  {
+   "arquivo": "src/services/__tests__/authService.test.ts",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/services/authService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/services/__tests__/avaliacaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 306,
+   "testa": [
+    "src/services/avaliacaoService.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/services/__tests__/backupService.test.ts",
+   "tipo": "unit",
+   "linhas": 154,
+   "testa": [
+    "src/services/backupService.ts",
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/services/__tests__/bancoHorasConfigService.test.ts",
+   "tipo": "unit",
+   "linhas": 156,
+   "testa": [
+    "src/services/bancoHorasConfigService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/services/__tests__/bancoHorasService.test.ts",
+   "tipo": "unit",
+   "linhas": 294,
+   "testa": [
+    "src/services/bancoHorasConfigService.ts",
+    "src/services/bancoHorasService.ts"
+   ],
+   "casos": 23
+  },
+  {
+   "arquivo": "src/services/__tests__/baseService.test.ts",
+   "tipo": "unit",
+   "linhas": 193,
+   "testa": [
+    "src/services/baseService.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/services/__tests__/batidasPontoService.test.ts",
+   "tipo": "unit",
+   "linhas": 260,
+   "testa": [
+    "src/services/batidasPontoService.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/services/__tests__/beneficioService.test.ts",
+   "tipo": "unit",
+   "linhas": 380,
+   "testa": [
+    "src/services/beneficioService.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "src/services/__tests__/calculoBeneficiosService.test.ts",
+   "tipo": "unit",
+   "linhas": 119,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/calculoBeneficiosService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/services/__tests__/canalContabilidadeService.test.ts",
+   "tipo": "unit",
+   "linhas": 382,
+   "testa": [
+    "src/services/canalContabilidadeService.ts"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/services/__tests__/cargoService.test.ts",
+   "tipo": "unit",
+   "linhas": 45,
+   "testa": [
+    "src/services/cargoService.ts",
+    "src/services/departamentoService.ts",
+    "src/services/localTrabalhoService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/services/__tests__/catalogoCursoService.test.ts",
+   "tipo": "unit",
+   "linhas": 387,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/catalogoCursoService.ts"
+   ],
+   "casos": 29
+  },
+  {
+   "arquivo": "src/services/__tests__/cnabService.test.ts",
+   "tipo": "unit",
+   "linhas": 950,
+   "testa": [
+    "src/services/cnabService.ts"
+   ],
+   "casos": 48
+  },
+  {
+   "arquivo": "src/services/__tests__/colaboradorDetalhesService.test.ts",
+   "tipo": "unit",
+   "linhas": 805,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/colaboradorDetalhesService.ts"
+   ],
+   "casos": 47
+  },
+  {
+   "arquivo": "src/services/__tests__/colaboradorService.test.ts",
+   "tipo": "unit",
+   "linhas": 238,
+   "testa": [
+    "src/services/colaboradorService.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/services/__tests__/comunicacaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 265,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/comunicacaoService.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/services/__tests__/contabilidadeService.test.ts",
+   "tipo": "unit",
+   "linhas": 188,
+   "testa": [
+    "src/services/contabilidadeService.ts",
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/__tests__/contratacaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 261,
+   "testa": [
+    "src/services/contratacaoService.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/services/__tests__/contratacaoService.xss.test.ts",
+   "tipo": "unit",
+   "linhas": 210,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/contratacaoService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/services/__tests__/contratoService.test.ts",
+   "tipo": "unit",
+   "linhas": 237,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/contratoService.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/services/__tests__/contratoTemplateService.test.ts",
+   "tipo": "unit",
+   "linhas": 276,
+   "testa": [
+    "src/services/contratoTemplateService.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/services/__tests__/controleAcessoService.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/services/controleAcessoService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/services/__tests__/departamentoService.test.ts",
+   "tipo": "unit",
+   "linhas": 49,
+   "testa": [
+    "src/services/baseService.ts",
+    "src/services/departamentoService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/services/__tests__/desligamentoService.test.ts",
+   "tipo": "unit",
+   "linhas": 163,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/desligamentoService.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/services/__tests__/despesaService.test.ts",
+   "tipo": "unit",
+   "linhas": 266,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/despesaService.ts"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/services/__tests__/documentoService.test.ts",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/services/documentoService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/__tests__/edgeFunctionsService.test.ts",
+   "tipo": "unit",
+   "linhas": 205,
+   "testa": [
+    "src/services/edgeFunctionsService.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/services/__tests__/empresaService.test.ts",
+   "tipo": "unit",
+   "linhas": 113,
+   "testa": [
+    "src/services/empresaService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/services/__tests__/encryptionService.test.ts",
+   "tipo": "unit",
+   "linhas": 83,
+   "testa": [
+    "src/services/encryptionService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/services/__tests__/episService.test.ts",
+   "tipo": "unit",
+   "linhas": 250,
+   "testa": [
+    "src/integrations/supabase/types.ts",
+    "src/services/episService.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/services/__tests__/esocialService.test.ts",
+   "tipo": "unit",
+   "linhas": 605,
+   "testa": [
+    "src/services/esocialService.ts"
+   ],
+   "casos": 60
+  },
+  {
+   "arquivo": "src/services/__tests__/exportService.test.ts",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "src/services/exportService.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/services/__tests__/faltasService.test.ts",
+   "tipo": "unit",
+   "linhas": 206,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/faltasService.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/services/__tests__/feriasService.test.ts",
+   "tipo": "unit",
+   "linhas": 488,
+   "testa": [
+    "src/services/feriasService.ts"
+   ],
+   "casos": 34
+  },
+  {
+   "arquivo": "src/services/__tests__/folhaPagamentoService.test.ts",
+   "tipo": "unit",
+   "linhas": 191,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/folhaPagamentoService.ts",
+    "src/utils/folha/validadorFolha.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/services/__tests__/folhaService.test.ts",
+   "tipo": "unit",
+   "linhas": 135,
+   "testa": [
+    "src/services/folhaService.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/services/__tests__/historicoContratoService.test.ts",
+   "tipo": "unit",
+   "linhas": 127,
+   "testa": [
+    "src/services/historicoContratoService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/services/__tests__/horaExtraService.test.ts",
+   "tipo": "unit",
+   "linhas": 227,
+   "testa": [
+    "src/services/horaExtraService.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/services/__tests__/integracaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 252,
+   "testa": [
+    "src/services/integracaoService.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/services/__tests__/intervaloService.test.ts",
+   "tipo": "unit",
+   "linhas": 162,
+   "testa": [
+    "src/services/intervaloService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/__tests__/jornadaHorariosService.test.ts",
+   "tipo": "unit",
+   "linhas": 211,
+   "testa": [
+    "src/services/jornadaHorariosService.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/services/__tests__/lgpdService.test.ts",
+   "tipo": "unit",
+   "linhas": 229,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/lgpdService.ts"
+   ],
+   "casos": 21
+  },
+  {
+   "arquivo": "src/services/__tests__/localTrabalhoService.test.ts",
+   "tipo": "unit",
+   "linhas": 49,
+   "testa": [
+    "src/services/baseService.ts",
+    "src/services/localTrabalhoService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/services/__tests__/loggerService.test.ts",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/services/loggerService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/services/__tests__/medidasDisciplinaresService.test.ts",
+   "tipo": "unit",
+   "linhas": 423,
+   "testa": [
+    "src/services/medidasDisciplinaresService.ts"
+   ],
+   "casos": 32
+  },
+  {
+   "arquivo": "src/services/__tests__/notificacoesService.test.ts",
+   "tipo": "unit",
+   "linhas": 200,
+   "testa": [
+    "src/services/notificacoesService.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/services/__tests__/pcsService.test.ts",
+   "tipo": "unit",
+   "linhas": 115,
+   "testa": [
+    "src/services/pcsService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/services/__tests__/pesquisaService.test.ts",
+   "tipo": "unit",
+   "linhas": 284,
+   "testa": [
+    "src/integrations/supabase/database.types.ts",
+    "src/services/pesquisaService.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/services/__tests__/piiAccessLogService.test.ts",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/services/piiAccessLogService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/services/__tests__/pontoAbertoService.test.ts",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [
+    "src/services/pontoAbertoService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/services/__tests__/pontoAuditService.test.ts",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [
+    "src/services/pontoAuditService.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/services/__tests__/pontoCompliance.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/services/__tests__/pontoMonitorService.test.ts",
+   "tipo": "unit",
+   "linhas": 129,
+   "testa": [
+    "src/services/pontoMonitorService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/services/__tests__/pontoOfflineService.test.ts",
+   "tipo": "unit",
+   "linhas": 220,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/pontoOfflineService.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/services/__tests__/pontoService.test.ts",
+   "tipo": "unit",
+   "linhas": 266,
+   "testa": [
+    "src/services/pontoService.ts",
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/services/__tests__/pontosService.test.ts",
+   "tipo": "unit",
+   "linhas": 106,
+   "testa": [
+    "src/services/pontosService.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/services/__tests__/premiacoesService.test.ts",
+   "tipo": "unit",
+   "linhas": 457,
+   "testa": [
+    "src/services/premiacoesService.ts"
+   ],
+   "casos": 30
+  },
+  {
+   "arquivo": "src/services/__tests__/provisaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/provisaoService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/services/__tests__/pushNotificationService.test.ts",
+   "tipo": "unit",
+   "linhas": 170,
+   "testa": [
+    "src/services/pushNotificationService.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/services/__tests__/recrutamentoService.test.ts",
+   "tipo": "unit",
+   "linhas": 334,
+   "testa": [
+    "src/services/recrutamentoService.ts"
+   ],
+   "casos": 25
+  },
+  {
+   "arquivo": "src/services/__tests__/rescisaoSecurity.test.ts",
+   "tipo": "unit",
+   "linhas": 78,
+   "testa": [
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/services/__tests__/rescisaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 335,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/rescisaoService.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/services/__tests__/securityService.test.ts",
+   "tipo": "unit",
+   "linhas": 242,
+   "testa": [
+    "src/services/securityService.ts"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "src/services/__tests__/tabelasReferenciaService.test.ts",
+   "tipo": "unit",
+   "linhas": 758,
+   "testa": [
+    "src/services/tabelasReferenciaService.ts"
+   ],
+   "casos": 64
+  },
+  {
+   "arquivo": "src/services/__tests__/turnoService.test.ts",
+   "tipo": "unit",
+   "linhas": 260,
+   "testa": [
+    "src/services/turnoService.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/services/__tests__/webhookService.test.ts",
+   "tipo": "unit",
+   "linhas": 132,
+   "testa": [
+    "src/services/webhookService.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/services/__tests__/whatsappService.test.ts",
+   "tipo": "unit",
+   "linhas": 297,
+   "testa": [
+    "src/services/whatsappService.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/services/__tests__/workflowService.test.ts",
+   "tipo": "unit",
+   "linhas": 707,
+   "testa": [
+    "src/services/workflowService.ts"
+   ],
+   "casos": 56
+  },
+  {
+   "arquivo": "src/services/folha/__tests__/calculoLoteService.test.ts",
+   "tipo": "unit",
+   "linhas": 297,
+   "testa": [
+    "src/services/folha/calculoLoteService.ts",
+    "src/utils/folhaCalc.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/adminService.test.ts",
+   "tipo": "unit",
+   "linhas": 194,
+   "testa": [
+    "src/services/tabelas/adminService.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/beneficiosService.test.ts",
+   "tipo": "unit",
+   "linhas": 160,
+   "testa": [
+    "src/services/tabelas/beneficiosService.ts",
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/documentosService.test.ts",
+   "tipo": "unit",
+   "linhas": 170,
+   "testa": [
+    "src/services/tabelas/documentosService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/folhaService.test.ts",
+   "tipo": "unit",
+   "linhas": 168,
+   "testa": [
+    "src/services/tabelas/folhaService.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/pontoService.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/services/tabelas/pontoService.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/rhService.test.ts",
+   "tipo": "unit",
+   "linhas": 366,
+   "testa": [
+    "src/services/tabelas/rhService.ts"
+   ],
+   "casos": 27
+  },
+  {
+   "arquivo": "src/services/tabelas/__tests__/viewsService.test.ts",
+   "tipo": "unit",
+   "linhas": 138,
+   "testa": [
+    "src/services/tabelas/viewsService.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/test/chain.ts",
+   "tipo": "unit",
+   "linhas": 77,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/deepChain.ts",
+   "tipo": "unit",
+   "linhas": 119,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/empresaMock.ts",
+   "tipo": "unit",
+   "linhas": 65,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/queryWrapper.tsx",
+   "tipo": "unit",
+   "linhas": 27,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/test/securityHeadersParity.test.ts",
+   "tipo": "unit",
+   "linhas": 31,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/test/supabaseMock.ts",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/tests/error-handling.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [
+    "src/errors/AppError.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/tests/rls-logic.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/tests/rpc-permissions.test.ts",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/tests/validateBridgeContract.ts",
+   "tipo": "unit",
+   "linhas": 71,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/utils/__tests__/afastamentoPDF.test.ts",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "src/utils/afastamentoPDF.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/utils/__tests__/auditIntegration.test.ts",
+   "tipo": "unit",
+   "linhas": 50,
+   "testa": [
+    "src/utils/auditLogger.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/utils/__tests__/auditLogger.test.ts",
+   "tipo": "unit",
+   "linhas": 101,
+   "testa": [
+    "src/utils/auditLogger.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/utils/__tests__/avisoFeriasPDF.test.ts",
+   "tipo": "unit",
+   "linhas": 132,
+   "testa": [
+    "src/utils/avisoFeriasPDF.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/utils/__tests__/calculoFerias.test.ts",
+   "tipo": "unit",
+   "linhas": 119,
+   "testa": [
+    "src/utils/calculoFerias.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/utils/__tests__/comunicadoFeriasColetivasPDF.test.ts",
+   "tipo": "unit",
+   "linhas": 152,
+   "testa": [
+    "src/utils/comunicadoFeriasColetivasPDF.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/utils/__tests__/cursorPagination.test.ts",
+   "tipo": "unit",
+   "linhas": 134,
+   "testa": [
+    "src/utils/cursorPagination.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/utils/__tests__/dateLocal.test.ts",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/utils/dateLocal.ts"
+   ],
+   "casos": 12
+  },
+  {
+   "arquivo": "src/utils/__tests__/desligamentoExcel.test.ts",
+   "tipo": "unit",
+   "linhas": 61,
+   "testa": [
+    "src/services/desligamentoService.ts",
+    "src/utils/desligamentoExcel.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/utils/__tests__/esocialXmlGenerator.test.ts",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "src/utils/esocialXmlGenerator.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/utils/__tests__/evaluationPDF.test.ts",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/utils/evaluationPDF.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/utils/__tests__/feriasPDF.test.ts",
+   "tipo": "unit",
+   "linhas": 206,
+   "testa": [
+    "src/types/entities.ts",
+    "src/utils/feriasPDF.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/utils/__tests__/folhaCalc.test.ts",
+   "tipo": "unit",
+   "linhas": 235,
+   "testa": [
+    "src/utils/folhaCalc.ts"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "src/utils/__tests__/format.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "src/utils/format.ts"
+   ],
+   "casos": 22
+  },
+  {
+   "arquivo": "src/utils/__tests__/holeritePDF.test.ts",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/utils/holeritePDF.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/utils/__tests__/passwordPolicy.test.ts",
+   "tipo": "unit",
+   "linhas": 112,
+   "testa": [
+    "src/utils/passwordPolicy.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/utils/__tests__/pgInterval.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "src/utils/pgInterval.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/utils/__tests__/piiMask.test.ts",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/utils/piiMask.ts"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "src/utils/__tests__/rescisaoCalc.test.ts",
+   "tipo": "unit",
+   "linhas": 873,
+   "testa": [
+    "src/calculators/impostos.ts",
+    "src/utils/rescisaoCalc.ts"
+   ],
+   "casos": 93
+  },
+  {
+   "arquivo": "src/utils/__tests__/rescisaoPDF.test.ts",
+   "tipo": "unit",
+   "linhas": 139,
+   "testa": [
+    "src/utils/rescisaoPDF.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/utils/__tests__/safeError.test.ts",
+   "tipo": "unit",
+   "linhas": 55,
+   "testa": [
+    "src/utils/safeError.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/utils/__tests__/safeUrl.test.ts",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/utils/safeUrl.ts"
+   ],
+   "casos": 19
+  },
+  {
+   "arquivo": "src/utils/__tests__/sanitizeHtml.test.ts",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/utils/sanitizeHtml.ts"
+   ],
+   "casos": 14
+  },
+  {
+   "arquivo": "src/utils/__tests__/secureJson.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "src/utils/secureJson.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "src/utils/__tests__/toError.test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [
+    "src/utils/toError.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/utils/__tests__/uploadValidation.test.ts",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [
+    "src/utils/uploadValidation.ts"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "src/utils/folha/__tests__/pontoIntegracaoUtils.test.ts",
+   "tipo": "unit",
+   "linhas": 57,
+   "testa": [
+    "src/utils/folha/pontoIntegracaoUtils.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/utils/folha/__tests__/validadorFolha.test.ts",
+   "tipo": "unit",
+   "linhas": 237,
+   "testa": [
+    "src/utils/folha/validadorFolha.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "src/utils/importacao/__tests__/columnMap.test.ts",
+   "tipo": "unit",
+   "linhas": 94,
+   "testa": [
+    "src/utils/importacao/columnMap.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "src/utils/importacao/__tests__/excelDownload.test.ts",
+   "tipo": "unit",
+   "linhas": 117,
+   "testa": [
+    "src/utils/importacao/excelDownload.ts"
+   ],
+   "casos": 9
+  },
+  {
+   "arquivo": "src/utils/importacao/__tests__/parser.test.ts",
+   "tipo": "unit",
+   "linhas": 120,
+   "testa": [
+    "src/utils/importacao/columnMap.ts",
+    "src/utils/importacao/parser.ts",
+    "src/utils/importacao/validators.ts"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "src/utils/importacao/__tests__/template.test.ts",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/utils/importacao/columnMap.ts",
+    "src/utils/importacao/template.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/utils/importacao/__tests__/validators.test.ts",
+   "tipo": "unit",
+   "linhas": 135,
+   "testa": [
+    "src/utils/importacao/validators.ts"
+   ],
+   "casos": 29
+  },
+  {
+   "arquivo": "supabase/functions/_shared/aal2.test.ts",
+   "tipo": "unit",
+   "linhas": 24,
+   "testa": [
+    "supabase/functions/_shared/aal2.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/_shared/clientIp.test.ts",
+   "tipo": "unit",
+   "linhas": 42,
+   "testa": [
+    "supabase/functions/_shared/clientIp.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/_shared/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 62,
+   "testa": [
+    "supabase/functions/_shared/contract.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/_shared/idempotency.test.ts",
+   "tipo": "unit",
+   "linhas": 337,
+   "testa": [
+    "supabase/functions/_shared/idempotency.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "supabase/functions/_shared/inss.test.ts",
+   "tipo": "unit",
+   "linhas": 39,
+   "testa": [
+    "supabase/functions/_shared/inss.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/_shared/integrityHash.test.ts",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "supabase/functions/_shared/integrityHash.ts"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "supabase/functions/_shared/irrf.test.ts",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [
+    "supabase/functions/_shared/irrf.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/_shared/originSecurity.test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [
+    "supabase/functions/_shared/contract.ts",
+    "supabase/functions/_shared/csrf.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/_shared/outboundDelivery.test.ts",
+   "tipo": "unit",
+   "linhas": 18,
+   "testa": [
+    "supabase/functions/_shared/outboundDelivery.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/_shared/rateLimit.test.ts",
+   "tipo": "unit",
+   "linhas": 192,
+   "testa": [
+    "supabase/functions/_shared/rateLimit.ts"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "supabase/functions/_shared/resendDelivery.test.ts",
+   "tipo": "unit",
+   "linhas": 11,
+   "testa": [
+    "supabase/functions/_shared/resendDelivery.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "supabase/functions/_shared/ssrf-guard.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "supabase/functions/_shared/ssrf-guard.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/alertas-dp/deliveryStatus.test.ts",
+   "tipo": "unit",
+   "linhas": 18,
+   "testa": [
+    "supabase/functions/alertas-dp/deliveryStatus.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "supabase/functions/auth-gov-br/govbrIdentity.test.ts",
+   "tipo": "unit",
+   "linhas": 70,
+   "testa": [
+    "supabase/functions/auth-gov-br/govbrIdentity.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "supabase/functions/auth-login/lockoutContract.test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [
+    "supabase/functions/auth-login/lockoutContract.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/backup-automatico/backupSnapshot.test.ts",
+   "tipo": "unit",
+   "linhas": 108,
+   "testa": [
+    "supabase/functions/backup-automatico/backupAudit.ts",
+    "supabase/functions/backup-automatico/backupSnapshot.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "supabase/functions/calcular-folha/e2e_concorrencia.test.ts",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "supabase/functions/calcular-folha/index.test.ts",
+   "tipo": "unit",
+   "linhas": 35,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "supabase/functions/calcular-rescisao/motor.test.ts",
+   "tipo": "unit",
+   "linhas": 202,
+   "testa": [
+    "supabase/functions/calcular-rescisao/motor.ts"
+   ],
+   "casos": 17
+  },
+  {
+   "arquivo": "supabase/functions/enviar-email-admissao/admissaoLink.test.ts",
+   "tipo": "unit",
+   "linhas": 23,
+   "testa": [
+    "supabase/functions/enviar-email-admissao/admissaoLink.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/enviar-esocial/s2299.test.ts",
+   "tipo": "unit",
+   "linhas": 50,
+   "testa": [
+    "supabase/functions/enviar-esocial/s2299.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/enviar-esocial/transmissionStatus.test.ts",
+   "tipo": "unit",
+   "linhas": 13,
+   "testa": [
+    "supabase/functions/enviar-esocial/transmissionStatus.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/enviar-relatorio/deliveryStatus.test.ts",
+   "tipo": "unit",
+   "linhas": 31,
+   "testa": [
+    "supabase/functions/enviar-relatorio/deliveryStatus.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/enviar-relatorio/dispatchPayload.test.ts",
+   "tipo": "unit",
+   "linhas": 26,
+   "testa": [
+    "supabase/functions/enviar-relatorio/dispatchPayload.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/enviar-relatorio/internalDispatch.test.ts",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [
+    "supabase/functions/enviar-relatorio/internalDispatch.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/enviar-relatorio/reportContent.test.ts",
+   "tipo": "unit",
+   "linhas": 19,
+   "testa": [
+    "supabase/functions/enviar-relatorio/reportContent.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/external-db-bridge/tenantScope.test.ts",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "supabase/functions/external-db-bridge/tenantScope.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/external-db-bridge/timeout.test.ts",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/external-db-bridge/validation.test.ts",
+   "tipo": "unit",
+   "linhas": 389,
+   "testa": [
+    "supabase/functions/external-db-bridge/access.ts",
+    "supabase/functions/external-db-bridge/request-schema.ts",
+    "supabase/functions/external-db-bridge/validation.ts"
+   ],
+   "casos": 26
+  },
+  {
+   "arquivo": "supabase/functions/fechar-folha/e2e_concorrencia.test.ts",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "supabase/functions/folha-metrics/auditActions.test.ts",
+   "tipo": "unit",
+   "linhas": 20,
+   "testa": [
+    "supabase/functions/folha-metrics/auditActions.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/gerar-holerite/inss.test.ts",
+   "tipo": "unit",
+   "linhas": 23,
+   "testa": [
+    "supabase/functions/gerar-holerite/inss.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/metricas/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 16,
+   "testa": [
+    "supabase/functions/_shared/schemas/common.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/metrics/metricsMath.test.ts",
+   "tipo": "unit",
+   "linhas": 38,
+   "testa": [
+    "supabase/functions/metrics/metricsMath.ts"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/functions/notificacao/plainText.test.ts",
+   "tipo": "unit",
+   "linhas": 26,
+   "testa": [
+    "supabase/functions/notificacao/plainText.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/pagar-desligamento/rpcErrors.test.ts",
+   "tipo": "unit",
+   "linhas": 15,
+   "testa": [
+    "supabase/functions/pagar-desligamento/rpcErrors.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/processar-agendamentos/scheduleContract.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [
+    "supabase/functions/processar-agendamentos/scheduleContract.ts"
+   ],
+   "casos": 8
+  },
+  {
+   "arquivo": "supabase/functions/processar-ponto-offline/e2e_assinatura.test.ts",
+   "tipo": "unit",
+   "linhas": 114,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/processar-ponto/e2e_idempotencia.test.ts",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/reabrir-folha/e2e_concorrencia.test.ts",
+   "tipo": "unit",
+   "linhas": 63,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "supabase/functions/upload-certificado/certRow.test.ts",
+   "tipo": "unit",
+   "linhas": 24,
+   "testa": [
+    "supabase/functions/upload-certificado/certRow.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/webhook/index.test.ts",
+   "tipo": "unit",
+   "linhas": 90,
+   "testa": [],
+   "casos": 6
+  },
+  {
+   "arquivo": "supabase/tests/ferias_embed_test.ts",
+   "tipo": "unit",
+   "linhas": 64,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/tests/migration_consistency.test.ts",
+   "tipo": "unit",
+   "linhas": 218,
+   "testa": [],
+   "casos": 7
+  }
+ ],
+ "sql": [
+  "supabase/tests/plano100/00_setup_stubs.sql",
+  "supabase/tests/plano100/20_asserts.sql"
+ ],
+ "cobertura_por_arquivo": {
+  "scripts/inventario/gerar-banco.mjs": 1,
+  "scripts/inventario/gerar-rotas.mjs": 1,
+  "scripts/inventario/mudou-conteudo.mjs": 1,
+  "scripts/validate-canonical-db-url.mjs": 1,
+  "src/calculators/auditHelper.ts": 1,
+  "src/calculators/beneficios.ts": 2,
+  "src/calculators/impostos.ts": 3,
+  "src/calculators/rescisao.ts": 3,
+  "src/calculators/tabelas.ts": 1,
+  "src/calculators/trabalhista-base.ts": 2,
+  "src/components/AdminRoute.tsx": 1,
+  "src/components/PageTitle.tsx": 1,
+  "src/components/ProtectedRoute.tsx": 1,
+  "src/components/RouteErrorBoundary.tsx": 1,
+  "src/components/admin/HealthTrendCard.tsx": 1,
+  "src/components/admin/UnifiedAuditSection.tsx": 2,
+  "src/components/admin/telemetry/TelemetryCharts.tsx": 1,
+  "src/components/admin/telemetry/TelemetryFilters.tsx": 1,
+  "src/components/admin/telemetry/TelemetryStatsCards.tsx": 1,
+  "src/components/admin/telemetry/TelemetryTable.tsx": 1,
+  "src/components/admin/telemetry/TelemetryTopOffenders.tsx": 1,
+  "src/components/admissao/AdmissaoChecklist.tsx": 1,
+  "src/components/admissao/SignaturePad.tsx": 1,
+  "src/components/admissoes/AdmissoesKanban.tsx": 1,
+  "src/components/admissoes/DetalhesAdmissaoDialog.tsx": 1,
+  "src/components/admissoes/NovaAdmissaoDialog.tsx": 1,
+  "src/components/admissoes/OnboardingDashboard.tsx": 1,
+  "src/components/admissoes/OnboardingPageContent.tsx": 1,
+  "src/components/afastamentos/AfastamentoDocumentManager.tsx": 1,
+  "src/components/afastamentos/AfastamentoForm.tsx": 1,
+  "src/components/afastamentos/AfastamentoStats.tsx": 1,
+  "src/components/afastamentos/AfastamentoTable.tsx": 1,
+  "src/components/afastamentos/AfastamentoTimeline.tsx": 1,
+  "src/components/auth/LoginForm.tsx": 1,
+  "src/components/avaliacao/NineBoxMatrix.tsx": 1,
+  "src/components/avaliacao/PerformanceAuditTimeline.tsx": 1,
+  "src/components/avaliacao/PerformanceDashboard.tsx": 1,
+  "src/components/beneficios/BeneficioHistorico.tsx": 1,
+  "src/components/beneficios/BeneficiosDashboard.tsx": 1,
+  "src/components/colaborador-detalhes/ASOTab.tsx": 1,
+  "src/components/colaborador-detalhes/AnotacoesTab.tsx": 1,
+  "src/components/colaborador-detalhes/AquisitivosTab.tsx": 1,
+  "src/components/colaborador-detalhes/BeneficiosTab.tsx": 1,
+  "src/components/colaborador-detalhes/ColaboradorDocuments.tsx": 1,
+  "src/components/colaborador-detalhes/ContasBancariasTab.tsx": 1,
+  "src/components/colaborador-detalhes/DependentesTab.tsx": 1,
+  "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx": 1,
+  "src/components/colaborador-detalhes/EmergenciaTab.tsx": 1,
+  "src/components/colaborador-detalhes/EstagiarioTab.tsx": 1,
+  "src/components/colaborador-detalhes/EstrangeiroTab.tsx": 1,
+  "src/components/colaborador-detalhes/ExperienciaTab.tsx": 1,
+  "src/components/colaborador-detalhes/FormacaoTab.tsx": 1,
+  "src/components/colaborador-detalhes/HistoricoContratosTab.tsx": 1,
+  "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx": 1,
+  "src/components/colaborador-detalhes/PCDTab.tsx": 1,
+  "src/components/colaboradores/ColaboradorFilters.tsx": 1,
+  "src/components/colaboradores/ColaboradorHistory.tsx": 1,
+  "src/components/contratacao/TokenInput.tsx": 1,
+  "src/components/contratos/ContratoTokenTimelineDialog.tsx": 1,
+  "src/components/contratos/ContratosAssinaturaKPICard.tsx": 1,
+  "src/components/contratos/ContratosVencendoPanel.tsx": 1,
+  "src/components/dashboard/AnalyticsSection.tsx": 1,
+  "src/components/dashboard/AnimatedNumber.tsx": 1,
+  "src/components/dashboard/BarChartWidget.tsx": 1,
+  "src/components/dashboard/DashboardHeader.tsx": 1,
+  "src/components/dashboard/DonutChart.tsx": 1,
+  "src/components/dashboard/EventTimeline.tsx": 1,
+  "src/components/dashboard/MetricCard.tsx": 1,
+  "src/components/dashboard/MiniSparkline.tsx": 1,
+  "src/components/dashboard/MorningBriefing.tsx": 1,
+  "src/components/dashboard/QuickActionsGrid.tsx": 2,
+  "src/components/dashboard/SectionHeader.tsx": 2,
+  "src/components/dashboard/WorkforceHealthScore.tsx": 1,
+  "src/components/departamentos/NovoDepartamentoDialog.tsx": 1,
+  "src/components/descontos/AdiantamentosTable.tsx": 1,
+  "src/components/descontos/EmprestimosTable.tsx": 2,
+  "src/components/descontos/FinancialSummaryCards.tsx": 2,
+  "src/components/descontos/NewAdvanceDialog.tsx": 1,
+  "src/components/descontos/NewLoanDialog.tsx": 1,
+  "src/components/desligamentos/DesligamentoChecklist.tsx": 1,
+  "src/components/desligamentos/DesligamentoDetailSheet.tsx": 1,
+  "src/components/desligamentos/DesligamentoFilters.tsx": 1,
+  "src/components/desligamentos/DesligamentoKPIs.tsx": 1,
+  "src/components/desligamentos/DesligamentoStatusBadge.tsx": 3,
+  "src/components/desligamentos/NovoDesligamentoDialog.tsx": 1,
+  "src/components/desligamentos/TurnoverChart.tsx": 1,
+  "src/components/documents/DocumentoPreview.tsx": 1,
+  "src/components/documents/DocumentoTimeline.tsx": 1,
+  "src/components/empresa/EmpresaSelector.tsx": 1,
+  "src/components/epis/EpiCatalogoTable.tsx": 1,
+  "src/components/epis/EpiCategoryChart.tsx": 1,
+  "src/components/epis/EpiEntregasTable.tsx": 1,
+  "src/components/epis/EpiKPIs.tsx": 1,
+  "src/components/esocial/ESocialAIInsights.tsx": 1,
+  "src/components/esocial/ESocialAuditDialog.tsx": 1,
+  "src/components/esocial/ESocialComplianceScore.tsx": 1,
+  "src/components/esocial/ESocialConciliacao.tsx": 1,
+  "src/components/esocial/ESocialEventViewer.tsx": 1,
+  "src/components/esocial/ESocialTimeline.tsx": 1,
+  "src/components/esocial/NaoPeriodicos.tsx": 3,
+  "src/components/esocial/Periodicos.tsx": 3,
+  "src/components/esocial/S2205AlteracaoCadastral.tsx": 1,
+  "src/components/esocial/S2206AlteracaoContratual.tsx": 1,
+  "src/components/esocial/S2210SST.tsx": 1,
+  "src/components/esocial/S2299Desligamento.tsx": 1,
+  "src/components/esocial/S2300TSVInicio.tsx": 1,
+  "src/components/esocial/S2306TSVAlteracao.tsx": 1,
+  "src/components/esocial/S2399TSVTermino.tsx": 1,
+  "src/components/esocial/S2400CDP.tsx": 1,
+  "src/components/esocial/SSTEvents.tsx": 2,
+  "src/components/esocial/tabs.tsx": 1,
+  "src/components/exames/ExameFormDialog.tsx": 1,
+  "src/components/exames/ExameKPIs.tsx": 1,
+  "src/components/exames/ExameTable.tsx": 1,
+  "src/components/exames/ExameTipoChart.tsx": 1,
+  "src/components/ferias/AssinarAvisoDialog.tsx": 1,
+  "src/components/ferias/CalendarioFerias.tsx": 1,
+  "src/components/ferias/FeriasActions.tsx": 1,
+  "src/components/ferias/FeriasAlertasPagamentoCard.tsx": 1,
+  "src/components/ferias/FeriasAuditTimeline.tsx": 1,
+  "src/components/ferias/FeriasColetivasTab.tsx": 1,
+  "src/components/ferias/FeriasDashboard.tsx": 1,
+  "src/components/ferias/FeriasInsights.tsx": 1,
+  "src/components/ferias/FeriasKPIs.tsx": 1,
+  "src/components/ferias/FeriasReconciliacaoCard.tsx": 1,
+  "src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx": 1,
+  "src/components/ferias/FeriasRelatorioDialog.tsx": 1,
+  "src/components/ferias/FeriasSaldoReport.tsx": 1,
+  "src/components/ferias/FeriasTable.tsx": 1,
+  "src/components/ferias/FeriasWorkflowStepper.tsx": 1,
+  "src/components/ferias/GerenciamentoPeriodos.tsx": 1,
+  "src/components/ferias/programacao/CardProgramacao.tsx": 1,
+  "src/components/ferias/programacao/NovaProgramacaoDialog.tsx": 1,
+  "src/components/ferias/programacao/RejeitarDialog.tsx": 1,
+  "src/components/folha/CNABDialog.tsx": 1,
+  "src/components/folha/CalculoFolhaWizard.tsx": 1,
+  "src/components/folha/DistribuirHoleritesButton.tsx": 1,
+  "src/components/folha/FolhaAuditTimeline.tsx": 1,
+  "src/components/folha/FolhaAuditoriaTable.tsx": 1,
+  "src/components/folha/FolhaComposicao.tsx": 1,
+  "src/components/folha/FolhaDashboard.tsx": 1,
+  "src/components/folha/FolhaESocialSync.tsx": 1,
+  "src/components/folha/FolhaKPIs.tsx": 1,
+  "src/components/folha/FolhaPipeline.tsx": 1,
+  "src/components/folha/FolhaValidationAlerts.tsx": 1,
+  "src/components/folha/MetricasFolhaDashboard.tsx": 1,
+  "src/components/folha/PagamentoBancarioWizard.tsx": 1,
+  "src/components/folha/RelatorioContabilDialog.tsx": 1,
+  "src/components/folha/RubricasDialog.tsx": 1,
+  "src/components/folha/Simulador13Dialog.tsx": 1,
+  "src/components/folha/SimuladorWhatIf.tsx": 1,
+  "src/components/folha/folhaDashboardData.ts": 1,
+  "src/components/forms/FormField.tsx": 1,
+  "src/components/forms/FormSection.tsx": 1,
+  "src/components/forms/FormSelect.tsx": 1,
+  "src/components/forms/FormSwitch.tsx": 1,
+  "src/components/layout/BackButton.tsx": 1,
+  "src/components/layout/Breadcrumbs.tsx": 1,
+  "src/components/layout/Column.tsx": 1,
+  "src/components/layout/Container.tsx": 1,
+  "src/components/layout/EmpresaSwitcher.tsx": 1,
+  "src/components/layout/EntityPageContainer.tsx": 1,
+  "src/components/layout/Flex.tsx": 1,
+  "src/components/layout/Footer.tsx": 1,
+  "src/components/layout/Grid.tsx": 1,
+  "src/components/layout/MobileBottomNav.tsx": 1,
+  "src/components/layout/MobileQuickActions.tsx": 1,
+  "src/components/layout/NavItem.tsx": 1,
+  "src/components/layout/PageContainer.tsx": 2,
+  "src/components/layout/PageHeader.tsx": 1,
+  "src/components/layout/Row.tsx": 1,
+  "src/components/layout/Section.tsx": 1,
+  "src/components/layout/SectionHeader.tsx": 1,
+  "src/components/layout/SidebarFooter.tsx": 1,
+  "src/components/layout/Stack.tsx": 1,
+  "src/components/layout/index.ts": 1,
+  "src/components/login/LockoutMessage.tsx": 1,
+  "src/components/medidas-disciplinares/MedidaContestacaoDialog.tsx": 1,
+  "src/components/medidas-disciplinares/MedidaWorkflowTimeline.tsx": 1,
+  "src/components/medidas-disciplinares/MedidasGravityScale.tsx": 2,
+  "src/components/medidas-disciplinares/MedidasKPIs.tsx": 2,
+  "src/components/medidas-disciplinares/MedidasTable.tsx": 2,
+  "src/components/medidas-disciplinares/MedidasTimeline.tsx": 2,
+  "src/components/notifications/NotificationBell.tsx": 1,
+  "src/components/notifications/NotificationCenter.tsx": 1,
+  "src/components/notifications/NotificationItem.tsx": 2,
+  "src/components/notifications/NotificationList.tsx": 2,
+  "src/components/obrigacoes/DarfTab.tsx": 1,
+  "src/components/obrigacoes/DeclaracoesTable.tsx": 1,
+  "src/components/obrigacoes/GuiasTable.tsx": 1,
+  "src/components/obrigacoes/ObrigacoesKPIs.tsx": 1,
+  "src/components/onboarding/GuidedTour.tsx": 1,
+  "src/components/organograma/OrganogramaNode.tsx": 1,
+  "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
+  "src/components/ponto/GerarAEJDialog.tsx": 1,
+  "src/components/ponto/GestaoPontoAnalytics.tsx": 1,
+  "src/components/ponto/GestaoRegistrosPonto.tsx": 1,
+  "src/components/ponto/ImportarAFDTDialog.tsx": 1,
+  "src/components/ponto/PontoAdjustmentRequests.tsx": 1,
+  "src/components/ponto/PontoAuditTimeline.tsx": 1,
+  "src/components/ponto/PontoCharts.tsx": 1,
+  "src/components/ponto/PontoClockRegister.tsx": 1,
+  "src/components/ponto/PontoGeoAnalytics.tsx": 1,
+  "src/components/ponto/PontoInconsistencyPanel.tsx": 1,
+  "src/components/ponto/PontoLeaderboard.tsx": 1,
+  "src/components/ponto/PontoStreakCard.tsx": 1,
+  "src/components/ponto/PontoTodayCard.tsx": 1,
+  "src/components/ponto/PontoWeekSummary.tsx": 1,
+  "src/components/portal/PortalDocumentosTab.tsx": 1,
+  "src/components/portal/PortalFinanceiroTab.tsx": 1,
+  "src/components/portal/PortalMeusDadosTab.tsx": 1,
+  "src/components/portal/PortalOverviewTab.tsx": 1,
+  "src/components/portal/PortalRegimentoCard.tsx": 1,
+  "src/components/premiacoes/CampaignWizard.tsx": 1,
+  "src/components/premiacoes/RewardsApprovalHub.tsx": 1,
+  "src/components/premiacoes/RewardsSimulator.tsx": 1,
+  "src/components/recrutamento/CandidatoTimeline.tsx": 1,
+  "src/components/relatorios/RelatoriosAgendadosTab.tsx": 1,
+  "src/components/relatorios/RelatoriosAnalyticsTab.tsx": 1,
+  "src/components/relatorios/RelatoriosExportTab.tsx": 1,
+  "src/components/relatorios/reportScheduleContract.ts": 1,
+  "src/components/seguranca/PolicyAuditPanel.tsx": 1,
+  "src/components/settings/BeneficiosSettingsTab.tsx": 1,
+  "src/components/settings/CamposCustomizadosTab.tsx": 1,
+  "src/components/settings/ConfiguracoesGeraisTab.tsx": 1,
+  "src/components/settings/EmpresaSettingsTab.tsx": 1,
+  "src/components/settings/GlobalAuditLogTab.tsx": 1,
+  "src/components/settings/IPBlockingTab.tsx": 1,
+  "src/components/settings/InlineTabs.tsx": 1,
+  "src/components/settings/LogsIntegracoesTab.tsx": 1,
+  "src/components/settings/MFASetup.tsx": 1,
+  "src/components/settings/SystemHealthTab.tsx": 1,
+  "src/components/settings/UserRolesTab.tsx": 1,
+  "src/components/sst/GerarLtcatOsButton.tsx": 1,
+  "src/components/sst/GerarPgrButton.tsx": 1,
+  "src/components/sst/SSTEPIsTab.tsx": 1,
+  "src/components/sst/SSTExamesTab.tsx": 1,
+  "src/components/sst/SSTIncidentesTab.tsx": 1,
+  "src/components/sst/SSTKPIs.tsx": 1,
+  "src/components/sst/SSTNRsTab.tsx": 1,
+  "src/components/sst/SSTProgramasTab.tsx": 1,
+  "src/components/sst/SSTRiscosTab.tsx": 1,
+  "src/components/ui/cpf-input.tsx": 1,
+  "src/components/ui/currency-input.tsx": 1,
+  "src/components/ui/index.ts": 1,
+  "src/components/workflows/WorkflowDesigner.tsx": 2,
+  "src/components/workflows/ordenarEtapas.ts": 1,
+  "src/constants/regimes.ts": 1,
+  "src/constants/rubricas.ts": 1,
+  "src/constants/workflow-status.ts": 1,
+  "src/contexts/AuthContext.tsx": 2,
+  "src/contexts/EmpresaContext.tsx": 1,
+  "src/contexts/NotificationContext.tsx": 1,
+  "src/contexts/index.ts": 1,
+  "src/errors/AppError.ts": 1,
+  "src/hooks/ferias/useAdiantamento13.ts": 1,
+  "src/hooks/ferias/useAlertasPagamentoD2.ts": 2,
+  "src/hooks/ferias/useGerarComunicadoColetivas.ts": 1,
+  "src/hooks/ferias/useProgramacaoFerias.ts": 2,
+  "src/hooks/ferias/useReconciliacaoFolha.ts": 2,
+  "src/hooks/ferias/useReconciliacaoLogs.ts": 2,
+  "src/hooks/index.ts": 1,
+  "src/hooks/use-mobile.tsx": 1,
+  "src/hooks/useAdmissaoWorkflow.ts": 1,
+  "src/hooks/useAdmissoes.ts": 1,
+  "src/hooks/useAfastamentos.ts": 4,
+  "src/hooks/useAssinarAvisoFerias.ts": 1,
+  "src/hooks/useAssinaturaDigital.ts": 1,
+  "src/hooks/useAssinaturas.ts": 1,
+  "src/hooks/useAuth.ts": 1,
+  "src/hooks/useBackGesture.ts": 1,
+  "src/hooks/useBeneficios.ts": 2,
+  "src/hooks/useBeneficiosColaborador.ts": 2,
+  "src/hooks/useBruteForceProtection.ts": 1,
+  "src/hooks/useCalcular13Salario.ts": 2,
+  "src/hooks/useCalculoFolha.ts": 1,
+  "src/hooks/useCargos.ts": 2,
+  "src/hooks/useColaboradorDetalhes.ts": 11,
+  "src/hooks/useColaboradorVinculo.ts": 1,
+  "src/hooks/useColaboradores.ts": 2,
+  "src/hooks/useConfiguracoesIntervalo.ts": 1,
+  "src/hooks/useContratacaoDigital.ts": 1,
+  "src/hooks/useContratoTemplates.ts": 1,
+  "src/hooks/useContratoTokenTimeline.ts": 2,
+  "src/hooks/useContratos.ts": 1,
+  "src/hooks/useContratosAssinaturaKPI.ts": 2,
+  "src/hooks/useContratosVencendo.ts": 2,
+  "src/hooks/useDataAccessLog.ts": 1,
+  "src/hooks/useDebounce.ts": 1,
+  "src/hooks/useDepartamentos.ts": 2,
+  "src/hooks/useDesligamentos.ts": 2,
+  "src/hooks/useDocumentOCR.ts": 1,
+  "src/hooks/useDocumentos.ts": 2,
+  "src/hooks/useESocial.ts": 1,
+  "src/hooks/useEmpresas.ts": 5,
+  "src/hooks/useExcelExport.ts": 1,
+  "src/hooks/useExecutiveDashboard.ts": 1,
+  "src/hooks/useFeriados.ts": 1,
+  "src/hooks/useFerias.ts": 2,
+  "src/hooks/useFeriasAprovacao.ts": 1,
+  "src/hooks/useFolha.ts": 2,
+  "src/hooks/useFolhaAuditoria.ts": 2,
+  "src/hooks/useFormGuard.ts": 1,
+  "src/hooks/useGenericCrud.ts": 2,
+  "src/hooks/useGrupo.ts": 3,
+  "src/hooks/useHistoricoContratos.ts": 2,
+  "src/hooks/useHorasExtras.ts": 1,
+  "src/hooks/useIdempotencyKey.ts": 1,
+  "src/hooks/useImportacaoColaboradores.ts": 1,
+  "src/hooks/useLocaisTrabalho.ts": 2,
+  "src/hooks/useLocalStorage.ts": 1,
+  "src/hooks/useMediaQuery.ts": 1,
+  "src/hooks/useMountEffects.ts": 1,
+  "src/hooks/useNavigationGuard.tsx": 1,
+  "src/hooks/useNotificacoes.ts": 2,
+  "src/hooks/useNovasTabelas.ts": 1,
+  "src/hooks/useNow.ts": 1,
+  "src/hooks/useOrganograma.ts": 2,
+  "src/hooks/usePDFExport.ts": 1,
+  "src/hooks/usePWA.ts": 1,
+  "src/hooks/usePcs.ts": 1,
+  "src/hooks/usePendencias.ts": 1,
+  "src/hooks/usePeriodosAquisitivos.ts": 1,
+  "src/hooks/usePiiMask.ts": 1,
+  "src/hooks/usePonto.ts": 1,
+  "src/hooks/usePontoMelhorado.ts": 1,
+  "src/hooks/usePontoOffline.ts": 1,
+  "src/hooks/usePontosAbertos.ts": 1,
+  "src/hooks/useRealTimeSubscription.ts": 1,
+  "src/hooks/useRealtimeDashboard.ts": 1,
+  "src/hooks/useSecureVisibility.ts": 1,
+  "src/hooks/useSecurityMonitor.ts": 1,
+  "src/hooks/useServerValidation.ts": 1,
+  "src/hooks/useSessionTimeout.ts": 1,
+  "src/hooks/useSyncedState.ts": 1,
+  "src/hooks/useSystemHealth.ts": 1,
+  "src/hooks/useSystemHealthHistory.ts": 2,
+  "src/hooks/useTabelasReferencia.ts": 4,
+  "src/hooks/useToast.ts": 1,
+  "src/hooks/useTodasEmpresas.ts": 1,
+  "src/hooks/useTranslation.ts": 1,
+  "src/hooks/useValeTransporte.ts": 1,
+  "src/hooks/useWebhooksAvancados.ts": 2,
+  "src/hooks/validators.ts": 1,
+  "src/integrations/supabase/client.ts": 18,
+  "src/integrations/supabase/database.types.ts": 10,
+  "src/integrations/supabase/previewAuthStorage.ts": 1,
+  "src/integrations/supabase/types.ts": 13,
+  "src/lib/circuitBreaker.ts": 1,
+  "src/lib/cursor.ts": 1,
+  "src/lib/masks.ts": 1,
+  "src/lib/queryClient.ts": 1,
+  "src/lib/reciboAssinaturaPdf.ts": 1,
+  "src/lib/retry.ts": 1,
+  "src/lib/utils.ts": 1,
+  "src/pages/CienciaMedidaPage.tsx": 1,
+  "src/pages/FolhaPage.tsx": 1,
+  "src/pages/ImportacaoPage.tsx": 1,
+  "src/pages/LoginPage.tsx": 1,
+  "src/pages/NotFoundPage.tsx": 1,
+  "src/pages/UsuariosPage.tsx": 1,
+  "src/pages/folhaResumo.ts": 1,
+  "src/schemas/common.ts": 1,
+  "src/schemas/esocial/helpers.ts": 1,
+  "src/schemas/esocial/naoPeriodicosValidators.ts": 2,
+  "src/schemas/esocial/periodicosValidators.ts": 1,
+  "src/schemas/esocial/rubricaValidator.ts": 1,
+  "src/schemas/esocial/sstValidators.ts": 2,
+  "src/schemas/ferias.ts": 1,
+  "src/schemas/validate.ts": 1,
+  "src/services/admissaoService.ts": 1,
+  "src/services/afastamentoService.ts": 1,
+  "src/services/assistenteIAService.ts": 1,
+  "src/services/auditoriaService.ts": 1,
+  "src/services/authService.ts": 1,
+  "src/services/avaliacaoService.ts": 1,
+  "src/services/backupService.ts": 1,
+  "src/services/bancoHorasConfigService.ts": 2,
+  "src/services/bancoHorasService.ts": 1,
+  "src/services/baseService.ts": 3,
+  "src/services/batidasPontoService.ts": 1,
+  "src/services/beneficioService.ts": 1,
+  "src/services/calculoBeneficiosService.ts": 1,
+  "src/services/canalContabilidadeService.ts": 1,
+  "src/services/cargoService.ts": 1,
+  "src/services/catalogoCursoService.ts": 1,
+  "src/services/cnabService.ts": 2,
+  "src/services/colaboradorDetalhesService.ts": 1,
+  "src/services/colaboradorService.ts": 1,
+  "src/services/comunicacaoService.ts": 1,
+  "src/services/contabilidadeService.ts": 1,
+  "src/services/contratacaoService.ts": 2,
+  "src/services/contratoService.ts": 1,
+  "src/services/contratoTemplateService.ts": 1,
+  "src/services/controleAcessoService.ts": 1,
+  "src/services/departamentoService.ts": 2,
+  "src/services/desligamentoService.ts": 4,
+  "src/services/despesaService.ts": 1,
+  "src/services/documentoService.ts": 2,
+  "src/services/edgeFunctionsService.ts": 2,
+  "src/services/empresaService.ts": 1,
+  "src/services/encryptionService.ts": 1,
+  "src/services/episService.ts": 1,
+  "src/services/esocialService.ts": 3,
+  "src/services/exportService.ts": 1,
+  "src/services/faltasService.ts": 1,
+  "src/services/feriasService.ts": 1,
+  "src/services/folha/calculoLoteService.ts": 1,
+  "src/services/folhaPagamentoService.ts": 1,
+  "src/services/folhaService.ts": 1,
+  "src/services/historicoContratoService.ts": 1,
+  "src/services/horaExtraService.ts": 1,
+  "src/services/index.ts": 1,
+  "src/services/integracaoService.ts": 1,
+  "src/services/intervaloService.ts": 1,
+  "src/services/jornadaHorariosService.ts": 1,
+  "src/services/lgpdService.ts": 1,
+  "src/services/localTrabalhoService.ts": 2,
+  "src/services/loggerService.ts": 2,
+  "src/services/medidasDisciplinaresService.ts": 1,
+  "src/services/notificacoesService.ts": 1,
+  "src/services/pcsService.ts": 1,
+  "src/services/pesquisaService.ts": 1,
+  "src/services/piiAccessLogService.ts": 1,
+  "src/services/pontoAbertoService.ts": 1,
+  "src/services/pontoAuditService.ts": 1,
+  "src/services/pontoMonitorService.ts": 1,
+  "src/services/pontoOfflineService.ts": 2,
+  "src/services/pontoService.ts": 1,
+  "src/services/pontosService.ts": 1,
+  "src/services/premiacoesService.ts": 1,
+  "src/services/provisaoService.ts": 1,
+  "src/services/pushNotificationService.ts": 1,
+  "src/services/recrutamentoService.ts": 1,
+  "src/services/rescisaoService.ts": 1,
+  "src/services/securityService.ts": 1,
+  "src/services/tabelas/adminService.ts": 1,
+  "src/services/tabelas/beneficiosService.ts": 1,
+  "src/services/tabelas/documentosService.ts": 1,
+  "src/services/tabelas/folhaService.ts": 1,
+  "src/services/tabelas/pontoService.ts": 1,
+  "src/services/tabelas/rhService.ts": 1,
+  "src/services/tabelas/viewsService.ts": 1,
+  "src/services/tabelasReferenciaService.ts": 1,
+  "src/services/turnoService.ts": 1,
+  "src/services/webhookService.ts": 1,
+  "src/services/whatsappService.ts": 1,
+  "src/services/workflowService.ts": 1,
+  "src/types/afastamentos.ts": 1,
+  "src/types/entities.ts": 5,
+  "src/types/medidasDisciplinares.ts": 6,
+  "src/types/pcs.ts": 1,
+  "src/utils/afastamentoPDF.ts": 1,
+  "src/utils/auditLogger.ts": 2,
+  "src/utils/avisoFeriasPDF.ts": 1,
+  "src/utils/calculoFerias.ts": 1,
+  "src/utils/comunicadoFeriasColetivasPDF.ts": 1,
+  "src/utils/cursorPagination.ts": 1,
+  "src/utils/dateLocal.ts": 5,
+  "src/utils/desligamentoExcel.ts": 1,
+  "src/utils/esocialXmlGenerator.ts": 1,
+  "src/utils/evaluationPDF.ts": 1,
+  "src/utils/feriasPDF.ts": 2,
+  "src/utils/folha/pontoIntegracaoUtils.ts": 1,
+  "src/utils/folha/validadorFolha.ts": 2,
+  "src/utils/folhaCalc.ts": 2,
+  "src/utils/format.ts": 1,
+  "src/utils/holeritePDF.ts": 1,
+  "src/utils/importacao/columnMap.ts": 3,
+  "src/utils/importacao/excelDownload.ts": 1,
+  "src/utils/importacao/parser.ts": 1,
+  "src/utils/importacao/template.ts": 1,
+  "src/utils/importacao/validators.ts": 2,
+  "src/utils/passwordPolicy.ts": 1,
+  "src/utils/pgInterval.ts": 1,
+  "src/utils/piiMask.ts": 4,
+  "src/utils/rescisaoCalc.ts": 1,
+  "src/utils/rescisaoPDF.ts": 1,
+  "src/utils/safeError.ts": 1,
+  "src/utils/safeUrl.ts": 1,
+  "src/utils/sanitizeHtml.ts": 1,
+  "src/utils/secureJson.ts": 1,
+  "src/utils/toError.ts": 1,
+  "src/utils/uploadValidation.ts": 1,
+  "supabase/functions/_shared/aal2.ts": 1,
+  "supabase/functions/_shared/clientIp.ts": 1,
+  "supabase/functions/_shared/contract.ts": 2,
+  "supabase/functions/_shared/csrf.ts": 1,
+  "supabase/functions/_shared/idempotency.ts": 1,
+  "supabase/functions/_shared/inss.ts": 1,
+  "supabase/functions/_shared/integrityHash.ts": 1,
+  "supabase/functions/_shared/irrf.ts": 1,
+  "supabase/functions/_shared/outboundDelivery.ts": 1,
+  "supabase/functions/_shared/rateLimit.ts": 1,
+  "supabase/functions/_shared/resendDelivery.ts": 1,
+  "supabase/functions/_shared/schemas/common.ts": 1,
+  "supabase/functions/_shared/ssrf-guard.ts": 1,
+  "supabase/functions/alertas-dp/deliveryStatus.ts": 1,
+  "supabase/functions/auth-gov-br/govbrIdentity.ts": 1,
+  "supabase/functions/auth-login/lockoutContract.ts": 1,
+  "supabase/functions/backup-automatico/backupAudit.ts": 1,
+  "supabase/functions/backup-automatico/backupSnapshot.ts": 1,
+  "supabase/functions/calcular-rescisao/motor.ts": 1,
+  "supabase/functions/enviar-email-admissao/admissaoLink.ts": 1,
+  "supabase/functions/enviar-esocial/s2299.ts": 1,
+  "supabase/functions/enviar-esocial/transmissionStatus.ts": 1,
+  "supabase/functions/enviar-relatorio/deliveryStatus.ts": 1,
+  "supabase/functions/enviar-relatorio/dispatchPayload.ts": 1,
+  "supabase/functions/enviar-relatorio/internalDispatch.ts": 1,
+  "supabase/functions/enviar-relatorio/reportContent.ts": 1,
+  "supabase/functions/external-db-bridge/access.ts": 1,
+  "supabase/functions/external-db-bridge/request-schema.ts": 1,
+  "supabase/functions/external-db-bridge/tenantScope.ts": 1,
+  "supabase/functions/external-db-bridge/validation.ts": 1,
+  "supabase/functions/folha-metrics/auditActions.ts": 1,
+  "supabase/functions/gerar-holerite/inss.ts": 1,
+  "supabase/functions/metrics/metricsMath.ts": 1,
+  "supabase/functions/notificacao/plainText.ts": 1,
+  "supabase/functions/pagar-desligamento/rpcErrors.ts": 1,
+  "supabase/functions/processar-agendamentos/scheduleContract.ts": 1,
+  "supabase/functions/upload-certificado/certRow.ts": 1
+ },
+ "sem_teste": {
+  "telas": [
+   "src/pages/AdminAgendamentoExamesPage.tsx",
+   "src/pages/AdminAsoWorkflowPage.tsx",
+   "src/pages/AdminCatPage.tsx",
+   "src/pages/AdminClinicasPartnersPage.tsx",
+   "src/pages/AdminDiagnosticoMigracaoPage.tsx",
+   "src/pages/AdminEpisFichasPage.tsx",
+   "src/pages/AdminExtintoresPage.tsx",
+   "src/pages/AdminIdempotenciaPage.tsx",
+   "src/pages/AdminOperacaoPage.tsx",
+   "src/pages/AdminPontoDivergenciasPage.tsx",
+   "src/pages/AdminRegimentoInternoPage.tsx",
+   "src/pages/AdminSecurityPage.tsx",
+   "src/pages/AdminSstDashboardPage.tsx",
+   "src/pages/AdminTelemetriaPage.tsx",
+   "src/pages/AdmissoesPage.tsx",
+   "src/pages/AfastamentosPage.tsx",
+   "src/pages/AssinarContratoPage.tsx",
+   "src/pages/AssinaturasPage.tsx",
+   "src/pages/AssistenteIAPage.tsx",
+   "src/pages/AuditoriaPage.tsx",
+   "src/pages/AuthCallbackPage.tsx",
+   "src/pages/AvaliacaoPage.tsx",
+   "src/pages/BackupPage.tsx",
+   "src/pages/BancoHorasPage.tsx",
+   "src/pages/BeneficioFormPage.tsx",
+   "src/pages/BeneficiosPage.tsx",
+   "src/pages/CalculadoraRescisaoPage.tsx",
+   "src/pages/CanalContabilidadePage.tsx",
+   "src/pages/CanalEticaPage.tsx",
+   "src/pages/CargosPage.tsx",
+   "src/pages/CentrosCustoPage.tsx",
+   "src/pages/ColaboradorDetalhesPage.tsx",
+   "src/pages/ColaboradorFormPage.tsx",
+   "src/pages/ColaboradoresPage.tsx",
+   "src/pages/ComunicacaoInternaPage.tsx",
+   "src/pages/ConfiguracoesPage.tsx",
+   "src/pages/ContabilidadePage.tsx",
+   "src/pages/ContratacaoPage.tsx",
+   "src/pages/ContratoTemplatesPage.tsx",
+   "src/pages/ContratosGeradosPage.tsx",
+   "src/pages/ControleAcessoPage.tsx",
+   "src/pages/ConveniosPage.tsx",
+   "src/pages/DashboardExecutivoPage.tsx",
+   "src/pages/DashboardPage.tsx",
+   "src/pages/DepartamentosPage.tsx",
+   "src/pages/DescontosPage.tsx",
+   "src/pages/DesignSystemPage.tsx",
+   "src/pages/DesligamentosPage.tsx",
+   "src/pages/DespesasPage.tsx",
+   "src/pages/DocumentosPage.tsx",
+   "src/pages/ESocialPage.tsx",
+   "src/pages/EmpresaFormPage.tsx",
+   "src/pages/EmpresasPage.tsx",
+   "src/pages/EscalasPage.tsx",
+   "src/pages/ExamesPage.tsx",
+   "src/pages/FaltasPage.tsx",
+   "src/pages/FeriadosPage.tsx",
+   "src/pages/FeriasPage.tsx",
+   "src/pages/FeriasProgramacaoPage.tsx",
+   "src/pages/FinanceiroBancarioPage.tsx",
+   "src/pages/FolhaCompliancePage.tsx",
+   "src/pages/FolhaPagamentoPage.tsx",
+   "src/pages/GeradorDocumentosPage.tsx",
+   "src/pages/HoleritesPage.tsx",
+   "src/pages/HorasExtrasPage.tsx",
+   "src/pages/IntegracoesPage.tsx",
+   "src/pages/JornadasPage.tsx",
+   "src/pages/LGPDPage.tsx",
+   "src/pages/LocaisTrabalhoPage.tsx",
+   "src/pages/LotacoesPage.tsx",
+   "src/pages/MedidasDisciplinaresPage.tsx",
+   "src/pages/MovimentacoesPage.tsx",
+   "src/pages/NotificacoesPage.tsx",
+   "src/pages/ObrigacoesFiscaisPage.tsx",
+   "src/pages/OnboardingPage.tsx",
+   "src/pages/OrganogramaPage.tsx",
+   "src/pages/PassivoTrabalhistaPage.tsx",
+   "src/pages/PensoesPage.tsx",
+   "src/pages/PerfilPage.tsx",
+   "src/pages/PesquisasClimaPage.tsx",
+   "src/pages/PlanoCargosSalariosPage.tsx",
+   "src/pages/PlanosSaudePage.tsx",
+   "src/pages/PontoKioskPage.tsx",
+   "src/pages/PontoPage.tsx",
+   "src/pages/PortalPage.tsx",
+   "src/pages/PremiacoesPage.tsx",
+   "src/pages/PromoBrindesPage.tsx",
+   "src/pages/ProvisoesPage.tsx",
+   "src/pages/RecrutamentoPage.tsx",
+   "src/pages/RelatoriosPage.tsx",
+   "src/pages/RubricasPage.tsx",
+   "src/pages/SSTPage.tsx",
+   "src/pages/SegurancaPage.tsx",
+   "src/pages/SegurosVidaPage.tsx",
+   "src/pages/SindicatosPage.tsx",
+   "src/pages/TimesPage.tsx",
+   "src/pages/TreinamentosPage.tsx",
+   "src/pages/TurnosPage.tsx",
+   "src/pages/ValesPage.tsx",
+   "src/pages/VerificarContratoPage.tsx",
+   "src/pages/VinculosPromoPage.tsx",
+   "src/pages/WorkflowsPage.tsx"
+  ],
+  "hooks": [
+   "scripts/ai-context/cenarios.mjs",
+   "src/components/layout/Breadcrumb.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/use-toast.ts",
+   "src/i18n/useTranslation.ts",
+   "src/providers/index.ts",
+   "src/providers/ThemeProvider.tsx"
+  ],
+  "edges": [
+   "adiantamento-salarial",
+   "admissao-publica",
+   "alertas-preditivos",
+   "assinaturaDigital",
+   "assistente-ia",
+   "auditoria",
+   "backup",
+   "cache",
+   "calcular-13-salario",
+   "calcular-ferias",
+   "calcular-provisoes",
+   "cnab-remessa",
+   "consultarCEP",
+   "consultarCNPJ",
+   "criptografia",
+   "dctfweb",
+   "distribuir-holerites",
+   "emprestimo-consignado",
+   "exportacao",
+   "fgts-digital",
+   "gerar-aej",
+   "gerar-afd",
+   "gerar-contrato-pdf",
+   "gerar-guias",
+   "gerar-ltcat-os",
+   "gerar-medida-disciplinar-pdf",
+   "gerar-pgr",
+   "healthcheck",
+   "integracao",
+   "limpeza",
+   "parse-afdt",
+   "pix-lote",
+   "process-document-ocr",
+   "relatorio",
+   "sincronizar-bitrix",
+   "tabelas-dominio",
+   "validar-biometria",
+   "warmup",
+   "whatsapp-send"
+  ],
+  "servicos": [
+   "src/services/tabelas/index.ts",
+   "src/services/tabelasComplementaresService.ts"
+  ]
+ }
+}

@@ -1,0 +1,948 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 81,
+ "scripts": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "descricao": "Simulação de cenários do gerador: monta centenas de repositórios sintéticos (variantes de SQL, rotas, menus, edges, workflows, monorepo, Python, arquivos corrompidos, fuzz) e confere:",
+   "linhas": 173,
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "descricao": "Gera o contexto de projeto para agentes de IA (padrão: inventario/ia/*). Zero dependências. Node >= 18. Genérico: funciona em qualquer repositório.",
+   "linhas": 926,
+   "env": [
+    "AI_CONTEXT_DIR",
+    "AI_CONTEXT_PUBLICACAO",
+    "AI_CONTEXT_ROOT"
+   ],
+   "npm_scripts": [
+    "contexto:ia"
+   ],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-bridge-frontend-contract.mjs",
+   "descricao": "* Fail-closed contract gate between production frontend calls and the generic",
+   "linhas": 203,
+   "env": [],
+   "npm_scripts": [
+    "audit:bridge-contract"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-canonical-project.mjs",
+   "descricao": "* Gate estático para impedir que configuração executável volte a apontar para",
+   "linhas": 113,
+   "env": [
+    "CANONICAL_SUPABASE_REF",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [
+    "audit:canonical-project"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-db-search-path.mjs",
+   "descricao": "* Gate de integridade: search_path x extensões isoladas.",
+   "linhas": 120,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:search-path"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-edge-audit-log-contract.mjs",
+   "descricao": "* Validates the physical contract of Edge Function inserts into the legacy",
+   "linhas": 205,
+   "env": [],
+   "npm_scripts": [
+    "audit:edge-audit-log"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-edge-authz.mjs",
+   "descricao": "* Gate de CI — autorização nas Edge Functions.",
+   "linhas": 171,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-edge-syntax.mjs",
+   "descricao": "* Gate de CI — sintaxe das Edge Functions (Deno).",
+   "linhas": 59,
+   "env": [],
+   "npm_scripts": [
+    "audit:edge-syntax"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-embed-hints.mjs",
+   "descricao": "* Gate de integridade dos \"embed hints\" do PostgREST.",
+   "linhas": 180,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:embeds"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-migration-style.mjs",
+   "descricao": "* Gate estático (sem DATABASE_URL): reprova migration nova com",
+   "linhas": 131,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-required-checks.mjs",
+   "descricao": "* E08 — Guard: verifica se todo check obrigatório do ruleset tem um job",
+   "linhas": 171,
+   "env": [
+    "GITHUB_TOKEN"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "ci.yml",
+    "ruleset-sync.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-rls-least-privilege.mjs",
+   "descricao": "* Gate de menor privilégio em RLS.",
+   "linhas": 301,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:rls-roles"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-rls-pii.mjs",
+   "descricao": "* Gate de regressão de RLS: políticas sobre tabelas com PII precisam",
+   "linhas": 287,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:rls-pii"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-rls-tenant-open.mjs",
+   "descricao": "* Gate de regressão: política PERMISSIVA irrestrita sobre tabela multi-tenant.",
+   "linhas": 275,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:rls-tenant"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-schema-drift.mjs",
+   "descricao": "* Gate de regressão: migration presente no repositório sem registro no ledger",
+   "linhas": 130,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-secdef-authz.mjs",
+   "descricao": "* Gate de regressão de funções SECURITY DEFINER.",
+   "linhas": 269,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:secdef"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-security-config.mjs",
+   "descricao": "* E-077 · Gate estático de configuração de segurança (sem acesso a banco).",
+   "linhas": 164,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-types-drift.mjs",
+   "descricao": "* Ratchet de drift: tabela criada em migration/baseline sem entrada em",
+   "linhas": 124,
+   "env": [],
+   "npm_scripts": [
+    "audit:types-drift"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/backup.sh",
+   "descricao": "Backup Script for Departamento Pessoal System Usage: ./backup.sh [full|incremental|db|files]",
+   "linhas": 93,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/build-rebaseline.mjs",
+   "descricao": "Estas correções não pertencem ao histórico de migrations ativo: elas são aplicadas SOBRE o snapshot físico antes de ele virar a baseline única.",
+   "linhas": 124,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/canonical-invariants.sql",
+   "descricao": null,
+   "linhas": 425,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/capacitor-build.sh",
+   "descricao": "============================================================== P5-079: Script de build Mobile (Capacitor + Android)",
+   "linhas": 178,
+   "env": [],
+   "npm_scripts": [
+    "build:mobile",
+    "build:mobile:android",
+    "cap:check"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-bundle-budget.mjs",
+   "descricao": "* E51-030 — Orçamento de bundle.",
+   "linhas": 87,
+   "env": [],
+   "npm_scripts": [
+    "audit:bundle"
+   ],
+   "workflows": [
+    "deploy.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-dependencies.js",
+   "descricao": null,
+   "linhas": 43,
+   "env": [],
+   "npm_scripts": [
+    "build"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db/classify-migration-drift.mjs",
+   "descricao": null,
+   "linhas": 211,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db/derive-pending-migrations.mjs",
+   "descricao": "* W67 — deriva, sem hardcode, os arquivos de `supabase/migrations/*.sql`",
+   "linhas": 132,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db/schema-inventory.sql",
+   "descricao": null,
+   "linhas": 159,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/deploy-functions-novo-projeto.sh",
+   "descricao": "Deploy de todas as Edge Functions no projeto Supabase canônico. Uso:",
+   "linhas": 72,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/deploy.sh",
+   "descricao": "deploy script Departamento Pessoal",
+   "linhas": 10,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/diag/run-sql-diag.mjs",
+   "descricao": "* Canonical read-only SQL diagnostic runner.",
+   "linhas": 274,
+   "env": [
+    "ALLOW_PII",
+    "DIAG_MAX_ROWS",
+    "DIAG_OUTPUT_FILE",
+    "DIAG_QUERY",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "canonical-sql-diag.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/eslint-tests-any.config.mjs",
+   "descricao": "* Config mínima do ratchet de `any` em TESTES (E51-029).",
+   "linhas": 35,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/format-check-changed.sh",
+   "descricao": "Format-check only files changed vs the base ref. Rationale: enforcing Prettier on the entire legacy codebase would create a",
+   "linhas": 45,
+   "env": [],
+   "npm_scripts": [
+    "format:check:changed"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/gen-table-columns.mjs",
+   "descricao": "* Gera src/schemas/tableColumns.ts a partir dos tipos do Supabase",
+   "linhas": 79,
+   "env": [],
+   "npm_scripts": [
+    "gen:table-columns"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/generate-audit-pdf.js",
+   "descricao": null,
+   "linhas": 26,
+   "env": [],
+   "npm_scripts": [
+    "build",
+    "audit:pdf"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/generate-component.js",
+   "descricao": "props",
+   "linhas": 16,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/generate-hook.js",
+   "descricao": "action logic",
+   "linhas": 13,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/generate-page.js",
+   "descricao": null,
+   "linhas": 15,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/generate-service.js",
+   "descricao": null,
+   "linhas": 29,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/healthcheck.sh",
+   "descricao": "============================================================================ E-095 · Healthcheck de ambiente — Departamento Pessoal",
+   "linhas": 182,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "canonical-edge-functions.yml",
+    "healthcheck.yml",
+    "post-deploy-smoke.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/index.js",
+   "descricao": null,
+   "linhas": 2,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/banco.sql",
+   "descricao": null,
+   "linhas": 169,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.mjs",
+   "descricao": "* Inventario do banco canonico -> inventario/estado/banco.json (fonte de consulta dos agentes).",
+   "linhas": 384,
+   "env": [
+    "CANONICAL_SUPABASE_REF",
+    "DATABASE_URL",
+    "INVENTARIO_PERMITIR_OUTRO_PROJETO",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_API_URL",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-repo.mjs",
+   "descricao": "Inventario gerado do lado do repositorio (sem acesso ao banco) — mesmo script do Zapp Web V2:  - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, ",
+   "linhas": 71,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-rotas.mjs",
+   "descricao": "* Inventario das rotas do front -> inventario/estado/rotas.json (fonte de consulta dos agentes).",
+   "linhas": 387,
+   "env": [],
+   "npm_scripts": [
+    "inventario:rotas"
+   ],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/mudou-conteudo.mjs",
+   "descricao": "* O inventario mudou de verdade? Compara cada arquivo de inventario/estado/ com a versao do",
+   "linhas": 78,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "inventario-estado-semanal.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/load/bridge-load.k6.js",
+   "descricao": "Load test do external-db-bridge (PGBouncer path) com k6. Pré-requisitos:",
+   "linhas": 69,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probes/print-summary.mjs",
+   "descricao": "* W71 — Resumo estruturado dos canonical probes para $GITHUB_STEP_SUMMARY.",
+   "linhas": 65,
+   "env": [
+    "GITHUB_RUN_ID",
+    "PROBES_OUTCOME",
+    "PROBES_RESULT"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "canonical-probes.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probes/run-probes.mjs",
+   "descricao": "* E71 — Canonical security probes runner.",
+   "linhas": 136,
+   "env": [
+    "GITHUB_OUTPUT",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "canonical-probes.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probes/rv-probes.sql",
+   "descricao": null,
+   "linhas": 54,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/provision-e2e-users.mjs",
+   "descricao": "* Provisiona as identidades usadas pelos testes E2E autenticados",
+   "linhas": 97,
+   "env": [
+    "E2E_ALLOW_EXISTING_ACCOUNT",
+    "E2E_NON_ADMIN_EMAIL",
+    "E2E_NON_ADMIN_PASSWORD",
+    "E2E_USER_EMAIL",
+    "E2E_USER_PASSWORD",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ratchet-any-tests.mjs",
+   "descricao": "* Ratchet de `any` em ARQUIVOS DE TESTE (E51-029) — irmão de ratchet-any.mjs,",
+   "linhas": 98,
+   "env": [],
+   "npm_scripts": [
+    "audit:ratchet-any-tests"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ratchet-any.mjs",
+   "descricao": "* `any` explícito é dívida medida, não proibida — mas só pode diminuir.",
+   "linhas": 94,
+   "env": [],
+   "npm_scripts": [
+    "audit:ratchet-any"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ratchet-lint-warnings.mjs",
+   "descricao": "* E43 — Orçamento de warnings ESLint por regra.",
+   "linhas": 93,
+   "env": [],
+   "npm_scripts": [
+    "audit:ratchet-warnings"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regenerate-supabase-types.sh",
+   "descricao": "Regenera src/integrations/supabase/types.ts a partir do schema atual. Requer: supabase CLI instalado, SUPABASE_DB_URL ou SUPABASE_PROJECT_ID configurado.",
+   "linhas": 45,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "descricao": null,
+   "linhas": 2138,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "descricao": null,
+   "linhas": 237,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/publish.sh",
+   "descricao": "Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida. Variáveis:",
+   "linhas": 106,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/report-workflows.mjs",
+   "descricao": "* W55: scripts/report-workflows.mjs",
+   "linhas": 68,
+   "env": [
+    "GITHUB_TOKEN"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "workflows-report.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/rollback.sh",
+   "descricao": "rollback script Departamento Pessoal",
+   "linhas": 10,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/secfix_correcao1_rpcs.sql",
+   "descricao": null,
+   "linhas": 42,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/secfix_correcao2_rpcs.sql",
+   "descricao": null,
+   "linhas": 47,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/secfix_correcao3_pgsodium.sql",
+   "descricao": null,
+   "linhas": 19,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/secfix_policies_criticas.sql",
+   "descricao": null,
+   "linhas": 17,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/run-all.mjs",
+   "descricao": "* Etapa 11 — wrapper de simulação exaustiva pós-cutover.",
+   "linhas": 143,
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/run-exhaustive-v3.mjs",
+   "descricao": "* Simulação exaustiva v3 — cenários sustentados pós-Etapa 7.",
+   "linhas": 226,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/run-exhaustive.mjs",
+   "descricao": "* Orquestrador de simulação exaustiva pós-hardening (Etapas 1–6).",
+   "linhas": 194,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/simulate_adiant_13.cjs",
+   "descricao": "Simulação: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias,",
+   "linhas": 29,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/simulacao/simulate_art145.cjs",
+   "descricao": "Simulação exaustiva Art. 145 CLT — pagamento até D-2 do início das férias. Cenários: combinações de (data_inicio, data_pagamento, status) cobrindo:",
+   "linhas": 35,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/simulacao/simulate_irrf.cjs",
+   "descricao": "Simulação: IRRF correto (frontend impostos.ts) vs IRRF do calcular-folha (edge, PRE-fix).",
+   "linhas": 99,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/simulate_notif_d3.cjs",
+   "descricao": "Simulação: notificação D-3 (Art. 145) - identificar quais status de férias devem gerar notificação diária ao RH.",
+   "linhas": 27,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/simulacao/simulate_rescisao.cjs",
+   "descricao": "Simulação de centenas de cenários: engine correta (frontend, src/calculators/rescisao.ts) vs engine atual do edge (supabase/functions/calcular-rescisao/index.ts), replicadas fielmente",
+   "linhas": 117,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/verify_bridge_contract.cjs",
+   "descricao": "* Contract test exaustivo do external-db-bridge no NOVO projeto Supabase.",
+   "linhas": 144,
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/verify_bridge_write_guard.cjs",
+   "descricao": "Reimplementação mínima da guarda nova do external-db-bridge (B1) para verificar o comportamento sem depender do runtime Deno.",
+   "linhas": 31,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/simulacao/verify_irrf_fix.cjs",
+   "descricao": "Regressão pós-correção (task 7 / achado K1): reimplementa em JS puro (a) o motor canônico src/calculators/impostos.ts::calcularIRRF",
+   "linhas": 125,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/simulacao/verify_rescisao_fix.cjs",
+   "descricao": "Regressão pós-correção (task 7 / achados K2-K4, H(K)4): reimplementa em JS puro (a) o motor canônico src/utils/rescisaoCalc.ts (usado pelo botão \"Calcular Local\")",
+   "linhas": 379,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/smoke-hash-triggers.mjs",
+   "descricao": "* Smoke test dos selos de integridade (`enforce_*_hash`).",
+   "linhas": 140,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "smoke:selos"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
+   "linhas": 1772,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/typecheck-edge.sh",
+   "descricao": "Mirrors the CI job \"Edge Functions (deno check)\" (.github/workflows/ci.yml) so a contributor can catch a real `deno check` failure before pushing.",
+   "linhas": 40,
+   "env": [],
+   "npm_scripts": [
+    "typecheck:edge"
+   ],
+   "workflows": [
+    "canonical-edge-functions.yml",
+    "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/update-workflows-status.mjs",
+   "descricao": "* W92: injeta a saída de scripts/report-workflows.mjs em",
+   "linhas": 61,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "workflows-report.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/validate-canonical-db-url.mjs",
+   "descricao": null,
+   "linhas": 51,
+   "env": [
+    "CANONICAL_SUPABASE_REF",
+    "SUPABASE_DB_URL"
+   ],
+   "npm_scripts": [
+    "audit:canonical-db-url"
+   ],
+   "workflows": [
+    "canonical-migrations.yml",
+    "canonical-probes.yml",
+    "canonical-sql-diag.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/validate-plan-50.mjs",
+   "descricao": "* Impede que a edição dos planos executivos perca etapas, subetapas, checkpoints",
+   "linhas": 99,
+   "env": [],
+   "npm_scripts": [
+    "audit:plan50"
+   ],
+   "workflows": [
+    "ci.yml"
+   ],
+   "orfao": false
+  }
+ ]
+}

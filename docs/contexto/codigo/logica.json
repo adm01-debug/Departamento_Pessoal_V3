@@ -1,0 +1,5090 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 157,
+ "por_camada": {
+  "contexts": 1,
+  "integrations": 7,
+  "lib": 7,
+  "providers": 1,
+  "python": 3,
+  "schemas": 25,
+  "services": 80,
+  "utils": 33
+ },
+ "arquivos": [
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "camada": "python",
+   "exports": [
+    "analyze_code_file",
+    "balanced",
+    "detect_stack",
+    "dir_tree",
+    "extract_html_constraints",
+    "extract_zod",
+    "files_cell",
+    "git",
+    "header",
+    "is_app_code",
+    "is_archived_sql",
+    "is_test_file",
+    "llm_synthesis",
+    "log",
+    "main",
+    "md_table",
+    "op_from_chain",
+    "read_text",
+    "redact",
+    "rel",
+    "render_access",
+    "render_architecture",
+    "render_changes",
+    "render_database",
+    "render_database_pointer",
+    "render_dataflow",
+    "render_features",
+    "render_glossary",
+    "render_index",
+    "render_integrations",
+    "render_modules",
+    "render_overview",
+    "render_rules",
+    "squash",
+    "stable_hash",
+    "strip_sql_comments",
+    "trunc",
+    "upsert_pointer",
+    "walk_repo"
+   ],
+   "linhas": 2138,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "AI_CONTEXT_INDEX",
+    "AI_CONTEXT_MODEL",
+    "AI_CONTEXT_PROFILE",
+    "AI_CONTEXT_SCHEMA_SNAPSHOT",
+    "ANTHROPIC_API_KEY"
+   ],
+   "externos": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "camada": "python",
+   "exports": [
+    "entry_file",
+    "git",
+    "main",
+    "parse_dt",
+    "producer_health",
+    "read_manifest"
+   ],
+   "linhas": 237,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "__future__",
+    "argparse",
+    "datetime",
+    "json",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "camada": "python",
+   "exports": [
+    "api",
+    "api_section",
+    "approx",
+    "banner",
+    "build_function_callers",
+    "callers_status_table",
+    "code",
+    "diff_fingerprints",
+    "dumps",
+    "excluded_sql",
+    "fingerprints",
+    "get_columns",
+    "get_constraints",
+    "get_cron",
+    "get_cron_runs",
+    "get_db_stats",
+    "get_extensions",
+    "get_foreign",
+    "get_functions",
+    "get_grants",
+    "get_index_stats",
+    "get_indexes",
+    "get_lints",
+    "get_migrations",
+    "get_policies",
+    "get_queues",
+    "get_realtime",
+    "get_roles",
+    "get_schemas",
+    "get_sequences",
+    "get_server",
+    "get_storage",
+    "get_table_stats",
+    "get_tables",
+    "get_triggers",
+    "get_types",
+    "get_vault",
+    "get_views",
+    "get_webhooks",
+    "group",
+    "has_ext",
+    "has_table",
+    "human_bytes",
+    "introspect_api",
+    "introspect_db",
+    "is_caller_source",
+    "jsonable",
+    "log",
+    "main",
+    "md_cell",
+    "md_table",
+    "q",
+    "record_error",
+    "redact",
+    "render_readme",
+    "render_relationships",
+    "render_simple",
+    "render_stats",
+    "render_tables",
+    "run_gen_types",
+    "run_pg_dump",
+    "rx_name_keys",
+    "scan_code_files",
+    "scrub",
+    "scrub_value",
+    "section",
+    "sha",
+    "slug",
+    "sql_without_routine_declarations",
+    "update_changelog",
+    "uslug",
+    "write"
+   ],
+   "linhas": 1772,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "CODE_SCAN_DIRS",
+    "CODE_SCAN_MAX_FILES",
+    "CRON_RUNS_PER_JOB",
+    "GEN_TYPES",
+    "PGDUMP",
+    "PGDUMP_SCHEMAS",
+    "REPO_ROOT",
+    "SNAPSHOT_DIR",
+    "SNAPSHOT_EXCLUDE_SCHEMAS",
+    "SNAPSHOT_INCLUDE_SCHEMAS",
+    "STAT_STATEMENTS_TOP",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_URL",
+    "SUPABASE_PROJECT_REF",
+    "SUPABASE_SNAPSHOT_PUBLICACAO"
+   ],
+   "externos": [
+    "__future__",
+    "datetime",
+    "decimal",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "psycopg",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "typing",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/contexts/index.ts",
+   "camada": "contexts",
+   "exports": [
+    "AuthProvider",
+    "EmpresaProvider",
+    "NotificationProvider",
+    "useAuth",
+    "useEmpresa",
+    "useNotification"
+   ],
+   "export_default": null,
+   "linhas": 5,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 19,
+   "usado_por_modulos": [
+    "components/ferias",
+    "components/ponto",
+    "components/sst",
+    "components/ui",
+    "hooks",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/lovable/index.ts",
+   "camada": "integrations",
+   "exports": [
+    "lovable"
+   ],
+   "export_default": null,
+   "linhas": 19,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.base.ts",
+   "camada": "integrations",
+   "exports": [
+    "supabase"
+   ],
+   "export_default": null,
+   "linhas": 10,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "components/settings",
+    "hooks",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "camada": "integrations",
+   "exports": [
+    "QueryBuilderType",
+    "fetchWithRetry",
+    "supabase",
+    "supabaseBase"
+   ],
+   "export_default": null,
+   "linhas": 440,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "VITE_SUPABASE_FUNCTIONS_BASE",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "externos": [
+    "@supabase/supabase-js",
+    "sonner"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 231,
+   "usado_por_modulos": [
+    "components",
+    "components/admin",
+    "components/admissoes",
+    "components/beneficios",
+    "components/colaborador-detalhes",
+    "components/contratacao",
+    "components/dashboard",
+    "components/descontos",
+    "components/desligamentos",
+    "components/documents",
+    "components/ferias",
+    "components/folha",
+    "components/integracoes",
+    "components/layout",
+    "components/medidas-disciplinares",
+    "components/pcs",
+    "components/ponto",
+    "components/portal",
+    "components/recrutamento",
+    "components/relatorios",
+    "components/seguranca",
+    "components/settings",
+    "components/sst",
+    "components/ui",
+    "contexts",
+    "hooks",
+    "hooks/ferias",
+    "integrations/lovable",
+    "integrations/supabase",
+    "pages",
+    "services",
+    "services/folha",
+    "services/tabelas",
+    "utils",
+    "utils/folha"
+   ],
+   "coberto_por_testes": 18,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/database.types.ts",
+   "camada": "integrations",
+   "exports": [
+    "Auditoria",
+    "Beneficio",
+    "Cargo",
+    "Colaborador",
+    "Database",
+    "Departamento",
+    "Empresa",
+    "Enums",
+    "Ferias",
+    "FolhaPagamento",
+    "Insertable",
+    "Json",
+    "PontoRegistro",
+    "Tables",
+    "Updatable"
+   ],
+   "export_default": null,
+   "linhas": 70,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 67,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "components/colaborador-detalhes",
+    "components/desligamentos",
+    "components/ferias",
+    "components/folha",
+    "components/settings",
+    "components/treinamentos",
+    "hooks",
+    "pages",
+    "services",
+    "services/tabelas",
+    "types",
+    "utils"
+   ],
+   "coberto_por_testes": 10,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/index.ts",
+   "camada": "integrations",
+   "exports": [
+    "supabase"
+   ],
+   "export_default": null,
+   "linhas": 4,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/previewAuthStorage.ts",
+   "camada": "integrations",
+   "exports": [
+    "brokeredPreviewStorage"
+   ],
+   "export_default": null,
+   "linhas": 102,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "integrations/supabase"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "camada": "integrations",
+   "exports": [
+    "CompositeTypes",
+    "Constants",
+    "Database",
+    "Enums",
+    "Json",
+    "Tables",
+    "TablesInsert",
+    "TablesUpdate"
+   ],
+   "export_default": null,
+   "linhas": 24625,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 73,
+   "usado_por_modulos": [
+    "components/admin",
+    "components/admissoes",
+    "components/afastamentos",
+    "components/beneficios",
+    "components/desligamentos",
+    "components/epis",
+    "components/exames",
+    "components/obrigacoes",
+    "components/ponto",
+    "components/portal",
+    "components/premiacoes",
+    "components/settings",
+    "components/sst",
+    "hooks",
+    "integrations/supabase",
+    "pages",
+    "services",
+    "services/folha",
+    "services/tabelas",
+    "types",
+    "utils"
+   ],
+   "coberto_por_testes": 13,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/circuitBreaker.ts",
+   "camada": "lib",
+   "exports": [
+    "CircuitBreaker",
+    "CircuitState",
+    "bitrixBreaker",
+    "genericBreaker",
+    "resendBreaker"
+   ],
+   "export_default": null,
+   "linhas": 93,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/cursor.ts",
+   "camada": "lib",
+   "exports": [
+    "CursorParams",
+    "CursorResult",
+    "buildCursorQuery",
+    "encodeCursor",
+    "extractNextCursor",
+    "parseCursor",
+    "useCursorPagination"
+   ],
+   "export_default": null,
+   "linhas": 116,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/masks.ts",
+   "camada": "lib",
+   "exports": [
+    "MaskType",
+    "formatarCEP",
+    "formatarCNPJ",
+    "formatarCPF",
+    "formatarPIS",
+    "formatarRG",
+    "formatarTelefone",
+    "getRGFormatInfo",
+    "maskCEP",
+    "maskCNPJ",
+    "maskCPF",
+    "maskCTPS",
+    "maskCurrency",
+    "maskDate",
+    "maskPIS",
+    "maskPhone",
+    "maskRG",
+    "masks",
+    "placeholders",
+    "unmask",
+    "validateCNH",
+    "validateCNPJ",
+    "validateCPF",
+    "validatePIS",
+    "validateRG",
+    "validateTituloEleitor"
+   ],
+   "export_default": null,
+   "linhas": 140,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/ui"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/queryClient.ts",
+   "camada": "lib",
+   "exports": [
+    "getQueryData",
+    "invalidateQueries",
+    "prefetchQuery",
+    "queryClient",
+    "setQueryData"
+   ],
+   "export_default": null,
+   "linhas": 32,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-query"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "contexts",
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/reciboAssinaturaPdf.ts",
+   "camada": "lib",
+   "exports": [
+    "ReciboAssinaturaData",
+    "gerarReciboAssinaturaPDF"
+   ],
+   "export_default": null,
+   "linhas": 108,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "jspdf",
+    "qrcode"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/retry.ts",
+   "camada": "lib",
+   "exports": [
+    "RetryOptions",
+    "RetryResult",
+    "retryEdgeFunction",
+    "retryWithIdempotency"
+   ],
+   "export_default": null,
+   "linhas": 173,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "camada": "lib",
+   "exports": [
+    "capitalize",
+    "cn",
+    "debounce",
+    "formatBytes",
+    "generateId",
+    "sleep",
+    "truncate"
+   ],
+   "export_default": null,
+   "linhas": 34,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "clsx",
+    "tailwind-merge"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 154,
+   "usado_por_modulos": [
+    "components/admissao",
+    "components/admissoes",
+    "components/afastamentos",
+    "components/dashboard",
+    "components/desligamentos",
+    "components/esocial",
+    "components/ferias",
+    "components/folha",
+    "components/forms",
+    "components/i18n",
+    "components/layout",
+    "components/medidas-disciplinares",
+    "components/notifications",
+    "components/obrigacoes",
+    "components/onboarding",
+    "components/organograma",
+    "components/ponto",
+    "components/portal",
+    "components/recrutamento",
+    "components/relatorios",
+    "components/settings",
+    "components/sst",
+    "components/ui",
+    "components/workflows",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/providers/index.ts",
+   "camada": "providers",
+   "exports": [
+    "QueryProvider",
+    "ThemeProvider",
+    "ToastProvider",
+    "useTheme"
+   ],
+   "export_default": null,
+   "linhas": 5,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/admissao.ts",
+   "camada": "schemas",
+   "exports": [
+    "AdmissaoSchema",
+    "admissaoSchema"
+   ],
+   "export_default": null,
+   "linhas": 18,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/afastamento.ts",
+   "camada": "schemas",
+   "exports": [
+    "AfastamentoSchema",
+    "afastamentoSchema"
+   ],
+   "export_default": null,
+   "linhas": 20,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/beneficio.ts",
+   "camada": "schemas",
+   "exports": [
+    "BeneficioSchema",
+    "beneficioSchema"
+   ],
+   "export_default": null,
+   "linhas": 14,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/settings",
+    "schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/cargo.ts",
+   "camada": "schemas",
+   "exports": [
+    "CargoSchema",
+    "cargoSchema"
+   ],
+   "export_default": null,
+   "linhas": 14,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/colaborador.ts",
+   "camada": "schemas",
+   "exports": [
+    "ColaboradorSchema",
+    "colaboradorSchema"
+   ],
+   "export_default": null,
+   "linhas": 34,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/colaboradorDetalhes.ts",
+   "camada": "schemas",
+   "exports": [
+    "anotacaoSchema",
+    "asoSchema",
+    "campoCustomizadoSchema",
+    "contatoEmergenciaSchema",
+    "dadosEstrangeiroSchema",
+    "deficienciaSchema",
+    "dependenteSchema",
+    "feriasColetivaSchema",
+    "formacaoSchema",
+    "historicoSalarialSchema",
+    "periodoExperienciaSchema",
+    "timeSchema",
+    "webhookConfigSchema"
+   ],
+   "export_default": null,
+   "linhas": 149,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 13,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/common.ts",
+   "camada": "schemas",
+   "exports": [
+    "auditoriaSchema",
+    "calcularFolhaSchema",
+    "cepSchema",
+    "cnpjSchema",
+    "healthcheckSchema",
+    "holeriteSchema",
+    "metricasSchema",
+    "notificacaoSchema",
+    "uuidPg",
+    "webhookSchema"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 7,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 16,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/cursos.ts",
+   "camada": "schemas",
+   "exports": [
+    "cursoSchema",
+    "inscricaoCursoSchema",
+    "trilhaCursoSchema",
+    "trilhaSchema"
+   ],
+   "export_default": null,
+   "linhas": 46,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/departamento.ts",
+   "camada": "schemas",
+   "exports": [
+    "DepartamentoSchema",
+    "departamentoSchema"
+   ],
+   "export_default": null,
+   "linhas": 16,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/documento.ts",
+   "camada": "schemas",
+   "exports": [
+    "DocumentoSchema",
+    "documentoSchema"
+   ],
+   "export_default": null,
+   "linhas": 13,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/empresa.ts",
+   "camada": "schemas",
+   "exports": [
+    "EmpresaSchema",
+    "EmpresaSchemaInput",
+    "empresaSchema"
+   ],
+   "export_default": null,
+   "linhas": 19,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/esocial/helpers.ts",
+   "camada": "schemas",
+   "exports": [
+    "ESocialData",
+    "ValidationError",
+    "ValidationResult",
+    "ValidationWarning",
+    "cnpjValido",
+    "cpfValido",
+    "dataValida",
+    "enumValido",
+    "maxLen",
+    "required"
+   ],
+   "export_default": null,
+   "linhas": 83,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "schemas/esocial",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/esocial/index.ts",
+   "camada": "schemas",
+   "exports": [
+    "getValidadoresDisponiveis",
+    "sugerirCorrecaoRubrica",
+    "validarEvento",
+    "validarRubricaESocial",
+    "validarS1000",
+    "validarS1005",
+    "validarS1010",
+    "validarS1020",
+    "validarS1070",
+    "validarS1200",
+    "validarS1210",
+    "validarS1260",
+    "validarS1270",
+    "validarS1280",
+    "validarS1298",
+    "validarS1299",
+    "validarS2190",
+    "validarS2200",
+    "validarS2205",
+    "validarS2206",
+    "validarS2210",
+    "validarS2220",
+    "validarS2230",
+    "validarS2240",
+    "validarS2299",
+    "validarS2300",
+    "validarS2306",
+    "validarS2399",
+    "validarS2400",
+    "validarS3000",
+    "validarS5001",
+    "validarS5011"
+   ],
+   "export_default": null,
+   "linhas": 64,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/folha",
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/esocial/naoPeriodicosValidators.ts",
+   "camada": "schemas",
+   "exports": [
+    "validarS2190",
+    "validarS2200",
+    "validarS2205",
+    "validarS2206",
+    "validarS2230",
+    "validarS2299",
+    "validarS2300",
+    "validarS2306",
+    "validarS2399",
+    "validarS2400",
+    "validarS3000"
+   ],
+   "export_default": null,
+   "linhas": 465,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "schemas/esocial"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/esocial/periodicosValidators.ts",
+   "camada": "schemas",
+   "exports": [
+    "validarS1000",
+    "validarS1005",
+    "validarS1010",
+    "validarS1020",
+    "validarS1070",
+    "validarS1200",
+    "validarS1210",
+    "validarS1260",
+    "validarS1270",
+    "validarS1280",
+    "validarS1298",
+    "validarS1299",
+    "validarS5001",
+    "validarS5011"
+   ],
+   "export_default": null,
+   "linhas": 792,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "schemas/esocial"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/esocial/rubricaValidator.ts",
+   "camada": "schemas",
+   "exports": [
+    "sugerirCorrecaoRubrica",
+    "validarRubricaESocial"
+   ],
+   "export_default": null,
+   "linhas": 75,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "schemas/esocial"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/esocial/sstValidators.ts",
+   "camada": "schemas",
+   "exports": [
+    "validarS2210",
+    "validarS2220",
+    "validarS2240"
+   ],
+   "export_default": null,
+   "linhas": 305,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "schemas/esocial"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/ferias.ts",
+   "camada": "schemas",
+   "exports": [
+    "FERIAS_ERROR_CODES",
+    "FeriasSchema",
+    "feriasSchema",
+    "feriasSchemaBase"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/folha.ts",
+   "camada": "schemas",
+   "exports": [
+    "FolhaSchema",
+    "folhaSchema"
+   ],
+   "export_default": null,
+   "linhas": 11,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services/folha"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/index.ts",
+   "camada": "schemas",
+   "exports": [],
+   "export_default": null,
+   "linhas": 18,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/recrutamento.ts",
+   "camada": "schemas",
+   "exports": [
+    "candidatoSchema",
+    "candidaturaSchema",
+    "vagaSchema"
+   ],
+   "export_default": null,
+   "linhas": 60,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/referencias.ts",
+   "camada": "schemas",
+   "exports": [
+    "centroCustoSchema",
+    "configAfastamentoSchema",
+    "contaBancariaSchema",
+    "dadosEstagiarioSchema",
+    "documentoPessoalSchema",
+    "feriasAprovacaoSchema",
+    "feriasArquivoSchema",
+    "feriasSolicitacaoSchema",
+    "linhaTransporteSchema",
+    "onboardingColaboradorSchema",
+    "onboardingTemplateSchema",
+    "onboardingTemplateTarefaSchema"
+   ],
+   "export_default": null,
+   "linhas": 155,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 12,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "schemas",
+    "services",
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/tableColumns.ts",
+   "camada": "schemas",
+   "exports": [
+    "TABLE_COLUMNS"
+   ],
+   "export_default": null,
+   "linhas": 4112,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/validate.ts",
+   "camada": "schemas",
+   "exports": [
+    "validateInput",
+    "validateTablePayload"
+   ],
+   "export_default": null,
+   "linhas": 130,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 116,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "components/dashboard",
+    "components/ferias",
+    "components/folha",
+    "components/ponto",
+    "components/portal",
+    "components/relatorios",
+    "components/settings",
+    "hooks",
+    "hooks/ferias",
+    "pages",
+    "services",
+    "services/folha",
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/schemas/workflowsPremiacoesCnab.ts",
+   "camada": "schemas",
+   "exports": [
+    "cenarioRoiInputSchema",
+    "cnabConfiguracaoSchema",
+    "premiacaoRegraSchema",
+    "premiacaoRoiCenarioSchema",
+    "workflowDefinicaoSchema",
+    "workflowEtapaSchema"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 6,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "schemas",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/admissaoService.ts",
+   "camada": "services",
+   "exports": [
+    "admissaoService"
+   ],
+   "export_default": null,
+   "linhas": 150,
+   "tabelas": [
+    "colaboradores"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/afastamentoService.ts",
+   "camada": "services",
+   "exports": [
+    "afastamentoService"
+   ],
+   "export_default": null,
+   "linhas": 351,
+   "tabelas": [
+    "afastamentos",
+    "cid10",
+    "config_afastamentos",
+    "documentos_afastamento",
+    "prorrogacoes_afastamento"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "components/afastamentos",
+    "hooks",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/assistenteIAService.ts",
+   "camada": "services",
+   "exports": [
+    "AssistentIARequest",
+    "AssistentIAResponse",
+    "ChatMessage",
+    "IAError",
+    "TokenUsage",
+    "assistenteIAService"
+   ],
+   "export_default": null,
+   "linhas": 278,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "VITE_SUPABASE_FUNCTIONS_BASE",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [
+    "user"
+   ],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/auditoriaService.ts",
+   "camada": "services",
+   "exports": [
+    "AuditoriaFiltros",
+    "AuditoriaRegistro",
+    "TrilhaAuditoriaFiltros",
+    "TrilhaAuditoriaRegistro",
+    "auditoriaService",
+    "notificacaoService"
+   ],
+   "export_default": null,
+   "linhas": 182,
+   "tabelas": [
+    "notificacoes"
+   ],
+   "rpcs": [
+    "get_audit_trail",
+    "listar_auditoria",
+    "registrar_auditoria"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 10,
+   "usado_por_modulos": [
+    "components/avaliacao",
+    "components/colaboradores",
+    "components/dashboard",
+    "components/ferias",
+    "components/ponto",
+    "components/settings",
+    "pages",
+    "services",
+    "utils"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/authService.ts",
+   "camada": "services",
+   "exports": [
+    "authService"
+   ],
+   "export_default": "authService",
+   "linhas": 58,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/avaliacaoService.ts",
+   "camada": "services",
+   "exports": [
+    "avaliacaoService"
+   ],
+   "export_default": null,
+   "linhas": 151,
+   "tabelas": [
+    "ciclos_avaliacao",
+    "competencias_config",
+    "feedbacks_360",
+    "metas_okrs",
+    "pdi_plano_desenvolvimento"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/backupService.ts",
+   "camada": "services",
+   "exports": [
+    "BackupRecord",
+    "downloadBlob",
+    "exportarBackupCSV",
+    "exportarBackupJSON"
+   ],
+   "export_default": null,
+   "linhas": 196,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/bancoHorasConfigService.ts",
+   "camada": "services",
+   "exports": [
+    "bancoHorasConfigService"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [
+    "banco_horas_config"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/bancoHorasService.ts",
+   "camada": "services",
+   "exports": [
+    "bancoHorasService"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [
+    "banco_horas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/baseService.ts",
+   "camada": "services",
+   "exports": [
+    "BaseService",
+    "ListOptions",
+    "ListResponse"
+   ],
+   "export_default": null,
+   "linhas": 200,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 14,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/batidasPontoService.ts",
+   "camada": "services",
+   "exports": [
+    "batidasPontoService"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "tabelas": [
+    "batidas_ponto",
+    "periodos_ponto"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/ponto",
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/beneficioService.ts",
+   "camada": "services",
+   "exports": [
+    "beneficioService"
+   ],
+   "export_default": null,
+   "linhas": 191,
+   "tabelas": [
+    "beneficios_colaborador"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/calculoBeneficiosService.ts",
+   "camada": "services",
+   "exports": [
+    "dependentesService",
+    "planoSaudeService",
+    "seguroVidaService",
+    "valeAlimentacaoService",
+    "valeTransporteService"
+   ],
+   "export_default": null,
+   "linhas": 285,
+   "tabelas": [
+    "beneficiarios_plano",
+    "beneficios",
+    "beneficios_colaborador",
+    "colaboradores",
+    "dependentes",
+    "recargas_vale"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/canalContabilidadeService.ts",
+   "camada": "services",
+   "exports": [
+    "AutorTipo",
+    "ThreadCategoria",
+    "ThreadPrioridade",
+    "ThreadStatus",
+    "canalContabilidadeService"
+   ],
+   "export_default": null,
+   "linhas": 174,
+   "tabelas": [
+    "contabilidade_contatos",
+    "contabilidade_mensagens",
+    "contabilidade_threads"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/cargoService.ts",
+   "camada": "services",
+   "exports": [
+    "cargoService"
+   ],
+   "export_default": null,
+   "linhas": 17,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/catalogoCursoService.ts",
+   "camada": "services",
+   "exports": [
+    "CertificadoComJoins",
+    "InscricaoComJoins",
+    "InstanciaComJoins",
+    "TrilhaCursoComCurso",
+    "catalogoCursoService"
+   ],
+   "export_default": null,
+   "linhas": 277,
+   "tabelas": [
+    "catalogo_cursos",
+    "inscricoes_cursos",
+    "treinamento_certificados",
+    "treinamento_feedback",
+    "treinamento_instancias",
+    "trilhas_aprendizado",
+    "trilhas_cursos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/cnabService.ts",
+   "camada": "services",
+   "exports": [
+    "CNABConfig",
+    "cnabService"
+   ],
+   "export_default": null,
+   "linhas": 1199,
+   "tabelas": [
+    "cnab_configuracoes",
+    "cnab_itens",
+    "cnab_remessas",
+    "contas_bancarias",
+    "empresas",
+    "folha_itens",
+    "folhas_pagamento",
+    "pix_lotes"
+   ],
+   "rpcs": [
+    "next_cnab_sequencial"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/folha",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/colaboradorDetalhesService.ts",
+   "camada": "services",
+   "exports": [
+    "atualizarDependente",
+    "criarASO",
+    "criarAnotacao",
+    "criarCampoCustomizado",
+    "criarContatoEmergencia",
+    "criarDependente",
+    "criarFeriasColetivas",
+    "criarFormacao",
+    "criarRegistroSalarial",
+    "criarTime",
+    "criarWebhook",
+    "excluirAnotacao",
+    "excluirContatoEmergencia",
+    "excluirDependente",
+    "excluirFormacao",
+    "excluirWebhook",
+    "listarASOs",
+    "listarAnotacoes",
+    "listarCamposCustomizados",
+    "listarContatosEmergencia",
+    "listarDependentes",
+    "listarEtnias",
+    "listarFeriasColetivas",
+    "listarFormacoes",
+    "listarHistoricoSalarial",
+    "listarIdentidadesGenero",
+    "listarPeriodosAquisitivos",
+    "listarTimes",
+    "listarTiposAdmissao",
+    "listarTiposEstabilidade",
+    "listarWebhooks",
+    "obterDadosEstrangeiro",
+    "obterDeficiencia",
+    "obterPeriodoExperiencia",
+    "obterValoresCamposCustomizados",
+    "salvarDadosEstrangeiro",
+    "salvarDeficiencia",
+    "salvarPeriodoExperiencia",
+    "salvarValorCampoCustomizado"
+   ],
+   "export_default": null,
+   "linhas": 555,
+   "tabelas": [
+    "anotacoes_colaborador",
+    "asos",
+    "campos_customizados",
+    "contatos_emergencia",
+    "dados_estrangeiro",
+    "deficiencias",
+    "dependentes",
+    "etnias",
+    "ferias_coletivas",
+    "formacoes_academicas",
+    "historico_salarial",
+    "identidades_genero",
+    "periodos_aquisitivos",
+    "periodos_experiencia",
+    "times",
+    "tipos_admissao",
+    "tipos_estabilidade",
+    "valores_campos_customizados",
+    "webhooks_config"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/colaboradorService.ts",
+   "camada": "services",
+   "exports": [
+    "colaboradorService"
+   ],
+   "export_default": null,
+   "linhas": 161,
+   "tabelas": [
+    "colaboradores"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "hooks",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/comunicacaoService.ts",
+   "camada": "services",
+   "exports": [
+    "comunicacaoService"
+   ],
+   "export_default": null,
+   "linhas": 105,
+   "tabelas": [
+    "canal_etica",
+    "comunicados",
+    "comunicados_leituras"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/contabilidadeService.ts",
+   "camada": "services",
+   "exports": [
+    "LancamentoComContas",
+    "contabilidadeService"
+   ],
+   "export_default": null,
+   "linhas": 104,
+   "tabelas": [
+    "folhas_pagamento",
+    "lancamentos_contabeis",
+    "plano_contas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/contratacaoService.ts",
+   "camada": "services",
+   "exports": [
+    "contratacaoService"
+   ],
+   "export_default": null,
+   "linhas": 313,
+   "tabelas": [
+    "admissao_tokens",
+    "admissoes",
+    "notificacoes_admissao"
+   ],
+   "rpcs": [],
+   "edges": [
+    "enviar-email-admissao"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "hooks",
+    "pages"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/contratoService.ts",
+   "camada": "services",
+   "exports": [
+    "contratoService"
+   ],
+   "export_default": null,
+   "linhas": 76,
+   "tabelas": [
+    "contratos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/contratoTemplateService.ts",
+   "camada": "services",
+   "exports": [
+    "ContratoGerado",
+    "ContratoTemplate",
+    "TIPO_CONTRATO_LABELS",
+    "TipoContrato",
+    "contratoTemplateService"
+   ],
+   "export_default": null,
+   "linhas": 242,
+   "tabelas": [
+    "contrato_templates",
+    "contrato_token_eventos",
+    "contratos_gerados"
+   ],
+   "rpcs": [
+    "contrato_estender_expiracao",
+    "contrato_gerar_token_assinatura",
+    "contrato_revogar_token"
+   ],
+   "edges": [
+    "gerar-contrato-pdf"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 7,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "components/contratos",
+    "hooks",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/controleAcessoService.ts",
+   "camada": "services",
+   "exports": [
+    "ControleAcessoComColaborador",
+    "controleAcessoService"
+   ],
+   "export_default": null,
+   "linhas": 38,
+   "tabelas": [
+    "controle_acesso"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/departamentoService.ts",
+   "camada": "services",
+   "exports": [
+    "departamentoService"
+   ],
+   "export_default": null,
+   "linhas": 16,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/desligamentoService.ts",
+   "camada": "services",
+   "exports": [
+    "DesligamentoComColaborador",
+    "desligamentoService"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 8,
+   "usado_por_modulos": [
+    "components/desligamentos",
+    "hooks",
+    "pages",
+    "services",
+    "utils"
+   ],
+   "coberto_por_testes": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/despesaService.ts",
+   "camada": "services",
+   "exports": [
+    "DespesaComColaborador",
+    "DespesaStatus",
+    "DespesaTipo",
+    "despesaService"
+   ],
+   "export_default": null,
+   "linhas": 172,
+   "tabelas": [
+    "despesas",
+    "despesas_aprovacoes_log"
+   ],
+   "rpcs": [
+    "aprovar_despesa",
+    "rejeitar_despesa"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/documentoService.ts",
+   "camada": "services",
+   "exports": [
+    "DocumentoListItem",
+    "documentoService"
+   ],
+   "export_default": null,
+   "linhas": 47,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/documents",
+    "components/portal",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/edgeFunctionsService.ts",
+   "camada": "services",
+   "exports": [
+    "EdgeFunctionInvokeError",
+    "edgeFunctionsService",
+    "isDefinitiveIdempotencyFailure"
+   ],
+   "export_default": null,
+   "linhas": 303,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 11,
+   "usado_por_modulos": [
+    "components/dashboard",
+    "components/layout",
+    "components/settings",
+    "pages"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/empresaService.ts",
+   "camada": "services",
+   "exports": [
+    "empresaService"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/encryptionService.ts",
+   "camada": "services",
+   "exports": [
+    "maskCNPJ",
+    "maskCPF",
+    "sanitizeForLogging",
+    "validateCNPJ",
+    "validateCPF"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/services/episService.ts",
+   "camada": "services",
+   "exports": [
+    "episEntregasService",
+    "episService"
+   ],
+   "export_default": null,
+   "linhas": 115,
+   "tabelas": [
+    "epis",
+    "epis_entregas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/esocialService.ts",
+   "camada": "services",
+   "exports": [
+    "AdmissionESocialClaim",
+    "ESocialConfig",
+    "ESocialEstatisticas",
+    "ESocialEvento",
+    "ESocialTransmissionResult",
+    "GerarEventosPeriodoResultado",
+    "adicionarCertificado",
+    "claimEventoAdmissaoESocial",
+    "completeEventoAdmissaoESocial",
+    "criarEvento",
+    "enviarEvento",
+    "failEventoAdmissaoESocial",
+    "gerarEventosPeriodo",
+    "getConfig",
+    "getEventoDescricao",
+    "listarCertificados",
+    "listarEventos",
+    "listarEventosPorCompetencia",
+    "listarEventosValidaveis",
+    "listarTransmissaoLogs",
+    "obterEstatisticas",
+    "reenviarEvento",
+    "salvarConfig",
+    "validarAnteDeEnviar"
+   ],
+   "export_default": null,
+   "linhas": 482,
+   "tabelas": [
+    "certificados_digitais",
+    "configuracoes_esocial",
+    "empresas",
+    "esocial_eventos",
+    "esocial_transmissao_logs",
+    "folha_itens"
+   ],
+   "rpcs": [
+    "claim_admission_esocial_event",
+    "complete_admission_esocial_event",
+    "fail_admission_esocial_event"
+   ],
+   "edges": [
+    "enviar-esocial",
+    "upload-certificado"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 7,
+   "usado_por_modulos": [
+    "components/esocial",
+    "components/folha",
+    "hooks",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/exportService.ts",
+   "camada": "services",
+   "exports": [
+    "PontoPdfLabels",
+    "Portaria671Solicitacao",
+    "exportPontoCSV",
+    "exportPontoPDF",
+    "exportPortaria671PDF",
+    "validateExportData"
+   ],
+   "export_default": null,
+   "linhas": 253,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns",
+    "jspdf",
+    "jspdf-autotable",
+    "papaparse"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 10,
+   "usado_por_modulos": [
+    "components/dashboard",
+    "components/ponto",
+    "components/settings",
+    "components/sst",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/faltasService.ts",
+   "camada": "services",
+   "exports": [
+    "FaltaComColaborador",
+    "faltasService"
+   ],
+   "export_default": null,
+   "linhas": 68,
+   "tabelas": [
+    "faltas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/feriasService.ts",
+   "camada": "services",
+   "exports": [
+    "feriasService"
+   ],
+   "export_default": null,
+   "linhas": 267,
+   "tabelas": [
+    "ferias_aprovacoes_log",
+    "periodos_aquisitivos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/folha/calculoLoteService.ts",
+   "camada": "services",
+   "exports": [
+    "BatchProgress",
+    "COLABORADOR_FOLHA_SELECT",
+    "EVENTO_VARIAVEL_SELECT",
+    "calculoLoteService"
+   ],
+   "export_default": null,
+   "linhas": 526,
+   "tabelas": [
+    "adiantamentos_salariais",
+    "beneficios_colaborador",
+    "colaboradores",
+    "emprestimos_consignados",
+    "eventos_variaveis",
+    "feriados",
+    "folha_auditoria",
+    "folha_itens",
+    "folhas_pagamento",
+    "pensoes",
+    "registros_ponto",
+    "vales_alimentacao",
+    "vales_transporte"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "sonner"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/folhaPagamentoService.ts",
+   "camada": "services",
+   "exports": [
+    "FolhaItemDetalhes",
+    "HoleriteData",
+    "folhaPagamentoService"
+   ],
+   "export_default": null,
+   "linhas": 358,
+   "tabelas": [
+    "colaboradores",
+    "empresas",
+    "folha_itens",
+    "folhas_pagamento",
+    "holerites"
+   ],
+   "rpcs": [],
+   "edges": [
+    "fechar-folha",
+    "reabrir-folha"
+   ],
+   "env": [],
+   "externos": [
+    "jspdf",
+    "jspdf-autotable"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/folha",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/folhaService.ts",
+   "camada": "services",
+   "exports": [
+    "FolhaFilters",
+    "FolhaRecord",
+    "folhaService"
+   ],
+   "export_default": null,
+   "linhas": 48,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/historicoContratoService.ts",
+   "camada": "services",
+   "exports": [
+    "historicoContratoService"
+   ],
+   "export_default": null,
+   "linhas": 34,
+   "tabelas": [
+    "historico_contratos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/horaExtraService.ts",
+   "camada": "services",
+   "exports": [
+    "horaExtraService"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "tabelas": [
+    "solicitacoes_hora_extra"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/index.ts",
+   "camada": "services",
+   "exports": [
+    "admissaoService",
+    "afastamentoService",
+    "auditoriaService",
+    "authService",
+    "avaliacaoService",
+    "bancoHorasConfigService",
+    "bancoHorasService",
+    "batidasPontoService",
+    "beneficioService",
+    "cargoService",
+    "catalogoCursoService",
+    "cnabService",
+    "colaboradorService",
+    "comunicacaoService",
+    "contabilidadeService",
+    "contratoService",
+    "controleAcessoService",
+    "departamentoService",
+    "desligamentoService",
+    "despesaService",
+    "documentoService",
+    "empresaService",
+    "episEntregasService",
+    "episService",
+    "faltasService",
+    "feriasService",
+    "fgtsService",
+    "folhaService",
+    "historicoContratoService",
+    "horaExtraService",
+    "intervaloService",
+    "jornadaHorariosService",
+    "lgpdService",
+    "localTrabalhoService",
+    "medidasDisciplinaresService",
+    "notificacaoService",
+    "pesquisaService",
+    "pontoAbertoService",
+    "pontoService",
+    "provisaoService",
+    "turnoService",
+    "webhookService",
+    "workflowService"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 28,
+   "usado_por_modulos": [
+    "components/ferias",
+    "components/medidas-disciplinares",
+    "components/portal",
+    "components/treinamentos",
+    "hooks",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/integracaoService.ts",
+   "camada": "services",
+   "exports": [
+    "CnabConfig",
+    "WebhookConfig",
+    "cnabService",
+    "webhookService"
+   ],
+   "export_default": null,
+   "linhas": 113,
+   "tabelas": [
+    "cnab_configuracoes",
+    "cnab_remessas",
+    "webhooks_config",
+    "webhooks_logs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/integracoes"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/intervaloService.ts",
+   "camada": "services",
+   "exports": [
+    "intervaloService"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "tabelas": [
+    "configuracoes_intervalo"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/jornadaHorariosService.ts",
+   "camada": "services",
+   "exports": [
+    "jornadaHorariosService"
+   ],
+   "export_default": null,
+   "linhas": 91,
+   "tabelas": [
+    "jornadas_horarios"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/lgpdService.ts",
+   "camada": "services",
+   "exports": [
+    "LgpdConsentimentoComColaborador",
+    "LgpdSolicitacaoComColaborador",
+    "lgpdService"
+   ],
+   "export_default": null,
+   "linhas": 99,
+   "tabelas": [
+    "lgpd_consentimentos",
+    "lgpd_solicitacoes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/localTrabalhoService.ts",
+   "camada": "services",
+   "exports": [
+    "localTrabalhoService"
+   ],
+   "export_default": null,
+   "linhas": 18,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/loggerService.ts",
+   "camada": "services",
+   "exports": [
+    "LogEntry",
+    "LogLevel",
+    "loggerService",
+    "redactLogContext",
+    "redactLogText"
+   ],
+   "export_default": null,
+   "linhas": 270,
+   "tabelas": [],
+   "rpcs": [
+    "log_frontend_error"
+   ],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 52,
+   "usado_por_modulos": [
+    "components",
+    "components/afastamentos",
+    "components/folha",
+    "components/ponto",
+    "contexts",
+    "errors",
+    "hooks",
+    "integrations/supabase",
+    "lib",
+    "pages",
+    "schemas",
+    "services",
+    "services/folha",
+    "services/tabelas",
+    "utils"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/medidasDisciplinaresService.ts",
+   "camada": "services",
+   "exports": [
+    "medidasDisciplinaresService"
+   ],
+   "export_default": null,
+   "linhas": 246,
+   "tabelas": [
+    "medidas_disciplinares",
+    "medidas_disciplinares_contestacao_anexos",
+    "medidas_disciplinares_integracao",
+    "medidas_disciplinares_workflow_log"
+   ],
+   "rpcs": [
+    "aplicar_medida_folha_ponto",
+    "medida_aprovar",
+    "medida_arquivar",
+    "medida_contestar",
+    "medida_enviar_aprovacao",
+    "medida_rejeitar",
+    "medida_responder_contestacao",
+    "sugerir_proxima_medida"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/medidas-disciplinares",
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/notificacoesService.ts",
+   "camada": "services",
+   "exports": [
+    "NotificationPayload",
+    "criarNotificacao",
+    "notificacoesService",
+    "notificarAjustePonto",
+    "notificarResultadoSync"
+   ],
+   "export_default": "notificacoesService",
+   "linhas": 94,
+   "tabelas": [
+    "colaboradores",
+    "notificacoes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pcsService.ts",
+   "camada": "services",
+   "exports": [
+    "pcsService"
+   ],
+   "export_default": null,
+   "linhas": 198,
+   "tabelas": [
+    "pcs_avaliacoes_cargo",
+    "pcs_fatores",
+    "pcs_grades",
+    "pcs_pesquisa_salarial",
+    "pcs_planos"
+   ],
+   "rpcs": [
+    "pcs_enquadramento",
+    "pcs_gerar_grades",
+    "pcs_grades_mercado",
+    "pcs_simular_impacto"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pesquisaService.ts",
+   "camada": "services",
+   "exports": [
+    "pesquisaService"
+   ],
+   "export_default": null,
+   "linhas": 104,
+   "tabelas": [
+    "pesquisas",
+    "pesquisas_perguntas",
+    "pesquisas_respostas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/piiAccessLogService.ts",
+   "camada": "services",
+   "exports": [
+    "PiiAcao",
+    "RegistrarAcessoPIIOpts",
+    "registrarAcessoPII"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "tabelas": [],
+   "rpcs": [
+    "record_pii_access"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 28,
+   "usado_por_modulos": [
+    "components/dashboard",
+    "components/folha",
+    "components/ponto",
+    "components/sst",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pontoAbertoService.ts",
+   "camada": "services",
+   "exports": [
+    "pontoAbertoService"
+   ],
+   "export_default": null,
+   "linhas": 13,
+   "tabelas": [
+    "pontos_abertos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pontoAuditService.ts",
+   "camada": "services",
+   "exports": [
+    "pontoAuditService"
+   ],
+   "export_default": null,
+   "linhas": 36,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pontoMonitorService.ts",
+   "camada": "services",
+   "exports": [
+    "pontoMonitorService"
+   ],
+   "export_default": null,
+   "linhas": 55,
+   "tabelas": [
+    "ponto_auditoria"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "sonner"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pontoOfflineService.ts",
+   "camada": "services",
+   "exports": [
+    "OfflineRegistro",
+    "pontoOfflineService"
+   ],
+   "export_default": null,
+   "linhas": 223,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [
+    "processar-ponto-offline"
+   ],
+   "env": [],
+   "externos": [
+    "crypto-js",
+    "idb"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/ponto",
+    "hooks",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pontoService.ts",
+   "camada": "services",
+   "exports": [
+    "pontoService"
+   ],
+   "export_default": null,
+   "linhas": 173,
+   "tabelas": [
+    "batidas_ponto",
+    "colaboradores",
+    "configuracoes_ponto",
+    "registros_ponto"
+   ],
+   "rpcs": [
+    "registrar_batida_ponto"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "crypto-js",
+    "date-fns"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pontosService.ts",
+   "camada": "services",
+   "exports": [
+    "pontosService"
+   ],
+   "export_default": null,
+   "linhas": 33,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/premiacoesService.ts",
+   "camada": "services",
+   "exports": [
+    "CenarioROI",
+    "CenarioROIConfig",
+    "CenarioROIInput",
+    "CenarioROIResultados",
+    "PERIODO_SEM_DATA",
+    "premiacoesService"
+   ],
+   "export_default": null,
+   "linhas": 405,
+   "tabelas": [
+    "folha_itens",
+    "notificacoes",
+    "premiacoes_auditoria",
+    "premiacoes_campanhas",
+    "premiacoes_pagamentos",
+    "premiacoes_regras",
+    "premiacoes_roi_cenarios"
+   ],
+   "rpcs": [
+    "get_empresa_admin_ids"
+   ],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/premiacoes",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/provisaoService.ts",
+   "camada": "services",
+   "exports": [
+    "provisaoService"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [
+    "provisoes_mensais"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/pushNotificationService.ts",
+   "camada": "services",
+   "exports": [
+    "pushNotificationService"
+   ],
+   "export_default": null,
+   "linhas": 104,
+   "tabelas": [
+    "push_subscriptions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/recrutamentoService.ts",
+   "camada": "services",
+   "exports": [
+    "recrutamentoService"
+   ],
+   "export_default": null,
+   "linhas": 201,
+   "tabelas": [
+    "candidatos",
+    "candidaturas",
+    "recrutamento_anotacoes",
+    "recrutamento_entrevistas",
+    "recrutamento_testes",
+    "vagas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/rescisaoService.ts",
+   "camada": "services",
+   "exports": [
+    "CalcularRescisaoParams",
+    "rescisaoService"
+   ],
+   "export_default": null,
+   "linhas": 351,
+   "tabelas": [
+    "dependentes",
+    "desligamentos",
+    "homologacoes_rescisao"
+   ],
+   "rpcs": [
+    "assinar_desligamento"
+   ],
+   "edges": [
+    "pagar-desligamento"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/desligamentos"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/securityService.ts",
+   "camada": "services",
+   "exports": [
+    "BlockedIp",
+    "GeoBlockedAttempt",
+    "LoginAttempt",
+    "SecurityAlert",
+    "securityService"
+   ],
+   "export_default": null,
+   "linhas": 150,
+   "tabelas": [
+    "blocked_ips",
+    "geo_blocked_attempts",
+    "login_attempts",
+    "rate_limit_logs",
+    "security_alerts"
+   ],
+   "rpcs": [
+    "resolve_security_alert"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/adminService.ts",
+   "camada": "services",
+   "exports": [
+    "bitrix24Service",
+    "logEnvioRelatoriosService",
+    "relatoriosAgendadosService",
+    "savedFiltersService"
+   ],
+   "export_default": null,
+   "linhas": 98,
+   "tabelas": [
+    "bitrix24_config",
+    "bitrix24_sync_logs",
+    "log_envio_relatorios",
+    "relatorios_agendados",
+    "saved_filters"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/beneficiosService.ts",
+   "camada": "services",
+   "exports": [
+    "SeguroColaboradorVinculo",
+    "beneficiariosPlanoService",
+    "beneficiariosSeguroService",
+    "colaboradorBeneficiosService",
+    "segurosColaboradoresService"
+   ],
+   "export_default": null,
+   "linhas": 108,
+   "tabelas": [
+    "beneficiarios_plano",
+    "beneficiarios_seguro",
+    "colaborador_beneficios",
+    "seguros_colaboradores"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/documentosService.ts",
+   "camada": "services",
+   "exports": [
+    "documentoTemplatesService",
+    "documentosAdmissaoService",
+    "documentosAfastamentoService",
+    "documentosAssinaturaService",
+    "documentosColaboradorService"
+   ],
+   "export_default": null,
+   "linhas": 90,
+   "tabelas": [
+    "documento_templates",
+    "documentos_admissao",
+    "documentos_afastamento",
+    "documentos_assinatura",
+    "documentos_colaborador"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/folhaService.ts",
+   "camada": "services",
+   "exports": [
+    "esocialLotesService",
+    "eventosVariaveisService",
+    "lancamentosFolhaService",
+    "rubricasFolhaService"
+   ],
+   "export_default": null,
+   "linhas": 100,
+   "tabelas": [
+    "esocial_lotes",
+    "eventos_variaveis",
+    "lancamentos_folha",
+    "rubricas_folha"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/folha",
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/index.ts",
+   "camada": "services",
+   "exports": [
+    "ajustesPontoService",
+    "beneficiariosPlanoService",
+    "beneficiariosSeguroService",
+    "bitrix24Service",
+    "colaboradorBeneficiosService",
+    "configAfastamentosService",
+    "documentoTemplatesService",
+    "documentosAdmissaoService",
+    "documentosAfastamentoService",
+    "documentosAssinaturaService",
+    "documentosColaboradorService",
+    "esocialLotesService",
+    "eventosVariaveisService",
+    "feriasSolicitacoesService",
+    "historicoCargoService",
+    "historicoFeriasService",
+    "lancamentosFolhaService",
+    "linhasTransporteService",
+    "logEnvioRelatoriosService",
+    "notificacoesAdmissaoService",
+    "onboardingService",
+    "periodosPontoService",
+    "relatoriosAgendadosService",
+    "rubricasFolhaService",
+    "savedFiltersService",
+    "segurosColaboradoresService",
+    "treinamentoParticipantesService",
+    "viewsService"
+   ],
+   "export_default": null,
+   "linhas": 38,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/pontoService.ts",
+   "camada": "services",
+   "exports": [
+    "ajustesPontoService",
+    "periodosPontoService"
+   ],
+   "export_default": null,
+   "linhas": 80,
+   "tabelas": [
+    "ajustes_ponto",
+    "periodos_ponto"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/rhService.ts",
+   "camada": "services",
+   "exports": [
+    "configAfastamentosService",
+    "feriasSolicitacoesService",
+    "historicoCargoService",
+    "historicoFeriasService",
+    "linhasTransporteService",
+    "notificacoesAdmissaoService",
+    "onboardingService",
+    "treinamentoParticipantesService"
+   ],
+   "export_default": null,
+   "linhas": 226,
+   "tabelas": [
+    "config_afastamentos",
+    "ferias_solicitacoes",
+    "historico_cargo",
+    "historico_ferias",
+    "linhas_transporte",
+    "notificacoes_admissao",
+    "onboarding_colaborador",
+    "onboarding_tarefas",
+    "onboarding_template_tarefas",
+    "onboarding_templates",
+    "treinamento_participantes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelas/viewsService.ts",
+   "camada": "services",
+   "exports": [
+    "viewsService"
+   ],
+   "export_default": null,
+   "linhas": 156,
+   "tabelas": [
+    "vw_alertas_compensacao",
+    "vw_alertas_rh",
+    "vw_banco_horas_saldo",
+    "vw_batidas_dia",
+    "vw_batidas_resumo",
+    "vw_cadastro_incompleto",
+    "vw_colaboradores_completo",
+    "vw_dashboard_time",
+    "vw_faltas_mensal",
+    "vw_ferias_resumo",
+    "vw_folha_ponto_mensal",
+    "vw_kpi_absenteismo",
+    "vw_kpi_beneficios_custo",
+    "vw_kpi_ponto_resumo",
+    "vw_kpi_turnover",
+    "vw_saldo_compensacao_mensal"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/tabelas"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelasComplementaresService.ts",
+   "camada": "services",
+   "exports": [],
+   "export_default": null,
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/dashboard",
+    "components/integracoes",
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/tabelasReferenciaService.ts",
+   "camada": "services",
+   "exports": [
+    "atualizarCentroCusto",
+    "atualizarContaBancaria",
+    "atualizarFeriasAprovacao",
+    "criarCentroCusto",
+    "criarContaBancaria",
+    "criarDocumentoPessoal",
+    "criarFeriasAprovacao",
+    "criarFeriasArquivo",
+    "desvincularDependenteBeneficio",
+    "excluirCentroCusto",
+    "excluirContaBancaria",
+    "excluirDocumentoPessoal",
+    "listarCategoriasTrabalhador",
+    "listarCentrosCusto",
+    "listarCondicoesIngresso",
+    "listarContasBancarias",
+    "listarDependentesBeneficios",
+    "listarDescricoesLogradouro",
+    "listarDocumentosPessoais",
+    "listarFeriasAprovacoes",
+    "listarFeriasArquivos",
+    "listarGenerosDocumento",
+    "listarMotivosAfastamento",
+    "listarNacionalidades",
+    "listarPaises",
+    "listarRelacionamentosContatoEmergencia",
+    "listarRelacionamentosDependentes",
+    "listarTemposResidencia",
+    "listarTiposAvisoPrevio",
+    "listarTiposDeficiencia",
+    "listarTiposDesligamento",
+    "listarTiposPagamento",
+    "listarTiposSalario",
+    "listarTiposVisto",
+    "obterDadosEstagiario",
+    "salvarDadosEstagiario",
+    "vincularDependenteBeneficio"
+   ],
+   "export_default": null,
+   "linhas": 331,
+   "tabelas": [
+    "centros_custo",
+    "contas_bancarias",
+    "dados_estagiario",
+    "dependentes_beneficios",
+    "documentos_pessoais_arquivos",
+    "ferias_aprovacoes",
+    "ferias_arquivos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/turnoService.ts",
+   "camada": "services",
+   "exports": [
+    "turnoService"
+   ],
+   "export_default": null,
+   "linhas": 83,
+   "tabelas": [
+    "escalas_trabalho",
+    "turnos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/webhookService.ts",
+   "camada": "services",
+   "exports": [
+    "webhookService"
+   ],
+   "export_default": null,
+   "linhas": 44,
+   "tabelas": [
+    "webhook_logs"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/whatsappService.ts",
+   "camada": "services",
+   "exports": [
+    "WhatsAppConfig",
+    "WhatsAppConfigData",
+    "WhatsAppLog",
+    "WhatsAppTemplate",
+    "whatsappService"
+   ],
+   "export_default": null,
+   "linhas": 126,
+   "tabelas": [
+    "whatsapp_config",
+    "whatsapp_mensagens_logs",
+    "whatsapp_templates"
+   ],
+   "rpcs": [],
+   "edges": [
+    "whatsapp-send"
+   ],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/integracoes",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/workflowService.ts",
+   "camada": "services",
+   "exports": [
+    "workflowService"
+   ],
+   "export_default": null,
+   "linhas": 544,
+   "tabelas": [
+    "workflows_definicoes",
+    "workflows_etapas",
+    "workflows_execucoes",
+    "workflows_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/afastamentoPDF.ts",
+   "camada": "utils",
+   "exports": [
+    "gerarAfastamentosPDF"
+   ],
+   "export_default": null,
+   "linhas": 131,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns",
+    "jspdf",
+    "jspdf-autotable"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/auditLogger.ts",
+   "camada": "utils",
+   "exports": [
+    "auditLogger"
+   ],
+   "export_default": null,
+   "linhas": 115,
+   "tabelas": [],
+   "rpcs": [
+    "registrar_auditoria"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 11,
+   "usado_por_modulos": [
+    "calculators",
+    "components/settings",
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/avisoFeriasPDF.ts",
+   "camada": "utils",
+   "exports": [
+    "AvisoFeriasInput",
+    "AvisoFeriasResult",
+    "gerarAvisoFeriasPDF"
+   ],
+   "export_default": null,
+   "linhas": 225,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns",
+    "jspdf",
+    "jspdf-autotable"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/calculoFerias.ts",
+   "camada": "utils",
+   "exports": [
+    "CalculoFeriasParams",
+    "CalculoFeriasResult",
+    "calculoFerias"
+   ],
+   "export_default": null,
+   "linhas": 34,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/comunicadoFeriasColetivasPDF.ts",
+   "camada": "utils",
+   "exports": [
+    "ComunicadoColetivasInput",
+    "ComunicadoResult",
+    "gerarComunicadoMTE",
+    "gerarComunicadoSindicato"
+   ],
+   "export_default": null,
+   "linhas": 257,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns",
+    "jspdf"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks/ferias"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/cursorPagination.ts",
+   "camada": "utils",
+   "exports": [
+    "CursorFilter",
+    "cursorToFilter",
+    "decodeCursor",
+    "encodeCursor"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/utils/dateLocal.ts",
+   "camada": "utils",
+   "exports": [
+    "addDaysLocal",
+    "currentCompetenciaLocal",
+    "formatCompetenciaLocal",
+    "formatDateLocalISO",
+    "todayLocalISO"
+   ],
+   "export_default": null,
+   "linhas": 68,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 39,
+   "usado_por_modulos": [
+    "components/colaborador-detalhes",
+    "components/descontos",
+    "components/folha",
+    "components/pcs",
+    "components/ponto",
+    "components/sst",
+    "pages",
+    "services",
+    "services/folha",
+    "services/tabelas",
+    "utils",
+    "utils/importacao"
+   ],
+   "coberto_por_testes": 5,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/desligamentoExcel.ts",
+   "camada": "utils",
+   "exports": [
+    "exportarDesligamentosExcel"
+   ],
+   "export_default": null,
+   "linhas": 69,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "sonner"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/esocialXmlGenerator.ts",
+   "camada": "utils",
+   "exports": [
+    "ESocialDados",
+    "ESocialXmlParams",
+    "gerarXmlESocial"
+   ],
+   "export_default": null,
+   "linhas": 172,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/evaluationPDF.ts",
+   "camada": "utils",
+   "exports": [
+    "gerarPDIPDF"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "jspdf",
+    "jspdf-autotable",
+    "sonner"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/feriasPDF.ts",
+   "camada": "utils",
+   "exports": [
+    "FeriasKpiStats",
+    "FeriasRelatorioFilters",
+    "feriasPDF"
+   ],
+   "export_default": null,
+   "linhas": 221,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns",
+    "jspdf",
+    "jspdf-autotable"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/ferias"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/fileSignature.ts",
+   "camada": "utils",
+   "exports": [
+    "SignedFileType",
+    "hasValidSignature"
+   ],
+   "export_default": null,
+   "linhas": 24,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/afastamentos"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/folha/pontoIntegracaoUtils.ts",
+   "camada": "utils",
+   "exports": [
+    "pontoIntegracaoUtils"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services/folha"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/folha/validadorFolha.ts",
+   "camada": "utils",
+   "exports": [
+    "AlertaConsistencia",
+    "validadorFolha"
+   ],
+   "export_default": null,
+   "linhas": 170,
+   "tabelas": [
+    "folha_itens",
+    "rubricas_folha"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/folhaCalc.ts",
+   "camada": "utils",
+   "exports": [
+    "CalculoParams",
+    "CalculoResultado",
+    "folhaCalc"
+   ],
+   "export_default": null,
+   "linhas": 239,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "decimal.js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/folha",
+    "hooks",
+    "services",
+    "services/folha"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/format.ts",
+   "camada": "utils",
+   "exports": [
+    "formatCNPJ",
+    "formatCPF",
+    "formatCompetencia",
+    "formatCurrency",
+    "formatDate",
+    "formatDateLong",
+    "formatDateTime",
+    "formatNumber",
+    "formatPercent",
+    "parseDateSafe"
+   ],
+   "export_default": null,
+   "linhas": 174,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 13,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "components/afastamentos",
+    "components/esocial",
+    "components/premiacoes",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/holeritePDF.ts",
+   "camada": "utils",
+   "exports": [
+    "gerarPDFHolerite"
+   ],
+   "export_default": null,
+   "linhas": 162,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "jspdf"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/importacao/columnMap.ts",
+   "camada": "utils",
+   "exports": [
+    "COLUMN_MAP",
+    "TEMPLATE_HEADERS",
+    "TEMPLATE_SAMPLE_ROW",
+    "mapColumns",
+    "normalizeHeader"
+   ],
+   "export_default": null,
+   "linhas": 41,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "utils/importacao"
+   ],
+   "coberto_por_testes": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/importacao/excelDownload.ts",
+   "camada": "utils",
+   "exports": [
+    "XLSX_MIME",
+    "buildTabularWorkbook",
+    "downloadWorkbook"
+   ],
+   "export_default": null,
+   "linhas": 46,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "exceljs"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/pcs",
+    "hooks",
+    "utils",
+    "utils/importacao"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/importacao/parser.ts",
+   "camada": "utils",
+   "exports": [
+    "ParseOptions",
+    "ParsedImportRow",
+    "parseRows",
+    "parseWorkbookBuffer",
+    "readWorkbookRows"
+   ],
+   "export_default": null,
+   "linhas": 103,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "exceljs"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/importacao/template.ts",
+   "camada": "utils",
+   "exports": [
+    "TEMPLATE_FILENAME",
+    "TEMPLATE_MIME",
+    "buildTemplateBuffer",
+    "buildTemplateWorkbook",
+    "downloadTemplate"
+   ],
+   "export_default": null,
+   "linhas": 28,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "exceljs"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/importacao/validators.ts",
+   "camada": "utils",
+   "exports": [
+    "normalizarCPF",
+    "parseDate",
+    "parseSalario",
+    "validarCPF"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "utils/importacao"
+   ],
+   "coberto_por_testes": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/passwordPolicy.ts",
+   "camada": "utils",
+   "exports": [
+    "PasswordValidation",
+    "checkPasswordBreach",
+    "validatePassword",
+    "validatePasswordFull"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "contexts",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/pgInterval.ts",
+   "camada": "utils",
+   "exports": [
+    "parsePgIntervalToHours"
+   ],
+   "export_default": null,
+   "linhas": 106,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/piiMask.ts",
+   "camada": "utils",
+   "exports": [
+    "maskBankAccount",
+    "maskCpfDisplay",
+    "maskEmail",
+    "maskGeneric",
+    "maskPiiDeep",
+    "maskPisDisplay"
+   ],
+   "export_default": null,
+   "linhas": 77,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/rescisaoCalc.ts",
+   "camada": "utils",
+   "exports": [
+    "RescisaoParams",
+    "RescisaoResult",
+    "SeguroDesempregoInfo",
+    "calcularRescisao",
+    "calcularRescisaoCore",
+    "fmt",
+    "normalizarTipoRescisao"
+   ],
+   "export_default": null,
+   "linhas": 445,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "calculators",
+    "components/desligamentos",
+    "pages",
+    "services",
+    "utils"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/rescisaoPDF.ts",
+   "camada": "utils",
+   "exports": [
+    "AuditoriaPdf",
+    "gerarPDFRescisao",
+    "mapearResultadoDeDesligamento"
+   ],
+   "export_default": null,
+   "linhas": 243,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "jspdf",
+    "jspdf-autotable",
+    "sonner"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/desligamentos",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/safeError.ts",
+   "camada": "utils",
+   "exports": [
+    "safeErrorMessage"
+   ],
+   "export_default": null,
+   "linhas": 67,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 114,
+   "usado_por_modulos": [
+    "components/admissoes",
+    "components/dashboard",
+    "components/desligamentos",
+    "components/ferias",
+    "components/folha",
+    "components/integracoes",
+    "components/layout",
+    "components/medidas-disciplinares",
+    "components/ponto",
+    "components/portal",
+    "components/premiacoes",
+    "components/relatorios",
+    "components/settings",
+    "components/sst",
+    "components/ui",
+    "hooks",
+    "hooks/ferias",
+    "pages",
+    "services/folha"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/safeUrl.ts",
+   "camada": "utils",
+   "exports": [
+    "assertAllowedUrl",
+    "isAllowedUrl",
+    "safeHref"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 10,
+   "usado_por_modulos": [
+    "components/afastamentos",
+    "components/colaborador-detalhes",
+    "components/documents",
+    "components/folha",
+    "components/medidas-disciplinares",
+    "components/sst",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/sanitizeHtml.ts",
+   "camada": "utils",
+   "exports": [
+    "SanitizeOptions",
+    "sanitizeContractHtml",
+    "sanitizeHtml",
+    "sanitizePlainText"
+   ],
+   "export_default": null,
+   "linhas": 209,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "dompurify"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/portal",
+    "contexts",
+    "pages"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/secureJson.ts",
+   "camada": "utils",
+   "exports": [
+    "secureJsonParse"
+   ],
+   "export_default": null,
+   "linhas": 60,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/ui",
+    "hooks",
+    "integrations/supabase"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/toError.ts",
+   "camada": "utils",
+   "exports": [
+    "toError",
+    "toErrorMessage"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/uploadValidation.ts",
+   "camada": "utils",
+   "exports": [
+    "sanitizeFileName",
+    "validateUploadFile"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components/portal",
+    "pages",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  }
+ ]
+}

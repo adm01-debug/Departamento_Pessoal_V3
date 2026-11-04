@@ -1,0 +1,88 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (108)",
+   "src/components (1)"
+  ],
+  "componentes": [
+   "src/components (312)",
+   "src/pages (109)",
+   "src/contexts (3)"
+  ],
+  "hooks": [
+   "src/hooks (88)",
+   "src/components (5)",
+   "src/contexts (4)"
+  ],
+  "servicos_logica": [
+   "src/services (80)",
+   "src/utils (33)",
+   "src/schemas (25)"
+  ],
+  "testes": [
+   "co-localizado (__tests__) (468)",
+   "co-localizado (*.test) (62)",
+   "e2e/ (27)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/simulacao (12)",
+   "scripts/inventario (5)",
+   "scripts/db (3)"
+  ],
+  "docs": [
+   "docs (72)",
+   "(raiz) (31)",
+   ".github (1)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (87%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (99%)",
+  "edge_functions": "kebab-case (68%)",
+  "tabelas": "snake_case (84%)"
+ },
+ "barrels_index": 23,
+ "extensao_componentes": [
+  ".tsx (429)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "commitlint",
+  "exemplos": [
+   "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)",
+   "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)",
+   "fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)",
+   "feat: security hardening - cherry-pick PR 315 sem workflows (#334)",
+   "fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)"
+  ]
+ },
+ "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
+ "codeowners": ".github/CODEOWNERS",
+ "contributing": "CONTRIBUTING.md",
+ "instrucoes_agentes": [
+  ".claude/CLAUDE.md",
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": true,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.build.json",
+   "tsconfig.e2e.json",
+   "tsconfig.json",
+   "tsconfig.node.json",
+   "tsconfig.tests.json"
+  ]
+ }
+}

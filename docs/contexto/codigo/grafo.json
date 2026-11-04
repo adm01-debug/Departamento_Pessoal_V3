@@ -1,0 +1,350 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nos": 937,
+ "arestas": 4583,
+ "hubs": [
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "importado_por": 256
+  },
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 250
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 249
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 194
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 155
+  },
+  {
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 144
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 137
+  },
+  {
+   "arquivo": "src/components/ui/dialog.tsx",
+   "importado_por": 124
+  },
+  {
+   "arquivo": "src/schemas/validate.ts",
+   "importado_por": 117
+  },
+  {
+   "arquivo": "src/utils/safeError.ts",
+   "importado_por": 115
+  },
+  {
+   "arquivo": "src/hooks/useEmpresas.ts",
+   "importado_por": 111
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 107
+  },
+  {
+   "arquivo": "src/components/ui/spinner.tsx",
+   "importado_por": 92
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 91
+  },
+  {
+   "arquivo": "src/components/PageTitle.tsx",
+   "importado_por": 88
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "importado_por": 86
+  },
+  {
+   "arquivo": "src/components/layout/index.ts",
+   "importado_por": 85
+  },
+  {
+   "arquivo": "src/integrations/supabase/database.types.ts",
+   "importado_por": 77
+  },
+  {
+   "arquivo": "supabase/functions/_shared/contract.ts",
+   "importado_por": 73
+  },
+  {
+   "arquivo": "supabase/functions/_shared/rateLimit.ts",
+   "importado_por": 65
+  },
+  {
+   "arquivo": "supabase/functions/_shared/csrf.ts",
+   "importado_por": 61
+  },
+  {
+   "arquivo": "supabase/functions/_shared/sentry.ts",
+   "importado_por": 56
+  },
+  {
+   "arquivo": "src/services/loggerService.ts",
+   "importado_por": 54
+  },
+  {
+   "arquivo": "src/components/ui/tabs.tsx",
+   "importado_por": 49
+  },
+  {
+   "arquivo": "src/hooks/index.ts",
+   "importado_por": 44
+  },
+  {
+   "arquivo": "src/utils/dateLocal.ts",
+   "importado_por": 44
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 38
+  },
+  {
+   "arquivo": "src/hooks/usePiiMask.ts",
+   "importado_por": 36
+  },
+  {
+   "arquivo": "src/components/ui/tooltip.tsx",
+   "importado_por": 32
+  },
+  {
+   "arquivo": "supabase/functions/_shared/authz.ts",
+   "importado_por": 32
+  },
+  {
+   "arquivo": "src/types/entities.ts",
+   "importado_por": 31
+  },
+  {
+   "arquivo": "src/services/index.ts",
+   "importado_por": 29
+  },
+  {
+   "arquivo": "src/services/piiAccessLogService.ts",
+   "importado_por": 29
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 22
+  },
+  {
+   "arquivo": "src/hooks/useColaboradorDetalhes.ts",
+   "importado_por": 22
+  },
+  {
+   "arquivo": "src/contexts/index.ts",
+   "importado_por": 20
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 19
+  },
+  {
+   "arquivo": "src/components/ui/scroll-area.tsx",
+   "importado_por": 18
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 18
+  },
+  {
+   "arquivo": "src/schemas/common.ts",
+   "importado_por": 17
+  }
+ ],
+ "ciclos": {
+  "total": 3,
+  "maiores": [
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/components/layout/MainLayout.tsx",
+     "src/components/layout/index.ts"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/components/workflows/NodeInspector.tsx",
+     "src/components/workflows/WorkflowDesigner.tsx"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/integrations/supabase/client.ts",
+     "src/services/loggerService.ts"
+    ]
+   }
+  ]
+ },
+ "orfaos": [
+  "lighthouserc.cjs",
+  "public/sw-custom.js",
+  "src/assets/index.ts",
+  "src/components/auth/index.ts",
+  "src/components/colaboradores/index.ts",
+  "src/components/dashboard/SectionHeader.tsx",
+  "src/components/index.ts",
+  "src/components/layout/Breadcrumb.tsx",
+  "src/components/layout/Column.tsx",
+  "src/components/layout/Container.tsx",
+  "src/components/layout/Flex.tsx",
+  "src/components/layout/Footer.tsx",
+  "src/components/layout/Grid.tsx",
+  "src/components/layout/NavItem.tsx",
+  "src/components/layout/PageContainer.tsx",
+  "src/components/layout/Row.tsx",
+  "src/components/layout/Section.tsx",
+  "src/components/layout/SectionHeader.tsx",
+  "src/components/layout/SidebarFooter.tsx",
+  "src/components/layout/Stack.tsx",
+  "src/components/notifications/NotificationCenter.tsx",
+  "src/components/notifications/index.ts",
+  "src/components/ui/data-table.tsx",
+  "src/components/ui/form.tsx",
+  "src/components/ui/masked-input.tsx",
+  "src/components/ui/page-header.tsx",
+  "src/components/ui/search-input.tsx",
+  "src/components/ui/sidebar.tsx",
+  "src/components/ui/use-toast.ts",
+  "src/constants/workflow-status.ts",
+  "src/hooks/validators.ts",
+  "src/i18n/useTranslation.ts",
+  "src/integrations/supabase/index.ts",
+  "src/services/encryptionService.ts",
+  "src/setupTests.ts",
+  "src/utils/cursorPagination.ts",
+  "supabase/functions/backup-automatico/config.ts",
+  "supabase/functions/calcular-13-salario/config.ts",
+  "supabase/functions/calcular-ferias/config.ts",
+  "supabase/functions/calcular-folha/config.ts",
+  "supabase/functions/calcular-rescisao/config.ts",
+  "supabase/functions/enviar-esocial/config.ts",
+  "supabase/functions/enviar-esocial/s2299.ts",
+  "supabase/functions/enviar-relatorio/config.ts",
+  "supabase/functions/gerar-guias/config.ts",
+  "supabase/functions/gerar-holerite/config.ts",
+  "supabase/functions/processar-agendamentos/config.ts",
+  "supabase/functions/processar-ponto/config.ts",
+  "supabase/functions/sincronizar-bitrix/config.ts",
+  "supabase/functions/webhook/contract_test.ts",
+  "supabase/functions/webhook/webhook_test.ts"
+ ],
+ "modulos_mais_acoplados": [
+  {
+   "modulo": "components/ui",
+   "depende_de": 6,
+   "importado_por": 46
+  },
+  {
+   "modulo": "pages",
+   "depende_de": 52,
+   "importado_por": 0
+  },
+  {
+   "modulo": "hooks",
+   "depende_de": 11,
+   "importado_por": 32
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 2,
+   "importado_por": 41
+  },
+  {
+   "modulo": "services",
+   "depende_de": 8,
+   "importado_por": 31
+  },
+  {
+   "modulo": "utils",
+   "depende_de": 5,
+   "importado_por": 31
+  },
+  {
+   "modulo": "lib",
+   "depende_de": 1,
+   "importado_por": 28
+  },
+  {
+   "modulo": "schemas",
+   "depende_de": 2,
+   "importado_por": 14
+  },
+  {
+   "modulo": "components/layout",
+   "depende_de": 12,
+   "importado_por": 2
+  },
+  {
+   "modulo": "contexts",
+   "depende_de": 5,
+   "importado_por": 9
+  },
+  {
+   "modulo": "types",
+   "depende_de": 1,
+   "importado_por": 13
+  },
+  {
+   "modulo": "components/folha",
+   "depende_de": 11,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/ferias",
+   "depende_de": 10,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/settings",
+   "depende_de": 10,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/admissoes",
+   "depende_de": 8,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/dashboard",
+   "depende_de": 7,
+   "importado_por": 2
+  },
+  {
+   "modulo": "components/ponto",
+   "depende_de": 8,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/portal",
+   "depende_de": 8,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/sst",
+   "depende_de": 8,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/afastamentos",
+   "depende_de": 7,
+   "importado_por": 1
+  }
+ ],
+ "arestas_em": "docs/contexto/codigo/grafo-arestas.json"
+}
