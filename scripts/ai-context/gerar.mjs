@@ -153,7 +153,8 @@ const RE = {
   dyn: /import\(\s*['"]([^'"]+)['"]\s*\)/g,
   req: /require\(\s*['"]([^'"]+)['"]\s*\)/g,
   hook: /\b(use[A-Z]\w*)\s*\(/g,
-  from: /\.from\(\s*['"`]([\w.]+)['"`]/g,
+  // `storage.from('bucket')` é Storage (vai para `buckets`), não tabela: lookbehind exclui, inclusive com quebra de linha.
+  from: /(?<!\bstorage\s*)\.from\(\s*['"`]([\w.]+)['"`]/g,
   rpc: /\.rpc\(\s*['"`](\w+)['"`]/g,
   invoke: /functions\.invoke\(\s*['"`]([\w-]+)['"`]/g,
   fnUrl: /\/functions\/v1\/([\w-]+)/g,

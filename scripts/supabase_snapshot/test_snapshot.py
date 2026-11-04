@@ -283,6 +283,46 @@ class SnapshotCronVisibilityTests(SnapshotFixture):
         self.assertIn("cron", self.error_sections())
 
 
+class SnapshotPartialPermissionTests(SnapshotFixture):
+    """Coletas parciais do papel somente-leitura não podem apagar o que foi lido nem inventar remoção."""
+
+    def test_storage_without_permission_keeps_the_other_database_stats(self):
+        s = self.snapshot
+        s.ERRORS.clear()
+
+        def q(_conn, sql, params=None):
+            if "storage.objects" in sql:
+                raise PermissionError("permission denied for schema storage")
+            if "auth." in sql:
+                raise PermissionError("permission denied for schema auth")
+            if "pg_database_size" in sql:
+                return [{"s": 123}]
+            if "pg_extension" in sql:
+                return []
+            return []
+
+        with mock.patch.object(s, "q", side_effect=q), mock.patch.object(s, "STAT_STATEMENTS_TOP", 0):
+            out = s.get_db_stats(OfflineConnection())
+        self.assertEqual(out["database_bytes"], 123)
+        self.assertIsNone(out["storage"])
+        self.assertEqual({e["section"] for e in s.ERRORS}, {"db_stats.storage", "db_stats.auth"})
+
+    def test_failed_edge_function_listing_preserves_previous_edges(self):
+        s = self.snapshot
+        s.ERRORS.clear()
+        s.CARRIED.clear()
+        readme = self.out / "edge-functions" / "calcular-folha" / "README.md"
+        readme.parent.mkdir(parents=True)
+        readme.write_text("anterior")
+        previous = {"edge_functions": [{"slug": "calcular-folha", "version": 7}]}
+        with mock.patch.object(s, "PROJECT_REF", "ref"), mock.patch.object(s, "ACCESS_TOKEN", "x"), \
+                mock.patch.object(s, "api_section", return_value=None), contextlib.redirect_stdout(io.StringIO()):
+            out, _stats = s.introspect_api(previous)
+        self.assertEqual(out["edge_functions"], previous["edge_functions"])
+        self.assertIn("api.edge_functions", s.CARRIED)
+        self.assertTrue(readme.exists(), "falha de coleta apagou o README da edge")
+
+
 class SnapshotFailureMatrixTests(SnapshotFixture):
     """24 sequências: seção × histórico/SQL disponível × repetição × recuperação."""
 

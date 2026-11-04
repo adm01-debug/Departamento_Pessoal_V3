@@ -358,3 +358,17 @@ supabase.rpc('dashboard_rpc'); supabase.functions.invoke('dashboard-edge');`);
   assert.deepEqual(orphan.chamada_pelo_front, []);
   assert.deepEqual(orphan.chamada_por_edges, []);
 });
+
+test('storage.from é bucket, não tabela (nem alerta de tabela inexistente)', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'worker/upload.ts', `await supabase.storage.from('avatars').upload(p, f);
+const { data } = supabase.storage
+  .from('docs-rh').getPublicUrl(p);
+await supabase.from('runtime_table').select('*');`);
+  });
+  const alertas = read('baseline.json').alertas.tabelas_usadas_sem_definicao;
+  assert.ok(!alertas.includes('avatars') && !alertas.includes('docs-rh'), `bucket virou tabela: ${alertas}`);
+  assert.ok(alertas.includes('runtime_table'));
+  const buckets = read('banco.json').buckets.map((b) => b.nome);
+  assert.ok(buckets.includes('avatars'));
+});

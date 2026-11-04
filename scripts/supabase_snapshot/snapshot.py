@@ -801,9 +801,19 @@ def get_db_stats(conn):
         SELECT n.nspname AS schema, sum(pg_total_relation_size(c.oid)) AS bytes
         FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
         WHERE c.relkind IN ('r','p','m') AND {excluded_sql()} GROUP BY 1 ORDER BY 2 DESC""")
-    out["storage"] = q(conn, """
-        SELECT bucket_id, count(*) AS objects, COALESCE(sum((metadata->>'size')::bigint), 0) AS bytes
-        FROM storage.objects GROUP BY 1 ORDER BY 1""")
+    # Mesmo motivo do auth abaixo: o ci_auditor do DP V3 não lê storage.objects, e isso não pode
+    # descartar tamanho do banco, conexões, filas e top queries.
+    try:
+        out["storage"] = q(conn, """
+            SELECT bucket_id, count(*) AS objects, COALESCE(sum((metadata->>'size')::bigint), 0) AS bytes
+            FROM storage.objects GROUP BY 1 ORDER BY 1""")
+    except Exception as e:  # noqa: BLE001
+        record_error("db_stats.storage", e)
+        try:
+            conn.rollback()
+        except Exception:  # noqa: BLE001
+            pass
+        out["storage"] = None
     # Role sem SELECT em auth.* (ex.: role de leitura do workflow) nao pode derrubar a secao inteira:
     # em producao isso apagava tamanho do banco, conexoes, storage e filas de stats.md.
     try:
@@ -916,9 +926,16 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
         return {k: d.get(k) for k in keys} if isinstance(d, dict) else d
 
     out["project"] = api_section("project", f"/projects/{ref}", lambda p: keep(p, ("id", "name", "region", "status", "created_at", "organization_id")))
-    out["edge_functions"] = api_section("edge_functions", f"/projects/{ref}/functions", lambda fs: sorted(
+    edge_functions = api_section("edge_functions", f"/projects/{ref}/functions", lambda fs: sorted(
         [keep(f, ("slug", "name", "status", "version", "verify_jwt", "import_map", "entrypoint_path", "import_map_path", "created_at", "updated_at")) for f in fs],
-        key=lambda f: f["slug"] or "")) or []
+        key=lambda f: f["slug"] or ""))
+    # Falha (timeout/HTTP) devolve None: reaproveita a lista anterior e não apaga os README das edges
+    # — falha de coleta não é "edge removida". Resposta vazia de verdade continua sendo [].
+    edges_falhou = edge_functions is None
+    if edges_falhou and previous_api and previous_api.get("edge_functions") is not None:
+        edge_functions = previous_api["edge_functions"]
+        CARRIED.append("api.edge_functions")
+    out["edge_functions"] = edge_functions or []
     out["secrets_names"] = api_section("secrets", f"/projects/{ref}/secrets", lambda s: sorted(x.get("name") for x in s if isinstance(x, dict)))
     out["auth_config"] = api_section("auth_config", f"/projects/{ref}/config/auth", redact)
     out["postgrest_config"] = api_section("postgrest_config", f"/projects/{ref}/postgrest", redact)
@@ -947,7 +964,7 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
             ["verify_jwt", f.get("verify_jwt")], ["entrypoint", f.get("entrypoint_path")], ["import_map", f.get("import_map_path")],
             ["URL", f"https://{ref}.supabase.co/functions/v1/{s}"], ["fonte no repo", f"`supabase/functions/{s}/`"]])]
         write(fn_dir / slug(s) / "README.md", "\n".join(md))
-    if fn_dir.exists():
+    if fn_dir.exists() and not edges_falhou:
         for d in fn_dir.iterdir():
             if d.is_dir() and d.name not in {slug(s) for s in current}:
                 shutil.rmtree(d)
@@ -1549,7 +1566,8 @@ def render_stats(stats: dict, api_stats: dict, db: dict) -> None:
           "\n## Índices nunca usados (candidatos a remoção; ignore PK/UNIQUE)\n",
           md_table(["índice", "tabela", "tamanho"], [[i["name"], f"{i['schema']}.{i['table']}", human_bytes(i["bytes"])]
                                                      for i in ist if i["scans"] == 0 and not i["is_unique"] and not i["is_primary"] and i["bytes"] > 65536]),
-          "\n## Storage\n", md_table(["bucket", "objetos (~)", "tamanho"], [[s["bucket_id"], approx(s["objects"]), human_bytes(s["bytes"])] for s in ds.get("storage") or []]),
+          "\n## Storage\n", ("_indisponível nesta coleta (ver errors.md)_\n" if ds and ds.get("storage") is None else
+                             md_table(["bucket", "objetos (~)", "tamanho"], [[s["bucket_id"], approx(s["objects"]), human_bytes(s["bytes"])] for s in ds.get("storage") or []])),
           "\n## Auth (agregados)\n"]
     a = ds.get("auth") or {}
     md.append(md_table(["métrica", "valor"], [["usuários (~)", approx(a.get("users_total"))], ["confirmados (~)", approx(a.get("users_confirmed"))],
