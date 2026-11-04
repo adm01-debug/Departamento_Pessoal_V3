@@ -63,3 +63,6 @@ docs/contexto/*
 !docs/contexto/regras/
 docs/contexto/regras/*
 !docs/contexto/regras/manual/
+
+# bytecode dos geradores Python (scripts/supabase_snapshot, scripts/regras_negocio)
+__pycache__/
