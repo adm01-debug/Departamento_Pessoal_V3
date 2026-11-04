@@ -452,7 +452,7 @@ def get_functions(conn):
                CASE WHEN p.prokind IN ('f','p') THEN pg_get_functiondef(p.oid) END AS definition,
                (SELECT string_agg(r.rolname, ', ' ORDER BY r.rolname) FROM pg_roles r
                  WHERE r.rolname IN ('anon','authenticated','service_role') AND has_function_privilege(r.oid, p.oid, 'EXECUTE')) AS execute_api_roles,
-               has_function_privilege('public', p.oid, 'EXECUTE') AS execute_public,
+               EXISTS (SELECT 1 FROM aclexplode(COALESCE(p.proacl, acldefault('f', p.proowner))) ace WHERE ace.grantee = 0 AND ace.privilege_type = 'EXECUTE') AS execute_public,
                (p.prorettype = 'trigger'::regtype) AS is_trigger_fn
         FROM pg_proc p
         JOIN pg_namespace n ON n.oid = p.pronamespace
