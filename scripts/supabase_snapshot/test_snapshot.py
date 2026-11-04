@@ -82,7 +82,7 @@ class SnapshotFixture(unittest.TestCase):
 
         self.source_files = [("src/client.ts", "supabase.rpc('demo')")]
 
-    def collect(self, *, failures=(), functions=None, migrations=None):
+    def collect(self, *, failures=(), functions=None, migrations=None, extra=None):
         snapshot = self.snapshot
         snapshot.ERRORS.clear()
         snapshot.CARRIED.clear()
@@ -91,6 +91,7 @@ class SnapshotFixture(unittest.TestCase):
             "server": {"server_version": "offline-fixture"},
             "functions": [function()] if functions is None else functions,
             "migrations": [migration()] if migrations is None else migrations,
+            **(extra or {}),
         }
 
         def section(name):
@@ -244,6 +245,42 @@ class SnapshotSQLRecoveryTests(SnapshotFixture):
         self.assertEqual(self.metadata()["carried"], ["functions"])
         self.assertEqual(self.collect(functions=entries), 0)
         self.assertEqual(self.error_sections(), set())
+
+
+class SnapshotCronVisibilityTests(SnapshotFixture):
+    """DP V3: o ci_auditor não enxerga cron.job (RLS do pg_cron); lista vazia não pode virar fato."""
+
+    def fake_q(self, *, rls, bypass, jobs=()):
+        def q(_conn, sql, params=None):
+            if "pg_extension" in sql:
+                return [{"present": 1}]
+            if "relrowsecurity" in sql:
+                return [{"rls": rls, "bypass": bypass}]
+            if "FROM cron.job" in sql:
+                return list(jobs)
+            raise AssertionError(f"consulta inesperada: {sql[:60]}")
+        return q
+
+    def test_rls_hidden_cron_is_a_section_error_not_an_empty_list(self):
+        self.snapshot.ERRORS.clear()
+        with mock.patch.object(self.snapshot, "q", side_effect=self.fake_q(rls=True, bypass=False, jobs=[{"jobid": 1}])):
+            self.assertIsNone(self.snapshot.get_cron(OfflineConnection()))
+        self.assertEqual([e["section"] for e in self.snapshot.ERRORS], ["cron"])
+
+    def test_visible_cron_is_collected(self):
+        self.snapshot.ERRORS.clear()
+        job = {"jobid": 1, "jobname": "x"}
+        for rls, bypass in ((True, True), (False, False)):
+            with mock.patch.object(self.snapshot, "q", side_effect=self.fake_q(rls=rls, bypass=bypass, jobs=[job])):
+                self.assertEqual(self.snapshot.get_cron(OfflineConnection()), {"installed": True, "jobs": [job]})
+        self.assertEqual(self.snapshot.ERRORS, [])
+
+    def test_unavailable_cron_is_not_rendered_as_missing_extension(self):
+        self.assertEqual(self.collect(failures={"cron"}, extra={"cron": {"installed": True, "jobs": []}}), 0)
+        document = (self.out / "cron.md").read_text()
+        self.assertIn("indisponível", document)
+        self.assertNotIn("não instalada", document)
+        self.assertIn("cron", self.error_sections())
 
 
 class SnapshotFailureMatrixTests(SnapshotFixture):

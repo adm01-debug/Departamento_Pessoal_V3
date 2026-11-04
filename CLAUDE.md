@@ -43,8 +43,9 @@ Ler sem trocar de branch: `git fetch origin contexto && git show origin/contexto
 - Testes offline: `node --test scripts/tests/contexto-*.test.mjs scripts/tests/inventario-*.test.mjs`
   (rodam no job `security-config` do `ci.yml`).
 - Sessão na nuvem: `.claude/hooks/session-start.sh` instala o graphify e gera o grafo em segundo plano
-  (log em `graphify-out/.session-start.log`), marcando `GRAPH_REPORT.md`/`manifest.json` como
-  `skip-worktree` para não sujar o `git status`.
+  (log em `graphify-out/.session-start.log`; clone sem `graph.json` faz build completo). Os versionados
+  `GRAPH_REPORT.md`/`manifest.json` voltam ao commitado depois do build (`git status` limpo); o relatório
+  fresco fica em `graphify-out/GRAPH_REPORT.sessao.md`.
 
 ## 📋 Sumário
 

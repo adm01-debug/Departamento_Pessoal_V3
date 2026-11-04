@@ -615,6 +615,14 @@ def get_realtime(conn):
 def get_cron(conn):
     if not has_ext(conn, "pg_cron"):
         return {"installed": False, "jobs": []}
+    # O pg_cron protege cron.job com RLS (username = current_user): um papel sem BYPASSRLS que não é
+    # dono dos jobs (ex.: ci_auditor do DP V3) recebe lista vazia sem erro. Isso não é "nenhum job".
+    vis = q(conn, """
+        SELECT c.relrowsecurity AS rls,
+               (SELECT rolbypassrls OR rolsuper FROM pg_roles WHERE rolname = current_user) AS bypass
+        FROM pg_class c WHERE c.oid = 'cron.job'::regclass""")[0]
+    if vis["rls"] and not vis["bypass"]:
+        raise PermissionError("cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável")
     return {"installed": True, "jobs": q(conn, """
         SELECT jobid, jobname, schedule, command, database, username, active FROM cron.job ORDER BY jobid""")}
 
@@ -1432,7 +1440,10 @@ def render_simple(db: dict, api_: dict, caller_sources: dict[str, str] | None = 
 
     # Cron / queues
     cron = db.get("cron") or {}
-    if not cron.get("installed"):
+    if db.get("cron") is None:
+        # Coleta falhou sem versão anterior: não afirmar que a extensão está ausente.
+        write(OUT / "cron.md", "# Cron (pg_cron)\n\n" + banner("cron"))
+    elif not cron.get("installed"):
         write(OUT / "cron.md", "# Cron (pg_cron)\n\n_extensão pg_cron não instalada_\n")
     else:
         write(OUT / "cron.md", "# Cron (pg_cron)\n\n" + banner("cron") + "Horários em UTC. Execuções recentes em `cron-runs.md`.\n\n" + md_table(
