@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a82cc073669db9d3079386bbba595522aebf2166",
+  "commit": "d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f",
   "branch": "main",
-  "data_commit": "2026-11-04T13:25:48Z",
+  "data_commit": "2026-11-04T20:30:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d43244e",
+    "data": "2026-11-04",
+    "assunto": "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)"
+   },
+   {
+    "sha": "9f008b6",
+    "data": "2026-11-04",
+    "assunto": "feat: adicionar scripts/graphify/setup.sh (#351)"
+   },
    {
     "sha": "a82cc07",
     "data": "2026-11-04",
@@ -121,46 +131,32 @@
     "sha": "4b196dc",
     "data": "2026-10-28",
     "assunto": "feat(edges): consumidores reais para as 3 filas de comunicação (#323)"
-   },
-   {
-    "sha": "4b5bd99",
-    "data": "2026-10-28",
-    "assunto": "docs(pendencias): consolidado da verificação V1-V5 — resolvidos 28/10, token Supabase expirado, backlog de gaps (#327)"
-   },
-   {
-    "sha": "210650e",
-    "data": "2026-10-28",
-    "assunto": "docs(pendencias): atualizar status pós-merge do PR #311 (#326)"
    }
   ],
-  "arquivos_mudados_7d": 246,
+  "arquivos_mudados_7d": 163,
   "pastas_mais_mudadas_30d": [
-   {
-    "pasta": "src/services/__tests__",
-    "mudancas": 94
-   },
-   {
-    "pasta": "src/components/__tests__",
-    "mudancas": 83
-   },
-   {
-    "pasta": "src/hooks/__tests__",
-    "mudancas": 51
-   },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 42
    },
    {
+    "pasta": "src/services/__tests__",
+    "mudancas": 39
+   },
+   {
+    "pasta": "src/components/__tests__",
+    "mudancas": 25
+   },
+   {
     "pasta": "CLAUDE.md",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "pasta": "package.json",
     "mudancas": 19
    },
    {
-    "pasta": "src/utils/__tests__",
+    "pasta": "src/hooks/__tests__",
     "mudancas": 17
    },
    {
@@ -180,11 +176,7 @@
     "mudancas": 12
    },
    {
-    "pasta": "src/services/folha",
-    "mudancas": 12
-   },
-   {
-    "pasta": "src/services/tabelas",
+    "pasta": "src/utils/__tests__",
     "mudancas": 11
    },
    {
@@ -192,18 +184,26 @@
     "mudancas": 10
    },
    {
+    "pasta": "src/services/folha",
+    "mudancas": 10
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
+    "mudancas": 9
+   },
+   {
+    "pasta": "src/services/cnabService.ts",
     "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 104
+    "mudancas": 102
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 97
+    "mudancas": 95
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 97
+    "commits": 91
    },
    {
     "autor": "adm01-debug",
-    "commits": 32
+    "commits": 34
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2777,
-  "arquivos_codigo": 1507,
-  "linhas_codigo": 260341,
+  "arquivos_total": 2781,
+  "arquivos_codigo": 1508,
+  "linhas_codigo": 260393,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -338,8 +338,8 @@
   "cron_jobs": 41,
   "testes": 572,
   "workflows": 17,
-  "scripts": 81,
-  "docs_md": 278
+  "scripts": 83,
+  "docs_md": 280
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -481,6 +481,10 @@
   "scripts/check-dependencies.js": {
    "arquivos": 1,
    "linhas": 43
+  },
+  "scripts/ci": {
+   "arquivos": 1,
+   "linhas": 52
   },
   "scripts/db": {
    "arquivos": 2,
@@ -811,7 +815,7 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 222,
+  "console_log": 223,
   "ts_ignore": 0,
   "eslint_disable": 1,
   "todos": 12,

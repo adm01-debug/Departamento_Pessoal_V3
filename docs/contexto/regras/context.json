@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a82cc073669db9d3079386bbba595522aebf2166",
+  "sha": "d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-04 20:28 UTC",
-  "files_total": 2797,
-  "code_files": 2322,
-  "code_lines": 308232
+  "generated_at": "2026-11-05 01:01 UTC",
+  "files_total": 2801,
+  "code_files": 2323,
+  "code_lines": 308284
  },
  "version": "1.3.2",
- "facts_hash": "53c893da83af0af3",
+ "facts_hash": "56bbbfbbfd4296a8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -344,7 +344,7 @@
    ".sql": 817,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 60,
+   ".mjs": 61,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -94893,8 +94893,8 @@
   },
   {
    "module": "scripts",
-   "files": 90,
-   "lines": 17278,
+   "files": 91,
+   "lines": 17330,
    "tables": [
     "a",
     "audit_log",
@@ -95031,6 +95031,7 @@
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
+    "scripts/ci/check-claude-md-integrity.mjs",
     "scripts/db/classify-migration-drift.mjs",
     "scripts/db/derive-pending-migrations.mjs",
     "scripts/db/schema-inventory.sql",
@@ -95065,8 +95066,7 @@
     "scripts/supabase_snapshot/snapshot.py",
     "scripts/supabase_snapshot/test_snapshot.py",
     "scripts/tests/audit-edge-audit-log-contract.test.mjs",
-    "scripts/tests/contexto-ai-context.test.mjs",
-    "scripts/tests/contexto-indice.test.mjs"
+    "scripts/tests/contexto-ai-context.test.mjs"
    ]
   },
   {
@@ -101628,6 +101628,9 @@
    ],
    "CI_BRANCH": [
     "playwright.config.ts"
+   ],
+   "CLAUDE_MD_BASE": [
+    "scripts/ci/check-claude-md-integrity.mjs"
    ],
    "CODE_SCAN_DIRS": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -226705,6 +226708,23 @@
    ],
    "uses_service_role": true
   },
+  "scripts/ci/check-claude-md-integrity.mjs": {
+   "path": "scripts/ci/check-claude-md-integrity.mjs",
+   "lines": 52,
+   "env": [
+    "CLAUDE_MD_BASE"
+   ],
+   "params": [
+    {
+     "name": "SHRINK_THRESHOLD",
+     "value": "0.30"
+    }
+   ],
+   "doc": "!/usr/bin/env node",
+   "percents": [
+    "* Verifica: arquivo existe, cabecalhos obrigatorios presentes, nao encolheu >30% vs a base."
+   ]
+  },
   "scripts/db/classify-migration-drift.mjs": {
    "path": "scripts/db/classify-migration-drift.mjs",
    "lines": 211,
@@ -274301,10 +274321,30 @@
   }
  },
  "git": {
-  "sha": "a82cc073669db9d3079386bbba595522aebf2166",
+  "sha": "d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d43244e",
+    "date": "2026-11-04",
+    "author": "adm01-debug",
+    "subject": "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)",
+    "files": [
+     "scripts/ci/README.md",
+     "scripts/ci/check-claude-md-integrity.mjs"
+    ]
+   },
+   {
+    "sha": "9f008b6",
+    "date": "2026-11-04",
+    "author": "adm01-debug",
+    "subject": "feat: adicionar scripts/graphify/setup.sh (#351)",
+    "files": [
+     "scripts/graphify/README.md",
+     "scripts/graphify/setup.sh"
+    ]
+   },
    {
     "sha": "a82cc07",
     "date": "2026-11-04",
@@ -274716,66 +274756,12 @@
     "files": [
      ".github/workflows/canonical-migrations.yml"
     ]
-   },
-   {
-    "sha": "8bc1418",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(folha): fechar os 10 gaps Folha/Fiscal — Lei 15.270, motores alinhados, lançamentos manuais (#311)",
-    "files": [
-     "PENDENCIAS.md",
-     "src/calculators/__tests__/folhaCompleta.test.ts",
-     "src/calculators/folhaCompleta.ts",
-     "src/calculators/impostos.ts",
-     "src/calculators/tabelas.ts",
-     "src/calculators/trabalhistas.ts",
-     "src/components/folha/LancamentosDialog.tsx",
-     "src/pages/FolhaPagamentoPage.tsx",
-     "src/services/folha/__tests__/calculoLoteService.test.ts",
-     "src/services/folha/calculoLoteService.ts",
-     "src/services/folhaPagamentoService.ts",
-     "src/services/tabelas/__tests__/folhaService.test.ts",
-     "src/services/tabelas/folhaService.ts",
-     "src/services/tabelas/index.ts",
-     "src/utils/__tests__/calculoFerias.test.ts",
-     "src/utils/__tests__/folhaCalc.test.ts",
-     "src/utils/__tests__/rescisaoCalc.test.ts",
-     "src/utils/folhaCalc.ts",
-     "supabase/functions/_shared/irrf.test.ts",
-     "supabase/functions/_shared/irrf.ts",
-     "supabase/functions/calcular-folha/index.ts",
-     "supabase/functions/gerar-holerite/index.ts"
-    ]
-   },
-   {
-    "sha": "39bd0bc",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "feat(ponto,ferias,folha): fecha os 5 gaps da verificação V2 (#24, §6.2, §6.4) (#312)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/.types-drift-baseline.json",
-     "scripts/canonical-invariants.sql",
-     "src/components/ferias/FeriasActions.tsx",
-     "src/components/ponto/GerarAFDDialog.tsx",
-     "src/components/ponto/PontoClockRegister.tsx",
-     "src/components/ponto/PontoGeoAnalytics.tsx",
-     "src/components/settings/InlineTabs.tsx",
-     "src/integrations/supabase/types.ts",
-     "src/pages/JornadasPage.tsx",
-     "src/pages/PontoPage.tsx",
-     "src/schemas/tableColumns.ts",
-     "supabase/functions/calcular-ferias/index.ts",
-     "supabase/functions/gerar-afd/index.ts",
-     "supabase/functions/processar-ponto/index.ts",
-     "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
-    ]
    }
   ],
   "hot_files": [
    [
     "PENDENCIAS.md",
-    6
+    5
    ],
    [
     "AGENTS.md",
@@ -274791,10 +274777,6 @@
    ],
    [
     "supabase/functions/enviar-esocial/index.ts",
-    3
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
     3
    ],
    [
@@ -274818,12 +274800,24 @@
     2
    ],
    [
-    "src/calculators/trabalhistas.ts",
+    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
-    "scripts/canonical-invariants.sql",
-    2
+    "scripts/ci/README.md",
+    1
+   ],
+   [
+    "scripts/ci/check-claude-md-integrity.mjs",
+    1
+   ],
+   [
+    "scripts/graphify/README.md",
+    1
+   ],
+   [
+    "scripts/graphify/setup.sh",
+    1
    ],
    [
     "inventario/estado/banco.json",
@@ -274843,14 +274837,6 @@
    ],
    [
     ".github/workflows/contexto.yml",
-    1
-   ],
-   [
-    ".github/workflows/inventario-estado-semanal.yml",
-    1
-   ],
-   [
-    ".gitignore",
     1
    ]
   ]

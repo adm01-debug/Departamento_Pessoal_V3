@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 81,
+ "total": 83,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -327,6 +327,17 @@
    "orfao": false
   },
   {
+   "arquivo": "scripts/ci/check-claude-md-integrity.mjs",
+   "descricao": "* GA02: garante que o CLAUDE.md nao foi apagado ou esvaziado por outra sessao.",
+   "linhas": 52,
+   "env": [
+    "CLAUDE_MD_BASE"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
    "arquivo": "scripts/db/classify-migration-drift.mjs",
    "descricao": null,
    "linhas": 211,
@@ -462,6 +473,15 @@
    "arquivo": "scripts/generate-service.js",
    "descricao": null,
    "linhas": 29,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify/setup.sh",
+   "descricao": "Instala o graphify (grafo de conhecimento do código) e o configura neste clone. Uso: npm run graph:setup   (Linux, macOS ou WSL; precisa de uv ou pipx)",
+   "linhas": 43,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

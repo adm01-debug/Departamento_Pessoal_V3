@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a82cc073669db9d3079386bbba595522aebf2166` (2026-11-04T13:25:48Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f` (2026-11-04T20:30:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (817), Markdown (278), JavaScript (85), YAML (52), Shell (44), JSON (38), Python (5)
+- linguagens: TypeScript (1418), SQL (817), Markdown (280), JavaScript (86), YAML (52), Shell (45), JSON (38), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2777 |
-| arquivos_codigo | 1507 |
-| linhas_codigo | 260341 |
+| arquivos_total | 2781 |
+| arquivos_codigo | 1508 |
+| linhas_codigo | 260393 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -50,8 +50,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | cron_jobs | 41 |
 | testes | 572 |
 | workflows | 17 |
-| scripts | 81 |
-| docs_md | 278 |
+| scripts | 83 |
+| docs_md | 280 |
 
 ## Onde ficam as coisas
 - telas: src/pages (108), src/components (1)
@@ -385,14 +385,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21272 nós · 44532 arestas · 2097 comunidades · grafo do commit `a82cc073`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (422), lucide-react (383), button.tsx (317), vitest (272), cn (246), App.tsx (188), contract.ts (181), services/index.ts (165), react (164), "public"."empresas" (164)
+- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `d43244e1`
+- comunidades maiores: react (576), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (389), useEmpresas (370), button.tsx (360), App.tsx (267), cn (244), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (104)
-- package-lock.json (97)
+- package.json (102)
+- package-lock.json (95)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (30)
 - .github/workflows/ci.yml (24)
@@ -598,6 +598,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-04 `d43244e` feat: adicionar scripts/ci (check-claude-md-integrity) (#350)
+- 2026-11-04 `9f008b6` feat: adicionar scripts/graphify/setup.sh (#351)
 - 2026-11-04 `a82cc07` chore: inventario do estado real [auto] (#346)
 - 2026-11-04 `173dc0c` feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)
 - 2026-11-02 `530a5cd` chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)
@@ -611,8 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-10-31 `7db8ba8` chore(limpeza): resolve código órfão do §8.3 – liga LanguageSelector/PDF-PDI, remove mortos, ativa specs
 - 2026-10-31 `e1a18ef` docs: pendências externas dos gaps de admissão/rescisão (secrets, provedores, fora de escopo)
 - 2026-10-31 `271d5b5` fix(govbr+esocial): login gov.br anônimo funcional + campo nivel corrigido + XML S-2299 real
-- 2026-10-31 `219c2f9` fix(rescisao): modalidades de desligamento no fluxo real + pagamento transacional via RPC
-- 2026-10-31 `3d2f0d5` fix(admissoes): botão S-2200 no fluxo claim-based + e-mail pré-admissão real + acionador de contrato
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
