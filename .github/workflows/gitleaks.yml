@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: gitleaks-${{ github.ref }}
@@ -25,5 +26,6 @@ jobs:
       - name: Scan segredos no histórico
         uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_ENABLE_COMMENTS: 'true'
           GITLEAKS_ENABLE_SUMMARY: 'true'
