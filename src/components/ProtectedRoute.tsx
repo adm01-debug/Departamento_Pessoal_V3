@@ -98,7 +98,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               opacity: [0.1, 0.2, 0.1],
               rotate: [0, 90, 0]
             }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-primary/10 rounded-full blur-[100px]"
           />
           <motion.div
@@ -107,7 +107,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               opacity: [0.1, 0.15, 0.1],
               rotate: [0, -90, 0]
             }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
             className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-[100px]"
           />
         </div>
@@ -120,7 +120,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           <div className="relative">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
               className="absolute inset-0 rounded-full border-2 border-primary/20 border-t-primary"
             />
             <div className="p-8 rounded-full bg-card shadow-glass border border-border/50 relative m-2">
