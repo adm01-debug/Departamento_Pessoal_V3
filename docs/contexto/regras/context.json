@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "6ed87f2aec80463d2465abb5d19b0cf5fb0ee765",
+  "sha": "f517257e84ed2eaf88eae27afececbe110ec38f3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-06 01:41 UTC",
+  "generated_at": "2026-11-06 09:34 UTC",
   "files_total": 2801,
   "code_files": 2323,
   "code_lines": 308287
@@ -274327,10 +274327,19 @@
   }
  },
  "git": {
-  "sha": "6ed87f2aec80463d2465abb5d19b0cf5fb0ee765",
+  "sha": "f517257e84ed2eaf88eae27afececbe110ec38f3",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f517257",
+    "date": "2026-11-05",
+    "author": "adm01-debug",
+    "subject": "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)",
+    "files": [
+     "deno.lock"
+    ]
+   },
    {
     "sha": "6ed87f2",
     "date": "2026-11-05",
@@ -274749,18 +274758,6 @@
      "src/services/feriasService.ts",
      "src/services/workflowService.ts"
     ]
-   },
-   {
-    "sha": "a90a4fe",
-    "date": "2026-10-29",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(e2e): smoke ignora sondas do diagnóstico com precisão (403/422/400) + flakes TOTP/recover (#320)",
-    "files": [
-     "e2e/auth.setup.ts",
-     "e2e/authenticated/post-cutover-smoke.spec.ts",
-     "e2e/public/login.spec.ts",
-     "e2e/public/reset-password.spec.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -274785,10 +274782,6 @@
     3
    ],
    [
-    "e2e/auth.setup.ts",
-    3
-   ],
-   [
     "supabase/functions/enviar-esocial/index.ts",
     3
    ],
@@ -274809,6 +274802,10 @@
     2
    ],
    [
+    "e2e/auth.setup.ts",
+    2
+   ],
+   [
     ".github/workflows/security.yml",
     2
    ],
@@ -274819,6 +274816,10 @@
    [
     "analise-prs/auditorias-anteriores.md",
     2
+   ],
+   [
+    "deno.lock",
+    1
    ],
    [
     ".github/workflows/e2e.yml",
@@ -274838,10 +274839,6 @@
    ],
    [
     "scripts/ci/README.md",
-    1
-   ],
-   [
-    "scripts/ci/check-claude-md-integrity.mjs",
     1
    ]
   ]

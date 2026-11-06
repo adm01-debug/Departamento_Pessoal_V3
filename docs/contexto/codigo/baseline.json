@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6ed87f2aec80463d2465abb5d19b0cf5fb0ee765",
+  "commit": "f517257e84ed2eaf88eae27afececbe110ec38f3",
   "branch": "main",
-  "data_commit": "2026-11-05T22:39:59-03:00",
+  "data_commit": "2026-11-05T23:39:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f517257",
+    "data": "2026-11-05",
+    "assunto": "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)"
+   },
    {
     "sha": "6ed87f2",
     "data": "2026-11-05",
@@ -126,14 +131,9 @@
     "sha": "219c2f9",
     "data": "2026-10-31",
     "assunto": "fix(rescisao): modalidades de desligamento no fluxo real + pagamento transacional via RPC"
-   },
-   {
-    "sha": "3d2f0d5",
-    "data": "2026-10-31",
-    "assunto": "fix(admissoes): botão S-2200 no fluxo claim-based + e-mail pré-admissão real + acionador de contrato"
    }
   ],
-  "arquivos_mudados_7d": 158,
+  "arquivos_mudados_7d": 159,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 102
+    "mudancas": 101
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 95
+    "mudancas": 94
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -258,6 +258,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": "deno.lock",
+    "mudancas": 10
+   },
+   {
     "arquivo": "vite.config.ts",
     "mudancas": 10
    },
@@ -267,10 +271,6 @@
    },
    {
     "arquivo": ".github/workflows/canonical-probes.yml",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "deno.lock",
     "mudancas": 9
    },
    {
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 37
+    "commits": 38
    },
    {
     "autor": "dependabot[bot]",
