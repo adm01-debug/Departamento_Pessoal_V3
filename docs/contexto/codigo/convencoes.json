@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)",
+   "fix: safeFetch do SW devolve resposta original (evita \"Failed to fetch dynamically imported module\") (#356)",
    "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)",
    "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)",
-   "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)",
-   "infra: exige branch atualizada antes do merge no ruleset da main (#337)",
-   "build(deps): bump minor-patch group (10 pacotes npm) (#348)"
+   "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

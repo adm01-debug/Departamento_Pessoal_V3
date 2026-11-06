@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f517257e84` · branch `main` · 2026-11-06 09:34 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `205c583603` · branch `main` · 2026-11-06 16:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4949,7 +4949,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | P1-022: Babel-based plugin required for React Compiler | `vite.config.ts` |
 | regra do time: só subir, nunca baixar (ratchet). | `vitest.config.ts` |
 | Se ambos falharem retorna null → quem chamou deve handlear. | `public/sw-custom.js` |
-| Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW | `public/sw-custom.js` |
+| Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW. | `public/sw-custom.js` |
+| intocada quando está dentro do limite — nunca reconstrói um novo Response | `public/sw-custom.js` |
 | cacheada — o SW apenas observa a resposta passar. | `public/sw-custom.js` |
 | Clickjacking defense-in-depth: só quebra o frame em produção e apenas | `src/main.tsx` |
 | Opção 2: Desconto Simplificado | `src/calculators/impostos.ts` |
@@ -5240,5 +5241,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Eventos variáveis lançados (comissão, bônus, adicionais por | `supabase/functions/calcular-folha/index.ts` |
 | Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`) | `supabase/functions/calcular-provisoes/index.ts` |
 | era um OU — pertencer à empresa já bastava, e o is_admin apenas somava | `supabase/functions/calcular-provisoes/index.ts` |
-| • Validação Zod estrita de payload (datas, tipos, ranges) | `supabase/functions/calcular-rescisao/index.ts` |
-| … +179 linhas — lista completa em `context.json` | |
+| … +180 linhas — lista completa em `context.json` | |

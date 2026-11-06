@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f517257e84ed2eaf88eae27afececbe110ec38f3` (2026-11-05T23:39:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `205c58360358ab74b52e640bd40ad057bf73a83a` (2026-11-06T13:09:27-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2781 |
 | arquivos_codigo | 1508 |
-| linhas_codigo | 260396 |
+| linhas_codigo | 260406 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -385,14 +385,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `f517257e`
+- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `205c5836`
 - comunidades maiores: react (576), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (389), useEmpresas (370), button.tsx (360), App.tsx (267), cn (244), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (101)
-- package-lock.json (94)
+- package.json (99)
+- package-lock.json (92)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (30)
 - .github/workflows/ci.yml (24)
@@ -598,6 +598,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-06 `205c583` fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)
+- 2026-11-06 `a18f04a` fix: safeFetch do SW devolve resposta original (evita "Failed to fetch dynamically imported module") (#356)
 - 2026-11-05 `f517257` fix: sincronizar deno.lock com package.json (14 dependências Dependabot)
 - 2026-11-05 `6ed87f2` fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)
 - 2026-11-05 `68a06b1` chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)
@@ -611,8 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-04 `9f008b6` feat: adicionar scripts/graphify/setup.sh (#351)
 - 2026-11-04 `a82cc07` chore: inventario do estado real [auto] (#346)
 - 2026-11-04 `173dc0c` feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)
-- 2026-11-02 `530a5cd` chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)
-- 2026-10-31 `39a1e20` fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

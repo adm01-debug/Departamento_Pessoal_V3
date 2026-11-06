@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f517257e84ed2eaf88eae27afececbe110ec38f3",
+  "commit": "205c58360358ab74b52e640bd40ad057bf73a83a",
   "branch": "main",
-  "data_commit": "2026-11-05T23:39:56-03:00",
+  "data_commit": "2026-11-06T13:09:27-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "205c583",
+    "data": "2026-11-06",
+    "assunto": "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)"
+   },
+   {
+    "sha": "a18f04a",
+    "data": "2026-11-06",
+    "assunto": "fix: safeFetch do SW devolve resposta original (evita \"Failed to fetch dynamically imported module\") (#356)"
+   },
    {
     "sha": "f517257",
     "data": "2026-11-05",
@@ -121,27 +131,17 @@
     "sha": "e1a18ef",
     "data": "2026-10-31",
     "assunto": "docs: pendências externas dos gaps de admissão/rescisão (secrets, provedores, fora de escopo)"
-   },
-   {
-    "sha": "271d5b5",
-    "data": "2026-10-31",
-    "assunto": "fix(govbr+esocial): login gov.br anônimo funcional + campo nivel corrigido + XML S-2299 real"
-   },
-   {
-    "sha": "219c2f9",
-    "data": "2026-10-31",
-    "assunto": "fix(rescisao): modalidades de desligamento no fluxo real + pagamento transacional via RPC"
    }
   ],
-  "arquivos_mudados_7d": 159,
+  "arquivos_mudados_7d": 160,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 42
+    "mudancas": 40
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 39
+    "mudancas": 37
    },
    {
     "pasta": "src/components/__tests__",
@@ -149,15 +149,15 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 23
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 20
+    "mudancas": 21
    },
    {
     "pasta": "CLAUDE.md",
     "mudancas": 19
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 18
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -168,11 +168,11 @@
     "mudancas": 16
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 13
+    "pasta": "PENDENCIAS.md",
+    "mudancas": 12
    },
    {
-    "pasta": "PENDENCIAS.md",
+    "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 12
    },
    {
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 101
+    "mudancas": 99
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 94
+    "mudancas": 92
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 91
+    "commits": 89
    },
    {
     "autor": "adm01-debug",
-    "commits": 38
+    "commits": 40
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2781,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260396,
+  "linhas_codigo": 260406,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -396,7 +396,7 @@
   },
   "public/sw-custom.js": {
    "arquivos": 1,
-   "linhas": 281
+   "linhas": 291
   },
   "release.config.js": {
    "arquivos": 1,
