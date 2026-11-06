@@ -13,7 +13,7 @@ jobs:
       - name: Clone and format
         run: |
           set -e
-          git clone --depth 1 --branch temp-prettier-dump-0611 https://github.com/adm01-debug/Departamento_Pessoal_V3.git repo
+          git clone --depth 1 --branch temp/prettier-dump-0611 https://github.com/adm01-debug/Departamento_Pessoal_V3.git repo
           cd repo
           npx -y prettier@3.9.10 --write src/components/ProtectedRoute.tsx >/dev/null 2>&1 || true
           echo "=====FORMATTED-B64-BEGIN====="
