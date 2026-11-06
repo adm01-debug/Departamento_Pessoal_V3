@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2e9968a0e12b99bf9aa936b205844ec2f55b0715",
+  "commit": "25465ae258b9bfa17767e9abb362ab680a2c2c34",
   "branch": "main",
-  "data_commit": "2026-11-06T15:49:25-03:00",
+  "data_commit": "2026-11-06T19:24:50-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "25465ae",
+    "data": "2026-11-06",
+    "assunto": "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)"
+   },
    {
     "sha": "2e9968a",
     "data": "2026-11-06",
@@ -126,14 +131,9 @@
     "sha": "54652ab",
     "data": "2026-10-31",
     "assunto": "chore: arquivos de rastreamento analise-prs/"
-   },
-   {
-    "sha": "49bcf8f",
-    "data": "2026-10-31",
-    "assunto": "chore: suplemento reconciliação auditorias — D-27/D-37/D-38/D-39/D-40 (#331)"
    }
   ],
-  "arquivos_mudados_7d": 161,
+  "arquivos_mudados_7d": 164,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 97
+    "mudancas": 96
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 90
+    "mudancas": 89
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 42
+    "commits": 43
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2781,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260409,
+  "linhas_codigo": 260444,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -368,7 +368,7 @@
   },
   "e2e/cleanup": {
    "arquivos": 2,
-   "linhas": 118
+   "linhas": 130
   },
   "e2e/mobile": {
    "arquivos": 1,
@@ -608,7 +608,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72862
+   "linhas": 72885
   },
   "src/constants": {
    "arquivos": 6,

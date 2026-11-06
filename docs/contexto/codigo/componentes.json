@@ -5055,7 +5055,7 @@
     "UserProfileMenu"
    ],
    "export_default": null,
-   "linhas": 128,
+   "linhas": 151,
    "dominio": "components/ui",
    "hooks_locais": [
     "useAuth"

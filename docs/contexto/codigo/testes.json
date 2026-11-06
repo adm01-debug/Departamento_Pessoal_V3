@@ -160,14 +160,14 @@
   {
    "arquivo": "e2e/cleanup/logout.spec.ts",
    "tipo": "e2e",
-   "linhas": 39,
+   "linhas": 42,
    "testa": [],
    "casos": 1
   },
   {
    "arquivo": "e2e/cleanup/seed-cleanup.spec.ts",
    "tipo": "e2e",
-   "linhas": 79,
+   "linhas": 88,
    "testa": [],
    "casos": 1
   },

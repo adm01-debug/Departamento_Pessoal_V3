@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2e9968a0e12b99bf9aa936b205844ec2f55b0715",
+  "sha": "25465ae258b9bfa17767e9abb362ab680a2c2c34",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-06 18:58 UTC",
+  "generated_at": "2026-11-06 22:25 UTC",
   "files_total": 2801,
   "code_files": 2323,
-  "code_lines": 308300
+  "code_lines": 308335
  },
  "version": "1.3.2",
- "facts_hash": "39c4cf461902337f",
+ "facts_hash": "a56554f70fdf1115",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94833,7 +94833,7 @@
   {
    "module": "e2e",
    "files": 27,
-   "lines": 1683,
+   "lines": 1695,
    "tables": [
     "colaboradores",
     "empresas",
@@ -95172,7 +95172,7 @@
   {
    "module": "src/components",
    "files": 567,
-   "lines": 72862,
+   "lines": 72885,
    "tables": [
     "admissoes",
     "afastamentos",
@@ -225509,7 +225509,7 @@
   },
   "e2e/cleanup/logout.spec.ts": {
    "path": "e2e/cleanup/logout.spec.ts",
-   "lines": 39,
+   "lines": 42,
    "is_test": true,
    "rule_comments": [
     "Tentar acessar uma rota protegida após logout (deve redirecionar)"
@@ -225524,7 +225524,7 @@
   },
   "e2e/cleanup/seed-cleanup.spec.ts": {
    "path": "e2e/cleanup/seed-cleanup.spec.ts",
-   "lines": 79,
+   "lines": 88,
    "is_test": true,
    "tables": [
     {
@@ -240010,7 +240010,7 @@
   },
   "src/components/ui/user-profile-menu.tsx": {
    "path": "src/components/ui/user-profile-menu.tsx",
-   "lines": 128,
+   "lines": 151,
    "exports": [
     "function UserProfileMenu"
    ],
@@ -274336,10 +274336,21 @@
   }
  },
  "git": {
-  "sha": "2e9968a0e12b99bf9aa936b205844ec2f55b0715",
+  "sha": "25465ae258b9bfa17767e9abb362ab680a2c2c34",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "25465ae",
+    "date": "2026-11-06",
+    "author": "adm01-debug",
+    "subject": "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)",
+    "files": [
+     "e2e/cleanup/logout.spec.ts",
+     "e2e/cleanup/seed-cleanup.spec.ts",
+     "src/components/ui/user-profile-menu.tsx"
+    ]
+   },
    {
     "sha": "2e9968a",
     "date": "2026-11-06",
@@ -274746,21 +274757,6 @@
      "supabase/functions/pagar-desligamento/rpcErrors.ts",
      "supabase/migrations/20261028220000_pagar_desligamento_transacional.sql"
     ]
-   },
-   {
-    "sha": "3d2f0d5",
-    "date": "2026-10-31",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(admissoes): botão S-2200 no fluxo claim-based + e-mail pré-admissão real + acionador de contrato",
-    "files": [
-     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-     "src/pages/AdmissoesPage.tsx",
-     "src/services/__tests__/contratacaoService.test.ts",
-     "src/services/contratacaoService.ts",
-     "supabase/functions/enviar-email-admissao/admissaoLink.test.ts",
-     "supabase/functions/enviar-email-admissao/admissaoLink.ts",
-     "supabase/functions/enviar-email-admissao/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -274817,6 +274813,18 @@
     2
    ],
    [
+    "e2e/cleanup/logout.spec.ts",
+    1
+   ],
+   [
+    "e2e/cleanup/seed-cleanup.spec.ts",
+    1
+   ],
+   [
+    "src/components/ui/user-profile-menu.tsx",
+    1
+   ],
+   [
     "src/components/ProtectedRoute.tsx",
     1
    ],
@@ -274830,18 +274838,6 @@
    ],
    [
     "src/components/AdminRoute.tsx",
-    1
-   ],
-   [
-    ".github/workflows/canonical-edge-functions.yml",
-    1
-   ],
-   [
-    "infra/github/ruleset-main.json",
-    1
-   ],
-   [
-    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     1
    ]
   ]
