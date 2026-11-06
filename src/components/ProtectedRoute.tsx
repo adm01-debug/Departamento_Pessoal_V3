@@ -42,7 +42,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         }
         // Enrolled TOTP but session is still at aal1 — must complete challenge.
         const { data: factors } = await supabase.auth.mfa.listFactors();
-        const totp = factors?.totp?.find(f => f.status === 'verified');
+        const totp = factors?.totp?.find((f) => f.status === 'verified');
         if (totp && !cancelled) {
           setFactorId(totp.id);
           setMfaGate('pending-challenge');
@@ -93,20 +93,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1],
-              rotate: [0, 90, 0]
-            }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1], rotate: [0, 90, 0] }}
             transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-primary/10 rounded-full blur-[100px]"
           />
           <motion.div
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.1, 0.15, 0.1],
-              rotate: [0, -90, 0]
-            }}
+            animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.15, 0.1], rotate: [0, -90, 0] }}
             transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
             className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-[100px]"
           />
@@ -127,10 +119,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               <ShieldCheck className="w-12 h-12 text-primary" />
             </div>
             <motion.div
-              animate={{
-                y: [0, -4, 0],
-                opacity: [0.5, 1, 0.5]
-              }}
+              animate={{ y: [0, -4, 0], opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute -top-2 -right-2 p-2 rounded-lg bg-primary shadow-glow-sm"
             >
@@ -205,7 +194,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               maxLength={7}
               placeholder="000 000"
               value={totpCode}
-              onChange={e => setTotpCode(e.target.value)}
+              onChange={(e) => setTotpCode(e.target.value)}
               className="text-center text-xl tracking-widest rounded-xl"
               disabled={challengeLoading}
             />
