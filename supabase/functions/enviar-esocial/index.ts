@@ -7,8 +7,8 @@
 // • Erros genéricos ao cliente; captureException server-side
 // • Auditoria ESOCIAL_TRANSMIT em audit_log
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { assinarXmlSandboxNaoHomologado } from './utils/signer.ts';
 import {
   createErrorResponse,

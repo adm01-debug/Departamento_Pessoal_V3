@@ -3,7 +3,7 @@
 // Diferença do AEJ: o AFD reflete o RELOGIO — só batidas_ponto (marcações
 // cruas registradas no REP), sem a ponte para registros_ponto (timesheet
 // processado). O AEJ mantém a ponte porque representa a jornada apurada.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';

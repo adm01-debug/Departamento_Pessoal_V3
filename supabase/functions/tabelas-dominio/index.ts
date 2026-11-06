@@ -13,7 +13,7 @@
  * Resposta: Cache-Control: public, max-age=300
  */
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { cachePublic, cachedFetch, getCacheStats } from '../_shared/cache.ts';
 import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';

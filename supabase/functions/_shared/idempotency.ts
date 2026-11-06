@@ -12,7 +12,7 @@
 // Mantém a mesma resolução major usada pelos callers. Fixar 2.49.1 aqui e
 // criar clientes com `@2` em outras funções fazia os genéricos protegidos do
 // supabase-js divergirem durante o type-check das Edge Functions.
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { SupabaseClient } from "npm:@supabase/supabase-js@2.112.4";
 import { createErrorResponse, getCorsHeaders } from "./contract.ts";
 
 const KEY_MIN = 16;
