@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f",
+  "sha": "70b26d7efc6bababcfd547b9aaac48436a2de68d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-05 01:01 UTC",
+  "generated_at": "2026-11-06 00:45 UTC",
   "files_total": 2801,
   "code_files": 2323,
   "code_lines": 308284
@@ -274321,10 +274321,20 @@
   }
  },
  "git": {
-  "sha": "d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f",
+  "sha": "70b26d7efc6bababcfd547b9aaac48436a2de68d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "70b26d7",
+    "date": "2026-11-05",
+    "author": "dependabot[bot]",
+    "subject": "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "d43244e",
     "date": "2026-11-04",
@@ -274747,15 +274757,6 @@
     "files": [
      "src/services/jornadaHorariosService.ts"
     ]
-   },
-   {
-    "sha": "ee9c333",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(canonical): asserts sec_* esperam count (Number()===3/6), não boolean (#324)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -274780,6 +274781,10 @@
     3
    ],
    [
+    "package.json",
+    2
+   ],
+   [
     "inventario/estado/edges.json",
     2
    ],
@@ -274800,8 +274805,8 @@
     2
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    2
+    "package-lock.json",
+    1
    ],
    [
     "scripts/ci/README.md",
@@ -274833,10 +274838,6 @@
    ],
    [
     ".github/workflows/ci.yml",
-    1
-   ],
-   [
-    ".github/workflows/contexto.yml",
     1
    ]
   ]

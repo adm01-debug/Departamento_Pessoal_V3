@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)",
    "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)",
    "feat: adicionar scripts/graphify/setup.sh (#351)",
    "chore: inventario do estado real [auto] (#346)",
-   "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)",
-   "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)"
+   "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

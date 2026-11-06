@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d43244e1eda8dcf9f75ae1ae9744d5cfe290d49f",
+  "commit": "70b26d7efc6bababcfd547b9aaac48436a2de68d",
   "branch": "main",
-  "data_commit": "2026-11-04T20:30:15-03:00",
+  "data_commit": "2026-11-05T21:44:24-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "70b26d7",
+    "data": "2026-11-05",
+    "assunto": "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)"
+   },
    {
     "sha": "d43244e",
     "data": "2026-11-04",
@@ -126,14 +131,9 @@
     "sha": "7f43cca",
     "data": "2026-10-29",
     "assunto": "docs(pendencias): review #327 — re-dispatch explícito, sql-diag a confirmar, ⚠️ nos fluxos quebrados, #323 resolvido (#3"
-   },
-   {
-    "sha": "4b196dc",
-    "data": "2026-10-28",
-    "assunto": "feat(edges): consumidores reais para as 3 filas de comunicação (#323)"
    }
   ],
-  "arquivos_mudados_7d": 163,
+  "arquivos_mudados_7d": 153,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -148,20 +148,20 @@
     "mudancas": 25
    },
    {
+    "pasta": "package.json",
+    "mudancas": 20
+   },
+   {
     "pasta": "CLAUDE.md",
     "mudancas": 19
    },
    {
-    "pasta": "package.json",
-    "mudancas": 19
+    "pasta": "package-lock.json",
+    "mudancas": 17
    },
    {
     "pasta": "src/hooks/__tests__",
     "mudancas": 17
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 16
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 13
+    "commits": 14
    },
    {
     "autor": "github-actions[bot]",
