@@ -81,11 +81,13 @@ async function safeFetch(request, maxBytes = 4 * 1024 * 1024) {
       total += value.byteLength;
       if (total > maxBytes) {
         reader.cancel();
+        response.body.cancel();
         return new Response('Payload too large', { status: 413 });
       }
     }
-  } catch {
-    // Erro ao medir o clone não deve impedir a resposta original de servir.
+  } catch (error) {
+    reader.cancel();
+    throw error;
   }
   return response;
 }
@@ -157,7 +159,7 @@ self.addEventListener('fetch', (event) => {
   const hasCred = !!(authH && authH !== 'null' && authH !== 'undefined') || request.headers.has('apikey');
   if (hasCred) return;
 
-  const NEVER_CACHE_PATH = /^\/(auth|login|mfa|functions|webhooks?)\//i;
+  const NEVER_CACHE_PATH = /^\/(auth|login|mfa|functions|webhooks?)\/i;
   const PII_PATH = /\/(holerites?|pagamentos?|dados-bancarios|biometria|documentos)(\/|$)/i;
   if (
     url.hostname.includes('supabase.co') ||
