@@ -32,7 +32,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     if (!isReady || !user) return;
 
     let cancelled = false;
-    supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+    supabase.auth.mfa
+      .getAuthenticatorAssuranceLevel()
       .then(async ({ data }) => {
         if (cancelled) return;
         // Already at aal2 or no MFA enrolled → grant access
@@ -46,7 +47,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         if (totp && !cancelled) {
           setFactorId(totp.id);
           setMfaGate('pending-challenge');
-          loggerService.warn('H19: aal1 session with enrolled MFA — requiring TOTP challenge', { userId: user.id });
+          loggerService.warn('H19: aal1 session with enrolled MFA — requiring TOTP challenge', {
+            userId: user.id,
+          });
         } else if (!cancelled) {
           // Inconsistent state: nextLevel=aal2 but no verified factor found → allow through
           setMfaGate('ok');
@@ -57,7 +60,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         if (!cancelled) setMfaGate('ok');
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [isReady, user]);
 
   useEffect(() => {
@@ -93,12 +98,20 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1], rotate: [0, 90, 0] }}
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.1, 0.2, 0.1],
+              rotate: [0, 90, 0],
+            }}
             transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-primary/10 rounded-full blur-[100px]"
           />
           <motion.div
-            animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.15, 0.1], rotate: [0, -90, 0] }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.1, 0.15, 0.1],
+              rotate: [0, -90, 0],
+            }}
             transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
             className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-[100px]"
           />
@@ -119,7 +132,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               <ShieldCheck className="w-12 h-12 text-primary" />
             </div>
             <motion.div
-              animate={{ y: [0, -4, 0], opacity: [0.5, 1, 0.5] }}
+              animate={{
+                y: [0, -4, 0],
+                opacity: [0.5, 1, 0.5],
+              }}
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute -top-2 -right-2 p-2 rounded-lg bg-primary shadow-glow-sm"
             >
@@ -141,7 +157,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                animate={{
+                  scale: [1, 1.5, 1],
+                  opacity: [0.3, 1, 0.3],
+                }}
                 transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
                 className="w-1.5 h-1.5 rounded-full bg-primary"
               />
@@ -199,9 +218,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               disabled={challengeLoading}
             />
           </div>
-          {challengeError && (
-            <p className="text-sm text-destructive text-center">{challengeError}</p>
-          )}
+          {challengeError && <p className="text-sm text-destructive text-center">{challengeError}</p>}
           <Button
             type="submit"
             className="w-full gap-2"
