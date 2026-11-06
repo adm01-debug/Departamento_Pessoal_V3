@@ -72,7 +72,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
         </div>
 
-        <DropdownMnMenuSeparator className="bg-border/30" />
+        <DropdownMenuSeparator className="bg-border/30" />
 
         <DropdownMenuItem onClick={() => navigate('/perfil')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
           <div className="p-1.5 rounded-lg bg-accent/80"><User className="h-3.5 w-3.5" /></div>
@@ -121,7 +121,8 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
             <p className="text-[11px] text-muted-foreground">Encerrar sessão</p>
           </div>
         </DropdownMenuItem>
-      </DropdownMenuContent>
+      </DropdownMenuMenuContent>
     </DropdownMenu>
   );
 }
+
