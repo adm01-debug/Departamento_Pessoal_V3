@@ -3666,7 +3666,7 @@
     "ProtectedRoute"
    ],
    "export_default": null,
-   "linhas": 230,
+   "linhas": 233,
    "dominio": "components",
    "hooks_locais": [
     "useAuth"

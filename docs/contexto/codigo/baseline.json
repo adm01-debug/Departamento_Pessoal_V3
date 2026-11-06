@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "205c58360358ab74b52e640bd40ad057bf73a83a",
+  "commit": "dc7d1eb8036a92cfe63fdcbf298b2e96efda63a3",
   "branch": "main",
-  "data_commit": "2026-11-06T13:09:27-03:00",
+  "data_commit": "2026-11-06T15:13:41-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "dc7d1eb",
+    "data": "2026-11-06",
+    "assunto": "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)"
+   },
    {
     "sha": "205c583",
     "data": "2026-11-06",
@@ -126,14 +131,9 @@
     "sha": "7db8ba8",
     "data": "2026-10-31",
     "assunto": "chore(limpeza): resolve código órfão do §8.3 – liga LanguageSelector/PDF-PDI, remove mortos, ativa specs"
-   },
-   {
-    "sha": "e1a18ef",
-    "data": "2026-10-31",
-    "assunto": "docs: pendências externas dos gaps de admissão/rescisão (secrets, provedores, fora de escopo)"
    }
   ],
-  "arquivos_mudados_7d": 160,
+  "arquivos_mudados_7d": 161,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 99
+    "mudancas": 98
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 92
+    "mudancas": 91
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 40
+    "commits": 41
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2781,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260406,
+  "linhas_codigo": 260409,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -608,7 +608,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72859
+   "linhas": 72862
   },
   "src/constants": {
    "arquivos": 6,
