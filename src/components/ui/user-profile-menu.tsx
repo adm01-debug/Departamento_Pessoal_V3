@@ -1,4 +1,4 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -62,9 +62,9 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w0">
+            <div className="flex-1 min-w-0">
               <p className="text-sm font-display font-semibold truncate">{user?.name || 'Usuário'}</p>
-              <p className="text-xs text-muted-foreground font-body truncate">{user/.email || ''}</p>
+              <p className="text-xs text-muted-foreground font-body truncate">{user?.email || ''}</p>
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-1.5">
@@ -106,7 +106,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuMenuSeparator className="bg-border/30" />
+        <DropdownMenuSeparator className="bg-border/30" />
 
         <DropdownMenuItem
           onClick={handleSignOut}
@@ -121,8 +121,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
             <p className="text-[11px] text-muted-foreground">Encerrar sessão</p>
           </div>
         </DropdownMenuItem>
-      </DropdownMenuMenuContent>
+      </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-
