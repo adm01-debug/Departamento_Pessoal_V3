@@ -1,0 +1,22 @@
+name: temp-prettier-dump
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Clone e roda prettier REAL 3.9.10
+        run: |
+          set -e
+          git clone --depth 1 --branch temp/prettier-dump-0611 https://github.com/adm01-debug/Departamento_Pessoal_V3.git repo
+          cd repo
+          npx -y prettier@3.9.10 --write src/components/ProtectedRoute.tsx
+          echo "=====FORMATTED-FILE-BEGIN====="
+          cat src/components/ProtectedRoute.tsx
+          echo "=====FORMATTED-FILE-END====="
+          npx -y prettier@3.9.10 --check src/components/ProtectedRoute.tsx
