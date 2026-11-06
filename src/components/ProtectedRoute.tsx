@@ -20,7 +20,8 @@ type MfaGate = 'checking' | 'ok' | 'pending-challenge';
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isReady, loading } = useAuth();
-  const [mfaGate, setMfaGate] = useState<MfaGate>(import.meta.env.VITE_E2E_BYPASS_MFA === 'true' ? 'ok' : 'checking');
+  const mfaBypass = import.meta.env.VITE_E2E_BYPASS_MFA === 'true';
+  const [mfaGate, setMfaGate] = useState<MfaGate>(mfaBypass ? 'ok' : 'checking');
   const [factorId, setFactorId] = useState('');
   const [totpCode, setTotpCode] = useState('');
   const [challengeLoading, setChallengeLoading] = useState(false);
