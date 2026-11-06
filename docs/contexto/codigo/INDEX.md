@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `68a06b1fa6d5f647c4fbc99107110db7a4727b8e` (2026-11-05T21:58:20-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6ed87f2aec80463d2465abb5d19b0cf5fb0ee765` (2026-11-05T22:39:59-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2781 |
 | arquivos_codigo | 1508 |
-| linhas_codigo | 260393 |
+| linhas_codigo | 260396 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -380,25 +380,25 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes_orfaos: 21 — ex.: src/components/dashboard/SectionHeader.tsx, src/components/layout/Breadcrumb.tsx, src/components/layout/Column.tsx
 - componentes_com_nome_duplicado: 17 — ex.: AlertasRHWidget, CadastroIncompletoWidget, ESocialMonitorWidget
 - scripts_orfaos: 4 — ex.: scripts/simulacao/simulate_adiant_13.cjs, scripts/simulacao/simulate_art145.cjs, scripts/simulacao/simulate_notif_d3.cjs
-- env_usadas_nao_declaradas: 12 — ex.: CI, DEV, GITHUB_ACTIONS
+- env_usadas_nao_declaradas: 13 — ex.: CI, DEV, GITHUB_ACTIONS
 - ciclos_de_import: 3
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `68a06b1f`
+- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `6ed87f2a`
 - comunidades maiores: react (576), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (389), useEmpresas (370), button.tsx (360), App.tsx (267), cn (244), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (103)
-- package-lock.json (96)
+- package.json (102)
+- package-lock.json (95)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (30)
 - .github/workflows/ci.yml (24)
 - src/integrations/supabase/types.ts (16)
+- .github/workflows/e2e.yml (15)
 - supabase/functions/external-db-bridge/validation.ts (15)
-- .github/workflows/e2e.yml (14)
 - .github/workflows/security.yml (13)
 - src/services/cnabService.ts (13)
 - .github/workflows/deploy.yml (12)
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-05 `6ed87f2` fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)
 - 2026-11-05 `68a06b1` chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)
 - 2026-11-05 `75eaf9a` infra: exige branch atualizada antes do merge no ruleset da main (#337)
 - 2026-11-05 `0d79b5c` build(deps): bump minor-patch group (10 pacotes npm) (#348)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-02 `530a5cd` chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)
 - 2026-10-31 `39a1e20` fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)
 - 2026-10-31 `451a80a` feat: security hardening - cherry-pick PR 315 sem workflows (#334)
-- 2026-10-31 `57054a5` fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

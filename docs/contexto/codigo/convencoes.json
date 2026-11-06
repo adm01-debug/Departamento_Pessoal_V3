@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)",
    "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)",
    "infra: exige branch atualizada antes do merge no ruleset da main (#337)",
    "build(deps): bump minor-patch group (10 pacotes npm) (#348)",
-   "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)",
-   "docs: atualizar WORKFLOWS_STATUS.md (#344)"
+   "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "68a06b1fa6d5f647c4fbc99107110db7a4727b8e",
+  "commit": "6ed87f2aec80463d2465abb5d19b0cf5fb0ee765",
   "branch": "main",
-  "data_commit": "2026-11-05T21:58:20-03:00",
+  "data_commit": "2026-11-05T22:39:59-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6ed87f2",
+    "data": "2026-11-05",
+    "assunto": "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)"
+   },
    {
     "sha": "68a06b1",
     "data": "2026-11-05",
@@ -126,14 +131,9 @@
     "sha": "3d2f0d5",
     "data": "2026-10-31",
     "assunto": "fix(admissoes): botão S-2200 no fluxo claim-based + e-mail pré-admissão real + acionador de contrato"
-   },
-   {
-    "sha": "199c855",
-    "data": "2026-10-31",
-    "assunto": "chore: reconciliação de auditorias anteriores (analise-prs/)"
    }
   ],
-  "arquivos_mudados_7d": 156,
+  "arquivos_mudados_7d": 158,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 103
+    "mudancas": 102
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 96
+    "mudancas": 95
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -222,12 +222,12 @@
     "mudancas": 16
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "arquivo": ".github/workflows/e2e.yml",
     "mudancas": 15
    },
    {
-    "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 14
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "mudancas": 15
    },
    {
     "arquivo": ".github/workflows/security.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 36
+    "commits": 37
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2781,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260393,
+  "linhas_codigo": 260396,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -608,7 +608,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72856
+   "linhas": 72859
   },
   "src/constants": {
    "arquivos": 6,
@@ -1025,7 +1025,8 @@
    "RUN_LIVE_RLS_TESTS",
    "SUPABASE_ANON_KEY",
    "SUPABASE_PUBLISHABLE_KEY",
-   "SUPABASE_URL"
+   "SUPABASE_URL",
+   "VITE_E2E_BYPASS_MFA"
   ],
   "ciclos_de_import": 3,
   "possiveis_segredos_no_codigo": [
