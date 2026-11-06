@@ -19,7 +19,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
   const { user, isReady, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const [mfaState, setMfaState] = useState<MfaState>(
-    import.meta.env.VITE_E2E_BYPASS_MFA === 'true' ? 'verified' : 'checking',
+    import.meta.env.VITE_E2E_BYPASS_MFA === 'true' ? 'verified' : 'checking'
   );
   const [factorId, setFactorId] = useState('');
   const [totpCode, setTotpCode] = useState('');
