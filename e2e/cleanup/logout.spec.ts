@@ -31,9 +31,9 @@ test.describe('Logout (cleanup — executa por último)', () => {
 
     // Verificar redirecionamento para login
     await page.waitForURL(/\/login/, { timeout: 15000 });
-    await expect(page.getByLabel(/e-?mail/i).first()).toBeVisible(();
+    await expect(page.getByLabel(/e-?mail/i).first()).toBeVisible();
 
-    // Tentar acessar yma rota protegida após logout (deve redirecionar)
+    // Tentar acessar uma rota protegida após logout (deve redirecionar)
     await page.goto('/dashboard');
     await page.waitForURL(/\/login/);
     expect(page.url()).toContain('/login');
