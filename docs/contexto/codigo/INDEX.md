@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `dc7d1eb8036a92cfe63fdcbf298b2e96efda63a3` (2026-11-06T15:13:41-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2e9968a0e12b99bf9aa936b205844ec2f55b0715` (2026-11-06T15:49:25-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,14 +385,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `dc7d1eb8`
+- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `2e9968a0`
 - comunidades maiores: react (576), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (389), useEmpresas (370), button.tsx (360), App.tsx (267), cn (244), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (98)
-- package-lock.json (91)
+- package.json (97)
+- package-lock.json (90)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (30)
 - .github/workflows/ci.yml (24)
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-06 `2e9968a` fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)
 - 2026-11-06 `dc7d1eb` fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)
 - 2026-11-06 `205c583` fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)
 - 2026-11-06 `a18f04a` fix: safeFetch do SW devolve resposta original (evita "Failed to fetch dynamically imported module") (#356)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-05 `70b26d7` build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)
 - 2026-11-04 `d43244e` feat: adicionar scripts/ci (check-claude-md-integrity) (#350)
 - 2026-11-04 `9f008b6` feat: adicionar scripts/graphify/setup.sh (#351)
-- 2026-11-04 `a82cc07` chore: inventario do estado real [auto] (#346)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

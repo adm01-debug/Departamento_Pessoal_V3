@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "dc7d1eb8036a92cfe63fdcbf298b2e96efda63a3",
+  "sha": "2e9968a0e12b99bf9aa936b205844ec2f55b0715",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-06 18:14 UTC",
+  "generated_at": "2026-11-06 18:58 UTC",
   "files_total": 2801,
   "code_files": 2323,
   "code_lines": 308300
@@ -274336,10 +274336,19 @@
   }
  },
  "git": {
-  "sha": "dc7d1eb8036a92cfe63fdcbf298b2e96efda63a3",
+  "sha": "2e9968a0e12b99bf9aa936b205844ec2f55b0715",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2e9968a",
+    "date": "2026-11-06",
+    "author": "adm01-debug",
+    "subject": "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)",
+    "files": [
+     "e2e/authenticated/audit-checklist.spec.ts"
+    ]
+   },
    {
     "sha": "dc7d1eb",
     "date": "2026-11-06",
@@ -274752,15 +274761,6 @@
      "supabase/functions/enviar-email-admissao/admissaoLink.ts",
      "supabase/functions/enviar-email-admissao/index.ts"
     ]
-   },
-   {
-    "sha": "199c855",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "chore: reconciliação de auditorias anteriores (analise-prs/)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -274783,6 +274783,10 @@
    [
     "supabase/functions/enviar-esocial/index.ts",
     3
+   ],
+   [
+    "e2e/authenticated/audit-checklist.spec.ts",
+    2
    ],
    [
     "public/sw-custom.js",
@@ -274810,10 +274814,6 @@
    ],
    [
     "analise-prs/progresso.json",
-    2
-   ],
-   [
-    "analise-prs/auditorias-anteriores.md",
     2
    ],
    [

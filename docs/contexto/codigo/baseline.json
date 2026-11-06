@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dc7d1eb8036a92cfe63fdcbf298b2e96efda63a3",
+  "commit": "2e9968a0e12b99bf9aa936b205844ec2f55b0715",
   "branch": "main",
-  "data_commit": "2026-11-06T15:13:41-03:00",
+  "data_commit": "2026-11-06T15:49:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2e9968a",
+    "data": "2026-11-06",
+    "assunto": "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)"
+   },
    {
     "sha": "dc7d1eb",
     "data": "2026-11-06",
@@ -126,11 +131,6 @@
     "sha": "49bcf8f",
     "data": "2026-10-31",
     "assunto": "chore: suplemento reconciliação auditorias — D-27/D-37/D-38/D-39/D-40 (#331)"
-   },
-   {
-    "sha": "7db8ba8",
-    "data": "2026-10-31",
-    "assunto": "chore(limpeza): resolve código órfão do §8.3 – liga LanguageSelector/PDF-PDI, remove mortos, ativa specs"
    }
   ],
   "arquivos_mudados_7d": 161,
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 98
+    "mudancas": 97
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 91
+    "mudancas": 90
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 41
+    "commits": 42
    },
    {
     "autor": "dependabot[bot]",

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)",
    "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)",
    "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)",
    "fix: safeFetch do SW devolve resposta original (evita \"Failed to fetch dynamically imported module\") (#356)",
-   "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)",
-   "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)"
+   "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
