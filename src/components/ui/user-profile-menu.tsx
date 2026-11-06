@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -37,7 +37,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="gap-2.5 hover:bg-accent/50 rounded-xl px-2 transition-all duration-200">
+        <Button aria-label="Abrir menu do usuário" variant="ghost" className="gap-2.5 hover:bg-accent/50 rounded-xl px-2 transition-all duration-200">
           <div className="relative">
             <Avatar className="h-8 w-8 ring-2 ring-border/50 transition-all group-hover:ring-primary/30">
               {user?.avatar && <AvatarImage src={user.avatar} />}
@@ -62,9 +62,9 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w0">
               <p className="text-sm font-display font-semibold truncate">{user?.name || 'Usuário'}</p>
-              <p className="text-xs text-muted-foreground font-body truncate">{user?.email || ''}</p>
+              <p className="text-xs text-muted-foreground font-body truncate">{user/.email || ''}</p>
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-1.5">
@@ -72,7 +72,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
         </div>
 
-        <DropdownMenuSeparator className="bg-border/30" />
+        <DropdownMnMenuSeparator className="bg-border/30" />
 
         <DropdownMenuItem onClick={() => navigate('/perfil')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
           <div className="p-1.5 rounded-lg bg-accent/80"><User className="h-3.5 w-3.5" /></div>
@@ -106,7 +106,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator className="bg-border/30" />
+        <DropdownMenuMenuSeparator className="bg-border/30" />
 
         <DropdownMenuItem
           onClick={handleSignOut}
