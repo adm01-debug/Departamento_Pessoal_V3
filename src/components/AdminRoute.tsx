@@ -28,6 +28,12 @@ export function AdminRoute({ children }: AdminRouteProps) {
   useEffect(() => {
     if (!isReady || !isAdmin || !user) return;
 
+    // Bypass MFA in E2E test environment (VITE_E2E_BYPASS_MFA=true)
+    if (import.meta.env.VITE_E2E_BYPASS_MFA === 'true') {
+      setMfaState('verified');
+      return;
+    }
+
     let cancelled = false;
     supabase.auth.mfa
       .getAuthenticatorAssuranceLevel()
@@ -56,7 +62,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
         setMfaState('missing');
       })
       .catch(() => {
-        // Fail-closed: cannot verify MFA status → block access, not grant it
+        // Fail-closed: cannot verify MFA status -> block access, not grant it
         if (!cancelled) {
           loggerService.warn('AdminRoute: MFA check failed — blocking access (fail-closed)', { userId: user?.id });
           setMfaState('missing');
