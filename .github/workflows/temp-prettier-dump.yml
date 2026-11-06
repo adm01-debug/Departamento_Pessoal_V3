@@ -4,24 +4,37 @@ on:
   push:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   dump:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TARGET_BRANCH: claude/fix-e2e-red-main-06111609
     steps:
-      - name: Clone and format
+      - name: Format and commit
         run: |
           set -e
-          git clone --depth 1 --branch temp/prettier-dump-0611 https://github.com/adm01-debug/Departamento_Pessoal_V3.git repo
-          cd repo
-          npx -y prettier@3.9.10 --write src/components/ProtectedRoute.tsx >/dev/null 2>&1 || true
-          echo "=====FORMATTED-B64-BEGIN====="
-          base64 -w0 src/components/ProtectedRoute.tsx
-          echo ""
-          echo "=====FORMATTED-B64-END====="
-          echo "=====FORMATTED-FILE-BEGIN====="
-          cat src/components/ProtectedRoute.tsx
-          echo "=====FORMATTED-FILE-END====="
-          echo "=====CHECK====="
+          mkdir -p src/components
+          gh api -H 'Accept: application/vnd.github.raw+json' \
+            "/repos/adm01-debug/Departamento_Pessoal_V3/contents/src/components/ProtectedRoute.tsx?ref=${TARGET_BRANCH}" \
+            > src/components/ProtectedRoute.tsx
+          echo "=====CHECK-BEFORE====="
           npx -y prettier@3.9.10 --check src/components/ProtectedRoute.tsx || true
+          npx -y prettier@3.9.10 --write src/components/ProtectedRoute.tsx >/dev/null
+          echo "=====CHECK-AFTER====="
+          npx -y prettier@3.9.10 --check src/components/ProtectedRoute.tsx || true
+          echo "=====FORMATTED-B64-BEGIN====="
+          base64 -w0 src/components/ProtectedRoute.tsx | fold -w 100
+          echo "=====FORMATTED-B64-END====="
+          CONTENT=$(base64 -w0 src/components/ProtectedRoute.tsx)
+          SHA=$(gh api "/repos/adm01-debug/Departamento_Pessoal_V3/contents/src/components/ProtectedRoute.tsx?ref=${TARGET_BRANCH}" --jq '.sha')
+          echo "=====OLD-SHA=====${SHA}"
+          gh api --method PUT /repos/adm01-debug/Departamento_Pessoal_V3/contents/src/components/ProtectedRoute.tsx \
+            -f message="fix: formata ProtectedRoute com prettier 3.9.10 (gerado via CI)" \
+            -f content="$CONTENT" \
+            -f branch="$TARGET_BRANCH" \
+            -f sha="$SHA" \
+            --jq '.commit.sha'
+          echo "=====DONE====="
