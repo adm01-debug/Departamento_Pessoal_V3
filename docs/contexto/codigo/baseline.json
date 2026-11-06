@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0d79b5cef658b8f58b69efc77931580b2c568f8f",
+  "commit": "68a06b1fa6d5f647c4fbc99107110db7a4727b8e",
   "branch": "main",
-  "data_commit": "2026-11-05T21:44:39-03:00",
+  "data_commit": "2026-11-05T21:58:20-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "68a06b1",
+    "data": "2026-11-05",
+    "assunto": "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)"
+   },
+   {
+    "sha": "75eaf9a",
+    "data": "2026-11-05",
+    "assunto": "infra: exige branch atualizada antes do merge no ruleset da main (#337)"
+   },
    {
     "sha": "0d79b5c",
     "data": "2026-11-05",
@@ -121,19 +131,9 @@
     "sha": "199c855",
     "data": "2026-10-31",
     "assunto": "chore: reconciliação de auditorias anteriores (analise-prs/)"
-   },
-   {
-    "sha": "420682d",
-    "data": "2026-10-29",
-    "assunto": "build(deps): bump the actions group across 1 directory with 4 updates (#276)"
-   },
-   {
-    "sha": "e8febd2",
-    "data": "2026-10-29",
-    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#304)"
    }
   ],
-  "arquivos_mudados_7d": 154,
+  "arquivos_mudados_7d": 156,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 104
+    "mudancas": 103
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 97
+    "mudancas": 96
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -262,6 +262,10 @@
     "mudancas": 10
    },
    {
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 9
+   },
+   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 9
    },
@@ -290,11 +294,7 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 8
    }
   ],
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 34
+    "commits": 36
    },
    {
     "autor": "dependabot[bot]",

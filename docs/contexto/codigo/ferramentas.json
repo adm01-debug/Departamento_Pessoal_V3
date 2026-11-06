@@ -512,11 +512,14 @@
     "gitleaks"
    ],
    "permissoes": [
-    "contents: read"
+    "contents: read",
+    "pull-requests: write"
    ],
    "scripts_usados": [],
    "npm_scripts": [],
-   "secrets": [],
+   "secrets": [
+    "GITHUB_TOKEN"
+   ],
    "actions": [
     "actions/checkout",
     "gitleaks/gitleaks-action"

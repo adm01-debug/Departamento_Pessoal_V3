@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "0d79b5cef658b8f58b69efc77931580b2c568f8f",
+  "sha": "68a06b1fa6d5f647c4fbc99107110db7a4727b8e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-06 00:46 UTC",
+  "generated_at": "2026-11-06 01:05 UTC",
   "files_total": 2801,
   "code_files": 2323,
   "code_lines": 308284
@@ -274321,10 +274321,31 @@
   }
  },
  "git": {
-  "sha": "0d79b5cef658b8f58b69efc77931580b2c568f8f",
+  "sha": "68a06b1fa6d5f647c4fbc99107110db7a4727b8e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "68a06b1",
+    "date": "2026-11-05",
+    "author": "adm01-debug",
+    "subject": "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)",
+    "files": [
+     ".github/workflows/canonical-edge-functions.yml",
+     ".github/workflows/contexto.yml",
+     ".github/workflows/gitleaks.yml",
+     "infra/github/action-pins.json"
+    ]
+   },
+   {
+    "sha": "75eaf9a",
+    "date": "2026-11-05",
+    "author": "adm01-debug",
+    "subject": "infra: exige branch atualizada antes do merge no ruleset da main (#337)",
+    "files": [
+     "infra/github/ruleset-main.json"
+    ]
+   },
    {
     "sha": "0d79b5c",
     "date": "2026-11-05",
@@ -274733,33 +274754,6 @@
     "files": [
      "src/components/dashboard/AnalyticsSection.tsx"
     ]
-   },
-   {
-    "sha": "7f43cca",
-    "date": "2026-10-29",
-    "author": "devin-ai-integration[bot]",
-    "subject": "docs(pendencias): review #327 — re-dispatch explícito, sql-diag a confirmar, ⚠️ nos fluxos quebrados, #323 resolvido (#329)",
-    "files": [
-     "PENDENCIAS.md"
-    ]
-   },
-   {
-    "sha": "4b196dc",
-    "date": "2026-10-28",
-    "author": "devin-ai-integration[bot]",
-    "subject": "feat(edges): consumidores reais para as 3 filas de comunicação (#323)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "scripts/canonical-invariants.sql",
-     "supabase/functions/_shared/outboundDelivery.test.ts",
-     "supabase/functions/_shared/outboundDelivery.ts",
-     "supabase/functions/distribuir-holerites/index.ts",
-     "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-     "supabase/functions/processar-agendamentos/index.ts",
-     "supabase/functions/whatsapp-send/index.ts",
-     "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.sql",
-     "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -274770,6 +274764,10 @@
    [
     "package-lock.json",
     4
+   ],
+   [
+    "infra/github/action-pins.json",
+    3
    ],
    [
     "AGENTS.md",
@@ -274788,15 +274786,19 @@
     3
    ],
    [
+    ".github/workflows/contexto.yml",
+    2
+   ],
+   [
+    ".github/workflows/gitleaks.yml",
+    2
+   ],
+   [
     "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     2
    ],
    [
     "inventario/estado/edges.json",
-    2
-   ],
-   [
-    "infra/github/action-pins.json",
     2
    ],
    [
@@ -274812,8 +274814,12 @@
     2
    ],
    [
-    "PENDENCIAS.md",
-    2
+    ".github/workflows/canonical-edge-functions.yml",
+    1
+   ],
+   [
+    "infra/github/ruleset-main.json",
+    1
    ],
    [
     "scripts/ci/README.md",
@@ -274829,18 +274835,6 @@
    ],
    [
     "scripts/graphify/setup.sh",
-    1
-   ],
-   [
-    "inventario/estado/banco.json",
-    1
-   ],
-   [
-    ".claude/hooks/session-start.sh",
-    1
-   ],
-   [
-    ".claude/settings.json",
     1
    ]
   ]
