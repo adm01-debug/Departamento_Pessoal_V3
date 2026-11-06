@@ -37,7 +37,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="gap-2.5 hover:bg-accent/50 rounded-xl px-2 transition-all duration-200">
+        <Button variant="ghost" className="gap-2.5 hover:bg-accent/50 rounded-xl px-2 transition-all duration-200" aria-label="Abrir menu do usuário">
           <div className="relative">
             <Avatar className="h-8 w-8 ring-2 ring-border/50 transition-all group-hover:ring-primary/30">
               {user?.avatar && <AvatarImage src={user.avatar} />}
