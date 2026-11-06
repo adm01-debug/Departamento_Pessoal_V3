@@ -18,13 +18,17 @@ jobs:
           set -e
           mkdir -p src/components
           gh api -H 'Accept: application/vnd.github.raw+json' \
+            "/repos/adm01-debug/Departamento_Pessoal_V3/contents/.prettierrc" \
+            > .prettierrc
+          gh api -H 'Accept: application/vnd.github.raw+json' \
             "/repos/adm01-debug/Departamento_Pessoal_V3/contents/src/components/ProtectedRoute.tsx?ref=${TARGET_BRANCH}" \
             > src/components/ProtectedRoute.tsx
+          echo "=====CFG====="; cat .prettierrc
           echo "=====CHECK-BEFORE====="
-          npx -y prettier@3.9.10 --check src/components/ProtectedRoute.tsx || true
-          npx -y prettier@3.9.10 --write src/components/ProtectedRoute.tsx >/dev/null
+          npx -y prettier@3.9.10 --config .prettierrc --check src/components/ProtectedRoute.tsx || true
+          npx -y prettier@3.9.10 --config .prettierrc --write src/components/ProtectedRoute.tsx >/dev/null
           echo "=====CHECK-AFTER====="
-          npx -y prettier@3.9.10 --check src/components/ProtectedRoute.tsx || true
+          npx -y prettier@3.9.10 --config .prettierrc --check src/components/ProtectedRoute.tsx || true
           echo "=====FORMATTED-B64-BEGIN====="
           base64 -w0 src/components/ProtectedRoute.tsx | fold -w 100
           echo "=====FORMATTED-B64-END====="
