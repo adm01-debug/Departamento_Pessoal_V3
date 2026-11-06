@@ -18,7 +18,9 @@ type MfaState = 'checking' | 'verified' | 'pending-challenge' | 'missing';
 export function AdminRoute({ children }: AdminRouteProps) {
   const { user, isReady, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
-  const [mfaState, setMfaState] = useState<MfaState>('checking');
+  const [mfaState, setMfaState] = useState<MfaState>(
+    import.meta.env.VITE_E2E_BYPASS_MFA === 'true' ? 'verified' : 'checking',
+  );
   const [factorId, setFactorId] = useState('');
   const [totpCode, setTotpCode] = useState('');
   const [challengeLoading, setChallengeLoading] = useState(false);
@@ -27,12 +29,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
 
   useEffect(() => {
     if (!isReady || !isAdmin || !user) return;
-
-    // Bypass MFA in E2E test environment (VITE_E2E_BYPASS_MFA=true)
-    if (import.meta.env.VITE_E2E_BYPASS_MFA === 'true') {
-      setMfaState('verified');
-      return;
-    }
+    if (import.meta.env.VITE_E2E_BYPASS_MFA === 'true') return;
 
     let cancelled = false;
     supabase.auth.mfa
@@ -58,11 +55,11 @@ export function AdminRoute({ children }: AdminRouteProps) {
           }
           return;
         }
-        // No MFA enrolled at all — reached only when cancelled is false (no await taken this path)
+        // No MFA enrolled at all
         setMfaState('missing');
       })
       .catch(() => {
-        // Fail-closed: cannot verify MFA status -> block access, not grant it
+        // Fail-closed: cannot verify MFA status → block access, not grant it
         if (!cancelled) {
           loggerService.warn('AdminRoute: MFA check failed — blocking access (fail-closed)', { userId: user?.id });
           setMfaState('missing');
