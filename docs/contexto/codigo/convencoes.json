@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)",
-   "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)",
-   "feat: adicionar scripts/graphify/setup.sh (#351)",
-   "chore: inventario do estado real [auto] (#346)",
-   "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)"
+   "build(deps): bump minor-patch group (10 pacotes npm) (#348)",
+   "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)",
+   "docs: atualizar WORKFLOWS_STATUS.md (#344)",
+   "build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)",
+   "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

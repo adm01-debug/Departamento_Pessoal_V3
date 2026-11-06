@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `70b26d7efc6bababcfd547b9aaac48436a2de68d` (2026-11-05T21:44:24-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0d79b5cef658b8f58b69efc77931580b2c568f8f` (2026-11-05T21:44:39-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,14 +385,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `70b26d7e`
+- 21291 nós · 44549 arestas · 2060 comunidades · grafo do commit `0d79b5ce`
 - comunidades maiores: react (576), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (389), useEmpresas (370), button.tsx (360), App.tsx (267), cn (244), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (102)
-- package-lock.json (95)
+- package.json (104)
+- package-lock.json (97)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (30)
 - .github/workflows/ci.yml (24)
@@ -598,6 +598,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-05 `0d79b5c` build(deps): bump minor-patch group (10 pacotes npm) (#348)
+- 2026-11-05 `e4dc94f` build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)
+- 2026-11-05 `77a6b83` docs: atualizar WORKFLOWS_STATUS.md (#344)
+- 2026-11-05 `50c052c` build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)
 - 2026-11-05 `70b26d7` build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)
 - 2026-11-04 `d43244e` feat: adicionar scripts/ci (check-claude-md-integrity) (#350)
 - 2026-11-04 `9f008b6` feat: adicionar scripts/graphify/setup.sh (#351)
@@ -609,10 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-10-31 `57054a5` fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)
 - 2026-10-31 `ceb50b3` feat: security hardening — 37 arquivos (cherry-pick PR #315 sem workflows)
 - 2026-10-31 `fc04fb8` chore: finaliza analise-prs/ — fontes, funcionalidades, regras-de-negocio, baseline, prs.csv (#333)
-- 2026-10-31 `54652ab` chore: arquivos de rastreamento analise-prs/
-- 2026-10-31 `49bcf8f` chore: suplemento reconciliação auditorias — D-27/D-37/D-38/D-39/D-40 (#331)
-- 2026-10-31 `7db8ba8` chore(limpeza): resolve código órfão do §8.3 – liga LanguageSelector/PDF-PDI, remove mortos, ativa specs
-- 2026-10-31 `e1a18ef` docs: pendências externas dos gaps de admissão/rescisão (secrets, provedores, fora de escopo)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "70b26d7efc6bababcfd547b9aaac48436a2de68d",
+  "commit": "0d79b5cef658b8f58b69efc77931580b2c568f8f",
   "branch": "main",
-  "data_commit": "2026-11-05T21:44:24-03:00",
+  "data_commit": "2026-11-05T21:44:39-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0d79b5c",
+    "data": "2026-11-05",
+    "assunto": "build(deps): bump minor-patch group (10 pacotes npm) (#348)"
+   },
+   {
+    "sha": "e4dc94f",
+    "data": "2026-11-05",
+    "assunto": "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)"
+   },
+   {
+    "sha": "77a6b83",
+    "data": "2026-11-05",
+    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (#344)"
+   },
+   {
+    "sha": "50c052c",
+    "data": "2026-11-05",
+    "assunto": "build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)"
+   },
    {
     "sha": "70b26d7",
     "data": "2026-11-05",
@@ -111,29 +131,9 @@
     "sha": "e8febd2",
     "data": "2026-10-29",
     "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#304)"
-   },
-   {
-    "sha": "231cdb7",
-    "data": "2026-10-29",
-    "assunto": "feat(workflow): liga gatilho real em feriasService.criar (§4.29) (#316)"
-   },
-   {
-    "sha": "a90a4fe",
-    "data": "2026-10-29",
-    "assunto": "fix(e2e): smoke ignora sondas do diagnóstico com precisão (403/422/400) + flakes TOTP/recover (#320)"
-   },
-   {
-    "sha": "529a8d6",
-    "data": "2026-10-29",
-    "assunto": "fix(dashboard): nomes únicos para canais realtime (crash no remount) (#321)"
-   },
-   {
-    "sha": "7f43cca",
-    "data": "2026-10-29",
-    "assunto": "docs(pendencias): review #327 — re-dispatch explícito, sql-diag a confirmar, ⚠️ nos fluxos quebrados, #323 resolvido (#3"
    }
   ],
-  "arquivos_mudados_7d": 153,
+  "arquivos_mudados_7d": 154,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -149,15 +149,15 @@
    },
    {
     "pasta": "package.json",
+    "mudancas": 23
+   },
+   {
+    "pasta": "package-lock.json",
     "mudancas": 20
    },
    {
     "pasta": "CLAUDE.md",
     "mudancas": 19
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 17
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 102
+    "mudancas": 104
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 95
+    "mudancas": 97
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -309,11 +309,11 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 14
+    "commits": 17
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 3
+    "commits": 4
    },
    {
     "autor": "Claude",
