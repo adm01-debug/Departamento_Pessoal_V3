@@ -157,7 +157,7 @@ self.addEventListener('fetch', (event) => {
   const hasCred = !!(authH && authH !== 'null' && authH !== 'undefined') || request.headers.has('apikey');
   if (hasCred) return;
 
-  const NEVER_CACHE_PATH = /^\/(auth|login|mfa|functions|webhooks?)\/i;
+  const NEVER_CACHE_PATH = /^\/(auth|login|mfa|functions|webhooks?)\//i;
   const PII_PATH = /\/(holerites?|pagamentos?|dados-bancarios|biometria|documentos)(\/|$)/i;
   if (
     url.hostname.includes('supabase.co') ||
