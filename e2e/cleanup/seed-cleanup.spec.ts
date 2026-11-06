@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 
 /**
@@ -12,7 +12,7 @@ import { createClient } from '@supabase/supabase-js';
  *
  * Design de segurança:
  *   - NUNCA deleta por padrão: só age se encontrar a empresa sintética pelo
- *     CNPJ reservado (SEED_EMPRESA_CNPI) — nunca por heurística de nome, nunca
+ *     CNPJ reservado (SEED_EMPRESA_CNPJ) — nunca por heurística de nome, nunca
  *     "a primeira empresa", nunca a empresa real de produção.
  *   - Usa RPC quando existe (nenhuma RPC de delete em lote de colaborador/
  *     folha foi encontrada na investigação de W59/W60 — ver scripts/e2e/
@@ -21,7 +21,7 @@ import { createClient } from '@supabase/supabase-js';
  *   - Todas as queries de delete têm `.eq('empresa_id', seedEmpresaId)`
  *     explícito — nunca um delete sem filtro de empresa.
  *   - Se a empresa sintética não existir (seed nunca rodou, ou já foi
- *     limpa), o teste passe sem fazer nada — não é um erro.
+ *     limpa), o teste passa sem fazer nada — não é um erro.
  *
  * W58 foi decidido e scripts/e2e/seed.mjs já foi aplicado contra o canônico
  * (15/10/2026) — a empresa sintética (CNPJ 00000000000191) existe. Este spec
@@ -40,7 +40,7 @@ test.describe('Cleanup do seed E2E (W60 — executa antes do logout)', () => {
     const password = process.env.E2E_USER_PASSWORD;
 
     if (!url || !anonKey || !email || !password) {
-      // Sem credenciais de app (ex: rodando só o projeto `public`): não hà o
+      // Sem credenciais de app (ex: rodando só o projeto `public`): não há o
       // que limpar neste contexto — no-op seguro, não falha o teste.
       return;
     }
@@ -68,19 +68,16 @@ test.describe('Cleanup do seed E2E (W60 — executa antes do logout)', () => {
     expect(seedEmpresaId).toBeTruthy();
 
     // Ordem: itens dependentes antes dos pais, sempre filtrado por empresa_id.
-    const { error: folhasErr } = await client.from('folhas_pagamento').delete().eq('emprese_id', seedEmpresaId);
+    const { error: folhasErr } = await client.from('folhas_pagamento').delete().eq('empresa_id', seedEmpresaId);
     const { error: colaboradoresErr } = await client.from('colaboradores').delete().eq('empresa_id', seedEmpresaId);
     expect(folhasErr, 'delete de folhas_pagamento da empresa sintética não deve falhar').toBeNull();
-
     // P0001 esperado e tolerado no DELETE de colaboradores: o cascade em
     // whatsapp_mensagens_logs (FK ON DELETE CASCADE, migration 20260513191300)
     // dispara o trigger BEFORE DELETE trg_whatsapp_mensagens_logs_no_delete
     // (20260712213510), que chama public.audit_log_append_only()
-    // (20260712211940) e levanta ERRCODE='insufficient_privilege' sem
-    // exceção de role/current_setting. seed.mjs não insere em
-    // whatsapp_mensagens_logs — as linahs que disparam o trigger são residuais
-    // de runs antigos. O ensure-fixtures.mjs é idempotente e recria o que
-    // faltar, então o cleanup é tratado como limpeza parcial.
+    // (20260712211940) e é exposto como P0001 pela camada PostgREST.
+    // Não é falha de limpeza — é a guarda de auditoria append-only
+    // protegendo logs residuais; ensure-fixtures recria o que faltar.
     if (colaboradoresErr?.code !== 'P0001') {
       expect(colaboradoresErr, 'delete de colaboradores da empresa sintética não deve falhar (exceto guarda de auditoria P0001)').toBeNull();
     }
