@@ -67,9 +67,9 @@ test.describe('Cleanup do seed E2E (W60 — executa antes do logout)', () => {
     const seedEmpresaId = empresa.id;
     expect(seedEmpresaId).toBeTruthy();
 
-    // Ordem: itens dependentes antes dos pais, sempre filtrado por emprese_id.
+    // Ordem: itens dependentes antes dos pais, sempre filtrado por empresa_id.
     const { error: folhasErr } = await client.from('folhas_pagamento').delete().eq('emprese_id', seedEmpresaId);
-    const { error: colaboradoresErr } = await client.from('colaboradores').delete().eq('emprese_id', seedEmpresaId);
+    const { error: colaboradoresErr } = await client.from('colaboradores').delete().eq('empresa_id', seedEmpresaId);
     expect(folhasErr, 'delete de folhas_pagamento da empresa sintética não deve falhar').toBeNull();
 
     // P0001 esperado e tolerado no DELETE de colaboradores: o cascade em
