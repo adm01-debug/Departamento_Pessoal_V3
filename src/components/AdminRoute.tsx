@@ -31,6 +31,12 @@ export function AdminRoute({ children }: AdminRouteProps) {
     if (!isReady || !isAdmin || !user) return;
     if (import.meta.env.VITE_E2E_BYPASS_MFA === 'true') return;
 
+    // Bypass MFA in E2E test environment (VITE_E2E_BYPASS_MFA=true)
+    if (import.meta.env.VITE_E2E_BYPASS_MFA === 'true') {
+      setMfaState('verified');
+      return;
+    }
+
     let cancelled = false;
     supabase.auth.mfa
       .getAuthenticatorAssuranceLevel()
