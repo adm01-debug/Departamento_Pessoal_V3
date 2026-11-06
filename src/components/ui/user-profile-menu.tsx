@@ -1,25 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  User,
-  Settings,
-  LogOut,
-  Shield,
-  HelpCircle,
-  Loader2,
-} from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
-import { toast } from "sonner";
-import { safeErrorMessage } from "@/utils/safeError";
+} from '@/components/ui/dropdown-menu';
+import { User, Settings, LogOut, Shield, HelpCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface UserProfileMenuProps {
   user?: { name: string; email: string; avatar?: string };
@@ -31,20 +24,20 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const initials =
     user?.name
-      ?.split(" ")
+      ?.split(' ')
       .map((n) => n[0])
-      .join("")
+      .join('')
       .slice(0, 2)
-      .toUpperCase() || "US";
+      .toUpperCase() || 'US';
 
   const handleSignOut = async () => {
     setIsLoggingOut(true);
     try {
       await signOut();
-      toast.success("Sessão encerrada com sucesso");
-      navigate("/login");
+      toast.success('Sessão encerrada com sucesso');
+      navigate('/login');
     } catch (error) {
-      toast.error(safeErrorMessage(error, "Erro ao encerrar sessão."));
+      toast.error(safeErrorMessage(error, 'Erro ao encerrar sessão.'));
     } finally {
       setIsLoggingOut(false);
     }
@@ -68,19 +61,12 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
             <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-success border-2 border-card" />
           </div>
           <div className="hidden md:flex flex-col items-start">
-            <span className="text-sm font-medium font-body leading-tight">
-              {user?.name || "Usuário"}
-            </span>
-            <span className="text-[11px] text-muted-foreground font-body leading-tight">
-              {user?.email || ""}
-            </span>
+            <span className="text-sm font-medium font-body leading-tight">{user?.name || 'Usuário'}</span>
+            <span className="text-[11px] text-muted-foreground font-body leading-tight">{user?.email || ''}</span>
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="w-64 glass border-border/50 rounded-xl p-1.5"
-      >
+      <DropdownMenuContent align="end" className="w-64 glass border-border/50 rounded-xl p-1.5">
         <div className="px-3 py-3 mb-1">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 ring-2 ring-border/30">
@@ -90,12 +76,8 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-display font-semibold truncate">
-                {user?.name || "Usuário"}
-              </p>
-              <p className="text-xs text-muted-foreground font-body truncate">
-                {user?.email || ""}
-              </p>
+              <p className="text-sm font-display font-semibold truncate">{user?.name || 'Usuário'}</p>
+              <p className="text-xs text-muted-foreground font-body truncate">{user?.email || ''}</p>
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-1.5">
@@ -107,10 +89,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
 
         <DropdownMenuSeparator className="bg-border/30" />
 
-        <DropdownMenuItem
-          onClick={() => navigate("/perfil")}
-          className="gap-3 py-2.5 rounded-lg cursor-pointer"
-        >
+        <DropdownMenuItem onClick={() => navigate('/perfil')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
           <div className="p-1.5 rounded-lg bg-accent/80">
             <User className="h-3.5 w-3.5" />
           </div>
@@ -120,33 +99,23 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onClick={() => navigate("/configuracoes")}
-          className="gap-3 py-2.5 rounded-lg cursor-pointer"
-        >
+        <DropdownMenuItem onClick={() => navigate('/configuracoes')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
           <div className="p-1.5 rounded-lg bg-accent/80">
             <Settings className="h-3.5 w-3.5" />
           </div>
           <div>
             <p className="text-sm font-body font-medium">Configurações</p>
-            <p className="text-[11px] text-muted-foreground">
-              Preferências do sistema
-            </p>
+            <p className="text-[11px] text-muted-foreground">Preferências do sistema</p>
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onClick={() => navigate("/seguranca")}
-          className="gap-3 py-2.5 rounded-lg cursor-pointer"
-        >
+        <DropdownMenuItem onClick={() => navigate('/seguranca')} className="gap-3 py-2.5 rounded-lg cursor-pointer">
           <div className="p-1.5 rounded-lg bg-accent/80">
             <Shield className="h-3.5 w-3.5" />
           </div>
           <div>
             <p className="text-sm font-body font-medium">Segurança</p>
-            <p className="text-[11px] text-muted-foreground">
-              Senha e autenticação
-            </p>
+            <p className="text-[11px] text-muted-foreground">Senha e autenticação</p>
           </div>
         </DropdownMenuItem>
 
@@ -156,9 +125,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
           <div>
             <p className="text-sm font-body font-medium">Ajuda</p>
-            <p className="text-[11px] text-muted-foreground">
-              Suporte e documentacção
-            </p>
+            <p className="text-[11px] text-muted-foreground">Suporte e documentacção</p>
           </div>
         </DropdownMenuItem>
 
@@ -170,11 +137,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           className="gap-3 py-2.5 rounded-lg cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
         >
           <div className="p-1.5 rounded-lg bg-destructive/10">
-            {isLoggingOut ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <LogOut className="h-3.5 w-3.5" />
-            )}
+            {isLoggingOut ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogOut className="h-3.5 w-3.5" />}
           </div>
           <div>
             <p className="text-sm font-body font-medium">Sair</p>
