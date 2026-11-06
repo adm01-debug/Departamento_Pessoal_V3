@@ -13,7 +13,8 @@ test.describe('Checklist Operacional e Auditoria de Rotas', () => {
       expect(title).not.toContain('Error');
 
       // Verifica elementos de layout padrão (Header/Sidebar)
-      await expect(page.locator('nav')).toBeVisible();
+      // O layout renderiza 2 <nav> (AppSidebar + MobileBottomNav); .first() pega o sidebar principal
+      await expect(page.locator('nav').first()).toBeVisible();
 
       // Captura console logs para auditoria de erros silenciosos
       page.on('console', (msg) => {
