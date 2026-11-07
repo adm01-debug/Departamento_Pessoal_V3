@@ -1,9 +1,5 @@
-#!/bin/bash
-# deploy script
-# Departamento Pessoal
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
-
-echo "Running deploy..."
-# Add your logic here
-echo "Done!"
+echo "ERRO: deploy.sh não possui rotina de implantação configurada; nenhuma alteração foi aplicada." >&2
+exit 1
