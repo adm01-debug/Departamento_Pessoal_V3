@@ -13,6 +13,14 @@ set -euo pipefail
 
 PROJECT_ID="${SUPABASE_PROJECT_ID:-}"
 OUTPUT="src/integrations/supabase/types.ts"
+TMP_OUTPUT=""
+
+cleanup() {
+  if [ -n "$TMP_OUTPUT" ]; then
+    rm -f "$TMP_OUTPUT"
+  fi
+}
+trap cleanup EXIT
 
 if [ -z "$PROJECT_ID" ]; then
   echo "❌ SUPABASE_PROJECT_ID não configurado."
@@ -24,7 +32,12 @@ echo "🔄 Regenerando tipos Supabase do projeto $PROJECT_ID..."
 
 # Supabase cloud
 if command -v supabase &> /dev/null; then
-  supabase gen types typescript --project-id "$PROJECT_ID" --schema public > "$OUTPUT"
+  mkdir -p "$(dirname "$OUTPUT")"
+  TMP_OUTPUT="$(mktemp "${OUTPUT}.tmp.XXXXXX")"
+  supabase gen types typescript --project-id "$PROJECT_ID" --schema public > "$TMP_OUTPUT"
+  chmod 644 "$TMP_OUTPUT"
+  mv "$TMP_OUTPUT" "$OUTPUT"
+  TMP_OUTPUT=""
   echo "✅ Tipos regenerados via Supabase CLI (cloud)"
 # Self-hosted via psql
 elif [ -n "${SUPABASE_DB_URL:-}" ] && command -v psql &> /dev/null; then

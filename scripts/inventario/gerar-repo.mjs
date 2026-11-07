@@ -14,17 +14,32 @@ const OUT = join(RAIZ, 'inventario/estado');
 mkdirSync(OUT, { recursive: true });
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const existingPaths = (paths) => paths.map((p) => join(RAIZ, p)).filter(existsSync);
+
 function rgCount(pattern, paths) {
+  const searchPaths = existingPaths(paths);
+  if (!searchPaths.length) return 0;
+
   try {
-    const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' });
+    const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...searchPaths], { encoding: 'utf8' });
     return out.split('\n').filter(Boolean).reduce((n, l) => n + Number(l.slice(l.lastIndexOf(':') + 1)), 0);
-  } catch { return 0; }
+  } catch (error) {
+    if (error.status === 1) return 0;
+    throw error;
+  }
 }
+
 function rgFiles(pattern, paths) {
+  const searchPaths = existingPaths(paths);
+  if (!searchPaths.length) return [];
+
   try {
-    return execFileSync('rg', ['-l', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' })
+    return execFileSync('rg', ['-l', '--no-messages', pattern, ...searchPaths], { encoding: 'utf8' })
       .split('\n').filter(Boolean).map((f) => f.slice(RAIZ.length));
-  } catch { return []; }
+  } catch (error) {
+    if (error.status === 1) return [];
+    throw error;
+  }
 }
 
 const edges = readdirSync(FDIR, { withFileTypes: true })
