@@ -119,7 +119,7 @@ if (fs.existsSync(nodeModulesPath)) {
     console.log(`ok: ${prodDeps.length} dependências de produção instaladas ✓`);
   }
 } else {
-  console.warn(`AVISO: node_modules não encontrado — execute npm ci antes de verificar.`);
+  throw new Error('node_modules não encontrado; instale as dependências antes de validar o build.');
 }
 
 // 6. Sumário
