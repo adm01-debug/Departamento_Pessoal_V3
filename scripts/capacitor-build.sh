@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# ==============================================================
+# ============================================================== 
 # P5-079: Script de build Mobile (Capacitor + Android)
 # ==============================================================
 # Uso:
@@ -111,6 +111,8 @@ if [[ "$BUILD_APK" == "true" ]]; then
     err "Após instalar, defina: export ANDROID_HOME=/caminho/para/Android/Sdk"
     exit 1
   fi
+  ANDROID_HOME="$ANDROID_SDK"
+  export ANDROID_HOME
   log "Android SDK: $ANDROID_SDK"
 fi
 

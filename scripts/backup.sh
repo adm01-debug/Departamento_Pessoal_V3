@@ -1,6 +1,6 @@
 #!/bin/bash
 # Backup Script for Departamento Pessoal System
-# Usage: ./backup.sh [full|incremental|db|files]
+# Usage: ./backup.sh [full|db|files|cleanup]
 
 set -euo pipefail
 
@@ -12,7 +12,7 @@ DB_NAME="${DB_NAME:-departamento_pessoal}"
 DB_USER="${DB_USER:-postgres}"
 RETENTION_DAYS=30
 S3_BUCKET="${S3_BUCKET:-}"
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+TIMESTAMP="$(date +%Y%m%d_%H%M%S)_$$"
 
 # Colors
 RED='\033[0;31m'
