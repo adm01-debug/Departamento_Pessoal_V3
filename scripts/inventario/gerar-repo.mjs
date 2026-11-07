@@ -14,17 +14,32 @@ const OUT = join(RAIZ, 'inventario/estado');
 mkdirSync(OUT, { recursive: true });
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const existingPaths = (paths) => paths.map((p) => join(RAIZ, p)).filter(existsSync);
+
 function rgCount(pattern, paths) {
+  const searchPaths = existingPaths(paths);
+  if (!searchPaths.length) return 0;
+
   try {
-    const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' });
+    const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...searchPaths], { encoding: 'utf8' });
     return out.split('\n').filter(Boolean).reduce((n, l) => n + Number(l.slice(l.lastIndexOf(':') + 1)), 0);
-  } catch { return 0; }
+  } catch (error) {
+    if (error.status === 1) return 0;
+    throw error;
+  }
 }
+
 function rgFiles(pattern, paths) {
+  const searchPaths = existingPaths(paths);
+  if (!searchPaths.length) return [];
+
   try {
-    return execFileSync('rg', ['-l', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' })
+    return execFileSync('rg', ['-l', '--no-messages', pattern, ...searchPaths], { encoding: 'utf8' })
       .split('\n').filter(Boolean).map((f) => f.slice(RAIZ.length));
-  } catch { return []; }
+  } catch (error) {
+    if (error.status === 1) return [];
+    throw error;
+  }
 }
 
 const edges = readdirSync(FDIR, { withFileTypes: true })
@@ -36,9 +51,9 @@ for (const f of edges) {
   const q = esc(f);
   const code = readFileSync(join(FDIR, f, 'index.ts'), 'utf8');
   const envs = [...new Set([...code.matchAll(/Deno\.env\.get\(\s*['"]([A-Z0-9_]+)['"]/g)].map((m) => m[1]))].sort();
-  const src = rgFiles(`(functions\\.invoke\\(\\s*['"\`]${q}['"\`]|functions/v1/${q}\\b|['"\`]${q}['"\`]\\s*[,)])`, ['src']);
+  const src = rgFiles(`(functions\\.invoke\\(\\s*['"\\`]${q}['"\\`]|functions/v1/${q}\\b|['"\\`]${q}['"\\`]\\s*[,)])`, ['src']);
   const migrations = rgFiles(`functions/v1/${q}\\b`, ['supabase/migrations']);
-  const outrasEdges = rgFiles(`functions/v1/${q}\\b|['"\`]${q}['"\`]`, ['supabase/functions']).filter((p) => !p.startsWith(`supabase/functions/${f}/`));
+  const outrasEdges = rgFiles(`functions/v1/${q}\\b|['"\\`]${q}['"\\`]`, ['supabase/functions']).filter((p) => !p.startsWith(`supabase/functions/${f}/`));
   const e2e = rgFiles(q, ['e2e']);
   const ci = rgFiles(q, ['.github/workflows', 'supabase/config.toml']);
   inventario[f] = {
@@ -59,8 +74,8 @@ if (nomes.length) {
   for (const t of nomes) {
     const q = esc(t);
     uso[t] = {
-      from_src: rgCount(`\\.from\\(\\s*['"\`]${q}['"\`]`, ['src']),
-      from_edges: rgCount(`\\.from\\(\\s*['"\`]${q}['"\`]`, ['supabase/functions']),
+      from_src: rgCount(`\\.from\\(\\s*['"\\`]${q}['"\\`]`, ['src']),
+      from_edges: rgCount(`\\.from\\(\\s*['"\\`]${q}['"\\`]`, ['supabase/functions']),
       em_types_ts: rgCount(`^\\s+${q}: \\{`, ['src/integrations/supabase/types.ts']) > 0,
     };
   }
