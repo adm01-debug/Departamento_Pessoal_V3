@@ -40,6 +40,7 @@ export const BodySchema = z.object({
   offset: z.number().int().min(0).optional(),
   countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(),
   single: z.boolean().optional(),
+  maybeSingle: z.boolean().optional(),
   onConflict: OnConflictSchema.optional(),
   data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
   params: z.record(z.unknown()).optional(),
