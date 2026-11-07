@@ -5,7 +5,7 @@
  * Base: CLAUDE_MD_BASE (no CI, a main buscada; localmente, sem a variavel, compara com o HEAD).
  */
 import { readFileSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 
 // CLAUDE.md é agora um arquivo de redirect (@AGENTS.md); as regras reais vivem em AGENTS.md.
 const CHECKED_FILE = 'AGENTS.md';
@@ -36,12 +36,17 @@ if (missing.length > 0) {
 const BASE = process.env.CLAUDE_MD_BASE || 'HEAD';
 let headContent;
 try {
-  headContent = execSync(`git show ${BASE}:${CHECKED_FILE}`, { encoding: 'utf8' });
+  headContent = execFileSync('git', ['show', `${BASE}:${CHECKED_FILE}`], { encoding: 'utf8' });
 } catch {
+  if (process.env.CLAUDE_MD_BASE) {
+    console.error(`::error::Nao foi possivel ler CLAUDE.md na base configurada: ${BASE}.`);
+    process.exitCode = 1;
+    process.exit();
+  }
   headContent = null;
 }
 
-if (headContent) {
+if (headContent !== null) {
   const ratio = content.length / headContent.length;
   if (ratio < (1 - SHRINK_THRESHOLD)) {
     console.error(`::error::${CHECKED_FILE} encolheu ${Math.round((1 - ratio) * 100)}% vs ${BASE} (atual: ${content.length} bytes, base: ${headContent.length} bytes). Possivel wipe por sessao paralela.`);

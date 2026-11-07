@@ -38,8 +38,17 @@ for arg in "$@"; do
       echo "  --check  apenas validação de ambiente"
       exit 0
       ;;
+    *)
+      printf 'Argumento desconhecido: %s\n' "$arg" >&2
+      exit 64
+      ;;
   esac
 done
+
+if [[ "$BUILD_APK" == "true" && "$CHECK_ONLY" == "true" ]]; then
+  printf 'Use --apk ou --check, não ambos.\n' >&2
+  exit 64
+fi
 
 # ── Cores ─────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -62,6 +71,22 @@ fi
 NODE_VERSION=$(node -v)
 info "Node: $NODE_VERSION"
 
+if [[ ! -x node_modules/.bin/vite ]]; then
+  err "Dependências npm ausentes ou incompletas. Execute npm ci antes do build."
+  exit 1
+fi
+
+if [[ "$CHECK_ONLY" == "true" ]]; then
+  if [[ -x node_modules/.bin/cap ]]; then
+    CAP_VERSION=$(node_modules/.bin/cap --version)
+    log "Capacitor CLI: $CAP_VERSION"
+  else
+    warn "Capacitor CLI não instalado. Execute: npm install @capacitor/cli @capacitor/core"
+  fi
+  log "Ambiente validado — sem alterações ou instalações."
+  exit 0
+fi
+
 # Capacitor CLI
 if npx --yes @capacitor/cli@latest --version >/dev/null 2>&1; then
   CAP_VERSION=$(npx --yes @capacitor/cli@latest --version 2>/dev/null)
@@ -70,17 +95,10 @@ else
   warn "Capacitor CLI não instalado. Execute: npm install @capacitor/cli @capacitor/core"
 fi
 
-# Dependências npm
-info "Verificando dependências..."
-if ! npm ci --dry-run >/dev/null 2>&1; then
-  warn "npm ci falhou — executando npm install"
-  npm install
-fi
-
 # Android SDK (requerido apenas para APK)
 if [[ "$BUILD_APK" == "true" ]]; then
   if [[ -z "$ANDROID_SDK" ]]; then
-    if [[ -d "$LOCALAPPDATA/Android/Sdk" ]]; then
+    if [[ -n "${LOCALAPPDATA:-}" && -d "$LOCALAPPDATA/Android/Sdk" ]]; then
       ANDROID_SDK="$LOCALAPPDATA/Android/Sdk"
     elif [[ -d "$HOME/Android/Sdk" ]]; then
       ANDROID_SDK="$HOME/Android/Sdk"
@@ -94,11 +112,6 @@ if [[ "$BUILD_APK" == "true" ]]; then
     exit 1
   fi
   log "Android SDK: $ANDROID_SDK"
-fi
-
-if [[ "$CHECK_ONLY" == "true" ]]; then
-  log "Ambiente validado — sem erros."
-  exit 0
 fi
 
 # ── 2. Build Web (Vite) ────────────────────────────────────────
@@ -122,11 +135,14 @@ log "Executando: npx cap sync android"
 npx cap sync android --no-interactive
 
 # Copia source maps para Android (debugging de produção)
-if [[ -f dist/assets/*.js.map ]]; then
+shopt -s nullglob
+SOURCE_MAPS=(dist/assets/*.js.map)
+if ((${#SOURCE_MAPS[@]} > 0)); then
   mkdir -p android/app/src/main/assets/public
-  cp dist/assets/*.js.map android/app/src/main/assets/public/ 2>/dev/null || true
+  cp "${SOURCE_MAPS[@]}" android/app/src/main/assets/public/
   log "Source maps copiados para Android"
 fi
+shopt -u nullglob
 
 # ── 4. Build APK (opcional) ───────────────────────────────────
 if [[ "$BUILD_APK" == "true" ]]; then
@@ -144,15 +160,15 @@ if [[ "$BUILD_APK" == "true" ]]; then
   cd android
 
   if ./gradlew assembleDebug --no-daemon 2>&1 | tee /tmp/capacitor-build.log; then
-    APK=$(find . -name '*.apk' -type f 2>/dev/null | head -1)
-    if [[ -n "$APK" ]]; then
-      APK_SIZE=$(du -sh "$APK" --block-size=1M 2>/dev/null | cut -f1 || du -sh "$APK" | cut -f1)
-      APK_ABS="$(pwd)/$APK"
-      log "APK gerado: $APK_ABS (${APK_SIZE})"
-      info "Para instalar no dispositivo: adb install '$APK_ABS'"
-    else
-      warn "Build concluído mas APK não encontrado em $(pwd)"
+    APK="app/build/outputs/apk/debug/app-debug.apk"
+    if [[ ! -f "$APK" ]]; then
+      err "Gradle terminou sem gerar o APK esperado: $APK"
+      exit 1
     fi
+    APK_SIZE=$(du -sh "$APK" --block-size=1M 2>/dev/null | cut -f1 || du -sh "$APK" | cut -f1)
+    APK_ABS="$(pwd)/$APK"
+    log "APK gerado: $APK_ABS (${APK_SIZE})"
+    info "Para instalar no dispositivo: adb install '$APK_ABS'"
   else
     err "Gradle build falhou. Verifique:"
     err "  1. Android SDK instalado corretamente"
