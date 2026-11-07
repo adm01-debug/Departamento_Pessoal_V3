@@ -1,166 +1,107 @@
 # AGENTS.md — Departamento_Pessoal_V3
 
-Como trabalhar neste repositório: regras do dono do projeto, válidas para qualquer agente de IA.
-Se algo em `docs/` contradisser este arquivo, **este arquivo vence** — relatórios, auditorias,
-handoffs e planos antigos são histórico, não ordem vigente.
-Conteúdo técnico do projeto fica em [`CLAUDE.md`](CLAUDE.md).
+Regras do dono para qualquer agente de IA; **vencem `docs/`** (histórico, não ordem). Responda em PT-BR.
 
----
-
-<!-- TEXTO-MESTRE adm01-debug (2026-11-02): as seções 1 a 7 são idênticas em todos os repositórios.
-     Mudou aqui → mude em todos. O que é específico deste repo fica só na seção 8 e no CLAUDE.md. -->
+<!-- Seções 1–7: texto-mestre adm01-debug; mudou aqui → mude em todos os repos. -->
 
 ## 1. Contexto
 
-Sistema ~80% pronto, em manutenção: bug em front, edge functions, SQL, workflows; auditoria e hardening
-(RLS, índices, permissões, CI, segredos); deploy/infra quebrado em produção; implementar o que falta.
-**O dono não é dev**: ele decide negócio, o agente executa engenharia. Responda sempre em PT-BR.
-
-**Princípio de toda decisão:** qualidade + velocidade. Executar o máximo de tarefas com êxito total,
-pelo caminho mais rápido e mais econômico em tokens. Isso decide ferramenta, profundidade de leitura,
-tamanho de diff e tamanho de resposta.
-
----
+Sistema ~80% pronto, em manutenção: bugs, hardening, deploy/infra quebrado em produção, implementar o que falta.
+**O dono não é dev**: decide negócio, o agente executa engenharia. **Princípio:** qualidade + velocidade, pelo caminho
+mais rápido e mais barato em tokens; isso decide ferramenta, leitura, diff e resposta.
 
 ## 2. Como trabalhar
 
-1. Execução end-to-end via MCP (GitHub, Supabase, Vercel, infra). O dono manda print/descrição;
-   o agente resolve inteiro. Nunca "copie e cole", "roda aí", "você faz X e eu faço Y".
-2. Aja como dev sênior e decida pelo dono. Pergunte só se envolver custo, mudança de arquitetura,
-   dado destrutivo em produção, trade-off real de negócio ou item da regra 8 do Fluxo Git.
-   Para ler/inspecionar, nunca peça permissão.
-3. **Verdade acima de validação.** Não sabe → diga. Falhou → diga. Nunca afirme ter testado/validado o
-   que não rodou. Toda afirmação sobre código cita evidência (arquivo:linha, trecho de diff, saída de
-   comando); sem evidência = "NÃO VERIFICADO" + motivo. Nome de branch, commit, PR ou comentário não
-   provam que algo funciona — leia o código.
-4. **Diff mínimo, zero churn.** Causa raiz, não reescrita. Não refatore, renomeie, "melhore" ou comente
-   o que não foi pedido. Não reescreva arquivo inteiro para mudar 3 linhas. Dependência nova ou bump de
-   major só se indispensável — e avise na PR.
+1. Execução end-to-end via MCP; o agente resolve inteiro. Nunca "copie e cole", "roda aí", "você faz X e eu faço Y", nem
+   passo manual do dono quando há MCP.
+2. Decida como dev sênior, pelo dono. Pergunte só por custo, arquitetura, dado destrutivo em produção, trade-off real
+   de negócio ou regra 8 do Fluxo Git. Para ler nunca peça permissão; sem "quer que eu faça?" após pedido.
+3. **Verdade acima de validação.** Não sabe/falhou → diga. "Testado/validado/funcionando" só se rodou. Toda afirmação
+   sobre código cita evidência (arquivo:linha, diff, saída); sem evidência = "NÃO VERIFICADO" + motivo. Nome
+   de branch/commit/PR não prova nada: leia o código.
+4. **Diff mínimo, zero churn.** Causa raiz, não reescrita; não refatore, renomeie, "melhore" ou comente o que não foi
+   pedido. Dependência nova/bump major só se indispensável, avisando na PR. Sem plano de 12 fases para fix de 20 linhas.
 5. `APROVADO` = execute o plano exatamente como descrito, sem reconfirmar.
-6. **Uma tarefa por vez.** Vários itens pedidos = em sequência, cada um com sua branch/PR. Achou outro
-   bug? Não conserte — anote em "Próximos passos". Nada de "aproveitei e também…". Travou (sem acesso,
-   MCP com erro, dependência quebrada) → reporte o erro exato e pare; não pivote nem contorne regra.
-   Antes de concluir, releia o pedido e entregue aquilo.
-7. **Tokens:** leia só o trecho necessário (range de linhas, grep). Use o grafo de código (seção 8)
-   antes de buscar por texto. Exploração ampla → subagente. Não rode tool "por garantia" que não muda a
-   decisão. Não gere código que não será aplicado. Não reformule o plano a cada turno.
-8. **Segredos** nunca entram em código, commit ou resposta — só em variável de ambiente/secret do serviço.
-
----
+6. **Uma tarefa por vez**, cada uma com sua branch/PR. Outro bug, mesmo quebrado? Não conserte nem expanda escopo:
+   anote em "Próximos passos". Travou → reporte o erro exato e pare, sem pivotar ou contornar regra. Antes de concluir,
+   releia o pedido.
+7. **Tokens:** só o trecho necessário (range, grep), nunca o repo inteiro; grafo de código (seção 8)
+   antes de buscar por texto; exploração ampla → subagente. Sem tool "por garantia", sem código que não será aplicado,
+   sem replanejar a cada turno.
+8. **Segredos** (`.git-credentials`, `.env.local`, tokens, chaves de API, service_role) nunca em código, commit, output
+   ou resposta; só em variável de ambiente/secret do serviço.
 
 ## 3. Bugs
 
-- **Diagnóstico antes de patch:** leia logs e estado real (banco, container, worker, request), localize o
-  ponto exato (arquivo:linha) e diga a causa. Não chute fix em cima de suposição. Sintoma com mais de uma
+- **Diagnóstico antes de patch:** logs e estado real, ponto exato (arquivo:linha) e causa. Não chute fix. Mais de uma
   causa → liste todas, corrija a pedida.
-- **Antes de abrir PR:** typecheck/lint/testes dos arquivos tocados. Só erro introduzido por você conta;
-  erro herdado do `main` vai para "Próximos passos".
-- **"Pronto"** = PR mergeada + deploy confirmado + comportamento verificado (log, query ou request real —
-  não "deveria funcionar"). Faltou um dos três → diga em que ponto parou.
-
----
+- **Antes de abrir PR:** typecheck/lint/testes dos arquivos tocados; só erro seu conta, herdado do `main` → "Próximos passos".
+- **"Pronto"** = PR mergeada + deploy confirmado + comportamento verificado (log, query ou request real). Faltou um →
+  diga onde parou.
 
 ## 4. Funcionalidades
 
-- **Pronta** = integrada de ponta a ponta: componente importado e usado, rota registrada, entrada na UI,
-  serviço/hook chamado, edge function invocada e registrada, tabela/coluna existe e tem RLS, estados de
-  erro/loading/vazio, botão com handler, form com submit. Sem corpo vazio, mock, hardcode, TODO/WIP.
-- Fluxo incompleto (cria sem editar/excluir, lê sem salvar) = pela metade, não entregue como pronto.
-- Não cabe na sessão → entregue o que está funcional e integrado e liste o que falta, em ordem, com
-  arquivos. Nunca deixe código morto ou feature "quase" sem dizer.
-
----
+- **Pronta** = integrada de ponta a ponta: componente importado e usado, rota registrada, entrada na UI, serviço/hook
+  chamado, edge function invocada e registrada, tabela/coluna existe e tem RLS, estados de erro/loading/vazio, botão com
+  handler, form com submit. Sem corpo vazio, mock, hardcode, TODO/WIP.
+- Fluxo incompleto (cria sem editar/excluir, lê sem salvar) = pela metade, não "pronto".
+- Não cabe na sessão → entregue o funcional e integrado e liste o que falta, em ordem, com arquivos; nunca código morto
+  ou feature "quase" sem dizer.
 
 ## 5. Comunicação
 
-- **Resultado primeiro, contexto depois** — só o que muda uma decisão do dono. Sem introdução,
-  recapitulação do pedido, resumo executivo, "vou fazer X agora", comentário sobre o próprio processo,
-  hedging, disclaimers, "consulte um especialista", desculpas repetidas, lição de moral sobre
-  risco/segurança/boas práticas. Nenhum fechamento de cortesia; o único fechamento permitido é o bloco
-  "Próximos passos".
-- Diga o que mudou e o efeito no negócio; explique a técnica só se perguntarem.
-- **Resposta proporcional:** fix de 3 linhas = resposta de 5 linhas; cabe em 1 linha → 1 linha. Não
-  despeje log/arquivo/resultado de tool — cite só a linha que importa. Caminhos, comandos e links completos.
-- Destrutivo de verdade: uma linha ("isso apaga X, sem volta — confirma?") e ponto.
-
-### Sempre feche com 3 próximos passos
-
-Ao terminar qualquer tarefa de execução (fix, deploy, migração, auditoria, PR):
-
-```
-Próximos passos
-1. [título curto] — [por que, em 1 linha] · [repo/arquivo/camada]
-2. ...
-3. ...
-```
-
-- Exatamente 3, por impacto (o 1 é o que o dono deveria fazer agora).
-- Derivados do que você realmente viu nesta sessão (código, logs, schema). Nada de "adicionar testes",
-  "melhorar documentação", "revisar segurança".
-- Cada item executável por você via MCP, não tarefa manual do dono. Escrito para quem não é dev:
-  efeito no negócio, não a técnica.
-- É um menu, não uma pergunta: `1`, `1 e 3`, `APROVADO 2`, "todos" ou o bloco colado de volta =
-  executar na ordem 1 → 2 → 3, sem reconfirmar. Nunca peça para "escolher uma" quando o bloco inteiro
-  foi devolvido.
-- Não use o bloco em resposta que foi só consulta, quando o dono já rejeitou aquelas 3 sugestões, ou
-  quando não sobrou nada — escreva `Próximos passos: nada pendente neste escopo.`
-
----
+- **Resultado primeiro**: o que mudou e o efeito no negócio; técnica só se perguntarem. Sem introdução, recapitulação,
+  narração, comentário sobre o processo, hedging, disclaimers, desculpas, lição de moral. Único fechamento: "Próximos passos".
+- **Proporcional:** fix de 3 linhas = resposta de 5 linhas. Não despeje log/arquivo/tool; cite só a linha que importa.
+  Caminhos, comandos e links completos. Destrutivo de verdade: uma linha ("isso apaga X, sem volta — confirma?").
+- **Toda execução fecha com exatamente 3 "Próximos passos"** (`1. [título] — [por quê] · [onde]`): por impacto, do que
+  você viu nesta sessão (nada genérico), executáveis via MCP, para não-dev. É menu: `1`, `1 e 3`, `APROVADO 2`,
+  "todos" ou o bloco colado = executar na ordem, sem reconfirmar. Só consulta, 3 já rejeitados ou nada pendente →
+  `Próximos passos: nada pendente neste escopo.`
 
 ## 6. Nunca
 
-- Reaproveitar branch existente. Commitar em branch que você não criou nesta sessão. Commitar em `main`.
-- Mergear o que está na regra 8 do Fluxo Git.
-- Sugerir passo manual do dono quando existe MCP para aquilo. Pedir para ele revisar diff, rodar comando
-  ou testar localmente.
-- Narrar o que está fazendo. Perguntar "quer que eu faça?" depois de já terem pedido.
-- Plano de 12 fases para fix de 20 linhas.
-- Ler repo inteiro para achar 1 função.
-- Expandir escopo ou consertar o que não pediram, mesmo quebrado.
-- Afirmar "testado", "validado", "funcionando" sem evidência real.
-- Imprimir conteúdo de `.git-credentials`, tokens, secrets ou variáveis sensíveis em output ou commit.
-- Commitar `.env.local`, `.git-credentials`, chaves de API ou service_role keys.
+Reaproveitar branch · commitar em branch que não criou nesta sessão ou em `main` · mergear item da regra 8 abaixo ·
+expandir escopo · afirmar sem evidência.
 
----
+## 7. Fluxo Git (vários agentes ao mesmo tempo)
 
-## 7. Fluxo Git (vários agentes nos mesmos repos ao mesmo tempo)
+Escrita no GitHub (`adm01-debug`): MCP **`GITHUB - MCP - FOREVER`** (o padrão dá 403 em write; `git push`/`gh` só em repo
+autorizado da sessão).
 
-Escrita no GitHub em repos `adm01-debug`: use o MCP **`GITHUB - MCP - FOREVER`**. O MCP padrão do GitHub
-retorna 403 em write; `git push` e `gh` só funcionam quando o repo é fonte autorizada da sessão.
-
-1. Nunca commite em `main`/`master`. Toda mudança nasce em branch própria.
-2. Só escreva em branch que **você** criou nesta sessão. Branch de outro agente/sessão é somente leitura —
-   mesmo assunto, PR aberta ou "só uma linha" não mudam isso.
-3. Antes de começar: liste as PRs abertas. PR aberta tocando os mesmos arquivos → pare e avise o dono;
-   não trabalhe nela nem abra outra por cima. Jeito barato de cumprir esta regra, numa chamada só:
-   `github_graphql` com `pullRequests(states:OPEN){ nodes { number files { nodes { path } } } }`.
-   Evite `github_list_pull_requests`: a resposta vem com o repo inteiro em cada nó e estoura o contexto.
-4. Branch nova a partir de `main` atualizado: `claude/<tipo>-<slug>-<AAMMDD-HHMM>`
-   (tipo = `fix` | `feat` | `chore` | `infra`). Sem carimbo não é aceito. Uma tarefa = uma branch = uma PR.
-   Antes de cada push, confirme que o último commit da branch é seu; se não for, pare e avise.
-5. Commits curtos em PT-BR com prefixo (`fix:`, `feat:`, `chore:`, `infra:`), de preferência 1 commit atômico
-   (`github_push_files` aceita `files` e `delete` no mesmo commit).
-6. PR sempre. Título = o que muda. Corpo = causa/por quê + o que foi verificado de verdade, com a
-   evidência.
-7. **Mergeie sem aprovação** as PRs que você criou ou corrigiu e que já estão prontas: CI verde, sem
-   conflito com `main`, escopo comum (front, edge function, workflow, config). Squash-merge e apague a
-   branch. Não espere "ok" — a única exceção é a regra 8.
-8. **Deixe a PR aberta e chame o dono** (sem mergear) quando envolver: DDL/migration em banco de produção;
-   CI/workflows, segredos, Dockerfile, stack/Swarm, Traefik; deleção de dado, mudança de arquitetura ou
-   custo; conflito com PR de outro agente.
-9. Conflito: rebase da sua branch em `main`; `--force-with-lease` só na sua branch. Nunca force-push em
-   `main`. Nunca rebase/force-push/commit/merge em branch alheia — nem para "ajudar".
-10. Merge aqui = **produção** (deploy automático na Vercel). Depois do merge, confira que o deploy subiu e
-    reporte. CI vermelha → leia o resumo da falha antes de qualquer patch; se o vermelho veio do seu merge,
-    corrija em branch nova (`fix:`) na mesma sessão.
+1. Nunca commite em `main`. Toda mudança nasce em branch própria.
+2. Só escreva em branch que **você** criou nesta sessão; branch alheia é somente leitura, mesmo "só uma linha".
+3. Antes de começar, liste PRs abertas nos mesmos arquivos (`github_graphql`, query: `docs/agentes/fluxo-git.md`; não
+   `github_list_pull_requests`: estoura o contexto). Conflito → pare e avise o dono.
+4. Branch de `main` atualizado: `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>` (sem carimbo não é aceito); uma
+   tarefa = uma branch = uma PR. Antes de push, confirme que o último commit é seu.
+5. Commits curtos em PT-BR com prefixo (`fix:`, `feat:`, `chore:`, `infra:`), de preferência 1 commit atômico.
+6. PR sempre: título = o que muda; corpo = causa/por quê + o que foi verificado de verdade, com evidência.
+7. **Mergeie sem aprovação** PR sua pronta (CI verde, sem conflito, escopo comum: front, edge function, workflow,
+   config): squash-merge e apague a branch. Exceção: regra 8.
+8. **Deixe aberta e chame o dono** quando envolver: DDL/migration em produção; CI/workflows, segredos, Dockerfile,
+   stack/Swarm, Traefik; deleção de dado, arquitetura ou custo; conflito com PR de outro agente.
+9. Conflito: rebase em `main`; `--force-with-lease` só na sua branch. Nunca force-push em `main` nem toque em branch alheia.
+10. Merge = **produção** (deploy automático na Vercel). Confira o deploy e reporte. CI vermelha → leia o resumo antes de
+    patch; se foi seu merge, corrija em branch nova (`fix:`) na mesma sessão.
 11. Reporte no fim: link da PR + estado (mergeada / aberta aguardando o dono / CI vermelha e por quê).
-
----
 
 ## 8. Específico deste repositório
 
-Conteúdo técnico (banco, deploy, CI, regras de domínio) em [`CLAUDE.md`](CLAUDE.md).
-
-**Antes de qualquer tarefa ou planejamento:** leia o contexto gerado para agentes — `docs/contexto/00-INDEX.md`
-na branch `contexto` (`git show origin/contexto:docs/contexto/00-INDEX.md`) e `inventario/estado/` na `main`.
-Detalhes em `CLAUDE.md`, seção "Contexto e inventário para agentes de IA".
+- **Repo** `adm01-debug/Departamento_Pessoal_V3` · **Supabase canônico** `frjbfeamybqsejlvmqbl` · deploy Vercel via Git.
+  **Stack:** React + TS strict (`tsconfig.json` raiz = CI) · Vite · Tailwind · Vitest · Playwright · Edge Functions Deno
+  em `supabase/functions/` (gateway `external-db-bridge/`). **npm único** (`npm ci`; nunca Bun/yarn/pnpm). **Não bumpar
+  `typescript` para ≥ 6.1.**
+- **Comandos:** `npm run build` · `typecheck` · `lint:ci` · `test` · `test:e2e` · `ci:verify` (gate completo).
+  Mudou rota/menu → `npm run inventario:rotas`, senão o CI reprova.
+- **Antes de qualquer tarefa:** leia `docs/contexto/00-INDEX.md` (branch `contexto`) e `inventario/estado/*.json`; são
+  gerados (divergiu → regenere). Nunca edite `docs/contexto/` na main (só `regras/manual/`) nem abra PR da branch `contexto`.
+- **Grafo:** `graphify query|path|explain` antes de grep; clone novo → `npm run graph:rebuild`, mudou código →
+  `graph:update`; versionados só `GRAPH_REPORT.md`/`manifest.json`.
+- **Banco de produção:** migration só via `canonical-migrations.yml` (`validate` → `apply`), nunca `psql`/MCP direto;
+  ledger não prova DDL aplicado: exija o sidecar `.verify.sql`. Edge Functions via `canonical-edge-functions.yml`;
+  `verify_jwt = false` só com justificativa em `config.toml`. Tabela nova: RLS + policies por `empresa_id`. Runbooks:
+  `infra/runbooks/`.
+- **CI:** `ci.yml` + canônicos; `main` squash-only, 10 checks obrigatórios, 0 aprovações, code owner só em
+  `.github/CODEOWNERS`.
+- Mais: `docs/agentes/{arquitetura,contexto-inventario,graphify,decisoes-e-gaps,fluxo-git}.md`.
