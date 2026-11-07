@@ -6,8 +6,8 @@
 // - Auditoria não-bloqueante
 // - Erros genéricos, sem vazar stack
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';

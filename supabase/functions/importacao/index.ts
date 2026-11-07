@@ -1,8 +1,8 @@
 // Onda 24 — Hardening avançado: CSRF + CSV parser RFC-4180 + anti-injection
 // + caps por linha + empresa_id obrigatório para tabelas multi-tenant.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';

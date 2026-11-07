@@ -11,7 +11,7 @@
  *   - bridge_error_rate > 1% por 1min
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { captureException } from '../_shared/sentry.ts';
 import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
 import {

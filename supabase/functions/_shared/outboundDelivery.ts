@@ -1,4 +1,4 @@
-import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import type { SupabaseClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { safeFetch, safePost } from './safe-fetch.ts';
 import { resendDeliveryId } from './resendDelivery.ts';
 

@@ -2,7 +2,7 @@
 // Renderiza contrato de trabalho a partir de contrato_templates + variáveis da admissão,
 // calcula SHA-256, faz upload no bucket privado 'contratos-trabalho' e grava em contratos_gerados.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, parseJsonBody, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';

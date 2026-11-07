@@ -15,7 +15,7 @@
  *       se mv_telemetry_dashboard não existir, fallback para query direta.
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { metricasSchema } from '../_shared/schemas/common.ts';
 import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
