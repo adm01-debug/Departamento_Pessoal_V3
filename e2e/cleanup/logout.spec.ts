@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 /**
  * Teste de LOGOUT isolado em um projeto próprio (`cleanup`) que roda DEPOIS de
@@ -16,8 +16,11 @@ test.describe('Logout (cleanup — executa por último)', () => {
     await page.goto('/dashboard');
     await expect(page).not.toHaveURL(/\/login/);
 
-    // O menu de perfil está no Header (UserProfileMenu); "usuário" é o fallback.
-    const profileButton = page.getByRole('button', { name: /usuário/i }).first();
+    // O menu de perfil está no Header (UserProfileMenu). Usa o aria-label
+    // estável do trigger em vez de /usuário/i: o nome exibido é o e-mail do
+    // usuário E2E (provision-e2e-users.mjs não define user_metadata.name),
+    // então um seletor por nome real nunca casaria de forma determinística.
+    const profileButton = page.getByRole('button', { name: /menu do usuário/i });
     await expect(profileButton).toBeVisible();
     await profileButton.click();
 
