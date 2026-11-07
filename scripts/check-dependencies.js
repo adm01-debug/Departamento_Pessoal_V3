@@ -26,12 +26,14 @@ try {
 
   // Verificar se está instalado em node_modules (aproximado)
   const nodeModulesPath = path.resolve(__dirname, '../node_modules');
-  if (fs.existsSync(nodeModulesPath)) {
-    for (const dep of criticalDeps) {
-      const depPath = path.join(nodeModulesPath, dep);
-      if (!fs.existsSync(depPath)) {
-        console.warn(`\x1b[33mAVISO: "${dep}" está no package.json mas não parece estar instalado.\x1b[0m`);
-      }
+  if (!fs.existsSync(nodeModulesPath)) {
+    throw new Error('node_modules não encontrado; instale as dependências antes de validar o build.');
+  }
+
+  for (const dep of criticalDeps) {
+    const depPath = path.join(nodeModulesPath, dep);
+    if (!fs.existsSync(depPath)) {
+      throw new Error(`Dependência crítica "${dep}" está no package.json mas não está instalada.`);
     }
   }
 
