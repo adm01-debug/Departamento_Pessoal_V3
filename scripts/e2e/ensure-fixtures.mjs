@@ -39,6 +39,7 @@ if (missing.length) {
 const SEED_COLABORADORES = [
   {
     cpf: '00000000191',
+    email: process.env.E2E_USER_EMAIL,
     nome_completo: '[E2E-SEED] Colaborador Um',
     data_nascimento: '1990-01-01',
     sexo: 'masculino',
@@ -91,11 +92,22 @@ async function main() {
   for (const colaborador of SEED_COLABORADORES) {
     const { data: existing, error: selErr } = await client
       .from('colaboradores')
-      .select('id')
+      .select('id, email')
       .eq('cpf', colaborador.cpf)
       .maybeSingle();
     if (selErr) throw selErr;
-    if (existing) continue;
+    if (existing) {
+      // Colaborador pre-existente sem o email do admin E2E (ex.: criado antes
+      // deste fix) — o select por email em /ponto retornaria 0 linhas.
+      if (colaborador.email && existing.email !== colaborador.email) {
+        const { error: updErr } = await client
+          .from('colaboradores')
+          .update({ email: colaborador.email })
+          .eq('id', existing.id);
+        if (updErr) throw updErr;
+      }
+      continue;
+    }
     const { error: insErr } = await client
       .from('colaboradores')
       .insert({ ...colaborador, empresa_id: empresaId });
@@ -115,6 +127,21 @@ async function main() {
       .from('folhas_pagamento')
       .insert({ empresa_id: empresaId, competencia, tipo: 'mensal', status: 'aberta' });
     if (folhaInsErr) throw folhaInsErr;
+  }
+
+  // /ponto faz maybeSingle em configuracoes_ponto por empresa_id — sem a linha,
+  // o fetch colapsa para single e vira 400. Os defaults preenchem o resto.
+  const { data: cfg, error: cfgSelErr } = await client
+    .from('configuracoes_ponto')
+    .select('id')
+    .eq('empresa_id', empresaId)
+    .maybeSingle();
+  if (cfgSelErr) throw cfgSelErr;
+  if (!cfg) {
+    const { error: cfgInsErr } = await client
+      .from('configuracoes_ponto')
+      .insert({ empresa_id: empresaId });
+    if (cfgInsErr) throw cfgInsErr;
   }
 
   await client.auth.signOut({ scope: 'local' });
