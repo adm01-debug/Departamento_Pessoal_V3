@@ -138,6 +138,7 @@ interface BridgePayload {
   limit?: number;
   offset?: number;
   single?: boolean;
+  maybeSingle?: boolean;
   countMode?: string;
   onConflict?: string;
   params?: Record<string, unknown>;
@@ -160,6 +161,7 @@ interface RpcBody {
   limit?: number;
   offset?: number;
   single?: boolean;
+  maybeSingle?: boolean;
   countMode?: string;
   onConflict?: string;
   params?: Record<string, unknown>;
@@ -233,7 +235,7 @@ const callBridge = async <T = unknown>(
       return { data: null, count: 0, error: { message: errorMsg } };
     }
     let data: unknown = json.data;
-    if (payload.single) data = Array.isArray(data) ? ((data as unknown[])[0] ?? null) : data;
+    if (payload.single || payload.maybeSingle) data = Array.isArray(data) ? ((data as unknown[])[0] ?? null) : data;
 
     if (json.duration_ms && json.duration_ms > 1000) {
       loggerService.warn(`[BRIDGE_SLOW_QUERY] ${action} em ${target} demorou ${json.duration_ms}ms`, {
@@ -408,7 +410,7 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
       return builder;
     },
     maybeSingle: () => {
-      state.payload.single = true;
+      state.payload.maybeSingle = true;
       return builder;
     },
     then: (resolve: (value: BridgeResult) => unknown, reject?: AnyFn) => exec().then(resolve, reject),
