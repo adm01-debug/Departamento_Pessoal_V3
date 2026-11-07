@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "f231df44b34c681d4843c586d08fbeaf2f66051e",
+  "sha": "618e38b6a47171d68423e3542da75b9afd3fbb4f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-07 17:29 UTC",
+  "generated_at": "2026-11-07 20:16 UTC",
   "files_total": 2806,
   "code_files": 2323,
-  "code_lines": 308335
+  "code_lines": 308343
  },
  "version": "1.3.2",
- "facts_hash": "a56554f70fdf1115",
+ "facts_hash": "6ded567c57e57c4a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 17330,
+   "lines": 17338,
    "tables": [
     "a",
     "audit_log",
@@ -228056,7 +228056,7 @@
   },
   "scripts/tests/sw-routing.test.mjs": {
    "path": "scripts/tests/sw-routing.test.mjs",
-   "lines": 145,
+   "lines": 153,
    "is_test": true,
    "params": [
     {
@@ -228065,6 +228065,7 @@
     }
    ],
    "rule_comments": [
+    "Node's Request aceita apenas HTTP(S); o SW ainda recebe a URL da extensão.",
     "S: uma falha no stream não pode virar HTTP 200 com corpo parcial/vazio.",
     "T: ativação limpa somente caches deste app; caches de outras aplicações"
    ],
@@ -274336,10 +274337,19 @@
   }
  },
  "git": {
-  "sha": "f231df44b34c681d4843c586d08fbeaf2f66051e",
+  "sha": "618e38b6a47171d68423e3542da75b9afd3fbb4f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "618e38b",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "fix: permite testar chrome-extension no harness (#369)",
+    "files": [
+     "scripts/tests/sw-routing.test.mjs"
+    ]
+   },
    {
     "sha": "f231df4",
     "date": "2026-11-07",
@@ -274717,46 +274727,6 @@
     "files": [
      "analise-prs/auditorias-anteriores.md"
     ]
-   },
-   {
-    "sha": "7db8ba8",
-    "date": "2026-10-31",
-    "author": "devin-ai-integration[bot]",
-    "subject": "chore(limpeza): resolve código órfão do §8.3 – liga LanguageSelector/PDF-PDI, remove mortos, ativa specs",
-    "files": [
-     "e2e/authenticated/audit-checklist.spec.ts",
-     "e2e/authenticated/fuzz-testing.spec.ts",
-     "src/calculators/trabalhistas.ts",
-     "src/components/layout/Header.tsx",
-     "src/components/metabase/MetabaseEmbed.test.tsx",
-     "src/components/metabase/MetabaseEmbed.tsx",
-     "src/hooks/__tests__/useActionStateHelper.test.ts",
-     "src/hooks/__tests__/useCalculoFeriasPreview.test.ts",
-     "src/hooks/useActionStateHelper.ts",
-     "src/hooks/useCalculoFeriasPreview.ts",
-     "src/pages/AvaliacaoPage.tsx",
-     "src/schemas/common.ts",
-     "src/services/__tests__/automacaoService.test.ts",
-     "src/services/__tests__/cnabLayoutService.test.ts",
-     "src/services/__tests__/dominioService.test.ts",
-     "src/services/automacaoService.ts",
-     "src/services/cnabLayoutService.ts",
-     "src/services/dominioService.ts",
-     "src/services/folha/__tests__/provisoesService.test.ts",
-     "src/services/folha/provisoesService.ts",
-     "src/utils/__tests__/esocialEventos.test.ts",
-     "src/utils/__tests__/esocialEventosPeriodicos.test.ts",
-     "src/utils/__tests__/esocialEventosSST.test.ts",
-     "src/utils/esocialEventosPeriodicos.ts",
-     "src/utils/esocialEventosSST.ts",
-     "src/validators/esocialValidators.ts",
-     "supabase/functions/_shared/safe-fetch.ts",
-     "supabase/functions/metabase-embed/availability.test.ts",
-     "supabase/functions/metabase-embed/availability.ts",
-     "supabase/functions/metabase-embed/dashboardAccess.test.ts",
-     "supabase/functions/metabase-embed/dashboardAccess.ts",
-     "supabase/functions/metabase-embed/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -274797,10 +274767,6 @@
     2
    ],
    [
-    "e2e/authenticated/audit-checklist.spec.ts",
-    2
-   ],
-   [
     "public/sw-custom.js",
     2
    ],
@@ -274831,6 +274797,10 @@
    [
     "analise-prs/progresso.json",
     2
+   ],
+   [
+    "scripts/tests/sw-routing.test.mjs",
+    1
    ],
    [
     ".agents/skills/departamento-pessoal-v2/SKILL.md",

@@ -349,7 +349,7 @@
   {
    "arquivo": "scripts/tests/sw-routing.test.mjs",
    "tipo": "unit",
-   "linhas": 145,
+   "linhas": 153,
    "testa": [],
    "casos": 0
   },

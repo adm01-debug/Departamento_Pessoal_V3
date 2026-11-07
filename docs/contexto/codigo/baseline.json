@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f231df44b34c681d4843c586d08fbeaf2f66051e",
+  "commit": "618e38b6a47171d68423e3542da75b9afd3fbb4f",
   "branch": "main",
-  "data_commit": "2026-11-07T14:05:46-03:00",
+  "data_commit": "2026-11-07T17:05:54-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "618e38b",
+    "data": "2026-11-07",
+    "assunto": "fix: permite testar chrome-extension no harness (#369)"
+   },
    {
     "sha": "f231df4",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "451a80a",
     "data": "2026-10-31",
     "assunto": "feat: security hardening - cherry-pick PR 315 sem workflows (#334)"
-   },
-   {
-    "sha": "57054a5",
-    "data": "2026-10-31",
-    "assunto": "fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)"
    }
   ],
-  "arquivos_mudados_7d": 175,
+  "arquivos_mudados_7d": 78,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 93
+    "mudancas": 92
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 86
+    "mudancas": 85
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 46
+    "commits": 47
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2786,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260444,
+  "linhas_codigo": 260452,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -580,7 +580,7 @@
   },
   "scripts/tests": {
    "arquivos": 13,
-   "linhas": 1524
+   "linhas": 1532
   },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
