@@ -87,7 +87,7 @@ function fixture(t, { ageMinutes = 0 } = {}) {
   git('push', '--quiet', 'origin', 'main');
   const head = git('rev-parse', 'HEAD');
   const stamp = new Date(Date.now() - ageMinutes * 60_000).toISOString().replace(/\.\d{3}Z$/, 'Z');
-  const remote = '******github.com/offline/contexto.git';
+  const remote = 'https://github.com/offline/contexto.git';
   const proxy = `#!/usr/bin/env bash
 set -euo pipefail
 if [[ "$CONTEXT_TEST_FAIL_MANIFEST_READ" == true && "\${1:-}" == show && "\${2:-}" == HEAD:docs/contexto/supabase/manifest.json ]]; then
