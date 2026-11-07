@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "618e38b6a47171d68423e3542da75b9afd3fbb4f",
+  "sha": "dddcff42de77bc6f4d5a0a25d9e72e68c2506457",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-07 20:16 UTC",
+  "generated_at": "2026-11-07 22:13 UTC",
   "files_total": 2806,
   "code_files": 2323,
-  "code_lines": 308343
+  "code_lines": 308355
  },
  "version": "1.3.2",
- "facts_hash": "6ded567c57e57c4a",
+ "facts_hash": "3e34497886c527b6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 17338,
+   "lines": 17350,
    "tables": [
     "a",
     "audit_log",
@@ -94955,7 +94955,6 @@
     "@tanstack/react-query",
     "b",
     "drizzle-orm",
-    "esbuild",
     "eslint",
     "express",
     "fs",
@@ -94973,7 +94972,8 @@
     "node:test",
     "node:url",
     "node:vm",
-    "path"
+    "path",
+    "react"
    ],
    "imports_modules": [
     "src/b",
@@ -105478,6 +105478,10 @@
    {
     "file": "scripts/audit-bridge-frontend-contract.mjs",
     "msg": "Não foi possível localizar ${name}"
+   },
+   {
+    "file": "scripts/audit-edge-syntax.mjs",
+    "msg": "TypeScript não carregou ${file}"
    },
    {
     "file": "scripts/build-rebaseline.mjs",
@@ -225818,15 +225822,15 @@
   },
   "scripts/audit-edge-syntax.mjs": {
    "path": "scripts/audit-edge-syntax.mjs",
-   "lines": 59,
+   "lines": 71,
+   "errors": [
+    "TypeScript não carregou ${file}"
+   ],
    "params": [
     {
      "name": "ROOT",
      "value": "'supabase/functions'"
     }
-   ],
-   "rule_comments": [
-    "`transform` não resolve imports (nada de rede) — apenas faz o parse."
    ],
    "doc": "!/usr/bin/env node"
   },
@@ -274337,10 +274341,22 @@
   }
  },
  "git": {
-  "sha": "618e38b6a47171d68423e3542da75b9afd3fbb4f",
+  "sha": "dddcff42de77bc6f4d5a0a25d9e72e68c2506457",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "dddcff4",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "fix: estabiliza validações locais dos scripts (#367)",
+    "files": [
+     ".gitattributes",
+     "scripts/audit-edge-syntax.mjs",
+     "scripts/build-rebaseline.mjs",
+     "scripts/tests/contexto-publicacao.test.mjs"
+    ]
+   },
    {
     "sha": "618e38b",
     "date": "2026-11-07",
@@ -274718,15 +274734,6 @@
      "analise-prs/progresso.json",
      "analise-prs/prs.json"
     ]
-   },
-   {
-    "sha": "49bcf8f",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "chore: suplemento reconciliação auditorias — D-27/D-37/D-38/D-39/D-40 (#331)",
-    "files": [
-     "analise-prs/auditorias-anteriores.md"
-    ]
    }
   ],
   "hot_files": [
@@ -274749,6 +274756,10 @@
    [
     "supabase/functions/external-db-bridge/index.ts",
     3
+   ],
+   [
+    "scripts/tests/contexto-publicacao.test.mjs",
+    2
    ],
    [
     "src/integrations/supabase/__tests__/clientBridge.test.ts",
@@ -274799,15 +274810,11 @@
     2
    ],
    [
-    "scripts/tests/sw-routing.test.mjs",
+    ".gitattributes",
     1
    ],
    [
-    ".agents/skills/departamento-pessoal-v2/SKILL.md",
-    1
-   ],
-   [
-    ".claude/skills/departamento-pessoal-v2/SKILL.md",
+    "scripts/audit-edge-syntax.mjs",
     1
    ]
   ]

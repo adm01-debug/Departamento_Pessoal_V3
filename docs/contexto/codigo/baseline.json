@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "618e38b6a47171d68423e3542da75b9afd3fbb4f",
+  "commit": "dddcff42de77bc6f4d5a0a25d9e72e68c2506457",
   "branch": "main",
-  "data_commit": "2026-11-07T17:05:54-03:00",
+  "data_commit": "2026-11-07T19:10:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "dddcff4",
+    "data": "2026-11-07",
+    "assunto": "fix: estabiliza validações locais dos scripts (#367)"
+   },
    {
     "sha": "618e38b",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "39a1e20",
     "data": "2026-10-31",
     "assunto": "fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)"
-   },
-   {
-    "sha": "451a80a",
-    "data": "2026-10-31",
-    "assunto": "feat: security hardening - cherry-pick PR 315 sem workflows (#334)"
    }
   ],
-  "arquivos_mudados_7d": 78,
+  "arquivos_mudados_7d": 77,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 92
+    "mudancas": 91
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 85
+    "mudancas": 84
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 47
+    "commits": 48
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2786,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260452,
+  "linhas_codigo": 260464,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -428,7 +428,7 @@
   },
   "scripts/audit-edge-syntax.mjs": {
    "arquivos": 1,
-   "linhas": 59
+   "linhas": 71
   },
   "scripts/audit-embed-hints.mjs": {
    "arquivos": 1,

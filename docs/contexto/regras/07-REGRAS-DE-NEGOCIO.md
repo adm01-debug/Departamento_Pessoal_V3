@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `618e38b6a4` · branch `main` · 2026-11-07 20:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `dddcff42de` · branch `main` · 2026-11-07 22:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4235,6 +4235,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | MFA verify do E2E falhou: ${JSON.stringify(verified)} | `e2e/auth.setup.ts` |
 | Payload too large | `public/sw-custom.js` |
 | Não foi possível localizar ${name} | `scripts/audit-bridge-frontend-contract.mjs` |
+| TypeScript não carregou ${file} | `scripts/audit-edge-syntax.mjs` |
 | A migração não pode conter metacomandos exclusivos do psql. | `scripts/build-rebaseline.mjs` |
 | A migração não pode recriar o schema public gerenciado. | `scripts/build-rebaseline.mjs` |
 | A migração squash não pode conter dados de Auth ou negócio. | `scripts/build-rebaseline.mjs` |
@@ -4525,8 +4526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao gerar PDF do holerite. | `src/pages/HoleritesPage.tsx` |
 | Falha ao processar o arquivo. Verifique o formato e tente novamente. | `src/pages/ImportacaoPage.tsx` |
 | Erro ao registrar | `src/pages/LGPDPage.tsx` |
-|                                aria-live= | `src/pages/LoginPage.tsx` |
-| … +434 linhas — lista completa em `context.json` | |
+| … +435 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

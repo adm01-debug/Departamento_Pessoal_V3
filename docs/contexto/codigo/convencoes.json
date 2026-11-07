@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: estabiliza validações locais dos scripts (#367)",
    "fix: permite testar chrome-extension no harness (#369)",
    "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)",
    "chore: instruções enxutas para agentes (#364)",
-   "fix: preserva semantica maybeSingle no proxy e no bridge (#366)",
-   "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)"
+   "fix: preserva semantica maybeSingle no proxy e no bridge (#366)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

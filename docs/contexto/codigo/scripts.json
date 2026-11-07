@@ -109,7 +109,7 @@
   {
    "arquivo": "scripts/audit-edge-syntax.mjs",
    "descricao": "* Gate de CI — sintaxe das Edge Functions (Deno).",
-   "linhas": 59,
+   "linhas": 71,
    "env": [],
    "npm_scripts": [
     "audit:edge-syntax"
