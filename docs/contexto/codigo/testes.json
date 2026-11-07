@@ -232,14 +232,14 @@
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
    "tipo": "e2e",
-   "linhas": 128,
+   "linhas": 155,
    "testa": [],
    "casos": 0
   },
   {
    "arquivo": "scripts/e2e/seed.mjs",
    "tipo": "e2e",
-   "linhas": 311,
+   "linhas": 336,
    "testa": [],
    "casos": 0
   },

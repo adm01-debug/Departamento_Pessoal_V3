@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "dddcff42de77bc6f4d5a0a25d9e72e68c2506457",
+  "commit": "1ebd08f3123bc48e21bc1ede1c68e8be5322cdb3",
   "branch": "main",
-  "data_commit": "2026-11-07T19:10:46-03:00",
+  "data_commit": "2026-11-07T20:07:20-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1ebd08f",
+    "data": "2026-11-07",
+    "assunto": "fix: garante fixtures E2E do /ponto autenticado (#374)"
+   },
    {
     "sha": "dddcff4",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "530a5cd",
     "data": "2026-11-02",
     "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)"
-   },
-   {
-    "sha": "39a1e20",
-    "data": "2026-10-31",
-    "assunto": "fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)"
    }
   ],
-  "arquivos_mudados_7d": 77,
+  "arquivos_mudados_7d": 79,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 91
+    "mudancas": 90
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 84
+    "mudancas": 83
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 48
+    "commits": 49
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2786,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260464,
+  "linhas_codigo": 260516,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -496,7 +496,7 @@
   },
   "scripts/e2e": {
    "arquivos": 3,
-   "linhas": 589
+   "linhas": 641
   },
   "scripts/eslint-tests-any.config.mjs": {
    "arquivos": 1,
@@ -815,7 +815,7 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 223,
+  "console_log": 225,
   "ts_ignore": 0,
   "eslint_disable": 1,
   "todos": 12,
