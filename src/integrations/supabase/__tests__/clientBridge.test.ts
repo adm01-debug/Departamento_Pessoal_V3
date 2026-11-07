@@ -107,6 +107,16 @@ describe('client.ts — callBridge via query builder', () => {
     expect(res.data).toEqual({ id: 'x' });
   });
 
+  it('maybeSingle serializa maybeSingle:true (não single) e retorna data:null em 0 linhas', async () => {
+    fetchMock.mockResolvedValue(okJson({ data: [] }));
+    const res = await supabase.from('t').select().eq('id', 'x').maybeSingle();
+    const body = lastFetchBody(fetchMock);
+    expect(body.maybeSingle).toBe(true);
+    expect(body.single).toBeUndefined();
+    expect(res.data).toBeNull();
+    expect(res.error).toBeNull();
+  });
+
   it('write sem sessão aborta antes do fetch ("Sessão inválida")', async () => {
     const res = await supabase.from('t').insert({ a: 1 });
     expect(res.error?.message).toMatch(/Sessão inválida/);
