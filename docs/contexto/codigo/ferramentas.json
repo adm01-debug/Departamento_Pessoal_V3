@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1418)",
    "SQL (817)",
-   "Markdown (280)",
+   "Markdown (285)",
    "JavaScript (86)",
    "YAML (52)",
    "Shell (45)",
@@ -782,7 +782,7 @@
   {
    "arquivo": "AGENTS.md",
    "titulo": "AGENTS.md — Departamento_Pessoal_V3",
-   "linhas": 167
+   "linhas": 108
   },
   {
    "arquivo": "ARCHITECTURE.md",
@@ -816,8 +816,8 @@
   },
   {
    "arquivo": "CLAUDE.md",
-   "titulo": "AI Context — Departamento Pessoal v3",
-   "linhas": 1215
+   "titulo": null,
+   "linhas": 2
   },
   {
    "arquivo": "CODE_OF_CONDUCT.md",
@@ -1311,6 +1311,10 @@
   {
    "pasta": "docs/adr",
    "arquivos_md": 7
+  },
+  {
+   "pasta": "docs/agentes",
+   "arquivos_md": 5
   },
   {
    "pasta": "docs/contexto",

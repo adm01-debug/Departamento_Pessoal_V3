@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: instruções enxutas para agentes (#364)",
    "fix: preserva semantica maybeSingle no proxy e no bridge (#366)",
    "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)",
    "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)",
-   "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)",
-   "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)"
+   "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

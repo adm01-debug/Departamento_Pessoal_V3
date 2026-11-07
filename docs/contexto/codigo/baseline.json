@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a29e6c0944fe26db60c9acddb8ac6fbac14e881c",
+  "commit": "a8a8516cb3abf75f59917d0abe2c884ca14e19fb",
   "branch": "main",
-  "data_commit": "2026-11-07T12:36:43-03:00",
+  "data_commit": "2026-11-07T16:34:57Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a8a8516",
+    "data": "2026-11-07",
+    "assunto": "chore: instruções enxutas para agentes (#364)"
+   },
    {
     "sha": "a29e6c0",
     "data": "2026-11-07",
@@ -126,14 +131,9 @@
     "sha": "ceb50b3",
     "data": "2026-10-31",
     "assunto": "feat: security hardening — 37 arquivos (cherry-pick PR #315 sem workflows)"
-   },
-   {
-    "sha": "fc04fb8",
-    "data": "2026-10-31",
-    "assunto": "chore: finaliza analise-prs/ — fontes, funcionalidades, regras-de-negocio, baseline, prs.csv (#333)"
    }
   ],
-  "arquivos_mudados_7d": 168,
+  "arquivos_mudados_7d": 175,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -148,12 +148,12 @@
     "mudancas": 25
    },
    {
-    "pasta": "package.json",
+    "pasta": "CLAUDE.md",
     "mudancas": 20
    },
    {
-    "pasta": "CLAUDE.md",
-    "mudancas": 19
+    "pasta": "package.json",
+    "mudancas": 20
    },
    {
     "pasta": "package-lock.json",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 95
+    "mudancas": 94
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 88
+    "mudancas": 87
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 30
+    "mudancas": 31
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -255,7 +255,7 @@
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 10
+    "mudancas": 11
    },
    {
     "arquivo": "deno.lock",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 44
+    "commits": 45
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2781,
+  "arquivos_total": 2786,
   "arquivos_codigo": 1508,
   "linhas_codigo": 260490,
   "rotas": 113,
@@ -339,7 +339,7 @@
   "testes": 572,
   "workflows": 17,
   "scripts": 83,
-  "docs_md": 280
+  "docs_md": 285
  },
  "por_pasta": {
   "capacitor.config.ts": {

@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "a29e6c0944fe26db60c9acddb8ac6fbac14e881c",
+  "sha": "a8a8516cb3abf75f59917d0abe2c884ca14e19fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-07 15:49 UTC",
-  "files_total": 2801,
+  "generated_at": "2026-11-07 16:45 UTC",
+  "files_total": 2806,
   "code_files": 2323,
   "code_lines": 308381
  },
@@ -274360,10 +274360,27 @@
   }
  },
  "git": {
-  "sha": "a29e6c0944fe26db60c9acddb8ac6fbac14e881c",
+  "sha": "a8a8516cb3abf75f59917d0abe2c884ca14e19fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a8a8516",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "chore: instruções enxutas para agentes (#364)",
+    "files": [
+     ".agents/skills/departamento-pessoal-v2/SKILL.md",
+     ".claude/skills/departamento-pessoal-v2/SKILL.md",
+     "AGENTS.md",
+     "CLAUDE.md",
+     "docs/agentes/arquitetura.md",
+     "docs/agentes/contexto-inventario.md",
+     "docs/agentes/decisoes-e-gaps.md",
+     "docs/agentes/fluxo-git.md",
+     "docs/agentes/graphify.md"
+    ]
+   },
    {
     "sha": "a29e6c0",
     "date": "2026-11-07",
@@ -274760,24 +274777,6 @@
     "files": [
      "PENDENCIAS.md"
     ]
-   },
-   {
-    "sha": "271d5b5",
-    "date": "2026-10-31",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(govbr+esocial): login gov.br anônimo funcional + campo nivel corrigido + XML S-2299 real",
-    "files": [
-     "scripts/audit-security-config.mjs",
-     "src/pages/AuthCallbackPage.tsx",
-     "supabase/config.toml",
-     "supabase/functions/auth-gov-br/govbrIdentity.test.ts",
-     "supabase/functions/auth-gov-br/govbrIdentity.ts",
-     "supabase/functions/auth-gov-br/index.ts",
-     "supabase/functions/enviar-esocial/index.ts",
-     "supabase/functions/enviar-esocial/s2299.test.ts",
-     "supabase/functions/enviar-esocial/s2299.ts",
-     "supabase/migrations/20261028230000_govbr_auth_state_user_id.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -274786,20 +274785,16 @@
     5
    ],
    [
-    "package-lock.json",
+    "AGENTS.md",
     4
    ],
    [
-    "AGENTS.md",
-    3
-   ],
-   [
     "CLAUDE.md",
-    3
+    4
    ],
    [
-    "supabase/functions/enviar-esocial/index.ts",
-    3
+    "package-lock.json",
+    4
    ],
    [
     "supabase/functions/external-db-bridge/index.ts",
@@ -274834,31 +274829,35 @@
     2
    ],
    [
+    "supabase/functions/enviar-esocial/index.ts",
+    2
+   ],
+   [
     "analise-prs/progresso.json",
     2
    ],
    [
-    "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    ".agents/skills/departamento-pessoal-v2/SKILL.md",
     1
    ],
    [
-    "src/integrations/supabase/client.ts",
+    ".claude/skills/departamento-pessoal-v2/SKILL.md",
     1
    ],
    [
-    "supabase/functions/external-db-bridge/request-schema.ts",
+    "docs/agentes/arquitetura.md",
     1
    ],
    [
-    "supabase/functions/external-db-bridge/validation.test.ts",
+    "docs/agentes/contexto-inventario.md",
     1
    ],
    [
-    "e2e/cleanup/logout.spec.ts",
+    "docs/agentes/decisoes-e-gaps.md",
     1
    ],
    [
-    "e2e/cleanup/seed-cleanup.spec.ts",
+    "docs/agentes/fluxo-git.md",
     1
    ]
   ]
