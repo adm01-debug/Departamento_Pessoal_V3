@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `25465ae258` · branch `main` · 2026-11-06 22:25 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a29e6c0944` · branch `main` · 2026-11-07 15:49 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2247,7 +2247,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **BodySchema** (`supabase/functions/external-db-bridge/request-schema.ts`, z.object):
   ```ts
-  { action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(), single: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).optional(), // Correlação distribuída — era …
+  { action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(), single: z.boolean().optional(), maybeSingle: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).option …
   ```
 - **BodySchema** (`supabase/functions/fechar-folha/index.ts`, z.object):
   ```ts
@@ -4571,7 +4571,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6736 testes em 542 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6740 testes em 542 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4615,6 +4615,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pesquisaService.test.ts` | 29 | pesquisaService.listar · returns pesquisas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/turnoService.test.ts` | 29 | turnoService.listarTurnos · returns all turnos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/whatsappService.test.ts` | 29 | whatsappService · getConfig · returns config data when found · returns null when no config found … |
+| `supabase/functions/external-db-bridge/validation.test.ts` | 28 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
 | `src/schemas/esocial/__tests__/sstValidators.test.ts` | 27 | validarS2210 · returns valid for complete data · errors when cpfTrab is missing · errors for invalid CPF … |
 | `src/services/__tests__/admissaoService.test.ts` | 27 | admissaoService.listarAdmissoes · always scopes query by empresa_id (multi-tenant) · returns empty array when supabase returns null · filters by empresa_id when provided … |
 | `src/services/__tests__/episService.test.ts` | 27 | episService.listar · returns EPIs without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
@@ -4628,7 +4629,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/horaExtraService.test.ts` | 25 | horaExtraService.listar · returns records without empresa filter · returns empty array when data is null · applies empresa_id filter when provided … |
 | `src/services/__tests__/pontoService.test.ts` | 25 | pontoService.getSettings · returns settings for empresa · returns null when no settings found · throws on DB error … |
 | `src/utils/__tests__/folhaCalc.test.ts` | 25 | Motor de Cálculo de Folha (folhaCalc) · deve processar uma folha simples corretamente · deve incluir horas extras e DSR no cálculo · deve calcular 13º salário quando solicitado … |
-| `supabase/functions/external-db-bridge/validation.test.ts` | 25 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
 | `src/hooks/__tests__/validators.test.ts` | 24 | required · rejeita null, undefined e string vazia · aceita valores presentes, incluindo 0 e false · isValidEmail … |
 | `src/utils/__tests__/esocialXmlGenerator.test.ts` | 24 | gerarXmlESocial · returns valid XML declaration · wraps output in eSocial root element · uses testing environment by default (tpAmb=2) … |
 | `src/components/__tests__/CardProgramacao.test.tsx` | 23 | CardProgramacao · renders colaborador name · renders dias previstos · renders status badge for rascunho … |
@@ -4709,6 +4709,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ESocialTSVComponents.test.tsx` | 13 | S2300TSVInicio · renders trabalhador name · renders CPF · renders data de início … |
 | `src/components/__tests__/EntityPageContainer.test.tsx` | 13 | EntityPageContainer · renders page title and description · shows TableSkeleton when isLoading=true · shows SyncErrorState when error is present … |
 | `src/components/__tests__/desligamento-badges.test.tsx` | 13 | StatusBadge · renders  · renders  · renders  … |
+| `src/integrations/supabase/__tests__/clientBridge.test.ts` | 13 | client.ts — callBridge via query builder · select serializa action/table/filters/order/limit no body do bridge · filtro com valor  · ilike vazio e string  … |
 | `src/services/__tests__/empresaService.test.ts` | 13 | empresaService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · adds or() filter when search is provided … |
 | `src/services/__tests__/encryptionService.test.ts` | 13 | validateCPF · aceita CPF válido (com e sem máscara) · rejeita dígito verificador errado · rejeita tamanho errado e sequências repetidas … |
 | `src/services/__tests__/historicoContratoService.test.ts` | 13 | historicoContratoService.listar · returns historico for given colaboradorId · returns empty array when data is null · filters by colaborador_id … |
@@ -4726,7 +4727,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useGenericCrud.test.ts` | 12 | useGenericCrud · passes queryKey and queryFn to useQuery · exposes items from query data · exposes total from query data … |
 | `src/hooks/__tests__/useLocalStorage.test.ts` | 12 | useLocalStorage · returns initial value when key does not exist · returns stored value when key exists · stores value and updates state … |
 | `src/hooks/__tests__/useMediaQuery.test.ts` | 12 | useMediaQuery · returns initial match state · returns false when query does not match · updates when media query changes … |
-| `src/integrations/supabase/__tests__/clientBridge.test.ts` | 12 | client.ts — callBridge via query builder · select serializa action/table/filters/order/limit no body do bridge · filtro com valor  · ilike vazio e string  … |
 | `src/services/__tests__/authService.test.ts` | 12 | authService.forgotPassword · returns success when supabase auth succeeds · throws when supabase auth returns error · throws with fallback message when error has no message … |
 | `src/services/__tests__/contratacaoService.xss.test.ts` | 12 | contratacaoService.gerarTemplateContrato — regressão XSS · escapa payload malicioso em admissao.nome: %s · escapa payload em admissao.cargo e admissao.departamento · escapa payload dentro de metadata.endereco (input do candidato) … |
 | `src/services/__tests__/controleAcessoService.test.ts` | 12 | controleAcessoService.listar · returns all records without filter · returns empty array when data is null · applies empresa_id filter when provided … |

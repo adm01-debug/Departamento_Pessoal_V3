@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "25465ae258b9bfa17767e9abb362ab680a2c2c34",
+  "commit": "a29e6c0944fe26db60c9acddb8ac6fbac14e881c",
   "branch": "main",
-  "data_commit": "2026-11-06T19:24:50-03:00",
+  "data_commit": "2026-11-07T12:36:43-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a29e6c0",
+    "data": "2026-11-07",
+    "assunto": "fix: preserva semantica maybeSingle no proxy e no bridge (#366)"
+   },
    {
     "sha": "25465ae",
     "data": "2026-11-06",
@@ -126,22 +131,17 @@
     "sha": "fc04fb8",
     "data": "2026-10-31",
     "assunto": "chore: finaliza analise-prs/ — fontes, funcionalidades, regras-de-negocio, baseline, prs.csv (#333)"
-   },
-   {
-    "sha": "54652ab",
-    "data": "2026-10-31",
-    "assunto": "chore: arquivos de rastreamento analise-prs/"
    }
   ],
-  "arquivos_mudados_7d": 164,
+  "arquivos_mudados_7d": 168,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "pasta": "src/components/__tests__",
@@ -149,7 +149,7 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 21
+    "mudancas": 20
    },
    {
     "pasta": "CLAUDE.md",
@@ -168,11 +168,15 @@
     "mudancas": 16
    },
    {
+    "pasta": "supabase/functions/external-db-bridge",
+    "mudancas": 15
+   },
+   {
     "pasta": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
+    "pasta": "src/integrations/supabase",
     "mudancas": 12
    },
    {
@@ -180,30 +184,26 @@
     "mudancas": 11
    },
    {
-    "pasta": "src/integrations/supabase",
-    "mudancas": 10
-   },
-   {
     "pasta": "src/services/folha",
     "mudancas": 10
    },
    {
-    "pasta": ".github/workflows/ci.yml",
+    "pasta": "src/services/cnabService.ts",
     "mudancas": 9
    },
    {
-    "pasta": "src/services/cnabService.ts",
-    "mudancas": 9
+    "pasta": ".github/workflows/ci.yml",
+    "mudancas": 8
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 96
+    "mudancas": 95
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 89
+    "mudancas": 88
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -246,11 +246,11 @@
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/healthcheck.yml",
-    "mudancas": 11
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
+    "mudancas": 12
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
+    "arquivo": ".github/workflows/healthcheck.yml",
     "mudancas": 11
    },
    {
@@ -259,6 +259,10 @@
    },
    {
     "arquivo": "deno.lock",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/integrations/supabase/client.ts",
     "mudancas": 10
    },
    {
@@ -271,10 +275,6 @@
    },
    {
     "arquivo": ".github/workflows/canonical-probes.yml",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/integrations/supabase/client.ts",
     "mudancas": 9
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 89
+    "commits": 88
    },
    {
     "autor": "adm01-debug",
-    "commits": 43
+    "commits": 44
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2781,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260444,
+  "linhas_codigo": 260490,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -632,7 +632,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 25705
+   "linhas": 25717
   },
   "src/lib": {
    "arquivos": 14,
@@ -684,7 +684,7 @@
   },
   "supabase/functions": {
    "arquivos": 171,
-   "linhas": 24366
+   "linhas": 24400
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -750,7 +750,7 @@
   },
   {
    "arquivo": "supabase/functions/external-db-bridge/index.ts",
-   "linhas": 810
+   "linhas": 812
   },
   {
    "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
