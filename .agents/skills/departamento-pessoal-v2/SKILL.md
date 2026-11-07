@@ -1,69 +1,45 @@
-```markdown
-# departamento-pessoal-v2 Development Patterns
+---
+name: departamento-pessoal-v2
+description: Use ao programar, revisar ou depurar código neste repositório (Departamento_Pessoal_V3 — React/TS + Supabase Edge Functions) para seguir as convenções de arquivos, testes, lint e commits do projeto. Não cobre regras de negócio de RH; para isso leia o contexto gerado em docs/contexto.
+---
 
-> Auto-generated skill from repository analysis
+# Convenções do repositório Departamento_Pessoal_V3
 
-## Overview
-This skill teaches the core development patterns and conventions used in the `departamento-pessoal-v2` repository, a TypeScript-based React project. You'll learn how to write code that fits the project's style, structure your files, use imports/exports, write and locate tests, and follow commit message conventions.
+Regras de trabalho, fluxo Git e específicos do repo: `AGENTS.md` (vence qualquer doc em `docs/`).
+Referência longa: `docs/agentes/`. Contexto gerado (rotas, banco, regras): `docs/contexto/00-INDEX.md`
+na branch `contexto` e `inventario/estado/*.json`.
 
-## Coding Conventions
+## Comandos
 
-### File Naming
-- Use **camelCase** for all file and folder names.
-  - Example: `userProfile.tsx`, `employeeList.ts`
+| Objetivo              | Comando                                              |
+| --------------------- | ---------------------------------------------------- |
+| Dev local             | `npm run dev`                                        |
+| Typecheck             | `npm run typecheck` · `typecheck:tests` · `typecheck:edge` |
+| Lint                  | `npm run lint:ci` (src) · `npm run lint:edge` (Deno) |
+| Testes unitários      | `npm run test` (Vitest)                              |
+| E2E                   | `npm run test:e2e` (Playwright)                      |
+| Gate completo local   | `npm run ci:verify`                                  |
+| Formatação            | `npm run format:check` / `format:write` (Prettier)   |
 
-### Import Style
-- Use **alias imports** rather than relative paths where possible.
-  - Example:
-    ```typescript
-    import { EmployeeCard } from '@components/EmployeeCard';
-    ```
+Gerenciador de pacotes: **npm** (`npm ci`). Nunca Bun/yarn/pnpm.
 
-### Export Style
-- Use **named exports** for all modules.
-  - Example:
-    ```typescript
-    // Good
-    export const EmployeeList = () => { ... };
+## Estrutura
 
-    // Avoid default exports
-    // export default EmployeeList;
-    ```
+- `src/` — React 19 + TypeScript strict: `pages/`, `components/`, `hooks/`, `services/`, `types/`, `lib/`.
+- `supabase/functions/` — Edge Functions (Deno); código comum em `_shared/`; gateway `external-db-bridge/`.
+- `supabase/migrations/` — SQL; aplicação em produção só via `canonical-migrations.yml`.
+- `e2e/` — Playwright. `scripts/` — audits, inventário, contexto. `infra/runbooks/` — operação.
 
-### Commit Messages
-- Follow **Conventional Commits**.
-- Use type prefixes (e.g., `fix:`).
-- Keep commit messages concise (average 77 characters).
-  - Example:
-    ```
-    fix: correct salary calculation for overtime hours
-    ```
+## Testes
 
-## Workflows
+- Nome `*.test.ts(x)` (ou `*.spec.*`), ao lado do módulo ou em `__tests__/`; Edge Functions têm
+  `*.test.ts` dentro de `supabase/functions/_shared/`.
+- `lint-staged` roda `vitest related --run` nos testes tocados no pre-commit.
 
-_No automated workflows detected in repository._
+## Commits e PR
 
-## Testing Patterns
-
-- **Test File Pattern:** All test files use the `*.test.*` naming convention.
-  - Example: `userProfile.test.tsx`
-- **Testing Framework:** Not explicitly detected; follow standard React/TypeScript testing practices.
-- **Test Placement:** Place test files alongside the modules they test or in a dedicated `__tests__` directory.
-
-  Example test file:
-  ```typescript
-  import { render } from '@testing-library/react';
-  import { EmployeeList } from './employeeList';
-
-  test('renders employee names', () => {
-    // test implementation
-  });
-  ```
-
-## Commands
-| Command      | Purpose                                       |
-|--------------|-----------------------------------------------|
-| /test        | Run all tests in the codebase                 |
-| /lint        | Lint the codebase for style and errors        |
-| /commit      | Guide for writing a conventional commit       |
-```
+- Conventional Commits em PT-BR, validados pelo `commitlint`: tipos `feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert`,
+  assunto em minúsculas, ≤ 72 caracteres. Ex.: `fix: corrige cálculo de horas extras na folha`.
+- Branch `claude/<tipo>-<slug>-<AAMMDD-HHMM>` a partir de `main`; uma tarefa = uma branch = uma PR.
+- Pre-commit (`husky` + `lint-staged`): eslint --fix + prettier em `*.ts/tsx`, prettier em `*.json/md/css`,
+  actionlint em `.github/workflows/*.yml`.
