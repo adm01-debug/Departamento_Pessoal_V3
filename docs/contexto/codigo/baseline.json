@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a8a8516cb3abf75f59917d0abe2c884ca14e19fb",
+  "commit": "f231df44b34c681d4843c586d08fbeaf2f66051e",
   "branch": "main",
-  "data_commit": "2026-11-07T16:34:57Z",
+  "data_commit": "2026-11-07T14:05:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f231df4",
+    "data": "2026-11-07",
+    "assunto": "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)"
+   },
    {
     "sha": "a8a8516",
     "data": "2026-11-07",
@@ -126,11 +131,6 @@
     "sha": "57054a5",
     "data": "2026-10-31",
     "assunto": "fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)"
-   },
-   {
-    "sha": "ceb50b3",
-    "data": "2026-10-31",
-    "assunto": "feat: security hardening — 37 arquivos (cherry-pick PR #315 sem workflows)"
    }
   ],
   "arquivos_mudados_7d": 175,
@@ -160,6 +160,10 @@
     "mudancas": 18
    },
    {
+    "pasta": "supabase/functions/external-db-bridge",
+    "mudancas": 18
+   },
+   {
     "pasta": "src/hooks/__tests__",
     "mudancas": 17
    },
@@ -168,15 +172,11 @@
     "mudancas": 16
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 15
+    "pasta": "src/integrations/supabase",
+    "mudancas": 14
    },
    {
     "pasta": "PENDENCIAS.md",
-    "mudancas": 12
-   },
-   {
-    "pasta": "src/integrations/supabase",
     "mudancas": 12
    },
    {
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 94
+    "mudancas": 93
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 87
+    "mudancas": 86
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -238,15 +238,15 @@
     "mudancas": 13
    },
    {
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
+    "mudancas": 13
+   },
+   {
     "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
-    "mudancas": 12
-   },
-   {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 12
    },
    {
@@ -258,11 +258,11 @@
     "mudancas": 11
    },
    {
-    "arquivo": "deno.lock",
-    "mudancas": 10
+    "arquivo": "src/integrations/supabase/client.ts",
+    "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/client.ts",
+    "arquivo": "deno.lock",
     "mudancas": 10
    },
    {
@@ -294,8 +294,8 @@
     "mudancas": 9
    },
    {
-    "arquivo": "infra/github/action-pins.json",
-    "mudancas": 8
+    "arquivo": "supabase/functions/external-db-bridge/validation.test.ts",
+    "mudancas": 9
    }
   ],
   "autores_30d": [
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 45
+    "commits": 46
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2786,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260490,
+  "linhas_codigo": 260444,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -632,7 +632,7 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 25717
+   "linhas": 25705
   },
   "src/lib": {
    "arquivos": 14,
@@ -684,7 +684,7 @@
   },
   "supabase/functions": {
    "arquivos": 171,
-   "linhas": 24400
+   "linhas": 24366
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -750,7 +750,7 @@
   },
   {
    "arquivo": "supabase/functions/external-db-bridge/index.ts",
-   "linhas": 812
+   "linhas": 810
   },
   {
    "arquivo": "src/components/dashboard/AnalyticsSection.tsx",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "a8a8516cb3abf75f59917d0abe2c884ca14e19fb",
+  "sha": "f231df44b34c681d4843c586d08fbeaf2f66051e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-07 16:45 UTC",
+  "generated_at": "2026-11-07 17:29 UTC",
   "files_total": 2806,
   "code_files": 2323,
-  "code_lines": 308381
+  "code_lines": 308335
  },
  "version": "1.3.2",
- "facts_hash": "cf472cb9de187e08",
+ "facts_hash": "a56554f70fdf1115",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -95720,7 +95720,7 @@
   {
    "module": "src/integrations",
    "files": 10,
-   "lines": 1092,
+   "lines": 1080,
    "tables": [
     "colaboradores",
     "folha_itens",
@@ -96781,7 +96781,7 @@
   {
    "module": "supabase/functions",
    "files": 171,
-   "lines": 24400,
+   "lines": 24366,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -104695,7 +104695,7 @@
     "file": "supabase/functions/external-db-bridge/request-schema.ts",
     "name": "BodySchema",
     "kind": "object",
-    "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), maybeSingle: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).option …",
+    "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).optional(), // Correlação distribuída — era …",
     "refines": [],
     "chain": []
    },
@@ -160183,10 +160183,6 @@
    },
    {
     "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
-    "name": "maybeSingle serializa maybeSingle:true (não single) e retorna data:null em 0 linhas"
-   },
-   {
-    "file": "src/integrations/supabase/__tests__/clientBridge.test.ts",
     "name": "write sem sessão aborta antes do fetch ("
    },
    {
@@ -172300,18 +172296,6 @@
    {
     "file": "supabase/functions/external-db-bridge/validation.test.ts",
     "name": "single: zero rows com single=true resultaria em PGRST116"
-   },
-   {
-    "file": "supabase/functions/external-db-bridge/validation.test.ts",
-    "name": "maybeSingle: true é aceito em SELECT e preservado"
-   },
-   {
-    "file": "supabase/functions/external-db-bridge/validation.test.ts",
-    "name": "maybeSingle: false explícito é aceito"
-   },
-   {
-    "file": "supabase/functions/external-db-bridge/validation.test.ts",
-    "name": "maybeSingle: tipos não-boolean são rejeitados"
    },
    {
     "file": "supabase/functions/external-db-bridge/validation.test.ts",
@@ -245252,7 +245236,7 @@
   },
   "src/integrations/supabase/client.ts": {
    "path": "src/integrations/supabase/client.ts",
-   "lines": 442,
+   "lines": 440,
    "exports": [
     "const supabaseBase",
     "function fetchWithRetry",
@@ -245332,15 +245316,11 @@
   },
   "src/integrations/supabase/__tests__/clientBridge.test.ts": {
    "path": "src/integrations/supabase/__tests__/clientBridge.test.ts",
-   "lines": 178,
+   "lines": 168,
    "is_test": true,
    "tables": [
     {
      "table": "colaboradores",
-     "op": "select"
-    },
-    {
-     "table": "t",
      "op": "select"
     },
     {
@@ -245411,7 +245391,6 @@
     "or() e match() acumulam filtros",
     "range(a,b) vira offset+limit e select count vira countMode",
     "single pega o primeiro elemento do array retornado",
-    "maybeSingle serializa maybeSingle:true (não single) e retorna data:null em 0 linhas",
     "write sem sessão aborta antes do fetch (",
     "write com sessão envia Bearer do JWT e Idempotency-Key",
     "erro do bridge vira {message} e dispara toast (exceto objeto ausente)",
@@ -266778,7 +266757,7 @@
   },
   "supabase/functions/external-db-bridge/index.ts": {
    "path": "supabase/functions/external-db-bridge/index.ts",
-   "lines": 812,
+   "lines": 810,
    "tables": [
     {
      "table": "query_telemetry",
@@ -266887,7 +266866,7 @@
   },
   "supabase/functions/external-db-bridge/request-schema.ts": {
    "path": "supabase/functions/external-db-bridge/request-schema.ts",
-   "lines": 58,
+   "lines": 57,
    "exports": [
     "const ON_CONFLICT_COLUMNS_RE",
     "const OnConflictSchema",
@@ -266912,7 +266891,7 @@
     {
      "name": "BodySchema",
      "kind": "object",
-     "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), maybeSingle: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).option …",
+     "body": "{ action: z.enum([\"select\", \"insert\", \"update\", \"delete\", \"upsert\", \"rpc\"]), table: z.string().max(63).optional(), rpcName: z.string().max(63).optional(), fn: z.string().max(63).optional(), columns: z.string().max(2000).optional(), filters: z.array(FilterSchema).max(50).optional(), order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(), limit: z.number().int().optional(), offset: z.number().int().min(0).optional(), countMode: z.enum([\"none\", \"exact\", \"planned\", \"estimated\"]).optional(), single: z.boolean().optional(), onConflict: OnConflictSchema.optional(), data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(), params: z.record(z.unknown()).optional(), userId: z.string().max(64).optional(), // Correlação distribuída — era …",
      "refines": [],
      "chain": []
     }
@@ -266977,7 +266956,7 @@
   },
   "supabase/functions/external-db-bridge/validation.test.ts": {
    "path": "supabase/functions/external-db-bridge/validation.test.ts",
-   "lines": 420,
+   "lines": 389,
    "is_test": true,
    "errors": [
     "FALHOU: ",
@@ -267022,9 +267001,6 @@
     "single: tipos não-boolean são rejeitados",
     "single: ausente tem semântica de array (não-single)",
     "single: zero rows com single=true resultaria em PGRST116",
-    "maybeSingle: true é aceito em SELECT e preservado",
-    "maybeSingle: false explícito é aceito",
-    "maybeSingle: tipos não-boolean são rejeitados",
     "upsert onConflict: lista de colunas legítima é preservada",
     "upsert onConflict: SQL, espaços e formatos inválidos são rejeitados",
     "disjunção: tabelas tenant-scoped não podem estar na denylist"
@@ -274360,10 +274336,23 @@
   }
  },
  "git": {
-  "sha": "a8a8516cb3abf75f59917d0abe2c884ca14e19fb",
+  "sha": "f231df44b34c681d4843c586d08fbeaf2f66051e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f231df4",
+    "date": "2026-11-07",
+    "author": "adm01-debug",
+    "subject": "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)",
+    "files": [
+     "src/integrations/supabase/__tests__/clientBridge.test.ts",
+     "src/integrations/supabase/client.ts",
+     "supabase/functions/external-db-bridge/index.ts",
+     "supabase/functions/external-db-bridge/request-schema.ts",
+     "supabase/functions/external-db-bridge/validation.test.ts"
+    ]
+   },
    {
     "sha": "a8a8516",
     "date": "2026-11-07",
@@ -274768,15 +274757,6 @@
      "supabase/functions/metabase-embed/dashboardAccess.ts",
      "supabase/functions/metabase-embed/index.ts"
     ]
-   },
-   {
-    "sha": "e1a18ef",
-    "date": "2026-10-31",
-    "author": "devin-ai-integration[bot]",
-    "subject": "docs: pendências externas dos gaps de admissão/rescisão (secrets, provedores, fora de escopo)",
-    "files": [
-     "PENDENCIAS.md"
-    ]
    }
   ],
   "hot_files": [
@@ -274798,6 +274778,22 @@
    ],
    [
     "supabase/functions/external-db-bridge/index.ts",
+    3
+   ],
+   [
+    "src/integrations/supabase/__tests__/clientBridge.test.ts",
+    2
+   ],
+   [
+    "src/integrations/supabase/client.ts",
+    2
+   ],
+   [
+    "supabase/functions/external-db-bridge/request-schema.ts",
+    2
+   ],
+   [
+    "supabase/functions/external-db-bridge/validation.test.ts",
     2
    ],
    [
@@ -274842,22 +274838,6 @@
    ],
    [
     ".claude/skills/departamento-pessoal-v2/SKILL.md",
-    1
-   ],
-   [
-    "docs/agentes/arquitetura.md",
-    1
-   ],
-   [
-    "docs/agentes/contexto-inventario.md",
-    1
-   ],
-   [
-    "docs/agentes/decisoes-e-gaps.md",
-    1
-   ],
-   [
-    "docs/agentes/fluxo-git.md",
     1
    ]
   ]

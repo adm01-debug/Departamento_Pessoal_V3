@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a8a8516cb3abf75f59917d0abe2c884ca14e19fb` (2026-11-07T16:34:57Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f231df44b34c681d4843c586d08fbeaf2f66051e` (2026-11-07T14:05:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2786 |
 | arquivos_codigo | 1508 |
-| linhas_codigo | 260490 |
+| linhas_codigo | 260444 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -385,14 +385,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21265 nós · 44511 arestas · 2096 comunidades · grafo do commit `a8a8516c`
+- 21265 nós · 44511 arestas · 2096 comunidades · grafo do commit `f231df44`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (328), Button (303), lucide-react (300), react (269), vitest (263), useEmpresas (255), services/index.ts (229), deepChain (190), button.tsx (176), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (94)
-- package-lock.json (87)
+- package.json (93)
+- package-lock.json (86)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (31)
 - .github/workflows/ci.yml (24)
@@ -401,9 +401,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/functions/external-db-bridge/validation.ts (15)
 - .github/workflows/security.yml (13)
 - src/services/cnabService.ts (13)
+- supabase/functions/external-db-bridge/index.ts (13)
 - .github/workflows/deploy.yml (12)
 - PENDENCIAS.md (12)
-- supabase/functions/external-db-bridge/index.ts (12)
 - .github/workflows/healthcheck.yml (11)
 - AGENTS.md (11)
 
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-07 `f231df4` fix: reverte maybeSingle do bridge (edge nao deployada) (#368)
 - 2026-11-07 `a8a8516` chore: instruções enxutas para agentes (#364)
 - 2026-11-07 `a29e6c0` fix: preserva semantica maybeSingle no proxy e no bridge (#366)
 - 2026-11-06 `25465ae` fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-05 `0d79b5c` build(deps): bump minor-patch group (10 pacotes npm) (#348)
 - 2026-11-05 `e4dc94f` build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)
 - 2026-11-05 `77a6b83` docs: atualizar WORKFLOWS_STATUS.md (#344)
-- 2026-11-05 `50c052c` build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
