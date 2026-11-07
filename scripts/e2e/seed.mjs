@@ -210,6 +210,7 @@ async function ensureUserLinkedToEmpresa(userId, empresaId, role) {
 const SEED_COLABORADORES = [
   {
     marker_cpf: '00000000191',
+    email: process.env.E2E_USER_EMAIL,
     nome_completo: '[E2E-SEED] Colaborador Um',
     data_nascimento: '1990-01-01',
     sexo: 'masculino',
@@ -283,6 +284,29 @@ async function seedFolhaAberta(asAdminClient, empresaId) {
   return created.id;
 }
 
+async function seedConfiguracoesPonto(asAdminClient, empresaId) {
+  // /ponto faz maybeSingle em configuracoes_ponto por empresa_id — sem a linha,
+  // o fetch colapsa para single e vira 400. Os defaults preenchem o resto.
+  const { data: existing, error: selErr } = await asAdminClient
+    .from('configuracoes_ponto')
+    .select('id')
+    .eq('empresa_id', empresaId)
+    .maybeSingle();
+  if (selErr) throw selErr;
+  if (existing) {
+    console.log(`↺ Configuracoes de ponto ja existem (${existing.id}).`);
+    return existing.id;
+  }
+  const { data: created, error: insErr } = await asAdminClient
+    .from('configuracoes_ponto')
+    .insert({ empresa_id: empresaId })
+    .select('id')
+    .single();
+  if (insErr) throw insErr;
+  console.log(`✅ Configuracoes de ponto criadas (${created.id}).`);
+  return created.id;
+}
+
 async function main() {
   const adminUser = await findUserByEmail(process.env.E2E_USER_EMAIL);
   const nonAdminUser = await findUserByEmail(process.env.E2E_NON_ADMIN_EMAIL);
@@ -300,8 +324,9 @@ async function main() {
 
   await seedColaboradores(adminAuthed, empresaId);
   await seedFolhaAberta(adminAuthed, empresaId);
+  await seedConfiguracoesPonto(adminAuthed, empresaId);
 
-  console.log('Pronto. Seed E2E sintético aplicado/garantido com sucesso.');
+  console.log('Pronto. Seed E2E sintetico aplicado/garantido com sucesso.');
 }
 
 main().catch((err) => {
