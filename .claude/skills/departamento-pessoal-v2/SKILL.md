@@ -38,8 +38,9 @@ Gerenciador de pacotes: **npm** (`npm ci`). Nunca Bun/yarn/pnpm.
 
 ## Commits e PR
 
-- Conventional Commits em PT-BR, validados pelo `commitlint`: tipos `feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert`,
-  assunto em minúsculas, ≤ 72 caracteres. Ex.: `fix: corrige cálculo de horas extras na folha`.
+- Conventional Commits em PT-BR conforme `commitlint.config.js`: tipos `feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert`,
+  assunto em minúsculas, ≤ 72 caracteres. Ex.: `fix: corrige cálculo de horas extras na folha`. Não há hook
+  `commit-msg` nem job de CI que execute o commitlint (pacote não instalado): a convenção vale por disciplina.
 - Branch `claude/<tipo>-<slug>-<AAMMDD-HHMM>` a partir de `main`; uma tarefa = uma branch = uma PR.
 - Pre-commit (`husky` + `lint-staged`): eslint --fix + prettier em `*.ts/tsx`, prettier em `*.json/md/css`,
   actionlint em `.github/workflows/*.yml`.

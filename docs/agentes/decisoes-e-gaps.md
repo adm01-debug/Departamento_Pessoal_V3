@@ -45,7 +45,6 @@ Críticos: nenhum bloqueante.
 
 | Gap | Impacto | Situação |
 | --- | --- | --- |
-| `--no-lock` no `deno test` do ci.yml | Bypassa deno.lock | Resolver após W36 corrigir lock |
 | `noUnusedLocals:true` pode alertar | Warnings no build | Aceitar ou limpar |
 | CodeQL unused-local (99 restantes) | Ruído no painel GHAS | Fechar em batch (W82 contínuo) |
 | `extract-zip ≤2.0.1`, `sprintf-js ≤1.1.3`, `uuid@8.3.2` em `@lhci/cli`, `basic-ftp` | DevDeps transitivas sem fix upstream (CI read-only) | Aguardar upstream; override de `uuid` para 14 é inválido (`@lhci/cli` exige `^8.3.1`) |
@@ -57,7 +56,24 @@ Críticos: nenhum bloqueante.
 Já resolvidos (mantidos só para não reabrir): rate limiting fail-open do bridge (503 sem SERVICE_KEY);
 `ALTER DEFAULT PRIVILEGES` sem `FOR ROLE` (migration `20261021010000`); migrações `20261015170000` e
 `20261018170000` ausentes do ledger (reconciliadas por `20261021000000`); CSRF code smell no bridge;
-`SUPABASE_DB_URL` no environment Production.
+`SUPABASE_DB_URL` no environment Production; `--no-lock` no `deno test` do ci.yml (W36: `--frozen` + cache deno,
+PR #251).
+
+## Pendências herdadas do histórico (sessões 9–22, out/2026)
+
+Itens que dependiam do dono e estavam só no histórico de sessões do antigo `CLAUDE.md`. Estado em 19/10/2026;
+confirme no repo/GitHub antes de agir.
+
+- **W50 — auto-merge**: CODEOWNERS sem regra `*` (W19) desbloqueou habilitar auto-merge no repo; "aguardando
+  decisão do dono" (sessão 9).
+- **Bloqueados, precisam do dono** (sessão 12): W16 (`ruleset-sync.yml` em modo diff explícito +
+  `environment: production`); W78 (`canonical-sql-diag`: `statement_timeout` + `SET LOCAL ROLE`, W23 pendente);
+  W66/W72/W80/W92 (canônicos + dependência do E2E + relatório semanal).
+- **Dados mock no canônico** (W58/W59/W60, sessão 9): seed de empresa + colaboradores + folha aplicado ao vivo na
+  empresa sintética do canônico (CNPJ `00000000000191`), com aval do dono para validação de design; limpeza via
+  `e2e/cleanup/seed-cleanup.spec.ts`. Não tratar como dado real.
+- **Secrets obsoletos** (W29, PR #247): os identificadores públicos `VITE_SUPABASE_*` (URL + chave anon, 12
+  ocorrências) migraram de `secrets` para `vars`; o dono deve apagar os secrets de repositório antigos.
 
 ## Pendências recomendadas (19/10/2026)
 

@@ -71,8 +71,8 @@ autorizado da sessão).
 
 1. Nunca commite em `main`. Toda mudança nasce em branch própria.
 2. Só escreva em branch que **você** criou nesta sessão; branch alheia é somente leitura, mesmo "só uma linha".
-3. Antes de começar, liste PRs abertas nos mesmos arquivos (`github_graphql`, não `github_list_pull_requests`: estoura
-   o contexto). Conflito → pare e avise o dono.
+3. Antes de começar, liste PRs abertas nos mesmos arquivos (`github_graphql`, query: `docs/agentes/fluxo-git.md`; não
+   `github_list_pull_requests`: estoura o contexto). Conflito → pare e avise o dono.
 4. Branch de `main` atualizado: `claude/<fix|feat|chore|infra>-<slug>-<AAMMDD-HHMM>` (sem carimbo não é aceito); uma
    tarefa = uma branch = uma PR. Antes de push, confirme que o último commit é seu.
 5. Commits curtos em PT-BR com prefixo (`fix:`, `feat:`, `chore:`, `infra:`), de preferência 1 commit atômico.
@@ -104,4 +104,4 @@ autorizado da sessão).
   `infra/runbooks/`.
 - **CI:** `ci.yml` + canônicos; `main` squash-only, 10 checks obrigatórios, 0 aprovações, code owner só em
   `.github/CODEOWNERS`.
-- Detalhes: `docs/agentes/` (arquitetura, contexto-inventario, graphify, decisoes-e-gaps).
+- Mais: `docs/agentes/{arquitetura,contexto-inventario,graphify,decisoes-e-gaps,fluxo-git}.md`.
