@@ -14,7 +14,7 @@
 #   npx cap add android
 #
 # Variáveis de ambiente:
-#   ANDROID_HOME  — caminho do projeto capacitor (padrão: ./)
+#   ANDROID_HOME  — caminho do Android SDK (obrigatório para APK)
 #   CAPACITOR_DIR — caminho do projeto capacitor (padrão: ./)
 
 set -euo pipefail
