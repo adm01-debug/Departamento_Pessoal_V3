@@ -18,7 +18,7 @@ const remediationPaths = [
 ].map((path) => resolve(root, path));
 const storagePath = resolve(root, 'supabase/rebaseline/20260831_storage_remediation.sql');
 
-const publicDump = await readFile(publicDumpPath, 'utf8');
+const publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
 const remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
 const storage = await readFile(storagePath, 'utf8');
 

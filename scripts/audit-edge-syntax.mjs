@@ -8,16 +8,16 @@
  * `metrics`, `reabrir-folha`) estavam com erro de sintaxe e falhavam no bundle
  * do deploy — em produção continuavam rodando a versão antiga, silenciosamente.
  *
- * Este script faz o parse de todo `supabase/functions/**` com o esbuild (já
- * presente via Vite), sem resolver imports remotos: só valida sintaxe e
+ * Este script faz o parse de todo `supabase/functions/**` com o TypeScript já
+ * presente no projeto, sem resolver imports remotos: só valida sintaxe e
  * declarações duplicadas, que é exatamente a classe de falha que quebra o
  * bundler do Supabase.
  *
  * Uso: node scripts/audit-edge-syntax.mjs   (exit 1 em caso de falha)
  */
 import { readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-import { transform } from 'esbuild';
+import { join, resolve } from 'node:path';
+import ts from 'typescript';
 
 const ROOT = 'supabase/functions';
 
@@ -34,17 +34,29 @@ function listTsFiles(dir) {
 
 const files = listTsFiles(ROOT);
 const failures = [];
+const duplicateCodes = new Set([2300, 2393, 2440, 2451, 2528]);
 
 for (const file of files) {
-  const source = await import('node:fs/promises').then((fs) => fs.readFile(file, 'utf8'));
-  try {
-    // `transform` não resolve imports (nada de rede) — apenas faz o parse.
-    await transform(source, { loader: 'ts', sourcefile: file });
-  } catch (error) {
-    const message = error?.errors?.[0]
-      ? `${error.errors[0].text} (linha ${error.errors[0].location?.line ?? '?'})`
-      : String(error?.message ?? error);
-    failures.push({ file, message });
+  const program = ts.createProgram([file], {
+    allowImportingTsExtensions: true,
+    module: ts.ModuleKind.ESNext,
+    noEmit: true,
+    noLib: true,
+    noResolve: true,
+    skipLibCheck: true,
+    target: ts.ScriptTarget.ESNext,
+  });
+  const source = program.getSourceFiles().find((item) => resolve(item.fileName) === resolve(file));
+  if (!source) throw new Error(`TypeScript não carregou ${file}`);
+
+  const diagnostics = [
+    ...program.getSyntacticDiagnostics(source),
+    ...program.getSemanticDiagnostics(source).filter((diagnostic) => duplicateCodes.has(diagnostic.code)),
+  ];
+  for (const diagnostic of diagnostics) {
+    const position = diagnostic.file?.getLineAndCharacterOfPosition(diagnostic.start ?? 0);
+    const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+    failures.push({ file, message: `${message} (linha ${(position?.line ?? 0) + 1})` });
   }
 }
 
