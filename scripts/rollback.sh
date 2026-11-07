@@ -1,9 +1,5 @@
-#!/bin/bash
-# rollback script
-# Departamento Pessoal
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
-
-echo "Running rollback..."
-# Add your logic here
-echo "Done!"
+echo "ERRO: rollback.sh não possui rotina de reversão configurada; nenhuma alteração foi aplicada." >&2
+exit 1
