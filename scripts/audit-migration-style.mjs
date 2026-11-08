@@ -57,7 +57,7 @@ const migrationsDir = resolve(import.meta.dirname, '../supabase/migrations');
 const CUTOFF_VERSION = '20260924300000';
 
 const DROP_POLICY_RE =
-  /^\s*DROP\s+POLICY\s+IF\s+EXISTS\s+"?([A-Za-z0-9_]+)"?\s+ON\s+(?:"?[A-Za-z0-9_]+"?\.)?"?([A-Za-z0-9_]+)"?/i;
+  /^\s*DROP\s+POLICY\s+IF\s+EXISTS\s+"?([A-Za-z0-9_]+)"?\s+ON\s+(?:"?[A-Za-z0-9_]+"?\.)? "?([A-Za-z0-9_]+)"?/i;
 const ALLOW_ANNOTATION_RE = /^\s*--\s*audit-migration-style:\s*allow-silent-drop\b/i;
 
 function escapeRegex(s) {
@@ -68,24 +68,37 @@ function hasFailClosedGuardFor(contentWithoutDropLine, policyName, tableName) {
   if (!/pg_policies/i.test(contentWithoutDropLine) || !/RAISE\s+EXCEPTION/i.test(contentWithoutDropLine)) {
     return false;
   }
-  const policyRe = new RegExp(`['"]${escapeRegex(policyName)}['"]`, 'i');
-  const tableRe = new RegExp(`['"]${escapeRegex(tableName)}['"]`, 'i');
+  const policyRe = new RegExp(`['"\`]${escapeRegex(policyName)}['"\`]`, 'i');
+  const tableRe = new RegExp(`['"\`]${escapeRegex(tableName)}['"\`]`, 'i');
   return policyRe.test(contentWithoutDropLine) || tableRe.test(contentWithoutDropLine);
 }
 
-const entries = await readdir(migrationsDir);
+let entries;
+try {
+  entries = await readdir(migrationsDir);
+} catch (err) {
+  console.error(`❌ audit-migration-style: diretório de migrations não encontrado: ${migrationsDir}`);
+  console.error(`   ${String(err.message || err)}`);
+  process.exit(1);
+}
+
 const migrationFiles = entries
   .filter((name) => /^\d{14}_.+\.sql$/.test(name))
   .filter((name) => name.split('_')[0] >= CUTOFF_VERSION)
   .sort();
 
 let failures = 0;
-let checkedFiles = 0;
+// Conta arquivos que possuem algum DROP POLICY IF EXISTS (guardado ou não),
+// para o relatório mostrar o escopo real da varredura.
+let filesWithAnyDrop = 0;
 
 for (const fileName of migrationFiles) {
   const path = resolve(migrationsDir, fileName);
   const content = await readFile(path, 'utf8');
   const lines = content.split('\n');
+
+  const hasAnyDrop = lines.some((line) => DROP_POLICY_RE.test(line));
+  if (hasAnyDrop) filesWithAnyDrop += 1;
 
   const unguardedDrops = [];
   lines.forEach((line, i) => {
@@ -104,7 +117,6 @@ for (const fileName of migrationFiles) {
   });
 
   if (unguardedDrops.length === 0) continue;
-  checkedFiles += 1;
   failures += 1;
   console.error(`❌ ${fileName}`);
   for (const drop of unguardedDrops) {
@@ -119,12 +131,13 @@ for (const fileName of migrationFiles) {
 
 if (failures > 0) {
   console.error(
-    `\n${failures} migration(s) nova(s) com DROP POLICY IF EXISTS solto (de ${checkedFiles} com DROP encontrado, ` +
-    `${migrationFiles.length} migrations avaliadas desde ${CUTOFF_VERSION}).`
+    `\n${failures} migration(s) nova(s) com DROP POLICY IF EXISTS solto ` +
+    `(de ${filesWithAnyDrop} com DROP, ${migrationFiles.length} migrations avaliadas desde ${CUTOFF_VERSION}).`
   );
   process.exit(1);
 }
 
 console.log(
-  `✅ audit-migration-style: ${migrationFiles.length} migration(s) desde ${CUTOFF_VERSION} sem DROP POLICY solto.`
+  `✅ audit-migration-style: ${migrationFiles.length} migration(s) desde ${CUTOFF_VERSION} sem DROP POLICY solto` +
+  (filesWithAnyDrop > 0 ? ` (${filesWithAnyDrop} com DROP guardado OK)` : '') + '.'
 );
