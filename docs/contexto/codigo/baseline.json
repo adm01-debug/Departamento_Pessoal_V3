@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1c8822710eef01b20f8bfa22e874aac419b248da",
+  "commit": "4fcdb158fa777e817e8f7b5a0b11904ed026c1a9",
   "branch": "main",
-  "data_commit": "2026-11-08T00:31:51-03:00",
+  "data_commit": "2026-11-08T01:25:27-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4fcdb15",
+    "data": "2026-11-08",
+    "assunto": "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)"
+   },
+   {
+    "sha": "70f6262",
+    "data": "2026-11-08",
+    "assunto": "feat: guards de job ausente em audit-canonical-project (#383)"
+   },
+   {
+    "sha": "752ceac",
+    "data": "2026-11-08",
+    "assunto": "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)"
+   },
    {
     "sha": "1c88227",
     "data": "2026-11-08",
@@ -116,24 +131,9 @@
     "sha": "50c052c",
     "data": "2026-11-05",
     "assunto": "build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)"
-   },
-   {
-    "sha": "70b26d7",
-    "data": "2026-11-05",
-    "assunto": "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)"
-   },
-   {
-    "sha": "d43244e",
-    "data": "2026-11-04",
-    "assunto": "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)"
-   },
-   {
-    "sha": "9f008b6",
-    "data": "2026-11-04",
-    "assunto": "feat: adicionar scripts/graphify/setup.sh (#351)"
    }
   ],
-  "arquivos_mudados_7d": 111,
+  "arquivos_mudados_7d": 116,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 87
+    "mudancas": 84
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 81
+    "mudancas": 78
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 52
+    "commits": 55
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2803,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260926,
+  "linhas_codigo": 261109,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -412,7 +412,7 @@
   },
   "scripts/audit-canonical-project.mjs": {
    "arquivos": 1,
-   "linhas": 113
+   "linhas": 115
   },
   "scripts/audit-db-search-path.mjs": {
    "arquivos": 1,
@@ -436,7 +436,7 @@
   },
   "scripts/audit-migration-style.mjs": {
    "arquivos": 1,
-   "linhas": 131
+   "linhas": 144
   },
   "scripts/audit-required-checks.mjs": {
    "arquivos": 1,
@@ -568,7 +568,7 @@
   },
   "scripts/simulacao": {
    "arquivos": 12,
-   "linhas": 1866
+   "linhas": 2034
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
@@ -815,7 +815,7 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 241,
+  "console_log": 247,
   "ts_ignore": 0,
   "eslint_disable": 1,
   "todos": 12,

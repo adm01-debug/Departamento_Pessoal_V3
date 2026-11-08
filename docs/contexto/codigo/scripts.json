@@ -56,7 +56,7 @@
   {
    "arquivo": "scripts/audit-canonical-project.mjs",
    "descricao": "* Gate estático para impedir que configuração executável volte a apontar para",
-   "linhas": 113,
+   "linhas": 115,
    "env": [
     "CANONICAL_SUPABASE_REF",
     "VITE_SUPABASE_URL"
@@ -137,7 +137,7 @@
   {
    "arquivo": "scripts/audit-migration-style.mjs",
    "descricao": "* Gate estático (sem DATABASE_URL): reprova migration nova com",
-   "linhas": 131,
+   "linhas": 144,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -824,8 +824,8 @@
   },
   {
    "arquivo": "scripts/simulacao/simulate_irrf.cjs",
-   "descricao": "Simulação: IRRF correto (frontend impostos.ts) vs IRRF do calcular-folha (edge, PRE-fix).",
-   "linhas": 99,
+   "descricao": "Simulação: IRRF correto (frontend impostos.ts) vs IRRF do calcular-folha (edge, PRE-fix). Cenários: salário 1518..20000 passo 50 × 0-4 dependentes = ~1.850 combinações.",
+   "linhas": 135,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -843,7 +843,7 @@
   {
    "arquivo": "scripts/simulacao/simulate_rescisao.cjs",
    "descricao": "Simulação de centenas de cenários: engine correta (frontend, src/calculators/rescisao.ts) vs engine atual do edge (supabase/functions/calcular-rescisao/index.ts), replicadas fielmente",
-   "linhas": 117,
+   "linhas": 163,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -863,8 +863,8 @@
   },
   {
    "arquivo": "scripts/simulacao/verify_bridge_write_guard.cjs",
-   "descricao": "Reimplementação mínima da guarda nova do external-db-bridge (B1) para verificar o comportamento sem depender do runtime Deno.",
-   "linhas": 31,
+   "descricao": "Verificação exaustiva do write-guard do external-db-bridge (B1). Regra: update/delete só são permitidos com filtros exclusivamente eq.",
+   "linhas": 117,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

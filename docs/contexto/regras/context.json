@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1c8822710eef01b20f8bfa22e874aac419b248da",
+  "sha": "4fcdb158fa777e817e8f7b5a0b11904ed026c1a9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-08 04:16 UTC",
+  "generated_at": "2026-11-08 04:49 UTC",
   "files_total": 2824,
   "code_files": 2323,
-  "code_lines": 308817
+  "code_lines": 309000
  },
  "version": "1.3.2",
- "facts_hash": "a2c30654534cbdae",
+ "facts_hash": "98aaa9f9b3e9bcd7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 17812,
+   "lines": 17995,
    "tables": [
     "a",
     "audit_log",
@@ -225794,7 +225794,7 @@
   },
   "scripts/audit-canonical-project.mjs": {
    "path": "scripts/audit-canonical-project.mjs",
-   "lines": 113,
+   "lines": 115,
    "env": [
     "CANONICAL_SUPABASE_REF",
     "VITE_SUPABASE_URL"
@@ -225870,7 +225870,7 @@
   },
   "scripts/audit-migration-style.mjs": {
    "path": "scripts/audit-migration-style.mjs",
-   "lines": 131,
+   "lines": 144,
    "params": [
     {
      "name": "CUTOFF_VERSION",
@@ -227547,7 +227547,7 @@
   },
   "scripts/simulacao/simulate_irrf.cjs": {
    "path": "scripts/simulacao/simulate_irrf.cjs",
-   "lines": 99,
+   "lines": 135,
    "params": [
     {
      "name": "DEDUCAO_SIMPLIFICADA",
@@ -227558,7 +227558,12 @@
      "value": "189.59"
     }
    ],
-   "doc": "Simulação: IRRF correto (frontend impostos.ts) vs IRRF do calcular-folha (edge, PRE-fix).",
+   "rule_comments": [
+    "Auto-validação: assertions sobre o motor CORRETO (isento, não-negativo, edge >= correto",
+    "— Auto-validação do motor CORRETO —",
+    "3. Quando dep=0, edge (que não usa simplificada) deve ser ≥ correto"
+   ],
+   "doc": "Simulação: IRRF correto (frontend impostos.ts) vs IRRF do calcular-folha (edge, PRE-fix). Cenários: salário 1518..20000 passo 50 × 0-4 dependentes = ~1.850 combinações. Auto-validação: assertions sobre o motor CORRETO (isento, não-negativo, edge >= correto quando dep=0 pois edge não aplica dedução s …",
    "calc_fns": [
     {
      "name": "round2",
@@ -227580,6 +227585,10 @@
      "params": "base",
      "body": "if (!Number.isFinite(base) || base <= 0) return 0; const f = faixaIRRF(base); return Math.max(0, round2(base * f.aliquota - f.deducao));"
     }
+   ],
+   "percents": [
+    "// 4. IRRF nunca excede 27,5% da base tributável",
+    "const teto = round2(baseTributavel * 0.275);"
    ]
   },
   "scripts/simulacao/simulate_notif_d3.cjs": {
@@ -227596,7 +227605,14 @@
   },
   "scripts/simulacao/simulate_rescisao.cjs": {
    "path": "scripts/simulacao/simulate_rescisao.cjs",
-   "lines": 117,
+   "lines": 163,
+   "rule_comments": [
+    "Auto-validação: assertions sobre invariantes do motor CORRETO (não-negativo, justa causa",
+    "— Auto-validação do motor CORRETO —",
+    "3. mesesFeriasProp deve estar em [0, 12]",
+    "4. avosTotal não pode ser negativo",
+    "5. Verba não excede salário mensal inteiro (máximo teórico = 1 salário para cada)"
+   ],
    "doc": "Simulação de centenas de cenários: engine correta (frontend, src/calculators/rescisao.ts) vs engine atual do edge (supabase/functions/calcular-rescisao/index.ts), replicadas fielmente aqui em JS puro para permitir comparação em lote sem depender do runtime Deno. Objetivo: quantificar divergências AN …",
    "calc_fns": [
     {
@@ -227629,8 +227645,15 @@
   },
   "scripts/simulacao/verify_bridge_write_guard.cjs": {
    "path": "scripts/simulacao/verify_bridge_write_guard.cjs",
-   "lines": 31,
-   "doc": "Reimplementação mínima da guarda nova do external-db-bridge (B1) para verificar o comportamento sem depender do runtime Deno."
+   "lines": 117,
+   "rule_comments": [
+    "Regra: update/delete só são permitidos com filtros exclusivamente eq.",
+    "contagem de filtros e todas as actions. Auto-validação: exit 1 se FAIL.",
+    "── DELETE: permitidos (apenas eq) ───────────────────────────────────────",
+    "── UPDATE: permitidos (apenas eq) ───────────────────────────────────────",
+    "Auto-validação extra: todos os operadores não-eq em UPDATE também devem bloquear"
+   ],
+   "doc": "Verificação exaustiva do write-guard do external-db-bridge (B1). Regra: update/delete só são permitidos com filtros exclusivamente eq. Qualquer filtro não-eq em update/delete → bloqueado. update/delete sem nenhum filtro → bloqueado. select/insert não são restritos pelo guard. Cenários: 42 casos cobr …"
   },
   "scripts/simulacao/verify_irrf_fix.cjs": {
    "path": "scripts/simulacao/verify_irrf_fix.cjs",
@@ -274455,10 +274478,39 @@
   }
  },
  "git": {
-  "sha": "1c8822710eef01b20f8bfa22e874aac419b248da",
+  "sha": "4fcdb158fa777e817e8f7b5a0b11904ed026c1a9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4fcdb15",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)",
+    "files": [
+     "scripts/audit-migration-style.mjs"
+    ]
+   },
+   {
+    "sha": "70f6262",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: guards de job ausente em audit-canonical-project (#383)",
+    "files": [
+     "scripts/audit-canonical-project.mjs"
+    ]
+   },
+   {
+    "sha": "752ceac",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)",
+    "files": [
+     "scripts/simulacao/simulate_irrf.cjs",
+     "scripts/simulacao/simulate_rescisao.cjs",
+     "scripts/simulacao/verify_bridge_write_guard.cjs"
+    ]
+   },
    {
     "sha": "1c88227",
     "date": "2026-11-08",
@@ -274807,35 +274859,6 @@
      "scripts/tests/inventario-mudou.test.mjs",
      "scripts/tests/inventario-rotas.test.mjs"
     ]
-   },
-   {
-    "sha": "530a5cd",
-    "date": "2026-11-02",
-    "author": "adm01-debug",
-    "subject": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)",
-    "files": [
-     "AGENTS.md",
-     "CLAUDE.md"
-    ]
-   },
-   {
-    "sha": "39a1e20",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "fix: corrige 4 rotinas pg_cron que falhavam (20261012130000) (#335)",
-    "files": [
-     "supabase/migrations/20261012130000_rotinas_agendadas_falhando.sql"
-    ]
-   },
-   {
-    "sha": "451a80a",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "feat: security hardening - cherry-pick PR 315 sem workflows (#334)",
-    "files": [
-     "e2e/auth.setup.ts",
-     "supabase/functions/enviar-esocial/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -274849,14 +274872,6 @@
    ],
    [
     "inventario/estado/edges.json",
-    3
-   ],
-   [
-    "AGENTS.md",
-    3
-   ],
-   [
-    "CLAUDE.md",
     3
    ],
    [
@@ -274888,6 +274903,14 @@
     2
    ],
    [
+    "AGENTS.md",
+    2
+   ],
+   [
+    "CLAUDE.md",
+    2
+   ],
+   [
     "public/sw-custom.js",
     2
    ],
@@ -274900,23 +274923,23 @@
     2
    ],
    [
-    "scripts/audit-schema-drift.mjs",
+    "scripts/audit-migration-style.mjs",
     1
    ],
    [
-    "scripts/report-workflows.mjs",
+    "scripts/audit-canonical-project.mjs",
     1
    ],
    [
-    "scripts/simulacao/simulate_adiant_13.cjs",
+    "scripts/simulacao/simulate_irrf.cjs",
     1
    ],
    [
-    "scripts/simulacao/simulate_art145.cjs",
+    "scripts/simulacao/simulate_rescisao.cjs",
     1
    ],
    [
-    "scripts/simulacao/simulate_notif_d3.cjs",
+    "scripts/simulacao/verify_bridge_write_guard.cjs",
     1
    ]
   ]

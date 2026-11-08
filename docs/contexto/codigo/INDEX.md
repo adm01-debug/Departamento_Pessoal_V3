@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1c8822710eef01b20f8bfa22e874aac419b248da` (2026-11-08T00:31:51-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4fcdb158fa777e817e8f7b5a0b11904ed026c1a9` (2026-11-08T01:25:27-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2803 |
 | arquivos_codigo | 1508 |
-| linhas_codigo | 260926 |
+| linhas_codigo | 261109 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -385,14 +385,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21347 nós · 44601 arestas · 2083 comunidades · grafo do commit `1c882271`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (454), cn (406), lucide-react (357), button.tsx (342), vitest (235), App.tsx (205), FolhaPagamentoPage.tsx (181), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 21349 nós · 44603 arestas · 2078 comunidades · grafo do commit `4fcdb158`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (400), button.tsx (345), useEmpresas (337), vitest (311), lucide-react (308), client.ts (237), App.tsx (218), contract.ts (182), "public"."empresas" (164), hooks/index.ts (160)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (87)
-- package-lock.json (81)
+- package.json (84)
+- package-lock.json (78)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (31)
 - .github/workflows/ci.yml (24)
@@ -598,6 +598,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-08 `4fcdb15` fix: audit-migration-style — counter correto + guard de diretório ausente (#384)
+- 2026-11-08 `70f6262` feat: guards de job ausente em audit-canonical-project (#383)
+- 2026-11-08 `752ceac` feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)
 - 2026-11-08 `1c88227` feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401
 - 2026-11-08 `0e4f470` feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard
 - 2026-11-08 `c83e9a1` fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock
@@ -610,9 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-06 `25465ae` fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)
 - 2026-11-06 `2e9968a` fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)
 - 2026-11-06 `dc7d1eb` fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)
-- 2026-11-06 `205c583` fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)
-- 2026-11-06 `a18f04a` fix: safeFetch do SW devolve resposta original (evita "Failed to fetch dynamically imported module") (#356)
-- 2026-11-05 `f517257` fix: sincronizar deno.lock com package.json (14 dependências Dependabot)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

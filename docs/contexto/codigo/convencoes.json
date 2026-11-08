@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)",
+   "feat: guards de job ausente em audit-canonical-project (#383)",
+   "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)",
    "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401",
-   "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard",
-   "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock",
-   "fix: garante fixtures E2E do /ponto autenticado (#374)",
-   "fix: estabiliza validações locais dos scripts (#367)"
+   "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
