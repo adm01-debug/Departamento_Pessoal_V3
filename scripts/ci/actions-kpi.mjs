@@ -33,7 +33,10 @@ export function textoSeguro(valor) {
     .replace(/`/g, "'")
     .trim()
     .slice(0, 120);
-  return (limpo || '(sem nome)').replace(/\|/g, '\\|');
+  // A barra invertida e escapada ANTES do pipe: na ordem inversa, um nome com `\|`
+  // sairia como `\\|` (barra escapada + pipe cru) e abriria coluna na tabela
+  // (CodeQL js/incomplete-sanitization).
+  return (limpo || '(sem nome)').replace(/\\/g, '\\\\').replace(/\|/g, '\\|');
 }
 
 export function duracaoMinutos(run) {

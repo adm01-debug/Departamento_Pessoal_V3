@@ -82,6 +82,10 @@ test('CodeQL 292: nome vindo da API nao injeta markdown, mention nem quebra a ta
   assert.ok(!/(^|[^\\])\|/.test(seguro), `pipe nao escapado em: ${seguro}`);
   assert.ok(!seguro.includes('`'), 'backtick quebraria o code span');
   assert.equal(textoSeguro('a\nb\tc'), 'a b c');
+  // CodeQL 293 (js/incomplete-sanitization): escapar `|` sem escapar `\` deixava
+  // `\|` virar `\\|` -- barra escapada e pipe cru, que abre coluna na tabela.
+  assert.equal(textoSeguro('a\\|b'), 'a\\\\\\|b');
+  assert.equal(textoSeguro('a\\b'), 'a\\\\b');
   assert.equal(textoSeguro('  '), '(sem nome)');
   assert.equal(textoSeguro('x'.repeat(300)).length, 120);
 
