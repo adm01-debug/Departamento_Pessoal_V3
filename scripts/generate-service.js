@@ -1,4 +1,14 @@
-const fs=require('fs');const path=require('path');const serviceName=process.argv[2];if(!serviceName){console.error('Usage: node generate-service.js serviceName');process.exit(1);}const serviceContent=`import { api } from '@/lib/api';
+#!/usr/bin/env node
+import fs from 'node:fs';
+import path from 'node:path';
+
+const serviceName = process.argv[2];
+if (!serviceName) {
+  console.error('Usage: node generate-service.js serviceName');
+  process.exit(1);
+}
+
+const serviceContent = `import { api } from '@/lib/api';
 
 export const ${serviceName}Service = {
   async listar() {
@@ -25,4 +35,7 @@ export const ${serviceName}Service = {
     await api.delete(\`/${serviceName}/\${id}\`);
   },
 };
-`;fs.writeFileSync(path.join('src/services',`${serviceName}Service.ts`),serviceContent);console.log(`Service ${serviceName}Service created!`);
+`;
+
+fs.writeFileSync(path.join('src/services', `${serviceName}Service.ts`), serviceContent);
+console.log(`Service ${serviceName}Service created!`);
