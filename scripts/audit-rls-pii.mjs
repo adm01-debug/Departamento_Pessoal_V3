@@ -72,7 +72,7 @@ const TENANT_CORRELATORS = [
 const FORGEABLE_CLAIM_RE = /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
 
 /** Claims do JWT que o banco valida e que, portanto, não são forjáveis. */
-const TRUSTED_CLAIM_RE = /->>\s*'(sub|aud|exp|iat|iss)'/i;
+const TRUSTED_CLAIM_RE = /->>'(sub|aud|exp|iat|iss)'/i;
 
 /**
  * Tabelas isentas, com justificativa obrigatória.
@@ -205,6 +205,12 @@ function main() {
 
   const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
 
+  // Guard: banco respondeu mas sem nenhuma função pública → schema vazio ou
+  // sem SELECT em pg_proc; o inlining fica cego e pode deixar passar violações.
+  if (bodies.length === 0) {
+    console.warn('[rls-pii] Aviso: 0 funções públicas — inlining de predicados desativado. Verifique permissão em pg_proc.');
+  }
+
   /** Reprovam o build: a PII fica de fato acessível a quem não deveria. */
   const violations = [];
   /** Não reprovam: higiene de política, sem exposição comprovada. */
@@ -255,6 +261,16 @@ function main() {
         reason: `atribuída à role "${roleList.join(', ')}" (inclui anon); restrinja para "authenticated"`,
       });
     }
+  }
+
+  // Guard de false-green: 0 políticas auditadas em banco com schema conhecido
+  // (functions > 0) é suspeito — a heurística de PII pode estar desatualizada
+  // ou todas as tabelas com PII foram silenciosamente adicionadas ao ALLOWLIST.
+  if (inspected === 0 && bodies.length > 0) {
+    console.warn(
+      '[rls-pii] Aviso: 0 políticas sobre tabelas com PII auditadas — ' +
+        'revise a heurística PII_COLUMN_RE ou o ALLOWLIST.',
+    );
   }
 
   for (const w of warnings) {
