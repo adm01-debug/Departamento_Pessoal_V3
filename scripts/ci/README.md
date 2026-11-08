@@ -18,12 +18,19 @@ node scripts/ci/check-claude-md-integrity.mjs
 Adicionar ao job `security-config` de `.github/workflows/ci.yml`:
 
 ```yaml
-- name: Verificar integridade das instruções para agentes (GA02)
+- name: Integridade das instruções para agentes (GA02)
+  env:
+    CLAUDE_MD_BASE: origin/main
   run: node scripts/ci/check-claude-md-integrity.mjs
 ```
 
-**Hoje este guard não está ligado em nenhum workflow** (`grep check-claude-md-integrity .github/`
-não retorna nada): roda só localmente.
+Precisa de `fetch-depth: 0` no checkout desse job, senão `origin/main` não existe localmente para a
+comparação de bytes.
+
+**Ligação real no CI:** PR [#396](https://github.com/adm01-debug/Departamento_Pessoal_V3/pull/396) (`ci: liga
+o guard...`) adiciona esse step ao job `security-config`. Está empilhada sobre a `main`, não sobre esta PR —
+por isso `grep check-claude-md-integrity .github/` ainda não retorna nada nesta branch. Depois que as duas
+mergearem (qualquer ordem), o guard roda em todo PR.
 
 ## Variáveis de ambiente
 
