@@ -73,8 +73,10 @@ expect(!safeUrl.includes("'.supabase.co'"), 'allowlist não libera projetos Supa
 console.log('6. Contrato da workflow E2E');
 const publicJobStart = workflow.indexOf('  playwright-public:');
 const authenticatedJobStart = workflow.indexOf('  playwright:', publicJobStart + 1);
-const publicJob = workflow.slice(publicJobStart, authenticatedJobStart);
-const authenticatedJob = workflow.slice(authenticatedJobStart);
+expect(publicJobStart !== -1, 'e2e.yml contém o job playwright-public');
+expect(authenticatedJobStart !== -1, 'e2e.yml contém o job playwright (autenticado)');
+const publicJob = publicJobStart !== -1 ? workflow.slice(publicJobStart, authenticatedJobStart !== -1 ? authenticatedJobStart : undefined) : '';
+const authenticatedJob = authenticatedJobStart !== -1 ? workflow.slice(authenticatedJobStart) : '';
 expect(
   publicJob.includes('VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}')
     && publicJob.includes('VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}'),
@@ -100,7 +102,7 @@ expect(
   'E2E autenticado recebe secrets somente no SHA integrado em main (push) ou em dispatch controlado — nunca em pull_request'
 );
 expect(
-  (workflow.match(/test \"\$VITE_SUPABASE_URL\" = 'https:\/\/frjbfeamybqsejlvmqbl\.supabase\.co'/g) ?? []).length === 2,
+  (workflow.match(/test "\$VITE_SUPABASE_URL" = 'https:\/\/frjbfeamybqsejlvmqbl\.supabase\.co'/g) ?? []).length === 2,
   'jobs público e autenticado recusam alvo Supabase não canônico'
 );
 
