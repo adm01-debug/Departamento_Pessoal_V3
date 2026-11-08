@@ -21,6 +21,21 @@ const FALHAS = new Set(['failure', 'timed_out', 'startup_failure']);
 const UM_DIA = 24 * 60 * 60 * 1000;
 const POR_PAGINA = 100; // teto da API do GitHub
 
+// CodeQL 292 ("Network data written to file"): `name`/`workflow_name` vem da API do
+// Actions e, em repositorio publico, PR de fork pode definir esses nomes -- o workflow
+// de `pull_request` e lido do head do PR. Esse texto termina no Job Summary e no corpo
+// de uma issue publica, entao ele e renderizado como code span: markdown, HTML, link e
+// mention deixam de valer. O pipe escapado mantem a tabela de pe mesmo dentro do span,
+// e o corte em 120 evita corpo de issue inflado por nome gigante.
+export function textoSeguro(valor) {
+  const limpo = String(valor ?? '')
+    .replace(/[\r\n\t]+/g, ' ')
+    .replace(/`/g, "'")
+    .trim()
+    .slice(0, 120);
+  return (limpo || '(sem nome)').replace(/\|/g, '\\|');
+}
+
 export function duracaoMinutos(run) {
   const inicio = Date.parse(run.run_started_at ?? '');
   const fim = Date.parse(run.updated_at ?? '');
@@ -90,7 +105,7 @@ export function tabela(agregado, { titulo = 'KPI do GitHub Actions — 7 dias' }
     '| --- | ---: | ---: | ---: | ---: | ---: | ---: |',
     ...agregado.map(
       (l) =>
-        `| ${l.workflow} | ${l.runs} | ${l.cancelados} | ${l.taxaCancelamento}% | ${l.falhas} | ${l.taxaFalha}% | ${l.minutos} |`,
+        `| \`${textoSeguro(l.workflow)}\` | ${l.runs} | ${l.cancelados} | ${l.taxaCancelamento}% | ${l.falhas} | ${l.taxaFalha}% | ${l.minutos} |`,
     ),
   ];
   const totalRuns = agregado.reduce((a, l) => a + l.runs, 0);
@@ -106,7 +121,7 @@ export function tabelaLentos(lentos) {
     '',
     '| job | workflow | minutos |',
     '| --- | --- | ---: |',
-    ...lentos.map((l) => `| ${l.job} | ${l.workflow} | ${l.minutos} |`),
+    ...lentos.map((l) => `| \`${textoSeguro(l.job)}\` | \`${textoSeguro(l.workflow)}\` | ${l.minutos} |`),
   ].join('\n');
 }
 

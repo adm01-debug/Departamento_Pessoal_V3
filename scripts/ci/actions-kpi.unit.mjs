@@ -12,6 +12,7 @@ import {
   paginaTemMais,
   tabela,
   tabelaLentos,
+  textoSeguro,
 } from './actions-kpi.mjs';
 
 const AGORA = Date.parse('2026-10-03T12:00:00Z');
@@ -73,6 +74,27 @@ test('E79: os 5 jobs mais lentos saem ordenados e limitados', () => {
   const lentos = maisLentos(jobs, { limite: 2 });
   assert.equal(lentos.length, 2);
   assert.deepEqual(lentos.map((l) => l.job), ['b', 'c']);
+});
+
+test('CodeQL 292: nome vindo da API nao injeta markdown, mention nem quebra a tabela', () => {
+  const hostil = 'CI | <img src=x> [link](http://e.x) @equipe #1 `cmd`';
+  const seguro = textoSeguro(hostil);
+  assert.ok(!/(^|[^\\])\|/.test(seguro), `pipe nao escapado em: ${seguro}`);
+  assert.ok(!seguro.includes('`'), 'backtick quebraria o code span');
+  assert.equal(textoSeguro('a\nb\tc'), 'a b c');
+  assert.equal(textoSeguro('  '), '(sem nome)');
+  assert.equal(textoSeguro('x'.repeat(300)).length, 120);
+
+  const md = tabela(agregar([run(hostil, 10, 'success')], { agora: AGORA }));
+  // Cada linha de dado tem de ter exatamente 8 pipes nao escapados (7 colunas).
+  const linha = md.split('\n').find((l) => l.includes('<img'));
+  assert.ok(linha, 'a linha do workflow hostil tem de existir');
+  assert.equal(linha.replace(/\\\|/g, '').split('|').length - 1, 8, `colunas quebradas: ${linha}`);
+  assert.match(linha, /`CI \\\| <img src=x>/, 'o nome tem de sair dentro de code span');
+
+  const lentos = tabelaLentos([{ job: hostil, workflow: hostil, minutos: 1 }]);
+  const linhaLenta = lentos.split('\n').find((l) => l.includes('<img'));
+  assert.equal(linhaLenta.replace(/\\\|/g, '').split('|').length - 1, 4, `colunas quebradas: ${linhaLenta}`);
 });
 
 test('E79: a tabela traz as colunas pedidas e o total', () => {
