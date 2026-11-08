@@ -3,7 +3,7 @@
 # Rationale: enforcing Prettier on the entire legacy codebase would create a
 # massive diff. Instead we gate NEW edits — anything a PR/commit touches must
 # be formatted. Existing untouched files are opted-in gradually via
-# `bun run format:write` on a per-directory basis.
+# `npm run format:write` on a per-directory basis.
 set -euo pipefail
 
 BASE_REF="${GITHUB_BASE_REF:-origin/main}"
