@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0e4f470a9a0cff26f683b4799dfbafb126a042ab",
+  "sha": "1c8822710eef01b20f8bfa22e874aac419b248da",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-08 03:25 UTC",
+  "generated_at": "2026-11-08 04:16 UTC",
   "files_total": 2824,
   "code_files": 2323,
-  "code_lines": 308507
+  "code_lines": 308817
  },
  "version": "1.3.2",
- "facts_hash": "d99d762e9a8c38d6",
+ "facts_hash": "a2c30654534cbdae",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 17502,
+   "lines": 17812,
    "tables": [
     "a",
     "audit_log",
@@ -105523,6 +105523,10 @@
    {
     "file": "scripts/report-workflows.mjs",
     "msg": "GitHub API ${res.status}: ${url}"
+   },
+   {
+    "file": "scripts/report-workflows.mjs",
+    "msg": "GitHub API inacessível (rede): ${err.message}"
    },
    {
     "file": "scripts/validate-canonical-db-url.mjs",
@@ -225961,7 +225965,7 @@
   },
   "scripts/audit-schema-drift.mjs": {
    "path": "scripts/audit-schema-drift.mjs",
-   "lines": 130,
+   "lines": 145,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -225973,7 +225977,8 @@
    ],
    "doc": "!/usr/bin/env node",
    "percents": [
-    "* ledger reprova ~40% das migrations existentes — inutilizável como gate,"
+    "* ledger reprova ~40% das migrations existentes — inutilizável como gate,",
+    "// Permite ligar o gate para migrations novas sem reprovar 40% do histórico."
    ]
   },
   "scripts/audit-secdef-authz.mjs": {
@@ -226216,12 +226221,13 @@
   },
   "scripts/report-workflows.mjs": {
    "path": "scripts/report-workflows.mjs",
-   "lines": 68,
+   "lines": 78,
    "env": [
     "GITHUB_TOKEN"
    ],
    "errors": [
-    "GitHub API ${res.status}: ${url}"
+    "GitHub API ${res.status}: ${url}",
+    "GitHub API inacessível (rede): ${err.message}"
    ],
    "params": [
     {
@@ -227484,23 +227490,60 @@
   },
   "scripts/simulacao/simulate_adiant_13.cjs": {
    "path": "scripts/simulacao/simulate_adiant_13.cjs",
-   "lines": 29,
+   "lines": 153,
    "rule_comments": [
     "Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias,",
-    "desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar"
+    "desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar",
+    "= 26.136 combinações. Auto-validação integrada.",
+    "Inclui: Nov/Dez (pré-prazo), Jan (dentro do prazo), Fev-Out (pós-prazo)",
+    "Fev-Out do ano corrente (pós-deadline: bloqueados por prazo)",
+    "— Auto-validação: assertions que pegam bugs de lógica —",
+    "3. Jan 31 é elegível (limite exato do prazo)",
+    "4. Nov/Dez do ano anterior: antes de 31/jan → deve ser elegível",
+    "5. Fev-Out do ano corrente: após 31/jan → sempre bloqueado por prazo",
+    "4. Valor máximo: salário/2 (12 avos, 1ª parcela)"
    ],
-   "doc": "Simulação: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias, desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar junto com as férias. Só pode ser solicitado 1x por ano.",
+   "doc": "Simulação exaustiva: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias, desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar junto com as férias. Só pode ser solicitado 1x por ano. Cenários: salários (6) × mes …",
+   "calc_fns": [
+    {
+     "name": "round2",
+     "params": "v",
+     "body": "return Math.round((v + Number.EPSILON) * 100) / 100;"
+    },
+    {
+     "name": "gerarDatasSolicitacao",
+     "params": "ano",
+     "body": "const datas = []; // Nov e Dez do ano anterior (elegíveis: antes de 31/jan) for (let m = 10; m <= 11; m++) { // 10=nov, 11=dez (mês 0-based) const dias = m === 10 ? 30 : 31; for (let d = 1; d <= dias; d++) { datas.push({ data: new Date(Date.UTC(ano - 1, m, d)), fase: 'pre_prazo' }); } } // Jan do ano corrente — até dia 31 é elegível for (let d = 1; d <= 31; d++) { datas.push({ data: new Date(Date.UTC(ano, 0, d)), fase: 'jan', dia: d }); } // Fev-Out do ano corrente (pós-deadline: bloqueados por …"
+    },
+    {
+     "name": "elegivel",
+     "params": "dataSolicitacao, anoFerias, jaRecebeuNoAno",
+     "body": "if (jaRecebeuNoAno) return false; const limite = new Date(Date.UTC(anoFerias, 0, 31)); // 31/jan return dataSolicitacao <= limite;"
+    },
+    {
+     "name": "calcularValor",
+     "params": "salario, mesesTrabalhados",
+     "body": "const avos = Math.min(mesesTrabalhados, 12); if (avos === 0) return 0; return round2((salario / 12) * avos / 2); // 1ª parcela = 50%"
+    }
+   ],
    "percents": [
-    "const valor13 = podeReceber ? (salario * avos) / 12 / 2 : 0; // 1ª parcela = 50%"
+    "return round2((salario / 12) * avos / 2); // 1ª parcela = 50%"
    ]
   },
   "scripts/simulacao/simulate_art145.cjs": {
    "path": "scripts/simulacao/simulate_art145.cjs",
-   "lines": 35,
+   "lines": 117,
    "rule_comments": [
-    "- pagamento D-2 (limite legal — OK)"
+    "cobrindo casos-limite legais, fins de semana e correção monetária.",
+    "o pagamento deve ser antecipado para o último dia útil anterior (TST OJ-123).",
+    "Auto-validação integrada — exit 1 se qualquer assertion falhar.",
+    "Deadline legal real: recua até achar dia útil >= D-2",
+    "pagamento até deadline",
+    "— Auto-validação —",
+    "1. D-7 sempre deve ser OK (antecipação ampla)",
+    "4. Salário não afeta status (apenas para verificar que não vaza)"
    ],
-   "doc": "Simulação exaustiva Art. 145 CLT — pagamento até D-2 do início das férias. Cenários: combinações de (data_inicio, data_pagamento, status) cobrindo: - pagamento no dia (violação) - pagamento D-1 (violação) - pagamento D-2 (limite legal — OK) - pagamento D-3+ (OK) - pagamento atrasado post-início (vio …"
+   "doc": "Simulação exaustiva Art. 145 CLT — pagamento até D-2 do início das férias. Cenários: combinações de (data_inicio, offset_pagamento, salário, turno) cobrindo casos-limite legais, fins de semana e correção monetária. D-2 é contado em DIAS CORRIDOS, não úteis. Se D-2 cair em sábado ou domingo, o pagame …"
   },
   "scripts/simulacao/simulate_irrf.cjs": {
    "path": "scripts/simulacao/simulate_irrf.cjs",
@@ -227541,8 +227584,15 @@
   },
   "scripts/simulacao/simulate_notif_d3.cjs": {
    "path": "scripts/simulacao/simulate_notif_d3.cjs",
-   "lines": 27,
-   "doc": "Simulação: notificação D-3 (Art. 145) - identificar quais status de férias devem gerar notificação diária ao RH."
+   "lines": 106,
+   "rule_comments": [
+    "Regra: RH deve ser notificado quando férias aprovadas se aproximam sem pagamento.",
+    "× empresa_id (3) = 4.920 combinações. Auto-validação integrada.",
+    "- NÃO notificar: rascunho, rejeitada, cancelada (nunca notificar independente do prazo)",
+    "— Auto-validação —",
+    "4. Empresa não afeta regra de negócio (apenas tenant isolation)"
+   ],
+   "doc": "Simulação exaustiva: notificações D-3/D-2/D-1 (Art. 145 CLT) Regra: RH deve ser notificado quando férias aprovadas se aproximam sem pagamento. Cenários: janela_dias (41) × pago (2) × status_ferias (5) × antecedencia_config (4) × empresa_id (3) = 4.920 combinações. Auto-validação integrada. Comportam …"
   },
   "scripts/simulacao/simulate_rescisao.cjs": {
    "path": "scripts/simulacao/simulate_rescisao.cjs",
@@ -274405,10 +274455,23 @@
   }
  },
  "git": {
-  "sha": "0e4f470a9a0cff26f683b4799dfbafb126a042ab",
+  "sha": "1c8822710eef01b20f8bfa22e874aac419b248da",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1c88227",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401",
+    "files": [
+     "scripts/audit-schema-drift.mjs",
+     "scripts/report-workflows.mjs",
+     "scripts/simulacao/simulate_adiant_13.cjs",
+     "scripts/simulacao/simulate_art145.cjs",
+     "scripts/simulacao/simulate_notif_d3.cjs"
+    ]
+   },
    {
     "sha": "0e4f470",
     "date": "2026-11-08",
@@ -274773,16 +274836,6 @@
      "e2e/auth.setup.ts",
      "supabase/functions/enviar-esocial/index.ts"
     ]
-   },
-   {
-    "sha": "57054a5",
-    "date": "2026-10-31",
-    "author": "devin-ai-integration[bot]",
-    "subject": "fix(security): gaps V4 — bridge hardening, aal2 nas edges, cert via edge, creds fora do repo (#315)",
-    "files": [
-     ".github/workflows/gitleaks.yml",
-     ".github/workflows/security.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -274843,27 +274896,27 @@
     2
    ],
    [
-    ".github/workflows/gitleaks.yml",
-    2
-   ],
-   [
     "infra/github/action-pins.json",
     2
    ],
    [
-    ".gitleaksignore",
+    "scripts/audit-schema-drift.mjs",
     1
    ],
    [
-    "inventario/ia/INDEX.md",
+    "scripts/report-workflows.mjs",
     1
    ],
    [
-    "inventario/ia/banco.json",
+    "scripts/simulacao/simulate_adiant_13.cjs",
     1
    ],
    [
-    "inventario/ia/baseline.json",
+    "scripts/simulacao/simulate_art145.cjs",
+    1
+   ],
+   [
+    "scripts/simulacao/simulate_notif_d3.cjs",
     1
    ]
   ]

@@ -213,7 +213,7 @@
   {
    "arquivo": "scripts/audit-schema-drift.mjs",
    "descricao": "* Gate de regressão: migration presente no repositório sem registro no ledger",
-   "linhas": 130,
+   "linhas": 145,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -711,7 +711,7 @@
   {
    "arquivo": "scripts/report-workflows.mjs",
    "descricao": "* W55: scripts/report-workflows.mjs",
-   "linhas": 68,
+   "linhas": 78,
    "env": [
     "GITHUB_TOKEN"
    ],
@@ -806,8 +806,8 @@
   },
   {
    "arquivo": "scripts/simulacao/simulate_adiant_13.cjs",
-   "descricao": "Simulação: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias,",
-   "linhas": 29,
+   "descricao": "Simulação exaustiva: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias,",
+   "linhas": 153,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -815,8 +815,8 @@
   },
   {
    "arquivo": "scripts/simulacao/simulate_art145.cjs",
-   "descricao": "Simulação exaustiva Art. 145 CLT — pagamento até D-2 do início das férias. Cenários: combinações de (data_inicio, data_pagamento, status) cobrindo:",
-   "linhas": 35,
+   "descricao": "Simulação exaustiva Art. 145 CLT — pagamento até D-2 do início das férias. Cenários: combinações de (data_inicio, offset_pagamento, salário, turno)",
+   "linhas": 117,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -833,8 +833,8 @@
   },
   {
    "arquivo": "scripts/simulacao/simulate_notif_d3.cjs",
-   "descricao": "Simulação: notificação D-3 (Art. 145) - identificar quais status de férias devem gerar notificação diária ao RH.",
-   "linhas": 27,
+   "descricao": "Simulação exaustiva: notificações D-3/D-2/D-1 (Art. 145 CLT) Regra: RH deve ser notificado quando férias aprovadas se aproximam sem pagamento.",
+   "linhas": 106,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

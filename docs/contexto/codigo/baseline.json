@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0e4f470a9a0cff26f683b4799dfbafb126a042ab",
+  "commit": "1c8822710eef01b20f8bfa22e874aac419b248da",
   "branch": "main",
-  "data_commit": "2026-11-08T00:10:29-03:00",
+  "data_commit": "2026-11-08T00:31:51-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1c88227",
+    "data": "2026-11-08",
+    "assunto": "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401"
+   },
    {
     "sha": "0e4f470",
     "data": "2026-11-08",
@@ -126,14 +131,9 @@
     "sha": "9f008b6",
     "data": "2026-11-04",
     "assunto": "feat: adicionar scripts/graphify/setup.sh (#351)"
-   },
-   {
-    "sha": "a82cc07",
-    "data": "2026-11-04",
-    "assunto": "chore: inventario do estado real [auto] (#346)"
    }
   ],
-  "arquivos_mudados_7d": 106,
+  "arquivos_mudados_7d": 111,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 88
+    "mudancas": 87
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 82
+    "mudancas": 81
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 51
+    "commits": 52
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2803,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260616,
+  "linhas_codigo": 260926,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -456,7 +456,7 @@
   },
   "scripts/audit-schema-drift.mjs": {
    "arquivos": 1,
-   "linhas": 130
+   "linhas": 145
   },
   "scripts/audit-secdef-authz.mjs": {
    "arquivos": 1,
@@ -564,11 +564,11 @@
   },
   "scripts/report-workflows.mjs": {
    "arquivos": 1,
-   "linhas": 68
+   "linhas": 78
   },
   "scripts/simulacao": {
    "arquivos": 12,
-   "linhas": 1581
+   "linhas": 1866
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
@@ -815,7 +815,7 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 225,
+  "console_log": 241,
   "ts_ignore": 0,
   "eslint_disable": 1,
   "todos": 12,

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0e4f470a9a` · branch `main` · 2026-11-08 03:25 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1c8822710e` · branch `main` · 2026-11-08 04:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4242,6 +4242,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | package.json não encontrado! | `scripts/check-dependencies.js` |
 | ${email} já existe no projeto — usar conta dedicada de teste ou E2E_ALLOW_EXISTING_ACCOUNT=1 para sobrescrever senha/roles | `scripts/provision-e2e-users.mjs` |
 | GitHub API ${res.status}: ${url} | `scripts/report-workflows.mjs` |
+| GitHub API inacessível (rede): ${err.message} | `scripts/report-workflows.mjs` |
 | SUPABASE_DB_URL ausente | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL deve apontar para o database postgres | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL deve exigir TLS com sslmode=require, verify-ca ou verify-full | `scripts/validate-canonical-db-url.mjs` |
@@ -4525,8 +4526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione um colaborador | `src/pages/GeradorDocumentosPage.tsx` |
 | Erro ao gerar PDF do holerite. | `src/pages/HoleritesPage.tsx` |
 | Falha ao processar o arquivo. Verifique o formato e tente novamente. | `src/pages/ImportacaoPage.tsx` |
-| Erro ao registrar | `src/pages/LGPDPage.tsx` |
-| … +435 linhas — lista completa em `context.json` | |
+| … +436 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
