@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale",
    "fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso",
    "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório",
    "fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas",
-   "feat: guards false-green + auto-assertions em 5 scripts de auditoria",
-   "feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config"
+   "feat: guards false-green + auto-assertions em 5 scripts de auditoria"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e` (2026-11-08T02:05:22-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cf32bad098ad09eabe0ad244b628dcab98e07ddd` (2026-11-08T02:27:15-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21359 nós · 44614 arestas · 2084 comunidades · grafo do commit `b9285c8a`
-- comunidades maiores: react (507), 20260831_corrected_public.sql (493), canonical_schema.sql (476), client.ts (390), lucide-react (360), button.tsx (333), useEmpresas (319), cn (184), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
+- 21358 nós · 44613 arestas · 2047 comunidades · grafo do commit `cf32bad0`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (448), button.tsx (363), lucide-react (339), react (327), supabase/types.ts (257), cn (242), App.tsx (200), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-08 `cf32bad` chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale
 - 2026-11-08 `b9285c8` fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso
 - 2026-11-08 `27afd9f` fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório
 - 2026-11-08 `20761bc` fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `752ceac` feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)
 - 2026-11-08 `1c88227` feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401
 - 2026-11-08 `0e4f470` feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard
-- 2026-11-08 `c83e9a1` fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e",
+  "commit": "cf32bad098ad09eabe0ad244b628dcab98e07ddd",
   "branch": "main",
-  "data_commit": "2026-11-08T02:05:22-03:00",
+  "data_commit": "2026-11-08T02:27:15-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cf32bad",
+    "data": "2026-11-08",
+    "assunto": "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale"
+   },
    {
     "sha": "b9285c8",
     "data": "2026-11-08",
@@ -126,11 +131,6 @@
     "sha": "dc7d1eb",
     "data": "2026-11-06",
     "assunto": "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)"
-   },
-   {
-    "sha": "205c583",
-    "data": "2026-11-06",
-    "assunto": "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)"
    }
   ],
   "arquivos_mudados_7d": 133,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 64
+    "commits": 65
    },
    {
     "autor": "dependabot[bot]",

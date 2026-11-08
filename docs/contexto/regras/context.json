@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e",
+  "sha": "cf32bad098ad09eabe0ad244b628dcab98e07ddd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-08 05:34 UTC",
+  "generated_at": "2026-11-08 05:41 UTC",
   "files_total": 2824,
   "code_files": 2323,
   "code_lines": 309292
@@ -274499,10 +274499,19 @@
   }
  },
  "git": {
-  "sha": "b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e",
+  "sha": "cf32bad098ad09eabe0ad244b628dcab98e07ddd",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cf32bad",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale",
+    "files": [
+     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
+    ]
+   },
    {
     "sha": "b9285c8",
     "date": "2026-11-08",
@@ -274834,15 +274843,6 @@
      ".github/workflows/gitleaks.yml",
      "infra/github/action-pins.json"
     ]
-   },
-   {
-    "sha": "75eaf9a",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "infra: exige branch atualizada antes do merge no ruleset da main (#337)",
-    "files": [
-     "infra/github/ruleset-main.json"
-    ]
    }
   ],
   "hot_files": [
@@ -274883,6 +274883,10 @@
     2
    ],
    [
+    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    1
+   ],
+   [
     "scripts/audit-required-checks.mjs",
     1
    ],
@@ -274920,10 +274924,6 @@
    ],
    [
     "scripts/audit-security-config.mjs",
-    1
-   ],
-   [
-    "scripts/audit-edge-audit-log-contract.mjs",
     1
    ]
   ]
