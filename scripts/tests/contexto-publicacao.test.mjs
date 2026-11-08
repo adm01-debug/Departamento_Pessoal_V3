@@ -9,7 +9,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
-const YAML = fs.readFileSync(path.join(ROOT, '.github/workflows/contexto.yml'), 'utf8');
+const YAML = fs.readFileSync(path.join(ROOT, '.github/workflows/contexto.yml'), 'utf8').replace(/\r\n/g, '\n');
 const SOURCES = [
   { key: 'codigo', job: 'codigo', id: '101' },
   { key: 'supabase', job: 'banco', id: '102' },

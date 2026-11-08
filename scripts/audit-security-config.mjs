@@ -47,12 +47,16 @@ sectionClean('verify_jwt deny-by-default preservado');
 // ── 2. CORS wildcard em edge functions ─────────────────────────────────────
 section('2. CORS wildcard');
 const FN_DIR = join(ROOT, 'supabase/functions');
+// Guard de false-green: sem funções não há nada para auditar — diretório vazio
+// seria um build incompleto silencioso.
+const edgeFnDirs = readdirSync(FN_DIR, { withFileTypes: true })
+  .filter((d) => d.isDirectory() && d.name !== '_shared' && existsSync(join(FN_DIR, d.name, 'index.ts')));
+if (edgeFnDirs.length === 0) {
+  fail('supabase/functions/ não contém nenhuma função com index.ts — build incompleto?');
+}
 const corsWild = /Access-Control-Allow-Origin["']?\s*[:=]\s*["']\*["']/;
-for (const dir of readdirSync(FN_DIR, { withFileTypes: true })) {
-  if (!dir.isDirectory()) continue;
-  const idx = join(FN_DIR, dir.name, 'index.ts');
-  if (!existsSync(idx)) continue;
-  const src = readFileSync(idx, 'utf8');
+for (const dir of edgeFnDirs) {
+  const src = readFileSync(join(FN_DIR, dir.name, 'index.ts'), 'utf8');
   if (corsWild.test(src)) fail(`CORS '*' em supabase/functions/${dir.name}/index.ts`);
 }
 sectionClean('nenhum CORS wildcard em edge functions');
@@ -78,11 +82,8 @@ sectionClean('security headers presentes');
 // ── 4. Segredo hardcoded (padrão A-015) ────────────────────────────────────
 section('4. Segredos hardcoded em edge functions');
 const secretAssign = /(?:KEY|SECRET|TOKEN|PASSWORD)\s*=\s*["'][0-9a-f]{32,}["']/i;
-for (const dir of readdirSync(FN_DIR, { withFileTypes: true })) {
-  if (!dir.isDirectory()) continue;
-  const idx = join(FN_DIR, dir.name, 'index.ts');
-  if (!existsSync(idx)) continue;
-  const src = readFileSync(idx, 'utf8');
+for (const dir of edgeFnDirs) {
+  const src = readFileSync(join(FN_DIR, dir.name, 'index.ts'), 'utf8');
   if (secretAssign.test(src)) fail(`possível segredo hardcoded em ${dir.name}/index.ts (padrão A-015)`);
 }
 sectionClean('nenhum segredo hardcoded detectado');
@@ -129,7 +130,7 @@ function* walkTs(dir) {
 }
 // Casa import de client.base por qualquer forma: alias '@/...', caminho
 // relativo ('../client.base', './client.base') e namespace ('import * as').
-const baseImportRe = /import\s+(?:\*|[^'"]+?)\s+from\s+['"][^'"]*client\.base['"]/;
+const baseImportRe = /import\s+(?:\*|[^'"]+?)\s+from\s+['"'][^'"]*client\.base['"]]/;
 let baseConsumers = 0;
 for (const file of walkTs(join(ROOT, 'src'))) {
   const rel = relative(ROOT, file).split(sep).join('/');
@@ -147,7 +148,7 @@ for (const file of walkTs(join(ROOT, 'src'))) {
   const rel = relative(ROOT, file).split(sep).join('/');
   if (CLIENT_BASE_ALLOWLIST.has(rel)) continue;
   const src = readFileSync(file, 'utf8');
-  if (!/import\s*\{[^}]*supabaseBase[^}]*\}\s*from\s*['"][^'"]*supabase\/client['"]/.test(src)) continue;
+  if (!/import\s*\{[^}]*supabaseBase[^}]*\}\s*from\s*['"'][^'"]*supabase\/client['"]/.test(src)) continue;
   // importou supabaseBase do client principal — verifica se usa .from()
   if (baseAliasRe.test(src)) {
     fail(`${rel} usa supabaseBase.from() — PostgREST cru que bypassa a bridge`);

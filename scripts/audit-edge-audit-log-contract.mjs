@@ -5,7 +5,7 @@
  * public.audit_log table. The Supabase client is intentionally untyped in
  * Deno functions, so invalid columns otherwise fail only at runtime.
  */
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import ts from 'typescript';
 
@@ -146,7 +146,17 @@ function isAuditLogInsert(node, aliases) {
   return isAuditLogSource(receiver);
 }
 
-for (const file of walk(functionsRoot)) {
+const edgeTsFiles = existsSync(functionsRoot) ? walk(functionsRoot) : [];
+if (!existsSync(functionsRoot)) {
+  failures.push(
+    `[edge-audit-log-contract] Diretório supabase/functions/ não encontrado — verifique o working directory.`
+  );
+} else if (edgeTsFiles.length === 0) {
+  failures.push(
+    `[edge-audit-log-contract] Nenhum arquivo .ts encontrado em supabase/functions/ — o scan pode estar defeituoso.`
+  );
+}
+for (const file of edgeTsFiles) {
   const sourceText = readFileSync(file, 'utf8');
   const source = ts.createSourceFile(file, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
   const auditLogAliases = collectAuditLogAliases(source);
@@ -193,6 +203,12 @@ for (const file of walk(functionsRoot)) {
     ts.forEachChild(node, visit);
   }
   visit(source);
+}
+
+if (checked === 0 && failures.length === 0) {
+  failures.push(
+    `[edge-audit-log-contract] Nenhum INSERT em audit_log encontrado em ${edgeTsFiles.length} arquivo(s) — esperado ≥ 1 (edge functions devem auditar operações)`
+  );
 }
 
 if (failures.length) {

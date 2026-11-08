@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * E51-030 — Orçamento de bundle.
  * Mede dist/assets após `npm run build` e reprova se algum limite do
@@ -43,6 +44,12 @@ const js = dirBytes(distAssets, '.js');
 const css = dirBytes(distAssets, '.css');
 
 const KB = 1024;
+// Guard de false-green: dist/assets presente mas sem JS é build incompleto
+if (js.total === 0) {
+  console.error('❌ check-bundle-budget: nenhum arquivo .js encontrado em dist/assets — build incompleto?');
+  process.exit(1);
+}
+
 const measured = {
   js_total_kb: Math.ceil(js.total / KB),
   js_max_chunk_kb: Math.ceil(js.max.bytes / KB),

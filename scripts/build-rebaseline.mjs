@@ -18,7 +18,7 @@ const remediationPaths = [
 ].map((path) => resolve(root, path));
 const storagePath = resolve(root, 'supabase/rebaseline/20260831_storage_remediation.sql');
 
-const publicDump = await readFile(publicDumpPath, 'utf8');
+const publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
 const remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
 const storage = await readFile(storagePath, 'utf8');
 
@@ -109,6 +109,7 @@ const result = [prelude, sanitizedDump, ...remediations.map((content) => content
   '\n\n'
 );
 
+// --- Verificações de segurança (ausência de padrões proibidos) ---
 if (/^\\(?:un)?restrict\b/m.test(result)) {
   throw new Error('A migração não pode conter metacomandos exclusivos do psql.');
 }
@@ -117,6 +118,21 @@ if (/^COPY\s|^INSERT INTO auth\.|^INSERT INTO public\./m.test(result)) {
 }
 if (/CREATE SCHEMA "public";/.test(result)) {
   throw new Error('A migração não pode recriar o schema public gerenciado.');
+}
+
+// --- Verificações de conteúdo (presença de estrutura mínima esperada) ---
+// Um dump sem nenhum CREATE TABLE indica que o snapshot foi gerado incorretamente
+// ou que o filtro de linhas removeu tudo — falso verde sem este check.
+if (!/^CREATE TABLE\b/m.test(result)) {
+  throw new Error('A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido.');
+}
+// A baseline deve ao menos referenciar as roles de acesso controlado do projeto.
+if (!result.includes('dp_mcp_role')) {
+  throw new Error('A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído.');
+}
+// Tamanho mínimo: um dump real do schema público tem dezenas de kB.
+if (result.length < 50_000) {
+  throw new Error(`A migração gerada tem apenas ${result.length} bytes — esperado > 50 kB para um dump completo.`);
 }
 
 await writeFile(output, result, { mode: 0o600 });

@@ -38,6 +38,13 @@ const results = await eslint.lintFiles([
   'src/tests/**/*.{ts,tsx}',
 ]);
 
+// Garantia estrutural: 0 arquivos indica que os padrões de teste não
+// encontraram nada — ou src/ foi esvaziado — falso verde sem este check.
+if (results.length === 0) {
+  console.error('❌ [ratchet-any-tests] ESLint não encontrou nenhum arquivo de teste em src/ — isso não é normal.');
+  process.exit(1);
+}
+
 const RULE = '@typescript-eslint/no-explicit-any';
 /** @type {Record<string, number>} */
 const current = {};

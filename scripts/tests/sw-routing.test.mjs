@@ -62,7 +62,15 @@ listeners.install?.forEach((h) => h({ waitUntil: () => {} }));
 listeners.activate?.forEach((h) => h({ waitUntil: () => {} }));
 
 async function fireFetch(url, { method = 'GET', mode, headers = {} } = {}) {
-  const req = new Request(url, { method, headers });
+  const parsedUrl = new URL(url);
+  // Node's Request aceita apenas HTTP(S); o SW ainda recebe a URL da extensão.
+  const req = new Request(
+    parsedUrl.protocol === 'chrome-extension:' ? ORIGIN + '/' : parsedUrl,
+    { method, headers },
+  );
+  if (parsedUrl.protocol === 'chrome-extension:') {
+    Object.defineProperty(req, 'url', { value: parsedUrl.href });
+  }
   // Node/undici não aceita mode:'navigate' no construtor; o getter vive no
   // prototype — uma propriedade própria na instância o oculta sem erro.
   if (mode) Object.defineProperty(req, 'mode', { value: mode });
@@ -91,7 +99,7 @@ const scenarios = [
   ['C', 'Google Fonts gstatic (dedicado)', 'https://fonts.gstatic.com/s/x.woff2', {}, true],
   ['D', 'navegação HTML (SWR)', H + '/dashboard', { mode: 'navigate' }, true],
   ['E', 'supabase COM Authorization', 'https://abc.supabase.co/rest/v1/holerites?select=*',
-    { headers: { authorization: 'Bearer tok' } }, false],
+    { headers: { authorization: '******' } }, false],
   ['F', 'supabase SEM Authorization (hostname)', 'https://abc.supabase.co/rest/v1/colaboradores', {}, false],
   ['G', 'PII holerites same-origin', H + '/holerites/123.pdf', {}, false],
   ['H', 'PII pagamentos same-origin', H + '/pagamentos/2026-08', {}, false],
