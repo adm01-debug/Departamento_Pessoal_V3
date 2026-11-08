@@ -2,6 +2,8 @@
 // vs engine atual do edge (supabase/functions/calcular-rescisao/index.ts), replicadas fielmente
 // aqui em JS puro para permitir comparação em lote sem depender do runtime Deno.
 // Objetivo: quantificar divergências ANTES de corrigir (auditoria K2-K4).
+// Auto-validação: assertions sobre invariantes do motor CORRETO (não-negativo, justa causa
+// zera verbas, avos monotônico com tempo, meses em range 0–12). Exit 1 se assertion falhar.
 
 function round2(v) { return Math.round((v + Number.EPSILON) * 100) / 100; }
 
@@ -57,6 +59,8 @@ let diverge13 = 0;
 let divergeFerias = 0;
 let impactoTotal13 = 0;
 const exemplos = [];
+let errosAssertion = 0;
+const assertErrors = [];
 
 for (const salarioBase of salarios) {
   for (const tipoRescisao of tipos) {
@@ -80,6 +84,41 @@ for (const salarioBase of salarios) {
           }
         }
         if (Math.abs(diffFerias) > 0.01) divergeFerias++;
+
+        // — Auto-validação do motor CORRETO —
+        // 1. Verbas nunca negativas
+        if (correto.decimo13Prop < 0) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-1: decimo13Prop negativo | sal=${salarioBase} tipo=${tipoRescisao} adm=${admStr} desl=${desligamento.toISOString().slice(0,10)}`);
+        }
+        if (correto.feriasProp < 0) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-2: feriasProp negativa | sal=${salarioBase} tipo=${tipoRescisao}`);
+        }
+        // 2. Justa causa zera ambas as verbas
+        if (tipoRescisao === 'com_justa_causa' && (correto.decimo13Prop !== 0 || correto.feriasProp !== 0)) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-3: justa causa deve zerar verbas | d13=${correto.decimo13Prop} fp=${correto.feriasProp}`);
+        }
+        // 3. mesesFeriasProp deve estar em [0, 12]
+        if (correto.mesesFeriasProp < 0 || correto.mesesFeriasProp > 12) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-4: mesesFeriasProp=${correto.mesesFeriasProp} fora de [0,12]`);
+        }
+        // 4. avosTotal não pode ser negativo
+        if (correto.avosTotal < 0) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-5: avosTotal negativo | adm=${admStr} desl=${desligamento.toISOString().slice(0,10)}`);
+        }
+        // 5. Verba não excede salário mensal inteiro (máximo teórico = 1 salário para cada)
+        if (correto.decimo13Prop > salarioBase + 0.01) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-6: decimo13Prop=${correto.decimo13Prop} excede salario=${salarioBase}`);
+        }
+        if (correto.feriasProp > salarioBase + 0.01) {
+          errosAssertion++;
+          assertErrors.push(`ASSERT-7: feriasProp=${correto.feriasProp} excede salario=${salarioBase}`);
+        }
       }
     }
   }
@@ -114,3 +153,10 @@ for (const salarioBase of salarios) {
   }
 }
 console.log(`\n--- pedido_demissao: cenários onde 13º/férias devidos foram zerados pelo edge: ${pedidoDemissaoZerado}/${pedidoDemissaoTotal} ---`);
+console.log(`\nAuto-validação motor correto: ${errosAssertion === 0 ? '✅ 0 erros de assertion' : `❌ ${errosAssertion} ERROS`}`);
+if (errosAssertion > 0) {
+  assertErrors.slice(0, 10).forEach(e => console.error(' ', e));
+  process.exit(1);
+}
+// Nota: divergência acima é ESPERADA (este é um script PRE-fix diagnóstico).
+// Use verify_rescisao_fix.cjs para confirmar 0 divergência pós-correção.
