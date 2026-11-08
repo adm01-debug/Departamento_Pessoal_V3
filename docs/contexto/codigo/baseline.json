@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cf32bad098ad09eabe0ad244b628dcab98e07ddd",
+  "commit": "61d37e7382999457b9ff09cdc1a6ef4fe8f7001c",
   "branch": "main",
-  "data_commit": "2026-11-08T02:27:15-03:00",
+  "data_commit": "2026-11-08T11:02:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "61d37e7",
+    "data": "2026-11-08",
+    "assunto": "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)"
+   },
    {
     "sha": "cf32bad",
     "data": "2026-11-08",
@@ -126,11 +131,6 @@
     "sha": "2e9968a",
     "data": "2026-11-06",
     "assunto": "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)"
-   },
-   {
-    "sha": "dc7d1eb",
-    "data": "2026-11-06",
-    "assunto": "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)"
    }
   ],
   "arquivos_mudados_7d": 133,
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 24
+    "mudancas": 23
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 65
+    "commits": 66
    },
    {
     "autor": "dependabot[bot]",
