@@ -65,12 +65,12 @@ const allSql = collect(resolve(root, 'supabase/migrations')) + '\n' + collect(re
 // schema, que resolvem em public) têm tipo gerado em types.ts — objetos
 // de auth./storage./partições internas não entram no `created`.
 const created = new Set();
-for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"?(\w+)"?\.)? "?(\w+)"?/gi)) {
+for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"?(\w+)"?\.)?"?(\w+)"?/gi)) {
   if (m[1] && m[1].toLowerCase() !== 'public') continue;
   created.add(m[2].toLowerCase());
 }
 const dropped = new Set();
-for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:"?(\w+)"?\.)? "?(\w+)"?/gi)) {
+for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:"?(\w+)"?\.)?"?(\w+)"?/gi)) {
   if (m[1] && m[1].toLowerCase() !== 'public') continue;
   dropped.add(m[2].toLowerCase());
 }
