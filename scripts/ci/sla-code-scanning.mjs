@@ -31,11 +31,21 @@ export function nivel(alerta) {
 // linha, um path malicioso rompe a cerca de código e injeta markdown/HTML cru.
 function textoSeguro(valor) {
   const limpo = String(valor ?? '?')
-    .replace(/[\r\n\t]+/g, ' ')
+    // \v/\f não são "quebra de linha" pro CommonMark (só \r/\n contam) — não
+    // rompem a cerca ```, mas entram no mesmo grupo de "não é texto normal
+    // de uma linha" que já neutralizamos.
+    .replace(/[\r\n\t\v\f]+/g, ' ')
     .replace(/`/g, "'")
-    .trim()
-    .slice(0, 200);
-  return limpo || '?';
+    .trim();
+  // .slice() opera em code units UTF-16, não em code points: pode cortar um
+  // par substituto (emoji, etc.) pela metade. O resto sobrevivendo sozinho
+  // (ex.: 0xD83C sem o par) é silenciosamente trocado por U+FFFD ao serializar
+  // em UTF-8 (fetch/JSON.stringify não avisam) — não é injeção, mas corrompe
+  // o texto publicado na issue.
+  let cortado = limpo.slice(0, 200);
+  const ultimo = cortado.charCodeAt(cortado.length - 1);
+  if (ultimo >= 0xd800 && ultimo <= 0xdbff) cortado = cortado.slice(0, -1);
+  return cortado || '?';
 }
 
 export function avaliarSla(alertas, agoraMs = Date.now()) {

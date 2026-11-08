@@ -44,6 +44,39 @@ test('CodeQL 292/293: location.path hostil não rompe a cerca de código (mesma 
   assert.ok(!r.violacoes[0].includes('\n'), `quebra de linha sobrevivente romperia a cerca: ${r.violacoes[0]}`);
 });
 
+test('corte em 200 chars não corta um par substituto (surrogate pair) pela metade', () => {
+  // '🎉' (U+1F389) são 2 code units UTF-16 (D83C DF89): com 199 chars antes dele,
+  // o corte em 200 caía bem na metade do par, sobrando D83C sozinho no fim —
+  // Buffer/JSON.stringify trocam isso por U+FFFD em silêncio ao serializar.
+  const emoji = String.fromCodePoint(0x1f389);
+  const path = 'a'.repeat(199) + emoji + 'resto-que-deveria-ser-cortado';
+  const r = avaliarSla([{
+    number: 9,
+    rule: { id: 'js/x', security_severity_level: 'high' },
+    created_at: diasAtras(20),
+    most_recent_instance: { location: { path } },
+  }], AGORA);
+  const linha = r.violacoes[0];
+  const loneSurrogate = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/.test(linha);
+  assert.ok(!loneSurrogate, `surrogate solto sobrevivendo ao corte: ${JSON.stringify(linha.slice(-10))}`);
+  assert.equal(Buffer.from(linha, 'utf8').toString('utf8'), linha, 'ida e volta por UTF-8 tem que preservar o texto (sem U+FFFD)');
+});
+
+test('\\v e \\f também são neutralizados (hardening: CommonMark só trata \\r/\\n como quebra de linha de verdade, mas ficam no mesmo grupo)', () => {
+  const c = String.fromCharCode;
+  const path = 'a' + c(0x0b) + c(0x0c) + 'b';
+  const r = avaliarSla([{
+    number: 10,
+    rule: { id: 'js/y', security_severity_level: 'high' },
+    created_at: diasAtras(20),
+    most_recent_instance: { location: { path } },
+  }], AGORA);
+  const linha = r.violacoes[0];
+  for (const n of [0x0b, 0x0c]) {
+    assert.ok(!linha.includes(c(n)), `caractere 0x${n.toString(16)} deveria ter sido neutralizado`);
+  }
+});
+
 test('created_at ausente/inválido não é ignorado em silêncio — avisa e segue, nunca mascara a violação como "não vencida"', () => {
   const semData = { number: 1, rule: { id: 'js/a', security_severity_level: 'high' }, most_recent_instance: {} };
   const dataInvalida = { ...semData, number: 2, created_at: 'não-é-data' };

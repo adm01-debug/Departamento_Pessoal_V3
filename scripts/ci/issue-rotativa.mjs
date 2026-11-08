@@ -16,25 +16,30 @@
 
 export const LIMITE_COMENTARIOS = 20;
 
+// Teto anti-loop-infinito (mesmo padrão de coletarRuns/coletarJobs em
+// actions-kpi.mjs): se a API devolver sempre página cheia (bug/instabilidade),
+// sem teto o loop nunca termina — 100 páginas = 10 mil itens, bem além de
+// qualquer uso real de comentário/issue de bot.
+const MAX_PAGINAS = 100;
+
 /**
  * Conta os comentários de uma issue via paginação (max 100/página).
  * Retorna o total real, não apenas os da primeira página.
  */
 export async function contarComentarios(gh, owner, repo, issueNumber) {
   let total = 0;
-  let page = 1;
-  for (;;) {
+  for (let page = 1; page <= MAX_PAGINAS; page += 1) {
     const lista = await gh('GET', `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100&page=${page}`);
     if (!Array.isArray(lista)) {
       // Resposta que não é array (erro de API/rate-limit) é diferente de "sem mais
       // comentários": tratar como vazio faria uma issue saturada nunca rotacionar.
       console.error(`::warning::issue-rotativa: resposta inesperada ao contar comentários da issue #${issueNumber} (página ${page})`);
-      break;
+      return total;
     }
-    if (lista.length === 0) break;
+    if (lista.length === 0) return total;
     total += lista.length;
-    if (lista.length < 100) break;
-    page += 1;
+    if (lista.length < 100) return total;
+    if (page === MAX_PAGINAS) console.error(`::warning::issue-rotativa: paginação de comentários da issue #${issueNumber} parou no teto de ${MAX_PAGINAS} páginas`);
   }
   return total;
 }
@@ -46,8 +51,7 @@ export async function contarComentarios(gh, owner, repo, issueNumber) {
  * uma issue nova e duplicada em vez de reconhecer a existente.
  */
 export async function encontrarIssue(gh, owner, repo, label, title) {
-  let page = 1;
-  for (;;) {
+  for (let page = 1; page <= MAX_PAGINAS; page += 1) {
     const lista = await gh(
       'GET',
       `/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open&per_page=100&page=${page}`,
@@ -59,8 +63,9 @@ export async function encontrarIssue(gh, owner, repo, label, title) {
     const achada = lista.find((i) => i.title === title);
     if (achada) return achada;
     if (lista.length < 100) return null;
-    page += 1;
+    if (page === MAX_PAGINAS) console.error(`::warning::issue-rotativa: paginação de issues do label '${label}' parou no teto de ${MAX_PAGINAS} páginas`);
   }
+  return null;
 }
 
 /**

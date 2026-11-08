@@ -96,6 +96,54 @@ test("encontrarIssue: pagina quando a issue alvo não está na 1ª página (regr
   assert.equal(page, 2, "tem que ter pedido a 2ª página");
 });
 
+// Sem timer/Promise.race: um mock que resolve na hora nunca cede a vez pro
+// event loop processar a fase de timers (microtasks em cadeia esgotam o loop
+// antes de qualquer setTimeout dar a chance de rodar) — um teste baseado em
+// timeout ficaria pendurado para sempre junto com o bug, em vez de falhar
+// rápido. O teto de segurança aqui é síncrono: o próprio mock lança erro
+// bem acima do teto esperado (100), nunca dependendo do relógio.
+test("encontrarIssue: tem teto anti-loop-infinito — API que sempre devolve página cheia não trava para sempre", async () => {
+  let chamadas = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => {
+      chamadas++;
+      if (chamadas > 150) throw new Error("loop sem teto: mock abortou após 150 chamadas");
+      return Array(100).fill({ title: "nunca bate" });
+    },
+  });
+  const original = console.error;
+  console.error = () => {};
+  let resultado;
+  try {
+    resultado = await encontrarIssue(gh, "o", "r", "bot-alert", "Alvo");
+  } finally {
+    console.error = original;
+  }
+  assert.equal(resultado, null);
+  assert.ok(chamadas <= 100, `teto deveria limitar a 100 páginas, fez ${chamadas} chamadas`);
+});
+
+test("contarComentarios: tem teto anti-loop-infinito — API que sempre devolve página cheia não trava para sempre", async () => {
+  let chamadas = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues/1/comments": () => {
+      chamadas++;
+      if (chamadas > 150) throw new Error("loop sem teto: mock abortou após 150 chamadas");
+      return Array(100).fill({});
+    },
+  });
+  const original = console.error;
+  console.error = () => {};
+  let total;
+  try {
+    total = await contarComentarios(gh, "o", "r", 1);
+  } finally {
+    console.error = original;
+  }
+  assert.equal(total, 10000);
+  assert.ok(chamadas <= 100, `teto deveria limitar a 100 páginas, fez ${chamadas} chamadas`);
+});
+
 test("encontrarIssue: para de paginar e retorna null quando a página vem incompleta sem achar o título", async () => {
   let chamadas = 0;
   const gh = mkGh({
