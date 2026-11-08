@@ -1,5 +1,8 @@
 # Grafo de conhecimento do código (graphify)
 
+Ler quando for buscar algo no código (grafo antes de grep), checar frescura do grafo ou trabalhar em sessão na nuvem.
+Resumo na seção 8 do `AGENTS.md`; aqui está o detalhe.
+
 > Extraído do antigo `CLAUDE.md` em 07/11/2026. Skill: `.claude/skills/graphify/SKILL.md` (`/graphify`).
 
 O projeto tem um grafo em `graphify-out/` (god nodes, comunidades, relações entre arquivos).
