@@ -29,6 +29,11 @@ while ((m = re.exec(tablesSection))) {
   tables[m[1]] = cols;
 }
 
+if (Object.keys(tables).length === 0) {
+  console.error(`gen-table-columns: nenhuma tabela extraída de ${TYPES} — tipos desatualizados ou regex quebrado`);
+  process.exit(1);
+}
+
 const header = `/**
  * GERADO por scripts/gen-table-columns.mjs — não editar à mão.
  * Rodar \`npm run gen:table-columns\` após regenerar types.ts.

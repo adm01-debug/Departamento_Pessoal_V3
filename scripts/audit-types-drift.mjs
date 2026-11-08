@@ -48,7 +48,12 @@ function collect(dir) {
       else if (e.name.endsWith('.sql')) sqls.push(readFileSync(p, 'utf8'));
     }
   };
-  walk(dir);
+  try {
+    walk(dir);
+  } catch (err) {
+    if (err.code === 'ENOENT') return '';
+    throw err;
+  }
   return sqls.map(stripComments).join('\n');
 }
 
@@ -78,6 +83,12 @@ const tablesSection = types.includes('Tables: {')
 const typed = new Set();
 for (const m of tablesSection.matchAll(/^\s{6}(\w+):\s*\{$/gm)) {
   typed.add(m[1].toLowerCase());
+}
+
+// Guard de false-green: sem nenhuma tabela no SQL, o gate não avalia nada
+if (live.length === 0) {
+  console.error('❌ audit-types-drift: nenhuma tabela encontrada nas migrations — verifique supabase/migrations/ e supabase/baseline/');
+  process.exit(1);
 }
 
 const missing = live.filter((t) => !typed.has(t)).sort((a, b) => a.localeCompare(b));
