@@ -26,31 +26,10 @@ comita e abre um PR com `gh pr create` — nunca abre PR vazio.
 
 <!-- REPORT:START -->
 
-> Última execução automática: 2026-11-04 (workflows-report.yml)
+> Última execução automática: 2026-11-08 (workflows-report.yml)
 
-# Relatório de Workflows
-
-| Workflow | Median (min) | P95 (min) | Runs |
-|----------|-------------|-----------|------|
-| Canonical Supabase — Edge Functions | 3 | 33 | 36 |
-| Canonical database — scoped migrations | 7 | 9703 | 38 |
-| Canonical database — read-only security probes | 34217 ⚠️ | 40415 | 11 |
-| Canonical database — read-only SQL diagnostic | 6983 ⚠️ | 7123 | 36 |
-| Continuous Integration & Delivery | 13 ⚠️ | 56 | 47 |
-| DB Migration Tests (PLANO_100) | 0 | 7 | 34 |
-| Manual & Preview Deploy | 1 | 13 | 49 |
-| E2E Tests (Playwright) | 5 | 14 | 42 |
-| Gitleaks | — | — | 0 |
-| Environment Healthcheck | 0 | 1 | 50 |
-| .github/workflows/main.yml | 0 | 0 | 1 |
-| OSSF Scorecard | 1 | 1 | 3 |
-| Post-deploy smoke | 3 | 20 | 18 |
-| Ruleset sync | 0 | 0 | 5 |
-| Security Scan & Code Quality | 4 | 18 | 41 |
-| Workflow lint (actionlint) | 1 | 9 | 47 |
-| Workflows report | 1 | 1 | 3 |
-| Copilot | 2 | 9 | 11 |
-| Dependabot Updates | 2 | 6 | 50 |
+[report-workflows] GitHub API 401 — token sem escopo "actions:read" ou expirado.
+Token atual: proxy-in... (primeiros 8 chars)
 
 <!-- REPORT:END -->
 
