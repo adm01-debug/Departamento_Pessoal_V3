@@ -290,6 +290,16 @@ function main() {
     return 1;
   }
 
+  if (inspecionadas === 0) {
+    console.error(
+      '[rls-least-privilege] ERRO: 0 políticas inspecionadas nas tabelas sensíveis. ' +
+        'Com banco conectado, o schema de produção sempre tem políticas nessas tabelas — ' +
+        'este resultado indica schema vazio, permissão negada ou pg_policies inacessível. ' +
+        'Falso verde bloqueado.'
+    );
+    return 1;
+  }
+
   console.log(
     `[rls-least-privilege] OK — ${inspecionadas} política(s) em tabela sensível ` +
       'exigem papel ou amarram a linha ao titular.'
