@@ -48,7 +48,12 @@ function collect(dir) {
       else if (e.name.endsWith('.sql')) sqls.push(readFileSync(p, 'utf8'));
     }
   };
-  walk(dir);
+  try {
+    walk(dir);
+  } catch (err) {
+    if (err.code === 'ENOENT') return '';
+    throw err;
+  }
   return sqls.map(stripComments).join('\n');
 }
 
@@ -60,12 +65,12 @@ const allSql = collect(resolve(root, 'supabase/migrations')) + '\n' + collect(re
 // schema, que resolvem em public) têm tipo gerado em types.ts — objetos
 // de auth./storage./partições internas não entram no `created`.
 const created = new Set();
-for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"?(\w+)"?\.)?"?(\w+)"?/gi)) {
+for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"?(\w+)"?\.)? "?(\w+)"?/gi)) {
   if (m[1] && m[1].toLowerCase() !== 'public') continue;
   created.add(m[2].toLowerCase());
 }
 const dropped = new Set();
-for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:"?(\w+)"?\.)?"?(\w+)"?/gi)) {
+for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:"?(\w+)"?\.)? "?(\w+)"?/gi)) {
   if (m[1] && m[1].toLowerCase() !== 'public') continue;
   dropped.add(m[2].toLowerCase());
 }
@@ -78,6 +83,12 @@ const tablesSection = types.includes('Tables: {')
 const typed = new Set();
 for (const m of tablesSection.matchAll(/^\s{6}(\w+):\s*\{$/gm)) {
   typed.add(m[1].toLowerCase());
+}
+
+// Guard de false-green: sem nenhuma tabela no SQL, o gate não avalia nada
+if (live.length === 0) {
+  console.error('❌ audit-types-drift: nenhuma tabela encontrada nas migrations — verifique supabase/migrations/ e supabase/baseline/');
+  process.exit(1);
 }
 
 const missing = live.filter((t) => !typed.has(t)).sort((a, b) => a.localeCompare(b));
