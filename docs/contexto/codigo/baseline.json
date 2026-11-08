@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e9086da18e3894083e208e114bc927828785edd2",
+  "commit": "b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e",
   "branch": "main",
-  "data_commit": "2026-11-08T01:45:46-03:00",
+  "data_commit": "2026-11-08T02:05:22-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b9285c8",
+    "data": "2026-11-08",
+    "assunto": "fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso"
+   },
+   {
+    "sha": "27afd9f",
+    "data": "2026-11-08",
+    "assunto": "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório"
+   },
+   {
+    "sha": "20761bc",
+    "data": "2026-11-08",
+    "assunto": "fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas"
+   },
+   {
+    "sha": "1822a56",
+    "data": "2026-11-08",
+    "assunto": "feat: guards false-green + auto-assertions em 5 scripts de auditoria"
+   },
    {
     "sha": "e9086da",
     "data": "2026-11-08",
@@ -111,29 +131,9 @@
     "sha": "205c583",
     "data": "2026-11-06",
     "assunto": "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)"
-   },
-   {
-    "sha": "a18f04a",
-    "data": "2026-11-06",
-    "assunto": "fix: safeFetch do SW devolve resposta original (evita \"Failed to fetch dynamically imported module\") (#356)"
-   },
-   {
-    "sha": "f517257",
-    "data": "2026-11-05",
-    "assunto": "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)"
-   },
-   {
-    "sha": "6ed87f2",
-    "data": "2026-11-05",
-    "assunto": "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)"
-   },
-   {
-    "sha": "68a06b1",
-    "data": "2026-11-05",
-    "assunto": "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)"
    }
   ],
-  "arquivos_mudados_7d": 126,
+  "arquivos_mudados_7d": 133,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 60
+    "commits": 64
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2803,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 261331,
+  "linhas_codigo": 261401,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -424,7 +424,7 @@
   },
   "scripts/audit-edge-authz.mjs": {
    "arquivos": 1,
-   "linhas": 171
+   "linhas": 192
   },
   "scripts/audit-edge-syntax.mjs": {
    "arquivos": 1,
@@ -440,11 +440,11 @@
   },
   "scripts/audit-required-checks.mjs": {
    "arquivos": 1,
-   "linhas": 171
+   "linhas": 178
   },
   "scripts/audit-rls-least-privilege.mjs": {
    "arquivos": 1,
-   "linhas": 301
+   "linhas": 311
   },
   "scripts/audit-rls-pii.mjs": {
    "arquivos": 1,
@@ -460,7 +460,7 @@
   },
   "scripts/audit-secdef-authz.mjs": {
    "arquivos": 1,
-   "linhas": 269
+   "linhas": 276
   },
   "scripts/audit-security-config.mjs": {
    "arquivos": 1,
@@ -468,7 +468,7 @@
   },
   "scripts/audit-types-drift.mjs": {
    "arquivos": 1,
-   "linhas": 124
+   "linhas": 135
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
@@ -476,7 +476,7 @@
   },
   "scripts/check-bundle-budget.mjs": {
    "arquivos": 1,
-   "linhas": 87
+   "linhas": 94
   },
   "scripts/check-dependencies.js": {
    "arquivos": 1,
@@ -504,7 +504,7 @@
   },
   "scripts/gen-table-columns.mjs": {
    "arquivos": 1,
-   "linhas": 79
+   "linhas": 84
   },
   "scripts/generate-audit-pdf.js": {
    "arquivos": 1,
@@ -556,7 +556,7 @@
   },
   "scripts/ratchet-lint-warnings.mjs": {
    "arquivos": 1,
-   "linhas": 104
+   "linhas": 106
   },
   "scripts/regras_negocio": {
    "arquivos": 3,

@@ -100,7 +100,7 @@
   {
    "arquivo": "scripts/audit-edge-authz.mjs",
    "descricao": "* Gate de CI — autorização nas Edge Functions.",
-   "linhas": 171,
+   "linhas": 192,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -148,7 +148,7 @@
   {
    "arquivo": "scripts/audit-required-checks.mjs",
    "descricao": "* E08 — Guard: verifica se todo check obrigatório do ruleset tem um job",
-   "linhas": 171,
+   "linhas": 178,
    "env": [
     "GITHUB_TOKEN"
    ],
@@ -162,7 +162,7 @@
   {
    "arquivo": "scripts/audit-rls-least-privilege.mjs",
    "descricao": "* Gate de menor privilégio em RLS.",
-   "linhas": 301,
+   "linhas": 311,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -226,7 +226,7 @@
   {
    "arquivo": "scripts/audit-secdef-authz.mjs",
    "descricao": "* Gate de regressão de funções SECURITY DEFINER.",
-   "linhas": 269,
+   "linhas": 276,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -254,7 +254,7 @@
   {
    "arquivo": "scripts/audit-types-drift.mjs",
    "descricao": "* Ratchet de drift: tabela criada em migration/baseline sem entrada em",
-   "linhas": 124,
+   "linhas": 135,
    "env": [],
    "npm_scripts": [
     "audit:types-drift"
@@ -305,7 +305,7 @@
   {
    "arquivo": "scripts/check-bundle-budget.mjs",
    "descricao": "* E51-030 — Orçamento de bundle.",
-   "linhas": 87,
+   "linhas": 94,
    "env": [],
    "npm_scripts": [
     "audit:bundle"
@@ -422,7 +422,7 @@
   {
    "arquivo": "scripts/gen-table-columns.mjs",
    "descricao": "* Gera src/schemas/tableColumns.ts a partir dos tipos do Supabase",
-   "linhas": 79,
+   "linhas": 84,
    "env": [],
    "npm_scripts": [
     "gen:table-columns"
@@ -660,7 +660,7 @@
   {
    "arquivo": "scripts/ratchet-lint-warnings.mjs",
    "descricao": "* E43 — Orçamento de warnings ESLint por regra.",
-   "linhas": 104,
+   "linhas": 106,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-warnings"

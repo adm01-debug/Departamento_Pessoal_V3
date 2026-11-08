@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e9086da18e3894083e208e114bc927828785edd2",
+  "sha": "b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-08 05:16 UTC",
+  "generated_at": "2026-11-08 05:34 UTC",
   "files_total": 2824,
   "code_files": 2323,
-  "code_lines": 309222
+  "code_lines": 309292
  },
  "version": "1.3.2",
- "facts_hash": "d338bba88ab757be",
+ "facts_hash": "1925455d47eeeea7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 18217,
+   "lines": 18287,
    "tables": [
     "a",
     "audit_log",
@@ -225836,7 +225836,7 @@
   },
   "scripts/audit-edge-authz.mjs": {
    "path": "scripts/audit-edge-authz.mjs",
-   "lines": 171,
+   "lines": 192,
    "params": [
     {
      "name": "DIR",
@@ -225844,7 +225844,8 @@
     }
    ],
    "rule_comments": [
-    "tratar vínculo com a empresa como se fosse permissão:"
+    "tratar vínculo com a empresa como se fosse permissão:",
+    "Auto-assertion: semComentarios deve remover blocos e linhas"
    ],
    "doc": "!/usr/bin/env node",
    "uses_service_role": true
@@ -225892,7 +225893,7 @@
   },
   "scripts/audit-required-checks.mjs": {
    "path": "scripts/audit-required-checks.mjs",
-   "lines": 171,
+   "lines": 178,
    "external_urls": [
     "https://api.github.com/repos/${OWNER_REPO}/rulesets/…"
    ],
@@ -225913,7 +225914,7 @@
   },
   "scripts/audit-rls-least-privilege.mjs": {
    "path": "scripts/audit-rls-least-privilege.mjs",
-   "lines": 301,
+   "lines": 311,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -225992,7 +225993,7 @@
   },
   "scripts/audit-secdef-authz.mjs": {
    "path": "scripts/audit-secdef-authz.mjs",
-   "lines": 269,
+   "lines": 276,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -226009,7 +226010,8 @@
     "também não deve se declarar aprovado em silêncio.",
     "dentro do próprio corpo, com expiração e limite de tentativas. Exigir",
     "Não pode autorizar internamente sem recursão. Exposição residual: mapeia",
-    "(checagem de rate-limit/lockout/bloqueio de IP/país no fluxo de login)."
+    "(checagem de rate-limit/lockout/bloqueio de IP/país no fluxo de login).",
+    "silenciosamente (permissão, schema errado) — reprovar em vez de dar OK vazio."
    ],
    "doc": "!/usr/bin/env node"
   },
@@ -226024,7 +226026,7 @@
   },
   "scripts/audit-types-drift.mjs": {
    "path": "scripts/audit-types-drift.mjs",
-   "lines": 124,
+   "lines": 135,
    "doc": "!/usr/bin/env node",
    "percents": [
     "* ficar 100% correto quando o schema vivo estiver reconciliado com o repo."
@@ -226066,12 +226068,12 @@
   },
   "scripts/check-bundle-budget.mjs": {
    "path": "scripts/check-bundle-budget.mjs",
-   "lines": 87,
+   "lines": 94,
    "rule_comments": [
     "Mede dist/assets após `npm run build` e reprova se algum limite do",
     "descer: para afrouxar um limite é preciso editar o baseline com"
    ],
-   "doc": "E51-030 — Orçamento de bundle. Mede dist/assets após `npm run build` e reprova se algum limite do baseline (scripts/.bundle-budget.json) for excedido. A dívida só pode descer: para afrouxar um limite é preciso editar o baseline com `--write`, o que fica explícito no diff do PR."
+   "doc": "!/usr/bin/env node"
   },
   "scripts/check-dependencies.js": {
    "path": "scripts/check-dependencies.js",
@@ -226099,7 +226101,7 @@
   },
   "scripts/gen-table-columns.mjs": {
    "path": "scripts/gen-table-columns.mjs",
-   "lines": 79,
+   "lines": 84,
    "exports": [
     "const TABLE_COLUMNS"
    ],
@@ -226230,7 +226232,7 @@
   },
   "scripts/ratchet-lint-warnings.mjs": {
    "path": "scripts/ratchet-lint-warnings.mjs",
-   "lines": 104,
+   "lines": 106,
    "rule_comments": [
     "* E43 — Orçamento de warnings ESLint por regra.",
     "* Nenhuma regra pode subir; qualquer uma pode descer.",
@@ -274497,10 +274499,50 @@
   }
  },
  "git": {
-  "sha": "e9086da18e3894083e208e114bc927828785edd2",
+  "sha": "b9285c8ae29b60c51ef461a1eb64e9fd0ab9130e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b9285c8",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso",
+    "files": [
+     "scripts/ratchet-lint-warnings.mjs"
+    ]
+   },
+   {
+    "sha": "27afd9f",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório",
+    "files": [
+     "scripts/audit-required-checks.mjs"
+    ]
+   },
+   {
+    "sha": "20761bc",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas",
+    "files": [
+     "scripts/audit-rls-least-privilege.mjs"
+    ]
+   },
+   {
+    "sha": "1822a56",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: guards false-green + auto-assertions em 5 scripts de auditoria",
+    "files": [
+     "scripts/audit-edge-authz.mjs",
+     "scripts/audit-secdef-authz.mjs",
+     "scripts/audit-types-drift.mjs",
+     "scripts/check-bundle-budget.mjs",
+     "scripts/gen-table-columns.mjs"
+    ]
+   },
    {
     "sha": "e9086da",
     "date": "2026-11-08",
@@ -274801,55 +274843,12 @@
     "files": [
      "infra/github/ruleset-main.json"
     ]
-   },
-   {
-    "sha": "0d79b5c",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump minor-patch group (10 pacotes npm) (#348)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "e4dc94f",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "77a6b83",
-    "date": "2026-11-05",
-    "author": "github-actions[bot]",
-    "subject": "docs: atualizar WORKFLOWS_STATUS.md (#344)",
-    "files": [
-     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
-    ]
-   },
-   {
-    "sha": "50c052c",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
    }
   ],
   "hot_files": [
    [
-    "package-lock.json",
-    4
-   ],
-   [
-    "package.json",
-    3
+    "scripts/ratchet-lint-warnings.mjs",
+    2
    ],
    [
     "scripts/audit-edge-syntax.mjs",
@@ -274884,6 +274883,34 @@
     2
    ],
    [
+    "scripts/audit-required-checks.mjs",
+    1
+   ],
+   [
+    "scripts/audit-rls-least-privilege.mjs",
+    1
+   ],
+   [
+    "scripts/audit-edge-authz.mjs",
+    1
+   ],
+   [
+    "scripts/audit-secdef-authz.mjs",
+    1
+   ],
+   [
+    "scripts/audit-types-drift.mjs",
+    1
+   ],
+   [
+    "scripts/check-bundle-budget.mjs",
+    1
+   ],
+   [
+    "scripts/gen-table-columns.mjs",
+    1
+   ],
+   [
     "scripts/audit-rls-pii.mjs",
     1
    ],
@@ -274897,30 +274924,6 @@
    ],
    [
     "scripts/audit-edge-audit-log-contract.mjs",
-    1
-   ],
-   [
-    "scripts/audit-bridge-frontend-contract.mjs",
-    1
-   ],
-   [
-    "scripts/check-dependencies.js",
-    1
-   ],
-   [
-    "scripts/validate-plan-50.mjs",
-    1
-   ],
-   [
-    "scripts/ratchet-any-tests.mjs",
-    1
-   ],
-   [
-    "scripts/ratchet-any.mjs",
-    1
-   ],
-   [
-    "scripts/ratchet-lint-warnings.mjs",
     1
    ]
   ]
