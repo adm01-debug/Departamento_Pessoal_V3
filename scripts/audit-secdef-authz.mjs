@@ -227,6 +227,13 @@ function main() {
     return false;
   }
 
+  // Guard: se o banco respondeu mas devolveu zero funções, a consulta falhou
+  // silenciosamente (permissão, schema errado) — reprovar em vez de dar OK vazio.
+  if (fns.size === 0) {
+    console.error('[secdef-authz] ERRO: consulta retornou 0 funções — schema vazio ou sem permissão SELECT em pg_proc.');
+    return 1;
+  }
+
   const violations = [];
   let inspected = 0;
 

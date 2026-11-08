@@ -80,7 +80,7 @@ const HARD_ADMIN = [
 ];
 
 /** Exige autenticação de fato. */
-const TEM_AUTH = [/auth\.getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\(/];
+const TEM_AUTH = [/auth\s*\.\s*getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\(/];
 
 /**
  * Remove comentários antes de casar os padrões.
@@ -106,8 +106,26 @@ function lerFuncoes() {
     .map((d) => ({ nome: d, src: semComentarios(readFileSync(join(DIR, d, 'index.ts'), 'utf8')) }));
 }
 
+// Auto-assertion: semComentarios deve remover blocos e linhas
+{
+  const _test = '/* bloco */ const x = 1; // linha\nconst y = 2;';
+  const _stripped = semComentarios(_test);
+  if (/bloco/.test(_stripped) || /linha/.test(_stripped)) {
+    console.error('[edge-authz] ERRO: semComentarios não remove comentários corretamente');
+    process.exit(2);
+  }
+}
+
 function main() {
   const funcoes = lerFuncoes();
+
+  // Guard de false-green: diretório presente mas sem funções indica anomalia de build
+  if (funcoes.length === 0) {
+    console.error(`[edge-authz] ERRO: ${DIR} existe mas não contém funções com index.ts`);
+    process.exit(2);
+  }
+
+  const sensiveisPresentes = funcoes.filter((f) => SENSIVEIS.has(f.nome));
   const violacoes = [];
   let auditadas = 0;
 
@@ -159,7 +177,10 @@ function main() {
     process.exit(1);
   }
 
-  console.log(`[edge-authz] OK — ${auditadas} função(ões) sensível(is) com service_role verificam papel do chamador.`);
+  console.log(
+    `[edge-authz] OK — ${auditadas}/${sensiveisPresentes.length} funções sensíveis+service_role auditadas`
+    + ` (${funcoes.length} funções no total).`
+  );
 }
 
 try {

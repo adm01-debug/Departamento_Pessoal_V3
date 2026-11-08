@@ -11,8 +11,7 @@
  */
 import { ESLint } from 'eslint';
 import { readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import { createRequire } from 'node:module';
+import { resolve, relative } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const budgetPath = resolve(root, 'scripts/.eslint-warnings-budget.json');
@@ -20,6 +19,12 @@ const write = process.argv.includes('--write');
 
 const eslint = new ESLint({ cwd: root });
 const results = await eslint.lintFiles(['src/**/*.{ts,tsx}']);
+
+// Garantia estrutural: 0 arquivos = falso verde (igual a edge-syntax e ratchet-any).
+if (results.length === 0) {
+  console.error('❌ [ratchet-lint-warnings] ESLint não encontrou nenhum arquivo .ts/.tsx em src/ — isso não é normal.');
+  process.exit(1);
+}
 
 /** @type {Record<string, number>} */
 const current = {};
@@ -31,8 +36,14 @@ for (const result of results) {
   }
 }
 
-const budgetRaw = await readFile(budgetPath, 'utf-8');
-const budget = JSON.parse(budgetRaw);
+let budget;
+try {
+  budget = JSON.parse(await readFile(budgetPath, 'utf-8'));
+} catch (err) {
+  console.error(`❌ Budget ausente ou inválido em ${relative(root, budgetPath)}: ${err.message}`);
+  console.error('   Rode com --write para criar um budget inicial após revisão.');
+  process.exit(1);
+}
 
 let failures = 0;
 const newBudget = { ...budget };
@@ -60,8 +71,10 @@ for (const rule of Object.keys(budget)) {
 }
 
 const totalCurrent = Object.values(current).reduce((a, b) => a + b, 0);
-const totalBudget = typeof budget._total === 'number' ? budget._total : Infinity;
-if (totalCurrent > totalBudget) {
+const totalBudget = typeof budget._total === 'number' ? budget._total : null;
+if (totalBudget === null) {
+  console.warn('  WARN: _total ausente no budget — rode --write para definir o limite total de warnings.');
+} else if (totalCurrent > totalBudget) {
   console.error(`  FAIL: total: ${totalCurrent} > ${totalBudget}`);
   failures++;
 } else {

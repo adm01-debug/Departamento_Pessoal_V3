@@ -84,7 +84,18 @@ const dynamicRpcCalls = [];
 const bridgeTableCalls = [];
 const baseTableCalls = [];
 const directLegacyAuditCalls = [];
-for (const file of walk(join(root, 'src'))) {
+
+const srcDir = join(root, 'src');
+if (!existsSync(srcDir)) {
+  console.error('[bridge-contract] Diretório src/ não encontrado — verifique o working directory.');
+  process.exit(1);
+}
+const srcFiles = walk(srcDir);
+if (srcFiles.length === 0) {
+  console.error('[bridge-contract] Nenhum arquivo de código encontrado em src/ — isso não é normal.');
+  process.exit(1);
+}
+for (const file of srcFiles) {
   const source = readFileSync(file, 'utf8');
   for (const match of source.matchAll(/\.from\s*\(\s*["']audit_log["']\s*\)/g)) {
     directLegacyAuditCalls.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
@@ -113,6 +124,13 @@ for (const file of walk(join(root, 'src'))) {
       (alias.lane === 'base' ? baseTableCalls : bridgeTableCalls).push(entry);
     }
   }
+}
+
+if (calls.size === 0 && bridgeTableCalls.length === 0 && baseTableCalls.length === 0) {
+  console.error(
+    `[bridge-contract] Nenhuma chamada .rpc() ou .from() encontrada em ${srcFiles.length} arquivo(s) — o scan pode estar defeituoso.`
+  );
+  process.exit(1);
 }
 
 const validation = readFileSync(validationPath, 'utf8');

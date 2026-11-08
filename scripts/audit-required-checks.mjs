@@ -130,6 +130,13 @@ if (process.env.GITHUB_TOKEN) {
 }
 
 if (requiredChecks.length === 0) {
+  if (baselineRules?.rules?.length > 0) {
+    console.error(
+      '❌ audit-required-checks: baseline tem regras mas nenhuma é required_status_checks — ' +
+        'verifique se a regra foi removida de infra/github/ruleset-main.json acidentalmente.'
+    );
+    process.exit(1);
+  }
   console.log('Nenhum required_status_checks no ruleset — nada a validar.');
   process.exit(0);
 }

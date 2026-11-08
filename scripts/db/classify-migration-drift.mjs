@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { basename, join, relative, resolve } from 'node:path';
 
 function parseArgs(argv) {
@@ -49,6 +49,12 @@ function main() {
   const outputPath = resolve(args.get('output') ?? 'migration-classification.csv');
   const summaryPath = resolve(args.get('summary') ?? 'migration-classification.summary.json');
 
+  if (!existsSync(ledgerPath)) {
+    console.error(`::error::Arquivo de ledger não encontrado: ${ledgerPath}`);
+    console.error('::error::Passe --ledger-json=<caminho> com o JSON exportado do ledger de migrations.');
+    console.error('::error::Veja infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md para instruções.');
+    process.exit(1);
+  }
   const ledgerDocument = JSON.parse(readFileSync(ledgerPath, 'utf8'));
   const ledgerRows = Array.isArray(ledgerDocument)
     ? ledgerDocument
