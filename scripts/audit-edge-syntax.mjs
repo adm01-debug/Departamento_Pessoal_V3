@@ -36,6 +36,14 @@ const files = listTsFiles(ROOT);
 const failures = [];
 const duplicateCodes = new Set([2300, 2393, 2440, 2451, 2528]);
 
+// Garantia estrutural: um deploy sem nenhum arquivo .ts nos indica que o
+// diretório foi esvaziado acidentalmente ou que o glob mudou. Sem este check,
+// o gate reportaria "0 arquivos OK" após uma remoção em massa — falso verde.
+if (files.length === 0) {
+  console.error(`[edge-syntax] Nenhum arquivo .ts encontrado em ${ROOT} — isso não é normal.`);
+  process.exit(1);
+}
+
 for (const file of files) {
   const program = ts.createProgram([file], {
     allowImportingTsExtensions: true,

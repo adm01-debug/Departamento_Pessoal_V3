@@ -65,6 +65,27 @@ for (const fileName of planFiles) {
     const checkpoints = (stage.text.match(/^- \[(?: |x|X)\] \*\*C[1-4] /gm) ?? []).length;
     expect(substeps === 10, `${label(stage.number)} tem 10 subetapas (encontradas: ${substeps})`);
     expect(checkpoints === 4, `${label(stage.number)} tem C1–C4 (encontrados: ${checkpoints})`);
+
+    // C1-C4 individualmente presentes — 4x o mesmo label (ex: 4x C1) passaria na
+    // contagem acima mas indicaria que os checkpoints C2/C3/C4 foram apagados.
+    for (const c of [1, 2, 3, 4]) {
+      const hasC = new RegExp(`- \\[(?: |x|X)\\] \\*\\*C${c} `).test(stage.text);
+      expect(hasC, `${label(stage.number)} contém checkpoint C${c} com label distinto`);
+    }
+  }
+
+  // Títulos únicos — cópia acidental de cabeçalho produz dois stages com
+  // o mesmo nome; isso não é detectado pela checagem de IDs (números distintos
+  // mas textos idênticos passariam sem este check).
+  const titlesSeen = new Map();
+  for (let i = 0; i < stages.length; i++) {
+    const title = headers[i][0].replace(/^## [A-Z]\d+-\d{3} — /, '').trim();
+    if (titlesSeen.has(title)) {
+      expect(false, `título duplicado: "${title}" em ${label(stages[i].number)} e ${label(titlesSeen.get(title))}`);
+    } else {
+      titlesSeen.set(title, stages[i].number);
+      checks++; // unique-title pass conta como verificação
+    }
   }
 
   const depRe = new RegExp(`${prefix}-(\\d{3})(?:–(\\d{3}))?`, 'g');
