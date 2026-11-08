@@ -31,6 +31,36 @@ test('high vence com 15 dias; medium só depois de 30', () => {
   ]);
 });
 
+test('CodeQL 292/293: location.path hostil não rompe a cerca de código (mesma classe já corrigida em actions-kpi.mjs)', () => {
+  const hostil = {
+    number: 5,
+    rule: { id: 'js/foo', security_severity_level: 'high' },
+    created_at: diasAtras(20),
+    most_recent_instance: { location: { path: 'a\n```\n<img src=x onerror=alert(1)>\n```\nb' } },
+  };
+  const r = avaliarSla([hostil], AGORA);
+  assert.equal(r.violacoes.length, 1);
+  assert.ok(!r.violacoes[0].includes('`'), `backtick sobrevivente romperia a cerca: ${r.violacoes[0]}`);
+  assert.ok(!r.violacoes[0].includes('\n'), `quebra de linha sobrevivente romperia a cerca: ${r.violacoes[0]}`);
+});
+
+test('created_at ausente/inválido não é ignorado em silêncio — avisa e segue, nunca mascara a violação como "não vencida"', () => {
+  const semData = { number: 1, rule: { id: 'js/a', security_severity_level: 'high' }, most_recent_instance: {} };
+  const dataInvalida = { ...semData, number: 2, created_at: 'não-é-data' };
+  const original = console.error;
+  const avisos = [];
+  console.error = (msg) => avisos.push(msg);
+  let r;
+  try {
+    r = avaliarSla([semData, dataInvalida], AGORA);
+  } finally {
+    console.error = original;
+  }
+  assert.equal(r.total, 2);
+  assert.deepEqual(r.violacoes, [], 'nenhum dos dois pode entrar em violacoes sem data válida para calcular dias vencidos');
+  assert.equal(avisos.filter((m) => m.includes('::warning::W83')).length, 2, 'cada alerta sem data válida tem que avisar');
+});
+
 test('relatório: sem violação diz isso; com violação lista em bloco', () => {
   assert.match(relatorio({ total: 0, violacoes: [] }), /Alertas abertos: 0[\s\S]*Nenhuma violação/);
   assert.match(relatorio({ total: 1, violacoes: ['HIGH x'] }), /Violações de SLA[\s\S]*HIGH x/);

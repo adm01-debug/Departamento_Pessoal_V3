@@ -212,16 +212,26 @@ const publicationCases = [
   { name: 'relatorio foi ignorado', outcome: 'skipped', cancelled: false, publish: false },
   { name: 'relatorio cancelado', outcome: 'cancelled', cancelled: false, publish: false },
   { name: 'workflow cancelado depois de gerar relatorio', outcome: 'success', cancelled: true, publish: false },
+  // Regressao: antes de checar steps.poda.outcome, uma falha REAL (bug no script,
+  // nao SLA) no passo de poda nao impedia a publicacao — a issue publica saia com
+  // o relatorio faltando a secao de poda, sem nenhuma marca de incompleto.
+  { name: 'poda falhou de verdade (bug no script, nao SLA) bloqueia a publicacao', outcome: 'success', cancelled: false, slaFailure: false, forcePodaCrash: true, publish: false },
 ];
 for (const item of publicationCases) test('W83 publicacao: ' + item.name, (t) => {
   const f = fixture(t, { existingIssue: item.existingIssue, alertPages: [[alert(1, 'high', item.slaFailure ? 16 : 1)]] });
+  if (item.forcePodaCrash) writeFileSync(join(f.root, 'scripts', 'ci', 'branch-podaveis.mjs'), 'process.exit(3);\n');
   let priorStatus = 0;
-  if (item.outcome === 'success') priorStatus = f.run(slaStep).status;
+  let podaOutcome = 'skipped';
+  if (item.outcome === 'success') {
+    podaOutcome = f.run(pruneStep).status === 0 ? 'success' : 'failure';
+    priorStatus = f.run(slaStep).status;
+  }
   const permitted = conditionAllows(conditionOf(publishStep), {
     'cancelled()': item.cancelled,
     'success()': priorStatus === 0 && item.outcome === 'success',
     'failure()': priorStatus !== 0 || item.outcome === 'failure',
     'steps.relatorio.outcome': item.outcome,
+    'steps.poda.outcome': podaOutcome,
   });
   assert.equal(permitted, item.publish);
   const before = readFileSync(f.report, 'utf8');

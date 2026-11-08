@@ -24,15 +24,37 @@ export function nivel(alerta) {
   return alerta?.rule?.severity === 'error' ? 'high' : 'low';
 }
 
+// CodeQL 292/293 (mesma classe já corrigida em actions-kpi.mjs): `location.path`
+// é o caminho de um arquivo do PR que disparou o alerta — quem abre o PR (inclusive
+// de fork) controla essa string. Ela termina dentro de um bloco ``` no Job Summary
+// e no corpo da issue pública [branch-hygiene]; sem neutralizar backtick/quebra de
+// linha, um path malicioso rompe a cerca de código e injeta markdown/HTML cru.
+function textoSeguro(valor) {
+  const limpo = String(valor ?? '?')
+    .replace(/[\r\n\t]+/g, ' ')
+    .replace(/`/g, "'")
+    .trim()
+    .slice(0, 200);
+  return limpo || '?';
+}
+
 export function avaliarSla(alertas, agoraMs = Date.now()) {
   const violacoes = [];
   for (const a of alertas) {
     const sev = nivel(a);
     const prazo = sev === 'high' || sev === 'critical' ? SLA_DIAS.alto : SLA_DIAS.baixo;
-    const dias = Math.floor((agoraMs - new Date(a.created_at).getTime()) / 86_400_000);
+    const criadoEm = new Date(a.created_at).getTime();
+    // created_at ausente/malformado dava NaN: `NaN > prazo` é sempre falso, então o
+    // alerta nunca entrava em violacoes mesmo vencido há anos, sem aviso nenhum
+    // (diferente do tratamento já existente para "resposta não é array").
+    if (!Number.isFinite(criadoEm)) {
+      console.error(`::warning::W83: alerta #${a.number ?? '?'} com created_at inválido/ausente — SLA não avaliado`);
+      continue;
+    }
+    const dias = Math.floor((agoraMs - criadoEm) / 86_400_000);
     if (dias > prazo) {
-      const local = a.most_recent_instance?.location?.path ?? '?';
-      violacoes.push(`${sev.toUpperCase()} (${dias}d > ${prazo}d) — #${a.number}: ${a.rule?.id ?? '?'} em ${local}`);
+      const local = textoSeguro(a.most_recent_instance?.location?.path);
+      violacoes.push(`${sev.toUpperCase()} (${dias}d > ${prazo}d) — #${a.number}: ${textoSeguro(a.rule?.id)} em ${local}`);
     }
   }
   return { total: alertas.length, violacoes };

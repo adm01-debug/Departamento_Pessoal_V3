@@ -50,6 +50,19 @@ test("contarComentarios: pagina quando retorna 100 itens", async () => {
   assert.equal(await contarComentarios(gh, "o", "r", 1), 107);
 });
 
+test("contarComentarios: resposta que não é array (erro de API) avisa em vez de ficar indistinguível de lista vazia", async () => {
+  const gh = mkGh({ "GET /repos/o/r/issues/1/comments": () => ({ message: "rate limited" }) });
+  const original = console.error;
+  const avisos = [];
+  console.error = (msg) => avisos.push(msg);
+  try {
+    assert.equal(await contarComentarios(gh, "o", "r", 1), 0);
+  } finally {
+    console.error = original;
+  }
+  assert.ok(avisos.some((m) => m.includes("::warning::")), "tem que avisar que a resposta não era a esperada");
+});
+
 // --- encontrarIssue ---
 
 test("encontrarIssue: retorna null quando lista não é array", async () => {
@@ -66,6 +79,33 @@ test("encontrarIssue: retorna a issue com título correto", async () => {
   const issue = { number: 42, title: "Alerta" };
   const gh = mkGh({ "GET /repos/o/r/issues": () => [{ title: "Outro" }, issue] });
   assert.deepEqual(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), issue);
+});
+
+test("encontrarIssue: pagina quando a issue alvo não está na 1ª página (regressão: antes só pedia per_page=10 sem paginar)", async () => {
+  const alvo = { number: 999, title: "Alerta" };
+  let page = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => {
+      page++;
+      if (page === 1) return Array(100).fill({ title: "Outro" });
+      if (page === 2) return [{ title: "Outro" }, alvo];
+      return [];
+    },
+  });
+  assert.deepEqual(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), alvo);
+  assert.equal(page, 2, "tem que ter pedido a 2ª página");
+});
+
+test("encontrarIssue: para de paginar e retorna null quando a página vem incompleta sem achar o título", async () => {
+  let chamadas = 0;
+  const gh = mkGh({
+    "GET /repos/o/r/issues": () => {
+      chamadas++;
+      return [{ title: "Outro" }]; // menos que 100 = última página
+    },
+  });
+  assert.equal(await encontrarIssue(gh, "o", "r", "bot-alert", "Alerta"), null);
+  assert.equal(chamadas, 1, "página incompleta não deveria gerar nova chamada");
 });
 
 // --- abrirOuRotacionar ---

@@ -25,7 +25,13 @@ export async function contarComentarios(gh, owner, repo, issueNumber) {
   let page = 1;
   for (;;) {
     const lista = await gh('GET', `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100&page=${page}`);
-    if (!Array.isArray(lista) || lista.length === 0) break;
+    if (!Array.isArray(lista)) {
+      // Resposta que não é array (erro de API/rate-limit) é diferente de "sem mais
+      // comentários": tratar como vazio faria uma issue saturada nunca rotacionar.
+      console.error(`::warning::issue-rotativa: resposta inesperada ao contar comentários da issue #${issueNumber} (página ${page})`);
+      break;
+    }
+    if (lista.length === 0) break;
     total += lista.length;
     if (lista.length < 100) break;
     page += 1;
@@ -35,10 +41,26 @@ export async function contarComentarios(gh, owner, repo, issueNumber) {
 
 /**
  * Encontra a primeira issue aberta com o título e label dados.
+ * Pagina até esgotar as issues abertas do label — sem paginar, uma issue fora
+ * das 10 mais recentes do label nunca seria encontrada e cada rodada abriria
+ * uma issue nova e duplicada em vez de reconhecer a existente.
  */
 export async function encontrarIssue(gh, owner, repo, label, title) {
-  const lista = await gh('GET', `/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open&per_page=10`);
-  return Array.isArray(lista) ? (lista.find((i) => i.title === title) ?? null) : null;
+  let page = 1;
+  for (;;) {
+    const lista = await gh(
+      'GET',
+      `/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open&per_page=100&page=${page}`,
+    );
+    if (!Array.isArray(lista)) {
+      console.error(`::warning::issue-rotativa: resposta inesperada ao listar issues do label '${label}' (página ${page})`);
+      return null;
+    }
+    const achada = lista.find((i) => i.title === title);
+    if (achada) return achada;
+    if (lista.length < 100) return null;
+    page += 1;
+  }
 }
 
 /**

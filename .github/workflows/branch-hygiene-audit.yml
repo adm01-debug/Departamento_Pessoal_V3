@@ -150,14 +150,19 @@ jobs:
             echo '```'
             # --limit explicito: o default do gh e 30, e o relatorio truncaria
             # silenciosamente se a fila de PRs abertas passar disso.
+            # .title remove crase antes de entrar na linha: o titulo e' texto de quem
+            # abriu o PR (inclusive fork) e esta dentro de um bloco ``` do Job
+            # Summary/issue publica — sem isso, um titulo com crase poderia tentar
+            # fechar a cerca de codigo mais cedo.
             gh pr list --repo "$REPO" --state open --limit 100 --json number,title,updatedAt,url \
-              --jq '.[] | select((now - (.updatedAt | fromdateiso8601)) > (7*86400)) | "#\(.number) \(.title) — ultimo movimento \(.updatedAt | split("T")[0]) — \(.url)"'
+              --jq '.[] | select((now - (.updatedAt | fromdateiso8601)) > (7*86400)) | "#\(.number) \(.title | gsub("`";"")) — ultimo movimento \(.updatedAt | split("T")[0]) — \(.url)"'
             echo '```'
           } > "$RELATORIO"
 
           cat "$RELATORIO" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Comandos de poda para revisao (W98, sem executar)
+        id: poda
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -195,9 +200,13 @@ jobs:
             | tee -a "$RELATORIO" "$GITHUB_STEP_SUMMARY"
 
       - name: Publicar na issue semanal [branch-hygiene]
-        # Publica tambem o SLA vencido, sem esconder o exit 1 do passo W83.
-        # Se a coleta de branches falhou/cancelou, nao publica relatorio incompleto.
-        if: ${{ !cancelled() && steps.relatorio.outcome == 'success' }}
+        # Publica tambem o SLA vencido, sem esconder o exit 1 do passo W83 (esse
+        # exit 1 e' por design, nao checado aqui). Mas uma falha REAL no passo de
+        # poda (bug no script, nao SLA) e' diferente: sem checar steps.poda, o
+        # relatorio ia pra issue publica faltando a secao de poda, sem nenhuma
+        # marca de incompleto. steps.relatorio continua sendo o gate de "a coleta
+        # de branches falhou/cancelou, nao publica relatorio incompleto".
+        if: ${{ !cancelled() && steps.relatorio.outcome == 'success' && steps.poda.outcome == 'success' }}
         # E91: alem do Job Summary (efemero), mantem UMA issue aberta com a tabela,
         # para o historico ficar consultavel. Mesmo mecanismo do [kpi-actions] em
         # actions-kpi.mjs: procura a aberta por titulo e atualiza; se nao houver,
