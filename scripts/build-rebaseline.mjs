@@ -18,9 +18,15 @@ const remediationPaths = [
 ].map((path) => resolve(root, path));
 const storagePath = resolve(root, 'supabase/rebaseline/20260831_storage_remediation.sql');
 
-const publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
-const remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
-const storage = await readFile(storagePath, 'utf8');
+let publicDump, remediations, storage;
+try {
+  publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
+  remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
+  storage = await readFile(storagePath, 'utf8');
+} catch (err) {
+  process.stderr.write(`❌ build-rebaseline: arquivo de entrada ausente — ${err.message}\n`);
+  process.exit(1);
+}
 
 const sanitizedDump = publicDump
   .split('\n')

@@ -54,7 +54,8 @@ const edgeFnDirs = readdirSync(FN_DIR, { withFileTypes: true })
 if (edgeFnDirs.length === 0) {
   fail('supabase/functions/ não contém nenhuma função com index.ts — build incompleto?');
 }
-const corsWild = /Access-Control-Allow-Origin["']?\s*[:=]\s*["']\*["']/;
+// Cobre: 'header': '*', headers.set('header', '*'), headers['header'] = '*'
+const corsWild = /Access-Control-Allow-Origin["']?\s*[:=]\s*["']\*["']|Access-Control-Allow-Origin["']\s*,\s*["']\*["']|Access-Control-Allow-Origin["']\]\s*=\s*["']\*["']/;
 for (const dir of edgeFnDirs) {
   const src = readFileSync(join(FN_DIR, dir.name, 'index.ts'), 'utf8');
   if (corsWild.test(src)) fail(`CORS '*' em supabase/functions/${dir.name}/index.ts`);
