@@ -80,7 +80,7 @@ const HARD_ADMIN = [
 ];
 
 /** Exige autenticação de fato. */
-const TEM_AUTH = [/auth\.getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\(/];
+const TEM_AUTH = [/auth\s*\.\s*getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\(/];
 
 /**
  * Remove comentários antes de casar os padrões.
