@@ -71,8 +71,10 @@ for (const rule of Object.keys(budget)) {
 }
 
 const totalCurrent = Object.values(current).reduce((a, b) => a + b, 0);
-const totalBudget = typeof budget._total === 'number' ? budget._total : Infinity;
-if (totalCurrent > totalBudget) {
+const totalBudget = typeof budget._total === 'number' ? budget._total : null;
+if (totalBudget === null) {
+  console.warn('  WARN: _total ausente no budget — rode --write para definir o limite total de warnings.');
+} else if (totalCurrent > totalBudget) {
   console.error(`  FAIL: total: ${totalCurrent} > ${totalBudget}`);
   failures++;
 } else {
