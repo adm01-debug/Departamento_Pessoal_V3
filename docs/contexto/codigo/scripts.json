@@ -43,7 +43,7 @@
   {
    "arquivo": "scripts/audit-bridge-frontend-contract.mjs",
    "descricao": "* Fail-closed contract gate between production frontend calls and the generic",
-   "linhas": 203,
+   "linhas": 221,
    "env": [],
    "npm_scripts": [
     "audit:bridge-contract"
@@ -89,7 +89,7 @@
   {
    "arquivo": "scripts/audit-edge-audit-log-contract.mjs",
    "descricao": "* Validates the physical contract of Edge Function inserts into the legacy",
-   "linhas": 205,
+   "linhas": 221,
    "env": [],
    "npm_scripts": [
     "audit:edge-audit-log"
@@ -109,7 +109,7 @@
   {
    "arquivo": "scripts/audit-edge-syntax.mjs",
    "descricao": "* Gate de CI — sintaxe das Edge Functions (Deno).",
-   "linhas": 71,
+   "linhas": 79,
    "env": [],
    "npm_scripts": [
     "audit:edge-syntax"
@@ -179,7 +179,7 @@
   {
    "arquivo": "scripts/audit-rls-pii.mjs",
    "descricao": "* Gate de regressão de RLS: políticas sobre tabelas com PII precisam",
-   "linhas": 287,
+   "linhas": 303,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -196,7 +196,7 @@
   {
    "arquivo": "scripts/audit-rls-tenant-open.mjs",
    "descricao": "* Gate de regressão: política PERMISSIVA irrestrita sobre tabela multi-tenant.",
-   "linhas": 275,
+   "linhas": 285,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -243,7 +243,7 @@
   {
    "arquivo": "scripts/audit-security-config.mjs",
    "descricao": "* E-077 · Gate estático de configuração de segurança (sem acesso a banco).",
-   "linhas": 164,
+   "linhas": 165,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -274,7 +274,7 @@
   {
    "arquivo": "scripts/build-rebaseline.mjs",
    "descricao": "Estas correções não pertencem ao histórico de migrations ativo: elas são aplicadas SOBRE o snapshot físico antes de ele virar a baseline única.",
-   "linhas": 124,
+   "linhas": 140,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -317,8 +317,8 @@
   },
   {
    "arquivo": "scripts/check-dependencies.js",
-   "descricao": null,
-   "linhas": 43,
+   "descricao": "* Verificação de integridade de dependências.",
+   "linhas": 133,
    "env": [],
    "npm_scripts": [
     "build"
@@ -638,7 +638,7 @@
   {
    "arquivo": "scripts/ratchet-any-tests.mjs",
    "descricao": "* Ratchet de `any` em ARQUIVOS DE TESTE (E51-029) — irmão de ratchet-any.mjs,",
-   "linhas": 98,
+   "linhas": 105,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-any-tests"
@@ -649,7 +649,7 @@
   {
    "arquivo": "scripts/ratchet-any.mjs",
    "descricao": "* `any` explícito é dívida medida, não proibida — mas só pode diminuir.",
-   "linhas": 94,
+   "linhas": 102,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-any"
@@ -660,7 +660,7 @@
   {
    "arquivo": "scripts/ratchet-lint-warnings.mjs",
    "descricao": "* E43 — Orçamento de warnings ESLint por regra.",
-   "linhas": 93,
+   "linhas": 104,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-warnings"
@@ -962,7 +962,7 @@
   {
    "arquivo": "scripts/validate-plan-50.mjs",
    "descricao": "* Impede que a edição dos planos executivos perca etapas, subetapas, checkpoints",
-   "linhas": 99,
+   "linhas": 120,
    "env": [],
    "npm_scripts": [
     "audit:plan50"

@@ -2,11 +2,36 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4fcdb158fa777e817e8f7b5a0b11904ed026c1a9",
+  "commit": "e9086da18e3894083e208e114bc927828785edd2",
   "branch": "main",
-  "data_commit": "2026-11-08T01:25:27-03:00",
+  "data_commit": "2026-11-08T01:45:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e9086da",
+    "data": "2026-11-08",
+    "assunto": "feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config"
+   },
+   {
+    "sha": "bb559b4",
+    "data": "2026-11-08",
+    "assunto": "feat: guards false-green em audit-edge-audit-log-contract"
+   },
+   {
+    "sha": "faaf11c",
+    "data": "2026-11-08",
+    "assunto": "feat: guards de false-green em audit-bridge-frontend-contract"
+   },
+   {
+    "sha": "e7d1f19",
+    "data": "2026-11-08",
+    "assunto": "feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard"
+   },
+   {
+    "sha": "3358bc1",
+    "data": "2026-11-08",
+    "assunto": "feat: guards contra falso verde nos ratchets e build-rebaseline"
+   },
    {
     "sha": "4fcdb15",
     "data": "2026-11-08",
@@ -106,34 +131,9 @@
     "sha": "68a06b1",
     "data": "2026-11-05",
     "assunto": "chore: atualizar SHAs de actions + action-pins.json (Dependabot PR #349) (#353)"
-   },
-   {
-    "sha": "75eaf9a",
-    "data": "2026-11-05",
-    "assunto": "infra: exige branch atualizada antes do merge no ruleset da main (#337)"
-   },
-   {
-    "sha": "0d79b5c",
-    "data": "2026-11-05",
-    "assunto": "build(deps): bump minor-patch group (10 pacotes npm) (#348)"
-   },
-   {
-    "sha": "e4dc94f",
-    "data": "2026-11-05",
-    "assunto": "build(deps): bump react-ecosystem group (react-hook-form + react-router-dom) (#347)"
-   },
-   {
-    "sha": "77a6b83",
-    "data": "2026-11-05",
-    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (#344)"
-   },
-   {
-    "sha": "50c052c",
-    "data": "2026-11-05",
-    "assunto": "build(deps): bump @hookform/resolvers 5.9.1 → 6.0.2 (#341)"
    }
   ],
-  "arquivos_mudados_7d": 116,
+  "arquivos_mudados_7d": 126,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 31
+    "mudancas": 28
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 55
+    "commits": 60
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2803,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 261109,
+  "linhas_codigo": 261331,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -408,7 +408,7 @@
   },
   "scripts/audit-bridge-frontend-contract.mjs": {
    "arquivos": 1,
-   "linhas": 203
+   "linhas": 221
   },
   "scripts/audit-canonical-project.mjs": {
    "arquivos": 1,
@@ -420,7 +420,7 @@
   },
   "scripts/audit-edge-audit-log-contract.mjs": {
    "arquivos": 1,
-   "linhas": 205
+   "linhas": 221
   },
   "scripts/audit-edge-authz.mjs": {
    "arquivos": 1,
@@ -428,7 +428,7 @@
   },
   "scripts/audit-edge-syntax.mjs": {
    "arquivos": 1,
-   "linhas": 71
+   "linhas": 79
   },
   "scripts/audit-embed-hints.mjs": {
    "arquivos": 1,
@@ -448,11 +448,11 @@
   },
   "scripts/audit-rls-pii.mjs": {
    "arquivos": 1,
-   "linhas": 287
+   "linhas": 303
   },
   "scripts/audit-rls-tenant-open.mjs": {
    "arquivos": 1,
-   "linhas": 275
+   "linhas": 285
   },
   "scripts/audit-schema-drift.mjs": {
    "arquivos": 1,
@@ -464,7 +464,7 @@
   },
   "scripts/audit-security-config.mjs": {
    "arquivos": 1,
-   "linhas": 164
+   "linhas": 165
   },
   "scripts/audit-types-drift.mjs": {
    "arquivos": 1,
@@ -472,7 +472,7 @@
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
-   "linhas": 124
+   "linhas": 140
   },
   "scripts/check-bundle-budget.mjs": {
    "arquivos": 1,
@@ -480,7 +480,7 @@
   },
   "scripts/check-dependencies.js": {
    "arquivos": 1,
-   "linhas": 43
+   "linhas": 133
   },
   "scripts/ci": {
    "arquivos": 1,
@@ -548,15 +548,15 @@
   },
   "scripts/ratchet-any-tests.mjs": {
    "arquivos": 1,
-   "linhas": 98
+   "linhas": 105
   },
   "scripts/ratchet-any.mjs": {
    "arquivos": 1,
-   "linhas": 94
+   "linhas": 102
   },
   "scripts/ratchet-lint-warnings.mjs": {
    "arquivos": 1,
-   "linhas": 93
+   "linhas": 104
   },
   "scripts/regras_negocio": {
    "arquivos": 3,
@@ -592,7 +592,7 @@
   },
   "scripts/validate-plan-50.mjs": {
    "arquivos": 1,
-   "linhas": 99
+   "linhas": 120
   },
   "src/App.tsx": {
    "arquivos": 1,
@@ -815,7 +815,7 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 247,
+  "console_log": 250,
   "ts_ignore": 0,
   "eslint_disable": 1,
   "todos": 12,

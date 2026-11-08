@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4fcdb158fa777e817e8f7b5a0b11904ed026c1a9",
+  "sha": "e9086da18e3894083e208e114bc927828785edd2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-08 04:49 UTC",
+  "generated_at": "2026-11-08 05:16 UTC",
   "files_total": 2824,
   "code_files": 2323,
-  "code_lines": 309000
+  "code_lines": 309222
  },
  "version": "1.3.2",
- "facts_hash": "98aaa9f9b3e9bcd7",
+ "facts_hash": "d338bba88ab757be",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 17995,
+   "lines": 18217,
    "tables": [
     "a",
     "audit_log",
@@ -94967,14 +94967,14 @@
     "node:child_process",
     "node:crypto",
     "node:fs",
-    "node:module",
     "node:os",
     "node:path",
     "node:test",
     "node:url",
     "node:vm",
     "path",
-    "react"
+    "react",
+    "react-router-dom"
    ],
    "imports_modules": [
     "src/b",
@@ -105502,6 +105502,18 @@
    },
    {
     "file": "scripts/build-rebaseline.mjs",
+    "msg": "A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído."
+   },
+   {
+    "file": "scripts/build-rebaseline.mjs",
+    "msg": "A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido."
+   },
+   {
+    "file": "scripts/build-rebaseline.mjs",
+    "msg": "A migração gerada tem apenas ${result.length} bytes — esperado > 50 kB para um dump completo."
+   },
+   {
+    "file": "scripts/build-rebaseline.mjs",
     "msg": "A migração não pode conter metacomandos exclusivos do psql."
    },
    {
@@ -105511,10 +105523,6 @@
    {
     "file": "scripts/build-rebaseline.mjs",
     "msg": "A migração squash não pode conter dados de Auth ou negócio."
-   },
-   {
-    "file": "scripts/check-dependencies.js",
-    "msg": "package.json não encontrado!"
    },
    {
     "file": "scripts/provision-e2e-users.mjs",
@@ -225779,7 +225787,7 @@
   },
   "scripts/audit-bridge-frontend-contract.mjs": {
    "path": "scripts/audit-bridge-frontend-contract.mjs",
-   "lines": 203,
+   "lines": 221,
    "dyn_from": 1,
    "rpc": [
     "name"
@@ -225823,7 +225831,7 @@
   },
   "scripts/audit-edge-audit-log-contract.mjs": {
    "path": "scripts/audit-edge-audit-log-contract.mjs",
-   "lines": 205,
+   "lines": 221,
    "doc": "!/usr/bin/env node"
   },
   "scripts/audit-edge-authz.mjs": {
@@ -225843,7 +225851,7 @@
   },
   "scripts/audit-edge-syntax.mjs": {
    "path": "scripts/audit-edge-syntax.mjs",
-   "lines": 71,
+   "lines": 79,
    "errors": [
     "TypeScript não carregou ${file}"
    ],
@@ -225927,7 +225935,7 @@
   },
   "scripts/audit-rls-pii.mjs": {
    "path": "scripts/audit-rls-pii.mjs",
-   "lines": 287,
+   "lines": 303,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -225949,7 +225957,7 @@
   },
   "scripts/audit-rls-tenant-open.mjs": {
    "path": "scripts/audit-rls-tenant-open.mjs",
-   "lines": 275,
+   "lines": 285,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -225958,7 +225966,8 @@
    "rule_comments": [
     "— um gate que não pôde rodar não deve reprovar o build, mas também não deve",
     "apenas por `service_role`, portanto não forjável pelo titular do token).",
-    "Este gate mede APENAS ausência de correlação. A discussão sobre a robustez"
+    "Este gate mede APENAS ausência de correlação. A discussão sobre a robustez",
+    "ao menos uma política. 0 linhas indica schema vazio ou permissão ausente."
    ],
    "doc": "!/usr/bin/env node",
    "uses_service_role": true
@@ -226006,7 +226015,7 @@
   },
   "scripts/audit-security-config.mjs": {
    "path": "scripts/audit-security-config.mjs",
-   "lines": 164,
+   "lines": 165,
    "rule_comments": [
     "cliente sem validação do gateway.",
     "um comentário citando \"PII_PATH\" não deve satisfazer o gate."
@@ -226023,14 +226032,19 @@
   },
   "scripts/build-rebaseline.mjs": {
    "path": "scripts/build-rebaseline.mjs",
-   "lines": 124,
+   "lines": 140,
    "errors": [
+    "A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído.",
+    "A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido.",
+    "A migração gerada tem apenas ${result.length} bytes — esperado > 50 kB para um dump completo.",
     "A migração não pode conter metacomandos exclusivos do psql.",
     "A migração não pode recriar o schema public gerenciado.",
     "A migração squash não pode conter dados de Auth ou negócio."
    ],
    "rule_comments": [
-    "A role postgres usada pelo runner oficial não pode alterar os defaults da"
+    "A role postgres usada pelo runner oficial não pode alterar os defaults da",
+    "A baseline deve ao menos referenciar as roles de acesso controlado do projeto.",
+    "Tamanho mínimo: um dump real do schema público tem dezenas de kB."
    ],
    "doc": "!/usr/bin/env node",
    "cron": [
@@ -226061,10 +226075,15 @@
   },
   "scripts/check-dependencies.js": {
    "path": "scripts/check-dependencies.js",
-   "lines": 43,
-   "errors": [
-    "package.json não encontrado!"
-   ]
+   "lines": 133,
+   "rule_comments": [
+    "- Verifica TODAS as dependências de produção (não apenas as críticas).",
+    "- Aplica a regra do projeto \"typescript < 6.1\" — bump para ≥ 6.1 é",
+    "- Auto-validação: assertions sobre o próprio motor de verificação;",
+    "---- Auto-validação do motor ----",
+    "Regra de boundary: 6.0.x não viola; 6.1.0 viola"
+   ],
+   "doc": "Verificação de integridade de dependências. Muito além dos 4 deps originais: - Verifica TODAS as dependências de produção (não apenas as críticas). - Aplica a regra do projeto \"typescript < 6.1\" — bump para ≥ 6.1 é proibido por AGENTS.md e quebra a checagem de tipos. - Detecta lockfiles de executore …"
   },
   "scripts/eslint-tests-any.config.mjs": {
    "path": "scripts/eslint-tests-any.config.mjs",
@@ -226189,7 +226208,7 @@
   },
   "scripts/ratchet-any-tests.mjs": {
    "path": "scripts/ratchet-any-tests.mjs",
-   "lines": 98,
+   "lines": 105,
    "params": [
     {
      "name": "RULE",
@@ -226200,7 +226219,7 @@
   },
   "scripts/ratchet-any.mjs": {
    "path": "scripts/ratchet-any.mjs",
-   "lines": 94,
+   "lines": 102,
    "params": [
     {
      "name": "RULE",
@@ -226211,7 +226230,7 @@
   },
   "scripts/ratchet-lint-warnings.mjs": {
    "path": "scripts/ratchet-lint-warnings.mjs",
-   "lines": 93,
+   "lines": 104,
    "rule_comments": [
     "* E43 — Orçamento de warnings ESLint por regra.",
     "* Nenhuma regra pode subir; qualquer uma pode descer.",
@@ -226327,7 +226346,7 @@
   },
   "scripts/validate-plan-50.mjs": {
    "path": "scripts/validate-plan-50.mjs",
-   "lines": 99,
+   "lines": 120,
    "doc": "!/usr/bin/env node"
   },
   "scripts/ai-context/cenarios.mjs": {
@@ -274478,10 +274497,62 @@
   }
  },
  "git": {
-  "sha": "4fcdb158fa777e817e8f7b5a0b11904ed026c1a9",
+  "sha": "e9086da18e3894083e208e114bc927828785edd2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e9086da",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config",
+    "files": [
+     "scripts/audit-rls-pii.mjs",
+     "scripts/audit-rls-tenant-open.mjs",
+     "scripts/audit-security-config.mjs"
+    ]
+   },
+   {
+    "sha": "bb559b4",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: guards false-green em audit-edge-audit-log-contract",
+    "files": [
+     "scripts/audit-edge-audit-log-contract.mjs"
+    ]
+   },
+   {
+    "sha": "faaf11c",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: guards de false-green em audit-bridge-frontend-contract",
+    "files": [
+     "scripts/audit-bridge-frontend-contract.mjs"
+    ]
+   },
+   {
+    "sha": "e7d1f19",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard",
+    "files": [
+     "scripts/audit-edge-syntax.mjs",
+     "scripts/check-dependencies.js",
+     "scripts/validate-plan-50.mjs"
+    ]
+   },
+   {
+    "sha": "3358bc1",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: guards contra falso verde nos ratchets e build-rebaseline",
+    "files": [
+     "scripts/build-rebaseline.mjs",
+     "scripts/ratchet-any-tests.mjs",
+     "scripts/ratchet-any.mjs",
+     "scripts/ratchet-lint-warnings.mjs"
+    ]
+   },
    {
     "sha": "4fcdb15",
     "date": "2026-11-08",
@@ -274769,117 +274840,23 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "70b26d7",
-    "date": "2026-11-05",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump @sentry/vite-plugin 5.4.1 → 11.9.0 (#340)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "d43244e",
-    "date": "2026-11-04",
-    "author": "adm01-debug",
-    "subject": "feat: adicionar scripts/ci (check-claude-md-integrity) (#350)",
-    "files": [
-     "scripts/ci/README.md",
-     "scripts/ci/check-claude-md-integrity.mjs"
-    ]
-   },
-   {
-    "sha": "9f008b6",
-    "date": "2026-11-04",
-    "author": "adm01-debug",
-    "subject": "feat: adicionar scripts/graphify/setup.sh (#351)",
-    "files": [
-     "scripts/graphify/README.md",
-     "scripts/graphify/setup.sh"
-    ]
-   },
-   {
-    "sha": "a82cc07",
-    "date": "2026-11-04",
-    "author": "github-actions[bot]",
-    "subject": "chore: inventario do estado real [auto] (#346)",
-    "files": [
-     "inventario/estado/banco.json",
-     "inventario/estado/edges.json"
-    ]
-   },
-   {
-    "sha": "173dc0c",
-    "date": "2026-11-04",
-    "author": "adm01-debug",
-    "subject": "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)",
-    "files": [
-     ".claude/hooks/session-start.sh",
-     ".claude/settings.json",
-     ".github/workflows/ci.yml",
-     ".github/workflows/contexto.yml",
-     ".github/workflows/inventario-estado-semanal.yml",
-     ".gitignore",
-     "AGENTS.md",
-     "CLAUDE.md",
-     "ai-context.config.json",
-     "docs/contexto/regras/manual/README.md",
-     "docs/contexto/regras/manual/TEMPLATE-regras-de-negocio.md",
-     "infra/github/action-pins.json",
-     "inventario/estado/README.md",
-     "inventario/estado/edges.json",
-     "inventario/estado/rotas.json",
-     "package.json",
-     "scripts/ai-context/README.md",
-     "scripts/ai-context/cenarios.mjs",
-     "scripts/ai-context/gerar.mjs",
-     "scripts/ai-context/gerar.unit.mjs",
-     "scripts/inventario/banco.sql",
-     "scripts/inventario/gerar-banco.mjs",
-     "scripts/inventario/gerar-repo.mjs",
-     "scripts/inventario/gerar-rotas.mjs",
-     "scripts/inventario/mudou-conteudo.mjs",
-     "scripts/regras_negocio/README.md",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/indice.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/supabase_snapshot/README.md",
-     "scripts/supabase_snapshot/requirements.txt",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py",
-     "scripts/tests/contexto-ai-context.test.mjs",
-     "scripts/tests/contexto-indice.test.mjs",
-     "scripts/tests/contexto-publicacao.test.mjs",
-     "scripts/tests/contexto-regras-negocio.test.mjs",
-     "scripts/tests/contexto-supabase-snapshot.test.mjs",
-     "scripts/tests/inventario-banco.test.mjs",
-     "scripts/tests/inventario-mudou.test.mjs",
-     "scripts/tests/inventario-rotas.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "package-lock.json",
-    5
+    4
    ],
    [
     "package.json",
-    5
-   ],
-   [
-    "inventario/estado/edges.json",
     3
    ],
    [
-    "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/audit-edge-syntax.mjs",
     2
    ],
    [
-    "scripts/tests/contexto-publicacao.test.mjs",
+    "scripts/build-rebaseline.mjs",
     2
    ],
    [
@@ -274903,43 +274880,47 @@
     2
    ],
    [
-    "AGENTS.md",
-    2
-   ],
-   [
-    "CLAUDE.md",
-    2
-   ],
-   [
     "public/sw-custom.js",
     2
    ],
    [
-    ".github/workflows/contexto.yml",
-    2
-   ],
-   [
-    "infra/github/action-pins.json",
-    2
-   ],
-   [
-    "scripts/audit-migration-style.mjs",
+    "scripts/audit-rls-pii.mjs",
     1
    ],
    [
-    "scripts/audit-canonical-project.mjs",
+    "scripts/audit-rls-tenant-open.mjs",
     1
    ],
    [
-    "scripts/simulacao/simulate_irrf.cjs",
+    "scripts/audit-security-config.mjs",
     1
    ],
    [
-    "scripts/simulacao/simulate_rescisao.cjs",
+    "scripts/audit-edge-audit-log-contract.mjs",
     1
    ],
    [
-    "scripts/simulacao/verify_bridge_write_guard.cjs",
+    "scripts/audit-bridge-frontend-contract.mjs",
+    1
+   ],
+   [
+    "scripts/check-dependencies.js",
+    1
+   ],
+   [
+    "scripts/validate-plan-50.mjs",
+    1
+   ],
+   [
+    "scripts/ratchet-any-tests.mjs",
+    1
+   ],
+   [
+    "scripts/ratchet-any.mjs",
+    1
+   ],
+   [
+    "scripts/ratchet-lint-warnings.mjs",
     1
    ]
   ]

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)",
-   "feat: guards de job ausente em audit-canonical-project (#383)",
-   "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)",
-   "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401",
-   "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard"
+   "feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config",
+   "feat: guards false-green em audit-edge-audit-log-contract",
+   "feat: guards de false-green em audit-bridge-frontend-contract",
+   "feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard",
+   "feat: guards contra falso verde nos ratchets e build-rebaseline"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

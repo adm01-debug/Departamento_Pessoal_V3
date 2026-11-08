@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4fcdb158fa` · branch `main` · 2026-11-08 04:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e9086da18e` · branch `main` · 2026-11-08 05:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4236,10 +4236,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Payload too large | `public/sw-custom.js` |
 | Não foi possível localizar ${name} | `scripts/audit-bridge-frontend-contract.mjs` |
 | TypeScript não carregou ${file} | `scripts/audit-edge-syntax.mjs` |
+| A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído. | `scripts/build-rebaseline.mjs` |
+| A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido. | `scripts/build-rebaseline.mjs` |
+| A migração gerada tem apenas ${result.length} bytes — esperado > 50 kB para um dump completo. | `scripts/build-rebaseline.mjs` |
 | A migração não pode conter metacomandos exclusivos do psql. | `scripts/build-rebaseline.mjs` |
 | A migração não pode recriar o schema public gerenciado. | `scripts/build-rebaseline.mjs` |
 | A migração squash não pode conter dados de Auth ou negócio. | `scripts/build-rebaseline.mjs` |
-| package.json não encontrado! | `scripts/check-dependencies.js` |
 | ${email} já existe no projeto — usar conta dedicada de teste ou E2E_ALLOW_EXISTING_ACCOUNT=1 para sobrescrever senha/roles | `scripts/provision-e2e-users.mjs` |
 | GitHub API ${res.status}: ${url} | `scripts/report-workflows.mjs` |
 | GitHub API inacessível (rede): ${err.message} | `scripts/report-workflows.mjs` |
@@ -4524,9 +4526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Nenhuma folha encontrada para encerramento | `src/pages/FolhaPagamentoPage.tsx` |
 | Selecione uma empresa antes de calcular a folha. | `src/pages/FolhaPagamentoPage.tsx` |
 | Selecione um colaborador | `src/pages/GeradorDocumentosPage.tsx` |
-| Erro ao gerar PDF do holerite. | `src/pages/HoleritesPage.tsx` |
-| Falha ao processar o arquivo. Verifique o formato e tente novamente. | `src/pages/ImportacaoPage.tsx` |
-| … +436 linhas — lista completa em `context.json` | |
+| … +438 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

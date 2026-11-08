@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4fcdb158fa777e817e8f7b5a0b11904ed026c1a9` (2026-11-08T01:25:27-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e9086da18e3894083e208e114bc927828785edd2` (2026-11-08T01:45:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2803 |
 | arquivos_codigo | 1508 |
-| linhas_codigo | 261109 |
+| linhas_codigo | 261331 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21349 nós · 44603 arestas · 2078 comunidades · grafo do commit `4fcdb158`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (400), button.tsx (345), useEmpresas (337), vitest (311), lucide-react (308), client.ts (237), App.tsx (218), contract.ts (182), "public"."empresas" (164), hooks/index.ts (160)
+- 21359 nós · 44614 arestas · 2084 comunidades · grafo do commit `e9086da1`
+- comunidades maiores: react (507), 20260831_corrected_public.sql (493), canonical_schema.sql (476), client.ts (390), lucide-react (360), button.tsx (333), useEmpresas (319), cn (184), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -394,7 +394,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package.json (84)
 - package-lock.json (78)
 - .github/workflows/canonical-migrations.yml (48)
-- CLAUDE.md (31)
+- CLAUDE.md (28)
 - .github/workflows/ci.yml (24)
 - src/integrations/supabase/types.ts (16)
 - .github/workflows/e2e.yml (15)
@@ -598,6 +598,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-08 `e9086da` feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config
+- 2026-11-08 `bb559b4` feat: guards false-green em audit-edge-audit-log-contract
+- 2026-11-08 `faaf11c` feat: guards de false-green em audit-bridge-frontend-contract
+- 2026-11-08 `e7d1f19` feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard
+- 2026-11-08 `3358bc1` feat: guards contra falso verde nos ratchets e build-rebaseline
 - 2026-11-08 `4fcdb15` fix: audit-migration-style — counter correto + guard de diretório ausente (#384)
 - 2026-11-08 `70f6262` feat: guards de job ausente em audit-canonical-project (#383)
 - 2026-11-08 `752ceac` feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)
@@ -608,11 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-07 `dddcff4` fix: estabiliza validações locais dos scripts (#367)
 - 2026-11-07 `618e38b` fix: permite testar chrome-extension no harness (#369)
 - 2026-11-07 `f231df4` fix: reverte maybeSingle do bridge (edge nao deployada) (#368)
-- 2026-11-07 `a8a8516` chore: instruções enxutas para agentes (#364)
-- 2026-11-07 `a29e6c0` fix: preserva semantica maybeSingle no proxy e no bridge (#366)
-- 2026-11-06 `25465ae` fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)
-- 2026-11-06 `2e9968a` fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)
-- 2026-11-06 `dc7d1eb` fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
