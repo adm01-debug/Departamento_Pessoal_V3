@@ -24,6 +24,14 @@ const write = process.argv.includes('--write');
 const eslint = new ESLint({ cwd: root });
 const results = await eslint.lintFiles(['src/**/*.{ts,tsx}']);
 
+// Garantia estrutural: ESLint retornando 0 arquivos indica que src/ foi
+// esvaziado acidentalmente ou o glob mudou — sem este check o ratchet
+// reportaria "sem regressão" com baseline intacto (falso verde).
+if (results.length === 0) {
+  console.error('❌ [ratchet-any] ESLint não encontrou nenhum arquivo .ts/.tsx em src/ — isso não é normal.');
+  process.exit(1);
+}
+
 const RULE = '@typescript-eslint/no-explicit-any';
 /** @type {Record<string, number>} */
 const current = {};
