@@ -24,9 +24,19 @@ if (!TOKEN) {
 }
 
 async function fetchJson(url) {
-  const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${TOKEN}`, 'X-GitHub-Api-Version': '2022-11-28' },
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      headers: { Authorization: `Bearer ${TOKEN}`, 'X-GitHub-Api-Version': '2022-11-28' },
+    });
+  } catch (err) {
+    throw new Error(`GitHub API inacessível (rede): ${err.message}`);
+  }
+  if (res.status === 401 || res.status === 403) {
+    console.error(`[report-workflows] GitHub API ${res.status} — token sem escopo "actions:read" ou expirado.`);
+    console.error(`  Token atual: ${TOKEN.slice(0, 8)}... (primeiros 8 chars)`);
+    process.exit(0); // soft-skip: não reprovar build por token local desatualizado
+  }
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${url}`);
   return res.json();
 }

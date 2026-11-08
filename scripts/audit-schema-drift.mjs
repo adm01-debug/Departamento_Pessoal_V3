@@ -50,6 +50,12 @@ import { readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
+// --since=YYYYMMDD  — ignora migrations com versão < cutoff (históricas, pré-convenção).
+// Permite ligar o gate para migrations novas sem reprovar 40% do histórico.
+// Exemplo: --since=20260924 (data em que a convenção de ledger foi adotada).
+const sinceArg = process.argv.find(a => a.startsWith('--since='));
+const SINCE_VERSION = sinceArg ? sinceArg.split('=')[1] : null;
+
 const MIGRATIONS_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   '..',
@@ -99,7 +105,15 @@ function main() {
     return 1;
   }
 
-  const naoAplicadas = [...local].filter((v) => !ledger.has(v)).sort();
+  const localFiltrado = SINCE_VERSION
+    ? new Set([...local].filter(v => v >= SINCE_VERSION))
+    : local;
+  if (SINCE_VERSION) {
+    const ignoradas = local.size - localFiltrado.size;
+    console.log(`[schema-drift] Filtro --since=${SINCE_VERSION}: ignorando ${ignoradas} migration(ões) históricas.`);
+  }
+
+  const naoAplicadas = [...localFiltrado].filter((v) => !ledger.has(v)).sort();
   const orfasNoLedger = [...ledger].filter((v) => !local.has(v)).sort();
 
   if (orfasNoLedger.length > 0) {
@@ -122,7 +136,8 @@ function main() {
     return 1;
   }
 
-  console.log(`[schema-drift] OK — ${local.size} migration(ões) local(is), todas com registro no ledger.`);
+  const escopo = SINCE_VERSION ? `${localFiltrado.size} desde ${SINCE_VERSION}` : `${local.size}`;
+  console.log(`[schema-drift] OK — ${escopo} migration(ões), todas com registro no ledger.`);
   return 0;
 }
 
