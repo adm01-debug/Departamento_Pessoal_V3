@@ -210,6 +210,16 @@ function main() {
     .filter((l) => l.trim().length > 0)
     .map((l) => l.split('\t'));
 
+  // Guard de false-green: num sistema em produção, tabelas com empresa_id têm
+  // ao menos uma política. 0 linhas indica schema vazio ou permissão ausente.
+  if (linhas.length === 0) {
+    console.error(
+      '[rls-tenant-open] ERRO: consulta retornou 0 políticas em tabelas multi-tenant — ' +
+        'schema vazio ou sem permissão em pg_policies.',
+    );
+    return 1;
+  }
+
   const violacoes = [];
   let avaliadas = 0;
 
