@@ -14,17 +14,31 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const envRaw = fs.readFileSync('.env', 'utf8');
-const env = Object.fromEntries(
-  envRaw
-    .split('\n')
-    .map((l) => l.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\r\n]*)"?\s*$/))
-    .filter(Boolean)
-    .map((m) => [m[1], m[2]]),
-);
-const URL_ = env.VITE_SUPABASE_URL;
+function loadEnv() {
+  const envPath = path.resolve(import.meta.dirname, '../..', '.env');
+  if (!fs.existsSync(envPath)) return {};
+  const out = {};
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*"?([^"\r\n]*)"?\s*$/);
+    if (m) out[m[1]] = m[2];
+  }
+  return out;
+}
+
+const env = loadEnv();
+const URL_ = process.env.VITE_SUPABASE_URL || env.VITE_SUPABASE_URL;
 // Usa PUBLISHABLE_KEY (que casa com o projeto atual) preferencialmente
-const ANON = env.VITE_SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_ANON_KEY;
+const ANON =
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY ||
+  env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  env.VITE_SUPABASE_ANON_KEY;
+
+if (!URL_ || !ANON) {
+  console.error('[run-exhaustive] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY ausentes — simulação ignorada neste ambiente.');
+  process.exit(0);
+}
+
 const BRIDGE = `${URL_}/functions/v1/external-db-bridge`;
 const ORIGIN_OK = 'https://unified-harmony-hub.lovable.app';
 
