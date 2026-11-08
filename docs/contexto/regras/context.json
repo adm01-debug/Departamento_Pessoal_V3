@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1ebd08f3123bc48e21bc1ede1c68e8be5322cdb3",
+  "sha": "0e4f470a9a0cff26f683b4799dfbafb126a042ab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-07 23:11 UTC",
-  "files_total": 2806,
+  "generated_at": "2026-11-08 03:25 UTC",
+  "files_total": 2824,
   "code_files": 2323,
-  "code_lines": 308407
+  "code_lines": 308507
  },
  "version": "1.3.2",
- "facts_hash": "b8fc55fc6026a93a",
+ "facts_hash": "d99d762e9a8c38d6",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 91,
-   "lines": 17402,
+   "lines": 17502,
    "tables": [
     "a",
     "audit_log",
@@ -102280,6 +102280,8 @@
    "VITE_SUPABASE_ANON_KEY": [
     "e2e/public/api-auth-errors.spec.ts",
     "scripts/simulacao/run-all.mjs",
+    "scripts/simulacao/run-exhaustive-v3.mjs",
+    "scripts/simulacao/run-exhaustive.mjs",
     "scripts/simulacao/verify_bridge_contract.cjs"
    ],
    "VITE_SUPABASE_FUNCTIONS_BASE": [
@@ -102293,6 +102295,8 @@
     "e2e/public/api-auth-errors.spec.ts",
     "scripts/e2e/ensure-fixtures.mjs",
     "scripts/e2e/seed.mjs",
+    "scripts/simulacao/run-exhaustive-v3.mjs",
+    "scripts/simulacao/run-exhaustive.mjs",
     "src/contexts/AuthContext.tsx",
     "src/integrations/supabase/client.ts",
     "src/main.tsx",
@@ -102306,6 +102310,8 @@
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/audit-canonical-project.mjs",
     "scripts/simulacao/run-all.mjs",
+    "scripts/simulacao/run-exhaustive-v3.mjs",
+    "scripts/simulacao/run-exhaustive.mjs",
     "scripts/simulacao/verify_bridge_contract.cjs",
     "src/contexts/AuthContext.tsx",
     "src/integrations/supabase/client.ts",
@@ -226098,28 +226104,31 @@
   },
   "scripts/generate-component.js": {
    "path": "scripts/generate-component.js",
-   "lines": 16,
+   "lines": 37,
    "exports": [
     "function $"
-   ]
+   ],
+   "doc": "!/usr/bin/env node"
   },
   "scripts/generate-hook.js": {
    "path": "scripts/generate-hook.js",
-   "lines": 13,
+   "lines": 26,
    "exports": [
     "function $"
-   ]
+   ],
+   "doc": "!/usr/bin/env node"
   },
   "scripts/generate-page.js": {
    "path": "scripts/generate-page.js",
-   "lines": 15,
+   "lines": 28,
    "exports": [
     "function $"
-   ]
+   ],
+   "doc": "!/usr/bin/env node"
   },
   "scripts/generate-service.js": {
    "path": "scripts/generate-service.js",
-   "lines": 29,
+   "lines": 42,
    "exports": [
     "const $"
    ],
@@ -226132,7 +226141,8 @@
      "method": "POST",
      "path": "/${serviceName}"
     }
-   ]
+   ],
+   "doc": "!/usr/bin/env node"
   },
   "scripts/index.js": {
    "path": "scripts/index.js",
@@ -226734,11 +226744,15 @@
   },
   "scripts/ci/check-claude-md-integrity.mjs": {
    "path": "scripts/ci/check-claude-md-integrity.mjs",
-   "lines": 52,
+   "lines": 54,
    "env": [
     "CLAUDE_MD_BASE"
    ],
    "params": [
+    {
+     "name": "CHECKED_FILE",
+     "value": "'AGENTS.md'"
+    },
     {
      "name": "SHRINK_THRESHOLD",
      "value": "0.30"
@@ -226751,7 +226765,7 @@
   },
   "scripts/db/classify-migration-drift.mjs": {
    "path": "scripts/db/classify-migration-drift.mjs",
-   "lines": 211,
+   "lines": 217,
    "errors": [
     "Argumento inválido: ${key ?? "
    ],
@@ -227434,7 +227448,12 @@
   },
   "scripts/simulacao/run-exhaustive-v3.mjs": {
    "path": "scripts/simulacao/run-exhaustive-v3.mjs",
-   "lines": 226,
+   "lines": 244,
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
    "params": [
     {
      "name": "ORIGIN_OK",
@@ -227445,7 +227464,12 @@
   },
   "scripts/simulacao/run-exhaustive.mjs": {
    "path": "scripts/simulacao/run-exhaustive.mjs",
-   "lines": 194,
+   "lines": 208,
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
    "params": [
     {
      "name": "ORIGIN_OK",
@@ -274381,10 +274405,56 @@
   }
  },
  "git": {
-  "sha": "1ebd08f3123bc48e21bc1ede1c68e8be5322cdb3",
+  "sha": "0e4f470a9a0cff26f683b4799dfbafb126a042ab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "0e4f470",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard",
+    "files": [
+     ".gitleaksignore",
+     "inventario/estado/edges.json",
+     "inventario/ia/INDEX.md",
+     "inventario/ia/banco.json",
+     "inventario/ia/baseline.json",
+     "inventario/ia/componentes.json",
+     "inventario/ia/convencoes.json",
+     "inventario/ia/edge-functions.json",
+     "inventario/ia/ferramentas.json",
+     "inventario/ia/grafo-arestas.json",
+     "inventario/ia/grafo-graphify.json",
+     "inventario/ia/grafo.json",
+     "inventario/ia/hooks.json",
+     "inventario/ia/logica.json",
+     "inventario/ia/manifest.json",
+     "inventario/ia/modulos.json",
+     "inventario/ia/rotas.json",
+     "inventario/ia/scripts.json",
+     "inventario/ia/testes.json",
+     "scripts/ci/check-claude-md-integrity.mjs",
+     "scripts/db/classify-migration-drift.mjs",
+     "scripts/generate-component.js",
+     "scripts/generate-hook.js",
+     "scripts/generate-page.js",
+     "scripts/generate-service.js",
+     "scripts/simulacao/run-exhaustive-v3.mjs",
+     "scripts/simulacao/run-exhaustive.mjs"
+    ]
+   },
+   {
+    "sha": "c83e9a1",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock",
+    "files": [
+     "package-lock.json",
+     "scripts/format-check-changed.sh",
+     "scripts/typecheck-edge.sh"
+    ]
+   },
    {
     "sha": "1ebd08f",
     "date": "2026-11-07",
@@ -274713,86 +274783,32 @@
      ".github/workflows/gitleaks.yml",
      ".github/workflows/security.yml"
     ]
-   },
-   {
-    "sha": "ceb50b3",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "feat: security hardening — 37 arquivos (cherry-pick PR #315 sem workflows)",
-    "files": [
-     "AGENTS.md",
-     "CLAUDE.md",
-     "docs/E2E_TESTING.md",
-     "docs/auditoria/01_FALHAS_E_GAPS.md",
-     "docs/auditoria/04_AUDITORIA_MASTER_COMPLETA.md",
-     "docs/auditoria/estado/10-infra-ci-testes.md",
-     "docs/lgpd/RIPD.md",
-     "docs/lgpd/ROPA.md",
-     "docs/seguranca/MATRIZ_PAPEIS.md",
-     "e2e/auth-non-admin.setup.ts",
-     "e2e/auth.setup.ts",
-     "nginx.conf",
-     "src/components/afastamentos/AfastamentoDocumentManager.tsx",
-     "src/components/esocial/tabs.tsx",
-     "src/pages/LGPDPage.tsx",
-     "src/services/__tests__/esocialService.test.ts",
-     "src/services/esocialService.ts",
-     "src/test/securityHeadersParity.test.ts",
-     "src/utils/fileSignature.ts",
-     "supabase/functions/_shared/aal2.test.ts",
-     "supabase/functions/_shared/aal2.ts",
-     "supabase/functions/auth-login/index.ts",
-     "supabase/functions/backup/index.ts",
-     "supabase/functions/cnab-remessa/index.ts",
-     "supabase/functions/criptografia/index.ts",
-     "supabase/functions/enviar-esocial/index.ts",
-     "supabase/functions/exportacao/index.ts",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/external-db-bridge/tableCatalog.ts",
-     "supabase/functions/external-db-bridge/validation.ts",
-     "supabase/functions/fechar-folha/index.ts",
-     "supabase/functions/pix-lote/index.ts",
-     "supabase/functions/reabrir-folha/index.ts",
-     "supabase/functions/upload-certificado/certRow.test.ts",
-     "supabase/functions/upload-certificado/certRow.ts",
-     "supabase/functions/upload-certificado/index.ts"
-    ]
-   },
-   {
-    "sha": "fc04fb8",
-    "date": "2026-10-31",
-    "author": "adm01-debug",
-    "subject": "chore: finaliza analise-prs/ — fontes, funcionalidades, regras-de-negocio, baseline, prs.csv (#333)",
-    "files": [
-     "analise-prs/baseline/estado.md",
-     "analise-prs/fontes.json",
-     "analise-prs/funcionalidades.csv",
-     "analise-prs/progresso.json",
-     "analise-prs/prs.csv",
-     "analise-prs/regras-de-negocio.md"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "package-lock.json",
+    5
+   ],
    [
     "package.json",
     5
    ],
    [
+    "inventario/estado/edges.json",
+    3
+   ],
+   [
     "AGENTS.md",
-    4
+    3
    ],
    [
     "CLAUDE.md",
-    4
-   ],
-   [
-    "package-lock.json",
-    4
-   ],
-   [
-    "supabase/functions/external-db-bridge/index.ts",
     3
+   ],
+   [
+    "scripts/ci/check-claude-md-integrity.mjs",
+    2
    ],
    [
     "scripts/tests/contexto-publicacao.test.mjs",
@@ -274804,6 +274820,10 @@
    ],
    [
     "src/integrations/supabase/client.ts",
+    2
+   ],
+   [
+    "supabase/functions/external-db-bridge/index.ts",
     2
    ],
    [
@@ -274831,27 +274851,19 @@
     2
    ],
    [
-    "inventario/estado/edges.json",
-    2
-   ],
-   [
-    "e2e/auth.setup.ts",
-    2
-   ],
-   [
-    "supabase/functions/enviar-esocial/index.ts",
-    2
-   ],
-   [
-    "scripts/e2e/ensure-fixtures.mjs",
+    ".gitleaksignore",
     1
    ],
    [
-    "scripts/e2e/seed.mjs",
+    "inventario/ia/INDEX.md",
     1
    ],
    [
-    ".gitattributes",
+    "inventario/ia/banco.json",
+    1
+   ],
+   [
+    "inventario/ia/baseline.json",
     1
    ]
   ]

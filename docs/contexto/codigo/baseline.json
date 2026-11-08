@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1ebd08f3123bc48e21bc1ede1c68e8be5322cdb3",
+  "commit": "0e4f470a9a0cff26f683b4799dfbafb126a042ab",
   "branch": "main",
-  "data_commit": "2026-11-07T20:07:20-03:00",
+  "data_commit": "2026-11-08T00:10:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0e4f470",
+    "data": "2026-11-08",
+    "assunto": "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard"
+   },
+   {
+    "sha": "c83e9a1",
+    "data": "2026-11-08",
+    "assunto": "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock"
+   },
    {
     "sha": "1ebd08f",
     "data": "2026-11-07",
@@ -121,19 +131,9 @@
     "sha": "a82cc07",
     "data": "2026-11-04",
     "assunto": "chore: inventario do estado real [auto] (#346)"
-   },
-   {
-    "sha": "173dc0c",
-    "data": "2026-11-04",
-    "assunto": "feat: scripts autônomos de contexto e inventário para agentes de IA (porte do Zapp Web V2) (#345)"
-   },
-   {
-    "sha": "530a5cd",
-    "data": "2026-11-02",
-    "assunto": "chore: AGENTS.md com o texto-mestre adm01-debug (seções 1-7) (#342)"
    }
   ],
-  "arquivos_mudados_7d": 79,
+  "arquivos_mudados_7d": 106,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -157,7 +157,7 @@
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 18
+    "mudancas": 19
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 90
+    "mudancas": 88
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 83
+    "mudancas": 82
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 49
+    "commits": 51
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2786,
+  "arquivos_total": 2803,
   "arquivos_codigo": 1508,
-  "linhas_codigo": 260516,
+  "linhas_codigo": 260616,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "testes": 572,
   "workflows": 17,
   "scripts": 83,
-  "docs_md": 285
+  "docs_md": 286
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -484,11 +484,11 @@
   },
   "scripts/ci": {
    "arquivos": 1,
-   "linhas": 52
+   "linhas": 54
   },
   "scripts/db": {
    "arquivos": 2,
-   "linhas": 343
+   "linhas": 349
   },
   "scripts/diag": {
    "arquivos": 1,
@@ -512,19 +512,19 @@
   },
   "scripts/generate-component.js": {
    "arquivos": 1,
-   "linhas": 16
+   "linhas": 37
   },
   "scripts/generate-hook.js": {
    "arquivos": 1,
-   "linhas": 13
+   "linhas": 26
   },
   "scripts/generate-page.js": {
    "arquivos": 1,
-   "linhas": 15
+   "linhas": 28
   },
   "scripts/generate-service.js": {
    "arquivos": 1,
-   "linhas": 29
+   "linhas": 42
   },
   "scripts/index.js": {
    "arquivos": 1,
@@ -568,7 +568,7 @@
   },
   "scripts/simulacao": {
    "arquivos": 12,
-   "linhas": 1549
+   "linhas": 1581
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
@@ -1007,12 +1007,7 @@
    "ToastProvider",
    "Toaster"
   ],
-  "scripts_orfaos": [
-   "scripts/simulacao/simulate_adiant_13.cjs",
-   "scripts/simulacao/simulate_art145.cjs",
-   "scripts/simulacao/simulate_notif_d3.cjs",
-   "scripts/simulacao/verify_bridge_write_guard.cjs"
-  ],
+  "scripts_orfaos": [],
   "env_usadas_nao_declaradas": [
    "CI",
    "DEV",

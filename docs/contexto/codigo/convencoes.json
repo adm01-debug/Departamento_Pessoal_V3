@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard",
+   "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock",
    "fix: garante fixtures E2E do /ponto autenticado (#374)",
    "fix: estabiliza validações locais dos scripts (#367)",
-   "fix: permite testar chrome-extension no harness (#369)",
-   "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)",
-   "chore: instruções enxutas para agentes (#364)"
+   "fix: permite testar chrome-extension no harness (#369)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
