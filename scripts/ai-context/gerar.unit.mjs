@@ -102,6 +102,7 @@ end $$;`);
 }
 
 const root = fixture();
+process.on('exit', () => fs.rmSync(root, { recursive: true, force: true })); // sem isto cada execução deixava um ctx-ia-* no tmp
 const out = path.join(root, 'inventario/ia');
 execFileSync(process.execPath, [GERADOR, '--quiet'], { cwd: root });
 const J = (f) => JSON.parse(fs.readFileSync(path.join(out, f), 'utf8'));
