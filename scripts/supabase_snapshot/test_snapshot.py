@@ -736,6 +736,25 @@ class SnapshotCallerFreshnessTests(SnapshotFixture):
         self.assertIn("indisponível", states["code"])
         self.assertTrue(any(e["section"] == "callers.code" for e in self.snapshot.ERRORS))
 
+    def test_freshly_collected_functions_keep_published_references_of_unavailable_sources(self):
+        # Caso comum: functions lida agora (sem `callers` nas linhas) e outra fonte indisponível.
+        previous = self.previous_database()
+        expected = copy.deepcopy(previous["functions"][0]["callers"])
+        current = {"functions": self.database("old")["functions"], "cron": None, "triggers": None, "views": None}
+        self.snapshot.CARRIED.clear()
+        with mock.patch.object(self.snapshot, "scan_code_files", return_value=None), contextlib.redirect_stdout(io.StringIO()):
+            states = self.snapshot.build_function_callers(current, previous)
+        self.assertEqual(current["functions"][0]["callers"], expected)
+        self.assertIn("indisponível", states["code"])
+        self.assertIn("coleta atual", states["db"])
+        self.assertEqual(self.snapshot.fingerprints({"db": current})["functions"], self.snapshot.fingerprints({"db": previous})["functions"])
+        # Fonte lida com sucesso e vazia continua removendo a referência antiga.
+        current = {"functions": self.database("old")["functions"], "cron": {"jobs": []}, "triggers": [], "views": []}
+        with mock.patch.object(self.snapshot, "scan_code_files", return_value=[]), contextlib.redirect_stdout(io.StringIO()):
+            self.snapshot.build_function_callers(current, previous)
+        self.assertEqual({k: current["functions"][0]["callers"][k] for k in ("code", "cron", "triggers", "views")},
+                         {"code": [], "cron": [], "triggers": [], "views": []})
+
     def test_database_callers_include_defaults_on_the_first_definition_line(self):
         consumer = function("consumer")
         consumer["definition"] = (

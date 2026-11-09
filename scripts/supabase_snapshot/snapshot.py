@@ -1111,11 +1111,14 @@ def rx_name_keys(names: list[str]) -> set[str]:
     return set(names)
 
 
-def build_function_callers(db: dict) -> dict[str, str]:
+def build_function_callers(db: dict, previous_db: dict | None = None) -> dict[str, str]:
     """Atualiza cada categoria disponível e informa a origem atual/anterior das referências."""
     fns = db.get("functions") or []
     if not fns:
         return {}
+    # Funções lidas agora não trazem `callers`: sem isto, fonte indisponível (código ilegível, cron negado)
+    # zerava as referências já publicadas e o CHANGELOG registrava `functions alterado`.
+    known = {(g["schema"], g["name"], g.get("args")): g.get("callers") for g in ((previous_db or {}).get("functions") or [])}
     if "functions" in CARRIED:
         # introspect_db reutiliza a lista anterior; não altere a base do changelog.
         fns = [{**f} for f in fns]
@@ -1153,7 +1156,7 @@ def build_function_callers(db: dict) -> dict[str, str]:
     for f in fns:
         n = f["name"]
         code = sorted(code_hits.get(n, {}).items())
-        previous = f.get("callers") or {}
+        previous = f.get("callers") or known.get((f["schema"], n, f.get("args"))) or {}
         callers = {
             "code": [{"file": rel, "hits": c} for rel, c in code[:30]],
             "code_total_files": len(code),
@@ -1737,7 +1740,7 @@ def main() -> int:
         log("Banco inteiro indisponível — nada será sobrescrito.")
         return 1
 
-    caller_sources = build_function_callers(db)
+    caller_sources = build_function_callers(db, (previous or {}).get("db"))
     api_, api_stats = introspect_api((previous or {}).get("api"))
     schema_sql = run_pg_dump()
     types_ts = run_gen_types()
