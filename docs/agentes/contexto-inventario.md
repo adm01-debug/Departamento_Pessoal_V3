@@ -1,5 +1,8 @@
 # Contexto e inventário gerados para agentes de IA
 
+Ler quando precisar do estado real (rotas, menu, banco, edges, regras de negócio) antes de abrir código, ou quando
+for regenerar/alterar o que é gerado. Resumo na seção 8 do `AGENTS.md`; aqui está o detalhe.
+
 > Extraído do antigo `CLAUDE.md` em 07/11/2026. Scripts autônomos portados do Zapp Web V2 (04/11/2026).
 > Nada aqui é escrito à mão: se divergir, regenere.
 

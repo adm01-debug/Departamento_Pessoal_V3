@@ -1,5 +1,8 @@
 # Decisões técnicas e gaps conhecidos
 
+Ler quando for propor mudança de stack, dependência, build ou bridge — e antes de "consertar" algo que pode ser
+decisão tomada. Resumo na seção 8 do `AGENTS.md`; aqui está o detalhe.
+
 > Extraído do antigo `CLAUDE.md` (estado em 19/10/2026) em 07/11/2026. O histórico de sessões (1–22) foi
 > descartado; o que ele dizia sobre o estado atual está no `git log` e nos PRs #244–#271.
 

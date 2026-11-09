@@ -1,6 +1,7 @@
 # Fluxo Git — dicas de ferramenta (complemento à seção 7 do `AGENTS.md`)
 
-> As regras estão no `AGENTS.md`; aqui ficam só os detalhes operacionais que não cabem lá.
+Ler quando for listar PRs abertas, montar commit atômico ou criar branch/worktree. As regras estão na seção 7 do
+`AGENTS.md`; aqui ficam só os detalhes operacionais.
 
 ## Listar PRs abertas tocando os mesmos arquivos (regra 3)
 
