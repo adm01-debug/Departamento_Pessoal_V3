@@ -189,6 +189,11 @@ test('consultarViaPsql: secao que falha vira motivo limpo, as outras seguem', ()
   assert.deepEqual(r.resumo, { ok: true });
   assert.deepEqual(Object.keys(falhas), ['ledger']);
   assert.match(falhas.ledger, /permission denied/);
+  // psql fora do PATH (ENOENT) ou travado (ETIMEDOUT) nao tem stderr: o motivo nao pode virar "falha sem mensagem".
+  const semPsql = consultarViaPsql('postgresql://u:senha@h/db', secoes, () => { throw new Error('spawnSync psql ENOENT'); });
+  assert.equal(semPsql.falhas.resumo, 'spawnSync psql ENOENT');
+  assert.equal(limparErro('spawnSync psql ETIMEDOUT'), 'spawnSync psql ETIMEDOUT');
+  assert.equal(limparErro(''), 'falha sem mensagem');
 });
 
 test('contarUsoNoCodigo conta .from() de verdade no DP (src e edges) e ignora storage.from', () => {
