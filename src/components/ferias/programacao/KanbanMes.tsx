@@ -1,14 +1,11 @@
 import { useMemo } from 'react';
-import type { DragEndEvent} from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { CardProgramacao } from './CardProgramacao';
 import type { ProgramacaoFerias } from '@/hooks/ferias/useProgramacaoFerias';
 
-const MESES = [
-  'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
-  'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez',
-];
+const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 interface Props {
   programacoes: ProgramacaoFerias[];
@@ -97,12 +94,7 @@ export function KanbanMes({
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="flex gap-3 overflow-x-auto pb-4">
         {Array.from({ length: 12 }, (_, i) => i + 1).map((mes) => (
-          <ColunaMes
-            key={mes}
-            mes={mes}
-            itens={porMes.get(mes) ?? []}
-            totalColaboradores={totalColaboradores}
-          >
+          <ColunaMes key={mes} mes={mes} itens={porMes.get(mes) ?? []} totalColaboradores={totalColaboradores}>
             {(porMes.get(mes) ?? []).map((p) => (
               <CardProgramacao
                 key={p.id}

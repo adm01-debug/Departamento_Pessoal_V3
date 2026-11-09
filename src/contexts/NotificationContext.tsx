@@ -21,21 +21,36 @@ const NotificationContext = createContext<NotificationContextType | undefined>(u
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const { notificacoes, naoLidas, marcarComoLida, marcarTodasComoLidas } = useNotificacoes();
 
-  const success = useCallback((title: string, message?: string) => toast.success(message ? `${title}: ${message}` : title), []);
-  const error = useCallback((title: string, message?: string) => toast.error(message ? `${title}: ${message}` : title), []);
-  const warning = useCallback((title: string, message?: string) => toast.warning(message ? `${title}: ${message}` : title), []);
-  const info = useCallback((title: string, message?: string) => toast.info(message ? `${title}: ${message}` : title), []);
+  const success = useCallback(
+    (title: string, message?: string) => toast.success(message ? `${title}: ${message}` : title),
+    []
+  );
+  const error = useCallback(
+    (title: string, message?: string) => toast.error(message ? `${title}: ${message}` : title),
+    []
+  );
+  const warning = useCallback(
+    (title: string, message?: string) => toast.warning(message ? `${title}: ${message}` : title),
+    []
+  );
+  const info = useCallback(
+    (title: string, message?: string) => toast.info(message ? `${title}: ${message}` : title),
+    []
+  );
 
   return (
-    <NotificationContext.Provider value={{
-      notifications: notificacoes,
-      unreadCount: naoLidas,
-      markAsRead: marcarComoLida,
-      markAllAsRead: marcarTodasComoLidas,
-      success,
-      error,
-      warning,
-      info}}>
+    <NotificationContext.Provider
+      value={{
+        notifications: notificacoes,
+        unreadCount: naoLidas,
+        markAsRead: marcarComoLida,
+        markAllAsRead: marcarTodasComoLidas,
+        success,
+        error,
+        warning,
+        info,
+      }}
+    >
       {children}
     </NotificationContext.Provider>
   );

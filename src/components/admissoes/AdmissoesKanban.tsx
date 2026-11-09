@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react';
-import type {
-  DragEndEvent,
-  DragStartEvent} from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
   DndContext,
   DragOverlay,

@@ -23,11 +23,7 @@ export function calcularHorasExtras(
  * Calcula o Descanso Semanal Remunerado (DSR) sobre verbas variáveis
  * Fórmula: (Total das Verbas Variáveis / Dias Úteis) * Domingos e Feriados
  */
-export function calcularDSR(
-  totalVariavel: number,
-  diasUteis = 26,
-  domingosFeriados = 4
-): number {
+export function calcularDSR(totalVariavel: number, diasUteis = 26, domingosFeriados = 4): number {
   if (totalVariavel <= 0 || diasUteis <= 0) return 0;
   return Math.trunc((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;
 }
@@ -38,13 +34,9 @@ export function calcularDSR(
  * @param mesesTrabalhados Meses de direito no ano (1-12)
  * @param parcela 1 para primeira parcela (50%, sem descontos), 2 para segunda ou integral
  */
-export function calcular13Salario(
-  salarioBase: number,
-  mesesTrabalhados = 12,
-  parcela: 1 | 2 = 2
-): number {
+export function calcular13Salario(salarioBase: number, mesesTrabalhados = 12, parcela: 1 | 2 = 2): number {
   const valorIntegral = (salarioBase / 12) * mesesTrabalhados;
-  
+
   if (parcela === 1) {
     // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF
     return Math.trunc((valorIntegral / 2) * 100) / 100;

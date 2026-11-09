@@ -20,16 +20,10 @@ const EmpresaContext = createContext<EmpresaContextType | undefined>(undefined);
  */
 export function EmpresaProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
-  const {
-    userEmpresas,
-    empresaAtual,
-    loadingEmpresas,
-    trocarEmpresa} = useEmpresas();
+  const { userEmpresas, empresaAtual, loadingEmpresas, trocarEmpresa } = useEmpresas();
 
   // Map userEmpresas to flat Empresa[] for backward compat
-  const empresas: Empresa[] = (userEmpresas || [])
-    .map(ue => ue.empresa)
-    .filter((e): e is Empresa => !!e);
+  const empresas: Empresa[] = (userEmpresas || []).map((ue) => ue.empresa).filter((e): e is Empresa => !!e);
 
   const setEmpresaAtual = (empresa: Empresa | null) => {
     if (empresa) trocarEmpresa(empresa.id);
@@ -45,7 +39,6 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
     ]);
   };
 
-
   return (
     <EmpresaContext.Provider
       value={{
@@ -53,7 +46,8 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
         empresaAtual: empresaAtual ?? null,
         loading: loadingEmpresas,
         setEmpresaAtual,
-        refresh}}
+        refresh,
+      }}
     >
       {children}
     </EmpresaContext.Provider>

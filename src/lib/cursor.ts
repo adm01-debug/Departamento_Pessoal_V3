@@ -84,10 +84,7 @@ export function buildCursorQuery(cursor: string, limit = 20): string {
  * Extrai próximo cursor do último item de uma lista
  * Usa o campo 'id' por padrão ou o campo especificado
  */
-export function extractNextCursor<T extends Record<string, unknown>>(
-  data: T[],
-  column = 'id'
-): string | null {
+export function extractNextCursor<T extends Record<string, unknown>>(data: T[], column = 'id'): string | null {
   if (!data || data.length === 0) return null;
 
   const lastItem = data[data.length - 1];
@@ -102,10 +99,7 @@ export function extractNextCursor<T extends Record<string, unknown>>(
  * Hook helper para paginação com cursor
  * Substitui page * limit em queries grandes
  */
-export function useCursorPagination<T extends Record<string, unknown>>(
-  items: T[],
-  column = 'id'
-) {
+export function useCursorPagination<T extends Record<string, unknown>>(items: T[], column = 'id') {
   const nextCursor = extractNextCursor(items, column);
 
   return {

@@ -1,7 +1,7 @@
 // V15-182: src/components/ui/stat-card.tsx
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from './card';
-import type { LucideIcon} from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface StatCardProps {
@@ -26,8 +26,8 @@ export function StatCard({ title, value, description, icon: Icon, trend, classNa
         {(description || trend) && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             {trend && (
-            <span className={cn('flex items-center', isPositive ? 'text-success' : 'text-destructive')}>
-              {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+              <span className={cn('flex items-center', isPositive ? 'text-success' : 'text-destructive')}>
+                {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                 {Math.abs(trend.value)}%
               </span>
             )}

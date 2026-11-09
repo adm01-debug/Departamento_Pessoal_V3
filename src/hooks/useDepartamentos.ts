@@ -16,8 +16,8 @@ export function useDepartamentos() {
     successMessages: {
       create: 'Departamento criado com sucesso',
       update: 'Departamento atualizado',
-      delete: 'Departamento excluído'
-    }
+      delete: 'Departamento excluído',
+    },
   });
 
   return {

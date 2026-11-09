@@ -150,15 +150,14 @@ export const loggerService = {
       emitStructured(logEntry);
       // Warn logs flush immediately to preserve security audit trail
       return this.flush();
-    } 
-      if (logBuffer.length >= MAX_LOGS_BUFFER) {
+    }
+    if (logBuffer.length >= MAX_LOGS_BUFFER) {
+      void this.flush();
+    } else if (!flushTimeout) {
+      flushTimeout = setTimeout(() => {
         void this.flush();
-      } else if (!flushTimeout) {
-        flushTimeout = setTimeout(() => {
-          void this.flush();
-        }, 10000);
-      }
-    
+      }, 10000);
+    }
   },
 
   async flush() {

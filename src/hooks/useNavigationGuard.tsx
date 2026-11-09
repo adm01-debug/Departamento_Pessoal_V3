@@ -54,29 +54,26 @@ export function useNavigationGuard({
     return () => window.removeEventListener('beforeunload', handler);
   }, [enabled, message]);
 
-  const NavigationGuardDialog = blocker.state === 'blocked' ? (
-    <AlertDialog open>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="font-display">Alterações não salvas</AlertDialogTitle>
-          <AlertDialogDescription className="font-body">
-            {message}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => blocker.reset?.()}>
-            Continuar editando
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => blocker.proceed?.()}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-          >
-            Sair sem salvar
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  ) : null;
+  const NavigationGuardDialog =
+    blocker.state === 'blocked' ? (
+      <AlertDialog open>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="font-display">Alterações não salvas</AlertDialogTitle>
+            <AlertDialogDescription className="font-body">{message}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => blocker.reset?.()}>Continuar editando</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => blocker.proceed?.()}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Sair sem salvar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    ) : null;
 
   return { NavigationGuardDialog, blocker };
 }

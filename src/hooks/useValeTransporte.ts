@@ -11,6 +11,6 @@ export function useValeTransporte(colaboradorId?: string, diasUteis = 22) {
   return {
     custo: query.data,
     isLoading: query.isLoading,
-    refetch: query.refetch
+    refetch: query.refetch,
   };
 }

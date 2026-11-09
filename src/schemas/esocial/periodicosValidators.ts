@@ -15,12 +15,8 @@
  *   - Integridade referencial (perApur futuro, fechamento antes de reabertura)
  */
 
-import type {
-  ValidationResult, ValidationError, ValidationWarning, ESocialData} from './helpers';
-import {
-  required, maxLen, cpfValido, cnpjValido, enumValido,
-  dataValida
-} from './helpers';
+import type { ValidationResult, ValidationError, ValidationWarning, ESocialData } from './helpers';
+import { required, maxLen, cpfValido, cnpjValido, enumValido, dataValida } from './helpers';
 
 /**
  * S-1298 — Reabertura de Período de Apuração
@@ -53,14 +49,22 @@ export function validarS1298(dados: ESocialData): ValidationResult {
   required(dados.perApur, 'ideEvento.perApur', errors);
   if (typeof dados.perApur === 'string') {
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(dados.perApur)) {
-      errors.push({ campo: 'ideEvento.perApur', mensagem: 'perApur deve estar no formato AAAA-MM', regra: 'REGRA_PERIODO' });
+      errors.push({
+        campo: 'ideEvento.perApur',
+        mensagem: 'perApur deve estar no formato AAAA-MM',
+        regra: 'REGRA_PERIODO',
+      });
     } else {
       const [year, month] = dados.perApur.split('-').map(Number);
       const apurDate = new Date(year, month - 1);
       const now = new Date();
       const thisMonth = new Date(now.getFullYear(), now.getMonth());
       if (apurDate > thisMonth) {
-        errors.push({ campo: 'ideEvento.perApur', mensagem: 'perApur não pode ser futuro', regra: 'REGRA_PERIODO_FUTURO' });
+        errors.push({
+          campo: 'ideEvento.perApur',
+          mensagem: 'perApur não pode ser futuro',
+          regra: 'REGRA_PERIODO_FUTURO',
+        });
       }
     }
   }
@@ -86,7 +90,10 @@ export function validarS1298(dados: ESocialData): ValidationResult {
 
   // ── Warnings ──────────────────────────────────────────────────────────
   if (dados.tpAmb === '2') {
-    warnings.push({ campo: 'ideEvento.tpAmb', mensagem: 'Ambiente de produção restrita — evento não produz efeitos legais' });
+    warnings.push({
+      campo: 'ideEvento.tpAmb',
+      mensagem: 'Ambiente de produção restrita — evento não produz efeitos legais',
+    });
   }
 
   return { valid: errors.length === 0, errors, warnings };
@@ -122,14 +129,22 @@ export function validarS1299(dados: ESocialData): ValidationResult {
   required(dados.perApur, 'ideEvento.perApur', errors);
   if (typeof dados.perApur === 'string') {
     if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(dados.perApur)) {
-      errors.push({ campo: 'ideEvento.perApur', mensagem: 'perApur deve estar no formato AAAA-MM', regra: 'REGRA_PERIODO' });
+      errors.push({
+        campo: 'ideEvento.perApur',
+        mensagem: 'perApur deve estar no formato AAAA-MM',
+        regra: 'REGRA_PERIODO',
+      });
     } else {
       const [year, month] = dados.perApur.split('-').map(Number);
       const apurDate = new Date(year, month - 1);
       const now = new Date();
       const thisMonth = new Date(now.getFullYear(), now.getMonth());
       if (apurDate > thisMonth) {
-        errors.push({ campo: 'ideEvento.perApur', mensagem: 'perApur não pode ser futuro', regra: 'REGRA_PERIODO_FUTURO' });
+        errors.push({
+          campo: 'ideEvento.perApur',
+          mensagem: 'perApur não pode ser futuro',
+          regra: 'REGRA_PERIODO_FUTURO',
+        });
       }
     }
   }
@@ -151,7 +166,10 @@ export function validarS1299(dados: ESocialData): ValidationResult {
 
   // ── Warnings ──────────────────────────────────────────────────────────
   if (dados.tpAmb === '2') {
-    warnings.push({ campo: 'ideEvento.tpAmb', mensagem: 'Ambiente de produção restrita — evento não produz efeitos legais' });
+    warnings.push({
+      campo: 'ideEvento.tpAmb',
+      mensagem: 'Ambiente de produção restrita — evento não produz efeitos legais',
+    });
   }
 
   // Aviso sobreevtRemun = false: fechamento sem remuneração pode indicar problema
@@ -201,18 +219,30 @@ export function validarS5001(dados: ESocialData): ValidationResult {
 
   required(dados.perApur, 'IDEEvento.perApur', errors);
   if (typeof dados.perApur === 'string' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(dados.perApur)) {
-    errors.push({ campo: 'IDEEvento.perApur', mensagem: 'perApur deve estar no formato AAAA-MM', regra: 'REGRA_PERIODO' });
+    errors.push({
+      campo: 'IDEEvento.perApur',
+      mensagem: 'perApur deve estar no formato AAAA-MM',
+      regra: 'REGRA_PERIODO',
+    });
   }
 
   // ── InfoIRRF (array de beneficiários) ──────────────────────────────────
   const infoIRRF = dados.infoIRRF as ESocialData[] | undefined;
   if (!infoIRRF || !Array.isArray(infoIRRF)) {
-    errors.push({ campo: 'infoIRRF', mensagem: 'infoIRRF é obrigatório e deve ser um array', regra: 'REGRA_OBRIGATORIO' });
+    errors.push({
+      campo: 'infoIRRF',
+      mensagem: 'infoIRRF é obrigatório e deve ser um array',
+      regra: 'REGRA_OBRIGATORIO',
+    });
     return { valid: errors.length === 0, errors, warnings };
   }
 
   if (infoIRRF.length === 0) {
-    errors.push({ campo: 'infoIRRF', mensagem: 'infoIRRF deve conter ao menos um beneficiário', regra: 'REGRA_ARRAY_VAZIO' });
+    errors.push({
+      campo: 'infoIRRF',
+      mensagem: 'infoIRRF deve conter ao menos um beneficiário',
+      regra: 'REGRA_ARRAY_VAZIO',
+    });
   }
 
   infoIRRF.forEach((benef: ESocialData, i: number) => {
@@ -222,7 +252,11 @@ export function validarS5001(dados: ESocialData): ValidationResult {
     const cpfBenef = benef.cpfBenef as string | undefined;
     const cnpjBenef = benef.cnpjBenef as string | undefined;
     if (!cpfBenef && !cnpjBenef) {
-      errors.push({ campo: `${prefix}.cpfBenef|cnpjBenef`, mensagem: 'Ao menos cpfBenef ou cnpjBenef é obrigatório', regra: 'REGRA_OBRIGATORIO' });
+      errors.push({
+        campo: `${prefix}.cpfBenef|cnpjBenef`,
+        mensagem: 'Ao menos cpfBenef ou cnpjBenef é obrigatório',
+        regra: 'REGRA_OBRIGATORIO',
+      });
     }
     if (cpfBenef) cpfValido(cpfBenef, `${prefix}.cpfBenef`, errors);
     if (cnpjBenef) cnpjValido(cnpjBenef, `${prefix}.cnpjBenef`, errors);
@@ -230,7 +264,11 @@ export function validarS5001(dados: ESocialData): ValidationResult {
     // NitPasep
     const nitPasep = benef.nitPasep as string | undefined;
     if (nitPasep && !/^\d{11}$/.test(nitPasep.replace(/\D/g, ''))) {
-      errors.push({ campo: `${prefix}.nitPasep`, mensagem: 'NIT/PASEP inválido (deve ter 11 dígitos)', regra: 'REGRA_NIT' });
+      errors.push({
+        campo: `${prefix}.nitPasep`,
+        mensagem: 'NIT/PASEP inválido (deve ter 11 dígitos)',
+        regra: 'REGRA_NIT',
+      });
     }
 
     // nomeBenef
@@ -240,12 +278,20 @@ export function validarS5001(dados: ESocialData): ValidationResult {
     // Bases de retenção (array)
     const basesRet = benef.infoIRRF as ESocialData[] | undefined;
     if (!basesRet || !Array.isArray(basesRet)) {
-      errors.push({ campo: `${prefix}.infoIRRF`, mensagem: `${prefix}.infoIRRF é obrigatório`, regra: 'REGRA_OBRIGATORIO' });
+      errors.push({
+        campo: `${prefix}.infoIRRF`,
+        mensagem: `${prefix}.infoIRRF é obrigatório`,
+        regra: 'REGRA_OBRIGATORIO',
+      });
       return;
     }
 
     if (basesRet.length === 0) {
-      errors.push({ campo: `${prefix}.infoIRRF`, mensagem: `${prefix}.infoIRRF deve conter ao menos uma base`, regra: 'REGRA_ARRAY_VAZIO' });
+      errors.push({
+        campo: `${prefix}.infoIRRF`,
+        mensagem: `${prefix}.infoIRRF deve conter ao menos uma base`,
+        regra: 'REGRA_ARRAY_VAZIO',
+      });
     }
 
     basesRet.forEach((base: ESocialData, j: number) => {
@@ -254,18 +300,29 @@ export function validarS5001(dados: ESocialData): ValidationResult {
       // vrTotalBasRet >= 0
       const basRet = Number(base.vrTotalBasRet ?? -1);
       if (isNaN(basRet) || basRet < 0) {
-        errors.push({ campo: `${p2}.vrTotalBasRet`, mensagem: 'vrTotalBasRet deve ser numérico >= 0', regra: 'REGRA_VALOR' });
+        errors.push({
+          campo: `${p2}.vrTotalBasRet`,
+          mensagem: 'vrTotalBasRet deve ser numérico >= 0',
+          regra: 'REGRA_VALOR',
+        });
       }
 
       // vrTotalIRRF >= 0
       const irrf = Number(base.vrTotalIRRF ?? -1);
       if (isNaN(irrf) || irrf < 0) {
-        errors.push({ campo: `${p2}.vrTotalIRRF`, mensagem: 'vrTotalIRRF deve ser numérico >= 0', regra: 'REGRA_VALOR' });
+        errors.push({
+          campo: `${p2}.vrTotalIRRF`,
+          mensagem: 'vrTotalIRRF deve ser numérico >= 0',
+          regra: 'REGRA_VALOR',
+        });
       }
 
       // Lógica: se base > 0, deve haver retenção (IRRF > 0)
       if (basRet > 0 && irrf === 0) {
-        warnings.push({ campo: `${p2}.vrTotalIRRF`, mensagem: `Base ${basRet} > 0 sem retenção — verifique tabela IRRF` });
+        warnings.push({
+          campo: `${p2}.vrTotalIRRF`,
+          mensagem: `Base ${basRet} > 0 sem retenção — verifique tabela IRRF`,
+        });
       }
 
       // vrTotalDeducao >= 0
@@ -276,12 +333,20 @@ export function validarS5001(dados: ESocialData): ValidationResult {
 
       // Dedução não pode exceder base
       if (deducao > basRet) {
-        errors.push({ campo: `${p2}.vrTotalDeducao`, mensagem: 'vrTotalDeducao não pode exceder vrTotalBasRet', regra: 'REGRA_LIMITE' });
+        errors.push({
+          campo: `${p2}.vrTotalDeducao`,
+          mensagem: 'vrTotalDeducao não pode exceder vrTotalBasRet',
+          regra: 'REGRA_LIMITE',
+        });
       }
 
       // tpCR (código de receita) obrigatório se base > 0
       if (basRet > 0 && !base.tpCR) {
-        errors.push({ campo: `${p2}.tpCR`, mensagem: 'tpCR é obrigatório quando há base de retenção', regra: 'REGRA_OBRIGATORIO' });
+        errors.push({
+          campo: `${p2}.tpCR`,
+          mensagem: 'tpCR é obrigatório quando há base de retenção',
+          regra: 'REGRA_OBRIGATORIO',
+        });
       }
 
       if (base.tpCR) maxLen(String(base.tpCR), 6, `${p2}.tpCR`, errors);
@@ -327,18 +392,30 @@ export function validarS5011(dados: ESocialData): ValidationResult {
 
   required(dados.perApur, 'IDEEvento.perApur', errors);
   if (typeof dados.perApur === 'string' && !/^\d{4}-(0[1-9]|1[0-2])$/.test(dados.perApur)) {
-    errors.push({ campo: 'IDEEvento.perApur', mensagem: 'perApur deve estar no formato AAAA-MM', regra: 'REGRA_PERIODO' });
+    errors.push({
+      campo: 'IDEEvento.perApur',
+      mensagem: 'perApur deve estar no formato AAAA-MM',
+      regra: 'REGRA_PERIODO',
+    });
   }
 
   // ── InfoPerApurPos ────────────────────────────────────────────────────
   const infoPos = dados.infoPerApurPos as ESocialData[] | undefined;
   if (!infoPos || !Array.isArray(infoPos)) {
-    errors.push({ campo: 'infoPerApurPos', mensagem: 'infoPerApurPos é obrigatório e deve ser um array', regra: 'REGRA_OBRIGATORIO' });
+    errors.push({
+      campo: 'infoPerApurPos',
+      mensagem: 'infoPerApurPos é obrigatório e deve ser um array',
+      regra: 'REGRA_OBRIGATORIO',
+    });
     return { valid: errors.length === 0, errors, warnings };
   }
 
   if (infoPos.length === 0) {
-    errors.push({ campo: 'infoPerApurPos', mensagem: 'infoPerApurPos deve conter ao menos um registro', regra: 'REGRA_ARRAY_VAZIO' });
+    errors.push({
+      campo: 'infoPerApurPos',
+      mensagem: 'infoPerApurPos deve conter ao menos um registro',
+      regra: 'REGRA_ARRAY_VAZIO',
+    });
   }
 
   infoPos.forEach((item: ESocialData, i: number) => {
@@ -349,21 +426,36 @@ export function validarS5011(dados: ESocialData): ValidationResult {
 
     const baseAP = Number(item.vrTotalBaseAP ?? -1);
     if (isNaN(baseAP) || baseAP < 0) {
-      errors.push({ campo: `${p}.vrTotalBaseAP`, mensagem: 'vrTotalBaseAP deve ser numérico >= 0', regra: 'REGRA_VALOR' });
+      errors.push({
+        campo: `${p}.vrTotalBaseAP`,
+        mensagem: 'vrTotalBaseAP deve ser numérico >= 0',
+        regra: 'REGRA_VALOR',
+      });
     }
 
     const tetoAP = Number(item.vrTotalTetoAP ?? -1);
     if (isNaN(tetoAP) || tetoAP < 0) {
-      errors.push({ campo: `${p}.vrTotalTetoAP`, mensagem: 'vrTotalTetoAP deve ser numérico >= 0', regra: 'REGRA_VALOR' });
+      errors.push({
+        campo: `${p}.vrTotalTetoAP`,
+        mensagem: 'vrTotalTetoAP deve ser numérico >= 0',
+        regra: 'REGRA_VALOR',
+      });
     }
 
     if (tetoAP > baseAP) {
-      warnings.push({ campo: `${p}.vrTotalTetoAP`, mensagem: 'vrTotalTetoAP > vrTotalBaseAP — verifique aplicação do teto' });
+      warnings.push({
+        campo: `${p}.vrTotalTetoAP`,
+        mensagem: 'vrTotalTetoAP > vrTotalBaseAP — verifique aplicação do teto',
+      });
     }
 
     const aliquota = Number(item.vrTotalAliquotaAP ?? -1);
     if (isNaN(aliquota) || aliquota < 0 || aliquota > 1) {
-      errors.push({ campo: `${p}.vrTotalAliquotaAP`, mensagem: 'vrTotalAliquotaAP deve estar entre 0 e 1 (0.00 a 1.00)', regra: 'REGRA_ALIQUOTA' });
+      errors.push({
+        campo: `${p}.vrTotalAliquotaAP`,
+        mensagem: 'vrTotalAliquotaAP deve estar entre 0 e 1 (0.00 a 1.00)',
+        regra: 'REGRA_ALIQUOTA',
+      });
     }
 
     if (baseAP > 0 && aliquota === 0) {
@@ -384,11 +476,7 @@ export function validarS5011(dados: ESocialData): ValidationResult {
 const COMPETENCIA_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 /** Valida um campo de competência AAAA-MM. */
-function competenciaValida(
-  val: unknown,
-  campo: string,
-  errors: ValidationError[],
-): void {
+function competenciaValida(val: unknown, campo: string, errors: ValidationError[]): void {
   if (typeof val === 'string' && !COMPETENCIA_RE.test(val)) {
     errors.push({
       campo,
@@ -399,12 +487,7 @@ function competenciaValida(
 }
 
 /** Valida o par tpInsc/nrInsc do empregador (CNPJ quando 1, CPF quando 2). */
-function validarInscricao(
-  dados: ESocialData,
-  errors: ValidationError[],
-  campoTp = 'tpInsc',
-  campoNr = 'nrInsc',
-): void {
+function validarInscricao(dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc'): void {
   required(dados[campoTp], campoTp, errors);
   enumValido(String(dados[campoTp] ?? ''), ['1', '2', '3', '4', '5', '6'], campoTp, errors);
   required(dados[campoNr], campoNr, errors);
@@ -550,7 +633,7 @@ export function validarS1020(dados: ESocialData): ValidationResult {
     String(dados.tpLotacao ?? ''),
     ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '21', '22', '24', '90', '91'],
     'tpLotacao',
-    errors,
+    errors
   );
 
   return { valid: errors.length === 0, errors, warnings };
@@ -691,12 +774,7 @@ export function validarS1210(dados: ESocialData): ValidationResult {
 
     // tpPgto conforme Tabela 26: 1..5
     required(pgto?.tpPgto, `infoPgto[${i}].tpPgto`, errors);
-    enumValido(
-      String(pgto?.tpPgto ?? ''),
-      ['1', '2', '3', '4', '5'],
-      `infoPgto[${i}].tpPgto`,
-      errors,
-    );
+    enumValido(String(pgto?.tpPgto ?? ''), ['1', '2', '3', '4', '5'], `infoPgto[${i}].tpPgto`, errors);
   });
 
   return { valid: errors.length === 0, errors, warnings };
@@ -716,12 +794,7 @@ export function validarS1260(dados: ESocialData): ValidationResult {
 
   // indComerc conforme Tabela 13 — 1 não é código válido para este evento
   required(dados.indComerc, 'indComerc', errors);
-  enumValido(
-    String(dados.indComerc ?? ''),
-    ['2', '3', '5', '6', '7', '8', '9'],
-    'indComerc',
-    errors,
-  );
+  enumValido(String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors);
 
   required(dados.vrTotCom, 'vrTotCom', errors);
   if (dados.vrTotCom !== undefined && dados.vrTotCom !== null && dados.vrTotCom !== '') {
@@ -772,11 +845,7 @@ export function validarS1280(dados: ESocialData): ValidationResult {
     enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors);
   }
 
-  if (
-    dados.percRedContrib !== undefined &&
-    dados.percRedContrib !== null &&
-    dados.percRedContrib !== ''
-  ) {
+  if (dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== '') {
     const perc = Number(dados.percRedContrib);
     if (!Number.isFinite(perc) || perc < 0 || perc > 100) {
       errors.push({
@@ -789,4 +858,3 @@ export function validarS1280(dados: ESocialData): ValidationResult {
 
   return { valid: errors.length === 0, errors, warnings };
 }
-

@@ -30,22 +30,20 @@ export function useDocumentOCR() {
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
       const filePath = `temp/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('documentos-admissao')
-        .upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from('documentos-admissao').upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       // 2. Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('documentos-admissao')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('documentos-admissao').getPublicUrl(filePath);
 
       // 3. Call OCR function
       const { data, error } = await supabase.functions.invoke('process-document-ocr', {
-        body: { 
+        body: {
           fileUrl: publicUrl,
-          docType
+          docType,
         },
       });
 
@@ -60,7 +58,7 @@ export function useDocumentOCR() {
       return {
         valid: false,
         confidence: 0,
-        error: 'Não foi possível processar o documento automaticamente.'
+        error: 'Não foi possível processar o documento automaticamente.',
       };
     } finally {
       setIsProcessing(false);

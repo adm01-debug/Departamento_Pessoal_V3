@@ -1,10 +1,5 @@
 // Cálculos de benefícios e adicionais
-import { 
-  SALARIO_MINIMO_2026, 
-  SALARIO_FAMILIA_TETO, 
-  SALARIO_FAMILIA_VALOR,
-  VA_VR_MAX_DESCONTO_PAT
-} from './tabelas';
+import { SALARIO_MINIMO_2026, SALARIO_FAMILIA_TETO, SALARIO_FAMILIA_VALOR, VA_VR_MAX_DESCONTO_PAT } from './tabelas';
 import { calcularINSS, calcularIRRF } from './impostos';
 
 export interface ParamsDecimo13 {
@@ -15,17 +10,17 @@ export interface ParamsDecimo13 {
   dependentes?: number;
 }
 
-export function calcularDecimo13(params: ParamsDecimo13): { 
-  bruto: number; 
-  inss: number; 
-  irrf: number; 
+export function calcularDecimo13(params: ParamsDecimo13): {
+  bruto: number;
+  inss: number;
+  irrf: number;
   fgts: number;
   liquido: number;
   mensagem?: string;
 } {
   const { salarioBase, mesesTrabalhados, mediasVariaveis = 0, parcela, dependentes = 0 } = params;
   const meses = Math.min(12, Math.max(0, mesesTrabalhados));
-  
+
   if (meses < 1) {
     return { bruto: 0, inss: 0, irrf: 0, fgts: 0, liquido: 0, mensagem: 'Mínimo de 15 dias trabalhados no ano.' };
   }
@@ -37,19 +32,18 @@ export function calcularDecimo13(params: ParamsDecimo13): {
     const bruto = Math.trunc((valorProporcional / 2) * 100) / 100;
     const fgts = Math.trunc(bruto * 0.08 * 100) / 100;
     return { bruto, inss: 0, irrf: 0, fgts, liquido: bruto };
-  } 
-    const brutoTotal = Math.trunc(valorProporcional * 100) / 100;
-    const primeiraParcelaJaPaga = Math.trunc((brutoTotal / 2) * 100) / 100;
-    
-    const inss = calcularINSS(brutoTotal);
-    const irrf = calcularIRRF(brutoTotal, dependentes);
-    const fgts = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 0.08 * 100) / 100;
-    
-    const brutoSegunda = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 100) / 100;
-    const liquido = Math.trunc((brutoTotal - inss - irrf - primeiraParcelaJaPaga) * 100) / 100;
-    
-    return { bruto: brutoSegunda, inss, irrf, fgts, liquido };
-  
+  }
+  const brutoTotal = Math.trunc(valorProporcional * 100) / 100;
+  const primeiraParcelaJaPaga = Math.trunc((brutoTotal / 2) * 100) / 100;
+
+  const inss = calcularINSS(brutoTotal);
+  const irrf = calcularIRRF(brutoTotal, dependentes);
+  const fgts = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 0.08 * 100) / 100;
+
+  const brutoSegunda = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 100) / 100;
+  const liquido = Math.trunc((brutoTotal - inss - irrf - primeiraParcelaJaPaga) * 100) / 100;
+
+  return { bruto: brutoSegunda, inss, irrf, fgts, liquido };
 }
 
 export function calcularFerias(salarioBase: number, diasFerias = 30, diasAbono = 0, dependentes = 0) {
@@ -59,11 +53,11 @@ export function calcularFerias(salarioBase: number, diasFerias = 30, diasAbono =
   const valorAbono = valorDiario * diasAbono;
   const tercoAbono = valorAbono / 3;
   const bruto = valorFerias + tercoConstitucional + valorAbono + tercoAbono;
-  
+
   // Férias têm tributação separada (exclusiva na fonte)
   const inss = calcularINSS(valorFerias + tercoConstitucional);
   const irrf = calcularIRRF(valorFerias + tercoConstitucional, dependentes);
-  
+
   const liquido = Math.trunc((bruto - inss - irrf) * 100) / 100;
 
   return {
@@ -72,11 +66,20 @@ export function calcularFerias(salarioBase: number, diasFerias = 30, diasAbono =
     valorAbono: Math.trunc(valorAbono * 100) / 100,
     tercoAbono: Math.trunc(tercoAbono * 100) / 100,
     bruto: Math.trunc(bruto * 100) / 100,
-    inss, irrf, liquido,
+    inss,
+    irrf,
+    liquido,
   };
 }
 
-export function calcularHorasExtras(salarioBase: number, horasExtras50 = 0, horasExtras100 = 0, jornadaMensal = 220, diasUteis = 26, domingosEFeriados = 4) {
+export function calcularHorasExtras(
+  salarioBase: number,
+  horasExtras50 = 0,
+  horasExtras100 = 0,
+  jornadaMensal = 220,
+  diasUteis = 26,
+  domingosEFeriados = 4
+) {
   const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0;
   const valor50 = Math.trunc(valorHora * 1.5 * horasExtras50 * 100) / 100;
   const valor100 = Math.trunc(valorHora * 2.0 * horasExtras100 * 100) / 100;
@@ -91,18 +94,23 @@ export function calcularDSR(totalVariaveis: number, diasUteis: number, domingosE
   return Math.trunc(valorDsr * 100) / 100;
 }
 
-export function calcularAdicionalNoturno(salarioBase: number, horasNoturnas: number, jornadaMensal = 220, percentual = 20): number {
+export function calcularAdicionalNoturno(
+  salarioBase: number,
+  horasNoturnas: number,
+  jornadaMensal = 220,
+  percentual = 20
+): number {
   const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0;
   return Math.trunc(valorHora * (percentual / 100) * horasNoturnas * 100) / 100;
 }
 
 export function calcularPericulosidade(salarioBase: number): number {
-  return Math.trunc(salarioBase * 0.30 * 100) / 100;
+  return Math.trunc(salarioBase * 0.3 * 100) / 100;
 }
 
 export type GrauInsalubridade = 'minimo' | 'medio' | 'maximo';
 export function calcularInsalubridade(grau: GrauInsalubridade): number {
-  const percentuais = { minimo: 0.10, medio: 0.20, maximo: 0.40 };
+  const percentuais = { minimo: 0.1, medio: 0.2, maximo: 0.4 };
   return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;
 }
 
@@ -111,9 +119,13 @@ export function calcularDescontoVT(salarioBase: number, valorVTMensal: number): 
   return Math.trunc(Math.min(valorVTMensal, limiteDesconto) * 100) / 100;
 }
 
-export function calcularValeAlimentacao(valorMensal: number, salarioBase: number, usaPAT = true): { valor: number, desconto: number } {
+export function calcularValeAlimentacao(
+  valorMensal: number,
+  salarioBase: number,
+  usaPAT = true
+): { valor: number; desconto: number } {
   const percentualMaximo = usaPAT ? VA_VR_MAX_DESCONTO_PAT : 1.0;
-  const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.20) * 100) / 100;
+  const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.2) * 100) / 100;
   return { valor: valorMensal, desconto };
 }
 
@@ -165,7 +177,7 @@ export function calcularDiarias(valorDiaria: number, dias: number, percentualDes
   return { total, desconto, liquido: Math.trunc((total - desconto) * 100) / 100 };
 }
 
-export function calcularQuilometragem(km: number, valorPorKm = 1.20): number {
+export function calcularQuilometragem(km: number, valorPorKm = 1.2): number {
   return Math.trunc(km * valorPorKm * 100) / 100;
 }
 
@@ -197,10 +209,13 @@ export function calcularAdicionalTransferencia(salarioBase: number, percentual =
   return Math.trunc(salarioBase * (percentual / 100) * 100) / 100;
 }
 
-export function calcularEmprestimoConsignado(salarioLiquido: number, parcela: number): { parcela: number, margemDisponivel: number } {
+export function calcularEmprestimoConsignado(
+  salarioLiquido: number,
+  parcela: number
+): { parcela: number; margemDisponivel: number } {
   const margemTotal = Math.trunc(salarioLiquido * 0.35 * 100) / 100;
   return {
     parcela,
-    margemDisponivel: Math.max(0, Math.trunc((margemTotal - parcela) * 100) / 100)
+    margemDisponivel: Math.max(0, Math.trunc((margemTotal - parcela) * 100) / 100),
   };
 }

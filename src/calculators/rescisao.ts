@@ -124,11 +124,7 @@ export function calcularProvisao13(salarioBase: number, mesesTrabalhados: number
   return { provisao13, provisaoEncargos, total };
 }
 
-export function calcularEncargos(
-  salarioBase: number,
-  percentualRAT = 0.03,
-  percentualTerceiros = 0.058
-) {
+export function calcularEncargos(salarioBase: number, percentualRAT = 0.03, percentualTerceiros = 0.058) {
   const inssEmpregado = calcularINSS(salarioBase);
   const irrfEmpregado = calcularIRRF(salarioBase);
   const fgts = calcularFGTS(salarioBase);

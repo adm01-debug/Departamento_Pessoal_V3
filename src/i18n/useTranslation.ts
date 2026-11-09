@@ -19,13 +19,8 @@
  *   formatDate(date, { year: 'numeric', month: 'long' }) // "julho de 2026"
  */
 import { useState, useCallback, useEffect } from 'react';
-import type {
-  Locale} from './index.ts';
-import {
-  i18n,
-  SUPPORTED_LOCALES,
-  setI18nLocale,
-  onI18nLocaleChange} from './index.ts';
+import type { Locale } from './index.ts';
+import { i18n, SUPPORTED_LOCALES, setI18nLocale, onI18nLocaleChange } from './index.ts';
 
 export { type Locale, SUPPORTED_LOCALES };
 
@@ -44,33 +39,23 @@ export function useTranslation() {
     setI18nLocale(newLocale);
   }, []);
 
-  const t = useCallback(
-    (key: string, vars?: Record<string, unknown>) => i18n.t(key, { vars }),
-    [],
-  );
+  const t = useCallback((key: string, vars?: Record<string, unknown>) => i18n.t(key, { vars }), []);
 
   const formatDate = useCallback(
-    (date: Date | string, options?: Intl.DateTimeFormatOptions) =>
-      i18n.formatDate(date, options),
-    [],
+    (date: Date | string, options?: Intl.DateTimeFormatOptions) => i18n.formatDate(date, options),
+    []
   );
 
   const formatNumber = useCallback(
-    (value: number, options?: Intl.NumberFormatOptions) =>
-      i18n.formatNumber(value, options),
-    [],
+    (value: number, options?: Intl.NumberFormatOptions) => i18n.formatNumber(value, options),
+    []
   );
 
-  const formatCurrency = useCallback(
-    (value: number, currency?: string) =>
-      i18n.formatCurrency(value, currency),
-    [],
-  );
+  const formatCurrency = useCallback((value: number, currency?: string) => i18n.formatCurrency(value, currency), []);
 
   const formatRelativeTime = useCallback(
-    (value: number, unit: Intl.RelativeTimeFormatUnit) =>
-      i18n.formatRelativeTime(value, unit),
-    [],
+    (value: number, unit: Intl.RelativeTimeFormatUnit) => i18n.formatRelativeTime(value, unit),
+    []
   );
 
   return {
@@ -81,5 +66,6 @@ export function useTranslation() {
     formatNumber,
     formatCurrency,
     formatRelativeTime,
-    supportedLocales: SUPPORTED_LOCALES};
+    supportedLocales: SUPPORTED_LOCALES,
+  };
 }

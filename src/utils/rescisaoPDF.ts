@@ -1,5 +1,5 @@
 import { toast } from 'sonner';
-import type { RescisaoResult} from './rescisaoCalc';
+import type { RescisaoResult } from './rescisaoCalc';
 import { fmt } from './rescisaoCalc';
 import { auditoriaService, type TrilhaAuditoriaRegistro } from '@/services/auditoriaService';
 
