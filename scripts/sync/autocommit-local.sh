@@ -2,7 +2,7 @@
 # Commit automático do trabalho local numa branch dedicada e envio ao GitHub, sem intervenção humana.
 #
 #   autocommit-local.sh --worktree <pasta> [--branch computador_local] [--remote origin]
-#                       [--quiet-min 2] [--max-mb 5] [--dry-run] [--quiet]
+#                       [--quiet-min 2] [--max-mb 5] [--pii cpf,cnpj] [--dry-run] [--quiet]
 #
 # Para cada execução: se o worktree está na branch <branch> e há alterações, faz UM commit com tudo (exceto o que as
 # travas abaixo barram) e dá push em <branch>. Se não há alterações, só envia commits ainda não enviados.
@@ -10,7 +10,8 @@
 # ATENÇÃO — o repositório é PÚBLICO: tudo que for enviado é legível por qualquer pessoa. Travas (falham fechadas):
 #   - gitleaks no que será commitado: se achar segredo, NADA é commitado nesta rodada;
 #   - dados pessoais/dados em massa: arquivos NOVOS .csv .xlsx .xls .xlsm .ods .dump .bak .sqlite .db .zip .tar .gz .7z .pdf,
-#     qualquer arquivo > --max-mb MB e qualquer arquivo com CPF formatado (000.000.000-00) nas linhas adicionadas
+#     qualquer arquivo > --max-mb MB e qualquer arquivo com dado pessoal formatado nas linhas adicionadas (--pii: cpf =
+#     000.000.000-00, cnpj = 00.000.000/0000-00; padrão cpf)
 #     são EXCLUÍDOS do commit (ficam só no disco/autosave) e registrados no log;
 #   - .env*, *.pem, *.key, *.p12, id_rsa* nunca entram, mesmo que não estejam no .gitignore.
 # Outras proteções: nunca troca de branch, nunca usa --force (push rejeitado = só avisa), não age com rebase/merge/
@@ -19,7 +20,7 @@
 # push na main e em PR para a main).
 set -uo pipefail
 
-WT=""; BRANCH="computador_local"; REMOTE="origin"; QUIET_MIN=2; MAX_MB=5; DRY=0; QUIET=0
+WT=""; BRANCH="computador_local"; REMOTE="origin"; QUIET_MIN=2; MAX_MB=5; PII="cpf"; DRY=0; QUIET=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --worktree) WT="${2:-}"; shift 2 ;;
@@ -27,6 +28,7 @@ while [ $# -gt 0 ]; do
     --remote) REMOTE="${2:-}"; shift 2 ;;
     --quiet-min) QUIET_MIN="${2:-}"; shift 2 ;;
     --max-mb) MAX_MB="${2:-}"; shift 2 ;;
+    --pii) PII="${2:-}"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
     -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
@@ -97,14 +99,33 @@ if ! "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err";
   say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 0
 fi
 
-# 5. CPF formatado nas linhas adicionadas => exclui o arquivo
-CPF='[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}'
-while IFS= read -r -d '' f; do
-  if "${G[@]}" diff --cached -U0 -- "$f" | grep -E '^\+' | grep -vE '^\+\+\+' | grep -qE "$CPF"; then
-    "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="CPF formatado nas linhas adicionadas"
-  fi
-done < <("${G[@]}" diff --cached --name-only -z)
-for f in "${!MOTIVO[@]}"; do say "EXCLUÍDO do commit: $f (${MOTIVO[$f]}) — segue só no disco/autosave"; done
+# 5. dado pessoal formatado (--pii) nas linhas adicionadas => exclui o arquivo
+PAT=()
+IFS=',' read -ra _pii <<< "$PII"
+for t in "${_pii[@]}"; do
+  case "$t" in
+    cpf)  PAT+=('[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}') ;;
+    cnpj) PAT+=('[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2}') ;;
+    "") ;;
+    *) say "AVISO: --pii desconhecido '$t' ignorado" ;;
+  esac
+done
+if [ "${#PAT[@]}" -gt 0 ]; then
+  PIIRE="$(IFS='|'; echo "${PAT[*]}")"
+  while IFS= read -r -d '' f; do
+    if "${G[@]}" diff --cached -U0 -- "$f" | grep -E '^\+' | grep -vE '^\+\+\+' | grep -qE "$PIIRE"; then
+      "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="dado pessoal formatado (${PII}) nas linhas adicionadas"
+    fi
+  done < <("${G[@]}" diff --cached --name-only -z)
+fi
+# avisa uma vez por arquivo (enquanto ele seguir igual), para não encher o log a cada hora
+EXCL_SEEN="$STATE/ac-$KEY.excl"; touch "$EXCL_SEEN"
+for f in "${!MOTIVO[@]}"; do
+  sig="$f|$(stat -c %Y "$WT/$f" 2>/dev/null || echo 0)"
+  grep -qxF "$sig" "$EXCL_SEEN" 2>/dev/null && continue
+  printf '%s\n' "$sig" >> "$EXCL_SEEN"
+  say "EXCLUÍDO do commit: $f (${MOTIVO[$f]}) — segue só no disco/autosave"
+done
 
 # 6. gitleaks no que sobrou (falha fechada: erro = não commita)
 if [ -n "$("${G[@]}" diff --cached --name-only)" ]; then
