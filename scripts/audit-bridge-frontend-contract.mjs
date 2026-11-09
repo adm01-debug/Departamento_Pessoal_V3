@@ -43,7 +43,10 @@ function walk(dir) {
 function exportedSet(source, name) {
   const match = source.match(new RegExp(`export const ${name}\\s*=\\s*new Set<[^>]+>\\(\\[([\\s\\S]*?)\\]\\);`));
   if (!match) throw new Error(`Não foi possível localizar ${name}`);
-  return new Set([...match[1].matchAll(/["']([A-Za-z0-9_]+)["']/g)].map((item) => item[1]));
+  // Comentários saem antes: uma entrada comentada (`// "rpc_removida",`) não
+  // está no Set em runtime e não pode contar como admitida pela allowlist.
+  const body = match[1].replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, '');
+  return new Set([...body.matchAll(/["']([A-Za-z0-9_]+)["']/g)].map((item) => item[1]));
 }
 
 function lineAt(source, index) {
