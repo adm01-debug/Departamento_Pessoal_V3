@@ -274,14 +274,16 @@ function main() {
     }
   }
 
-  // Guard de false-green: 0 políticas auditadas em banco com schema conhecido
-  // (functions > 0) é suspeito — a heurística de PII pode estar desatualizada
-  // ou todas as tabelas com PII foram silenciosamente adicionadas ao ALLOWLIST.
-  if (inspected === 0 && bodies.length > 0) {
-    console.warn(
-      '[rls-pii] Aviso: 0 políticas sobre tabelas com PII auditadas — ' +
-        'revise a heurística PII_COLUMN_RE ou o ALLOWLIST.',
+  // Guard de false-green: com alvo conectado, 0 políticas auditadas nunca é
+  // "tudo correlacionado" — é schema vazio/alvo errado, heurística de PII
+  // desatualizada ou tabelas com PII silenciosamente movidas para o ALLOWLIST.
+  // Reprova, como os gates irmãos (least-privilege, tenant-open, secdef).
+  if (inspected === 0) {
+    console.error(
+      '[rls-pii] ERRO: 0 políticas sobre tabelas com PII auditadas — schema vazio ou alvo errado; ' +
+        'revise também a heurística PII_COLUMN_RE e o ALLOWLIST. Falso verde bloqueado.',
     );
+    return 1;
   }
 
   for (const w of warnings) {
