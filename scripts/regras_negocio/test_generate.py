@@ -213,6 +213,18 @@ export type Database = {
         self.assertEqual((policies["other"]["using"], policies["other"]["roles"]), ("true", "service_role"))
         self.assertEqual(policies["own"]["src"], generator.rel(changed, self.root))
 
+    def test_comment_markers_inside_string_literals_do_not_swallow_statements(self):
+        self.write("supabase/migrations/20260101000000_strings.sql",
+                   "CREATE TABLE public.a (id integer); -- comentário real com 'aspas\n"
+                   "INSERT INTO public.a VALUES ('x -- não é comentário');\n"
+                   "CREATE TABLE public.b (id integer);\n"
+                   "COMMENT ON TABLE public.b IS 'usa /* e */ e it''s -- no texto';\n"
+                   "/* bloco\n   CREATE TABLE public.fantasma (id integer); */\n"
+                   "CREATE TABLE public.c (id integer);\n")
+        schema = self.schema()
+        self.assertEqual(sorted(schema["tables"]), ["a", "b", "c"])
+        self.assertEqual(schema["tables"]["b"]["comment"], "usa /* e */ e it's -- no texto")
+
 
 if __name__ == "__main__":
     unittest.main()

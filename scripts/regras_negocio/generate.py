@@ -186,8 +186,8 @@ def balanced(txt: str, start: int, open_ch: str = "(", close_ch: str = ")") -> i
 
 
 def strip_sql_comments(txt: str) -> str:
-    txt = re.sub(r"/\*[\s\S]*?\*/", "", txt)
-    return re.sub(r"--[^\n]*", "", txt)
+    # literais '...' passam intactos: `--` ou `/*` dentro de string não é comentário
+    return re.sub(r"('(?:[^']|'')*')|/\*[\s\S]*?\*/|--[^\n]*", lambda m: m.group(1) or "", txt)
 
 
 def is_test_file(r: str) -> bool:
