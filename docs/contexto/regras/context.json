@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f9261e3bd1ea071f0d83bb9286cef41a9d2a730a",
+  "sha": "8597905b565a9f26c0c3eea64b6a88dcc6cb5c04",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 21:55 UTC",
+  "generated_at": "2026-11-09 22:03 UTC",
   "files_total": 2847,
   "code_files": 2333,
   "code_lines": 311367
@@ -274819,10 +274819,19 @@
   }
  },
  "git": {
-  "sha": "f9261e3bd1ea071f0d83bb9286cef41a9d2a730a",
+  "sha": "8597905b565a9f26c0c3eea64b6a88dcc6cb5c04",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8597905",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)",
+    "files": [
+     "scripts/sync/run-all.sh"
+    ]
+   },
    {
     "sha": "f9261e3",
     "date": "2026-11-09",
@@ -275230,25 +275239,16 @@
      "scripts/simulacao/simulate_rescisao.cjs",
      "scripts/simulacao/verify_bridge_write_guard.cjs"
     ]
-   },
-   {
-    "sha": "1c88227",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401",
-    "files": [
-     "scripts/audit-schema-drift.mjs",
-     "scripts/report-workflows.mjs",
-     "scripts/simulacao/simulate_adiant_13.cjs",
-     "scripts/simulacao/simulate_art145.cjs",
-     "scripts/simulacao/simulate_notif_d3.cjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/sync/mirror-github.sh",
     5
+   ],
+   [
+    "scripts/sync/run-all.sh",
+    4
    ],
    [
     "scripts/autofix/run.mjs",
@@ -275272,10 +275272,6 @@
    ],
    [
     "scripts/autofix/regras/dados.mjs",
-    3
-   ],
-   [
-    "scripts/sync/run-all.sh",
     3
    ],
    [

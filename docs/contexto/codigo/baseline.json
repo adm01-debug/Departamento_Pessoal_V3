@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f9261e3bd1ea071f0d83bb9286cef41a9d2a730a",
+  "commit": "8597905b565a9f26c0c3eea64b6a88dcc6cb5c04",
   "branch": "main",
-  "data_commit": "2026-11-09T18:34:25-03:00",
+  "data_commit": "2026-11-09T18:44:22-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8597905",
+    "data": "2026-11-09",
+    "assunto": "fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)"
+   },
    {
     "sha": "f9261e3",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "faaf11c",
     "data": "2026-11-08",
     "assunto": "feat: guards de false-green em audit-bridge-frontend-contract"
-   },
-   {
-    "sha": "e7d1f19",
-    "data": "2026-11-08",
-    "assunto": "feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard"
    }
   ],
   "arquivos_mudados_7d": 241,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 81
+    "commits": 82
    },
    {
     "autor": "dependabot[bot]",

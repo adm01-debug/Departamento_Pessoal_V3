@@ -1061,7 +1061,7 @@
   {
    "arquivo": "scripts/sync/run-all.sh",
    "descricao": "Orquestrador: aplica a arquitetura \"espelho + computador_local\" a TODOS os repositórios listados em repos.conf.   run-all.sh mirror     [--only <nome>] [--dry-run]   espelho exato da main + fast-forwa",
-   "linhas": 79,
+   "linhas": 82,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
