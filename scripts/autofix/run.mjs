@@ -209,7 +209,9 @@ async function main() {
 
   const gate = async () => {
     const t = await tc();
-    const fresh = newErrors(baseTsc.errors, t.errors);
+    // Sem a linha na chave: eslint --fix e prettier MUDAM o número de linhas, e um erro antigo do tsc abaixo do trecho
+    // reformatado "virava novo" (o gate final desfazia o autofix inteiro). A linha só é estável dentro do codemod.
+    const fresh = newErrors(baseTsc.errors, t.errors, (e) => `${e.file}|${e.code}|${e.msg}`);
     return { ok: !t.crashed && fresh.length === 0, fresh };
   };
   const stepSnapshot = () => snapshot(cwd, srcFiles);
