@@ -102,7 +102,8 @@ while IFS='|' read -r branch upstream track; do
       say "PULEI $branch ($track): há alterações locais não commitadas em $wt"; pulados=$((pulados+1)); continue
     fi
     if [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $branch ($track) por fast-forward em $wt"; continue; fi
-    if git -C "$wt" merge --ff-only --quiet "$upstream" 2>/dev/null; then say "ATUALIZADO $branch ($track) em $wt"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git"; pulados=$((pulados+1)); fi
+    # --no-overwrite-ignore: sem isso o fast-forward sobrescreve calado um arquivo IGNORADO local (.env) que o remoto passou a rastrear
+    if git -C "$wt" merge --ff-only --no-overwrite-ignore --quiet "$upstream" 2>/dev/null; then say "ATUALIZADO $branch ($track) em $wt"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git (arquivo não rastreado ou ignorado no caminho?)"; pulados=$((pulados+1)); fi
   else
     if [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $branch ($track) por fast-forward"; continue; fi
     # `fetch . origem:destino` só aceita fast-forward; recusa qualquer outra coisa
@@ -128,8 +129,8 @@ if "${G[@]}" rev-parse -q --verify "refs/heads/$CL" >/dev/null 2>&1 && [ -n "${W
           if [ -n "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
             say "PULEI $CL (${n} atrás de $DEF): há alterações locais não commitadas em $wt"; pulados=$((pulados+1))
           elif [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $CL ${n} commit(s) até $DEF em $wt"
-          elif git -C "$wt" merge --ff-only --quiet "$DEF" 2>/dev/null; then say "ATUALIZADO $CL (+${n} commit(s) de $DEF) em $wt"; atualizados=$((atualizados+1))
-          else say "PULEI $CL: fast-forward para $DEF recusado pelo git (arquivo não rastreado no caminho?)"; pulados=$((pulados+1)); fi
+          elif git -C "$wt" merge --ff-only --no-overwrite-ignore --quiet "$DEF" 2>/dev/null; then say "ATUALIZADO $CL (+${n} commit(s) de $DEF) em $wt"; atualizados=$((atualizados+1))
+          else say "PULEI $CL: fast-forward para $DEF recusado pelo git (arquivo não rastreado ou ignorado no caminho?)"; pulados=$((pulados+1)); fi
         else
           own="$("${G[@]}" rev-list --count "$DEF..$hw")"; beh="$("${G[@]}" rev-list --count "$hw..$hd")"
           aviso "$CL" proprios "$CL tem $own commit(s) próprio(s) fora de $DEF e está $beh atrás dela: integre (PR/rebase) quando quiser; não mexo"; avisos=$((avisos+1))
