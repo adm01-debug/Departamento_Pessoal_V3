@@ -225,7 +225,9 @@ jobs:
             exit 1
           fi
           TITULO='[branch-hygiene] Higiene de branches — relatorio semanal'
-          EXISTENTE=$(gh issue list --repo "$REPO" --state open --limit 100 --json number,title \
+          EXISTENTE=$(gh issue list --repo "$REPO" --state open \
+            --search '"[branch-hygiene]" in:title' --limit 10 \
+            --json number,title \
             --jq '[.[] | select(.title | startswith("[branch-hygiene]"))][0].number // empty')
 
           if [ -n "$EXISTENTE" ]; then
