@@ -219,7 +219,12 @@ async function main() {
     const targets = only ? [...only].filter((f) => /\.tsx?$/.test(f)) : ['src'];
     const t0 = { touched: 0, kept: [], dropped: [] };
     if (targets.length) {
-      const run = (rules) => sh(bin(cwd, 'eslint'), ['--fix', ...targets, ...rules.flatMap((r) => ['--rule', `${r}:error`])], { cwd });
+      // fix restrito às regras da lista (via API do ESLint); falha de execução aborta a etapa em vez de passar como "sem mudança"
+      const run = async (rules) => {
+        const r = await sh(process.execPath, [new URL('./eslint-safe-fix.mjs', import.meta.url).pathname, cwd, rules.join(','), ...targets], { cwd });
+        if (r.code !== 0) throw new Error(`eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr || r.stdout).slice(0, 500)}`);
+        return r;
+      };
       await run(SAFE_RULES);
       t0.touched = touchedSince(cwd, snap).length;
       if (t0.touched) {

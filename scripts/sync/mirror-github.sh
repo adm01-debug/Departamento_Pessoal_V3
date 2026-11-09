@@ -71,29 +71,55 @@ REMOTE_SHA="$(timeout 60 "${G[@]}" ls-remote origin "refs/heads/$BRANCH" 2>/dev/
 
 # Arquivos rastreados cujos bytes reais no disco diferem do blob do índice. O `git status` não vê isso quando
 # core.autocrlf=input normaliza CRLF->LF na comparação (cópia criada no Windows, por exemplo).
+# Saída: caminhos separados por NUL (nomes com aspas, TAB, newline ou acentos passam intactos). Pula links simbólicos,
+# submódulos e arquivos cuja conversão de checkout é DE PROPÓSITO diferente do blob (atributos eol/filter/ident/
+# working-tree-encoding no .gitattributes): esses continuam diferindo por regra do repositório.
 byte_drift() {
-  local exp act
-  exp="$(mktemp "$STATE/exp.XXXXXX")"; act="$(mktemp "$STATE/act.XXXXXX")"
-  "${G[@]}" ls-files -s -z | while IFS= read -r -d '' rec; do
-    mode="${rec%% *}"; rest="${rec#* }"; sha="${rest%% *}"; path="${rec#*$'\t'}"
-    case "$mode" in 120000|160000) continue ;; esac
-    [ -f "$REPO/$path" ] && printf '%s\t%s\n' "$sha" "$path"
-  done > "$exp"
-  cut -f2- "$exp" | (cd "$REPO" && git hash-object --no-filters --stdin-paths 2>/dev/null) > "$act"
-  paste -d'\t' "$act" "$exp" | awk -F'\t' '$1 != $2 {print $3}'
-  rm -f "$exp" "$act"
+  python3 -I - "$REPO" <<'PY'
+import hashlib, os, subprocess, sys
+repo = sys.argv[1]
+G = ["git", "-C", repo, "-c", "core.autocrlf=false", "-c", "core.quotepath=false"]
+out = subprocess.run(G + ["ls-files", "-s", "-z"], capture_output=True, check=True).stdout
+ents = []
+for rec in out.split(b"\0"):
+    if not rec: continue
+    meta, _, path = rec.partition(b"\t")
+    mode, sha, stage = meta.split(b" ")
+    if mode in (b"120000", b"160000") or stage != b"0": continue
+    ents.append((sha.decode(), path))
+special = set()
+if ents:
+    r = subprocess.run(G + ["check-attr", "-z", "--stdin", "eol", "filter", "ident", "working-tree-encoding"],
+                       input=b"\0".join(p for _, p in ents) + b"\0", capture_output=True, check=True).stdout.split(b"\0")
+    for i in range(0, len(r) - 2, 3):
+        if r[i + 2] not in (b"unspecified", b"unset", b""): special.add(r[i])
+for sha, path in ents:
+    if path in special: continue
+    full = os.path.join(repo.encode(), path)
+    if not os.path.isfile(full) or os.path.islink(full): continue
+    try:
+        n = os.path.getsize(full); h = hashlib.sha1(b"blob %d\0" % n)
+        with open(full, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""): h.update(chunk)
+    except OSError:
+        continue
+    if h.hexdigest() != sha: sys.stdout.buffer.write(path + b"\0")
+PY
 }
-# Reescreve esses arquivos com os bytes do blob (autocrlf desligado). Arquivos com regra de fim de linha própria
-# (.gitattributes eol=crlf) continuam diferindo de propósito e só são avisados.
+# Reescreve esses arquivos com os bytes do blob (autocrlf desligado).
 normaliza_bytes() {
-  local lista; lista="$(byte_drift)"; [ -n "$lista" ] || return 0
-  local n; n="$(printf '%s\n' "$lista" | grep -c .)"
+  local lista; lista="$(mktemp "$STATE/drift.XXXXXX")"
+  byte_drift > "$lista" 2>/dev/null || { say "AVISO: não consegui conferir os bytes dos arquivos (python3/git falhou); nada normalizado"; rm -f "$lista"; return 0; }
+  [ -s "$lista" ] || { rm -f "$lista"; return 0; }
+  local n; n="$(tr -cd '\0' < "$lista" | wc -c)"
   # `checkout-index -f` PULA arquivos que o cache de stat do índice dá como em dia (mesmo com -f). Mudar o mtime antes
   # invalida o cache e força a reescrita; se algo falhar, o conteúdo antigo continua intacto.
-  printf '%s\n' "$lista" | tr '\n' '\0' | (cd "$REPO" && xargs -0 touch -d '1970-01-02' --) 2>/dev/null
-  printf '%s\n' "$lista" | tr '\n' '\0' | xargs -0 git -C "$REPO" -c core.autocrlf=false checkout-index -u -f -- 2>/dev/null
-  local resto; resto="$(byte_drift | grep -c . || true)"
-  say "NORMALIZADOS $n arquivo(s): bytes do disco (fim de linha) diferiam do GitHub${resto:+; restam $resto por regra de eol do repositório}"
+  (cd "$REPO" && xargs -0 -a "$lista" touch -d '1970-01-02' --) 2>/dev/null
+  "${G[@]}" -c core.autocrlf=false checkout-index -u -f -z --stdin < "$lista" 2>/dev/null
+  rm -f "$lista"
+  local resto; resto="$(byte_drift 2>/dev/null | tr -cd '\0' | wc -c)"
+  if [ "$resto" -gt 0 ]; then say "AVISO: NORMALIZADOS $n arquivo(s), mas $resto ainda diferem do GitHub nos bytes"
+  else say "NORMALIZADOS $n arquivo(s): bytes do disco (fim de linha) diferiam do GitHub"; fi
 }
 
 CUR="$("${G[@]}" rev-parse --abbrev-ref HEAD)"
