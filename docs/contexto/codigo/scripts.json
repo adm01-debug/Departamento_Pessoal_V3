@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 92,
+ "total": 94,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1002,6 +1002,24 @@
    "workflows": [
     "contexto.yml"
    ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/install-timer.sh",
+   "descricao": "Instala (ou remove) um timer systemd de USUÁRIO que roda sync-github.sh de hora em hora. Não faz nada até você executar. Copia o script para um local estável (~/.local/share/dp-sync), para o",
+   "linhas": 56,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/sync-github.sh",
+   "descricao": "Mantém o repositório local atualizado com o GitHub, com segurança.   sync-github.sh [--repo <caminho>] [--dry-run] [--quiet]",
+   "linhas": 108,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
    "orfao": false
   },
   {

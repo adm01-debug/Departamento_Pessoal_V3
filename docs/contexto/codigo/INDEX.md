@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b590d3ffdd099148dcf29641cbfc100e2aa500dc` (2026-11-09T11:56:44-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `458423501d585744a756d719e7f16a5e8f5bd5d2` (2026-11-09T11:57:31-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (817), Markdown (288), JavaScript (94), JSON (54), YAML (52), Shell (46), Python (5)
+- linguagens: TypeScript (1418), SQL (817), Markdown (288), JavaScript (94), JSON (54), YAML (52), Shell (48), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2814 |
+| arquivos_total | 2816 |
 | arquivos_codigo | 1516 |
 | linhas_codigo | 262934 |
 | rotas | 113 |
@@ -50,7 +50,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | cron_jobs | 41 |
 | testes | 572 |
 | workflows | 17 |
-| scripts | 92 |
+| scripts | 94 |
 | docs_md | 288 |
 
 ## Onde ficam as coisas
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21466 nós · 44839 arestas · 2090 comunidades · grafo do commit `b590d3ff`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (419), cn (326), button.tsx (320), lucide-react (310), vitest (264), ESocialPage.tsx (234), contract.ts (174), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 21472 nós · 44846 arestas · 2110 comunidades · grafo do commit `45842350`
+- comunidades maiores: useEmpresas (534), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (437), button.tsx (341), App.tsx (328), cn (266), vitest (260), "public"."empresas" (164), react (160), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-09 `4584235` feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)
 - 2026-11-09 `b590d3f` feat(autofix): autofix sem IA e verificador de regras de negócio (#402)
 - 2026-11-09 `d03a83b` fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)
 - 2026-11-08 `8c51e5f` fix: corrige 3 inconsistências de doc achadas na validação pós-#395
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `e9086da` feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config
 - 2026-11-08 `bb559b4` feat: guards false-green em audit-edge-audit-log-contract
 - 2026-11-08 `faaf11c` feat: guards de false-green em audit-bridge-frontend-contract
-- 2026-11-08 `e7d1f19` feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

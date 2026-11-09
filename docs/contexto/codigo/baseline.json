@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b590d3ffdd099148dcf29641cbfc100e2aa500dc",
+  "commit": "458423501d585744a756d719e7f16a5e8f5bd5d2",
   "branch": "main",
-  "data_commit": "2026-11-09T11:56:44-03:00",
+  "data_commit": "2026-11-09T11:57:31-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4584235",
+    "data": "2026-11-09",
+    "assunto": "feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)"
+   },
    {
     "sha": "b590d3f",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "dddcff4",
     "data": "2026-11-07",
     "assunto": "fix: estabiliza validações locais dos scripts (#367)"
-   },
-   {
-    "sha": "618e38b",
-    "data": "2026-11-07",
-    "assunto": "fix: permite testar chrome-extension no harness (#369)"
    }
   ],
-  "arquivos_mudados_7d": 144,
+  "arquivos_mudados_7d": 146,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 71
+    "commits": 72
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2814,
+  "arquivos_total": 2816,
   "arquivos_codigo": 1516,
   "linhas_codigo": 262934,
   "rotas": 113,
@@ -338,7 +338,7 @@
   "cron_jobs": 41,
   "testes": 572,
   "workflows": 17,
-  "scripts": 92,
+  "scripts": 94,
   "docs_md": 288
  },
  "por_pasta": {

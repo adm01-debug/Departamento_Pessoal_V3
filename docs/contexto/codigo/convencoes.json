@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)",
    "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)",
    "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)",
    "fix: corrige 3 inconsistências de doc achadas na validação pós-#395",
-   "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)",
-   "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)"
+   "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
