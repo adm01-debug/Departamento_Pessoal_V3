@@ -88,11 +88,29 @@ const TEM_AUTH = [/auth\s*\.\s*getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\
  * Sem isto o gate acusa a própria documentação: os comentários que explicam o
  * anti-padrão `!belongs && !isAdmin` contêm o texto que o regex procura, e o
  * arquivo corrigido era reportado como vulnerável.
+ *
+ * Um único passo, da esquerda para a direita, que PRESERVA literais de
+ * string, template e regex: a sequência barra-asterisco dentro de uma string
+ * (header Accept com asterisco-barra-asterisco, a máscara de CNPJ do pix-lote)
+ * abria um "comentário" que engolia código real até o próximo fechamento —
+ * apagando tanto o anti-padrão quanto o `requireRh` do arquivo. O literal de
+ * regex entra para que uma aspa solta dentro dele (`/[",]/`) não desalinhe o
+ * pareamento das strings.
  */
+const LITERAL_OU_COMENTARIO = new RegExp(
+  [
+    '("(?:\\\\.|[^"\\\\\\n])*"', // "string"
+    "'(?:\\\\.|[^'\\\\\\n])*'", // 'string'
+    '`(?:\\\\[\\s\\S]|[^`\\\\])*`', // `template`
+    '(?<=(?:[(,=:\\[!&|?{};]|\\breturn)\\s*)\\/(?![*/])(?:\\\\.|\\[(?:\\\\.|[^\\]\\\\\\n])*\\]|[^/\\\\\\n\\[])+\\/)', // /regex/
+    '\\/\\*[\\s\\S]*?\\*\\/', // comentário de bloco
+    '\\/\\/[^\\n]*', // comentário de linha
+  ].join('|'),
+  'g'
+);
+
 function semComentarios(src) {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  return src.replace(LITERAL_OU_COMENTARIO, (_m, literal) => literal ?? '');
 }
 
 function lerFuncoes() {
