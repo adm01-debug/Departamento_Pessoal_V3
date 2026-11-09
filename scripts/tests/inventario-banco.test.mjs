@@ -39,6 +39,13 @@ test('banco.sql so le: nenhum comando de escrita e nada do command do cron', () 
   assert.match(SQL, /regexp_matches\(j\.command, '\(\(\?:public\|net\|cron\)/, 'do command so sai o nome das funcoes chamadas');
 });
 
+test('banco.sql: nome de tabela entra escapado na regex de citada_no_banco', () => {
+  // `foo$bar`/`a+b` davam falso negativo e `x[1` derrubava a secao obrigatoria (invalid regular expression).
+  const tabelas = lerSecoes(SQL).find((s) => s.nome === 'tabelas').sql;
+  assert.doesNotMatch(tabelas, /'\\m'\s*\|\|\s*b\.nome\s*\|\|/, 'b.nome cru dentro da regex');
+  assert.match(tabelas, /'\\m' \|\| regexp_replace\(b\.nome, '\(\[\^\[:alnum:\]_\]\)', '\\\\\\1', 'g'\) \|\| '\\M'/);
+});
+
 test('secao obrigatoria ausente aborta; opcional ausente vira coleta_parcial com o motivo', () => {
   assert.throws(() => montarDado({ tabelas: [tabela('a')] }), /secao obrigatoria "resumo"/);
   assert.throws(() => montarDado({ resumo: {}, tabelas: [] }), /entrada sem tabelas/);

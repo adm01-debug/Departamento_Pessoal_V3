@@ -83,7 +83,9 @@ SELECT coalesce(jsonb_agg(jsonb_build_object(
                         ELSE b.reltuples::bigint END,
          'linhas_exatas', b.legivel AND b.reltuples < 200000,
          'bytes', b.bytes,
-         'citada_no_banco', EXISTS (SELECT 1 FROM corpos c WHERE c.txt ~ ('\m' || b.nome || '\M'))
+         -- nome escapado: `foo$bar`, `a+b` ou `x[1` na regex davam falso negativo ou derrubavam a secao inteira
+         'citada_no_banco', EXISTS (SELECT 1 FROM corpos c
+                                     WHERE c.txt ~ ('\m' || regexp_replace(b.nome, '([^[:alnum:]_])', '\\\1', 'g') || '\M'))
        ) ORDER BY b.nome), '[]'::jsonb) AS j
   FROM base b
   LEFT JOIN policies p ON p.nome = b.nome
