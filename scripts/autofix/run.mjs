@@ -223,7 +223,7 @@ async function main() {
     if (targets.length) {
       // fix restrito às regras da lista (via API do ESLint); falha de execução aborta a etapa em vez de passar como "sem mudança"
       const run = async (rules, base = snap) => {
-        const r = await sh(process.execPath, [new URL('./eslint-safe-fix.mjs', import.meta.url).pathname, cwd, rules.join(','), ...targets], { cwd });
+        const r = await sh(process.execPath, [join(import.meta.dirname, 'eslint-safe-fix.mjs'), cwd, rules.join(','), ...targets], { cwd });
         if (r.code !== 0) throw new Error(`eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr || r.stdout).slice(0, 500)}`);
         // Guarda de lint por arquivo: a correção segura de uma regra pode CRIAR problema em outra (no-else-return move um `const`
         // para dentro de `case` => no-case-declarations) e o gate final desfaria o autofix inteiro. O arquivo que piorou volta ao original.
