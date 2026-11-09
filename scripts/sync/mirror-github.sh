@@ -18,9 +18,11 @@
 #     outro worktree, ou se o fetch falhar (rede: tenta de novo na próxima hora).
 # Nunca faz push. Uma execução por vez (flock, o mesmo trinco do sync-github.sh).
 set -uo pipefail
+# PATH explícito: sob o systemd o PATH não inclui ~/.local/bin (onde está o gitleaks) e as travas falham fechadas.
+export PATH="$HOME/.local/bin:$HOME/.local/opt/node/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 # Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
 # husky). Vale para todos os `git` deste script e dos filhos.
-export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
+_n="${GIT_CONFIG_COUNT:-0}"; export "GIT_CONFIG_KEY_$_n=core.hooksPath" "GIT_CONFIG_VALUE_$_n=/dev/null" GIT_CONFIG_COUNT=$((_n+1))   # acrescenta; não apaga a config do usuário via ambiente
 
 REPO=""; BRANCH="main"; DRY=0; QUIET=0; QUIET_MIN=10; KEEP_DAYS=30
 while [ $# -gt 0 ]; do
@@ -54,7 +56,7 @@ export GIT_TERMINAL_PROMPT=0
 
 # 0. operação git em andamento? Não atropela.
 GD="$("${G[@]}" rev-parse --absolute-git-dir)"
-for f in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISECT_LOG; do
+for f in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISECT_LOG index.lock; do
   [ -e "$GD/$f" ] && { say "PULEI: operação git em andamento ($f)"; exit 0; }
 done
 
@@ -96,7 +98,7 @@ normaliza_bytes() {
 
 CUR="$("${G[@]}" rev-parse --abbrev-ref HEAD)"
 HEAD_SHA="$("${G[@]}" rev-parse HEAD)"
-DIRTY="$("${G[@]}" status --porcelain 2>/dev/null)"
+DIRTY="$("${G[@]}" status --porcelain --ignore-submodules=all 2>/dev/null)"
 
 # 2. já espelhado?
 if [ "$CUR" = "$BRANCH" ] && [ "$HEAD_SHA" = "$REMOTE_SHA" ] && [ -z "$DIRTY" ]; then
@@ -128,15 +130,33 @@ if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ]; then
   if [ "$DRY" -eq 1 ]; then
     say "[dry-run] faria backup (alterações: $(printf '%s\n' "$DIRTY" | grep -c .) item(ns)) em refs/mirror-backup/<data>"
   else
-    TMPIDX="$(mktemp "$STATE/idx.XXXXXX")"; rm -f "$TMPIDX"
-    export GIT_INDEX_FILE="$TMPIDX"
-    "${G[@]}" read-tree HEAD && "${G[@]}" add -A >/dev/null 2>&1
-    TREE="$("${G[@]}" write-tree)"
-    unset GIT_INDEX_FILE; rm -f "$TMPIDX"
-    COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA")"
-    base_ref="refs/mirror-backup/$(date +%Y%m%d-%H%M%S)"; BACKUP="$base_ref"; n=0
-    while "${G[@]}" show-ref --verify --quiet "$BACKUP"; do n=$((n+1)); BACKUP="$base_ref-$n"; done   # nunca sobrescreve um backup existente
-    "${G[@]}" update-ref "$BACKUP" "$COMMIT" || { say "ERRO: não consegui gravar o backup; nada foi descartado"; exit 0; }
+    # árvore de TUDO que está no disco (rastreados + não rastreados, sem ignorados), com os bytes exatos; vazio = falhou
+    snap_tree() {
+      local ix t=""; ix="$(mktemp "$STATE/idx.XXXXXX")"; rm -f "$ix"
+      if GIT_INDEX_FILE="$ix" "${G[@]}" read-tree HEAD 2>/dev/null \
+         && GIT_INDEX_FILE="$ix" "${G[@]}" -c core.autocrlf=false -c core.safecrlf=false add -A 2>"$STATE/$KEY.err"; then
+        t="$(GIT_INDEX_FILE="$ix" "${G[@]}" write-tree 2>/dev/null)"
+      fi
+      rm -f "$ix"; printf '%s' "$t"
+    }
+    estavel=0
+    for tentativa in 1 2 3; do
+      TREE="$(snap_tree)"
+      [ -n "$TREE" ] || { say "ERRO: não consegui ler tudo para o backup (arquivo ilegível?); NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
+      ultimo="$("${G[@]}" for-each-ref --sort=-committerdate --count=1 --format='%(refname)' refs/mirror-backup/)"
+      if [ -n "$ultimo" ] && [ "$("${G[@]}" rev-parse "$ultimo^{tree}" 2>/dev/null)" = "$TREE" ] && [ "$("${G[@]}" log -1 --format=%P "$ultimo" 2>/dev/null)" = "$HEAD_SHA" ]; then
+        BACKUP="$ultimo"   # mesmo estado do último backup: reaproveita (não cria uma ref nova por hora)
+      else
+        COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA")"
+        base_ref="refs/mirror-backup/$(date +%Y%m%d-%H%M%S)"; BACKUP="$base_ref"; n=0
+        while "${G[@]}" show-ref --verify --quiet "$BACKUP"; do n=$((n+1)); BACKUP="$base_ref-$n"; done   # nunca sobrescreve um backup existente
+        "${G[@]}" update-ref "$BACKUP" "$COMMIT" || { say "ERRO: não consegui gravar o backup; nada foi descartado"; exit 1; }
+      fi
+      # confere de novo: se algo mudou no disco durante o backup (usuário salvando), refaz
+      if [ "$(snap_tree)" = "$TREE" ]; then estavel=1; break; fi
+    done
+    [ "$estavel" -eq 1 ] || { say "ADIEI: os arquivos continuam mudando durante o backup; NADA foi descartado; próxima execução"; exit 0; }
+    COMMIT="$("${G[@]}" rev-parse "$BACKUP")"
     say "backup gravado em $BACKUP ($("${G[@]}" diff-tree --no-commit-id --name-only -r "$HEAD_SHA" "$COMMIT" | grep -c .) arquivo(s) diferentes do commit $CUR@${HEAD_SHA:0:9})"
   fi
 fi
@@ -146,16 +166,16 @@ if [ "$DRY" -eq 1 ]; then say "[dry-run] espelharia: checkout $BRANCH @ ${REMOTE
 # 6. espelha. `clean` ANTES do checkout (arquivo não rastreado no caminho de um rastreado); sem -x: ignorados ficam.
 "${G[@]}" clean -fdq
 if ! "${G[@]}" checkout -q -f -B "$BRANCH" "origin/$BRANCH" 2>"$STATE/$KEY.err"; then
-  say "ERRO no checkout: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')${BACKUP:+ (backup preservado em $BACKUP)}"; exit 0
+  say "ERRO no checkout: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')${BACKUP:+ (backup preservado em $BACKUP)}"; exit 1
 fi
 "${G[@]}" clean -fdq
 
 # 7. confere (bytes inclusive)
 normaliza_bytes
-if [ "$("${G[@]}" rev-parse HEAD)" = "$REMOTE_SHA" ] && [ -z "$("${G[@]}" status --porcelain)" ] && "${G[@]}" diff --quiet "origin/$BRANCH"; then
+if [ "$("${G[@]}" rev-parse HEAD)" = "$REMOTE_SHA" ] && [ -z "$("${G[@]}" status --porcelain --ignore-submodules=all)" ] && "${G[@]}" diff --quiet "origin/$BRANCH"; then
   say "ESPELHADO: $BRANCH @ ${REMOTE_SHA:0:9} (antes: $CUR @ ${HEAD_SHA:0:9})${BACKUP:+; backup: $BACKUP}"
 else
-  say "ERRO: após o espelhamento o checkout ainda difere do GitHub${BACKUP:+ (backup: $BACKUP)}"
+  say "ERRO: após o espelhamento o checkout ainda difere do GitHub${BACKUP:+ (backup: $BACKUP)}"; RC=1
 fi
 
 # 8. retenção dos backups
@@ -163,4 +183,4 @@ corte=$(( $(date +%s) - KEEP_DAYS * 86400 ))
 while read -r ref ts; do
   [ -n "$ref" ] && [ "$ts" -lt "$corte" ] && "${G[@]}" update-ref -d "$ref"
 done < <("${G[@]}" for-each-ref --format='%(refname) %(committerdate:unix)' refs/mirror-backup/)
-exit 0
+exit "${RC:-0}"
