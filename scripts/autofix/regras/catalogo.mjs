@@ -73,7 +73,7 @@ export const regras = [
     fonte: TABELAS.irrf2026.fonte, confianca: TABELAS.irrf2026.confianca, severidade: 'critica',
     acao: 'Implementar o redutor em calcularIRRF (src/calculators/impostos.ts) com testes; mudança de cálculo de imposto, exige revisão humana.',
     run({ eng }) {
-      const grid = [2500, 3000, 4000, 4664.68, 5000, 5300, 5583, 6000, 7000, 7350, 9000];
+      const grid = [2500, 3000, 4000, 4664.68, 4999.99, 5000, 5000.01, 5300, 5583, 6000, 7000, 7349.99, 7350, 7350.01, 9000];
       const falhas = [];
       let maxDelta = 0;
       for (const b of grid) {
@@ -86,10 +86,18 @@ export const regras = [
       }
       // Diferença de poucos centavos = política de arredondamento do redutor (a norma que consultei não a
       // especifica), não erro de regra: exige conferência humana, mas não é "divergência com a norma".
-      if (falhas.length && maxDelta <= 0.03) {
+      // diferença de poucos centavos é política de arredondamento (a Receita não a especifica) — MAS nunca na faixa de isenção:
+      // lá o devido é 0, e qualquer retenção é indevida, não arredondamento.
+      const retemNaIsencao = grid.some((b) => b <= TABELAS.irrf2026.redutor.isencaoAte && eng.impostos.calcularIRRF(b, 0, 0) > 0.0001);
+      if (falhas.length && maxDelta <= 0.03 && !retemNaIsencao) {
         return { status: 'revisar', resumo: `${grid.length - falhas.length}/${grid.length} casos conferem; ${falhas.length} diferem em até R$ ${maxDelta.toFixed(2)} (arredondamento do redutor)`, exemplos: falhas.slice(0, 4), impactoMaximoMensal: maxDelta };
       }
-      return resultado(falhas, grid.length, { impactoMaximoMensal: maxDelta });
+      // dependentes e deduções extras exercitam a escolha entre dedução legal e simplificada
+      for (const [b, dep, outras] of [[6000, 2, 0], [5200, 1, 300], [7000, 3, 500]]) {
+        const got = eng.impostos.calcularIRRF(b, dep, outras); const exp = refIRRF({ bruto: b, inss: refINSS(b), dependentes: dep, outras });
+        if (diff(got, exp)) falhas.push(`bruto ${brl(b)} dep=${dep} outras=${outras}: sistema ${brl(got)} x devido ${brl(exp)}`);
+      }
+      return resultado(falhas, grid.length + 3, { impactoMaximoMensal: maxDelta });
     },
   },
 

@@ -26,6 +26,10 @@ export function collectCandidates(ts, file, text) {
   const lines = text.split('\n');
   const out = [];
   const K = ts.SyntaxKind;
+  // regiões /* eslint-disable ... */ ... /* eslint-enable */ em QUALQUER ponto do arquivo (não só nos primeiros caracteres)
+  const eventos = [...text.matchAll(/\/\*\s*eslint-(disable|enable)(?!-)\s*([^*]*?)\*\//g)].map((m) => ({ pos: m.index, off: m[1] === 'disable', vale: !m[2].trim() || /no-explicit-any/.test(m[2]) })).filter((e) => e.vale);
+  const regiaoDesligada = (pos) => { let off = false; for (const e of eventos) { if (e.pos > pos) break; off = e.off; } return off; };
+  const sobKeyof = (n) => { for (let a = n.parent; a && !ts.isStatement(a); a = a.parent) if (a.kind === K.TypeOperator && a.operator === K.KeyOfKeyword) return true; return false; };
 
   const insideAssertionType = (n) => {
     for (let a = n.parent; a && !ts.isStatement(a); a = a.parent) {
@@ -49,7 +53,12 @@ export function collectCandidates(ts, file, text) {
       const line = sf.getLineAndCharacterOfPosition(start).line + 1;
       const same = lines[line - 1] ?? '';
       const prev = lines[line - 2] ?? '';
-      const disabled = /eslint-disable-line/.test(same) || /eslint-disable-next-line/.test(prev);
+      // `keyof any` = string|number|symbol; `keyof unknown` = never: nunca trocar. `this: any` não pode perder o tipo.
+      // @ts-ignore/@ts-expect-error por perto mascaram o erro que a troca causaria. Região eslint-disable de bloco.
+      const p0 = n.parent;
+      const disabled = /eslint-disable-line/.test(same) || /eslint-disable-next-line/.test(prev) || regiaoDesligada(start) || sobKeyof(n)
+        || /@ts-(?:ignore|expect-error)/.test(`${prev}\n${same}\n${lines[line] ?? ''}`)
+        || (ts.isParameter(p0) && ts.isIdentifier(p0.name) && p0.name.text === 'this');
       if (!disabled) {
         const p = n.parent;
         if (insideAssertionType(n)) {
