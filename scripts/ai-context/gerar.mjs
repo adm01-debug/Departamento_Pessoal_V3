@@ -470,7 +470,9 @@ secao('banco-sql', () => {
   banco.migrations = sqlFiles.length; banco.fonte.push(migDir || '*.sql');
   const allSql = [];
   for (const f of sqlFiles) {
-    const sql = readText(f).replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+    // `--` e `/*` dentro de string ('... -- confirmar ...') não são comentário: cortar ali desbalanceava as aspas e o resto do arquivo era lido errado.
+    const semComentarioSql = (s) => s.replace(/'(?:[^']|'')*'|\$(\w*)\$([\s\S]*?)\$\1\$|--[^\n]*|\/\*[\s\S]*?\*\//g, (m0, tag, corpo) => (m0[0] === "'" ? m0 : m0[0] === '$' ? `$${tag}$${semComentarioSql(corpo)}$${tag}$` : ''));
+    const sql = semComentarioSql(readText(f));
     const bodies = []; const sqlNoBody = sql.replace(/\$(\w*)\$[\s\S]*?\$\1\$/g, (m0) => { bodies.push(m0); return "''"; });
     allSql.push(sql.toLowerCase());
     // DO $$ ... $$ e corpos de função: statements literais (CREATE/DROP POLICY, ALTER TABLE) também valem; DDL dinâmico (EXECUTE format) é só sinalizado

@@ -398,3 +398,24 @@ test('possiveis_segredos_no_codigo aponta a linha do arquivo, mesmo depois de co
   });
   assert.deepEqual(read('baseline.json').alertas.possiveis_segredos_no_codigo, ['worker/chave.ts:6']);
 });
+
+test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);
+alter table public.pontos enable row level security;
+create policy "bp_del" on public.pontos for delete to authenticated using (true);
+do $$ begin
+  if not exists (select 1) then
+    raise exception 'policy "bp_del" nao encontrada -- confirmar ao vivo; antes de reaplicar';
+  end if;
+  -- drop table public.pontos;
+  drop policy "bp_del" on public.pontos;
+  create policy bp_del_role_gate on public.pontos for delete to authenticated using (true);
+end $$;
+comment on table public.pontos is 'ver doc -- secao 2; /* nao e comentario';
+create table public.depois_da_string (id int); /* fim */`);
+  });
+  const banco = read('banco.json');
+  assert.deepEqual(banco.tabelas.pontos.policies.map((p) => p.nome), ['bp_del_role_gate'], 'drop/create depois da string com -- foram lidos');
+  assert.ok(banco.tabelas.depois_da_string, 'statement depois da string com ; e /* foi lido');
+});
