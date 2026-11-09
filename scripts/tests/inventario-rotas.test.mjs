@@ -131,6 +131,12 @@ test('helpers: tags com > dentro de element, juntar caminho e casar padrao', () 
   assert.equal(semComentarios("const u = 'https://x';\n// import a from 'b';\n/* c */").includes('https://x'), true);
 });
 
+test('edges: wrapper do DP (handleInvoke) e functions.invoke com generico aninhado', () => {
+  const texto = "const a = () => handleInvoke('gerar-guias', { body });\nconst b = () => handleInvoke<{ ok: boolean }>('calcular-ferias', {});\n"
+    + "const c = supabase.functions.invoke<\n  Partial<Resultado> & { success?: boolean }\n>('gerar-pdf', { body });\nipcRenderer.send('nao-e-edge');";
+  assert.deepEqual(extrairChamadas(texto).edges, ['gerar-guias', 'calcular-ferias', 'gerar-pdf']);
+});
+
 test('rota, item de menu e chamada comentados nao contam', (t) => {
   const raiz = repo(t, {
     'src/App.tsx': APP.replace("{/* comentario com 'aspas' */}",

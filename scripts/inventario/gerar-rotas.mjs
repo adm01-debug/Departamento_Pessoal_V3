@@ -113,10 +113,12 @@ export function extrairChamadas(texto) {
     rpcs: [...pegar(/(?:\.|\b)rpc\(\s*['"`]([A-Za-z0-9_]+)['"`]/g), ...pegar(/\/rest\/v1\/rpc\/([A-Za-z0-9_]+)/g)],
     // `functions.invoke` (inclusive quebrado em linha) e o atalho `invokeEdge<T>(...)` de
     // src/lib/invokeEdge.ts; `invoke('evolution-api/connect')` conta como a edge `evolution-api`.
+    // No DP o wrapper e `handleInvoke('x')` (src/services/edgeFunctionsService.ts); o generico pode
+    // ter um nivel aninhado e quebra de linha: `invoke<\n Partial<T> & { ok?: boolean }\n>('x')`.
     // `fetch(`${SUPABASE_URL}/functions/v1/get-call-recording`)` (chamada direta pela URL): so dentro
     // de string/template; a URL mostrada como texto em JSX (ex.: GmailWebhookMonitor) nao e chamada.
     edges: [
-      ...pegar(/(?:functions\s*\.\s*invoke|\binvokeEdge)(?:<[^>()]*>)?\(\s*['"`]([A-Za-z0-9_-]+)(?:\/[^'"`]*)?['"`]/g),
+      ...pegar(/(?:functions\s*\.\s*invoke|\binvokeEdge|\bhandleInvoke)(?:<(?:[^<>()]|<[^<>()]*>)*>)?\(\s*['"`]([A-Za-z0-9_-]+)(?:\/[^'"`]*)?['"`]/g),
       ...pegar(/['"`][^'"`\n]*\/functions\/v1\/([A-Za-z0-9_-]+)/g),
     ],
   };
