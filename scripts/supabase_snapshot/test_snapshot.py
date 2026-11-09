@@ -341,6 +341,21 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
             s.render_stats({"db_stats": {"storage": []}}, {}, {})
             self.assertIn("_nenhum_", (self.out / "stats.md").read_text().split("## Storage", 1)[1].split("##", 1)[0])
 
+    def test_constraint_columns_are_requested_in_key_order(self):
+        # FOREIGN KEY (b, a) REFERENCES t (x, y): sem ORDER BY na posição da chave o Postgres devolve
+        # as colunas na ordem do join (attnum) e o par publicado sai trocado (a→x, b→y).
+        s = self.snapshot
+        seen = []
+        with mock.patch.object(s, "q", side_effect=lambda _conn, sql, params=None: seen.append(sql) or []), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(s.get_constraints(OfflineConnection()), [])
+            self.assertEqual(s.get_lints(OfflineConnection()), [])
+        arrays = [a for sql in seen for a in re.findall(r"ARRAY\(SELECT a\.attname FROM unnest\(con\.conf?key\)[\s\S]*?\) AS \w+", sql)]
+        self.assertEqual([a.rsplit(" ", 1)[1] for a in arrays], ["columns", "ref_columns", "cols"])
+        for array in arrays:
+            self.assertIn("WITH ORDINALITY k(attnum, ord)", array)
+            self.assertIn("ORDER BY k.ord", array)
+
 
 class SnapshotFailureMatrixTests(SnapshotFixture):
     """24 sequências: seção × histórico/SQL disponível × repetição × recuperação."""
