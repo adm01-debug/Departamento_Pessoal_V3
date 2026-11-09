@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `458423501d585744a756d719e7f16a5e8f5bd5d2` (2026-11-09T11:57:31-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4e36ab2bed6e8577f78a0f9cebf882ff4e3c9014` (2026-11-09T12:47:54-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2816 |
 | arquivos_codigo | 1516 |
-| linhas_codigo | 262934 |
+| linhas_codigo | 263102 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -385,27 +385,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21472 nós · 44846 arestas · 2110 comunidades · grafo do commit `45842350`
+- 21472 nós · 44846 arestas · 2110 comunidades · grafo do commit `4e36ab2b`
 - comunidades maiores: useEmpresas (534), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (437), button.tsx (341), App.tsx (328), cn (266), vitest (260), "public"."empresas" (164), react (160), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (83)
+- package.json (82)
 - package-lock.json (78)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (28)
-- .github/workflows/ci.yml (24)
-- src/integrations/supabase/types.ts (16)
-- .github/workflows/e2e.yml (15)
-- supabase/functions/external-db-bridge/validation.ts (15)
+- .github/workflows/ci.yml (23)
+- src/integrations/supabase/types.ts (15)
+- .github/workflows/e2e.yml (14)
+- supabase/functions/external-db-bridge/validation.ts (14)
 - .github/workflows/security.yml (13)
 - src/services/cnabService.ts (13)
 - supabase/functions/external-db-bridge/index.ts (13)
-- .github/workflows/deploy.yml (12)
 - AGENTS.md (12)
 - PENDENCIAS.md (12)
-- .github/workflows/healthcheck.yml (11)
+- .github/workflows/deploy.yml (11)
+- src/integrations/supabase/client.ts (11)
 
 ## Workflows
 - `canonical-edge-functions.yml` — Canonical Supabase — Edge Functions (pull_request, push, workflow_dispatch)
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-09 `4e36ab2` chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)
 - 2026-11-09 `4584235` feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)
 - 2026-11-09 `b590d3f` feat(autofix): autofix sem IA e verificador de regras de negócio (#402)
 - 2026-11-09 `d03a83b` fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `1822a56` feat: guards false-green + auto-assertions em 5 scripts de auditoria
 - 2026-11-08 `e9086da` feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config
 - 2026-11-08 `bb559b4` feat: guards false-green em audit-edge-audit-log-contract
-- 2026-11-08 `faaf11c` feat: guards de false-green em audit-bridge-frontend-contract
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

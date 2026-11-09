@@ -83,7 +83,7 @@
    "hooks_exportados": [
     "useFormField"
    ],
-   "linhas": 131,
+   "linhas": 132,
    "dominio": "components/ui",
    "tabelas": [],
    "rpcs": [],
@@ -103,7 +103,7 @@
    "hooks_exportados": [
     "useSidebar"
    ],
-   "linhas": 642,
+   "linhas": 643,
    "dominio": "components/ui",
    "tabelas": [],
    "rpcs": [],
@@ -144,7 +144,7 @@
    "hooks_exportados": [
     "useAuth"
    ],
-   "linhas": 377,
+   "linhas": 378,
    "dominio": "contexts",
    "tabelas": [
     "colaboradores",
@@ -189,7 +189,7 @@
    "hooks_exportados": [
     "useEmpresa"
    ],
-   "linhas": 68,
+   "linhas": 63,
    "dominio": "contexts",
    "tabelas": [],
    "rpcs": [],
@@ -253,7 +253,7 @@
     "useNotification",
     "useNotifications"
    ],
-   "linhas": 51,
+   "linhas": 68,
    "dominio": "contexts",
    "tabelas": [],
    "rpcs": [],
@@ -932,7 +932,7 @@
    "hooks_exportados": [
     "useCalculoFolha"
    ],
-   "linhas": 163,
+   "linhas": 165,
    "dominio": "hooks",
    "tabelas": [
     "folha_auditoria",
@@ -1362,7 +1362,7 @@
    "hooks_exportados": [
     "useDocumentOCR"
    ],
-   "linhas": 72,
+   "linhas": 70,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1935,7 +1935,7 @@
    "hooks_exportados": [
     "useNavigationGuard"
    ],
-   "linhas": 82,
+   "linhas": 80,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2377,7 +2377,7 @@
    "hooks_exportados": [
     "useRealTimeSubscription"
    ],
-   "linhas": 63,
+   "linhas": 64,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2726,7 +2726,7 @@
    "hooks_exportados": [
     "useTranslation"
    ],
-   "linhas": 85,
+   "linhas": 72,
    "dominio": "i18n",
    "tabelas": [],
    "rpcs": [],
@@ -2746,7 +2746,7 @@
    "hooks_exportados": [
     "useCursorPagination"
    ],
-   "linhas": 116,
+   "linhas": 110,
    "dominio": "lib",
    "tabelas": [],
    "rpcs": [],

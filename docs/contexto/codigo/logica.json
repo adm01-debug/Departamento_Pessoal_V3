@@ -573,7 +573,7 @@
     "useCursorPagination"
    ],
    "export_default": null,
-   "linhas": 116,
+   "linhas": 110,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1190,7 +1190,7 @@
     "validarS5011"
    ],
    "export_default": null,
-   "linhas": 64,
+   "linhas": 121,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1225,7 +1225,7 @@
     "validarS3000"
    ],
    "export_default": null,
-   "linhas": 465,
+   "linhas": 451,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1261,7 +1261,7 @@
     "validarS5011"
    ],
    "export_default": null,
-   "linhas": 792,
+   "linhas": 861,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1285,7 +1285,7 @@
     "validarRubricaESocial"
    ],
    "export_default": null,
-   "linhas": 75,
+   "linhas": 76,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1310,7 +1310,7 @@
     "validarS2240"
    ],
    "export_default": null,
-   "linhas": 305,
+   "linhas": 315,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1570,7 +1570,7 @@
     "admissaoService"
    ],
    "export_default": null,
-   "linhas": 150,
+   "linhas": 151,
    "tabelas": [
     "colaboradores"
    ],
@@ -1596,7 +1596,7 @@
     "afastamentoService"
    ],
    "export_default": null,
-   "linhas": 351,
+   "linhas": 352,
    "tabelas": [
     "afastamentos",
     "cid10",
@@ -1892,7 +1892,7 @@
     "beneficioService"
    ],
    "export_default": null,
-   "linhas": 191,
+   "linhas": 192,
    "tabelas": [
     "beneficios_colaborador"
    ],
@@ -2120,7 +2120,7 @@
     "salvarValorCampoCustomizado"
    ],
    "export_default": null,
-   "linhas": 555,
+   "linhas": 554,
    "tabelas": [
     "anotacoes_colaborador",
     "asos",
@@ -2163,7 +2163,7 @@
     "colaboradorService"
    ],
    "export_default": null,
-   "linhas": 161,
+   "linhas": 162,
    "tabelas": [
     "colaboradores"
    ],
@@ -2395,7 +2395,7 @@
     "desligamentoService"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 114,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -2456,7 +2456,7 @@
     "documentoService"
    ],
    "export_default": null,
-   "linhas": 47,
+   "linhas": 48,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -2510,7 +2510,7 @@
     "empresaService"
    ],
    "export_default": null,
-   "linhas": 39,
+   "linhas": 40,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -2715,7 +2715,7 @@
     "feriasService"
    ],
    "export_default": null,
-   "linhas": 267,
+   "linhas": 268,
    "tabelas": [
     "ferias_aprovacoes_log",
     "periodos_aquisitivos"
@@ -2823,7 +2823,7 @@
     "folhaService"
    ],
    "export_default": null,
-   "linhas": 48,
+   "linhas": 49,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -3109,7 +3109,7 @@
     "redactLogText"
    ],
    "export_default": null,
-   "linhas": 270,
+   "linhas": 269,
    "tabelas": [],
    "rpcs": [
     "log_frontend_error"
@@ -4015,7 +4015,7 @@
     "vincularDependenteBeneficio"
    ],
    "export_default": null,
-   "linhas": 331,
+   "linhas": 330,
    "tabelas": [
     "centros_custo",
     "contas_bancarias",
@@ -4073,7 +4073,7 @@
     "webhookService"
    ],
    "export_default": null,
-   "linhas": 44,
+   "linhas": 45,
    "tabelas": [
     "webhook_logs"
    ],
@@ -4888,7 +4888,7 @@
     "mapearResultadoDeDesligamento"
    ],
    "export_default": null,
-   "linhas": 243,
+   "linhas": 244,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

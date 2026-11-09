@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `458423501d` · branch `main` · 2026-11-09 15:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4e36ab2bed` · branch `main` · 2026-11-09 15:48 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2499,11 +2499,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   bruto: number; inss: number; irrf: number; fgts: number; liquido: number; mensagem?: string;
   ```
-- **calcularFerias(salarioBase: number, diasFerias: number = 30, diasAbono: number = 0, dependentes: number = 0)** — `src/calculators/beneficios.ts`
+- **calcularFerias(salarioBase: number, diasFerias = 30, diasAbono = 0, dependentes = 0)** — `src/calculators/beneficios.ts`
   ```
   const valorDiario = salarioBase / 30; const valorFerias = valorDiario * diasFerias; const tercoConstitucional = valorFerias / 3; const valorAbono = valorDiario * diasAbono; const tercoAbono = valorAbono / 3; const bruto = valorFerias + tercoConstitucional + valorAbono + tercoAbono; // Férias têm tributação separada (exclusiva na fonte) const inss = calcularINSS(valorFerias + tercoConstitucional); const irrf = calcularIRRF(valorFerias + tercoConstitucional, dependentes); const liquido = Math.trun …
   ```
-- **calcularHorasExtras(salarioBase: number, horasExtras50: number = 0, horasExtras100: number = 0, jornadaMensal: number = 220, diasUteis: numb)** — `src/calculators/beneficios.ts`
+- **calcularHorasExtras(salarioBase: number, horasExtras50 = 0, horasExtras100 = 0, jornadaMensal = 220, diasUteis = 26, domingosEFeriados = 4)** — `src/calculators/beneficios.ts`
   ```
   const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0; const valor50 = Math.trunc(valorHora * 1.5 * horasExtras50 * 100) / 100; const valor100 = Math.trunc(valorHora * 2.0 * horasExtras100 * 100) / 100; const totalExtras = Math.trunc((valor50 + valor100) * 100) / 100; const dsr = calcularDSR(totalExtras, diasUteis, domingosEFeriados); return { valor50, valor100, total: totalExtras, dsr, totalComDsr: Math.trunc((totalExtras + dsr) * 100) / 100 };
   ```
@@ -2511,27 +2511,27 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   if (diasUteis <= 0) return 0; const valorDsr = (totalVariaveis / diasUteis) * domingosEFeriados; return Math.trunc(valorDsr * 100) / 100;
   ```
-- **calcularAdicionalNoturno(salarioBase: number, horasNoturnas: number, jornadaMensal: number = 220, percentual: number = 20)** — `src/calculators/beneficios.ts`
+- **calcularAdicionalNoturno(salarioBase: number, horasNoturnas: number, jornadaMensal = 220, percentual = 20)** — `src/calculators/beneficios.ts`
   ```
   const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0; return Math.trunc(valorHora * (percentual / 100) * horasNoturnas * 100) / 100;
   ```
 - **calcularPericulosidade(salarioBase: number)** — `src/calculators/beneficios.ts`
   ```
-  return Math.trunc(salarioBase * 0.30 * 100) / 100;
+  return Math.trunc(salarioBase * 0.3 * 100) / 100;
   ```
 - **calcularInsalubridade(grau: GrauInsalubridade)** — `src/calculators/beneficios.ts`
   ```
-  const percentuais = { minimo: 0.10, medio: 0.20, maximo: 0.40 }; return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;
+  const percentuais = { minimo: 0.1, medio: 0.2, maximo: 0.4 }; return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;
   ```
 - **calcularDescontoVT(salarioBase: number, valorVTMensal: number)** — `src/calculators/beneficios.ts`
   ```
   const limiteDesconto = salarioBase * 0.06; return Math.trunc(Math.min(valorVTMensal, limiteDesconto) * 100) / 100;
   ```
-- **calcularValeAlimentacao(valorMensal: number, salarioBase: number, usaPAT: boolean = true)** — `src/calculators/beneficios.ts`
+- **calcularValeAlimentacao(valorMensal: number, salarioBase: number, usaPAT = true)** — `src/calculators/beneficios.ts`
   ```
-  valor: number, desconto: number
+  valor: number; desconto: number
   ```
-- **calcularPlanoSaude(custoTotal: number, coparticipacao: number = 0, mensalidadeFixa: number = 0)** — `src/calculators/beneficios.ts`
+- **calcularPlanoSaude(custoTotal: number, coparticipacao = 0, mensalidadeFixa = 0)** — `src/calculators/beneficios.ts`
   ```
   return Math.trunc((mensalidadeFixa + coparticipacao) * 100) / 100;
   ```
@@ -2543,7 +2543,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   if (salarioBruto > SALARIO_FAMILIA_TETO) return 0; return Math.trunc(SALARIO_FAMILIA_VALOR * numeroDependentes * 100) / 100;
   ```
-- **calcularSalarioMaternidade(salarioBase: number, diasLicenca: number = 120)** — `src/calculators/beneficios.ts`
+- **calcularSalarioMaternidade(salarioBase: number, diasLicenca = 120)** — `src/calculators/beneficios.ts`
   ```
   return Math.trunc((salarioBase / 30) * diasLicenca * 100) / 100;
   ```
@@ -2551,11 +2551,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const beneficio = mediaSalarial * 0.91; return Math.trunc(Math.max(SALARIO_MINIMO_2026, beneficio) * 100) / 100;
   ```
-- **calcularSobreaviso(salarioBase: number, horas: number, jornadaMensal: number = 220)** — `src/calculators/beneficios.ts`
+- **calcularSobreaviso(salarioBase: number, horas: number, jornadaMensal = 220)** — `src/calculators/beneficios.ts`
   ```
   if (jornadaMensal <= 0 || horas <= 0) return 0; const valorHora = salarioBase / jornadaMensal; return Math.trunc(valorHora * (1 / 3) * horas * 100) / 100;
   ```
-- **calcularProntidao(salarioBase: number, horas: number, jornadaMensal: number = 220)** — `src/calculators/beneficios.ts`
+- **calcularProntidao(salarioBase: number, horas: number, jornadaMensal = 220)** — `src/calculators/beneficios.ts`
   ```
   if (jornadaMensal <= 0 || horas <= 0) return 0; const valorHora = salarioBase / jornadaMensal; return Math.trunc(valorHora * (2 / 3) * horas * 100) / 100;
   ```
@@ -2567,11 +2567,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return Math.trunc(valorVendas * (percentualComissao / 100) * 100) / 100;
   ```
-- **calcularDiarias(valorDiaria: number, dias: number, percentualDesconto: number = 0)** — `src/calculators/beneficios.ts`
+- **calcularDiarias(valorDiaria: number, dias: number, percentualDesconto = 0)** — `src/calculators/beneficios.ts`
   ```
   const total = Math.trunc(valorDiaria * dias * 100) / 100; const desconto = Math.trunc(total * (percentualDesconto / 100) * 100) / 100; return { total, desconto, liquido: Math.trunc((total - desconto) * 100) / 100 };
   ```
-- **calcularQuilometragem(km: number, valorPorKm: number = 1.20)** — `src/calculators/beneficios.ts`
+- **calcularQuilometragem(km: number, valorPorKm = 1.2)** — `src/calculators/beneficios.ts`
   ```
   return Math.trunc(km * valorPorKm * 100) / 100;
   ```
@@ -2587,15 +2587,15 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return Math.trunc((bruto - descontos) * 100) / 100;
   ```
-- **calcularAdicionalTransferencia(salarioBase: number, percentual: number = 25)** — `src/calculators/beneficios.ts`
+- **calcularAdicionalTransferencia(salarioBase: number, percentual = 25)** — `src/calculators/beneficios.ts`
   ```
   return Math.trunc(salarioBase * (percentual / 100) * 100) / 100;
   ```
 - **calcularEmprestimoConsignado(salarioLiquido: number, parcela: number)** — `src/calculators/beneficios.ts`
   ```
-  parcela: number, margemDisponivel: number
+  parcela: number; margemDisponivel: number
   ```
-- **calcularINSS(salarioBruto: number, ano: number = 2026)** — `src/calculators/impostos.ts`
+- **calcularINSS(salarioBruto: number, ano = 2026)** — `src/calculators/impostos.ts`
   ```
   if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos const anos = Object.keys(INSS_POR_ANO) .map(Number) .sort((a, b) => a - b); const anoTabela = anos.filter((a) => a <= ano).pop() ?? anos[0]; const { faixas, teto } = INSS_POR_ANO[anoTabela]; const baseCents = BigInt(Math.round(salarioBruto * 100)); const tetoCents = BigInt(Math.round(teto * 100)); const b = baseCents < tetoCents ? baseCents : tetoCents; let inssMilesimos = 0n; let anterior = 0n; for (const faixa of faixas) { if ( …
   ```
@@ -2611,7 +2611,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const dias = Math.min(90, 30 + anosServico * 3); const valor = Math.trunc((salarioBase / 30) * dias * 100) / 100; return { dias, valor };
   ```
-- **calcularSeguroDesemprego(ultimosSalarios: number[], mesesVinculo: number = 0)** — `src/calculators/rescisao.ts`
+- **calcularSeguroDesemprego(ultimosSalarios: number[], mesesVinculo = 0)** — `src/calculators/rescisao.ts`
   ```
   if (!ultimosSalarios.length) return { valorParcela: SALARIO_MINIMO_2026, parcelas: 3 }; const media = ultimosSalarios.reduce((a, b) => a + b, 0) / ultimosSalarios.length; const sd = FAIXAS_SEGURO_DESEMPREGO_2026; let valorParcela: number; if (media <= sd.faixa1Limite) valorParcela = media * sd.faixa1Mult; else if (media <= sd.faixa2Limite) valorParcela = sd.faixa2Base + (media - sd.faixa1Limite) * sd.faixa2Mult; else valorParcela = sd.teto; valorParcela = Math.max(SALARIO_MINIMO_2026, Math.trunc …
   ```
@@ -2619,7 +2619,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const percentual = tipo === 'sem_justa_causa' ? 0.4 : 0.2; return Math.trunc((saldoFGTS + fgtsRescisao) * percentual * 100) / 100;
   ```
-- **calcularMulta477(salarioBase: number, empregadorCulpado: boolean = false)** — `src/calculators/rescisao.ts`
+- **calcularMulta477(salarioBase: number, empregadorCulpado = false)** — `src/calculators/rescisao.ts`
   ```
   if (!empregadorCulpado) return 0; return Math.trunc(salarioBase * 100) / 100;
   ```
@@ -2631,7 +2631,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const provisao13 = Math.trunc((salarioBase / 12) * mesesTrabalhados * 100) / 100; const provisaoEncargos = Math.trunc(provisao13 * 0.3637 * 100) / 100; const total = Math.trunc((provisao13 + provisaoEncargos) * 100) / 100; return { provisao13, provisaoEncargos, total };
   ```
-- **calcularEncargos(salarioBase: number, percentualRAT: number = 0.03, percentualTerceiros: number = 0.058)** — `src/calculators/rescisao.ts`
+- **calcularEncargos(salarioBase: number, percentualRAT = 0.03, percentualTerceiros = 0.058)** — `src/calculators/rescisao.ts`
   ```
   const inssEmpregado = calcularINSS(salarioBase); const irrfEmpregado = calcularIRRF(salarioBase); const fgts = calcularFGTS(salarioBase); const inssPatronal = Math.trunc(salarioBase * 0.2 * 100) / 100; const rat = Math.trunc(salarioBase * percentualRAT * 100) / 100; const terceiros = Math.trunc(salarioBase * percentualTerceiros * 100) / 100; const totalEncargosPatronais = Math.trunc((inssPatronal + rat + terceiros + fgts) * 100) / 100; const custoMensalTotal = Math.trunc((salarioBase + totalEnca …
   ```
@@ -2647,15 +2647,15 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   let irrf = 0; for (const faixa of FAIXAS_PLR_2026) { if (valor <= faixa.limite) { irrf = Math.max(0, Math.trunc((valor * faixa.aliquota - faixa.deducao) * 100) / 100); break; } } return { bruto: valor, irrf, liquido: Math.trunc((valor - irrf) * 100) / 100 };
   ```
-- **calcularHorasExtras(salarioBase: number, jornadaMensal: number = 220, horasExtras: number, percentual: number = 0.5)** — `src/calculators/trabalhista-base.ts`
+- **calcularHorasExtras(salarioBase: number, jornadaMensal = 220, horasExtras: number, percentual = 0.5)** — `src/calculators/trabalhista-base.ts`
   ```
   if (horasExtras <= 0 || jornadaMensal <= 0) return 0; const valorHora = salarioBase / jornadaMensal; const valorComAdicional = valorHora * (1 + percentual); return Math.trunc(valorComAdicional * horasExtras * 100) / 100;
   ```
-- **calcularDSR(totalVariavel: number, diasUteis: number = 26, domingosFeriados: number = 4)** — `src/calculators/trabalhista-base.ts`
+- **calcularDSR(totalVariavel: number, diasUteis = 26, domingosFeriados = 4)** — `src/calculators/trabalhista-base.ts`
   ```
   if (totalVariavel <= 0 || diasUteis <= 0) return 0; return Math.trunc((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;
   ```
-- **calcular13Salario(salarioBase: number, mesesTrabalhados: number = 12, parcela: 1 | 2 = 2)** — `src/calculators/trabalhista-base.ts`
+- **calcular13Salario(salarioBase: number, mesesTrabalhados = 12, parcela: 1 | 2 = 2)** — `src/calculators/trabalhista-base.ts`
   ```
   const valorIntegral = (salarioBase / 12) * mesesTrabalhados; if (parcela === 1) { // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF return Math.trunc((valorIntegral / 2) * 100) / 100; } // 2ª Parcela é o valor integral (sobre o qual incidirão descontos no cálculo principal) return Math.trunc(valorIntegral * 100) / 100;
   ```
@@ -2985,7 +2985,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **validarEvento(tipo: string, dados: ESocialData)** — `src/schemas/esocial/index.ts`
   ```
-  const fn = validadores[tipo]; if (!fn) { return { valid: false, errors: [{ campo: 'tpEvento', mensagem: `Validador não encontrado para ${tipo}. Verifique se este evento é suportado.`, regra: 'REGRA_TIPO_EVENTO' }], warnings: [] }; } return fn(dados);
+  const fn = validadores[tipo]; if (!fn) { return { valid: false, errors: [ { campo: 'tpEvento', mensagem: `Validador não encontrado para ${tipo}. Verifique se este evento é suportado.`, regra: 'REGRA_TIPO_EVENTO', }, ], warnings: [], }; } return fn(dados);
   ```
 - **validarTrabalhador(dados: ESocialData, errors: ValidationError[])** — `src/schemas/esocial/naoPeriodicosValidators.ts`
   ```
@@ -3013,7 +3013,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **validarS2299(dados: ESocialData)** — `src/schemas/esocial/naoPeriodicosValidators.ts`
   ```
-  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtDeslig, 'dtDeslig', errors); dataValida(dados.dtDeslig as string, 'dtDeslig', errors); if (dados.dtAdm !== undefined && dados.dtAdm !== null && dados.dtAdm !== '') { ordemCronologica( dados.dtAdm, dados.dtDeslig, 'dtDeslig', 'Data de desligamento não pode ser anterior à data de admissão', errors, ); } if (dados.mtvDeslig !== undefined && dados.mtvDeslig !== null && …
+  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtDeslig, 'dtDeslig', errors); dataValida(dados.dtDeslig as string, 'dtDeslig', errors); if (dados.dtAdm !== undefined && dados.dtAdm !== null && dados.dtAdm !== '') { ordemCronologica( dados.dtAdm, dados.dtDeslig, 'dtDeslig', 'Data de desligamento não pode ser anterior à data de admissão', errors ); } if (dados.mtvDeslig !== undefined && dados.mtvDeslig !== null && d …
   ```
 - **validarS2300(dados: ESocialData)** — `src/schemas/esocial/naoPeriodicosValidators.ts`
   ```
@@ -3025,7 +3025,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **validarS2399(dados: ESocialData)** — `src/schemas/esocial/naoPeriodicosValidators.ts`
   ```
-  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtTerm, 'dtTerm', errors); dataValida(dados.dtTerm as string, 'dtTerm', errors); if (dados.dtInicio !== undefined && dados.dtInicio !== null && dados.dtInicio !== '') { ordemCronologica( dados.dtInicio, dados.dtTerm, 'dtTerm', 'Data de término não pode ser anterior à data de início', errors, ); } if (dados.mtvDesligTSV !== undefined && dados.mtvDesligTSV !== null && d …
+  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtTerm, 'dtTerm', errors); dataValida(dados.dtTerm as string, 'dtTerm', errors); if (dados.dtInicio !== undefined && dados.dtInicio !== null && dados.dtInicio !== '') { ordemCronologica( dados.dtInicio, dados.dtTerm, 'dtTerm', 'Data de término não pode ser anterior à data de início', errors ); } if (dados.mtvDesligTSV !== undefined && dados.mtvDesligTSV !== null && da …
   ```
 - **validarS2400(dados: ESocialData)** — `src/schemas/esocial/naoPeriodicosValidators.ts`
   ```
@@ -3051,11 +3051,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; // ── IDEEvento ───────────────────────────────────────────────────────── required(dados.tpInsc, 'IDEEvento.tpInsc', errors); enumValido(String(dados.tpInsc), ['1'], 'IDEEvento.tpInsc', errors); required(dados.nrInsc, 'IDEEvento.nrInsc', errors); cnpjValido(String(dados.nrInsc ?? ''), 'IDEEvento.nrInsc', errors); required(dados.perApur, 'IDEEvento.perApur', errors); if (typeof dados.perApur === 'string' && !/^\d{4}-( …
   ```
-- **competenciaValida(val: unknown, campo: string, errors: ValidationError[],)** — `src/schemas/esocial/periodicosValidators.ts`
+- **competenciaValida(val: unknown, campo: string, errors: ValidationError[])** — `src/schemas/esocial/periodicosValidators.ts`
   ```
   if (typeof val === 'string' && !COMPETENCIA_RE.test(val)) { errors.push({ campo, mensagem: `${campo} deve estar no formato AAAA-MM`, regra: 'REGRA_PERIODO', }); }
   ```
-- **validarInscricao(dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc',)** — `src/schemas/esocial/periodicosValidators.ts`
+- **validarInscricao(dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc')** — `src/schemas/esocial/periodicosValidators.ts`
   ```
   required(dados[campoTp], campoTp, errors); enumValido(String(dados[campoTp] ?? ''), ['1', '2', '3', '4', '5', '6'], campoTp, errors); required(dados[campoNr], campoNr, errors); if (Number(dados[campoTp]) === 1) cnpjValido(String(dados[campoNr] ?? ''), campoNr, errors); if (Number(dados[campoTp]) === 2) cpfValido(String(dados[campoNr] ?? ''), campoNr, errors);
   ```
@@ -3089,7 +3089,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **validarS1260(dados: ESocialData)** — `src/schemas/esocial/periodicosValidators.ts`
   ```
-  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); required(dados.nrInsc, 'nrInsc', errors); // indComerc conforme Tabela 13 — 1 não é código válido para este evento required(dados.indComerc, 'indComerc', errors); enumValido( String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors, ); required(dados.vrTotCom, 'vrTotCom', errors); if (dados. …
+  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); required(dados.nrInsc, 'nrInsc', errors); // indComerc conforme Tabela 13 — 1 não é código válido para este evento required(dados.indComerc, 'indComerc', errors); enumValido(String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors); required(dados.vrTotCom, 'vrTotCom', errors); if (dados.vrT …
   ```
 - **validarS1270(dados: ESocialData)** — `src/schemas/esocial/periodicosValidators.ts`
   ```
@@ -3097,7 +3097,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **validarS1280(dados: ESocialData)** — `src/schemas/esocial/periodicosValidators.ts`
   ```
-  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); // indSubstPatr: 1=integral, 2=proporcional if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') { enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors); } if ( dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== …
+  const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); // indSubstPatr: 1=integral, 2=proporcional if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') { enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors); } if (dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== ' …
   ```
 - **validarRubricaESocial(rubrica: ESocialData)** — `src/schemas/esocial/rubricaValidator.ts`
   ```
@@ -3139,11 +3139,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   ok: boolean; reason?: string
   ```
-- **calcularCustoMensal(colaboradorId: string, diasUteis: number = 22)** — `src/services/calculoBeneficiosService.ts`
+- **calcularCustoMensal(colaboradorId: string, diasUteis = 22)** — `src/services/calculoBeneficiosService.ts`
   ```
   const { data: colab, error: colabError } = await supabase .from('colaboradores') .select('salario_base') .eq('id', colaboradorId) .single(); if (colabError) throw colabError; const salario = colab?.salario_base || 0; const descontoMaximo = salario * 0.06; const { data: rotas, error: rotasError } = await ( fromBeneficiosColaborador().select('*, beneficio:beneficios(*)') as unknown as QBuilder<BeneficioColaboradorRow> ) .eq('colaborador_id', colaboradorId) .eq('status_vinculo', 'ativo'); if (rotas …
   ```
-- **calcularCredito(beneficioId: string, diasTrabalhados: number = 22)** — `src/services/calculoBeneficiosService.ts`
+- **calcularCredito(beneficioId: string, diasTrabalhados = 22)** — `src/services/calculoBeneficiosService.ts`
   ```
   const { data: beneficio, error } = await supabase .from('beneficios') .select('valor, tipo') .eq('id', beneficioId) .single(); if (error) throw error; const valor = beneficio?.valor || 0; // Se for mensal (valor alto), retorna o valor cheio, senão calcula proporcional if (valor < 100) { return valor * diasTrabalhados; } return valor;
   ```
@@ -3513,12 +3513,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Trecho | Arquivo |
 |---|---|
 | `const beneficio = mediaSalarial * 0.91;` | `src/calculators/beneficios.ts` |
-| `const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.20) * 100) / 100;` | `src/calculators/beneficios.ts` |
+| `const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.2) * 100) / 100;` | `src/calculators/beneficios.ts` |
 | `const fgts = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 0.08 * 100) / 100;` | `src/calculators/beneficios.ts` |
 | `const fgts = Math.trunc(bruto * 0.08 * 100) / 100;` | `src/calculators/beneficios.ts` |
 | `const limiteDesconto = salarioBase * 0.06;` | `src/calculators/beneficios.ts` |
 | `const margemTotal = Math.trunc(salarioLiquido * 0.35 * 100) / 100;` | `src/calculators/beneficios.ts` |
-| `return Math.trunc(salarioBase * 0.30 * 100) / 100;` | `src/calculators/beneficios.ts` |
+| `return Math.trunc(salarioBase * 0.3 * 100) / 100;` | `src/calculators/beneficios.ts` |
 | `const inssPatronal = Math.trunc(salarioBase * 0.2 * 100) / 100;` | `src/calculators/rescisao.ts` |
 | `const provisaoEncargos = Math.trunc((provisaoFerias + provisaoTerco) * 0.3637 * 100) / 100;` | `src/calculators/rescisao.ts` |
 | `const provisaoEncargos = Math.trunc(provisao13 * 0.3637 * 100) / 100;` | `src/calculators/rescisao.ts` |
@@ -3778,8 +3778,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `BUCKET` | `'documentos'` | `src/components/portal/PortalDocumentosTab.tsx` |
 | `PAGE` | `1000` | `src/components/sst/SSTIncidentesTab.tsx` |
 | `SIDEBAR_COOKIE_MAX_AGE` | `60` | `src/components/ui/sidebar.tsx` |
-| `SIDEBAR_WIDTH` | `"16rem"` | `src/components/ui/sidebar.tsx` |
-| `SIDEBAR_WIDTH_MOBILE` | `"18rem"` | `src/components/ui/sidebar.tsx` |
+| `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
+| `SIDEBAR_WIDTH_MOBILE` | `'18rem'` | `src/components/ui/sidebar.tsx` |
 | `TOAST_LIMIT` | `1` | `src/components/ui/use-toast.ts` |
 | `NODE_W` | `160` | `src/components/workflows/WorkflowDesigner.tsx` |
 | `NODE_H` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |

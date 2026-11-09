@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)",
    "feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)",
    "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)",
    "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)",
-   "fix: corrige 3 inconsistências de doc achadas na validação pós-#395",
-   "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)"
+   "fix: corrige 3 inconsistências de doc achadas na validação pós-#395"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

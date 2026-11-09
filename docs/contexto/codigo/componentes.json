@@ -245,7 +245,7 @@
     "AdmissoesKanban"
    ],
    "export_default": null,
-   "linhas": 213,
+   "linhas": 212,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useEmpresas"
@@ -261,7 +261,7 @@
     "DetalhesAdmissaoDialog"
    ],
    "export_default": null,
-   "linhas": 464,
+   "linhas": 465,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useAdmissaoWorkflow",
@@ -1341,7 +1341,7 @@
     "EmpresaSelector"
    ],
    "export_default": null,
-   "linhas": 106,
+   "linhas": 109,
    "dominio": "components/empresa",
    "hooks_locais": [
     "useEmpresas"
@@ -2024,7 +2024,7 @@
     "KanbanMes"
    ],
    "export_default": null,
-   "linhas": 123,
+   "linhas": 116,
    "dominio": "components/ferias",
    "hooks_locais": [],
    "tabelas": [],
@@ -2091,7 +2091,7 @@
     "CNABDialog"
    ],
    "export_default": null,
-   "linhas": 353,
+   "linhas": 354,
    "dominio": "components/folha",
    "hooks_locais": [
     "useEmpresas"
@@ -2444,7 +2444,7 @@
     "WhatsAppConfigPanel"
    ],
    "export_default": null,
-   "linhas": 611,
+   "linhas": 612,
    "dominio": "components/integracoes",
    "hooks_locais": [
     "useEmpresas"
@@ -2925,7 +2925,7 @@
     "MedidasKanban"
    ],
    "export_default": null,
-   "linhas": 326,
+   "linhas": 325,
    "dominio": "components/medidas-disciplinares",
    "hooks_locais": [
     "useEmpresas"
@@ -4485,7 +4485,7 @@
     "EmptyState"
    ],
    "export_default": null,
-   "linhas": 77,
+   "linhas": 83,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -4505,7 +4505,7 @@
     "FormMessage"
    ],
    "export_default": null,
-   "linhas": 131,
+   "linhas": 132,
    "dominio": "components/ui",
    "hooks_locais": [
     "useFormField"
@@ -4771,7 +4771,7 @@
     "SidebarTrigger"
    ],
    "export_default": null,
-   "linhas": 642,
+   "linhas": 643,
    "dominio": "components/ui",
    "hooks_locais": [
     "useIsMobile",
@@ -4862,7 +4862,7 @@
     "StatCard"
    ],
    "export_default": null,
-   "linhas": 40,
+   "linhas": 41,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -5107,7 +5107,7 @@
     "User"
    ],
    "export_default": null,
-   "linhas": 377,
+   "linhas": 378,
    "dominio": "contexts",
    "hooks_locais": [
     "useAuth"
@@ -5126,7 +5126,7 @@
     "EmpresaProvider"
    ],
    "export_default": null,
-   "linhas": 68,
+   "linhas": 63,
    "dominio": "contexts",
    "hooks_locais": [
     "useEmpresa",
@@ -5143,7 +5143,7 @@
     "NotificationProvider"
    ],
    "export_default": null,
-   "linhas": 51,
+   "linhas": 68,
    "dominio": "contexts",
    "hooks_locais": [
     "useNotificacoes",
@@ -5160,7 +5160,7 @@
     "ErrorBoundary"
    ],
    "export_default": null,
-   "linhas": 73,
+   "linhas": 75,
    "dominio": "errors",
    "hooks_locais": [],
    "tabelas": [],
@@ -5671,7 +5671,7 @@
     "CargosPage"
    ],
    "export_default": "CargosPage",
-   "linhas": 115,
+   "linhas": 135,
    "dominio": "pages",
    "hooks_locais": [
     "useCargos"
@@ -5830,7 +5830,7 @@
     "ContratacaoPage"
    ],
    "export_default": "ContratacaoPage",
-   "linhas": 734,
+   "linhas": 736,
    "dominio": "pages",
    "hooks_locais": [
     "useDocumentOCR"
@@ -6087,7 +6087,7 @@
     "EmpresasPage"
    ],
    "export_default": "EmpresasPage",
-   "linhas": 101,
+   "linhas": 111,
    "dominio": "pages",
    "hooks_locais": [
     "useTodasEmpresas"
@@ -6244,7 +6244,7 @@
     "FinanceiroBancarioPage"
    ],
    "export_default": "FinanceiroBancarioPage",
-   "linhas": 603,
+   "linhas": 604,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"

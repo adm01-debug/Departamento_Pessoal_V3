@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "458423501d585744a756d719e7f16a5e8f5bd5d2",
+  "sha": "4e36ab2bed6e8577f78a0f9cebf882ff4e3c9014",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 15:14 UTC",
+  "generated_at": "2026-11-09 15:48 UTC",
   "files_total": 2837,
   "code_files": 2331,
-  "code_lines": 310825
+  "code_lines": 310993
  },
  "version": "1.3.2",
- "facts_hash": "a347228e3c7bd566",
+ "facts_hash": "64d7f2976c3c2bac",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -95135,7 +95135,7 @@
   {
    "module": "src/calculators",
    "files": 16,
-   "lines": 2114,
+   "lines": 2117,
    "tables": [],
    "exports": [
     "auditHelper.ts: signCalculation, auditCalculation, verifyCalculationIntegrity",
@@ -95181,7 +95181,7 @@
   {
    "module": "src/components",
    "files": 567,
-   "lines": 72885,
+   "lines": 72891,
    "tables": [
     "admissoes",
     "afastamentos",
@@ -95441,7 +95441,7 @@
   {
    "module": "src/contexts",
    "files": 7,
-   "lines": 954,
+   "lines": 967,
    "tables": [
     "colaboradores",
     "empresas"
@@ -95483,7 +95483,7 @@
   {
    "module": "src/errors",
    "files": 4,
-   "lines": 174,
+   "lines": 176,
    "tables": [],
    "exports": [
     "AppError.ts: AppError, ValidationError, AuthError, NetworkError, NotFoundError, PermissionError",
@@ -95511,7 +95511,7 @@
   {
    "module": "src/hooks",
    "files": 182,
-   "lines": 20006,
+   "lines": 20005,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -95708,7 +95708,7 @@
   {
    "module": "src/i18n",
    "files": 2,
-   "lines": 567,
+   "lines": 554,
    "tables": [],
    "exports": [
     "index.ts: Locale, SUPPORTED_LOCALES, DEFAULT_LOCALE, detectLocale, TranslateOptions, i18n",
@@ -95775,7 +95775,7 @@
   {
    "module": "src/lib",
    "files": 14,
-   "lines": 1725,
+   "lines": 1719,
    "tables": [],
    "exports": [
     "circuitBreaker.ts: CircuitState, CircuitBreaker, bitrixBreaker, resendBreaker, genericBreaker",
@@ -95823,7 +95823,7 @@
   {
    "module": "src/pages",
    "files": 114,
-   "lines": 39375,
+   "lines": 39408,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -96099,7 +96099,7 @@
   {
    "module": "src/schemas",
    "files": 32,
-   "lines": 8518,
+   "lines": 8641,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -96181,7 +96181,7 @@
   {
    "module": "src/services",
    "files": 160,
-   "lines": 33289,
+   "lines": 33296,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -96633,7 +96633,7 @@
   {
    "module": "src/utils",
    "files": 66,
-   "lines": 8317,
+   "lines": 8318,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -133597,12 +133597,12 @@
    {
     "file": "src/components/ui/sidebar.tsx",
     "name": "SIDEBAR_WIDTH",
-    "value": "\"16rem\""
+    "value": "'16rem'"
    },
    {
     "file": "src/components/ui/sidebar.tsx",
     "name": "SIDEBAR_WIDTH_MOBILE",
-    "value": "\"18rem\""
+    "value": "'18rem'"
    },
    {
     "file": "src/components/ui/use-toast.ts",
@@ -142364,13 +142364,13 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularFerias",
-    "params": "salarioBase: number, diasFerias: number = 30, diasAbono: number = 0, dependentes: number = 0",
+    "params": "salarioBase: number, diasFerias = 30, diasAbono = 0, dependentes = 0",
     "body": "const valorDiario = salarioBase / 30; const valorFerias = valorDiario * diasFerias; const tercoConstitucional = valorFerias / 3; const valorAbono = valorDiario * diasAbono; const tercoAbono = valorAbono / 3; const bruto = valorFerias + tercoConstitucional + valorAbono + tercoAbono; // Férias têm tributação separada (exclusiva na fonte) const inss = calcularINSS(valorFerias + tercoConstitucional); const irrf = calcularIRRF(valorFerias + tercoConstitucional, dependentes); const liquido = Math.trun …"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularHorasExtras",
-    "params": "salarioBase: number, horasExtras50: number = 0, horasExtras100: number = 0, jornadaMensal: number = 220, diasUteis: numb",
+    "params": "salarioBase: number, horasExtras50 = 0, horasExtras100 = 0, jornadaMensal = 220, diasUteis = 26, domingosEFeriados = 4",
     "body": "const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0; const valor50 = Math.trunc(valorHora * 1.5 * horasExtras50 * 100) / 100; const valor100 = Math.trunc(valorHora * 2.0 * horasExtras100 * 100) / 100; const totalExtras = Math.trunc((valor50 + valor100) * 100) / 100; const dsr = calcularDSR(totalExtras, diasUteis, domingosEFeriados); return { valor50, valor100, total: totalExtras, dsr, totalComDsr: Math.trunc((totalExtras + dsr) * 100) / 100 };"
    },
    {
@@ -142382,20 +142382,20 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularAdicionalNoturno",
-    "params": "salarioBase: number, horasNoturnas: number, jornadaMensal: number = 220, percentual: number = 20",
+    "params": "salarioBase: number, horasNoturnas: number, jornadaMensal = 220, percentual = 20",
     "body": "const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0; return Math.trunc(valorHora * (percentual / 100) * horasNoturnas * 100) / 100;"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularPericulosidade",
     "params": "salarioBase: number",
-    "body": "return Math.trunc(salarioBase * 0.30 * 100) / 100;"
+    "body": "return Math.trunc(salarioBase * 0.3 * 100) / 100;"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularInsalubridade",
     "params": "grau: GrauInsalubridade",
-    "body": "const percentuais = { minimo: 0.10, medio: 0.20, maximo: 0.40 }; return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;"
+    "body": "const percentuais = { minimo: 0.1, medio: 0.2, maximo: 0.4 }; return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;"
    },
    {
     "file": "src/calculators/beneficios.ts",
@@ -142406,13 +142406,13 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularValeAlimentacao",
-    "params": "valorMensal: number, salarioBase: number, usaPAT: boolean = true",
-    "body": "valor: number, desconto: number"
+    "params": "valorMensal: number, salarioBase: number, usaPAT = true",
+    "body": "valor: number; desconto: number"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularPlanoSaude",
-    "params": "custoTotal: number, coparticipacao: number = 0, mensalidadeFixa: number = 0",
+    "params": "custoTotal: number, coparticipacao = 0, mensalidadeFixa = 0",
     "body": "return Math.trunc((mensalidadeFixa + coparticipacao) * 100) / 100;"
    },
    {
@@ -142430,7 +142430,7 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularSalarioMaternidade",
-    "params": "salarioBase: number, diasLicenca: number = 120",
+    "params": "salarioBase: number, diasLicenca = 120",
     "body": "return Math.trunc((salarioBase / 30) * diasLicenca * 100) / 100;"
    },
    {
@@ -142442,13 +142442,13 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularSobreaviso",
-    "params": "salarioBase: number, horas: number, jornadaMensal: number = 220",
+    "params": "salarioBase: number, horas: number, jornadaMensal = 220",
     "body": "if (jornadaMensal <= 0 || horas <= 0) return 0; const valorHora = salarioBase / jornadaMensal; return Math.trunc(valorHora * (1 / 3) * horas * 100) / 100;"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularProntidao",
-    "params": "salarioBase: number, horas: number, jornadaMensal: number = 220",
+    "params": "salarioBase: number, horas: number, jornadaMensal = 220",
     "body": "if (jornadaMensal <= 0 || horas <= 0) return 0; const valorHora = salarioBase / jornadaMensal; return Math.trunc(valorHora * (2 / 3) * horas * 100) / 100;"
    },
    {
@@ -142466,13 +142466,13 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularDiarias",
-    "params": "valorDiaria: number, dias: number, percentualDesconto: number = 0",
+    "params": "valorDiaria: number, dias: number, percentualDesconto = 0",
     "body": "const total = Math.trunc(valorDiaria * dias * 100) / 100; const desconto = Math.trunc(total * (percentualDesconto / 100) * 100) / 100; return { total, desconto, liquido: Math.trunc((total - desconto) * 100) / 100 };"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularQuilometragem",
-    "params": "km: number, valorPorKm: number = 1.20",
+    "params": "km: number, valorPorKm = 1.2",
     "body": "return Math.trunc(km * valorPorKm * 100) / 100;"
    },
    {
@@ -142496,19 +142496,19 @@
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularAdicionalTransferencia",
-    "params": "salarioBase: number, percentual: number = 25",
+    "params": "salarioBase: number, percentual = 25",
     "body": "return Math.trunc(salarioBase * (percentual / 100) * 100) / 100;"
    },
    {
     "file": "src/calculators/beneficios.ts",
     "name": "calcularEmprestimoConsignado",
     "params": "salarioLiquido: number, parcela: number",
-    "body": "parcela: number, margemDisponivel: number"
+    "body": "parcela: number; margemDisponivel: number"
    },
    {
     "file": "src/calculators/impostos.ts",
     "name": "calcularINSS",
-    "params": "salarioBruto: number, ano: number = 2026",
+    "params": "salarioBruto: number, ano = 2026",
     "body": "if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos const anos = Object.keys(INSS_POR_ANO) .map(Number) .sort((a, b) => a - b); const anoTabela = anos.filter((a) => a <= ano).pop() ?? anos[0]; const { faixas, teto } = INSS_POR_ANO[anoTabela]; const baseCents = BigInt(Math.round(salarioBruto * 100)); const tetoCents = BigInt(Math.round(teto * 100)); const b = baseCents < tetoCents ? baseCents : tetoCents; let inssMilesimos = 0n; let anterior = 0n; for (const faixa of faixas) { if ( …"
    },
    {
@@ -142532,7 +142532,7 @@
    {
     "file": "src/calculators/rescisao.ts",
     "name": "calcularSeguroDesemprego",
-    "params": "ultimosSalarios: number[], mesesVinculo: number = 0",
+    "params": "ultimosSalarios: number[], mesesVinculo = 0",
     "body": "if (!ultimosSalarios.length) return { valorParcela: SALARIO_MINIMO_2026, parcelas: 3 }; const media = ultimosSalarios.reduce((a, b) => a + b, 0) / ultimosSalarios.length; const sd = FAIXAS_SEGURO_DESEMPREGO_2026; let valorParcela: number; if (media <= sd.faixa1Limite) valorParcela = media * sd.faixa1Mult; else if (media <= sd.faixa2Limite) valorParcela = sd.faixa2Base + (media - sd.faixa1Limite) * sd.faixa2Mult; else valorParcela = sd.teto; valorParcela = Math.max(SALARIO_MINIMO_2026, Math.trunc …"
    },
    {
@@ -142544,7 +142544,7 @@
    {
     "file": "src/calculators/rescisao.ts",
     "name": "calcularMulta477",
-    "params": "salarioBase: number, empregadorCulpado: boolean = false",
+    "params": "salarioBase: number, empregadorCulpado = false",
     "body": "if (!empregadorCulpado) return 0; return Math.trunc(salarioBase * 100) / 100;"
    },
    {
@@ -142562,7 +142562,7 @@
    {
     "file": "src/calculators/rescisao.ts",
     "name": "calcularEncargos",
-    "params": "salarioBase: number, percentualRAT: number = 0.03, percentualTerceiros: number = 0.058",
+    "params": "salarioBase: number, percentualRAT = 0.03, percentualTerceiros = 0.058",
     "body": "const inssEmpregado = calcularINSS(salarioBase); const irrfEmpregado = calcularIRRF(salarioBase); const fgts = calcularFGTS(salarioBase); const inssPatronal = Math.trunc(salarioBase * 0.2 * 100) / 100; const rat = Math.trunc(salarioBase * percentualRAT * 100) / 100; const terceiros = Math.trunc(salarioBase * percentualTerceiros * 100) / 100; const totalEncargosPatronais = Math.trunc((inssPatronal + rat + terceiros + fgts) * 100) / 100; const custoMensalTotal = Math.trunc((salarioBase + totalEnca …"
    },
    {
@@ -142586,19 +142586,19 @@
    {
     "file": "src/calculators/trabalhista-base.ts",
     "name": "calcularHorasExtras",
-    "params": "salarioBase: number, jornadaMensal: number = 220, horasExtras: number, percentual: number = 0.5",
+    "params": "salarioBase: number, jornadaMensal = 220, horasExtras: number, percentual = 0.5",
     "body": "if (horasExtras <= 0 || jornadaMensal <= 0) return 0; const valorHora = salarioBase / jornadaMensal; const valorComAdicional = valorHora * (1 + percentual); return Math.trunc(valorComAdicional * horasExtras * 100) / 100;"
    },
    {
     "file": "src/calculators/trabalhista-base.ts",
     "name": "calcularDSR",
-    "params": "totalVariavel: number, diasUteis: number = 26, domingosFeriados: number = 4",
+    "params": "totalVariavel: number, diasUteis = 26, domingosFeriados = 4",
     "body": "if (totalVariavel <= 0 || diasUteis <= 0) return 0; return Math.trunc((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;"
    },
    {
     "file": "src/calculators/trabalhista-base.ts",
     "name": "calcular13Salario",
-    "params": "salarioBase: number, mesesTrabalhados: number = 12, parcela: 1 | 2 = 2",
+    "params": "salarioBase: number, mesesTrabalhados = 12, parcela: 1 | 2 = 2",
     "body": "const valorIntegral = (salarioBase / 12) * mesesTrabalhados; if (parcela === 1) { // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF return Math.trunc((valorIntegral / 2) * 100) / 100; } // 2ª Parcela é o valor integral (sobre o qual incidirão descontos no cálculo principal) return Math.trunc(valorIntegral * 100) / 100;"
    },
    {
@@ -143091,7 +143091,7 @@
     "file": "src/schemas/esocial/index.ts",
     "name": "validarEvento",
     "params": "tipo: string, dados: ESocialData",
-    "body": "const fn = validadores[tipo]; if (!fn) { return { valid: false, errors: [{ campo: 'tpEvento', mensagem: `Validador não encontrado para ${tipo}. Verifique se este evento é suportado.`, regra: 'REGRA_TIPO_EVENTO' }], warnings: [] }; } return fn(dados);"
+    "body": "const fn = validadores[tipo]; if (!fn) { return { valid: false, errors: [ { campo: 'tpEvento', mensagem: `Validador não encontrado para ${tipo}. Verifique se este evento é suportado.`, regra: 'REGRA_TIPO_EVENTO', }, ], warnings: [], }; } return fn(dados);"
    },
    {
     "file": "src/schemas/esocial/naoPeriodicosValidators.ts",
@@ -143133,7 +143133,7 @@
     "file": "src/schemas/esocial/naoPeriodicosValidators.ts",
     "name": "validarS2299",
     "params": "dados: ESocialData",
-    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtDeslig, 'dtDeslig', errors); dataValida(dados.dtDeslig as string, 'dtDeslig', errors); if (dados.dtAdm !== undefined && dados.dtAdm !== null && dados.dtAdm !== '') { ordemCronologica( dados.dtAdm, dados.dtDeslig, 'dtDeslig', 'Data de desligamento não pode ser anterior à data de admissão', errors, ); } if (dados.mtvDeslig !== undefined && dados.mtvDeslig !== null && …"
+    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtDeslig, 'dtDeslig', errors); dataValida(dados.dtDeslig as string, 'dtDeslig', errors); if (dados.dtAdm !== undefined && dados.dtAdm !== null && dados.dtAdm !== '') { ordemCronologica( dados.dtAdm, dados.dtDeslig, 'dtDeslig', 'Data de desligamento não pode ser anterior à data de admissão', errors ); } if (dados.mtvDeslig !== undefined && dados.mtvDeslig !== null && d …"
    },
    {
     "file": "src/schemas/esocial/naoPeriodicosValidators.ts",
@@ -143151,7 +143151,7 @@
     "file": "src/schemas/esocial/naoPeriodicosValidators.ts",
     "name": "validarS2399",
     "params": "dados: ESocialData",
-    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtTerm, 'dtTerm', errors); dataValida(dados.dtTerm as string, 'dtTerm', errors); if (dados.dtInicio !== undefined && dados.dtInicio !== null && dados.dtInicio !== '') { ordemCronologica( dados.dtInicio, dados.dtTerm, 'dtTerm', 'Data de término não pode ser anterior à data de início', errors, ); } if (dados.mtvDesligTSV !== undefined && dados.mtvDesligTSV !== null && d …"
+    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtTerm, 'dtTerm', errors); dataValida(dados.dtTerm as string, 'dtTerm', errors); if (dados.dtInicio !== undefined && dados.dtInicio !== null && dados.dtInicio !== '') { ordemCronologica( dados.dtInicio, dados.dtTerm, 'dtTerm', 'Data de término não pode ser anterior à data de início', errors ); } if (dados.mtvDesligTSV !== undefined && dados.mtvDesligTSV !== null && da …"
    },
    {
     "file": "src/schemas/esocial/naoPeriodicosValidators.ts",
@@ -143192,13 +143192,13 @@
    {
     "file": "src/schemas/esocial/periodicosValidators.ts",
     "name": "competenciaValida",
-    "params": "val: unknown, campo: string, errors: ValidationError[],",
+    "params": "val: unknown, campo: string, errors: ValidationError[]",
     "body": "if (typeof val === 'string' && !COMPETENCIA_RE.test(val)) { errors.push({ campo, mensagem: `${campo} deve estar no formato AAAA-MM`, regra: 'REGRA_PERIODO', }); }"
    },
    {
     "file": "src/schemas/esocial/periodicosValidators.ts",
     "name": "validarInscricao",
-    "params": "dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc',",
+    "params": "dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc'",
     "body": "required(dados[campoTp], campoTp, errors); enumValido(String(dados[campoTp] ?? ''), ['1', '2', '3', '4', '5', '6'], campoTp, errors); required(dados[campoNr], campoNr, errors); if (Number(dados[campoTp]) === 1) cnpjValido(String(dados[campoNr] ?? ''), campoNr, errors); if (Number(dados[campoTp]) === 2) cpfValido(String(dados[campoNr] ?? ''), campoNr, errors);"
    },
    {
@@ -143247,7 +143247,7 @@
     "file": "src/schemas/esocial/periodicosValidators.ts",
     "name": "validarS1260",
     "params": "dados: ESocialData",
-    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); required(dados.nrInsc, 'nrInsc', errors); // indComerc conforme Tabela 13 — 1 não é código válido para este evento required(dados.indComerc, 'indComerc', errors); enumValido( String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors, ); required(dados.vrTotCom, 'vrTotCom', errors); if (dados. …"
+    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); required(dados.nrInsc, 'nrInsc', errors); // indComerc conforme Tabela 13 — 1 não é código válido para este evento required(dados.indComerc, 'indComerc', errors); enumValido(String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors); required(dados.vrTotCom, 'vrTotCom', errors); if (dados.vrT …"
    },
    {
     "file": "src/schemas/esocial/periodicosValidators.ts",
@@ -143259,7 +143259,7 @@
     "file": "src/schemas/esocial/periodicosValidators.ts",
     "name": "validarS1280",
     "params": "dados: ESocialData",
-    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); // indSubstPatr: 1=integral, 2=proporcional if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') { enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors); } if ( dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== …"
+    "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); // indSubstPatr: 1=integral, 2=proporcional if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') { enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors); } if (dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== ' …"
    },
    {
     "file": "src/schemas/esocial/rubricaValidator.ts",
@@ -143324,13 +143324,13 @@
    {
     "file": "src/services/calculoBeneficiosService.ts",
     "name": "calcularCustoMensal",
-    "params": "colaboradorId: string, diasUteis: number = 22",
+    "params": "colaboradorId: string, diasUteis = 22",
     "body": "const { data: colab, error: colabError } = await supabase .from('colaboradores') .select('salario_base') .eq('id', colaboradorId) .single(); if (colabError) throw colabError; const salario = colab?.salario_base || 0; const descontoMaximo = salario * 0.06; const { data: rotas, error: rotasError } = await ( fromBeneficiosColaborador().select('*, beneficio:beneficios(*)') as unknown as QBuilder<BeneficioColaboradorRow> ) .eq('colaborador_id', colaboradorId) .eq('status_vinculo', 'ativo'); if (rotas …"
    },
    {
     "file": "src/services/calculoBeneficiosService.ts",
     "name": "calcularCredito",
-    "params": "beneficioId: string, diasTrabalhados: number = 22",
+    "params": "beneficioId: string, diasTrabalhados = 22",
     "body": "const { data: beneficio, error } = await supabase .from('beneficios') .select('valor, tipo') .eq('id', beneficioId) .single(); if (error) throw error; const valor = beneficio?.valor || 0; // Se for mensal (valor alto), retorna o valor cheio, senão calcula proporcional if (valor < 100) { return valor * diasTrabalhados; } return valor;"
    },
    {
@@ -144643,7 +144643,7 @@
    },
    {
     "file": "src/calculators/beneficios.ts",
-    "line": "const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.20) * 100) / 100;"
+    "line": "const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.2) * 100) / 100;"
    },
    {
     "file": "src/calculators/beneficios.ts",
@@ -144663,7 +144663,7 @@
    },
    {
     "file": "src/calculators/beneficios.ts",
-    "line": "return Math.trunc(salarioBase * 0.30 * 100) / 100;"
+    "line": "return Math.trunc(salarioBase * 0.3 * 100) / 100;"
    },
    {
     "file": "src/calculators/rescisao.ts",
@@ -229206,7 +229206,7 @@
   },
   "src/calculators/beneficios.ts": {
    "path": "src/calculators/beneficios.ts",
-   "lines": 207,
+   "lines": 222,
    "exports": [
     "interface ParamsDecimo13",
     "function calcularDecimo13",
@@ -229251,12 +229251,12 @@
     },
     {
      "name": "calcularFerias",
-     "params": "salarioBase: number, diasFerias: number = 30, diasAbono: number = 0, dependentes: number = 0",
+     "params": "salarioBase: number, diasFerias = 30, diasAbono = 0, dependentes = 0",
      "body": "const valorDiario = salarioBase / 30; const valorFerias = valorDiario * diasFerias; const tercoConstitucional = valorFerias / 3; const valorAbono = valorDiario * diasAbono; const tercoAbono = valorAbono / 3; const bruto = valorFerias + tercoConstitucional + valorAbono + tercoAbono; // Férias têm tributação separada (exclusiva na fonte) const inss = calcularINSS(valorFerias + tercoConstitucional); const irrf = calcularIRRF(valorFerias + tercoConstitucional, dependentes); const liquido = Math.trun …"
     },
     {
      "name": "calcularHorasExtras",
-     "params": "salarioBase: number, horasExtras50: number = 0, horasExtras100: number = 0, jornadaMensal: number = 220, diasUteis: numb",
+     "params": "salarioBase: number, horasExtras50 = 0, horasExtras100 = 0, jornadaMensal = 220, diasUteis = 26, domingosEFeriados = 4",
      "body": "const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0; const valor50 = Math.trunc(valorHora * 1.5 * horasExtras50 * 100) / 100; const valor100 = Math.trunc(valorHora * 2.0 * horasExtras100 * 100) / 100; const totalExtras = Math.trunc((valor50 + valor100) * 100) / 100; const dsr = calcularDSR(totalExtras, diasUteis, domingosEFeriados); return { valor50, valor100, total: totalExtras, dsr, totalComDsr: Math.trunc((totalExtras + dsr) * 100) / 100 };"
     },
     {
@@ -229266,18 +229266,18 @@
     },
     {
      "name": "calcularAdicionalNoturno",
-     "params": "salarioBase: number, horasNoturnas: number, jornadaMensal: number = 220, percentual: number = 20",
+     "params": "salarioBase: number, horasNoturnas: number, jornadaMensal = 220, percentual = 20",
      "body": "const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0; return Math.trunc(valorHora * (percentual / 100) * horasNoturnas * 100) / 100;"
     },
     {
      "name": "calcularPericulosidade",
      "params": "salarioBase: number",
-     "body": "return Math.trunc(salarioBase * 0.30 * 100) / 100;"
+     "body": "return Math.trunc(salarioBase * 0.3 * 100) / 100;"
     },
     {
      "name": "calcularInsalubridade",
      "params": "grau: GrauInsalubridade",
-     "body": "const percentuais = { minimo: 0.10, medio: 0.20, maximo: 0.40 }; return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;"
+     "body": "const percentuais = { minimo: 0.1, medio: 0.2, maximo: 0.4 }; return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;"
     },
     {
      "name": "calcularDescontoVT",
@@ -229286,12 +229286,12 @@
     },
     {
      "name": "calcularValeAlimentacao",
-     "params": "valorMensal: number, salarioBase: number, usaPAT: boolean = true",
-     "body": "valor: number, desconto: number"
+     "params": "valorMensal: number, salarioBase: number, usaPAT = true",
+     "body": "valor: number; desconto: number"
     },
     {
      "name": "calcularPlanoSaude",
-     "params": "custoTotal: number, coparticipacao: number = 0, mensalidadeFixa: number = 0",
+     "params": "custoTotal: number, coparticipacao = 0, mensalidadeFixa = 0",
      "body": "return Math.trunc((mensalidadeFixa + coparticipacao) * 100) / 100;"
     },
     {
@@ -229306,7 +229306,7 @@
     },
     {
      "name": "calcularSalarioMaternidade",
-     "params": "salarioBase: number, diasLicenca: number = 120",
+     "params": "salarioBase: number, diasLicenca = 120",
      "body": "return Math.trunc((salarioBase / 30) * diasLicenca * 100) / 100;"
     },
     {
@@ -229316,12 +229316,12 @@
     },
     {
      "name": "calcularSobreaviso",
-     "params": "salarioBase: number, horas: number, jornadaMensal: number = 220",
+     "params": "salarioBase: number, horas: number, jornadaMensal = 220",
      "body": "if (jornadaMensal <= 0 || horas <= 0) return 0; const valorHora = salarioBase / jornadaMensal; return Math.trunc(valorHora * (1 / 3) * horas * 100) / 100;"
     },
     {
      "name": "calcularProntidao",
-     "params": "salarioBase: number, horas: number, jornadaMensal: number = 220",
+     "params": "salarioBase: number, horas: number, jornadaMensal = 220",
      "body": "if (jornadaMensal <= 0 || horas <= 0) return 0; const valorHora = salarioBase / jornadaMensal; return Math.trunc(valorHora * (2 / 3) * horas * 100) / 100;"
     },
     {
@@ -229336,12 +229336,12 @@
     },
     {
      "name": "calcularDiarias",
-     "params": "valorDiaria: number, dias: number, percentualDesconto: number = 0",
+     "params": "valorDiaria: number, dias: number, percentualDesconto = 0",
      "body": "const total = Math.trunc(valorDiaria * dias * 100) / 100; const desconto = Math.trunc(total * (percentualDesconto / 100) * 100) / 100; return { total, desconto, liquido: Math.trunc((total - desconto) * 100) / 100 };"
     },
     {
      "name": "calcularQuilometragem",
-     "params": "km: number, valorPorKm: number = 1.20",
+     "params": "km: number, valorPorKm = 1.2",
      "body": "return Math.trunc(km * valorPorKm * 100) / 100;"
     },
     {
@@ -229361,23 +229361,23 @@
     },
     {
      "name": "calcularAdicionalTransferencia",
-     "params": "salarioBase: number, percentual: number = 25",
+     "params": "salarioBase: number, percentual = 25",
      "body": "return Math.trunc(salarioBase * (percentual / 100) * 100) / 100;"
     },
     {
      "name": "calcularEmprestimoConsignado",
      "params": "salarioLiquido: number, parcela: number",
-     "body": "parcela: number, margemDisponivel: number"
+     "body": "parcela: number; margemDisponivel: number"
     }
    ],
    "percents": [
     "const beneficio = mediaSalarial * 0.91;",
-    "const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.20) * 100) / 100;",
+    "const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.2) * 100) / 100;",
     "const fgts = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 0.08 * 100) / 100;",
     "const fgts = Math.trunc(bruto * 0.08 * 100) / 100;",
     "const limiteDesconto = salarioBase * 0.06;",
     "const margemTotal = Math.trunc(salarioLiquido * 0.35 * 100) / 100;",
-    "return Math.trunc(salarioBase * 0.30 * 100) / 100;"
+    "return Math.trunc(salarioBase * 0.3 * 100) / 100;"
    ]
   },
   "src/calculators/impostos.ts": {
@@ -229395,7 +229395,7 @@
    "calc_fns": [
     {
      "name": "calcularINSS",
-     "params": "salarioBruto: number, ano: number = 2026",
+     "params": "salarioBruto: number, ano = 2026",
      "body": "if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos const anos = Object.keys(INSS_POR_ANO) .map(Number) .sort((a, b) => a - b); const anoTabela = anos.filter((a) => a <= ano).pop() ?? anos[0]; const { faixas, teto } = INSS_POR_ANO[anoTabela]; const baseCents = BigInt(Math.round(salarioBruto * 100)); const tetoCents = BigInt(Math.round(teto * 100)); const b = baseCents < tetoCents ? baseCents : tetoCents; let inssMilesimos = 0n; let anterior = 0n; for (const faixa of faixas) { if ( …"
     },
     {
@@ -229411,7 +229411,7 @@
   },
   "src/calculators/rescisao.ts": {
    "path": "src/calculators/rescisao.ts",
-   "lines": 176,
+   "lines": 172,
    "exports": [
     "type TipoRescisao",
     "function calcularRescisao",
@@ -229462,7 +229462,7 @@
     },
     {
      "name": "calcularSeguroDesemprego",
-     "params": "ultimosSalarios: number[], mesesVinculo: number = 0",
+     "params": "ultimosSalarios: number[], mesesVinculo = 0",
      "body": "if (!ultimosSalarios.length) return { valorParcela: SALARIO_MINIMO_2026, parcelas: 3 }; const media = ultimosSalarios.reduce((a, b) => a + b, 0) / ultimosSalarios.length; const sd = FAIXAS_SEGURO_DESEMPREGO_2026; let valorParcela: number; if (media <= sd.faixa1Limite) valorParcela = media * sd.faixa1Mult; else if (media <= sd.faixa2Limite) valorParcela = sd.faixa2Base + (media - sd.faixa1Limite) * sd.faixa2Mult; else valorParcela = sd.teto; valorParcela = Math.max(SALARIO_MINIMO_2026, Math.trunc …"
     },
     {
@@ -229472,7 +229472,7 @@
     },
     {
      "name": "calcularMulta477",
-     "params": "salarioBase: number, empregadorCulpado: boolean = false",
+     "params": "salarioBase: number, empregadorCulpado = false",
      "body": "if (!empregadorCulpado) return 0; return Math.trunc(salarioBase * 100) / 100;"
     },
     {
@@ -229487,7 +229487,7 @@
     },
     {
      "name": "calcularEncargos",
-     "params": "salarioBase: number, percentualRAT: number = 0.03, percentualTerceiros: number = 0.058",
+     "params": "salarioBase: number, percentualRAT = 0.03, percentualTerceiros = 0.058",
      "body": "const inssEmpregado = calcularINSS(salarioBase); const irrfEmpregado = calcularIRRF(salarioBase); const fgts = calcularFGTS(salarioBase); const inssPatronal = Math.trunc(salarioBase * 0.2 * 100) / 100; const rat = Math.trunc(salarioBase * percentualRAT * 100) / 100; const terceiros = Math.trunc(salarioBase * percentualTerceiros * 100) / 100; const totalEncargosPatronais = Math.trunc((inssPatronal + rat + terceiros + fgts) * 100) / 100; const custoMensalTotal = Math.trunc((salarioBase + totalEnca …"
     },
     {
@@ -229612,7 +229612,7 @@
   },
   "src/calculators/trabalhista-base.ts": {
    "path": "src/calculators/trabalhista-base.ts",
-   "lines": 56,
+   "lines": 48,
    "exports": [
     "function calcularHorasExtras",
     "function calcularDSR",
@@ -229622,17 +229622,17 @@
    "calc_fns": [
     {
      "name": "calcularHorasExtras",
-     "params": "salarioBase: number, jornadaMensal: number = 220, horasExtras: number, percentual: number = 0.5",
+     "params": "salarioBase: number, jornadaMensal = 220, horasExtras: number, percentual = 0.5",
      "body": "if (horasExtras <= 0 || jornadaMensal <= 0) return 0; const valorHora = salarioBase / jornadaMensal; const valorComAdicional = valorHora * (1 + percentual); return Math.trunc(valorComAdicional * horasExtras * 100) / 100;"
     },
     {
      "name": "calcularDSR",
-     "params": "totalVariavel: number, diasUteis: number = 26, domingosFeriados: number = 4",
+     "params": "totalVariavel: number, diasUteis = 26, domingosFeriados = 4",
      "body": "if (totalVariavel <= 0 || diasUteis <= 0) return 0; return Math.trunc((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;"
     },
     {
      "name": "calcular13Salario",
-     "params": "salarioBase: number, mesesTrabalhados: number = 12, parcela: 1 | 2 = 2",
+     "params": "salarioBase: number, mesesTrabalhados = 12, parcela: 1 | 2 = 2",
      "body": "const valorIntegral = (salarioBase / 12) * mesesTrabalhados; if (parcela === 1) { // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF return Math.trunc((valorIntegral / 2) * 100) / 100; } // 2ª Parcela é o valor integral (sobre o qual incidirão descontos no cálculo principal) return Math.trunc(valorIntegral * 100) / 100;"
     }
    ],
@@ -234133,7 +234133,7 @@
   },
   "src/components/admissoes/AdmissoesKanban.tsx": {
    "path": "src/components/admissoes/AdmissoesKanban.tsx",
-   "lines": 213,
+   "lines": 212,
    "exports": [
     "function AdmissoesKanban"
    ],
@@ -234155,7 +234155,7 @@
   },
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-   "lines": 464,
+   "lines": 465,
    "exports": [
     "function DetalhesAdmissaoDialog"
    ],
@@ -235708,7 +235708,7 @@
   },
   "src/components/empresa/EmpresaSelector.tsx": {
    "path": "src/components/empresa/EmpresaSelector.tsx",
-   "lines": 106,
+   "lines": 109,
    "exports": [
     "const EmpresaSelector"
    ]
@@ -236613,7 +236613,7 @@
   },
   "src/components/ferias/programacao/KanbanMes.tsx": {
    "path": "src/components/ferias/programacao/KanbanMes.tsx",
-   "lines": 123,
+   "lines": 116,
    "exports": [
     "function KanbanMes"
    ]
@@ -236641,7 +236641,7 @@
   },
   "src/components/folha/CNABDialog.tsx": {
    "path": "src/components/folha/CNABDialog.tsx",
-   "lines": 353,
+   "lines": 354,
    "exports": [
     "function CNABDialog"
    ],
@@ -237314,7 +237314,7 @@
   },
   "src/components/integracoes/ConfigPanels.tsx": {
    "path": "src/components/integracoes/ConfigPanels.tsx",
-   "lines": 611,
+   "lines": 612,
    "exports": [
     "function Bitrix24ConfigPanel",
     "function CnabConfigPanel",
@@ -237763,7 +237763,7 @@
   },
   "src/components/medidas-disciplinares/MedidasKanban.tsx": {
    "path": "src/components/medidas-disciplinares/MedidasKanban.tsx",
-   "lines": 326,
+   "lines": 325,
    "exports": [
     "function MedidasKanban"
    ],
@@ -240079,7 +240079,7 @@
   },
   "src/components/ui/empty-state.tsx": {
    "path": "src/components/ui/empty-state.tsx",
-   "lines": 77,
+   "lines": 83,
    "exports": [
     "function EmptyState",
     "function EmptySearch",
@@ -240095,7 +240095,7 @@
   },
   "src/components/ui/form.tsx": {
    "path": "src/components/ui/form.tsx",
-   "lines": 131,
+   "lines": 132,
    "errors": [
     "useFormField should be used within <FormField>"
    ]
@@ -240208,7 +240208,7 @@
   },
   "src/components/ui/sidebar.tsx": {
    "path": "src/components/ui/sidebar.tsx",
-   "lines": 642,
+   "lines": 643,
    "errors": [
     "useSidebar must be used within a SidebarProvider."
    ],
@@ -240219,11 +240219,11 @@
     },
     {
      "name": "SIDEBAR_WIDTH",
-     "value": "\"16rem\""
+     "value": "'16rem'"
     },
     {
      "name": "SIDEBAR_WIDTH_MOBILE",
-     "value": "\"18rem\""
+     "value": "'18rem'"
     }
    ],
    "status_values": [
@@ -240273,7 +240273,7 @@
   },
   "src/components/ui/stat-card.tsx": {
    "path": "src/components/ui/stat-card.tsx",
-   "lines": 40,
+   "lines": 41,
    "exports": [
     "function StatCard"
    ],
@@ -240916,7 +240916,7 @@
   },
   "src/contexts/AuthContext.tsx": {
    "path": "src/contexts/AuthContext.tsx",
-   "lines": 377,
+   "lines": 378,
    "exports": [
     "type AppRole",
     "interface User",
@@ -241010,7 +241010,7 @@
   },
   "src/contexts/EmpresaContext.tsx": {
    "path": "src/contexts/EmpresaContext.tsx",
-   "lines": 68,
+   "lines": 63,
    "exports": [
     "function EmpresaProvider",
     "function useEmpresa"
@@ -241027,7 +241027,7 @@
   },
   "src/contexts/NotificationContext.tsx": {
    "path": "src/contexts/NotificationContext.tsx",
-   "lines": 51,
+   "lines": 68,
    "exports": [
     "function NotificationProvider",
     "function useNotification",
@@ -241131,7 +241131,7 @@
   },
   "src/errors/ErrorBoundary.tsx": {
    "path": "src/errors/ErrorBoundary.tsx",
-   "lines": 73,
+   "lines": 75,
    "exports": [
     "class ErrorBoundary"
    ],
@@ -241511,7 +241511,7 @@
   },
   "src/hooks/useCalculoFolha.ts": {
    "path": "src/hooks/useCalculoFolha.ts",
-   "lines": 163,
+   "lines": 165,
    "exports": [
     "function useCalculoFolha"
    ],
@@ -241902,7 +241902,7 @@
   },
   "src/hooks/useDocumentOCR.ts": {
    "path": "src/hooks/useDocumentOCR.ts",
-   "lines": 72,
+   "lines": 70,
    "exports": [
     "type OCRResult",
     "function useDocumentOCR"
@@ -242534,7 +242534,7 @@
   },
   "src/hooks/useNavigationGuard.tsx": {
    "path": "src/hooks/useNavigationGuard.tsx",
-   "lines": 82,
+   "lines": 80,
    "exports": [
     "function useNavigationGuard"
    ],
@@ -243102,7 +243102,7 @@
   },
   "src/hooks/useRealTimeSubscription.ts": {
    "path": "src/hooks/useRealTimeSubscription.ts",
-   "lines": 63,
+   "lines": 64,
    "exports": [
     "function useRealTimeSubscription"
    ],
@@ -245563,7 +245563,7 @@
   },
   "src/i18n/useTranslation.ts": {
    "path": "src/i18n/useTranslation.ts",
-   "lines": 85,
+   "lines": 72,
    "exports": [
     "function useTranslation"
    ],
@@ -245891,7 +245891,7 @@
   },
   "src/lib/cursor.ts": {
    "path": "src/lib/cursor.ts",
-   "lines": 116,
+   "lines": 110,
    "exports": [
     "interface CursorParams",
     "interface CursorResult",
@@ -247539,7 +247539,7 @@
   },
   "src/pages/CargosPage.tsx": {
    "path": "src/pages/CargosPage.tsx",
-   "lines": 115,
+   "lines": 135,
    "exports": [
     "function CargosPage"
    ],
@@ -247761,7 +247761,7 @@
   },
   "src/pages/ContratacaoPage.tsx": {
    "path": "src/pages/ContratacaoPage.tsx",
-   "lines": 734,
+   "lines": 736,
    "exports": [
     "function ContratacaoPage"
    ],
@@ -248569,7 +248569,7 @@
   },
   "src/pages/EmpresasPage.tsx": {
    "path": "src/pages/EmpresasPage.tsx",
-   "lines": 101,
+   "lines": 111,
    "exports": [
     "function EmpresasPage"
    ],
@@ -248799,7 +248799,7 @@
   },
   "src/pages/FinanceiroBancarioPage.tsx": {
    "path": "src/pages/FinanceiroBancarioPage.tsx",
-   "lines": 603,
+   "lines": 604,
    "exports": [
     "function FinanceiroBancarioPage"
    ],
@@ -252075,7 +252075,7 @@
   },
   "src/schemas/esocial/index.ts": {
    "path": "src/schemas/esocial/index.ts",
-   "lines": 64,
+   "lines": 121,
    "exports": [
     "function validarEvento",
     "function getValidadoresDisponiveis"
@@ -252090,13 +252090,13 @@
     {
      "name": "validarEvento",
      "params": "tipo: string, dados: ESocialData",
-     "body": "const fn = validadores[tipo]; if (!fn) { return { valid: false, errors: [{ campo: 'tpEvento', mensagem: `Validador não encontrado para ${tipo}. Verifique se este evento é suportado.`, regra: 'REGRA_TIPO_EVENTO' }], warnings: [] }; } return fn(dados);"
+     "body": "const fn = validadores[tipo]; if (!fn) { return { valid: false, errors: [ { campo: 'tpEvento', mensagem: `Validador não encontrado para ${tipo}. Verifique se este evento é suportado.`, regra: 'REGRA_TIPO_EVENTO', }, ], warnings: [], }; } return fn(dados);"
     }
    ]
   },
   "src/schemas/esocial/naoPeriodicosValidators.ts": {
    "path": "src/schemas/esocial/naoPeriodicosValidators.ts",
-   "lines": 465,
+   "lines": 451,
    "exports": [
     "function validarS2190",
     "function validarS2200",
@@ -252149,7 +252149,7 @@
     {
      "name": "validarS2299",
      "params": "dados: ESocialData",
-     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtDeslig, 'dtDeslig', errors); dataValida(dados.dtDeslig as string, 'dtDeslig', errors); if (dados.dtAdm !== undefined && dados.dtAdm !== null && dados.dtAdm !== '') { ordemCronologica( dados.dtAdm, dados.dtDeslig, 'dtDeslig', 'Data de desligamento não pode ser anterior à data de admissão', errors, ); } if (dados.mtvDeslig !== undefined && dados.mtvDeslig !== null && …"
+     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtDeslig, 'dtDeslig', errors); dataValida(dados.dtDeslig as string, 'dtDeslig', errors); if (dados.dtAdm !== undefined && dados.dtAdm !== null && dados.dtAdm !== '') { ordemCronologica( dados.dtAdm, dados.dtDeslig, 'dtDeslig', 'Data de desligamento não pode ser anterior à data de admissão', errors ); } if (dados.mtvDeslig !== undefined && dados.mtvDeslig !== null && d …"
     },
     {
      "name": "validarS2300",
@@ -252164,7 +252164,7 @@
     {
      "name": "validarS2399",
      "params": "dados: ESocialData",
-     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtTerm, 'dtTerm', errors); dataValida(dados.dtTerm as string, 'dtTerm', errors); if (dados.dtInicio !== undefined && dados.dtInicio !== null && dados.dtInicio !== '') { ordemCronologica( dados.dtInicio, dados.dtTerm, 'dtTerm', 'Data de término não pode ser anterior à data de início', errors, ); } if (dados.mtvDesligTSV !== undefined && dados.mtvDesligTSV !== null && d …"
+     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; validarTrabalhador(dados, errors); required(dados.dtTerm, 'dtTerm', errors); dataValida(dados.dtTerm as string, 'dtTerm', errors); if (dados.dtInicio !== undefined && dados.dtInicio !== null && dados.dtInicio !== '') { ordemCronologica( dados.dtInicio, dados.dtTerm, 'dtTerm', 'Data de término não pode ser anterior à data de início', errors ); } if (dados.mtvDesligTSV !== undefined && dados.mtvDesligTSV !== null && da …"
     },
     {
      "name": "validarS2400",
@@ -252180,7 +252180,7 @@
   },
   "src/schemas/esocial/periodicosValidators.ts": {
    "path": "src/schemas/esocial/periodicosValidators.ts",
-   "lines": 792,
+   "lines": 861,
    "exports": [
     "function validarS1298",
     "function validarS1299",
@@ -252234,12 +252234,12 @@
     },
     {
      "name": "competenciaValida",
-     "params": "val: unknown, campo: string, errors: ValidationError[],",
+     "params": "val: unknown, campo: string, errors: ValidationError[]",
      "body": "if (typeof val === 'string' && !COMPETENCIA_RE.test(val)) { errors.push({ campo, mensagem: `${campo} deve estar no formato AAAA-MM`, regra: 'REGRA_PERIODO', }); }"
     },
     {
      "name": "validarInscricao",
-     "params": "dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc',",
+     "params": "dados: ESocialData, errors: ValidationError[], campoTp = 'tpInsc', campoNr = 'nrInsc'",
      "body": "required(dados[campoTp], campoTp, errors); enumValido(String(dados[campoTp] ?? ''), ['1', '2', '3', '4', '5', '6'], campoTp, errors); required(dados[campoNr], campoNr, errors); if (Number(dados[campoTp]) === 1) cnpjValido(String(dados[campoNr] ?? ''), campoNr, errors); if (Number(dados[campoTp]) === 2) cpfValido(String(dados[campoNr] ?? ''), campoNr, errors);"
     },
     {
@@ -252280,7 +252280,7 @@
     {
      "name": "validarS1260",
      "params": "dados: ESocialData",
-     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); required(dados.nrInsc, 'nrInsc', errors); // indComerc conforme Tabela 13 — 1 não é código válido para este evento required(dados.indComerc, 'indComerc', errors); enumValido( String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors, ); required(dados.vrTotCom, 'vrTotCom', errors); if (dados. …"
+     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); required(dados.nrInsc, 'nrInsc', errors); // indComerc conforme Tabela 13 — 1 não é código válido para este evento required(dados.indComerc, 'indComerc', errors); enumValido(String(dados.indComerc ?? ''), ['2', '3', '5', '6', '7', '8', '9'], 'indComerc', errors); required(dados.vrTotCom, 'vrTotCom', errors); if (dados.vrT …"
     },
     {
      "name": "validarS1270",
@@ -252290,13 +252290,13 @@
     {
      "name": "validarS1280",
      "params": "dados: ESocialData",
-     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); // indSubstPatr: 1=integral, 2=proporcional if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') { enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors); } if ( dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== …"
+     "body": "const errors: ValidationError[] = []; const warnings: ValidationWarning[] = []; required(dados.perApur, 'perApur', errors); competenciaValida(dados.perApur, 'perApur', errors); // indSubstPatr: 1=integral, 2=proporcional if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') { enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors); } if (dados.percRedContrib !== undefined && dados.percRedContrib !== null && dados.percRedContrib !== ' …"
     }
    ]
   },
   "src/schemas/esocial/rubricaValidator.ts": {
    "path": "src/schemas/esocial/rubricaValidator.ts",
-   "lines": 75,
+   "lines": 76,
    "exports": [
     "function validarRubricaESocial",
     "function sugerirCorrecaoRubrica"
@@ -252322,7 +252322,7 @@
   },
   "src/schemas/esocial/sstValidators.ts": {
    "path": "src/schemas/esocial/sstValidators.ts",
-   "lines": 305,
+   "lines": 315,
    "exports": [
     "function validarS2210",
     "function validarS2220",
@@ -252660,7 +252660,7 @@
   },
   "src/services/admissaoService.ts": {
    "path": "src/services/admissaoService.ts",
-   "lines": 150,
+   "lines": 151,
    "exports": [
     "const admissaoService"
    ],
@@ -252729,7 +252729,7 @@
   },
   "src/services/afastamentoService.ts": {
    "path": "src/services/afastamentoService.ts",
-   "lines": 351,
+   "lines": 352,
    "exports": [
     "const afastamentoService"
    ],
@@ -253274,7 +253274,7 @@
   },
   "src/services/beneficioService.ts": {
    "path": "src/services/beneficioService.ts",
-   "lines": 191,
+   "lines": 192,
    "exports": [
     "const beneficioService"
    ],
@@ -253402,12 +253402,12 @@
    "calc_fns": [
     {
      "name": "calcularCustoMensal",
-     "params": "colaboradorId: string, diasUteis: number = 22",
+     "params": "colaboradorId: string, diasUteis = 22",
      "body": "const { data: colab, error: colabError } = await supabase .from('colaboradores') .select('salario_base') .eq('id', colaboradorId) .single(); if (colabError) throw colabError; const salario = colab?.salario_base || 0; const descontoMaximo = salario * 0.06; const { data: rotas, error: rotasError } = await ( fromBeneficiosColaborador().select('*, beneficio:beneficios(*)') as unknown as QBuilder<BeneficioColaboradorRow> ) .eq('colaborador_id', colaboradorId) .eq('status_vinculo', 'ativo'); if (rotas …"
     },
     {
      "name": "calcularCredito",
-     "params": "beneficioId: string, diasTrabalhados: number = 22",
+     "params": "beneficioId: string, diasTrabalhados = 22",
      "body": "const { data: beneficio, error } = await supabase .from('beneficios') .select('valor, tipo') .eq('id', beneficioId) .single(); if (error) throw error; const valor = beneficio?.valor || 0; // Se for mensal (valor alto), retorna o valor cheio, senão calcula proporcional if (valor < 100) { return valor * diasTrabalhados; } return valor;"
     },
     {
@@ -254020,7 +254020,7 @@
   },
   "src/services/colaboradorDetalhesService.ts": {
    "path": "src/services/colaboradorDetalhesService.ts",
-   "lines": 555,
+   "lines": 554,
    "exports": [
     "function listarDependentes",
     "function criarDependente",
@@ -254301,7 +254301,7 @@
   },
   "src/services/colaboradorService.ts": {
    "path": "src/services/colaboradorService.ts",
-   "lines": 161,
+   "lines": 162,
    "exports": [
     "const colaboradorService"
    ],
@@ -254741,7 +254741,7 @@
   },
   "src/services/desligamentoService.ts": {
    "path": "src/services/desligamentoService.ts",
-   "lines": 113,
+   "lines": 114,
    "exports": [
     "type DesligamentoComColaborador",
     "const desligamentoService"
@@ -254862,7 +254862,7 @@
   },
   "src/services/documentoService.ts": {
    "path": "src/services/documentoService.ts",
-   "lines": 47,
+   "lines": 48,
    "exports": [
     "interface DocumentoListItem",
     "const documentoService"
@@ -254900,7 +254900,7 @@
   },
   "src/services/empresaService.ts": {
    "path": "src/services/empresaService.ts",
-   "lines": 39,
+   "lines": 40,
    "exports": [
     "const empresaService"
    ]
@@ -255243,7 +255243,7 @@
   },
   "src/services/feriasService.ts": {
    "path": "src/services/feriasService.ts",
-   "lines": 267,
+   "lines": 268,
    "exports": [
     "const feriasService"
    ],
@@ -255448,7 +255448,7 @@
   },
   "src/services/folhaService.ts": {
    "path": "src/services/folhaService.ts",
-   "lines": 48,
+   "lines": 49,
    "exports": [
     "type FolhaRecord",
     "interface FolhaFilters",
@@ -255769,7 +255769,7 @@
   },
   "src/services/loggerService.ts": {
    "path": "src/services/loggerService.ts",
-   "lines": 270,
+   "lines": 269,
    "exports": [
     "type LogLevel",
     "interface LogEntry",
@@ -256866,7 +256866,7 @@
   },
   "src/services/tabelasReferenciaService.ts": {
    "path": "src/services/tabelasReferenciaService.ts",
-   "lines": 331,
+   "lines": 330,
    "exports": [
     "const listarNacionalidades",
     "const listarTiposDesligamento",
@@ -257095,7 +257095,7 @@
   },
   "src/services/webhookService.ts": {
    "path": "src/services/webhookService.ts",
-   "lines": 44,
+   "lines": 45,
    "exports": [
     "const webhookService"
    ],
@@ -261753,7 +261753,7 @@
   },
   "src/utils/rescisaoPDF.ts": {
    "path": "src/utils/rescisaoPDF.ts",
-   "lines": 243,
+   "lines": 244,
    "exports": [
     "type AuditoriaPdf",
     "function mapearResultadoDeDesligamento",
@@ -274691,10 +274691,103 @@
   }
  },
  "git": {
-  "sha": "458423501d585744a756d719e7f16a5e8f5bd5d2",
+  "sha": "4e36ab2bed6e8577f78a0f9cebf882ff4e3c9014",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4e36ab2",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)",
+    "files": [
+     "src/calculators/beneficios.ts",
+     "src/calculators/impostos.ts",
+     "src/calculators/rescisao.ts",
+     "src/calculators/trabalhista-base.ts",
+     "src/components/admissoes/AdmissoesKanban.tsx",
+     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+     "src/components/departamentos/NovoDepartamentoDialog.tsx",
+     "src/components/empresa/EmpresaSelector.tsx",
+     "src/components/esocial/ESocialAuditDialog.tsx",
+     "src/components/esocial/ESocialTimeline.tsx",
+     "src/components/ferias/programacao/KanbanMes.tsx",
+     "src/components/folha/CNABDialog.tsx",
+     "src/components/folha/CalculoFolhaWizard.tsx",
+     "src/components/folha/SimuladorWhatIf.tsx",
+     "src/components/integracoes/ConfigPanels.tsx",
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/layout/EntityGridPageContainer.tsx",
+     "src/components/layout/EntityPageContainer.tsx",
+     "src/components/medidas-disciplinares/MedidasKanban.tsx",
+     "src/components/ui/empty-state.tsx",
+     "src/components/ui/form.tsx",
+     "src/components/ui/sidebar.tsx",
+     "src/components/ui/stat-card.tsx",
+     "src/contexts/AuthContext.tsx",
+     "src/contexts/EmpresaContext.tsx",
+     "src/contexts/NotificationContext.tsx",
+     "src/errors/AppError.ts",
+     "src/errors/ErrorBoundary.tsx",
+     "src/hooks/useAdmissaoWorkflow.ts",
+     "src/hooks/useCalculoFolha.ts",
+     "src/hooks/useCargos.ts",
+     "src/hooks/useColaboradores.ts",
+     "src/hooks/useDepartamentos.ts",
+     "src/hooks/useDocumentOCR.ts",
+     "src/hooks/useExecutiveDashboard.ts",
+     "src/hooks/useFormGuard.ts",
+     "src/hooks/useGenericCrud.ts",
+     "src/hooks/useNavigationGuard.tsx",
+     "src/hooks/useNow.ts",
+     "src/hooks/useRealTimeSubscription.ts",
+     "src/hooks/useServerValidation.ts",
+     "src/hooks/useSyncedState.ts",
+     "src/hooks/useTabelasReferencia.ts",
+     "src/hooks/useTodasEmpresas.ts",
+     "src/hooks/useValeTransporte.ts",
+     "src/i18n/useTranslation.ts",
+     "src/lib/cursor.ts",
+     "src/pages/CargosPage.tsx",
+     "src/pages/ColaboradoresPage.tsx",
+     "src/pages/ContratacaoPage.tsx",
+     "src/pages/DepartamentosPage.tsx",
+     "src/pages/EmpresaFormPage.tsx",
+     "src/pages/EmpresasPage.tsx",
+     "src/pages/FinanceiroBancarioPage.tsx",
+     "src/pages/RelatoriosPage.tsx",
+     "src/schemas/esocial/index.ts",
+     "src/schemas/esocial/naoPeriodicosValidators.ts",
+     "src/schemas/esocial/periodicosValidators.ts",
+     "src/schemas/esocial/rubricaValidator.ts",
+     "src/schemas/esocial/sstValidators.ts",
+     "src/services/admissaoService.ts",
+     "src/services/afastamentoService.ts",
+     "src/services/baseService.ts",
+     "src/services/beneficioService.ts",
+     "src/services/calculoBeneficiosService.ts",
+     "src/services/cargoService.ts",
+     "src/services/colaboradorDetalhesService.ts",
+     "src/services/colaboradorService.ts",
+     "src/services/contratacaoService.ts",
+     "src/services/departamentoService.ts",
+     "src/services/desligamentoService.ts",
+     "src/services/documentoService.ts",
+     "src/services/edgeFunctionsService.ts",
+     "src/services/empresaService.ts",
+     "src/services/esocialService.ts",
+     "src/services/exportService.ts",
+     "src/services/feriasService.ts",
+     "src/services/folhaPagamentoService.ts",
+     "src/services/folhaService.ts",
+     "src/services/loggerService.ts",
+     "src/services/tabelasReferenciaService.ts",
+     "src/services/webhookService.ts",
+     "src/services/whatsappService.ts",
+     "src/utils/folhaCalc.ts",
+     "src/utils/rescisaoPDF.ts"
+    ]
+   },
    {
     "sha": "4584235",
     "date": "2026-11-09",
@@ -275039,17 +275132,6 @@
      "supabase/functions/external-db-bridge/request-schema.ts",
      "supabase/functions/external-db-bridge/validation.test.ts"
     ]
-   },
-   {
-    "sha": "25465ae",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)",
-    "files": [
-     "e2e/cleanup/logout.spec.ts",
-     "e2e/cleanup/seed-cleanup.spec.ts",
-     "src/components/ui/user-profile-menu.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -275126,11 +275208,11 @@
     2
    ],
    [
-    "scripts/sync/install-timer.sh",
+    "src/calculators/beneficios.ts",
     1
    ],
    [
-    "scripts/sync/sync-github.sh",
+    "src/calculators/impostos.ts",
     1
    ]
   ]
