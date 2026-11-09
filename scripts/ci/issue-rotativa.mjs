@@ -69,14 +69,16 @@ export async function encontrarIssue(gh, owner, repo, label, title) {
 }
 
 /**
- * Garante que o label existe (ignora 422 se já existir).
+ * Garante que o label existe (ignora erros, ex: 422 se já existir).
  */
 async function garantirLabel(gh, owner, repo, label) {
-  await gh('POST', `/repos/${owner}/${repo}/labels`, {
-    name: label,
-    color: 'e11d48',
-    description: 'Issue de alerta de guarda automático',
-  }).catch(() => {});
+  try {
+    await gh('POST', `/repos/${owner}/${repo}/labels`, {
+      name: label,
+      color: 'e11d48',
+      description: 'Issue de alerta de guarda automático',
+    });
+  } catch (_) {}
 }
 
 /**
