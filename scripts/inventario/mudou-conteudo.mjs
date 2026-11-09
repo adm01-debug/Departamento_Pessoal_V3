@@ -70,7 +70,8 @@ export function mudou(arquivos, lerAntes, lerDepois) {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const arquivos = process.argv.length > 2 ? process.argv.slice(2) : PADRAO;
   const lerAntes = (f) => {
-    try { return execFileSync('git', ['show', `HEAD:${f}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return null; }
+    // maxBuffer: o padrao (1 MiB) estoura com arquivo maior, o catch devolve null ("arquivo novo") e sai `true` toda semana.
+    try { return execFileSync('git', ['show', `HEAD:${f}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 256 * 1024 * 1024 }); } catch { return null; }
   };
   const lerDepois = (f) => (fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null);
   console.log(String(mudou(arquivos, lerAntes, lerDepois)));
