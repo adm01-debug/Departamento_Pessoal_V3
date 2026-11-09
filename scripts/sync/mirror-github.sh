@@ -177,7 +177,7 @@ if [ -n "$DIRTY" ] && [ "$QUIET_MIN" -gt 0 ]; then
   recent=""
   while IFS= read -r -d '' f; do
     [ -e "$REPO/$f" ] && [ -n "$(find "$REPO/$f" -type f -mmin "-$QUIET_MIN" -print -quit 2>/dev/null)" ] && { recent="$f"; break; }
-  done < <("${G[@]}" ls-files -z -m -o --exclude-standard)
+  done < <("${G[@]}" ls-files -z -m -o --exclude-standard; "${G[@]}" diff --cached --name-only -z --no-renames --diff-filter=AM)   # + o que está em `git add` (arquivo novo staged não aparece em -m/-o)
   [ -z "$recent" ] || { say "ADIEI: '$recent' foi alterado há menos de $QUIET_MIN min (alguém está editando); próxima execução"; exit 0; }
 fi
 
