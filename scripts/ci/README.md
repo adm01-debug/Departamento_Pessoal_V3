@@ -27,10 +27,8 @@ Adicionar ao job `security-config` de `.github/workflows/ci.yml`:
 Precisa de `fetch-depth: 0` no checkout desse job, senão `origin/main` não existe localmente para a
 comparação de bytes.
 
-**Ligação real no CI:** PR [#396](https://github.com/adm01-debug/Departamento_Pessoal_V3/pull/396) (`ci: liga
-o guard...`) adiciona esse step ao job `security-config`. Está empilhada sobre a `main`, não sobre esta PR —
-por isso `grep check-claude-md-integrity .github/` ainda não retorna nada nesta branch. Depois que as duas
-mergearem (qualquer ordem), o guard roda em todo PR.
+**Ligação no CI:** o step está no job `security-config` de `.github/workflows/ci.yml`, adicionado pela PR
+[#396](https://github.com/adm01-debug/Departamento_Pessoal_V3/pull/396) — já mergeada, roda em todo PR.
 
 ## Variáveis de ambiente
 
