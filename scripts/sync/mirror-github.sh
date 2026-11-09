@@ -185,6 +185,13 @@ perde_commits=0
 if [ "$CUR" = "$BRANCH" ] || [ "$CUR" = "HEAD" ]; then
   "${G[@]}" merge-base --is-ancestor "$HEAD_SHA" "origin/$BRANCH" 2>/dev/null || perde_commits=1
 fi
+# A branch local <branch> também é reposicionada (checkout -B) quando o checkout está em OUTRA branch: se ela tem commits que
+# não estão em origin/<branch>, o backup os segura como pai extra (senão só restariam no reflog).
+PAIS="$HEAD_SHA"; P2=(); EXTRA=""
+LOCAL_SHA="$("${G[@]}" rev-parse -q --verify "refs/heads/$BRANCH" 2>/dev/null || true)"
+if [ -n "$LOCAL_SHA" ] && [ "$LOCAL_SHA" != "$HEAD_SHA" ] && ! "${G[@]}" merge-base --is-ancestor "$LOCAL_SHA" "origin/$BRANCH" 2>/dev/null; then
+  perde_commits=1; PAIS="$HEAD_SHA $LOCAL_SHA"; P2=(-p "$LOCAL_SHA"); EXTRA="; inclui os commits locais de $BRANCH não enviados (${LOCAL_SHA:0:9})"
+fi
 if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ]; then
   if [ "$DRY" -eq 1 ]; then
     say "[dry-run] faria backup (alterações: $(printf '%s\n' "$DIRTY" | grep -c .) item(ns)) em refs/mirror-backup/<data>"
@@ -203,10 +210,10 @@ if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ]; then
       TREE="$(snap_tree)"
       [ -n "$TREE" ] || { say "ERRO: não consegui ler tudo para o backup (arquivo ilegível?); NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
       ultimo="$("${G[@]}" for-each-ref --sort=-committerdate --count=1 --format='%(refname)' refs/mirror-backup/)"
-      if [ -n "$ultimo" ] && [ "$("${G[@]}" rev-parse "$ultimo^{tree}" 2>/dev/null)" = "$TREE" ] && [ "$("${G[@]}" log -1 --format=%P "$ultimo" 2>/dev/null)" = "$HEAD_SHA" ]; then
+      if [ -n "$ultimo" ] && [ "$("${G[@]}" rev-parse "$ultimo^{tree}" 2>/dev/null)" = "$TREE" ] && [ "$("${G[@]}" log -1 --format=%P "$ultimo" 2>/dev/null)" = "$PAIS" ]; then
         BACKUP="$ultimo"   # mesmo estado do último backup: reaproveita (não cria uma ref nova por hora)
       else
-        COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA")"
+        COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA" "${P2[@]}")"
         base_ref="refs/mirror-backup/$(date +%Y%m%d-%H%M%S)"; BACKUP="$base_ref"; n=0
         while "${G[@]}" show-ref --verify --quiet "$BACKUP"; do n=$((n+1)); BACKUP="$base_ref-$n"; done   # nunca sobrescreve um backup existente
         "${G[@]}" update-ref "$BACKUP" "$COMMIT" || { say "ERRO: não consegui gravar o backup; nada foi descartado"; exit 1; }
@@ -216,7 +223,7 @@ if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ]; then
     done
     [ "$estavel" -eq 1 ] || { say "ADIEI: os arquivos continuam mudando durante o backup; NADA foi descartado; próxima execução"; exit 0; }
     COMMIT="$("${G[@]}" rev-parse "$BACKUP")"
-    say "backup gravado em $BACKUP ($("${G[@]}" diff-tree --no-commit-id --name-only -r "$HEAD_SHA" "$COMMIT" | grep -c .) arquivo(s) diferentes do commit $CUR@${HEAD_SHA:0:9})"
+    say "backup gravado em $BACKUP ($("${G[@]}" diff-tree --no-commit-id --name-only -r "$HEAD_SHA" "$COMMIT" | grep -c .) arquivo(s) diferentes do commit $CUR@${HEAD_SHA:0:9})$EXTRA"
   fi
 fi
 
