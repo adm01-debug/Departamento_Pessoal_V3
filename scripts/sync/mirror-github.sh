@@ -83,6 +83,9 @@ byte_drift() {
 normaliza_bytes() {
   local lista; lista="$(byte_drift)"; [ -n "$lista" ] || return 0
   local n; n="$(printf '%s\n' "$lista" | grep -c .)"
+  # `checkout-index -f` PULA arquivos que o cache de stat do índice dá como em dia (mesmo com -f). Mudar o mtime antes
+  # invalida o cache e força a reescrita; se algo falhar, o conteúdo antigo continua intacto.
+  printf '%s\n' "$lista" | tr '\n' '\0' | (cd "$REPO" && xargs -0 touch -d '1970-01-02' --) 2>/dev/null
   printf '%s\n' "$lista" | tr '\n' '\0' | xargs -0 git -C "$REPO" -c core.autocrlf=false checkout-index -u -f -- 2>/dev/null
   local resto; resto="$(byte_drift | grep -c . || true)"
   say "NORMALIZADOS $n arquivo(s): bytes do disco (fim de linha) diferiam do GitHub${resto:+; restam $resto por regra de eol do repositório}"
