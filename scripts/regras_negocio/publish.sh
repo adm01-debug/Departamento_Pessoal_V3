@@ -79,7 +79,7 @@ git commit -q -m "$MSG"
 
 if [ "$MODE" = "push" ]; then
   for attempt in 1 2 3; do
-    if git push -q origin "HEAD:$BRANCH" 2>/tmp/push.err; then
+    if git push -q "${PUSH_URL:-origin}" "HEAD:$BRANCH" 2>/tmp/push.err; then
       echo "contexto publicado em $(git rev-parse --short HEAD) ($BRANCH)"; exit 0
     fi
     if grep -qiE "protected|GH006|pre-receive|required status|review|rule" /tmp/push.err; then
@@ -103,7 +103,7 @@ fi
 if ! command -v gh >/dev/null; then
   echo "ERRO: branch protegida e gh CLI ausente — não há como abrir PR"; exit 1
 fi
-git push -q --force origin "HEAD:refs/heads/$PR_BRANCH"
+git push -q --force "${PUSH_URL:-origin}" "HEAD:refs/heads/$PR_BRANCH"
 if gh pr list --head "$PR_BRANCH" --base "$BRANCH" --state open --json number -q '.[0].number' | grep -q .; then
   echo "PR existente atualizada (branch $PR_BRANCH)"
 else

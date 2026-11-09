@@ -66,3 +66,13 @@ test('branch derivada: falha ao consultar o remoto aborta em vez de publicar por
   assert.deepEqual(files('contexto'), ['README.md', 'docs/ai-context/00-INDEX.md', 'docs/outro/dado.md']);
 });
 
+test('push direto usa PUSH_URL quando origin não aceita escrita', (t) => {
+  const { tmp, remote, files, publish } = fixture(t, { derived: false });
+  const work = path.join(tmp, 'work');
+  git(tmp, 'clone', '-q', '--branch', 'main', remote, work);
+  git(work, 'remote', 'set-url', '--push', 'origin', path.join(tmp, 'somente-leitura.git'));
+  put(work, 'docs/ai-context/00-INDEX.md', 'novo\n');
+  const result = publish(work, { MODE: 'push', PUSH_URL: remote, GEN_CMD: 'true' });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.deepEqual(files('main'), ['README.md', 'docs/ai-context/00-INDEX.md']);
+});
