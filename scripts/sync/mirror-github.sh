@@ -236,13 +236,13 @@ if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then
       fi
       ultimo="$("${G[@]}" for-each-ref --sort=-committerdate --count=1 --format='%(refname)' refs/mirror-backup/)"
       if [ -n "$ultimo" ] && [ "$("${G[@]}" rev-parse "$ultimo^{tree}" 2>/dev/null)" = "$TREE" ] && [ "$("${G[@]}" log -1 --format=%P "$ultimo" 2>/dev/null)" = "$PAIS_T" ]; then
-        BACKUP="$ultimo"   # mesmo estado do último backup: reaproveita (não cria uma ref nova por hora)
-      else
-        COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA" "${P2[@]}" "${PIDX[@]}")"
-        base_ref="refs/mirror-backup/$(date +%Y%m%d-%H%M%S)"; BACKUP="$base_ref"; n=0
-        while "${G[@]}" show-ref --verify --quiet "$BACKUP"; do n=$((n+1)); BACKUP="$base_ref-$n"; done   # nunca sobrescreve um backup existente
-        "${G[@]}" update-ref "$BACKUP" "$COMMIT" || { say "ERRO: não consegui gravar o backup; nada foi descartado"; exit 1; }
-      fi
+        velho="$ultimo"   # mesmo estado do último backup: o novo o SUBSTITUI (não acumula uma ref por hora) e a retenção passa a
+      else velho=""; fi   # contar DESTE descarte (reaproveitar o antigo com mais de --keep-days o apagava na mesma execução)
+      COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA" "${P2[@]}" "${PIDX[@]}")"
+      base_ref="refs/mirror-backup/$(date +%Y%m%d-%H%M%S)"; BACKUP="$base_ref"; n=0
+      while "${G[@]}" show-ref --verify --quiet "$BACKUP"; do n=$((n+1)); BACKUP="$base_ref-$n"; done   # nunca sobrescreve um backup existente
+      "${G[@]}" update-ref "$BACKUP" "$COMMIT" || { say "ERRO: não consegui gravar o backup; nada foi descartado"; exit 1; }
+      [ -z "$velho" ] || "${G[@]}" update-ref -d "$velho"
       # confere de novo: se algo mudou no disco durante o backup (usuário salvando), refaz
       if [ "$(snap_tree)" = "$TREE" ]; then estavel=1; break; fi
     done
