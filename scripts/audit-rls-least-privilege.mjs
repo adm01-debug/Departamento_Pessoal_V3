@@ -239,7 +239,9 @@ function main() {
     return 1;
   }
 
-  const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
+  // O corpo pode conter TAB (indentação), que é também o separador de campos:
+  // reagrupa tudo após o nome, senão o helper era truncado no primeiro TAB.
+  const bodies = parseRows(functionOutput, 2).map(([name, ...src]) => [name, src.join(' ')]);
   const violacoes = [];
   let inspecionadas = 0;
 

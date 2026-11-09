@@ -203,7 +203,9 @@ function main() {
     return 1;
   }
 
-  const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
+  // O corpo pode conter TAB (indentação), que é também o separador de campos:
+  // reagrupa tudo após o nome, senão o helper era truncado no primeiro TAB.
+  const bodies = parseRows(functionOutput, 2).map(([name, ...src]) => [name, src.join(' ')]);
 
   // Guard: banco respondeu mas sem nenhuma função pública → schema vazio ou
   // sem SELECT em pg_proc; o inlining fica cego e pode deixar passar violações.
