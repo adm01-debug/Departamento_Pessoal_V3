@@ -18,6 +18,9 @@
 #     outro worktree, ou se o fetch falhar (rede: tenta de novo na próxima hora).
 # Nunca faz push. Uma execução por vez (flock, o mesmo trinco do sync-github.sh).
 set -uo pipefail
+# Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
+# husky). Vale para todos os `git` deste script e dos filhos.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
 
 REPO=""; BRANCH="main"; DRY=0; QUIET=0; QUIET_MIN=10; KEEP_DAYS=30
 while [ $# -gt 0 ]; do

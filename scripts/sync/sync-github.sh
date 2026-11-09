@@ -15,6 +15,9 @@
 # Nunca faz: reset, rebase, merge com commit, checkout, stash, force, delete de branch, push.
 # Uma execução por vez (flock); falha de rede não é erro (tenta de novo na próxima hora).
 set -uo pipefail
+# Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
+# husky). Vale para todos os `git` deste script e dos filhos.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
 
 REPO=""
 DRY=0

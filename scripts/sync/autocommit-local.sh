@@ -19,6 +19,9 @@
 # Commits usam --no-verify (os hooks de pre-commit reformatariam o seu trabalho). Não dispara CI (o CI só roda em
 # push na main e em PR para a main).
 set -uo pipefail
+# Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
+# husky). Vale para todos os `git` deste script e dos filhos.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
 
 WT=""; BRANCH="computador_local"; REMOTE="origin"; QUIET_MIN=2; MAX_MB=5; PII="cpf"; DRY=0; QUIET=0
 while [ $# -gt 0 ]; do
