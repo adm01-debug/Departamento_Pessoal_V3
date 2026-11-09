@@ -727,6 +727,16 @@ class SnapshotHeartbeatTests(SnapshotFixture):
                 self.assertEqual(self.snapshot.main(), 1)
         self.assertEqual((self.out / "manifest.json").read_bytes(), before)
 
+    def test_database_that_answers_nothing_is_unavailable_even_with_a_previous_snapshot(self):
+        # Caminho real: introspect_db reaproveita cada seção que falhou; nenhuma foi lida nesta coleta.
+        self.assertEqual(self.collect(), 0)
+        before = {path.relative_to(self.out): path.read_bytes() for path in self.out.rglob("*") if path.is_file()}
+        self.assertEqual(self.collect(failures={"server", "functions", "migrations"}), 1)
+        self.assertEqual(set(self.snapshot.CARRIED), {"server", "functions", "migrations"})
+        after = {path.relative_to(self.out): path.read_bytes() for path in self.out.rglob("*") if path.is_file()}
+        self.assertEqual(after, before)
+        self.assertEqual(self.collect(failures={"functions", "migrations"}), 0, "falha parcial continua publicando")
+
     def test_interrupted_render_does_not_publish_a_completed_heartbeat(self):
         with mock.patch.object(self.snapshot, "render_simple", side_effect=RuntimeError("falha de escrita simulada")):
             with self.assertRaisesRegex(RuntimeError, "falha de escrita"):

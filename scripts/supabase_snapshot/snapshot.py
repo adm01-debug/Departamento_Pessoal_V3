@@ -1710,7 +1710,9 @@ def main() -> int:
             previous = None
 
     db, stats = introspect_db((previous or {}).get("db"))
-    if all(v is None for v in db.values()):
+    # Seção reaproveitada (CARRIED) também não foi lida agora: com snapshot anterior, um banco que não
+    # respondia nada passava por aqui e era republicado como coleta concluída (exit 0, manifest renovado).
+    if all(v is None or name in CARRIED for name, v in db.items()):
         log("Banco inteiro indisponível — nada será sobrescrito.")
         return 1
 
