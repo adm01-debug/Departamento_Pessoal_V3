@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "98f0f59d4172a2a6891003da3848f5b4ae3b6ebe",
+  "commit": "8c51e5f4ddc44c7765f795bd0615811f10935d00",
   "branch": "main",
-  "data_commit": "2026-11-08T21:57:24Z",
+  "data_commit": "2026-11-08T21:33:32-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8c51e5f",
+    "data": "2026-11-08",
+    "assunto": "fix: corrige 3 inconsistências de doc achadas na validação pós-#395"
+   },
+   {
+    "sha": "28a1191",
+    "data": "2026-11-08",
+    "assunto": "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)"
+   },
    {
     "sha": "98f0f59",
     "data": "2026-11-08",
@@ -121,19 +131,9 @@
     "sha": "a8a8516",
     "data": "2026-11-07",
     "assunto": "chore: instruções enxutas para agentes (#364)"
-   },
-   {
-    "sha": "a29e6c0",
-    "data": "2026-11-07",
-    "assunto": "fix: preserva semantica maybeSingle no proxy e no bridge (#366)"
-   },
-   {
-    "sha": "25465ae",
-    "data": "2026-11-06",
-    "assunto": "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)"
    }
   ],
-  "arquivos_mudados_7d": 133,
+  "arquivos_mudados_7d": 134,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -192,7 +192,7 @@
     "mudancas": 9
    },
    {
-    "pasta": "src/services/cnabService.ts",
+    "pasta": "AGENTS.md",
     "mudancas": 9
    }
   ],
@@ -246,15 +246,15 @@
     "mudancas": 12
    },
    {
+    "arquivo": "AGENTS.md",
+    "mudancas": 12
+   },
+   {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
     "arquivo": ".github/workflows/healthcheck.yml",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "AGENTS.md",
     "mudancas": 11
    },
    {
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 67
+    "commits": 69
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2803,
+  "arquivos_total": 2804,
   "arquivos_codigo": 1508,
   "linhas_codigo": 261401,
   "rotas": 113,
@@ -339,7 +339,7 @@
   "testes": 572,
   "workflows": 17,
   "scripts": 83,
-  "docs_md": 286
+  "docs_md": 287
  },
  "por_pasta": {
   "capacitor.config.ts": {

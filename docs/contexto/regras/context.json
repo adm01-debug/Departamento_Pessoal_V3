@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "98f0f59d4172a2a6891003da3848f5b4ae3b6ebe",
+  "sha": "8c51e5f4ddc44c7765f795bd0615811f10935d00",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 02:32 UTC",
-  "files_total": 2824,
+  "generated_at": "2026-11-09 05:10 UTC",
+  "files_total": 2825,
   "code_files": 2323,
   "code_lines": 309292
  },
@@ -274499,10 +274499,37 @@
   }
  },
  "git": {
-  "sha": "98f0f59d4172a2a6891003da3848f5b4ae3b6ebe",
+  "sha": "8c51e5f4ddc44c7765f795bd0615811f10935d00",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8c51e5f",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "fix: corrige 3 inconsistências de doc achadas na validação pós-#395",
+    "files": [
+     "docs/agentes/arquitetura.md",
+     "docs/agentes/banco.md",
+     "scripts/ci/README.md"
+    ]
+   },
+   {
+    "sha": "28a1191",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)",
+    "files": [
+     "AGENTS.md",
+     "docs/agentes/arquitetura.md",
+     "docs/agentes/banco.md",
+     "docs/agentes/contexto-inventario.md",
+     "docs/agentes/decisoes-e-gaps.md",
+     "docs/agentes/fluxo-git.md",
+     "docs/agentes/graphify.md",
+     "scripts/ci/README.md"
+    ]
+   },
    {
     "sha": "98f0f59",
     "date": "2026-11-08",
@@ -274821,27 +274848,41 @@
     "files": [
      "public/sw-custom.js"
     ]
-   },
-   {
-    "sha": "a18f04a",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "fix: safeFetch do SW devolve resposta original (evita \"Failed to fetch dynamically imported module\") (#356)",
-    "files": [
-     "public/sw-custom.js"
-    ]
-   },
-   {
-    "sha": "f517257",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: sincronizar deno.lock com package.json (14 dependências Dependabot)",
-    "files": [
-     "deno.lock"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/agentes/arquitetura.md",
+    3
+   ],
+   [
+    "docs/agentes/banco.md",
+    2
+   ],
+   [
+    "scripts/ci/README.md",
+    2
+   ],
+   [
+    "AGENTS.md",
+    2
+   ],
+   [
+    "docs/agentes/contexto-inventario.md",
+    2
+   ],
+   [
+    "docs/agentes/decisoes-e-gaps.md",
+    2
+   ],
+   [
+    "docs/agentes/fluxo-git.md",
+    2
+   ],
+   [
+    "docs/agentes/graphify.md",
+    2
+   ],
    [
     "scripts/audit-edge-authz.mjs",
     2
@@ -274879,10 +274920,6 @@
     2
    ],
    [
-    "public/sw-custom.js",
-    2
-   ],
-   [
     ".github/workflows/ci.yml",
     1
    ],
@@ -274892,34 +274929,6 @@
    ],
    [
     "scripts/audit-required-checks.mjs",
-    1
-   ],
-   [
-    "scripts/audit-rls-least-privilege.mjs",
-    1
-   ],
-   [
-    "scripts/audit-secdef-authz.mjs",
-    1
-   ],
-   [
-    "scripts/audit-types-drift.mjs",
-    1
-   ],
-   [
-    "scripts/check-bundle-budget.mjs",
-    1
-   ],
-   [
-    "scripts/gen-table-columns.mjs",
-    1
-   ],
-   [
-    "scripts/audit-rls-pii.mjs",
-    1
-   ],
-   [
-    "scripts/audit-rls-tenant-open.mjs",
     1
    ]
   ]

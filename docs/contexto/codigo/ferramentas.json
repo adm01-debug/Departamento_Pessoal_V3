@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1418)",
    "SQL (817)",
-   "Markdown (286)",
+   "Markdown (287)",
    "JavaScript (86)",
    "JSON (54)",
    "YAML (52)",
@@ -783,7 +783,7 @@
   {
    "arquivo": "AGENTS.md",
    "titulo": "AGENTS.md — Departamento_Pessoal_V3",
-   "linhas": 108
+   "linhas": 116
   },
   {
    "arquivo": "ARCHITECTURE.md",
@@ -1315,7 +1315,7 @@
   },
   {
    "pasta": "docs/agentes",
-   "arquivos_md": 5
+   "arquivos_md": 6
   },
   {
    "pasta": "docs/contexto",

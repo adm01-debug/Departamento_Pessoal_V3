@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige 3 inconsistências de doc achadas na validação pós-#395",
+   "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)",
    "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)",
    "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)",
-   "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale",
-   "fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso",
-   "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório"
+   "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

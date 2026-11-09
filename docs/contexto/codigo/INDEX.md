@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `98f0f59d4172a2a6891003da3848f5b4ae3b6ebe` (2026-11-08T21:57:24Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8c51e5f4ddc44c7765f795bd0615811f10935d00` (2026-11-08T21:33:32-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (817), Markdown (286), JavaScript (86), JSON (54), YAML (52), Shell (45), Python (5)
+- linguagens: TypeScript (1418), SQL (817), Markdown (287), JavaScript (86), JSON (54), YAML (52), Shell (45), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2803 |
+| arquivos_total | 2804 |
 | arquivos_codigo | 1508 |
 | linhas_codigo | 261401 |
 | rotas | 113 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 572 |
 | workflows | 17 |
 | scripts | 83 |
-| docs_md | 286 |
+| docs_md | 287 |
 
 ## Onde ficam as coisas
 - telas: src/pages (108), src/components (1)
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21358 nós · 44613 arestas · 2047 comunidades · grafo do commit `98f0f59d`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (448), button.tsx (363), lucide-react (339), react (327), supabase/types.ts (257), cn (242), App.tsx (200), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 21367 nós · 44621 arestas · 2103 comunidades · grafo do commit `8c51e5f4`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (450), useEmpresas (370), card.tsx (360), App.tsx (255), vitest (220), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), CardHeader (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -403,9 +403,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - src/services/cnabService.ts (13)
 - supabase/functions/external-db-bridge/index.ts (13)
 - .github/workflows/deploy.yml (12)
+- AGENTS.md (12)
 - PENDENCIAS.md (12)
 - .github/workflows/healthcheck.yml (11)
-- AGENTS.md (11)
 
 ## Workflows
 - `canonical-edge-functions.yml` — Canonical Supabase — Edge Functions (pull_request, push, workflow_dispatch)
@@ -491,7 +491,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Documentos (raiz e docs/)
 - `.github/PULL_REQUEST_TEMPLATE.md` — cole aqui o trecho do log, resultado de query ou request que prova que funciona (29 linhas)
-- `AGENTS.md` — AGENTS.md — Departamento_Pessoal_V3 (108 linhas)
+- `AGENTS.md` — AGENTS.md — Departamento_Pessoal_V3 (116 linhas)
 - `ARCHITECTURE.md` — Arquitetura e Fluxo de Dados - RH ERP (125 linhas)
 - `AUDITORIA.md` — Auditoria total — Departamento Pessoal V3 (414 linhas)
 - `AUDIT_REPORT.md` — Auditoria Enterprise e Inventário de Funcionalidades - Sistema de Gestão de RH (69 linhas)
@@ -594,10 +594,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
-- subpastas de docs/: docs/auditoria (48), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (5), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/seguranca (1)
+- subpastas de docs/: docs/auditoria (48), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-08 `8c51e5f` fix: corrige 3 inconsistências de doc achadas na validação pós-#395
+- 2026-11-08 `28a1191` Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)
 - 2026-11-08 `98f0f59` ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)
 - 2026-11-08 `61d37e7` fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)
 - 2026-11-08 `cf32bad` chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale
@@ -611,8 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `e7d1f19` feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard
 - 2026-11-08 `3358bc1` feat: guards contra falso verde nos ratchets e build-rebaseline
 - 2026-11-08 `4fcdb15` fix: audit-migration-style — counter correto + guard de diretório ausente (#384)
-- 2026-11-08 `70f6262` feat: guards de job ausente em audit-canonical-project (#383)
-- 2026-11-08 `752ceac` feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
