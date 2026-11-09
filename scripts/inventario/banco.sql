@@ -37,13 +37,17 @@ SELECT jsonb_build_object(
 ) AS j;
 
 -- @secao tabelas
--- Linhas: count(*) exato so quando o papel pode ler a tabela e a estimativa do planner
+-- Linhas: count(*) exato so quando o papel pode ler a tabela INTEIRA e a estimativa do planner
 -- (reltuples, persiste entre reinicios) fica abaixo de 200 mil; senao, a estimativa
 -- (reltuples = -1: tabela nunca analisada -> null). O ci_auditor nao le public: sai estimativa.
+-- Com RLS ligado e papel sem BYPASSRLS o count(*) so ve as linhas liberadas pela policy (0 numa
+-- tabela cheia, marcado como exato e virando "orfa"): nesse caso tambem vale a estimativa.
 WITH base AS (
   SELECT c.oid, c.relname AS nome, c.relrowsecurity AS rls, c.relforcerowsecurity AS rls_forcado,
          c.reltuples, pg_total_relation_size(c.oid)::bigint AS bytes,
-         has_table_privilege(c.oid, 'SELECT') AS legivel
+         has_table_privilege(c.oid, 'SELECT')
+           AND (NOT c.relrowsecurity
+                OR (SELECT rolbypassrls OR rolsuper FROM pg_roles WHERE rolname = current_user)) AS legivel
     FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
    WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
 ),

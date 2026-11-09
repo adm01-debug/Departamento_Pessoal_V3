@@ -46,6 +46,13 @@ test('banco.sql: nome de tabela entra escapado na regex de citada_no_banco', () 
   assert.match(tabelas, /'\\m' \|\| regexp_replace\(b\.nome, '\(\[\^\[:alnum:\]_\]\)', '\\\\\\1', 'g'\) \|\| '\\M'/);
 });
 
+test('banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS)', () => {
+  // Papel com SELECT mas sem BYPASSRLS contava so as linhas liberadas pela policy: 0 "exato" numa tabela cheia.
+  const tabelas = lerSecoes(SQL).find((s) => s.nome === 'tabelas').sql;
+  assert.match(tabelas, /has_table_privilege\(c\.oid, 'SELECT'\)\s+AND \(NOT c\.relrowsecurity\s+OR \(SELECT rolbypassrls OR rolsuper FROM pg_roles WHERE rolname = current_user\)\) AS legivel/);
+  assert.equal((tabelas.match(/b\.legivel AND b\.reltuples < 200000/g) || []).length, 2, 'linhas e linhas_exatas usam o mesmo criterio');
+});
+
 test('secao obrigatoria ausente aborta; opcional ausente vira coleta_parcial com o motivo', () => {
   assert.throws(() => montarDado({ tabelas: [tabela('a')] }), /secao obrigatoria "resumo"/);
   assert.throws(() => montarDado({ resumo: {}, tabelas: [] }), /entrada sem tabelas/);
