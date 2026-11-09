@@ -6,16 +6,17 @@
 // só geram erro quando presentes e inconsistentes. Campos meramente recomendados
 // viram `warning`. Isso evita reprovar payloads legados válidos ao mesmo tempo em
 // que impede o envio de dados logicamente impossíveis (ex.: término antes do início).
-import {
+import type {
   ValidationResult,
   ValidationError,
   ValidationWarning,
+  ESocialData} from './helpers';
+import {
   required,
   maxLen,
   cpfValido,
   dataValida,
-  enumValido,
-  ESocialData,
+  enumValido
 } from './helpers';
 
 const finish = (

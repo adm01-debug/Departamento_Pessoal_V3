@@ -6,7 +6,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { Briefcase, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
-import { Cargo } from '@/types/entities';
+import type { Cargo } from '@/types/entities';
 
 export default function CargosPage() {
   const { 

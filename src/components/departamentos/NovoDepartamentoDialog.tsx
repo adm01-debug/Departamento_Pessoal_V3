@@ -1,4 +1,4 @@
-import { Departamento } from '@/types/entities';
+import type { Departamento } from '@/types/entities';
 import { useState } from 'react';
 import {
   Dialog,

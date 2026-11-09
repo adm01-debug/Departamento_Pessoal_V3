@@ -15,10 +15,11 @@
  *   - Integridade referencial (perApur futuro, fechamento antes de reabertura)
  */
 
+import type {
+  ValidationResult, ValidationError, ValidationWarning, ESocialData} from './helpers';
 import {
-  ValidationResult, ValidationError, ValidationWarning,
   required, maxLen, cpfValido, cnpjValido, enumValido,
-  dataValida, ESocialData,
+  dataValida
 } from './helpers';
 
 /**

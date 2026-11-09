@@ -9,9 +9,9 @@
  */
 export function calcularHorasExtras(
   salarioBase: number,
-  jornadaMensal: number = 220,
+  jornadaMensal = 220,
   horasExtras: number,
-  percentual: number = 0.5
+  percentual = 0.5
 ): number {
   if (horasExtras <= 0 || jornadaMensal <= 0) return 0;
   const valorHora = salarioBase / jornadaMensal;
@@ -25,8 +25,8 @@ export function calcularHorasExtras(
  */
 export function calcularDSR(
   totalVariavel: number,
-  diasUteis: number = 26,
-  domingosFeriados: number = 4
+  diasUteis = 26,
+  domingosFeriados = 4
 ): number {
   if (totalVariavel <= 0 || diasUteis <= 0) return 0;
   return Math.trunc((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;
@@ -40,7 +40,7 @@ export function calcularDSR(
  */
 export function calcular13Salario(
   salarioBase: number,
-  mesesTrabalhados: number = 12,
+  mesesTrabalhados = 12,
   parcela: 1 | 2 = 2
 ): number {
   const valorIntegral = (salarioBase / 12) * mesesTrabalhados;

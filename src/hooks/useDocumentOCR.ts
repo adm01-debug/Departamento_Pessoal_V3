@@ -45,7 +45,7 @@ export function useDocumentOCR() {
       const { data, error } = await supabase.functions.invoke('process-document-ocr', {
         body: { 
           fileUrl: publicUrl,
-          docType: docType
+          docType
         },
       });
 

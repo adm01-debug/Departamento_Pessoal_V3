@@ -19,9 +19,10 @@
  *   formatDate(date, { year: 'numeric', month: 'long' }) // "julho de 2026"
  */
 import { useState, useCallback, useEffect } from 'react';
+import type {
+  Locale} from './index.ts';
 import {
   i18n,
-  Locale,
   SUPPORTED_LOCALES,
   setI18nLocale,
   onI18nLocaleChange} from './index.ts';

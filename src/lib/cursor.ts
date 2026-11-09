@@ -68,7 +68,7 @@ export function parseCursor(cursor: string): { column: string; value: unknown; d
  * Constrói query string com cursor para PostgREST
  * Usa o formato nativo: ?id=gt.123 (greater than)
  */
-export function buildCursorQuery(cursor: string, limit: number = 20): string {
+export function buildCursorQuery(cursor: string, limit = 20): string {
   const parsed = parseCursor(cursor);
   if (!parsed) {
     return `?limit=${limit}`;
@@ -86,7 +86,7 @@ export function buildCursorQuery(cursor: string, limit: number = 20): string {
  */
 export function extractNextCursor<T extends Record<string, unknown>>(
   data: T[],
-  column: string = 'id'
+  column = 'id'
 ): string | null {
   if (!data || data.length === 0) return null;
 
@@ -104,7 +104,7 @@ export function extractNextCursor<T extends Record<string, unknown>>(
  */
 export function useCursorPagination<T extends Record<string, unknown>>(
   items: T[],
-  column: string = 'id'
+  column = 'id'
 ) {
   const nextCursor = extractNextCursor(items, column);
 

@@ -1,4 +1,5 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { validateUploadFile } from '@/utils/uploadValidation';
@@ -57,7 +58,7 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
     return { data: data || [], total: count || 0 };
   }
 
-  async listarHistoricoRecente(colaboradorId: string, empresaId: string, dias: number = 60): Promise<AfastamentoRow[]> {
+  async listarHistoricoRecente(colaboradorId: string, empresaId: string, dias = 60): Promise<AfastamentoRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const dataLimite = new Date();
     dataLimite.setDate(dataLimite.getDate() - dias);

@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import { useBlocker, Location } from 'react-router-dom';
+import type { Location } from 'react-router-dom';
+import { useBlocker } from 'react-router-dom';
 import {
   AlertDialog,
   AlertDialogAction,

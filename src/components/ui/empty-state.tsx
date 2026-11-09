@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
-import { LucideIcon, Inbox, Search, FileX, Plus, ArrowRight } from 'lucide-react';
+import type { LucideIcon} from 'lucide-react';
+import { Inbox, Search, FileX, Plus, ArrowRight } from 'lucide-react';
 import { Button } from './button';
 import { motion } from 'framer-motion';
 

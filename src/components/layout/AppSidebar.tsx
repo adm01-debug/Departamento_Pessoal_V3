@@ -1,3 +1,5 @@
+import type {
+  LucideIcon} from 'lucide-react';
 import {
   LayoutDashboard,
   Users,
@@ -30,7 +32,6 @@ import {
   GraduationCap,
   Target,
   UserSearch,
-  LucideIcon,
   MapPin,
   Timer,
   Megaphone,

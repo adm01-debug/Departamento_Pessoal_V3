@@ -162,7 +162,7 @@ export async function salvarDadosEstagiario(
       if (error) throw error;
       if (!data) throw new Error('Nenhum registro de dados de estagiário foi retornado.');
       return data;
-    } else {
+    } 
       const { data, error } = await supabase
         .from('dados_estagiario')
         .insert(
@@ -177,7 +177,7 @@ export async function salvarDadosEstagiario(
       if (error) throw error;
       if (!data) throw new Error('Nenhum registro de dados de estagiário foi retornado.');
       return data;
-    }
+    
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Erro desconhecido';
     throw new Error(`Falha ao salvar dados de estagiário: ${msg}`, { cause: e });

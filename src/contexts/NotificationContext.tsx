@@ -1,6 +1,8 @@
 // NotificationContext - connected to database via useNotificacoes + toast helpers
-import { createContext, useContext, useCallback, ReactNode } from 'react';
-import { useNotificacoes, Notificacao } from '@/hooks/useNotificacoes';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useCallback } from 'react';
+import type { Notificacao } from '@/hooks/useNotificacoes';
+import { useNotificacoes } from '@/hooks/useNotificacoes';
 import { toast } from 'sonner';
 
 interface NotificationContextType {

@@ -7,7 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEmpresas, Empresa } from "@/hooks/useEmpresas";
+import type { Empresa } from "@/hooks/useEmpresas";
+import { useEmpresas } from "@/hooks/useEmpresas";
 import { Badge } from "@/components/ui/badge";
 
 interface EmpresaItem {

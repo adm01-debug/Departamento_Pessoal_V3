@@ -5,16 +5,17 @@
  * Regra de compatibilidade: campos historicamente obrigatórios seguem como erro;
  * campos novos só são validados quando presentes, e recomendações viram warnings.
  */
-import {
+import type {
   ValidationResult,
   ValidationError,
   ValidationWarning,
+  ESocialData} from './helpers';
+import {
   required,
   maxLen,
   cpfValido,
   enumValido,
-  dataValida,
-  ESocialData,
+  dataValida
 } from './helpers';
 
 /** Hora no formato HHMM (padrão eSocial) ou HH:MM (uso interno). */

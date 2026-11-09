@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTodasEmpresas } from '@/hooks/useTodasEmpresas';
 import { EntityGridPageContainer } from '@/components/layout/EntityGridPageContainer';
-import { Empresa } from '@/types/entities';
+import type { Empresa } from '@/types/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 

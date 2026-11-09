@@ -91,7 +91,7 @@ export function SimuladorWhatIf() {
             empresa_id: empresaAtual.id,
             titulo: form.titulo,
             configuracao: form,
-            resultado: resultado,
+            resultado,
           },
           'SimuladorWhatIf:simulacoes_fiscais'
         )

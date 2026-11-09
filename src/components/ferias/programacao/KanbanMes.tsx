@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { DndContext, DragEndEvent, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
+import type { DragEndEvent} from '@dnd-kit/core';
+import { DndContext, PointerSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { CardProgramacao } from './CardProgramacao';
 import type { ProgramacaoFerias } from '@/hooks/ferias/useProgramacaoFerias';

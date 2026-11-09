@@ -137,7 +137,7 @@ export async function criarEvento(evento: {
             competencia: evento.competencia || currentCompetenciaLocal(),
             dados: (evento.dados || {}) as Json,
             status: 'pendente',
-            xml: xml,
+            xml,
           },
         ],
         'esocialService:esocial_eventos'

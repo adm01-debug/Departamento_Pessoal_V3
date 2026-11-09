@@ -15,7 +15,7 @@ export {
 export { validarS2210, validarS2220, validarS2240 } from './sstValidators';
 export { validarRubricaESocial, sugerirCorrecaoRubrica } from './rubricaValidator';
 
-import { ValidationResult, ESocialData } from './helpers';
+import type { ValidationResult, ESocialData } from './helpers';
 import {
   validarS1000, validarS1005, validarS1010, validarS1020, validarS1070,
   validarS1200, validarS1210, validarS1260, validarS1270, validarS1280,

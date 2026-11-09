@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { cnabService, CNABConfig, folhaService } from '@/services';
+import type { CNABConfig} from '@/services';
+import { cnabService, folhaService } from '@/services';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';

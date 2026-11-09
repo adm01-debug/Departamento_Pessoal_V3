@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
-import { RescisaoResult, fmt } from './rescisaoCalc';
+import type { RescisaoResult} from './rescisaoCalc';
+import { fmt } from './rescisaoCalc';
 import { auditoriaService, type TrilhaAuditoriaRegistro } from '@/services/auditoriaService';
 
 interface RescisaoPdfForm {

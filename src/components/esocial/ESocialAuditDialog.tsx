@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/compone
 import { Button } from '@/components/ui/button';
 import { ShieldAlert, CheckCircle, AlertTriangle, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ESocialEvento } from '@/services/esocialService';
+import type { ESocialEvento } from '@/services/esocialService';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 

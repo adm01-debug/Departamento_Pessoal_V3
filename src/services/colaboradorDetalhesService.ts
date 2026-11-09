@@ -306,7 +306,7 @@ export async function salvarPeriodoExperiencia(
       .maybeSingle();
     if (error) throw error;
     return data;
-  } else {
+  } 
     const { data, error } = await supabase
       .from('periodos_experiencia')
       .insert(
@@ -320,7 +320,7 @@ export async function salvarPeriodoExperiencia(
       .maybeSingle();
     if (error) throw error;
     return data;
-  }
+  
 }
 
 // =============================================
