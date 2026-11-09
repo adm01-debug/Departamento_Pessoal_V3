@@ -194,6 +194,11 @@ def is_test_file(r: str) -> bool:
     return bool(re.search(r"(\.test\.|\.spec\.|__tests__/|/tests?/|/e2e/|/cypress/)", r))
 
 
+def is_system_code(r: str) -> bool:
+    """Código do sistema: nem teste nem ferramenta/doc (mesmo corte de collect_rules)."""
+    return is_app_code(r) and not is_test_file(r)
+
+
 # --------------------------------------------------------------------------- #
 # 1. Inventário
 # --------------------------------------------------------------------------- #
@@ -1235,6 +1240,7 @@ def detect_modules(root: Path, code: dict[str, dict]) -> list[dict]:
 def build_dataflow(code: dict[str, dict], feats: dict, schema: dict) -> dict:
     table_usage: dict[str, dict[str, set]] = defaultdict(lambda: defaultdict(set))
     table_cols: dict[str, set] = defaultdict(set)
+    app_cols: dict[str, set] = defaultdict(set)  # auditoria: fixture de teste/script não é coluna usada pelo sistema
     env_usage, rpc_usage, invoke_usage, storage_usage, ext_usage, realtime = (defaultdict(set) for _ in range(6))
     dyn = []
     for r, info in code.items():
@@ -1243,6 +1249,7 @@ def build_dataflow(code: dict[str, dict], feats: dict, schema: dict) -> dict:
                 table_usage[t["table"]][op].add(r)
         for t, cols in info["table_cols"].items():
             table_cols[t].update(cols)
+            if is_system_code(r): app_cols[t].update(cols)
         if info["dyn_from"]:
             dyn.append({"file": r, "count": info["dyn_from"]})
         for e in info["env"]: env_usage[e].add(r)
@@ -1267,7 +1274,7 @@ def build_dataflow(code: dict[str, dict], feats: dict, schema: dict) -> dict:
     schema_names = {k.split(".")[-1]: k for k in schema["tables"]}
     view_names = {k.split(".")[-1] for k in schema["views"]}
     cols_unknown = []
-    for t, cols in table_cols.items():
+    for t, cols in app_cols.items():
         key = schema_names.get(t)
         if key:
             known = {c["name"] for c in schema["tables"][key]["columns"]}
@@ -1461,7 +1468,9 @@ def build_audit(code, schema, feats, dataflow, rules, access, docs) -> dict:
     for c in dataflow["columns_unknown"]:
         issues.append({"kind": "coluna", "msg": f"coluna `{c['column']}` usada no código não existe no schema de `{c['table']}`", "where": []})
     for t in dataflow["tables_only_in_code"]:
-        issues.append({"kind": "tabela", "msg": f"tabela `{t}` usada no código não existe nas migrations/types do repo", "where": sorted({f for fs in dataflow["tables"][t].values() for f in fs})[:4]})
+        where = sorted({f for fs in dataflow["tables"][t].values() for f in fs if is_system_code(f)})
+        if where:
+            issues.append({"kind": "tabela", "msg": f"tabela `{t}` usada no código não existe nas migrations/types do repo", "where": where[:4]})
     for r in access["risky"]:
         issues.append({"kind": "rls", "msg": f"`{r['table']}`: {r['issue']}", "where": r["files"][:4]})
     for k, c, ty in access["money_float"]:
@@ -1469,13 +1478,15 @@ def build_audit(code, schema, feats, dataflow, rules, access, docs) -> dict:
     for k in access["tenant_missing"]:
         issues.append({"kind": "tenant", "msg": f"`{k}` não tem coluna `{access['tenant_key']}` (isolamento por tenant pode estar incompleto)", "where": []})
     for k, v in dataflow["invokes"].items():
-        if k not in {e["name"] for e in feats["edge_functions"]}:
+        v = [f for f in v if is_system_code(f)]
+        if v and k not in {e["name"] for e in feats["edge_functions"]}:
             issues.append({"kind": "edge", "msg": f"edge function `{k}` invocada mas não existe em supabase/functions/", "where": v[:4]})
     for k, v in dataflow["rpc"].items():
-        if k not in schema["functions"]:
+        v = [f for f in v if is_system_code(f)]
+        if v and k not in schema["functions"]:
             issues.append({"kind": "rpc", "msg": f"RPC `{k}` chamada mas não definida nas migrations/types", "where": v[:4]})
     for d in dataflow["dynamic_from"]:
-        issues.append({"kind": "dinâmico", "msg": f"{d['count']} chamada(s) `.from(variável)` — tabela só conhecida em runtime", "where": [d["file"]]})
+        if is_system_code(d["file"]): issues.append({"kind": "dinâmico", "msg": f"{d['count']} chamada(s) `.from(variável)` — tabela só conhecida em runtime", "where": [d["file"]]})
     for n, f in schema["functions"].items():
         if f.get("security_definer") and not f.get("search_path"):
             issues.append({"kind": "segurança", "msg": f"função `{n}` é SECURITY DEFINER sem `set search_path` (risco de escalação)", "where": [f["src"]]})
@@ -1499,7 +1510,7 @@ def build_audit(code, schema, feats, dataflow, rules, access, docs) -> dict:
         gaps.append("Nenhum perfil/role identificado — quem pode fazer o quê não está explícito no código nem no banco.")
     if not schema["tables"]:
         gaps.append("Nenhum schema encontrado (migrations, prisma ou database.types.ts) — o banco real é desconhecido para este contexto.")
-    if dataflow["tables_only_in_code"]:
+    if any(i["kind"] == "tabela" for i in issues):
         gaps.append("Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.")
     return {"issues": issues, "gaps": gaps}
 

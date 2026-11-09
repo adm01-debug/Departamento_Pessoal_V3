@@ -202,6 +202,25 @@ export type Database = {
         self.assertNotIn("historical_status", rendered)
         self.assertFalse((self.root / "AGENTS.md").exists())
 
+    def audit_issues(self):
+        subprocess.run([sys.executable, str(SCRIPT), "--repo", str(self.root), "--out", "output",
+                        "--profile", "regras", "--no-pointer"], check=True, capture_output=True, text=True, timeout=30)
+        context = json.loads((self.root / "output/context.json").read_text(encoding="utf-8"))
+        return sorted((issue["kind"], issue["msg"].split("`")[1], tuple(issue["where"])) for issue in context["audit"]["issues"])
+
+    def test_consistency_audit_ignores_fixtures_from_tests_and_tooling(self):
+        self.write("supabase/migrations/20260101000000_orders.sql",
+                   "CREATE TABLE public.orders (id uuid, total numeric);\nALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;\n"
+                   "CREATE POLICY read_all ON public.orders FOR SELECT USING (true);\n")
+        self.write("src/orders.ts", "supabase.from('orders').select('id, missing_col');\nsupabase.from('missing_table').select('*');\n"
+                                    "supabase.rpc('missing_rpc');\nsupabase.functions.invoke('missing-edge');\nsupabase.from(dynamicName);\n")
+        self.write("src/orders.test.ts", "supabase.from('orders').select('fixture_col');\nsupabase.from('fixture_table').select('*');\n"
+                                         "supabase.rpc('fixture_rpc');\nsupabase.functions.invoke('fixture-edge');\nsupabase.from(fixtureName);\n")
+        self.write("scripts/tool.mjs", "db.from('tool_table').select('*');\ndb.rpc('tool_rpc');\ndb.functions.invoke('tool-edge');\ndb.from(toolName);\n")
+        self.assertEqual(self.audit_issues(), [
+            ("coluna", "missing_col", ()), ("dinâmico", ".from(variável)", ("src/orders.ts",)), ("edge", "missing-edge", ("src/orders.ts",)),
+            ("rpc", "missing_rpc", ("src/orders.ts",)), ("tabela", "missing_table", ("src/orders.ts",))])
+
     def test_policy_with_quoted_roles_is_parsed_like_the_unquoted_form(self):
         # Formato do pg_dump/supabase db dump: todo identificador vem entre aspas.
         self.write("supabase/migrations/20260101000000_dump.sql",
