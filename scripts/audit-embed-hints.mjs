@@ -101,6 +101,8 @@ function collectHints() {
         // arbitrárias que por acaso contenham `algo!outra_coisa`.
         const isQuery = line.includes('select(') || line.includes('.select') || line.includes('sel(');
         if (!isQuery && depth <= 0) return;
+        // Comentário entre os argumentos não é consulta (nem conta parêntese).
+        if (!isQuery && /^\s*(?:\/\/|\/\*|\*)/.test(line)) return;
         if (isQuery) depth = 0;
         const from = isQuery ? Math.max(line.search(/sel(?:ect)?\(/), 0) : 0;
         for (const ch of line.slice(from)) depth += ch === '(' ? 1 : ch === ')' ? -1 : 0;

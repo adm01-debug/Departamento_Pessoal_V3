@@ -46,6 +46,11 @@ const cases = [
   ['string com barra-asterisco não apaga o requireRh', 0, { [target]: SR + AUTH + "const h = { Accept: '*/*' };\n" + RH + '/** doc */\n' }],
   ['string com // não apaga o resto da linha', 0, { [target]: SR + AUTH + 'const sep = "//"; const authz = await requireRh(admin, userId, e);\n' }],
   ['anti-padrão só em comentário não reprova', 0, { [target]: OK + '// antes: if (!belongs && !isAdmin) return 403\n' }],
+  [
+    'comentário dentro de ${} de template não vale como requireRh',
+    1,
+    { [target]: SR + AUTH + 'const label = `user: ${/* requireRh(admin, userId, empresaId) */ userId}`;\n' },
+  ],
   ['operandos invertidos', 1, { [target]: SR + AUTH + HAS_ROLE + 'if (!isAdmin && !belongs) return forbidden();\n' }],
   ['função sensível renomeada', 1, {}, { [target]: `${target}-v2` }],
 ];

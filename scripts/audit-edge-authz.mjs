@@ -112,7 +112,13 @@ const LITERAL_OU_COMENTARIO = new RegExp(
 );
 
 function semComentarios(src) {
-  return src.replace(LITERAL_OU_COMENTARIO, (_m, literal) => literal ?? '');
+  return src.replace(LITERAL_OU_COMENTARIO, (_m, literal) => {
+    if (literal === undefined) return '';
+    // A interpolação `${...}` de um template é CÓDIGO: um comentário ali
+    // dentro não pode contar como chamada de autorização.
+    if (literal.startsWith('`')) return literal.replace(/\$\{([^{}]*)\}/g, (_x, code) => '${' + semComentarios(code) + '}');
+    return literal;
+  });
 }
 
 function lerFuncoes() {

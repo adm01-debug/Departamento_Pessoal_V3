@@ -57,7 +57,7 @@ ext_fn AS (
 -- identificador SQL não diferencia maiúsculas (DIGEST(...) quebra igual).
 SELECT DISTINCT f.extname || E'\t' || f.sch || E'\t' || f.proname || E'\t' || c.oid::regprocedure::text
 FROM ext_fn f
-JOIN pg_proc c ON c.prosrc ~* ('(^|[^.[:alnum:]_"])' || f.proname || '\\s*\\(')
+JOIN pg_proc c ON c.prosrc ~* ('(^|[^.[:alnum:]_"])"?' || f.proname || '"?\\s*\\(')
   AND c.oid <> f.ext_fn_oid
 JOIN pg_namespace cn ON cn.oid = c.pronamespace AND cn.nspname = 'public'
 WHERE c.proconfig IS NOT NULL
