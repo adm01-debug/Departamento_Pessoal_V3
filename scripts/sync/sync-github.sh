@@ -110,5 +110,33 @@ while IFS='|' read -r branch upstream track; do
   fi
 done < <("${G[@]}" for-each-ref --format='%(refname:short)|%(upstream:short)|%(upstream:track)' refs/heads)
 
+# 3. computador_local acompanha a branch padrão ENQUANTO não tem commits próprios (o upstream dela é ela mesma, então o passo 2
+#    nunca a avança e ela ficava para trás da main). Com commits próprios só avisa; com alterações locais não mexe.
+CL=computador_local
+if "${G[@]}" rev-parse -q --verify "refs/heads/$CL" >/dev/null 2>&1 && [ -n "${WT[$CL]:-}" ]; then
+  wt="${WT[$CL]}"
+  DEF="$("${G[@]}" symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null || true)"
+  [ -n "$DEF" ] || for c in origin/main origin/master; do "${G[@]}" rev-parse -q --verify "$c" >/dev/null 2>&1 && { DEF="$c"; break; }; done
+  case "$wt" in
+    */_arquivo/*) ;;
+    *)
+      if [ -n "$DEF" ] && "${G[@]}" rev-parse -q --verify "$DEF" >/dev/null 2>&1; then
+        hw="$(git -C "$wt" rev-parse HEAD 2>/dev/null)"; hd="$("${G[@]}" rev-parse "$DEF")"
+        if [ "$hw" = "$hd" ]; then :
+        elif git -C "$wt" merge-base --is-ancestor HEAD "$DEF" 2>/dev/null; then
+          n="$("${G[@]}" rev-list --count "$hw..$hd")"
+          if [ -n "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
+            say "PULEI $CL (${n} atrás de $DEF): há alterações locais não commitadas em $wt"; pulados=$((pulados+1))
+          elif [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $CL ${n} commit(s) até $DEF em $wt"
+          elif git -C "$wt" merge --ff-only --quiet "$DEF" 2>/dev/null; then say "ATUALIZADO $CL (+${n} commit(s) de $DEF) em $wt"; atualizados=$((atualizados+1))
+          else say "PULEI $CL: fast-forward para $DEF recusado pelo git (arquivo não rastreado no caminho?)"; pulados=$((pulados+1)); fi
+        else
+          own="$("${G[@]}" rev-list --count "$DEF..$hw")"; beh="$("${G[@]}" rev-list --count "$hw..$hd")"
+          aviso "$CL" proprios "$CL tem $own commit(s) próprio(s) fora de $DEF e está $beh atrás dela: integre (PR/rebase) quando quiser; não mexo"; avisos=$((avisos+1))
+        fi
+      fi ;;
+  esac
+fi
+
 say "fim: $atualizados atualizado(s), $pulados pulado(s), $avisos aviso(s)"
 exit 0
