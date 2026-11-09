@@ -11,7 +11,7 @@
 #   - ANTES de descartar, tudo que é só local é gravado em refs/mirror-backup/<data> (alterações, arquivos não
 #     rastreados e o commit local de partida). Recuperar:  git checkout refs/mirror-backup/<data> -- .
 #     Os backups ficam só nesta máquina e são apagados após --keep-days dias.
-#   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados.
+#   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído.
 #   - A branch local em que você estava (ex.: fix/x) continua existindo; só o checkout troca para <branch>.
 #   - Se você mexeu em algum arquivo nos últimos --quiet-min minutos, adia para a próxima execução.
 #   - Não age se houver rebase/merge/cherry-pick/bisect em andamento, se <branch> estiver em checkout em
@@ -192,15 +192,29 @@ LOCAL_SHA="$("${G[@]}" rev-parse -q --verify "refs/heads/$BRANCH" 2>/dev/null ||
 if [ -n "$LOCAL_SHA" ] && [ "$LOCAL_SHA" != "$HEAD_SHA" ] && ! "${G[@]}" merge-base --is-ancestor "$LOCAL_SHA" "origin/$BRANCH" 2>/dev/null; then
   perde_commits=1; PAIS="$HEAD_SHA $LOCAL_SHA"; P2=(-p "$LOCAL_SHA"); EXTRA="; inclui os commits locais de $BRANCH não enviados (${LOCAL_SHA:0:9})"
 fi
-if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ]; then
+# Arquivos IGNORADOS que o espelhamento destruiria mesmo assim (o `add -A` do backup não os vê): o que estiver no lugar de um
+# caminho que origin/<branch> rastreia e o índice local não — o próprio arquivo, um diretório no lugar dele ou um arquivo no
+# lugar de um diretório pai (o `checkout -f` os sobrescreve/apaga). Lista (NUL) em $NOCAMINHO; entram no backup. Falha fechada.
+NOCAMINHO="$STATE/$KEY.ign"
+"${G[@]}" diff-index --cached --name-only -z --diff-filter=D "origin/$BRANCH" 2>"$STATE/$KEY.err" | while IFS= read -r -d '' p; do
+  printf '%s\0' "$p"
+  while [[ "$p" == */* ]]; do p="${p%/*}"; { [ -d "$REPO/$p" ] && [ ! -L "$REPO/$p" ]; } || printf '%s\0' "$p"; done
+done | GIT_LITERAL_PATHSPECS=1 xargs -0 -r "${G[@]}" ls-files -z -o -i --exclude-standard -- > "$NOCAMINHO" 2>>"$STATE/$KEY.err" \
+  || { say "ERRO: não consegui listar os arquivos ignorados no caminho do espelhamento; NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
+[ -s "$NOCAMINHO" ] && EXTRA="$EXTRA; inclui $(tr -cd '\0' < "$NOCAMINHO" | wc -c) arquivo(s) IGNORADO(S) que estavam no lugar de caminhos que o GitHub rastreia"
+if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then
   if [ "$DRY" -eq 1 ]; then
     say "[dry-run] faria backup (alterações: $(printf '%s\n' "$DIRTY" | grep -c .) item(ns)) em refs/mirror-backup/<data>"
   else
-    # árvore de TUDO que está no disco (rastreados + não rastreados, sem ignorados), com os bytes exatos; vazio = falhou
+    # árvore de TUDO que está no disco (rastreados + não rastreados, sem ignorados), com os bytes exatos; vazio = falhou.
+    # Dos ignorados entram só os que seriam destruídos: os de $NOCAMINHO e os que já estavam no índice via `git add -f`
+    # (o checkout -f apaga do disco o que está no índice e não está em origin/<branch>).
     snap_tree() {
       local ix t=""; ix="$(mktemp "$STATE/idx.XXXXXX")"; rm -f "$ix"
       if GIT_INDEX_FILE="$ix" "${G[@]}" read-tree HEAD 2>/dev/null \
-         && GIT_INDEX_FILE="$ix" "${G[@]}" -c core.autocrlf=false -c core.safecrlf=false add -A 2>"$STATE/$KEY.err"; then
+         && GIT_INDEX_FILE="$ix" "${G[@]}" -c core.autocrlf=false -c core.safecrlf=false add -A 2>"$STATE/$KEY.err" \
+         && { "${G[@]}" diff --cached --name-only -z --no-renames --diff-filter=A HEAD; cat "$NOCAMINHO"; } \
+            | GIT_INDEX_FILE="$ix" "${G[@]}" -c core.autocrlf=false -c core.safecrlf=false update-index --add --remove -z --stdin 2>"$STATE/$KEY.err"; then
         t="$(GIT_INDEX_FILE="$ix" "${G[@]}" write-tree 2>/dev/null)"
       fi
       rm -f "$ix"; printf '%s' "$t"

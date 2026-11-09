@@ -14,7 +14,7 @@ bash scripts/sync/mirror-github.sh --repo <caminho> --dry-run          # mostra 
 ## Nada se perde
 
 - Antes de descartar qualquer diferença local, o mirror grava tudo em `refs/mirror-backup/<data>`: alterações, arquivos não rastreados e o commit local de partida. Só local, apagado após 30 dias. Recuperar um arquivo: `git checkout refs/mirror-backup/<data> -- <arquivo>`; listar: `git for-each-ref refs/mirror-backup`.
-- Arquivos **ignorados** pelo git (`.env`, `node_modules`, `dist`) nunca são tocados.
+- Arquivos **ignorados** pelo git (`.env`, `node_modules`, `dist`) nunca são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído.
 - A branch local em que você estava continua existindo (só o checkout troca para `main`).
 - Adia se algum arquivo foi alterado nos últimos 10 min; não age com rebase/merge/cherry-pick/bisect em andamento, com `main` em outro worktree, ou se o fetch falhar.
 - Nunca faz push. Log: `~/.cache/dp-sync/sync.log`.
