@@ -131,6 +131,18 @@ test('helpers: tags com > dentro de element, juntar caminho e casar padrao', () 
   assert.equal(semComentarios("const u = 'https://x';\n// import a from 'b';\n/* c */").includes('https://x'), true);
 });
 
+test('`/*` dentro de string (accept="image/*") nao engole os imports ate o proximo fim de comentario', (t) => {
+  const limpo = semComentarios('<input accept="image/*,.pdf" />\nconst Dlg = lazy(() => import("@/components/dlg/Dlg"));\n/** doc */\n<p>caixa d\'agua {/* import("./comentado") */}</p>');
+  assert.ok(limpo.includes('import("@/components/dlg/Dlg")'), 'import() depois do accept="image/*" foi preservado');
+  assert.ok(!limpo.includes('doc') && !limpo.includes('comentado'), 'comentario de verdade continua removido');
+  const raiz = repo(t, {
+    'src/App.tsx': "import A from '@/pages/A';\nexport default () => <Routes><Route path=\"/a\" element={<A />} /></Routes>;\n",
+    'src/pages/A.tsx': "export default () => <input accept=\"image/*\" />;\nconst Dlg = lazy(() => import('@/components/dlg/Dlg'));\n/** doc */\nexport const x = 1;\n",
+    'src/components/dlg/Dlg.tsx': "export default () => supabase.from('anexos');\n",
+  });
+  assert.deepEqual(gerarRotas(raiz).telas[0].tabelas, ['anexos']);
+});
+
 // Mesmo gate do Zapp: so a parte estrutural (URLs, telas, menu, problemas). Hooks/tabelas de cada tela
 // mudam a todo PR de front e ficam para o inventario semanal.
 test('rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)', () => {

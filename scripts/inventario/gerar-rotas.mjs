@@ -122,8 +122,34 @@ export function extrairChamadas(texto) {
   };
 }
 
-/** Tira comentarios de bloco e linhas inteiras de `//` (nao mexe em `//` dentro de string, ex.: URL). */
-export const semComentarios = (texto) => texto.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+/** O `/*` da posicao i esta dentro de string na mesma linha (accept="image/*", path="/x/*")? Aspa colada em letra e apostrofo de texto. */
+function dentroDeString(texto, i) {
+  let aspas = null;
+  for (let j = texto.lastIndexOf('\n', i) + 1; j < i; j += 1) {
+    const c = texto[j];
+    if (aspas) { if (c === '\\') j += 1; else if (c === aspas) aspas = null; }
+    else if ((c === '"' || c === "'" || c === '`') && !/[\p{L}\p{N}_]/u.test(texto[j - 1] || '')) aspas = c;
+  }
+  return aspas !== null;
+}
+
+/**
+ * Tira comentarios de bloco e linhas inteiras de `//` (nao mexe em `//` dentro de string, ex.: URL).
+ * `/*` dentro de string nao abre comentario: sem isso, tudo ate o proximo fim de comentario sumia.
+ */
+export function semComentarios(texto) {
+  let out = '';
+  let i = 0;
+  for (;;) {
+    const a = texto.indexOf('/*', i);
+    if (a === -1) { out += texto.slice(i); break; }
+    const b = dentroDeString(texto, a) ? -1 : texto.indexOf('*/', a + 2);
+    if (b === -1) { out += texto.slice(i, a + 2); i = a + 2; continue; }
+    out += texto.slice(i, a);
+    i = b + 2;
+  }
+  return out.replace(/^\s*\/\/.*$/gm, '');
+}
 
 const ehTeste = (p) => /(\.test\.|\.spec\.|__tests__|\.stories\.)/.test(p);
 
