@@ -332,6 +332,32 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
         self.assertIsNone(out["edge_functions"])
         self.assertNotIn("api.edge_functions", s.CARRIED)
 
+    def test_management_api_outage_keeps_previous_configs_instead_of_recording_removal(self):
+        s = self.snapshot
+        previous = {"enabled": True, "edge_functions": [], "secrets_names": ["RESEND_API_KEY"], "auth_config": {"jwt_exp": 3600},
+                    "postgrest_config": {"max_rows": 1000}, "pooler_config": [{"pool_mode": "transaction"}],
+                    "storage_config": {"fileSizeLimit": 1}, "backups_config": {"pitr_enabled": False}}
+
+        def collect(status):
+            s.ERRORS.clear()
+            s.CARRIED.clear()
+            error = s.urllib.error.HTTPError("http://offline.invalid", status, "falha simulada", None, None)
+            with mock.patch.object(s, "PROJECT_REF", "ref"), mock.patch.object(s, "ACCESS_TOKEN", "x"), \
+                    mock.patch.object(s, "api", side_effect=error), contextlib.redirect_stdout(io.StringIO()):
+                return s.introspect_api(previous)[0]
+
+        out = collect(500)
+        self.assertEqual({key: out[key] for key in previous}, previous)
+        self.assertEqual(s.fingerprints({"api": out}), s.fingerprints({"api": previous}))
+        self.assertTrue({"api.secrets", "api.auth_config", "api.postgrest_config", "api.pooler_config", "api.storage_config",
+                         "api.backups"}.issubset(s.CARRIED))
+        self.assertIn("api.auth_config", {error["section"] for error in s.ERRORS})
+        # 404 em endpoint opcional é "não existe neste projeto": não é falha e não reaproveita a versão anterior.
+        out = collect(404)
+        self.assertIsNone(out["storage_config"])
+        self.assertNotIn("api.storage_config", s.CARRIED)
+        self.assertEqual(out["auth_config"], previous["auth_config"], "404 em endpoint obrigatório continua sendo falha")
+
     def test_failed_db_stats_renders_storage_as_unavailable(self):
         s = self.snapshot
         self.out.mkdir(parents=True, exist_ok=True)

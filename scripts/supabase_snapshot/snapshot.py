@@ -960,6 +960,13 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     out["backups_config"] = keep(backups, ("region", "pitr_enabled", "walg_enabled")) if isinstance(backups, dict) else None
     stats["backups"] = backups
     stats["health"] = api_section("health", f"/projects/{ref}/health?services=auth,db,pooler,realtime,rest,storage", redact, optional=True)
+    # Falha de coleta (HTTP 5xx/401, timeout) não é "config removida": reaproveita a anterior, como nas seções
+    # do banco; senão o CHANGELOG registrava `config: ... removido` e os secrets saíam como "_nenhum_".
+    for key in out:
+        name = {"secrets_names": "secrets", "backups_config": "backups"}.get(key, key)
+        if out[key] is None and (previous_api or {}).get(key) is not None and any(e["section"] == f"api.{name}" for e in ERRORS):
+            out[key] = previous_api[key]
+            CARRIED.append(f"api.{name}")
 
     # Edge functions: a API devolve bundle binário (eszip), não fonte. Guardamos só metadados por função;
     # o fonte canônico é supabase/functions/<slug>/ no repo.
