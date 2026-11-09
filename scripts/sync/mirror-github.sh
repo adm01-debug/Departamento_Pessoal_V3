@@ -10,6 +10,8 @@
 # Segurança (nada se perde):
 #   - ANTES de descartar, tudo que é só local é gravado em refs/mirror-backup/<data> (alterações, arquivos não
 #     rastreados e o commit local de partida). Recuperar:  git checkout refs/mirror-backup/<data> -- .
+#     Commits locais de <branch> não enviados e a versão que estava em `git add` (se diferente do disco) entram como pais
+#     extras do backup:  git log --graph refs/mirror-backup/<data>
 #     Os backups ficam só nesta máquina e são apagados após --keep-days dias.
 #   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído.
 #   - A branch local em que você estava (ex.: fix/x) continua existindo; só o checkout troca para <branch>.
@@ -33,7 +35,7 @@ while [ $# -gt 0 ]; do
     --keep-days) KEEP_DAYS="${2:-}"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
-    -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "opção desconhecida: $1" >&2; exit 2 ;;
   esac
 done
@@ -223,11 +225,20 @@ if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then
     for tentativa in 1 2 3; do
       TREE="$(snap_tree)"
       [ -n "$TREE" ] || { say "ERRO: não consegui ler tudo para o backup (arquivo ilegível?); NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
+      # A árvore acima é a do DISCO. O que estava em `git add` com conteúdo diferente (versão intermediária) sumiria no reset do
+      # índice: entra como pai extra, como no stash (data fixa => mesmo estado gera o mesmo commit e o backup é reaproveitado).
+      PAIS_T="$PAIS"; PIDX=(); EXTRA_T="$EXTRA"
+      IDX="$("${G[@]}" write-tree 2>/dev/null || true)"
+      if [ -n "$IDX" ] && [ "$IDX" != "$TREE" ] && [ "$IDX" != "$("${G[@]}" rev-parse "$HEAD_SHA^{tree}")" ]; then
+        ICOMMIT="$(printf 'mirror-backup: o que estava no índice (git add) em %s\n' "$HEAD_SHA" | GIT_AUTHOR_DATE='@1 +0000' GIT_COMMITTER_DATE='@1 +0000' "${G[@]}" commit-tree "$IDX" -p "$HEAD_SHA")"
+        [ -n "$ICOMMIT" ] || { say "ERRO: não consegui guardar o índice (git add) no backup; nada foi descartado"; exit 1; }
+        PAIS_T="$PAIS $ICOMMIT"; PIDX=(-p "$ICOMMIT"); EXTRA_T="$EXTRA; a versão que estava em 'git add' ficou em ${ICOMMIT:0:9}"
+      fi
       ultimo="$("${G[@]}" for-each-ref --sort=-committerdate --count=1 --format='%(refname)' refs/mirror-backup/)"
-      if [ -n "$ultimo" ] && [ "$("${G[@]}" rev-parse "$ultimo^{tree}" 2>/dev/null)" = "$TREE" ] && [ "$("${G[@]}" log -1 --format=%P "$ultimo" 2>/dev/null)" = "$PAIS" ]; then
+      if [ -n "$ultimo" ] && [ "$("${G[@]}" rev-parse "$ultimo^{tree}" 2>/dev/null)" = "$TREE" ] && [ "$("${G[@]}" log -1 --format=%P "$ultimo" 2>/dev/null)" = "$PAIS_T" ]; then
         BACKUP="$ultimo"   # mesmo estado do último backup: reaproveita (não cria uma ref nova por hora)
       else
-        COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA" "${P2[@]}")"
+        COMMIT="$(printf 'mirror-backup: branch=%s head=%s\n' "$CUR" "$HEAD_SHA" | "${G[@]}" commit-tree "$TREE" -p "$HEAD_SHA" "${P2[@]}" "${PIDX[@]}")"
         base_ref="refs/mirror-backup/$(date +%Y%m%d-%H%M%S)"; BACKUP="$base_ref"; n=0
         while "${G[@]}" show-ref --verify --quiet "$BACKUP"; do n=$((n+1)); BACKUP="$base_ref-$n"; done   # nunca sobrescreve um backup existente
         "${G[@]}" update-ref "$BACKUP" "$COMMIT" || { say "ERRO: não consegui gravar o backup; nada foi descartado"; exit 1; }
@@ -237,7 +248,7 @@ if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then
     done
     [ "$estavel" -eq 1 ] || { say "ADIEI: os arquivos continuam mudando durante o backup; NADA foi descartado; próxima execução"; exit 0; }
     COMMIT="$("${G[@]}" rev-parse "$BACKUP")"
-    say "backup gravado em $BACKUP ($("${G[@]}" diff-tree --no-commit-id --name-only -r "$HEAD_SHA" "$COMMIT" | grep -c .) arquivo(s) diferentes do commit $CUR@${HEAD_SHA:0:9})$EXTRA"
+    say "backup gravado em $BACKUP ($("${G[@]}" diff-tree --no-commit-id --name-only -r "$HEAD_SHA" "$COMMIT" | grep -c .) arquivo(s) diferentes do commit $CUR@${HEAD_SHA:0:9})$EXTRA_T"
   fi
 fi
 
