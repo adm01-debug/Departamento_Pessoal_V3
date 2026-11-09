@@ -71,7 +71,9 @@ expect(
 console.log('5. Allowlist de URL');
 expect(safeUrl.includes(CANONICAL_REF), 'allowlist nomeia o host Supabase canônico');
 expect(!safeUrl.includes(LEGACY_REF), 'allowlist não nomeia o host legado');
-expect(!safeUrl.includes("'.supabase.co'"), 'allowlist não libera projetos Supabase arbitrários por sufixo');
+// Qualquer tipo de aspas e com ou sem o ponto inicial: ".supabase.co" e
+// 'supabase.co' liberam o mesmo sufixo que '.supabase.co'.
+expect(!/['"`]\.?supabase\.co['"`]/.test(safeUrl), 'allowlist não libera projetos Supabase arbitrários por sufixo');
 
 console.log('6. Contrato da workflow E2E');
 const publicJobStart = workflow.indexOf('  playwright-public:');
