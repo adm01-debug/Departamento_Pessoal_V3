@@ -85,6 +85,19 @@ function acquireLock() {
 const releaseLock = () => rmSync(LOCK, { recursive: true, force: true });
 
 // ---------- ambiente ----------
+/**
+ * O conteúdo desta branch já está em BASE? Os PRs do autofix entram por SQUASH, então `git branch --merged`
+ * nunca reconhece a branch como integrada. Em vez disso, simula o merge na BASE: se a árvore resultante é
+ * idêntica à da BASE, a branch não acrescenta nada (já foi integrada) e pode ser descartada sem perda.
+ * Conflito, erro ou git antigo (< 2.38) => false (trata como pendente, o lado seguro).
+ */
+async function integrada(branch) {
+  const r = await sh('git', ['merge-tree', '--write-tree', BASE, branch], { cwd: REPO });
+  if (r.code !== 0) return false;
+  const tree = r.stdout.split('\n')[0].trim();
+  return tree.length > 0 && tree === (await git(REPO, 'rev-parse', `${BASE}^{tree}`));
+}
+
 async function setupWorktree(stamp) {
   const wt = resolve(opt('worktree', join(homedir(), 'projetos/_worktrees/Departamento_Pessoal_V3-autofix')));
   await sh('git', ['fetch', 'origin', '--quiet'], { cwd: REPO }); // falha de rede não é fatal: usa o que existe
@@ -99,7 +112,12 @@ async function setupWorktree(stamp) {
     await git(REPO, 'worktree', 'add', '-q', '-B', branch, wt, BASE);
   }
   for (const b of (await git(REPO, 'branch', '--list', 'autofix/*', '--format=%(refname:short)')).split('\n').filter(Boolean)) {
-    if (b !== branch) await sh('git', ['branch', '-d', b], { cwd: REPO });
+    if (b === branch) continue;
+    const r = await sh('git', ['branch', '-d', b], { cwd: REPO });
+    if (r.code !== 0 && (await integrada(b))) {
+      await sh('git', ['branch', '-D', b], { cwd: REPO }); // squash-mergeada: o conteúdo já está na BASE
+      log(`branch ${b} já integrada (squash) — removida`);
+    }
   }
   const nm = join(wt, 'node_modules');
   if (!existsSync(nm)) symlinkSync(join(REPO, 'node_modules'), nm);
@@ -147,14 +165,16 @@ async function main() {
   if (HERE) {
     cwd = await git(process.cwd(), 'rev-parse', '--show-toplevel');
   } else {
-    // Idempotência: se já existe uma branch autofix/* com commits ainda não integrados, não empilha outra.
-    // (Depois do merge/squash do PR, apague a branch: git branch -D autofix/<data>.)
+    // Idempotência: se já existe uma branch autofix/* com conteúdo ainda não integrado, não empilha outra.
+    // Branch já squash-mergeada não conta (ver integrada()); ela é removida no setupWorktree.
     if (!DRY && !flag('force')) {
       await sh('git', ['fetch', 'origin', '--quiet'], { cwd: REPO });
-      const pend = (await sh('git', ['branch', '--list', 'autofix/*', '--no-merged', BASE], { cwd: REPO })).stdout
+      const naoMescladas = (await sh('git', ['branch', '--list', 'autofix/*', '--no-merged', BASE], { cwd: REPO })).stdout
         .split('\n')
         .map((l) => l.replace(/^[*+\s]+/, '').trim())
         .filter(Boolean);
+      const pend = [];
+      for (const b of naoMescladas) if (!(await integrada(b))) pend.push(b);
       if (pend.length) {
         log(`já existe branch autofix pendente (${pend.join(', ')}); nada a fazer. Use --force para ignorar.`);
         report.skipped = pend;
