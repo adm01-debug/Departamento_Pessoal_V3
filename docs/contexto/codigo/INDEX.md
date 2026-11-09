@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e` (2026-11-09T17:42:34-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2e54da5d336fc15b6ac7cb2126eef8174a9a6517` (2026-11-09T17:49:22-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (817), Markdown (289), JavaScript (94), JSON (54), Shell (53), YAML (52), Python (5)
+- linguagens: TypeScript (1418), SQL (817), Markdown (289), JavaScript (96), JSON (54), Shell (53), YAML (52), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2823 |
-| arquivos_codigo | 1516 |
-| linhas_codigo | 263124 |
+| arquivos_total | 2825 |
+| arquivos_codigo | 1518 |
+| linhas_codigo | 263344 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -48,9 +48,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 436 |
 | migrations | 781 |
 | cron_jobs | 41 |
-| testes | 572 |
+| testes | 573 |
 | workflows | 17 |
-| scripts | 99 |
+| scripts | 100 |
 | docs_md | 289 |
 
 ## Onde ficam as coisas
@@ -58,10 +58,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (312), src/pages (109), src/contexts (3)
 - hooks: src/hooks (88), src/components (5), src/contexts (4)
 - servicos_logica: src/services (80), src/utils (33), src/schemas (25)
-- testes: co-localizado (__tests__) (468), co-localizado (*.test) (62), e2e/ (27)
+- testes: co-localizado (__tests__) (468), co-localizado (*.test) (63), e2e/ (27)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
-- scripts: scripts/simulacao (12), scripts/autofix (9), scripts/sync (7)
+- scripts: scripts/simulacao (12), scripts/autofix (10), scripts/sync (7)
 - docs: docs (72), (raiz) (31), .github (1)
 - nomenclatura: {"componentes":"PascalCase (87%)","hooks":"use + PascalCase","servicos":"camelCase (99%)","edge_functions":"kebab-case (68%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21507 nós · 44891 arestas · 2110 comunidades · grafo do commit `ac8cc117`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (426), cn (335), vitest (324), lucide-react (310), button.tsx (302), react (204), AfastamentosPage.tsx (183), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155)
+- 21521 nós · 44924 arestas · 2091 comunidades · grafo do commit `2e54da5d`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (451), lucide-react (433), button.tsx (330), cn (253), App.tsx (223), contract.ts (180), react (165), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-09 `2e54da5` fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)
 - 2026-11-09 `ac8cc11` fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommi
 - 2026-11-09 `bff8377` feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)
 - 2026-11-09 `85fc652` feat(sync): commit automático do trabalho local na branch computador_local (#407)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `28a1191` Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)
 - 2026-11-08 `98f0f59` ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)
 - 2026-11-08 `61d37e7` fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)
-- 2026-11-08 `cf32bad` chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

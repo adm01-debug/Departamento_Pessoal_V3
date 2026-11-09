@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e",
+  "sha": "2e54da5d336fc15b6ac7cb2126eef8174a9a6517",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 20:54 UTC",
-  "files_total": 2844,
-  "code_files": 2331,
-  "code_lines": 311015
+  "generated_at": "2026-11-09 21:05 UTC",
+  "files_total": 2846,
+  "code_files": 2333,
+  "code_lines": 311235
  },
  "version": "1.3.2",
- "facts_hash": "e2773c2298b51936",
+ "facts_hash": "b32cd808b48d9c6b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -344,7 +344,7 @@
    ".sql": 817,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 69,
+   ".mjs": 71,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -94893,8 +94893,8 @@
   },
   {
    "module": "scripts",
-   "files": 99,
-   "lines": 19840,
+   "files": 101,
+   "lines": 20060,
    "tables": [
     "a",
     "audit_log",
@@ -95041,10 +95041,12 @@
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/autofix/any-codemod.mjs",
+    "scripts/autofix/eslint-safe-fix.mjs",
     "scripts/autofix/lib.mjs",
     "scripts/autofix/run.mjs",
     "scripts/autofix/regras/catalogo.mjs",
     "scripts/autofix/regras/dados.mjs",
+    "scripts/autofix/regras/dados.test.mjs",
     "scripts/autofix/regras/motores.mjs",
     "scripts/autofix/regras/referencia.mjs",
     "scripts/autofix/regras/verificar.mjs",
@@ -95073,9 +95075,7 @@
     "scripts/simulacao/run-exhaustive.mjs",
     "scripts/simulacao/simulate_adiant_13.cjs",
     "scripts/simulacao/simulate_art145.cjs",
-    "scripts/simulacao/simulate_irrf.cjs",
-    "scripts/simulacao/simulate_notif_d3.cjs",
-    "scripts/simulacao/simulate_rescisao.cjs"
+    "scripts/simulacao/simulate_irrf.cjs"
    ]
   },
   {
@@ -105596,6 +105596,10 @@
    {
     "file": "scripts/autofix/run.mjs",
     "msg": "${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status)"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr || r.stdout).slice(0, 500)}"
    },
    {
     "file": "scripts/autofix/run.mjs",
@@ -145910,6 +145914,62 @@
    {
     "file": "e2e/public/reset-password.spec.ts",
     "name": "permite voltar ao login após solicitar recuperação"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "tokenizador: comentário de bloco aninhado e dollar-quote aninhado"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "CREATE POLICY "
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "DO que só VERIFICA (cita pg_class e "
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "função: o CORPO que cita "
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "função: sobrecarga é distinguida por tipo (f(int) sem SP não é escondida por f(text) com SP)"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "função: RESET search_path remove; DROP FUNCTION remove"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "loop que APLICA search_path a todas as SECURITY DEFINER (prosecdef + EXECUTE + ALTER FUNCTION) é reconhecido"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "ACL: PUBLIC não fecha anon/authenticated; DROP+CREATE limpa a ACL; GRANT a PUBLIC reabre"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "RENAME move o RLS; a tabela recriada com o mesmo nome NÃO herda a proteção"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "ALTER POLICY: muda papéis, renomeia sem corromper os papéis"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "DROP TABLE a, b com schema; partição e CREATE TABLE AS entram sem RLS"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "regra RLS-002: tautologia 1=1 em tabela com PII é divergente; papel entre aspas e service_role não"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "regra TIPO-001: double precision, float(53), money e real[] em coluna monetária; hora não"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "regra ESTR-002: PK composta, UNIQUE inline e ADD CONSTRAINT UNIQUE contam como índice da FK; DROP INDEX descobre"
    },
    {
     "file": "scripts/tests/contexto-indice.test.mjs",
@@ -207161,6 +207221,7 @@
    "scripts/audit-rls-pii.mjs",
    "scripts/audit-rls-tenant-open.mjs",
    "scripts/autofix/regras/dados.mjs",
+   "scripts/autofix/regras/dados.test.mjs",
    "scripts/e2e/ensure-fixtures.mjs",
    "scripts/e2e/seed.mjs",
    "scripts/e2e/verify-seed.mjs",
@@ -226809,13 +226870,14 @@
   },
   "scripts/autofix/any-codemod.mjs": {
    "path": "scripts/autofix/any-codemod.mjs",
-   "lines": 180,
+   "lines": 189,
    "exports": [
     "function collectCandidates",
     "function applyEdits",
     "function runAnyPass"
    ],
    "rule_comments": [
+    "`keyof any` = string|number|symbol; `keyof unknown` = never: nunca trocar. `this: any` não pode perder o tipo.",
     "estado final = somente o aceito (todo aceito foi provado em conjunto)"
    ],
    "doc": "Codemod determinístico para `@typescript-eslint/no-explicit-any` (823 avisos, sem autofix no ESLint). Estratégia \"tentar e provar\": para cada `any` aplica uma transformação mecânica de TIPO (nunca muda runtime) e só mantém se o `tsc` não ganhar nenhum erro novo. drop : `(h: any) => …` em callback -> …",
@@ -226826,6 +226888,11 @@
      "body": "let out = text; for (const e of [...edits].sort((a, b) => b.start - a.start)) out = out.slice(0, e.start) + e.text + out.slice(e.end); return out;"
     }
    ]
+  },
+  "scripts/autofix/eslint-safe-fix.mjs": {
+   "path": "scripts/autofix/eslint-safe-fix.mjs",
+   "lines": 27,
+   "doc": "!/usr/bin/env node eslint --fix RESTRITO às regras pedidas. `eslint --fix --rule X:error` aplica TODA regra corrigível do projeto (muda `new Array(1,2)`, `let t: Number`, etc.); aqui a função `fix` do ESLint só deixa passar as regras da lista. Uso: node eslint-safe-fix.mjs <cwd> <regra1,regra2,...> …"
   },
   "scripts/autofix/lib.mjs": {
    "path": "scripts/autofix/lib.mjs",
@@ -226854,13 +226921,14 @@
   },
   "scripts/autofix/run.mjs": {
    "path": "scripts/autofix/run.mjs",
-   "lines": 377,
+   "lines": 382,
    "env": [
     "XDG_CACHE_HOME"
    ],
    "errors": [
     "${wt} existe mas não é um worktree do autofix (branch ",
     "${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status)",
+    "eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr || r.stdout).slice(0, 500)}",
     "outra execução do autofix está ativa (${LOCK})",
     "tsc quebrou na linha de base:\\n${baseTsc.raw.slice(0, 1500)}"
    ],
@@ -226868,7 +226936,7 @@
   },
   "scripts/autofix/regras/catalogo.mjs": {
    "path": "scripts/autofix/regras/catalogo.mjs",
-   "lines": 263,
+   "lines": 271,
    "exports": [
     "const regras"
    ],
@@ -226894,7 +226962,7 @@
   },
   "scripts/autofix/regras/dados.mjs": {
    "path": "scripts/autofix/regras/dados.mjs",
-   "lines": 275,
+   "lines": 334,
    "exports": [
     "function dividirStatements",
     "function reconstruirSchema",
@@ -226912,11 +226980,34 @@
     {
      "name": "aplicar",
      "params": "st, origem",
-     "body": "let m; if ((m = re(String.raw`^(revoke|grant)\\s+.*?\\bon\\s+(?:table\\s+)?${TBL}\\s+(?:from|to)\\s+(.+)$`, 'is').exec(st)) && !/\\bon\\s+(?:all\\s+)?(?:tables|functions|sequences)\\s+in\\s+schema/i.test(st)) { const t = norm(m[2]); const papeis = m[3].toLowerCase().replace(/\\s+with\\s+.*$/, '').split(',').map((x) => x.trim().replace(/^group\\s+/, '')); const alvo = papeis.flatMap((x) => (x === 'public' ? ['anon', 'authenticated'] : [x])); if (!acl.has(t)) acl.set(t, new Set()); if (m[1].toLowerCase() === 'r …"
+     "body": "{ let m; if (/^(revoke|grant)\\s+(?:all|select|insert|update|references)(?:\\s+privileges)?\\s*\\(/i.test(st)) return; // privilégio por COLUNA não fecha a tabela if ((m = /^(revoke|grant)\\s+all\\b.*?\\bon\\s+all\\s+tables\\s+in\\s+schema\\s+public\\s+(?:from|to)\\s+(.+)$/is.exec(st))) { const papeis = m[2].toLowerCase().split(',').map((x) => x.trim().replace(/\"/g, '')); const rv = m[1].toLowerCase() === 'revoke'; for (const"
     }
    ],
    "temporal": [
     "const r = spawnSync('node', [f], { cwd, encoding: 'utf8', timeout: 120000 });"
+   ],
+   "uses_service_role": true
+  },
+  "scripts/autofix/regras/dados.test.mjs": {
+   "path": "scripts/autofix/regras/dados.test.mjs",
+   "lines": 111,
+   "is_test": true,
+   "doc": "Regressão do replay estático de migrations (dados.mjs). Cada caso é um FALSO VERDE (dizer \"protegido\" quando não está) ou um falso alarme que a auditoria adversarial de 09/11/2026 reproduziu. Rodar: node --test scripts/autofix/regras/dados.test.mjs",
+   "tests": [
+    "tokenizador: comentário de bloco aninhado e dollar-quote aninhado",
+    "CREATE POLICY ",
+    "DO que só VERIFICA (cita pg_class e ",
+    "função: o CORPO que cita ",
+    "função: sobrecarga é distinguida por tipo (f(int) sem SP não é escondida por f(text) com SP)",
+    "função: RESET search_path remove; DROP FUNCTION remove",
+    "loop que APLICA search_path a todas as SECURITY DEFINER (prosecdef + EXECUTE + ALTER FUNCTION) é reconhecido",
+    "ACL: PUBLIC não fecha anon/authenticated; DROP+CREATE limpa a ACL; GRANT a PUBLIC reabre",
+    "RENAME move o RLS; a tabela recriada com o mesmo nome NÃO herda a proteção",
+    "ALTER POLICY: muda papéis, renomeia sem corromper os papéis",
+    "DROP TABLE a, b com schema; partição e CREATE TABLE AS entram sem RLS",
+    "regra RLS-002: tautologia 1=1 em tabela com PII é divergente; papel entre aspas e service_role não",
+    "regra TIPO-001: double precision, float(53), money e real[] em coluna monetária; hora não",
+    "regra ESTR-002: PK composta, UNIQUE inline e ADD CONSTRAINT UNIQUE contam como índice da FK; DROP INDEX descobre"
    ],
    "uses_service_role": true
   },
@@ -226930,7 +227021,7 @@
   },
   "scripts/autofix/regras/referencia.mjs": {
    "path": "scripts/autofix/regras/referencia.mjs",
-   "lines": 106,
+   "lines": 107,
    "exports": [
     "const TABELAS",
     "function refINSS",
@@ -274691,10 +274782,26 @@
   }
  },
  "git": {
-  "sha": "ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e",
+  "sha": "2e54da5d336fc15b6ac7cb2126eef8174a9a6517",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2e54da5",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)",
+    "files": [
+     "scripts/autofix/any-codemod.mjs",
+     "scripts/autofix/eslint-safe-fix.mjs",
+     "scripts/autofix/regras/catalogo.mjs",
+     "scripts/autofix/regras/dados.mjs",
+     "scripts/autofix/regras/dados.test.mjs",
+     "scripts/autofix/regras/referencia.mjs",
+     "scripts/autofix/run.mjs",
+     "scripts/sync/mirror-github.sh"
+    ]
+   },
    {
     "sha": "ac8cc11",
     "date": "2026-11-09",
@@ -275115,26 +275222,19 @@
      "scripts/simulacao/run-exhaustive-v3.mjs",
      "scripts/simulacao/run-exhaustive.mjs"
     ]
-   },
-   {
-    "sha": "c83e9a1",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock",
-    "files": [
-     "package-lock.json",
-     "scripts/format-check-changed.sh",
-     "scripts/typecheck-edge.sh"
-    ]
    }
   ],
   "hot_files": [
    [
-    "scripts/sync/autocommit-local.sh",
+    "scripts/sync/mirror-github.sh",
+    4
+   ],
+   [
+    "scripts/autofix/run.mjs",
     3
    ],
    [
-    "scripts/sync/mirror-github.sh",
+    "scripts/sync/autocommit-local.sh",
     3
    ],
    [
@@ -275146,6 +275246,22 @@
     3
    ],
    [
+    "scripts/autofix/any-codemod.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/catalogo.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/dados.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/referencia.mjs",
+    2
+   ],
+   [
     "scripts/sync/run-all.sh",
     2
    ],
@@ -275155,10 +275271,6 @@
    ],
    [
     "scripts/autofix/README.md",
-    2
-   ],
-   [
-    "scripts/autofix/run.mjs",
     2
    ],
    [
@@ -275186,27 +275298,11 @@
     2
    ],
    [
-    "scripts/sync/install-all-timers.sh",
+    "scripts/autofix/eslint-safe-fix.mjs",
     1
    ],
    [
-    "scripts/sync/repos.conf.example",
-    1
-   ],
-   [
-    "scripts/sync/install-autocommit-timer.sh",
-    1
-   ],
-   [
-    "src/components/AdminRoute.tsx",
-    1
-   ],
-   [
-    "src/calculators/beneficios.ts",
-    1
-   ],
-   [
-    "src/calculators/impostos.ts",
+    "scripts/autofix/regras/dados.test.mjs",
     1
    ]
   ]

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 99,
+ "total": 100,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -265,7 +265,16 @@
   {
    "arquivo": "scripts/autofix/any-codemod.mjs",
    "descricao": "Estratégia \"tentar e provar\": para cada `any` aplica uma transformação mecânica de TIPO (nunca muda runtime) e só mantém se o `tsc` não ganhar nenhum erro novo.",
-   "linhas": 180,
+   "linhas": 189,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/eslint-safe-fix.mjs",
+   "descricao": "(muda `new Array(1,2)`, `let t: Number`, etc.); aqui a função `fix` do ESLint só deixa passar as regras da lista.",
+   "linhas": 27,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -292,7 +301,7 @@
   {
    "arquivo": "scripts/autofix/regras/catalogo.mjs",
    "descricao": "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e confiança, e um `run(ctx)` que EXECUTA os cálculos reais do sistema e compara com a referência.",
-   "linhas": 263,
+   "linhas": 271,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -301,7 +310,7 @@
   {
    "arquivo": "scripts/autofix/regras/dados.mjs",
    "descricao": "Regras de DADOS verificadas por replay ESTÁTICO das migrations (supabase/migrations/*.sql, em ordem). Reconstrói o estado final aproximado do schema (tabelas, colunas, RLS, policies, funções, índices,",
-   "linhas": 275,
+   "linhas": 334,
    "env": [
     "DATABASE_URL",
     "PGHOST"
@@ -322,7 +331,7 @@
   {
    "arquivo": "scripts/autofix/regras/referencia.mjs",
    "descricao": "Implementação de REFERÊNCIA das regras trabalhistas/tributárias, escrita a partir das fontes legais e independente do código do sistema. É o \"gabarito\" contra o qual o verificador compara o sistema.",
-   "linhas": 106,
+   "linhas": 107,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -340,7 +349,7 @@
   {
    "arquivo": "scripts/autofix/run.mjs",
    "descricao": "* Modos",
-   "linhas": 377,
+   "linhas": 382,
    "env": [
     "XDG_CACHE_HOME"
    ],
@@ -1043,7 +1052,7 @@
   {
    "arquivo": "scripts/sync/mirror-github.sh",
    "descricao": "Deixa o checkout local EXATAMENTE igual ao GitHub (espelho), sem intervenção humana.   mirror-github.sh [--repo <caminho>] [--branch main] [--quiet-min 10] [--keep-days 30] [--dry-run] [--quiet]",
-   "linhas": 187,
+   "linhas": 213,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

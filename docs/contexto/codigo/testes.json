@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 572,
+ "total": 573,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 534
+  "unit": 535
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 62
+   "arquivos": 63
   },
   {
    "padrao": "e2e/",
@@ -228,6 +228,15 @@
     "src/components/ui/index.ts"
    ],
    "casos": 19
+  },
+  {
+   "arquivo": "scripts/autofix/regras/dados.test.mjs",
+   "tipo": "unit",
+   "linhas": 111,
+   "testa": [
+    "scripts/autofix/regras/dados.mjs"
+   ],
+   "casos": 14
   },
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
@@ -5211,6 +5220,7 @@
   "supabase/tests/plano100/20_asserts.sql"
  ],
  "cobertura_por_arquivo": {
+  "scripts/autofix/regras/dados.mjs": 1,
   "scripts/inventario/gerar-banco.mjs": 1,
   "scripts/inventario/gerar-rotas.mjs": 1,
   "scripts/inventario/mudou-conteudo.mjs": 1,

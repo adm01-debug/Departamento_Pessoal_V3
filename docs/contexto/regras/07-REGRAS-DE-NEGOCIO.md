@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `ac8cc11787` · branch `main` · 2026-11-09 20:54 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2e54da5d33` · branch `main` · 2026-11-09 21:05 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4257,6 +4257,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | prettier falhou:\n${r.stderr \|\| r.stdout} | `scripts/autofix/lib.mjs` |
 | ${wt} existe mas não é um worktree do autofix (branch  | `scripts/autofix/run.mjs` |
 | ${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status) | `scripts/autofix/run.mjs` |
+| eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr \|\| r.stdout).slice(0, 500)} | `scripts/autofix/run.mjs` |
 | outra execução do autofix está ativa (${LOCK}) | `scripts/autofix/run.mjs` |
 | tsc quebrou na linha de base:\n${baseTsc.raw.slice(0, 1500)} | `scripts/autofix/run.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/classify-migration-drift.mjs` |
@@ -4525,8 +4526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Falha ao atualizar os dados de férias | `src/pages/FeriasPage.tsx` |
 | Configure os dados bancários primeiro | `src/pages/FinanceiroBancarioPage.tsx` |
 | Erro ao carregar dados bancários | `src/pages/FinanceiroBancarioPage.tsx` |
-| Erro ao salvar configuração | `src/pages/FinanceiroBancarioPage.tsx` |
-| … +444 linhas — lista completa em `context.json` | |
+| … +445 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4571,7 +4571,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6736 testes em 542 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6750 testes em 543 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4694,6 +4694,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/lib/__tests__/queryClient.test.ts` | 15 | queryClient · is a QueryClient instance · has staleTime of 5 minutes · has gcTime of 30 minutes … |
 | `src/utils/__tests__/dateLocal.test.ts` | 15 | dateLocal · formata YYYY-MM-DD com zero-padding no fuso local · não sofre shift de UTC quando a hora local é próxima da meia-noite · retorna string vazia para entrada inválida (contrato defensivo) … |
 | `src/utils/__tests__/sanitizeHtml.test.ts` | 15 | sanitizeHtml — baseline hardened profile · strips <script> entirely · preserves safe anchors (http, mailto, tel, hash) · forces rel= … |
+| `scripts/autofix/regras/dados.test.mjs` | 14 | tokenizador: comentário de bloco aninhado e dollar-quote aninhado · CREATE POLICY  · DO que só VERIFICA (cita pg_class e  · função: o CORPO que cita  … |
 | `src/components/__tests__/AfastamentoForm.test.tsx` | 14 | AfastamentoForm · renders Colaborador label · renders Motivo do Afastamento label · renders Data de Início label … |
 | `src/components/__tests__/ESocialDesligamentoCDP.test.tsx` | 14 | S2299Desligamento · renders CPF do trabalhador · renders data do desligamento · renders motivo do desligamento … |
 | `src/components/__tests__/SidebarFooter.test.tsx` | 14 | SidebarFooter — expanded · renders user initials · renders user name · renders user email … |
@@ -4874,8 +4875,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/SectionHeader.test.tsx` | 9 | SectionHeader · renders title · renders subtitle when provided · does not render subtitle when absent … |
 | `src/components/__tests__/SignaturePad.test.tsx` | 9 | SignaturePad · renders canvas element · shows  · renders Limpar button … |
 | `src/components/__tests__/Simulador13Dialog.test.tsx` | 9 | Simulador13Dialog · renders 13º Salário trigger button · renders Simulador 13º Salário dialog title · renders Salário Base label … |
-| `src/components/__tests__/SimuladorWhatIf.test.tsx` | 9 | SimuladorWhatIf · renders Simulador What-if trigger button · renders dialog title · renders Título da Simulação label … |
-| … +242 linhas — lista completa em `context.json` | | |
+| … +243 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

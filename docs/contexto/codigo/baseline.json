@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e",
+  "commit": "2e54da5d336fc15b6ac7cb2126eef8174a9a6517",
   "branch": "main",
-  "data_commit": "2026-11-09T17:42:34-03:00",
+  "data_commit": "2026-11-09T17:49:22-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2e54da5",
+    "data": "2026-11-09",
+    "assunto": "fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)"
+   },
    {
     "sha": "ac8cc11",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "3358bc1",
     "data": "2026-11-08",
     "assunto": "feat: guards contra falso verde nos ratchets e build-rebaseline"
-   },
-   {
-    "sha": "4fcdb15",
-    "data": "2026-11-08",
-    "assunto": "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)"
    }
   ],
-  "arquivos_mudados_7d": 238,
+  "arquivos_mudados_7d": 240,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 79
+    "commits": 80
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2823,
-  "arquivos_codigo": 1516,
-  "linhas_codigo": 263124,
+  "arquivos_total": 2825,
+  "arquivos_codigo": 1518,
+  "linhas_codigo": 263344,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -336,9 +336,9 @@
   "tabelas": 436,
   "migrations": 781,
   "cron_jobs": 41,
-  "testes": 572,
+  "testes": 573,
   "workflows": 17,
-  "scripts": 99,
+  "scripts": 100,
   "docs_md": 289
  },
  "por_pasta": {
@@ -471,8 +471,8 @@
    "linhas": 135
   },
   "scripts/autofix": {
-   "arquivos": 8,
-   "linhas": 1553
+   "arquivos": 10,
+   "linhas": 1773
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
