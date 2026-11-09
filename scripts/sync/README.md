@@ -23,3 +23,17 @@ bash scripts/sync/mirror-github.sh --repo <caminho> --dry-run          # mostra 
 
 ## sync-github.sh
 `fetch --all --prune` + fast-forward só de branches atrás do upstream. Branch com alterações locais, divergente ou com upstream apagado: só avisa, uma vez.
+
+---
+
+## autocommit-local.sh — o trabalho local sempre no GitHub, numa branch visível
+
+Timer `dp-autocommit` (hh:30, instalado com `install-autocommit-timer.sh --worktree <pasta>`): faz **um commit com tudo** que mudou no worktree de
+desenvolvimento (branch `computador_local`) e dá push, sem humano e sem IA. Complementa o `git-autosave` (fotos a cada 2 min em `refs/autosave/*`).
+
+**O repositório é PÚBLICO**, então o script falha fechado:
+- `gitleaks` no que seria commitado: achou segredo => nada é commitado na rodada;
+- **excluídos do commit** (ficam só no disco/autosave, com aviso no log): arquivos **novos** de dados (`.csv .xlsx .xls .xlsm .ods .dump .bak .sqlite .db .zip .tar .gz .7z .pdf`), qualquer arquivo > 5 MB e qualquer arquivo com **CPF formatado** nas linhas adicionadas;
+- `.env*`, `*.pem`, `*.key`, `*.p12`, `id_rsa*` nunca entram.
+
+Nunca troca de branch, nunca usa `--force` (push rejeitado = só avisa, o commit fica local), não age com rebase/merge/cherry-pick/bisect ou `index.lock`, e adia se algo foi editado nos últimos 2 min. Commits usam `--no-verify`. Não dispara CI (o CI só roda em push na `main` e em PR para a `main`). Como a `main` só aceita squash, os commits "autosave" somem do histórico ao mergear o PR.
