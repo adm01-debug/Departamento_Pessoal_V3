@@ -1,4 +1,9 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CANONICAL_PROJECT_REF, validateCanonicalDbUrl } from '../validate-canonical-db-url.mjs';
 
 const validDirect = validateCanonicalDbUrl(
@@ -41,6 +46,20 @@ for (const [label, value] of [
   ['user na query (pooler)', `postgresql://postgres.${CANONICAL_PROJECT_REF}:secret@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require&user=postgres.wrong`],
 ]) {
   assert.throws(() => validateCanonicalDbUrl(value), undefined, label);
+}
+
+// Regressão: invocado por um caminho com symlink, o CLI saía com 0 sem validar nada.
+const linkDir = mkdtempSync(join(tmpdir(), 'canonical-db-url-'));
+try {
+  const link = join(linkDir, 'validate.mjs');
+  symlinkSync(fileURLToPath(new URL('../validate-canonical-db-url.mjs', import.meta.url)), link);
+  const viaSymlink = spawnSync(process.execPath, [link], {
+    env: { ...process.env, SUPABASE_DB_URL: 'https://example.test' },
+    encoding: 'utf8',
+  });
+  assert.equal(viaSymlink.status, 1, 'CLI via symlink deve reprovar URL inválida');
+} finally {
+  rmSync(linkDir, { recursive: true, force: true });
 }
 
 console.log('CANONICAL_DB_URL_VALIDATOR_OK: direct/pooler accepted; wrong ref, credential shape, database and TLS rejected.');

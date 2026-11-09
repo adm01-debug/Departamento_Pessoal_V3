@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { realpathSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 export const CANONICAL_PROJECT_REF = process.env.CANONICAL_SUPABASE_REF ?? 'frjbfeamybqsejlvmqbl';
@@ -49,7 +50,9 @@ export function validateCanonicalDbUrl(raw) {
   };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// realpath: chamado por um caminho com symlink, import.meta.url (já resolvido)
+// não batia com argv[1] e o gate saía com 0 sem validar nada.
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   try {
     const result = validateCanonicalDbUrl(process.env.SUPABASE_DB_URL);
     process.stdout.write(`${JSON.stringify(result)}\n`);
