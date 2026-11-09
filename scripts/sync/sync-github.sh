@@ -86,7 +86,7 @@ done < <("${G[@]}" worktree list --porcelain)
 
 atualizados=0; pulados=0; avisos=0
 
-while IFS='|' read -r branch upstream track; do
+while IFS='|' read -r branch upstream track upref; do
   [ -n "$upstream" ] || continue
   case "$track" in
     "") continue ;;                                   # já em dia
@@ -108,10 +108,11 @@ while IFS='|' read -r branch upstream track; do
     if git -C "$wt" merge --ff-only --no-overwrite-ignore --quiet "$upstream" 2>/dev/null 9>&-; then say "ATUALIZADO $branch ($track) em $wt"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git (arquivo não rastreado ou ignorado no caminho?)"; pulados=$((pulados+1)); fi
   else
     if [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $branch ($track) por fast-forward"; continue; fi
-    # `fetch . origem:destino` só aceita fast-forward; recusa qualquer outra coisa
-    if "${G[@]}" fetch --quiet . "refs/remotes/$upstream:refs/heads/$branch" 2>/dev/null 9>&-; then say "ATUALIZADO $branch ($track)"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git"; pulados=$((pulados+1)); fi
+    # `fetch . origem:destino` só aceita fast-forward; recusa qualquer outra coisa. Origem = ref completa do upstream (pode
+    # ser uma branch LOCAL: `refs/remotes/<nome curto>` não existia e a branch era pulada a cada hora, para sempre)
+    if "${G[@]}" fetch --quiet . "$upref:refs/heads/$branch" 2>/dev/null 9>&-; then say "ATUALIZADO $branch ($track)"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git"; pulados=$((pulados+1)); fi
   fi
-done < <("${G[@]}" for-each-ref --format='%(refname:short)|%(upstream:short)|%(upstream:track)' refs/heads)
+done < <("${G[@]}" for-each-ref --format='%(refname:short)|%(upstream:short)|%(upstream:track)|%(upstream)' refs/heads)
 
 # 3. computador_local acompanha a branch padrão ENQUANTO não tem commits próprios (o upstream dela é ela mesma, então o passo 2
 #    nunca a avança e ela ficava para trás da main). Com commits próprios só avisa; com alterações locais não mexe.
