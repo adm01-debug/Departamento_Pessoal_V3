@@ -87,6 +87,13 @@ const migrationFiles = entries
   .filter((name) => name.split('_')[0] >= CUTOFF_VERSION)
   .sort();
 
+// Guard de falso verde: o corte é histórico, então 0 migrations avaliadas
+// significa diretório esvaziado ou padrão de nome quebrado -- não "tudo limpo".
+if (migrationFiles.length === 0) {
+  console.error(`❌ audit-migration-style: nenhuma migration >= ${CUTOFF_VERSION} em ${migrationsDir} — nada foi avaliado.`);
+  process.exit(1);
+}
+
 let failures = 0;
 // Conta arquivos que possuem algum DROP POLICY IF EXISTS (guardado ou não),
 // para o relatório mostrar o escopo real da varredura.
