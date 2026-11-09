@@ -451,6 +451,19 @@ alter type "public"."app_role" add value if not exists 'gestor';`);
   assert.deepEqual(banco.enums.app_role, ['admin', 'agent', 'gestor']);
 });
 
+test('banco: pgTable/@Entity em script ou teste não vira tabela nem fonte do schema', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'scripts/fixtures-orm.mjs', `export const exemplo = "export const users = pgTable('tabela_de_script', { id: serial('id') });";`);
+    w(dir, 'src/__tests__/orm.test.ts', `@Entity('tabela_de_teste')\nclass Fake {}\nit('x', () => {});`);
+    w(dir, 'worker/schema.ts', `export const contas = pgTable('tabela_do_app', { id: serial('id') });`);
+  });
+  const banco = read('banco.json');
+  assert.ok(banco.tabelas.tabela_do_app, 'pgTable em código de aplicação continua valendo');
+  assert.equal(banco.tabelas.tabela_de_script, undefined);
+  assert.equal(banco.tabelas.tabela_de_teste, undefined);
+  assert.ok(banco.fonte.includes('drizzle') && !banco.fonte.includes('typeorm'), `fonte: ${banco.fonte}`);
+});
+
 test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
   const read = isolatedFixture(t, (dir) => {
     w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);
