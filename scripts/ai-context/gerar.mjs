@@ -48,7 +48,7 @@ const git = (...args) => { try { return execFileSync('git', args, { cwd: ROOT, e
 // `/*` dentro de string na mesma linha (accept="image/*", path="/x/*", glob) não abre comentário: sem isto tudo até o próximo `*/` sumia da análise.
 // Aspa logo depois de letra/dígito é apóstrofo de texto (d'água), não abertura de string.
 const emString = (s, i) => { let q = null; for (let j = s.lastIndexOf('\n', i) + 1; j < i; j++) { const ch = s[j]; if (q) { if (ch === '\\') j++; else if (ch === q) q = null; } else if ((ch === '"' || ch === "'" || ch === '`') && !/[\p{L}\p{N}_]/u.test(s[j - 1] || '')) q = ch; } return q !== null; };
-const stripBlocos = (s) => { let out = '', i = 0; for (;;) { const a = s.indexOf('/*', i); if (a < 0) return out + s.slice(i); const b = emString(s, a) ? -1 : s.indexOf('*/', a + 2); if (b < 0) { out += s.slice(i, a + 2); i = a + 2; continue; } out += s.slice(i, a); i = b + 2; } };
+const stripBlocos = (s) => { let out = '', i = 0; for (;;) { const a = s.indexOf('/*', i); if (a < 0) return out + s.slice(i); const b = emString(s, a) ? -1 : s.indexOf('*/', a + 2); if (b < 0) { out += s.slice(i, a + 2); i = a + 2; continue; } out += s.slice(i, a) + s.slice(a, b).replace(/[^\n]+/g, ''); i = b + 2; } }; // mantém as quebras de linha: quem cita arquivo:linha conta no texto sem comentário
 const stripComments = (s) => stripBlocos(s).replace(/(^|[^:\\'"`])\/\/[^\n]*/g, '$1');
 const cap = (arr, n = 200) => arr.slice(0, n);
 const allMatches = (re, s, g = 1) => { const out = []; re.lastIndex = 0; let m; while ((m = re.exec(s))) out.push(m[g]); return out; };

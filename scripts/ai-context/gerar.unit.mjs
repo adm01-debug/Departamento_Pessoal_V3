@@ -390,3 +390,11 @@ export const Texto = () => <p>caixa d'água {/* supabase.from('comentada_jsx') *
   assert.ok(alertas.includes('runtime_glob'), `código depois de glob com /* sumiu: ${alertas}`);
   assert.ok(!alertas.includes('comentada_bloco') && !alertas.includes('comentada_jsx'), `comentário de verdade deixou de ser removido: ${alertas}`);
 });
+
+test('possiveis_segredos_no_codigo aponta a linha do arquivo, mesmo depois de comentário de bloco', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    // chave falsa montada em duas partes: este arquivo não pode virar alerta de segredo no repo real
+    w(dir, 'worker/chave.ts', `/**\n * doc\n * doc\n */\nexport const a = 1;\nconst k = '${'sk_'}${'live_abcdefghijklmnop'}';\n`);
+  });
+  assert.deepEqual(read('baseline.json').alertas.possiveis_segredos_no_codigo, ['worker/chave.ts:6']);
+});
