@@ -125,7 +125,7 @@ export const exportPontoPDF = (
     autoTable(doc, {
       startY: 75,
       head: [columns.map((c) => c.replace('_', ' ').toUpperCase())],
-      body: body,
+      body,
       theme: 'striped',
       headStyles: {
         fillColor: [30, 41, 59],

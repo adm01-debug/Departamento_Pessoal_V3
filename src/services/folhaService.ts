@@ -1,4 +1,5 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import type { Tables } from '@/integrations/supabase/database.types';
 
 export type FolhaRecord = Tables<'folhas_pagamento'>;

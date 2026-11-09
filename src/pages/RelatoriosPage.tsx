@@ -149,7 +149,7 @@ async function fetchReportData(id: string, empresaId?: string) {
       });
       return {
         title: `Aniversariantes do Mês`,
-        rows: rows,
+        rows,
         columns: ['nome_completo', 'data_nascimento', 'departamento', 'cargo'],
       };
     }

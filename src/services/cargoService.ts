@@ -1,5 +1,5 @@
 import { BaseService } from './baseService';
-import { Cargo } from '@/types/entities';
+import type { Cargo } from '@/types/entities';
 import { cargoSchema } from '@/schemas/cargo';
 
 class CargoService extends BaseService<Cargo> {

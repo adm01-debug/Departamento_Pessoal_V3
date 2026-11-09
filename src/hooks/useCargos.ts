@@ -1,7 +1,7 @@
 import { useGenericCrud } from './useGenericCrud';
 import { cargoService } from '@/services/cargoService';
 import { useEmpresas } from './useEmpresas';
-import { Cargo } from '@/types/entities';
+import type { Cargo } from '@/types/entities';
 
 export function useCargos() {
   const { empresaAtual } = useEmpresas();

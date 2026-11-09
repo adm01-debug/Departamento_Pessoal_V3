@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { Database } from '@/integrations/supabase/types';
+import type { Database } from '@/integrations/supabase/types';
 import { validateTablePayload } from '@/schemas/validate';
 
 type WhatsAppConfigTable = Database['public']['Tables']['whatsapp_config'];

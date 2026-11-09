@@ -306,21 +306,20 @@ export async function salvarPeriodoExperiencia(
       .maybeSingle();
     if (error) throw error;
     return data;
-  } else {
-    const { data, error } = await supabase
-      .from('periodos_experiencia')
-      .insert(
-        validateTablePayload(
-          'periodos_experiencia',
-          [{ ...dados, colaborador_id: colaboradorId }],
-          'colaboradorDetalhesService:periodos_experiencia'
-        )
-      )
-      .select()
-      .maybeSingle();
-    if (error) throw error;
-    return data;
   }
+  const { data, error } = await supabase
+    .from('periodos_experiencia')
+    .insert(
+      validateTablePayload(
+        'periodos_experiencia',
+        [{ ...dados, colaborador_id: colaboradorId }],
+        'colaboradorDetalhesService:periodos_experiencia'
+      )
+    )
+    .select()
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 }
 
 // =============================================

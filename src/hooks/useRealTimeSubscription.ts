@@ -1,7 +1,8 @@
 import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient, QueryKey } from '@tanstack/react-query';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
+import type { QueryKey } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { loggerService } from '@/services/loggerService';
 
 export function useRealTimeSubscription(
@@ -41,7 +42,7 @@ export function useRealTimeSubscription(
       {
         event: options.event || '*',
         schema: options.schema || 'public',
-        table: table,
+        table,
         filter: `empresa_id=eq.${empresaId}`,
       },
       handleChange

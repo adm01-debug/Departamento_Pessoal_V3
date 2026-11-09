@@ -21,7 +21,7 @@ import { useState, type Dispatch, type SetStateAction } from 'react';
 export function useSyncedState<S, T>(
   source: S,
   derive: (source: S) => T,
-  enabled: boolean = true
+  enabled = true
 ): [T, Dispatch<SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => derive(source));
   const [lastSync, setLastSync] = useState<{ source: S; enabled: boolean }>({ source, enabled });
