@@ -310,7 +310,8 @@ const routeFiles = uniq([...CODE_FILES.filter((f) => !FILE.get(f)?.teste && (isS
 secao('rotas-jsx', () => {
   for (const rf of routeFiles) {
     const src = FILE.get(rf)?.conteudo || ''; const stack = [];
-    const re = /<Route\b((?:[^>{/]|\/(?!>)|\{(?:[^{}]|\{[^{}]*\})*\})*)(\/?)>|<\/Route\s*>/g; let m;
+    // chaves aninhadas até 5 níveis: `element={<Suspense fallback={<L style={{ a: 1 }} />}>…}` tem 4; com 2 a rota sumia e as filhas perdiam o pai
+    const re = /<Route\b((?:[^>{/]|\/(?!>)|\{(?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*\})*\})*)(\/?)>|<\/Route\s*>/g; let m;
     while ((m = re.exec(src))) {
       if (m[0].startsWith('</')) { stack.pop(); continue; }
       const attrs = m[1] || ''; const self = m[2] === '/';

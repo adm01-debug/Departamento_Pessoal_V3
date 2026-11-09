@@ -399,6 +399,25 @@ test('possiveis_segredos_no_codigo aponta a linha do arquivo, mesmo depois de co
   assert.deepEqual(read('baseline.json').alertas.possiveis_segredos_no_codigo, ['worker/chave.ts:6']);
 });
 
+test('rotas: element com chaves aninhadas em 4 níveis não some nem tira o pai das filhas', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/routes/Extra.tsx', `import { Shell } from '@/components/layout/Shell';
+import { Home } from '@/components/home/Home';
+import { ContactPage } from '@/components/contacts/ContactPage';
+export const Extra = () => (<Routes>
+  <Route path="/fundo" element={<Suspense fallback={<Spinner style={{ a: { b: 1 } }} />}><Shell /></Suspense>}>
+    <Route path="filha" element={<ContactPage />} />
+  </Route>
+  <Route path="/depois" element={<Home />} />
+</Routes>);`);
+  });
+  const by = Object.fromEntries(read('rotas.json').urls.map((u) => [u.caminho, u]));
+  assert.equal(by['/fundo']?.arquivo, 'src/components/layout/Shell.tsx');
+  assert.equal(by['/fundo/filha']?.pai, '/fundo');
+  assert.equal(by['/depois']?.arquivo, 'src/components/home/Home.tsx');
+  assert.equal(by['/filha'], undefined, 'filha não pode subir para a raiz');
+});
+
 test('edge chamada por wrapper local (handleInvoke) ou com genérico não é órfã; invoke de outra coisa não vira edge', (t) => {
   const read = isolatedFixture(t, (dir) => {
     w(dir, 'supabase/functions/runtime-fn/index.ts', `Deno.serve(() => new Response('ok'));`);
