@@ -84,20 +84,23 @@ export const regras = [
           maxDelta = Math.max(maxDelta, Math.abs(got - exp));
         }
       }
-      // Diferença de poucos centavos = política de arredondamento do redutor (a norma que consultei não a
-      // especifica), não erro de regra: exige conferência humana, mas não é "divergência com a norma".
-      // diferença de poucos centavos é política de arredondamento (a Receita não a especifica) — MAS nunca na faixa de isenção:
-      // lá o devido é 0, e qualquer retenção é indevida, não arredondamento.
-      const retemNaIsencao = grid.some((b) => b <= TABELAS.irrf2026.redutor.isencaoAte && eng.impostos.calcularIRRF(b, 0, 0) > 0.0001);
-      if (falhas.length && maxDelta <= 0.03 && !retemNaIsencao) {
-        return { status: 'revisar', resumo: `${grid.length - falhas.length}/${grid.length} casos conferem; ${falhas.length} diferem em até R$ ${maxDelta.toFixed(2)} (arredondamento do redutor)`, exemplos: falhas.slice(0, 4), impactoMaximoMensal: maxDelta };
-      }
-      // dependentes e deduções extras exercitam a escolha entre dedução legal e simplificada
-      for (const [b, dep, outras] of [[6000, 2, 0], [5200, 1, 300], [7000, 3, 500]]) {
+      // dependentes e deduções extras exercitam a escolha entre dedução legal e simplificada.
+      // ANTES do atalho "revisar": senão o atalho devolve cedo e estes casos nunca rodam enquanto houver diferença de centavos.
+      const extras = [[6000, 2, 0], [5200, 1, 300], [7000, 3, 500], [3500, 2, 0], [5000.01, 5, 0], [7350, 1, 0]];
+      let maxDeltaExtras = 0;
+      const falhasExtras = [];
+      for (const [b, dep, outras] of extras) {
         const got = eng.impostos.calcularIRRF(b, dep, outras); const exp = refIRRF({ bruto: b, inss: refINSS(b), dependentes: dep, outras });
-        if (diff(got, exp)) falhas.push(`bruto ${brl(b)} dep=${dep} outras=${outras}: sistema ${brl(got)} x devido ${brl(exp)}`);
+        if (diff(got, exp)) { falhasExtras.push(`bruto ${brl(b)} dep=${dep} outras=${outras}: sistema ${brl(got)} x devido ${brl(exp)}`); maxDeltaExtras = Math.max(maxDeltaExtras, Math.abs(got - exp)); }
       }
-      return resultado(falhas, grid.length + 3, { impactoMaximoMensal: maxDelta });
+      const retemNaIsencao = grid.some((b) => b <= TABELAS.irrf2026.redutor.isencaoAte && eng.impostos.calcularIRRF(b, 0, 0) > 0.0001)
+        || extras.some(([b, dep, o]) => b <= TABELAS.irrf2026.redutor.isencaoAte && refIRRF({ bruto: b, inss: refINSS(b), dependentes: dep, outras: o }) === 0 && eng.impostos.calcularIRRF(b, dep, o) > 0.0001);
+      maxDelta = Math.max(maxDelta, maxDeltaExtras);
+      falhas.push(...falhasExtras);
+      if (falhas.length && maxDelta <= 0.03 && !retemNaIsencao) {
+        return { status: 'revisar', resumo: `${grid.length + extras.length - falhas.length}/${grid.length + extras.length} casos conferem; ${falhas.length} diferem em até R$ ${maxDelta.toFixed(2)} (arredondamento do redutor)`, exemplos: falhas.slice(0, 4), impactoMaximoMensal: maxDelta };
+      }
+      return resultado(falhas, grid.length + extras.length, { impactoMaximoMensal: maxDelta });
     },
   },
 
