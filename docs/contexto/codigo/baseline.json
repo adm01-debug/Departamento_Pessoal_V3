@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bff8377f8fba5b4ab0aad807cbf40908be66b53c",
+  "commit": "ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e",
   "branch": "main",
-  "data_commit": "2026-11-09T17:02:39-03:00",
+  "data_commit": "2026-11-09T17:42:34-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "ac8cc11",
+    "data": "2026-11-09",
+    "assunto": "fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommi"
+   },
    {
     "sha": "bff8377",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "4fcdb15",
     "data": "2026-11-08",
     "assunto": "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)"
-   },
-   {
-    "sha": "70f6262",
-    "data": "2026-11-08",
-    "assunto": "feat: guards de job ausente em audit-canonical-project (#383)"
    }
   ],
   "arquivos_mudados_7d": 238,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 78
+    "commits": 79
    },
    {
     "autor": "dependabot[bot]",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bff8377f8fba5b4ab0aad807cbf40908be66b53c` (2026-11-09T17:02:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e` (2026-11-09T17:42:34-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21508 nós · 44890 arestas · 2122 comunidades · grafo do commit `bff8377f`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (436), button.tsx (306), lucide-react (280), vitest (278), App.tsx (231), cn (220), AfastamentosPage.tsx (172), contract.ts (166), "public"."empresas" (164), "public"."colaboradores" (155)
+- 21507 nós · 44891 arestas · 2110 comunidades · grafo do commit `ac8cc117`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (426), cn (335), vitest (324), lucide-react (310), button.tsx (302), react (204), AfastamentosPage.tsx (183), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-09 `ac8cc11` fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommi
 - 2026-11-09 `bff8377` feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)
 - 2026-11-09 `85fc652` feat(sync): commit automático do trabalho local na branch computador_local (#407)
 - 2026-11-09 `a7e645d` feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `98f0f59` ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)
 - 2026-11-08 `61d37e7` fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)
 - 2026-11-08 `cf32bad` chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale
-- 2026-11-08 `b9285c8` fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

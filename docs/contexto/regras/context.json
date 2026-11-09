@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "bff8377f8fba5b4ab0aad807cbf40908be66b53c",
+  "sha": "ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 20:16 UTC",
+  "generated_at": "2026-11-09 20:54 UTC",
   "files_total": 2844,
   "code_files": 2331,
   "code_lines": 311015
@@ -274691,10 +274691,22 @@
   }
  },
  "git": {
-  "sha": "bff8377f8fba5b4ab0aad807cbf40908be66b53c",
+  "sha": "ac8cc1178736179dfd17d62cb9a5d699f2fb8f5e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "ac8cc11",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommit) (#409)",
+    "files": [
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/mirror-github.sh",
+     "scripts/sync/run-all.sh",
+     "scripts/sync/sync-github.sh"
+    ]
+   },
    {
     "sha": "bff8377",
     "date": "2026-11-09",
@@ -275114,33 +275126,27 @@
      "scripts/format-check-changed.sh",
      "scripts/typecheck-edge.sh"
     ]
-   },
-   {
-    "sha": "1ebd08f",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: garante fixtures E2E do /ponto autenticado (#374)",
-    "files": [
-     "scripts/e2e/ensure-fixtures.mjs",
-     "scripts/e2e/seed.mjs"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/sync/autocommit-local.sh",
+    3
+   ],
+   [
+    "scripts/sync/mirror-github.sh",
+    3
+   ],
+   [
+    "scripts/sync/sync-github.sh",
+    3
+   ],
    [
     "scripts/sync/README.md",
     3
    ],
    [
-    "scripts/sync/autocommit-local.sh",
-    2
-   ],
-   [
-    "scripts/sync/mirror-github.sh",
-    2
-   ],
-   [
-    "scripts/sync/sync-github.sh",
+    "scripts/sync/run-all.sh",
     2
    ],
    [
@@ -275185,10 +275191,6 @@
    ],
    [
     "scripts/sync/repos.conf.example",
-    1
-   ],
-   [
-    "scripts/sync/run-all.sh",
     1
    ],
    [
