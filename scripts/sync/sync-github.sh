@@ -9,6 +9,7 @@
 #        - branch sem checkout em nenhum worktree  -> atualiza a referência (fast-forward)
 #        - branch com checkout e árvore LIMPA      -> git merge --ff-only
 #        - branch com checkout e alterações locais -> PULA (nunca mexe no seu trabalho)
+#        - branch com checkout num worktree ARQUIVADO (caminho com /_arquivo/) -> PULA (não mexo em arquivo morto)
 #   3. branch adiantado, divergente ou com upstream apagado -> só avisa.
 #
 # Nunca faz: reset, rebase, merge com commit, checkout, stash, force, delete de branch, push.
@@ -91,6 +92,7 @@ while IFS='|' read -r branch upstream track; do
 
   if [ -n "${WT[$branch]:-}" ]; then
     wt="${WT[$branch]}"
+    case "$wt" in */_arquivo/*) aviso "$branch" arquivado "$branch: está em worktree ARQUIVADO ($wt); não mexo em arquivo morto"; continue ;; esac
     if [ -n "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
       say "PULEI $branch ($track): há alterações locais não commitadas em $wt"; pulados=$((pulados+1)); continue
     fi
