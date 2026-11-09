@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `560e7150bbb7878aa10abaca078aa22d7d472225` (2026-11-09T16:17:54Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `a7e645d566054caac17ca6f30b4fdd5d68fc95d7` (2026-11-09T13:36:26-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (817), Markdown (288), JavaScript (94), JSON (54), YAML (52), Shell (48), Python (5)
+- linguagens: TypeScript (1418), SQL (817), Markdown (289), JavaScript (94), JSON (54), YAML (52), Shell (49), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2816 |
+| arquivos_total | 2818 |
 | arquivos_codigo | 1516 |
 | linhas_codigo | 263124 |
 | rotas | 113 |
@@ -50,8 +50,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | cron_jobs | 41 |
 | testes | 572 |
 | workflows | 17 |
-| scripts | 94 |
-| docs_md | 288 |
+| scripts | 95 |
+| docs_md | 289 |
 
 ## Onde ficam as coisas
 - telas: src/pages (108), src/components (1)
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21473 nós · 44852 arestas · 2101 comunidades · grafo do commit `560e7150`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (390), lucide-react (355), @tanstack/react-query (348), vitest (265), react (239), cn (225), client.ts (220), contract.ts (181), "public"."empresas" (164), "public"."colaboradores" (155)
+- 21481 nós · 44859 arestas · 2099 comunidades · grafo do commit `a7e645d5`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (334), useEmpresas (320), button.tsx (277), utils.ts (247), vitest (223), client.ts (204), cn (189), "public"."empresas" (164), entities.ts (160), validate.ts (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -395,7 +395,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - package-lock.json (78)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (28)
-- .github/workflows/ci.yml (22)
+- .github/workflows/ci.yml (21)
 - src/integrations/supabase/types.ts (15)
 - supabase/functions/external-db-bridge/validation.ts (14)
 - .github/workflows/e2e.yml (13)
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-09 `a7e645d` feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)
 - 2026-11-09 `560e715` fix: bypass MFA em E2E para rotas admin (VITE_E2E_BYPASS_MFA) (#352)
 - 2026-11-09 `2b341de` fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)
 - 2026-11-09 `4e36ab2` chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `b9285c8` fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso
 - 2026-11-08 `27afd9f` fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório
 - 2026-11-08 `20761bc` fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas
-- 2026-11-08 `1822a56` feat: guards false-green + auto-assertions em 5 scripts de auditoria
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

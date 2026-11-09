@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 94,
+ "total": 95,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1006,8 +1006,17 @@
   },
   {
    "arquivo": "scripts/sync/install-timer.sh",
-   "descricao": "Instala (ou remove) um timer systemd de USUÁRIO que roda sync-github.sh de hora em hora. Não faz nada até você executar. Copia o script para um local estável (~/.local/share/dp-sync), para o",
-   "linhas": 56,
+   "descricao": "Instala (ou remove) um timer systemd de USUÁRIO que, de hora em hora, espelha o checkout no GitHub (mirror-github.sh) e avança os demais branches locais por fast-forward (sync-github.sh).",
+   "linhas": 68,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/mirror-github.sh",
+   "descricao": "Deixa o checkout local EXATAMENTE igual ao GitHub (espelho), sem intervenção humana.   mirror-github.sh [--repo <caminho>] [--branch main] [--quiet-min 10] [--keep-days 30] [--dry-run] [--quiet]",
+   "linhas": 132,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "560e7150bbb7878aa10abaca078aa22d7d472225",
+  "sha": "a7e645d566054caac17ca6f30b4fdd5d68fc95d7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 16:21 UTC",
-  "files_total": 2837,
+  "generated_at": "2026-11-09 16:39 UTC",
+  "files_total": 2839,
   "code_files": 2331,
   "code_lines": 311015
  },
@@ -274691,10 +274691,21 @@
   }
  },
  "git": {
-  "sha": "560e7150bbb7878aa10abaca078aa22d7d472225",
+  "sha": "a7e645d566054caac17ca6f30b4fdd5d68fc95d7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a7e645d",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)",
+    "files": [
+     "scripts/sync/README.md",
+     "scripts/sync/install-timer.sh",
+     "scripts/sync/mirror-github.sh"
+    ]
+   },
    {
     "sha": "560e715",
     "date": "2026-11-09",
@@ -275108,22 +275119,13 @@
     "files": [
      "scripts/tests/sw-routing.test.mjs"
     ]
-   },
-   {
-    "sha": "f231df4",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)",
-    "files": [
-     "src/integrations/supabase/__tests__/clientBridge.test.ts",
-     "src/integrations/supabase/client.ts",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/external-db-bridge/request-schema.ts",
-     "supabase/functions/external-db-bridge/validation.test.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/sync/install-timer.sh",
+    2
+   ],
    [
     "scripts/autofix/README.md",
     2
@@ -275165,6 +275167,14 @@
     2
    ],
    [
+    "scripts/sync/README.md",
+    1
+   ],
+   [
+    "scripts/sync/mirror-github.sh",
+    1
+   ],
+   [
     "src/components/AdminRoute.tsx",
     1
    ],
@@ -275190,18 +275200,6 @@
    ],
    [
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-    1
-   ],
-   [
-    "src/components/departamentos/NovoDepartamentoDialog.tsx",
-    1
-   ],
-   [
-    "src/components/empresa/EmpresaSelector.tsx",
-    1
-   ],
-   [
-    "src/components/esocial/ESocialAuditDialog.tsx",
     1
    ]
   ]

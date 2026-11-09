@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "560e7150bbb7878aa10abaca078aa22d7d472225",
+  "commit": "a7e645d566054caac17ca6f30b4fdd5d68fc95d7",
   "branch": "main",
-  "data_commit": "2026-11-09T16:17:54Z",
+  "data_commit": "2026-11-09T13:36:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a7e645d",
+    "data": "2026-11-09",
+    "assunto": "feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)"
+   },
    {
     "sha": "560e715",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "1c88227",
     "data": "2026-11-08",
     "assunto": "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401"
-   },
-   {
-    "sha": "0e4f470",
-    "data": "2026-11-08",
-    "assunto": "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard"
    }
   ],
-  "arquivos_mudados_7d": 231,
+  "arquivos_mudados_7d": 233,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 22
+    "mudancas": 21
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 75
+    "commits": 76
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2816,
+  "arquivos_total": 2818,
   "arquivos_codigo": 1516,
   "linhas_codigo": 263124,
   "rotas": 113,
@@ -338,8 +338,8 @@
   "cron_jobs": 41,
   "testes": 572,
   "workflows": 17,
-  "scripts": 94,
-  "docs_md": 288
+  "scripts": 95,
+  "docs_md": 289
  },
  "por_pasta": {
   "capacitor.config.ts": {
