@@ -39,42 +39,22 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: 🔔 Abrir ou atualizar issue de falha
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      - name: Checkout (sparse — apenas scripts/ci)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          script: |
-            const wf = context.payload.workflow_run;
-            const titulo = `[falha-main] ${wf.name} falhou na main`;
-            const corpo = [
-              `**Workflow:** ${wf.name}`,
-              `**Branch:** ${wf.head_branch}`,
-              `**Commit:** ${wf.head_sha.slice(0, 7)}`,
-              `**Run:** ${wf.html_url}`,
-              `**Quando:** ${wf.updated_at}`,
-            ].join('\n');
+          sparse-checkout: scripts/ci
+          sparse-checkout-cone-mode: false
 
-            const { data: issues } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'falha-main',
-            });
-
-            const existente = issues.find(i => i.title.startsWith(`[falha-main] ${wf.name}`));
-
-            if (existente) {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: existente.number,
-                body: corpo,
-              });
-            } else {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title: titulo,
-                body: corpo,
-                labels: ['falha-main'],
-              });
-            }
+      - name: 🔔 Abrir ou atualizar issue de falha
+        # issue-rotativa.mjs: pagina corretamente (listForRepo sem --paginate perdia
+        # issues quando o repo tem >30 abertas), rotaciona em >20 comentarios (E51/W91)
+        # e cria o label se necessario. O github-script inline nao fazia nenhum dos tres.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WF_NAME: ${{ github.event.workflow_run.name }}
+          WF_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WF_SHA: ${{ github.event.workflow_run.head_sha }}
+          WF_URL: ${{ github.event.workflow_run.html_url }}
+          WF_AT: ${{ github.event.workflow_run.updated_at }}
+        run: node scripts/ci/notifica-falha.mjs

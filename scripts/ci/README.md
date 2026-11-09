@@ -8,7 +8,8 @@ Scripts que rodam no CI e podem ser executados localmente antes de abrir PR.
 | `actions-kpi.mjs` | Runs/semana por workflow, taxa de cancelamento/falha, minutos, 5 jobs mais lentos; mantém a issue `[kpi-actions]` | `.github/workflows/branch-hygiene-audit.yml` (semanal) |
 | `branch-podaveis.mjs` | Monta (sem executar) comandos de poda para branches patch-equivalentes a `main`, sem commit há 30d, sem PR aberta | idem |
 | `sla-code-scanning.mjs` | SLA de alertas de code scanning: high/critical 14d, medium/low 30d | idem |
-| `issue-rotativa.mjs` | Abre/comenta/rotaciona issue de alerta quando passa de 20 comentários (ainda sem chamador real neste repo) | biblioteca, sem `cli` própria |
+| `issue-rotativa.mjs` | Abre/comenta/rotaciona issue de alerta quando passa de 20 comentários | biblioteca — chamada por `notifica-falha.mjs` |
+| `notifica-falha.mjs` | Glue para `notifica-falha-main.yml`: lê o contexto do `workflow_run` via env vars e chama `abrirOuRotacionar` (paginação correta + rotação) | `.github/workflows/notifica-falha-main.yml` |
 | `bump-toolchain.mjs` | Avisa (informativo, nunca falha) quando há versão mais nova de `supabase-cli`/`playwright`/`actionlint` em `.github/toolchain.json` | idem |
 | `workflow-test-support.mjs` | Helper de leitura de YAML de workflow usado pelos `.unit.mjs` acima — não roda sozinho | — |
 

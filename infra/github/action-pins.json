@@ -81,10 +81,6 @@
     "e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e": {
       "action": "gitleaks/gitleaks-action",
       "version": "v3.0.0"
-    },
-    "3a2844b7e9c422d3c10d287c895573f7108da1b3": {
-      "action": "actions/github-script",
-      "version": "v9.0.0"
     }
   }
 }
