@@ -40,6 +40,9 @@ expect(
   new RegExp(`^project_id\\s*=\\s*"${CANONICAL_REF}"\\s*$`, 'm').test(configToml),
   `supabase/config.toml usa exclusivamente ${CANONICAL_REF}`
 );
+// "Exclusivamente" precisa da metade negativa: a linha canônica presente não
+// impede uma segunda chave (outra seção, redirect URL) apontando ao legado.
+expect(!configToml.includes(LEGACY_REF), 'supabase/config.toml não referencia o projeto legado');
 
 console.log('2. Proxy de desenvolvimento');
 expect(viteConfig.includes(canonicalUrl), 'vite.config.ts encaminha Edge Functions ao projeto canônico');
