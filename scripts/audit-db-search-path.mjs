@@ -70,8 +70,16 @@ function hasDatabase() {
   return Boolean(process.env.PGHOST || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
 }
 
-function runQuery() {
-  const args = ['-Atq', '-c', QUERY];
+// Universo auditável: sem nenhuma extensão fora de pg_catalog a QUERY acima
+// devolve 0 linhas por construção -- é alvo vazio/errado, não "tudo limpo".
+const EXT_COUNT_QUERY = `
+SELECT count(*) FROM pg_extension e
+JOIN pg_namespace n ON n.oid = e.extnamespace
+WHERE n.nspname <> 'pg_catalog';
+`;
+
+function runQuery(sql = QUERY) {
+  const args = ['-Atq', '-c', sql];
   const conn = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
   // Sem PGHOST o psql cairia num socket local inexistente; nesse caso a URL
   // explícita é a única forma de conexão.
@@ -87,8 +95,10 @@ function main() {
   }
 
   let output;
+  let extCount;
   try {
     output = runQuery();
+    extCount = Number(runQuery(EXT_COUNT_QUERY).trim());
   } catch (error) {
     // Se o alvo foi configurado, tanto erro de SQL quanto indisponibilidade
     // impedem uma conclusão de auditoria. O CI não pode aprovar às cegas.
@@ -105,6 +115,14 @@ function main() {
       const [extname, schema, extFn, fn] = line.split('\t');
       return { extname, schema, extFn, fn };
     });
+
+  if (!(extCount > 0)) {
+    console.error(
+      '[search-path] ERRO: nenhuma extensão fora de pg_catalog no alvo — schema vazio ou alvo errado; ' +
+        'nada foi auditado. Falso verde bloqueado.'
+    );
+    return 1;
+  }
 
   if (rows.length === 0) {
     console.log('[search-path] OK — nenhuma função referencia extensão fora do seu search_path.');
