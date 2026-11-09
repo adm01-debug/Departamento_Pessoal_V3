@@ -234,7 +234,7 @@ export type Database = {
         self.assertEqual(errors, ["Bearer ausente no header Authorization", "chave obrigatória [REDACTED]",
                                   "header inválido: [REDACTED]", "token obrigatório [REDACTED]"])
         subprocess.run(["git", "init", "-q", "-b", "main"], cwd=self.root, check=True)
-        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-q", "--allow-empty",
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "-c", "commit.gpgsign=false", "commit", "-q", "--allow-empty",
                         "-m", f"chore: rotaciona {secret_key}"], cwd=self.root, check=True)
         self.assertEqual([c["subject"] for c in generator.git_info(self.root)["commits"]], ["chore: rotaciona [REDACTED]"])
 
