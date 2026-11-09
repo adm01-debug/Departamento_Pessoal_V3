@@ -13,6 +13,7 @@ import { homedir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { carregarMotores } from './motores.mjs';
 import { regras } from './catalogo.mjs';
+import { regrasDados } from './dados.mjs';
 
 const argv = process.argv.slice(2);
 const flag = (n) => argv.includes(`--${n}`);
@@ -75,26 +76,30 @@ function checagensEstaticas() {
 // ---------- execução ----------
 const rodar = async () => {
   const linhas = [];
-  let eng;
+  let eng = null;
+  let erro;
   try {
     eng = await carregarMotores(cwd);
   } catch (e) {
-    console.error(`[regras] não consegui carregar os motores de cálculo: ${e.message}`);
-    return { ok: false, resultados: [], estaticas: checagensEstaticas(), erro: String(e.message) };
+    erro = String(e.message);
+    console.error(`[regras] não consegui carregar os motores de cálculo: ${erro}`);
   }
   const resultados = [];
-  for (const r of regras) {
+  for (const r of [...regras, ...regrasDados]) {
     let res;
-    try {
-      res = await r.run({ eng, cwd });
-    } catch (e) {
-      res = { status: 'nao_verificavel', resumo: `erro ao executar: ${e.message}`, exemplos: [] };
+    if (!eng && !r.semMotor) res = { status: 'nao_verificavel', resumo: 'motores de cálculo não carregaram', exemplos: [] };
+    else {
+      try {
+        res = await r.run({ eng, cwd });
+      } catch (e) {
+        res = { status: 'nao_verificavel', resumo: `erro ao executar: ${e.message}`, exemplos: [] };
+      }
     }
     resultados.push({ id: r.id, area: r.area, titulo: r.titulo, fonte: r.fonte, confianca: r.confianca, severidade: r.severidade, acao: r.acao, ...res });
     linhas.push(`${res.status === 'ok' ? 'OK        ' : res.status.toUpperCase().padEnd(10)}${r.id}  ${res.resumo}`);
   }
   console.log(linhas.join('\n'));
-  return { ok: true, resultados, estaticas: checagensEstaticas() };
+  return { ok: Boolean(eng), resultados, estaticas: checagensEstaticas(), erro };
 };
 
 // ---------- relatório ----------
@@ -112,7 +117,7 @@ function markdown({ resultados, estaticas: e, erro }) {
     ].join('\n');
   const lista = (t, xs) => (xs.length ? [`**${t}** (${xs.length})`, ...xs.map((x) => `- ${x}`), ''] : []);
   return [
-    `# Verificação das regras de cálculo — ${stamp}`,
+    `# Verificação das regras de negócio (cálculo e dados) — ${stamp}`,
     `Repositório: \`${cwd}\``,
     erro && `> Não foi possível executar os motores: ${erro}`,
     '',
