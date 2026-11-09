@@ -620,9 +620,9 @@ def analyze_code_file(p: Path, root: Path) -> dict | None:
 # 4. Schema SQL (migrations / schema.sql / prisma / database.types.ts)
 # --------------------------------------------------------------------------- #
 SQL_CREATE_TABLE_RE = re.compile(r"create\s+(?:unlogged\s+|temp(?:orary)?\s+|global\s+|local\s+)*table\s+(?:if\s+not\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(", re.I)
-SQL_ALTER_ADD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+(?:column\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+([^,;]+)", re.I)
+SQL_ALTER_ADD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+(?:column\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+([^;]+)", re.I)
 SQL_ALTER_ADD_CONSTRAINT_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+constraint\s+\"?(\w+)\"?\s+([^;]+);", re.I)
-SQL_ALTER_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+alter\s+(?:column\s+)?\"?(\w+)\"?\s+(set\s+not\s+null|drop\s+not\s+null|set\s+default\s+[^,;]+|drop\s+default|(?:set\s+data\s+)?type\s+[^,;]+)", re.I)
+SQL_ALTER_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+alter\s+(?:column\s+)?\"?(\w+)\"?\s+(set\s+not\s+null|drop\s+not\s+null|set\s+default\s+[^;]+|drop\s+default|(?:set\s+data\s+)?type\s+[^;]+)", re.I)
 SQL_ALTER_DROP_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+column\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
 SQL_DROP_TABLE_RE = re.compile(r"drop\s+table\s+(?:if\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
 SQL_POLICY_RE = re.compile(
@@ -662,6 +662,20 @@ def split_columns(body: str) -> list[str]:
     if cur:
         parts.append("".join(cur).strip())
     return [p for p in parts if p]
+
+
+SQL_ALTER_HEAD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?\w+\"?\.)?\"?\w+\"?\s+", re.I)
+
+
+def expand_alter_table(statements: list[str]):
+    """`ALTER TABLE t ação1, ação2;` vira um statement por ação (vírgula de nível superior)."""
+    for st in statements:
+        m = SQL_ALTER_HEAD_RE.match(st)
+        actions = split_columns(st[m.end():].rstrip(";")) if m else []
+        if len(actions) < 2:
+            yield st
+        else:
+            yield from (st[:m.end()] + action + ";" for action in actions)
 
 
 def tkey(sch: str | None, name: str) -> str:
@@ -761,7 +775,7 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
         for kind, target, comment in SQL_COMMENT_RE.findall(txt):
             tgt = target.replace('"', "").replace("public.", "")
             schema["comments"][f"{kind.lower()}:{tgt}"] = comment.replace("''", "'")
-        for st in split_sql_statements(txt_nc):
+        for st in expand_alter_table(split_sql_statements(txt_nc)):
             low = st.lower().lstrip()
             # ---- CREATE TABLE
             m = SQL_CREATE_TABLE_RE.match(st)
@@ -799,6 +813,9 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                         T[key]["constraints"] = [c for c in T[key]["constraints"] if not re.match(rf"constraint\s+{re.escape(m.group(3))}\b", c, re.I)]
                     continue
                 m = SQL_ALTER_ADD_RE.match(st)
+                if m and m.group(3).lower() in ("primary", "unique", "check", "foreign", "exclude"):
+                    T.setdefault(tkey(m.group(1), m.group(2)), new_table(src))["constraints"].append(trunc(squash(f"{m.group(3)} {m.group(4)}"), 300))
+                    continue
                 if m and m.group(3).lower() != "constraint":
                     key = tkey(m.group(1), m.group(2)); t = T.setdefault(key, new_table(src))
                     if not any(c["name"] == m.group(3) for c in t["columns"]):
@@ -813,9 +830,9 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                                 a = m.group(4); al = a.lower()
                                 if al.startswith("set not null") and "not null" not in c["type"].lower(): c["type"] += " not null"
                                 elif al.startswith("drop not null"): c["type"] = re.sub(r"\s*not null", "", c["type"], flags=re.I)
-                                elif al.startswith("set default"): c["type"] = re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I) + " " + squash(a)
+                                elif al.startswith("set default"): c["type"] = re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I) + " " + squash(a)[4:]
                                 elif al.startswith("drop default"): c["type"] = re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I)
-                                elif "type" in al: c["type"] = squash(re.sub(r"^(set\s+data\s+)?type\s+", "", a, flags=re.I)) + " " + re.sub(r"^\S+(\([^)]*\))?", "", c["type"]).strip()
+                                elif "type" in al: c["type"] = squash(re.sub(r"^(set\s+data\s+)?type\s+|\s+using\s[\s\S]*$", "", a, flags=re.I)) + " " + re.sub(r"^\S+(\([^)]*\))?", "", c["type"]).strip()
                                 c["type"] = trunc(c["type"], 200)
                     continue
                 m = SQL_ALTER_DROP_COL_RE.match(st)

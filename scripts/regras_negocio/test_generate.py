@@ -177,6 +177,20 @@ export type Database = {
                          [("by_list", "BEFORE UPDATE OF A, B", "t", "f"),
                           ("by_quoted", 'AFTER INSERT OR UPDATE OF "STATUS"', "t", "g")])
 
+    def test_alter_table_applies_every_action_and_keeps_types_with_commas(self):
+        self.write("supabase/migrations/20260101000000_alter.sql",
+                   "CREATE TABLE public.t (id integer, v text DEFAULT 'a');\n"
+                   "ALTER TABLE public.t ADD COLUMN a text, ADD COLUMN IF NOT EXISTS valor DECIMAL(15,2) NOT NULL DEFAULT 0,\n"
+                   "  ADD COLUMN st text CHECK (st IN ('x','y'));\n"
+                   "ALTER TABLE public.t ALTER COLUMN id TYPE numeric(10,2) USING id::numeric(10,2), ALTER COLUMN v SET DEFAULT 'b';\n"
+                   "ALTER TABLE public.t ADD PRIMARY KEY (id);\n"
+                   "ALTER TABLE public.t ADD CONSTRAINT c1 CHECK (a <> ''), ADD CONSTRAINT c2 UNIQUE (a, st);\n")
+        table = self.schema()["tables"]["t"]
+        self.assertEqual([(c["name"], c["type"]) for c in table["columns"]],
+                         [("id", "numeric(10,2)"), ("v", "text DEFAULT 'b'"), ("a", "text"),
+                          ("valor", "DECIMAL(15,2) NOT NULL DEFAULT 0"), ("st", "text CHECK (st IN ('x','y'))")])
+        self.assertEqual(table["constraints"], ["PRIMARY KEY (id)", "constraint c1 CHECK (a <> '')", "constraint c2 UNIQUE (a, st)"])
+
 
 if __name__ == "__main__":
     unittest.main()
