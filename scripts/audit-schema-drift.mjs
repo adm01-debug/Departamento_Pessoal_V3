@@ -101,7 +101,9 @@ function main() {
     ledger = new Set(ledgerVersions());
   } catch (err) {
     console.error('[schema-drift] A consulta ao ledger falhou — gate reprovado.');
-    console.error(err.message);
+    // err.message traz a linha de comando do psql, isto é, a DATABASE_URL com
+    // a senha. O stderr do psql já explica a falha sem expor a credencial.
+    console.error(String(err.stderr || err.message).trim());
     return 1;
   }
 
