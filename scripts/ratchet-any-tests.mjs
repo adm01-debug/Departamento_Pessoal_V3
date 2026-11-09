@@ -33,9 +33,10 @@ const results = await eslint.lintFiles([
   'src/**/__tests__/**/*.{ts,tsx}',
   'src/**/__mocks__/**/*.{ts,tsx}',
   // Helpers/fixtures fora dos padrões *.test/__tests__ — antes uma zona
-  // cega onde `any` crescia invisível (src/test/, src/tests/).
-  'src/test/**/*.{ts,tsx}',
-  'src/tests/**/*.{ts,tsx}',
+  // cega onde `any` crescia invisível (test/ e tests/ em qualquer nível,
+  // igual ao ignore `**/test/**` do eslint.config.js).
+  'src/**/test/**/*.{ts,tsx}',
+  'src/**/tests/**/*.{ts,tsx}',
 ]);
 
 // Garantia estrutural: 0 arquivos indica que os padrões de teste não
