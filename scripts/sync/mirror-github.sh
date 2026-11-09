@@ -4,7 +4,8 @@
 #   mirror-github.sh [--repo <caminho>] [--branch main] [--quiet-min 10] [--keep-days 30] [--dry-run] [--quiet]
 #
 # Resultado de cada execução bem-sucedida: o checkout está na branch <branch> (padrão main), no mesmo commit de
-# origin/<branch>, sem nenhuma alteração local (tracked ou untracked) — `git status` limpo e `git diff origin/<branch>` vazio.
+# origin/<branch>, sem nenhuma alteração local (tracked ou untracked) — `git status` limpo e `git diff origin/<branch>` vazio —
+# e com os MESMOS BYTES do GitHub (fins de linha CRLF herdados do Windows são normalizados).
 #
 # Segurança (nada se perde):
 #   - ANTES de descartar, tudo que é só local é gravado em refs/mirror-backup/<data> (alterações, arquivos não
@@ -17,6 +18,9 @@
 #     outro worktree, ou se o fetch falhar (rede: tenta de novo na próxima hora).
 # Nunca faz push. Uma execução por vez (flock, o mesmo trinco do sync-github.sh).
 set -uo pipefail
+# Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
+# husky). Vale para todos os `git` deste script e dos filhos.
+export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
 
 REPO=""; BRANCH="main"; DRY=0; QUIET=0; QUIET_MIN=10; KEEP_DAYS=30
 while [ $# -gt 0 ]; do
@@ -62,12 +66,42 @@ REMOTE_SHA="$(timeout 60 "${G[@]}" ls-remote origin "refs/heads/$BRANCH" 2>/dev/
 [ -n "$REMOTE_SHA" ] || { say "AVISO: o GitHub não tem a branch $BRANCH; nada feito"; exit 0; }
 [ "$("${G[@]}" rev-parse "origin/$BRANCH" 2>/dev/null)" = "$REMOTE_SHA" ] || { say "AVISO: origin/$BRANCH não bate com o GitHub após o fetch; nada feito"; exit 0; }
 
+
+# Arquivos rastreados cujos bytes reais no disco diferem do blob do índice. O `git status` não vê isso quando
+# core.autocrlf=input normaliza CRLF->LF na comparação (cópia criada no Windows, por exemplo).
+byte_drift() {
+  local exp act
+  exp="$(mktemp "$STATE/exp.XXXXXX")"; act="$(mktemp "$STATE/act.XXXXXX")"
+  "${G[@]}" ls-files -s -z | while IFS= read -r -d '' rec; do
+    mode="${rec%% *}"; rest="${rec#* }"; sha="${rest%% *}"; path="${rec#*$'\t'}"
+    case "$mode" in 120000|160000) continue ;; esac
+    [ -f "$REPO/$path" ] && printf '%s\t%s\n' "$sha" "$path"
+  done > "$exp"
+  cut -f2- "$exp" | (cd "$REPO" && git hash-object --no-filters --stdin-paths 2>/dev/null) > "$act"
+  paste -d'\t' "$act" "$exp" | awk -F'\t' '$1 != $2 {print $3}'
+  rm -f "$exp" "$act"
+}
+# Reescreve esses arquivos com os bytes do blob (autocrlf desligado). Arquivos com regra de fim de linha própria
+# (.gitattributes eol=crlf) continuam diferindo de propósito e só são avisados.
+normaliza_bytes() {
+  local lista; lista="$(byte_drift)"; [ -n "$lista" ] || return 0
+  local n; n="$(printf '%s\n' "$lista" | grep -c .)"
+  # `checkout-index -f` PULA arquivos que o cache de stat do índice dá como em dia (mesmo com -f). Mudar o mtime antes
+  # invalida o cache e força a reescrita; se algo falhar, o conteúdo antigo continua intacto.
+  printf '%s\n' "$lista" | tr '\n' '\0' | (cd "$REPO" && xargs -0 touch -d '1970-01-02' --) 2>/dev/null
+  printf '%s\n' "$lista" | tr '\n' '\0' | xargs -0 git -C "$REPO" -c core.autocrlf=false checkout-index -u -f -- 2>/dev/null
+  local resto; resto="$(byte_drift | grep -c . || true)"
+  say "NORMALIZADOS $n arquivo(s): bytes do disco (fim de linha) diferiam do GitHub${resto:+; restam $resto por regra de eol do repositório}"
+}
+
 CUR="$("${G[@]}" rev-parse --abbrev-ref HEAD)"
 HEAD_SHA="$("${G[@]}" rev-parse HEAD)"
 DIRTY="$("${G[@]}" status --porcelain 2>/dev/null)"
 
 # 2. já espelhado?
 if [ "$CUR" = "$BRANCH" ] && [ "$HEAD_SHA" = "$REMOTE_SHA" ] && [ -z "$DIRTY" ]; then
+  if [ "$DRY" -eq 1 ]; then say "ok (dry-run): commit idêntico; bytes não verificados no dry-run"; exit 0; fi
+  normaliza_bytes
   say "ok: já idêntico ao GitHub (${REMOTE_SHA:0:9})"; exit 0
 fi
 
@@ -116,7 +150,8 @@ if ! "${G[@]}" checkout -q -f -B "$BRANCH" "origin/$BRANCH" 2>"$STATE/$KEY.err";
 fi
 "${G[@]}" clean -fdq
 
-# 7. confere
+# 7. confere (bytes inclusive)
+normaliza_bytes
 if [ "$("${G[@]}" rev-parse HEAD)" = "$REMOTE_SHA" ] && [ -z "$("${G[@]}" status --porcelain)" ] && "${G[@]}" diff --quiet "origin/$BRANCH"; then
   say "ESPELHADO: $BRANCH @ ${REMOTE_SHA:0:9} (antes: $CUR @ ${HEAD_SHA:0:9})${BACKUP:+; backup: $BACKUP}"
 else

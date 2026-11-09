@@ -12,6 +12,7 @@ bash scripts/sync/mirror-github.sh --repo <caminho> --dry-run          # mostra 
 ```
 
 ## Nada se perde
+
 - Antes de descartar qualquer diferença local, o mirror grava tudo em `refs/mirror-backup/<data>`: alterações, arquivos não rastreados e o commit local de partida. Só local, apagado após 30 dias. Recuperar um arquivo: `git checkout refs/mirror-backup/<data> -- <arquivo>`; listar: `git for-each-ref refs/mirror-backup`.
 - Arquivos **ignorados** pelo git (`.env`, `node_modules`, `dist`) nunca são tocados.
 - A branch local em que você estava continua existindo (só o checkout troca para `main`).
@@ -22,6 +23,7 @@ bash scripts/sync/mirror-github.sh --repo <caminho> --dry-run          # mostra 
 > (`git worktree add ../meu-trabalho -b minha-branch origin/main`); o que for deixado aqui sem commit/push é guardado no backup, mas sai do checkout.
 
 ## sync-github.sh
+
 `fetch --all --prune` + fast-forward só de branches atrás do upstream. Branch com alterações locais, divergente ou com upstream apagado: só avisa, uma vez.
 
 ---
@@ -32,8 +34,24 @@ Timer `dp-autocommit` (hh:30, instalado com `install-autocommit-timer.sh --workt
 desenvolvimento (branch `computador_local`) e dá push, sem humano e sem IA. Complementa o `git-autosave` (fotos a cada 2 min em `refs/autosave/*`).
 
 **O repositório é PÚBLICO**, então o script falha fechado:
+
 - `gitleaks` no que seria commitado: achou segredo => nada é commitado na rodada;
 - **excluídos do commit** (ficam só no disco/autosave, com aviso no log): arquivos **novos** de dados (`.csv .xlsx .xls .xlsm .ods .dump .bak .sqlite .db .zip .tar .gz .7z .pdf`), qualquer arquivo > 5 MB e qualquer arquivo com **CPF formatado** nas linhas adicionadas;
 - `.env*`, `*.pem`, `*.key`, `*.p12`, `id_rsa*` nunca entram.
 
 Nunca troca de branch, nunca usa `--force` (push rejeitado = só avisa, o commit fica local), não age com rebase/merge/cherry-pick/bisect ou `index.lock`, e adia se algo foi editado nos últimos 2 min. Commits usam `--no-verify`. Não dispara CI (o CI só roda em push na `main` e em PR para a `main`). Como a `main` só aceita squash, os commits "autosave" somem do histórico ao mergear o PR.
+
+---
+
+## Vários repositórios: `run-all.sh` + `repos.conf`
+
+A mesma arquitetura (espelho exato da main + worktree `computador_local` com commit automático) vale para todos os repositórios de `~/.config/dp-sync/repos.conf`
+(`repos.conf.example`): `repo|worktree_dev|branch_padrao|mirror|pii`, onde `mirror` é `1` (espelha), `ext` (o repositório já tem espelho próprio) ou `0`.
+
+```bash
+bash scripts/sync/install-all-timers.sh     # 2 timers: dp-sync-all (hh:00, espelho + sync) e dp-autocommit-all (hh:30)
+run-all.sh mirror|autocommit [--only <nome>] [--dry-run] [--quiet-min N]
+```
+
+Um repositório com problema não impede os demais. `--pii cpf,cnpj` (por repositório) barra do commit automático arquivos com CPF/CNPJ formatados
+(o aviso de exclusão aparece uma vez por arquivo). O instalador migra os timers antigos de um repositório só (`dp-sync-github`, `dp-autocommit`).
