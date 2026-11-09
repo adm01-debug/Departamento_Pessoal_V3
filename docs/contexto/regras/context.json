@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "61d37e7382999457b9ff09cdc1a6ef4fe8f7001c",
+  "sha": "98f0f59d4172a2a6891003da3848f5b4ae3b6ebe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-08 14:12 UTC",
+  "generated_at": "2026-11-09 02:32 UTC",
   "files_total": 2824,
   "code_files": 2323,
   "code_lines": 309292
@@ -274499,10 +274499,19 @@
   }
  },
  "git": {
-  "sha": "61d37e7382999457b9ff09cdc1a6ef4fe8f7001c",
+  "sha": "98f0f59d4172a2a6891003da3848f5b4ae3b6ebe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "98f0f59",
+    "date": "2026-11-08",
+    "author": "adm01-debug",
+    "subject": "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)",
+    "files": [
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "61d37e7",
     "date": "2026-11-08",
@@ -274830,16 +274839,6 @@
     "files": [
      "deno.lock"
     ]
-   },
-   {
-    "sha": "6ed87f2",
-    "date": "2026-11-05",
-    "author": "adm01-debug",
-    "subject": "fix: bypass MFA em testes E2E autenticados (AdminRoute + e2e.yml)",
-    "files": [
-     ".github/workflows/e2e.yml",
-     "src/components/AdminRoute.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -274884,6 +274883,10 @@
     2
    ],
    [
+    ".github/workflows/ci.yml",
+    1
+   ],
+   [
     "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     1
    ],
@@ -274917,10 +274920,6 @@
    ],
    [
     "scripts/audit-rls-tenant-open.mjs",
-    1
-   ],
-   [
-    "scripts/audit-security-config.mjs",
     1
    ]
   ]

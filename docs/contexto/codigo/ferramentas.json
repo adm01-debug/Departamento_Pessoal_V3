@@ -338,6 +338,7 @@
     "scripts/audit-rls-tenant-open.mjs",
     "scripts/audit-secdef-authz.mjs",
     "scripts/audit-security-config.mjs",
+    "scripts/ci/check-claude-md-integrity.mjs",
     "scripts/smoke-hash-triggers.mjs",
     "scripts/tests/audit-edge-audit-log-contract.test.mjs",
     "scripts/tests/lockfile-parity.test.sh",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "61d37e7382999457b9ff09cdc1a6ef4fe8f7001c",
+  "commit": "98f0f59d4172a2a6891003da3848f5b4ae3b6ebe",
   "branch": "main",
-  "data_commit": "2026-11-08T11:02:09-03:00",
+  "data_commit": "2026-11-08T21:57:24Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "98f0f59",
+    "data": "2026-11-08",
+    "assunto": "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)"
+   },
    {
     "sha": "61d37e7",
     "data": "2026-11-08",
@@ -126,11 +131,6 @@
     "sha": "25465ae",
     "data": "2026-11-06",
     "assunto": "fix: estabilizar E2E cleanup — tolerar P0001 e logout via aria-label (#363)"
-   },
-   {
-    "sha": "2e9968a",
-    "data": "2026-11-06",
-    "assunto": "fix: usar nav.first() no audit-checklist para evitar strict mode violation (#360)"
    }
   ],
   "arquivos_mudados_7d": 133,
@@ -188,12 +188,12 @@
     "mudancas": 10
    },
    {
-    "pasta": "src/services/cnabService.ts",
+    "pasta": ".github/workflows/ci.yml",
     "mudancas": 9
    },
    {
-    "pasta": ".github/workflows/ci.yml",
-    "mudancas": 8
+    "pasta": "src/services/cnabService.ts",
+    "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 66
+    "commits": 67
    },
    {
     "autor": "dependabot[bot]",
