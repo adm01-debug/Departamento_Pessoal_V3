@@ -1,4 +1,5 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 

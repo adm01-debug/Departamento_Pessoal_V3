@@ -14,7 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { empresaService } from '@/services';
-import { Empresa } from '@/types/entities';
+import type { Empresa } from '@/types/entities';
 import { empresaSchema, type EmpresaSchema, type EmpresaSchemaInput } from '@/schemas';
 
 import { useNotification } from '@/contexts';

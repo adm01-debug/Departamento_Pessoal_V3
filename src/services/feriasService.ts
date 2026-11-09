@@ -1,5 +1,6 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
-import { Ferias } from '@/types/entities';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
+import type { Ferias } from '@/types/entities';
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { parseCursor } from '@/lib/cursor';

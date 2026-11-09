@@ -1,5 +1,6 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
-import { Documento } from '@/types/entities';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
+import type { Documento } from '@/types/entities';
 
 /** Documento com o join de colaborador e metadados de storage opcionais retornados pelo Supabase. */
 export interface DocumentoListItem extends Documento {

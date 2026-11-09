@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
  *
  * @param intervalMs Intervalo de atualização (padrão: 60s).
  */
-export function useNow(intervalMs: number = 60_000): number {
+export function useNow(intervalMs = 60_000): number {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), intervalMs);

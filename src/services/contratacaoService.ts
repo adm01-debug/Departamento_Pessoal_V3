@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
-import { Database } from '@/integrations/supabase/types';
+import type { Database } from '@/integrations/supabase/types';
 import type { Tables } from '@/integrations/supabase/database.types';
 import {
   claimEventoAdmissaoESocial,
@@ -177,7 +177,7 @@ export const contratacaoService = {
           'admissao_tokens',
           {
             admissao_id: admissaoId,
-            token: token,
+            token,
             email_candidato: email,
             data_expiracao: expiracao.toISOString(),
           },

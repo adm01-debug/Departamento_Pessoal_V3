@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { folhaCalc, CalculoResultado, CalculoParams } from '@/utils/folhaCalc';
-import { calculoLoteService, BatchProgress } from '@/services/folha/calculoLoteService';
+import type { CalculoResultado, CalculoParams } from '@/utils/folhaCalc';
+import { folhaCalc } from '@/utils/folhaCalc';
+import type { BatchProgress } from '@/services/folha/calculoLoteService';
+import { calculoLoteService } from '@/services/folha/calculoLoteService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
