@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "a7e645d566054caac17ca6f30b4fdd5d68fc95d7",
+  "sha": "85fc652456e2ea86818e525a3d2a2bf87132e615",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 16:39 UTC",
-  "files_total": 2839,
+  "generated_at": "2026-11-09 17:48 UTC",
+  "files_total": 2841,
   "code_files": 2331,
   "code_lines": 311015
  },
@@ -274691,10 +274691,21 @@
   }
  },
  "git": {
-  "sha": "a7e645d566054caac17ca6f30b4fdd5d68fc95d7",
+  "sha": "85fc652456e2ea86818e525a3d2a2bf87132e615",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "85fc652",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "feat(sync): commit automático do trabalho local na branch computador_local (#407)",
+    "files": [
+     "scripts/sync/README.md",
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/install-autocommit-timer.sh"
+    ]
+   },
    {
     "sha": "a7e645d",
     "date": "2026-11-09",
@@ -275110,18 +275121,13 @@
      "scripts/build-rebaseline.mjs",
      "scripts/tests/contexto-publicacao.test.mjs"
     ]
-   },
-   {
-    "sha": "618e38b",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: permite testar chrome-extension no harness (#369)",
-    "files": [
-     "scripts/tests/sw-routing.test.mjs"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/sync/README.md",
+    2
+   ],
    [
     "scripts/sync/install-timer.sh",
     2
@@ -275167,7 +275173,11 @@
     2
    ],
    [
-    "scripts/sync/README.md",
+    "scripts/sync/autocommit-local.sh",
+    1
+   ],
+   [
+    "scripts/sync/install-autocommit-timer.sh",
     1
    ],
    [
@@ -275192,14 +275202,6 @@
    ],
    [
     "src/calculators/trabalhista-base.ts",
-    1
-   ],
-   [
-    "src/components/admissoes/AdmissoesKanban.tsx",
-    1
-   ],
-   [
-    "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     1
    ]
   ]

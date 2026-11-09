@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 95,
+ "total": 97,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -1002,6 +1002,24 @@
    "workflows": [
     "contexto.yml"
    ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/autocommit-local.sh",
+   "descricao": "Commit automático do trabalho local numa branch dedicada e envio ao GitHub, sem intervenção humana.   autocommit-local.sh --worktree <pasta> [--branch computador_local] [--remote origin]",
+   "linhas": 133,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/sync/install-autocommit-timer.sh",
+   "descricao": "Instala (ou remove) o timer systemd de USUÁRIO que roda autocommit-local.sh de hora em hora (hh:30).   bash scripts/sync/install-autocommit-timer.sh --worktree <pasta> [--branch computador_local]",
+   "linhas": 61,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
    "orfao": false
   },
   {

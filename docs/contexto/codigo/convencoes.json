@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(sync): commit automático do trabalho local na branch computador_local (#407)",
    "feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)",
    "fix: bypass MFA em E2E para rotas admin (VITE_E2E_BYPASS_MFA) (#352)",
    "fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)",
-   "chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)",
-   "feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)"
+   "chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

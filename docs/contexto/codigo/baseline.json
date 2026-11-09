@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a7e645d566054caac17ca6f30b4fdd5d68fc95d7",
+  "commit": "85fc652456e2ea86818e525a3d2a2bf87132e615",
   "branch": "main",
-  "data_commit": "2026-11-09T13:36:26-03:00",
+  "data_commit": "2026-11-09T14:45:05-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "85fc652",
+    "data": "2026-11-09",
+    "assunto": "feat(sync): commit automático do trabalho local na branch computador_local (#407)"
+   },
    {
     "sha": "a7e645d",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "752ceac",
     "data": "2026-11-08",
     "assunto": "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)"
-   },
-   {
-    "sha": "1c88227",
-    "data": "2026-11-08",
-    "assunto": "feat: scripts — simulações exaustivas com auto-validação + --since e soft-skip 401"
    }
   ],
-  "arquivos_mudados_7d": 233,
+  "arquivos_mudados_7d": 235,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 82
+    "mudancas": 81
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 78
+    "mudancas": 77
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -230,16 +230,16 @@
     "mudancas": 13
    },
    {
-    "arquivo": ".github/workflows/security.yml",
-    "mudancas": 13
-   },
-   {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 13
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 13
+   },
+   {
+    "arquivo": ".github/workflows/security.yml",
+    "mudancas": 12
    },
    {
     "arquivo": "AGENTS.md",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 76
+    "commits": 77
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2818,
+  "arquivos_total": 2820,
   "arquivos_codigo": 1516,
   "linhas_codigo": 263124,
   "rotas": 113,
@@ -338,7 +338,7 @@
   "cron_jobs": 41,
   "testes": 572,
   "workflows": 17,
-  "scripts": 95,
+  "scripts": 97,
   "docs_md": 289
  },
  "por_pasta": {
