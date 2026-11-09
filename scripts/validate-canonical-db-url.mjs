@@ -21,6 +21,16 @@ export function validateCanonicalDbUrl(raw) {
   if (!['require', 'verify-ca', 'verify-full'].includes(sslmode ?? '')) {
     throw new Error('SUPABASE_DB_URL deve exigir TLS com sslmode=require, verify-ca ou verify-full');
   }
+  // O libpq (psql) deixa a query string sobrescrever o que é validado aqui
+  // (host/hostaddr/port/dbname/user/password) e, com sslmode repetido, usa o
+  // ÚLTIMO — este validador lia o primeiro. Sem isto, uma URL aprovada como
+  // "canônica com TLS" conectava em outro servidor, sem TLS.
+  const overrides = ['host', 'hostaddr', 'port', 'dbname', 'user', 'password'].filter((key) =>
+    url.searchParams.has(key),
+  );
+  if (overrides.length > 0 || url.searchParams.getAll('sslmode').length !== 1) {
+    throw new Error('SUPABASE_DB_URL não pode sobrescrever host, porta, database, usuário ou sslmode na query string');
+  }
 
   const directHost = `db.${CANONICAL_PROJECT_REF}.supabase.co`;
   const isDirect = url.hostname === directHost && url.username === 'postgres';

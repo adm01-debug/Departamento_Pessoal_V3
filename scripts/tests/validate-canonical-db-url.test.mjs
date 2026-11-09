@@ -13,6 +13,14 @@ const validPooler = validateCanonicalDbUrl(
 assert.equal(validPooler.connectionKind, 'pooler');
 assert.match(validPooler.hostFingerprint, /^[a-f0-9]{16}$/);
 
+// Parâmetros que não redirecionam a conexão continuam aceitos.
+assert.equal(
+  validateCanonicalDbUrl(
+    `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=verify-full&connect_timeout=10&application_name=ci`,
+  ).tls,
+  'verify-full',
+);
+
 for (const [label, value] of [
   ['missing', ''],
   ['wrong protocol', 'https://example.test'],
@@ -24,6 +32,13 @@ for (const [label, value] of [
   ['TLS omitted', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres`],
   ['TLS allow downgrade', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=allow`],
   ['TLS prefer downgrade', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=prefer`],
+  // Regressão: o libpq honra estes parâmetros da query por cima da autoridade validada.
+  ['sslmode repetido (libpq usa o último)', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=require&sslmode=disable`],
+  ['host na query', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=require&host=evil.example`],
+  ['hostaddr na query', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=require&hostaddr=203.0.113.9`],
+  ['host percent-encoded na query', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=require&%68ost=evil.example`],
+  ['dbname na query', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=require&dbname=other`],
+  ['user na query (pooler)', `postgresql://postgres.${CANONICAL_PROJECT_REF}:secret@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require&user=postgres.wrong`],
 ]) {
   assert.throws(() => validateCanonicalDbUrl(value), undefined, label);
 }
