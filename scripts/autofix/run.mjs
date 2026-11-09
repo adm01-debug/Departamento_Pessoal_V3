@@ -233,10 +233,19 @@ async function main() {
       ? srcFiles.filter(inScope)
       : [...new Set([...touchedSince(cwd, startSnap), ...(only ?? [])])].filter((f) => known.has(f));
     const snap = stepSnapshot();
+    const tsFiles = touched.filter((f) => /\.tsx?$/.test(f));
+    const preLint = tsFiles.length ? await eslintJson(cwd, tsFiles) : { byFile: new Map() };
     await prettierWrite(cwd, touched);
+    // O Prettier pode reflowar uma linha e afastar um `eslint-disable-next-line` do `any` que ele cobria
+    // (avisos sobem), ou não estabilizar. Esses arquivos voltam ao estado original em vez de reprovar tudo.
+    const postLint = tsFiles.length ? await eslintJson(cwd, tsFiles) : { byFile: new Map() };
+    const count = (r, f) => r.byFile.get(f)?.length ?? 0;
+    const reverted = new Set(tsFiles.filter((f) => count(postLint, f) > count(preLint, f)));
+    for (const f of await prettierCheck(cwd, touched)) reverted.add(f);
+    for (const f of reverted) if (startSnap.has(f)) restore(cwd, startSnap, [f]);
     const changed = touchedSince(cwd, snap);
-    report.steps.format = { files: changed.length };
-    log(`prettier: ${changed.length} arquivos reformatados de ${touched.length}`);
+    report.steps.format = { files: changed.length, reverted: [...reverted] };
+    log(`prettier: ${changed.length} arquivos alterados de ${touched.length}; ${reverted.size} revertidos ao original (reflow/instável)`);
     await commit('style(autofix): prettier nos arquivos alterados', changed);
   }
 
