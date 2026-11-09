@@ -176,13 +176,14 @@ export function fechoDaTela(raiz, arquivoTelaAbs) {
     if (saltosVistos.has(atual) && saltosVistos.get(atual) <= saltos) continue;
     const primeiraVez = !saltosVistos.has(atual);
     saltosVistos.set(atual, saltos);
-    const texto = fs.readFileSync(atual, 'utf8');
+    // Comentario nao e codigo: `// export * from './X'` desligado nao pode virar import quebrado, e o
+    // exemplo de um JSDoc (`* supabase.functions.invoke('calcular-folha')`) nao e chamada da tela.
+    const texto = semComentarios(fs.readFileSync(atual, 'utf8'));
     if (primeiraVez) {
       const c = extrairChamadas(texto);
       for (const k of Object.keys(chamadas)) chamadas[k].push(...c[k]);
     }
-    // Comentario nao e import: `// export * from './X'` desligado nao pode virar import quebrado.
-    for (const imp of extrairImports(semComentarios(texto))) {
+    for (const imp of extrairImports(texto)) {
       const alvo = resolverImport(raiz, atual, imp.especificador);
       if (alvo === undefined && !/\.(css|scss|svg|png|jpe?g|webp|gif|json)(\?.*)?$|\?/.test(imp.especificador)) {
         quebrados.add(`${rel(raiz, atual)} -> ${imp.especificador}`);
@@ -266,7 +267,7 @@ export function importsDeComponentes(texto) {
 
 /** URLs do react-router em src/App.tsx, com caminho completo e protecao herdada dos pais. */
 export function lerUrls(raiz) {
-  const texto = ler(raiz, ARQ_ROTAS);
+  const texto = semComentarios(ler(raiz, ARQ_ROTAS)); // rota comentada ({/* <Route .../> */} ou //) nao e rota
   const abs = path.join(raiz, ARQ_ROTAS);
   const imports = importsDeComponentes(texto);
   const tags = lerTagsDeRota(texto);
@@ -302,7 +303,7 @@ export function lerUrls(raiz) {
 /** Itens do menu lateral: [{ grupo, rotulo, caminho }] de `menuGroups` (+ `portalItem`). */
 export function lerMenu(raiz) {
   if (!fs.existsSync(path.join(raiz, ARQ_MENU))) return [];
-  const texto = ler(raiz, ARQ_MENU);
+  const texto = semComentarios(ler(raiz, ARQ_MENU)); // item de menu comentado nao e item
   const ini = texto.indexOf('const menuGroups');
   const itens = [];
   if (ini !== -1) {

@@ -131,6 +131,27 @@ test('helpers: tags com > dentro de element, juntar caminho e casar padrao', () 
   assert.equal(semComentarios("const u = 'https://x';\n// import a from 'b';\n/* c */").includes('https://x'), true);
 });
 
+test('rota, item de menu e chamada comentados nao contam', (t) => {
+  const raiz = repo(t, {
+    'src/App.tsx': APP.replace("{/* comentario com 'aspas' */}",
+      '{/* <Route path="velha" element={<LazyPage Component={FolhaPage} />}> */}\n        // <Route path="velha2" element={<LazyPage Component={FolhaPage} />} />'),
+    'src/components/layout/AppSidebar.tsx': MENU.replace('      { icon: Users,', "      // { icon: Old, label: 'Velho', path: '/velho', color: 'x' },\n      { icon: Users,"),
+    'src/components/layout/index.ts': "export const MainLayout = () => null;\n",
+    'src/pages/LoginPage.tsx': 'export default () => null;\n',
+    'src/pages/FolhaPage.tsx': "import { retry } from '@/lib/retry';\nexport default () => retry;\n",
+    'src/lib/retry.ts': "/**\n * Exemplo:\n *   retry(() => supabase.functions.invoke('calcular-folha', { body }))\n */\nexport const retry = (fn) => fn();\n// supabase.from('tabela_comentada')\n",
+    'src/pages/UsuariosPage.tsx': 'export default () => null;\n',
+    'src/pages/PublicaPage.tsx': 'export default () => null;\n',
+    'src/pages/NotFoundPage.tsx': 'export default () => null;\n',
+  });
+  const inv = gerarRotas(raiz);
+  assert.deepEqual(inv.urls.filter((u) => u.caminho.includes('velha')), [], 'rota comentada nao e URL');
+  assert.ok(inv.urls.some((u) => u.caminho === '/usuarios' && u.admin), 'rota pai comentada nao desalinha as seguintes');
+  assert.deepEqual(inv.menu.map((m) => m.caminho), ['/folha', '/usuarios', '/nao-existe', '/portal'], 'item de menu comentado nao e item');
+  const folha = inv.telas.find((t2) => t2.arquivo === 'src/pages/FolhaPage.tsx');
+  assert.deepEqual([folha.edges, folha.tabelas], [[], []], 'exemplo em JSDoc e linha comentada nao sao chamadas da tela');
+});
+
 test('`/*` dentro de string (accept="image/*") nao engole os imports ate o proximo fim de comentario', (t) => {
   const limpo = semComentarios('<input accept="image/*,.pdf" />\nconst Dlg = lazy(() => import("@/components/dlg/Dlg"));\n/** doc */\n<p>caixa d\'agua {/* import("./comentado") */}</p>');
   assert.ok(limpo.includes('import("@/components/dlg/Dlg")'), 'import() depois do accept="image/*" foi preservado');
