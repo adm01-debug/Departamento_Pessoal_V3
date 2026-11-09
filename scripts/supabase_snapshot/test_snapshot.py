@@ -369,6 +369,24 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
         self.assertIn('"Authorization": "Bearer [REDACTED]"', text)
         self.assertNotIn("Dumped from", text)
 
+    def test_scrubbed_text_does_not_trip_the_workflow_secret_guard(self):
+        # O job `banco` aborta a publicação se o grep abaixo casar: o texto já redigido não pode casar.
+        workflow = (pathlib.Path(__file__).resolve().parents[2] / ".github/workflows/contexto.yml").read_text(encoding="utf-8")
+        guard = re.compile(re.search(r"grep -rIEl '([^']+)' \"\$SNAPSHOT_DIR\"", workflow).group(1))
+        password = "SenhaForte" + "123"  # valores falsos
+        samples = [
+            f"SELECT dblink_connect('postgresql://postgres.ref:{password}@db.example.co:5432/postgres');",
+            f"postgres://app:{password}@10.0.0.1/db e https://user:{password}@api.example.com/v1",
+            "headers:='{\"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.abcdefghijklmnop\"}'",
+            "apikey: sb_" + "secret_AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+        ]
+        for sample in samples:
+            self.assertRegex(sample, guard)
+            scrubbed = self.snapshot.scrub(sample)
+            self.assertNotRegex(scrubbed, guard)
+            self.assertNotIn(password, scrubbed)
+        self.assertEqual(self.snapshot.scrub(samples[0]), "SELECT dblink_connect('postgresql://[REDACTED]@db.example.co:5432/postgres');")
+
 
 class SnapshotFailureMatrixTests(SnapshotFixture):
     """24 sequências: seção × histórico/SQL disponível × repetição × recuperação."""
