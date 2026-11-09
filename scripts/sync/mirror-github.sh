@@ -155,7 +155,9 @@ normaliza_bytes() {
 
 CUR="$("${G[@]}" rev-parse --abbrev-ref HEAD)"
 HEAD_SHA="$("${G[@]}" rev-parse HEAD)"
-DIRTY="$("${G[@]}" status --porcelain --ignore-submodules=all 2>/dev/null)"
+# Falha fechada: se o `git status` falhar (disco cheio, índice corrompido), DIRTY viria vazio e a árvore suja seria tratada como
+# limpa — sem backup antes do descarte.
+DIRTY="$("${G[@]}" status --porcelain --ignore-submodules=all 2>"$STATE/$KEY.err")" || { say "ERRO: git status falhou; NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
 
 # 2. já espelhado?
 if [ "$CUR" = "$BRANCH" ] && [ "$HEAD_SHA" = "$REMOTE_SHA" ] && [ -z "$DIRTY" ]; then
