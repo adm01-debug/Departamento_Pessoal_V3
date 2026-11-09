@@ -57,7 +57,8 @@ export async function carregarMotores(cwd) {
     });
     return await import(pathToFileURL(out).href);
   } finally {
-    // O módulo já está em memória depois do import.
-    setTimeout(() => rmSync(dir, { recursive: true, force: true }), 2000).unref();
+    // O módulo já está em memória depois do import. (Remoção imediata: o setTimeout+unref nunca disparava antes do
+    // process.exit do verificador e cada execução deixava ~1 MB em /tmp/dp-regras-*.)
+    rmSync(dir, { recursive: true, force: true });
   }
 }
