@@ -872,6 +872,15 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                     schema["policies"] = [p for p in schema["policies"] if not (p["name"] == pol["name"] and p["table"] == pol["table"])]
                     schema["policies"].append({**pol, "src": src})
                 continue
+            if low.startswith("alter policy"):
+                # ALTER POLICY nome ON tabela [TO ...] [USING (...)] [WITH CHECK (...)]: mesma gramática do CREATE.
+                hm = SQL_POLICY_HEAD_RE.match("create" + st[5:])
+                pol = parse_policy("create" + st[5:])
+                for p in schema["policies"] if pol else []:
+                    if p["name"] == pol["name"] and p["table"] == pol["table"]:
+                        p.update({k: pol[k] for k in ("using", "check") if pol[k]}, src=src)
+                        if hm.group(7): p["roles"] = pol["roles"]
+                continue
             m = SQL_DROP_POLICY_RE.match(st)
             if m:
                 key = tkey(m.group(2), m.group(3))

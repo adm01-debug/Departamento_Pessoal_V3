@@ -199,6 +199,20 @@ export type Database = {
             "mv_total": {"body": "SELECT 1 AS total", "src": "supabase/migrations/20260101000000_views.sql"},
             "v": {"body": "SELECT 2", "src": "supabase/migrations/20260101000000_views.sql"}})
 
+    def test_alter_policy_replaces_only_the_clauses_it_declares(self):
+        self.write("supabase/migrations/20260101000000_policy.sql",
+                   "CREATE TABLE public.t (id integer);\n"
+                   "CREATE POLICY own ON public.t FOR UPDATE TO authenticated USING (id = 1) WITH CHECK (id = 1);\n"
+                   "CREATE POLICY other ON public.t FOR SELECT USING (true);\n")
+        changed = self.write("supabase/migrations/20260102000000_tighten.sql",
+                             "ALTER POLICY own ON public.t\n  USING (id = 1 AND EXISTS (SELECT 1 FROM public.u WHERE u.open));\n"
+                             'ALTER POLICY "other" ON "public"."t" TO "service_role";\n')
+        policies = {p["name"]: p for p in self.schema()["policies"]}
+        self.assertEqual((policies["own"]["using"], policies["own"]["check"], policies["own"]["roles"], policies["own"]["cmd"]),
+                         ("id = 1 AND EXISTS (SELECT 1 FROM public.u WHERE u.open)", "id = 1", "authenticated", "UPDATE"))
+        self.assertEqual((policies["other"]["using"], policies["other"]["roles"]), ("true", "service_role"))
+        self.assertEqual(policies["own"]["src"], generator.rel(changed, self.root))
+
 
 if __name__ == "__main__":
     unittest.main()
