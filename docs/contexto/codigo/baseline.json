@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "85fc652456e2ea86818e525a3d2a2bf87132e615",
+  "commit": "bff8377f8fba5b4ab0aad807cbf40908be66b53c",
   "branch": "main",
-  "data_commit": "2026-11-09T14:45:05-03:00",
+  "data_commit": "2026-11-09T17:02:39-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bff8377",
+    "data": "2026-11-09",
+    "assunto": "feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)"
+   },
    {
     "sha": "85fc652",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "70f6262",
     "data": "2026-11-08",
     "assunto": "feat: guards de job ausente em audit-canonical-project (#383)"
-   },
-   {
-    "sha": "752ceac",
-    "data": "2026-11-08",
-    "assunto": "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)"
    }
   ],
-  "arquivos_mudados_7d": 235,
+  "arquivos_mudados_7d": 238,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -270,10 +270,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/healthcheck.yml",
-    "mudancas": 9
-   },
-   {
     "arquivo": "src/services/__tests__/cnabService.test.ts",
     "mudancas": 9
    },
@@ -296,6 +292,10 @@
    {
     "arquivo": "vite.config.ts",
     "mudancas": 9
+   },
+   {
+    "arquivo": ".github/workflows/healthcheck.yml",
+    "mudancas": 8
    }
   ],
   "autores_30d": [
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 77
+    "commits": 78
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2820,
+  "arquivos_total": 2823,
   "arquivos_codigo": 1516,
   "linhas_codigo": 263124,
   "rotas": 113,
@@ -338,7 +338,7 @@
   "cron_jobs": 41,
   "testes": 572,
   "workflows": 17,
-  "scripts": 97,
+  "scripts": 99,
   "docs_md": 289
  },
  "por_pasta": {

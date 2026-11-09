@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "85fc652456e2ea86818e525a3d2a2bf87132e615",
+  "sha": "bff8377f8fba5b4ab0aad807cbf40908be66b53c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 17:48 UTC",
-  "files_total": 2841,
+  "generated_at": "2026-11-09 20:16 UTC",
+  "files_total": 2844,
   "code_files": 2331,
   "code_lines": 311015
  },
@@ -274691,10 +274691,25 @@
   }
  },
  "git": {
-  "sha": "85fc652456e2ea86818e525a3d2a2bf87132e615",
+  "sha": "bff8377f8fba5b4ab0aad807cbf40908be66b53c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bff8377",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)",
+    "files": [
+     "scripts/sync/README.md",
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/install-all-timers.sh",
+     "scripts/sync/mirror-github.sh",
+     "scripts/sync/repos.conf.example",
+     "scripts/sync/run-all.sh",
+     "scripts/sync/sync-github.sh"
+    ]
+   },
    {
     "sha": "85fc652",
     "date": "2026-11-09",
@@ -275109,23 +275124,23 @@
      "scripts/e2e/ensure-fixtures.mjs",
      "scripts/e2e/seed.mjs"
     ]
-   },
-   {
-    "sha": "dddcff4",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: estabiliza validações locais dos scripts (#367)",
-    "files": [
-     ".gitattributes",
-     "scripts/audit-edge-syntax.mjs",
-     "scripts/build-rebaseline.mjs",
-     "scripts/tests/contexto-publicacao.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/sync/README.md",
+    3
+   ],
+   [
+    "scripts/sync/autocommit-local.sh",
+    2
+   ],
+   [
+    "scripts/sync/mirror-github.sh",
+    2
+   ],
+   [
+    "scripts/sync/sync-github.sh",
     2
    ],
    [
@@ -275165,23 +275180,19 @@
     2
    ],
    [
-    "scripts/audit-edge-syntax.mjs",
-    2
+    "scripts/sync/install-all-timers.sh",
+    1
    ],
    [
-    "scripts/build-rebaseline.mjs",
-    2
+    "scripts/sync/repos.conf.example",
+    1
    ],
    [
-    "scripts/sync/autocommit-local.sh",
+    "scripts/sync/run-all.sh",
     1
    ],
    [
     "scripts/sync/install-autocommit-timer.sh",
-    1
-   ],
-   [
-    "scripts/sync/mirror-github.sh",
     1
    ],
    [
@@ -275194,14 +275205,6 @@
    ],
    [
     "src/calculators/impostos.ts",
-    1
-   ],
-   [
-    "src/calculators/rescisao.ts",
-    1
-   ],
-   [
-    "src/calculators/trabalhista-base.ts",
     1
    ]
   ]
