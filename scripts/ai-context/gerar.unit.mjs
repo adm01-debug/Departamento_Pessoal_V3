@@ -437,6 +437,20 @@ end $$;`);
   assert.deepEqual(banco.triggers.filter((tr) => tr.tabela === 'public'), [], 'trigger de molde %I não é trigger da tabela "public"');
 });
 
+test('banco: schema entre aspas ("public"."fn") e VIEW IF NOT EXISTS saem com o nome certo', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_nomes.sql', `create or replace function "public"."fn_dump"() returns boolean language sql as $$ select true $$;
+create materialized view if not exists public.mv_resumo as select 1 as id;
+create unique index mv_resumo_idx on public.mv_resumo (id);
+alter type "public"."app_role" add value if not exists 'gestor';`);
+  });
+  const banco = read('banco.json');
+  assert.deepEqual(banco.funcoes, ['fn_dump', 'is_admin']);
+  assert.deepEqual(banco.views, ['mv_resumo']);
+  assert.equal(banco.tabelas.mv_resumo, undefined);
+  assert.deepEqual(banco.enums.app_role, ['admin', 'agent', 'gestor']);
+});
+
 test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
   const read = isolatedFixture(t, (dir) => {
     w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);

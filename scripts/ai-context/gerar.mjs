@@ -482,7 +482,7 @@ secao('banco-sql', () => {
     // DO $$ ... $$ e corpos de função: statements literais (CREATE/DROP POLICY, ALTER TABLE) também valem; DDL dinâmico (EXECUTE format) é só sinalizado
     const bodyStatements = bodies.flatMap((b) => { const inner = b.replace(/^\$\w*\$|\$\w*\$$/g, '').replace(/\$(\w*)\$[\s\S]*?\$\1\$/g, "''"); if (/\bexecute\s+(format|'|\$|[a-z_]+\s*\()/i.test(inner)) banco.ddl_dinamico++; return splitStatements(inner).map((x) => { const m0 = /\b(create|drop|alter)\s[\s\S]*$/i.exec(x); return m0 ? m0[0] : ''; }).filter((x) => x && !/%[IsL]\b/.test(x)); }); // molde de format() (`ON public.%I`) não é statement literal
     for (const stRaw of [...splitStatements(sqlNoBody), ...bodyStatements]) {
-      const st = stRaw.trim(); if (!st) continue; let m;
+      const st = stRaw.trim().replace(/"public"\./gi, 'public.'); if (!st) continue; let m; // estilo pg_dump: "public"."fn" — sem isto o nome lido era "public"
       if ((m = /^create\s+(?:unlogged\s+)?table\s+(?:if\s+not\s+exists\s+)?((?:"?\w+"?\.)?"?\w+"?)\s*\(/i.exec(st))) {
         let i = m[0].length, depth = 1, body = '';
         while (i < st.length && depth > 0) { const ch = st[i++]; if (ch === '(') depth++; if (ch === ')') depth--; if (depth > 0) body += ch; }
@@ -525,7 +525,7 @@ secao('banco-sql', () => {
         banco.triggers.push({ nome: m[1], quando: m[2].toLowerCase(), evento: m[3].replace(/\s+/g, ' ').toLowerCase(), tabela: tb, funcao: m[5] }); continue;
       }
       if ((m = /^drop\s+trigger\s+(?:if\s+exists\s+)?"?(\w+)"?\s+on\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { const tb = tname(m[2]); banco.triggers = banco.triggers.filter((t) => !(t.nome === m[1] && t.tabela === tb)); continue; }
-      if ((m = /^create\s+(?:or\s+replace\s+)?(?:materialized\s+)?view\s+(?:public\.)?"?(\w+)"?/i.exec(st))) { banco.views.add(m[1]); continue; }
+      if ((m = /^create\s+(?:or\s+replace\s+)?(?:materialized\s+)?view\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?(\w+)"?/i.exec(st))) { banco.views.add(m[1]); continue; }
       if ((m = /^drop\s+(?:materialized\s+)?view\s+(?:if\s+exists\s+)?(?:public\.)?"?(\w+)"?/i.exec(st))) { banco.views.delete(m[1]); continue; }
       if ((m = /^create\s+type\s+(?:public\.)?"?(\w+)"?\s+as\s+enum\s*\(([^)]*)\)/i.exec(st))) { banco.enums[m[1]] = m[2].split(',').map((v) => v.trim().replace(/'/g, '')).filter(Boolean); continue; }
       if ((m = /^alter\s+type\s+(?:public\.)?"?(\w+)"?\s+add\s+value\s+(?:if\s+not\s+exists\s+)?'([^']+)'/i.exec(st))) { (banco.enums[m[1]] = banco.enums[m[1]] || []).push(m[2]); continue; }
