@@ -149,6 +149,18 @@ function main() {
   const violacoes = [];
   let auditadas = 0;
 
+  // Guard de false-green: função da lista que sumiu do diretório (renomeada ou
+  // movida) deixava de ser auditada em silêncio — o total só encolhia.
+  const presentes = new Set(funcoes.map((f) => f.nome));
+  for (const nome of SENSIVEIS) {
+    if (presentes.has(nome)) continue;
+    violacoes.push({
+      nome,
+      motivo: `listada em SENSIVEIS mas sem ${DIR}/${nome}/index.ts — se foi renomeada, `
+        + 'a pasta nova não está sendo auditada; atualize a lista',
+    });
+  }
+
   for (const { nome, src } of funcoes) {
     if (!/SERVICE_ROLE/.test(src)) continue; // sem service_role, o RLS já protege
     if (!SENSIVEIS.has(nome)) continue;
