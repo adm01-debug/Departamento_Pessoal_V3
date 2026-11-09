@@ -49,6 +49,7 @@ const rejected = [
   ['set_config desfaz o SET LOCAL ROLE', `SELECT set_config('role', 'postgres', true)`],
   ['U&"..." com escape Unicode', `SELECT U&"set\\005Fconfig"('role', 'postgres', true)`],
   ['pg_read_binary_file', `SELECT pg_read_binary_file('/etc/hostname')`],
+  ['função proibida entre aspas colada na palavra anterior', `SELECT"dblink"('x', 'select 1')`],
 ];
 
 for (const [label, query] of rejected) {
@@ -75,6 +76,22 @@ for (const [label, query] of accepted) {
     const result = run(query);
     assert.equal(result.status, 0, result.stderr);
     assert.equal(result.reachedPsql, true);
+  });
+}
+
+// Literal/identificador removido não pode colar os tokens vizinhos: `dateFROM`
+// e `nomeFROM` escondiam o FROM do filtro W27 (tabela public sem allow_pii).
+const needsPii = [
+  ['literal tipado colado no FROM', `SELECT date'2020-01-01'FROM colaboradores`],
+  ['alias entre aspas colado no FROM', `SELECT nome"x"FROM"colaboradores"`],
+];
+
+for (const [label, query] of needsPii) {
+  test(`exige allow_pii: ${label}`, () => {
+    const result = run(query);
+    assert.equal(result.status, 1, result.stderr);
+    assert.match(result.stderr, /W27/);
+    assert.equal(result.reachedPsql, false, 'a consulta chegou ao psql');
   });
 }
 

@@ -84,6 +84,9 @@ function stripSqlComments(input, keepQuotedNames = false) {
         if (input[i] === "'") { i++; break; }
         i++;
       }
+      // Como nos comentários: sem o espaço, `date'2020-01-01'FROM t` virava
+      // `dateFROM t` e o FROM sumia dos checks (W27 e palavras proibidas).
+      out += ' ';
       continue;
     }
     if (c === '"') {
@@ -98,7 +101,7 @@ function stripSqlComments(input, keepQuotedNames = false) {
       }
       // Para a denylist de chamadas o nome entre aspas conta: "dblink"(...) e
       // cron."schedule"(...) são as mesmas funções.
-      if (keepQuotedNames) out += input.slice(nameStart, i - 1).replace(/\W/g, '_');
+      out += keepQuotedNames ? ` ${input.slice(nameStart, i - 1).replace(/\W/g, '_')} ` : ' ';
       continue;
     }
     // Tag aceita não-ASCII, como no Postgres ([A-Za-z\200-\377_]).
@@ -109,6 +112,7 @@ function stripSqlComments(input, keepQuotedNames = false) {
       const tag = dollar[0];
       const end = input.indexOf(tag, i + tag.length);
       i = end === -1 ? n : end + tag.length;
+      out += ' ';
       continue;
     }
     out += c;
