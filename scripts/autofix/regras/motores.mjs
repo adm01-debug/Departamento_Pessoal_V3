@@ -30,7 +30,11 @@ export async function carregarMotores(cwd) {
       target: 'node22',
       outfile: out,
       alias: { '@': join(cwd, 'src') },
-      define: { 'import.meta.env': '{}' },
+      // Valores falsos: os cálculos são puros; o cliente do Supabase só precisa existir para o import não lançar.
+      // Nunca usa o .env real nem faz chamada de rede.
+      define: {
+        'import.meta.env': JSON.stringify({ VITE_SUPABASE_URL: 'http://127.0.0.1:1', VITE_SUPABASE_PUBLISHABLE_KEY: 'chave-falsa-para-verificacao', MODE: 'test', DEV: false, PROD: true, BASE_URL: '/' }),
+      },
       logLevel: 'silent',
     });
     return await import(pathToFileURL(out).href);

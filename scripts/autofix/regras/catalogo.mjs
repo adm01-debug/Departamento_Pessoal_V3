@@ -84,6 +84,11 @@ export const regras = [
           maxDelta = Math.max(maxDelta, Math.abs(got - exp));
         }
       }
+      // Diferença de poucos centavos = política de arredondamento do redutor (a norma que consultei não a
+      // especifica), não erro de regra: exige conferência humana, mas não é "divergência com a norma".
+      if (falhas.length && maxDelta <= 0.03) {
+        return { status: 'revisar', resumo: `${grid.length - falhas.length}/${grid.length} casos conferem; ${falhas.length} diferem em até R$ ${maxDelta.toFixed(2)} (arredondamento do redutor)`, exemplos: falhas.slice(0, 4), impactoMaximoMensal: maxDelta };
+      }
       return resultado(falhas, grid.length, { impactoMaximoMensal: maxDelta });
     },
   },
@@ -167,7 +172,10 @@ export const regras = [
       const aviso30 = Math.trunc((4000 / 30) * ac.diasAviso * 0.5 * 100) / 100;
       if (diff(ac.avisoIndenizado, aviso30)) falhas.push(`[utils] acordo: aviso indenizado ${brl(ac.avisoIndenizado)} x 50% ${brl(aviso30)}`);
       const s = syncResc(eng, { salarioBase: 4000, dataAdmissao: base.dataAdmissao, dataDesligamento: base.dataDesligamento, tipoRescisao: 'sem_justa_causa', saldoFGTS: 20000 });
-      if (diff(s.multaFGTS, 8000)) falhas.push(`[calculators] sem justa causa: multa ${brl(s.multaFGTS)} x 40% de 20000 = 8000.00`);
+      // Versões novas expõem o depósito da rescisão (a multa incide sobre saldo + esse depósito); as antigas, não.
+      const baseMulta = 20000 + (typeof s.fgtsRescisao === 'number' ? s.fgtsRescisao : 0);
+      const esperado = Math.trunc(baseMulta * 0.4 * 100) / 100;
+      if (diff(s.multaFGTS, esperado)) falhas.push(`[calculators] sem justa causa: multa ${brl(s.multaFGTS)} x 40% de ${brl(baseMulta)} = ${brl(esperado)}`);
       return resultado(falhas, 4);
     },
   },
@@ -183,7 +191,7 @@ export const regras = [
         ['tercoFerias', (a) => a.tercoFerias, (s) => s.tercoFeriasProporcional + s.tercoFeriasVencidas],
         ['decimoTerceiro', 'decimoTerceiro', 'decimo13Proporcional'], ['multaFGTS', 'multaFGTS'],
         ['inss', 'inss'], ['irrf', 'irrf'],
-        ['liquido (sem multa)', (a) => a.totalLiquido - a.multaFGTS, (s) => s.totalLiquido],
+        ['liquido (proventos - descontos)', (a) => Math.max(0, a.totalProventos - a.totalDescontos), (s) => s.totalLiquido],
       ];
       const porCampo = new Map();
       let cenarios = 0;

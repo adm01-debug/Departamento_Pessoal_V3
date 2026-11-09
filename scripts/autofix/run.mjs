@@ -129,6 +129,15 @@ async function commit(msg, files) {
 
 async function main() {
   acquireLock();
+  // A VM do WSL já travou por falta de memória: com pouca folga, não roda (use --force para ignorar).
+  const minMb = Number(opt('min-mem-mb', '6000'));
+  const availMb = Number(/MemAvailable:\s+(\d+)/.exec(readFileSync('/proc/meminfo', 'utf8'))?.[1] ?? 0) / 1024;
+  if (!flag('force') && availMb < minMb) {
+    log(`memória disponível ${Math.round(availMb)} MB < ${minMb} MB; adiado (use --force para ignorar)`);
+    report.skipped = [`memória ${Math.round(availMb)} MB`];
+    report.ok = true;
+    return 0;
+  }
   setPriority(10); // não competir com o editor/WSL
 
   if (HERE) {

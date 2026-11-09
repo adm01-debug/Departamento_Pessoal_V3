@@ -32,8 +32,6 @@ WorkingDirectory=$REPO
 Environment=PATH=$(dirname "$NODE"):/usr/local/bin:/usr/bin:/bin
 ExecStart=$NODE $REPO/scripts/autofix/run.mjs
 Nice=10
-# Se a VM estiver sem folga de memória, melhor não rodar (a VM já travou por isso).
-ExecCondition=/bin/sh -c 'test "\$(awk "/MemAvailable/ {print int(\\\$2/1024)}" /proc/meminfo)" -gt 6000'
 TimeoutStartSec=3h
 EOF
 
