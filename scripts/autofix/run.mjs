@@ -94,6 +94,9 @@ async function setupWorktree(stamp) {
   } else {
     await git(REPO, 'worktree', 'add', '-q', '-B', branch, wt, BASE);
   }
+  for (const b of (await git(REPO, 'branch', '--list', 'autofix/*', '--format=%(refname:short)')).split('\n').filter(Boolean)) {
+    if (b !== branch) await sh('git', ['branch', '-d', b], { cwd: REPO });
+  }
   const nm = join(wt, 'node_modules');
   if (!existsSync(nm)) symlinkSync(join(REPO, 'node_modules'), nm);
   return { wt, branch };
@@ -131,6 +134,21 @@ async function main() {
   if (HERE) {
     cwd = await git(process.cwd(), 'rev-parse', '--show-toplevel');
   } else {
+    // Idempotência: se já existe uma branch autofix/* com commits ainda não integrados, não empilha outra.
+    // (Depois do merge/squash do PR, apague a branch: git branch -D autofix/<data>.)
+    if (!DRY && !flag('force')) {
+      await sh('git', ['fetch', 'origin', '--quiet'], { cwd: REPO });
+      const pend = (await sh('git', ['branch', '--list', 'autofix/*', '--no-merged', BASE], { cwd: REPO })).stdout
+        .split('\n')
+        .map((l) => l.replace(/^[*+\s]+/, '').trim())
+        .filter(Boolean);
+      if (pend.length) {
+        log(`já existe branch autofix pendente (${pend.join(', ')}); nada a fazer. Use --force para ignorar.`);
+        report.skipped = pend;
+        report.ok = true;
+        return 0;
+      }
+    }
     const w = await setupWorktree(stamp);
     cwd = w.wt;
     report.branch = w.branch;
