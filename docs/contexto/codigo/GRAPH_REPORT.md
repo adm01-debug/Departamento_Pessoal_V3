@@ -1,7 +1,7 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-09)
 
 ## Corpus Check
-- 2730 files · ~2,379,967 words
+- 2730 files · ~2,379,972 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 35 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2b341deb`
+- Built from commit: `560e7150`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

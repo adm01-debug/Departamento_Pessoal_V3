@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2b341debbfd9c644fe2b5d4212aba773350bd6a6",
+  "commit": "560e7150bbb7878aa10abaca078aa22d7d472225",
   "branch": "main",
-  "data_commit": "2026-11-09T13:10:05-03:00",
+  "data_commit": "2026-11-09T16:17:54Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "560e715",
+    "data": "2026-11-09",
+    "assunto": "fix: bypass MFA em E2E para rotas admin (VITE_E2E_BYPASS_MFA) (#352)"
+   },
    {
     "sha": "2b341de",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "0e4f470",
     "data": "2026-11-08",
     "assunto": "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard"
-   },
-   {
-    "sha": "c83e9a1",
-    "data": "2026-11-08",
-    "assunto": "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock"
    }
   ],
   "arquivos_mudados_7d": 231,
@@ -222,12 +222,12 @@
     "mudancas": 15
    },
    {
-    "arquivo": ".github/workflows/e2e.yml",
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 14
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 14
+    "arquivo": ".github/workflows/e2e.yml",
+    "mudancas": 13
    },
    {
     "arquivo": ".github/workflows/security.yml",
@@ -250,12 +250,12 @@
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": "src/integrations/supabase/client.ts",
     "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/client.ts",
-    "mudancas": 11
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 10
    },
    {
     "arquivo": "deno.lock",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 74
+    "commits": 75
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2816,
   "arquivos_codigo": 1516,
-  "linhas_codigo": 263122,
+  "linhas_codigo": 263124,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -612,7 +612,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72891
+   "linhas": 72893
   },
   "src/constants": {
    "arquivos": 6,
