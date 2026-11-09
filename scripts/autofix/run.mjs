@@ -19,7 +19,7 @@
  */
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync } from 'node:fs';
-import { homedir, tmpdir } from 'node:os';
+import { homedir, tmpdir, setPriority } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { sh, git, bin, log, typecheck, newErrors, eslintJson, listSrc, snapshot, touchedSince, restore, prettierWrite, prettierCheck } from './lib.mjs';
@@ -126,7 +126,7 @@ async function commit(msg, files) {
 
 async function main() {
   acquireLock();
-  process.setPriority(10); // não competir com o editor/WSL
+  setPriority(10); // não competir com o editor/WSL
 
   if (HERE) {
     cwd = await git(process.cwd(), 'rev-parse', '--show-toplevel');
