@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 83,
+ "total": 92,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -259,6 +259,92 @@
    "npm_scripts": [
     "audit:types-drift"
    ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/any-codemod.mjs",
+   "descricao": "Estratégia \"tentar e provar\": para cada `any` aplica uma transformação mecânica de TIPO (nunca muda runtime) e só mantém se o `tsc` não ganhar nenhum erro novo.",
+   "linhas": 180,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/install-timer.sh",
+   "descricao": "Instala (ou remove) um timer systemd de USUÁRIO que roda o autofix todo dia de madrugada. Não roda nada por si só até você executar este script. Sem push: o resultado fica numa",
+   "linhas": 56,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/lib.mjs",
+   "descricao": "Utilitários compartilhados do autofix. Zero IA: só ferramentas determinísticas * Executa um comando sem shell; nunca lança por exit code != 0 (a menos que allowFail=false). */",
+   "linhas": 134,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/regras/catalogo.mjs",
+   "descricao": "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e confiança, e um `run(ctx)` que EXECUTA os cálculos reais do sistema e compara com a referência.",
+   "linhas": 263,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/regras/dados.mjs",
+   "descricao": "Regras de DADOS verificadas por replay ESTÁTICO das migrations (supabase/migrations/*.sql, em ordem). Reconstrói o estado final aproximado do schema (tabelas, colunas, RLS, policies, funções, índices,",
+   "linhas": 275,
+   "env": [
+    "DATABASE_URL",
+    "PGHOST"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/regras/motores.mjs",
+   "descricao": "Carrega os motores de cálculo REAIS do sistema (TypeScript) sem build do projeto: empacota com o esbuild que já está em node_modules, resolvendo o alias \"@/\". Nada é executado além de funções puras.",
+   "linhas": 46,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/regras/referencia.mjs",
+   "descricao": "Implementação de REFERÊNCIA das regras trabalhistas/tributárias, escrita a partir das fontes legais e independente do código do sistema. É o \"gabarito\" contra o qual o verificador compara o sistema.",
+   "linhas": 106,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/regras/verificar.mjs",
+   "descricao": "* verificar — confere as regras de negócio de CÁLCULO do sistema contra uma referência legal. Sem IA.",
+   "linhas": 172,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/autofix/run.mjs",
+   "descricao": "* Modos",
+   "linhas": 357,
+   "env": [
+    "XDG_CACHE_HOME"
+   ],
+   "npm_scripts": [],
    "workflows": [],
    "orfao": false
   },

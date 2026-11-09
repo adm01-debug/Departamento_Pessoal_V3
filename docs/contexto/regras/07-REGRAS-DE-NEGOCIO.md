@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d03a83b8e1` · branch `main` · 2026-11-09 10:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b590d3ffdd` · branch `main` · 2026-11-09 14:57 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4253,6 +4253,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | SUPABASE_DB_URL não pertence ao projeto canônico | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL não é uma URI válida | `scripts/validate-canonical-db-url.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
+| eslint não devolveu JSON (exit ${r.code}):\n${(r.stderr \|\| r.stdout).slice(0, 2000)} | `scripts/autofix/lib.mjs` |
+| prettier falhou:\n${r.stderr \|\| r.stdout} | `scripts/autofix/lib.mjs` |
+| ${wt} existe mas não é um worktree do autofix (branch  | `scripts/autofix/run.mjs` |
+| ${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status) | `scripts/autofix/run.mjs` |
+| outra execução do autofix está ativa (${LOCK}) | `scripts/autofix/run.mjs` |
+| tsc quebrou na linha de base:\n${baseTsc.raw.slice(0, 1500)} | `scripts/autofix/run.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/classify-migration-drift.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/derive-pending-migrations.mjs` |
 | --entrada exige o caminho do arquivo com as respostas do banco.sql | `scripts/inventario/gerar-banco.mjs` |
@@ -4520,13 +4526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Configure os dados bancários primeiro | `src/pages/FinanceiroBancarioPage.tsx` |
 | Erro ao carregar dados bancários | `src/pages/FinanceiroBancarioPage.tsx` |
 | Erro ao salvar configuração | `src/pages/FinanceiroBancarioPage.tsx` |
-| Nenhum registro de pagamento encontrado no arquivo — confira se o layout é CNAB 240 ou 400. | `src/pages/FinanceiroBancarioPage.tsx` |
-| Selecione uma folha de pagamento | `src/pages/FinanceiroBancarioPage.tsx` |
-| Nenhum evento para exportar | `src/pages/FolhaCompliancePage.tsx` |
-| Nenhuma folha encontrada para encerramento | `src/pages/FolhaPagamentoPage.tsx` |
-| Selecione uma empresa antes de calcular a folha. | `src/pages/FolhaPagamentoPage.tsx` |
-| Selecione um colaborador | `src/pages/GeradorDocumentosPage.tsx` |
-| … +438 linhas — lista completa em `context.json` | |
+| … +444 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

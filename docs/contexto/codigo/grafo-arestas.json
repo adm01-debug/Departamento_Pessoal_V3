@@ -7,6 +7,31 @@
    "src/hooks/index.ts",
    "src/types/index.ts"
   ],
+  "scripts/autofix/any-codemod.mjs": [
+   "scripts/autofix/lib.mjs"
+  ],
+  "scripts/autofix/regras/catalogo.mjs": [
+   "scripts/autofix/regras/referencia.mjs"
+  ],
+  "scripts/autofix/regras/motores.mjs": [
+   "src/calculators/beneficios.ts",
+   "src/calculators/impostos.ts",
+   "src/calculators/rescisao.ts",
+   "src/calculators/tabelas.ts",
+   "src/calculators/trabalhista-base.ts",
+   "src/utils/calculoFerias.ts",
+   "src/utils/folhaCalc.ts",
+   "src/utils/rescisaoCalc.ts"
+  ],
+  "scripts/autofix/regras/verificar.mjs": [
+   "scripts/autofix/regras/catalogo.mjs",
+   "scripts/autofix/regras/dados.mjs",
+   "scripts/autofix/regras/motores.mjs"
+  ],
+  "scripts/autofix/run.mjs": [
+   "scripts/autofix/any-codemod.mjs",
+   "scripts/autofix/lib.mjs"
+  ],
   "src/App.tsx": [
    "src/components/AdminRoute.tsx",
    "src/components/ProtectedRoute.tsx",

@@ -5,11 +5,11 @@
   "linguagens": [
    "TypeScript (1418)",
    "SQL (817)",
-   "Markdown (287)",
-   "JavaScript (86)",
+   "Markdown (288)",
+   "JavaScript (94)",
    "JSON (54)",
    "YAML (52)",
-   "Shell (45)",
+   "Shell (46)",
    "Python (5)"
   ],
   "linguagem_principal": "TypeScript",
@@ -1826,6 +1826,10 @@
     "ocorrencias": 5
    },
    {
+    "papel": "service_role",
+    "ocorrencias": 4
+   },
+   {
     "papel": "tab",
     "ocorrencias": 4
    },
@@ -1839,10 +1843,6 @@
    },
    {
     "papel": "rh",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "service_role",
     "ocorrencias": 3
    },
    {

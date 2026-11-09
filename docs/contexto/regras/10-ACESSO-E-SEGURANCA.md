@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `d03a83b8e1` · branch `main` · 2026-11-09 10:29 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b590d3ffdd` · branch `main` · 2026-11-09 14:57 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -320,7 +320,7 @@
 
 > `—` com RLS ligado = ninguém além de service_role. `sem RLS` = qualquer chave anon lê/escreve tudo.
 
-## Onde o RLS é IGNORADO (service_role) — 278 arquivo(s)
+## Onde o RLS é IGNORADO (service_role) — 279 arquivo(s)
 
 - `e2e/cleanup/seed-cleanup.spec.ts`
 - `scripts/ai-context/cenarios.mjs`
@@ -329,6 +329,7 @@
 - `scripts/audit-rls-least-privilege.mjs`
 - `scripts/audit-rls-pii.mjs`
 - `scripts/audit-rls-tenant-open.mjs`
+- `scripts/autofix/regras/dados.mjs`
 - `scripts/e2e/ensure-fixtures.mjs`
 - `scripts/e2e/seed.mjs`
 - `scripts/e2e/verify-seed.mjs`
@@ -471,8 +472,7 @@
 - `supabase/migrations/20260715154911_30dca9dd-27bf-46ba-a1c7-e1cb3923bf92.sql`
 - `supabase/migrations/20260715173728_392ca7e2-2bbc-474b-8158-ccbc730c890b.sql`
 - `supabase/migrations/20260716175930_c7892081-2003-4c95-a887-57976b9e54ef.sql`
-- `supabase/migrations/20260717133719_0ecd2109-adf2-4d73-9e66-51e9608755e9.sql`
-- … +128 (lista completa em `context.json`)
+- … +129 (lista completa em `context.json`)
 
 ## Funções SQL `SECURITY DEFINER` (rodam com privilégio do dono, ignoram RLS)
 

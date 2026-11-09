@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "d03a83b8e1fda721bed43c19f405eef1c9df45bc",
+  "sha": "b590d3ffdd099148dcf29641cbfc100e2aa500dc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 10:29 UTC",
-  "files_total": 2825,
-  "code_files": 2323,
-  "code_lines": 309292
+  "generated_at": "2026-11-09 14:57 UTC",
+  "files_total": 2835,
+  "code_files": 2331,
+  "code_lines": 310825
  },
  "version": "1.3.2",
- "facts_hash": "1925455d47eeeea7",
+ "facts_hash": "a347228e3c7bd566",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -344,7 +344,7 @@
    ".sql": 817,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 61,
+   ".mjs": 69,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -94893,8 +94893,8 @@
   },
   {
    "module": "scripts",
-   "files": 91,
-   "lines": 18287,
+   "files": 99,
+   "lines": 19820,
    "tables": [
     "a",
     "audit_log",
@@ -94929,6 +94929,12 @@
     "generate-service.js: $",
     "validate-canonical-db-url.mjs: CANONICAL_PROJECT_REF, validateCanonicalDbUrl",
     "gerar.unit.mjs: AppRoutes, useContacts",
+    "any-codemod.mjs: collectCandidates, applyEdits, runAnyPass",
+    "lib.mjs: log, sh, git, bin, typecheck, errKey",
+    "catalogo.mjs: regras",
+    "dados.mjs: dividirStatements, reconstruirSchema, regrasDados",
+    "motores.mjs: carregarMotores",
+    "referencia.mjs: TABELAS, refINSS, refIRRFTabela, refIRRF, refFGTS, refDiasAviso",
     "derive-pending-migrations.mjs: DEFAULT_MAX_PENDING, derivePendingMigrations",
     "gerar-banco.mjs: PROJETO_CANONICO, SECOES_OBRIGATORIAS, LIMIARES, PARECE_CREDENCIAL, lerSecoes, limparErro",
     "gerar-rotas.mjs: resolverImport, extrairImports, extrairChamadas, semComentarios, PASTAS_LIVRES, MAX_SALTOS_FEATURE",
@@ -94967,17 +94973,18 @@
     "node:child_process",
     "node:crypto",
     "node:fs",
+    "node:module",
     "node:os",
     "node:path",
     "node:test",
     "node:url",
     "node:vm",
     "path",
-    "react",
-    "react-router-dom"
+    "react"
    ],
    "imports_modules": [
     "src/b",
+    "src/calculators",
     "src/components",
     "src/config",
     "src/hooks",
@@ -94985,6 +94992,7 @@
     "src/pages",
     "src/routes",
     "src/types",
+    "src/utils",
     "src/views"
    ],
    "file_list": [
@@ -95032,6 +95040,14 @@
     "scripts/ai-context/cenarios.mjs",
     "scripts/ai-context/gerar.mjs",
     "scripts/ai-context/gerar.unit.mjs",
+    "scripts/autofix/any-codemod.mjs",
+    "scripts/autofix/lib.mjs",
+    "scripts/autofix/run.mjs",
+    "scripts/autofix/regras/catalogo.mjs",
+    "scripts/autofix/regras/dados.mjs",
+    "scripts/autofix/regras/motores.mjs",
+    "scripts/autofix/regras/referencia.mjs",
+    "scripts/autofix/regras/verificar.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
     "scripts/db/classify-migration-drift.mjs",
     "scripts/db/derive-pending-migrations.mjs",
@@ -95059,15 +95075,7 @@
     "scripts/simulacao/simulate_art145.cjs",
     "scripts/simulacao/simulate_irrf.cjs",
     "scripts/simulacao/simulate_notif_d3.cjs",
-    "scripts/simulacao/simulate_rescisao.cjs",
-    "scripts/simulacao/verify_bridge_contract.cjs",
-    "scripts/simulacao/verify_bridge_write_guard.cjs",
-    "scripts/simulacao/verify_irrf_fix.cjs",
-    "scripts/simulacao/verify_rescisao_fix.cjs",
-    "scripts/supabase_snapshot/snapshot.py",
-    "scripts/supabase_snapshot/test_snapshot.py",
-    "scripts/tests/audit-edge-audit-log-contract.test.mjs",
-    "scripts/tests/contexto-ai-context.test.mjs"
+    "scripts/simulacao/simulate_rescisao.cjs"
    ]
   },
   {
@@ -101663,6 +101671,7 @@
     "scripts/audit-rls-tenant-open.mjs",
     "scripts/audit-schema-drift.mjs",
     "scripts/audit-secdef-authz.mjs",
+    "scripts/autofix/regras/dados.mjs",
     "scripts/inventario/gerar-banco.mjs",
     "scripts/smoke-hash-triggers.mjs"
    ],
@@ -101894,6 +101903,7 @@
     "scripts/audit-rls-tenant-open.mjs",
     "scripts/audit-schema-drift.mjs",
     "scripts/audit-secdef-authz.mjs",
+    "scripts/autofix/regras/dados.mjs",
     "scripts/smoke-hash-triggers.mjs"
    ],
    "PIX_APROVACAO_DUPLA_CENTAVOS": [
@@ -102328,6 +102338,9 @@
    ],
    "WEBHOOK_SECRET": [
     "supabase/functions/webhook/index.ts"
+   ],
+   "XDG_CACHE_HOME": [
+    "scripts/autofix/run.mjs"
    ]
   },
   "rpc": {
@@ -105567,6 +105580,30 @@
    {
     "file": "scripts/ai-context/cenarios.mjs",
     "msg": "${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)}"
+   },
+   {
+    "file": "scripts/autofix/lib.mjs",
+    "msg": "eslint não devolveu JSON (exit ${r.code}):\\n${(r.stderr || r.stdout).slice(0, 2000)}"
+   },
+   {
+    "file": "scripts/autofix/lib.mjs",
+    "msg": "prettier falhou:\\n${r.stderr || r.stdout}"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "${wt} existe mas não é um worktree do autofix (branch "
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status)"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "outra execução do autofix está ativa (${LOCK})"
+   },
+   {
+    "file": "scripts/autofix/run.mjs",
+    "msg": "tsc quebrou na linha de base:\\n${baseTsc.raw.slice(0, 1500)}"
    },
    {
     "file": "scripts/db/classify-migration-drift.mjs",
@@ -207123,6 +207160,7 @@
    "scripts/audit-rls-least-privilege.mjs",
    "scripts/audit-rls-pii.mjs",
    "scripts/audit-rls-tenant-open.mjs",
+   "scripts/autofix/regras/dados.mjs",
    "scripts/e2e/ensure-fixtures.mjs",
    "scripts/e2e/seed.mjs",
    "scripts/e2e/verify-seed.mjs",
@@ -226768,6 +226806,160 @@
     "invoke("
    ],
    "uses_service_role": true
+  },
+  "scripts/autofix/any-codemod.mjs": {
+   "path": "scripts/autofix/any-codemod.mjs",
+   "lines": 180,
+   "exports": [
+    "function collectCandidates",
+    "function applyEdits",
+    "function runAnyPass"
+   ],
+   "rule_comments": [
+    "estado final = somente o aceito (todo aceito foi provado em conjunto)"
+   ],
+   "doc": "Codemod determinístico para `@typescript-eslint/no-explicit-any` (823 avisos, sem autofix no ESLint). Estratégia \"tentar e provar\": para cada `any` aplica uma transformação mecânica de TIPO (nunca muda runtime) e só mantém se o `tsc` não ganhar nenhum erro novo. drop : `(h: any) => …` em callback -> …",
+   "calc_fns": [
+    {
+     "name": "applyEdits",
+     "params": "text, edits",
+     "body": "let out = text; for (const e of [...edits].sort((a, b) => b.start - a.start)) out = out.slice(0, e.start) + e.text + out.slice(e.end); return out;"
+    }
+   ]
+  },
+  "scripts/autofix/lib.mjs": {
+   "path": "scripts/autofix/lib.mjs",
+   "lines": 134,
+   "exports": [
+    "const log",
+    "function sh",
+    "const git",
+    "const bin",
+    "function typecheck",
+    "const errKey",
+    "function newErrors",
+    "function eslintJson",
+    "function listSrc",
+    "function snapshot",
+    "function touchedSince",
+    "function restore",
+    "function prettierWrite",
+    "function prettierCheck"
+   ],
+   "errors": [
+    "eslint não devolveu JSON (exit ${r.code}):\\n${(r.stderr || r.stdout).slice(0, 2000)}",
+    "prettier falhou:\\n${r.stderr || r.stdout}"
+   ],
+   "doc": "Utilitários compartilhados do autofix. Zero IA: só ferramentas determinísticas (tsc, eslint, prettier, git). Nada aqui faz chamada de rede além do git fetch."
+  },
+  "scripts/autofix/run.mjs": {
+   "path": "scripts/autofix/run.mjs",
+   "lines": 357,
+   "env": [
+    "XDG_CACHE_HOME"
+   ],
+   "errors": [
+    "${wt} existe mas não é um worktree do autofix (branch ",
+    "${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status)",
+    "outra execução do autofix está ativa (${LOCK})",
+    "tsc quebrou na linha de base:\\n${baseTsc.raw.slice(0, 1500)}"
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/autofix/regras/catalogo.mjs": {
+   "path": "scripts/autofix/regras/catalogo.mjs",
+   "lines": 263,
+   "exports": [
+    "const regras"
+   ],
+   "params": [
+    {
+     "name": "TOL",
+     "value": "0.011"
+    }
+   ],
+   "rule_comments": [
+    "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e",
+    "ou a regra é discutível; exige decisão humana) | 'nao_verificavel'.",
+    "especifica), não erro de regra: exige conferência humana, mas não é \"divergência com a norma\".",
+    "Versões novas expõem o depósito da rescisão (a multa incide sobre saldo + esse depósito); as antigas, não."
+   ],
+   "doc": "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e confiança, e um `run(ctx)` que EXECUTA os cálculos reais do sistema e compara com a referência. status: 'ok' | 'divergente' (o sistema contraria a norma/referência) | 'revisar' (motores divergem entr …",
+   "percents": [
+    "const aviso30 = Math.trunc((4000 / 30) * ac.diasAviso * 0.5 * 100) / 100;",
+    "const esp20 = Math.trunc((20000 + ac.fgtsRescisao) * 0.2 * 100) / 100;",
+    "const esp40 = Math.trunc((20000 + sjc.fgtsRescisao) * 0.4 * 100) / 100;",
+    "const esperado = Math.trunc(baseMulta * 0.4 * 100) / 100;"
+   ]
+  },
+  "scripts/autofix/regras/dados.mjs": {
+   "path": "scripts/autofix/regras/dados.mjs",
+   "lines": 275,
+   "exports": [
+    "function dividirStatements",
+    "function reconstruirSchema",
+    "const regrasDados"
+   ],
+   "env": [
+    "DATABASE_URL",
+    "PGHOST"
+   ],
+   "role_checks": [
+    "service_role"
+   ],
+   "doc": "Regras de DADOS verificadas por replay ESTÁTICO das migrations (supabase/migrations/*.sql, em ordem). Reconstrói o estado final aproximado do schema (tabelas, colunas, RLS, policies, funções, índices, FKs) sem precisar de banco. É uma aproximação por regex: serve para achar candidatos; todo achado c …",
+   "calc_fns": [
+    {
+     "name": "aplicar",
+     "params": "st, origem",
+     "body": "let m; if ((m = re(String.raw`^(revoke|grant)\\s+.*?\\bon\\s+(?:table\\s+)?${TBL}\\s+(?:from|to)\\s+(.+)$`, 'is').exec(st)) && !/\\bon\\s+(?:all\\s+)?(?:tables|functions|sequences)\\s+in\\s+schema/i.test(st)) { const t = norm(m[2]); const papeis = m[3].toLowerCase().replace(/\\s+with\\s+.*$/, '').split(',').map((x) => x.trim().replace(/^group\\s+/, '')); const alvo = papeis.flatMap((x) => (x === 'public' ? ['anon', 'authenticated'] : [x])); if (!acl.has(t)) acl.set(t, new Set()); if (m[1].toLowerCase() === 'r …"
+    }
+   ],
+   "temporal": [
+    "const r = spawnSync('node', [f], { cwd, encoding: 'utf8', timeout: 120000 });"
+   ],
+   "uses_service_role": true
+  },
+  "scripts/autofix/regras/motores.mjs": {
+   "path": "scripts/autofix/regras/motores.mjs",
+   "lines": 46,
+   "exports": [
+    "function carregarMotores"
+   ],
+   "doc": "Carrega os motores de cálculo REAIS do sistema (TypeScript) sem build do projeto: empacota com o esbuild que já está em node_modules, resolvendo o alias \"@/\". Nada é executado além de funções puras."
+  },
+  "scripts/autofix/regras/referencia.mjs": {
+   "path": "scripts/autofix/regras/referencia.mjs",
+   "lines": 106,
+   "exports": [
+    "const TABELAS",
+    "function refINSS",
+    "function refIRRFTabela",
+    "function refIRRF",
+    "const refFGTS",
+    "const refDiasAviso",
+    "function consistenciaIRRF"
+   ],
+   "rule_comments": [
+    "[limite superior da faixa, alíquota]; incidência progressiva sobre a parcela dentro de cada faixa",
+    "[limite superior, alíquota, parcela a deduzir]",
+    "25% do limite de isenção (2.428,80)"
+   ],
+   "doc": "Implementação de REFERÊNCIA das regras trabalhistas/tributárias, escrita a partir das fontes legais e independente do código do sistema. É o \"gabarito\" contra o qual o verificador compara o sistema. Cada tabela traz fonte e confiança. Atualizar uma tabela = editar ESTE arquivo (uma vez por ano). con …",
+   "percents": [
+    "const simpl = f[0][0] * 0.25;",
+    "descontoSimplificado: 607.2, // 25% do limite de isenção (2.428,80)"
+   ]
+  },
+  "scripts/autofix/regras/verificar.mjs": {
+   "path": "scripts/autofix/regras/verificar.mjs",
+   "lines": 172,
+   "rule_comments": [
+    "* verificar — confere as regras de negócio de CÁLCULO do sistema contra uma referência legal. Sem IA.",
+    "Constantes de tabela com ano/salário-mínimo desatualizado dentro do próprio arquivo de tabelas.",
+    "Verificação das regras de negócio (cálculo e dados) — ${stamp}`,"
+   ],
+   "doc": "!/usr/bin/env node"
   },
   "scripts/ci/check-claude-md-integrity.mjs": {
    "path": "scripts/ci/check-claude-md-integrity.mjs",
@@ -274499,10 +274691,28 @@
   }
  },
  "git": {
-  "sha": "d03a83b8e1fda721bed43c19f405eef1c9df45bc",
+  "sha": "b590d3ffdd099148dcf29641cbfc100e2aa500dc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b590d3f",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)",
+    "files": [
+     "scripts/autofix/README.md",
+     "scripts/autofix/any-codemod.mjs",
+     "scripts/autofix/install-timer.sh",
+     "scripts/autofix/lib.mjs",
+     "scripts/autofix/regras/catalogo.mjs",
+     "scripts/autofix/regras/dados.mjs",
+     "scripts/autofix/regras/motores.mjs",
+     "scripts/autofix/regras/referencia.mjs",
+     "scripts/autofix/regras/verificar.mjs",
+     "scripts/autofix/run.mjs"
+    ]
+   },
    {
     "sha": "d03a83b",
     "date": "2026-11-09",
@@ -274839,15 +275049,6 @@
     "files": [
      "e2e/authenticated/audit-checklist.spec.ts"
     ]
-   },
-   {
-    "sha": "dc7d1eb",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "fix: bypass MFA no ProtectedRoute para E2E (VITE_E2E_BYPASS_MFA) (#359)",
-    "files": [
-     "src/components/ProtectedRoute.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -274924,11 +275125,11 @@
     2
    ],
    [
-    ".github/workflows/ci.yml",
+    "scripts/autofix/README.md",
     1
    ],
    [
-    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "scripts/autofix/any-codemod.mjs",
     1
    ]
   ]

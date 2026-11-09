@@ -30,8 +30,8 @@
   "migrations": "supabase/migrations",
   "scripts": [
    "scripts/simulacao (12)",
-   "scripts/inventario (5)",
-   "scripts/db (3)"
+   "scripts/autofix (9)",
+   "scripts/inventario (5)"
   ],
   "docs": [
    "docs (72)",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)",
    "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)",
    "fix: corrige 3 inconsistências de doc achadas na validação pós-#395",
    "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)",
-   "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)",
-   "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)"
+   "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

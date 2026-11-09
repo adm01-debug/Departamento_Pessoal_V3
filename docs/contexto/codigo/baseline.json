@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "d03a83b8e1fda721bed43c19f405eef1c9df45bc",
+  "commit": "b590d3ffdd099148dcf29641cbfc100e2aa500dc",
   "branch": "main",
-  "data_commit": "2026-11-09T10:23:02Z",
+  "data_commit": "2026-11-09T11:56:44-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b590d3f",
+    "data": "2026-11-09",
+    "assunto": "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)"
+   },
    {
     "sha": "d03a83b",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "618e38b",
     "data": "2026-11-07",
     "assunto": "fix: permite testar chrome-extension no harness (#369)"
-   },
-   {
-    "sha": "f231df4",
-    "data": "2026-11-07",
-    "assunto": "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)"
    }
   ],
-  "arquivos_mudados_7d": 134,
+  "arquivos_mudados_7d": 144,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 84
+    "mudancas": 83
    },
    {
     "arquivo": "package-lock.json",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 70
+    "commits": 71
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2804,
-  "arquivos_codigo": 1508,
-  "linhas_codigo": 261401,
+  "arquivos_total": 2814,
+  "arquivos_codigo": 1516,
+  "linhas_codigo": 262934,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -338,8 +338,8 @@
   "cron_jobs": 41,
   "testes": 572,
   "workflows": 17,
-  "scripts": 83,
-  "docs_md": 287
+  "scripts": 92,
+  "docs_md": 288
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -469,6 +469,10 @@
   "scripts/audit-types-drift.mjs": {
    "arquivos": 1,
    "linhas": 135
+  },
+  "scripts/autofix": {
+   "arquivos": 8,
+   "linhas": 1533
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
@@ -815,10 +819,10 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 250,
+  "console_log": 254,
   "ts_ignore": 0,
-  "eslint_disable": 1,
-  "todos": 12,
+  "eslint_disable": 4,
+  "todos": 14,
   "arquivos_acima_500_linhas": 49
  },
  "todos": [
@@ -839,6 +843,18 @@
    "linha": 224,
    "tipo": "TODO",
    "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/autofix/regras/verificar.mjs",
+   "linha": 70,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK)\\b.*/g)].length;"
+  },
+  {
+   "arquivo": "scripts/autofix/regras/verificar.mjs",
+   "linha": 71,
+   "tipo": "TODO",
+   "texto": "/FIXME`);"
   },
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
