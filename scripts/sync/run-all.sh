@@ -14,9 +14,11 @@
 #     pii           dados pessoais a barrar no autocommit (ex.: cpf,cnpj)
 # Linhas começando com # e linhas vazias são ignoradas. Um repositório com problema NÃO impede os demais.
 set -uo pipefail
+# PATH explícito: sob o systemd o PATH não inclui ~/.local/bin (onde está o gitleaks) e as travas falham fechadas.
+export PATH="$HOME/.local/bin:$HOME/.local/opt/node/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 # Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
 # husky). Vale para todos os `git` deste script e dos filhos.
-export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
+_n="${GIT_CONFIG_COUNT:-0}"; export "GIT_CONFIG_KEY_$_n=core.hooksPath" "GIT_CONFIG_VALUE_$_n=/dev/null" GIT_CONFIG_COUNT=$((_n+1))   # acrescenta; não apaga a config do usuário via ambiente
 
 MODE="${1:-}"; shift || true
 ONLY=""; DRY=(); QM=()
@@ -38,9 +40,10 @@ LOG="$STATE/sync.log"
 [ -f "$CONF" ] || { echo "$(date '+%F %T') run-all: lista $CONF não existe" >> "$LOG"; echo "lista $CONF não existe" >&2; exit 2; }
 
 ok=0; falha=0; pulado=0
-while IFS='|' read -r repo wt branch mirror pii; do
-  repo="${repo//[[:space:]]/}"; [ -z "$repo" ] && continue; case "$repo" in \#*) continue ;; esac
-  wt="${wt//[[:space:]]/}"; branch="${branch//[[:space:]]/}"; mirror="${mirror//[[:space:]]/}"; pii="${pii//[[:space:]]/}"
+trim() { local v="${1%$'\r'}"; v="${v#"${v%%[![:space:]]*}"}"; v="${v%"${v##*[![:space:]]}"}"; printf '%s' "$v"; }
+while IFS='|' read -r repo wt branch mirror pii || [ -n "${repo:-}" ]; do
+  repo="$(trim "$repo")"; [ -z "$repo" ] && continue; case "$repo" in \#*) continue ;; esac
+  wt="$(trim "${wt:-}")"; branch="$(trim "${branch:-}")"; mirror="$(trim "${mirror:-}")"; pii="${pii//[[:space:]]/}"; pii="${pii%$'\r'}"
   name="$(basename "$repo")"; [ -n "$ONLY" ] && [ "$ONLY" != "$name" ] && continue
   [ -d "$repo/.git" ] || [ -f "$repo/.git" ] || { echo "$(date '+%F %T') [$name] run-all: caminho não é um repositório ($repo)" >> "$LOG"; falha=$((falha+1)); continue; }
   case "$MODE" in
@@ -56,4 +59,6 @@ while IFS='|' read -r repo wt branch mirror pii; do
   esac
 done < "$CONF"
 echo "$(date '+%F %T') run-all $MODE: $ok ok, $falha com erro, $pulado pulado(s)" >> "$LOG"
+# status 1 quando algum repositório falhou: aparece em `systemctl --user --failed`
+[ "$falha" -gt 0 ] && exit 1
 exit 0

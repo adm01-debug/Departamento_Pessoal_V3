@@ -19,9 +19,11 @@
 # Commits usam --no-verify (os hooks de pre-commit reformatariam o seu trabalho). Não dispara CI (o CI só roda em
 # push na main e em PR para a main).
 set -uo pipefail
+# PATH explícito: sob o systemd o PATH não inclui ~/.local/bin (onde está o gitleaks) e as travas falham fechadas.
+export PATH="$HOME/.local/bin:$HOME/.local/opt/node/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 # Operação sem supervisão: NUNCA roda hooks do repositório (ex.: reconstrução em segundo plano a cada troca de branch,
 # husky). Vale para todos os `git` deste script e dos filhos.
-export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=core.hooksPath GIT_CONFIG_VALUE_0=/dev/null
+_n="${GIT_CONFIG_COUNT:-0}"; export "GIT_CONFIG_KEY_$_n=core.hooksPath" "GIT_CONFIG_VALUE_$_n=/dev/null" GIT_CONFIG_COUNT=$((_n+1))   # acrescenta; não apaga a config do usuário via ambiente
 
 WT=""; BRANCH="computador_local"; REMOTE="origin"; QUIET_MIN=2; MAX_MB=5; PII="cpf"; DRY=0; QUIET=0
 while [ $# -gt 0 ]; do
@@ -43,7 +45,34 @@ WT="$(cd "$WT" && pwd -P)"
 
 STATE="${XDG_CACHE_HOME:-$HOME/.cache}/dp-sync"; mkdir -p "$STATE" && chmod 700 "$STATE"
 KEY="$(printf '%s' "$WT" | sha1sum | cut -c1-10)"; LOG="$STATE/sync.log"; G=(git -C "$WT")
-say() { local line; line="$(date '+%F %T') [$(basename "$WT")] autocommit: $*"; printf '%s\n' "$line" >> "$LOG"; [ "$QUIET" -eq 1 ] || printf '%s\n' "$line"; }
+# gitleaks: config própria = a do git-autosave (se existir) + regras extras (URL de banco com senha, token sbp_ do Supabase)
+GLCFG="$STATE/gitleaks-dp-sync.toml"
+cat > "$GLCFG" <<GLEOF
+title = "dp-sync"
+[extend]
+$( [ -f "$HOME/.config/git-autosave/gitleaks.toml" ] && echo "path = \"$HOME/.config/git-autosave/gitleaks.toml\"" || echo "useDefault = true" )
+
+[[rules]]
+id = "dp-postgres-url-com-senha"
+description = "URL de banco com usuário e senha"
+regex = '''postgres(?:ql)?://[^:\s/@]+:[^@\s]{3,}@[^\s'"]+'''
+keywords = ["postgres"]
+
+[[rules]]
+id = "dp-jwt-qualquer"
+description = "Token no formato JWT (inclui service_role/anon do Supabase); sem filtro de entropia"
+regex = '''\bey[A-Za-z0-9_-]{15,}\.ey[A-Za-z0-9_-]{15,}\.[A-Za-z0-9_-]{15,}'''
+keywords = ["ey"]
+
+[[rules]]
+id = "dp-supabase-pat"
+description = "Supabase personal access token"
+regex = '''sbp_[a-f0-9]{40}'''
+keywords = ["sbp_"]
+GLEOF
+
+NAME="$(basename "$WT")"; [ "$NAME" = computador_local ] && NAME="$(basename "$(dirname "$WT")")/computador_local"
+say() { local line; line="$(date '+%F %T') [$NAME] autocommit: $*"; printf '%s\n' "$line" >> "$LOG"; [ "$QUIET" -eq 1 ] || printf '%s\n' "$line"; }
 
 exec 9>"$STATE/ac-$KEY.lock"; flock -n 9 || { say "outra execução em andamento; pulando"; exit 0; }
 export GIT_TERMINAL_PROMPT=0
@@ -60,10 +89,25 @@ push_pendente() {
   local ahead; ahead="$("${G[@]}" rev-list --count "$REMOTE/$BRANCH..HEAD" 2>/dev/null || echo novo)"
   [ "$ahead" = "0" ] && return 0
   if [ "$DRY" -eq 1 ]; then say "[dry-run] enviaria $BRANCH ao GitHub ($ahead commit(s) à frente)"; return 0; fi
+  # varre TUDO que vai ser enviado (inclui commits manuais do usuário), como texto — falha fechada
+  local base="$REMOTE/$BRANCH" largs=(log -p -U0 --text --format=)
+  "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1 || base="$REMOTE/main"
+  if "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1; then largs+=("$base..HEAD"); else largs+=(-1); fi
+  local ex=(); [ -f "$GLCFG" ] && ex=(--config "$GLCFG")
+  "${G[@]}" "${largs[@]}" | gitleaks stdin "${ex[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$STATE/ac-push-$KEY.json" >/dev/null 2>&1
+  case $? in
+    0) ;;
+    9) say "BLOQUEADO: segredo em commit que seria ENVIADO — não enviei nada ($STATE/ac-push-$KEY.json); remova do histórico local"; return 0 ;;
+    *) say "BLOQUEADO: o gitleaks falhou ao varrer o que seria enviado (falha fechada) — não enviei nada"; return 0 ;;
+  esac
   if timeout 300 "${G[@]}" push -q --no-verify -u "$REMOTE" "$BRANCH" 2>"$STATE/ac-$KEY.err"; then
     say "ENVIADO $BRANCH ao GitHub ($([ "$ahead" = novo ] && echo "branch nova" || echo "$ahead commit(s)")) @ $("${G[@]}" rev-parse --short HEAD)"
   else
-    say "AVISO: push de $BRANCH recusado/falhou — NÃO forço; o commit segue seguro localmente: $(head -c 220 "$STATE/ac-$KEY.err" | tr '\n' ' ')"
+    local ws="$("${G[@]}" rev-parse HEAD)"   # avisa uma vez por commit (não enche o log a cada hora)
+    if [ "$(cat "$STATE/ac-$KEY.pushwarn" 2>/dev/null)" != "$ws" ]; then
+      printf '%s' "$ws" > "$STATE/ac-$KEY.pushwarn"
+      say "AVISO: push de $BRANCH recusado/falhou — NÃO forço; o commit segue seguro localmente: $(head -c 220 "$STATE/ac-$KEY.err" | tr '\n' ' ')"
+    fi
   fi
 }
 
@@ -102,24 +146,77 @@ if ! "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err";
   say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 0
 fi
 
-# 5. dado pessoal formatado (--pii) nas linhas adicionadas => exclui o arquivo
-PAT=()
-IFS=',' read -ra _pii <<< "$PII"
-for t in "${_pii[@]}"; do
-  case "$t" in
-    cpf)  PAT+=('[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}') ;;
-    cnpj) PAT+=('[0-9]{2}\.[0-9]{3}\.[0-9]{3}/[0-9]{4}-[0-9]{2}') ;;
-    "") ;;
-    *) say "AVISO: --pii desconhecido '$t' ignorado" ;;
+# 4b. revalida o que está NO ÍNDICE. O `add -A` só filtra o que ele mesmo adiciona: o usuário pode ter feito `git add`
+# antes, e arquivos JÁ rastreados e modificados não passam pela regra de "novos". Falha fechada.
+SECRET_RE='^(.*/)?(\.env|\.env\..*|.*\.env|\.envrc|\.npmrc|\.netrc|id_rsa.*|id_ed25519.*|id_ecdsa.*)$'
+while IFS= read -r -d '' f; do
+  lc="${f,,}"; bad=""
+  case "$lc" in
+    *.csv|*.xlsx|*.xls|*.xlsm|*.ods|*.dump|*.bak|*.sqlite|*.sqlite3|*.db|*.zip|*.tar|*.gz|*.tgz|*.7z|*.pdf|*.doc|*.docx|*.ppt|*.pptx|*.odt|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|*.kdbx) bad="tipo de dado/segredo" ;;
   esac
-done
-if [ "${#PAT[@]}" -gt 0 ]; then
-  PIIRE="$(IFS='|'; echo "${PAT[*]}")"
-  while IFS= read -r -d '' f; do
-    if "${G[@]}" diff --cached -U0 -- "$f" | grep -E '^\+' | grep -vE '^\+\+\+' | grep -qE "$PIIRE"; then
-      "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="dado pessoal formatado (${PII}) nas linhas adicionadas"
-    fi
-  done < <("${G[@]}" diff --cached --name-only -z)
+  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && bad="arquivo de segredo/ambiente"
+  if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
+  [ -n "$bad" ] && { "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
+done < <("${G[@]}" diff --cached --name-only --diff-filter=AM -z)
+# binário fora da lista permitida (imagens/fontes/mídia): o gitleaks e a trava de PII não leem binário; UTF-16 também conta como binário
+while IFS= read -r -d '' rec; do
+  case "$rec" in
+    -$'\t'-$'\t'*)
+      f="${rec#-$'\t'-$'\t'}"; lc="${f,,}"
+      case "$lc" in *.png|*.jpg|*.jpeg|*.gif|*.webp|*.ico|*.bmp|*.avif|*.woff|*.woff2|*.ttf|*.otf|*.eot|*.mp3|*.mp4|*.webm|*.wav|*.ogg) ;;
+        *) "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="binário fora da lista permitida" ;;
+      esac ;;
+  esac
+done < <("${G[@]}" diff --cached --numstat -z --no-renames --diff-filter=AM)
+
+# 5. dado pessoal nas linhas adicionadas e nos NOMES dos arquivos (--pii). Formatado (000.000.000-00) sempre conta;
+# sem pontuação/com espaços só conta se o dígito verificador for válido (evita barrar qualquer número de 11 dígitos).
+PIIOFF=0; [ -z "${PII// /}" ] && PIIOFF=1
+if [ "$PIIOFF" -eq 0 ]; then
+  read -r -d '' PIISCAN <<'PYEOF' || true
+import sys,re,os
+tipos=set(sys.argv[1].split(','))
+def cpf_ok(d):
+    if len(d)!=11 or d==d[0]*11: return False
+    s=sum(int(d[i])*(10-i) for i in range(9)); d1=(s*10)%11%10
+    s=sum(int(d[i])*(11-i) for i in range(10)); d2=(s*10)%11%10
+    return d1==int(d[9]) and d2==int(d[10])
+def cnpj_ok(d):
+    if len(d)!=14 or d==d[0]*14: return False
+    w1=[5,4,3,2,9,8,7,6,5,4,3,2]; w2=[6]+w1
+    d1=sum(int(d[i])*w1[i] for i in range(12))%11; d1=0 if d1<2 else 11-d1
+    d2=sum(int(d[i])*w2[i] for i in range(13))%11; d2=0 if d2<2 else 11-d2
+    return d1==int(d[12]) and d2==int(d[13])
+FCPF=re.compile(r'\d{3}\.\d{3}\.\d{3}-\d{2}'); FCNPJ=re.compile(r'\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}')
+LCPF=re.compile(r'(?<!\d)\d{3}[. ]?\d{3}[. ]?\d{3}[-. ]?\d{2}(?!\d)'); LCNPJ=re.compile(r'(?<!\d)\d{2}[. ]?\d{3}[. ]?\d{3}[/. ]?\d{4}[-. ]?\d{2}(?!\d)')
+def tem(t):
+    if 'cpf' in tipos:
+        if FCPF.search(t): return True
+        for m in LCPF.finditer(t):
+            if cpf_ok(re.sub(r'\D','',m.group())): return True
+    if 'cnpj' in tipos:
+        if FCNPJ.search(t): return True
+        for m in LCNPJ.finditer(t):
+            if cnpj_ok(re.sub(r'\D','',m.group())): return True
+    return False
+modo=sys.argv[2]
+raw=sys.stdin.buffer.read().decode('utf-8','replace')
+if modo=='any':   # há algum dado pessoal em qualquer linha adicionada ou nome de arquivo?
+    for l in raw.split('\n'):
+        if (l.startswith('+') and not l.startswith('+++')) or l.startswith('+++ ') or l.startswith('diff --git'):
+            if tem(l): print('1'); break
+else:             # modo 'nomes': stdin = nomes separados por NUL
+    for n in raw.split('\0'):
+        if n and tem(n): sys.stdout.write(n+'\0')
+PYEOF
+  if [ -n "$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" ]; then
+    # há algo: atribui por arquivo (caro, mas só roda quando a varredura geral achou)
+    while IFS= read -r -d '' f; do
+      if "${G[@]}" diff --cached -U0 --text -- "$f" | python3 -c "$PIISCAN" "$PII" any 2>/dev/null | grep -q 1; then
+        "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="dado pessoal (${PII}) no conteúdo ou no nome"
+      fi
+    done < <("${G[@]}" diff --cached --name-only -z)
+  fi
 fi
 # avisa uma vez por arquivo (enquanto ele seguir igual), para não encher o log a cada hora
 EXCL_SEEN="$STATE/ac-$KEY.excl"; touch "$EXCL_SEEN"
@@ -132,9 +229,9 @@ done
 
 # 6. gitleaks no que sobrou (falha fechada: erro = não commita)
 if [ -n "$("${G[@]}" diff --cached --name-only)" ]; then
-  CFG="$HOME/.config/git-autosave/gitleaks.toml"; extra=(); [ -f "$CFG" ] && extra=(--config "$CFG")
+  extra=(); [ -f "$GLCFG" ] && extra=(--config "$GLCFG")
   rep="$STATE/ac-gitleaks-$KEY.json"
-  "${G[@]}" diff --cached -U0 | gitleaks stdin "${extra[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$rep" >/dev/null 2>&1
+  "${G[@]}" diff --cached -U0 --text | gitleaks stdin "${extra[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$rep" >/dev/null 2>&1
   case $? in
     0) ;;
     9) "${G[@]}" reset -q; say "BLOQUEADO pelo gitleaks: segredo no que seria commitado — NADA foi commitado ($rep)"; exit 0 ;;
