@@ -221,6 +221,15 @@ export type Database = {
             ("coluna", "missing_col", ()), ("dinâmico", ".from(variável)", ("src/orders.ts",)), ("edge", "missing-edge", ("src/orders.ts",)),
             ("rpc", "missing_rpc", ("src/orders.ts",)), ("tabela", "missing_table", ("src/orders.ts",))])
 
+    def test_storage_bucket_on_a_wrapped_chain_is_not_a_table(self):
+        source = self.write("supabase/functions/backup/index.ts",
+                            "const { error } = await admin.storage\n        .from('backups')\n        .upload(path, body);\n"
+                            "await admin.storage.from('inline-bucket').download(path);\n"
+                            "await admin\n  .from('orders')\n  .select('id');\n")
+        info = generator.analyze_code_file(source, self.root)
+        self.assertEqual(info["tables"], [{"table": "orders", "op": "select"}])
+        self.assertEqual(info["storage"], ["backups", "inline-bucket"])
+
     def test_policy_with_quoted_roles_is_parsed_like_the_unquoted_form(self):
         # Formato do pg_dump/supabase db dump: todo identificador vem entre aspas.
         self.write("supabase/migrations/20260101000000_dump.sql",

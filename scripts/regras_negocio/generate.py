@@ -496,7 +496,10 @@ def analyze_code_file(p: Path, root: Path) -> dict | None:
             info["exports"].append(f"default {d.group(1)}")
         info["hooks"] = HOOK_USE_RE.findall(txt)
     info["imports"] = sorted(set(IMPORT_RE.findall(txt) + REQUIRE_RE.findall(txt)))[:80]
-    for t, chain in SUPA_FROM_RE.findall(txt):
+    for fm in SUPA_FROM_RE.finditer(txt):
+        t, chain = fm.groups()
+        if re.search(r"storage\s+$", txt[max(0, fm.start() - 80):fm.start()]):
+            continue  # `.storage` + quebra de linha + `.from(...)` é bucket de storage, não tabela
         info["tables"].append({"table": t, "op": op_from_chain(chain)})
         cols = set(c for op, c in FILTER_COL_RE.findall(chain) if "." not in c and op != "order")  # a.b = filtro em tabela embutida
         for sel in SELECT_COLS_RE.findall(chain):
