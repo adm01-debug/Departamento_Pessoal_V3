@@ -158,6 +158,15 @@ export type Database = {
         self.assertNotIn("historical_status", rendered)
         self.assertFalse((self.root / "AGENTS.md").exists())
 
+    def test_policy_with_quoted_roles_is_parsed_like_the_unquoted_form(self):
+        # Formato do pg_dump/supabase db dump: todo identificador vem entre aspas.
+        self.write("supabase/migrations/20260101000000_dump.sql",
+                   'CREATE TABLE "public"."t" ("id" integer);\n'
+                   'CREATE POLICY "p1" ON "public"."t" FOR SELECT TO "authenticated", "service_role" USING (("id" = 1));\n'
+                   "CREATE POLICY p2 ON public.t FOR DELETE TO authenticated USING (id = 2);\n")
+        self.assertEqual([(p["name"], p["cmd"], p["roles"], p["using"]) for p in self.schema()["policies"]],
+                         [("p1", "SELECT", "authenticated, service_role", '("id" = 1)'), ("p2", "DELETE", "authenticated", "id = 2")])
+
 
 if __name__ == "__main__":
     unittest.main()

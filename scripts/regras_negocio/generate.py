@@ -713,7 +713,7 @@ def split_sql_statements(txt: str) -> list[str]:
 SQL_RENAME_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+(?:column\s+)?\"?(\w+)\"?\s+to\s+\"?(\w+)\"?", re.I)
 SQL_RENAME_TABLE_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+to\s+\"?(\w+)\"?", re.I)
 SQL_DROP_CONSTRAINT_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+constraint\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
-SQL_POLICY_HEAD_RE = re.compile(r"create\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w\s,]+?)\s*)?(?=using|with\s+check|;|$)", re.I)
+SQL_POLICY_HEAD_RE = re.compile(r"create\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w\s,\"]+?)\s*)?(?=using|with\s+check|;|$)", re.I)
 
 
 def parse_policy(st: str) -> dict | None:
@@ -729,7 +729,7 @@ def parse_policy(st: str) -> dict | None:
         close = balanced(rest, km.end() - 1)
         return squash(rest[km.end():close]) if close > 0 else squash(rest[km.end():])
     return {"name": pname.strip(), "table": tkey(m.group(3), m.group(4)), "cmd": (m.group(6) or "ALL").upper(),
-            "roles": squash(m.group(7) or "public"), "mode": (m.group(5) or "permissive").lower(),
+            "roles": squash((m.group(7) or "public").replace('"', "")), "mode": (m.group(5) or "permissive").lower(),
             "using": trunc(clause(r"\busing"), 300), "check": trunc(clause(r"with\s+check"), 300)}
 
 
