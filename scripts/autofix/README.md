@@ -10,7 +10,7 @@ node scripts/autofix/run.mjs --here --commit
 bash scripts/autofix/install-timer.sh       # agenda diariamente às 03:40 (opcional)
 ```
 
-Opções: `--steps eslint,any,format,ratchet` · `--max-runs 80` (orçamento de rodadas do tsc) ·
+Opções: `--steps eslint,any,format,ratchet` · `--max-runs 150` (orçamento de rodadas do tsc) ·
 `--include-as` (também tenta `x as any`) · `--format-all` (prettier em todo o escopo: diff enorme) ·
 `--base origin/main` · `--worktree <caminho>` · `--report-dir <pasta>`.
 

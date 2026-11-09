@@ -43,7 +43,7 @@ const REPO = resolve(import.meta.dirname, '..', '..');
 const STEPS = opt('steps', 'eslint,any,format,ratchet').split(',');
 const HERE = flag('here');
 const DRY = flag('dry-run');
-const MAX_RUNS = Number(opt('max-runs', '80'));
+const MAX_RUNS = Number(opt('max-runs', '150'));
 const BASE = opt('base', 'origin/main');
 const SAFE_RULES = [
   '@typescript-eslint/consistent-type-imports',
@@ -224,7 +224,8 @@ async function main() {
   }
 
   // ----- 3. prettier nos arquivos tocados (CI exige nos arquivos que o PR altera) -----
-  if (STEPS.includes('format')) {
+  // O formato é obrigatório sempre que algo mudou: o CI reprova arquivo tocado fora do padrão.
+  if (STEPS.includes('format') || touchedSince(cwd, startSnap).length) {
     // O CI (format:check:changed) exige prettier em tudo que o PR altera: arquivos que o autofix tocou
     // + (no modo --here) os que a branch já alterava.
     const known = new Set(srcFiles);
