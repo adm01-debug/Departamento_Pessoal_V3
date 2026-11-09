@@ -30,7 +30,7 @@ stage() {
   for f in CLAUDE.md AGENTS.md; do [ -f "$f" ] && git add "$f" || true; done
 }
 
-if git check-ignore -q "$OUT_DIR"; then
+if [ "$MODE" != "branch" ] && git check-ignore -q "$OUT_DIR"; then   # em MODE=branch a saída pode ser ignorada na origem (stage usa -f)
   echo "ERRO: $OUT_DIR está no .gitignore — os docs nunca seriam commitados. Remova a regra ou mude AI_CONTEXT_OUT."; exit 1
 fi
 if [ "$MODE" = "branch" ]; then
@@ -59,7 +59,7 @@ if [ "$MODE" = "branch" ]; then
   git checkout -q "$OURS" -- "$OUT_DIR"                                                            # a nossa saída
   for f in CLAUDE.md AGENTS.md; do git checkout -q "$OURS" -- "$f" 2>/dev/null || true; done
   if [ -n "${INDEX_CMD:-}" ]; then eval "$INDEX_CMD"; git add -A "$(dirname "$OUT_DIR")"; fi
-  git add -A "$OUT_DIR" ${KEEP_DIRS:-} 2>/dev/null || git add -A "$OUT_DIR"
+  git add -f -A "$OUT_DIR" ${KEEP_DIRS:-} 2>/dev/null || git add -f -A "$OUT_DIR"
   for f in CLAUDE.md AGENTS.md; do [ -f "$f" ] && git add "$f" || true; done
   if [ "$HAS_OLD" = 1 ] && git diff --quiet --cached "origin/$BRANCH_OUT" -- && [ "$(git rev-parse origin/$BRANCH_OUT^ 2>/dev/null)" = "$SRC" ]; then
     echo "branch $BRANCH_OUT já reflete este estado — nada a publicar"; git checkout -q "$SRC_REF" 2>/dev/null || true; exit 0

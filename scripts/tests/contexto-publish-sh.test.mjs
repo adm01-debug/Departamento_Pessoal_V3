@@ -66,6 +66,23 @@ test('branch derivada: falha ao consultar o remoto aborta em vez de publicar por
   assert.deepEqual(files('contexto'), ['README.md', 'docs/ai-context/00-INDEX.md', 'docs/outro/dado.md']);
 });
 
+test('branch derivada: primeira publicação e saída ignorada na branch de origem', (t) => {
+  const { tmp, remote, files, publish } = fixture(t, { derived: false });
+  const work = path.join(tmp, 'work');
+  git(tmp, 'clone', '-q', '--branch', 'main', remote, work);
+  put(work, '.gitignore', 'docs/ai-context/\n');
+  git(work, 'add', '-A'); git(work, 'commit', '-q', '-m', 'chore: ignora gerados'); git(work, 'push', '-q', 'origin', 'main');
+  put(work, 'docs/ai-context/00-INDEX.md', 'novo\n');
+  const result = publish(work, { MODE: 'branch' });
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.deepEqual(files('contexto'), ['.gitignore', 'README.md', 'docs/ai-context/00-INDEX.md']);
+  assert.equal(git(tmp, '--git-dir', remote, 'rev-parse', 'contexto^'), git(tmp, '--git-dir', remote, 'rev-parse', 'main'));
+  put(work, 'docs/ai-context/00-INDEX.md', 'novo\n');
+  const direct = publish(work, { MODE: 'push' });
+  assert.equal(direct.status, 1, direct.stdout + direct.stderr);
+  assert.match(direct.stdout, /está no \.gitignore/, 'push direto continua recusando saída ignorada');
+});
+
 test('push direto usa PUSH_URL quando origin não aceita escrita', (t) => {
   const { tmp, remote, files, publish } = fixture(t, { derived: false });
   const work = path.join(tmp, 'work');
