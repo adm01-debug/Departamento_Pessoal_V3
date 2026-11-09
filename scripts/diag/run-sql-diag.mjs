@@ -40,7 +40,16 @@ if (!QUERY) {
 // order can be bypassed (a '--' inside /* */ hides the rest of the line; a
 // '/*' inside -- hides a block-comment span and swallows real statements).
 // Block comments nest in Postgres, so depth is tracked.
-function stripSqlComments(input) {
+// Qualquer ponto em que este scanner e o lexer do Postgres possam discordar
+// vira execução de SQL que os checks abaixo não viram (ex.: `; ROLLBACK;
+// BEGIN; DELETE ...; COMMIT` escondido num "literal"). Onde a leitura é
+// ambígua, a consulta é recusada em vez de adivinhada.
+function rejectAmbiguous(what) {
+  console.error(`::error::${what} — leitura ambígua para o validador read-only; reescreva a consulta`);
+  process.exit(1);
+}
+
+function stripSqlComments(input, keepQuotedNames = false) {
   let out = '';
   let i = 0;
   const n = input.length;
@@ -48,7 +57,9 @@ function stripSqlComments(input) {
     const c = input[i];
     const two = input.slice(i, i + 2);
     if (two === '--') {
-      while (i < n && input[i] !== '\n') i++;
+      // O Postgres encerra o comentário em \n OU \r: parar só em \n escondia
+      // o que vinha depois de um \r.
+      while (i < n && input[i] !== '\n' && input[i] !== '\r') i++;
       continue;
     }
     if (two === '/*') {
@@ -67,6 +78,8 @@ function stripSqlComments(input) {
     if (c === "'") {
       i++;
       while (i < n) {
+        // `\'` é aspas escapada em E'...' e fim de string em literal comum.
+        if (input[i] === '\\' && input[i + 1] === "'") rejectAmbiguous("barra invertida antes de aspas em literal ('' escapa aspas)");
         if (input.slice(i, i + 2) === "''") { i += 2; continue; }
         if (input[i] === "'") { i++; break; }
         i++;
@@ -74,16 +87,25 @@ function stripSqlComments(input) {
       continue;
     }
     if (c === '"') {
+      // U&"set\005Fconfig" é set_config: escape Unicode não é comparável à denylist.
+      if (input[i - 1] === '&') rejectAmbiguous('identificador U&"..."');
       i++;
+      const nameStart = i;
       while (i < n) {
         if (input.slice(i, i + 2) === '""') { i += 2; continue; }
         if (input[i] === '"') { i++; break; }
         i++;
       }
+      // Para a denylist de chamadas o nome entre aspas conta: "dblink"(...) e
+      // cron."schedule"(...) são as mesmas funções.
+      if (keepQuotedNames) out += input.slice(nameStart, i - 1).replace(/\W/g, '_');
       continue;
     }
-    const dollar = input.slice(i).match(/^\$([A-Za-z_][A-Za-z0-9_]*)?\$/);
+    // Tag aceita não-ASCII, como no Postgres ([A-Za-z\200-\377_]).
+    const dollar = input.slice(i).match(/^\$((?:[A-Za-z_]|[^\x00-\x7f])(?:[A-Za-z0-9_]|[^\x00-\x7f])*)?\$/);
     if (dollar) {
+      // Colado num identificador, `$a$` faz parte do nome (x$a$) e não abre string.
+      if (/[A-Za-z0-9_$]|[^\x00-\x7f]/.test(input[i - 1] ?? '')) rejectAmbiguous('`$...$` colado em identificador ou número');
       const tag = dollar[0];
       const end = input.indexOf(tag, i + tag.length);
       i = end === -1 ? n : end + tag.length;
@@ -171,6 +193,8 @@ if (FORBIDDEN_RE.test(codeOnly)) {
 // cron.schedule writes survive ROLLBACK once dequeued by pg_cron workers;
 // pg_terminate/cancel affect live connections; dblink/pg_read_file/lo_*
 // reach outside the catalog. Reading cron.job / net queues stays allowed.
+// dblink* inteiro: dblink() comum também executa SQL (inclusive DML) em outra
+// conexão, fora desta transação. set_config: desfaz o SET LOCAL ROLE ci_auditor.
 // Codex P1: query_to_xml / query_to_xml_and_xmlroot aceitam uma query SQL como
 // string e a executam — literal stripping remove o argumento e a função aparece
 // sem FROM no topo, iludindo needsPiiFlag. Bloqueadas aqui independentemente de
@@ -178,9 +202,10 @@ if (FORBIDDEN_RE.test(codeOnly)) {
 // table_to_xml/schema_to_xml/database_to_xml exportam dados em bulk (sem filtro
 // de PII possível); cursor_to_xml pode ser alimentada com cursor de query arbitrária.
 const FORBIDDEN_CALL_RE =
-  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_stat_file|pg_ls_dir|dblink_exec|dblink_send_query|lo_import|lo_export|lo_unlink|query_to_xml|query_to_xml_and_xmlroot|cursor_to_xml|table_to_xml|schema_to_xml|database_to_xml)\b/i;
-if (FORBIDDEN_CALL_RE.test(codeOnly)) {
-  const fn = codeOnly.match(FORBIDDEN_CALL_RE)?.[0];
+  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_read_binary_file|pg_stat_file|pg_ls_dir|dblink\w*|set_config|lo_import|lo_export|lo_unlink|query_to_xml|query_to_xml_and_xmlroot|cursor_to_xml|table_to_xml|schema_to_xml|database_to_xml)\b/i;
+const callCheck = stripSqlComments(stripped, true);
+if (FORBIDDEN_CALL_RE.test(callCheck)) {
+  const fn = callCheck.match(FORBIDDEN_CALL_RE)?.[0];
   console.error(`::error::chamada não permitida em diagnóstico read-only: "${fn}"`);
   process.exit(1);
 }
