@@ -57,12 +57,12 @@ export default function AfastamentosPage() {
 
   const stats = {
     total: afastamentos.length,
-    ativos: afastamentos.filter((a: any) => a.status === 'ativo').length,
-    pendentes: afastamentos.filter((a: any) => a.status === 'pendente').length,
-    finalizados: afastamentos.filter((a: any) => a.status === 'finalizado' || a.status === 'concluido').length,
-    diasTotais: afastamentos.reduce<number>((sum, a: any) => sum + Number(a.dias_total || 0), 0)};
+    ativos: afastamentos.filter((a) => a.status === 'ativo').length,
+    pendentes: afastamentos.filter((a) => a.status === 'pendente').length,
+    finalizados: afastamentos.filter((a) => a.status === 'finalizado' || a.status === 'concluido').length,
+    diasTotais: afastamentos.reduce<number>((sum, a) => sum + Number(a.dias_total || 0), 0)};
 
-  const filteredAfastamentos = afastamentos.filter((a: any) => {
+  const filteredAfastamentos = afastamentos.filter((a) => {
     const matchSearch = 
       !searchTerm || a.colaborador?.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -81,7 +81,7 @@ export default function AfastamentosPage() {
     const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     const data = months.map(m => ({ name: m, total: 0 }));
     
-    afastamentos.forEach((af: any) => {
+    afastamentos.forEach((af) => {
       const date = new Date(af.data_inicio);
       const monthIndex = date.getMonth();
       data[monthIndex].total += 1;
@@ -90,17 +90,17 @@ export default function AfastamentosPage() {
     return data;
   }, [afastamentos]);
 
-  const handleEdit = (af: any) => {
+  const handleEdit = (af) => {
     setSelectedAfastamento(af);
     setIsFormOpen(true);
   };
 
-  const handleDocuments = (af: any) => {
+  const handleDocuments = (af) => {
     setSelectedAfastamento(af);
     setIsDocOpen(true);
   };
 
-  const handleTimeline = (af: any) => {
+  const handleTimeline = (af) => {
     setSelectedAfastamento(af);
     setIsTimelineOpen(true);
   };
@@ -210,7 +210,7 @@ export default function AfastamentosPage() {
                   <Download className="h-4 w-4 mr-2" /> CSV (Planilha)
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={async () => {
-                  const dataToExport = filteredAfastamentos.map((af: any) => ({
+                  const dataToExport = filteredAfastamentos.map((af) => ({
                     colaborador: af.colaborador?.nome_completo || '-',
                     tipo: tipoLabels[af.tipo as TipoAfastamento] || af.tipo,
                     cid: af.cid?.codigo || af.cid || '-',
@@ -280,7 +280,7 @@ export default function AfastamentosPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {prorrogacoes.map((p: any) => (
+                        {prorrogacoes.map((p) => (
                           <TableRow key={p.id}>
                             <TableCell className="font-medium">{p.afastamento?.colaborador?.nome_completo || '-'}</TableCell>
                             <TableCell>
@@ -314,12 +314,12 @@ export default function AfastamentosPage() {
               <CardContent>
                 <ScrollArea className="h-[400px] pr-4">
                   <div className="space-y-4">
-                    {afastamentos.filter((a: any) => a.data_pericia || a.dias_inss > 0).length === 0 ? (
+                    {afastamentos.filter((a) => a.data_pericia || a.dias_inss > 0).length === 0 ? (
                       <p className="text-xs text-muted-foreground text-center py-4">Sem eventos agendados.</p>
                     ) : (
                       afastamentos
-                        .filter((a: any) => a.data_pericia || a.dias_inss > 0)
-                        .map((af: any) => (
+                        .filter((a) => a.data_pericia || a.dias_inss > 0)
+                        .map((af) => (
                           <div key={af.id} className="relative pl-6 pb-4 border-l border-muted last:pb-0">
                             <div className="absolute left-[-5px] top-1 h-2.5 w-2.5 rounded-full bg-primary" />
                             <div className="space-y-1">
@@ -382,11 +382,11 @@ export default function AfastamentosPage() {
                 <div className="mt-4 space-y-3 pt-2 border-t">
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
                     <span className="text-muted-foreground">Impacto Direto</span>
-                    <span className="text-foreground">{afastamentos.reduce<number>((acc, a: any) => acc + Number(a.dias_empresa || 0), 0)} dias pagos</span>
+                    <span className="text-foreground">{afastamentos.reduce<number>((acc, a) => acc + Number(a.dias_empresa || 0), 0)} dias pagos</span>
                   </div>
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
                     <span className="text-muted-foreground">Previdência</span>
-                    <span className="text-orange-600">{afastamentos.filter((a: any) => (a.dias_inss || 0) > 0).length} casos ativos</span>
+                    <span className="text-orange-600">{afastamentos.filter((a) => (a.dias_inss || 0) > 0).length} casos ativos</span>
                   </div>
                 </div>
               </CardContent>
