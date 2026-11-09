@@ -323,7 +323,7 @@ export function lerMenu(raiz) {
 
 /** O caminho do menu casa com algum padrao de rota (`:param` casa um segmento; `*` nao conta)? */
 export function casaRota(caminho, padroes) {
-  const partes = caminho.replace(/\/$/, '').split('/');
+  const partes = caminho.replace(/[?#].*$/, '').replace(/\/$/, '').split('/'); // `/x?aba=1` e `/x#secao` abrem a rota `/x`
   return padroes.some((p) => {
     if (p.endsWith('*')) return false;
     const pp = p.replace(/\/$/, '').split('/');

@@ -127,6 +127,9 @@ test('helpers: tags com > dentro de element, juntar caminho e casar padrao', () 
   assert.equal(juntarCaminho('/x', '/abs'), '/abs');
   assert.equal(casaRota('/colaboradores/123', ['/colaboradores/:id']), true);
   assert.equal(casaRota('/qualquer', ['/*']), false, 'o * do NotFound nao conta como rota');
+  assert.equal(casaRota('/configuracoes?aba=esocial', ['/configuracoes']), true, 'query string nao faz parte do caminho');
+  assert.equal(casaRota('/ajuda#faq', ['/ajuda']), true, 'hash nao faz parte do caminho');
+  assert.equal(casaRota('/outra?aba=1', ['/configuracoes']), false);
   assert.deepEqual(extrairChamadas("supabase.storage.from('docs'); supabase.from('ferias')").buckets, ['docs']);
   assert.equal(semComentarios("const u = 'https://x';\n// import a from 'b';\n/* c */").includes('https://x'), true);
 });
