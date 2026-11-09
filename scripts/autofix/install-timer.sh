@@ -29,10 +29,10 @@ Description=Autofix do Departamento_Pessoal_V3 (sem IA)
 [Service]
 Type=oneshot
 WorkingDirectory=$REPO
-Environment=PATH=$(dirname "$NODE"):/usr/local/bin:/usr/bin:/bin
-ExecStart=$NODE $REPO/scripts/autofix/run.mjs
+Environment="PATH=$(dirname "$NODE"):/usr/local/bin:/usr/bin:/bin"
+ExecStart="$NODE" "$REPO/scripts/autofix/run.mjs"
 # Depois do autofix, confere as regras de negócio do origin/main (cálculo e dados). Falha aqui não derruba o serviço.
-ExecStart=-$NODE $REPO/scripts/autofix/regras/verificar.mjs --cwd $REPO --ref origin/main
+ExecStart=-"$NODE" "$REPO/scripts/autofix/regras/verificar.mjs" --cwd "$REPO" --ref origin/main
 Nice=10
 TimeoutStartSec=3h
 EOF
