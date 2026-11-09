@@ -1,7 +1,7 @@
 # Arquitetura, CI/CD e governança — referência para agentes
 
 Ler quando mexer em CI, `.github/workflows/`, governança da `main`, deploy, headers de produção ou no gateway
-`external-db-bridge`. Resumo das regras nas seções 6 e 8 do `AGENTS.md`; aqui está o detalhe.
+`external-db-bridge`. Resumo das regras de CI/deploy/gateway nas seções 6 e 8 do `AGENTS.md` (headers de produção só aqui); aqui está o detalhe.
 
 > Extraído do antigo `CLAUDE.md` (estado documentado em 19/10/2026) em 07/11/2026. Regras operacionais
 > vivem em `AGENTS.md`; este arquivo é referência. Para o estado real (rotas, banco, edges) use o contexto

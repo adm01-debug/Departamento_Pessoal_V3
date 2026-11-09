@@ -19,7 +19,7 @@ Resumo das regras na seção 5 do `AGENTS.md`; aqui está o detalhe. Errar o ban
 aponta para o projeto canônico, **o `npm run dev` e o E2E escrevem em produção** — confira antes de testar tela
 que grava.
 
-## Banco OFICIAL
+## Banco CANÔNICO
 
 `frjbfeamybqsejlvmqbl` — `project_id` em `supabase/config.toml:3` (corrigido em 30/08/2026; antes apontava para
 o projeto errado). É o alvo de `canonical-migrations.yml` (`CANONICAL_REF`), `canonical-edge-functions.yml`,
