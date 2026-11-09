@@ -709,7 +709,7 @@ def split_sql_statements(txt: str) -> list[str]:
         if ch == "'":
             in_sq = True; cur.append(ch); i += 1; continue
         if ch == "$":
-            m = re.match(r"\$[A-Za-z_]*\$", txt[i:i + 64])
+            m = re.match(r"\$(?:[A-Za-z_]\w*)?\$", txt[i:i + 64])
             if m:
                 dollar = m.group(0); cur.append(dollar); i += len(dollar); continue
         if ch == ";":

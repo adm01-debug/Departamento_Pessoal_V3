@@ -225,6 +225,15 @@ export type Database = {
         self.assertEqual(sorted(schema["tables"]), ["a", "b", "c"])
         self.assertEqual(schema["tables"]["b"]["comment"], "usa /* e */ e it's -- no texto")
 
+    def test_dollar_quote_tag_with_digits_keeps_the_function_body_whole(self):
+        self.write("supabase/migrations/20260101000000_fn.sql",
+                   "CREATE FUNCTION public.f1() RETURNS integer LANGUAGE plpgsql AS $fn1$\n"
+                   "BEGIN RAISE EXCEPTION 'saldo insuficiente; operação negada'; RETURN 1; END $fn1$;\n"
+                   "CREATE TABLE public.depois (id integer);\n")
+        schema = self.schema()
+        self.assertEqual(schema["functions"]["f1"]["raises"], ["saldo insuficiente; operação negada"])
+        self.assertEqual(list(schema["tables"]), ["depois"])
+
 
 if __name__ == "__main__":
     unittest.main()
