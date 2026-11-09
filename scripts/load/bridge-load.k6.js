@@ -4,6 +4,9 @@
 //   brew install k6 (ou https://k6.io/docs/getting-started/installation)
 //   export BRIDGE_URL=https://<projeto>.supabase.co/functions/v1/external-db-bridge
 //   export BRIDGE_TOKEN=<token de sessão admin>
+//   export BRIDGE_APIKEY=<chave pública (publishable) do projeto>
+//   export BRIDGE_ORIGIN=<origem em ALLOWED_ORIGINS de supabase/functions/_shared/csrf.ts>
+//     (sem Origin o bridge responde 403 de CSRF antes de validar o JWT)
 //
 // Uso:
 //   k6 run scripts/load/bridge-load.k6.js
@@ -40,17 +43,25 @@ export const options = {
 
 const BASE = __ENV.BRIDGE_URL;
 const TOKEN = __ENV.BRIDGE_TOKEN;
+const APIKEY = __ENV.BRIDGE_APIKEY;
+const ORIGIN = __ENV.BRIDGE_ORIGIN;
 
 export default function () {
   const res = http.post(
     BASE,
+    // Contrato do bridge (external-db-bridge/request-schema.ts): não aceita SQL
+    // livre — o corpo antigo ({ query, params }) era recusado com 400 em 100% das chamadas.
     JSON.stringify({
-      query: 'SELECT id, nome FROM public.colaboradores LIMIT $1',
-      params: [25],
+      action: 'select',
+      table: 'colaboradores',
+      columns: 'id,nome_completo',
+      limit: 25,
     }),
     {
       headers: {
         'Content-Type': 'application/json',
+        apikey: APIKEY,
+        Origin: ORIGIN,
         Authorization: `Bearer ${TOKEN}`,
       },
       timeout: '10s',
