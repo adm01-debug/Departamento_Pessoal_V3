@@ -417,6 +417,26 @@ export const svc = {
   assert.deepEqual(read('baseline.json').alertas.edges_chamadas_sem_pasta, [], 'canal de IPC não é edge function');
 });
 
+test('banco: DROP POLICY, índice de materialized view e molde de format() não criam tabela fantasma', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_fantasmas.sql', `create table public.t_real (id int);
+create materialized view public.mv_painel as select 1 as id;
+create unique index mv_painel_idx on public.mv_painel (id);
+drop policy if exists "nunca existiu" on public.t_nunca_criada;
+do $$ declare t_name text; begin
+  foreach t_name in array array['t_real'] loop
+    execute format('DROP POLICY IF EXISTS "p" ON public.%I', t_name);
+    execute format('CREATE TRIGGER trg_x AFTER UPDATE ON public.%I FOR EACH ROW EXECUTE FUNCTION public.is_admin()', t_name);
+  end loop;
+end $$;`);
+  });
+  const banco = read('banco.json');
+  for (const fantasma of ['public', 'mv_painel', 't_nunca_criada']) assert.equal(banco.tabelas[fantasma], undefined, `tabela fantasma: ${fantasma}`);
+  assert.ok(banco.tabelas.t_real);
+  assert.ok(banco.views.includes('mv_painel'));
+  assert.deepEqual(banco.triggers.filter((tr) => tr.tabela === 'public'), [], 'trigger de molde %I não é trigger da tabela "public"');
+});
+
 test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
   const read = isolatedFixture(t, (dir) => {
     w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);
