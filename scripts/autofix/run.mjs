@@ -20,7 +20,7 @@
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync } from 'node:fs';
 import { homedir, setPriority } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { sh, git, bin, log, typecheck, newErrors, eslintJson, listSrc, snapshot, touchedSince, restore, prettierWrite, prettierCheck } from './lib.mjs';
 import { runAnyPass } from './any-codemod.mjs';
@@ -266,8 +266,12 @@ async function main() {
   if (STEPS.includes('any')) {
     const snap = stepSnapshot();
     const before = await eslintJson(cwd, ['src']);
+    // Só arquivo que o tsc realmente checa: no que o tsconfig exclui (ex.: *.stories.tsx) o gate aceitaria QUALQUER troca,
+    // porque o tsc nunca olha para ele (`(x: any) => x.foo` virava `(x: unknown) => x.foo` "provado").
+    const cfg = ts.getParsedCommandLineOfConfigFile(join(cwd, 'tsconfig.json'), {}, { ...ts.sys, onUnRecoverableConfigFileDiagnostic: () => {} });
+    const noTsc = new Set((cfg?.fileNames ?? []).map((f) => relative(cwd, f)));
     const files = [...before.byFile]
-      .filter(([f, msgs]) => inScope(f) && msgs.some((m) => m.ruleId === '@typescript-eslint/no-explicit-any'))
+      .filter(([f, msgs]) => inScope(f) && noTsc.has(f) && msgs.some((m) => m.ruleId === '@typescript-eslint/no-explicit-any'))
       .map(([f]) => f);
     const kinds = flag('include-as') ? ['drop', 'unknown', 'as'] : ['drop', 'unknown'];
     const pass = { candidates: 0, accepted: 0, rejected: 0, runs: 0, exhausted: false };
