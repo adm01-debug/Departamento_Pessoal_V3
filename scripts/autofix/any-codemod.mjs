@@ -15,6 +15,8 @@ import { newErrors } from './lib.mjs';
 class BudgetExhausted extends Error {}
 
 function skipFile(text) {
+  // @ts-nocheck: o tsc não reporta nada ali, então o gate aceitaria QUALQUER troca (`x: unknown; x.a` passaria).
+  if (/@ts-nocheck/.test(text)) return true;
   // Só pula o arquivo se o desligamento de bloco no topo cobre no-explicit-any (ou é um disable genérico).
   return /\/\*\s*eslint-disable\s*(\*\/|[^*]*no-explicit-any[^*]*\*\/)/.test(text.slice(0, 600));
 }
@@ -30,6 +32,17 @@ export function collectCandidates(ts, file, text) {
   const eventos = [...text.matchAll(/\/\*\s*eslint-(disable|enable)(?!-)\s*([^*]*?)\*\//g)].map((m) => ({ pos: m.index, off: m[1] === 'disable', vale: !m[2].trim() || /no-explicit-any/.test(m[2]) })).filter((e) => e.vale);
   const regiaoDesligada = (pos) => { let off = false; for (const e of eventos) { if (e.pos > pos) break; off = e.off; } return off; };
   const sobKeyof = (n) => { for (let a = n.parent; a && !ts.isStatement(a); a = a.parent) if (a.kind === K.TypeOperator && a.operator === K.KeyOfKeyword) return true; return false; };
+
+  // `any` em tipo condicional / infer muda o RESULTADO do tipo sem erro (`T extends (...a: any[]) => any ? R : never` vira `never`,
+  // que é atribuível a tudo, então o tsc não reclama) e `any` como argumento de IsAny/Equal inverte o teste.
+  const TIPO_DE_TESTE = /^(?:Is[A-Z]\w*|Equals?|Expect\w*|Assert\w*|NotAny|Not[A-Z]\w*)$/;
+  const tipoSensivel = (n) => {
+    for (let a = n.parent; a && !ts.isStatement(a); a = a.parent) {
+      if (a.kind === K.ConditionalType || a.kind === K.InferType) return true;
+      if (ts.isTypeReferenceNode(a) && TIPO_DE_TESTE.test(a.typeName.getText(sf))) return true;
+    }
+    return false;
+  };
 
   const insideAssertionType = (n) => {
     for (let a = n.parent; a && !ts.isStatement(a); a = a.parent) {
@@ -56,7 +69,7 @@ export function collectCandidates(ts, file, text) {
       // `keyof any` = string|number|symbol; `keyof unknown` = never: nunca trocar. `this: any` não pode perder o tipo.
       // @ts-ignore/@ts-expect-error por perto mascaram o erro que a troca causaria. Região eslint-disable de bloco.
       const p0 = n.parent;
-      const disabled = /eslint-disable-line/.test(same) || /eslint-disable-next-line/.test(prev) || regiaoDesligada(start) || sobKeyof(n)
+      const disabled = /eslint-disable-line/.test(same) || /eslint-disable-next-line/.test(prev) || regiaoDesligada(start) || sobKeyof(n) || tipoSensivel(n)
         || /@ts-(?:ignore|expect-error)/.test(`${prev}\n${same}\n${lines[line] ?? ''}`)
         || (ts.isParameter(p0) && ts.isIdentifier(p0.name) && p0.name.text === 'this');
       if (!disabled) {
