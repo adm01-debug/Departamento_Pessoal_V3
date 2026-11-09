@@ -68,6 +68,7 @@ MAX_SNIPPET = 900
 SECRET_RE = re.compile(
     r"(sk-[A-Za-z0-9_-]{10,}|sk_(?:live|test)_[A-Za-z0-9]{10,}|rk_(?:live|test)_[A-Za-z0-9]{10,}|whsec_[A-Za-z0-9]{16,}|AIza[0-9A-Za-z_-]{30,}|xkeysib-[A-Za-z0-9-]{20,}|SG\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}|re_[A-Za-z0-9]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}|AKIA[0-9A-Z]{16}|"
     r"ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|"
+    r"sb_secret_[A-Za-z0-9_-]{8,}|sbp_[A-Za-z0-9]{20,}|(?i:bearer)\s+[A-Za-z0-9._~+/=-]{16,}|"
     r"-----BEGIN [A-Z ]*PRIVATE KEY-----|postgres(?:ql)?://[^\s'\"]+:[^\s'\"]+@|"
     r"(?i:password|senha|secret|token|api[_-]?key)\s*[:=]\s*['\"][^'\"\\\n]{8,}['\"])"
 )
@@ -1537,7 +1538,7 @@ def git_info(root: Path) -> dict:
                 cur = None; continue
             if len(commits) == 0:
                 sha = parts[0]
-            cur = {"sha": parts[1], "date": parts[2], "author": parts[3], "subject": subject, "files": []}
+            cur = {"sha": parts[1], "date": parts[2], "author": parts[3], "subject": redact(subject), "files": []}
             commits.append(cur)
         elif line.strip() and cur is not None and not skip:
             cur["files"].append(line.strip())

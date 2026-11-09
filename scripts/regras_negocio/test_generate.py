@@ -221,6 +221,23 @@ export type Database = {
             ("coluna", "missing_col", ()), ("dinâmico", ".from(variável)", ("src/orders.ts",)), ("edge", "missing-edge", ("src/orders.ts",)),
             ("rpc", "missing_rpc", ("src/orders.ts",)), ("tabela", "missing_table", ("src/orders.ts",))])
 
+    def test_supabase_secret_keys_and_bearer_tokens_are_redacted(self):
+        # Valores falsos, montados em pedaços para o próprio arquivo de teste não parecer um segredo.
+        secret_key = "sb_" + "secret_" + "AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+        access_token = "sbp_" + "0123456789abcdef0123456789abcdef01234567"
+        bearer = "9f8e7d6c5b4a39281706f5e4d3c2b1a0"
+        source = self.write("src/keys.ts", f"throw new Error('chave obrigatória {secret_key}');\n"
+                                            f"throw new Error('token obrigatório {access_token}');\n"
+                                            f"throw new Error('header inválido: Bearer {bearer}');\n"
+                                            "throw new Error('Bearer ausente no header Authorization');\n")
+        errors = generator.analyze_code_file(source, self.root)["errors"]
+        self.assertEqual(errors, ["Bearer ausente no header Authorization", "chave obrigatória [REDACTED]",
+                                  "header inválido: [REDACTED]", "token obrigatório [REDACTED]"])
+        subprocess.run(["git", "init", "-q", "-b", "main"], cwd=self.root, check=True)
+        subprocess.run(["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-q", "--allow-empty",
+                        "-m", f"chore: rotaciona {secret_key}"], cwd=self.root, check=True)
+        self.assertEqual([c["subject"] for c in generator.git_info(self.root)["commits"]], ["chore: rotaciona [REDACTED]"])
+
     def test_storage_bucket_on_a_wrapped_chain_is_not_a_table(self):
         source = self.write("supabase/functions/backup/index.ts",
                             "const { error } = await admin.storage\n        .from('backups')\n        .upload(path, body);\n"
