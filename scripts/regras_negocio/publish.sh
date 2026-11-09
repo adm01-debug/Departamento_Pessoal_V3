@@ -43,7 +43,15 @@ if [ "$MODE" = "branch" ]; then
   stage
   git commit -q -m "$MSG" --allow-empty
   OURS=$(git rev-parse HEAD)
-  HAS_OLD=0; git fetch -q origin "$BRANCH_OUT" 2>/dev/null && HAS_OLD=1
+  # Só "a branch ainda não existe" (ls-remote sai com 2) autoriza publicar do zero. Falha de rede/credencial aborta:
+  # tratá-la como branch nova faria o force-push apagar as pastas dos outros produtores (KEEP_DIRS).
+  HAS_OLD=0
+  if git ls-remote --exit-code "${PUSH_URL:-origin}" "refs/heads/$BRANCH_OUT" >/dev/null 2>&1; then
+    # refspec explícito: clone raso/single-branch não cria origin/$BRANCH_OUT com `git fetch origin <branch>`
+    git fetch -q "${PUSH_URL:-origin}" "+refs/heads/$BRANCH_OUT:refs/remotes/origin/$BRANCH_OUT"; HAS_OLD=1
+  elif [ $? -ne 2 ]; then
+    echo "ERRO: não foi possível consultar a branch $BRANCH_OUT no remoto — nada publicado"; exit 1
+  fi
   git checkout -q --detach "$SRC"
   if [ "$HAS_OLD" = 1 ]; then
     for d in ${KEEP_DIRS:-}; do git checkout -q "origin/$BRANCH_OUT" -- "$d" 2>/dev/null || true; done   # saídas dos outros produtores
