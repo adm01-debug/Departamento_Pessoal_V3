@@ -28,7 +28,7 @@ import { rubricasFolhaService } from '@/services/tabelas/folhaService';
 import { validarRubricaESocial } from '@/schemas/esocial';
 import { folhaPagamentoService } from '@/services/folhaPagamentoService';
 import { FolhaComposicao } from './FolhaComposicao';
-import { CalculoResultado } from '@/utils/folhaCalc';
+import type { CalculoResultado } from '@/utils/folhaCalc';
 import { cnabService } from '@/services/cnabService';
 import { validateTablePayload } from '@/schemas/validate';
 

@@ -94,7 +94,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
             'admissao_tokens',
             {
               admissao_id: admissaoId || '',
-              token: token,
+              token,
               email_candidato: admissao.email,
               data_expiracao: expiracao.toISOString(),
             },

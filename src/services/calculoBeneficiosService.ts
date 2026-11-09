@@ -50,7 +50,7 @@ export const valeTransporteService = {
    * Calcula o custo de VT considerando o limite de 6% do salário base (Lei 7.418/85)
    * Integração com Portaria 671 MTP para controle de dias úteis
    */
-  async calcularCustoMensal(colaboradorId: string, diasUteis: number = 22) {
+  async calcularCustoMensal(colaboradorId: string, diasUteis = 22) {
     const { data: colab, error: colabError } = await supabase
       .from('colaboradores')
       .select('salario_base')
@@ -95,7 +95,7 @@ export const valeAlimentacaoService = {
   /**
    * Calcula crédito proporcional aos dias trabalhados (PAT - Portaria 671/MTP)
    */
-  async calcularCredito(beneficioId: string, diasTrabalhados: number = 22) {
+  async calcularCredito(beneficioId: string, diasTrabalhados = 22) {
     const { data: beneficio, error } = await supabase
       .from('beneficios')
       .select('valor, tipo')

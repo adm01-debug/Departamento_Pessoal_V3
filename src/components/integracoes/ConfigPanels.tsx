@@ -15,7 +15,8 @@ import { bitrix24Service } from '@/services/tabelasComplementaresService';
 import { cnabService, webhookService } from '@/services/integracaoService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { whatsappService, WhatsAppConfig } from '@/services/whatsappService';
+import type { WhatsAppConfig } from '@/services/whatsappService';
+import { whatsappService } from '@/services/whatsappService';
 import { useEmpresas } from '@/hooks/useEmpresas';
 
 export function Bitrix24ConfigPanel() {

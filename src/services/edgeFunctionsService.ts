@@ -293,7 +293,7 @@ export const edgeFunctionsService = {
   }) => handleInvoke('sincronizar-bitrix', { body: params }, bitrixBreaker),
 
   /** Verifica rate limit */
-  checkRateLimit: async (key: string, limit: number = 100, windowSeconds: number = 60) =>
+  checkRateLimit: async (key: string, limit = 100, windowSeconds = 60) =>
     handleInvoke('rateLimit', { body: { key, limit, window_seconds: windowSeconds } }),
 
   /** Verifica conexão com banco externo */

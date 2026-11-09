@@ -1,14 +1,15 @@
 import { memo } from 'react';
-import { Building2, Check, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Building2, Check, ChevronDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useEmpresas, Empresa } from "@/hooks/useEmpresas";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/dropdown-menu';
+import type { Empresa } from '@/hooks/useEmpresas';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { Badge } from '@/components/ui/badge';
 
 interface EmpresaItem {
   empresa: Empresa;
@@ -18,17 +19,17 @@ interface EmpresaItem {
 
 export const EmpresaSelector = memo(function EmpresaSelector() {
   const { userEmpresas, todasEmpresas, empresaAtual, trocarEmpresa } = useEmpresas();
-  
+
   // Lista unificada: empresas vinculadas + empresas globais (removendo duplicatas)
   const map = new Map<string, EmpresaItem>();
-  
+
   // Adiciona todas as empresas (como não vinculadas inicialmente)
-  (todasEmpresas || []).forEach(e => {
+  (todasEmpresas || []).forEach((e) => {
     map.set(e.id, { empresa: e, is_default: false, vinculada: false });
   });
-  
+
   // Sobrescreve com as vinculadas (para ter o status correto)
-  (userEmpresas || []).forEach(ue => {
+  (userEmpresas || []).forEach((ue) => {
     if (ue.empresa) {
       map.set(ue.empresa_id, { empresa: ue.empresa, is_default: ue.is_default, vinculada: true });
     }
@@ -63,7 +64,7 @@ export const EmpresaSelector = memo(function EmpresaSelector() {
           <div className="flex items-center gap-2 truncate">
             <Building2 className="h-4 w-4 text-primary" />
             <span className="truncate">
-              {empresaAtual?.nome_fantasia || empresaAtual?.razao_social || "Selecionar"}
+              {empresaAtual?.nome_fantasia || empresaAtual?.razao_social || 'Selecionar'}
             </span>
           </div>
           <ChevronDown className="h-3 w-3 opacity-50" />
@@ -77,7 +78,11 @@ export const EmpresaSelector = memo(function EmpresaSelector() {
             className="flex items-center justify-between gap-2"
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <Building2 className={item.vinculada ? "h-4 w-4 text-primary shrink-0" : "h-4 w-4 text-muted-foreground shrink-0 opacity-50"} />
+              <Building2
+                className={
+                  item.vinculada ? 'h-4 w-4 text-primary shrink-0' : 'h-4 w-4 text-muted-foreground shrink-0 opacity-50'
+                }
+              />
               <div className="flex flex-col min-w-0">
                 <span className="truncate font-medium text-sm">
                   {item.empresa.nome_fantasia || item.empresa.razao_social}
@@ -88,9 +93,7 @@ export const EmpresaSelector = memo(function EmpresaSelector() {
               </div>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              {item.empresa.id === empresaAtual?.id && (
-                <Check className="h-4 w-4 text-primary" />
-              )}
+              {item.empresa.id === empresaAtual?.id && <Check className="h-4 w-4 text-primary" />}
               {item.is_default && (
                 <Badge variant="secondary" className="text-[9px] px-1 h-4">
                   Padrão
