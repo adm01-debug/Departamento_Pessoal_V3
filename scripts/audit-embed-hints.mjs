@@ -83,11 +83,14 @@ function walk(dir, out = []) {
   return out;
 }
 
+let scannedFiles = 0;
+
 /** Coleta as dicas citadas no código, com arquivo e linha para o relatório. */
 function collectHints() {
   const hits = [];
   for (const root of ROOTS) {
     for (const file of walk(root)) {
+      scannedFiles += 1;
       const lines = readFileSync(file, 'utf8').split('\n');
       // Parênteses ainda abertos desde o último `select(`. O prettier quebra
       // `.select(\n  '...tabela!constraint(...)'\n)`: a dica cai numa linha
@@ -114,6 +117,15 @@ function collectHints() {
 
 function main() {
   const hints = collectHints();
+
+  // Guard de falso verde: os ROOTS são relativos ao cwd e `walk` engole
+  // diretório ausente — fora da raiz do repo o gate "aprovava" 0 dicas.
+  if (scannedFiles === 0) {
+    console.error(
+      `[embed-hints] ERRO: nenhum arquivo de código em ${ROOTS.join(', ')} (cwd: ${process.cwd()}) — rode da raiz do repositório.`
+    );
+    process.exit(1);
+  }
 
   if (!hasDatabase()) {
     console.warn(
