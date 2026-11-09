@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
 import { validateInput, validateTablePayload } from '@/schemas/validate';
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { LooseQueryBuilder } from '@/types/queryBuilder';
 
 export interface ListOptions {

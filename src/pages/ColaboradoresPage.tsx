@@ -25,7 +25,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
-import { Colaborador } from '@/types/entities';
+import type { Colaborador } from '@/types/entities';
 import { StatCardSkeleton } from '@/components/ui/module-skeleton';
 import { loggerService } from '@/services/loggerService';
 

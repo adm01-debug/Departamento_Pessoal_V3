@@ -1,5 +1,6 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
-import { Empresa } from '@/types/entities';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
+import type { Empresa } from '@/types/entities';
 
 class EmpresaService extends BaseService<Empresa, Record<string, unknown>, Record<string, unknown>, false> {
   constructor() {

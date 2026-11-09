@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { CalculoResultado } from '@/utils/folhaCalc';
+import type { CalculoResultado } from '@/utils/folhaCalc';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
 

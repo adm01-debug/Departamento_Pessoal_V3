@@ -4,16 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTodasEmpresas } from '@/hooks/useTodasEmpresas';
 import { EntityGridPageContainer } from '@/components/layout/EntityGridPageContainer';
-import { Empresa } from '@/types/entities';
+import type { Empresa } from '@/types/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 export default function EmpresasPage() {
   const navigate = useNavigate();
-  const { 
-    empresas, 
-    total, 
-    isLoading, 
+  const {
+    empresas,
+    total,
+    isLoading,
     isFetching,
     error,
     page,
@@ -22,17 +22,23 @@ export default function EmpresasPage() {
     search,
     setSearch,
     refetch,
-    isRefreshing
+    isRefreshing,
   } = useTodasEmpresas();
 
-  const handleSearchChange = useCallback((val: string) => {
-    setSearch(val);
-    setPage(1);
-  }, [setSearch, setPage]);
+  const handleSearchChange = useCallback(
+    (val: string) => {
+      setSearch(val);
+      setPage(1);
+    },
+    [setSearch, setPage]
+  );
 
-  const handlePageChange = useCallback((p: number) => {
-    setPage(p);
-  }, [setPage]);
+  const handlePageChange = useCallback(
+    (p: number) => {
+      setPage(p);
+    },
+    [setPage]
+  );
 
   return (
     <EntityGridPageContainer<Empresa>
@@ -58,11 +64,7 @@ export default function EmpresasPage() {
       isRefreshing={isRefreshing}
       onAdd={() => navigate('/empresas/novo')}
       addLabel="Nova Empresa"
-      actions={
-        <div className="flex gap-2">
-          {/* Outras ações se necessário */}
-        </div>
-      }
+      actions={<div className="flex gap-2">{/* Outras ações se necessário */}</div>}
       renderItem={(empresa, i) => (
         <motion.div
           key={empresa.id}
@@ -77,7 +79,9 @@ export default function EmpresasPage() {
                 <Building2 className="h-5 w-5 text-primary-foreground" />
               </div>
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-base font-display truncate">{empresa.nome_fantasia || empresa.razao_social}</CardTitle>
+                <CardTitle className="text-base font-display truncate">
+                  {empresa.nome_fantasia || empresa.razao_social}
+                </CardTitle>
                 <p className="text-sm text-muted-foreground font-body">{empresa.cnpj || 'CNPJ não informado'}</p>
               </div>
             </CardHeader>
@@ -87,8 +91,14 @@ export default function EmpresasPage() {
                   <Users className="h-4 w-4" />
                   <span>Status: {empresa.ativa !== false ? 'Ativa' : 'Inativa'}</span>
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => navigate(`/empresas/editar/${empresa.id}`)} className="rounded-xl hover:bg-primary/10 font-body">
-                  <Edit className="h-4 w-4 mr-1" />Editar
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate(`/empresas/editar/${empresa.id}`)}
+                  className="rounded-xl hover:bg-primary/10 font-body"
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  Editar
                 </Button>
               </div>
             </CardContent>

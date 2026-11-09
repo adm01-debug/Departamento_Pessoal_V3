@@ -70,7 +70,7 @@ function descreverFaixaIrrf(base: number): string {
 }
 
 export const folhaCalc = {
-  calcularINSS: (salarioBruto: number, ano: number = 2026): { valor: number; faixa: string } => ({
+  calcularINSS: (salarioBruto: number, ano = 2026): { valor: number; faixa: string } => ({
     valor: _inss(salarioBruto, ano),
     faixa: descreverFaixaInss(salarioBruto),
   }),
@@ -78,9 +78,9 @@ export const folhaCalc = {
   calcularIRRF: (
     salarioBruto: number,
     inss: number,
-    dependentes: number = 0,
-    outrasDeducoes: number = 0,
-    ano: number = 2026
+    dependentes = 0,
+    outrasDeducoes = 0,
+    ano = 2026
   ): { valor: number; faixa: string } => {
     const valor = _irrf(salarioBruto, dependentes, outrasDeducoes, false, ano);
     const base = salarioBruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF - outrasDeducoes;
