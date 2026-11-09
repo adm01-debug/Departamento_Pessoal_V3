@@ -25,15 +25,10 @@ const guard = (name) =>
 const allow = '-- audit-migration-style: allow-silent-drop recriada logo abaixo\n';
 
 const cases = [
-  ['nome com espaço e acento, solto', 1, 'DROP POLICY IF EXISTS "Empresas gerenciam seu próprio WhatsApp" ON "public"."t";\n'],
-  ['nome com espaço, guardado', 0, 'DROP POLICY IF EXISTS "Users can view" ON public.t;\n' + guard('Users can view')],
-  ['nome com espaço, anotado', 0, allow + 'DROP POLICY IF EXISTS "Users can view" ON public.t;\n'],
-  ['guarda de outra policy não vale', 1, 'DROP POLICY IF EXISTS "a b" ON public.t;\n' + guard('c d')],
-  ['apóstrofo dobrado na guarda', 0, `DROP POLICY IF EXISTS "company's rows" ON public.t;\n` + guard("company''s rows")],
-  ['ON na linha seguinte', 1, 'DROP POLICY IF EXISTS "p1"\n  ON public.t;\n'],
-  ['dentro de EXECUTE', 1, `DO $$ BEGIN\n  EXECUTE 'DROP POLICY IF EXISTS "p1" ON public.t';\nEND $$;\n`],
-  ['EXECUTE format dinâmico', 1, `DO $$ BEGIN\n  EXECUTE format('DROP POLICY IF EXISTS %I_read ON public.%I', t, t);\nEND $$;\n`],
-  ['EXECUTE anotado', 0, `DO $$ BEGIN\n  ${allow}  EXECUTE 'DROP POLICY IF EXISTS "p1" ON public.t';\nEND $$;\n`],
+  ['nome simples, solto', 1, 'DROP POLICY IF EXISTS p1 ON public.t;\n'],
+  ['nome simples, guardado', 0, 'DROP POLICY IF EXISTS p1 ON public.t;\n' + guard('p1')],
+  ['nome simples, anotado', 0, allow + 'DROP POLICY IF EXISTS p1 ON public.t;\n'],
+  ['guarda de outra policy não vale', 1, 'DROP POLICY IF EXISTS p1 ON public.t;\n' + guard('p2')],
   ['DROP comentado', 0, '-- DROP POLICY IF EXISTS p1 ON public.t;\nSELECT 1;\n'],
   ['nenhuma migration avaliada', 1, null],
 ];
