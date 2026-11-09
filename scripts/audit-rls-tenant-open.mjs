@@ -142,7 +142,8 @@ WITH RECURSIVE alcanca_tenant(oid, profundidade) AS (
   FROM pg_class c
   JOIN pg_namespace n ON n.oid = c.relnamespace
   JOIN pg_attribute a ON a.attrelid = c.oid AND a.attname = 'empresa_id' AND NOT a.attisdropped
-  WHERE n.nspname = 'public' AND c.relkind = 'r'
+  -- 'p' = tabela particionada: a política vive no pai e vale para todo acesso por ele
+  WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
   UNION
   -- passo: filha que aponta, por FK, para algo que já alcança o tenant
   SELECT fk.conrelid, at.profundidade + 1

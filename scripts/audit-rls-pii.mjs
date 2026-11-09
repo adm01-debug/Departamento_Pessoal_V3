@@ -116,7 +116,8 @@ WITH pii_tables AS (
   FROM pg_attribute a
   JOIN pg_class pc ON pc.oid = a.attrelid
   JOIN pg_namespace pn ON pn.oid = pc.relnamespace AND pn.nspname = 'public'
-  WHERE pc.relkind = 'r'
+  -- 'p' = tabela particionada: a política vive no pai e vale para todo acesso por ele
+  WHERE pc.relkind IN ('r', 'p')
     AND a.attnum > 0
     AND NOT a.attisdropped
     AND a.attname ~* '${PII_COLUMN_RE}'
