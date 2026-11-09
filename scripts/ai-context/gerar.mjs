@@ -557,7 +557,9 @@ secao('banco-orm', () => {
 });
 const tabelasTypes = {};
 secao('banco-types', () => {
-  const typesFile = CFG.typesFile || ALL.find((f) => /(supabase|database)[/.-].*types\.ts$|types\/supabase\.ts$|database\.types\.ts$|supabase\.types\.ts$/.test(f) && !TEST_RE.test(f));
+  // Entre os candidatos, o que de fato declara `Tables: {`: um reexport (database.types.ts) vem antes de types.ts na ordem alfabética e zerava colunas_types/drift.
+  const candidatos = ALL.filter((f) => /(supabase|database)[/.-].*types\.ts$|types\/supabase\.ts$|database\.types\.ts$|supabase\.types\.ts$/.test(f) && !TEST_RE.test(f));
+  const typesFile = CFG.typesFile || candidatos.find((f) => readText(f).includes('Tables: {')) || candidatos[0];
   if (!typesFile) return;
   const src = readText(typesFile); if (!src) { ERROS.push({ secao: 'banco-types', erro: `${typesFile} maior que ${MAX_FILE_BYTES / 1048576} MB; aumente maxFileMB em ai-context.config.json` }); return; }
   banco.fonte.push(typesFile);

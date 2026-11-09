@@ -464,6 +464,15 @@ test('banco: pgTable/@Entity em script ou teste não vira tabela nem fonte do sc
   assert.ok(banco.fonte.includes('drizzle') && !banco.fonte.includes('typeorm'), `fonte: ${banco.fonte}`);
 });
 
+test('banco: reexport database.types.ts não toma o lugar do types.ts que declara as tabelas', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/integrations/supabase/database.types.ts', `import type { Database as D } from './types';\nexport type Database = D;\n`);
+  });
+  const banco = read('banco.json');
+  assert.ok(banco.fonte.includes('src/integrations/supabase/types.ts'), `fonte: ${banco.fonte}`);
+  assert.deepEqual(banco.tabelas.contacts.drift.so_no_types, ['extra_col'], 'drift migration x types continua calculado');
+});
+
 test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
   const read = isolatedFixture(t, (dir) => {
     w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);
