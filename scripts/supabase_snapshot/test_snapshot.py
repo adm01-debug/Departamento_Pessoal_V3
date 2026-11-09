@@ -387,6 +387,27 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
             self.assertNotIn(password, scrubbed)
         self.assertEqual(self.snapshot.scrub(samples[0]), "SELECT dblink_connect('postgresql://[REDACTED]@db.example.co:5432/postgres');")
 
+    def test_auth_config_redacts_every_credential_but_keeps_flags_and_limits(self):
+        s = self.snapshot
+        config = {  # nomes de campos do GET /v1/projects/{ref}/config/auth; valores falsos
+            "smtp_pass": "valor-falso-1", "external_google_secret": "valor-falso-2", "sms_twilio_auth_token": "valor-falso-3",
+            "sms_messagebird_access_key": "valor-falso-4", "sms_test_otp": "5511999990000=123456",
+            "jwt_exp": 3600, "password_min_length": 12, "refresh_token_rotation_enabled": True,
+            "hook_custom_access_token_enabled": False, "hook_send_email_enabled": True, "site_url": "https://app.example.com",
+        }
+        redacted = s.redact(config)
+        self.assertEqual({k for k, v in redacted.items() if v == "[REDACTED]"},
+                         {"smtp_pass", "external_google_secret", "sms_twilio_auth_token", "sms_messagebird_access_key", "sms_test_otp"})
+        self.assertEqual({k: redacted[k] for k in ("jwt_exp", "password_min_length", "refresh_token_rotation_enabled",
+                                                   "hook_custom_access_token_enabled", "site_url")},
+                         {"jwt_exp": 3600, "password_min_length": 12, "refresh_token_rotation_enabled": True,
+                          "hook_custom_access_token_enabled": False, "site_url": "https://app.example.com"})
+        self.out.mkdir(parents=True, exist_ok=True)
+        s.render_simple({}, {"enabled": True, "url": "https://ref.supabase.co", "auth_config": redacted})
+        summary = (self.out / "auth.md").read_text(encoding="utf-8").split("## Configuração completa", 1)[0]
+        self.assertIn("| jwt_exp (s) | 3600 |", summary)
+        self.assertIn("| hooks | hook_send_email_enabled |", summary)
+
 
 class SnapshotFailureMatrixTests(SnapshotFixture):
     """24 sequências: seção × histórico/SQL disponível × repetição × recuperação."""

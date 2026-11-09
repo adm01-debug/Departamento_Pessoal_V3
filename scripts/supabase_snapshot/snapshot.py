@@ -101,7 +101,8 @@ API_ROLES = ("anon", "authenticated", "service_role", "PUBLIC")
 MGMT_API = "https://api.supabase.com/v1"
 REDACT_RE = re.compile(
     r"(secret|password|passwd|token|private_key|api_key|apikey|smtp_pass|client_secret|"
-    r"signing_key|service_key|anon_key|service_role|jwt|credential|encryption_key|connection_string|dsn)",
+    r"signing_key|service_key|anon_key|service_role|jwt|credential|encryption_key|connection_string|dsn|"
+    r"access_key|test_otp)",  # sms_messagebird_access_key e sms_test_otp (telefone=código) do auth config
     re.I,
 )
 
@@ -216,7 +217,9 @@ def write(path: pathlib.Path, content: str) -> None:
 
 def redact(obj: Any) -> Any:
     if isinstance(obj, dict):
-        return {k: ("[REDACTED]" if REDACT_RE.search(str(k)) else redact(v)) for k, v in obj.items()}
+        # bool/número/null não carregam segredo: redigi-los escondia jwt_exp e fazia todo hook_*_token_enabled parecer ligado
+        return {k: ("[REDACTED]" if REDACT_RE.search(str(k)) and not isinstance(v, (bool, int, float, type(None))) else redact(v))
+                for k, v in obj.items()}
     if isinstance(obj, list):
         return [redact(v) for v in obj]
     if isinstance(obj, str):
