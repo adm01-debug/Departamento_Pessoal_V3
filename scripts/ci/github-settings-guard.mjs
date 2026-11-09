@@ -58,7 +58,7 @@ const semQuebra = (valor) => String(valor).replace(/[\r\n\u0000-\u001f\u007f]/g,
 // em qualquer runner/locale.
 const porCodigo = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
-/** Erro de leitura por falta de escopo — não é regressão, é ponto cego. */
+/** Erro de leitura por falta de escopo — não é repressão, é ponto cego. */
 class NaoVerificavel extends Error {
   constructor(caminho, status, motivo) {
     super(`${status} em ${caminho}: ${motivo}`);
@@ -199,7 +199,12 @@ async function checarRepo() {
     return { divergencias, cego: `200 — campos nao expostos ao token: ${ausentes.join(', ')}`, campos: ausentes };
   }
   // W14: security_and_analysis (secret_scanning*)
+  // A API so inclui este bloco para tokens com escopo admin; ausente nao e divergencia.
   const blSec = baseline.security_and_analysis ?? {};
+  const blSecChaves = Object.keys(blSec).filter((k) => !k.startsWith('_'));
+  if (blSecChaves.length > 0 && !repo?.security_and_analysis) {
+    return { divergencias, cego: `200 — security_and_analysis ausente: escopo admin nao disponivel com este token`, campos: ['security_and_analysis'] };
+  }
   for (const [chave, valorEsperado] of Object.entries(blSec)) {
     if (chave.startsWith('_')) continue;
     const encontrado = repo?.security_and_analysis?.[chave]?.status ?? null;
@@ -277,7 +282,7 @@ async function checarRulesets() {
 }
 
 async function checarEnvironments() {
-  const dados = await ghAdmin('GET', `/repos/${OWNER}/${REPO_NAME}/environments`);
+  const dados = await ghAdmin('GET', `/repos/${OWNER}/${REPO_NAME}/environments?per_page=100`);
   const encontrados = (dados?.environments ?? []).map((e) => e.name).sort();
   const esperados = [...baseline.environments].sort();
   const prefixosVercel = (baseline.environments_vercel_managed?.prefixos ?? []);
@@ -291,7 +296,7 @@ async function checarEnvironments() {
     divergencias.push({ campo: 'environments.faltando', esperado: faltando.join(', '), encontrado: '(ausente)', restauravel: false });
   }
   if (extrasVercel.length > 0) {
-    console.error(`::warning::W13: environments gerenciados pela Vercel presentes (não é regressão): ${extrasVercel.join(', ')}`);
+    console.error(`::warning::W13: environments gerenciados pela Vercel presentes (não é repressão): ${extrasVercel.join(', ')}`);
   }
   if (extrasInesperados.length > 0) {
     divergencias.push({ campo: 'environments.extras_inesperados', esperado: '(nenhum além dos do baseline)', encontrado: extrasInesperados.join(', '), restauravel: false });
