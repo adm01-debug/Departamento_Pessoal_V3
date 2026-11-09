@@ -51,6 +51,10 @@ check "diretório ignorado no lugar de arquivo novo vai para o backup" test "$(g
 check "arquivo ignorado no lugar de diretório novo vai para o backup" test "$(git -C "$L" show "$B:x.log" 2>/dev/null)" = "log local"
 check "com ignorado no caminho o checkout ainda fica idêntico ao GitHub" espelhado
 
+mklab; ( cd "$L" && mkdir pasta && git init -q pasta/sub && cd pasta/sub && echo trabalho > s && git add -A && git commit -qm s )
+remoto 'echo f > pasta'; mirror; rc=$?
+check "repositório git aninhado no lugar de caminho novo do GitHub: erro e nada é apagado" test "$rc" -ne 0 -a -d "$L/pasta/sub/.git" -a "$(cat "$L/pasta/sub/s" 2>/dev/null)" = trabalho
+
 mklab; ( cd "$L" && echo "SEGREDO LOCAL" > .env && git add -f .env ); mirror
 check "ignorado já no índice (git add -f) vai para o backup" test "$(git -C "$L" show "$(bk):.env" 2>/dev/null)" = "SEGREDO LOCAL"
 

@@ -13,7 +13,7 @@
 #     Commits locais de <branch> não enviados e a versão que estava em `git add` (se diferente do disco) entram como pais
 #     extras do backup:  git log --graph refs/mirror-backup/<data>
 #     Os backups ficam só nesta máquina e são apagados após --keep-days dias.
-#   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído.
+#   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído ou removido; repositório git aninhado nesse lugar = erro, nada é apagado.
 #   - A branch local em que você estava (ex.: fix/x) continua existindo; só o checkout troca para <branch>.
 #   - Se você mexeu em algum arquivo nos últimos --quiet-min minutos, adia para a próxima execução.
 #   - Não age se houver rebase/merge/cherry-pick/bisect em andamento, se <branch> estiver em checkout em
@@ -201,11 +201,18 @@ fi
 # caminho que origin/<branch> rastreia e o índice local não — o próprio arquivo, um diretório no lugar dele ou um arquivo no
 # lugar de um diretório pai (o `checkout -f` os sobrescreve/apaga). Lista (NUL) em $NOCAMINHO; entram no backup. Falha fechada.
 NOCAMINHO="$STATE/$KEY.ign"
-"${G[@]}" diff-index --cached --name-only -z --diff-filter=D "origin/$BRANCH" 2>"$STATE/$KEY.err" | while IFS= read -r -d '' p; do
-  printf '%s\0' "$p"
-  while [[ "$p" == */* ]]; do p="${p%/*}"; { [ -d "$REPO/$p" ] && [ ! -L "$REPO/$p" ]; } || printf '%s\0' "$p"; done
-done | GIT_LITERAL_PATHSPECS=1 xargs -0 -r "${G[@]}" ls-files -z -o -i --exclude-standard -- > "$NOCAMINHO" 2>>"$STATE/$KEY.err" \
+{ "${G[@]}" diff-index --cached --name-only -z --diff-filter=D "origin/$BRANCH" | while IFS= read -r -d '' p; do
+    printf '%s\0' "$p"
+    while [[ "$p" == */* ]]; do p="${p%/*}"; { [ -d "$REPO/$p" ] && [ ! -L "$REPO/$p" ]; } || printf '%s\0' "$p"; done
+  done > "$NOCAMINHO.p" \
+  && GIT_LITERAL_PATHSPECS=1 xargs -0 -r -a "$NOCAMINHO.p" "${G[@]}" ls-files -z -o -i --exclude-standard -- > "$NOCAMINHO" \
+  && GIT_LITERAL_PATHSPECS=1 xargs -0 -r -a "$NOCAMINHO.p" "${G[@]}" ls-files -z -o -- > "$NOCAMINHO.t"; } 2>"$STATE/$KEY.err" \
   || { say "ERRO: não consegui listar os arquivos ignorados no caminho do espelhamento; NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
+# Repositório git ANINHADO (ignorado ou não) nesse lugar: o `ls-files` o lista como "dir/". O backup guardaria só o ponteiro e o
+# `checkout -f` apagaria o repositório inteiro, .git incluso. Falha fechada: alguém precisa movê-lo.
+if grep -qz '/$' "$NOCAMINHO.t"; then
+  say "ERRO: há um repositório git aninhado ($(grep -z '/$' "$NOCAMINHO.t" | tr '\0' ' ' | head -c 160)) no lugar de um caminho que o GitHub rastreia; o backup não guardaria o conteúdo dele — NADA foi descartado; mova-o para fora deste checkout"; exit 1
+fi
 [ -s "$NOCAMINHO" ] && EXTRA="$EXTRA; inclui $(tr -cd '\0' < "$NOCAMINHO" | wc -c) arquivo(s) IGNORADO(S) que estavam no lugar de caminhos que o GitHub rastreia"
 if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then
   if [ "$DRY" -eq 1 ]; then
