@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)",
    "fix: corrige 3 inconsistências de doc achadas na validação pós-#395",
    "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)",
    "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)",
-   "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)",
-   "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale"
+   "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -6,7 +6,7 @@
       "auth": {},
       "connections": [
         {
-          "n": 1,
+          "n": 2,
           "state": null,
           "usename": "authenticator"
         },
@@ -42,124 +42,124 @@
       "storage": null,
       "top_queries": [
         {
-          "calls": 401,
-          "mean_ms": 2619.16,
+          "calls": 406,
+          "mean_ms": 2613.11,
           "query": "WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO",
           "role": "ci_auditor",
           "rows": 0,
-          "total_ms": 1050285
+          "total_ms": 1060925
         },
         {
-          "calls": 291,
-          "mean_ms": 676.91,
+          "calls": 296,
+          "mean_ms": 673.58,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "ci_auditor",
-          "rows": 1427355,
-          "total_ms": 196982
+          "rows": 1451880,
+          "total_ms": 199379
         },
         {
-          "calls": 395,
-          "mean_ms": 340.15,
+          "calls": 400,
+          "mean_ms": 339.54,
           "query": "WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito",
           "role": "ci_auditor",
-          "rows": 42663,
-          "total_ms": 134358
+          "rows": 43208,
+          "total_ms": 135816
         },
         {
-          "calls": 291,
-          "mean_ms": 338.66,
+          "calls": 296,
+          "mean_ms": 337.96,
           "query": "SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE",
           "role": "ci_auditor",
           "rows": 0,
-          "total_ms": 98550
+          "total_ms": 100037
         },
         {
-          "calls": 291,
-          "mean_ms": 277.01,
+          "calls": 296,
+          "mean_ms": 276.96,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "ci_auditor",
-          "rows": 2328,
-          "total_ms": 80609
+          "rows": 2368,
+          "total_ms": 81981
         },
         {
-          "calls": 397,
-          "mean_ms": 161.74,
+          "calls": 402,
+          "mean_ms": 161.43,
           "query": "SELECT p.tablename, p.policyname, p.cmd, array_to_string(p.roles, $1), replace(coalesce(p.qual, $2) || $3 || coalesce(p.with_check, $4), $5, $6) FROM pg_policies p WHERE p.schemaname = $7 ORDER BY p.tablename, p.policyna",
           "role": "ci_auditor",
-          "rows": 242701,
-          "total_ms": 64211
+          "rows": 245776,
+          "total_ms": 64893
         },
         {
-          "calls": 291,
-          "mean_ms": 189.21,
+          "calls": 296,
+          "mean_ms": 188.78,
           "query": "SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c",
           "role": "ci_auditor",
-          "rows": 15423,
-          "total_ms": 55059
+          "rows": 15688,
+          "total_ms": 55878
         },
         {
-          "calls": 291,
-          "mean_ms": 156.07,
+          "calls": 296,
+          "mean_ms": 156.14,
           "query": "SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)",
           "role": "ci_auditor",
-          "rows": 113199,
-          "total_ms": 45415
+          "rows": 115144,
+          "total_ms": 46217
         },
         {
-          "calls": 291,
-          "mean_ms": 150.57,
+          "calls": 296,
+          "mean_ms": 150,
           "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
           "role": "ci_auditor",
-          "rows": 115527,
-          "total_ms": 43816
+          "rows": 117512,
+          "total_ms": 44400
         },
         {
-          "calls": 291,
-          "mean_ms": 136.95,
+          "calls": 296,
+          "mean_ms": 136.96,
           "query": "SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.",
           "role": "ci_auditor",
-          "rows": 113199,
-          "total_ms": 39851
+          "rows": 115144,
+          "total_ms": 40540
         },
         {
-          "calls": 397,
-          "mean_ms": 94.38,
+          "calls": 402,
+          "mean_ms": 94.14,
           "query": "WITH RECURSIVE alcanca_tenant(oid, profundidade) AS ( -- base: a tabela carrega o próprio tenant SELECT c.oid, $1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace JOIN pg_attribute a ON a.attrelid = c.oid AN",
           "role": "ci_auditor",
-          "rows": 184750,
-          "total_ms": 37471
+          "rows": 187090,
+          "total_ms": 37843
         },
         {
-          "calls": 291,
-          "mean_ms": 109.61,
+          "calls": 296,
+          "mean_ms": 109.31,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", con.conname AS name, CASE con.contype WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 WHEN $7 THEN $8 WHEN $9 THEN $10 ELSE con.contype::text END AS type, pg_get_constrai",
           "role": "ci_auditor",
-          "rows": 387612,
-          "total_ms": 31898
+          "rows": 394272,
+          "total_ms": 32355
         },
         {
-          "calls": 291,
-          "mean_ms": 107.92,
+          "calls": 296,
+          "mean_ms": 107.85,
           "query": "SELECT n.nspname AS schema, t.relname AS \"table\", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth",
           "role": "ci_auditor",
-          "rows": 380628,
-          "total_ms": 31405
+          "rows": 387168,
+          "total_ms": 31923
         },
         {
-          "calls": 397,
-          "mean_ms": 42.44,
+          "calls": 402,
+          "mean_ms": 42.11,
           "query": "SELECT p.proname, p.prosecdef::text, has_function_privilege($1, p.oid, $2)::text, has_function_privilege($3, p.oid, $4)::text, replace(coalesce(p.prosrc, $5), $6, $7) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.prona",
           "role": "ci_auditor",
-          "rows": 154052,
-          "total_ms": 16847
+          "rows": 156037,
+          "total_ms": 16929
         },
         {
-          "calls": 291,
-          "mean_ms": 40.01,
+          "calls": 296,
+          "mean_ms": 39.98,
           "query": "SELECT schemaname AS schema, tablename AS \"table\", policyname AS name, permissive, roles, cmd, qual AS \"using\", with_check FROM pg_policies WHERE schemaname NOT IN ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13,",
           "role": "ci_auditor",
-          "rows": 183330,
-          "total_ms": 11644
+          "rows": 186480,
+          "total_ms": 11834
         }
       ]
     },
@@ -673,7 +673,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_audit_log_created_at",
-        "scans": 16939,
+        "scans": 16949,
         "schema": "public",
         "table": "audit_log"
       },
@@ -2320,7 +2320,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_colaboradores_cpf",
-        "scans": 208,
+        "scans": 210,
         "schema": "public",
         "table": "colaboradores"
       },
@@ -2653,7 +2653,7 @@
         "is_primary": false,
         "is_unique": true,
         "name": "configuracoes_ponto_empresa_id_key",
-        "scans": 209,
+        "scans": 210,
         "schema": "public",
         "table": "configuracoes_ponto"
       },
@@ -6055,7 +6055,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_folhas_pagamento_empresa_status",
-        "scans": 3187,
+        "scans": 3188,
         "schema": "public",
         "table": "folhas_pagamento"
       },
@@ -6667,7 +6667,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_idempotency_status",
-        "scans": 12469,
+        "scans": 12470,
         "schema": "public",
         "table": "idempotency_keys"
       },
@@ -7117,7 +7117,7 @@
         "is_primary": false,
         "is_unique": true,
         "name": "login_lockouts_identifier_identifier_type_key",
-        "scans": 838,
+        "scans": 842,
         "schema": "public",
         "table": "login_lockouts"
       },
@@ -9259,7 +9259,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_query_telemetry_created_at",
-        "scans": 55982,
+        "scans": 55984,
         "schema": "public",
         "table": "query_telemetry"
       },
@@ -9358,7 +9358,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_rate_limits_key_timestamp",
-        "scans": 222318,
+        "scans": 222334,
         "schema": "public",
         "table": "rate_limits"
       },
@@ -11965,23 +11965,23 @@
         "total_bytes": 1089536
       },
       {
-        "dead_rows": 1,
+        "dead_rows": 4,
         "est_rows": 37,
         "heap_bytes": 188416,
-        "idx_scan": 222321,
+        "idx_scan": 222337,
         "index_bytes": 663552,
         "last_autoanalyze": "2026-11-09T04:07:10.406200+00:00",
         "last_autovacuum": "2026-11-09T06:07:13.057439+00:00",
         "name": "rate_limits",
         "schema": "public",
-        "seq_scan": 994,
+        "seq_scan": 995,
         "total_bytes": 892928
       },
       {
         "dead_rows": 51,
         "est_rows": 290,
         "heap_bytes": 409600,
-        "idx_scan": 17012,
+        "idx_scan": 17022,
         "index_bytes": 245760,
         "last_autoanalyze": "2026-10-15T16:17:00.039811+00:00",
         "last_autovacuum": null,
@@ -12007,7 +12007,7 @@
         "dead_rows": 4,
         "est_rows": 16,
         "heap_bytes": 8192,
-        "idx_scan": 78658,
+        "idx_scan": 78660,
         "index_bytes": 401408,
         "last_autoanalyze": null,
         "last_autovacuum": null,
@@ -12085,7 +12085,7 @@
         "dead_rows": 0,
         "est_rows": 265,
         "heap_bytes": 57344,
-        "idx_scan": 81627,
+        "idx_scan": 81629,
         "index_bytes": 114688,
         "last_autoanalyze": "2026-07-23T21:39:46.237574+00:00",
         "last_autovacuum": null,
@@ -12098,7 +12098,7 @@
         "dead_rows": 12,
         "est_rows": 5,
         "heap_bytes": 8192,
-        "idx_scan": 6372,
+        "idx_scan": 6373,
         "index_bytes": 180224,
         "last_autoanalyze": null,
         "last_autovacuum": null,
@@ -12507,7 +12507,7 @@
         "last_autovacuum": null,
         "name": "empresas",
         "schema": "public",
-        "seq_scan": 27155,
+        "seq_scan": 27156,
         "total_bytes": 98304
       },
       {
@@ -12637,7 +12637,7 @@
         "last_autovacuum": null,
         "name": "user_empresas",
         "schema": "public",
-        "seq_scan": 638951,
+        "seq_scan": 638954,
         "total_bytes": 90112
       },
       {
@@ -12810,16 +12810,16 @@
         "total_bytes": 81920
       },
       {
-        "dead_rows": 27,
+        "dead_rows": 31,
         "est_rows": 7,
         "heap_bytes": 8192,
-        "idx_scan": 840,
+        "idx_scan": 844,
         "index_bytes": 32768,
         "last_autoanalyze": "2026-11-08T14:02:52.673337+00:00",
         "last_autovacuum": "2026-11-08T05:31:42.486469+00:00",
         "name": "login_lockouts",
         "schema": "public",
-        "seq_scan": 3682,
+        "seq_scan": 3686,
         "total_bytes": 81920
       },
       {
@@ -13346,13 +13346,13 @@
         "dead_rows": 0,
         "est_rows": 0,
         "heap_bytes": 0,
-        "idx_scan": 15689,
+        "idx_scan": 15690,
         "index_bytes": 49152,
         "last_autoanalyze": null,
         "last_autovacuum": null,
         "name": "idempotency_keys",
         "schema": "public",
-        "seq_scan": 15228,
+        "seq_scan": 15229,
         "total_bytes": 57344
       },
       {
@@ -14392,7 +14392,7 @@
         "last_autovacuum": null,
         "name": "user_roles",
         "schema": "public",
-        "seq_scan": 569677,
+        "seq_scan": 569678,
         "total_bytes": 40960
       },
       {
@@ -16726,7 +16726,7 @@
         "dead_rows": 0,
         "est_rows": 0,
         "heap_bytes": 0,
-        "idx_scan": 209,
+        "idx_scan": 210,
         "index_bytes": 16384,
         "last_autoanalyze": null,
         "last_autovacuum": null,

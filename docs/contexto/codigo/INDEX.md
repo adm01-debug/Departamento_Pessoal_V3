@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8c51e5f4ddc44c7765f795bd0615811f10935d00` (2026-11-08T21:33:32-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `d03a83b8e1fda721bed43c19f405eef1c9df45bc` (2026-11-09T10:23:02Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,7 +385,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
 
 ## Grafo de código (graphify)
-- 21367 nós · 44621 arestas · 2103 comunidades · grafo do commit `8c51e5f4`
+- 21367 nós · 44621 arestas · 2103 comunidades · grafo do commit `d03a83b8`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (450), useEmpresas (370), card.tsx (360), App.tsx (255), vitest (220), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), CardHeader (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-09 `d03a83b` fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)
 - 2026-11-08 `8c51e5f` fix: corrige 3 inconsistências de doc achadas na validação pós-#395
 - 2026-11-08 `28a1191` Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)
 - 2026-11-08 `98f0f59` ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-08 `faaf11c` feat: guards de false-green em audit-bridge-frontend-contract
 - 2026-11-08 `e7d1f19` feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard
 - 2026-11-08 `3358bc1` feat: guards contra falso verde nos ratchets e build-rebaseline
-- 2026-11-08 `4fcdb15` fix: audit-migration-style — counter correto + guard de diretório ausente (#384)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

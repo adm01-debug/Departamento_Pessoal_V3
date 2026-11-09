@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "8c51e5f4ddc44c7765f795bd0615811f10935d00",
+  "sha": "d03a83b8e1fda721bed43c19f405eef1c9df45bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 05:10 UTC",
+  "generated_at": "2026-11-09 10:29 UTC",
   "files_total": 2825,
   "code_files": 2323,
   "code_lines": 309292
@@ -274499,10 +274499,19 @@
   }
  },
  "git": {
-  "sha": "8c51e5f4ddc44c7765f795bd0615811f10935d00",
+  "sha": "d03a83b8e1fda721bed43c19f405eef1c9df45bc",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "d03a83b",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)",
+    "files": [
+     "scripts/audit-migration-style.mjs"
+    ]
+   },
    {
     "sha": "8c51e5f",
     "date": "2026-11-08",
@@ -274839,21 +274848,16 @@
     "files": [
      "src/components/ProtectedRoute.tsx"
     ]
-   },
-   {
-    "sha": "205c583",
-    "date": "2026-11-06",
-    "author": "adm01-debug",
-    "subject": "fix: restaura registro do Service Worker (regex NEVER_CACHE_PATH) (#357)",
-    "files": [
-     "public/sw-custom.js"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/agentes/arquitetura.md",
     3
+   ],
+   [
+    "scripts/audit-migration-style.mjs",
+    2
    ],
    [
     "docs/agentes/banco.md",
@@ -274925,10 +274929,6 @@
    ],
    [
     "docs/auditoria/estado/WORKFLOWS_STATUS.md",
-    1
-   ],
-   [
-    "scripts/audit-required-checks.mjs",
     1
    ]
   ]

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8c51e5f4ddc44c7765f795bd0615811f10935d00",
+  "commit": "d03a83b8e1fda721bed43c19f405eef1c9df45bc",
   "branch": "main",
-  "data_commit": "2026-11-08T21:33:32-03:00",
+  "data_commit": "2026-11-09T10:23:02Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "d03a83b",
+    "data": "2026-11-09",
+    "assunto": "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)"
+   },
    {
     "sha": "8c51e5f",
     "data": "2026-11-08",
@@ -126,11 +131,6 @@
     "sha": "f231df4",
     "data": "2026-11-07",
     "assunto": "fix: reverte maybeSingle do bridge (edge nao deployada) (#368)"
-   },
-   {
-    "sha": "a8a8516",
-    "data": "2026-11-07",
-    "assunto": "chore: instruções enxutas para agentes (#364)"
    }
   ],
   "arquivos_mudados_7d": 134,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 69
+    "commits": 70
    },
    {
     "autor": "dependabot[bot]",
