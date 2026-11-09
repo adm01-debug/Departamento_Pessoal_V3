@@ -152,6 +152,8 @@ function resolveImport(fromFile, spec) {
 // ---------- análise por arquivo (JS/TS/Vue/Svelte/Astro) ----------
 const CODE_FILES = ALL.filter((f) => CODE_EXT.has(path.extname(f)) && !f.endsWith('.d.ts'));
 const FILE = new Map();
+const EDGE_DIR = ['supabase/functions', 'functions', 'netlify/functions', 'edge-functions'].find((d) => exists(d)) || 'supabase/functions';
+const EDGE_NOMES = new Set(ALL.filter((f) => f.startsWith(EDGE_DIR + '/')).map((f) => f.slice(EDGE_DIR.length + 1).split('/')[0]));
 const RE = {
   imp: /(?:import|export)\s+(?:type\s+)?(?:[\w*{}\s,$]+?\s+from\s+)?['"]([^'"]+)['"]/g,
   dyn: /import\(\s*['"]([^'"]+)['"]\s*\)/g,
@@ -161,6 +163,8 @@ const RE = {
   from: /(?<!\bstorage\s*)\.from\(\s*['"`]([\w.]+)['"`]/g,
   rpc: /\.rpc\(\s*['"`](\w+)['"`]/g,
   invoke: /functions\.invoke\(\s*['"`]([\w-]+)['"`]/g,
+  // wrapper local do projeto (`handleInvoke('x')`, `invokeEdge<T>('x')`) e `functions.invoke<T>('x')`: só conta quando 'x' é pasta de edge function.
+  invokeVia: /\b\w*[iI]nvoke\w*(?:<(?:[^<>()]|<[^<>()]*>)*>)?\(\s*['"`]([\w-]+)['"`]/g,
   fnUrl: /\/functions\/v1\/([\w-]+)/g,
   envVite: /import\.meta\.env\.(\w+)/g,
   envNode: /process\.env\.(\w+)/g,
@@ -201,7 +205,7 @@ for (const f of CODE_FILES) secao(`arquivo:${f}`, () => {
   FILE.set(f, {
     linhas: countLines(raw), bytes: Buffer.byteLength(raw), imports: local, externos: external, exports: exportsNamed, export_default: expDef[0] || (/export\s+default\b/.test(src) ? '(anônimo)' : null),
     hooks: uniq(allMatches(RE.hook, src)), tabelas: uniq([...allMatches(RE.from, src), ...allMatches(RE.prisma, src)]), rpcs: uniq(allMatches(RE.rpc, src)),
-    edges: uniq([...allMatches(RE.invoke, src), ...allMatches(RE.fnUrl, src)]), env: envNames(src), buckets: uniq(allMatches(RE.storage, src)), canais_realtime: uniq(allMatches(RE.channel, src)),
+    edges: uniq([...allMatches(RE.invoke, src), ...allMatches(RE.fnUrl, src), ...allMatches(RE.invokeVia, src).filter((e) => EDGE_NOMES.has(e))]), env: envNames(src), buckets: uniq(allMatches(RE.storage, src)), canais_realtime: uniq(allMatches(RE.channel, src)),
     hosts_externos: uniq(allMatches(RE.urlHost, src).map((h) => h.toLowerCase())).filter((h) => !/localhost|example\.(com|org)|w3\.org|schema\.org|github\.com|npmjs\.com|deno\.land|esm\.sh|jsdelivr|unpkg/.test(h)),
     flags: uniq([...allMatches(RE.flag, src), ...allMatches(RE.flagEnv, src)]), papeis: uniq(allMatches(RE.role, src)), zod: (src.match(RE.zod) || []).length,
     rotas_http: rotasHttp, drizzle: uniq(allMatches(RE.drizzleTable, src)),
@@ -558,7 +562,6 @@ secao('banco-types', () => {
   while ((m = re.exec(body))) { let j = re.lastIndex, d2 = 1, row = ''; while (j < body.length && d2 > 0) { const ch = body[j++]; if (ch === '{') d2++; if (ch === '}') d2--; if (d2 > 0) row += ch; } const campos = []; let dd = 0, cur = ''; for (const ch of row) { if (ch === '{' || ch === '[' || ch === '(') dd++; if (ch === '}' || ch === ']' || ch === ')') dd--; if ((ch === ';' || ch === '\n') && dd === 0) { campos.push(cur); cur = ''; } else cur += ch; } campos.push(cur); tabelasTypes[m[1]] = Object.fromEntries(campos.map((cmp) => /^\s*(\w+)\??:\s*([\s\S]+?)\s*$/.exec(cmp)).filter(Boolean).map((cm) => [cm[1], cm[2].replace(/\s+/g, ' ')])); }
 });
 for (const [t, cols] of Object.entries(tabelasTypes)) T(t).colunas_types = cols;
-const EDGE_DIR = ['supabase/functions', 'functions', 'netlify/functions', 'edge-functions'].find((d) => exists(d)) || 'supabase/functions';
 // Exemplos, testes e ferramentas continuam no inventário, mas não provam uso pela aplicação.
 // srcDirs explícito permite tratar uma raiz de ferramentas como código de aplicação.
 const TOOLING_ROOT = /^(?:(?:apps|packages|services|libs)\/[^/]+\/)?(?:scripts|bin|tools|\.github|docs|inventario|analise|examples?|samples?)\//;

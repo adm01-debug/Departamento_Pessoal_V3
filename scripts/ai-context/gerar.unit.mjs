@@ -399,6 +399,24 @@ test('possiveis_segredos_no_codigo aponta a linha do arquivo, mesmo depois de co
   assert.deepEqual(read('baseline.json').alertas.possiveis_segredos_no_codigo, ['worker/chave.ts:6']);
 });
 
+test('edge chamada por wrapper local (handleInvoke) ou com genérico não é órfã; invoke de outra coisa não vira edge', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/functions/runtime-fn/index.ts', `Deno.serve(() => new Response('ok'));`);
+    w(dir, 'worker/edgeService.ts', `const handleInvoke = async <T>(name: string, o: unknown): Promise<T> => supabase.functions.invoke(name, o);
+export const svc = {
+  a: () => handleInvoke('orphan-fn', { body: {} }),
+  b: () => supabase.functions.invoke<
+    Partial<Resultado> & { ok?: boolean }
+  >('runtime-fn', { body: {} }),
+  c: () => ipcRenderer.invoke('abrir-janela'),
+};`);
+  });
+  const edges = Object.fromEntries(read('edge-functions.json').edges.map((e) => [e.nome, e]));
+  assert.deepEqual([edges['orphan-fn'].orfa, edges['orphan-fn'].chamada_pelo_front], [false, ['worker/edgeService.ts']]);
+  assert.deepEqual([edges['runtime-fn'].orfa, edges['runtime-fn'].chamada_pelo_front], [false, ['worker/edgeService.ts']]);
+  assert.deepEqual(read('baseline.json').alertas.edges_chamadas_sem_pasta, [], 'canal de IPC não é edge function');
+});
+
 test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
   const read = isolatedFixture(t, (dir) => {
     w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);
