@@ -373,3 +373,20 @@ await supabase.from('runtime_table').select('*');`);
   assert.ok(buckets.avatars, 'avatars em buckets');
   assert.ok(buckets['docs-rh'] && buckets['docs-rh'].usado_em >= 1, 'storage com .from( em outra linha também é bucket');
 });
+
+test('`/*` dentro de string (accept="image/*", glob) não engole o código até o próximo `*/`', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'worker/upload.tsx', `export const Up = () => <input type="file" accept="image/*,.pdf" />;
+export async function salvar() { await supabase.from('runtime_uploads').insert({}); }
+/** doc */
+export const fim = 1;`);
+    w(dir, 'worker/glob.tsx', `export const GLOBS = ['src/**/*.test.ts'];
+export const depois = () => supabase.from('runtime_glob');
+/* supabase.from('comentada_bloco') */
+export const Texto = () => <p>caixa d'água {/* supabase.from('comentada_jsx') */}</p>;`);
+  });
+  const alertas = read('baseline.json').alertas.tabelas_usadas_sem_definicao;
+  assert.ok(alertas.includes('runtime_uploads'), `código depois de accept="image/*" sumiu: ${alertas}`);
+  assert.ok(alertas.includes('runtime_glob'), `código depois de glob com /* sumiu: ${alertas}`);
+  assert.ok(!alertas.includes('comentada_bloco') && !alertas.includes('comentada_jsx'), `comentário de verdade deixou de ser removido: ${alertas}`);
+});

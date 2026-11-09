@@ -45,7 +45,11 @@ const sortObj = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
 const countLines = (s) => (s ? s.split('\n').length : 0);
 const git = (...args) => { try { return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).trim(); } catch { return ''; } };
-const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:\\'"`])\/\/[^\n]*/g, '$1');
+// `/*` dentro de string na mesma linha (accept="image/*", path="/x/*", glob) não abre comentário: sem isto tudo até o próximo `*/` sumia da análise.
+// Aspa logo depois de letra/dígito é apóstrofo de texto (d'água), não abertura de string.
+const emString = (s, i) => { let q = null; for (let j = s.lastIndexOf('\n', i) + 1; j < i; j++) { const ch = s[j]; if (q) { if (ch === '\\') j++; else if (ch === q) q = null; } else if ((ch === '"' || ch === "'" || ch === '`') && !/[\p{L}\p{N}_]/u.test(s[j - 1] || '')) q = ch; } return q !== null; };
+const stripBlocos = (s) => { let out = '', i = 0; for (;;) { const a = s.indexOf('/*', i); if (a < 0) return out + s.slice(i); const b = emString(s, a) ? -1 : s.indexOf('*/', a + 2); if (b < 0) { out += s.slice(i, a + 2); i = a + 2; continue; } out += s.slice(i, a); i = b + 2; } };
+const stripComments = (s) => stripBlocos(s).replace(/(^|[^:\\'"`])\/\/[^\n]*/g, '$1');
 const cap = (arr, n = 200) => arr.slice(0, n);
 const allMatches = (re, s, g = 1) => { const out = []; re.lastIndex = 0; let m; while ((m = re.exec(s))) out.push(m[g]); return out; };
 const byCount = (arr) => Object.entries(arr.reduce((a, k) => { a[k] = (a[k] || 0) + 1; return a; }, {})).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
