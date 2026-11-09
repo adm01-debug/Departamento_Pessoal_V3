@@ -344,8 +344,11 @@ async function main() {
   if (problems.length) {
     log(`GATE FINAL REPROVOU: ${problems.join('; ')} — desfazendo tudo`);
     report.problems = problems;
-    if (HERE) restore(cwd, startSnap, touchedAll);
-    else await git(cwd, 'reset', '--hard', '-q', startSha);
+    if (HERE) {
+      restore(cwd, startSnap, touchedAll);
+      // --here --commit: os commits das etapas também saem (reset misto: HEAD e índice voltam, os arquivos já foram restaurados)
+      if (report.commits.length) await git(cwd, 'reset', '-q', startSha);
+    } else await git(cwd, 'reset', '--hard', '-q', startSha);
     return 1;
   }
 
@@ -386,6 +389,10 @@ try {
   // rollback em caso de queda no meio de uma etapa
   try {
     if (startSnap) restore(cwd, startSnap, touchedSince(cwd, startSnap));
+    // Os commits das etapas já concluídas não passaram pelo gate final: saem também (ficavam na branch, com o worktree sujo).
+    // startSha só existe depois que o worktree do autofix foi assumido; no --here o reset é misto (não toca nos arquivos).
+    if (startSha && !HERE) await git(cwd, 'reset', '--hard', '-q', startSha);
+    else if (startSha && report.commits.length) await git(cwd, 'reset', '-q', startSha);
   } catch {}
 } finally {
   if (lockOwned) writeReport(); // quem não pegou a trava não sobrescreve o relatório da execução ativa (mesmo carimbo de minuto)
