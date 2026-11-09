@@ -103,12 +103,14 @@ for (const file of srcFiles) {
   for (const match of source.matchAll(/\.from\s*\(\s*["']audit_log["']\s*\)/g)) {
     directLegacyAuditCalls.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
   }
-  for (const match of source.matchAll(/\.rpc\s*\(\s*["']([A-Za-z0-9_]+)["']/g)) {
+  // `(?:<[^(]*>)?` cobre argumentos de tipo: `.rpc<Row>('nome')` não casava
+  // nenhum dos dois padrões e a chamada escapava da allowlist.
+  for (const match of source.matchAll(/\.rpc\s*(?:<[^(]*>)?\s*\(\s*["']([A-Za-z0-9_]+)["']/g)) {
     const locations = calls.get(match[1]) ?? [];
     locations.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
     calls.set(match[1], locations);
   }
-  for (const match of source.matchAll(/\.rpc\s*\(\s*([^"'\s)][^,)\n]*)/g)) {
+  for (const match of source.matchAll(/\.rpc\s*(?:<[^(]*>)?\s*\(\s*([^"'\s)][^,)\n]*)/g)) {
     dynamicRpcCalls.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
   }
 
