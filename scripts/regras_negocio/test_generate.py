@@ -191,6 +191,14 @@ export type Database = {
                           ("valor", "DECIMAL(15,2) NOT NULL DEFAULT 0"), ("st", "text CHECK (st IN ('x','y'))")])
         self.assertEqual(table["constraints"], ["PRIMARY KEY (id)", "constraint c1 CHECK (a <> '')", "constraint c2 UNIQUE (a, st)"])
 
+    def test_materialized_view_created_if_not_exists_is_listed(self):
+        self.write("supabase/migrations/20260101000000_views.sql",
+                   "CREATE MATERIALIZED VIEW IF NOT EXISTS public.mv_total WITH (fillfactor = 80) AS SELECT 1 AS total;\n"
+                   "CREATE OR REPLACE VIEW v AS SELECT 2;\n")
+        self.assertEqual(self.schema()["views"], {
+            "mv_total": {"body": "SELECT 1 AS total", "src": "supabase/migrations/20260101000000_views.sql"},
+            "v": {"body": "SELECT 2", "src": "supabase/migrations/20260101000000_views.sql"}})
+
 
 if __name__ == "__main__":
     unittest.main()
