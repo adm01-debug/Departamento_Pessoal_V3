@@ -75,6 +75,17 @@ test('texto que nao e JSON volta como esta', () => {
   assert.equal(semCarimbos(null), null);
 });
 
+test('CLI: o resultado nao depende do cwd (subpasta do repo ou fora dele)', (t) => {
+  const raiz = repoGit(t, ESTADO);
+  const script = path.join(raiz, 'scripts/inventario/mudou-conteudo.mjs');
+  assert.equal(cli(raiz, 'scripts/inventario/mudou-conteudo.mjs'), 'false');
+  assert.equal(cli(path.join(raiz, 'scripts'), 'inventario/mudou-conteudo.mjs'), 'false', 'de uma subpasta, sem mudanca');
+  assert.equal(cli(os.tmpdir(), script), 'false', 'de fora do repo, sem mudanca');
+  fs.writeFileSync(path.join(raiz, 'inventario/estado/rotas.json'), '{"urls":[{"caminho":"/nova"}]}');
+  assert.equal(cli(path.join(raiz, 'scripts'), 'inventario/mudou-conteudo.mjs'), 'true', 'de uma subpasta, com mudanca');
+  assert.equal(cli(os.tmpdir(), script, 'inventario/estado/banco.json'), 'false', 'arquivo explicito sem mudanca');
+});
+
 test('CLI: arquivo com mais de 1 MiB no HEAD e so a data mudando nao abre PR', (t) => {
   const grande = (data) => JSON.stringify({ medido_em: data, tabelas: Array.from({ length: 20000 }, (_, i) => ({ nome: `tabela_${i}`, rls: true, policies: 3, obs: 'x'.repeat(30) })) });
   assert.ok(grande('1').length > 1024 * 1024, 'a fixture precisa passar do maxBuffer padrao do execFileSync');
