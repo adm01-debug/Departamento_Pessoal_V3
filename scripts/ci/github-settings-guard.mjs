@@ -484,7 +484,7 @@ async function main() {
     MARCADOR(assinatura),
     soCegos ? '## 👁️ Ponto cego do perímetro (nada divergiu do que foi possível ler)' : '## ⚠️ Divergência de perímetro detectada',
     '',
-    `Baseline: \`scripts/ci/github-settings-baseline.json\` (medido em ${baseline.medido_em})`,
+    `Baseline: \`scripts/ci/github-settings-baseline.json\` (medido em ${semQuebra(baseline.medido_em)})`,
     '',
   ];
 
