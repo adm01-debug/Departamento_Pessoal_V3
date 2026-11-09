@@ -167,6 +167,16 @@ export type Database = {
         self.assertEqual([(p["name"], p["cmd"], p["roles"], p["using"]) for p in self.schema()["policies"]],
                          [("p1", "SELECT", "authenticated, service_role", '("id" = 1)'), ("p2", "DELETE", "authenticated", "id = 2")])
 
+    def test_trigger_restricted_to_columns_is_not_dropped(self):
+        self.write("supabase/migrations/20260101000000_triggers.sql",
+                   "CREATE TABLE public.t (a integer, b integer, status text);\n"
+                   "CREATE TRIGGER by_list BEFORE UPDATE OF a, b ON public.t FOR EACH ROW EXECUTE FUNCTION f();\n"
+                   'CREATE OR REPLACE TRIGGER "by_quoted" AFTER INSERT OR UPDATE OF "status" ON "public"."t" '
+                   'FOR EACH ROW EXECUTE FUNCTION "public"."g"();\n')
+        self.assertEqual([(t["name"], t["when"], t["table"], t["function"]) for t in self.schema()["triggers"]],
+                         [("by_list", "BEFORE UPDATE OF A, B", "t", "f"),
+                          ("by_quoted", 'AFTER INSERT OR UPDATE OF "STATUS"', "t", "g")])
+
 
 if __name__ == "__main__":
     unittest.main()
