@@ -110,8 +110,10 @@ const VERIFICADORES_DE_PAPEL = [
  */
 const AUTO_ACESSO = [
   /\bsou_o_colaborador\b/i,
-  /\buser_id\s*=\s*auth\.uid\s*\(\s*\)/i,
-  /\bauth\.uid\s*\(\s*\)\s*=\s*user_id\b/i,
+  // Aceita também a forma initplan `( SELECT auth.uid() AS uid)`, como o
+  // Postgres decompila `user_id = (select auth.uid())`.
+  /\buser_id\s*=\s*(?:\(\s*select\s+)?auth\.uid\s*\(\s*\)/i,
+  /\bauth\.uid\s*\(\s*\)(?:\s+as\s+\w+\s*\))?\s*=\s*user_id\b/i,
 ];
 
 /**
