@@ -69,10 +69,18 @@ const TENANT_CORRELATORS = [
  * Detectado ANTES dos correlacionadores, porque uma política pode conter
  * `auth.uid()` num ramo e a claim forjável em outro, unidos por OR.
  */
-const FORGEABLE_CLAIM_RE = /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
+// `(?:\s+as\s+\w+\s*\))?` cobre a forma initplan: `(select auth.jwt()) ->> 'x'`
+// é decompilado como `( SELECT auth.jwt() AS jwt) ->> 'x'::text`.
+const FORGEABLE_CLAIM_RE =
+  /auth\.jwt\s*\(\s*\)(?:\s+as\s+\w+\s*\))?\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
 
-/** Claims do JWT que o banco valida e que, portanto, não são forjáveis. */
-const TRUSTED_CLAIM_RE = /->>'(sub|aud|exp|iat|iss)'/i;
+/**
+ * Acesso a uma claim que o banco valida e que, portanto, não é forjável.
+ * Casa o ACESSO inteiro (e tolera o espaço que o Postgres põe após `->>`),
+ * para ser descontado ocorrência a ocorrência — ver usesForgeableClaim.
+ */
+const TRUSTED_CLAIM_RE =
+  /(?:auth\.jwt\s*\(\s*\)(?:\s+as\s+\w+\s*\))?|current_setting\s*\(\s*'request\.jwt\.claims'[^)]*\)\s*\)?(?:::\w+)?)\s*->>\s*'(?:sub|aud|exp|iat|iss)'/gi;
 
 /**
  * Tabelas isentas, com justificativa obrigatória.
@@ -178,10 +186,11 @@ function isCorrelated(expression) {
 }
 
 function usesForgeableClaim(expression) {
-  if (!FORGEABLE_CLAIM_RE.test(expression)) return false;
   // `auth.jwt() ->> 'sub'` é equivalente a auth.uid() e é verificado pelo
   // banco; só as claims livres (empresa_id, role, tenant, ...) são o problema.
-  return !TRUSTED_CLAIM_RE.test(expression);
+  // Desconta cada acesso confiável e julga o que sobra: uma claim confiável
+  // num ramo não pode absolver uma claim livre em outro.
+  return FORGEABLE_CLAIM_RE.test(expression.replace(TRUSTED_CLAIM_RE, ''));
 }
 
 function main() {
