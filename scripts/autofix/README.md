@@ -16,12 +16,12 @@ Opções: `--steps eslint,any,format,ratchet` · `--max-runs 150` (orçamento de
 
 ## O que faz
 
-| Etapa | O quê |
-| --- | --- |
-| `eslint` | `eslint --fix` com regras seguras que o projeto ainda não liga: `consistent-type-imports`, `no-inferrable-types`, `object-shorthand`, `no-else-return`, `prefer-const`, `no-var`, `no-extra-boolean-cast`, `no-useless-rename`. Se o conjunto regredir o `tsc`, reaplica regra a regra e descarta só a culpada. |
-| `any` | Para cada `no-explicit-any`: `(h: any) =>` em callback vira `(h) =>`; `catch (e: any)` vira `catch (e)`; `x: any` / `any[]` / `Record<string, any>` viram `unknown`. Só mantém o que o `tsc` aceita sem erro novo. Falhas são isoladas por arquivo/linha do erro e, se preciso, por bisseção. |
-| `format` | Prettier nos arquivos tocados (o CI `format:check:changed` exige isso em tudo que o PR altera). |
-| `ratchet` | `scripts/ratchet-any.mjs --write`, para o orçamento de `any` só descer. |
+| Etapa     | O quê                                                                                                                                                                                                                                                                                                           |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `eslint`  | `eslint --fix` com regras seguras que o projeto ainda não liga: `consistent-type-imports`, `no-inferrable-types`, `object-shorthand`, `no-else-return`, `prefer-const`, `no-var`, `no-extra-boolean-cast`, `no-useless-rename`. Se o conjunto regredir o `tsc`, reaplica regra a regra e descarta só a culpada. |
+| `any`     | Para cada `no-explicit-any`: `(h: any) =>` em callback vira `(h) =>`; `catch (e: any)` vira `catch (e)`; `x: any` / `any[]` / `Record<string, any>` viram `unknown`. Só mantém o que o `tsc` aceita sem erro novo. Falhas são isoladas por arquivo/linha do erro e, se preciso, por bisseção.                   |
+| `format`  | Prettier nos arquivos tocados (o CI `format:check:changed` exige isso em tudo que o PR altera).                                                                                                                                                                                                                 |
+| `ratchet` | `scripts/ratchet-any.mjs --write`, para o orçamento de `any` só descer.                                                                                                                                                                                                                                         |
 
 ## Garantias
 

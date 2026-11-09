@@ -19,7 +19,7 @@
  */
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync } from 'node:fs';
-import { homedir, tmpdir, setPriority } from 'node:os';
+import { homedir, setPriority } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { sh, git, bin, log, typecheck, newErrors, eslintJson, listSrc, snapshot, touchedSince, restore, prettierWrite, prettierCheck } from './lib.mjs';
@@ -62,7 +62,11 @@ if (HERE && DRY) {
 }
 
 // ---------- trava (uma execução por vez; a VM já travou com medições em paralelo) ----------
-const LOCK = join(tmpdir(), 'dp-autofix.lock');
+// Estado (trava e cache do tsc) em diretório PRIVADO do usuário, nunca em caminho previsível dentro de /tmp
+// (gravável por qualquer usuário: risco de symlink/arquivo pré-criado).
+const STATE_DIR = join(process.env.XDG_CACHE_HOME || join(homedir(), '.cache'), 'dp-autofix');
+mkdirSync(STATE_DIR, { recursive: true, mode: 0o700 });
+const LOCK = join(STATE_DIR, 'run.lock');
 function acquireLock() {
   try {
     mkdirSync(LOCK);
@@ -165,7 +169,7 @@ async function main() {
   startSha = await git(cwd, 'rev-parse', 'HEAD');
   const req = createRequire(join(cwd, 'package.json'));
   const ts = req('typescript');
-  const buildInfo = join(tmpdir(), `dp-autofix-${createHash('sha1').update(cwd).digest('hex').slice(0, 8)}.tsbuildinfo`);
+  const buildInfo = join(STATE_DIR, `tsc-${createHash('sha1').update(cwd).digest('hex').slice(0, 8)}.tsbuildinfo`);
   const tc = () => typecheck(cwd, buildInfo);
 
   srcFiles = listSrc(cwd);
