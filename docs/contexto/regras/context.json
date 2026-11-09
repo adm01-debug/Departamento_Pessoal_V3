@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4e36ab2bed6e8577f78a0f9cebf882ff4e3c9014",
+  "sha": "2b341debbfd9c644fe2b5d4212aba773350bd6a6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 15:48 UTC",
+  "generated_at": "2026-11-09 16:17 UTC",
   "files_total": 2837,
   "code_files": 2331,
-  "code_lines": 310993
+  "code_lines": 311013
  },
  "version": "1.3.2",
- "facts_hash": "64d7f2976c3c2bac",
+ "facts_hash": "3844d1418ed52f2e",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 99,
-   "lines": 19820,
+   "lines": 19840,
    "tables": [
     "a",
     "audit_log",
@@ -226854,7 +226854,7 @@
   },
   "scripts/autofix/run.mjs": {
    "path": "scripts/autofix/run.mjs",
-   "lines": 357,
+   "lines": 377,
    "env": [
     "XDG_CACHE_HOME"
    ],
@@ -274691,10 +274691,20 @@
   }
  },
  "git": {
-  "sha": "4e36ab2bed6e8577f78a0f9cebf882ff4e3c9014",
+  "sha": "2b341debbfd9c644fe2b5d4212aba773350bd6a6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2b341de",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)",
+    "files": [
+     "scripts/autofix/README.md",
+     "scripts/autofix/run.mjs"
+    ]
+   },
    {
     "sha": "4e36ab2",
     "date": "2026-11-09",
@@ -275119,25 +275129,20 @@
      "docs/agentes/fluxo-git.md",
      "docs/agentes/graphify.md"
     ]
-   },
-   {
-    "sha": "a29e6c0",
-    "date": "2026-11-07",
-    "author": "adm01-debug",
-    "subject": "fix: preserva semantica maybeSingle no proxy e no bridge (#366)",
-    "files": [
-     "src/integrations/supabase/__tests__/clientBridge.test.ts",
-     "src/integrations/supabase/client.ts",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/external-db-bridge/request-schema.ts",
-     "supabase/functions/external-db-bridge/validation.test.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/agentes/arquitetura.md",
     3
+   ],
+   [
+    "scripts/autofix/README.md",
+    2
+   ],
+   [
+    "scripts/autofix/run.mjs",
+    2
    ],
    [
     "scripts/audit-migration-style.mjs",
@@ -275188,31 +275193,23 @@
     2
    ],
    [
-    "src/integrations/supabase/__tests__/clientBridge.test.ts",
-    2
-   ],
-   [
-    "src/integrations/supabase/client.ts",
-    2
-   ],
-   [
-    "supabase/functions/external-db-bridge/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/external-db-bridge/request-schema.ts",
-    2
-   ],
-   [
-    "supabase/functions/external-db-bridge/validation.test.ts",
-    2
-   ],
-   [
     "src/calculators/beneficios.ts",
     1
    ],
    [
     "src/calculators/impostos.ts",
+    1
+   ],
+   [
+    "src/calculators/rescisao.ts",
+    1
+   ],
+   [
+    "src/calculators/trabalhista-base.ts",
+    1
+   ],
+   [
+    "src/components/admissoes/AdmissoesKanban.tsx",
     1
    ]
   ]

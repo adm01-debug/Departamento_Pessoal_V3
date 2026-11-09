@@ -340,7 +340,7 @@
   {
    "arquivo": "scripts/autofix/run.mjs",
    "descricao": "* Modos",
-   "linhas": 357,
+   "linhas": 377,
    "env": [
     "XDG_CACHE_HOME"
    ],

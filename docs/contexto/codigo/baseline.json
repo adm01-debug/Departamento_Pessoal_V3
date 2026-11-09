@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4e36ab2bed6e8577f78a0f9cebf882ff4e3c9014",
+  "commit": "2b341debbfd9c644fe2b5d4212aba773350bd6a6",
   "branch": "main",
-  "data_commit": "2026-11-09T12:47:54-03:00",
+  "data_commit": "2026-11-09T13:10:05-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2b341de",
+    "data": "2026-11-09",
+    "assunto": "fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)"
+   },
    {
     "sha": "4e36ab2",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "c83e9a1",
     "data": "2026-11-08",
     "assunto": "fix: typecheck:edge soft-skip sem deno; corrige comentário bun→npm; atualiza package-lock"
-   },
-   {
-    "sha": "1ebd08f",
-    "data": "2026-11-07",
-    "assunto": "fix: garante fixtures E2E do /ponto autenticado (#374)"
    }
   ],
   "arquivos_mudados_7d": 231,
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -258,15 +258,7 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/healthcheck.yml",
-    "mudancas": 10
-   },
-   {
     "arquivo": "deno.lock",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "vite.config.ts",
     "mudancas": 10
    },
    {
@@ -275,6 +267,10 @@
    },
    {
     "arquivo": ".github/workflows/canonical-probes.yml",
+    "mudancas": 9
+   },
+   {
+    "arquivo": ".github/workflows/healthcheck.yml",
     "mudancas": 9
    },
    {
@@ -296,6 +292,10 @@
    {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 9
+   },
+   {
+    "arquivo": "vite.config.ts",
+    "mudancas": 9
    }
   ],
   "autores_30d": [
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 73
+    "commits": 74
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2816,
   "arquivos_codigo": 1516,
-  "linhas_codigo": 263102,
+  "linhas_codigo": 263122,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -472,7 +472,7 @@
   },
   "scripts/autofix": {
    "arquivos": 8,
-   "linhas": 1533
+   "linhas": 1553
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
