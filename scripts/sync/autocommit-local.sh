@@ -92,17 +92,23 @@ push_pendente() {
   # varre TUDO que vai ser enviado (inclui commits manuais do usuário), como texto — falha fechada
   local base="$REMOTE/$BRANCH" largs=(log -p -U0 --text --format=)
   "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1 || base="$REMOTE/main"
-  if "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1; then largs+=("$base..HEAD"); else largs+=(-1); fi
+  # commits que JÁ estão na branch padrão do GitHub são públicos e não são enviados "de novo": fora da varredura (senão uma
+  # falsa detecção num commit antigo da main bloquearia o push da computador_local para sempre)
+  local dref; dref="$("${G[@]}" symbolic-ref -q --short "refs/remotes/$REMOTE/HEAD" 2>/dev/null || true)"; [ -n "$dref" ] || dref="$REMOTE/main"
+  if "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1; then
+    largs+=("$base..HEAD"); "${G[@]}" rev-parse -q --verify "$dref" >/dev/null 2>&1 && largs+=("^$dref")
+  else largs+=(-1); fi
   local ex=(); [ -f "$GLCFG" ] && ex=(--config "$GLCFG")
   "${G[@]}" "${largs[@]}" | gitleaks stdin "${ex[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$STATE/ac-push-$KEY.json" >/dev/null 2>&1
   case $? in
     0) ;;
-    9) say "BLOQUEADO: segredo em commit que seria ENVIADO — não enviei nada ($STATE/ac-push-$KEY.json); remova do histórico local"; return 0 ;;
-    *) say "BLOQUEADO: o gitleaks falhou ao varrer o que seria enviado (falha fechada) — não enviei nada"; return 0 ;;
+    9) say "BLOQUEADO: segredo em commit que seria ENVIADO — não enviei nada ($STATE/ac-push-$KEY.json); remova do histórico local"; RC=75; return 0 ;;
+    *) say "BLOQUEADO: o gitleaks falhou ao varrer o que seria enviado (falha fechada) — não enviei nada"; RC=75; return 0 ;;
   esac
   if timeout 300 "${G[@]}" push -q --no-verify -u "$REMOTE" "$BRANCH" 2>"$STATE/ac-$KEY.err"; then
     say "ENVIADO $BRANCH ao GitHub ($([ "$ahead" = novo ] && echo "branch nova" || echo "$ahead commit(s)")) @ $("${G[@]}" rev-parse --short HEAD)"
   else
+    RC=75   # push recusado/falhou: o timer precisa mostrar (run-all conta falhas consecutivas)
     local ws="$("${G[@]}" rev-parse HEAD)"   # avisa uma vez por commit (não enche o log a cada hora)
     if [ "$(cat "$STATE/ac-$KEY.pushwarn" 2>/dev/null)" != "$ws" ]; then
       printf '%s' "$ws" > "$STATE/ac-$KEY.pushwarn"
@@ -111,10 +117,14 @@ push_pendente() {
   fi
 }
 
+# Tira do índice UM arquivo, em modo LITERAL (nome com ':' no começo, '[', '*', '\\' ou '-' é pathspec/magia para o git: o
+# `reset -- nome` falhava e o arquivo ficava no commit). Falha fechada: se não conseguiu tirar, nada é commitado.
+unstage() { "${G[@]}" reset -q -- ":(literal)$1" 2>/dev/null || { "${G[@]}" reset -q 2>/dev/null; say "BLOQUEADO: não consegui tirar '$1' do índice (falha fechada) — NADA foi commitado"; exit 75; }; }
+
 timeout 120 "${G[@]}" fetch -q "$REMOTE" "$BRANCH" 2>/dev/null || true   # só para calcular "à frente"; falha de rede não impede o commit
 
 # 1. há o que commitar?
-if [ -z "$("${G[@]}" status --porcelain 2>/dev/null)" ]; then push_pendente; say "ok: nada novo para commitar"; exit 0; fi
+if [ -z "$("${G[@]}" status --porcelain 2>/dev/null)" ]; then push_pendente; say "ok: nada novo para commitar"; exit "${RC:-0}"; fi
 
 # 2. editando agora? adia
 if [ "$QUIET_MIN" -gt 0 ]; then
@@ -136,13 +146,15 @@ while IFS= read -r -d '' f; do    # qualquer arquivo grande (novo ou alterado)
   [ -f "$WT/$f" ] && [ "$(stat -c %s "$WT/$f")" -gt "$max_bytes" ] && excluir "$f" "maior que ${MAX_MB} MB"
 done < <("${G[@]}" ls-files -z -m -o --exclude-standard)
 SEGREDOS=(':(exclude,glob)**/.env' ':(exclude,glob)**/.env.*' ':(exclude,glob)**/*.pem' ':(exclude,glob)**/*.key' ':(exclude,glob)**/*.p12' ':(exclude,glob)**/id_rsa*')
+# artefatos GERADOS que mudam milhares de linhas a cada rodada (ex.: graphify-out) poluem o histórico e o GitHub; ficam só no disco
+GERADOS=(':(exclude,glob)graphify-out/**' ':(exclude,glob)**/graphify-out/**')
 
 if [ "$DRY" -eq 1 ]; then
   say "[dry-run] commitaria $("${G[@]}" status --porcelain | grep -c .) item(ns) em $BRANCH (excluindo ${#EXCL[@]} por trava de dados)"; push_pendente; exit 0
 fi
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
-if ! "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err"; then
+if ! "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${GERADOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err"; then
   say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 0
 fi
 
@@ -155,16 +167,16 @@ while IFS= read -r -d '' f; do
     *.csv|*.xlsx|*.xls|*.xlsm|*.ods|*.dump|*.bak|*.sqlite|*.sqlite3|*.db|*.zip|*.tar|*.gz|*.tgz|*.7z|*.pdf|*.doc|*.docx|*.ppt|*.pptx|*.odt|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|*.kdbx) bad="tipo de dado/segredo" ;;
   esac
   [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && bad="arquivo de segredo/ambiente"
-  if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
-  [ -n "$bad" ] && { "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
-done < <("${G[@]}" diff --cached --name-only --diff-filter=AM -z)
+  if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":0:$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
+  [ -n "$bad" ] && { unstage "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
+done < <("${G[@]}" diff --cached --name-only --no-renames --diff-filter=AM -z)
 # binário fora da lista permitida (imagens/fontes/mídia): o gitleaks e a trava de PII não leem binário; UTF-16 também conta como binário
 while IFS= read -r -d '' rec; do
   case "$rec" in
     -$'\t'-$'\t'*)
       f="${rec#-$'\t'-$'\t'}"; lc="${f,,}"
       case "$lc" in *.png|*.jpg|*.jpeg|*.gif|*.webp|*.ico|*.bmp|*.avif|*.woff|*.woff2|*.ttf|*.otf|*.eot|*.mp3|*.mp4|*.webm|*.wav|*.ogg) ;;
-        *) "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="binário fora da lista permitida" ;;
+        *) unstage "$f"; MOTIVO["$f"]="binário fora da lista permitida" ;;
       esac ;;
   esac
 done < <("${G[@]}" diff --cached --numstat -z --no-renames --diff-filter=AM)
@@ -209,14 +221,18 @@ else:             # modo 'nomes': stdin = nomes separados por NUL
     for n in raw.split('\0'):
         if n and tem(n): sys.stdout.write(n+'\0')
 PYEOF
-  if [ -n "$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" ]; then
+  if [ -n "$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" ]; then
     # há algo: atribui por arquivo (caro, mas só roda quando a varredura geral achou)
     while IFS= read -r -d '' f; do
-      if "${G[@]}" diff --cached -U0 --text -- "$f" | python3 -c "$PIISCAN" "$PII" any 2>/dev/null | grep -q 1; then
-        "${G[@]}" reset -q -- "$f"; MOTIVO["$f"]="dado pessoal (${PII}) no conteúdo ou no nome"
+      if "${G[@]}" diff --cached -U0 --text --no-renames -- ":(literal)$f" | python3 -c "$PIISCAN" "$PII" any 2>/dev/null | grep -q 1; then
+        unstage "$f"; MOTIVO["$f"]="dado pessoal (${PII}) no conteúdo ou no nome"
       fi
     done < <("${G[@]}" diff --cached --name-only -z)
   fi
+fi
+# 5b. TRAVA FINAL (cinto e suspensório): revarre o índice inteiro. Se ainda há dado pessoal, NADA é commitado.
+if [ "$PIIOFF" -eq 0 ] && [ -n "$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" ]; then
+  "${G[@]}" reset -q; say "BLOQUEADO: dado pessoal ainda presente no índice depois das exclusões (falha fechada) — NADA foi commitado"; exit 75
 fi
 # avisa uma vez por arquivo (enquanto ele seguir igual), para não encher o log a cada hora
 EXCL_SEEN="$STATE/ac-$KEY.excl"; touch "$EXCL_SEEN"
@@ -234,14 +250,14 @@ if [ -n "$("${G[@]}" diff --cached --name-only)" ]; then
   "${G[@]}" diff --cached -U0 --text | gitleaks stdin "${extra[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$rep" >/dev/null 2>&1
   case $? in
     0) ;;
-    9) "${G[@]}" reset -q; say "BLOQUEADO pelo gitleaks: segredo no que seria commitado — NADA foi commitado ($rep)"; exit 0 ;;
-    *) "${G[@]}" reset -q; say "BLOQUEADO: o gitleaks falhou (falha fechada) — NADA foi commitado"; exit 0 ;;
+    9) "${G[@]}" reset -q; say "BLOQUEADO pelo gitleaks: segredo no que seria commitado — NADA foi commitado ($rep)"; exit 75 ;;
+    *) "${G[@]}" reset -q; say "BLOQUEADO: o gitleaks falhou (falha fechada) — NADA foi commitado"; exit 75 ;;
   esac
 fi
 
 # 7. commit + push
 if [ -z "$("${G[@]}" diff --cached --name-only)" ]; then
-  say "nada a commitar depois das travas"; push_pendente; exit 0
+  say "nada a commitar depois das travas"; push_pendente; exit "${RC:-0}"
 fi
 N="$("${G[@]}" diff --cached --name-only | grep -c .)"
 if "${G[@]}" commit -q --no-verify -m "autosave($BRANCH): $(date '+%F %T') — $N arquivo(s)" 2>"$STATE/ac-$KEY.err"; then
@@ -250,4 +266,4 @@ else
   "${G[@]}" reset -q; say "ERRO no commit: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 0
 fi
 push_pendente
-exit 0
+exit "${RC:-0}"

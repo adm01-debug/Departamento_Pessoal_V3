@@ -39,8 +39,21 @@ STATE="${XDG_CACHE_HOME:-$HOME/.cache}/dp-sync"; mkdir -p "$STATE" && chmod 700 
 LOG="$STATE/sync.log"
 [ -f "$CONF" ] || { echo "$(date '+%F %T') run-all: lista $CONF não existe" >> "$LOG"; echo "lista $CONF não existe" >&2; exit 2; }
 
-ok=0; falha=0; pulado=0
+ok=0; falha=0; pulado=0; atencao=0
 trim() { local v="${1%$'\r'}"; v="${v#"${v%%[![:space:]]*}"}"; v="${v%"${v##*[![:space:]]}"}"; printf '%s' "$v"; }
+# Resultado de um script: 0 = ok; 75 = "precisa de atenção" (rede/credencial fora do ar, push recusado, segredo barrado...): o script
+# já falhou de forma SEGURA, mas não pode ficar invisível. Conta falhas consecutivas por repositório e por modo; a partir de
+# 3 seguidas (3 horas) o serviço sai com erro e aparece em `systemctl --user --failed`. Qualquer outro código ≠ 0 = falha na hora.
+resultado() { # resultado <nome> <rc>
+  local f="$STATE/consec-$MODE-$1" c
+  if [ "$2" -eq 0 ]; then rm -f "$f"; ok=$((ok+1)); return; fi
+  if [ "$2" -eq 75 ]; then
+    c=$(( $(cat "$f" 2>/dev/null || echo 0) + 1 )); printf '%s' "$c" > "$f"
+    if [ "$c" -ge 3 ]; then echo "$(date '+%F %T') [$1] run-all $MODE: ATENÇÃO há $c execuções seguidas sem concluir (rede/credencial/push/segredo) — veja as linhas acima" >> "$LOG"; falha=$((falha+1)); else atencao=$((atencao+1)); fi
+    return
+  fi
+  falha=$((falha+1))
+}
 while IFS='|' read -r repo wt branch mirror pii || [ -n "${repo:-}" ]; do
   repo="$(trim "$repo")"; [ -z "$repo" ] && continue; case "$repo" in \#*) continue ;; esac
   wt="$(trim "${wt:-}")"; branch="$(trim "${branch:-}")"; mirror="$(trim "${mirror:-}")"; pii="${pii//[[:space:]]/}"; pii="${pii%$'\r'}"
@@ -49,16 +62,17 @@ while IFS='|' read -r repo wt branch mirror pii || [ -n "${repo:-}" ]; do
   case "$MODE" in
     mirror)
       case "$mirror" in
-        1) timeout 25m nice -n 10 bash "$HERE/mirror-github.sh" --repo "$repo" --branch "${branch:-main}" --quiet "${QM[@]}" "${DRY[@]}" \
-             && timeout 25m nice -n 10 bash "$HERE/sync-github.sh" --repo "$repo" --quiet "${DRY[@]}" && ok=$((ok+1)) || falha=$((falha+1)) ;;
+        1) timeout 25m nice -n 10 bash "$HERE/mirror-github.sh" --repo "$repo" --branch "${branch:-main}" --quiet "${QM[@]}" "${DRY[@]}" </dev/null; rc=$?
+           if [ "$rc" -eq 0 ]; then timeout 25m nice -n 10 bash "$HERE/sync-github.sh" --repo "$repo" --quiet "${DRY[@]}" </dev/null; rc=$?; fi
+           resultado "$name" "$rc" ;;
         *) pulado=$((pulado+1)) ;;   # ext/0: espelho próprio ou nenhum
       esac ;;
     autocommit)
       [ -n "$wt" ] || { pulado=$((pulado+1)); continue; }
-      timeout 25m nice -n 10 bash "$HERE/autocommit-local.sh" --worktree "$wt" --branch computador_local ${pii:+--pii "$pii"} --quiet "${QM[@]}" "${DRY[@]}" && ok=$((ok+1)) || falha=$((falha+1)) ;;
+      timeout 25m nice -n 10 bash "$HERE/autocommit-local.sh" --worktree "$wt" --branch computador_local ${pii:+--pii "$pii"} --quiet "${QM[@]}" "${DRY[@]}" </dev/null; resultado "$name" $? ;;
   esac
 done < "$CONF"
-echo "$(date '+%F %T') run-all $MODE: $ok ok, $falha com erro, $pulado pulado(s)" >> "$LOG"
+echo "$(date '+%F %T') run-all $MODE: $ok ok, $atencao com atenção (1ª/2ª vez), $falha com erro, $pulado pulado(s)" >> "$LOG"
 # status 1 quando algum repositório falhou: aparece em `systemctl --user --failed`
 [ "$falha" -gt 0 ] && exit 1
 exit 0

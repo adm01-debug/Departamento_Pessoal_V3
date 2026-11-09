@@ -13,7 +13,10 @@ try {
   const eslint = new ESLint({
     cwd,
     fix: (m) => regras.has(m.ruleId),
-    overrideConfig: { rules: Object.fromEntries([...regras].map((r) => [r, 'error'])) },
+    // baseConfig (prioridade MAIS BAIXA): liga as regras onde o projeto não disse nada, mas respeita um `off` do projeto
+    // (overrideConfig vencia tudo, inclusive override por pasta); restrito a ts/tsx (o plugin só existe lá, senão .js dá "Could not find plugin").
+    // object-shorthand só em `properties`: a forma `method` troca `function(){}` por método (perde [[Construct]]/.prototype).
+    baseConfig: [{ files: ['**/*.{ts,tsx}'], rules: Object.fromEntries([...regras].map((r) => [r, r === 'object-shorthand' ? ['error', 'properties'] : 'error'])) }],
   });
   const results = await eslint.lintFiles(alvos);
   await ESLint.outputFixes(results);

@@ -108,3 +108,40 @@ test('regra ESTR-002: PK composta, UNIQUE inline e ADD CONSTRAINT UNIQUE contam 
   assert.equal(r('create table p(id int primary key); create table c(p_id int references p); create index ix on c(p_id);').status, 'ok');
   assert.equal(r('create table p(id int primary key); create table c(p_id int references p); create index ix on c(p_id); drop index ix;').status, 'revisar');
 });
+
+// ---- 2ª auditoria (oráculo Postgres 16): DDL dentro de DO só vale quando o replay sabe que rodou ----
+test('DO: RENAME condicional NÃO é aplicado (caso real `ferias`: só renomeia se faltar data_inicio)', (t) => {
+  const s = schema(t, "create table ferias(id int, data_inicio date); alter table ferias enable row level security; DO $$ BEGIN IF EXISTS (select 1 from information_schema.tables where table_name='ferias') THEN IF NOT EXISTS (select 1 from information_schema.columns where column_name='data_inicio') THEN ALTER TABLE public.ferias RENAME TO ferias_legacy_003; END IF; END IF; END $$; CREATE TABLE IF NOT EXISTS public.ferias(id int);");
+  assert.ok(s.rls.has('ferias'));
+  assert.equal(s.tabelas.has('ferias_legacy_003'), false);
+});
+
+test('DO: ENABLE RLS dentro de guarda de existência (to_regclass / IF EXISTS catálogo) conta; em IF incerto não', (t) => {
+  assert.ok(schema(t, "create table a(id int); DO $$ BEGIN IF to_regclass('public.a') IS NOT NULL THEN EXECUTE 'ALTER TABLE public.a ENABLE ROW LEVEL SECURITY'; END IF; END $$;").rls.has('a'));
+  assert.equal(schema(t, "create table a(id int); DO $$ BEGIN IF current_setting('x') = '1' THEN ALTER TABLE a ENABLE ROW LEVEL SECURITY; END IF; END $$;").rls.has('a'), false);
+  assert.equal(schema(t, "create table a(id int); DO $$ BEGIN IF true THEN NULL; ELSE ALTER TABLE a ENABLE ROW LEVEL SECURITY; END IF; END $$;").rls.has('a'), false);
+});
+
+test('DO: ENABLE depois de RAISE EXCEPTION, em tratador de erro, e literal em RAISE/exclusão não contam', (t) => {
+  assert.equal(schema(t, "create table a(id int); DO $$ BEGIN RAISE EXCEPTION 'x'; ALTER TABLE a ENABLE ROW LEVEL SECURITY; END $$;").rls.has('a'), false);
+  assert.equal(schema(t, "create table a(id int); DO $$ BEGIN PERFORM 1; EXCEPTION WHEN others THEN ALTER TABLE a ENABLE ROW LEVEL SECURITY; END $$;").rls.has('a'), false);
+  assert.equal(schema(t, "create table a(id int); create table b(id int); DO $$ DECLARE r record; BEGIN FOR r IN select tablename from pg_tables where tablename <> 'b' LOOP EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', r.tablename); END LOOP; RAISE NOTICE 'a'; END $$;").rls.has('b'), false);
+});
+
+test('DO: array constante de DDL (FOREACH x IN ARRAY) roda; DROP TABLE condicional não apaga a tabela', (t) => {
+  const s = schema(t, "create table a(id int, p int references a); DO $$ DECLARE s text; BEGIN FOREACH s IN ARRAY ARRAY['CREATE INDEX IF NOT EXISTS i1 ON public.a(p)'] LOOP EXECUTE s; END LOOP; END $$;");
+  assert.ok(s.indices.some((i) => i.tabela === 'a' && i.cols[0] === 'p'));
+  assert.ok(schema(t, "create table a(id int); DO $$ BEGIN IF random() > 2 THEN DROP TABLE a; END IF; END $$;").tabelas.has('a'));
+});
+
+test('ordem: ENABLE RLS antes do CREATE TABLE não deixa RLS fantasma; identificador com $ não engole o arquivo', (t) => {
+  assert.equal(schema(t, 'alter table if exists x enable row level security; create table x(id int);').rls.has('x'), false);
+  assert.ok(schema(t, 'create table a$x$y(id int); create table b(id int);').tabelas.has('b'));
+});
+
+test('policy aberta: true OR x e x OR true também são abertas; procedure SECURITY DEFINER é vista', (t) => {
+  const r = regra('DADOS-RLS-002').run({ cwd: mk(t, 'create table a(cpf text); create policy p on a for select to authenticated using (true or auth.uid() is null);') });
+  assert.equal(r.status, 'divergente');
+  const s = schema(t, "CREATE PROCEDURE pr() LANGUAGE sql SECURITY DEFINER AS $$ select 1 $$;");
+  assert.deepEqual(nomes(s), ['pr():D:SEM']);
+});

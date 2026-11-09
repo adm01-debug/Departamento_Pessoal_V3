@@ -62,22 +62,24 @@ done
 
 # 1. fetch e conferência de que origin/<branch> é mesmo o que está no GitHub agora
 if ! timeout 180 "${G[@]}" fetch --prune --quiet origin 2>"$STATE/$KEY.err"; then
-  say "fetch falhou (rede/credencial?): $(head -c 160 "$STATE/$KEY.err" | tr '\n' ' ') — tentarei na próxima"; exit 0
+  say "fetch falhou (rede/credencial?): $(head -c 160 "$STATE/$KEY.err" | tr '\n' ' ') — tentarei na próxima"; exit 75
 fi
 REMOTE_SHA="$(timeout 60 "${G[@]}" ls-remote origin "refs/heads/$BRANCH" 2>/dev/null | cut -f1)"
-[ -n "$REMOTE_SHA" ] || { say "AVISO: o GitHub não tem a branch $BRANCH; nada feito"; exit 0; }
-[ "$("${G[@]}" rev-parse "origin/$BRANCH" 2>/dev/null)" = "$REMOTE_SHA" ] || { say "AVISO: origin/$BRANCH não bate com o GitHub após o fetch; nada feito"; exit 0; }
+[ -n "$REMOTE_SHA" ] || { say "AVISO: o GitHub não tem a branch $BRANCH (ou ls-remote falhou); nada feito"; exit 75; }
+[ "$("${G[@]}" rev-parse "origin/$BRANCH" 2>/dev/null)" = "$REMOTE_SHA" ] || { say "AVISO: origin/$BRANCH não bate com o GitHub após o fetch; nada feito"; exit 75; }
 
 
-# Arquivos rastreados cujos bytes reais no disco diferem do blob do índice. O `git status` não vê isso quando
-# core.autocrlf=input normaliza CRLF->LF na comparação (cópia criada no Windows, por exemplo).
-# Saída: caminhos separados por NUL (nomes com aspas, TAB, newline ou acentos passam intactos). Pula links simbólicos,
-# submódulos e arquivos cuja conversão de checkout é DE PROPÓSITO diferente do blob (atributos eol/filter/ident/
-# working-tree-encoding no .gitattributes): esses continuam diferindo por regra do repositório.
+# Arquivos rastreados cujos bytes reais no disco diferem do blob do índice SÓ no fim de linha (CRLF x LF). O `git status`
+# não vê isso quando core.autocrlf=input normaliza CRLF->LF na comparação (cópia criada no Windows, por exemplo).
+#   stdout (NUL): só deriva de fim de linha E sem edição recente -> pode ser reescrito sem perda
+#   $1 (arquivo, NUL): arquivos cujo CONTEÚDO difere (assume-unchanged/skip-worktree escondem isso do `git status`) ou que
+#       foram editados há pouco: NÃO se toca; só se avisa.
+# Pula links simbólicos, submódulos e arquivos cuja conversão de checkout é DE PROPÓSITO diferente do blob (atributos
+# eol/filter/ident/working-tree-encoding): esses continuam diferindo por regra do repositório.
 byte_drift() {
-  python3 -I - "$REPO" <<'PY'
-import hashlib, os, subprocess, sys
-repo = sys.argv[1]
+  python3 -I - "$REPO" "${1:-/dev/null}" "$((QUIET_MIN * 60))" <<'PY'
+import hashlib, os, subprocess, sys, time
+repo, real_out, quiet = sys.argv[1], sys.argv[2], int(sys.argv[3])
 G = ["git", "-C", repo, "-c", "core.autocrlf=false", "-c", "core.quotepath=false"]
 out = subprocess.run(G + ["ls-files", "-s", "-z"], capture_output=True, check=True).stdout
 ents = []
@@ -93,6 +95,15 @@ if ents:
                        input=b"\0".join(p for _, p in ents) + b"\0", capture_output=True, check=True).stdout.split(b"\0")
     for i in range(0, len(r) - 2, 3):
         if r[i + 2] not in (b"unspecified", b"unset", b""): special.add(r[i])
+real = []
+now = time.time()
+cat = subprocess.Popen(G + ["cat-file", "--batch"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+def blob_of(sha):   # um único processo cat-file para todos os arquivos divergentes
+    cat.stdin.write(sha.encode() + b"\n"); cat.stdin.flush()
+    hdr = cat.stdout.readline().split()
+    if len(hdr) != 3 or hdr[1] != b"blob": raise OSError("blob ausente")
+    data = cat.stdout.read(int(hdr[2])); cat.stdout.read(1)
+    return data
 for sha, path in ents:
     if path in special: continue
     full = os.path.join(repo.encode(), path)
@@ -101,21 +112,41 @@ for sha, path in ents:
         n = os.path.getsize(full); h = hashlib.sha1(b"blob %d\0" % n)
         with open(full, "rb") as f:
             for chunk in iter(lambda: f.read(1 << 20), b""): h.update(chunk)
+        if h.hexdigest() == sha: continue
+        recente = quiet > 0 and now - os.stat(full).st_mtime < quiet
+        eol = False
+        if not recente:
+            blob = blob_of(sha)
+            with open(full, "rb") as f: disk = f.read()
+            eol = disk.replace(b"\r\n", b"\n") == blob.replace(b"\r\n", b"\n")
     except OSError:
         continue
-    if h.hexdigest() != sha: sys.stdout.buffer.write(path + b"\0")
+    if eol: sys.stdout.buffer.write(path + b"\0")
+    else: real.append(path)
+cat.stdin.close(); cat.wait()
+if real and real_out != "/dev/null":
+    with open(real_out, "wb") as f: f.write(b"\0".join(real) + b"\0")
 PY
 }
 # Reescreve esses arquivos com os bytes do blob (autocrlf desligado).
 normaliza_bytes() {
-  local lista; lista="$(mktemp "$STATE/drift.XXXXXX")"
-  byte_drift > "$lista" 2>/dev/null || { say "AVISO: não consegui conferir os bytes dos arquivos (python3/git falhou); nada normalizado"; rm -f "$lista"; return 0; }
+  local lista real; lista="$(mktemp "$STATE/drift.XXXXXX")"; real="$(mktemp "$STATE/real.XXXXXX")"
+  byte_drift "$real" > "$lista" 2>/dev/null || { say "AVISO: não consegui conferir os bytes dos arquivos (python3/git falhou); nada normalizado"; rm -f "$lista" "$real"; return 0; }
+  if [ -s "$real" ]; then   # conteúdo diferente do GitHub que o git status não mostra: trabalho do usuário -> não toco
+    local nr; nr="$(tr -cd '\0' < "$real" | wc -c)"
+    local sig; sig="$(tr '\0' '\n' < "$real" | sha1sum | cut -c1-12)"
+    if [ "$(cat "$STATE/$KEY.realwarn" 2>/dev/null)" != "$sig" ]; then
+      printf '%s' "$sig" > "$STATE/$KEY.realwarn"
+      say "AVISO: $nr arquivo(s) com CONTEÚDO diferente do GitHub escondido do git status (assume-unchanged/skip-worktree?) ou editado(s) há pouco — NÃO toquei: $(tr '\0' ' ' < "$real" | head -c 160)"
+    fi
+  fi
+  rm -f "$real"
   [ -s "$lista" ] || { rm -f "$lista"; return 0; }
   local n; n="$(tr -cd '\0' < "$lista" | wc -c)"
   # `checkout-index -f` PULA arquivos que o cache de stat do índice dá como em dia (mesmo com -f). Mudar o mtime antes
-  # invalida o cache e força a reescrita; se algo falhar, o conteúdo antigo continua intacto.
+  # invalida o cache e força a reescrita. Só chega aqui o que difere apenas no fim de linha (nada de conteúdo se perde).
   (cd "$REPO" && xargs -0 -a "$lista" touch -d '1970-01-02' --) 2>/dev/null
-  "${G[@]}" -c core.autocrlf=false checkout-index -u -f -z --stdin < "$lista" 2>/dev/null
+  "${G[@]}" -c core.autocrlf=false -c core.eol=lf checkout-index -u -f -z --stdin < "$lista" 2>/dev/null
   rm -f "$lista"
   local resto; resto="$(byte_drift 2>/dev/null | tr -cd '\0' | wc -c)"
   if [ "$resto" -gt 0 ]; then say "AVISO: NORMALIZADOS $n arquivo(s), mas $resto ainda diferem do GitHub nos bytes"

@@ -19,7 +19,7 @@ export function dividirStatements(sql) {
     if (c === '/' && d === '*') { let depth = 1; i += 2; while (i < n && depth > 0) { if (sql[i] === '/' && sql[i + 1] === '*') { depth++; i += 2; } else if (sql[i] === '*' && sql[i + 1] === '/') { depth--; i += 2; } else i++; } cur += ' '; continue; }
     if (c === "'") { let j = i + 1; while (j < n) { if (sql[j] === "'" && sql[j + 1] === "'") j += 2; else if (sql[j] === "'") break; else j++; } cur += sql.slice(i, j + 1); i = j + 1; continue; }
     if (c === '"') { const j = sql.indexOf('"', i + 1); const e = j < 0 ? n : j; cur += sql.slice(i, e + 1); i = e + 1; continue; }
-    if (c === '$') {
+    if (c === '$' && !(i > 0 && /[\w$]/.test(sql[i - 1]))) {
       const m = /^\$((?:[^\s$\d][^\s$]*)?)\$/.exec(sql.slice(i, i + 80));
       if (m) { const e = sql.indexOf(m[0], i + m[0].length); const end = e < 0 ? n : e + m[0].length; cur += sql.slice(i, end); i = end; continue; }
     }
@@ -77,22 +77,74 @@ export function reconstruirSchema(dirMigrations) {
   // SQL dinâmico: blocos DO e chamadas ao helper _ensure_search_path. Reaplica os literais SQL
   // ('DROP POLICY ...', 'ALTER TABLE ... ENABLE ROW LEVEL SECURITY') e trata loops por arrays de nomes.
   const marcaSP = (nome, txt) => { const alvo = tiposDe(txt); for (const [k, f] of funcoes) if (nomeDe(k) === nome && (alvo === null || k === `${nome}(${alvo})`)) f.searchPath = true; };
-  const dinamico = (st, origem) => {
-    // 1) literais SQL (EXECUTE 'DROP POLICY ...')
-    for (const lit of st.matchAll(/'((?:[^']|'')*)'/g)) {
-      const sql = lit[1].replace(/''/g, "'").trim();
-      if (/^(alter|drop|create)\s/i.test(sql) && !sql.includes('%')) for (const sub of dividirStatements(sql)) aplicar(sub, origem);
-    }
-    // 2) DDL "nu" dentro do corpo do bloco DO (CREATE POLICY ...; ALTER TABLE ...; em IF/BEGIN/EXCEPTION)
-    for (const bm of st.matchAll(/\$([^\s$]*)\$([\s\S]*?)\$\1\$/g)) {
-      for (const sub of dividirStatements(bm[2])) {
-        const mm = /\b(create\s+(?:or\s+replace\s+)?policy|alter\s+policy|drop\s+policy|alter\s+table|create\s+table|drop\s+table|create\s+(?:unique\s+)?index|drop\s+index|alter\s+function|drop\s+function)\b/i.exec(sub);
-        if (mm && !/^\s*execute\b/i.test(sub.slice(0, mm.index))) aplicar(sub.slice(mm.index), origem);
+  // Contexto de um DDL dentro de DO: "firme" (roda sempre), "guarda" (só dentro de IF [NOT] EXISTS (SELECT ... catálogo), que numa
+  // reconstrução a partir das migrations vale para o que o replay conhece) ou "incerta" (qualquer outra condição, loop, ELSE).
+  //  - firme  : aplica tudo.
+  //  - guarda : aplica tudo MENOS o destrutivo (DROP, RENAME, SET SCHEMA): o replay não avalia a condição de coluna/dado
+  //             (ex.: "só renomeia se a tabela não tiver data_inicio") e renomear errado faz a tabela real sair da auditoria.
+  //  - incerta: aplica só o que ACRESCENTA ao que é auditado (policy, tabela, índice); nunca o que "fecha" nem o que apaga.
+  const ACRESCENTA = /^(create\s+(?:or\s+replace\s+)?policy|alter\s+policy|create\s+(?:unlogged\s+)?table|create\s+(?:unique\s+)?index)\b/i;
+  // DROP POLICY/INDEX em guarda de existência é o idioma normal de migration idempotente e vale; o que faz a tabela real sair da
+  // auditoria (DROP TABLE/FUNCTION, RENAME, SET SCHEMA) continua bloqueado quando condicional.
+  const DESTRUTIVO = /^(drop\s+(?:table|function|procedure)\b|alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?\S+\s+(?:rename\s|set\s+schema\b))/i;
+  const DDL_DO = /\b(create\s+(?:or\s+replace\s+)?policy|alter\s+policy|drop\s+policy|alter\s+table|create\s+(?:unlogged\s+)?table|drop\s+table|create\s+(?:unique\s+)?index|drop\s+index|alter\s+function|drop\s+function)\b/i;
+  const GUARDA_EXISTENCIA = /\bif\s+(?:not\s+)?exists\s*\(\s*select\b[\s\S]*?\bfrom\s+(?:information_schema\.|pg_catalog\.|pg_)|\bif\s+(?:not\s+)?to_reg(?:class|proc|procedure|type|namespace)\s*\(/i;
+  const caminharDO = (corpo, origem) => {
+    const pilha = []; // um item por IF/LOOP aberto: { guarda: bool, senao: bool }
+    let handler = false; let abortou = false;
+    const contexto = (pre) => {
+      let guarda = pilha.every((n) => n.guarda && !n.senao);
+      let incerta = !guarda;
+      if (/\b(loop|else)\b/i.test(pre)) incerta = true;
+      else if (/\bthen\b/i.test(pre)) { if (!GUARDA_EXISTENCIA.test(pre)) incerta = true; else guarda = true; }
+      return incerta ? 'incerta' : (pilha.length || /\bthen\b/i.test(pre)) ? 'guarda' : 'firme';
+    };
+    for (const sub of dividirStatements(corpo)) {
+      if (abortou) break;
+      if (/\bexception\s+when\b/i.test(sub)) handler = true;          // o que vem depois é tratador de erro: não é o caminho feliz
+      if (handler) { if (/^end\b(?!\s+(?:if|loop|case))/i.test(sub)) handler = false; continue; }
+      if (/^else\b/i.test(sub) && pilha.length) pilha[pilha.length - 1].senao = true;
+      // FOREACH x IN ARRAY ARRAY['CREATE INDEX ...', ...] LOOP EXECUTE x: array CONSTANTE de DDL percorrido por inteiro,
+      // então cada literal roda (com o contexto dos IFs que envolvem o loop, não do loop em si).
+      if (/\b(?:foreach|for)\b[\s\S]*?\bin\b[\s\S]*?\barray\s*\[/i.test(sub)) {
+        const ctx = contexto('');
+        for (const lit of sub.matchAll(/'((?:[^']|'')*)'/g)) {
+          const q = lit[1].replace(/''/g, "'").trim();
+          if (!/^(alter|drop|create)\s/i.test(q) || q.includes('%')) continue;
+          for (const x of dividirStatements(q)) if (ctx === 'firme' || (ctx === 'guarda' && !DESTRUTIVO.test(x)) || (ctx === 'incerta' && ACRESCENTA.test(x))) aplicar(x, origem);
+        }
       }
+      let achou = null;
+      const ex = /^(?:[\s\S]*?\bthen\s+|else\s+|begin\s+)?execute\s+'((?:[^']|'')*)'\s*$/i.exec(sub);
+      if (ex && !ex[1].includes('%')) achou = { sql: ex[1].replace(/''/g, "'").trim(), pre: sub.slice(0, sub.search(/execute/i)) };
+      else if (!/\bexecute\b/i.test(sub)) { const mm = DDL_DO.exec(sub); if (mm) achou = { sql: sub.slice(mm.index), pre: sub.slice(0, mm.index) }; }
+      if (achou) {
+        const ctx = contexto(achou.pre);
+        for (const x of dividirStatements(achou.sql)) {
+          if (ctx === 'firme' || (ctx === 'guarda' && !DESTRUTIVO.test(x)) || (ctx === 'incerta' && ACRESCENTA.test(x))) aplicar(x, origem);
+        }
+      }
+      if (!pilha.length && /^(?:begin\s+)?raise\s+exception\b/i.test(sub)) abortou = true;   // o resto não executa
+      // abre/fecha níveis: cada THEN de IF abre um (guarda se a condição consulta o catálogo), cada LOOP abre um (incerto)
+      const abre = [];
+      const cond = sub.split(/\bthen\b/i);
+      for (let k = 0; k < cond.length - 1; k++) {
+        if (/\bwhen\b/i.test(cond[k]) && !/\bif\b/i.test(cond[k])) continue;        // WHEN ... THEN (case/exception)
+        if (/\belsif\b/i.test(cond[k])) continue;                                  // ELSIF não abre nível novo
+        if (/\bif\b/i.test(cond[k])) abre.push({ guarda: GUARDA_EXISTENCIA.test(cond[k] + ' then'), senao: false });
+      }
+      for (let k = 0; k < (sub.match(/\bloop\b/gi) || []).length - 2 * (sub.match(/\bend\s+loop\b/gi) || []).length; k++) abre.push({ guarda: false, senao: false });
+      pilha.push(...abre);
+      for (let k = 0; k < (sub.match(/\bend\s+if\b/gi) || []).length + (sub.match(/\bend\s+loop\b/gi) || []).length; k++) pilha.pop();
+    }
+  };
+  const dinamico = (st, origem) => {
+    if (/^do\b/i.test(st)) {
+      for (const bm of st.matchAll(/\$([^\s$]*)\$([\s\S]*?)\$\1\$/g)) caminharDO(bm[2], origem);
     }
     // 3a) loop que APLICA search_path a todas as SECURITY DEFINER existentes: só conta se filtra prosecdef, usa EXECUTE
     //     e contém ALTER FUNCTION ... SET search_path (aplicação real, não um bloco que só verifica/avisa).
-    if (/pg_proc|information_schema\.routines/i.test(st) && /prosecdef|security\s+definer/i.test(st) && /\bexecute\b/i.test(st) && /alter\s+function[^;]*set\s+search_path/i.test(st)) {
+    if (/pg_proc|information_schema\.routines/i.test(st) && /prosecdef|security\s+definer/i.test(st) && /\bexecute\b/i.test(st) && /alter\s+function[^;]*set\s+search_path/i.test(st) && !/proname\s*(?:=|<>|!=|~|like\b|not\b|in\s*\()/i.test(st)) {
       for (const f of funcoes.values()) if (f.secdef) f.searchPath = true;
     }
     // 3b) helper de search_path por assinatura. Sem curinga para tabelas e sem curinga genérico para funções.
@@ -102,7 +154,8 @@ export function reconstruirSchema(dirMigrations) {
     }
     // 4) tabelas citadas por literal em bloco que habilita RLS (loop por array de nomes)
     if (/enable\s+row\s+level\s+security/i.test(st)) {
-      for (const x of st.matchAll(/'([A-Za-z_]\w*)'/g)) if (tabelas.has(x[1].toLowerCase())) rls.add(x[1].toLowerCase());
+      const limpo = st.replace(/\braise\s+\w+\s+'(?:[^']|'')*'[^;]*/gi, ' ').replace(/(?:<>|!=)\s*'[^']*'/g, ' ').replace(/not\s+in\s*\([^)]*\)/gi, ' ');
+      for (const x of limpo.matchAll(/'([A-Za-z_]\w*)'/g)) if (tabelas.has(x[1].toLowerCase())) rls.add(x[1].toLowerCase());
     }
   };
 
@@ -148,7 +201,7 @@ export function reconstruirSchema(dirMigrations) {
         for (const x of m[1].replace(/\s+(cascade|restrict)\s*$/i, '').split(',')) { const n = norm(x); tabelas.delete(n); rls.delete(n); acl.delete(n); for (let k = indices.length - 1; k >= 0; k--) if (indices[k].tabela === n) indices.splice(k, 1); for (const k of [...policies.keys()]) if (k.startsWith(`${n}|`)) policies.delete(k); }
       } else if ((m = re(String.raw`^alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?${TBL}\s+(enable|disable|force)\s+row\s+level\s+security`).exec(st))) {
         const n = norm(m[1]);
-        if (m[2].toLowerCase() === 'enable') rls.add(n); else if (m[2].toLowerCase() === 'disable') rls.delete(n);
+        if (m[2].toLowerCase() === 'enable') { if (tabelas.has(n)) rls.add(n); } else if (m[2].toLowerCase() === 'disable') rls.delete(n);
       } else if ((m = re(String.raw`^alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?${TBL}\s+rename\s+to\s+(\S+)`).exec(st))) {
         const a = norm(m[1]); const b = norm(m[2]); const t = tabelas.get(a);
         if (t) { tabelas.delete(a); tabelas.set(b, t); if (rls.delete(a)) rls.add(b); if (acl.has(a)) { acl.set(b, acl.get(a)); acl.delete(a); }
@@ -160,7 +213,7 @@ export function reconstruirSchema(dirMigrations) {
         const n = norm(m[1]); const t = tabelas.get(n); if (!t) return;
         for (const acao of splitTopLevel(m[2])) {
           let a;
-          if ((a = /^(enable|disable)\s+row\s+level\s+security/i.exec(acao))) { if (a[1].toLowerCase() === 'enable') rls.add(n); else rls.delete(n); }
+          if ((a = /^(enable|disable)\s+row\s+level\s+security/i.exec(acao))) { if (a[1].toLowerCase() === 'enable') rls.add(n); else rls.delete(n); } /* (t existe: checado acima) */
           else if ((a = /^add\s+column\s+(?:if\s+not\s+exists\s+)?"?([^"\s]+)"?\s+(.+)$/is.exec(acao))) {
             t.cols.set(a[1].toLowerCase(), tipoDe(a[2]));
             const inl = /references\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(acao); if (inl) t.fks.push({ cols: [a[1].toLowerCase()], ref: norm(inl[1]), origem });
@@ -193,7 +246,7 @@ export function reconstruirSchema(dirMigrations) {
         for (let k = indices.length - 1; k >= 0; k--) if (indices[k].nome && nomes.includes(indices[k].nome)) indices.splice(k, 1);
       } else if ((m = re(String.raw`^create\s+(?:unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?(?:(\S+)\s+)?on\s+(?:only\s+)?${TBL}\s*(?:using\s+\w+\s*)?\(([^)]*)\)`).exec(st))) {
         indices.push({ nome: m[1] ? norm(m[1]).replace(/^.*\./, '') : null, tabela: norm(m[2]), cols: m[3].split(',').map((x) => norm(x.trim().split(/\s+/)[0])) });
-      } else if ((m = re(String.raw`^create\s+(?:or\s+replace\s+)?function\s+((?:"?\w+"?\.)?"?\w+"?)\s*\(`).exec(st))) {
+      } else if ((m = re(String.raw`^create\s+(?:or\s+replace\s+)?(?:function|procedure)\s+((?:"?\w+"?\.)?"?\w+"?)\s*\(`).exec(st))) {
         const nome = norm(m[1]);
         const cab = st.replace(/\$([^\s$]*)\$[\s\S]*?\$\1\$/, ' ').replace(/\bas\s+'(?:[^']|'')*'/is, ' '); // sem o CORPO (pode citar "set search_path"/"security definer" sem aplicá-lo), mas COM os atributos antes e depois dele
         funcoes.set(fkey(nome, corpoParenteses(st)), { secdef: /\bsecurity\s+definer\b/i.test(cab), searchPath: /\bset\s+"?search_path"?\b/i.test(cab), origem });
@@ -252,7 +305,7 @@ export const regrasDados = [
     run({ cwd }) {
       if (!temDir(cwd)) return naoVer('supabase/migrations não encontrado');
       const s = schema(cwd);
-      const abertas = [...s.policies.values()].filter((p) => p.roles !== 'service_role' && (/^\(?\s*(?:true|1\s*=\s*1)\s*\)?$/i.test(p.using || '') || (p.cmd !== 'select' && /^\(?\s*(?:true|1\s*=\s*1)\s*\)?$/i.test(p.check || ''))));
+      const abertas = [...s.policies.values()].filter((p) => p.roles !== 'service_role' && (/^\(?\s*(?:(?:true|1\s*=\s*1)\s*\)?$|true\s+or\b|[\s\S]*\bor\s+true\s*\)?$)/i.test(p.using || '') || (p.cmd !== 'select' && /^\(?\s*(?:(?:true|1\s*=\s*1)\s*\)?$|true\s+or\b|[\s\S]*\bor\s+true\s*\)?$)/i.test(p.check || ''))));
       const gravidade = (p) => { const t = s.tabelas.get(p.tabela); if (!t) return 0; return [...t.cols.keys()].some((c) => PII.test(c)) ? 2 : 1; }; // só PII real é grave; multi-tenant sem PII = revisar
       const graves = abertas.filter((p) => gravidade(p) === 2);
       return {
@@ -331,3 +384,13 @@ export const regrasDados = [
     },
   },
 ];
+
+// As regras que usam o replay estático das migrations (RLS, FUNC, TIPO, ESTR) devem dizer o que são: uma APROXIMAÇÃO. Validada
+// contra um Postgres 16 real em 09/11/2026: precisão/recall ~97–100% nas categorias principais, mas com falsos verdes conhecidos
+// (SQL dinâmico por format(), policies/ACL criadas em função chamada por SELECT, DO com condição avaliada só em execução).
+export const AVISO_REPLAY = ' [replay estático das migrations: indicativo, NÃO prova; confirme no banco real]';
+for (const r of regrasDados) {
+  if (!/^DADOS-(RLS|FUNC|TIPO|ESTR)-/.test(r.id)) continue;
+  const run = r.run;
+  r.run = (ctx) => { const x = run(ctx); return x.status === 'nao_verificavel' ? x : { ...x, resumo: `${x.resumo}${AVISO_REPLAY}` }; };
+}

@@ -81,8 +81,10 @@ function acquireLock() {
     mkdirSync(LOCK);
   }
   writeFileSync(join(LOCK, 'pid'), String(process.pid));
+  lockOwned = true;
 }
-const releaseLock = () => rmSync(LOCK, { recursive: true, force: true });
+let lockOwned = false; // só remove a trava quem a adquiriu (antes, o 2º processo apagava a trava do 1º ao falhar)
+const releaseLock = () => { if (lockOwned) rmSync(LOCK, { recursive: true, force: true }); };
 
 // ---------- ambiente ----------
 /**
@@ -220,9 +222,16 @@ async function main() {
     const t0 = { touched: 0, kept: [], dropped: [] };
     if (targets.length) {
       // fix restrito às regras da lista (via API do ESLint); falha de execução aborta a etapa em vez de passar como "sem mudança"
-      const run = async (rules) => {
+      const run = async (rules, base = snap) => {
         const r = await sh(process.execPath, [new URL('./eslint-safe-fix.mjs', import.meta.url).pathname, cwd, rules.join(','), ...targets], { cwd });
         if (r.code !== 0) throw new Error(`eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr || r.stdout).slice(0, 500)}`);
+        // Guarda de lint por arquivo: a correção segura de uma regra pode CRIAR problema em outra (no-else-return move um `const`
+        // para dentro de `case` => no-case-declarations) e o gate final desfaria o autofix inteiro. O arquivo que piorou volta ao original.
+        const mexidos = touchedSince(cwd, base).filter((f) => /\.tsx?$/.test(f));
+        if (mexidos.length) {
+          const now = await eslintJson(cwd, mexidos);
+          for (const f of mexidos) if ((now.byFile.get(f)?.length ?? 0) > (baseLint.byFile.get(f)?.length ?? 0)) restore(cwd, base, [f]);
+        }
         return r;
       };
       await run(SAFE_RULES);
@@ -234,7 +243,7 @@ async function main() {
           rollback(snap);
           for (const rule of SAFE_RULES) {
             const s2 = stepSnapshot();
-            await run([rule]);
+            await run([rule], s2);
             if (!touchedSince(cwd, s2).length) continue;
             if ((await gate()).ok) t0.kept.push(rule);
             else {
@@ -324,6 +333,10 @@ async function main() {
   if (!g.ok) problems.push(`tsc: ${g.fresh.length} erros novos (ex.: ${g.fresh[0] ? `${g.fresh[0].file}:${g.fresh[0].line} ${g.fresh[0].code}` : 'crash'})`);
   if (lint.errors > baseLint.errors) problems.push(`eslint: erros ${baseLint.errors} -> ${lint.errors}`);
   if (lint.warnings > baseLint.warnings) problems.push(`eslint: avisos ${baseLint.warnings} -> ${lint.warnings}`);
+  // Totais mascaram regressão (um erro novo de no-case-declarations compensado por 3 `no-var` corrigidos passava): compara por REGRA.
+  const porRegra = (r) => { const m = new Map(); for (const msgs of r.byFile.values()) for (const x of msgs) m.set(x.ruleId ?? 'fatal', (m.get(x.ruleId ?? 'fatal') ?? 0) + 1); return m; };
+  const r0 = porRegra(baseLint);
+  for (const [rule, n] of porRegra(lint)) if (n > (r0.get(rule) ?? 0)) problems.push(`eslint: regra ${rule} ${r0.get(rule) ?? 0} -> ${n}`);
   if (fmtBad.length) problems.push(`prettier: ${fmtBad.length} arquivos tocados fora do padrão (${fmtBad.slice(0, 3).join(', ')})`);
   if (rr.code !== 0) problems.push('ratchet-any reprovou');
   report.final = { tscErrors: baseTsc.errors.length + g.fresh.length, lintWarnings: lint.warnings, lintErrors: lint.errors, filesTouched: touchedAll.length };
@@ -375,7 +388,7 @@ try {
     if (startSnap) restore(cwd, startSnap, touchedSince(cwd, startSnap));
   } catch {}
 } finally {
-  writeReport();
+  if (lockOwned) writeReport(); // quem não pegou a trava não sobrescreve o relatório da execução ativa (mesmo carimbo de minuto)
   releaseLock();
 }
 process.exit(code);
