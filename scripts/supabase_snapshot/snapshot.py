@@ -1001,7 +1001,8 @@ def run_pg_dump() -> str | None:
         return None
     lines = [ln for ln in res.stdout.splitlines()
              if not ln.startswith(("-- Dumped from", "-- Dumped by", "\\restrict", "\\unrestrict"))]
-    text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines))
+    # pg_dump não passa por q(): sem o scrub, segredo embutido em corpo de função ia cru para schema.sql.
+    text = scrub(re.sub(r"\n{3,}", "\n\n", "\n".join(lines)))
     log(f"pg_dump: ok ({len(text)} bytes)")
     return text
 

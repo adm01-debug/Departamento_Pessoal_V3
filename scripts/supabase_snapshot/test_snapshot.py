@@ -356,6 +356,19 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
             self.assertIn("WITH ORDINALITY k(attnum, ord)", array)
             self.assertIn("ORDER BY k.ord", array)
 
+    def test_pg_dump_output_is_scrubbed_like_every_other_database_text(self):
+        s = self.snapshot
+        token = "abcdef0123456789" * 2  # valor falso
+        dump = ("-- Dumped from database version 17\nCREATE FUNCTION public.notify() RETURNS void LANGUAGE plpgsql AS $$\n"
+                f"BEGIN PERFORM net.http_post(headers := '{{\"Authorization\": \"Bearer {token}\"}}'); END $$;\n")
+        completed = types.SimpleNamespace(returncode=0, stdout=dump, stderr="")
+        with mock.patch.object(s, "PGDUMP", True), mock.patch.object(s.shutil, "which", return_value="/usr/bin/pg_dump"), \
+                mock.patch.object(s.subprocess, "run", return_value=completed), contextlib.redirect_stdout(io.StringIO()):
+            text = s.run_pg_dump()
+        self.assertNotIn(token, text)
+        self.assertIn('"Authorization": "Bearer [REDACTED]"', text)
+        self.assertNotIn("Dumped from", text)
+
 
 class SnapshotFailureMatrixTests(SnapshotFixture):
     """24 sequências: seção × histórico/SQL disponível × repetição × recuperação."""
