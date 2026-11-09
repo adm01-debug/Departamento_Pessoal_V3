@@ -158,7 +158,8 @@ export function reconstruirSchema(dirMigrations) {
 }
 
 // ---------- regras ----------
-const PII = /^(cpf|rg|pis|nis|ctps|titulo_eleitor|salario(_\w+)?|conta(_\w+)?|agencia|pix(_\w+)?|iban|data_nascimento|nome_mae|telefone|email_pessoal|endereco|cep)$/;
+// PII "forte": documentos, dados bancários, salário, nascimento. Telefone/endereço/CEP não entram (aparecem em cadastros de entidades).
+const PII = /^(cpf|rg|pis|nis|ctps|titulo_eleitor|salario(_\w+)?|conta(_\w+)?|agencia|pix(_\w+)?|iban|data_nascimento|nome_mae)$/;
 const MONEY = /(valor|salario|total|preco|custo|saldo|remuneracao|desconto|provento|liquido|bruto|inss|irrf|fgts)/;
 const FLOAT = /^(real|double precision|float|float4|float8)$/;
 const exemplos = (xs, n = 8) => xs.slice(0, n);

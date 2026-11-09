@@ -2,14 +2,16 @@
 /**
  * verificar — confere as regras de negócio de CÁLCULO do sistema contra uma referência legal. Sem IA.
  *
- *   node scripts/autofix/regras/verificar.mjs [--cwd <repo>] [--strict] [--report-dir <pasta>]
+ *   node scripts/autofix/regras/verificar.mjs [--cwd <repo>] [--ref origin/main] [--strict] [--report-dir <pasta>]
+ *   --ref: verifica o código daquele commit (extraído para uma pasta temporária), não a árvore de trabalho.
  *
  * Executa os motores reais (calculators/ e utils/*Calc), compara com scripts/autofix/regras/referencia.mjs e
  * escreve um relatório de gaps (divergências, pontos a revisar, melhorias, cobertura de testes).
  * Não altera nenhum arquivo do projeto. Com --strict, sai com código 1 se houver divergência crítica/alta.
  */
-import { readFileSync, readdirSync, statSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
-import { homedir } from 'node:os';
+import { readFileSync, readdirSync, statSync, mkdirSync, writeFileSync, existsSync, mkdtempSync, symlinkSync, rmSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { homedir, tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { carregarMotores } from './motores.mjs';
 import { regras } from './catalogo.mjs';
@@ -21,7 +23,18 @@ const opt = (n, d) => {
   const i = argv.indexOf(`--${n}`);
   return i >= 0 && argv[i + 1] ? argv[i + 1] : d;
 };
-const cwd = resolve(opt('cwd', join(import.meta.dirname, '..', '..', '..')));
+let cwd = resolve(opt('cwd', join(import.meta.dirname, '..', '..', '..')));
+const rotulo = opt('ref', null) ? `${cwd} @ ${opt('ref', '')}` : cwd;
+let tmpRef = null;
+if (opt('ref', null)) {
+  // Extrai só o necessário do commit pedido e reaproveita o node_modules do checkout. Não altera nada no repositório.
+  tmpRef = mkdtempSync(join(tmpdir(), 'dp-ref-'));
+  const tar = execFileSync('git', ['-C', cwd, 'archive', opt('ref', ''), 'src', 'supabase', 'scripts', 'package.json'], { maxBuffer: 1 << 30 });
+  execFileSync('tar', ['-x', '-C', tmpRef], { input: tar });
+  symlinkSync(join(cwd, 'node_modules'), join(tmpRef, 'node_modules'));
+  cwd = tmpRef;
+  process.on('exit', () => rmSync(tmpRef, { recursive: true, force: true }));
+}
 const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/^(\d{8})/, '$1-');
 
 // ---------- checagens estáticas (melhorias e cobertura) ----------
@@ -118,7 +131,7 @@ function markdown({ resultados, estaticas: e, erro }) {
   const lista = (t, xs) => (xs.length ? [`**${t}** (${xs.length})`, ...xs.map((x) => `- ${x}`), ''] : []);
   return [
     `# Verificação das regras de negócio (cálculo e dados) — ${stamp}`,
-    `Repositório: \`${cwd}\``,
+    `Repositório: \`${rotulo}\``,
     erro && `> Não foi possível executar os motores: ${erro}`,
     '',
     `**Resumo:** ${resultados.length} regras · ${por('ok').length} ok · ${por('divergente').length} divergentes · ${por('revisar').length} a revisar · ${por('nao_verificavel').length} não verificáveis`,

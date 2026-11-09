@@ -37,3 +37,25 @@ Opções: `--steps eslint,any,format,ratchet` · `--max-runs 150` (orçamento de
 - `x as any` (194 casos): quase sempre esconde um tipo errado que exige decisão humana. Use `--include-as` para tentar.
 - Regras que mudam comportamento (`eqeqeq`, `no-unused-vars` com remoção) não entram.
 - Não abre PR nem faz push; revise a branch `autofix/*` e abra o PR quando quiser.
+
+---
+
+# regras/ — gaps de regras de negócio sem IA
+
+```bash
+node scripts/autofix/regras/verificar.mjs --ref origin/main      # confere o main atual; relatório em ~/.autofix-reports/Departamento_Pessoal_V3/regras/ULTIMO.md
+node scripts/autofix/regras/verificar.mjs --cwd <pasta> --strict # sai 1 se houver divergência crítica/alta
+```
+
+Não altera o projeto: só lê e relata. Dois grupos de regras:
+
+**Cálculo** (`catalogo.mjs` + `referencia.mjs`): executa os motores reais (`calculators/`, `utils/*Calc`) e compara com um gabarito independente
+escrito a partir da norma (INSS 2026, IRRF + redutor da Lei 15.270/2025, FGTS, aviso prévio, multa 40%/20%, férias, 13º, horas extras) e dos dois motores de
+rescisão entre si. As tabelas do gabarito ficam em `referencia.mjs` com **fonte e confiança**; atualizar a tabela do ano = editar esse arquivo.
+
+**Dados** (`dados.mjs`): reconstrói o schema final a partir das migrations (replay estático, incluindo SQL dinâmico em blocos `DO` e o helper
+`_ensure_search_path`) e confere: RLS/ACL em toda tabela, policies irrestritas em tabela com PII, `SECURITY DEFINER` sem `search_path`, colunas monetárias em
+float, PK ausente, FKs sem índice, gate estático de segurança das edge functions, e se os gates de banco do projeto realmente executam.
+
+Limites assumidos: o replay é por regex (candidatos a conferir, com a migration de origem citada); tabelas sem fonte no catálogo (PLR, salário-família,
+seguro-desemprego, encargos) aparecem como "não verificadas" até alguém registrar a fonte oficial; a decisão de **corrigir** regra de cálculo é sempre humana.

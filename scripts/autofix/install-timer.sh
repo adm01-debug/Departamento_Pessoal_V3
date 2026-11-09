@@ -31,6 +31,8 @@ Type=oneshot
 WorkingDirectory=$REPO
 Environment=PATH=$(dirname "$NODE"):/usr/local/bin:/usr/bin:/bin
 ExecStart=$NODE $REPO/scripts/autofix/run.mjs
+# Depois do autofix, confere as regras de negócio do origin/main (cálculo e dados). Falha aqui não derruba o serviço.
+ExecStart=-$NODE $REPO/scripts/autofix/regras/verificar.mjs --cwd $REPO --ref origin/main
 Nice=10
 TimeoutStartSec=3h
 EOF
@@ -50,4 +52,4 @@ EOF
 systemctl --user daemon-reload
 systemctl --user enable --now "$UNIT.timer"
 systemctl --user list-timers "$UNIT.timer" --no-pager
-echo "ok — relatórios em ~/.autofix-reports/Departamento_Pessoal_V3/"
+echo "ok — relatórios em ~/.autofix-reports/Departamento_Pessoal_V3/ (regras/ULTIMO.md = gaps de negócio)"
