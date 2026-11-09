@@ -63,6 +63,8 @@ const TEM_PAPEL = [
 const OR_ADMIN = [
   /!\s*\w*[Bb]elongs?\w*\s*&&\s*!\s*\w*(?:isAdm|is_admin|isAdmin)\w*/,
   /!\s*\w*pertence\w*\s*&&\s*!\s*\w*(?:isAdm|isAdmin)\w*/,
+  // A mesma condição com os operandos trocados: `!isAdmin && !belongs`.
+  /!\s*\w*(?:isAdm|is_admin|isAdmin)\w*\s*&&\s*!\s*\w*(?:[Bb]elongs?|pertence)\w*/,
 ];
 
 /** Check que parece autorização mas é só tenant. */
