@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2e54da5d336fc15b6ac7cb2126eef8174a9a6517",
+  "sha": "f9261e3bd1ea071f0d83bb9286cef41a9d2a730a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 21:05 UTC",
-  "files_total": 2846,
+  "generated_at": "2026-11-09 21:55 UTC",
+  "files_total": 2847,
   "code_files": 2333,
-  "code_lines": 311235
+  "code_lines": 311367
  },
  "version": "1.3.2",
- "facts_hash": "b32cd808b48d9c6b",
+ "facts_hash": "5620e3db9b9f3e14",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94894,7 +94894,7 @@
   {
    "module": "scripts",
    "files": 101,
-   "lines": 20060,
+   "lines": 20192,
    "tables": [
     "a",
     "audit_log",
@@ -94932,7 +94932,7 @@
     "any-codemod.mjs: collectCandidates, applyEdits, runAnyPass",
     "lib.mjs: log, sh, git, bin, typecheck, errKey",
     "catalogo.mjs: regras",
-    "dados.mjs: dividirStatements, reconstruirSchema, regrasDados",
+    "dados.mjs: dividirStatements, reconstruirSchema, regrasDados, AVISO_REPLAY",
     "motores.mjs: carregarMotores",
     "referencia.mjs: TABELAS, refINSS, refIRRFTabela, refIRRF, refFGTS, refDiasAviso",
     "derive-pending-migrations.mjs: DEFAULT_MAX_PENDING, derivePendingMigrations",
@@ -145970,6 +145970,30 @@
    {
     "file": "scripts/autofix/regras/dados.test.mjs",
     "name": "regra ESTR-002: PK composta, UNIQUE inline e ADD CONSTRAINT UNIQUE contam como índice da FK; DROP INDEX descobre"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "DO: RENAME condicional NÃO é aplicado (caso real "
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "DO: ENABLE RLS dentro de guarda de existência (to_regclass / IF EXISTS catálogo) conta; em IF incerto não"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "DO: ENABLE depois de RAISE EXCEPTION, em tratador de erro, e literal em RAISE/exclusão não contam"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "DO: array constante de DDL (FOREACH x IN ARRAY) roda; DROP TABLE condicional não apaga a tabela"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "ordem: ENABLE RLS antes do CREATE TABLE não deixa RLS fantasma; identificador com $ não engole o arquivo"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "policy aberta: true OR x e x OR true também são abertas; procedure SECURITY DEFINER é vista"
    },
    {
     "file": "scripts/tests/contexto-indice.test.mjs",
@@ -226870,7 +226894,7 @@
   },
   "scripts/autofix/any-codemod.mjs": {
    "path": "scripts/autofix/any-codemod.mjs",
-   "lines": 189,
+   "lines": 202,
    "exports": [
     "function collectCandidates",
     "function applyEdits",
@@ -226891,7 +226915,7 @@
   },
   "scripts/autofix/eslint-safe-fix.mjs": {
    "path": "scripts/autofix/eslint-safe-fix.mjs",
-   "lines": 27,
+   "lines": 30,
    "doc": "!/usr/bin/env node eslint --fix RESTRITO às regras pedidas. `eslint --fix --rule X:error` aplica TODA regra corrigível do projeto (muda `new Array(1,2)`, `let t: Number`, etc.); aqui a função `fix` do ESLint só deixa passar as regras da lista. Uso: node eslint-safe-fix.mjs <cwd> <regra1,regra2,...> …"
   },
   "scripts/autofix/lib.mjs": {
@@ -226921,7 +226945,7 @@
   },
   "scripts/autofix/run.mjs": {
    "path": "scripts/autofix/run.mjs",
-   "lines": 382,
+   "lines": 395,
    "env": [
     "XDG_CACHE_HOME"
    ],
@@ -226932,11 +226956,15 @@
     "outra execução do autofix está ativa (${LOCK})",
     "tsc quebrou na linha de base:\\n${baseTsc.raw.slice(0, 1500)}"
    ],
+   "rule_comments": [
+    "Guarda de lint por arquivo: a correção segura de uma regra pode CRIAR problema em outra (no-else-return move um `const`",
+    "Totais mascaram regressão (um erro novo de no-case-declarations compensado por 3 `no-var` corrigidos passava): compara por REGRA."
+   ],
    "doc": "!/usr/bin/env node"
   },
   "scripts/autofix/regras/catalogo.mjs": {
    "path": "scripts/autofix/regras/catalogo.mjs",
-   "lines": 271,
+   "lines": 274,
    "exports": [
     "const regras"
    ],
@@ -226949,7 +226977,6 @@
    "rule_comments": [
     "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e",
     "ou a regra é discutível; exige decisão humana) | 'nao_verificavel'.",
-    "especifica), não erro de regra: exige conferência humana, mas não é \"divergência com a norma\".",
     "Versões novas expõem o depósito da rescisão (a multa incide sobre saldo + esse depósito); as antigas, não."
    ],
    "doc": "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e confiança, e um `run(ctx)` que EXECUTA os cálculos reais do sistema e compara com a referência. status: 'ok' | 'divergente' (o sistema contraria a norma/referência) | 'revisar' (motores divergem entr …",
@@ -226962,11 +226989,12 @@
   },
   "scripts/autofix/regras/dados.mjs": {
    "path": "scripts/autofix/regras/dados.mjs",
-   "lines": 334,
+   "lines": 397,
    "exports": [
     "function dividirStatements",
     "function reconstruirSchema",
-    "const regrasDados"
+    "const regrasDados",
+    "const AVISO_REPLAY"
    ],
    "env": [
     "DATABASE_URL",
@@ -226986,11 +227014,14 @@
    "temporal": [
     "const r = spawnSync('node', [f], { cwd, encoding: 'utf8', timeout: 120000 });"
    ],
+   "percents": [
+    "// contra um Postgres 16 real em 09/11/2026: precisão/recall ~97–100% nas categorias principais, mas com falsos verdes conhecidos"
+   ],
    "uses_service_role": true
   },
   "scripts/autofix/regras/dados.test.mjs": {
    "path": "scripts/autofix/regras/dados.test.mjs",
-   "lines": 111,
+   "lines": 148,
    "is_test": true,
    "doc": "Regressão do replay estático de migrations (dados.mjs). Cada caso é um FALSO VERDE (dizer \"protegido\" quando não está) ou um falso alarme que a auditoria adversarial de 09/11/2026 reproduziu. Rodar: node --test scripts/autofix/regras/dados.test.mjs",
    "tests": [
@@ -227007,7 +227038,13 @@
     "DROP TABLE a, b com schema; partição e CREATE TABLE AS entram sem RLS",
     "regra RLS-002: tautologia 1=1 em tabela com PII é divergente; papel entre aspas e service_role não",
     "regra TIPO-001: double precision, float(53), money e real[] em coluna monetária; hora não",
-    "regra ESTR-002: PK composta, UNIQUE inline e ADD CONSTRAINT UNIQUE contam como índice da FK; DROP INDEX descobre"
+    "regra ESTR-002: PK composta, UNIQUE inline e ADD CONSTRAINT UNIQUE contam como índice da FK; DROP INDEX descobre",
+    "DO: RENAME condicional NÃO é aplicado (caso real ",
+    "DO: ENABLE RLS dentro de guarda de existência (to_regclass / IF EXISTS catálogo) conta; em IF incerto não",
+    "DO: ENABLE depois de RAISE EXCEPTION, em tratador de erro, e literal em RAISE/exclusão não contam",
+    "DO: array constante de DDL (FOREACH x IN ARRAY) roda; DROP TABLE condicional não apaga a tabela",
+    "ordem: ENABLE RLS antes do CREATE TABLE não deixa RLS fantasma; identificador com $ não engole o arquivo",
+    "policy aberta: true OR x e x OR true também são abertas; procedure SECURITY DEFINER é vista"
    ],
    "uses_service_role": true
   },
@@ -274782,10 +274819,29 @@
   }
  },
  "git": {
-  "sha": "2e54da5d336fc15b6ac7cb2126eef8174a9a6517",
+  "sha": "f9261e3bd1ea071f0d83bb9286cef41a9d2a730a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f9261e3",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)",
+    "files": [
+     "scripts/autofix/any-codemod.mjs",
+     "scripts/autofix/eslint-safe-fix.mjs",
+     "scripts/autofix/regras/catalogo.mjs",
+     "scripts/autofix/regras/dados.mjs",
+     "scripts/autofix/regras/dados.test.mjs",
+     "scripts/autofix/run.mjs",
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/autocommit-local.sh.orig",
+     "scripts/sync/mirror-github.sh",
+     "scripts/sync/run-all.sh",
+     "scripts/sync/sync-github.sh"
+    ]
+   },
    {
     "sha": "2e54da5",
     "date": "2026-11-09",
@@ -275187,58 +275243,39 @@
      "scripts/simulacao/simulate_art145.cjs",
      "scripts/simulacao/simulate_notif_d3.cjs"
     ]
-   },
-   {
-    "sha": "0e4f470",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: scripts — soft-skip sem env, ESM generators, AGENTS.md integrity, migrate drift guard",
-    "files": [
-     ".gitleaksignore",
-     "inventario/estado/edges.json",
-     "inventario/ia/INDEX.md",
-     "inventario/ia/banco.json",
-     "inventario/ia/baseline.json",
-     "inventario/ia/componentes.json",
-     "inventario/ia/convencoes.json",
-     "inventario/ia/edge-functions.json",
-     "inventario/ia/ferramentas.json",
-     "inventario/ia/grafo-arestas.json",
-     "inventario/ia/grafo-graphify.json",
-     "inventario/ia/grafo.json",
-     "inventario/ia/hooks.json",
-     "inventario/ia/logica.json",
-     "inventario/ia/manifest.json",
-     "inventario/ia/modulos.json",
-     "inventario/ia/rotas.json",
-     "inventario/ia/scripts.json",
-     "inventario/ia/testes.json",
-     "scripts/ci/check-claude-md-integrity.mjs",
-     "scripts/db/classify-migration-drift.mjs",
-     "scripts/generate-component.js",
-     "scripts/generate-hook.js",
-     "scripts/generate-page.js",
-     "scripts/generate-service.js",
-     "scripts/simulacao/run-exhaustive-v3.mjs",
-     "scripts/simulacao/run-exhaustive.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/sync/mirror-github.sh",
-    4
+    5
    ],
    [
     "scripts/autofix/run.mjs",
-    3
+    4
    ],
    [
     "scripts/sync/autocommit-local.sh",
-    3
+    4
    ],
    [
     "scripts/sync/sync-github.sh",
+    4
+   ],
+   [
+    "scripts/autofix/any-codemod.mjs",
+    3
+   ],
+   [
+    "scripts/autofix/regras/catalogo.mjs",
+    3
+   ],
+   [
+    "scripts/autofix/regras/dados.mjs",
+    3
+   ],
+   [
+    "scripts/sync/run-all.sh",
     3
    ],
    [
@@ -275246,23 +275283,15 @@
     3
    ],
    [
-    "scripts/autofix/any-codemod.mjs",
+    "scripts/autofix/eslint-safe-fix.mjs",
     2
    ],
    [
-    "scripts/autofix/regras/catalogo.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/dados.mjs",
+    "scripts/autofix/regras/dados.test.mjs",
     2
    ],
    [
     "scripts/autofix/regras/referencia.mjs",
-    2
-   ],
-   [
-    "scripts/sync/run-all.sh",
     2
    ],
    [
@@ -275296,14 +275325,6 @@
    [
     "scripts/ratchet-lint-warnings.mjs",
     2
-   ],
-   [
-    "scripts/autofix/eslint-safe-fix.mjs",
-    1
-   ],
-   [
-    "scripts/autofix/regras/dados.test.mjs",
-    1
    ]
   ]
  }

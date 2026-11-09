@@ -265,7 +265,7 @@
   {
    "arquivo": "scripts/autofix/any-codemod.mjs",
    "descricao": "Estratégia \"tentar e provar\": para cada `any` aplica uma transformação mecânica de TIPO (nunca muda runtime) e só mantém se o `tsc` não ganhar nenhum erro novo.",
-   "linhas": 189,
+   "linhas": 202,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -274,7 +274,7 @@
   {
    "arquivo": "scripts/autofix/eslint-safe-fix.mjs",
    "descricao": "(muda `new Array(1,2)`, `let t: Number`, etc.); aqui a função `fix` do ESLint só deixa passar as regras da lista.",
-   "linhas": 27,
+   "linhas": 30,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -301,7 +301,7 @@
   {
    "arquivo": "scripts/autofix/regras/catalogo.mjs",
    "descricao": "Catálogo de regras de negócio verificáveis por máquina. Cada regra declara fonte legal, severidade e confiança, e um `run(ctx)` que EXECUTA os cálculos reais do sistema e compara com a referência.",
-   "linhas": 271,
+   "linhas": 274,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -310,7 +310,7 @@
   {
    "arquivo": "scripts/autofix/regras/dados.mjs",
    "descricao": "Regras de DADOS verificadas por replay ESTÁTICO das migrations (supabase/migrations/*.sql, em ordem). Reconstrói o estado final aproximado do schema (tabelas, colunas, RLS, policies, funções, índices,",
-   "linhas": 334,
+   "linhas": 397,
    "env": [
     "DATABASE_URL",
     "PGHOST"
@@ -349,7 +349,7 @@
   {
    "arquivo": "scripts/autofix/run.mjs",
    "descricao": "* Modos",
-   "linhas": 382,
+   "linhas": 395,
    "env": [
     "XDG_CACHE_HOME"
    ],
@@ -1016,7 +1016,7 @@
   {
    "arquivo": "scripts/sync/autocommit-local.sh",
    "descricao": "Commit automático do trabalho local numa branch dedicada e envio ao GitHub, sem intervenção humana.   autocommit-local.sh --worktree <pasta> [--branch computador_local] [--remote origin]",
-   "linhas": 254,
+   "linhas": 270,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1052,7 +1052,7 @@
   {
    "arquivo": "scripts/sync/mirror-github.sh",
    "descricao": "Deixa o checkout local EXATAMENTE igual ao GitHub (espelho), sem intervenção humana.   mirror-github.sh [--repo <caminho>] [--branch main] [--quiet-min 10] [--keep-days 30] [--dry-run] [--quiet]",
-   "linhas": 213,
+   "linhas": 244,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1061,7 +1061,7 @@
   {
    "arquivo": "scripts/sync/run-all.sh",
    "descricao": "Orquestrador: aplica a arquitetura \"espelho + computador_local\" a TODOS os repositórios listados em repos.conf.   run-all.sh mirror     [--only <nome>] [--dry-run]   espelho exato da main + fast-forwa",
-   "linhas": 65,
+   "linhas": 79,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1070,7 +1070,7 @@
   {
    "arquivo": "scripts/sync/sync-github.sh",
    "descricao": "Mantém o repositório local atualizado com o GitHub, com segurança.   sync-github.sh [--repo <caminho>] [--dry-run] [--quiet]",
-   "linhas": 115,
+   "linhas": 143,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

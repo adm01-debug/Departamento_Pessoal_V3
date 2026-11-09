@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2e54da5d336fc15b6ac7cb2126eef8174a9a6517",
+  "commit": "f9261e3bd1ea071f0d83bb9286cef41a9d2a730a",
   "branch": "main",
-  "data_commit": "2026-11-09T17:49:22-03:00",
+  "data_commit": "2026-11-09T18:34:25-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f9261e3",
+    "data": "2026-11-09",
+    "assunto": "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)"
+   },
    {
     "sha": "2e54da5",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "e7d1f19",
     "data": "2026-11-08",
     "assunto": "feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard"
-   },
-   {
-    "sha": "3358bc1",
-    "data": "2026-11-08",
-    "assunto": "feat: guards contra falso verde nos ratchets e build-rebaseline"
    }
   ],
-  "arquivos_mudados_7d": 240,
+  "arquivos_mudados_7d": 241,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -180,6 +180,10 @@
     "mudancas": 12
    },
    {
+    "pasta": "scripts/autofix/regras",
+    "mudancas": 12
+   },
+   {
     "pasta": "src/utils/__tests__",
     "mudancas": 11
    },
@@ -189,10 +193,6 @@
    },
    {
     "pasta": ".github/workflows/ci.yml",
-    "mudancas": 9
-   },
-   {
-    "pasta": "AGENTS.md",
     "mudancas": 9
    }
   ],
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 80
+    "commits": 81
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2825,
+  "arquivos_total": 2826,
   "arquivos_codigo": 1518,
-  "linhas_codigo": 263344,
+  "linhas_codigo": 263476,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -472,7 +472,7 @@
   },
   "scripts/autofix": {
    "arquivos": 10,
-   "linhas": 1773
+   "linhas": 1905
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
@@ -820,7 +820,7 @@
  "qualidade": {
   "any": 75,
   "console_log": 254,
-  "ts_ignore": 0,
+  "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 14,
   "arquivos_acima_500_linhas": 49
