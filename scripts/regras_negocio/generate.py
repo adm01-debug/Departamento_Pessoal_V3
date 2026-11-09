@@ -970,10 +970,13 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
             schema["sources"].append(rel(f, root))
     # database.types.ts (Supabase gen types) — fonte quando migrations não têm a tabela
     for f in files:
-        if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f) and "Row:" in read_text(f):
-            txt = read_text(f)
+        if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f, MAX_SQL_BYTES) and "Row:" in read_text(f, MAX_SQL_BYTES):
+            txt = tables_txt = read_text(f, MAX_SQL_BYTES)  # o arquivo gerado passa fácil do limite de código-fonte
             schema["types_file"] = rel(f, root)
-            for name, row in re.findall(r"\n\s+(\w+):\s*\{\s*\n\s*Row:\s*\{([^}]*)\}", txt):
+            for vm in reversed(list(re.finditer(r"\bViews:\s*\{", txt))):  # Row de view não é tabela (não tem RLS)
+                end = balanced(txt, vm.end() - 1, "{", "}")
+                tables_txt = tables_txt[:vm.end()] + tables_txt[end:] if end > 0 else tables_txt
+            for name, row in re.findall(r"\n\s+(\w+):\s*\{\s*\n\s*Row:\s*\{([^}]*)\}", tables_txt):
                 cols = []
                 for line in row.strip().splitlines():
                     cm = re.match(r"\s*(\w+)\??:\s*(.+?)\s*;?$", line)
@@ -1000,7 +1003,8 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                     schema["enums"][name] = re.findall(r"\"([^\"]+)\"", vals)
             fb = block("Functions")
             if fb:
-                for name in re.findall(r"\n\s+(\w+):\s*\{", fb):
+                ind = re.match(r"\n([ \t]+)", fb)  # só o 1º nível: `Args:`/`Returns:` não são funções; overload vem como `nome:\n | {`
+                for name in re.findall(r"\n" + ind.group(1) + r"(\w+):", fb) if ind else re.findall(r"\n\s+(\w+):\s*\{", fb):
                     schema["functions"].setdefault(name, {"args": "", "returns": "?", "lang": "", "src": rel(f, root), "security_definer": False, "search_path": False, "body": "", "raises": [], "tables": []})
             schema["sources"].append(rel(f, root))
             break

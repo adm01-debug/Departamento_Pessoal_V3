@@ -130,6 +130,50 @@ export type Database = {
         self.assertEqual(schema["tables"]["Store"]["origin"], "prisma")
         self.assertEqual(schema["tables"]["customers"]["origin"], "types.ts")
 
+    def test_large_generated_types_file_is_read_without_views_or_fake_functions(self):
+        self.write("supabase/migrations/20260101000000_orders.sql", "CREATE TABLE public.orders (id uuid);")
+        self.write("src/integrations/supabase/types.ts", """
+export type Database = {
+  public: {
+    Tables: {
+      orders: {
+        Row: {
+          id: string
+          added_in_dashboard: string | null
+        }
+      }
+    }
+    Views: {
+      v_orders: {
+        Row: {
+          id: string | null
+        }
+      }
+    }
+    Functions: {
+      short_fn: { Args: never; Returns: boolean }
+      long_fn: {
+        Args: { _id: string }
+        Returns: {
+          id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+        }
+      }
+      overloaded_fn:
+        | { Args: never; Returns: number }
+        | { Args: { _id: string }; Returns: number }
+    }
+  }
+}
+""" + "// " + "x" * (generator.MAX_FILE_BYTES + 1) + "\n")
+        schema = self.schema()
+        self.assertEqual(schema["types_file"], "src/integrations/supabase/types.ts")
+        self.assertEqual(list(schema["tables"]), ["orders"])
+        self.assertEqual([c["name"] for c in schema["tables"]["orders"]["columns"]], ["id", "added_in_dashboard"])
+        self.assertEqual(sorted(schema["functions"]), ["long_fn", "overloaded_fn", "short_fn"])
+
     def test_archived_sql_is_not_current_code_but_remains_in_file_inventory(self):
         current = self.write("supabase/migrations/20260101000000_retention.sql", "SELECT now() - interval '7 days';")
         archived = self.write("supabase/migrations/_superseded/20250101000000_retention.sql", "SELECT now() - interval '365 days';")
