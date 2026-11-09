@@ -307,6 +307,31 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
         self.assertIsNone(out["storage"])
         self.assertEqual({e["section"] for e in s.ERRORS}, {"db_stats.storage", "db_stats.auth"})
 
+    def test_queue_metrics_without_permission_keep_the_other_database_stats(self):
+        s = self.snapshot
+        s.ERRORS.clear()
+
+        def q(_conn, sql, params=None):
+            if "pgmq.metrics_all" in sql:
+                raise PermissionError("permission denied for schema pgmq")
+            if "pg_database_size" in sql:
+                return [{"s": 123}]
+            if "pg_extension" in sql:
+                return [{"present": 1}]
+            if "count(*) AS c" in sql:
+                return [{"c": 1}]
+            return []
+
+        with mock.patch.object(s, "q", side_effect=q), mock.patch.object(s, "STAT_STATEMENTS_TOP", 0), \
+                contextlib.redirect_stdout(io.StringIO()):
+            out = s.get_db_stats(OfflineConnection())
+        self.assertEqual(out["database_bytes"], 123)
+        self.assertIsNone(out["queues"])
+        self.assertEqual({e["section"] for e in s.ERRORS}, {"db_stats.queues"})
+        self.out.mkdir(parents=True, exist_ok=True)
+        s.render_stats({"db_stats": out}, {}, {})
+        self.assertIn("| tamanho | 123 B |", (self.out / "stats.md").read_text(encoding="utf-8"))
+
     def test_failed_edge_function_listing_preserves_previous_edges(self):
         s = self.snapshot
         s.ERRORS.clear()

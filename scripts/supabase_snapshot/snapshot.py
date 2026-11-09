@@ -835,7 +835,16 @@ def get_db_stats(conn):
     except Exception as e:  # noqa: BLE001
         record_error("db_stats.auth", e)
         out["auth"] = {}
-    out["queues"] = q(conn, "SELECT queue_name, queue_length, newest_msg_age_sec, oldest_msg_age_sec, total_messages FROM pgmq.metrics_all() ORDER BY 1") if has_ext(conn, "pgmq") else []
+    # Mesmo contrato de storage/auth: papel sem acesso ao schema pgmq não pode derrubar as demais métricas.
+    try:
+        out["queues"] = q(conn, "SELECT queue_name, queue_length, newest_msg_age_sec, oldest_msg_age_sec, total_messages FROM pgmq.metrics_all() ORDER BY 1") if has_ext(conn, "pgmq") else []
+    except Exception as e:  # noqa: BLE001
+        record_error("db_stats.queues", e)
+        try:
+            conn.rollback()
+        except Exception:  # noqa: BLE001
+            pass
+        out["queues"] = None
     if STAT_STATEMENTS_TOP > 0:
         try:
             extension = q(conn, """
