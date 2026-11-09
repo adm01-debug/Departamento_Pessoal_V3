@@ -1,0 +1,45 @@
+name: Settings Guard
+
+on:
+  schedule:
+    # 07:19 UTC diário (jitter para evitar pico na hora cheia)
+    - cron: '19 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  guard:
+    name: Verificar perímetro do GitHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (sparse — apenas scripts/ci)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: scripts/ci
+          sparse-checkout-cone-mode: false
+
+      - name: Verificar perímetro do GitHub
+        # W11 pendente: criar environment `perimetro-leitura` com secret
+        # `SETTINGS_GUARD_TOKEN` (PAT fine-grained, administration:read) para
+        # remover o ponto cego de branch protection (DP V3 usa rulesets — a API
+        # classica retorna 404). Enquanto ausente, o guard roda com github.token
+        # e declara branch protection como NAO VERIFICAVEL — comportamento esperado.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ADMIN_READ_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          PERIMETER_SNAPSHOT_PATH: perimeter-snapshot.json
+        run: node scripts/ci/github-settings-guard.mjs
+
+      - name: Salvar snapshot do perímetro
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: perimeter-snapshot-${{ github.run_id }}
+          path: perimeter-snapshot.json
+          retention-days: 90
+          if-no-files-found: ignore
