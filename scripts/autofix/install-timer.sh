@@ -19,7 +19,7 @@ if [ "${1:-}" = "--remove" ]; then
   exit 0
 fi
 
-NODE="$(command -v node)"
+NODE="$(command -v node)" || { echo "node não encontrado no PATH; nada instalado" >&2; exit 1; }
 mkdir -p "$DIR"
 
 cat > "$DIR/$UNIT.service" <<EOF
