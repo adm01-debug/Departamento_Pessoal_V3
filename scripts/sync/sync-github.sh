@@ -26,10 +26,10 @@ DRY=0
 QUIET=0
 while [ $# -gt 0 ]; do
   case "$1" in
-    --repo) REPO="${2:-}"; shift 2 ;;
+    --repo) REPO="${2:?--repo exige um valor}"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
-    -h|--help) sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "opção desconhecida: $1" >&2; exit 2 ;;
   esac
 done

@@ -29,16 +29,17 @@ _n="${GIT_CONFIG_COUNT:-0}"; export "GIT_CONFIG_KEY_$_n=core.hooksPath" "GIT_CON
 REPO=""; BRANCH="main"; DRY=0; QUIET=0; QUIET_MIN=10; KEEP_DAYS=30
 while [ $# -gt 0 ]; do
   case "$1" in
-    --repo) REPO="${2:-}"; shift 2 ;;
-    --branch) BRANCH="${2:-}"; shift 2 ;;
-    --quiet-min) QUIET_MIN="${2:-}"; shift 2 ;;
-    --keep-days) KEEP_DAYS="${2:-}"; shift 2 ;;
+    --repo) REPO="${2:?--repo exige um valor}"; shift 2 ;;
+    --branch) BRANCH="${2:?--branch exige um valor}"; shift 2 ;;
+    --quiet-min) QUIET_MIN="${2:?--quiet-min exige um valor}"; shift 2 ;;
+    --keep-days) KEEP_DAYS="${2:?--keep-days exige um valor}"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
-    -h|--help) sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "opção desconhecida: $1" >&2; exit 2 ;;
   esac
 done
+case "$QUIET_MIN$KEEP_DAYS" in *[!0-9]*) echo "--quiet-min e --keep-days exigem um número inteiro" >&2; exit 2 ;; esac
 
 REPO="${REPO:-$(git rev-parse --show-toplevel 2>/dev/null || true)}"
 [ -n "$REPO" ] && { [ -d "$REPO/.git" ] || [ -f "$REPO/.git" ]; } || { echo "informe --repo <caminho de um repositório git>" >&2; exit 2; }
