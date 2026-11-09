@@ -40,9 +40,12 @@ test('classify: sidecar .verify.sql não é migration nem duplica a versão', ()
 
 test('classify: --failed-file aceita caminho, não só o nome do arquivo', () => {
   const result = run(classify, [
-    '--migrations', migrations,
-    '--ledger-json', 'ledger.json',
-    '--failed-file', join(migrations, '20260103000000_c.sql'),
+    '--migrations',
+    migrations,
+    '--ledger-json',
+    'ledger.json',
+    '--failed-file',
+    join(migrations, '20260103000000_c.sql'),
   ]);
   assert.equal(result.status, 0, result.stderr);
   const row = readFileSync(join(work, 'migration-classification.csv'), 'utf8')
@@ -53,9 +56,12 @@ test('classify: --failed-file aceita caminho, não só o nome do arquivo', () =>
 
 test('classify: --last-successful-ordinal não numérico reprova', () => {
   const result = run(classify, [
-    '--migrations', migrations,
-    '--ledger-json', 'ledger.json',
-    '--last-successful-ordinal', 'abc',
+    '--migrations',
+    migrations,
+    '--ledger-json',
+    'ledger.json',
+    '--last-successful-ordinal',
+    'abc',
   ]);
   assert.notEqual(result.status, 0);
 });
