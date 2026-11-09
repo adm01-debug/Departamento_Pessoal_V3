@@ -80,6 +80,11 @@ exec 9>"$STATE/ac-$KEY.lock"; flock -n 9 || { say "outra execução em andamento
 export GIT_TERMINAL_PROMPT=0
 
 # 0. pré-condições
+# --pii com valor desconhecido ("cfp", "cpf|cnpj") desligava a trava em silêncio e o CPF ia para o GitHub: falha fechada.
+PII="${PII//[[:space:]]/}"; PII="${PII,,}"; IFS=, read -r -a _tipos <<< "$PII"
+for _t in "${_tipos[@]}"; do
+  case "$_t" in cpf|cnpj|'') ;; *) say "ERRO: --pii '$PII' inválido (use cpf, cnpj ou cpf,cnpj; vazio desliga) — NADA foi commitado"; echo "--pii inválido: $PII" >&2; exit 2 ;; esac
+done
 CUR="$("${G[@]}" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 [ "$CUR" = "$BRANCH" ] || { say "PULEI: o worktree está em '$CUR', não em '$BRANCH' (nunca troco de branch)"; exit 0; }
 GD="$("${G[@]}" rev-parse --absolute-git-dir)"
