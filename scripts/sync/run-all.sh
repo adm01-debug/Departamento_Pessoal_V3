@@ -65,7 +65,10 @@ while IFS='|' read -r repo wt branch mirror pii || [ -n "${repo:-}" ]; do
         1) timeout 25m nice -n 10 bash "$HERE/mirror-github.sh" --repo "$repo" --branch "${branch:-main}" --quiet "${QM[@]}" "${DRY[@]}" </dev/null; rc=$?
            if [ "$rc" -eq 0 ]; then timeout 25m nice -n 10 bash "$HERE/sync-github.sh" --repo "$repo" --quiet "${DRY[@]}" </dev/null; rc=$?; fi
            resultado "$name" "$rc" ;;
-        *) pulado=$((pulado+1)) ;;   # ext/0: espelho próprio ou nenhum
+        ext) # espelho PRÓPRIO do repositório (não o reseto), mas a computador_local ainda precisa acompanhar a main: o sync só faz
+             # fast-forward (nunca reset/merge/push), então é seguro rodá-lo aqui
+             timeout 25m nice -n 10 bash "$HERE/sync-github.sh" --repo "$repo" --quiet "${DRY[@]}" </dev/null; resultado "$name" $? ;;
+        *) pulado=$((pulado+1)) ;;   # 0: nenhum
       esac ;;
     autocommit)
       [ -n "$wt" ] || { pulado=$((pulado+1)); continue; }
