@@ -64,7 +64,9 @@ for f in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISEC
 done
 
 # 1. fetch e conferência de que origin/<branch> é mesmo o que está no GitHub agora
-if ! timeout 180 "${G[@]}" fetch --prune --quiet origin 2>"$STATE/$KEY.err"; then
+# `9>&-`: o fetch pode disparar o gc automático em segundo plano, que herdaria o fd do trinco e o seguraria depois do fim deste
+# script (o sync-github.sh que roda em seguida no mesmo timer sairia com "outra sincronização em andamento").
+if ! timeout 180 "${G[@]}" fetch --prune --quiet origin 2>"$STATE/$KEY.err" 9>&-; then
   say "fetch falhou (rede/credencial?): $(head -c 160 "$STATE/$KEY.err" | tr '\n' ' ') — tentarei na próxima"; exit 75
 fi
 REMOTE_SHA="$(timeout 60 "${G[@]}" ls-remote origin "refs/heads/$BRANCH" 2>/dev/null | cut -f1)"
