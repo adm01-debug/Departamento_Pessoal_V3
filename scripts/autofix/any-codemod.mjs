@@ -90,6 +90,7 @@ export async function runAnyPass(ctx) {
   }
 
   let runs = 0;
+  let cap = maxRuns; // teto vigente (a segunda chance usa um teto menor)
   const accepted = new Set();
   const rejected = new Set();
   const dirty = new Set();
@@ -103,7 +104,7 @@ export async function runAnyPass(ctx) {
   };
 
   const test = async (live) => {
-    if (runs >= maxRuns) throw new BudgetExhausted();
+    if (runs >= cap) throw new BudgetExhausted();
     write(live);
     runs++;
     const res = await ctx.typecheck();
@@ -158,8 +159,15 @@ export async function runAnyPass(ctx) {
     const again = [...rejected];
     if (again.length && again.length < candidates.length) {
       rejected.clear();
-      log(`any[${kinds}]: segunda chance para ${again.length} rejeitados`);
-      await settle(again);
+      cap = Math.min(maxRuns, runs + 25); // pouco retorno: não deixa consumir o orçamento das outras fases
+      log(`any[${kinds}]: segunda chance para ${again.length} rejeitados (até 25 rodadas)`);
+      try {
+        await settle(again);
+      } catch (e) {
+        if (!(e instanceof BudgetExhausted)) throw e;
+        for (const r of again) if (!accepted.has(r)) rejected.add(r);
+        if (runs >= maxRuns) throw e;
+      }
     }
   } catch (e) {
     if (!(e instanceof BudgetExhausted)) throw e;

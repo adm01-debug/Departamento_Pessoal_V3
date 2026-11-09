@@ -259,7 +259,7 @@ async function main() {
   if (!g.ok) problems.push(`tsc: ${g.fresh.length} erros novos (ex.: ${g.fresh[0] ? `${g.fresh[0].file}:${g.fresh[0].line} ${g.fresh[0].code}` : 'crash'})`);
   if (lint.errors > baseLint.errors) problems.push(`eslint: erros ${baseLint.errors} -> ${lint.errors}`);
   if (lint.warnings > baseLint.warnings) problems.push(`eslint: avisos ${baseLint.warnings} -> ${lint.warnings}`);
-  if (fmtBad.length) problems.push(`prettier: ${fmtBad.length} arquivos tocados fora do padrão`);
+  if (fmtBad.length) problems.push(`prettier: ${fmtBad.length} arquivos tocados fora do padrão (${fmtBad.slice(0, 3).join(', ')})`);
   if (rr.code !== 0) problems.push('ratchet-any reprovou');
   report.final = { tscErrors: baseTsc.errors.length + g.fresh.length, lintWarnings: lint.warnings, lintErrors: lint.errors, filesTouched: touchedAll.length };
 
