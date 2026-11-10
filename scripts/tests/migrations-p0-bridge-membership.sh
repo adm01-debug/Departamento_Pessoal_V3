@@ -126,6 +126,14 @@ admin_default="$(run_psql -Atc "SELECT empresa_id FROM public.user_empresas WHER
 
 # Twenty competing tabs must still leave one and only one default.
 pids=()
+# One switch stays uncommitted while the others race: without the advisory
+# lock a racer works on a stale snapshot and violates the one-default index.
+(run_as_authenticated "$USER_A" "SELECT public.set_own_default_empresa('$EMP_A1'); SELECT pg_sleep(3);" >/dev/null) >"$RESULT_DIR/0" 2>&1 &
+pids+=("$!")
+for _ in $(seq 1 50); do
+  [ "$(run_psql -Atc "SELECT count(*) FROM pg_stat_activity WHERE wait_event = 'PgSleep'")" = '1' ] && break
+  sleep 0.2
+done
 for i in $(seq 1 20); do
   target="$EMP_A1"
   [ $((i % 2)) -eq 0 ] && target="$EMP_A2"
