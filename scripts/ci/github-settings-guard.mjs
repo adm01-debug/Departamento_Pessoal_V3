@@ -195,22 +195,31 @@ async function checarRepo() {
   if (ausentes.length === Object.keys(baseline.merge).filter(k => !k.startsWith('_')).length) {
     throw new NaoVerificavel(`/repos (merge.*)`, 200, 'resposta sem os campos de merge: o token nao tem permissao push/admin para le-los');
   }
-  if (ausentes.length > 0) {
-    return { divergencias, cego: `200 — campos nao expostos ao token: ${ausentes.join(', ')}`, campos: ausentes };
-  }
-  // W14: security_and_analysis (secret_scanning*)
-  // A API so inclui este bloco para tokens com escopo admin; ausente nao e divergencia.
+  // W14: security_and_analysis (secret_scanning*) — conferido antes do retorno parcial
+  // para nao pular divergencias presentes na resposta quando merge fields estao ausentes.
   const blSec = baseline.security_and_analysis ?? {};
   const blSecChaves = Object.keys(blSec).filter((k) => !k.startsWith('_'));
-  if (blSecChaves.length > 0 && !repo?.security_and_analysis) {
-    return { divergencias, cego: `200 — security_and_analysis ausente: escopo admin nao disponivel com este token`, campos: ['security_and_analysis'] };
-  }
-  for (const [chave, valorEsperado] of Object.entries(blSec)) {
-    if (chave.startsWith('_')) continue;
-    const encontrado = repo?.security_and_analysis?.[chave]?.status ?? null;
-    if (encontrado !== valorEsperado) {
-      divergencias.push({ campo: `security_and_analysis.${chave}`, esperado: valorEsperado, encontrado, restauravel: false });
+  let cegoSec = null;
+  if (blSecChaves.length > 0) {
+    if (!repo?.security_and_analysis) {
+      cegoSec = 'security_and_analysis ausente: escopo admin nao disponivel com este token';
+    } else {
+      for (const [chave, valorEsperado] of Object.entries(blSec)) {
+        if (chave.startsWith('_')) continue;
+        const encontrado = repo.security_and_analysis[chave]?.status ?? null;
+        if (encontrado !== valorEsperado) {
+          divergencias.push({ campo: `security_and_analysis.${chave}`, esperado: valorEsperado, encontrado, restauravel: false });
+        }
+      }
     }
+  }
+  if (ausentes.length > 0 || cegoSec) {
+    const camposCegos = [...ausentes, ...(cegoSec ? ['security_and_analysis'] : [])];
+    const partes = [
+      ausentes.length > 0 ? `campos nao expostos ao token: ${ausentes.join(', ')}` : null,
+      cegoSec,
+    ].filter(Boolean);
+    return { divergencias, cego: `200 — ${partes.join('; ')}`, campos: camposCegos };
   }
   return divergencias;
 }
