@@ -6,10 +6,10 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(process.argv[2] ?? '/tmp/20260831000000_rebaseline_canonico.sql');
 const publicDumpPath = resolve(root, 'supabase/rebaseline/20260831_corrected_public.sql');
-// Estas correções não pertencem ao histórico de migrations ativo: elas são
-// aplicadas SOBRE o snapshot físico antes de ele virar a baseline única.
-// A ordem é deliberada: primeiro helpers de autorização, depois policies e
-// funções que os consomem, e só então views e Storage.
+// Estas correÃ§Ãµes nÃ£o pertencem ao histÃ³rico de migrations ativo: elas sÃ£o
+// aplicadas SOBRE o snapshot fÃ­sico antes de ele virar a baseline Ãºnica.
+// A ordem Ã© deliberada: primeiro helpers de autorizaÃ§Ã£o, depois policies e
+// funÃ§Ãµes que os consomem, e sÃ³ entÃ£o views e Storage.
 const remediationPaths = [
   'supabase/rebaseline/20260831_security_remediation.sql',
   'supabase/rebaseline/20260902_rls_tenant_tautology_remediation.sql',
@@ -18,24 +18,30 @@ const remediationPaths = [
 ].map((path) => resolve(root, path));
 const storagePath = resolve(root, 'supabase/rebaseline/20260831_storage_remediation.sql');
 
-const publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
-const remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
-const storage = await readFile(storagePath, 'utf8');
+let publicDump, remediations, storage;
+try {
+  publicDump = (await readFile(publicDumpPath, 'utf8')).replace(/\r\n/g, '\n');
+  remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
+  storage = await readFile(storagePath, 'utf8');
+} catch (err) {
+  process.stderr.write(`âŒ build-rebaseline: arquivo de entrada ausente â€” ${err.message}\n`);
+  process.exit(1);
+}
 
 const sanitizedDump = publicDump
   .split('\n')
   .filter((line) => !/^\\(?:un)?restrict\b/.test(line))
   .filter((line) => line !== 'CREATE SCHEMA "public";')
-  // A role postgres usada pelo runner oficial não pode alterar os defaults da
-  // role gerenciada supabase_admin. Esses defaults já vêm do bootstrap da
-  // plataforma e não pertencem ao schema da aplicação.
+  // A role postgres usada pelo runner oficial nÃ£o pode alterar os defaults da
+  // role gerenciada supabase_admin. Esses defaults jÃ¡ vÃªm do bootstrap da
+  // plataforma e nÃ£o pertencem ao schema da aplicaÃ§Ã£o.
   .filter((line) => !/^ALTER DEFAULT PRIVILEGES FOR ROLE "supabase_admin"\s/.test(line))
   .join('\n')
   .trim();
 
-const prelude = `-- Baseline canônica única do Departamento Pessoal V3.
--- Gerada de um restore físico do projeto frjbfeamybqsejlvmqbl, corrigido e
--- validado localmente. Não contém dados, usuários, sessões ou objetos Storage.
+const prelude = `-- Baseline canÃ´nica Ãºnica do Departamento Pessoal V3.
+-- Gerada de um restore fÃ­sico do projeto frjbfeamybqsejlvmqbl, corrigido e
+-- validado localmente. NÃ£o contÃ©m dados, usuÃ¡rios, sessÃµes ou objetos Storage.
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -69,15 +75,15 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 CREATE EXTENSION IF NOT EXISTS supabase_vault WITH SCHEMA vault;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
 
--- O bootstrap local/hosted pode conceder privilégios de tabela distintos
--- por versão. Zeramos o papel anon antes de criar as tabelas; os GRANTs
--- explícitos do dump restauram exatamente a superfície canônica. Sem isso,
+-- O bootstrap local/hosted pode conceder privilÃ©gios de tabela distintos
+-- por versÃ£o. Zeramos o papel anon antes de criar as tabelas; os GRANTs
+-- explÃ­citos do dump restauram exatamente a superfÃ­cie canÃ´nica. Sem isso,
 -- anon herdava TRUNCATE/REFERENCES em todas as tabelas no teste limpo.
 ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA public
   REVOKE ALL ON TABLES FROM anon;
 `;
 
-const cron = `-- Jobs canônicos de auditoria e retenção.
+const cron = `-- Jobs canÃ´nicos de auditoria e retenÃ§Ã£o.
 SELECT cron.unschedule(jobid)
 FROM cron.job
 WHERE jobname IN (
@@ -109,31 +115,31 @@ const result = [prelude, sanitizedDump, ...remediations.map((content) => content
   '\n\n'
 );
 
-// --- Verificações de segurança (ausência de padrões proibidos) ---
+// --- VerificaÃ§Ãµes de seguranÃ§a (ausÃªncia de padrÃµes proibidos) ---
 if (/^\\(?:un)?restrict\b/m.test(result)) {
-  throw new Error('A migração não pode conter metacomandos exclusivos do psql.');
+  throw new Error('A migraÃ§Ã£o nÃ£o pode conter metacomandos exclusivos do psql.');
 }
 // O dump usa identificadores entre aspas (CREATE SCHEMA "public"): dado vazado viria como INSERT INTO "public"."t".
 if (/^COPY\s|^INSERT INTO "?(?:auth|public)"?\./im.test(result)) {
-  throw new Error('A migração squash não pode conter dados de Auth ou negócio.');
+  throw new Error('A migraÃ§Ã£o squash nÃ£o pode conter dados de Auth ou negÃ³cio.');
 }
 if (/CREATE SCHEMA "public";/.test(result)) {
-  throw new Error('A migração não pode recriar o schema public gerenciado.');
+  throw new Error('A migraÃ§Ã£o nÃ£o pode recriar o schema public gerenciado.');
 }
 
-// --- Verificações de conteúdo (presença de estrutura mínima esperada) ---
+// --- VerificaÃ§Ãµes de conteÃºdo (presenÃ§a de estrutura mÃ­nima esperada) ---
 // Um dump sem nenhum CREATE TABLE indica que o snapshot foi gerado incorretamente
-// ou que o filtro de linhas removeu tudo — falso verde sem este check.
+// ou que o filtro de linhas removeu tudo â€” falso verde sem este check.
 if (!/^CREATE TABLE\b/m.test(result)) {
-  throw new Error('A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido.');
+  throw new Error('A migraÃ§Ã£o gerada nÃ£o contÃ©m nenhum CREATE TABLE â€” o dump pode estar vazio ou corrompido.');
 }
 // A baseline deve ao menos referenciar as roles de acesso controlado do projeto.
 if (!result.includes('dp_mcp_role')) {
-  throw new Error('A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído.');
+  throw new Error('A migraÃ§Ã£o gerada nÃ£o contÃ©m a role dp_mcp_role â€” o prelude nÃ£o foi incluÃ­do.');
 }
-// Tamanho mínimo: um dump real do schema público tem dezenas de kB.
+// Tamanho mÃ­nimo: um dump real do schema pÃºblico tem dezenas de kB.
 if (result.length < 50_000) {
-  throw new Error(`A migração gerada tem apenas ${result.length} bytes — esperado > 50 kB para um dump completo.`);
+  throw new Error(`A migraÃ§Ã£o gerada tem apenas ${result.length} bytes â€” esperado > 50 kB para um dump completo.`);
 }
 
 await writeFile(output, result, { mode: 0o600 });
