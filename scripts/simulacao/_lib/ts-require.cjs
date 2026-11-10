@@ -12,6 +12,13 @@ const path = require('path');
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 
 function tsRequire(absPath) {
+  // Exige caminho absoluto: um relativo resolveria contra process.cwd(), não
+  // contra o diretório do script chamador, e quebraria dependendo de onde o
+  // comando é rodado (ex.: `node scripts/simulacao/x.cjs` da raiz do repo vs.
+  // de dentro de scripts/simulacao/). Quem chama monta o caminho com __dirname.
+  if (!path.isAbsolute(absPath)) {
+    throw new Error(`tsRequire: caminho deve ser absoluto (recebido: '${absPath}'); monte com path.join(__dirname, ...)`);
+  }
   const resolved = path.resolve(absPath);
   const cached = Module._cache[resolved];
   if (cached) return cached.exports;

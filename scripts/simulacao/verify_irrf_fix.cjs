@@ -11,9 +11,14 @@
 // redução de 2026. Auditoria (sessão 2026-11-10): com tabelas 2025 fixas,
 // 1700/1850 cenários de 2026-10 e 341/1850 de 2025-06 divergiam.
 
+const path = require('path');
 const { tsRequire } = require('./_lib/ts-require.cjs');
-const { calcularIRRF } = tsRequire('../../src/calculators/impostos.ts');
-const { calcIRRF } = tsRequire('../../supabase/functions/_shared/irrf.ts');
+// Caminho absoluto a partir de __dirname (não do cwd): este script precisa
+// rodar igual chamado como `node scripts/simulacao/verify_irrf_fix.cjs` da
+// raiz do repo ou de dentro de scripts/simulacao/.
+const REPO_ROOT = path.resolve(__dirname, '..', '..');
+const { calcularIRRF } = tsRequire(path.join(REPO_ROOT, 'src/calculators/impostos.ts'));
+const { calcIRRF } = tsRequire(path.join(REPO_ROOT, 'supabase/functions/_shared/irrf.ts'));
 
 function round2(v) {
   return Math.round((v + Number.EPSILON) * 100) / 100;
