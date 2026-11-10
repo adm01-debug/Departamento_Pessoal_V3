@@ -48,12 +48,12 @@ export async function typecheck(cwd, buildInfo) {
 export const errKey = (e) => `${e.file}|${e.line}|${e.code}|${e.msg}`;
 
 /** Erros presentes em `now` que não existiam em `base` (comparação por multiconjunto). */
-export function newErrors(base, now) {
+export function newErrors(base, now, key = errKey) {
   const budget = new Map();
-  for (const e of base) budget.set(errKey(e), (budget.get(errKey(e)) ?? 0) + 1);
+  for (const e of base) budget.set(key(e), (budget.get(key(e)) ?? 0) + 1);
   const out = [];
   for (const e of now) {
-    const k = errKey(e);
+    const k = key(e);
     const left = budget.get(k) ?? 0;
     if (left > 0) budget.set(k, left - 1);
     else out.push(e);
