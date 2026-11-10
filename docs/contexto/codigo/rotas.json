@@ -3,7 +3,7 @@
  "format_version": 2,
  "resumo": {
   "urls": 113,
-  "rotas_http_backend": 19,
+  "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 93,
   "lazy": 105
@@ -27516,20 +27516,6 @@
     "VITE_FEATURE_X",
     "X"
    ]
-  },
-  {
-   "metodo": "GET",
-   "caminho": "/${serviceName}",
-   "arquivo": "scripts/generate-service.js",
-   "tabelas": [],
-   "env": []
-  },
-  {
-   "metodo": "POST",
-   "caminho": "/${serviceName}",
-   "arquivo": "scripts/generate-service.js",
-   "tabelas": [],
-   "env": []
   },
   {
    "metodo": "GET",

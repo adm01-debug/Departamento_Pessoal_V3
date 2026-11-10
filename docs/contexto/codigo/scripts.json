@@ -413,7 +413,7 @@
   {
    "arquivo": "scripts/check-dependencies.js",
    "descricao": "* Verificação de integridade de dependências.",
-   "linhas": 133,
+   "linhas": 143,
    "env": [],
    "npm_scripts": [
     "build"
@@ -530,7 +530,7 @@
   {
    "arquivo": "scripts/generate-audit-pdf.js",
    "descricao": null,
-   "linhas": 26,
+   "linhas": 36,
    "env": [],
    "npm_scripts": [
     "build",
@@ -542,7 +542,7 @@
   {
    "arquivo": "scripts/generate-component.js",
    "descricao": null,
-   "linhas": 37,
+   "linhas": 43,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -551,7 +551,7 @@
   {
    "arquivo": "scripts/generate-hook.js",
    "descricao": null,
-   "linhas": 26,
+   "linhas": 37,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -560,7 +560,7 @@
   {
    "arquivo": "scripts/generate-page.js",
    "descricao": null,
-   "linhas": 28,
+   "linhas": 39,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -569,7 +569,7 @@
   {
    "arquivo": "scripts/generate-service.js",
    "descricao": null,
-   "linhas": 42,
+   "linhas": 36,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -636,7 +636,7 @@
   {
    "arquivo": "scripts/inventario/gerar-repo.mjs",
    "descricao": "Inventario gerado do lado do repositorio (sem acesso ao banco) — mesmo script do Zapp Web V2:  - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, ",
-   "linhas": 71,
+   "linhas": 78,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -768,7 +768,7 @@
   {
    "arquivo": "scripts/regenerate-supabase-types.sh",
    "descricao": "Regenera src/integrations/supabase/types.ts a partir do schema atual. Requer: supabase CLI instalado, SUPABASE_DB_URL ou SUPABASE_PROJECT_ID configurado.",
-   "linhas": 45,
+   "linhas": 53,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -878,7 +878,7 @@
   {
    "arquivo": "scripts/simulacao/run-exhaustive-v3.mjs",
    "descricao": "* Simulação exaustiva v3 — cenários sustentados pós-Etapa 7.",
-   "linhas": 244,
+   "linhas": 252,
    "env": [
     "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
@@ -891,7 +891,7 @@
   {
    "arquivo": "scripts/simulacao/run-exhaustive.mjs",
    "descricao": "* Orquestrador de simulação exaustiva pós-hardening (Etapas 1–6).",
-   "linhas": 208,
+   "linhas": 216,
    "env": [
     "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
@@ -940,8 +940,10 @@
   {
    "arquivo": "scripts/simulacao/simulate_rescisao.cjs",
    "descricao": "Simulação de centenas de cenários: engine correta (frontend, src/calculators/rescisao.ts) vs engine atual do edge (supabase/functions/calcular-rescisao/index.ts), replicadas fielmente",
-   "linhas": 163,
-   "env": [],
+   "linhas": 168,
+   "env": [
+    "TZ"
+   ],
    "npm_scripts": [],
    "workflows": [],
    "orfao": false
@@ -961,7 +963,7 @@
   {
    "arquivo": "scripts/simulacao/verify_bridge_write_guard.cjs",
    "descricao": "Verificação exaustiva do write-guard do external-db-bridge (B1). Regra: update/delete só são permitidos com filtros exclusivamente eq.",
-   "linhas": 117,
+   "linhas": 130,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -979,8 +981,10 @@
   {
    "arquivo": "scripts/simulacao/verify_rescisao_fix.cjs",
    "descricao": "Regressão pós-correção (task 7 / achados K2-K4, H(K)4): reimplementa em JS puro (a) o motor canônico src/utils/rescisaoCalc.ts (usado pelo botão \"Calcular Local\")",
-   "linhas": 379,
-   "env": [],
+   "linhas": 384,
+   "env": [
+    "TZ"
+   ],
    "npm_scripts": [],
    "workflows": [],
    "orfao": false

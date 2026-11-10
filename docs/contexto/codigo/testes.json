@@ -359,7 +359,7 @@
   {
    "arquivo": "scripts/tests/rebaseline-artifact.test.mjs",
    "tipo": "unit",
-   "linhas": 92,
+   "linhas": 93,
    "testa": [],
    "casos": 3
   },
@@ -373,7 +373,7 @@
   {
    "arquivo": "scripts/tests/sw-routing.test.mjs",
    "tipo": "unit",
-   "linhas": 153,
+   "linhas": 156,
    "testa": [],
    "casos": 0
   },
@@ -389,9 +389,9 @@
   {
    "arquivo": "scripts/tests/workflows-contract.test.mjs",
    "tipo": "contrato",
-   "linhas": 269,
+   "linhas": 270,
    "testa": [],
-   "casos": 14
+   "casos": 18
   },
   {
    "arquivo": "src/calculators/__tests__/auditHelper.test.ts",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3077cf6084822ebeedd37e10d8b93a908461ab03",
+  "sha": "e11272ee00cbd92e60ea4891183f2f5fa8db508d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 17:59 UTC",
+  "generated_at": "2026-11-10 18:15 UTC",
   "files_total": 2850,
   "code_files": 2335,
-  "code_lines": 312085
+  "code_lines": 312178
  },
  "version": "1.3.2",
- "facts_hash": "7cf21ffee388fabf",
+ "facts_hash": "564f6b3c647b9297",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -92672,16 +92672,6 @@
    },
    {
     "method": "GET",
-    "path": "/${serviceName}",
-    "file": "scripts/generate-service.js"
-   },
-   {
-    "method": "POST",
-    "path": "/${serviceName}",
-    "file": "scripts/generate-service.js"
-   },
-   {
-    "method": "GET",
     "path": "server_version",
     "file": "scripts/supabase_snapshot/snapshot.py"
    },
@@ -94922,7 +94912,7 @@
   {
    "module": "scripts",
    "files": 103,
-   "lines": 20910,
+   "lines": 21003,
    "tables": [
     "a",
     "anexos",
@@ -102310,6 +102300,10 @@
    ],
    "TURNSTILE_SECRET_KEY": [
     "supabase/functions/auth-login/index.ts"
+   ],
+   "TZ": [
+    "scripts/simulacao/simulate_rescisao.cjs",
+    "scripts/simulacao/verify_rescisao_fix.cjs"
    ],
    "VERCEL_GIT_COMMIT_SHA": [
     "vite.config.ts"
@@ -226399,7 +226393,7 @@
   },
   "scripts/check-dependencies.js": {
    "path": "scripts/check-dependencies.js",
-   "lines": 133,
+   "lines": 143,
    "rule_comments": [
     "- Verifica TODAS as dependências de produção (não apenas as críticas).",
     "- Aplica a regra do projeto \"typescript < 6.1\" — bump para ≥ 6.1 é",
@@ -226441,18 +226435,18 @@
   },
   "scripts/generate-audit-pdf.js": {
    "path": "scripts/generate-audit-pdf.js",
-   "lines": 26,
+   "lines": 36,
    "calc_fns": [
     {
      "name": "generatePDF",
      "params": "",
-     "body": "try { const mdContent = fs.readFileSync('AUDIT_REPORT.md', 'utf8'); const doc = new jsPDF(); doc.setFontSize(16); doc.text('Auditoria Enterprise e Inventário de Funcionalidades', 10, 20); doc.setFontSize(10); const lines = doc.splitTextToSize(mdContent, 180); doc.text(lines, 10, 30); const pdfOutput = doc.output('arraybuffer'); fs.writeFileSync('AUDIT_REPORT.pdf', Buffer.from(pdfOutput)); console.log('AUDIT_REPORT.pdf gerado com sucesso!'); } catch (error) { console.error('Erro ao gerar PDF:', e …"
+     "body": "try { const mdContent = fs.readFileSync('AUDIT_REPORT.md', 'utf8'); const doc = new jsPDF(); doc.setFontSize(16); doc.text('Auditoria Enterprise e Inventário de Funcionalidades', 10, 20); doc.setFontSize(10); const lines = doc.splitTextToSize(mdContent, 180); const pageHeight = doc.internal.pageSize.getHeight(); const lineHeight = 5; let y = 30; for (const line of lines) { if (y + lineHeight > pageHeight - 10) { doc.addPage(); y = 20; } doc.text(line, 10, y); y += lineHeight; } const pdfOutput = …"
     }
    ]
   },
   "scripts/generate-component.js": {
    "path": "scripts/generate-component.js",
-   "lines": 37,
+   "lines": 43,
    "exports": [
     "function $"
    ],
@@ -226460,7 +226454,7 @@
   },
   "scripts/generate-hook.js": {
    "path": "scripts/generate-hook.js",
-   "lines": 26,
+   "lines": 37,
    "exports": [
     "function $"
    ],
@@ -226468,7 +226462,7 @@
   },
   "scripts/generate-page.js": {
    "path": "scripts/generate-page.js",
-   "lines": 28,
+   "lines": 39,
    "exports": [
     "function $"
    ],
@@ -226476,19 +226470,9 @@
   },
   "scripts/generate-service.js": {
    "path": "scripts/generate-service.js",
-   "lines": 42,
+   "lines": 36,
    "exports": [
     "const $"
-   ],
-   "server_routes": [
-    {
-     "method": "GET",
-     "path": "/${serviceName}"
-    },
-    {
-     "method": "POST",
-     "path": "/${serviceName}"
-    }
    ],
    "doc": "!/usr/bin/env node"
   },
@@ -227761,12 +227745,15 @@
   },
   "scripts/inventario/gerar-repo.mjs": {
    "path": "scripts/inventario/gerar-repo.mjs",
-   "lines": 71,
+   "lines": 78,
    "tables": [
     {
      "table": "tabela",
      "op": "ref"
     }
+   ],
+   "rule_comments": [
+    "rg sai 1 quando nao ha ocorrencia; qualquer outra falha (rg ausente, erro de E/S) nao pode virar \"zero chamadas\"."
    ],
    "doc": "!/usr/bin/env node Inventario gerado do lado do repositorio (sem acesso ao banco) — mesmo script do Zapp Web V2: - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI) - tabelas: para cada nome recebido em stdin (uma por linha), quantos .fro …"
   },
@@ -228051,7 +228038,7 @@
   },
   "scripts/simulacao/run-exhaustive-v3.mjs": {
    "path": "scripts/simulacao/run-exhaustive-v3.mjs",
-   "lines": 244,
+   "lines": 252,
    "env": [
     "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
@@ -228067,7 +228054,7 @@
   },
   "scripts/simulacao/run-exhaustive.mjs": {
    "path": "scripts/simulacao/run-exhaustive.mjs",
-   "lines": 208,
+   "lines": 216,
    "env": [
     "VITE_SUPABASE_ANON_KEY",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
@@ -228202,7 +228189,10 @@
   },
   "scripts/simulacao/simulate_rescisao.cjs": {
    "path": "scripts/simulacao/simulate_rescisao.cjs",
-   "lines": 163,
+   "lines": 168,
+   "env": [
+    "TZ"
+   ],
    "rule_comments": [
     "Auto-validação: assertions sobre invariantes do motor CORRETO (não-negativo, justa causa",
     "— Auto-validação do motor CORRETO —",
@@ -228222,6 +228212,9 @@
      "params": "inicio, fim",
      "body": "if (fim < inicio) return 0; const meses = (fim.getFullYear() - inicio.getFullYear()) * 12 + (fim.getMonth() - inicio.getMonth()); const dataReferencia = new Date(inicio.getFullYear(), inicio.getMonth() + meses, inicio.getDate()); const diasRestantes = Math.floor((fim.getTime() - dataReferencia.getTime()) / 86400000); return diasRestantes >= 15 ? meses + 1 : meses;"
     }
+   ],
+   "percents": [
+    "// America/Sao_Paulo o verify acusava 100% de divergência). Fixa o fuso do processo."
    ]
   },
   "scripts/simulacao/verify_bridge_contract.cjs": {
@@ -228242,7 +228235,7 @@
   },
   "scripts/simulacao/verify_bridge_write_guard.cjs": {
    "path": "scripts/simulacao/verify_bridge_write_guard.cjs",
-   "lines": 117,
+   "lines": 130,
    "rule_comments": [
     "Regra: update/delete só são permitidos com filtros exclusivamente eq.",
     "contagem de filtros e todas as actions. Auto-validação: exit 1 se FAIL.",
@@ -228300,7 +228293,10 @@
   },
   "scripts/simulacao/verify_rescisao_fix.cjs": {
    "path": "scripts/simulacao/verify_rescisao_fix.cjs",
-   "lines": 379,
+   "lines": 384,
+   "env": [
+    "TZ"
+   ],
    "params": [
     {
      "name": "TETO_INSS",
@@ -228343,6 +228339,7 @@
     "const diffAnos = Math.floor((desligamento.getTime() - admissao.getTime()) / (1000 * 60 * 60 * 24 * 365.25));"
    ],
    "percents": [
+    "// America/Sao_Paulo o verify acusava 100% de divergência). Fixa o fuso do processo.",
     "const fgtsRescisao = round2((saldoSalario + avisoIndenizado + decimoTerceiro) * 0.08);",
     "multaFGTS = round2((saldoFGTS + fgtsRescisao) * 0.2);",
     "multaFGTS = round2((saldoFGTS + fgtsRescisao) * 0.4);",
@@ -228824,7 +228821,7 @@
   },
   "scripts/tests/rebaseline-artifact.test.mjs": {
    "path": "scripts/tests/rebaseline-artifact.test.mjs",
-   "lines": 92,
+   "lines": 93,
    "is_test": true,
    "errors": [
     "A baseline gerada contém conteúdo proibido: ${pattern}",
@@ -228861,7 +228858,7 @@
   },
   "scripts/tests/sw-routing.test.mjs": {
    "path": "scripts/tests/sw-routing.test.mjs",
-   "lines": 153,
+   "lines": 156,
    "is_test": true,
    "params": [
     {
@@ -228871,6 +228868,7 @@
    ],
    "rule_comments": [
     "Node's Request aceita apenas HTTP(S); o SW ainda recebe a URL da extensão.",
+    "default network-only escondia a remoção de cada regra de bloqueio.",
     "S: uma falha no stream não pode virar HTTP 200 com corpo parcial/vazio.",
     "T: ativação limpa somente caches deste app; caches de outras aplicações"
    ],
@@ -228886,7 +228884,7 @@
   },
   "scripts/tests/workflows-contract.test.mjs": {
    "path": "scripts/tests/workflows-contract.test.mjs",
-   "lines": 269,
+   "lines": 270,
    "is_test": true,
    "rule_comments": [
     "W97c: carrega required checks do baseline para detectar jobs que podem ficar skipped",
@@ -275145,10 +275143,74 @@
   }
  },
  "git": {
-  "sha": "3077cf6084822ebeedd37e10d8b93a908461ab03",
+  "sha": "e11272ee00cbd92e60ea4891183f2f5fa8db508d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e11272e",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruição de arquivo (#418)",
+    "files": [
+     "scripts/check-dependencies.js",
+     "scripts/generate-audit-pdf.js",
+     "scripts/generate-component.js",
+     "scripts/generate-hook.js",
+     "scripts/generate-page.js",
+     "scripts/generate-service.js",
+     "scripts/inventario/gerar-repo.mjs",
+     "scripts/regenerate-supabase-types.sh"
+    ]
+   },
+   {
+    "sha": "8cadcc1",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: testes de migration e contratos detectam o que prometem (sem falso verde) e param de vazar volume Docker (#424)",
+    "files": [
+     "scripts/simulacao/run-exhaustive-v3.mjs",
+     "scripts/simulacao/run-exhaustive.mjs",
+     "scripts/simulacao/simulate_rescisao.cjs",
+     "scripts/simulacao/verify_bridge_write_guard.cjs",
+     "scripts/simulacao/verify_rescisao_fix.cjs",
+     "scripts/tests/db-audit-fail-closed.sh",
+     "scripts/tests/lockfile-parity.test.sh",
+     "scripts/tests/lockfile-single.test.sh",
+     "scripts/tests/migrations-p0-atomic-rate-limit.sh",
+     "scripts/tests/migrations-p0-auth-lockout.sh",
+     "scripts/tests/migrations-p0-bridge-membership.sh",
+     "scripts/tests/migrations-p0-hash-search-path.sh",
+     "scripts/tests/migrations-p0-holerite-espelho.sh",
+     "scripts/tests/migrations-p0-identity-rls-authz.sh",
+     "scripts/tests/migrations-p0-payroll-upsert.sh",
+     "scripts/tests/migrations-p0-pgcrypto-routine-search-path.sh",
+     "scripts/tests/migrations-p0-report-schedule-claims.sh",
+     "scripts/tests/migrations-p0-secdef-search-path.sh",
+     "scripts/tests/migrations-p0-token-table-acl.sh",
+     "scripts/tests/migrations-p0-view-acl.sh",
+     "scripts/tests/migrations-p1-admission-esocial-claim.sh",
+     "scripts/tests/migrations-p1-atomic-provisions.sh",
+     "scripts/tests/migrations-p1-audit-action-contract.sh",
+     "scripts/tests/migrations-p1-backup-storage-bucket.sh",
+     "scripts/tests/migrations-p1-company-payroll-tax-contract.sh",
+     "scripts/tests/migrations-p1-function-search-path.sh",
+     "scripts/tests/migrations-p1-idempotency-monitoring-contract.sh",
+     "scripts/tests/migrations-p1-internal-notification-recipients.sh",
+     "scripts/tests/migrations-p1-payroll-audit-read-contract.sh",
+     "scripts/tests/migrations-p1-pcs-contract.sh",
+     "scripts/tests/migrations-p1-report-dispatch-idempotency.sh",
+     "scripts/tests/migrations-p1-report-schedule-authorship.sh",
+     "scripts/tests/migrations-p1-scoped-audit-trail.sh",
+     "scripts/tests/migrations-p1-security-cron-contract.sh",
+     "scripts/tests/migrations-p1-tenant-telemetry-contract.sh",
+     "scripts/tests/migrations-plano100.sh",
+     "scripts/tests/rebaseline-artifact.test.mjs",
+     "scripts/tests/run-shard.sh",
+     "scripts/tests/sw-routing.test.mjs",
+     "scripts/tests/workflows-contract.test.mjs"
+    ]
+   },
    {
     "sha": "3077cf6",
     "date": "2026-11-10",
@@ -275591,24 +275653,6 @@
      "scripts/audit-rls-pii.mjs",
      "scripts/audit-rls-tenant-open.mjs",
      "scripts/audit-security-config.mjs"
-    ]
-   },
-   {
-    "sha": "bb559b4",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: guards false-green em audit-edge-audit-log-contract",
-    "files": [
-     "scripts/audit-edge-audit-log-contract.mjs"
-    ]
-   },
-   {
-    "sha": "faaf11c",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: guards de false-green em audit-bridge-frontend-contract",
-    "files": [
-     "scripts/audit-bridge-frontend-contract.mjs"
     ]
    }
   ],

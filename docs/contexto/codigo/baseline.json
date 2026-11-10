@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3077cf6084822ebeedd37e10d8b93a908461ab03",
+  "commit": "e11272ee00cbd92e60ea4891183f2f5fa8db508d",
   "branch": "main",
-  "data_commit": "2026-11-10T17:52:02Z",
+  "data_commit": "2026-11-10T15:11:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e11272e",
+    "data": "2026-11-10",
+    "assunto": "fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruiçã"
+   },
+   {
+    "sha": "8cadcc1",
+    "data": "2026-11-10",
+    "assunto": "fix: testes de migration e contratos detectam o que prometem (sem falso verde) e param de vazar volume Docker (#424)"
+   },
    {
     "sha": "3077cf6",
     "data": "2026-11-10",
@@ -121,23 +131,13 @@
     "sha": "cf32bad",
     "data": "2026-11-08",
     "assunto": "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale"
-   },
-   {
-    "sha": "b9285c8",
-    "data": "2026-11-08",
-    "assunto": "fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso"
-   },
-   {
-    "sha": "27afd9f",
-    "data": "2026-11-08",
-    "assunto": "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório"
    }
   ],
-  "arquivos_mudados_7d": 256,
+  "arquivos_mudados_7d": 293,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "pasta": "CLAUDE.md",
@@ -153,7 +153,7 @@
    },
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 19
+    "mudancas": 18
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
@@ -180,10 +180,6 @@
     "mudancas": 12
    },
    {
-    "pasta": "src/hooks/__tests__",
-    "mudancas": 12
-   },
-   {
     "pasta": "src/services/folha",
     "mudancas": 10
    },
@@ -194,16 +190,20 @@
    {
     "pasta": "AGENTS.md",
     "mudancas": 9
+   },
+   {
+    "pasta": "src/components/folha",
+    "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 80
+    "mudancas": 78
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 76
+    "mudancas": 74
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 87
+    "commits": 89
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 73
+    "commits": 71
    },
    {
     "autor": "dependabot[bot]",
@@ -324,9 +324,9 @@
  "contagens": {
   "arquivos_total": 2829,
   "arquivos_codigo": 1520,
-  "linhas_codigo": 264188,
+  "linhas_codigo": 264281,
   "rotas": 113,
-  "rotas_http_backend": 19,
+  "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 93,
   "modulos": 77,
@@ -484,7 +484,7 @@
   },
   "scripts/check-dependencies.js": {
    "arquivos": 1,
-   "linhas": 133
+   "linhas": 143
   },
   "scripts/ci": {
    "arquivos": 1,
@@ -512,23 +512,23 @@
   },
   "scripts/generate-audit-pdf.js": {
    "arquivos": 1,
-   "linhas": 26
+   "linhas": 36
   },
   "scripts/generate-component.js": {
    "arquivos": 1,
-   "linhas": 37
+   "linhas": 43
   },
   "scripts/generate-hook.js": {
    "arquivos": 1,
-   "linhas": 26
+   "linhas": 37
   },
   "scripts/generate-page.js": {
    "arquivos": 1,
-   "linhas": 28
+   "linhas": 39
   },
   "scripts/generate-service.js": {
    "arquivos": 1,
-   "linhas": 42
+   "linhas": 36
   },
   "scripts/index.js": {
    "arquivos": 1,
@@ -536,7 +536,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 954
+   "linhas": 961
   },
   "scripts/load": {
    "arquivos": 1,
@@ -572,7 +572,7 @@
   },
   "scripts/simulacao": {
    "arquivos": 12,
-   "linhas": 2034
+   "linhas": 2073
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
@@ -584,7 +584,7 @@
   },
   "scripts/tests": {
    "arquivos": 15,
-   "linhas": 1868
+   "linhas": 1873
   },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
@@ -818,7 +818,7 @@
   }
  ],
  "qualidade": {
-  "any": 75,
+  "any": 73,
   "console_log": 250,
   "ts_ignore": 1,
   "eslint_disable": 4,

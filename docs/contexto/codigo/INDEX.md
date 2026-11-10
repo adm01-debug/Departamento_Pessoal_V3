@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3077cf6084822ebeedd37e10d8b93a908461ab03` (2026-11-10T17:52:02Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e11272ee00cbd92e60ea4891183f2f5fa8db508d` (2026-11-10T15:11:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,9 +36,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2829 |
 | arquivos_codigo | 1520 |
-| linhas_codigo | 264188 |
+| linhas_codigo | 264281 |
 | rotas | 113 |
-| rotas_http_backend | 19 |
+| rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 93 |
 | modulos | 77 |
@@ -223,8 +223,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Rotas HTTP de backend
 - `GET /{t}` → scripts/ai-context/cenarios.mjs
-- `GET /${serviceName}` → scripts/generate-service.js
-- `POST /${serviceName}` → scripts/generate-service.js
 - `GET /a` → scripts/ai-context/cenarios.mjs
 - `GET /a` → scripts/ai-context/cenarios.mjs
 - `POST /b` → scripts/ai-context/cenarios.mjs
@@ -385,14 +383,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21564 nós · 45009 arestas · 2106 comunidades · grafo do commit `3077cf60`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (459), lucide-react (393), button.tsx (331), cn (304), vitest (270), react (219), contract.ts (179), "public"."empresas" (164), services/index.ts (158), App.tsx (156)
+- 21571 nós · 45019 arestas · 2112 comunidades · grafo do commit `e11272ee`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (396), @tanstack/react-query (325), button.tsx (309), cn (244), vitest (239), validate.ts (205), client.ts (204), useEmpresas (189), contract.ts (170), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (80)
-- package-lock.json (76)
+- package.json (78)
+- package-lock.json (74)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (21)
@@ -598,6 +596,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-10 `e11272e` fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruiçã
+- 2026-11-10 `8cadcc1` fix: testes de migration e contratos detectam o que prometem (sem falso verde) e param de vazar volume Docker (#424)
 - 2026-11-10 `3077cf6` fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)
 - 2026-11-10 `6e2024f` feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a t
 - 2026-11-10 `7aba28e` fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)
@@ -611,8 +611,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-09 `85fc652` feat(sync): commit automático do trabalho local na branch computador_local (#407)
 - 2026-11-09 `a7e645d` feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)
 - 2026-11-09 `560e715` fix: bypass MFA em E2E para rotas admin (VITE_E2E_BYPASS_MFA) (#352)
-- 2026-11-09 `2b341de` fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)
-- 2026-11-09 `4e36ab2` chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
