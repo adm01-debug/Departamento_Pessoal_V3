@@ -239,6 +239,8 @@ END $$;
 DO $$
 DECLARE drift_anon boolean; rpc_auth boolean; anon_pii boolean; npol int;
         secdef_bad int; perms int; tenants int;
+        anon_belongs boolean; anon_mytenant boolean; anon_usertenants boolean;
+        auth_write_pii boolean;
 BEGIN
   -- A sobrecarga insegura pode estar revogada OU ter sido removida. A versão
   -- textual de has_function_privilege lança erro quando ela não existe;
@@ -250,6 +252,19 @@ BEGIN
     to_regprocedure('public.record_pii_access(uuid,text,text,text,integer)'),
     'EXECUTE'), false);
   anon_pii := has_table_privilege('anon','public.pii_access_logs','SELECT');
+  -- Helpers de tenant/permissão só para authenticated/service_role: anon não
+  -- pode checar pertencimento a empresa nem listar o próprio tenant.
+  anon_belongs := COALESCE(has_function_privilege(
+    'anon', to_regprocedure('public.user_belongs_to_empresa(uuid,uuid)'), 'EXECUTE'), false);
+  anon_mytenant := COALESCE(has_function_privilege(
+    'anon', to_regprocedure('public.get_my_permissions()'), 'EXECUTE'), false);
+  anon_usertenants := COALESCE(has_function_privilege(
+    'anon', to_regprocedure('public.get_user_tenants()'), 'EXECUTE'), false);
+  -- authenticated só pode LER o log de acesso a PII; gravar/apagar é só via
+  -- a RPC record_pii_access/purge_pii_access_logs (SECURITY DEFINER).
+  auth_write_pii := has_table_privilege('authenticated','public.pii_access_logs','INSERT')
+    OR has_table_privilege('authenticated','public.pii_access_logs','UPDATE')
+    OR has_table_privilege('authenticated','public.pii_access_logs','DELETE');
   SELECT count(*) INTO npol FROM pg_policies
     WHERE schemaname='storage' AND tablename='objects' AND policyname LIKE 'tenant\_%';
   SELECT count(*) INTO secdef_bad FROM pg_proc p
@@ -273,6 +288,10 @@ BEGIN
   PERFORM _assert('T7.2 funções canônicas secdef/search_path', secdef_bad = 0, 'bad=' || secdef_bad);
   PERFORM _assert('T7.3 get_my_permissions usa role canônica', perms = 1, 'perms=' || perms);
   PERFORM _assert('T7.4 get_user_tenants filtra tenant ativo', tenants = 1, 'tenants=' || tenants);
+  PERFORM _assert('T7.5 anon sem EXECUTE em user_belongs_to_empresa', NOT anon_belongs);
+  PERFORM _assert('T7.6 anon sem EXECUTE em get_my_permissions/get_user_tenants (sem args)',
+    NOT anon_mytenant AND NOT anon_usertenants);
+  PERFORM _assert('T7.7 authenticated só lê pii_access_logs (sem INSERT/UPDATE/DELETE)', NOT auth_write_pii);
 END $$;
 
 SELECT nome, ok, detalhe FROM public._asserts ORDER BY id;
