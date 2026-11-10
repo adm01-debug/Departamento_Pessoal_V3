@@ -13,7 +13,7 @@
 #     Commits locais de <branch> não enviados e a versão que estava em `git add` (se diferente do disco) entram como pais
 #     extras do backup:  git log --graph refs/mirror-backup/<data>
 #     Os backups ficam só nesta máquina e são apagados após --keep-days dias.
-#   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído ou removido; repositório git aninhado nesse lugar = erro, nada é apagado.
+#   - Arquivos IGNORADOS pelo git (.env, node_modules, dist...) NUNCA são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído ou removido — exceto se o nome parecer segredo (`.env*`, chaves, credenciais), caso em que o espelhamento para com erro e nada é descartado; repositório git aninhado nesse lugar = erro, nada é apagado.
 #   - A branch local em que você estava (ex.: fix/x) continua existindo; só o checkout troca para <branch>.
 #   - Se você mexeu em algum arquivo nos últimos --quiet-min minutos, adia para a próxima execução.
 #   - Não age se houver rebase/merge/cherry-pick/bisect em andamento, se <branch> estiver em checkout em
@@ -212,6 +212,12 @@ NOCAMINHO="$STATE/$KEY.ign"
 # `checkout -f` apagaria o repositório inteiro, .git incluso. Falha fechada: alguém precisa movê-lo.
 if grep -qz '/$' "$NOCAMINHO.t"; then
   say "ERRO: há um repositório git aninhado ($(grep -z '/$' "$NOCAMINHO.t" | tr '\0' ' ' | head -c 160)) no lugar de um caminho que o GitHub rastreia; o backup não guardaria o conteúdo dele — NADA foi descartado; mova-o para fora deste checkout"; exit 1
+fi
+# Ignorado com nome de segredo (.env*, chaves, credenciais) no lugar do caminho: NÃO entra no backup (o backup é um commit no banco de
+# objetos do git, e segredo não vai para commit). Falha fechada: nada é descartado; mova o arquivo para fora do checkout.
+SEGREDO_RE='(^|/)\.env([._-][^/]*)?$|\.(pem|key|p12|pfx|jks|kdbx)$|(^|/)(id_(rsa|dsa|ecdsa|ed25519)|\.npmrc|\.netrc|\.git-credentials|\.pgpass)$|credential|secret|token|passw|senha'
+if [ -s "$NOCAMINHO" ] && tr '\0' '\n' < "$NOCAMINHO" | grep -qiE "$SEGREDO_RE"; then
+  say "ERRO: arquivo ignorado com nome de segredo ($(tr '\0' '\n' < "$NOCAMINHO" | grep -iE "$SEGREDO_RE" | head -3 | tr '\n' ' ')) está no lugar de um caminho que o GitHub rastreia; ele não vai para o backup (segredo não entra em commit) — NADA foi descartado; mova-o para fora deste checkout"; exit 1
 fi
 [ -s "$NOCAMINHO" ] && EXTRA="$EXTRA; inclui $(tr -cd '\0' < "$NOCAMINHO" | wc -c) arquivo(s) IGNORADO(S) que estavam no lugar de caminhos que o GitHub rastreia"
 if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then

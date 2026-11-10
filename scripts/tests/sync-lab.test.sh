@@ -44,12 +44,15 @@ mklab; ( cd "$L" && git checkout -q -b fix/x && git checkout -q main && echo m1 
 X="$(git -C "$L" rev-parse main)"; mirror
 check "commits locais da main não enviados (checkout em outra branch) ficam seguros no backup" test -n "$(git -C "$L" for-each-ref --contains "$X" refs/mirror-backup)"
 
-mklab; ( cd "$L" && echo "SEGREDO LOCAL" > .env && mkdir -p build/sub && echo artefato > "build/sub/o [1].bin" && echo "log local" > x.log )
-remoto 'echo "do remoto" > .env; echo f > build; mkdir x.log; echo y > x.log/y'; mirror; B="$(bk)"
-check "ignorado no lugar de arquivo que o GitHub passou a rastrear vai para o backup" test "$(git -C "$L" show "$B:.env" 2>/dev/null)" = "SEGREDO LOCAL"
+mklab; ( cd "$L" && mkdir -p build/sub && echo artefato > "build/sub/o [1].bin" && echo "log local" > x.log )
+remoto 'echo f > build; mkdir x.log; echo y > x.log/y'; mirror; B="$(bk)"
 check "diretório ignorado no lugar de arquivo novo vai para o backup" test "$(git -C "$L" show "$B:build/sub/o [1].bin" 2>/dev/null)" = artefato
 check "arquivo ignorado no lugar de diretório novo vai para o backup" test "$(git -C "$L" show "$B:x.log" 2>/dev/null)" = "log local"
 check "com ignorado no caminho o checkout ainda fica idêntico ao GitHub" espelhado
+
+mklab; ( cd "$L" && echo "SEGREDO LOCAL" > .env )
+remoto 'echo "do remoto" > .env'; mirror; rc=$?
+check "ignorado com nome de segredo no lugar de caminho rastreado: erro, nada descartado e NADA no backup" test "$rc" -ne 0 -a "$(cat "$L/.env" 2>/dev/null)" = "SEGREDO LOCAL" -a -z "$(bk)"
 
 mklab; ( cd "$L" && mkdir pasta && git init -q pasta/sub && cd pasta/sub && echo trabalho > s && git add -A && git commit -qm s )
 remoto 'echo f > pasta'; mirror; rc=$?
