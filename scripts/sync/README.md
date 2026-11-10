@@ -46,7 +46,9 @@ Nunca troca de branch, nunca usa `--force` (push rejeitado = só avisa, o commit
 ## Vários repositórios: `run-all.sh` + `repos.conf`
 
 A mesma arquitetura (espelho exato da main + worktree `computador_local` com commit automático) vale para todos os repositórios de `~/.config/dp-sync/repos.conf`
-(`repos.conf.example`): `repo|worktree_dev|branch_padrao|mirror|pii`, onde `mirror` é `1` (espelha), `ext` (o repositório já tem espelho próprio) ou `0`.
+(`repos.conf.example`): `repo|worktree_dev|branch_padrao|mirror|pii[|push]`, onde `mirror` é `1` (espelha), `ext` (o repositório já tem espelho próprio) ou `0`.
+O campo `push` é opcional: vazio ou `1` = commit + push da `computador_local`; `0` = só commit **local** (`autocommit-local.sh --no-push`: nada é enviado, as travas
+continuam valendo). Qualquer outro valor é erro de configuração: o repositório é pulado, com aviso no log, e o serviço sai com erro.
 
 ```bash
 bash scripts/sync/install-all-timers.sh     # 2 timers: dp-sync-all (hh:00, espelho + sync) e dp-autocommit-all (hh:30)
@@ -54,4 +56,4 @@ run-all.sh mirror|autocommit [--only <nome>] [--dry-run] [--quiet-min N]
 ```
 
 Um repositório com problema não impede os demais. `--pii cpf,cnpj` (por repositório) barra do commit automático arquivos com CPF/CNPJ formatados
-(o aviso de exclusão aparece uma vez por arquivo). O instalador migra os timers antigos de um repositório só (`dp-sync-github`, `dp-autocommit`).
+(o aviso de exclusão aparece uma vez por arquivo); valor diferente de `cpf`/`cnpj` é recusado, em vez de desligar a trava em silêncio. O instalador migra os timers antigos de um repositório só (`dp-sync-github`, `dp-autocommit`).
