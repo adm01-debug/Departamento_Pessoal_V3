@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)",
    "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)",
    "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
    "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)",
-   "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)",
-   "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)"
+   "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
