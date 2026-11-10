@@ -11,7 +11,7 @@ const path = require('path');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 
-function tsRequire(absPath) {
+function tsRequire(absPath, stubs = {}) {
   // Exige caminho absoluto: um relativo resolveria contra process.cwd(), não
   // contra o diretório do script chamador, e quebraria dependendo de onde o
   // comando é rodado (ex.: `node scripts/simulacao/x.cjs` da raiz do repo vs.
@@ -20,6 +20,12 @@ function tsRequire(absPath) {
     throw new Error(`tsRequire: caminho deve ser absoluto (recebido: '${absPath}'); monte com path.join(__dirname, ...)`);
   }
   const resolved = path.resolve(absPath);
+  // `stubs`: { caminhoAbsoluto: exportsFalso } — substitui um módulo real por
+  // um objeto fixo sem carregá-lo, para dependências que arrastam efeitos
+  // colaterais inúteis na simulação (ex.: cliente Supabase exigindo env vars
+  // do Vite). Nunca usar para alterar a LÓGICA sob teste — só dependências
+  // periféricas (ex.: assinatura de auditoria).
+  if (stubs[resolved]) return stubs[resolved];
   const cached = Module._cache[resolved];
   if (cached) return cached.exports;
 
@@ -47,7 +53,7 @@ function tsRequire(absPath) {
         : path.resolve(path.dirname(resolved), id);
       for (const candidate of [base, `${base}.ts`, `${base}.tsx`, path.join(base, 'index.ts')]) {
         if (candidate.endsWith('.ts') || candidate.endsWith('.tsx')) {
-          if (fs.existsSync(candidate)) return tsRequire(candidate);
+          if (stubs[path.resolve(candidate)] || fs.existsSync(candidate)) return tsRequire(candidate, stubs);
         } else if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
           return Module.prototype.require.call(mod, candidate);
         }
