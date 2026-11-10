@@ -50,6 +50,12 @@ status=$?
 set -e
 [ "$status" -ne 0 ] && [[ "$denied" == *'permission denied'* ]] || { echo 'authenticated caller reached recipient RPC' >&2; exit 1; }
 
+set +e
+over_limit="$(run_psql -c "SET ROLE service_role; SELECT * FROM public.get_company_rh_recipient_emails('10000000-0000-4000-8000-000000000001',51);" 2>&1)"
+status=$?
+set -e
+[ "$status" -ne 0 ] && [[ "$over_limit" == *'invalid notification recipient arguments'* ]] || { echo 'recipient RPC accepted a limit above 50' >&2; exit 1; }
+
 run_psql -c 'CREATE DATABASE missing_recipient_dependencies' >/dev/null
 set +e
 missing="$(docker exec "$NAME" psql -X -U postgres -d missing_recipient_dependencies -v ON_ERROR_STOP=1 -f /tmp/migration.sql 2>&1)"

@@ -22,5 +22,6 @@ for pass in 1 2; do psqlc -f /tmp/m.sql >/dev/null; echo "company tax contract p
 reject "INSERT INTO empresas(regime_tributario,rat,fap,terceiros) VALUES ('mei',1.1,1,0.058)"
 reject "INSERT INTO empresas(regime_tributario,rat,fap,terceiros) VALUES ('mei',0.031,1,0.058)"
 reject "INSERT INTO empresas(regime_tributario,rat,fap,terceiros) VALUES ('mei',0.02,1,0.201)"
+reject "INSERT INTO empresas(regime_tributario,rat,fap,terceiros) VALUES ('mei',0.02,2.1,0.058)"
 reject "INSERT INTO empresas(regime_tributario,rat,fap,terceiros,simples_anexo) VALUES ('simples_nacional',0.02,1,0.058,'VI')"
 echo 'P1_COMPANY_PAYROLL_TAX_OK: legacy normalization, enum, defaults, bounds and idempotency passed.'

@@ -196,6 +196,8 @@ run_psql -c "UPDATE public.folha_itens SET total_liquido = 1841 WHERE colaborado
 expect_eq 'item volta a espelhar' "$(q "SELECT count(*) FROM public.holerites WHERE colaborador_id = '$BRUNO'")" 1
 run_psql -c "DELETE FROM public.folha_itens WHERE colaborador_id = '$BRUNO'" >/dev/null
 expect_eq 'delete espelhado' "$(q "SELECT count(*) FROM public.holerites WHERE colaborador_id = '$BRUNO'")" 0
+run_psql -c "DELETE FROM public.folha_itens WHERE colaborador_id = '$ANA'" >/dev/null
+expect_eq 'delete preserva holerite assinado' "$(q "SELECT count(*) FROM public.holerites WHERE colaborador_id = '$ANA'")" 1
 
 # Folha fechada é imutável para o espelho.
 run_psql -c "INSERT INTO public.folha_itens (folha_id, colaborador_id, total_proventos, total_liquido) VALUES ('$F_FECHADA', '$BRUNO', 10, 10)" >/dev/null
@@ -211,7 +213,7 @@ expect_eq 'notificação do colaborador com login' \
 
 # Leitura própria exige folha fechada ou paga.
 qual="$(q "SELECT qual FROM pg_policies WHERE tablename = 'holerites' AND policyname = 'holerites_self_read'")"
-[[ "$qual" == *'sou_o_colaborador'* && "$qual" == *'fechada'* && "$qual" == *'paga'* ]] || {
+[[ "$qual" == *'sou_o_colaborador(colaborador_id) AND '* && "$qual" == *'fechada'* && "$qual" == *'paga'* ]] || {
   echo "holerites_self_read does not require a closed payroll: $qual" >&2
   exit 1
 }

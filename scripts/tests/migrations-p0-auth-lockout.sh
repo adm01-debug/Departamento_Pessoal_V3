@@ -121,6 +121,8 @@ if [ "$anon_status" -eq 0 ] || [[ "$anon_output" != *'permission denied'* ]]; th
   echo "$anon_output" >&2
   exit 1
 fi
+anon_can_check="$(run_psql -Atc "SELECT has_function_privilege('anon', 'public.check_account_lockout(text)', 'EXECUTE')")"
+[ "$anon_can_check" = 'f' ] || { echo "anon unexpectedly executes check_account_lockout" >&2; exit 1; }
 
 config_count="$(run_psql -Atc "
   SELECT count(*)

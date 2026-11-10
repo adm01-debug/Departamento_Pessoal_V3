@@ -22,4 +22,5 @@ psqlc -qAtc "INSERT INTO query_telemetry(operation,table_name,duration_ms,severi
 [ "$(psqlc -qAtc "SELECT data_type FROM information_schema.columns WHERE table_schema='public' AND table_name='query_telemetry' AND column_name='trace_id'")" = 'text' ] || { echo 'trace_id compatibility column missing' >&2; exit 1; }
 set +e; denied="$(psqlc -c 'SET ROLE authenticated; SELECT * FROM query_telemetry;' 2>&1)"; status=$?; set -e
 [ "$status" -ne 0 ] && [[ "$denied" == *'permission denied'* ]] || { echo 'authenticated read telemetry' >&2; exit 1; }
+[ "$(psqlc -qAtc "SELECT has_function_privilege('authenticated','public.refresh_telemetry_views()','EXECUTE')")" = 'f' ] || { echo 'authenticated can refresh telemetry views' >&2; exit 1; }
 echo 'P1_TENANT_TELEMETRY_OK: attribution column, separated MV, legacy exclusion, ACL and idempotency passed.'

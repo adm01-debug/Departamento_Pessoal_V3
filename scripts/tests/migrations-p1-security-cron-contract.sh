@@ -108,6 +108,11 @@ set -e
 [ "$anon_status" -ne 0 ] && [[ "$anon_output" == *'permission denied'* ]] || {
   echo "anon unexpectedly executed the internal scanner" >&2; exit 1;
 }
+for internal_routine in 'public.sec_policy_regressions_purge()' 'public.sec_verify_seals_scan()'; do
+  [ "$(run_psql -qAtc "SELECT has_function_privilege('anon','$internal_routine','EXECUTE') OR has_function_privilege('authenticated','$internal_routine','EXECUTE')")" = 'f' ] || {
+    echo "client role can execute $internal_routine" >&2; exit 1;
+  }
+done
 
 admin_visible="$(run_psql -qAt <<'SQL'
 SET ROLE authenticated;
