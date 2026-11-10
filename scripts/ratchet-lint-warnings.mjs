@@ -39,10 +39,21 @@ for (const result of results) {
 let budget;
 try {
   budget = JSON.parse(await readFile(budgetPath, 'utf-8'));
+  // Valor não numérico fazia as comparações abaixo serem sempre falsas ("ok").
+  if (!budget || typeof budget !== 'object' ||
+      Object.entries(budget).some(([k, v]) => !k.startsWith('_') && typeof v !== 'number')) {
+    throw new Error('esperado um objeto { regra: número }');
+  }
 } catch (err) {
-  console.error(`❌ Budget ausente ou inválido em ${relative(root, budgetPath)}: ${err.message}`);
-  console.error('   Rode com --write para criar um budget inicial após revisão.');
-  process.exit(1);
+  if (write && err.code === 'ENOENT') {
+    // Budget inicial: a mensagem abaixo manda rodar --write, mas o --write
+    // também saía aqui — não havia como criar o arquivo.
+    budget = { ...current };
+  } else {
+    console.error(`❌ Budget ausente ou inválido em ${relative(root, budgetPath)}: ${err.message}`);
+    console.error('   Rode com --write para criar um budget inicial após revisão.');
+    process.exit(1);
+  }
 }
 
 let failures = 0;
@@ -74,6 +85,7 @@ const totalCurrent = Object.values(current).reduce((a, b) => a + b, 0);
 const totalBudget = typeof budget._total === 'number' ? budget._total : null;
 if (totalBudget === null) {
   console.warn('  WARN: _total ausente no budget — rode --write para definir o limite total de warnings.');
+  if (write && failures === 0) newBudget._total = totalCurrent;
 } else if (totalCurrent > totalBudget) {
   console.error(`  FAIL: total: ${totalCurrent} > ${totalBudget}`);
   failures++;
@@ -92,7 +104,9 @@ if (write) {
     /("lint:ci":\s*"eslint[^"]*--max-warnings=)\d+/,
     `$1${totalCurrent}`,
   );
-  if (newPkg !== pkgRaw) {
+  // Só sincroniza quando nada subiu: com falha, o budget não é afrouxado e o
+  // --max-warnings do lint:ci também não pode ser.
+  if (failures === 0 && newPkg !== pkgRaw) {
     await writeFile(pkgPath, newPkg);
     console.log(`package.json lint:ci --max-warnings atualizado para ${totalCurrent}`);
   }
