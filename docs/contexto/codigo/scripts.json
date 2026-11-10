@@ -1122,8 +1122,8 @@
   },
   {
    "arquivo": "scripts/simulacao/simulate_notif_d3.cjs",
-   "descricao": "Simulação exaustiva: notificações D-3/D-2/D-1 (Art. 145 CLT) Regra: RH deve ser notificado quando férias aprovadas se aproximam sem pagamento.",
-   "linhas": 106,
+   "descricao": "Simulação exaustiva: notificações D-3/D-2/D-1 (Art. 145 CLT) Motor real: view v_ferias_alerta_pagamento_d2 (migration 20260723112647,",
+   "linhas": 139,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

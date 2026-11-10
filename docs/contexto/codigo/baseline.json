@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e87dcb776ee086bd2f7ad8c81610ee38858039c4",
+  "commit": "7f6d195fee788a710b1c93498d95eba520a859ba",
   "branch": "main",
-  "data_commit": "2026-11-10T23:35:47Z",
+  "data_commit": "2026-11-10T20:43:54-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7f6d195",
+    "data": "2026-11-10",
+    "assunto": "fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)"
+   },
    {
     "sha": "e87dcb7",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "ac8cc11",
     "data": "2026-11-09",
     "assunto": "fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommi"
-   },
-   {
-    "sha": "bff8377",
-    "data": "2026-11-09",
-    "assunto": "feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)"
    }
   ],
   "arquivos_mudados_7d": 418,
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 68
+    "mudancas": 67
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 63
+    "mudancas": 62
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 102
+    "commits": 103
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2875,
   "arquivos_codigo": 1548,
-  "linhas_codigo": 273315,
+  "linhas_codigo": 273348,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -592,7 +592,7 @@
   },
   "scripts/simulacao": {
    "arquivos": 13,
-   "linhas": 2125
+   "linhas": 2158
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
