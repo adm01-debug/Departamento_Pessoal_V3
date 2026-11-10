@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "1dbce640a14c71271d62b61a8c777372736b1521",
+  "sha": "34e22ec5df8bc4a83aa012a093a82f66828fbec8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 01:08 UTC",
+  "generated_at": "2026-11-10 10:28 UTC",
   "files_total": 2849,
   "code_files": 2335,
   "code_lines": 311728
@@ -274933,10 +274933,20 @@
   }
  },
  "git": {
-  "sha": "1dbce640a14c71271d62b61a8c777372736b1521",
+  "sha": "34e22ec5df8bc4a83aa012a093a82f66828fbec8",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "34e22ec",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)",
+    "files": [
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/run-all.sh"
+    ]
+   },
    {
     "sha": "1dbce64",
     "date": "2026-11-09",
@@ -275366,32 +275376,23 @@
     "files": [
      "scripts/audit-migration-style.mjs"
     ]
-   },
-   {
-    "sha": "70f6262",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: guards de job ausente em audit-canonical-project (#383)",
-    "files": [
-     "scripts/audit-canonical-project.mjs"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/sync/autocommit-local.sh",
+    5
+   ],
+   [
+    "scripts/sync/run-all.sh",
+    5
+   ],
    [
     "scripts/sync/mirror-github.sh",
     5
    ],
    [
-    "scripts/sync/run-all.sh",
-    4
-   ],
-   [
     "scripts/autofix/run.mjs",
-    4
-   ],
-   [
-    "scripts/sync/autocommit-local.sh",
     4
    ],
    [

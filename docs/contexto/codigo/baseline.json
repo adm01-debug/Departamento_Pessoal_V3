@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1dbce640a14c71271d62b61a8c777372736b1521",
+  "commit": "34e22ec5df8bc4a83aa012a093a82f66828fbec8",
   "branch": "main",
-  "data_commit": "2026-11-09T21:03:30-03:00",
+  "data_commit": "2026-11-10T07:14:36-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "34e22ec",
+    "data": "2026-11-10",
+    "assunto": "feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)"
+   },
    {
     "sha": "1dbce64",
     "data": "2026-11-09",
@@ -126,11 +131,6 @@
     "sha": "e9086da",
     "data": "2026-11-08",
     "assunto": "feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config"
-   },
-   {
-    "sha": "bb559b4",
-    "data": "2026-11-08",
-    "assunto": "feat: guards false-green em audit-edge-audit-log-contract"
    }
   ],
   "arquivos_mudados_7d": 255,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 83
+    "commits": 84
    },
    {
     "autor": "dependabot[bot]",
