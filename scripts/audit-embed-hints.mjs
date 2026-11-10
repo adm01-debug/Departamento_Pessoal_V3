@@ -83,16 +83,29 @@ function walk(dir, out = []) {
   return out;
 }
 
+let scannedFiles = 0;
+
 /** Coleta as dicas citadas no código, com arquivo e linha para o relatório. */
 function collectHints() {
   const hits = [];
   for (const root of ROOTS) {
     for (const file of walk(root)) {
+      scannedFiles += 1;
       const lines = readFileSync(file, 'utf8').split('\n');
+      // Parênteses ainda abertos desde o último `select(`. O prettier quebra
+      // `.select(\n  '...tabela!constraint(...)'\n)`: a dica cai numa linha
+      // sem a palavra "select" e ficava de fora (13 das 21 dicas do repo).
+      let depth = 0;
       lines.forEach((line, i) => {
         // Só considera linhas de consulta: reduz falso positivo em strings
         // arbitrárias que por acaso contenham `algo!outra_coisa`.
-        if (!line.includes('select(') && !line.includes('.select') && !line.includes('sel(')) return;
+        const isQuery = line.includes('select(') || line.includes('.select') || line.includes('sel(');
+        if (!isQuery && depth <= 0) return;
+        // Comentário entre os argumentos não é consulta (nem conta parêntese).
+        if (!isQuery && /^\s*(?:\/\/|\/\*|\*)/.test(line)) return;
+        if (isQuery) depth = 0;
+        const from = isQuery ? Math.max(line.search(/sel(?:ect)?\(/), 0) : 0;
+        for (const ch of line.slice(from)) depth += ch === '(' ? 1 : ch === ')' ? -1 : 0;
         for (const m of line.matchAll(HINT_RE)) {
           const [, table, constraint] = m;
           if (JOIN_MODIFIERS.has(constraint)) continue;
@@ -106,6 +119,15 @@ function collectHints() {
 
 function main() {
   const hints = collectHints();
+
+  // Guard de falso verde: os ROOTS são relativos ao cwd e `walk` engole
+  // diretório ausente — fora da raiz do repo o gate "aprovava" 0 dicas.
+  if (scannedFiles === 0) {
+    console.error(
+      `[embed-hints] ERRO: nenhum arquivo de código em ${ROOTS.join(', ')} (cwd: ${process.cwd()}) — rode da raiz do repositório.`
+    );
+    process.exit(1);
+  }
 
   if (!hasDatabase()) {
     console.warn(

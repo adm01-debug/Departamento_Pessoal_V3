@@ -69,10 +69,18 @@ const TENANT_CORRELATORS = [
  * Detectado ANTES dos correlacionadores, porque uma política pode conter
  * `auth.uid()` num ramo e a claim forjável em outro, unidos por OR.
  */
-const FORGEABLE_CLAIM_RE = /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
+// `(?:\s+as\s+\w+\s*\))?` cobre a forma initplan: `(select auth.jwt()) ->> 'x'`
+// é decompilado como `( SELECT auth.jwt() AS jwt) ->> 'x'::text`.
+const FORGEABLE_CLAIM_RE =
+  /auth\.jwt\s*\(\s*\)(?:\s+as\s+\w+\s*\))?\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
 
-/** Claims do JWT que o banco valida e que, portanto, não são forjáveis. */
-const TRUSTED_CLAIM_RE = /->>'(sub|aud|exp|iat|iss)'/i;
+/**
+ * Acesso a uma claim que o banco valida e que, portanto, não é forjável.
+ * Casa o ACESSO inteiro (e tolera o espaço que o Postgres põe após `->>`),
+ * para ser descontado ocorrência a ocorrência — ver usesForgeableClaim.
+ */
+const TRUSTED_CLAIM_RE =
+  /(?:auth\.jwt\s*\(\s*\)(?:\s+as\s+\w+\s*\))?|current_setting\s*\(\s*'request\.jwt\.claims'[^)]*\)\s*\)?(?:::\w+)?)\s*->>\s*'(?:sub|aud|exp|iat|iss)'/gi;
 
 /**
  * Tabelas isentas, com justificativa obrigatória.
@@ -108,7 +116,8 @@ WITH pii_tables AS (
   FROM pg_attribute a
   JOIN pg_class pc ON pc.oid = a.attrelid
   JOIN pg_namespace pn ON pn.oid = pc.relnamespace AND pn.nspname = 'public'
-  WHERE pc.relkind = 'r'
+  -- 'p' = tabela particionada: a política vive no pai e vale para todo acesso por ele
+  WHERE pc.relkind IN ('r', 'p')
     AND a.attnum > 0
     AND NOT a.attisdropped
     AND a.attname ~* '${PII_COLUMN_RE}'
@@ -178,10 +187,11 @@ function isCorrelated(expression) {
 }
 
 function usesForgeableClaim(expression) {
-  if (!FORGEABLE_CLAIM_RE.test(expression)) return false;
   // `auth.jwt() ->> 'sub'` é equivalente a auth.uid() e é verificado pelo
   // banco; só as claims livres (empresa_id, role, tenant, ...) são o problema.
-  return !TRUSTED_CLAIM_RE.test(expression);
+  // Desconta cada acesso confiável e julga o que sobra: uma claim confiável
+  // num ramo não pode absolver uma claim livre em outro.
+  return FORGEABLE_CLAIM_RE.test(expression.replace(TRUSTED_CLAIM_RE, ''));
 }
 
 function main() {
@@ -203,7 +213,9 @@ function main() {
     return 1;
   }
 
-  const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
+  // O corpo pode conter TAB (indentação), que é também o separador de campos:
+  // reagrupa tudo após o nome, senão o helper era truncado no primeiro TAB.
+  const bodies = parseRows(functionOutput, 2).map(([name, ...src]) => [name, src.join(' ')]);
 
   // Guard: banco respondeu mas sem nenhuma função pública → schema vazio ou
   // sem SELECT em pg_proc; o inlining fica cego e pode deixar passar violações.
@@ -263,14 +275,16 @@ function main() {
     }
   }
 
-  // Guard de false-green: 0 políticas auditadas em banco com schema conhecido
-  // (functions > 0) é suspeito — a heurística de PII pode estar desatualizada
-  // ou todas as tabelas com PII foram silenciosamente adicionadas ao ALLOWLIST.
-  if (inspected === 0 && bodies.length > 0) {
-    console.warn(
-      '[rls-pii] Aviso: 0 políticas sobre tabelas com PII auditadas — ' +
-        'revise a heurística PII_COLUMN_RE ou o ALLOWLIST.',
+  // Guard de false-green: com alvo conectado, 0 políticas auditadas nunca é
+  // "tudo correlacionado" — é schema vazio/alvo errado, heurística de PII
+  // desatualizada ou tabelas com PII silenciosamente movidas para o ALLOWLIST.
+  // Reprova, como os gates irmãos (least-privilege, tenant-open, secdef).
+  if (inspected === 0) {
+    console.error(
+      '[rls-pii] ERRO: 0 políticas sobre tabelas com PII auditadas — schema vazio ou alvo errado; ' +
+        'revise também a heurística PII_COLUMN_RE e o ALLOWLIST. Falso verde bloqueado.',
     );
+    return 1;
   }
 
   for (const w of warnings) {
