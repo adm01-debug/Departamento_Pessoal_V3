@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bc5d927fb6008bdae80011d8f5f449c752f48157",
+  "sha": "8391bcc91ed87c7a5156b680082ed604745567c5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 19:23 UTC",
-  "files_total": 2855,
-  "code_files": 2339,
-  "code_lines": 313069
+  "generated_at": "2026-11-10 20:49 UTC",
+  "files_total": 2857,
+  "code_files": 2341,
+  "code_lines": 313097
  },
  "version": "1.3.2",
- "facts_hash": "e22a8ac93c2c16e0",
+ "facts_hash": "2ad9a3b78486a027",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -341,7 +341,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 817,
+   ".sql": 819,
    ".ts": 739,
    ".tsx": 679,
    ".mjs": 77,
@@ -45362,16 +45362,6 @@
     "src": "supabase/migrations/20260719120000_rls_fix_public_access_batch2.sql"
    },
    {
-    "name": "configuracoes_ponto_tenant_manage",
-    "table": "configuracoes_ponto",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.rls_tenant_or_admin(empresa_id)",
-    "check": "public.rls_tenant_or_admin(empresa_id)",
-    "src": "supabase/migrations/20260719120000_rls_fix_public_access_batch2.sql"
-   },
-   {
     "name": "configuracoes_esocial_tenant_select",
     "table": "configuracoes_esocial",
     "cmd": "SELECT",
@@ -49440,6 +49430,16 @@
     "using": "",
     "check": "public.has_role(auth.uid(), 'admin'::app_role) OR EXISTS ( SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = auth.uid() AND ue.empresa_id = afd_geracoes.empresa_id )",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "name": "configuracoes_ponto_tenant_manage",
+    "table": "configuracoes_ponto",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.rls_tenant_or_admin(empresa_id)",
+    "check": "public.rls_tenant_or_admin(empresa_id)",
+    "src": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -70167,6 +70167,8 @@
    "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
    "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.sql",
    "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.verify.sql",
+   "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
+   "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -98062,8 +98064,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 781,
-   "lines": 66382,
+   "files": 783,
+   "lines": 66410,
    "tables": [
     "profiles",
     "user_roles"
@@ -178704,16 +178706,6 @@
     "src": "supabase/migrations/20260719120000_rls_fix_public_access_batch2.sql"
    },
    {
-    "name": "configuracoes_ponto_tenant_manage",
-    "table": "configuracoes_ponto",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.rls_tenant_or_admin(empresa_id)",
-    "check": "public.rls_tenant_or_admin(empresa_id)",
-    "src": "supabase/migrations/20260719120000_rls_fix_public_access_batch2.sql"
-   },
-   {
     "name": "configuracoes_esocial_tenant_select",
     "table": "configuracoes_esocial",
     "cmd": "SELECT",
@@ -182782,6 +182774,16 @@
     "using": "",
     "check": "public.has_role(auth.uid(), 'admin'::app_role) OR EXISTS ( SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = auth.uid() AND ue.empresa_id = afd_geracoes.empresa_id )",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "name": "configuracoes_ponto_tenant_manage",
+    "table": "configuracoes_ponto",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.rls_tenant_or_admin(empresa_id)",
+    "check": "public.rls_tenant_or_admin(empresa_id)",
+    "src": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -203958,16 +203960,16 @@
     "rls": "enabled",
     "SELECT": [
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "public: public.pertence_a_empresa(empresa_id)",
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "authenticated: (\"empresa_id\" IN ( SELECT \"public\".\"get_user_empresas\"(\"auth\".\"uid\"()) AS \"get_user_empresas\"))"
     ],
     "INSERT": [
      "authenticated: public.rls_tenant_or_admin(empresa_id)"
     ],
     "UPDATE": [
-     "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "public: public.pertence_a_empresa(empresa_id)",
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "authenticated: ((\"empresa_id\" IN ( SELECT \"public\".\"get_user_empresas\"(\"auth\".\"uid\"()) AS \"get_user_empresas\")) AND \"public\".\"is_admin\"(\"aut"
     ],
     "DELETE": [
@@ -276708,6 +276710,14 @@
    "path": "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.verify.sql",
    "lines": 21
   },
+  "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql": {
+   "path": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
+   "lines": 20
+  },
+  "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql": {
+   "path": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
+   "lines": 8
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -276923,10 +276933,20 @@
   }
  },
  "git": {
-  "sha": "bc5d927fb6008bdae80011d8f5f449c752f48157",
+  "sha": "8391bcc91ed87c7a5156b680082ed604745567c5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "8391bcc",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)",
+    "files": [
+     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
+     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql"
+    ]
+   },
    {
     "sha": "bc5d927",
     "date": "2026-11-10",
@@ -277519,15 +277539,6 @@
     "subject": "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)",
     "files": [
      "scripts/audit-edge-authz.mjs"
-    ]
-   },
-   {
-    "sha": "cf32bad",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale",
-    "files": [
-     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
     ]
    }
   ],

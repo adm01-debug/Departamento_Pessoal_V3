@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-10)
 
 ## Corpus Check
-- 2746 files · ~2,406,620 words
+- 2748 files · ~2,406,769 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 21629 nodes · 45204 edges · 2133 communities (1246 shown, 887 thin omitted)
+- 21631 nodes · 45204 edges · 2135 communities (1246 shown, 889 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1082 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bc5d927f`
+- Built from commit: `8391bcc9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1807,7 +1807,7 @@
 ## Import Cycles
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2133 total, 887 thin omitted)
+## Communities (2135 total, 889 thin omitted)
 
 ### Community 0 - "20260831_corrected_public.sql"
 Cohesion: 0.01
@@ -6875,18 +6875,18 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 ## Knowledge Gaps
 - **6152 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+6147 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9677 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **887 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9679 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **889 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `vitest` connect `vitest` to `medidasDisciplinaresService.test.ts`, `avisoFeriasPDF.ts`, `cn`, `lucide-react`, `client.ts`, `useEmpresas`, `App.tsx`, `supabase/types.ts`, `hooks/index.ts`, `PontoWeekSummary.test.tsx`, `BaseService`, `deepChain`, `makeChain`, `react`, `usePiiMask`, `useEmpresas.test.ts`, `ColaboradorFormPage.tsx`, `ref_node_fs`, `desligamentoService.ts`, `package.json`, `DesligamentoDetailSheet.tsx`, `colaboradorDetalhesService.ts`, `useNovasTabelas.ts`, `useContratoTokenTimeline.ts`, `useReconciliacaoFolha.ts`, `tabelasReferenciaService.ts`, `secureJsonParse`, `rescisaoService.ts`, `afastamentoService.test.ts`, `avaliacaoService.test.ts`, `ESocialEventViewer.tsx`, `esocialXmlGenerator.ts`, `tabelas/index.ts`, `calculoBeneficiosService.ts`, `esocialService.ts`, `ContratosVencendoPanel.tsx`, `afastamentoService.ts`, `trabalhistas.ts`, `src/schemas/common.ts`, `feriasService.ts`, `useNotificacoes`, `useNow`, `pontoOfflineService.ts`, `@supabase/supabase-js`, `FolhaPagamentoPage.tsx`, `esocial/index.ts`, `medidasDisciplinares.ts`, `useReconciliacaoLogs.ts`, `useAssinaturas.test.ts`, `useFeriados.test.ts`, `LoginPage`, `useImportacaoColaboradores.test.ts`, `useOrganograma.test.ts`, `usePeriodosAquisitivos.test.ts`, `hooks/__tests__/validators.test.ts`, `CienciaMedidaPage.test.tsx`, `folhaResumo.ts`, `rescisao.ts`, `encryptionService.test.ts`, `workflow-status.ts`, `validadorFolha.ts`, `useOnMount`, `sanitizeHtml.ts`, `masks.ts`, `PARTE 2 — Itens ainda ABERTOS (ou DOC_DESATUALIZADA) das auditorias/relatórios de apoio`, `useToast.ts`, `queryClient.ts`, `tabelas.ts`, `useGrupo.ts`, `SEÇÃO 2: FALHAS HIGH (68 achados)`, `errors/index.ts`, `useGerarComunicadoColetivas.ts`, `pesquisaService.test.ts`, `HealthTrendCard.tsx`, `Ferias`, `folhaCalc.ts`, `pushNotificationService.test.ts`, `LayoutGridSection.test.tsx`, `calculoLoteService.ts`, `DescontosPage.tsx`, `naoPeriodicosValidators.ts`, `H — Infra/CI, Agendamentos, Observabilidade, Testes, Scripts, DB (complemento)`, `LayoutPrimitives.test.tsx`, `whatsappService.ts`, `ColaboradorHistory.test.tsx`, `backupService.ts`, `supabaseMock.ts`, `assistenteIAService.ts`, `DonutChart.tsx`, `PolicyAuditPanel.test.tsx`, `useBackGesture.test.ts`, `loggerService.test.ts`, `jspdf`, `usePcs.ts`, `FASE 2 — Camada de Services (Etapas 4-12)`, `TablesInsert`, `Revisão de implementação — 50 etapas, código, GitHub e canônico`, `toError`, `empresaMock.ts`, `Simulação Exaustiva — Fluxo de Folha de Pagamento`, `EmprestimosFinanceiros.test.tsx`, `FolhaDashboard.tsx`, `NotificationItem.tsx`, `usePontosAbertos.test.ts`, `SEÇÃO 3: FALHAS MEDIUM (82 achados)`, `RouteErrorBoundary`, `TelemetryStatsCards.tsx`, `CalculoFolhaWizard.test.tsx`, `usePendencias.test.tsx`, `useSystemHealth.test.ts`, `rescisaoPDF.test.ts`, `rubricaValidator.ts`, `ordenarEtapas.test.ts`, `useBruteForceProtection.ts`, `circuitBreaker.ts`, `reciboAssinaturaPdf.ts`, `ContasBancariasTab.test.tsx`, `hooks/useTranslation.ts`, `authService.ts`, `canalContabilidadeService.test.ts`, `recrutamentoService.test.ts`, `turnoService.test.ts`, `useAssinaturaDigital.test.ts`, `EmpresaContext.tsx`, `reportScheduleContract.ts`, `retry.ts`, `comunicacaoService.test.ts`, `faltasService.test.ts`, `intervaloService.test.ts`?**
-  _High betweenness centrality (0.062) - this node is a cross-community bridge._
+  _High betweenness centrality (0.063) - this node is a cross-community bridge._
 - **Why does `base()` connect `cenarios.mjs` to `public.medidas_disciplinares`?**
-  _High betweenness centrality (0.055) - this node is a cross-community bridge._
+  _High betweenness centrality (0.060) - this node is a cross-community bridge._
 - **Why does `"public"."medida_gerar_link_ciencia"()` connect `public.medidas_disciplinares` to `20260831_corrected_public.sql`, `"public"."user_empresas"`, `cenarios.mjs`, `"public"."colaboradores"`?**
-  _High betweenness centrality (0.055) - this node is a cross-community bridge._
+  _High betweenness centrality (0.060) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `useEmpresas()` (e.g. with `1. Cobertura` and `#1 — CRÍTICO · `useEmpresas` deixa **todo** usuário não‑admin sem contexto de empresa`) actually correct?**
   _`useEmpresas()` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**

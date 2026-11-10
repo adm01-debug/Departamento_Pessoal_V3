@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bc5d927fb6008bdae80011d8f5f449c752f48157",
+  "commit": "8391bcc91ed87c7a5156b680082ed604745567c5",
   "branch": "main",
-  "data_commit": "2026-11-10T16:22:46-03:00",
+  "data_commit": "2026-11-10T17:48:01-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "8391bcc",
+    "data": "2026-11-10",
+    "assunto": "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)"
+   },
    {
     "sha": "bc5d927",
     "data": "2026-11-10",
@@ -126,14 +131,9 @@
     "sha": "b590d3f",
     "data": "2026-11-09",
     "assunto": "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)"
-   },
-   {
-    "sha": "d03a83b",
-    "data": "2026-11-09",
-    "assunto": "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)"
    }
   ],
-  "arquivos_mudados_7d": 374,
+  "arquivos_mudados_7d": 376,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -211,11 +211,11 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 28
+    "mudancas": 29
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
@@ -223,31 +223,35 @@
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 14
+    "mudancas": 15
    },
    {
     "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": "src/services/cnabService.ts",
-    "mudancas": 13
+    "mudancas": 14
    },
    {
     "arquivo": ".github/workflows/security.yml",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 12
+   },
+   {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 11
    },
    {
     "arquivo": "deno.lock",
@@ -258,11 +262,27 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
+    "mudancas": 11
+   },
+   {
+    "arquivo": "src/services/__tests__/cnabService.test.ts",
     "mudancas": 10
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
+    "arquivo": "src/services/edgeFunctionsService.ts",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/services/folha/__tests__/calculoLoteService.test.ts",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/services/folha/calculoLoteService.ts",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "vite.config.ts",
     "mudancas": 10
    },
    {
@@ -274,34 +294,14 @@
     "mudancas": 9
    },
    {
-    "arquivo": "src/services/__tests__/cnabService.test.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/services/edgeFunctionsService.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/services/folha/__tests__/calculoLoteService.test.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "src/services/folha/calculoLoteService.ts",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "vite.config.ts",
-    "mudancas": 9
-   },
-   {
     "arquivo": ".github/workflows/healthcheck.yml",
-    "mudancas": 8
+    "mudancas": 9
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 94
+    "commits": 95
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2834,
+  "arquivos_total": 2836,
   "arquivos_codigo": 1524,
   "linhas_codigo": 265172,
   "rotas": 113,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 781,
+  "migrations": 783,
   "cron_jobs": 41,
   "testes": 579,
   "workflows": 17,
