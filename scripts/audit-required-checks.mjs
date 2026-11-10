@@ -23,7 +23,14 @@ try {
   baselineRules = ruleset;
   const scRule = ruleset.rules?.find((r) => r.type === 'required_status_checks');
   requiredChecks = scRule?.parameters?.required_status_checks?.map((c) => c.context) ?? [];
-} catch {
+} catch (err) {
+  // Só a AUSÊNCIA do arquivo é o caso "E02 pendente". JSON corrompido/vazio ou
+  // com estrutura inesperada caía aqui e saía verde como "não encontrado"; e
+  // em --full não há o que comparar com o ruleset vivo sem o baseline.
+  if (err.code !== 'ENOENT' || process.argv.includes('--full')) {
+    console.error(`❌ infra/github/ruleset-main.json ausente ou ilegível: ${err.message}`);
+    process.exit(1);
+  }
   // Arquivo ainda não existe (E02 pendente) — aviso mas não falha
   console.warn(
     '⚠  infra/github/ruleset-main.json não encontrado (E02 pendente). Pulando validação de checks obrigatórios.'

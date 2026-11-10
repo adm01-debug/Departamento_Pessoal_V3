@@ -5,7 +5,7 @@
 //
 // Generic data operations require a verified JWT. The external database sees
 // that same JWT on reads/RPCs, so its RLS policies remain authoritative.
-import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2.49.1";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { logRpcError } from "../_shared/rpc-error-logging.ts";
 import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';

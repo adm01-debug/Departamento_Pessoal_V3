@@ -31,12 +31,13 @@ const KEYWORDS = new Set([
 ]);
 
 function stripComments(sql) {
-  return sql
-    .replace(/--[^\n]*/g, '')
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    // Literais '...': COMMENT ON FUNCTION IS '... CREATE TABLE no schema ...'
-    // gerava falso positivo de tabela. '' escapado é preservado.
-    .replace(/'(?:[^']|'')*'/g, "''");
+  // Um passo só, da esquerda para a direita: em três passes, um `--` ou `/*`
+  // DENTRO de um literal ('passo 1 -- início') era cortado como comentário,
+  // deixava a aspa sem par e o passe de literais engolia o SQL seguinte até a
+  // próxima aspa -- escondendo o CREATE TABLE que vinha no meio.
+  // Literais '...': COMMENT ON FUNCTION IS '... CREATE TABLE no schema ...'
+  // gerava falso positivo de tabela. '' escapado é preservado.
+  return sql.replace(/--[^\n]*|\/\*[\s\S]*?\*\/|'(?:[^']|'')*'/g, (token) => (token[0] === "'" ? "''" : ''));
 }
 
 function collect(dir) {

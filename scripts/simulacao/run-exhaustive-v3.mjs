@@ -240,4 +240,12 @@ Ver \`simulacao_exaustiva_v3.json\`.
 `;
   fs.writeFileSync('/mnt/documents/simulacao_exaustiva_v3.md', md);
   console.log(`\n📝 Relatório salvo em /mnt/documents/simulacao_exaustiva_v3.{json,md}`);
+
+  // Antes o script saía 0 mesmo com payload hostil aceito ou origem não bloqueada.
+  const failed =
+    !idem.allSameStatus || fuzz.pass !== fuzz.total || orig.pass !== orig.total || enf.pass !== enf.total;
+  if (failed) {
+    console.error('❌ Simulação v3 com divergências (idempotência/fuzz/origins/enforceOrigin) — veja o relatório.');
+    process.exit(1);
+  }
 })();

@@ -34,13 +34,30 @@ section('1. verify_jwt (config.toml)');
 const toml = readFileSync(join(ROOT, 'supabase/config.toml'), 'utf8');
 // auth-gov-br: login gov.br pré-autenticação (PR #317) — JWT opcional validado na função.
 const JWT_PUBLIC_ALLOWLIST = new Set(['auth-login', 'auth-gov-br', 'healthcheck', 'metrics', 'webhook', 'admissao-publica']);
-const fnBlocks = [...toml.matchAll(/\[functions\.([\w-]+)\]\s*\nverify_jwt\s*=\s*(true|false)/g)];
+// Parser por linha, não regex de bloco: comentário ou outra chave entre o cabeçalho e o
+// verify_jwt, nome entre aspas e indentação escondiam a função do gate.
+const fnBlocks = [];
+const fnSections = new Set();
+let currentFn = null;
+for (const raw of toml.split(/\r?\n/)) {
+  const line = raw.replace(/#.*$/, '').trim();
+  const header = line.match(/^\[\s*(.+?)\s*\]$/);
+  if (header) {
+    currentFn = header[1].match(/^functions\.["']?([\w-]+)["']?$/)?.[1] ?? null;
+    if (currentFn) fnSections.add(currentFn);
+    continue;
+  }
+  const jwt = line.match(/verify_jwt\s*=\s*(true|false)/);
+  if (!jwt) continue;
+  if (currentFn && line.startsWith('verify_jwt')) fnBlocks.push([line, currentFn, jwt[1]]);
+  else if (jwt[1] === 'false') fail(`verify_jwt = false fora de um bloco [functions.<nome>] reconhecível: ${line}`);
+}
 for (const [, fn, val] of fnBlocks) {
   if (val === 'false' && !JWT_PUBLIC_ALLOWLIST.has(fn)) {
     fail(`função '${fn}' com verify_jwt=false fora da allowlist ${[...JWT_PUBLIC_ALLOWLIST].join(', ')}`);
   }
 }
-if (fnBlocks.every(([, fn]) => fn !== 'migrate-helper')) ok('migrate-helper ausente do config.toml');
+if (!fnSections.has('migrate-helper')) ok('migrate-helper ausente do config.toml');
 else fail('migrate-helper ainda presente no config.toml (A-015)');
 sectionClean('verify_jwt deny-by-default preservado');
 
@@ -54,10 +71,20 @@ const edgeFnDirs = readdirSync(FN_DIR, { withFileTypes: true })
 if (edgeFnDirs.length === 0) {
   fail('supabase/functions/ não contém nenhuma função com index.ts — build incompleto?');
 }
-const corsWild = /Access-Control-Allow-Origin["']?\s*[:=]\s*["']\*["']/;
-for (const dir of edgeFnDirs) {
-  const src = readFileSync(join(FN_DIR, dir.name, 'index.ts'), 'utf8');
-  if (corsWild.test(src)) fail(`CORS '*' em supabase/functions/${dir.name}/index.ts`);
+// Todo .ts de supabase/functions (módulos auxiliares e _shared incluídos; testes fora):
+// um wildcard em helper importado vale tanto quanto no index.ts.
+const edgeSources = [...walkTs(FN_DIR)]
+  .filter((file) => !/_test\.ts$/.test(file))
+  .map((file) => ({ rel: relative(ROOT, file).split(sep).join('/'), src: readFileSync(file, 'utf8') }));
+// Cobre 'h': '*', h.set('h', '*'), h['h'] = '*', [['h', '*']], aspas simples/duplas/crase,
+// valor em outra linha e fallback (origin ?? '*', cond ? origin : '*'); nome do header sem distinção de caixa.
+const corsWild = /Access-Control-Allow-Origin["'`]?\s*\]?\s*[:=,]\s*[^;,\n)}]*?["'`]\*["'`]/i;
+// Valor vindo de constante do mesmo arquivo: const ANY = '*' ... 'Access-Control-Allow-Origin': ANY
+const corsIdent = /Access-Control-Allow-Origin["'`]?\s*\]?\s*[:=,]\s*([A-Za-z_$][\w$]*)/gi;
+const hasCorsWildcard = (src) => corsWild.test(src) || [...src.matchAll(corsIdent)].some(([, id]) =>
+  new RegExp(`\\b(?:const|let|var)\\s+${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b[^;\\n]*["'\`]\\*["'\`]\\s*;?\\s*$`, 'm').test(src));
+for (const { rel, src } of edgeSources) {
+  if (hasCorsWildcard(src)) fail(`CORS '*' em ${rel}`);
 }
 sectionClean('nenhum CORS wildcard em edge functions');
 
@@ -81,10 +108,9 @@ sectionClean('security headers presentes');
 
 // ── 4. Segredo hardcoded (padrão A-015) ────────────────────────────────────
 section('4. Segredos hardcoded em edge functions');
-const secretAssign = /(?:KEY|SECRET|TOKEN|PASSWORD)\s*=\s*["'][0-9a-f]{32,}["']/i;
-for (const dir of edgeFnDirs) {
-  const src = readFileSync(join(FN_DIR, dir.name, 'index.ts'), 'utf8');
-  if (secretAssign.test(src)) fail(`possível segredo hardcoded em ${dir.name}/index.ts (padrão A-015)`);
+const secretAssign = /(?:KEY|SECRET|TOKEN|PASSWORD)\s*(?::\s*[\w.<>[\]| ]+?)?\s*=\s*["'`][0-9a-f]{32,}["'`]/i;
+for (const { rel, src } of edgeSources) {
+  if (secretAssign.test(src)) fail(`possível segredo hardcoded em ${rel} (padrão A-015)`);
 }
 sectionClean('nenhum segredo hardcoded detectado');
 
@@ -130,7 +156,9 @@ function* walkTs(dir) {
 }
 // Casa import de client.base por qualquer forma: alias '@/...', caminho
 // relativo ('../client.base', './client.base') e namespace ('import * as').
-const baseImportRe = /import\s+(?:\*|[^'"]+?)\s+from\s+['"'][^'"]*client\.base['"]]/;
+// A versão anterior terminava em `['"]]` (um `]` literal a mais) e nunca casava: 0 consumidores.
+// Cobre também import dinâmico, re-export (`export ... from`) e especificador com `.ts`.
+const baseImportRe = /\b(?:from|import)\s*\(?\s*['"][^'"]*client\.base(?:\.ts)?['"]/;
 let baseConsumers = 0;
 for (const file of walkTs(join(ROOT, 'src'))) {
   const rel = relative(ROOT, file).split(sep).join('/');
@@ -143,12 +171,12 @@ for (const file of walkTs(join(ROOT, 'src'))) {
 }
 // Também flaga acesso direto a supabaseBase exportado do client.ts principal,
 // se aparecer .from() nele fora da allowlist (indicativo de PostgREST cru).
-const baseAliasRe = /\.from\(\s*['"]/g;
+const baseAliasRe = /\.from\(\s*['"]/;
 for (const file of walkTs(join(ROOT, 'src'))) {
   const rel = relative(ROOT, file).split(sep).join('/');
   if (CLIENT_BASE_ALLOWLIST.has(rel)) continue;
   const src = readFileSync(file, 'utf8');
-  if (!/import\s*\{[^}]*supabaseBase[^}]*\}\s*from\s*['"'][^'"]*supabase\/client['"]/.test(src)) continue;
+  if (!/import\s*\{[^}]*supabaseBase[^}]*\}\s*from\s*['"][^'"]*\bclient(?:\.ts)?['"]/.test(src)) continue;
   // importou supabaseBase do client principal — verifica se usa .from()
   if (baseAliasRe.test(src)) {
     fail(`${rel} usa supabaseBase.from() — PostgREST cru que bypassa a bridge`);

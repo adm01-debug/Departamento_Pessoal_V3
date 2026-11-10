@@ -36,7 +36,7 @@ Description=Commit automático do trabalho local na branch $BRANCH e envio ao Gi
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash $DEST/autocommit-local.sh --worktree $WT --branch $BRANCH --quiet
+ExecStart=/bin/bash "$DEST/autocommit-local.sh" --worktree "$WT" --branch "$BRANCH" --quiet
 Nice=10
 TimeoutStartSec=15min
 UNITEOF

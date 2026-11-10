@@ -34,7 +34,7 @@ mkdir -p "$DIR" "$DEST"
 install -m 755 "$(dirname "${BASH_SOURCE[0]}")/sync-github.sh" "$DEST/sync-github.sh"
 install -m 755 "$(dirname "${BASH_SOURCE[0]}")/mirror-github.sh" "$DEST/mirror-github.sh"
 MIRROR_LINE=""
-[ "$MIRROR" -eq 1 ] && MIRROR_LINE="ExecStart=-/bin/bash $DEST/mirror-github.sh --repo $REPO --quiet"
+[ "$MIRROR" -eq 1 ] && MIRROR_LINE="ExecStart=-/bin/bash \"$DEST/mirror-github.sh\" --repo \"$REPO\" --quiet"   # aspas: caminho com espaço era partido pelo systemd
 
 cat > "$DIR/$UNIT.service" <<UNITEOF
 [Unit]
@@ -43,7 +43,7 @@ Description=Mantém o repositório local igual ao GitHub (espelho + fast-forward
 [Service]
 Type=oneshot
 $MIRROR_LINE
-ExecStart=/bin/bash $DEST/sync-github.sh --repo $REPO --quiet
+ExecStart=/bin/bash "$DEST/sync-github.sh" --repo "$REPO" --quiet
 Nice=10
 TimeoutStartSec=15min
 UNITEOF

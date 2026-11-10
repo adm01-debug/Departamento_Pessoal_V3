@@ -11,7 +11,7 @@ command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
 
@@ -53,6 +53,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-rate-limit.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN;
 CREATE TABLE public.rate_limits (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -83,9 +84,27 @@ third="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit_ch
 reset_at="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit_check('serial', 2, 60, 1001)->>'reset';")"
 [ "$reset_at" = "1060" ] || { echo "rate-limit reset timestamp is wrong: $reset_at" >&2; exit 1; }
 
+set +e
+strict_output="$(run_psql -c "SET ROLE service_role; SELECT public.edge_rate_limit_check('strict', 0, 60, 1000);" 2>&1)"
+strict_status=$?
+set -e
+if [ "$strict_status" -eq 0 ] || [[ "$strict_output" != *'p_limit must be between 1 and 10000'* ]]; then
+  echo "rate-limit RPC accepted an out-of-range limit" >&2; echo "$strict_output" >&2; exit 1
+fi
+
 # Twenty independent transactions race on the same key. The advisory lock must
 # allow exactly three requests, never N+1.
 pids=()
+# One allowed request stays uncommitted while the others race: without the
+# advisory lock they cannot see it and admit a fourth request.
+docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
+  "SET ROLE service_role; SELECT public.edge_rate_limit_check('concurrent', 3, 60, 2000)->>'allowed'; SELECT pg_sleep(3);" \
+  >"$RESULT_DIR/0" &
+pids+=("$!")
+for _ in $(seq 1 50); do
+  [ "$(run_psql -Atc "SELECT count(*) FROM pg_stat_activity WHERE wait_event = 'PgSleep'")" = "1" ] && break
+  sleep 0.2
+done
 for i in $(seq 1 20); do
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
     "SET ROLE service_role; SELECT public.edge_rate_limit_check('concurrent', 3, 60, 2000)->>'allowed';" \

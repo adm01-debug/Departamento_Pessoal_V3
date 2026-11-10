@@ -38,6 +38,10 @@ for arg in "$@"; do
       echo "  --check  apenas validação de ambiente"
       exit 0
       ;;
+    *)
+      echo "Argumento desconhecido: $arg (use --help)" >&2
+      exit 64
+      ;;
   esac
 done
 
@@ -63,24 +67,25 @@ NODE_VERSION=$(node -v)
 info "Node: $NODE_VERSION"
 
 # Capacitor CLI
-if npx --yes @capacitor/cli@latest --version >/dev/null 2>&1; then
-  CAP_VERSION=$(npx --yes @capacitor/cli@latest --version 2>/dev/null)
+if npx --no-install cap --version >/dev/null 2>&1; then
+  CAP_VERSION=$(npx --no-install cap --version 2>/dev/null)
   log "Capacitor CLI: $CAP_VERSION"
 else
-  warn "Capacitor CLI não instalado. Execute: npm install @capacitor/cli @capacitor/core"
+  err "Capacitor CLI não instalado. Execute: npm install @capacitor/cli @capacitor/core"
+  exit 1
 fi
 
 # Dependências npm
 info "Verificando dependências..."
-if ! npm ci --dry-run >/dev/null 2>&1; then
-  warn "npm ci falhou — executando npm install"
-  npm install
+if [[ ! -d node_modules ]] || ! npm ci --dry-run >/dev/null 2>&1; then
+  err "Dependências ausentes ou package-lock fora de sincronia. Execute: npm ci"
+  exit 1
 fi
 
 # Android SDK (requerido apenas para APK)
 if [[ "$BUILD_APK" == "true" ]]; then
   if [[ -z "$ANDROID_SDK" ]]; then
-    if [[ -d "$LOCALAPPDATA/Android/Sdk" ]]; then
+    if [[ -n "${LOCALAPPDATA:-}" && -d "$LOCALAPPDATA/Android/Sdk" ]]; then
       ANDROID_SDK="$LOCALAPPDATA/Android/Sdk"
     elif [[ -d "$HOME/Android/Sdk" ]]; then
       ANDROID_SDK="$HOME/Android/Sdk"
@@ -122,9 +127,9 @@ log "Executando: npx cap sync android"
 npx cap sync android --no-interactive
 
 # Copia source maps para Android (debugging de produção)
-if [[ -f dist/assets/*.js.map ]]; then
+if compgen -G 'dist/assets/*.js.map' >/dev/null; then
   mkdir -p android/app/src/main/assets/public
-  cp dist/assets/*.js.map android/app/src/main/assets/public/ 2>/dev/null || true
+  cp dist/assets/*.js.map android/app/src/main/assets/public/
   log "Source maps copiados para Android"
 fi
 
@@ -137,7 +142,7 @@ if [[ "$BUILD_APK" == "true" ]]; then
     exit 1
   fi
 
-  export ANDROID_HOME
+  export ANDROID_HOME="$ANDROID_SDK"
   export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
   log "Executando: ./gradlew assembleDebug"
@@ -151,7 +156,8 @@ if [[ "$BUILD_APK" == "true" ]]; then
       log "APK gerado: $APK_ABS (${APK_SIZE})"
       info "Para instalar no dispositivo: adb install '$APK_ABS'"
     else
-      warn "Build concluído mas APK não encontrado em $(pwd)"
+      err "Build concluído mas APK não encontrado em $(pwd)"
+      exit 1
     fi
   else
     err "Gradle build falhou. Verifique:"

@@ -109,7 +109,7 @@ const rodar = async () => {
       }
     }
     resultados.push({ id: r.id, area: r.area, titulo: r.titulo, fonte: r.fonte, confianca: r.confianca, severidade: r.severidade, acao: r.acao, ...res });
-    linhas.push(`${res.status === 'ok' ? 'OK        ' : res.status.toUpperCase().padEnd(10)}${r.id}  ${res.resumo}`);
+    linhas.push(`${res.status.toUpperCase().padEnd(16)}${r.id}  ${res.resumo}`); // 16: "NAO_VERIFICAVEL" (15) colava no id com padEnd(10)
   }
   console.log(linhas.join('\n'));
   return { ok: Boolean(eng), resultados, estaticas: checagensEstaticas(), erro };

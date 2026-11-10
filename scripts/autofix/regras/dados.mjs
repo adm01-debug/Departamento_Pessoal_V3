@@ -17,7 +17,8 @@ export function dividirStatements(sql) {
     const d = sql[i + 1];
     if (c === '-' && d === '-') { while (i < n && sql[i] !== '\n') i++; continue; }
     if (c === '/' && d === '*') { let depth = 1; i += 2; while (i < n && depth > 0) { if (sql[i] === '/' && sql[i + 1] === '*') { depth++; i += 2; } else if (sql[i] === '*' && sql[i + 1] === '/') { depth--; i += 2; } else i++; } cur += ' '; continue; }
-    if (c === "'") { let j = i + 1; while (j < n) { if (sql[j] === "'" && sql[j + 1] === "'") j += 2; else if (sql[j] === "'") break; else j++; } cur += sql.slice(i, j + 1); i = j + 1; continue; }
+    // E'...': a barra invertida escapa (E'it\'s; x' é UMA string; sem isso o \' fechava a string e o ; de dentro partia o statement)
+    if (c === "'") { const esc = /(?:^|[^\w$])e$/i.test(sql.slice(Math.max(0, i - 2), i)); let j = i + 1; while (j < n) { if (esc && sql[j] === '\\') j += 2; else if (sql[j] === "'" && sql[j + 1] === "'") j += 2; else if (sql[j] === "'") break; else j++; } cur += sql.slice(i, j + 1); i = j + 1; continue; }
     if (c === '"') { const j = sql.indexOf('"', i + 1); const e = j < 0 ? n : j; cur += sql.slice(i, e + 1); i = e + 1; continue; }
     if (c === '$' && !(i > 0 && /[\w$]/.test(sql[i - 1]))) {
       const m = /^\$((?:[^\s$\d][^\s$]*)?)\$/.exec(sql.slice(i, i + 80));
