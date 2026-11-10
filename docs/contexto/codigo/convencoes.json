@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)",
    "feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a trava (#421)",
    "fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)",
    "feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)",
-   "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)",
-   "fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)"
+   "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

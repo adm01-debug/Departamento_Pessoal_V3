@@ -232,11 +232,11 @@
   {
    "arquivo": "scripts/autofix/regras/dados.test.mjs",
    "tipo": "unit",
-   "linhas": 148,
+   "linhas": 154,
    "testa": [
     "scripts/autofix/regras/dados.mjs"
    ],
-   "casos": 20
+   "casos": 21
   },
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",

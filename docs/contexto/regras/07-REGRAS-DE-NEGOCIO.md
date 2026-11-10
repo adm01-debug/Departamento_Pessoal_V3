@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6e2024fb3c` · branch `main` · 2026-11-10 17:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3077cf6084` · branch `main` · 2026-11-10 17:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4571,7 +4571,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6771 testes em 545 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6772 testes em 545 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4640,11 +4640,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/faltasService.test.ts` | 22 | faltasService.listar · returns all faltas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/rescisaoService.test.ts` | 22 | rescisaoService · validarTransicao · should block jumping more than one stage · should block homologation if status is not calculado … |
 | `src/utils/__tests__/safeUrl.test.ts` | 22 | isAllowedUrl · allows known supabase host · blocks non-canonical Supabase hosts · allows lovable.app subdomain … |
+| `scripts/autofix/regras/dados.test.mjs` | 21 | tokenizador: comentário de bloco aninhado e dollar-quote aninhado · tokenizador: em E · CREATE POLICY  · DO que só VERIFICA (cita pg_class e  … |
 | `src/components/__tests__/PortalDocumentosTab.test.tsx` | 21 | PortalDocumentosTab · renders Gestão de Documentos title · renders Enviar Novo button · shows loading spinner when loading … |
 | `src/schemas/esocial/__tests__/crossFieldValidators.test.ts` | 21 | cronologia de datas · S-2200 rejeita admissão anterior ao nascimento · S-2230 rejeita término de afastamento anterior ao início · S-2299 rejeita desligamento anterior à admissão … |
 | `src/services/__tests__/notificacoesService.test.ts` | 21 | criarNotificacao · calls supabase.auth.getUser to get current user · inserts notification with provided fields · uses current user id when payload.user_id is not provided … |
 | `src/utils/importacao/__tests__/columnMap.test.ts` | 21 | normalizeHeader · lowercases the header · trims surrounding whitespace · strips diacritics … |
-| `scripts/autofix/regras/dados.test.mjs` | 20 | tokenizador: comentário de bloco aninhado e dollar-quote aninhado · CREATE POLICY  · DO que só VERIFICA (cita pg_class e  · função: o CORPO que cita  … |
 | `src/calculators/__tests__/impostos.test.ts` | 20 | calcularINSS · returns 0 for salary of 0 · returns 0 for negative salary · returns 0 for NaN … |
 | `src/components/__tests__/MFASetup.test.tsx` | 20 | MFASetup · shows loading spinner when loading · renders 2FA title · shows Desativado badge when no factors … |
 | `src/hooks/__tests__/useGenericCrud.test.tsx` | 20 | useGenericCrud · initial state has correct defaults · respects custom initialPageSize · loads items from service after query resolves … |

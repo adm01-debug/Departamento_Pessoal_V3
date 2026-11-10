@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6e2024fb3cde2bf2dba644a71652938620fa1bb4",
+  "sha": "3077cf6084822ebeedd37e10d8b93a908461ab03",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 17:50 UTC",
-  "files_total": 2849,
+  "generated_at": "2026-11-10 17:59 UTC",
+  "files_total": 2850,
   "code_files": 2335,
-  "code_lines": 312038
+  "code_lines": 312085
  },
  "version": "1.3.2",
- "facts_hash": "c084c5bce84c3204",
+ "facts_hash": "7cf21ffee388fabf",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -94922,7 +94922,7 @@
   {
    "module": "scripts",
    "files": 103,
-   "lines": 20863,
+   "lines": 20910,
    "tables": [
     "a",
     "anexos",
@@ -146010,6 +146010,10 @@
    {
     "file": "scripts/autofix/regras/dados.test.mjs",
     "name": "tokenizador: comentário de bloco aninhado e dollar-quote aninhado"
+   },
+   {
+    "file": "scripts/autofix/regras/dados.test.mjs",
+    "name": "tokenizador: em E"
    },
    {
     "file": "scripts/autofix/regras/dados.test.mjs",
@@ -227191,7 +227195,7 @@
   },
   "scripts/autofix/run.mjs": {
    "path": "scripts/autofix/run.mjs",
-   "lines": 395,
+   "lines": 416,
    "env": [
     "XDG_CACHE_HOME"
    ],
@@ -227235,7 +227239,7 @@
   },
   "scripts/autofix/regras/dados.mjs": {
    "path": "scripts/autofix/regras/dados.mjs",
-   "lines": 397,
+   "lines": 398,
    "exports": [
     "function dividirStatements",
     "function reconstruirSchema",
@@ -227267,11 +227271,12 @@
   },
   "scripts/autofix/regras/dados.test.mjs": {
    "path": "scripts/autofix/regras/dados.test.mjs",
-   "lines": 148,
+   "lines": 154,
    "is_test": true,
    "doc": "Regressão do replay estático de migrations (dados.mjs). Cada caso é um FALSO VERDE (dizer \"protegido\" quando não está) ou um falso alarme que a auditoria adversarial de 09/11/2026 reproduziu. Rodar: node --test scripts/autofix/regras/dados.test.mjs",
    "tests": [
     "tokenizador: comentário de bloco aninhado e dollar-quote aninhado",
+    "tokenizador: em E",
     "CREATE POLICY ",
     "DO que só VERIFICA (cita pg_class e ",
     "função: o CORPO que cita ",
@@ -227296,11 +227301,11 @@
   },
   "scripts/autofix/regras/motores.mjs": {
    "path": "scripts/autofix/regras/motores.mjs",
-   "lines": 46,
+   "lines": 65,
    "exports": [
     "function carregarMotores"
    ],
-   "doc": "Carrega os motores de cálculo REAIS do sistema (TypeScript) sem build do projeto: empacota com o esbuild que já está em node_modules, resolvendo o alias \"@/\". Nada é executado além de funções puras."
+   "doc": "Carrega os motores de cálculo REAIS do sistema (TypeScript) sem build do projeto: empacota com o empacotador que já está em node_modules (esbuild se existir; senão o rolldown, que vem com o Vite 8), resolvendo o alias \"@/\". Nada é executado além de funções puras."
   },
   "scripts/autofix/regras/referencia.mjs": {
    "path": "scripts/autofix/regras/referencia.mjs",
@@ -275140,10 +275145,34 @@
   }
  },
  "git": {
-  "sha": "6e2024fb3cde2bf2dba644a71652938620fa1bb4",
+  "sha": "3077cf6084822ebeedd37e10d8b93a908461ab03",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3077cf6",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)",
+    "files": [
+     "scripts/autofix/README.md",
+     "scripts/autofix/install-timer.sh",
+     "scripts/autofix/lib.mjs",
+     "scripts/autofix/regras/dados.mjs",
+     "scripts/autofix/regras/dados.test.mjs",
+     "scripts/autofix/regras/motores.mjs",
+     "scripts/autofix/regras/verificar.mjs",
+     "scripts/autofix/run.mjs",
+     "scripts/graphify/setup.sh",
+     "scripts/sync/README.md",
+     "scripts/sync/install-all-timers.sh",
+     "scripts/sync/install-autocommit-timer.sh",
+     "scripts/sync/install-timer.sh",
+     "scripts/sync/mirror-github.sh",
+     "scripts/sync/sync-github.sh",
+     "scripts/tests/sync-lab.test.sh"
+    ]
+   },
    {
     "sha": "6e2024f",
     "date": "2026-11-10",
@@ -275581,20 +275610,13 @@
     "files": [
      "scripts/audit-bridge-frontend-contract.mjs"
     ]
-   },
-   {
-    "sha": "e7d1f19",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: ampliar check-dependencies + validate-plan-50 + edge-syntax guard",
-    "files": [
-     "scripts/audit-edge-syntax.mjs",
-     "scripts/check-dependencies.js",
-     "scripts/validate-plan-50.mjs"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "scripts/sync/mirror-github.sh",
+    6
+   ],
    [
     "scripts/sync/autocommit-local.sh",
     6
@@ -275604,20 +275626,32 @@
     6
    ],
    [
-    "scripts/sync/mirror-github.sh",
+    "scripts/autofix/run.mjs",
     5
    ],
    [
     "scripts/sync/README.md",
-    4
-   ],
-   [
-    "scripts/autofix/run.mjs",
-    4
+    5
    ],
    [
     "scripts/sync/sync-github.sh",
+    5
+   ],
+   [
+    "scripts/autofix/regras/dados.mjs",
     4
+   ],
+   [
+    "scripts/autofix/README.md",
+    3
+   ],
+   [
+    "scripts/autofix/regras/dados.test.mjs",
+    3
+   ],
+   [
+    "scripts/sync/install-timer.sh",
+    3
    ],
    [
     "scripts/autofix/any-codemod.mjs",
@@ -275628,8 +275662,28 @@
     3
    ],
    [
-    "scripts/autofix/regras/dados.mjs",
-    3
+    "scripts/autofix/install-timer.sh",
+    2
+   ],
+   [
+    "scripts/autofix/lib.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/motores.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/verificar.mjs",
+    2
+   ],
+   [
+    "scripts/sync/install-all-timers.sh",
+    2
+   ],
+   [
+    "scripts/sync/install-autocommit-timer.sh",
+    2
    ],
    [
     "scripts/sync/repos.conf.example",
@@ -275637,42 +275691,6 @@
    ],
    [
     "scripts/check-bundle-budget.mjs",
-    2
-   ],
-   [
-    "scripts/ratchet-lint-warnings.mjs",
-    2
-   ],
-   [
-    "scripts/validate-plan-50.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/eslint-safe-fix.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/dados.test.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/referencia.mjs",
-    2
-   ],
-   [
-    "scripts/sync/install-timer.sh",
-    2
-   ],
-   [
-    "scripts/autofix/README.md",
-    2
-   ],
-   [
-    "docs/agentes/arquitetura.md",
-    2
-   ],
-   [
-    "docs/agentes/banco.md",
     2
    ]
   ]

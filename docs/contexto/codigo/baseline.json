@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6e2024fb3cde2bf2dba644a71652938620fa1bb4",
+  "commit": "3077cf6084822ebeedd37e10d8b93a908461ab03",
   "branch": "main",
-  "data_commit": "2026-11-10T14:46:33-03:00",
+  "data_commit": "2026-11-10T17:52:02Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3077cf6",
+    "data": "2026-11-10",
+    "assunto": "fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)"
+   },
    {
     "sha": "6e2024f",
     "data": "2026-11-10",
@@ -126,14 +131,9 @@
     "sha": "27afd9f",
     "data": "2026-11-08",
     "assunto": "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório"
-   },
-   {
-    "sha": "20761bc",
-    "data": "2026-11-08",
-    "assunto": "fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas"
    }
   ],
-  "arquivos_mudados_7d": 255,
+  "arquivos_mudados_7d": 256,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -160,6 +160,10 @@
     "mudancas": 18
    },
    {
+    "pasta": "scripts/autofix/regras",
+    "mudancas": 16
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 16
    },
@@ -173,10 +177,6 @@
    },
    {
     "pasta": "PENDENCIAS.md",
-    "mudancas": 12
-   },
-   {
-    "pasta": "scripts/autofix/regras",
     "mudancas": 12
    },
    {
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 81
+    "mudancas": 80
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 77
+    "mudancas": 76
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 86
+    "commits": 87
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2828,
+  "arquivos_total": 2829,
   "arquivos_codigo": 1520,
-  "linhas_codigo": 264141,
+  "linhas_codigo": 264188,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -472,7 +472,7 @@
   },
   "scripts/autofix": {
    "arquivos": 10,
-   "linhas": 1905
+   "linhas": 1952
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,

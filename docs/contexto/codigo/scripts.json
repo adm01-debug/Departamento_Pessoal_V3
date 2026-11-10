@@ -310,7 +310,7 @@
   {
    "arquivo": "scripts/autofix/regras/dados.mjs",
    "descricao": "Regras de DADOS verificadas por replay ESTÁTICO das migrations (supabase/migrations/*.sql, em ordem). Reconstrói o estado final aproximado do schema (tabelas, colunas, RLS, policies, funções, índices,",
-   "linhas": 397,
+   "linhas": 398,
    "env": [
     "DATABASE_URL",
     "PGHOST"
@@ -321,8 +321,8 @@
   },
   {
    "arquivo": "scripts/autofix/regras/motores.mjs",
-   "descricao": "Carrega os motores de cálculo REAIS do sistema (TypeScript) sem build do projeto: empacota com o esbuild que já está em node_modules, resolvendo o alias \"@/\". Nada é executado além de funções puras.",
-   "linhas": 46,
+   "descricao": "Carrega os motores de cálculo REAIS do sistema (TypeScript) sem build do projeto: empacota com o empacotador que já está em node_modules (esbuild se existir; senão o rolldown, que vem com o Vite 8),",
+   "linhas": 65,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -349,7 +349,7 @@
   {
    "arquivo": "scripts/autofix/run.mjs",
    "descricao": "* Modos",
-   "linhas": 395,
+   "linhas": 416,
    "env": [
     "XDG_CACHE_HOME"
    ],
@@ -578,7 +578,7 @@
   {
    "arquivo": "scripts/graphify/setup.sh",
    "descricao": "Instala o graphify (grafo de conhecimento do código) e o configura neste clone. Uso: npm run graph:setup   (Linux, macOS ou WSL; precisa de uv ou pipx)",
-   "linhas": 43,
+   "linhas": 44,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1052,7 +1052,7 @@
   {
    "arquivo": "scripts/sync/mirror-github.sh",
    "descricao": "Deixa o checkout local EXATAMENTE igual ao GitHub (espelho), sem intervenção humana.   mirror-github.sh [--repo <caminho>] [--branch main] [--quiet-min 10] [--keep-days 30] [--dry-run] [--quiet]",
-   "linhas": 244,
+   "linhas": 294,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1070,7 +1070,7 @@
   {
    "arquivo": "scripts/sync/sync-github.sh",
    "descricao": "Mantém o repositório local atualizado com o GitHub, com segurança.   sync-github.sh [--repo <caminho>] [--dry-run] [--quiet]",
-   "linhas": 143,
+   "linhas": 147,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
