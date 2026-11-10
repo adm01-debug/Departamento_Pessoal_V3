@@ -51,6 +51,11 @@ const cases = [
     1,
     { [target]: SR + AUTH + 'const label = `user: ${/* requireRh(admin, userId, empresaId) */ userId}`;\n' },
   ],
+  [
+    'regex após => com aspa não desalinha e o comentário não vale como requireRh',
+    1,
+    { [target]: SR + AUTH + 'const check = (s) => /"/.test(s); /* requireRh(admin, userId, empresaId) */ const label = "";\n' },
+  ],
   ['operandos invertidos', 1, { [target]: SR + AUTH + HAS_ROLE + 'if (!isAdmin && !belongs) return forbidden();\n' }],
   ['função sensível renomeada', 1, {}, { [target]: `${target}-v2` }],
 ];
