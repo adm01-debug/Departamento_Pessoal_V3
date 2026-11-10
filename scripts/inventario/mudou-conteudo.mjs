@@ -5,10 +5,12 @@
  * Imprime `true` ou `false` (usado pelo inventario-estado-semanal.yml para decidir se abre PR).
  *
  * Uso: node scripts/inventario/mudou-conteudo.mjs [arquivo...]   (padrao: banco, rotas e edges)
+ * Os caminhos sao relativos a raiz do repo (a pasta dois niveis acima deste script), nao ao cwd.
  */
 import fs from 'node:fs';
+import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const PADRAO = ['inventario/estado/banco.json', 'inventario/estado/rotas.json', 'inventario/estado/edges.json'];
 const CARIMBOS = new Set(['medido_em', 'gerado_em']);
@@ -69,9 +71,12 @@ export function mudou(arquivos, lerAntes, lerDepois) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const arquivos = process.argv.length > 2 ? process.argv.slice(2) : PADRAO;
+  // `git show HEAD:<f>` e sempre relativo a raiz; ler o "depois" pelo cwd dava `true` fora da raiz.
+  const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
   const lerAntes = (f) => {
-    try { return execFileSync('git', ['show', `HEAD:${f}`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { return null; }
+    // maxBuffer: o padrao (1 MiB) estoura com arquivo maior, o catch devolve null ("arquivo novo") e sai `true` toda semana.
+    try { return execFileSync('git', ['show', `HEAD:${f}`], { cwd: RAIZ, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 256 * 1024 * 1024 }); } catch { return null; }
   };
-  const lerDepois = (f) => (fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : null);
+  const lerDepois = (f) => (fs.existsSync(path.join(RAIZ, f)) ? fs.readFileSync(path.join(RAIZ, f), 'utf8') : null);
   console.log(String(mudou(arquivos, lerAntes, lerDepois)));
 }
