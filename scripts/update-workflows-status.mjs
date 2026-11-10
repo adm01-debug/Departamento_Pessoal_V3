@@ -31,11 +31,18 @@ try {
   );
   process.exit(1);
 }
+// report-workflows.mjs sai com 0 e stdout vazio (401/403) ou com o texto do
+// "modo offline" (sem token): nenhum dos dois é um relatório — injetá-los
+// apagava a tabela do doc e abria PR com lixo.
+if (!report.startsWith('# Relatório de Workflows')) {
+  console.error(`Relatório vazio ou inválido em ${REPORT_PATH} — ${STATUS_PATH} não foi alterado.`);
+  process.exit(1);
+}
 const status = readFileSync(STATUS_PATH, 'utf-8');
 
 const startIdx = status.indexOf(START);
 const endIdx = status.indexOf(END);
-if (startIdx === -1 || endIdx === -1) {
+if (startIdx === -1 || endIdx === -1 || endIdx < startIdx) {
   console.error(`Marcadores ${START}/${END} não encontrados em ${STATUS_PATH}`);
   process.exit(1);
 }
