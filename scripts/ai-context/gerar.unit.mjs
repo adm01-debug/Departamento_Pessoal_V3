@@ -10,8 +10,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-const GERADOR = path.resolve(path.dirname(new URL(import.meta.url).pathname), 'gerar.mjs');
+const GERADOR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'gerar.mjs'); // .pathname vem com %20: quebrava em pasta com espaço/acento
 const w = (root, rel, text) => { const p = path.join(root, rel); fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, text); };
 
 function fixture() {
@@ -101,6 +102,7 @@ end $$;`);
 }
 
 const root = fixture();
+process.on('exit', () => fs.rmSync(root, { recursive: true, force: true })); // sem isto cada execução deixava um ctx-ia-* no tmp
 const out = path.join(root, 'inventario/ia');
 execFileSync(process.execPath, [GERADOR, '--quiet'], { cwd: root });
 const J = (f) => JSON.parse(fs.readFileSync(path.join(out, f), 'utf8'));
@@ -372,4 +374,143 @@ await supabase.from('runtime_table').select('*');`);
   const buckets = Object.fromEntries(read('banco.json').buckets.map((b) => [b.nome, b]));
   assert.ok(buckets.avatars, 'avatars em buckets');
   assert.ok(buckets['docs-rh'] && buckets['docs-rh'].usado_em >= 1, 'storage com .from( em outra linha também é bucket');
+});
+
+test('`/*` dentro de string (accept="image/*", glob) não engole o código até o próximo `*/`', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'worker/upload.tsx', `export const Up = () => <input type="file" accept="image/*,.pdf" />;
+export async function salvar() { await supabase.from('runtime_uploads').insert({}); }
+/** doc */
+export const fim = 1;`);
+    w(dir, 'worker/glob.tsx', `export const GLOBS = ['src/**/*.test.ts'];
+export const depois = () => supabase.from('runtime_glob');
+/* supabase.from('comentada_bloco') */
+export const Texto = () => <p>caixa d'água {/* supabase.from('comentada_jsx') */}</p>;`);
+  });
+  const alertas = read('baseline.json').alertas.tabelas_usadas_sem_definicao;
+  assert.ok(alertas.includes('runtime_uploads'), `código depois de accept="image/*" sumiu: ${alertas}`);
+  assert.ok(alertas.includes('runtime_glob'), `código depois de glob com /* sumiu: ${alertas}`);
+  assert.ok(!alertas.includes('comentada_bloco') && !alertas.includes('comentada_jsx'), `comentário de verdade deixou de ser removido: ${alertas}`);
+});
+
+test('possiveis_segredos_no_codigo aponta a linha do arquivo, mesmo depois de comentário de bloco', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    // chave falsa montada em duas partes: este arquivo não pode virar alerta de segredo no repo real
+    w(dir, 'worker/chave.ts', `/**\n * doc\n * doc\n */\nexport const a = 1;\nconst k = '${'sk_'}${'live_abcdefghijklmnop'}';\n`);
+  });
+  assert.deepEqual(read('baseline.json').alertas.possiveis_segredos_no_codigo, ['worker/chave.ts:6']);
+});
+
+test('rotas: element com chaves aninhadas em 4 níveis não some nem tira o pai das filhas', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/routes/Extra.tsx', `import { Shell } from '@/components/layout/Shell';
+import { Home } from '@/components/home/Home';
+import { ContactPage } from '@/components/contacts/ContactPage';
+export const Extra = () => (<Routes>
+  <Route path="/fundo" element={<Suspense fallback={<Spinner style={{ a: { b: 1 } }} />}><Shell /></Suspense>}>
+    <Route path="filha" element={<ContactPage />} />
+  </Route>
+  <Route path="/depois" element={<Home />} />
+</Routes>);`);
+  });
+  const by = Object.fromEntries(read('rotas.json').urls.map((u) => [u.caminho, u]));
+  assert.equal(by['/fundo']?.arquivo, 'src/components/layout/Shell.tsx');
+  assert.equal(by['/fundo/filha']?.pai, '/fundo');
+  assert.equal(by['/depois']?.arquivo, 'src/components/home/Home.tsx');
+  assert.equal(by['/filha'], undefined, 'filha não pode subir para a raiz');
+});
+
+test('edge chamada por wrapper local (handleInvoke) ou com genérico não é órfã; invoke de outra coisa não vira edge', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/functions/runtime-fn/index.ts', `Deno.serve(() => new Response('ok'));`);
+    w(dir, 'worker/edgeService.ts', `const handleInvoke = async <T>(name: string, o: unknown): Promise<T> => supabase.functions.invoke(name, o);
+export const svc = {
+  a: () => handleInvoke('orphan-fn', { body: {} }),
+  b: () => supabase.functions.invoke<
+    Partial<Resultado> & { ok?: boolean }
+  >('runtime-fn', { body: {} }),
+  c: () => ipcRenderer.invoke('abrir-janela'),
+};`);
+  });
+  const edges = Object.fromEntries(read('edge-functions.json').edges.map((e) => [e.nome, e]));
+  assert.deepEqual([edges['orphan-fn'].orfa, edges['orphan-fn'].chamada_pelo_front], [false, ['worker/edgeService.ts']]);
+  assert.deepEqual([edges['runtime-fn'].orfa, edges['runtime-fn'].chamada_pelo_front], [false, ['worker/edgeService.ts']]);
+  assert.deepEqual(read('baseline.json').alertas.edges_chamadas_sem_pasta, [], 'canal de IPC não é edge function');
+});
+
+test('banco: DROP POLICY, índice de materialized view e molde de format() não criam tabela fantasma', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_fantasmas.sql', `create table public.t_real (id int);
+create materialized view public.mv_painel as select 1 as id;
+create unique index mv_painel_idx on public.mv_painel (id);
+drop policy if exists "nunca existiu" on public.t_nunca_criada;
+do $$ declare t_name text; begin
+  foreach t_name in array array['t_real'] loop
+    execute format('DROP POLICY IF EXISTS "p" ON public.%I', t_name);
+    execute format('CREATE TRIGGER trg_x AFTER UPDATE ON public.%I FOR EACH ROW EXECUTE FUNCTION public.is_admin()', t_name);
+  end loop;
+end $$;`);
+  });
+  const banco = read('banco.json');
+  for (const fantasma of ['public', 'mv_painel', 't_nunca_criada']) assert.equal(banco.tabelas[fantasma], undefined, `tabela fantasma: ${fantasma}`);
+  assert.ok(banco.tabelas.t_real);
+  assert.ok(banco.views.includes('mv_painel'));
+  assert.deepEqual(banco.triggers.filter((tr) => tr.tabela === 'public'), [], 'trigger de molde %I não é trigger da tabela "public"');
+});
+
+test('banco: schema entre aspas ("public"."fn") e VIEW IF NOT EXISTS saem com o nome certo', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_nomes.sql', `create or replace function "public"."fn_dump"() returns boolean language sql as $$ select true $$;
+create materialized view if not exists public.mv_resumo as select 1 as id;
+create unique index mv_resumo_idx on public.mv_resumo (id);
+alter type "public"."app_role" add value if not exists 'gestor';`);
+  });
+  const banco = read('banco.json');
+  assert.deepEqual(banco.funcoes, ['fn_dump', 'is_admin']);
+  assert.deepEqual(banco.views, ['mv_resumo']);
+  assert.equal(banco.tabelas.mv_resumo, undefined);
+  assert.deepEqual(banco.enums.app_role, ['admin', 'agent', 'gestor']);
+});
+
+test('banco: pgTable/@Entity em script ou teste não vira tabela nem fonte do schema', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'scripts/fixtures-orm.mjs', `export const exemplo = "export const users = pgTable('tabela_de_script', { id: serial('id') });";`);
+    w(dir, 'src/__tests__/orm.test.ts', `@Entity('tabela_de_teste')\nclass Fake {}\nit('x', () => {});`);
+    w(dir, 'worker/schema.ts', `export const contas = pgTable('tabela_do_app', { id: serial('id') });`);
+  });
+  const banco = read('banco.json');
+  assert.ok(banco.tabelas.tabela_do_app, 'pgTable em código de aplicação continua valendo');
+  assert.equal(banco.tabelas.tabela_de_script, undefined);
+  assert.equal(banco.tabelas.tabela_de_teste, undefined);
+  assert.ok(banco.fonte.includes('drizzle') && !banco.fonte.includes('typeorm'), `fonte: ${banco.fonte}`);
+});
+
+test('banco: reexport database.types.ts não toma o lugar do types.ts que declara as tabelas', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'src/integrations/supabase/database.types.ts', `import type { Database as D } from './types';\nexport type Database = D;\n`);
+  });
+  const banco = read('banco.json');
+  assert.ok(banco.fonte.includes('src/integrations/supabase/types.ts'), `fonte: ${banco.fonte}`);
+  assert.deepEqual(banco.tabelas.contacts.drift.so_no_types, ['extra_col'], 'drift migration x types continua calculado');
+});
+
+test('banco: `--`, `;` e `/*` dentro de string SQL não são comentário nem fim de statement', (t) => {
+  const read = isolatedFixture(t, (dir) => {
+    w(dir, 'supabase/migrations/003_aspas.sql', `create table public.pontos (id uuid primary key);
+alter table public.pontos enable row level security;
+create policy "bp_del" on public.pontos for delete to authenticated using (true);
+do $$ begin
+  if not exists (select 1) then
+    raise exception 'policy "bp_del" nao encontrada -- confirmar ao vivo; antes de reaplicar';
+  end if;
+  -- drop table public.pontos;
+  drop policy "bp_del" on public.pontos;
+  create policy bp_del_role_gate on public.pontos for delete to authenticated using (true);
+end $$;
+comment on table public.pontos is 'ver doc -- secao 2; /* nao e comentario';
+create table public.depois_da_string (id int); /* fim */`);
+  });
+  const banco = read('banco.json');
+  assert.deepEqual(banco.tabelas.pontos.policies.map((p) => p.nome), ['bp_del_role_gate'], 'drop/create depois da string com -- foram lidos');
+  assert.ok(banco.tabelas.depois_da_string, 'statement depois da string com ; e /* foi lido');
 });

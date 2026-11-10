@@ -45,7 +45,11 @@ const sortObj = (o) => Object.fromEntries(Object.entries(o).sort(([a], [b]) => (
 const sha = (s) => crypto.createHash('sha256').update(s).digest('hex').slice(0, 16);
 const countLines = (s) => (s ? s.split('\n').length : 0);
 const git = (...args) => { try { return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 64 * 1024 * 1024 }).trim(); } catch { return ''; } };
-const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:\\'"`])\/\/[^\n]*/g, '$1');
+// `/*` dentro de string na mesma linha (accept="image/*", path="/x/*", glob) não abre comentário: sem isto tudo até o próximo `*/` sumia da análise.
+// Aspa logo depois de letra/dígito é apóstrofo de texto (d'água), não abertura de string.
+const emString = (s, i) => { let q = null; for (let j = s.lastIndexOf('\n', i) + 1; j < i; j++) { const ch = s[j]; if (q) { if (ch === '\\') j++; else if (ch === q) q = null; } else if ((ch === '"' || ch === "'" || ch === '`') && !/[\p{L}\p{N}_]/u.test(s[j - 1] || '')) q = ch; } return q !== null; };
+const stripBlocos = (s) => { let out = '', i = 0; for (;;) { const a = s.indexOf('/*', i); if (a < 0) return out + s.slice(i); const b = emString(s, a) ? -1 : s.indexOf('*/', a + 2); if (b < 0) { out += s.slice(i, a + 2); i = a + 2; continue; } out += s.slice(i, a) + s.slice(a, b).replace(/[^\n]+/g, ''); i = b + 2; } }; // mantém as quebras de linha: quem cita arquivo:linha conta no texto sem comentário
+const stripComments = (s) => stripBlocos(s).replace(/(^|[^:\\'"`])\/\/[^\n]*/g, '$1');
 const cap = (arr, n = 200) => arr.slice(0, n);
 const allMatches = (re, s, g = 1) => { const out = []; re.lastIndex = 0; let m; while ((m = re.exec(s))) out.push(m[g]); return out; };
 const byCount = (arr) => Object.entries(arr.reduce((a, k) => { a[k] = (a[k] || 0) + 1; return a; }, {})).sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1));
@@ -148,6 +152,8 @@ function resolveImport(fromFile, spec) {
 // ---------- análise por arquivo (JS/TS/Vue/Svelte/Astro) ----------
 const CODE_FILES = ALL.filter((f) => CODE_EXT.has(path.extname(f)) && !f.endsWith('.d.ts'));
 const FILE = new Map();
+const EDGE_DIR = ['supabase/functions', 'functions', 'netlify/functions', 'edge-functions'].find((d) => exists(d)) || 'supabase/functions';
+const EDGE_NOMES = new Set(ALL.filter((f) => f.startsWith(EDGE_DIR + '/')).map((f) => f.slice(EDGE_DIR.length + 1).split('/')[0]));
 const RE = {
   imp: /(?:import|export)\s+(?:type\s+)?(?:[\w*{}\s,$]+?\s+from\s+)?['"]([^'"]+)['"]/g,
   dyn: /import\(\s*['"]([^'"]+)['"]\s*\)/g,
@@ -157,6 +163,8 @@ const RE = {
   from: /(?<!\bstorage\s*)\.from\(\s*['"`]([\w.]+)['"`]/g,
   rpc: /\.rpc\(\s*['"`](\w+)['"`]/g,
   invoke: /functions\.invoke\(\s*['"`]([\w-]+)['"`]/g,
+  // wrapper local do projeto (`handleInvoke('x')`, `invokeEdge<T>('x')`) e `functions.invoke<T>('x')`: só conta quando 'x' é pasta de edge function.
+  invokeVia: /\b\w*[iI]nvoke\w*(?:<(?:[^<>()]|<[^<>()]*>)*>)?\(\s*['"`]([\w-]+)['"`]/g,
   fnUrl: /\/functions\/v1\/([\w-]+)/g,
   envVite: /import\.meta\.env\.(\w+)/g,
   envNode: /process\.env\.(\w+)/g,
@@ -197,7 +205,7 @@ for (const f of CODE_FILES) secao(`arquivo:${f}`, () => {
   FILE.set(f, {
     linhas: countLines(raw), bytes: Buffer.byteLength(raw), imports: local, externos: external, exports: exportsNamed, export_default: expDef[0] || (/export\s+default\b/.test(src) ? '(anônimo)' : null),
     hooks: uniq(allMatches(RE.hook, src)), tabelas: uniq([...allMatches(RE.from, src), ...allMatches(RE.prisma, src)]), rpcs: uniq(allMatches(RE.rpc, src)),
-    edges: uniq([...allMatches(RE.invoke, src), ...allMatches(RE.fnUrl, src)]), env: envNames(src), buckets: uniq(allMatches(RE.storage, src)), canais_realtime: uniq(allMatches(RE.channel, src)),
+    edges: uniq([...allMatches(RE.invoke, src), ...allMatches(RE.fnUrl, src), ...allMatches(RE.invokeVia, src).filter((e) => EDGE_NOMES.has(e))]), env: envNames(src), buckets: uniq(allMatches(RE.storage, src)), canais_realtime: uniq(allMatches(RE.channel, src)),
     hosts_externos: uniq(allMatches(RE.urlHost, src).map((h) => h.toLowerCase())).filter((h) => !/localhost|example\.(com|org)|w3\.org|schema\.org|github\.com|npmjs\.com|deno\.land|esm\.sh|jsdelivr|unpkg/.test(h)),
     flags: uniq([...allMatches(RE.flag, src), ...allMatches(RE.flagEnv, src)]), papeis: uniq(allMatches(RE.role, src)), zod: (src.match(RE.zod) || []).length,
     rotas_http: rotasHttp, drizzle: uniq(allMatches(RE.drizzleTable, src)),
@@ -302,7 +310,8 @@ const routeFiles = uniq([...CODE_FILES.filter((f) => !FILE.get(f)?.teste && (isS
 secao('rotas-jsx', () => {
   for (const rf of routeFiles) {
     const src = FILE.get(rf)?.conteudo || ''; const stack = [];
-    const re = /<Route\b((?:[^>{/]|\/(?!>)|\{(?:[^{}]|\{[^{}]*\})*\})*)(\/?)>|<\/Route\s*>/g; let m;
+    // chaves aninhadas até 5 níveis: `element={<Suspense fallback={<L style={{ a: 1 }} />}>…}` tem 4; com 2 a rota sumia e as filhas perdiam o pai
+    const re = /<Route\b((?:[^>{/]|\/(?!>)|\{(?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*\})*\})*)(\/?)>|<\/Route\s*>/g; let m;
     while ((m = re.exec(src))) {
       if (m[0].startsWith('</')) { stack.pop(); continue; }
       const attrs = m[1] || ''; const self = m[2] === '/';
@@ -466,13 +475,15 @@ secao('banco-sql', () => {
   banco.migrations = sqlFiles.length; banco.fonte.push(migDir || '*.sql');
   const allSql = [];
   for (const f of sqlFiles) {
-    const sql = readText(f).replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+    // `--` e `/*` dentro de string ('... -- confirmar ...') não são comentário: cortar ali desbalanceava as aspas e o resto do arquivo era lido errado.
+    const semComentarioSql = (s) => s.replace(/'(?:[^']|'')*'|\$(\w*)\$([\s\S]*?)\$\1\$|--[^\n]*|\/\*[\s\S]*?\*\//g, (m0, tag, corpo) => (m0[0] === "'" ? m0 : m0[0] === '$' ? `$${tag}$${semComentarioSql(corpo)}$${tag}$` : ''));
+    const sql = semComentarioSql(readText(f));
     const bodies = []; const sqlNoBody = sql.replace(/\$(\w*)\$[\s\S]*?\$\1\$/g, (m0) => { bodies.push(m0); return "''"; });
     allSql.push(sql.toLowerCase());
     // DO $$ ... $$ e corpos de função: statements literais (CREATE/DROP POLICY, ALTER TABLE) também valem; DDL dinâmico (EXECUTE format) é só sinalizado
-    const bodyStatements = bodies.flatMap((b) => { const inner = b.replace(/^\$\w*\$|\$\w*\$$/g, '').replace(/\$(\w*)\$[\s\S]*?\$\1\$/g, "''"); if (/\bexecute\s+(format|'|\$|[a-z_]+\s*\()/i.test(inner)) banco.ddl_dinamico++; return splitStatements(inner).map((x) => { const m0 = /\b(create|drop|alter)\s[\s\S]*$/i.exec(x); return m0 ? m0[0] : ''; }).filter(Boolean); });
+    const bodyStatements = bodies.flatMap((b) => { const inner = b.replace(/^\$\w*\$|\$\w*\$$/g, '').replace(/\$(\w*)\$[\s\S]*?\$\1\$/g, "''"); if (/\bexecute\s+(format|'|\$|[a-z_]+\s*\()/i.test(inner)) banco.ddl_dinamico++; return splitStatements(inner).map((x) => { const m0 = /\b(create|drop|alter)\s[\s\S]*$/i.exec(x); return m0 ? m0[0] : ''; }).filter((x) => x && !/%[IsL]\b/.test(x)); }); // molde de format() (`ON public.%I`) não é statement literal
     for (const stRaw of [...splitStatements(sqlNoBody), ...bodyStatements]) {
-      const st = stRaw.trim(); if (!st) continue; let m;
+      const st = stRaw.trim().replace(/"public"\./gi, 'public.'); if (!st) continue; let m; // estilo pg_dump: "public"."fn" — sem isto o nome lido era "public"
       if ((m = /^create\s+(?:unlogged\s+)?table\s+(?:if\s+not\s+exists\s+)?((?:"?\w+"?\.)?"?\w+"?)\s*\(/i.exec(st))) {
         let i = m[0].length, depth = 1, body = '';
         while (i < st.length && depth > 0) { const ch = st[i++]; if (ch === '(') depth++; if (ch === ')') depth--; if (depth > 0) body += ch; }
@@ -502,8 +513,9 @@ secao('banco-sql', () => {
         const t = T(m[2]); const nome = m[1].replace(/"/g, ''); t.policies = t.policies.filter((p) => p.nome !== nome);
         t.policies.push({ nome, comando: (m[4] || 'all').toLowerCase(), para: (m[5] || 'public').trim(), tipo: (m[3] || 'permissive').toLowerCase() }); continue;
       }
-      if ((m = /^drop\s+policy\s+(?:if\s+exists\s+)?("[^"]+"|\w+)\s+on\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { const t = T(m[2]); t.policies = t.policies.filter((p) => p.nome !== m[1].replace(/"/g, '')); continue; }
+      if ((m = /^drop\s+policy\s+(?:if\s+exists\s+)?("[^"]+"|\w+)\s+on\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { const t = banco.tabelas[tname(m[2])]; if (t) t.policies = t.policies.filter((p) => p.nome !== m[1].replace(/"/g, '')); continue; } // sem T(): DROP não cria tabela (ex.: template `ON public.%I` de format())
       if ((m = /^create\s+(unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?("?\w+"?)\s+on\s+(?:only\s+)?((?:"?\w+"?\.)?"?\w+"?)\s*(?:using\s+\w+\s*)?\(([^)]+)\)/i.exec(st))) {
+        if (banco.views.has(tname(m[3]))) continue; // índice de materialized view não é tabela
         const t = T(m[3]); const nome = m[2].replace(/"/g, ''); t.indices = t.indices.filter((i) => i.nome !== nome); t.indices.push({ nome, colunas: m[4].replace(/\s+/g, ' ').trim(), unico: !!m[1] }); continue;
       }
       if ((m = /^drop\s+index\s+(?:concurrently\s+)?(?:if\s+exists\s+)?(?:public\.)?"?(\w+)"?/i.exec(st))) { for (const t of Object.values(banco.tabelas)) t.indices = t.indices.filter((i) => i.nome !== m[1]); continue; }
@@ -514,7 +526,7 @@ secao('banco-sql', () => {
         banco.triggers.push({ nome: m[1], quando: m[2].toLowerCase(), evento: m[3].replace(/\s+/g, ' ').toLowerCase(), tabela: tb, funcao: m[5] }); continue;
       }
       if ((m = /^drop\s+trigger\s+(?:if\s+exists\s+)?"?(\w+)"?\s+on\s+((?:"?\w+"?\.)?"?\w+"?)/i.exec(st))) { const tb = tname(m[2]); banco.triggers = banco.triggers.filter((t) => !(t.nome === m[1] && t.tabela === tb)); continue; }
-      if ((m = /^create\s+(?:or\s+replace\s+)?(?:materialized\s+)?view\s+(?:public\.)?"?(\w+)"?/i.exec(st))) { banco.views.add(m[1]); continue; }
+      if ((m = /^create\s+(?:or\s+replace\s+)?(?:materialized\s+)?view\s+(?:if\s+not\s+exists\s+)?(?:public\.)?"?(\w+)"?/i.exec(st))) { banco.views.add(m[1]); continue; }
       if ((m = /^drop\s+(?:materialized\s+)?view\s+(?:if\s+exists\s+)?(?:public\.)?"?(\w+)"?/i.exec(st))) { banco.views.delete(m[1]); continue; }
       if ((m = /^create\s+type\s+(?:public\.)?"?(\w+)"?\s+as\s+enum\s*\(([^)]*)\)/i.exec(st))) { banco.enums[m[1]] = m[2].split(',').map((v) => v.trim().replace(/'/g, '')).filter(Boolean); continue; }
       if ((m = /^alter\s+type\s+(?:public\.)?"?(\w+)"?\s+add\s+value\s+(?:if\s+not\s+exists\s+)?'([^']+)'/i.exec(st))) { (banco.enums[m[1]] = banco.enums[m[1]] || []).push(m[2]); continue; }
@@ -529,19 +541,26 @@ secao('banco-sql', () => {
   for (const cj of banco.cron) { const m = new RegExp(`cron\\.schedule\\s*\\(\\s*'${cj.nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}'[\\s\\S]{0,600}?functions/v1/([\\w-]+)`, 'i').exec(SQL_TEXT_LOWER); if (m) cj.chama_edge = m[1]; }
   banco.seeds = ALL.filter((f) => /(^|\/)seed[\w-]*\.sql$/.test(f));
 });
+// Exemplos, testes e ferramentas continuam no inventário, mas não provam uso pela aplicação.
+// srcDirs explícito permite tratar uma raiz de ferramentas como código de aplicação.
+const TOOLING_ROOT = /^(?:(?:apps|packages|services|libs)\/[^/]+\/)?(?:scripts|bin|tools|\.github|docs|inventario|analise|examples?|samples?)\//;
+const appFiles = [...FILE.entries()].filter(([f, d]) => !d.teste && !d.story && (isSrc(f) || !TOOLING_ROOT.test(f)));
 secao('banco-orm', () => {
   for (const f of ALL.filter((x) => x.endsWith('.prisma'))) {
     banco.fonte.push(f); const s = readText(f); let m; const re = /model\s+(\w+)\s*\{([^}]*)\}/g;
     while ((m = re.exec(s))) { const t = T(m[1]); t.criada_em = path.posix.basename(f); for (const l of m[2].split('\n')) { const cm = /^\s*(\w+)\s+([\w[\]?]+)(.*)$/.exec(l); if (cm && !cm[1].startsWith('@')) { const ref = /@relation/.test(cm[3]) ? cm[2].replace(/[[\]?]/g, '') : null; t.colunas[cm[1]] = { tipo: cm[2].toLowerCase(), nn: !cm[2].endsWith('?'), pk: /@id/.test(cm[3]), default: (/@default\(([^)]*)\)/.exec(cm[3]) || [])[1] || null, ref }; if (ref) t.fks.push({ coluna: cm[1], ref }); } } }
     const re2 = /enum\s+(\w+)\s*\{([^}]*)\}/g; while ((m = re2.exec(s))) banco.enums[m[1]] = m[2].split(/\s+/).map((x) => x.trim()).filter((x) => /^\w+$/.test(x) && !/^@/.test(x));
   }
-  for (const [f, d] of FILE) for (const t of d.drizzle) { const tb = T(t); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('drizzle')) banco.fonte.push('drizzle'); const m = new RegExp(`(?:pgTable|mysqlTable|sqliteTable)\\(\\s*['"]${t}['"]\\s*,\\s*\\{([^}]*)\\}`).exec(d.conteudo); if (m) for (const cm of m[1].matchAll(/(\w+)\s*:\s*(\w+)\(/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2], nn: /notNull/.test(m[1]), pk: false, default: null, ref: null }; }
-  for (const [f, d] of FILE) { let m; const re = /@Entity\(\s*(?:['"](\w+)['"])?\s*\)[\s\S]*?class\s+(\w+)/g; while ((m = re.exec(d.conteudo))) { const tb = T(m[1] || m[2]); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('typeorm')) banco.fonte.push('typeorm'); for (const cm of d.conteudo.matchAll(/@(?:Primary\w*|Column|CreateDateColumn|UpdateDateColumn)\([^)]*\)\s*\n\s*(\w+)\s*[?!]?:\s*([\w[\]]+)/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2].toLowerCase(), nn: true, pk: false, default: null, ref: null }; } }
+  // só código de aplicação: `pgTable('users'` / `@Entity` dentro de teste ou script (ex.: fixtures do próprio gerador) não é schema do projeto
+  for (const [f, d] of appFiles) for (const t of d.drizzle) { const tb = T(t); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('drizzle')) banco.fonte.push('drizzle'); const m = new RegExp(`(?:pgTable|mysqlTable|sqliteTable)\\(\\s*['"]${t}['"]\\s*,\\s*\\{([^}]*)\\}`).exec(d.conteudo); if (m) for (const cm of m[1].matchAll(/(\w+)\s*:\s*(\w+)\(/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2], nn: /notNull/.test(m[1]), pk: false, default: null, ref: null }; }
+  for (const [f, d] of appFiles) { let m; const re = /@Entity\(\s*(?:['"](\w+)['"])?\s*\)[\s\S]*?class\s+(\w+)/g; while ((m = re.exec(d.conteudo))) { const tb = T(m[1] || m[2]); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('typeorm')) banco.fonte.push('typeorm'); for (const cm of d.conteudo.matchAll(/@(?:Primary\w*|Column|CreateDateColumn|UpdateDateColumn)\([^)]*\)\s*\n\s*(\w+)\s*[?!]?:\s*([\w[\]]+)/g)) tb.colunas[cm[1]] = tb.colunas[cm[1]] || { tipo: cm[2].toLowerCase(), nn: true, pk: false, default: null, ref: null }; } }
   for (const [f, d] of PY) for (const cls of d.modelos) { const tb = T(cls); tb.criada_em = tb.criada_em || f; if (!banco.fonte.includes('python-models')) banco.fonte.push('python-models'); }
 });
 const tabelasTypes = {};
 secao('banco-types', () => {
-  const typesFile = CFG.typesFile || ALL.find((f) => /(supabase|database)[/.-].*types\.ts$|types\/supabase\.ts$|database\.types\.ts$|supabase\.types\.ts$/.test(f) && !TEST_RE.test(f));
+  // Entre os candidatos, o que de fato declara `Tables: {`: um reexport (database.types.ts) vem antes de types.ts na ordem alfabética e zerava colunas_types/drift.
+  const candidatos = ALL.filter((f) => /(supabase|database)[/.-].*types\.ts$|types\/supabase\.ts$|database\.types\.ts$|supabase\.types\.ts$/.test(f) && !TEST_RE.test(f));
+  const typesFile = CFG.typesFile || candidatos.find((f) => readText(f).includes('Tables: {')) || candidatos[0];
   if (!typesFile) return;
   const src = readText(typesFile); if (!src) { ERROS.push({ secao: 'banco-types', erro: `${typesFile} maior que ${MAX_FILE_BYTES / 1048576} MB; aumente maxFileMB em ai-context.config.json` }); return; }
   banco.fonte.push(typesFile);
@@ -552,11 +571,6 @@ secao('banco-types', () => {
   while ((m = re.exec(body))) { let j = re.lastIndex, d2 = 1, row = ''; while (j < body.length && d2 > 0) { const ch = body[j++]; if (ch === '{') d2++; if (ch === '}') d2--; if (d2 > 0) row += ch; } const campos = []; let dd = 0, cur = ''; for (const ch of row) { if (ch === '{' || ch === '[' || ch === '(') dd++; if (ch === '}' || ch === ']' || ch === ')') dd--; if ((ch === ';' || ch === '\n') && dd === 0) { campos.push(cur); cur = ''; } else cur += ch; } campos.push(cur); tabelasTypes[m[1]] = Object.fromEntries(campos.map((cmp) => /^\s*(\w+)\??:\s*([\s\S]+?)\s*$/.exec(cmp)).filter(Boolean).map((cm) => [cm[1], cm[2].replace(/\s+/g, ' ')])); }
 });
 for (const [t, cols] of Object.entries(tabelasTypes)) T(t).colunas_types = cols;
-const EDGE_DIR = ['supabase/functions', 'functions', 'netlify/functions', 'edge-functions'].find((d) => exists(d)) || 'supabase/functions';
-// Exemplos, testes e ferramentas continuam no inventário, mas não provam uso pela aplicação.
-// srcDirs explícito permite tratar uma raiz de ferramentas como código de aplicação.
-const TOOLING_ROOT = /^(?:(?:apps|packages|services|libs)\/[^/]+\/)?(?:scripts|bin|tools|\.github|docs|inventario|analise|examples?|samples?)\//;
-const appFiles = [...FILE.entries()].filter(([f, d]) => !d.teste && !d.story && (isSrc(f) || !TOOLING_ROOT.test(f)));
 const tabelasUsadas = new Map();
 for (const [f, d] of appFiles) for (const t of d.tabelas) { if (!tabelasUsadas.has(t)) tabelasUsadas.set(t, { front: [], edges: [] }); (f.startsWith(EDGE_DIR) ? tabelasUsadas.get(t).edges : tabelasUsadas.get(t).front).push(f); }
 const bancoOut = {

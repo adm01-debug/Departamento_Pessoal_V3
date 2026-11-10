@@ -39,6 +39,20 @@ test('banco.sql so le: nenhum comando de escrita e nada do command do cron', () 
   assert.match(SQL, /regexp_matches\(j\.command, '\(\(\?:public\|net\|cron\)/, 'do command so sai o nome das funcoes chamadas');
 });
 
+test('banco.sql: nome de tabela entra escapado na regex de citada_no_banco', () => {
+  // `foo$bar`/`a+b` davam falso negativo e `x[1` derrubava a secao obrigatoria (invalid regular expression).
+  const tabelas = lerSecoes(SQL).find((s) => s.nome === 'tabelas').sql;
+  assert.doesNotMatch(tabelas, /'\\m'\s*\|\|\s*b\.nome\s*\|\|/, 'b.nome cru dentro da regex');
+  assert.match(tabelas, /'\\m' \|\| regexp_replace\(b\.nome, '\(\[\^\[:alnum:\]_\]\)', '\\\\\\1', 'g'\) \|\| '\\M'/);
+});
+
+test('banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS)', () => {
+  // Papel com SELECT mas sem BYPASSRLS contava so as linhas liberadas pela policy: 0 "exato" numa tabela cheia.
+  const tabelas = lerSecoes(SQL).find((s) => s.nome === 'tabelas').sql;
+  assert.match(tabelas, /has_table_privilege\(c\.oid, 'SELECT'\)\s+AND \(NOT c\.relrowsecurity\s+OR \(SELECT rolbypassrls OR rolsuper FROM pg_roles WHERE rolname = current_user\)\) AS legivel/);
+  assert.equal((tabelas.match(/b\.legivel AND b\.reltuples < 200000/g) || []).length, 2, 'linhas e linhas_exatas usam o mesmo criterio');
+});
+
 test('secao obrigatoria ausente aborta; opcional ausente vira coleta_parcial com o motivo', () => {
   assert.throws(() => montarDado({ tabelas: [tabela('a')] }), /secao obrigatoria "resumo"/);
   assert.throws(() => montarDado({ resumo: {}, tabelas: [] }), /entrada sem tabelas/);
@@ -175,6 +189,11 @@ test('consultarViaPsql: secao que falha vira motivo limpo, as outras seguem', ()
   assert.deepEqual(r.resumo, { ok: true });
   assert.deepEqual(Object.keys(falhas), ['ledger']);
   assert.match(falhas.ledger, /permission denied/);
+  // psql fora do PATH (ENOENT) ou travado (ETIMEDOUT) nao tem stderr: o motivo nao pode virar "falha sem mensagem".
+  const semPsql = consultarViaPsql('postgresql://u:senha@h/db', secoes, () => { throw new Error('spawnSync psql ENOENT'); });
+  assert.equal(semPsql.falhas.resumo, 'spawnSync psql ENOENT');
+  assert.equal(limparErro('spawnSync psql ETIMEDOUT'), 'spawnSync psql ETIMEDOUT');
+  assert.equal(limparErro(''), 'falha sem mensagem');
 });
 
 test('contarUsoNoCodigo conta .from() de verdade no DP (src e edges) e ignora storage.from', () => {

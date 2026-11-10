@@ -5,13 +5,14 @@
 #   run-all.sh autocommit [--only <nome>] [--dry-run]   commit automático + push da branch computador_local (hh:30)
 #   (ambos aceitam --quiet-min N: quantos minutos sem edição antes de agir; 0 = agir já)
 #
-# Lista: ${XDG_CONFIG_HOME:-~/.config}/dp-sync/repos.conf — uma linha por repositório, campos separados por | (repo|worktree|branch|mirror|pii[|push]; push=0 = só commit local, sem enviar a computador_local)
-#   repo|worktree_dev|branch_padrao|mirror|pii
+# Lista: ${XDG_CONFIG_HOME:-~/.config}/dp-sync/repos.conf — uma linha por repositório, campos separados por |
+#   repo|worktree_dev|branch_padrao|mirror|pii[|push]
 #     repo          caminho do checkout principal (o ESPELHO)
 #     worktree_dev  caminho do worktree de desenvolvimento na branch computador_local (vazio = sem autocommit)
 #     branch_padrao main
 #     mirror        1 = este orquestrador espelha; ext = o repositório já tem espelho próprio (não toco); 0 = nenhum
 #     pii           dados pessoais a barrar no autocommit (ex.: cpf,cnpj)
+#     push          opcional: vazio ou 1 = commit + push da computador_local; 0 = só commit LOCAL (nada é enviado)
 # Linhas começando com # e linhas vazias são ignoradas. Um repositório com problema NÃO impede os demais.
 set -uo pipefail
 # PATH explícito: sob o systemd o PATH não inclui ~/.local/bin (onde está o gitleaks) e as travas falham fechadas.
@@ -56,7 +57,7 @@ resultado() { # resultado <nome> <rc>
 }
 while IFS='|' read -r repo wt branch mirror pii push || [ -n "${repo:-}" ]; do
   repo="$(trim "$repo")"; [ -z "$repo" ] && continue; case "$repo" in \#*) continue ;; esac
-  wt="$(trim "${wt:-}")"; branch="$(trim "${branch:-}")"; mirror="$(trim "${mirror:-}")"; pii="${pii//[[:space:]]/}"; pii="${pii%$'\r'}"; push="${push//[[:space:]]/}"; push="${push%$'\r'}"; NOPUSH=(); [ "$push" = 0 ] && NOPUSH=(--no-push)
+  wt="$(trim "${wt:-}")"; branch="$(trim "${branch:-}")"; mirror="$(trim "${mirror:-}")"; pii="${pii//[[:space:]]/}"; pii="${pii%$'\r'}"; push="${push//[[:space:]]/}"
   name="$(basename "$repo")"; [ -n "$ONLY" ] && [ "$ONLY" != "$name" ] && continue
   [ -d "$repo/.git" ] || [ -f "$repo/.git" ] || { echo "$(date '+%F %T') [$name] run-all: caminho não é um repositório ($repo)" >> "$LOG"; falha=$((falha+1)); continue; }
   case "$MODE" in
@@ -72,6 +73,10 @@ while IFS='|' read -r repo wt branch mirror pii push || [ -n "${repo:-}" ]; do
       esac ;;
     autocommit)
       [ -n "$wt" ] || { pulado=$((pulado+1)); continue; }
+      # push: valor desconhecido (ex.: "nao", "0|obs") NÃO vira push — num repositório público o engano custaria caro
+      case "$push" in ''|1) NOPUSH=() ;; 0) NOPUSH=(--no-push) ;;
+        *) echo "$(date '+%F %T') [$name] run-all: campo push inválido ('$push') em $CONF — use vazio, 1 ou 0; NADA foi feito neste repositório" >> "$LOG"; falha=$((falha+1)); continue ;;
+      esac
       timeout 25m nice -n 10 bash "$HERE/autocommit-local.sh" --worktree "$wt" --branch computador_local ${pii:+--pii "$pii"} "${NOPUSH[@]}" --quiet "${QM[@]}" "${DRY[@]}" </dev/null; resultado "$name" $? ;;
   esac
 done < "$CONF"
