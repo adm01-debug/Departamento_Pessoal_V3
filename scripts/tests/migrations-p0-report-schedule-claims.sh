@@ -6,15 +6,15 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260912192000_p0_report_schedule_claims.sql"
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p0-report-claims-$$"
-RESULT_DIR="$(mktemp -d)"
 
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
+RESULT_DIR="$(mktemp -d)"
 trap cleanup EXIT
 
 run_psql() {
@@ -29,6 +29,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-report-claims.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN;
 CREATE TABLE public.relatorios_agendados (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -59,6 +60,9 @@ signature='public.claim_due_report_schedules(timestamp with time zone, integer)'
 [ "$(run_psql -Atc "SELECT has_function_privilege('anon', '$signature', 'EXECUTE')")" = 'f' ]
 [ "$(run_psql -Atc "SELECT has_function_privilege('authenticated', '$signature', 'EXECUTE')")" = 'f' ]
 [ "$(run_psql -Atc "SELECT has_function_privilege('service_role', '$signature', 'EXECUTE')")" = 't' ]
+finish_signature='public.finish_report_schedule_claim(uuid, uuid, timestamp with time zone)'
+[ "$(run_psql -Atc "SELECT has_function_privilege('anon', '$finish_signature', 'EXECUTE')")" = 'f' ]
+[ "$(run_psql -Atc "SELECT has_function_privilege('authenticated', '$finish_signature', 'EXECUTE')")" = 'f' ]
 
 schedule_id="$(run_psql -qAtc "INSERT INTO public.relatorios_agendados
   (nome,tipo_relatorio,email_destinatario,frequencia,hora_envio,proximo_envio)
@@ -68,6 +72,16 @@ schedule_id="$(run_psql -qAtc "INSERT INTO public.relatorios_agendados
 # Twenty independent transactions race for one schedule. SKIP LOCKED plus the
 # lease predicate must return the row exactly once.
 pids=()
+# One claim stays uncommitted while the others race: without SKIP LOCKED they
+# wait on its row lock and then claim the same schedule again.
+docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
+  "SET ROLE service_role; SELECT id FROM public.claim_due_report_schedules(now(), 1); SELECT pg_sleep(3);" \
+  >"$RESULT_DIR/0" &
+pids+=("$!")
+for _ in $(seq 1 50); do
+  [ "$(run_psql -Atc "SELECT count(*) FROM pg_stat_activity WHERE wait_event = 'PgSleep'")" = '1' ] && break
+  sleep 0.2
+done
 for i in $(seq 1 20); do
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
     "SET ROLE service_role; SELECT id FROM public.claim_due_report_schedules(now(), 1);" \
@@ -75,6 +89,8 @@ for i in $(seq 1 20); do
   pids+=("$!")
 done
 for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent schedule-claim process failed" >&2; exit 1; }; done
+# After the first claim commits, its lease must still keep the row unavailable.
+run_psql -qAtc "SET ROLE service_role; SELECT id FROM public.claim_due_report_schedules(now(), 1);" >"$RESULT_DIR/after"
 [ "$(grep -h -c "$schedule_id" "$RESULT_DIR"/* | awk '{s += $1} END {print s+0}')" = '1' ] || {
   echo 'concurrent claim returned the same schedule more than once' >&2; exit 1;
 }

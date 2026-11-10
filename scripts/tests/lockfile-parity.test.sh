@@ -38,7 +38,7 @@ else
 fi
 
 # 3. name e version coincidem entre package.json e packages[""] do lockfile
-node - <<'JS'
+node - <<'JS' || FAIL=1
 const fs = require('fs');
 const pkg  = JSON.parse(fs.readFileSync(process.env.PKG,  'utf8'));
 const lock = JSON.parse(fs.readFileSync(process.env.LOCK, 'utf8'));
@@ -55,27 +55,28 @@ if (root.version !== pkg.version) {
 if (ok) console.log('  ok:   name e version coincidem');
 process.exitCode = ok ? 0 : 1;
 JS
-if [[ $? -ne 0 ]]; then FAIL=1; fi
 
 # 4. Dependências diretas declaradas em package.json existem no lockfile
-node - <<'JS'
+node - <<'JS' || FAIL=1
 const fs = require('fs');
 const pkg  = JSON.parse(fs.readFileSync(process.env.PKG,  'utf8'));
 const lock = JSON.parse(fs.readFileSync(process.env.LOCK, 'utf8'));
 const allDeps = Object.assign({}, pkg.dependencies || {}, pkg.devDependencies || {});
 const pkgs = lock.packages || {};
+const root = pkgs[''] || {};
+const lockSpecs = Object.assign({}, root.dependencies || {}, root.devDependencies || {});
 const missing = Object.keys(allDeps).filter(name => {
-  // Aceita node_modules/<name> ou node_modules/@scope/<name>
-  return !Object.keys(pkgs).some(k => k === `node_modules/${name}` || k.endsWith(`/${name}`));
+  // Entrada exata node_modules/<name> (um sufixo "/<name>" casaria com outro
+  // pacote, ex.: @types/react) e a mesma faixa que o lock registrou na raiz.
+  return !pkgs[`node_modules/${name}`] || lockSpecs[name] !== allDeps[name];
 });
 if (missing.length === 0) {
   console.log('  ok:   todas as dependências diretas presentes no lock');
 } else {
-  console.error('  FAIL: dependências ausentes no lock:', missing.join(', '));
+  console.error('  FAIL: dependências ausentes ou com faixa divergente no lock:', missing.join(', '));
   process.exitCode = 1;
 }
 JS
-if [[ $? -ne 0 ]]; then FAIL=1; fi
 
 # 5. package-lock.json não é mais antigo que package.json
 # (mtime: lock deve ter sido regenerado APÓS ou JUNTO com package.json)

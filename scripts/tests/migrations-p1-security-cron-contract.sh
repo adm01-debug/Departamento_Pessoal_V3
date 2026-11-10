@@ -7,7 +7,7 @@ MIGRATION="$REPO_ROOT/supabase/migrations/20260912203000_p1_security_cron_contra
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p1-security-cron-$$"
 
-cleanup() { docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+cleanup() { docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 run_psql() { docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 
@@ -18,6 +18,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p1-security-cron.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 CREATE SCHEMA auth;
@@ -108,6 +109,11 @@ set -e
 [ "$anon_status" -ne 0 ] && [[ "$anon_output" == *'permission denied'* ]] || {
   echo "anon unexpectedly executed the internal scanner" >&2; exit 1;
 }
+for internal_routine in 'public.sec_policy_regressions_purge()' 'public.sec_verify_seals_scan()'; do
+  [ "$(run_psql -qAtc "SELECT has_function_privilege('anon','$internal_routine','EXECUTE') OR has_function_privilege('authenticated','$internal_routine','EXECUTE')")" = 'f' ] || {
+    echo "client role can execute $internal_routine" >&2; exit 1;
+  }
+done
 
 admin_visible="$(run_psql -qAt <<'SQL'
 SET ROLE authenticated;

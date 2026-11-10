@@ -34,7 +34,7 @@ else
   FAIL=1
 fi
 
-if grep -nE '\bbunx?\b|setup-bun' "$ROOT"/.github/workflows/*.yml; then
+if grep -rnE --include='*.yml' --include='*.yaml' '\bbunx?\b|setup-bun' "$ROOT/.github/workflows"; then
   echo "  FAIL: workflows ainda referenciam Bun (linhas acima)"
   FAIL=1
 else
