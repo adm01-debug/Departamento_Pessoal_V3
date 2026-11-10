@@ -9,7 +9,7 @@ NAME="dp-p1-function-path-$$"
 
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
-cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 psql_run() { docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 
@@ -40,7 +40,7 @@ for pass in 1 2; do
   echo "migration pass $pass succeeded"
 done
 
-remaining="$(psql_run -Atc "SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname = ANY (ARRAY['dp_assert_rls','dp_set_updated_at','dp_soft_delete_trigger','dp_table_template','fill_recrutamento_child_empresa','fill_treinamento_certificados_empresa','fill_treinamento_instancias_empresa','gerar_hash_ponto','get_personnel_cost_projection']) AND NOT ('search_path=pg_catalog, public, extensions'=ANY(p.proconfig))")"
+remaining="$(psql_run -Atc "SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname = ANY (ARRAY['dp_assert_rls','dp_set_updated_at','dp_soft_delete_trigger','dp_table_template','fill_recrutamento_child_empresa','fill_treinamento_certificados_empresa','fill_treinamento_instancias_empresa','gerar_hash_ponto','get_personnel_cost_projection']) AND NOT ('search_path=pg_catalog, public, extensions'=ANY(coalesce(p.proconfig, '{}'::text[])))")"
 [ "$remaining" = "0" ] || { echo "ordinary function still has mutable search_path" >&2; exit 1; }
 
 psql_run -c 'CREATE DATABASE p1_function_path_missing_prerequisite' >/dev/null
