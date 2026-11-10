@@ -59,6 +59,13 @@ function calcIRRF(bruto, dependentes = 0) {
 }
 
 // ---- (a) motor canônico: src/utils/rescisaoCalc.ts ----
+// Clamp ao último dia válido do mês de referência (src/utils/rescisaoCalc.ts:58-61):
+// sem ele, admissão em dia 29-31 projetada para um mês mais curto faz o
+// `new Date` rolar para o mês seguinte e o cálculo de avos (férias/13º
+// proporcionais) erra. Repro: admissão 31/jan/2024, desligamento 15/mar/2024
+// → sem o clamp dava meses=1, com o clamp (igual ao motor real) dá meses=2.
+// Usada pelos dois lados da comparação (canônico e edge): o bug não aparecia
+// como divergência entre eles, só como infidelidade ao motor real.
 function calcularAvosCanonico(inicio, fim) {
   if (fim < inicio) return 0;
   let meses = (fim.getFullYear() - inicio.getFullYear()) * 12;
@@ -66,7 +73,10 @@ function calcularAvosCanonico(inicio, fim) {
   const diaInicio = inicio.getDate();
   const diaFim = fim.getDate();
   if (diaFim < diaInicio - 1) meses--;
-  const dataReferencia = new Date(inicio.getFullYear(), inicio.getMonth() + meses, inicio.getDate());
+  const anoRef = inicio.getFullYear();
+  const mesRef = inicio.getMonth() + meses;
+  const ultimoDiaMesRef = new Date(anoRef, mesRef + 1, 0).getDate();
+  const dataReferencia = new Date(anoRef, mesRef, Math.min(inicio.getDate(), ultimoDiaMesRef));
   const diffTime = fim.getTime() - dataReferencia.getTime();
   const diasRestantes = Math.floor(diffTime / 86400000);
   return diasRestantes >= 15 ? meses + 1 : meses;
