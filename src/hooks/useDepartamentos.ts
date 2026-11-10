@@ -1,7 +1,7 @@
 import { useGenericCrud } from './useGenericCrud';
 import { departamentoService } from '@/services/departamentoService';
 import { useEmpresas } from './useEmpresas';
-import { Departamento } from '@/types/entities';
+import type { Departamento } from '@/types/entities';
 
 export function useDepartamentos() {
   const { empresaAtual } = useEmpresas();
@@ -16,8 +16,8 @@ export function useDepartamentos() {
     successMessages: {
       create: 'Departamento criado com sucesso',
       update: 'Departamento atualizado',
-      delete: 'Departamento excluído'
-    }
+      delete: 'Departamento excluído',
+    },
   });
 
   return {

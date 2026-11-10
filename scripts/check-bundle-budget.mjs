@@ -73,8 +73,10 @@ let failures = 0;
 for (const key of Object.keys(measured)) {
   const lim = budget[key];
   const val = measured[key];
-  if (lim === undefined) {
-    console.error(`  FAIL: métrica "${key}" sem baseline (${val} KB medido)`);
+  // typeof: limite não numérico ("cinco", {}, []) fazia `val > lim` ser falso
+  // e a métrica passava como "ok" com qualquer tamanho.
+  if (typeof lim !== 'number') {
+    console.error(`  FAIL: métrica "${key}" sem baseline numérico (${val} KB medido)`);
     failures++;
   } else if (val > lim) {
     console.error(`  FAIL: ${key} = ${val} KB > limite ${lim} KB (+${val - lim} KB)`);
@@ -84,7 +86,7 @@ for (const key of Object.keys(measured)) {
   }
 }
 
-console.log(`\nMaior chunk JS: ${js.max.name} (${Math.round(js.max.bytes / KB)} KB)`);
+console.log(`\nMaior chunk JS: ${js.max.name} (${Math.ceil(js.max.bytes / KB)} KB)`);
 
 if (failures > 0) {
   console.error(`\n❌ ${failures} limite(s) de bundle excedido(s).`);

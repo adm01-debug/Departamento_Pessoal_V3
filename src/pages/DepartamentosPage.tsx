@@ -7,7 +7,7 @@ import { Building2, GitBranch, ArrowRight, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NovoDepartamentoDialog } from '@/components/departamentos/NovoDepartamentoDialog';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
-import { Departamento } from '@/types/entities';
+import type { Departamento } from '@/types/entities';
 export default function DepartamentosPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editando, setEditando] = useState<Departamento | null>(null);

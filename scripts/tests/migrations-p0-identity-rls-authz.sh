@@ -11,7 +11,7 @@ command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
@@ -47,6 +47,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-identity-rls.sql
 docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
 CREATE SCHEMA auth;
 CREATE TYPE public.app_role AS ENUM ('admin','rh','gestor','financeiro','auditor','colaborador');
@@ -171,11 +172,15 @@ after="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\
 
 open_audit="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\"}'; SELECT count(*) FROM public.audit_log;")"
 [ "$open_audit" = "0" ] || { echo "non-admin still reads audit_log: $open_audit" >&2; exit 1; }
+open_policies="$(run_psql -qAtc "SELECT count(*) FROM pg_policies WHERE schemaname='public' AND qual='true';")"
+[ "$open_policies" = "0" ] || { echo "allow-all policy survived the remediation: $open_policies" >&2; exit 1; }
 
 rh_allowed="$(run_psql -qAtc "SET ROLE service_role; SELECT public.pode_gerir_rh_para('00000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001');")"
 [ "$rh_allowed" = "t" ] || { echo "legitimate RH was denied" >&2; exit 1; }
 global_admin_allowed="$(run_psql -qAtc "SET ROLE service_role; SELECT public.pode_gerir_rh_para('00000000-0000-0000-0000-000000000099','20000000-0000-0000-0000-000000000002');")"
 [ "$global_admin_allowed" = "t" ] || { echo "global admin without tenant membership was denied" >&2; exit 1; }
+member_allowed="$(run_psql -qAtc "SET ROLE service_role; SELECT public.pode_gerir_rh_para('00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001');")"
+[ "$member_allowed" = "f" ] || { echo "tenant member without RH role was allowed" >&2; exit 1; }
 
 expect_denied "SET ROLE authenticated; SELECT public.pode_gerir_rh_para('00000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001');"
 expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT * FROM public.get_user_scope_empresas('00000000-0000-0000-0000-000000000002');"
@@ -184,6 +189,7 @@ expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"000000
   echo 'legitimate tenant could not read its CNAB sequence' >&2; exit 1;
 }
 expect_denied "SET ROLE anon; SELECT public.reset_login_attempts('victim','email');"
+expect_denied "SET ROLE authenticated; SELECT public.reset_login_attempts('victim','email');"
 expect_denied "SET ROLE authenticated; SELECT * FROM public.v_audit_trail;"
 expect_denied "SET ROLE anon; SELECT * FROM public.v_system_health;"
 

@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
-import { LucideIcon, Inbox, Search, FileX, Plus, ArrowRight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Inbox, Search, FileX, Plus, ArrowRight } from 'lucide-react';
 import { Button } from './button';
 import { motion } from 'framer-motion';
 
@@ -13,7 +14,15 @@ interface EmptyStateProps {
   className?: string;
 }
 
-export function EmptyState({ icon: Icon = Inbox, title, description, action, secondaryAction, gradient, className }: EmptyStateProps) {
+export function EmptyState({
+  icon: Icon = Inbox,
+  title,
+  description,
+  action,
+  secondaryAction,
+  gradient,
+  className,
+}: EmptyStateProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -25,12 +34,9 @@ export function EmptyState({ icon: Icon = Inbox, title, description, action, sec
         initial={{ scale: 0.8 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.1, type: 'spring', bounce: 0.4 }}
-        className={cn(
-          "rounded-2xl p-5 mb-5",
-          gradient ? `bg-gradient-to-br ${gradient} shadow-lg` : "bg-muted/50"
-        )}
+        className={cn('rounded-2xl p-5 mb-5', gradient ? `bg-gradient-to-br ${gradient} shadow-lg` : 'bg-muted/50')}
       >
-        <Icon className={cn("h-8 w-8", gradient ? "text-primary-foreground" : "text-muted-foreground")} />
+        <Icon className={cn('h-8 w-8', gradient ? 'text-primary-foreground' : 'text-muted-foreground')} />
       </motion.div>
       <h3 className="text-lg font-display font-semibold text-foreground mb-1">{title}</h3>
       {description && <p className="text-sm text-muted-foreground font-body mb-5 max-w-sm">{description}</p>}
@@ -70,7 +76,7 @@ export function EmptyList({ entityName = 'registros', onCreate }: { entityName?:
       title={`Nenhum ${entityName} encontrado`}
       description={`Não há ${entityName} cadastrados ainda. Comece criando o primeiro!`}
       action={onCreate ? { label: `Criar ${entityName}`, onClick: onCreate } : undefined}
-      gradient={onCreate ? "from-primary/20 to-primary-glow/10" : undefined}
+      gradient={onCreate ? 'from-primary/20 to-primary-glow/10' : undefined}
     />
   );
 }

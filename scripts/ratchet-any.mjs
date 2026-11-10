@@ -66,6 +66,11 @@ if (write) {
 let baseline;
 try {
   baseline = JSON.parse(await readFile(baselinePath, 'utf8'));
+  // Valor não numérico (edição manual/merge ruim) fazia `after > before` ser
+  // sempre falso — qualquer regressão passava como "sem regressão".
+  if (!baseline || typeof baseline !== 'object' || Object.values(baseline).some((v) => typeof v !== 'number')) {
+    throw new Error('esperado um objeto { diretório: número }');
+  }
 } catch (err) {
   console.error(`❌ Baseline ausente ou inválido em ${relative(root, baselinePath)}: ${err.message}`);
   console.error('   Rode com --write para criar um baseline inicial após revisão.');

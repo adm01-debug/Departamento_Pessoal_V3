@@ -1,5 +1,6 @@
-import { BaseService, ListOptions, ListResponse } from './baseService';
-import { Colaborador } from '@/types/entities';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
+import type { Colaborador } from '@/types/entities';
 import { colaboradorSchema } from '@/schemas/colaborador';
 import { validateInput } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
