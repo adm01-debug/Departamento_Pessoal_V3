@@ -68,6 +68,7 @@ MAX_SNIPPET = 900
 SECRET_RE = re.compile(
     r"(sk-[A-Za-z0-9_-]{10,}|sk_(?:live|test)_[A-Za-z0-9]{10,}|rk_(?:live|test)_[A-Za-z0-9]{10,}|whsec_[A-Za-z0-9]{16,}|AIza[0-9A-Za-z_-]{30,}|xkeysib-[A-Za-z0-9-]{20,}|SG\.[A-Za-z0-9_-]{16,}\.[A-Za-z0-9_-]{16,}|re_[A-Za-z0-9]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}|AKIA[0-9A-Z]{16}|"
     r"ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[baprs]-[A-Za-z0-9-]{10,}|"
+    r"sb_secret_[A-Za-z0-9_-]{8,}|sbp_[A-Za-z0-9]{20,}|(?i:bearer)\s+[A-Za-z0-9._~+/=-]{16,}|"
     r"-----BEGIN [A-Z ]*PRIVATE KEY-----|postgres(?:ql)?://[^\s'\"]+:[^\s'\"]+@|"
     r"(?i:password|senha|secret|token|api[_-]?key)\s*[:=]\s*['\"][^'\"\\\n]{8,}['\"])"
 )
@@ -186,12 +187,17 @@ def balanced(txt: str, start: int, open_ch: str = "(", close_ch: str = ")") -> i
 
 
 def strip_sql_comments(txt: str) -> str:
-    txt = re.sub(r"/\*[\s\S]*?\*/", "", txt)
-    return re.sub(r"--[^\n]*", "", txt)
+    # literais '...' passam intactos: `--` ou `/*` dentro de string não é comentário
+    return re.sub(r"('(?:[^']|'')*')|/\*[\s\S]*?\*/|--[^\n]*", lambda m: m.group(1) or "", txt)
 
 
 def is_test_file(r: str) -> bool:
     return bool(re.search(r"(\.test\.|\.spec\.|__tests__/|/tests?/|/e2e/|/cypress/)", r))
+
+
+def is_system_code(r: str) -> bool:
+    """Código do sistema: nem teste nem ferramenta/doc (mesmo corte de collect_rules)."""
+    return is_app_code(r) and not is_test_file(r)
 
 
 # --------------------------------------------------------------------------- #
@@ -491,7 +497,10 @@ def analyze_code_file(p: Path, root: Path) -> dict | None:
             info["exports"].append(f"default {d.group(1)}")
         info["hooks"] = HOOK_USE_RE.findall(txt)
     info["imports"] = sorted(set(IMPORT_RE.findall(txt) + REQUIRE_RE.findall(txt)))[:80]
-    for t, chain in SUPA_FROM_RE.findall(txt):
+    for fm in SUPA_FROM_RE.finditer(txt):
+        t, chain = fm.groups()
+        if re.search(r"storage\s+$", txt[max(0, fm.start() - 80):fm.start()]):
+            continue  # `.storage` + quebra de linha + `.from(...)` é bucket de storage, não tabela
         info["tables"].append({"table": t, "op": op_from_chain(chain)})
         cols = set(c for op, c in FILTER_COL_RE.findall(chain) if "." not in c and op != "order")  # a.b = filtro em tabela embutida
         for sel in SELECT_COLS_RE.findall(chain):
@@ -620,9 +629,9 @@ def analyze_code_file(p: Path, root: Path) -> dict | None:
 # 4. Schema SQL (migrations / schema.sql / prisma / database.types.ts)
 # --------------------------------------------------------------------------- #
 SQL_CREATE_TABLE_RE = re.compile(r"create\s+(?:unlogged\s+|temp(?:orary)?\s+|global\s+|local\s+)*table\s+(?:if\s+not\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(", re.I)
-SQL_ALTER_ADD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+(?:column\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+([^,;]+)", re.I)
+SQL_ALTER_ADD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+(?:column\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+([^;]+)", re.I)
 SQL_ALTER_ADD_CONSTRAINT_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+add\s+constraint\s+\"?(\w+)\"?\s+([^;]+);", re.I)
-SQL_ALTER_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+alter\s+(?:column\s+)?\"?(\w+)\"?\s+(set\s+not\s+null|drop\s+not\s+null|set\s+default\s+[^,;]+|drop\s+default|(?:set\s+data\s+)?type\s+[^,;]+)", re.I)
+SQL_ALTER_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+alter\s+(?:column\s+)?\"?(\w+)\"?\s+(set\s+not\s+null|drop\s+not\s+null|set\s+default\s+[^;]+|drop\s+default|(?:set\s+data\s+)?type\s+[^;]+)", re.I)
 SQL_ALTER_DROP_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+column\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
 SQL_DROP_TABLE_RE = re.compile(r"drop\s+table\s+(?:if\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
 SQL_POLICY_RE = re.compile(
@@ -630,7 +639,7 @@ SQL_POLICY_RE = re.compile(
     re.I)
 SQL_DROP_POLICY_RE = re.compile(r"drop\s+policy\s+(?:if\s+exists\s+)?\"?([^\"\n]+?)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
 SQL_RLS_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+(enable|disable|force|no\s+force)\s+row\s+level\s+security", re.I)
-SQL_TRIGGER_RE = re.compile(r"create\s+(?:or\s+replace\s+)?trigger\s+\"?(\w+)\"?\s+(before|after|instead\s+of)\s+([\w\s|]+?)\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?([\s\S]*?)execute\s+(?:function|procedure)\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
+SQL_TRIGGER_RE = re.compile(r"create\s+(?:or\s+replace\s+)?trigger\s+\"?(\w+)\"?\s+(before|after|instead\s+of)\s+([\w\s|,\"]+?)\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?([\s\S]*?)execute\s+(?:function|procedure)\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?", re.I)
 SQL_FUNC_RE = re.compile(r"create\s+(?:or\s+replace\s+)?function\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*\(([^)]*)\)\s*returns\s+((?:setof\s+)?[\w\s\[\]\.]+?)\s+(?=language|as|security|stable|volatile|immutable)", re.I)
 SQL_FUNC_FULL_RE = re.compile(r"create\s+(?:or\s+replace\s+)?function\s+(?:\"?\w+\"?\.)?\"?(\w+)\"?\s*\(([\s\S]*?)\$([\w]*)\$([\s\S]*?)\$\3\$([^;]*);", re.I)
 SQL_ENUM_RE = re.compile(r"create\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+as\s+enum\s*\(([^)]*)\)", re.I)
@@ -638,7 +647,7 @@ SQL_ENUM_ADD_RE = re.compile(r"alter\s+type\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+ad
 SQL_INDEX_RE = re.compile(r"create\s+(unique\s+)?index\s+(?:concurrently\s+)?(?:if\s+not\s+exists\s+)?\"?(\w+)\"?\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:using\s+\w+\s*)?\(([^)]*)\)(\s*where\s+[^;]+)?", re.I)
 SQL_CRON_RE = re.compile(r"cron\.schedule\s*\(\s*'([^']+)'\s*,\s*'([^']+)'\s*,\s*(?:\$\$([\s\S]*?)\$\$|'([^']*)')", re.I)
 SQL_COMMENT_RE = re.compile(r"comment\s+on\s+(table|column|function|type)\s+([\w.\"]+)\s+is\s+'((?:[^']|'')*)'", re.I)
-SQL_VIEW_RE = re.compile(r"create\s+(?:or\s+replace\s+)?(?:materialized\s+)?(?:recursive\s+)?view\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\([^)]*\))?\s*(?:with\s*\([^)]*\)\s*)?as\s+([\s\S]*?);", re.I)
+SQL_VIEW_RE = re.compile(r"create\s+(?:or\s+replace\s+)?(?:materialized\s+)?(?:recursive\s+)?view\s+(?:if\s+not\s+exists\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\([^)]*\))?\s*(?:with\s*\([^)]*\)\s*)?as\s+([\s\S]*?);", re.I)
 SQL_FK_RE = re.compile(r"references\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:\(\s*\"?(\w+)\"?\s*\))?\s*(on\s+delete\s+(?:cascade|set\s+null|restrict|no\s+action|set\s+default))?", re.I)
 SQL_CHECK_RE = re.compile(r"check\s*\(((?:[^()]|\([^()]*\))*)\)", re.I)
 SQL_GENERATED_RE = re.compile(r"generated\s+always\s+as\s*\(((?:[^()]|\([^()]*\))*)\)\s*stored", re.I)
@@ -662,6 +671,20 @@ def split_columns(body: str) -> list[str]:
     if cur:
         parts.append("".join(cur).strip())
     return [p for p in parts if p]
+
+
+SQL_ALTER_HEAD_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?\w+\"?\.)?\"?\w+\"?\s+", re.I)
+
+
+def expand_alter_table(statements: list[str]):
+    """`ALTER TABLE t ação1, ação2;` vira um statement por ação (vírgula de nível superior)."""
+    for st in statements:
+        m = SQL_ALTER_HEAD_RE.match(st)
+        actions = split_columns(st[m.end():].rstrip(";")) if m else []
+        if len(actions) < 2:
+            yield st
+        else:
+            yield from (st[:m.end()] + action + ";" for action in actions)
 
 
 def tkey(sch: str | None, name: str) -> str:
@@ -695,7 +718,7 @@ def split_sql_statements(txt: str) -> list[str]:
         if ch == "'":
             in_sq = True; cur.append(ch); i += 1; continue
         if ch == "$":
-            m = re.match(r"\$[A-Za-z_]*\$", txt[i:i + 64])
+            m = re.match(r"\$(?:[A-Za-z_]\w*)?\$", txt[i:i + 64])
             if m:
                 dollar = m.group(0); cur.append(dollar); i += len(dollar); continue
         if ch == ";":
@@ -713,7 +736,7 @@ def split_sql_statements(txt: str) -> list[str]:
 SQL_RENAME_COL_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+(?:column\s+)?\"?(\w+)\"?\s+to\s+\"?(\w+)\"?", re.I)
 SQL_RENAME_TABLE_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+rename\s+to\s+\"?(\w+)\"?", re.I)
 SQL_DROP_CONSTRAINT_RE = re.compile(r"alter\s+table\s+(?:if\s+exists\s+)?(?:only\s+)?(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s+drop\s+constraint\s+(?:if\s+exists\s+)?\"?(\w+)\"?", re.I)
-SQL_POLICY_HEAD_RE = re.compile(r"create\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w\s,]+?)\s*)?(?=using|with\s+check|;|$)", re.I)
+SQL_POLICY_HEAD_RE = re.compile(r"create\s+policy\s+(?:\"([^\"]+)\"|(\w+))\s+on\s+(?:\"?(\w+)\"?\.)?\"?(\w+)\"?\s*(?:as\s+(permissive|restrictive)\s*)?(?:for\s+(select|insert|update|delete|all)\s*)?(?:to\s+([\w\s,\"]+?)\s*)?(?=using|with\s+check|;|$)", re.I)
 
 
 def parse_policy(st: str) -> dict | None:
@@ -729,7 +752,7 @@ def parse_policy(st: str) -> dict | None:
         close = balanced(rest, km.end() - 1)
         return squash(rest[km.end():close]) if close > 0 else squash(rest[km.end():])
     return {"name": pname.strip(), "table": tkey(m.group(3), m.group(4)), "cmd": (m.group(6) or "ALL").upper(),
-            "roles": squash(m.group(7) or "public"), "mode": (m.group(5) or "permissive").lower(),
+            "roles": squash((m.group(7) or "public").replace('"', "")), "mode": (m.group(5) or "permissive").lower(),
             "using": trunc(clause(r"\busing"), 300), "check": trunc(clause(r"with\s+check"), 300)}
 
 
@@ -761,7 +784,7 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
         for kind, target, comment in SQL_COMMENT_RE.findall(txt):
             tgt = target.replace('"', "").replace("public.", "")
             schema["comments"][f"{kind.lower()}:{tgt}"] = comment.replace("''", "'")
-        for st in split_sql_statements(txt_nc):
+        for st in expand_alter_table(split_sql_statements(txt_nc)):
             low = st.lower().lstrip()
             # ---- CREATE TABLE
             m = SQL_CREATE_TABLE_RE.match(st)
@@ -799,6 +822,9 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                         T[key]["constraints"] = [c for c in T[key]["constraints"] if not re.match(rf"constraint\s+{re.escape(m.group(3))}\b", c, re.I)]
                     continue
                 m = SQL_ALTER_ADD_RE.match(st)
+                if m and m.group(3).lower() in ("primary", "unique", "check", "foreign", "exclude"):
+                    T.setdefault(tkey(m.group(1), m.group(2)), new_table(src))["constraints"].append(trunc(squash(f"{m.group(3)} {m.group(4)}"), 300))
+                    continue
                 if m and m.group(3).lower() != "constraint":
                     key = tkey(m.group(1), m.group(2)); t = T.setdefault(key, new_table(src))
                     if not any(c["name"] == m.group(3) for c in t["columns"]):
@@ -813,9 +839,9 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                                 a = m.group(4); al = a.lower()
                                 if al.startswith("set not null") and "not null" not in c["type"].lower(): c["type"] += " not null"
                                 elif al.startswith("drop not null"): c["type"] = re.sub(r"\s*not null", "", c["type"], flags=re.I)
-                                elif al.startswith("set default"): c["type"] = re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I) + " " + squash(a)
+                                elif al.startswith("set default"): c["type"] = re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I) + " " + squash(a)[4:]
                                 elif al.startswith("drop default"): c["type"] = re.sub(r"\s*default\s+\S+(\([^)]*\))?", "", c["type"], flags=re.I)
-                                elif "type" in al: c["type"] = squash(re.sub(r"^(set\s+data\s+)?type\s+", "", a, flags=re.I)) + " " + re.sub(r"^\S+(\([^)]*\))?", "", c["type"]).strip()
+                                elif "type" in al: c["type"] = squash(re.sub(r"^(set\s+data\s+)?type\s+|\s+using\s[\s\S]*$", "", a, flags=re.I)) + " " + re.sub(r"^\S+(\([^)]*\))?", "", c["type"]).strip()
                                 c["type"] = trunc(c["type"], 200)
                     continue
                 m = SQL_ALTER_DROP_COL_RE.match(st)
@@ -854,6 +880,15 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                 if pol:
                     schema["policies"] = [p for p in schema["policies"] if not (p["name"] == pol["name"] and p["table"] == pol["table"])]
                     schema["policies"].append({**pol, "src": src})
+                continue
+            if low.startswith("alter policy"):
+                # ALTER POLICY nome ON tabela [TO ...] [USING (...)] [WITH CHECK (...)]: mesma gramática do CREATE.
+                hm = SQL_POLICY_HEAD_RE.match("create" + st[5:])
+                pol = parse_policy("create" + st[5:])
+                for p in schema["policies"] if pol else []:
+                    if p["name"] == pol["name"] and p["table"] == pol["table"]:
+                        p.update({k: pol[k] for k in ("using", "check") if pol[k]}, src=src)
+                        if hm.group(7): p["roles"] = pol["roles"]
                 continue
             m = SQL_DROP_POLICY_RE.match(st)
             if m:
@@ -944,10 +979,13 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
             schema["sources"].append(rel(f, root))
     # database.types.ts (Supabase gen types) — fonte quando migrations não têm a tabela
     for f in files:
-        if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f) and "Row:" in read_text(f):
-            txt = read_text(f)
+        if f.name in ("types.ts", "database.types.ts", "database.ts", "supabase.ts") and "Tables:" in read_text(f, MAX_SQL_BYTES) and "Row:" in read_text(f, MAX_SQL_BYTES):
+            txt = tables_txt = read_text(f, MAX_SQL_BYTES)  # o arquivo gerado passa fácil do limite de código-fonte
             schema["types_file"] = rel(f, root)
-            for name, row in re.findall(r"\n\s+(\w+):\s*\{\s*\n\s*Row:\s*\{([^}]*)\}", txt):
+            for vm in reversed(list(re.finditer(r"\bViews:\s*\{", txt))):  # Row de view não é tabela (não tem RLS)
+                end = balanced(txt, vm.end() - 1, "{", "}")
+                tables_txt = tables_txt[:vm.end()] + tables_txt[end:] if end > 0 else tables_txt
+            for name, row in re.findall(r"\n\s+(\w+):\s*\{\s*\n\s*Row:\s*\{([^}]*)\}", tables_txt):
                 cols = []
                 for line in row.strip().splitlines():
                     cm = re.match(r"\s*(\w+)\??:\s*(.+?)\s*;?$", line)
@@ -974,7 +1012,8 @@ def parse_sql_schema(root: Path, files: list[Path]) -> dict:
                     schema["enums"][name] = re.findall(r"\"([^\"]+)\"", vals)
             fb = block("Functions")
             if fb:
-                for name in re.findall(r"\n\s+(\w+):\s*\{", fb):
+                ind = re.match(r"\n([ \t]+)", fb)  # só o 1º nível: `Args:`/`Returns:` não são funções; overload vem como `nome:\n | {`
+                for name in re.findall(r"\n" + ind.group(1) + r"(\w+):", fb) if ind else re.findall(r"\n\s+(\w+):\s*\{", fb):
                     schema["functions"].setdefault(name, {"args": "", "returns": "?", "lang": "", "src": rel(f, root), "security_definer": False, "search_path": False, "body": "", "raises": [], "tables": []})
             schema["sources"].append(rel(f, root))
             break
@@ -1205,6 +1244,7 @@ def detect_modules(root: Path, code: dict[str, dict]) -> list[dict]:
 def build_dataflow(code: dict[str, dict], feats: dict, schema: dict) -> dict:
     table_usage: dict[str, dict[str, set]] = defaultdict(lambda: defaultdict(set))
     table_cols: dict[str, set] = defaultdict(set)
+    app_cols: dict[str, set] = defaultdict(set)  # auditoria: fixture de teste/script não é coluna usada pelo sistema
     env_usage, rpc_usage, invoke_usage, storage_usage, ext_usage, realtime = (defaultdict(set) for _ in range(6))
     dyn = []
     for r, info in code.items():
@@ -1213,6 +1253,7 @@ def build_dataflow(code: dict[str, dict], feats: dict, schema: dict) -> dict:
                 table_usage[t["table"]][op].add(r)
         for t, cols in info["table_cols"].items():
             table_cols[t].update(cols)
+            if is_system_code(r): app_cols[t].update(cols)
         if info["dyn_from"]:
             dyn.append({"file": r, "count": info["dyn_from"]})
         for e in info["env"]: env_usage[e].add(r)
@@ -1237,7 +1278,7 @@ def build_dataflow(code: dict[str, dict], feats: dict, schema: dict) -> dict:
     schema_names = {k.split(".")[-1]: k for k in schema["tables"]}
     view_names = {k.split(".")[-1] for k in schema["views"]}
     cols_unknown = []
-    for t, cols in table_cols.items():
+    for t, cols in app_cols.items():
         key = schema_names.get(t)
         if key:
             known = {c["name"] for c in schema["tables"][key]["columns"]}
@@ -1431,7 +1472,9 @@ def build_audit(code, schema, feats, dataflow, rules, access, docs) -> dict:
     for c in dataflow["columns_unknown"]:
         issues.append({"kind": "coluna", "msg": f"coluna `{c['column']}` usada no código não existe no schema de `{c['table']}`", "where": []})
     for t in dataflow["tables_only_in_code"]:
-        issues.append({"kind": "tabela", "msg": f"tabela `{t}` usada no código não existe nas migrations/types do repo", "where": sorted({f for fs in dataflow["tables"][t].values() for f in fs})[:4]})
+        where = sorted({f for fs in dataflow["tables"][t].values() for f in fs if is_system_code(f)})
+        if where:
+            issues.append({"kind": "tabela", "msg": f"tabela `{t}` usada no código não existe nas migrations/types do repo", "where": where[:4]})
     for r in access["risky"]:
         issues.append({"kind": "rls", "msg": f"`{r['table']}`: {r['issue']}", "where": r["files"][:4]})
     for k, c, ty in access["money_float"]:
@@ -1439,13 +1482,15 @@ def build_audit(code, schema, feats, dataflow, rules, access, docs) -> dict:
     for k in access["tenant_missing"]:
         issues.append({"kind": "tenant", "msg": f"`{k}` não tem coluna `{access['tenant_key']}` (isolamento por tenant pode estar incompleto)", "where": []})
     for k, v in dataflow["invokes"].items():
-        if k not in {e["name"] for e in feats["edge_functions"]}:
+        v = [f for f in v if is_system_code(f)]
+        if v and k not in {e["name"] for e in feats["edge_functions"]}:
             issues.append({"kind": "edge", "msg": f"edge function `{k}` invocada mas não existe em supabase/functions/", "where": v[:4]})
     for k, v in dataflow["rpc"].items():
-        if k not in schema["functions"]:
+        v = [f for f in v if is_system_code(f)]
+        if v and k not in schema["functions"]:
             issues.append({"kind": "rpc", "msg": f"RPC `{k}` chamada mas não definida nas migrations/types", "where": v[:4]})
     for d in dataflow["dynamic_from"]:
-        issues.append({"kind": "dinâmico", "msg": f"{d['count']} chamada(s) `.from(variável)` — tabela só conhecida em runtime", "where": [d["file"]]})
+        if is_system_code(d["file"]): issues.append({"kind": "dinâmico", "msg": f"{d['count']} chamada(s) `.from(variável)` — tabela só conhecida em runtime", "where": [d["file"]]})
     for n, f in schema["functions"].items():
         if f.get("security_definer") and not f.get("search_path"):
             issues.append({"kind": "segurança", "msg": f"função `{n}` é SECURITY DEFINER sem `set search_path` (risco de escalação)", "where": [f["src"]]})
@@ -1469,7 +1514,7 @@ def build_audit(code, schema, feats, dataflow, rules, access, docs) -> dict:
         gaps.append("Nenhum perfil/role identificado — quem pode fazer o quê não está explícito no código nem no banco.")
     if not schema["tables"]:
         gaps.append("Nenhum schema encontrado (migrations, prisma ou database.types.ts) — o banco real é desconhecido para este contexto.")
-    if dataflow["tables_only_in_code"]:
+    if any(i["kind"] == "tabela" for i in issues):
         gaps.append("Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.")
     return {"issues": issues, "gaps": gaps}
 
@@ -1493,7 +1538,7 @@ def git_info(root: Path) -> dict:
                 cur = None; continue
             if len(commits) == 0:
                 sha = parts[0]
-            cur = {"sha": parts[1], "date": parts[2], "author": parts[3], "subject": subject, "files": []}
+            cur = {"sha": parts[1], "date": parts[2], "author": parts[3], "subject": redact(subject), "files": []}
             commits.append(cur)
         elif line.strip() and cur is not None and not skip:
             cur["files"].append(line.strip())

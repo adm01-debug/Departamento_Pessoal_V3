@@ -167,7 +167,14 @@ def main() -> int:
             avisos.append(f"gerado no commit `{str(commit)[:7]}`, HEAD é `{head[:7]}`")
             if status == "ok":
                 status = "desatualizado"
-        arquivos = sorted(p.relative_to(d).as_posix() for p in d.rglob("*") if p.is_file() and p.suffix in (".md", ".json") and not p.name.startswith(".")) if local else []
+        if idade_min is not None and idade_min < 0:
+            idade_min = 0 if idade_min >= -5 else None  # até 5 min é relógio de outro runner; além disso a data é inválida
+        if local and idade_min is None and not atual_por_commit:
+            # sem data válida não há como aplicar o limite de idade: não pode sair como "ok"
+            avisos.append("data da coleta ausente, inválida ou no futuro")
+            if status == "ok":
+                status = "não verificável"
+        arquivos =sorted(p.relative_to(d).as_posix() for p in d.rglob("*") if p.is_file() and p.suffix in (".md", ".json") and not p.name.startswith(".")) if local else []
         fontes.append({"nome": nome, "caminho": caminho, "branch": branch, "local": local, "manifest": man, "gerado": gerado, "idade_min": idade_min,
                        "commit": commit, "status": status, "avisos": avisos, "arquivos": arquivos, "entrada": entry_file(d, man) if local else ""})
 
