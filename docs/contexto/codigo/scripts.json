@@ -243,7 +243,7 @@
   {
    "arquivo": "scripts/audit-security-config.mjs",
    "descricao": "* E-077 · Gate estático de configuração de segurança (sem acesso a banco).",
-   "linhas": 165,
+   "linhas": 193,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -359,8 +359,8 @@
   },
   {
    "arquivo": "scripts/backup.sh",
-   "descricao": "Backup Script for Departamento Pessoal System Usage: ./backup.sh [full|incremental|db|files]",
-   "linhas": 93,
+   "descricao": "Backup Script for Departamento Pessoal System Usage: ./backup.sh [full|db|files|cleanup]",
+   "linhas": 110,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -369,7 +369,7 @@
   {
    "arquivo": "scripts/build-rebaseline.mjs",
    "descricao": "Estas correções não pertencem ao histórico de migrations ativo: elas são aplicadas SOBRE o snapshot físico antes de ele virar a baseline única.",
-   "linhas": 140,
+   "linhas": 141,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -387,7 +387,7 @@
   {
    "arquivo": "scripts/capacitor-build.sh",
    "descricao": "============================================================== P5-079: Script de build Mobile (Capacitor + Android)",
-   "linhas": 178,
+   "linhas": 184,
    "env": [],
    "npm_scripts": [
     "build:mobile",
@@ -424,7 +424,7 @@
   {
    "arquivo": "scripts/ci/check-claude-md-integrity.mjs",
    "descricao": "* GA02: garante que o CLAUDE.md nao foi apagado ou esvaziado por outra sessao.",
-   "linhas": 54,
+   "linhas": 74,
    "env": [
     "CLAUDE_MD_BASE"
    ],
@@ -473,7 +473,7 @@
   {
    "arquivo": "scripts/deploy.sh",
    "descricao": "deploy script Departamento Pessoal",
-   "linhas": 10,
+   "linhas": 11,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -821,7 +821,7 @@
   {
    "arquivo": "scripts/rollback.sh",
    "descricao": "rollback script Departamento Pessoal",
-   "linhas": 10,
+   "linhas": 11,
    "env": [],
    "npm_scripts": [],
    "workflows": [],

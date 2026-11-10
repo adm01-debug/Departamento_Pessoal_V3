@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2d6010b679a6a6b7d9d7b0f97b22c6d03126a221",
+  "commit": "4921f71280a269e526e07babf6a42862affcd083",
   "branch": "main",
-  "data_commit": "2026-11-10T15:24:56-03:00",
+  "data_commit": "2026-11-10T15:25:04-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4921f71",
+    "data": "2026-11-10",
+    "assunto": "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com ide"
+   },
+   {
+    "sha": "f8dace8",
+    "data": "2026-11-10",
+    "assunto": "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o "
+   },
    {
     "sha": "2d6010b",
     "data": "2026-11-10",
@@ -121,19 +131,9 @@
     "sha": "8c51e5f",
     "data": "2026-11-08",
     "assunto": "fix: corrige 3 inconsistências de doc achadas na validação pós-#395"
-   },
-   {
-    "sha": "28a1191",
-    "data": "2026-11-08",
-    "assunto": "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)"
-   },
-   {
-    "sha": "98f0f59",
-    "data": "2026-11-08",
-    "assunto": "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)"
    }
   ],
-  "arquivos_mudados_7d": 300,
+  "arquivos_mudados_7d": 305,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 76
+    "mudancas": 74
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 72
+    "mudancas": 70
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 91
+    "commits": 93
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2833,
   "arquivos_codigo": 1524,
-  "linhas_codigo": 265123,
+  "linhas_codigo": 265172,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -464,7 +464,7 @@
   },
   "scripts/audit-security-config.mjs": {
    "arquivos": 1,
-   "linhas": 165
+   "linhas": 193
   },
   "scripts/audit-types-drift.mjs": {
    "arquivos": 1,
@@ -476,7 +476,7 @@
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
-   "linhas": 140
+   "linhas": 141
   },
   "scripts/check-bundle-budget.mjs": {
    "arquivos": 1,
@@ -488,7 +488,7 @@
   },
   "scripts/ci": {
    "arquivos": 1,
-   "linhas": 54
+   "linhas": 74
   },
   "scripts/db": {
    "arquivos": 2,

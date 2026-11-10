@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2d6010b679a6a6b7d9d7b0f97b22c6d03126a221",
+  "sha": "4921f71280a269e526e07babf6a42862affcd083",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 18:25 UTC",
+  "generated_at": "2026-11-10 18:29 UTC",
   "files_total": 2854,
   "code_files": 2339,
-  "code_lines": 313020
+  "code_lines": 313069
  },
  "version": "1.3.2",
- "facts_hash": "9e5ff662df267da2",
+ "facts_hash": "fc738596a7970eb4",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -95915,7 +95915,7 @@
   {
    "module": "scripts",
    "files": 107,
-   "lines": 21845,
+   "lines": 21894,
    "tables": [
     "a",
     "anexos",
@@ -227962,7 +227962,13 @@
   },
   "scripts/audit-security-config.mjs": {
    "path": "scripts/audit-security-config.mjs",
-   "lines": 165,
+   "lines": 193,
+   "params": [
+    {
+     "name": "ANY",
+     "value": "'*'"
+    }
+   ],
    "rule_comments": [
     "cliente sem validação do gateway.",
     "um comentário citando \"PII_PATH\" não deve satisfazer o gate."
@@ -227979,7 +227985,7 @@
   },
   "scripts/build-rebaseline.mjs": {
    "path": "scripts/build-rebaseline.mjs",
-   "lines": 140,
+   "lines": 141,
    "errors": [
     "A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído.",
     "A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido.",
@@ -228956,7 +228962,7 @@
   },
   "scripts/ci/check-claude-md-integrity.mjs": {
    "path": "scripts/ci/check-claude-md-integrity.mjs",
-   "lines": 54,
+   "lines": 74,
    "env": [
     "CLAUDE_MD_BASE"
    ],
@@ -228969,6 +228975,9 @@
      "name": "SHRINK_THRESHOLD",
      "value": "0.30"
     }
+   ],
+   "rule_comments": [
+    "Base pedida explicitamente (CI) e ilegivel: a checagem de encolhimento nao rodaria — nao pode passar."
    ],
    "doc": "!/usr/bin/env node",
    "percents": [
@@ -276912,10 +276921,34 @@
   }
  },
  "git": {
-  "sha": "2d6010b679a6a6b7d9d7b0f97b22c6d03126a221",
+  "sha": "4921f71280a269e526e07babf6a42862affcd083",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4921f71",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com identificador entre aspas (#420)",
+    "files": [
+     "scripts/audit-security-config.mjs",
+     "scripts/build-rebaseline.mjs"
+    ]
+   },
+   {
+    "sha": "f8dace8",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o trabalho (#419)",
+    "files": [
+     "scripts/backup.sh",
+     "scripts/capacitor-build.sh",
+     "scripts/ci/check-claude-md-integrity.mjs",
+     "scripts/deploy.sh",
+     "scripts/rollback.sh",
+     "scripts/tests/wait-for-postgres-container.sh"
+    ]
+   },
    {
     "sha": "2d6010b",
     "date": "2026-11-10",
@@ -277424,24 +277457,6 @@
     "files": [
      "scripts/ratchet-lint-warnings.mjs"
     ]
-   },
-   {
-    "sha": "27afd9f",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: guard falso verde em audit-required-checks quando ruleset tem regras mas nenhum check obrigatório",
-    "files": [
-     "scripts/audit-required-checks.mjs"
-    ]
-   },
-   {
-    "sha": "20761bc",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas",
-    "files": [
-     "scripts/audit-rls-least-privilege.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -277502,14 +277517,6 @@
     2
    ],
    [
-    "scripts/audit-required-checks.mjs",
-    2
-   ],
-   [
-    "scripts/audit-rls-least-privilege.mjs",
-    2
-   ],
-   [
     "scripts/autofix/install-timer.sh",
     2
    ],
@@ -277523,6 +277530,14 @@
    ],
    [
     "scripts/autofix/regras/verificar.mjs",
+    2
+   ],
+   [
+    "scripts/sync/install-all-timers.sh",
+    2
+   ],
+   [
+    "scripts/sync/install-autocommit-timer.sh",
     2
    ]
   ]
