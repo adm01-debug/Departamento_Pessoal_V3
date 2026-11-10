@@ -31,11 +31,13 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CPFInput } from '@/components/ui/cpf-input';
-import { CEPInput, Address } from '@/components/ui/cep-input';
+import type { Address } from '@/components/ui/cep-input';
+import { CEPInput } from '@/components/ui/cep-input';
 import { PhoneInput } from '@/components/ui/phone-input';
 import { SignaturePad } from '@/components/admissao/SignaturePad';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useDocumentOCR, OCRResult } from '@/hooks/useDocumentOCR';
+import type { OCRResult } from '@/hooks/useDocumentOCR';
+import { useDocumentOCR } from '@/hooks/useDocumentOCR';
 import { contratacaoService } from '@/services/contratacaoService';
 import { TokenInput } from '@/components/contratacao/TokenInput';
 

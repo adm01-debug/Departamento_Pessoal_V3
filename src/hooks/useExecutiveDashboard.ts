@@ -9,7 +9,7 @@ type FolhaResumo = {
   total_descontos: number | null;
 };
 
-export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
+export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
   return useQuery({
     queryKey: ['executive-kpis', empresaId, periodo],
     enabled: !!empresaId,

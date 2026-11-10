@@ -44,8 +44,8 @@ const USES_RE = /uses:\s+(\S+)/g;
 // Campos controlados por quem abre a PR/issue: interpolá-los em run: é
 // injeção de script (github.event.*, head_ref, ref, actor, inputs).
 const RUN_INTERPOLATION_RE = /\$\{\{\s*(github\.event\.|github\.head_ref|github\.ref|github\.actor|github\.triggering_actor|inputs\.)/;
-// Job no nível `  nome:` dentro de `jobs:`.
-const JOB_HEADER_RE = /^  ([\w-]+):\s*$/gm;
+// Job no nível `  nome:` dentro de `jobs:` (aceita comentário no fim da linha).
+const JOB_HEADER_RE = /^  ([\w-]+):[ \t]*(?:#.*)?$/gm;
 
 for (const file of files) {
   const path = join(WORKFLOWS_DIR, file);
@@ -66,8 +66,8 @@ for (const file of files) {
         const start = heads[i].index;
         const end = i + 1 < heads.length ? heads[i + 1].index : jobsSection.length;
         const body = jobsSection.slice(start, end);
-        if (body.includes('if: false')) continue; // job desabilitado
-        if (!body.includes('timeout-minutes')) missing.push(heads[i][1]);
+        if (/^ {4}if:\s*false\b/m.test(body)) continue; // job desabilitado
+        if (!/^ {4}timeout-minutes:/m.test(body)) missing.push(heads[i][1]);
       }
       if (missing.length > 0) {
         fail(`${file}: jobs sem timeout-minutes: ${missing.join(', ')} (D11)`);
@@ -132,7 +132,7 @@ for (const file of files) {
 
   // 6. SHA pins: (a) comentário coerente + (b) check reverso — todo SHA usado deve estar no JSON
   if (Object.keys(actionPins).length > 0) {
-    const versionCommentRe = /uses:\s+[^\s@]+@([0-9a-f]{40})\s+#\s+(\S+)/g;
+    const versionCommentRe = /uses:\s+[^\s@]+@([0-9a-f]{40})(?:[ \t]+#[ \t]+(\S+))?/g;
     let mismatches = [];
     let missing = [];
     for (const m of raw.matchAll(versionCommentRe)) {
@@ -199,7 +199,7 @@ for (const file of files) {
 
   // 11. node-version: literal proibido (W38 concluído — todos usam node-version-file) (W97g/D6)
   for (let i = 0; i < lines.length; i++) {
-    if (/^\s+node-version:\s+'?\d/.test(lines[i])) {
+    if (/^\s+node-version:\s+['"]?\d/.test(lines[i])) {
       fail(`${file}:${i + 1}: node-version: literal, usar node-version-file: .nvmrc (W97g/D6): "${lines[i].trim()}"`);
     }
   }
@@ -217,7 +217,7 @@ for (const file of files) {
         const start12 = heads12[i].index;
         const end12 = i + 1 < heads12.length ? heads12[i + 1].index : js12.length;
         const body12 = js12.slice(start12, end12);
-        if (body12.includes('if: false')) continue; // job desabilitado
+        if (/^ {4}if:\s*false\b/m.test(body12)) continue; // job desabilitado
         const nameMatch12 = body12.match(/^\s{4}name:\s+(.+)$/m);
         if (!nameMatch12) continue;
         const jobName12 = nameMatch12[1].trim();
@@ -232,7 +232,8 @@ for (const file of files) {
         if (ifBlock.length === 0) continue;
         const ifText = ifBlock.join('\n');
         // Seguro se a condição inclui pull_request ou workflow_call
-        if (ifText.includes('pull_request') || ifText.includes('workflow_call')) continue;
+        const excludesPr = /!=\s*['"]pull_request['"]/.test(ifText);
+        if (!excludesPr && (ifText.includes('pull_request') || ifText.includes('workflow_call'))) continue;
         violations.push(`${heads12[i][1]} (name: "${jobName12}", if: "${ifBlock[0].trim().slice(0, 60)}")`);
       }
       if (violations.length > 0) {

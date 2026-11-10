@@ -34,7 +34,6 @@ async function fetchJson(url) {
   }
   if (res.status === 401 || res.status === 403) {
     console.error(`[report-workflows] GitHub API ${res.status} — token sem escopo "actions:read" ou expirado.`);
-    console.error(`  Token atual: ${TOKEN.slice(0, 8)}... (primeiros 8 chars)`);
     process.exit(0); // soft-skip: não reprovar build por token local desatualizado
   }
   if (!res.ok) throw new Error(`GitHub API ${res.status}: ${url}`);
@@ -61,17 +60,20 @@ async function getWorkflowDurations(workflowId) {
 
 async function main() {
   const { workflows } = await fetchJson(
-    `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows`
+    `https://api.github.com/repos/${OWNER}/${REPO}/actions/workflows?per_page=100`
   );
-  console.log('# Relatório de Workflows\n');
-  console.log('| Workflow | Median (min) | P95 (min) | Runs |');
-  console.log('|----------|-------------|-----------|------|');
+  // Acumula e só imprime no fim: um 401/403 no meio (soft-skip acima) deixava
+  // um relatório parcial no stdout, que o workflows-report.yml injetava no doc.
+  const out = ['# Relatório de Workflows\n'];
+  out.push('| Workflow | Median (min) | P95 (min) | Runs |');
+  out.push('|----------|-------------|-----------|------|');
   for (const wf of workflows) {
     const stats = await getWorkflowDurations(wf.id);
-    if (!stats) { console.log(`| ${wf.name} | — | — | 0 |`); continue; }
+    if (!stats) { out.push(`| ${wf.name} | — | — | 0 |`); continue; }
     const flag = stats.median > 12 ? ' ⚠️' : '';
-    console.log(`| ${wf.name} | ${stats.median}${flag} | ${stats.p95} | ${stats.count} |`);
+    out.push(`| ${wf.name} | ${stats.median}${flag} | ${stats.p95} | ${stats.count} |`);
   }
+  console.log(out.join('\n'));
 }
 
 main().catch(e => { console.error(e.message); process.exit(1); });

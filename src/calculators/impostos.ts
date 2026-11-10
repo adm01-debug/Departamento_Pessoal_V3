@@ -20,7 +20,7 @@ import {
 // tabela por ano-calendário (default: mais recente); ano sem tabela cai na
 // mais próxima (a mais antiga quando abaixo do intervalo, a mais recente
 // quando acima — simulador; a edge falha fechado em ambos os casos).
-export function calcularINSS(salarioBruto: number, ano: number = 2026): number {
+export function calcularINSS(salarioBruto: number, ano = 2026): number {
   if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos
 
   const anos = Object.keys(INSS_POR_ANO)
@@ -51,11 +51,11 @@ export function calcularINSS(salarioBruto: number, ano: number = 2026): number {
 
 export function calcularIRRF(
   salarioBruto: number,
-  dependentes: number = 0,
-  outrasDeducoes: number = 0,
+  dependentes = 0,
+  outrasDeducoes = 0,
   // Pensão alimentícia recebida é isenta de IRRF (Art. 6°, XXXIII, Lei 7.713/88)
-  isPensaoAlimenticia: boolean = false,
-  ano: number = 2026
+  isPensaoAlimenticia = false,
+  ano = 2026
 ): number {
   if (!(salarioBruto > 0)) return 0; // captura também NaN/negativos
   if (isPensaoAlimenticia) return 0; // rendimento isento — sem incidência de IRRF
