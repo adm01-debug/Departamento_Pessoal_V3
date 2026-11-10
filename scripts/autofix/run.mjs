@@ -130,6 +130,7 @@ const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replac
 const report = { stamp, mode: HERE ? 'here' : 'worktree', dry: DRY, steps: {}, commits: [], ok: false };
 let cwd = REPO;
 let startSha = '';
+let startIdx = ''; // --here: árvore do ÍNDICE inicial (versões staged), para o rollback não perdê-las
 let startSnap;
 let srcFiles = [];
 
@@ -189,6 +190,7 @@ async function main() {
     report.branch = w.branch;
   }
   startSha = await git(cwd, 'rev-parse', 'HEAD');
+  if (HERE) startIdx = await git(cwd, 'write-tree').catch(() => ''); // índice com conflito não tem árvore: sem restauração
   const req = createRequire(join(cwd, 'package.json'));
   const ts = req('typescript');
   const buildInfo = join(STATE_DIR, `tsc-${createHash('sha1').update(cwd).digest('hex').slice(0, 8)}.tsbuildinfo`);
@@ -353,7 +355,10 @@ async function main() {
     if (HERE) {
       restore(cwd, startSnap, touchedAll);
       // --here --commit: os commits das etapas também saem (reset misto: HEAD e índice voltam, os arquivos já foram restaurados)
-      if (report.commits.length) await git(cwd, 'reset', '-q', startSha);
+      if (report.commits.length) {
+        await git(cwd, 'reset', '-q', startSha);
+        if (startIdx) await git(cwd, 'read-tree', startIdx); // devolve ao índice o que estava em `git add`
+      }
     } else await git(cwd, 'reset', '--hard', '-q', startSha);
     return 1;
   }
@@ -398,7 +403,10 @@ try {
     // Os commits das etapas já concluídas não passaram pelo gate final: saem também (ficavam na branch, com o worktree sujo).
     // startSha só existe depois que o worktree do autofix foi assumido; no --here o reset é misto (não toca nos arquivos).
     if (startSha && !HERE) await git(cwd, 'reset', '--hard', '-q', startSha);
-    else if (startSha && report.commits.length) await git(cwd, 'reset', '-q', startSha);
+    else if (startSha && report.commits.length) {
+      await git(cwd, 'reset', '-q', startSha);
+      if (startIdx) await git(cwd, 'read-tree', startIdx);
+    }
   } catch {}
 } finally {
   if (lockOwned) writeReport(); // quem não pegou a trava não sobrescreve o relatório da execução ativa (mesmo carimbo de minuto)
