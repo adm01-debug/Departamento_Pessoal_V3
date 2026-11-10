@@ -54,7 +54,8 @@ try {
   // The rollout migration applies the hardening programmatically (FOREACH over
   // an expected_views array), so parity is checked on the view set and on the
   // two operations applied to every entry.
-  const rollout = await readFile(rolloutPath, 'utf8');
+  // Linhas comentadas não são DDL aplicado.
+  const rollout = (await readFile(rolloutPath, 'utf8')).replace(/^\s*--.*$/gm, '');
   const baseline = await readFile(baselineViewPath, 'utf8');
   const baselineViews = new Set(
     [...baseline.matchAll(/^ALTER VIEW public\."([^"]+)"/gm)].map((m) => m[1]),

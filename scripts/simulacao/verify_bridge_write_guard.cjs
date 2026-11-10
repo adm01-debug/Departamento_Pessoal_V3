@@ -112,5 +112,18 @@ if (extraPass !== OPS_NAO_EQ.length) {
   process.exit(1);
 }
 
+// A função acima é uma CÓPIA do guard. Sem conferir o código real, o script
+// continuava verde mesmo com o guard removido do bridge.
+const bridgeSrc = require('fs').readFileSync(
+  require('path').resolve(__dirname, '../../supabase/functions/external-db-bridge/index.ts'),
+  'utf8',
+);
+const guardReal =
+  /if \(action === "update" \|\| action === "delete"\) \{\s*const nonEq = filters\.find\(\(f\) => f\.op !== "eq"\);\s*if \(nonEq\) \{\s*return jsonError\(\s*400,\s*"UNSUPPORTED_FILTER_FOR_WRITE",[\s\S]*?\);\s*\}\s*if \(filters\.length === 0\) \{\s*return jsonError\(400, "WRITE_REQUIRES_FILTER",/;
+if (!guardReal.test(bridgeSrc)) {
+  console.error('ASSERT: write-guard não encontrado em supabase/functions/external-db-bridge/index.ts — a cópia simulada não corresponde mais ao código real');
+  process.exit(1);
+}
+
 console.log(`\nAuto-validação extra: ${OPS_NAO_EQ.length} operadores não-eq em UPDATE — todos bloqueados ✅`);
 console.log(`\n✅ ${pass}/${cases.length} cenários conforme esperado.`);
