@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `75460b779f` · branch `main` · 2026-11-10 22:17 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e87dcb776e` · branch `main` · 2026-11-10 23:36 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4310,6 +4310,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | chave obrigatória {secret_key} | `scripts/regras_negocio/test_generate.py` |
 | header inválido: Bearer {bearer} | `scripts/regras_negocio/test_generate.py` |
 | token obrigatório {access_token} | `scripts/regras_negocio/test_generate.py` |
+| tsRequire: caminho deve ser absoluto (recebido:  | `scripts/simulacao/_lib/ts-require.cjs` |
 | cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável | `scripts/supabase_snapshot/snapshot.py` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -4533,8 +4534,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Preencha salário, data de admissão e desligamento | `src/pages/CalculadoraRescisaoPage.tsx` |
 | Servidor não retornou um resultado válido | `src/pages/CalculadoraRescisaoPage.tsx` |
 | Não foi possível abrir anexo | `src/pages/CanalContabilidadePage.tsx` |
-| ; import { Skeleton } from  | `src/pages/CienciaMedidaPage.tsx` |
-| … +474 linhas — lista completa em `context.json` | |
+| … +475 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

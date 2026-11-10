@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "75460b779f45e4b3a334156084c240e5d167ea07",
+  "sha": "e87dcb776ee086bd2f7ad8c81610ee38858039c4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 22:17 UTC",
-  "files_total": 2895,
-  "code_files": 2366,
-  "code_lines": 321205
+  "generated_at": "2026-11-10 23:36 UTC",
+  "files_total": 2896,
+  "code_files": 2367,
+  "code_lines": 321276
  },
  "version": "1.3.2",
- "facts_hash": "4b1bf56cfec8bd93",
+ "facts_hash": "d26401183c0e5695",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -389,7 +389,7 @@
    ".tsx": 679,
    ".mjs": 100,
    ".js": 15,
-   ".cjs": 10,
+   ".cjs": 11,
    ".py": 5
   },
   "monorepo_packages": [],
@@ -95981,8 +95981,8 @@
   },
   {
    "module": "scripts",
-   "files": 130,
-   "lines": 29987,
+   "files": 131,
+   "lines": 30039,
    "tables": [
     "a",
     "anexos",
@@ -96067,6 +96067,7 @@
     "#",
     "@lib/y",
     "@supabase/supabase-js",
+    "@swc/core",
     "@tanstack/react-query",
     "b",
     "drizzle-orm",
@@ -96077,6 +96078,7 @@
     "k6",
     "lib",
     "lodash",
+    "module",
     "node:assert",
     "node:child_process",
     "node:crypto",
@@ -96086,9 +96088,7 @@
     "node:https",
     "node:module",
     "node:net",
-    "node:os",
-    "node:path",
-    "node:string_decoder"
+    "node:os"
    ],
    "imports_modules": [
     "src/b",
@@ -98274,7 +98274,7 @@
   {
    "module": "supabase/tests",
    "files": 4,
-   "lines": 667,
+   "lines": 686,
    "tables": [
     "audit_log",
     "batidas_ponto",
@@ -107022,6 +107022,10 @@
    {
     "file": "scripts/regras_negocio/test_generate.py",
     "msg": "token obrigatório {access_token}"
+   },
+   {
+    "file": "scripts/simulacao/_lib/ts-require.cjs",
+    "msg": "tsRequire: caminho deve ser absoluto (recebido: "
    },
    {
     "file": "scripts/supabase_snapshot/snapshot.py",
@@ -209999,7 +210003,8 @@
    "supabase/rebaseline/20260902_view_security_invoker_remediation.sql",
    "supabase/tests/ferias_embed_test.ts",
    "supabase/tests/migration_consistency.test.ts",
-   "supabase/tests/plano100/00_setup_stubs.sql"
+   "supabase/tests/plano100/00_setup_stubs.sql",
+   "supabase/tests/plano100/20_asserts.sql"
   ],
   "security_definer_fns": [
    "_admissao_token_row",
@@ -230556,20 +230561,22 @@
   },
   "scripts/simulacao/simulate_adiant_13.cjs": {
    "path": "scripts/simulacao/simulate_adiant_13.cjs",
-   "lines": 153,
+   "lines": 187,
    "rule_comments": [
     "Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias,",
     "desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar",
-    "= 26.136 combinações. Auto-validação integrada.",
+    "solicitar_adiantamento_13_ferias, linhas 60-65): o bloqueio por prazo só",
+    "Auto-validação integrada.",
     "Inclui: Nov/Dez (pré-prazo), Jan (dentro do prazo), Fev-Out (pós-prazo)",
     "Fev-Out do ano corrente (pós-deadline: bloqueados por prazo)",
+    "do prazo (férias cedo no ano) e uma depois (férias tarde no ano) — geram,",
     "— Auto-validação: assertions que pegam bugs de lógica —",
     "3. Jan 31 é elegível (limite exato do prazo)",
     "4. Nov/Dez do ano anterior: antes de 31/jan → deve ser elegível",
-    "5. Fev-Out do ano corrente: após 31/jan → sempre bloqueado por prazo",
-    "4. Valor máximo: salário/2 (12 avos, 1ª parcela)"
+    "5a. Fev-Out, férias AINDA NÃO começaram → bloqueado por prazo",
+    "6. Valor máximo: salário/2 (12 avos, 1ª parcela)"
    ],
-   "doc": "Simulação exaustiva: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias, desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar junto com as férias. Só pode ser solicitado 1x por ano. Cenários: salários (6) × mes …",
+   "doc": "Simulação exaustiva: adiantamento 13º nas férias (Lei 4.749/65 art. 2º §2º) Regra: colaborador pode solicitar 1ª parcela do 13º junto com férias, desde que solicite até 31/janeiro do ano corrente. Empresa deve pagar junto com as férias. Só pode ser solicitado 1x por ano. Exceção real (motor: migrati …",
    "calc_fns": [
     {
      "name": "round2",
@@ -230583,8 +230590,8 @@
     },
     {
      "name": "elegivel",
-     "params": "dataSolicitacao, anoFerias, jaRecebeuNoAno",
-     "body": "if (jaRecebeuNoAno) return false; const limite = new Date(Date.UTC(anoFerias, 0, 31)); // 31/jan return dataSolicitacao <= limite;"
+     "params": "dataSolicitacao, anoFerias, jaRecebeuNoAno, dataInicioFerias",
+     "body": "if (jaRecebeuNoAno) return false; const limite = new Date(Date.UTC(anoFerias, 0, 31)); // 31/jan if (dataSolicitacao <= limite) return true; return dataInicioFerias <= dataSolicitacao; // férias já em curso"
     },
     {
      "name": "calcularValor",
@@ -230729,53 +230736,19 @@
   },
   "scripts/simulacao/verify_irrf_fix.cjs": {
    "path": "scripts/simulacao/verify_irrf_fix.cjs",
-   "lines": 125,
-   "params": [
-    {
-     "name": "TETO_INSS",
-     "value": "8157.41"
-    },
-    {
-     "name": "DEDUCAO_SIMPLIFICADA_IRRF",
-     "value": "564.8"
-    },
-    {
-     "name": "DEDUCAO_DEPENDENTE_IRRF",
-     "value": "189.59"
-    }
-   ],
-   "doc": "Regressão pós-correção (task 7 / achado K1): reimplementa em JS puro (a) o motor canônico src/calculators/impostos.ts::calcularIRRF (b) o NOVO calcIRRF de supabase/functions/calcular-folha/index.ts (pós-fix) e compara os dois no mesmo grid de simulate_irrf.cjs, para confirmar divergência zero (objet …",
+   "lines": 64,
+   "doc": "Regressão pós-correção (task 7 / achado K1): compara os DOIS MOTORES REAIS do produto — src/calculators/impostos.ts::calcularIRRF (front) e supabase/functions/_shared/irrf.ts::calcIRRF (edge, hoje importado diretamente por calcular-folha/index.ts) — carregados via @swc/core (scripts/simulacao/_lib/t …",
    "calc_fns": [
     {
      "name": "round2",
      "params": "v",
      "body": "return Math.round((v + Number.EPSILON) * 100) / 100;"
-    },
-    {
-     "name": "calcularINSS",
-     "params": "salarioBruto",
-     "body": "if (!(salarioBruto > 0)) return 0; let descontoTotal = 0; let baseRestante = Math.min(salarioBruto, TETO_INSS); for (let i = 0; i < FAIXAS_INSS.length; i++) { const faixa = FAIXAS_INSS[i]; const limiteAnterior = i === 0 ? 0 : FAIXAS_INSS[i - 1].limite; const faixaCalculo = Math.min(baseRestante, faixa.limite - limiteAnterior); if (faixaCalculo <= 0) break; descontoTotal += faixaCalculo * faixa.aliquota; baseRestante -= faixaCalculo; } return round2(descontoTotal);"
-    },
-    {
-     "name": "calcularIRRFCanonico",
-     "params": "salarioBruto, dependentes = 0",
-     "body": "if (!(salarioBruto > 0)) return 0; const descontoINSS = calcularINSS(salarioBruto); const baseCalculoLegal = salarioBruto - descontoINSS - dependentes * DEDUCAO_DEPENDENTE_IRRF; const baseCalculoSimplificado = salarioBruto - DEDUCAO_SIMPLIFICADA_IRRF; const baseCalculo = Math.max(0, Math.min(baseCalculoLegal, baseCalculoSimplificado)); if (baseCalculo <= 0) return 0; let impostoTotal = 0; for (let i = 0; i < FAIXAS_IRRF.length; i++) { const faixa = FAIXAS_IRRF[i]; const limiteAnterior = i === 0 …"
-    },
-    {
-     "name": "calcINSSEdge",
-     "params": "salario",
-     "body": "if (!Number.isFinite(salario) || salario <= 0) return 0; let desc = 0; const baseCalculo = Math.min(salario, TETO_INSS); let rest = baseCalculo; for (let i = 0; i < FAIXAS_INSS.length; i++) { const limAnt = i === 0 ? 0 : FAIXAS_INSS[i - 1].limite; const f = Math.min(rest, FAIXAS_INSS[i].limite - limAnt); if (f <= 0) break; desc += f * FAIXAS_INSS[i].aliquota; rest -= f; } return round2(desc);"
-    },
-    {
-     "name": "calcIRRFEdgeNovo",
-     "params": "bruto, dependentes = 0",
-     "body": "if (!Number.isFinite(bruto) || bruto <= 0) return 0; const inss = calcINSSEdge(bruto); const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF; const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF; const base = Math.max(0, Math.min(baseLegal, baseSimplificada)); if (base <= 0) return 0; for (const f of FAIXAS_IRRF) { if (base <= f.limite) return Math.max(0, round2(base * f.aliquota - f.deducao)); } return 0;"
     }
    ]
   },
   "scripts/simulacao/verify_rescisao_fix.cjs": {
    "path": "scripts/simulacao/verify_rescisao_fix.cjs",
-   "lines": 384,
+   "lines": 394,
    "env": [
     "TZ"
    ],
@@ -230813,7 +230786,7 @@
     {
      "name": "calcularAvosCanonico",
      "params": "inicio, fim",
-     "body": "if (fim < inicio) return 0; let meses = (fim.getFullYear() - inicio.getFullYear()) * 12; meses += fim.getMonth() - inicio.getMonth(); const diaInicio = inicio.getDate(); const diaFim = fim.getDate(); if (diaFim < diaInicio - 1) meses--; const dataReferencia = new Date(inicio.getFullYear(), inicio.getMonth() + meses, inicio.getDate()); const diffTime = fim.getTime() - dataReferencia.getTime(); const diasRestantes = Math.floor(diffTime / 86400000); return diasRestantes >= 15 ? meses + 1 : meses;"
+     "body": "if (fim < inicio) return 0; let meses = (fim.getFullYear() - inicio.getFullYear()) * 12; meses += fim.getMonth() - inicio.getMonth(); const diaInicio = inicio.getDate(); const diaFim = fim.getDate(); if (diaFim < diaInicio - 1) meses--; const anoRef = inicio.getFullYear(); const mesRef = inicio.getMonth() + meses; const ultimoDiaMesRef = new Date(anoRef, mesRef + 1, 0).getDate(); const dataReferencia = new Date(anoRef, mesRef, Math.min(inicio.getDate(), ultimoDiaMesRef)); const diffTime = fim.ge …"
     }
    ],
    "temporal": [
@@ -230828,6 +230801,14 @@
     "multaFGTS = round2((saldo_fgts + fgtsRescisao) * 0.2);",
     "multaFGTS = round2((saldo_fgts + fgtsRescisao) * 0.4);"
    ]
+  },
+  "scripts/simulacao/_lib/ts-require.cjs": {
+   "path": "scripts/simulacao/_lib/ts-require.cjs",
+   "lines": 69,
+   "errors": [
+    "tsRequire: caminho deve ser absoluto (recebido: "
+   ],
+   "doc": "Carrega um módulo .ts do PRODUTO (Deno-style, import relativo com extensão .ts) dentro do Node, via @swc/core, para que os simuladores comparem contra o código real em vez de uma cópia reimplementada que pode ter divergido. Zero dependência nova: @swc/core já está em node_modules (devDependency tran …"
   },
   "scripts/supabase_snapshot/snapshot.py": {
    "path": "scripts/supabase_snapshot/snapshot.py",
@@ -277706,20 +277687,35 @@
   },
   "supabase/tests/plano100/20_asserts.sql": {
    "path": "supabase/tests/plano100/20_asserts.sql",
-   "lines": 289,
+   "lines": 308,
    "is_test": true,
    "temporal": [
     "'holerites', now() - interval '400 days');",
     "WHERE created_at < now() - interval '300 days';",
     "WHERE created_at > now() - interval '30 days';"
-   ]
+   ],
+   "uses_service_role": true
   }
  },
  "git": {
-  "sha": "75460b779f45e4b3a334156084c240e5d167ea07",
+  "sha": "e87dcb776ee086bd2f7ad8c81610ee38858039c4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e87dcb7",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)",
+    "files": [
+     "scripts/automation.config.json",
+     "scripts/simulacao/_lib/ts-require.cjs",
+     "scripts/simulacao/simulate_adiant_13.cjs",
+     "scripts/simulacao/verify_irrf_fix.cjs",
+     "scripts/simulacao/verify_rescisao_fix.cjs",
+     "supabase/tests/plano100/20_asserts.sql"
+    ]
+   },
    {
     "sha": "75460b7",
     "date": "2026-11-10",
@@ -278338,16 +278334,6 @@
      "src/utils/folhaCalc.ts",
      "src/utils/rescisaoPDF.ts"
     ]
-   },
-   {
-    "sha": "4584235",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)",
-    "files": [
-     "scripts/sync/install-timer.sh",
-     "scripts/sync/sync-github.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -278368,16 +278354,16 @@
     5
    ],
    [
-    "scripts/sync/sync-github.sh",
-    5
+    "scripts/automation.config.json",
+    4
    ],
    [
     "scripts/autofix/run.mjs",
     4
    ],
    [
-    "scripts/automation.config.json",
-    3
+    "scripts/sync/sync-github.sh",
+    4
    ],
    [
     "scripts/autofix/README.md",
@@ -278392,8 +278378,8 @@
     3
    ],
    [
-    "scripts/sync/install-timer.sh",
-    3
+    "scripts/simulacao/verify_rescisao_fix.cjs",
+    2
    ],
    [
     "scripts/ci/README.md",
@@ -278416,6 +278402,10 @@
     2
    ],
    [
+    "scripts/sync/install-timer.sh",
+    2
+   ],
+   [
     "scripts/sync/repos.conf.example",
     2
    ],
@@ -278425,10 +278415,6 @@
    ],
    [
     "scripts/autofix/eslint-safe-fix.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/catalogo.mjs",
     2
    ]
   ]

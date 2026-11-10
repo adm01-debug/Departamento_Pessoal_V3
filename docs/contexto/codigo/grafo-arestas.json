@@ -44,6 +44,9 @@
   "scripts/maintenance/typecheck.mjs": [
    "scripts/maintenance/lib.mjs"
   ],
+  "scripts/simulacao/verify_irrf_fix.cjs": [
+   "scripts/simulacao/_lib/ts-require.cjs"
+  ],
   "src/App.tsx": [
    "src/components/AdminRoute.tsx",
    "src/components/ProtectedRoute.tsx",
