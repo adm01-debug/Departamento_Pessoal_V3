@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 573,
+ "total": 575,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 535
+  "unit": 537
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 63
+   "arquivos": 65
   },
   {
    "padrao": "e2e/",
@@ -241,14 +241,14 @@
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
    "tipo": "e2e",
-   "linhas": 155,
+   "linhas": 159,
    "testa": [],
    "casos": 0
   },
   {
    "arquivo": "scripts/e2e/seed.mjs",
    "tipo": "e2e",
-   "linhas": 336,
+   "linhas": 339,
    "testa": [],
    "casos": 0
   },
@@ -316,6 +316,13 @@
    "casos": 1
   },
   {
+   "arquivo": "scripts/tests/db-migration-scripts.test.mjs",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [],
+   "casos": 5
+  },
+  {
    "arquivo": "scripts/tests/inventario-banco.test.mjs",
    "tipo": "unit",
    "linhas": 185,
@@ -356,6 +363,13 @@
    "casos": 3
   },
   {
+   "arquivo": "scripts/tests/run-sql-diag-guard.test.mjs",
+   "tipo": "unit",
+   "linhas": 102,
+   "testa": [],
+   "casos": 4
+  },
+  {
    "arquivo": "scripts/tests/sw-routing.test.mjs",
    "tipo": "unit",
    "linhas": 153,
@@ -365,7 +379,7 @@
   {
    "arquivo": "scripts/tests/validate-canonical-db-url.test.mjs",
    "tipo": "unit",
-   "linhas": 32,
+   "linhas": 66,
    "testa": [
     "scripts/validate-canonical-db-url.mjs"
    ],

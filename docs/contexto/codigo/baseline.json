@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8597905b565a9f26c0c3eea64b6a88dcc6cb5c04",
+  "commit": "1dbce640a14c71271d62b61a8c777372736b1521",
   "branch": "main",
-  "data_commit": "2026-11-09T18:44:22-03:00",
+  "data_commit": "2026-11-09T21:03:30-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1dbce64",
+    "data": "2026-11-09",
+    "assunto": "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)"
+   },
    {
     "sha": "8597905",
     "data": "2026-11-09",
@@ -126,14 +131,9 @@
     "sha": "bb559b4",
     "data": "2026-11-08",
     "assunto": "feat: guards false-green em audit-edge-audit-log-contract"
-   },
-   {
-    "sha": "faaf11c",
-    "data": "2026-11-08",
-    "assunto": "feat: guards de false-green em audit-bridge-frontend-contract"
    }
   ],
-  "arquivos_mudados_7d": 241,
+  "arquivos_mudados_7d": 255,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 82
+    "commits": 83
    },
    {
     "autor": "dependabot[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2826,
-  "arquivos_codigo": 1518,
-  "linhas_codigo": 263476,
+  "arquivos_total": 2828,
+  "arquivos_codigo": 1520,
+  "linhas_codigo": 263837,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 436,
   "migrations": 781,
   "cron_jobs": 41,
-  "testes": 573,
+  "testes": 575,
   "workflows": 17,
   "scripts": 100,
   "docs_md": 289
@@ -480,7 +480,7 @@
   },
   "scripts/check-bundle-budget.mjs": {
    "arquivos": 1,
-   "linhas": 94
+   "linhas": 96
   },
   "scripts/check-dependencies.js": {
    "arquivos": 1,
@@ -492,19 +492,19 @@
   },
   "scripts/db": {
    "arquivos": 2,
-   "linhas": 349
+   "linhas": 364
   },
   "scripts/diag": {
    "arquivos": 1,
-   "linhas": 274
+   "linhas": 303
   },
   "scripts/e2e": {
    "arquivos": 3,
-   "linhas": 641
+   "linhas": 648
   },
   "scripts/eslint-tests-any.config.mjs": {
    "arquivos": 1,
-   "linhas": 35
+   "linhas": 36
   },
   "scripts/gen-table-columns.mjs": {
    "arquivos": 1,
@@ -540,11 +540,11 @@
   },
   "scripts/load": {
    "arquivos": 1,
-   "linhas": 69
+   "linhas": 80
   },
   "scripts/probes": {
    "arquivos": 2,
-   "linhas": 201
+   "linhas": 222
   },
   "scripts/provision-e2e-users.mjs": {
    "arquivos": 1,
@@ -552,15 +552,15 @@
   },
   "scripts/ratchet-any-tests.mjs": {
    "arquivos": 1,
-   "linhas": 105
+   "linhas": 111
   },
   "scripts/ratchet-any.mjs": {
    "arquivos": 1,
-   "linhas": 102
+   "linhas": 107
   },
   "scripts/ratchet-lint-warnings.mjs": {
    "arquivos": 1,
-   "linhas": 106
+   "linhas": 120
   },
   "scripts/regras_negocio": {
    "arquivos": 3,
@@ -568,7 +568,7 @@
   },
   "scripts/report-workflows.mjs": {
    "arquivos": 1,
-   "linhas": 78
+   "linhas": 80
   },
   "scripts/simulacao": {
    "arquivos": 12,
@@ -576,27 +576,27 @@
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
-   "linhas": 140
+   "linhas": 144
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
    "linhas": 2690
   },
   "scripts/tests": {
-   "arquivos": 13,
-   "linhas": 1532
+   "arquivos": 15,
+   "linhas": 1754
   },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
-   "linhas": 61
+   "linhas": 68
   },
   "scripts/validate-canonical-db-url.mjs": {
    "arquivos": 1,
-   "linhas": 51
+   "linhas": 64
   },
   "scripts/validate-plan-50.mjs": {
    "arquivos": 1,
-   "linhas": 120
+   "linhas": 122
   },
   "src/App.tsx": {
    "arquivos": 1,
@@ -819,10 +819,10 @@
  ],
  "qualidade": {
   "any": 75,
-  "console_log": 254,
+  "console_log": 250,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 14,
+  "todos": 15,
   "arquivos_acima_500_linhas": 49
  },
  "todos": [
@@ -861,6 +861,12 @@
    "linha": 4,
    "tipo": "TODO",
    "texto": "E2E autenticado"
+  },
+  {
+   "arquivo": "scripts/smoke-hash-triggers.mjs",
+   "linha": 42,
+   "tipo": "TODO",
+   "texto": "gatilho da função precisa selar (bool_or aprovava a função"
   },
   {
    "arquivo": "scripts/tests/workflows-contract.test.mjs",

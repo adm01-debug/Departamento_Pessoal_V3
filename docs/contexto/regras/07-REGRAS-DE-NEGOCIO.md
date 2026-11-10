@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8597905b56` · branch `main` · 2026-11-09 22:03 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1dbce640a1` · branch `main` · 2026-11-10 01:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4243,6 +4243,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | A migração não pode recriar o schema public gerenciado. | `scripts/build-rebaseline.mjs` |
 | A migração squash não pode conter dados de Auth ou negócio. | `scripts/build-rebaseline.mjs` |
 | ${email} já existe no projeto — usar conta dedicada de teste ou E2E_ALLOW_EXISTING_ACCOUNT=1 para sobrescrever senha/roles | `scripts/provision-e2e-users.mjs` |
+| esperado um objeto { diretório: número } | `scripts/ratchet-any-tests.mjs` |
+| esperado um objeto { diretório: número } | `scripts/ratchet-any.mjs` |
+| esperado um objeto { regra: número } | `scripts/ratchet-lint-warnings.mjs` |
 | GitHub API ${res.status}: ${url} | `scripts/report-workflows.mjs` |
 | GitHub API inacessível (rede): ${err.message} | `scripts/report-workflows.mjs` |
 | SUPABASE_DB_URL ausente | `scripts/validate-canonical-db-url.mjs` |
@@ -4251,6 +4254,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | SUPABASE_DB_URL deve usar postgresql:// | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL não contém senha | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL não pertence ao projeto canônico | `scripts/validate-canonical-db-url.mjs` |
+| SUPABASE_DB_URL não pode sobrescrever host, porta, database, usuário ou sslmode na query string | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL não é uma URI válida | `scripts/validate-canonical-db-url.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
 | eslint não devolveu JSON (exit ${r.code}):\n${(r.stderr \|\| r.stdout).slice(0, 2000)} | `scripts/autofix/lib.mjs` |
@@ -4261,6 +4265,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | outra execução do autofix está ativa (${LOCK}) | `scripts/autofix/run.mjs` |
 | tsc quebrou na linha de base:\n${baseTsc.raw.slice(0, 1500)} | `scripts/autofix/run.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/classify-migration-drift.mjs` |
+| --max-pending inválido: ${args.get( | `scripts/db/derive-pending-migrations.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/derive-pending-migrations.mjs` |
 | --entrada exige o caminho do arquivo com as respostas do banco.sql | `scripts/inventario/gerar-banco.mjs` |
 | CANONICAL_SUPABASE_REF=${ref} nao e o projeto canonico (${PROJETO_CANONICO}). | `scripts/inventario/gerar-banco.mjs` |
@@ -4521,12 +4526,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione um arquivo e tipo | `src/pages/DocumentosPage.tsx` |
 | Evento ${evento.tipo_evento} possui ${result.errors.length} erro(s) de validação. | `src/pages/ESocialPage.tsx` |
 | Falha ao validar evento | `src/pages/ESocialPage.tsx` |
-| XML não disponível. Envie o evento primeiro. | `src/pages/ESocialPage.tsx` |
-|                  className= | `src/pages/FeriasPage.tsx` |
-| Falha ao atualizar os dados de férias | `src/pages/FeriasPage.tsx` |
-| Configure os dados bancários primeiro | `src/pages/FinanceiroBancarioPage.tsx` |
-| Erro ao carregar dados bancários | `src/pages/FinanceiroBancarioPage.tsx` |
-| … +445 linhas — lista completa em `context.json` | |
+| … +450 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4571,7 +4571,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6756 testes em 543 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6765 testes em 545 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4875,7 +4875,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/SectionHeader.test.tsx` | 9 | SectionHeader · renders title · renders subtitle when provided · does not render subtitle when absent … |
 | `src/components/__tests__/SignaturePad.test.tsx` | 9 | SignaturePad · renders canvas element · shows  · renders Limpar button … |
 | `src/components/__tests__/Simulador13Dialog.test.tsx` | 9 | Simulador13Dialog · renders 13º Salário trigger button · renders Simulador 13º Salário dialog title · renders Salário Base label … |
-| … +243 linhas — lista completa em `context.json` | | |
+| … +245 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

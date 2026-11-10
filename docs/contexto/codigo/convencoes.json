@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (468)",
-   "co-localizado (*.test) (63)",
+   "co-localizado (*.test) (65)",
    "e2e/ (27)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)",
    "fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)",
    "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)",
    "fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)",
-   "fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommit) (#409)",
-   "feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)"
+   "fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommit) (#409)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

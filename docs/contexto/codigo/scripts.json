@@ -400,7 +400,7 @@
   {
    "arquivo": "scripts/check-bundle-budget.mjs",
    "descricao": "* E51-030 — Orçamento de bundle.",
-   "linhas": 94,
+   "linhas": 96,
    "env": [],
    "npm_scripts": [
     "audit:bundle"
@@ -437,7 +437,7 @@
   {
    "arquivo": "scripts/db/classify-migration-drift.mjs",
    "descricao": null,
-   "linhas": 217,
+   "linhas": 224,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -446,7 +446,7 @@
   {
    "arquivo": "scripts/db/derive-pending-migrations.mjs",
    "descricao": "* W67 — deriva, sem hardcode, os arquivos de `supabase/migrations/*.sql`",
-   "linhas": 132,
+   "linhas": 140,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -464,7 +464,7 @@
   {
    "arquivo": "scripts/deploy-functions-novo-projeto.sh",
    "descricao": "Deploy de todas as Edge Functions no projeto Supabase canônico. Uso:",
-   "linhas": 72,
+   "linhas": 77,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -482,7 +482,7 @@
   {
    "arquivo": "scripts/diag/run-sql-diag.mjs",
    "descricao": "* Canonical read-only SQL diagnostic runner.",
-   "linhas": 274,
+   "linhas": 303,
    "env": [
     "ALLOW_PII",
     "DIAG_MAX_ROWS",
@@ -499,7 +499,7 @@
   {
    "arquivo": "scripts/eslint-tests-any.config.mjs",
    "descricao": "* Config mínima do ratchet de `any` em TESTES (E51-029).",
-   "linhas": 35,
+   "linhas": 36,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -508,7 +508,7 @@
   {
    "arquivo": "scripts/format-check-changed.sh",
    "descricao": "Format-check only files changed vs the base ref. Rationale: enforcing Prettier on the entire legacy codebase would create a",
-   "linhas": 45,
+   "linhas": 53,
    "env": [],
    "npm_scripts": [
     "format:check:changed"
@@ -587,7 +587,7 @@
   {
    "arquivo": "scripts/healthcheck.sh",
    "descricao": "============================================================================ E-095 · Healthcheck de ambiente — Departamento Pessoal",
-   "linhas": 182,
+   "linhas": 184,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -671,7 +671,7 @@
   {
    "arquivo": "scripts/load/bridge-load.k6.js",
    "descricao": "Load test do external-db-bridge (PGBouncer path) com k6. Pré-requisitos:",
-   "linhas": 69,
+   "linhas": 80,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -680,7 +680,7 @@
   {
    "arquivo": "scripts/probes/print-summary.mjs",
    "descricao": "* W71 — Resumo estruturado dos canonical probes para $GITHUB_STEP_SUMMARY.",
-   "linhas": 65,
+   "linhas": 68,
    "env": [
     "GITHUB_RUN_ID",
     "PROBES_OUTCOME",
@@ -695,7 +695,7 @@
   {
    "arquivo": "scripts/probes/run-probes.mjs",
    "descricao": "* E71 — Canonical security probes runner.",
-   "linhas": 136,
+   "linhas": 154,
    "env": [
     "GITHUB_OUTPUT",
     "SUPABASE_DB_URL"
@@ -735,7 +735,7 @@
   {
    "arquivo": "scripts/ratchet-any-tests.mjs",
    "descricao": "* Ratchet de `any` em ARQUIVOS DE TESTE (E51-029) — irmão de ratchet-any.mjs,",
-   "linhas": 105,
+   "linhas": 111,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-any-tests"
@@ -746,7 +746,7 @@
   {
    "arquivo": "scripts/ratchet-any.mjs",
    "descricao": "* `any` explícito é dívida medida, não proibida — mas só pode diminuir.",
-   "linhas": 102,
+   "linhas": 107,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-any"
@@ -757,7 +757,7 @@
   {
    "arquivo": "scripts/ratchet-lint-warnings.mjs",
    "descricao": "* E43 — Orçamento de warnings ESLint por regra.",
-   "linhas": 106,
+   "linhas": 120,
    "env": [],
    "npm_scripts": [
     "audit:ratchet-warnings"
@@ -808,7 +808,7 @@
   {
    "arquivo": "scripts/report-workflows.mjs",
    "descricao": "* W55: scripts/report-workflows.mjs",
-   "linhas": 78,
+   "linhas": 80,
    "env": [
     "GITHUB_TOKEN"
    ],
@@ -988,7 +988,7 @@
   {
    "arquivo": "scripts/smoke-hash-triggers.mjs",
    "descricao": "* Smoke test dos selos de integridade (`enforce_*_hash`).",
-   "linhas": 140,
+   "linhas": 144,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -1079,7 +1079,7 @@
   {
    "arquivo": "scripts/typecheck-edge.sh",
    "descricao": "Mirrors the CI job \"Edge Functions (deno check)\" (.github/workflows/ci.yml) so a contributor can catch a real `deno check` failure before pushing.",
-   "linhas": 41,
+   "linhas": 46,
    "env": [],
    "npm_scripts": [
     "typecheck:edge"
@@ -1093,7 +1093,7 @@
   {
    "arquivo": "scripts/update-workflows-status.mjs",
    "descricao": "* W92: injeta a saída de scripts/report-workflows.mjs em",
-   "linhas": 61,
+   "linhas": 68,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -1104,7 +1104,7 @@
   {
    "arquivo": "scripts/validate-canonical-db-url.mjs",
    "descricao": null,
-   "linhas": 51,
+   "linhas": 64,
    "env": [
     "CANONICAL_SUPABASE_REF",
     "SUPABASE_DB_URL"
@@ -1122,7 +1122,7 @@
   {
    "arquivo": "scripts/validate-plan-50.mjs",
    "descricao": "* Impede que a edição dos planos executivos perca etapas, subetapas, checkpoints",
-   "linhas": 120,
+   "linhas": 122,
    "env": [],
    "npm_scripts": [
     "audit:plan50"

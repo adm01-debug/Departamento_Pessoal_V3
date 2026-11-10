@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8597905b565a9f26c0c3eea64b6a88dcc6cb5c04",
+  "sha": "1dbce640a14c71271d62b61a8c777372736b1521",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-09 22:03 UTC",
-  "files_total": 2847,
-  "code_files": 2333,
-  "code_lines": 311367
+  "generated_at": "2026-11-10 01:08 UTC",
+  "files_total": 2849,
+  "code_files": 2335,
+  "code_lines": 311728
  },
  "version": "1.3.2",
- "facts_hash": "5620e3db9b9f3e14",
+ "facts_hash": "96597acfac073bb7",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -344,7 +344,7 @@
    ".sql": 817,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 71,
+   ".mjs": 73,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -94893,8 +94893,8 @@
   },
   {
    "module": "scripts",
-   "files": 101,
-   "lines": 20192,
+   "files": 103,
+   "lines": 20553,
    "tables": [
     "a",
     "audit_log",
@@ -101887,7 +101887,8 @@
     "supabase/functions/alertas-preditivos/index.ts"
    ],
    "PATH": [
-    "scripts/tests/contexto-publicacao.test.mjs"
+    "scripts/tests/contexto-publicacao.test.mjs",
+    "scripts/tests/run-sql-diag-guard.test.mjs"
    ],
    "PGDUMP": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -105542,6 +105543,18 @@
     "msg": "${email} já existe no projeto — usar conta dedicada de teste ou E2E_ALLOW_EXISTING_ACCOUNT=1 para sobrescrever senha/roles"
    },
    {
+    "file": "scripts/ratchet-any-tests.mjs",
+    "msg": "esperado um objeto { diretório: número }"
+   },
+   {
+    "file": "scripts/ratchet-any.mjs",
+    "msg": "esperado um objeto { diretório: número }"
+   },
+   {
+    "file": "scripts/ratchet-lint-warnings.mjs",
+    "msg": "esperado um objeto { regra: número }"
+   },
+   {
     "file": "scripts/report-workflows.mjs",
     "msg": "GitHub API ${res.status}: ${url}"
    },
@@ -105572,6 +105585,10 @@
    {
     "file": "scripts/validate-canonical-db-url.mjs",
     "msg": "SUPABASE_DB_URL não pertence ao projeto canônico"
+   },
+   {
+    "file": "scripts/validate-canonical-db-url.mjs",
+    "msg": "SUPABASE_DB_URL não pode sobrescrever host, porta, database, usuário ou sslmode na query string"
    },
    {
     "file": "scripts/validate-canonical-db-url.mjs",
@@ -105612,6 +105629,10 @@
    {
     "file": "scripts/db/classify-migration-drift.mjs",
     "msg": "Argumento inválido: ${key ?? "
+   },
+   {
+    "file": "scripts/db/derive-pending-migrations.mjs",
+    "msg": "--max-pending inválido: ${args.get("
    },
    {
     "file": "scripts/db/derive-pending-migrations.mjs",
@@ -146120,6 +146141,26 @@
     "name": "snapshot Supabase preserva SQL durante coletas parciais (offline)"
    },
    {
+    "file": "scripts/tests/db-migration-scripts.test.mjs",
+    "name": "classify: sidecar .verify.sql não é migration nem duplica a versão"
+   },
+   {
+    "file": "scripts/tests/db-migration-scripts.test.mjs",
+    "name": "classify: --failed-file aceita caminho, não só o nome do arquivo"
+   },
+   {
+    "file": "scripts/tests/db-migration-scripts.test.mjs",
+    "name": "classify: --last-successful-ordinal não numérico reprova"
+   },
+   {
+    "file": "scripts/tests/db-migration-scripts.test.mjs",
+    "name": "derive: --max-pending não numérico reprova em vez de desligar o gate"
+   },
+   {
+    "file": "scripts/tests/db-migration-scripts.test.mjs",
+    "name": "derive: roda com espaço no caminho e por symlink (antes saía 0 sem saída)"
+   },
+   {
     "file": "scripts/tests/inventario-banco.test.mjs",
     "name": "banco.sql tem as secoes esperadas e cada uma devolve a coluna j"
    },
@@ -146214,6 +146255,22 @@
    {
     "file": "scripts/tests/inventario-rotas.test.mjs",
     "name": "rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)"
+   },
+   {
+    "file": "scripts/tests/run-sql-diag-guard.test.mjs",
+    "name": "recusa: ${label}"
+   },
+   {
+    "file": "scripts/tests/run-sql-diag-guard.test.mjs",
+    "name": "aceita: ${label}"
+   },
+   {
+    "file": "scripts/tests/run-sql-diag-guard.test.mjs",
+    "name": "exige allow_pii: ${label}"
+   },
+   {
+    "file": "scripts/tests/run-sql-diag-guard.test.mjs",
+    "name": "aceita com allow_pii: coluna com nome reservado entre aspas"
    },
    {
     "file": "src/calculators/__tests__/auditHelper.test.ts",
@@ -226191,10 +226248,11 @@
   },
   "scripts/check-bundle-budget.mjs": {
    "path": "scripts/check-bundle-budget.mjs",
-   "lines": 94,
+   "lines": 96,
    "rule_comments": [
     "Mede dist/assets após `npm run build` e reprova se algum limite do",
-    "descer: para afrouxar um limite é preciso editar o baseline com"
+    "descer: para afrouxar um limite é preciso editar o baseline com",
+    "typeof: limite não numérico (\"cinco\", {}, []) fazia `val > lim` ser falso"
    ],
    "doc": "!/usr/bin/env node"
   },
@@ -226212,7 +226270,7 @@
   },
   "scripts/eslint-tests-any.config.mjs": {
    "path": "scripts/eslint-tests-any.config.mjs",
-   "lines": 35,
+   "lines": 36,
    "exports": [
     "default tseslint"
    ],
@@ -226333,7 +226391,10 @@
   },
   "scripts/ratchet-any-tests.mjs": {
    "path": "scripts/ratchet-any-tests.mjs",
-   "lines": 105,
+   "lines": 111,
+   "errors": [
+    "esperado um objeto { diretório: número }"
+   ],
    "params": [
     {
      "name": "RULE",
@@ -226344,7 +226405,10 @@
   },
   "scripts/ratchet-any.mjs": {
    "path": "scripts/ratchet-any.mjs",
-   "lines": 102,
+   "lines": 107,
+   "errors": [
+    "esperado um objeto { diretório: número }"
+   ],
    "params": [
     {
      "name": "RULE",
@@ -226355,17 +226419,21 @@
   },
   "scripts/ratchet-lint-warnings.mjs": {
    "path": "scripts/ratchet-lint-warnings.mjs",
-   "lines": 106,
+   "lines": 120,
+   "errors": [
+    "esperado um objeto { regra: número }"
+   ],
    "rule_comments": [
     "* E43 — Orçamento de warnings ESLint por regra.",
     "* Nenhuma regra pode subir; qualquer uma pode descer.",
-    "node scripts/ratchet-lint-warnings.mjs            # falha se alguma regra subiu"
+    "node scripts/ratchet-lint-warnings.mjs            # falha se alguma regra subiu",
+    "--max-warnings do lint:ci também não pode ser."
    ],
    "doc": "!/usr/bin/env node"
   },
   "scripts/report-workflows.mjs": {
    "path": "scripts/report-workflows.mjs",
-   "lines": 78,
+   "lines": 80,
    "env": [
     "GITHUB_TOKEN"
    ],
@@ -226412,7 +226480,7 @@
   },
   "scripts/smoke-hash-triggers.mjs": {
    "path": "scripts/smoke-hash-triggers.mjs",
-   "lines": 140,
+   "lines": 144,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -226425,7 +226493,7 @@
   },
   "scripts/update-workflows-status.mjs": {
    "path": "scripts/update-workflows-status.mjs",
-   "lines": 61,
+   "lines": 68,
    "params": [
     {
      "name": "START",
@@ -226443,7 +226511,7 @@
   },
   "scripts/validate-canonical-db-url.mjs": {
    "path": "scripts/validate-canonical-db-url.mjs",
-   "lines": 51,
+   "lines": 64,
    "exports": [
     "const CANONICAL_PROJECT_REF",
     "function validateCanonicalDbUrl"
@@ -226459,6 +226527,7 @@
     "SUPABASE_DB_URL deve usar postgresql://",
     "SUPABASE_DB_URL não contém senha",
     "SUPABASE_DB_URL não pertence ao projeto canônico",
+    "SUPABASE_DB_URL não pode sobrescrever host, porta, database, usuário ou sslmode na query string",
     "SUPABASE_DB_URL não é uma URI válida"
    ],
    "calc_fns": [
@@ -226471,7 +226540,10 @@
   },
   "scripts/validate-plan-50.mjs": {
    "path": "scripts/validate-plan-50.mjs",
-   "lines": 120,
+   "lines": 122,
+   "rule_comments": [
+    "digitado com hífen validava apenas o início e a dependência futura passava."
+   ],
    "doc": "!/usr/bin/env node"
   },
   "scripts/ai-context/cenarios.mjs": {
@@ -227112,7 +227184,7 @@
   },
   "scripts/db/classify-migration-drift.mjs": {
    "path": "scripts/db/classify-migration-drift.mjs",
-   "lines": 217,
+   "lines": 224,
    "errors": [
     "Argumento inválido: ${key ?? "
    ],
@@ -227127,12 +227199,13 @@
   },
   "scripts/db/derive-pending-migrations.mjs": {
    "path": "scripts/db/derive-pending-migrations.mjs",
-   "lines": 132,
+   "lines": 140,
    "exports": [
     "const DEFAULT_MAX_PENDING",
     "function derivePendingMigrations"
    ],
    "errors": [
+    "--max-pending inválido: ${args.get(",
     "Argumento inválido: ${key ?? "
    ],
    "params": [
@@ -227154,7 +227227,7 @@
   },
   "scripts/diag/run-sql-diag.mjs": {
    "path": "scripts/diag/run-sql-diag.mjs",
-   "lines": 274,
+   "lines": 303,
    "env": [
     "ALLOW_PII",
     "DIAG_MAX_ROWS",
@@ -227180,7 +227253,7 @@
   },
   "scripts/e2e/ensure-fixtures.mjs": {
    "path": "scripts/e2e/ensure-fixtures.mjs",
-   "lines": 155,
+   "lines": 159,
    "is_test": true,
    "tables": [
     {
@@ -227222,7 +227295,6 @@
      "id"
     ],
     "colaboradores": [
-     "cpf",
      "email",
      "id"
     ],
@@ -227254,7 +227326,7 @@
   },
   "scripts/e2e/seed.mjs": {
    "path": "scripts/e2e/seed.mjs",
-   "lines": 336,
+   "lines": 339,
    "is_test": true,
    "tables": [
     {
@@ -227313,7 +227385,6 @@
      "user_id"
     ],
     "colaboradores": [
-     "cpf",
      "id"
     ],
     "folhas_pagamento": [
@@ -227597,16 +227668,19 @@
   },
   "scripts/load/bridge-load.k6.js": {
    "path": "scripts/load/bridge-load.k6.js",
-   "lines": 69,
+   "lines": 80,
    "exports": [
     "const options",
     "default function"
    ],
-   "doc": "Load test do external-db-bridge (PGBouncer path) com k6. Pré-requisitos: brew install k6 (ou https://k6.io/docs/getting-started/installation) export BRIDGE_URL=https://<projeto>.supabase.co/functions/v1/external-db-bridge export BRIDGE_TOKEN=<token de sessão admin> Uso:"
+   "doc": "Load test do external-db-bridge (PGBouncer path) com k6. Pré-requisitos: brew install k6 (ou https://k6.io/docs/getting-started/installation) export BRIDGE_URL=https://<projeto>.supabase.co/functions/v1/external-db-bridge export BRIDGE_TOKEN=<token de sessão admin> export BRIDGE_APIKEY=<chave públic …",
+   "percents": [
+    "// livre — o corpo antigo ({ query, params }) era recusado com 400 em 100% das chamadas."
+   ]
   },
   "scripts/probes/print-summary.mjs": {
    "path": "scripts/probes/print-summary.mjs",
-   "lines": 65,
+   "lines": 68,
    "env": [
     "GITHUB_RUN_ID",
     "PROBES_OUTCOME",
@@ -227619,7 +227693,7 @@
   },
   "scripts/probes/run-probes.mjs": {
    "path": "scripts/probes/run-probes.mjs",
-   "lines": 136,
+   "lines": 154,
    "env": [
     "GITHUB_OUTPUT",
     "SUPABASE_DB_URL"
@@ -228393,6 +228467,19 @@
     "snapshot Supabase preserva SQL durante coletas parciais (offline)"
    ]
   },
+  "scripts/tests/db-migration-scripts.test.mjs": {
+   "path": "scripts/tests/db-migration-scripts.test.mjs",
+   "lines": 86,
+   "is_test": true,
+   "doc": "Regressões de scripts/db/classify-migration-drift.mjs e derive-pending-migrations.mjs. Rodar: node --test scripts/tests/db-migration-scripts.test.mjs",
+   "tests": [
+    "classify: sidecar .verify.sql não é migration nem duplica a versão",
+    "classify: --failed-file aceita caminho, não só o nome do arquivo",
+    "classify: --last-successful-ordinal não numérico reprova",
+    "derive: --max-pending não numérico reprova em vez de desligar o gate",
+    "derive: roda com espaço no caminho e por symlink (antes saía 0 sem saída)"
+   ]
+  },
   "scripts/tests/inventario-banco.test.mjs": {
    "path": "scripts/tests/inventario-banco.test.mjs",
    "lines": 185,
@@ -228536,6 +228623,30 @@
    ],
    "doc": "!/usr/bin/env node"
   },
+  "scripts/tests/run-sql-diag-guard.test.mjs": {
+   "path": "scripts/tests/run-sql-diag-guard.test.mjs",
+   "lines": 102,
+   "is_test": true,
+   "env": [
+    "PATH"
+   ],
+   "params": [
+    {
+     "name": "ESCAPE",
+     "value": "'; ROLLBACK; BEGIN; DELETE FROM public.t; COMMIT'"
+    }
+   ],
+   "rule_comments": [
+    "Literal/identificador removido não pode colar os tokens vizinhos: `dateFROM`"
+   ],
+   "doc": "Regressões do guard de scripts/diag/run-sql-diag.mjs: consultas que o scanner lia diferente do lexer do Postgres (e por isso escapavam da transação READ ONLY) têm de ser recusadas ANTES de chegar ao psql. Usa um psql falso no PATH — não precisa de banco. Rodar: node --test scripts/tests/run-sql-diag …",
+   "tests": [
+    "recusa: ${label}",
+    "aceita: ${label}",
+    "exige allow_pii: ${label}",
+    "aceita com allow_pii: coluna com nome reservado entre aspas"
+   ]
+  },
   "scripts/tests/sw-routing.test.mjs": {
    "path": "scripts/tests/sw-routing.test.mjs",
    "lines": 153,
@@ -228555,8 +228666,11 @@
   },
   "scripts/tests/validate-canonical-db-url.test.mjs": {
    "path": "scripts/tests/validate-canonical-db-url.test.mjs",
-   "lines": 32,
-   "is_test": true
+   "lines": 66,
+   "is_test": true,
+   "temporal": [
+    "`[REDACTED]db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=verify-full&connect_timeout=10&application_name=ci`,"
+   ]
   },
   "scripts/tests/workflows-contract.test.mjs": {
    "path": "scripts/tests/workflows-contract.test.mjs",
@@ -274819,10 +274933,43 @@
   }
  },
  "git": {
-  "sha": "8597905b565a9f26c0c3eea64b6a88dcc6cb5c04",
+  "sha": "1dbce640a14c71271d62b61a8c777372736b1521",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1dbce64",
+    "date": "2026-11-09",
+    "author": "adm01-debug",
+    "subject": "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)",
+    "files": [
+     "scripts/check-bundle-budget.mjs",
+     "scripts/db/classify-migration-drift.mjs",
+     "scripts/db/derive-pending-migrations.mjs",
+     "scripts/deploy-functions-novo-projeto.sh",
+     "scripts/diag/run-sql-diag.mjs",
+     "scripts/e2e/ensure-fixtures.mjs",
+     "scripts/e2e/seed.mjs",
+     "scripts/eslint-tests-any.config.mjs",
+     "scripts/format-check-changed.sh",
+     "scripts/healthcheck.sh",
+     "scripts/load/bridge-load.k6.js",
+     "scripts/probes/print-summary.mjs",
+     "scripts/probes/run-probes.mjs",
+     "scripts/ratchet-any-tests.mjs",
+     "scripts/ratchet-any.mjs",
+     "scripts/ratchet-lint-warnings.mjs",
+     "scripts/report-workflows.mjs",
+     "scripts/smoke-hash-triggers.mjs",
+     "scripts/tests/db-migration-scripts.test.mjs",
+     "scripts/tests/run-sql-diag-guard.test.mjs",
+     "scripts/tests/validate-canonical-db-url.test.mjs",
+     "scripts/typecheck-edge.sh",
+     "scripts/update-workflows-status.mjs",
+     "scripts/validate-canonical-db-url.mjs",
+     "scripts/validate-plan-50.mjs"
+    ]
+   },
    {
     "sha": "8597905",
     "date": "2026-11-09",
@@ -275228,17 +275375,6 @@
     "files": [
      "scripts/audit-canonical-project.mjs"
     ]
-   },
-   {
-    "sha": "752ceac",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: scripts — assertions autovalidade write-guard + motores IRRF/rescisão (#378)",
-    "files": [
-     "scripts/simulacao/simulate_irrf.cjs",
-     "scripts/simulacao/simulate_rescisao.cjs",
-     "scripts/simulacao/verify_bridge_write_guard.cjs"
-    ]
    }
   ],
   "hot_files": [
@@ -275263,6 +275399,10 @@
     4
    ],
    [
+    "scripts/ratchet-lint-warnings.mjs",
+    3
+   ],
+   [
     "scripts/autofix/any-codemod.mjs",
     3
    ],
@@ -275277,6 +275417,22 @@
    [
     "scripts/sync/README.md",
     3
+   ],
+   [
+    "scripts/check-bundle-budget.mjs",
+    2
+   ],
+   [
+    "scripts/ratchet-any-tests.mjs",
+    2
+   ],
+   [
+    "scripts/ratchet-any.mjs",
+    2
+   ],
+   [
+    "scripts/validate-plan-50.mjs",
+    2
    ],
    [
     "scripts/autofix/eslint-safe-fix.mjs",
@@ -275300,26 +275456,6 @@
    ],
    [
     "scripts/audit-migration-style.mjs",
-    2
-   ],
-   [
-    "docs/agentes/arquitetura.md",
-    2
-   ],
-   [
-    "docs/agentes/banco.md",
-    2
-   ],
-   [
-    "scripts/ci/README.md",
-    2
-   ],
-   [
-    "scripts/audit-edge-authz.mjs",
-    2
-   ],
-   [
-    "scripts/ratchet-lint-warnings.mjs",
     2
    ]
   ]
