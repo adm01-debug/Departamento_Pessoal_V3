@@ -16,6 +16,8 @@ set -uo pipefail
 
 APP_URL="${APP_URL:-}"
 SUPABASE_URL="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"
+# Barra final viraria `//functions/v1/...` em todos os checks de backend (APP_URL já é normalizada abaixo).
+SUPABASE_URL="${SUPABASE_URL%/}"
 SUPABASE_PUBLISHABLE_KEY="${SUPABASE_PUBLISHABLE_KEY:-${VITE_SUPABASE_PUBLISHABLE_KEY:-}}"
 REQUIRE_APP="${REQUIRE_APP:-0}"
 REQUIRE_BACKEND="${REQUIRE_BACKEND:-0}"
