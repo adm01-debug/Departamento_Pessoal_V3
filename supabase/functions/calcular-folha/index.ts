@@ -6,7 +6,7 @@
 // • Precisão financeira via helper round2 + banker-safe
 // • Auditoria PAYROLL_CALC em audit_log
 // • Sem vazamento de PII em erros; captureException em falhas
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.112.4";
 import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { calcularFolhaSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
