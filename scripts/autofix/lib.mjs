@@ -33,7 +33,11 @@ const TSC_LINE = /^(.+?)\((\d+),(\d+)\): error (TS\d+): (.*)$/;
  * rodadas repetidas do codemod custarem segundos, não ~20s cada.
  */
 export async function typecheck(cwd, buildInfo) {
-  const r = await sh(bin(cwd, 'tsc'), ['--noEmit', '--incremental', '--tsBuildInfoFile', buildInfo, '--pretty', 'false'], { cwd });
+  const r = await sh(
+    bin(cwd, 'tsc'),
+    ['--noEmit', '--incremental', '--tsBuildInfoFile', buildInfo, '--pretty', 'false'],
+    { cwd }
+  );
   const errors = [];
   for (const line of r.stdout.split('\n')) {
     const m = TSC_LINE.exec(line);
