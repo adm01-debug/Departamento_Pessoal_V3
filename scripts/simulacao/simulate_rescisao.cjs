@@ -5,6 +5,11 @@
 // Auto-validação: assertions sobre invariantes do motor CORRETO (não-negativo, justa causa
 // zera verbas, avos monotônico com tempo, meses em range 0–12). Exit 1 se assertion falhar.
 
+// Datas são montadas ora em UTC (new Date('YYYY-MM-DD'), toISOString) ora no fuso
+// local (new Date(a, m, d), getDate): fora de UTC o resultado mudava (em
+// America/Sao_Paulo o verify acusava 100% de divergência). Fixa o fuso do processo.
+process.env.TZ = 'UTC';
+
 function round2(v) { return Math.round((v + Number.EPSILON) * 100) / 100; }
 
 // ---- Engine CORRETA (espelha src/calculators/rescisao.ts) ----
