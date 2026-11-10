@@ -752,6 +752,14 @@
       "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação."
     },
     {
+      "id": "helper-ts-require-7a3f91c2",
+      "kind": "helper",
+      "files": ["scripts/simulacao/_lib/ts-require.cjs"],
+      "manual": ["node", "scripts/simulacao/_lib/ts-require.cjs"],
+      "triggers": ["manual"],
+      "callers": ["scripts/simulacao/verify_irrf_fix.cjs"]
+    },
+    {
       "id": "legacy-4c0a135065cf6144",
       "kind": "legacy",
       "files": ["scripts/smoke-hash-triggers.mjs"],
