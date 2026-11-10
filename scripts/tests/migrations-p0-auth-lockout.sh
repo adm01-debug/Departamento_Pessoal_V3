@@ -11,7 +11,7 @@ command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
@@ -46,6 +46,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-auth.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN;
 CREATE TABLE public.login_attempts (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -121,6 +122,8 @@ if [ "$anon_status" -eq 0 ] || [[ "$anon_output" != *'permission denied'* ]]; th
   echo "$anon_output" >&2
   exit 1
 fi
+anon_can_check="$(run_psql -Atc "SELECT has_function_privilege('anon', 'public.check_account_lockout(text)', 'EXECUTE')")"
+[ "$anon_can_check" = 'f' ] || { echo "anon unexpectedly executes check_account_lockout" >&2; exit 1; }
 
 config_count="$(run_psql -Atc "
   SELECT count(*)
