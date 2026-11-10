@@ -115,7 +115,8 @@ function isAuditLogSource(node) {
     ts.isPropertyAccessExpression(node.expression) &&
     node.expression.name.text === 'from' &&
     node.arguments.length === 1 &&
-    ts.isStringLiteral(node.arguments[0]) &&
+    // StringLiteralLike também cobre o template sem substituição: from(`audit_log`).
+    ts.isStringLiteralLike(node.arguments[0]) &&
     node.arguments[0].text === 'audit_log'
   );
 }
@@ -139,7 +140,8 @@ function collectAuditLogAliases(source) {
 
 function isAuditLogInsert(node, aliases) {
   if (!ts.isCallExpression(node) || !ts.isPropertyAccessExpression(node.expression)) return false;
-  if (node.expression.name.text !== 'insert') return false;
+  // upsert grava a mesma linha sob o mesmo CHECK: é INSERT para este contrato.
+  if (node.expression.name.text !== 'insert' && node.expression.name.text !== 'upsert') return false;
   const receiver = node.expression.expression;
   if (ts.isIdentifier(receiver) && aliases.has(receiver.text)) return true;
   if (!ts.isCallExpression(receiver) || !ts.isPropertyAccessExpression(receiver.expression)) return false;
