@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "7f6d195fee788a710b1c93498d95eba520a859ba",
+  "sha": "bba79fdd12bcb48bad659e56f153a812a640e780",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 23:49 UTC",
+  "generated_at": "2026-11-10 23:56 UTC",
   "files_total": 2896,
   "code_files": 2367,
-  "code_lines": 321309
+  "code_lines": 321143
  },
  "version": "1.3.2",
- "facts_hash": "8934fb8c8cc6ad26",
+ "facts_hash": "59ae73867d47687a",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -95982,7 +95982,7 @@
   {
    "module": "scripts",
    "files": 131,
-   "lines": 30072,
+   "lines": 29932,
    "tables": [
     "a",
     "anexos",
@@ -97898,7 +97898,7 @@
   {
    "module": "supabase/functions",
    "files": 171,
-   "lines": 24366,
+   "lines": 24340,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -135591,16 +135591,6 @@
    },
    {
     "file": "supabase/functions/calcular-rescisao/motor.ts",
-    "name": "DEDUCAO_SIMPLIFICADA_IRRF",
-    "value": "564.80"
-   },
-   {
-    "file": "supabase/functions/calcular-rescisao/motor.ts",
-    "name": "DEDUCAO_DEPENDENTE_IRRF",
-    "value": "189.59"
-   },
-   {
-    "file": "supabase/functions/calcular-rescisao/motor.ts",
     "name": "SALARIO_MINIMO",
     "value": "1621.00"
    },
@@ -145274,12 +145264,6 @@
     "name": "reaisToCents",
     "params": "v: number",
     "body": "return BigInt(Math.round(v * 100));"
-   },
-   {
-    "file": "supabase/functions/calcular-rescisao/motor.ts",
-    "name": "calcIRRF",
-    "params": "bruto: number, dependentes = 0, referencia: string",
-    "body": "if (!Number.isFinite(bruto) || bruto <= 0) return 0; const inss = calcularINSS(bruto, referencia); const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF; const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF; const base = Math.max(0, Math.min(baseLegal, baseSimplificada)); if (base <= 0) return 0; // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal for (const f of FAIXAS_IRRF) { if (base <= f.l) return Math.max(0, trunc2(base * f.a - f.d)); } return 0;"
    },
    {
     "file": "supabase/functions/calcular-rescisao/motor.ts",
@@ -230605,13 +230589,15 @@
   },
   "scripts/simulacao/simulate_art145.cjs": {
    "path": "scripts/simulacao/simulate_art145.cjs",
-   "lines": 117,
+   "lines": 147,
    "rule_comments": [
     "cobrindo casos-limite legais, fins de semana e correção monetária.",
     "o pagamento deve ser antecipado para o último dia útil anterior (TST OJ-123).",
     "Auto-validação integrada — exit 1 se qualquer assertion falhar.",
     "Deadline legal real: recua até achar dia útil >= D-2",
+    "sem antecipar o deadline em fim de semana/feriado (sem TST OJ-123). Usada",
     "pagamento até deadline",
+    "já é violação legal (deadline com OJ-123 passou) mas o produto real",
     "— Auto-validação —",
     "1. D-7 sempre deve ser OK (antecipação ampla)",
     "4. Salário não afeta status (apenas para verificar que não vaza)"
@@ -230749,63 +230735,25 @@
   },
   "scripts/simulacao/verify_rescisao_fix.cjs": {
    "path": "scripts/simulacao/verify_rescisao_fix.cjs",
-   "lines": 394,
+   "lines": 218,
    "env": [
     "TZ"
    ],
-   "params": [
-    {
-     "name": "TETO_INSS",
-     "value": "8157.41"
-    },
-    {
-     "name": "DEDUCAO_SIMPLIFICADA_IRRF",
-     "value": "564.8"
-    },
-    {
-     "name": "DEDUCAO_DEPENDENTE_IRRF",
-     "value": "189.59"
-    }
+   "rule_comments": [
+    "---- 4. dataPagamento tardia (multa art. 477 §8º) ----"
    ],
-   "doc": "Regressão pós-correção (task 7 / achados K2-K4, H(K)4): reimplementa em JS puro (a) o motor canônico src/utils/rescisaoCalc.ts (usado pelo botão \"Calcular Local\") (b) o NOVO cálculo de supabase/functions/calcular-rescisao/index.ts (pós-fix) e compara os dois em lote, no mesmo grid de cenários de sim …",
+   "doc": "Regressão pós-correção (task 7 / achados K2-K4): compara os DOIS MOTORES REAIS do produto — src/utils/rescisaoCalc.ts::calcularRescisaoCore (front, fonte de verdade) e supabase/functions/calcular-rescisao/motor.ts:: calcularRescisaoMotor (edge, espelho Deno portado manualmente — ver cabeçalho de mot …",
    "calc_fns": [
     {
      "name": "round2",
      "params": "v",
      "body": "return Math.round((v + Number.EPSILON) * 100) / 100;"
-    },
-    {
-     "name": "calcINSS",
-     "params": "sal",
-     "body": "if (!Number.isFinite(sal) || sal <= 0) return 0; const base = Math.min(sal, TETO_INSS); let desc = 0, rest = base; for (let i = 0; i < FAIXAS_INSS.length; i++) { const la = i === 0 ? 0 : FAIXAS_INSS[i - 1].l; const f = Math.min(rest, FAIXAS_INSS[i].l - la); if (f <= 0) break; desc += f * FAIXAS_INSS[i].a; rest -= f; } return round2(desc);"
-    },
-    {
-     "name": "calcIRRF",
-     "params": "bruto, dependentes = 0",
-     "body": "if (!Number.isFinite(bruto) || bruto <= 0) return 0; const inss = calcINSS(bruto); const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF; const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF; const base = Math.max(0, Math.min(baseLegal, baseSimplificada)); if (base <= 0) return 0; for (const f of FAIXAS_IRRF) { if (base <= f.l) return Math.max(0, round2(base * f.a - f.d)); } return 0;"
-    },
-    {
-     "name": "calcularAvosCanonico",
-     "params": "inicio, fim",
-     "body": "if (fim < inicio) return 0; let meses = (fim.getFullYear() - inicio.getFullYear()) * 12; meses += fim.getMonth() - inicio.getMonth(); const diaInicio = inicio.getDate(); const diaFim = fim.getDate(); if (diaFim < diaInicio - 1) meses--; const anoRef = inicio.getFullYear(); const mesRef = inicio.getMonth() + meses; const ultimoDiaMesRef = new Date(anoRef, mesRef + 1, 0).getDate(); const dataReferencia = new Date(anoRef, mesRef, Math.min(inicio.getDate(), ultimoDiaMesRef)); const diffTime = fim.ge …"
     }
-   ],
-   "temporal": [
-    "const diffAnos = Math.floor((desl.getTime() - adm.getTime()) / (1000 * 60 * 60 * 24 * 365.25));",
-    "const diffAnos = Math.floor((desligamento.getTime() - admissao.getTime()) / (1000 * 60 * 60 * 24 * 365.25));"
-   ],
-   "percents": [
-    "// America/Sao_Paulo o verify acusava 100% de divergência). Fixa o fuso do processo.",
-    "const fgtsRescisao = round2((saldoSalario + avisoIndenizado + decimoTerceiro) * 0.08);",
-    "multaFGTS = round2((saldoFGTS + fgtsRescisao) * 0.2);",
-    "multaFGTS = round2((saldoFGTS + fgtsRescisao) * 0.4);",
-    "multaFGTS = round2((saldo_fgts + fgtsRescisao) * 0.2);",
-    "multaFGTS = round2((saldo_fgts + fgtsRescisao) * 0.4);"
    ]
   },
   "scripts/simulacao/_lib/ts-require.cjs": {
    "path": "scripts/simulacao/_lib/ts-require.cjs",
-   "lines": 69,
+   "lines": 75,
    "errors": [
     "tsRequire: caminho deve ser absoluto (recebido: "
    ],
@@ -268715,7 +268663,7 @@
   },
   "supabase/functions/calcular-rescisao/motor.ts": {
    "path": "supabase/functions/calcular-rescisao/motor.ts",
-   "lines": 312,
+   "lines": 286,
    "exports": [
     "const trunc2",
     "function calcularAvos",
@@ -268733,14 +268681,6 @@
     {
      "name": "DIA_MS",
      "value": "1000"
-    },
-    {
-     "name": "DEDUCAO_SIMPLIFICADA_IRRF",
-     "value": "564.80"
-    },
-    {
-     "name": "DEDUCAO_DEPENDENTE_IRRF",
-     "value": "189.59"
     },
     {
      "name": "SALARIO_MINIMO",
@@ -268881,11 +268821,6 @@
    ],
    "doc": "Motor puro da rescisão (Deno) — espelho portado de src/utils/rescisaoCalc.ts::calcularRescisaoCore (motor único do front). Edge functions não podem importar de src/: qualquer mudança no motor canônico exige porte manual para este arquivo (mesmas regras/valores).",
    "calc_fns": [
-    {
-     "name": "calcIRRF",
-     "params": "bruto: number, dependentes = 0, referencia: string",
-     "body": "if (!Number.isFinite(bruto) || bruto <= 0) return 0; const inss = calcularINSS(bruto, referencia); const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF; const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF; const base = Math.max(0, Math.min(baseLegal, baseSimplificada)); if (base <= 0) return 0; // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal for (const f of FAIXAS_IRRF) { if (base <= f.l) return Math.max(0, trunc2(base * f.a - f.d)); } return 0;"
-    },
     {
      "name": "calcularAvos",
      "params": "inicio: Date, fim: Date",
@@ -277699,10 +277634,30 @@
   }
  },
  "git": {
-  "sha": "7f6d195fee788a710b1c93498d95eba520a859ba",
+  "sha": "bba79fdd12bcb48bad659e56f153a812a640e780",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bba79fd",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)",
+    "files": [
+     "scripts/simulacao/_lib/ts-require.cjs",
+     "scripts/simulacao/verify_rescisao_fix.cjs",
+     "supabase/functions/calcular-rescisao/motor.ts"
+    ]
+   },
+   {
+    "sha": "9a0babf",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)",
+    "files": [
+     "scripts/simulacao/simulate_art145.cjs"
+    ]
+   },
    {
     "sha": "7f6d195",
     "date": "2026-11-10",
@@ -278232,25 +278187,6 @@
      "scripts/sync/install-timer.sh",
      "scripts/sync/mirror-github.sh"
     ]
-   },
-   {
-    "sha": "560e715",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix: bypass MFA em E2E para rotas admin (VITE_E2E_BYPASS_MFA) (#352)",
-    "files": [
-     "src/components/AdminRoute.tsx"
-    ]
-   },
-   {
-    "sha": "2b341de",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)",
-    "files": [
-     "scripts/autofix/README.md",
-     "scripts/autofix/run.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -278275,15 +278211,11 @@
     4
    ],
    [
-    "scripts/autofix/run.mjs",
-    4
-   ],
-   [
     "scripts/sync/sync-github.sh",
     4
    ],
    [
-    "scripts/autofix/README.md",
+    "scripts/simulacao/verify_rescisao_fix.cjs",
     3
    ],
    [
@@ -278295,7 +278227,11 @@
     3
    ],
    [
-    "scripts/simulacao/verify_rescisao_fix.cjs",
+    "scripts/autofix/run.mjs",
+    3
+   ],
+   [
+    "scripts/simulacao/_lib/ts-require.cjs",
     2
    ],
    [
@@ -278303,11 +278239,11 @@
     2
    ],
    [
-    "scripts/autofix/lib.mjs",
+    "scripts/autofix/README.md",
     2
    ],
    [
-    "src/components/AdminRoute.tsx",
+    "scripts/autofix/lib.mjs",
     2
    ],
    [

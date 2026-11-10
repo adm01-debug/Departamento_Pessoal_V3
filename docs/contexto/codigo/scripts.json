@@ -1049,7 +1049,7 @@
   {
    "arquivo": "scripts/simulacao/_lib/ts-require.cjs",
    "descricao": "Carrega um módulo .ts do PRODUTO (Deno-style, import relativo com extensão .ts) dentro do Node, via @swc/core, para que os simuladores comparem contra",
-   "linhas": 69,
+   "linhas": 75,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1105,7 +1105,7 @@
   {
    "arquivo": "scripts/simulacao/simulate_art145.cjs",
    "descricao": "Simulação exaustiva Art. 145 CLT — pagamento até D-2 do início das férias. Cenários: combinações de (data_inicio, offset_pagamento, salário, turno)",
-   "linhas": 117,
+   "linhas": 147,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1172,8 +1172,8 @@
   },
   {
    "arquivo": "scripts/simulacao/verify_rescisao_fix.cjs",
-   "descricao": "Regressão pós-correção (task 7 / achados K2-K4, H(K)4): reimplementa em JS puro (a) o motor canônico src/utils/rescisaoCalc.ts (usado pelo botão \"Calcular Local\")",
-   "linhas": 394,
+   "descricao": "Regressão pós-correção (task 7 / achados K2-K4): compara os DOIS MOTORES REAIS do produto — src/utils/rescisaoCalc.ts::calcularRescisaoCore (front,",
+   "linhas": 218,
    "env": [
     "TZ"
    ],

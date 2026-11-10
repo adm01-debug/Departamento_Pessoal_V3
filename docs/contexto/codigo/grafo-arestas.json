@@ -47,6 +47,9 @@
   "scripts/simulacao/verify_irrf_fix.cjs": [
    "scripts/simulacao/_lib/ts-require.cjs"
   ],
+  "scripts/simulacao/verify_rescisao_fix.cjs": [
+   "scripts/simulacao/_lib/ts-require.cjs"
+  ],
   "src/App.tsx": [
    "src/components/AdminRoute.tsx",
    "src/components/ProtectedRoute.tsx",
@@ -5692,7 +5695,8 @@
    "supabase/functions/calcular-rescisao/motor.ts"
   ],
   "supabase/functions/calcular-rescisao/motor.ts": [
-   "supabase/functions/_shared/inss.ts"
+   "supabase/functions/_shared/inss.ts",
+   "supabase/functions/_shared/irrf.ts"
   ],
   "supabase/functions/cnab-remessa/index.ts": [
    "supabase/functions/_shared/aal2.ts",

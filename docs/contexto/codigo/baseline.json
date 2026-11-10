@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7f6d195fee788a710b1c93498d95eba520a859ba",
+  "commit": "bba79fdd12bcb48bad659e56f153a812a640e780",
   "branch": "main",
-  "data_commit": "2026-11-10T20:43:54-03:00",
+  "data_commit": "2026-11-10T20:56:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bba79fd",
+    "data": "2026-11-10",
+    "assunto": "fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)"
+   },
+   {
+    "sha": "9a0babf",
+    "data": "2026-11-10",
+    "assunto": "feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)"
+   },
    {
     "sha": "7f6d195",
     "data": "2026-11-10",
@@ -121,19 +131,9 @@
     "sha": "f9261e3",
     "data": "2026-11-09",
     "assunto": "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)"
-   },
-   {
-    "sha": "2e54da5",
-    "data": "2026-11-09",
-    "assunto": "fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)"
-   },
-   {
-    "sha": "ac8cc11",
-    "data": "2026-11-09",
-    "assunto": "fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommi"
    }
   ],
-  "arquivos_mudados_7d": 418,
+  "arquivos_mudados_7d": 419,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 67
+    "mudancas": 65
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 62
+    "mudancas": 60
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 103
+    "commits": 105
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2875,
   "arquivos_codigo": 1548,
-  "linhas_codigo": 273348,
+  "linhas_codigo": 273182,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -592,7 +592,7 @@
   },
   "scripts/simulacao": {
    "arquivos": 13,
-   "linhas": 2158
+   "linhas": 2018
   },
   "scripts/smoke-hash-triggers.mjs": {
    "arquivos": 1,
@@ -708,7 +708,7 @@
   },
   "supabase/functions": {
    "arquivos": 171,
-   "linhas": 24366
+   "linhas": 24340
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -839,7 +839,7 @@
  ],
  "qualidade": {
   "any": 73,
-  "console_log": 292,
+  "console_log": 293,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,

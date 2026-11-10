@@ -739,7 +739,7 @@
    "nome": "calcular-rescisao",
    "entrada": "supabase/functions/calcular-rescisao/index.ts",
    "arquivos": 3,
-   "linhas": 522,
+   "linhas": 496,
    "verify_jwt": true,
    "metodos": [],
    "tabelas": [
@@ -760,6 +760,7 @@
     "contract.ts",
     "csrf.ts",
     "inss.ts",
+    "irrf.ts",
     "rateLimit.ts",
     "sentry.ts"
    ],

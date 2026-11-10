@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7f6d195fee` · branch `main` · 2026-11-10 23:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bba79fdd12` · branch `main` · 2026-11-10 23:56 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -3423,10 +3423,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
   return BigInt(Math.round(v * 100));
   ```
-- **calcIRRF(bruto: number, dependentes = 0, referencia: string)** — `supabase/functions/calcular-rescisao/motor.ts`
-  ```
-  if (!Number.isFinite(bruto) || bruto <= 0) return 0; const inss = calcularINSS(bruto, referencia); const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF; const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF; const base = Math.max(0, Math.min(baseLegal, baseSimplificada)); if (base <= 0) return 0; // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal for (const f of FAIXAS_IRRF) { if (base <= f.l) return Math.max(0, trunc2(base * f.a - f.d)); } return 0;
-  ```
 - **calcularAvos(inicio: Date, fim: Date)** — `supabase/functions/calcular-rescisao/motor.ts`
   ```
   if (fim < inicio) return 0; let meses = (fim.getFullYear() - inicio.getFullYear()) * 12; meses += fim.getMonth() - inicio.getMonth(); const diaInicio = inicio.getDate(); const diaFim = fim.getDate(); if (diaFim < diaInicio - 1) { meses--; } const anoRef = inicio.getFullYear(); const mesRef = inicio.getMonth() + meses; const ultimoDiaMesRef = new Date(anoRef, mesRef + 1, 0).getDate(); const dataReferencia = new Date(anoRef, mesRef, Math.min(inicio.getDate(), ultimoDiaMesRef)); const diffTime = fi …
@@ -3877,8 +3873,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `TERCEIROS_BPS` | `58` | `supabase/functions/calcular-provisoes/index.ts` |
 | `FGTS_BPS` | `80` | `supabase/functions/calcular-provisoes/index.ts` |
 | `DIA_MS` | `1000` | `supabase/functions/calcular-rescisao/motor.ts` |
-| `DEDUCAO_SIMPLIFICADA_IRRF` | `564.80` | `supabase/functions/calcular-rescisao/motor.ts` |
-| `DEDUCAO_DEPENDENTE_IRRF` | `189.59` | `supabase/functions/calcular-rescisao/motor.ts` |
 | `SALARIO_MINIMO` | `1621.00` | `supabase/functions/calcular-rescisao/motor.ts` |
 | `MAX_ITENS` | `10` | `supabase/functions/cnab-remessa/index.ts` |
 | `MAX_TOTAL_CENTAVOS` | `5` | `supabase/functions/cnab-remessa/index.ts` |
