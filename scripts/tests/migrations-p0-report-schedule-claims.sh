@@ -6,7 +6,6 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260912192000_p0_report_schedule_claims.sql"
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p0-report-claims-$$"
-RESULT_DIR="$(mktemp -d)"
 
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
@@ -15,6 +14,7 @@ cleanup() {
   [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
+RESULT_DIR="$(mktemp -d)"
 trap cleanup EXIT
 
 run_psql() {
