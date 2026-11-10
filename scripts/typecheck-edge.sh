@@ -17,6 +17,11 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
 command -v deno >/dev/null || {
+  # No CI este script É o gate: sem deno ele não pode sair verde sem checar nada.
+  if [ -n "${GITHUB_ACTIONS:-}" ]; then
+    echo "::error::[typecheck:edge] deno ausente no CI — gate reprovado (nada foi verificado)." >&2
+    exit 1
+  fi
   echo "[typecheck:edge] deno ausente — verificação ignorada neste ambiente." >&2
   echo "[typecheck:edge] Instale deno (https://deno.land) ou confie no gate de CI." >&2
   exit 0
