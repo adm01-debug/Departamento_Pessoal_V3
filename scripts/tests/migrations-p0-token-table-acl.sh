@@ -76,7 +76,7 @@ if [ "$authenticated_status" -eq 0 ] || [[ "$authenticated_direct" != *"permissi
 fi
 
 set +e
-direct_update="$(docker exec "$NAME" psql -X -U postgres -c "SET ROLE anon; UPDATE public.medidas_ciencia_tokens SET used_at=now() WHERE token_hash='secret-hash';" 2>&1)"
+direct_update="$(docker exec "$NAME" psql -X -U postgres -c "SET ROLE anon; UPDATE public.medidas_ciencia_tokens SET used_at=now();" 2>&1)"
 update_status=$?
 set -e
 if [ "$update_status" -eq 0 ] || [[ "$direct_update" != *"permission denied"* ]]; then

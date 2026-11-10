@@ -45,8 +45,8 @@ set -e
 [ "$insert_status" -ne 0 ] && [[ "$anon_insert" == *'row-level security'* ]] || {
   echo "anonymous caller inserted a backup object" >&2; echo "$anon_insert" >&2; exit 1;
 }
-run_psql -c "SET ROLE anon; UPDATE storage.objects SET name='tampered.json' WHERE bucket_id='backups';" >/dev/null
-run_psql -c "SET ROLE anon; DELETE FROM storage.objects WHERE bucket_id='backups';" >/dev/null
+run_psql -c "SET ROLE anon; UPDATE storage.objects SET name='tampered.json';" >/dev/null
+run_psql -c "SET ROLE anon; DELETE FROM storage.objects;" >/dev/null
 unchanged="$(run_psql -qAtc "SET ROLE service_role; SELECT name FROM storage.objects WHERE bucket_id='backups';")"
 [ "$unchanged" = "tenant/backup.json" ] || { echo "anonymous UPDATE/DELETE changed backup object: $unchanged" >&2; exit 1; }
 
