@@ -18,7 +18,8 @@ MIGS=$(ls "$REPO_ROOT"/supabase/migrations/2026083*_plano100_*.sql 2>/dev/null |
 [ -n "$MIGS" ] || { echo "❌ nenhuma migration plano100 encontrada"; exit 1; }
 command -v docker >/dev/null || { echo "❌ docker necessário"; exit 1; }
 
-cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+LOG_DIR="$(mktemp -d)"
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; rm -rf "$LOG_DIR"; }
 trap cleanup EXIT
 
 echo "── Container $IMAGE ($NAME)"
@@ -53,10 +54,10 @@ fi
 
 run_sql() { # arquivo, rótulo
   docker cp "$1" "$NAME":/tmp/x.sql >/dev/null
-  if docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -q -f /tmp/x.sql >/dev/null 2>/tmp/migtest_err.log; then
+  if docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -q -f /tmp/x.sql >/dev/null 2>"$LOG_DIR/err.log"; then
     echo "✅ $2"
   else
-    echo "❌ $2"; cat /tmp/migtest_err.log >&2; exit 1
+    echo "❌ $2"; cat "$LOG_DIR/err.log" >&2; exit 1
   fi
 }
 
@@ -71,11 +72,11 @@ done
 
 echo "── Asserts comportamentais"
 docker cp "$FIXTURES/20_asserts.sql" "$NAME":/tmp/a.sql >/dev/null
-if docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -f /tmp/a.sql > /tmp/migtest_asserts.log 2>&1; then
-  grep -q 'PLANO100_ASSERTS_OK' /tmp/migtest_asserts.log \
+if docker exec "$NAME" psql -U postgres -v ON_ERROR_STOP=1 -f /tmp/a.sql > "$LOG_DIR/asserts.log" 2>&1; then
+  grep -q 'PLANO100_ASSERTS_OK' "$LOG_DIR/asserts.log" \
     || { echo "❌ marcador PLANO100_ASSERTS_OK ausente"; exit 1; }
-  echo "✅ $(grep -o 'PLANO100_ASSERTS_OK.*' /tmp/migtest_asserts.log)"
+  echo "✅ $(grep -o 'PLANO100_ASSERTS_OK.*' "$LOG_DIR/asserts.log")"
 else
-  echo "❌ asserts falharam:"; tail -25 /tmp/migtest_asserts.log >&2; exit 1
+  echo "❌ asserts falharam:"; tail -25 "$LOG_DIR/asserts.log" >&2; exit 1
 fi
 echo "✅ MIGTEST_OK"
