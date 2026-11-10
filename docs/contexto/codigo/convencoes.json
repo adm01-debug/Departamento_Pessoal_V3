@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)",
    "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)",
    "chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)",
    "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)",
-   "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
-   "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)"
+   "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

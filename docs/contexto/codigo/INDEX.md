@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `225d5912d736014cad7d26647b644816b725aa53` (2026-11-10T19:03:26-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `75460b779f45e4b3a334156084c240e5d167ea07` (2026-11-10T19:17:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,15 +383,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21951 nós · 46085 arestas · 2108 comunidades · grafo do commit `225d5912`
+- 21951 nós · 46085 arestas · 2108 comunidades · grafo do commit `75460b77`
 - comunidades maiores: cn (544), react (499), useEmpresas (495), 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (373), AfastamentosPage.tsx (189), App.tsx (182), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (70)
-- package-lock.json (65)
-- .github/workflows/canonical-migrations.yml (48)
+- package.json (69)
+- package-lock.json (64)
+- .github/workflows/canonical-migrations.yml (49)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (21)
 - src/integrations/supabase/types.ts (14)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-10 `75460b7` infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)
 - 2026-11-10 `225d591` feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)
 - 2026-11-10 `24cadd4` chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)
 - 2026-11-10 `b4f9205` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `e11272e` fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruiçã
 - 2026-11-10 `8cadcc1` fix: testes de migration e contratos detectam o que prometem (sem falso verde) e param de vazar volume Docker (#424)
 - 2026-11-10 `3077cf6` fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)
-- 2026-11-10 `6e2024f` feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a t
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

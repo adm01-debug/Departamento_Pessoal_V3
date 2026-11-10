@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "225d5912d736014cad7d26647b644816b725aa53",
+  "sha": "75460b779f45e4b3a334156084c240e5d167ea07",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 22:04 UTC",
+  "generated_at": "2026-11-10 22:17 UTC",
   "files_total": 2895,
   "code_files": 2366,
   "code_lines": 321205
@@ -277716,10 +277716,19 @@
   }
  },
  "git": {
-  "sha": "225d5912d736014cad7d26647b644816b725aa53",
+  "sha": "75460b779f45e4b3a334156084c240e5d167ea07",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "75460b7",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml"
+    ]
+   },
    {
     "sha": "225d591",
     "date": "2026-11-10",
@@ -278339,24 +278348,6 @@
      "scripts/sync/install-timer.sh",
      "scripts/sync/sync-github.sh"
     ]
-   },
-   {
-    "sha": "b590d3f",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)",
-    "files": [
-     "scripts/autofix/README.md",
-     "scripts/autofix/any-codemod.mjs",
-     "scripts/autofix/install-timer.sh",
-     "scripts/autofix/lib.mjs",
-     "scripts/autofix/regras/catalogo.mjs",
-     "scripts/autofix/regras/dados.mjs",
-     "scripts/autofix/regras/motores.mjs",
-     "scripts/autofix/regras/referencia.mjs",
-     "scripts/autofix/regras/verificar.mjs",
-     "scripts/autofix/run.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -278373,10 +278364,6 @@
     6
    ],
    [
-    "scripts/autofix/run.mjs",
-    5
-   ],
-   [
     "scripts/sync/README.md",
     5
    ],
@@ -278385,11 +278372,7 @@
     5
    ],
    [
-    "scripts/autofix/README.md",
-    4
-   ],
-   [
-    "scripts/autofix/regras/dados.mjs",
+    "scripts/autofix/run.mjs",
     4
    ],
    [
@@ -278397,7 +278380,11 @@
     3
    ],
    [
-    "scripts/autofix/lib.mjs",
+    "scripts/autofix/README.md",
+    3
+   ],
+   [
+    "scripts/autofix/regras/dados.mjs",
     3
    ],
    [
@@ -278409,15 +278396,11 @@
     3
    ],
    [
-    "scripts/autofix/any-codemod.mjs",
-    3
-   ],
-   [
-    "scripts/autofix/regras/catalogo.mjs",
-    3
-   ],
-   [
     "scripts/ci/README.md",
+    2
+   ],
+   [
+    "scripts/autofix/lib.mjs",
     2
    ],
    [
@@ -278425,19 +278408,27 @@
     2
    ],
    [
-    "scripts/autofix/install-timer.sh",
-    2
-   ],
-   [
-    "scripts/autofix/regras/motores.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/verificar.mjs",
-    2
-   ],
-   [
     "scripts/sync/install-all-timers.sh",
+    2
+   ],
+   [
+    "scripts/sync/install-autocommit-timer.sh",
+    2
+   ],
+   [
+    "scripts/sync/repos.conf.example",
+    2
+   ],
+   [
+    "scripts/autofix/any-codemod.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/eslint-safe-fix.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/catalogo.mjs",
     2
    ]
   ]
