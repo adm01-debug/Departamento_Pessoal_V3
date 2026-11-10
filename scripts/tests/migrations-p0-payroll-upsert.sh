@@ -11,7 +11,7 @@ command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
@@ -112,5 +112,13 @@ INSERT INTO public.folha_itens VALUES
   ('00000000-0000-0000-0000-000000000202', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000020');
 SQL
 expect_failure p0_payroll_duplicate_data 'requires deduplicated folha_itens'
+
+# Once deduplicated, the keyless shape must receive both unique keys.
+run_psql_db p0_payroll_duplicate_data >/dev/null <<'SQL'
+DELETE FROM public.folha_itens WHERE id = '00000000-0000-0000-0000-000000000202';
+\i /tmp/p0-payroll-upsert.sql
+SQL
+created_keys="$(docker exec "$NAME" psql -X -U postgres -d p0_payroll_duplicate_data -Atc "SELECT count(*) FROM pg_constraint WHERE contype = 'u' AND conrelid IN ('public.folhas_pagamento'::regclass, 'public.folha_itens'::regclass)")"
+[ "$created_keys" = "2" ] || { echo "migration did not create the missing unique keys: $created_keys" >&2; exit 1; }
 
 echo 'P0_PAYROLL_UPSERT_MIGRATION_OK: validated legacy-key recognition, idempotency, ON CONFLICT behavior and fail-closed preconditions.'

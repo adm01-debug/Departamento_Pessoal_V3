@@ -9,7 +9,7 @@ NAME="dp-p1-pcs-contract-$$"
 RESULT_DIR="$(mktemp -d)"
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
 trap cleanup EXIT
@@ -40,6 +40,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p1-pcs.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 CREATE SCHEMA auth;
@@ -218,14 +219,25 @@ SQL
 )"
 [ "$member_count" = '1' ] || { echo "tenant member cannot read PCS" >&2; exit 1; }
 expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',false); INSERT INTO public.pcs_fatores(plano_id,nome,ordem,graus) VALUES ('$plan_id','Forbidden',9,'[{\"grau\":1,\"rotulo\":\"X\",\"pontos\":1}]');" 'row-level security'
+expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',false); SELECT * FROM public.pcs_gerar_grades('$plan_id',2,1000);" 'not authorized to manage this PCS plan'
+expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',false); INSERT INTO public.pcs_planos(empresa_id,nome) VALUES ('10000000-0000-0000-0000-000000000001','Forbidden plan');" 'row-level security'
 
 # Two simultaneous generations serialize on the plan and leave one coherent matrix.
 pids=()
 for i in 1 2; do
+  # The first generation stays uncommitted while the second starts: without
+  # the plan lock the second cannot see it and collides on the grade key.
+  hold=''; if [ "$i" = 1 ]; then hold=' SELECT pg_sleep(3);'; fi
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
-    "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT count(*) FROM public.pcs_gerar_grades('$plan_id',2,1000);" \
+    "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT count(*) FROM public.pcs_gerar_grades('$plan_id',2,1000);$hold" \
     >"$RESULT_DIR/$i" &
   pids+=("$!")
+  if [ "$i" = 1 ]; then
+    for _ in $(seq 1 50); do
+      [ "$(run_psql -Atc "SELECT count(*) FROM pg_stat_activity WHERE wait_event = 'PgSleep'")" = '1' ] && break
+      sleep 0.2
+    done
+  fi
 done
 for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent PCS generation process failed" >&2; exit 1; }; done
 [ "$(grep -h '^2$' "$RESULT_DIR"/* | wc -l | tr -d ' ')" = '2' ] || {
@@ -266,6 +278,7 @@ SQL
 # Anonymous callers cannot enumerate tables or call privileged RPCs.
 expect_failure "SET ROLE anon; SELECT * FROM public.pcs_planos;" 'permission denied'
 expect_failure "SET ROLE anon; SELECT * FROM public.pcs_gerar_grades('$plan_id',2,1000);" 'permission denied'
+expect_failure "SET ROLE anon; SELECT * FROM public.pcs_enquadramento('$plan_id');" 'permission denied'
 
 # Preflight rejects both missing prerequisites and a partial pre-existing PCS schema.
 run_psql -c 'CREATE DATABASE pcs_missing_prerequisites' >/dev/null

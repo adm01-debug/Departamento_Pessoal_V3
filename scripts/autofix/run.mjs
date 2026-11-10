@@ -20,7 +20,7 @@
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, rmSync, symlinkSync, writeFileSync, readFileSync } from 'node:fs';
 import { homedir, setPriority } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join, relative, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { sh, git, bin, log, typecheck, newErrors, eslintJson, listSrc, snapshot, touchedSince, restore, prettierWrite, prettierCheck } from './lib.mjs';
 import { runAnyPass } from './any-codemod.mjs';
@@ -81,8 +81,10 @@ function acquireLock() {
     mkdirSync(LOCK);
   }
   writeFileSync(join(LOCK, 'pid'), String(process.pid));
+  lockOwned = true;
 }
-const releaseLock = () => rmSync(LOCK, { recursive: true, force: true });
+let lockOwned = false; // só remove a trava quem a adquiriu (antes, o 2º processo apagava a trava do 1º ao falhar)
+const releaseLock = () => { if (lockOwned) rmSync(LOCK, { recursive: true, force: true }); };
 
 // ---------- ambiente ----------
 /**
@@ -128,6 +130,7 @@ const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replac
 const report = { stamp, mode: HERE ? 'here' : 'worktree', dry: DRY, steps: {}, commits: [], ok: false };
 let cwd = REPO;
 let startSha = '';
+let startIdx = ''; // --here: árvore do ÍNDICE inicial (versões staged), para o rollback não perdê-las
 let startSnap;
 let srcFiles = [];
 
@@ -187,6 +190,7 @@ async function main() {
     report.branch = w.branch;
   }
   startSha = await git(cwd, 'rev-parse', 'HEAD');
+  if (HERE) startIdx = await git(cwd, 'write-tree').catch(() => ''); // índice com conflito não tem árvore: sem restauração
   const req = createRequire(join(cwd, 'package.json'));
   const ts = req('typescript');
   const buildInfo = join(STATE_DIR, `tsc-${createHash('sha1').update(cwd).digest('hex').slice(0, 8)}.tsbuildinfo`);
@@ -207,7 +211,9 @@ async function main() {
 
   const gate = async () => {
     const t = await tc();
-    const fresh = newErrors(baseTsc.errors, t.errors);
+    // Sem a linha na chave: eslint --fix e prettier MUDAM o número de linhas, e um erro antigo do tsc abaixo do trecho
+    // reformatado "virava novo" (o gate final desfazia o autofix inteiro). A linha só é estável dentro do codemod.
+    const fresh = newErrors(baseTsc.errors, t.errors, (e) => `${e.file}|${e.code}|${e.msg}`);
     return { ok: !t.crashed && fresh.length === 0, fresh };
   };
   const stepSnapshot = () => snapshot(cwd, srcFiles);
@@ -219,7 +225,19 @@ async function main() {
     const targets = only ? [...only].filter((f) => /\.tsx?$/.test(f)) : ['src'];
     const t0 = { touched: 0, kept: [], dropped: [] };
     if (targets.length) {
-      const run = (rules) => sh(bin(cwd, 'eslint'), ['--fix', ...targets, ...rules.flatMap((r) => ['--rule', `${r}:error`])], { cwd });
+      // fix restrito às regras da lista (via API do ESLint); falha de execução aborta a etapa em vez de passar como "sem mudança"
+      const run = async (rules, base = snap) => {
+        const r = await sh(process.execPath, [join(import.meta.dirname, 'eslint-safe-fix.mjs'), cwd, rules.join(','), ...targets], { cwd });
+        if (r.code !== 0) throw new Error(`eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr || r.stdout).slice(0, 500)}`);
+        // Guarda de lint por arquivo: a correção segura de uma regra pode CRIAR problema em outra (no-else-return move um `const`
+        // para dentro de `case` => no-case-declarations) e o gate final desfaria o autofix inteiro. O arquivo que piorou volta ao original.
+        const mexidos = touchedSince(cwd, base).filter((f) => /\.tsx?$/.test(f));
+        if (mexidos.length) {
+          const now = await eslintJson(cwd, mexidos);
+          for (const f of mexidos) if ((now.byFile.get(f)?.length ?? 0) > (baseLint.byFile.get(f)?.length ?? 0)) restore(cwd, base, [f]);
+        }
+        return r;
+      };
       await run(SAFE_RULES);
       t0.touched = touchedSince(cwd, snap).length;
       if (t0.touched) {
@@ -229,7 +247,7 @@ async function main() {
           rollback(snap);
           for (const rule of SAFE_RULES) {
             const s2 = stepSnapshot();
-            await run([rule]);
+            await run([rule], s2);
             if (!touchedSince(cwd, s2).length) continue;
             if ((await gate()).ok) t0.kept.push(rule);
             else {
@@ -250,8 +268,12 @@ async function main() {
   if (STEPS.includes('any')) {
     const snap = stepSnapshot();
     const before = await eslintJson(cwd, ['src']);
+    // Só arquivo que o tsc realmente checa: no que o tsconfig exclui (ex.: *.stories.tsx) o gate aceitaria QUALQUER troca,
+    // porque o tsc nunca olha para ele (`(x: any) => x.foo` virava `(x: unknown) => x.foo` "provado").
+    const cfg = ts.getParsedCommandLineOfConfigFile(join(cwd, 'tsconfig.json'), {}, { ...ts.sys, onUnRecoverableConfigFileDiagnostic: () => {} });
+    const noTsc = new Set((cfg?.fileNames ?? []).map((f) => relative(cwd, f)));
     const files = [...before.byFile]
-      .filter(([f, msgs]) => inScope(f) && msgs.some((m) => m.ruleId === '@typescript-eslint/no-explicit-any'))
+      .filter(([f, msgs]) => inScope(f) && noTsc.has(f) && msgs.some((m) => m.ruleId === '@typescript-eslint/no-explicit-any'))
       .map(([f]) => f);
     const kinds = flag('include-as') ? ['drop', 'unknown', 'as'] : ['drop', 'unknown'];
     const pass = { candidates: 0, accepted: 0, rejected: 0, runs: 0, exhausted: false };
@@ -319,6 +341,10 @@ async function main() {
   if (!g.ok) problems.push(`tsc: ${g.fresh.length} erros novos (ex.: ${g.fresh[0] ? `${g.fresh[0].file}:${g.fresh[0].line} ${g.fresh[0].code}` : 'crash'})`);
   if (lint.errors > baseLint.errors) problems.push(`eslint: erros ${baseLint.errors} -> ${lint.errors}`);
   if (lint.warnings > baseLint.warnings) problems.push(`eslint: avisos ${baseLint.warnings} -> ${lint.warnings}`);
+  // Totais mascaram regressão (um erro novo de no-case-declarations compensado por 3 `no-var` corrigidos passava): compara por REGRA.
+  const porRegra = (r) => { const m = new Map(); for (const msgs of r.byFile.values()) for (const x of msgs) m.set(x.ruleId ?? 'fatal', (m.get(x.ruleId ?? 'fatal') ?? 0) + 1); return m; };
+  const r0 = porRegra(baseLint);
+  for (const [rule, n] of porRegra(lint)) if (n > (r0.get(rule) ?? 0)) problems.push(`eslint: regra ${rule} ${r0.get(rule) ?? 0} -> ${n}`);
   if (fmtBad.length) problems.push(`prettier: ${fmtBad.length} arquivos tocados fora do padrão (${fmtBad.slice(0, 3).join(', ')})`);
   if (rr.code !== 0) problems.push('ratchet-any reprovou');
   report.final = { tscErrors: baseTsc.errors.length + g.fresh.length, lintWarnings: lint.warnings, lintErrors: lint.errors, filesTouched: touchedAll.length };
@@ -326,8 +352,14 @@ async function main() {
   if (problems.length) {
     log(`GATE FINAL REPROVOU: ${problems.join('; ')} — desfazendo tudo`);
     report.problems = problems;
-    if (HERE) restore(cwd, startSnap, touchedAll);
-    else await git(cwd, 'reset', '--hard', '-q', startSha);
+    if (HERE) {
+      restore(cwd, startSnap, touchedAll);
+      // --here --commit: os commits das etapas também saem (reset misto: HEAD e índice voltam, os arquivos já foram restaurados)
+      if (report.commits.length) {
+        await git(cwd, 'reset', '-q', startSha);
+        if (startIdx) await git(cwd, 'read-tree', startIdx); // devolve ao índice o que estava em `git add`
+      }
+    } else await git(cwd, 'reset', '--hard', '-q', startSha);
     return 1;
   }
 
@@ -368,9 +400,16 @@ try {
   // rollback em caso de queda no meio de uma etapa
   try {
     if (startSnap) restore(cwd, startSnap, touchedSince(cwd, startSnap));
+    // Os commits das etapas já concluídas não passaram pelo gate final: saem também (ficavam na branch, com o worktree sujo).
+    // startSha só existe depois que o worktree do autofix foi assumido; no --here o reset é misto (não toca nos arquivos).
+    if (startSha && !HERE) await git(cwd, 'reset', '--hard', '-q', startSha);
+    else if (startSha && report.commits.length) {
+      await git(cwd, 'reset', '-q', startSha);
+      if (startIdx) await git(cwd, 'read-tree', startIdx);
+    }
   } catch {}
 } finally {
-  writeReport();
+  if (lockOwned) writeReport(); // quem não pegou a trava não sobrescreve o relatório da execução ativa (mesmo carimbo de minuto)
   releaseLock();
 }
 process.exit(code);

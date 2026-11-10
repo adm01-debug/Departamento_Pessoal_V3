@@ -1,4 +1,5 @@
 # ~/.config/dp-sync/repos.conf — repositórios que seguem a arquitetura "espelho + computador_local".
-# repo|worktree_dev|branch_padrao|mirror|pii
+# repo|worktree_dev|branch_padrao|mirror|pii[|push]
 #   mirror: 1 = espelho feito por run-all.sh · ext = o repositório já tem espelho próprio · 0 = nenhum
+#   push (opcional): vazio ou 1 = commit + push da computador_local · 0 = só commit local, nada é enviado
 /home/USUARIO/projetos/Exemplo_V2|/home/USUARIO/projetos/_worktrees/Exemplo_V2/computador_local|main|1|cpf,cnpj

@@ -8,7 +8,7 @@ NAME="dp-p1-admission-esocial-$$"
 RESULT_DIR="$(mktemp -d)"
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
 trap cleanup EXIT
@@ -28,6 +28,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/migration.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
 CREATE SCHEMA auth;
 CREATE TYPE public.app_role AS ENUM ('admin','rh','user');
@@ -109,10 +110,19 @@ attached="$(run_psql -qAtc "SELECT count(*) FROM public.esocial_eventos WHERE ad
 
 pids=()
 for i in 1 2 3 4; do
+  # The first caller keeps its claim uncommitted while the others race: without
+  # the row locks they cannot see it and try to create a second event.
+  hold=''; if [ "$i" = 1 ]; then hold=' SELECT pg_sleep(3);'; fi
   (set +e; docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
-    "SET ROLE authenticated; SET request.jwt.claim.sub='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1'; SELECT (r->>'evento_id')||':'||(r->>'claim_token') FROM (SELECT public.claim_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001') r) q;" \
+    "SET ROLE authenticated; SET request.jwt.claim.sub='aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1'; SELECT (r->>'evento_id')||':'||(r->>'claim_token') FROM (SELECT public.claim_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001') r) q;$hold" \
     >"$RESULT_DIR/$i.out" 2>"$RESULT_DIR/$i.err"; echo "$?" >"$RESULT_DIR/$i.status") &
   pids+=("$!")
+  if [ "$i" = 1 ]; then
+    for _ in $(seq 1 50); do
+      [ "$(run_psql -Atc "SELECT count(*) FROM pg_stat_activity WHERE wait_event = 'PgSleep'")" = '1' ] && break
+      sleep 0.2
+    done
+  fi
 done
 for pid in "${pids[@]}"; do wait "$pid"; done
 

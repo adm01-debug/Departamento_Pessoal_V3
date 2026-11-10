@@ -61,7 +61,7 @@ export function lerSecoes(texto) {
 
 /** Tira DSN/senha de mensagens de erro do psql antes de imprimir ou gravar. */
 export const limparErro = (msg) => String(msg ?? '').split('\n').map((l) => l.trim()).filter(Boolean)
-  .find((l) => /ERROR|FATAL|erro|error/i.test(l))?.replace(/postgres(?:ql)?:\/\/\S+/g, '<dsn>').slice(0, 240)
+  .find((l) => /ERROR|FATAL|erro|error|ENOENT|ETIMEDOUT|ENOBUFS/i.test(l))?.replace(/postgres(?:ql)?:\/\/\S+/g, '<dsn>').slice(0, 240)
   ?? 'falha sem mensagem';
 
 /**
