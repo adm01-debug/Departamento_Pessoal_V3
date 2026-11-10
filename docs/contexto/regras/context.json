@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4921f71280a269e526e07babf6a42862affcd083",
+  "sha": "bc5d927fb6008bdae80011d8f5f449c752f48157",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 18:29 UTC",
-  "files_total": 2854,
+  "generated_at": "2026-11-10 19:23 UTC",
+  "files_total": 2855,
   "code_files": 2339,
   "code_lines": 313069
  },
  "version": "1.3.2",
- "facts_hash": "fc738596a7970eb4",
+ "facts_hash": "e22a8ac93c2c16e0",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -97970,7 +97970,9 @@
    ],
    "deps": [
     "https:",
-    "npm:@supabase"
+    "npm:@supabase",
+    "npm:pdf-lib@1.17.1",
+    "npm:zod@3.23.8"
    ],
    "imports_modules": [
     "src/integrations"
@@ -276921,10 +276923,89 @@
   }
  },
  "git": {
-  "sha": "4921f71280a269e526e07babf6a42862affcd083",
+  "sha": "bc5d927fb6008bdae80011d8f5f449c752f48157",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bc5d927",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)",
+    "files": [
+     "deno.json",
+     "deno.lock",
+     "supabase/functions/OCR/index.ts",
+     "supabase/functions/_shared/folhaIntegrity.ts",
+     "supabase/functions/_shared/idempotency.ts",
+     "supabase/functions/_shared/monitor.ts",
+     "supabase/functions/_shared/outboundDelivery.ts",
+     "supabase/functions/adiantamento-salarial/index.ts",
+     "supabase/functions/admissao-publica/index.ts",
+     "supabase/functions/alertas-dp/index.ts",
+     "supabase/functions/alertas-preditivos/index.ts",
+     "supabase/functions/assinaturaDigital/index.ts",
+     "supabase/functions/assistente-ia/index.ts",
+     "supabase/functions/auditoria/index.ts",
+     "supabase/functions/auth-gov-br/index.ts",
+     "supabase/functions/auth-login/index.ts",
+     "supabase/functions/backup-automatico/index.ts",
+     "supabase/functions/backup/index.ts",
+     "supabase/functions/cache/index.ts",
+     "supabase/functions/calcular-13-salario/index.ts",
+     "supabase/functions/calcular-ferias/index.ts",
+     "supabase/functions/calcular-folha/index.ts",
+     "supabase/functions/calcular-provisoes/index.ts",
+     "supabase/functions/calcular-rescisao/index.ts",
+     "supabase/functions/cnab-remessa/index.ts",
+     "supabase/functions/consultarCEP/index.ts",
+     "supabase/functions/consultarCNPJ/index.ts",
+     "supabase/functions/criptografia/index.ts",
+     "supabase/functions/dctfweb/index.ts",
+     "supabase/functions/distribuir-holerites/index.ts",
+     "supabase/functions/emprestimo-consignado/index.ts",
+     "supabase/functions/enviar-email-admissao/index.ts",
+     "supabase/functions/enviar-esocial/index.ts",
+     "supabase/functions/enviar-relatorio/index.ts",
+     "supabase/functions/exportacao/index.ts",
+     "supabase/functions/external-db-bridge/index.ts",
+     "supabase/functions/fechar-folha/index.ts",
+     "supabase/functions/fgts-digital/index.ts",
+     "supabase/functions/folha-metrics/index.ts",
+     "supabase/functions/gerar-aej/index.ts",
+     "supabase/functions/gerar-afd/index.ts",
+     "supabase/functions/gerar-contrato-pdf/index.ts",
+     "supabase/functions/gerar-guias/index.ts",
+     "supabase/functions/gerar-holerite/index.ts",
+     "supabase/functions/gerar-ltcat-os/index.ts",
+     "supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
+     "supabase/functions/gerar-pgr/index.ts",
+     "supabase/functions/healthcheck/index.ts",
+     "supabase/functions/importacao/index.ts",
+     "supabase/functions/integracao/index.ts",
+     "supabase/functions/limpeza/index.ts",
+     "supabase/functions/metricas/index.ts",
+     "supabase/functions/metrics/index.ts",
+     "supabase/functions/notificacao/index.ts",
+     "supabase/functions/pagar-desligamento/index.ts",
+     "supabase/functions/parse-afdt/index.ts",
+     "supabase/functions/pix-lote/index.ts",
+     "supabase/functions/process-document-ocr/index.ts",
+     "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
+     "supabase/functions/processar-agendamentos/index.ts",
+     "supabase/functions/processar-ponto-offline/index.ts",
+     "supabase/functions/processar-ponto/index.ts",
+     "supabase/functions/rateLimit/index.ts",
+     "supabase/functions/reabrir-folha/index.ts",
+     "supabase/functions/relatorio/index.ts",
+     "supabase/functions/sincronizar-bitrix/index.ts",
+     "supabase/functions/tabelas-dominio/index.ts",
+     "supabase/functions/upload-certificado/index.ts",
+     "supabase/functions/validar-biometria/index.ts",
+     "supabase/functions/warmup/index.ts",
+     "supabase/functions/whatsapp-send/index.ts"
+    ]
+   },
    {
     "sha": "4921f71",
     "date": "2026-11-10",
@@ -277447,15 +277528,6 @@
     "subject": "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale",
     "files": [
      "docs/auditoria/estado/WORKFLOWS_STATUS.md"
-    ]
-   },
-   {
-    "sha": "b9285c8",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: ratchet-lint-warnings trata _total ausente como warning em vez de Infinity silencioso",
-    "files": [
-     "scripts/ratchet-lint-warnings.mjs"
     ]
    }
   ],

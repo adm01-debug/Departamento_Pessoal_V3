@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4921f71280a269e526e07babf6a42862affcd083` (2026-11-10T15:25:04-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bc5d927fb6008bdae80011d8f5f449c752f48157` (2026-11-10T16:22:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (817), Markdown (289), JavaScript (102), JSON (54), Shell (54), YAML (52), Python (5)
+- linguagens: TypeScript (1418), SQL (817), Markdown (289), JavaScript (102), JSON (55), Shell (54), YAML (52), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2833 |
+| arquivos_total | 2834 |
 | arquivos_codigo | 1524 |
 | linhas_codigo | 265172 |
 | rotas | 113 |
@@ -383,27 +383,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21625 nós · 45133 arestas · 2119 comunidades · grafo do commit `4921f712`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (457), lucide-react (394), button.tsx (330), vitest (312), cn (235), services/index.ts (164), "public"."empresas" (164), contract.ts (162), App.tsx (160), "public"."colaboradores" (155)
+- 21629 nós · 45204 arestas · 2133 comunidades · grafo do commit `bc5d927f`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (346), lucide-react (338), @tanstack/react-query (330), vitest (303), client.ts (213), contract.ts (183), "public"."empresas" (164), useEmpresas (162), App.tsx (157), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (74)
-- package-lock.json (70)
+- package.json (73)
+- package-lock.json (69)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (21)
 - src/integrations/supabase/types.ts (15)
+- supabase/functions/external-db-bridge/index.ts (14)
 - supabase/functions/external-db-bridge/validation.ts (14)
 - .github/workflows/e2e.yml (13)
 - src/services/cnabService.ts (13)
-- supabase/functions/external-db-bridge/index.ts (13)
 - .github/workflows/security.yml (12)
 - AGENTS.md (12)
 - PENDENCIAS.md (12)
+- deno.lock (11)
 - src/integrations/supabase/client.ts (11)
-- .github/workflows/deploy.yml (10)
 
 ## Workflows
 - `canonical-edge-functions.yml` — Canonical Supabase — Edge Functions (pull_request, push, workflow_dispatch)
@@ -596,6 +596,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-10 `bc5d927` infra: migra imports esm.sh para npm: pinados nas edge functions (#362)
 - 2026-11-10 `4921f71` fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com ide
 - 2026-11-10 `f8dace8` fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o 
 - 2026-11-10 `2d6010b` fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417
@@ -610,7 +611,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-09 `8597905` fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)
 - 2026-11-09 `f9261e3` fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)
 - 2026-11-09 `2e54da5` fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)
-- 2026-11-09 `ac8cc11` fix(sync): endurece os scripts após auditoria adversarial (PATH do systemd, perda de dado no backup, travas do autocommi
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)",
    "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com identificador entre aspas (#420)",
    "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o trabalho (#419)",
    "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417)",
-   "fix: auditorias de segurança/RLS/edge sem falso verde, falso positivo nem vazamento de senha (#416)",
-   "fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruição de arquivo (#418)"
+   "fix: auditorias de segurança/RLS/edge sem falso verde, falso positivo nem vazamento de senha (#416)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4921f71280a269e526e07babf6a42862affcd083",
+  "commit": "bc5d927fb6008bdae80011d8f5f449c752f48157",
   "branch": "main",
-  "data_commit": "2026-11-10T15:25:04-03:00",
+  "data_commit": "2026-11-10T16:22:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bc5d927",
+    "data": "2026-11-10",
+    "assunto": "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)"
+   },
    {
     "sha": "4921f71",
     "data": "2026-11-10",
@@ -126,18 +131,13 @@
     "sha": "d03a83b",
     "data": "2026-11-09",
     "assunto": "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)"
-   },
-   {
-    "sha": "8c51e5f",
-    "data": "2026-11-08",
-    "assunto": "fix: corrige 3 inconsistências de doc achadas na validação pós-#395"
    }
   ],
-  "arquivos_mudados_7d": 305,
+  "arquivos_mudados_7d": 374,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 36
    },
    {
     "pasta": "CLAUDE.md",
@@ -148,7 +148,15 @@
     "mudancas": 20
    },
    {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 20
+   },
+   {
     "pasta": "package-lock.json",
+    "mudancas": 19
+   },
+   {
+    "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
    },
    {
@@ -156,15 +164,7 @@
     "mudancas": 18
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 18
-   },
-   {
     "pasta": "scripts/autofix/regras",
-    "mudancas": 16
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 16
    },
    {
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 74
+    "mudancas": 73
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 70
+    "mudancas": 69
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -222,6 +222,10 @@
     "mudancas": 15
    },
    {
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
+    "mudancas": 14
+   },
+   {
     "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 14
    },
@@ -231,10 +235,6 @@
    },
    {
     "arquivo": "src/services/cnabService.ts",
-    "mudancas": 13
-   },
-   {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 13
    },
    {
@@ -250,6 +250,10 @@
     "mudancas": 12
    },
    {
+    "arquivo": "deno.lock",
+    "mudancas": 11
+   },
+   {
     "arquivo": "src/integrations/supabase/client.ts",
     "mudancas": 11
    },
@@ -258,7 +262,7 @@
     "mudancas": 10
    },
    {
-    "arquivo": "deno.lock",
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 10
    },
    {
@@ -286,10 +290,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 9
-   },
-   {
     "arquivo": "vite.config.ts",
     "mudancas": 9
    },
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 93
+    "commits": 94
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 71
+    "commits": 69
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2833,
+  "arquivos_total": 2834,
   "arquivos_codigo": 1524,
   "linhas_codigo": 265172,
   "rotas": 113,

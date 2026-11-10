@@ -7,7 +7,7 @@
    "SQL (817)",
    "Markdown (289)",
    "JavaScript (102)",
-   "JSON (54)",
+   "JSON (55)",
    "Shell (54)",
    "YAML (52)",
    "Python (5)"
@@ -154,6 +154,7 @@
   "ai-context.config.json",
   "commitlint.config.js",
   "components.json",
+  "deno.json",
   "docker-compose.dev.yml",
   "docker-compose.prod.yml",
   "eslint.config.js",
