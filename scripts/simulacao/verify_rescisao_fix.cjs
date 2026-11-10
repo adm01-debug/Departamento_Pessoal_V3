@@ -4,6 +4,11 @@
 // e compara os dois em lote, no mesmo grid de cenários de simulate_rescisao.cjs,
 // para confirmar divergência zero (objetivo da unificação da engine).
 
+// Datas são montadas ora em UTC (new Date('YYYY-MM-DD'), toISOString) ora no fuso
+// local (new Date(a, m, d), getDate): fora de UTC o resultado mudava (em
+// America/Sao_Paulo o verify acusava 100% de divergência). Fixa o fuso do processo.
+process.env.TZ = 'UTC';
+
 function round2(v) {
   return Math.round((v + Number.EPSILON) * 100) / 100;
 }

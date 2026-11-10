@@ -13,6 +13,9 @@ set -euo pipefail
 
 PROJECT_ID="${SUPABASE_PROJECT_ID:-}"
 OUTPUT="src/integrations/supabase/types.ts"
+TMP_OUTPUT=""
+trap '[ -z "$TMP_OUTPUT" ] || rm -f "$TMP_OUTPUT"' EXIT
+trap 'exit 130' INT TERM
 
 if [ -z "$PROJECT_ID" ]; then
   echo "❌ SUPABASE_PROJECT_ID não configurado."
@@ -24,12 +27,17 @@ echo "🔄 Regenerando tipos Supabase do projeto $PROJECT_ID..."
 
 # Supabase cloud
 if command -v supabase &> /dev/null; then
-  supabase gen types typescript --project-id "$PROJECT_ID" --schema public > "$OUTPUT"
+  # Gera em temporário: se a CLI falhar ou for interrompida, o types.ts atual fica intacto.
+  TMP_OUTPUT="$(mktemp "${OUTPUT}.tmp.XXXXXX")"
+  supabase gen types typescript --project-id "$PROJECT_ID" --schema public > "$TMP_OUTPUT"
+  chmod 644 "$TMP_OUTPUT"
+  mv "$TMP_OUTPUT" "$OUTPUT"
+  TMP_OUTPUT=""
   echo "✅ Tipos regenerados via Supabase CLI (cloud)"
 # Self-hosted via psql
 elif [ -n "${SUPABASE_DB_URL:-}" ] && command -v psql &> /dev/null; then
-  echo "ℹ️  Self-hosted detectado. Use scripts/gen-types-from-db.sh para gerar via introspection."
-  exit 0
+  echo "❌ Self-hosted detectado, mas este script só gera via supabase CLI (não instalada). Nada foi gerado."
+  exit 1
 else
   echo "❌ Nem supabase CLI nem psql disponíveis."
   exit 1

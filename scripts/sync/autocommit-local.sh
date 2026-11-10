@@ -2,10 +2,11 @@
 # Commit automático do trabalho local numa branch dedicada e envio ao GitHub, sem intervenção humana.
 #
 #   autocommit-local.sh --worktree <pasta> [--branch computador_local] [--remote origin]
-#                       [--quiet-min 2] [--max-mb 5] [--pii cpf,cnpj] [--dry-run] [--quiet]
+#                       [--quiet-min 2] [--max-mb 5] [--pii cpf,cnpj] [--no-push] [--dry-run] [--quiet]
 #
 # Para cada execução: se o worktree está na branch <branch> e há alterações, faz UM commit com tudo (exceto o que as
 # travas abaixo barram) e dá push em <branch>. Se não há alterações, só envia commits ainda não enviados.
+# Com --no-push o commit fica só LOCAL: nada é enviado (as travas continuam valendo para o commit).
 #
 # ATENÇÃO — o repositório é PÚBLICO: tudo que for enviado é legível por qualquer pessoa. Travas (falham fechadas):
 #   - gitleaks no que será commitado: se achar segredo, NADA é commitado nesta rodada;
@@ -34,10 +35,10 @@ while [ $# -gt 0 ]; do
     --quiet-min) QUIET_MIN="${2:-}"; shift 2 ;;
     --max-mb) MAX_MB="${2:-}"; shift 2 ;;
     --pii) PII="${2:-}"; shift 2 ;;
-    --no-push) NOPUSH=1; shift ;;   # só commit LOCAL (repos públicos em que cada branch enviada dispara preview/CI; o git-autosave já copia para refs/autosave)
+    --no-push) NOPUSH=1; shift ;;   # só commit LOCAL (repos em que cada branch enviada dispara preview/CI; o git-autosave já copia para refs/autosave)
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
-    -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,21p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "opção desconhecida: $1" >&2; exit 2 ;;
   esac
 done
@@ -79,6 +80,11 @@ exec 9>"$STATE/ac-$KEY.lock"; flock -n 9 || { say "outra execução em andamento
 export GIT_TERMINAL_PROMPT=0
 
 # 0. pré-condições
+# --pii com valor desconhecido ("cfp", "cpf|cnpj") desligava a trava em silêncio e o CPF ia para o GitHub: falha fechada.
+PII="${PII//[[:space:]]/}"; PII="${PII,,}"; IFS=, read -r -a _tipos <<< "$PII"
+for _t in "${_tipos[@]}"; do
+  case "$_t" in cpf|cnpj|'') ;; *) say "ERRO: --pii '$PII' inválido (use cpf, cnpj ou cpf,cnpj; vazio desliga) — NADA foi commitado"; echo "--pii inválido: $PII" >&2; exit 2 ;; esac
+done
 CUR="$("${G[@]}" rev-parse --abbrev-ref HEAD 2>/dev/null)"
 [ "$CUR" = "$BRANCH" ] || { say "PULEI: o worktree está em '$CUR', não em '$BRANCH' (nunca troco de branch)"; exit 0; }
 GD="$("${G[@]}" rev-parse --absolute-git-dir)"
@@ -87,7 +93,7 @@ for f in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISEC
 done
 
 push_pendente() {
-  [ "$NOPUSH" -eq 1 ] && return 0   # modo sem push: o commit fica local (e o git-autosave o leva ao GitHub em refs/autosave, sem CI)
+  [ "$NOPUSH" -eq 1 ] && return 0   # modo sem push: o commit fica local; nada é varrido nem enviado
   local ahead; ahead="$("${G[@]}" rev-list --count "$REMOTE/$BRANCH..HEAD" 2>/dev/null || echo novo)"
   [ "$ahead" = "0" ] && return 0
   if [ "$DRY" -eq 1 ]; then say "[dry-run] enviaria $BRANCH ao GitHub ($ahead commit(s) à frente)"; return 0; fi
@@ -263,7 +269,7 @@ if [ -z "$("${G[@]}" diff --cached --name-only)" ]; then
 fi
 N="$("${G[@]}" diff --cached --name-only | grep -c .)"
 if "${G[@]}" commit -q --no-verify -m "autosave($BRANCH): $(date '+%F %T') — $N arquivo(s)" 2>"$STATE/ac-$KEY.err"; then
-  say "COMMIT $("${G[@]}" rev-parse --short HEAD) em $BRANCH ($N arquivo(s))"
+  say "COMMIT $("${G[@]}" rev-parse --short HEAD) em $BRANCH ($N arquivo(s))$([ "$NOPUSH" -eq 1 ] && echo ' — só local (--no-push)')"
 else
   "${G[@]}" reset -q; say "ERRO no commit: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 0
 fi

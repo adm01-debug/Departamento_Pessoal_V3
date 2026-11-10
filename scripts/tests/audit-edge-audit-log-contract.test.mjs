@@ -59,6 +59,26 @@ try {
     throw new Error(`shorthand action escaped the checker:\n${shorthand.stdout}${shorthand.stderr}`);
   }
 
+  // Um INSERT válido ao lado mantém checked > 0: sem ele o guard de "nenhum
+  // INSERT encontrado" reprovaria por outro motivo e mascararia o escape.
+  const validInsert = `
+    await client.from('audit_log').insert({ tabela: 't', registro_id: 'r', acao: 'INSERT' });
+  `;
+  const escapes = {
+    'template literal table name': 'await client.from(`audit_log`).insert({ tabela: "t", acao: "NOT_ALLOWED" });',
+    upsert: `await client.from('audit_log').upsert({ tabela: 't', acao: 'NOT_ALLOWED' });`,
+  };
+  for (const [name, source] of Object.entries(escapes)) {
+    const escaped = runFixture(validInsert + source);
+    if (
+      escaped.status === 0 ||
+      !escaped.stderr.includes('coluna obrigatória ausente em audit_log: registro_id') ||
+      !escaped.stderr.includes('acao incompatível com audit_log_acao_check: NOT_ALLOWED')
+    ) {
+      throw new Error(`${name} escaped the checker:\n${escaped.stdout}${escaped.stderr}`);
+    }
+  }
+
   console.log('EDGE_AUDIT_LOG_ALIAS_TEST_OK');
 } finally {
   rmSync(fixtureRoot, { recursive: true, force: true });

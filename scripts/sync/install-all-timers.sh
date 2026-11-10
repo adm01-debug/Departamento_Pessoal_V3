@@ -30,7 +30,7 @@ Description=$2
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash $DEST/run-all.sh $3
+ExecStart=/bin/bash "$DEST/run-all.sh" $3
 Nice=10
 TimeoutStartSec=2h
 UNITEOF

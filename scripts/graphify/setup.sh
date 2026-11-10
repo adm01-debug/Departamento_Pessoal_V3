@@ -6,7 +6,8 @@ set -euo pipefail
 GRAPHIFY_VERSION="${GRAPHIFY_VERSION:-0.9.68}"
 PKG="graphifyy[sql]==${GRAPHIFY_VERSION}"
 
-cd "$(git rev-parse --show-toplevel)"
+RAIZ="$(git rev-parse --show-toplevel)"   # atribuição separada: dentro de `cd "$(...)"` a falha do git não aborta (set -e) e o script seguia fora do repositório
+cd "$RAIZ"
 
 if command -v uv >/dev/null 2>&1; then
   uv tool install --force "$PKG"

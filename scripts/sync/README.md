@@ -13,8 +13,8 @@ bash scripts/sync/mirror-github.sh --repo <caminho> --dry-run          # mostra 
 
 ## Nada se perde
 
-- Antes de descartar qualquer diferença local, o mirror grava tudo em `refs/mirror-backup/<data>`: alterações, arquivos não rastreados e o commit local de partida. Só local, apagado após 30 dias. Recuperar um arquivo: `git checkout refs/mirror-backup/<data> -- <arquivo>`; listar: `git for-each-ref refs/mirror-backup`.
-- Arquivos **ignorados** pelo git (`.env`, `node_modules`, `dist`) nunca são tocados.
+- Antes de descartar qualquer diferença local, o mirror grava tudo em `refs/mirror-backup/<data>`: alterações, arquivos não rastreados e o commit local de partida. Só local, apagado após 30 dias. Recuperar um arquivo: `git checkout refs/mirror-backup/<data> -- <arquivo>`; listar: `git for-each-ref refs/mirror-backup`. Commits locais da `main` não enviados e a versão que estava em `git add` (quando diferente do disco) entram como pais extras do backup (`git log --graph refs/mirror-backup/<data>`).
+- Arquivos **ignorados** pelo git (`.env`, `node_modules`, `dist`) nunca são tocados. Única exceção: o ignorado que estiver no lugar de um caminho que o GitHub passou a rastrear (ou já no índice via `git add -f`) vai para o backup antes de ser substituído ou removido — exceto se o nome parecer segredo (`.env*`, chaves, credenciais): aí o espelhamento para com erro e nada é descartado; repositório git aninhado nesse lugar = erro, nada é apagado.
 - A branch local em que você estava continua existindo (só o checkout troca para `main`).
 - Adia se algum arquivo foi alterado nos últimos 10 min; não age com rebase/merge/cherry-pick/bisect em andamento, com `main` em outro worktree, ou se o fetch falhar.
 - Nunca faz push. Log: `~/.cache/dp-sync/sync.log`.
@@ -46,7 +46,9 @@ Nunca troca de branch, nunca usa `--force` (push rejeitado = só avisa, o commit
 ## Vários repositórios: `run-all.sh` + `repos.conf`
 
 A mesma arquitetura (espelho exato da main + worktree `computador_local` com commit automático) vale para todos os repositórios de `~/.config/dp-sync/repos.conf`
-(`repos.conf.example`): `repo|worktree_dev|branch_padrao|mirror|pii`, onde `mirror` é `1` (espelha), `ext` (o repositório já tem espelho próprio) ou `0`.
+(`repos.conf.example`): `repo|worktree_dev|branch_padrao|mirror|pii[|push]`, onde `mirror` é `1` (espelha), `ext` (o repositório já tem espelho próprio) ou `0`.
+O campo `push` é opcional: vazio ou `1` = commit + push da `computador_local`; `0` = só commit **local** (`autocommit-local.sh --no-push`: nada é enviado, as travas
+continuam valendo). Qualquer outro valor é erro de configuração: o repositório é pulado, com aviso no log, e o serviço sai com erro.
 
 ```bash
 bash scripts/sync/install-all-timers.sh     # 2 timers: dp-sync-all (hh:00, espelho + sync) e dp-autocommit-all (hh:30)
@@ -54,4 +56,4 @@ run-all.sh mirror|autocommit [--only <nome>] [--dry-run] [--quiet-min N]
 ```
 
 Um repositório com problema não impede os demais. `--pii cpf,cnpj` (por repositório) barra do commit automático arquivos com CPF/CNPJ formatados
-(o aviso de exclusão aparece uma vez por arquivo). O instalador migra os timers antigos de um repositório só (`dp-sync-github`, `dp-autocommit`).
+(o aviso de exclusão aparece uma vez por arquivo); valor diferente de `cpf`/`cnpj` é recusado, em vez de desligar a trava em silêncio. O instalador migra os timers antigos de um repositório só (`dp-sync-github`, `dp-autocommit`).
