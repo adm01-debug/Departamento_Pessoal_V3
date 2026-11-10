@@ -50,6 +50,9 @@ for (const row of ROWS) {
   let cell;
   if (parseError || v === undefined) {
     cell = '⚪ indisponível';
+  } else if (v === 'error') {
+    // run-probes.mjs grava 'error' quando o psql falhou: não é um "fail" medido.
+    cell = '⚠️ não executou (erro no psql)';
   } else if (row.informational) {
     cell = 'ℹ️ informativo';
   } else {

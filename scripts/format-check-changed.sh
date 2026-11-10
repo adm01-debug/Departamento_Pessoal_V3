@@ -22,6 +22,14 @@ if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
   fi
 fi
 
+# Base existe mas não há merge-base (clone raso, histórico órfão): o
+# `git diff BASE...HEAD` abaixo falha e o `|| true` engolia o erro — o gate
+# passava com "0 arquivos alterados".
+if ! git merge-base "$BASE_REF" HEAD >/dev/null 2>&1; then
+  echo "::error::[format:check:changed] no merge base between $BASE_REF and HEAD (shallow clone?); refusing a false-green format gate." >&2
+  exit 2
+fi
+
 mapfile -t CHANGED < <(
   {
     # Files already committed on the feature branch (the CI/PR case).
