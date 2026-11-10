@@ -8,7 +8,7 @@
 // A RPC revalida o ator (pode_gerir_rh_para) e faz desligamento 'pago' +
 // colaborador 'desligado' + audit_log numa única transação.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import {
   createErrorResponse,

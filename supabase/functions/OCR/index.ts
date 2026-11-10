@@ -5,8 +5,8 @@
 //   repassada como image_url para o gateway de IA)
 // • Erros genéricos ao cliente (antes: error.message podia vazar detalhes)
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { z } from 'https://esm.sh/zod@3.23.8';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { z } from 'npm:zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
