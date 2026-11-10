@@ -66,3 +66,7 @@ docs/contexto/regras/*
 
 # bytecode dos geradores Python (scripts/supabase_snapshot, scripts/regras_negocio)
 __pycache__/
+
+# Estado local privado dos novos adaptadores de automação
+/.tools/repo-automation/
+/.tools/graphify/local-state/
