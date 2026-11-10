@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `24cadd4427` · branch `main` · 2026-11-10 21:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `225d5912d7` · branch `main` · 2026-11-10 22:04 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4282,6 +4282,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio | `scripts/ci/branch-podaveis.mjs` |
 | argumento inválido: ${chave} | `scripts/ci/branch-podaveis.mjs` |
 | falta --${obrigatorio} | `scripts/ci/branch-podaveis.mjs` |
+| GitHub API ${method} ${path} → ${res.status}: ${text} | `scripts/ci/github-settings-guard.mjs` |
 | gh mock não coberto: ${method} ${path} | `scripts/ci/issue-rotativa.unit.mjs` |
 | loop sem teto: mock abortou após 150 chamadas | `scripts/ci/issue-rotativa.unit.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/classify-migration-drift.mjs` |
@@ -4533,8 +4534,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Servidor não retornou um resultado válido | `src/pages/CalculadoraRescisaoPage.tsx` |
 | Não foi possível abrir anexo | `src/pages/CanalContabilidadePage.tsx` |
 | ; import { Skeleton } from  | `src/pages/CienciaMedidaPage.tsx` |
-| Empresa atual não identificada | `src/pages/ColaboradorFormPage.tsx` |
-| … +473 linhas — lista completa em `context.json` | |
+| … +474 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

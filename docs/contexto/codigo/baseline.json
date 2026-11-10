@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "24cadd442795495cd5ab8f7eb3d5abee326044ff",
+  "commit": "225d5912d736014cad7d26647b644816b725aa53",
   "branch": "main",
-  "data_commit": "2026-11-10T18:45:33-03:00",
+  "data_commit": "2026-11-10T19:03:26-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "225d591",
+    "data": "2026-11-10",
+    "assunto": "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)"
+   },
    {
     "sha": "24cadd4",
     "data": "2026-11-10",
@@ -126,14 +131,9 @@
     "sha": "a7e645d",
     "data": "2026-11-09",
     "assunto": "feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)"
-   },
-   {
-    "sha": "560e715",
-    "data": "2026-11-09",
-    "assunto": "fix: bypass MFA em E2E para rotas admin (VITE_E2E_BYPASS_MFA) (#352)"
    }
   ],
-  "arquivos_mudados_7d": 410,
+  "arquivos_mudados_7d": 414,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 71
+    "mudancas": 70
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 66
+    "mudancas": 65
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 99
+    "commits": 100
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2870,
-  "arquivos_codigo": 1545,
-  "linhas_codigo": 272348,
+  "arquivos_total": 2874,
+  "arquivos_codigo": 1547,
+  "linhas_codigo": 273263,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -336,9 +336,9 @@
   "tabelas": 417,
   "migrations": 785,
   "cron_jobs": 41,
-  "testes": 588,
-  "workflows": 20,
-  "scripts": 113,
+  "testes": 589,
+  "workflows": 21,
+  "scripts": 114,
   "docs_md": 291
  },
  "por_pasta": {
@@ -495,8 +495,8 @@
    "linhas": 143
   },
   "scripts/ci": {
-   "arquivos": 13,
-   "linhas": 2195
+   "arquivos": 15,
+   "linhas": 3110
   },
   "scripts/db": {
    "arquivos": 2,
@@ -839,11 +839,11 @@
  ],
  "qualidade": {
   "any": 73,
-  "console_log": 278,
+  "console_log": 292,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
-  "arquivos_acima_500_linhas": 53
+  "arquivos_acima_500_linhas": 54
  },
  "todos": [
   {

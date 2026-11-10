@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 588,
+ "total": 589,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 550
+  "unit": 551
  },
  "onde_ficam": [
   {
@@ -27,7 +27,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 22
+   "arquivos": 23
   }
  ],
  "arquivos": [
@@ -284,6 +284,15 @@
     "scripts/ci/workflow-test-support.mjs"
    ],
    "casos": 16
+  },
+  {
+   "arquivo": "scripts/ci/github-settings-guard.unit.mjs",
+   "tipo": "unit",
+   "linhas": 353,
+   "testa": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
+   "casos": 22
   },
   {
    "arquivo": "scripts/ci/issue-rotativa.unit.mjs",
@@ -5353,6 +5362,7 @@
   "scripts/automation.mjs": 1,
   "scripts/ci/actions-kpi.mjs": 1,
   "scripts/ci/branch-podaveis.mjs": 1,
+  "scripts/ci/github-settings-guard.mjs": 1,
   "scripts/ci/issue-rotativa.mjs": 1,
   "scripts/ci/sla-code-scanning.mjs": 1,
   "scripts/ci/workflow-test-support.mjs": 4,

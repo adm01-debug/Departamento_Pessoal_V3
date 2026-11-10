@@ -31,7 +31,7 @@
   "scripts": [
    "scripts/simulacao (12)",
    "scripts/autofix (10)",
-   "scripts/ci (8)"
+   "scripts/ci (9)"
   ],
   "docs": [
    "docs (73)",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)",
    "chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)",
    "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)",
    "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
-   "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)",
-   "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)"
+   "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

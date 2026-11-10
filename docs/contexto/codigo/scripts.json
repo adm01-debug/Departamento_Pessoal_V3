@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 113,
+ "total": 114,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -498,6 +498,24 @@
    "npm_scripts": [],
    "workflows": [
     "ci.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/github-settings-guard.mjs",
+   "descricao": "* E13/E14 + E95: confere o perimetro do GitHub contra o baseline versionado",
+   "linhas": 562,
+   "env": [
+    "ADMIN_READ_TOKEN",
+    "GITHUB_REPOSITORY",
+    "GITHUB_RUN_ID",
+    "GITHUB_TOKEN",
+    "PERIMETER_SNAPSHOT_PATH",
+    "SETTINGS_GUARD_AUTOR"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "settings-guard.yml"
    ],
    "orfao": false
   },

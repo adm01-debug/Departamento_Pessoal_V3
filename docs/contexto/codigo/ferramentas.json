@@ -6,10 +6,10 @@
    "TypeScript (1418)",
    "SQL (821)",
    "Markdown (291)",
-   "JavaScript (123)",
-   "JSON (60)",
+   "JavaScript (125)",
+   "JSON (61)",
+   "YAML (56)",
    "Shell (55)",
-   "YAML (55)",
    "Python (5)"
   ],
   "linguagem_principal": "TypeScript",
@@ -808,6 +808,34 @@
     "github/codeql-action/init",
     "github/codeql-action/upload-sarif",
     "ossf/scorecard-action"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/settings-guard.yml",
+   "nome": "Settings Guard",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "19 7 * * *"
+   ],
+   "branches": [],
+   "jobs": [
+    "guard"
+   ],
+   "permissoes": [
+    "contents: read",
+    "issues: write"
+   ],
+   "scripts_usados": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/upload-artifact"
    ]
   },
   {

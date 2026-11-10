@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "24cadd442795495cd5ab8f7eb3d5abee326044ff",
+  "sha": "225d5912d736014cad7d26647b644816b725aa53",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 21:50 UTC",
-  "files_total": 2891,
-  "code_files": 2364,
-  "code_lines": 320290
+  "generated_at": "2026-11-10 22:04 UTC",
+  "files_total": 2895,
+  "code_files": 2366,
+  "code_lines": 321205
  },
  "version": "1.3.2",
- "facts_hash": "d295f4cf06d14ad3",
+ "facts_hash": "4b1bf56cfec8bd93",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -358,6 +358,14 @@
     ]
    },
    {
+    "file": ".github/workflows/settings-guard.yml",
+    "name": "Settings Guard",
+    "triggers": [
+     "schedule",
+     "workflow_dispatch"
+    ]
+   },
+   {
     "file": ".github/workflows/workflow-lint.yml",
     "name": "Workflow lint (actionlint)",
     "triggers": [
@@ -379,7 +387,7 @@
    ".sql": 821,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 98,
+   ".mjs": 100,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -94846,6 +94854,11 @@
    },
    {
     "kind": "GitHub Actions cron",
+    "detail": "19 7 * * *",
+    "file": ".github/workflows/settings-guard.yml"
+   },
+   {
+    "kind": "GitHub Actions cron",
     "detail": "10 8 * * 3",
     "file": ".github/workflows/workflows-report.yml"
    }
@@ -95968,8 +95981,8 @@
   },
   {
    "module": "scripts",
-   "files": 128,
-   "lines": 29072,
+   "files": 130,
+   "lines": 29987,
    "tables": [
     "a",
     "anexos",
@@ -96024,6 +96037,7 @@
     "referencia.mjs: TABELAS, refINSS, refIRRFTabela, refIRRF, refFGTS, refDiasAviso",
     "actions-kpi.mjs: textoSeguro, duracaoMinutos, runsNaJanela, agregar, paginaTemMais, maisLentos",
     "branch-podaveis.mjs: DIAS_MINIMOS, SEMPRE_FORA, motivoNomeInseguro, nomeVisivel, selecionarPodaveis, relatorio",
+    "github-settings-guard.mjs: assinaturaDe",
     "issue-rotativa.mjs: LIMITE_COMENTARIOS, contarComentarios, encontrarIssue, abrirOuRotacionar, fecharSeAberta",
     "sla-code-scanning.mjs: SLA_DIAS, nivel, avaliarSla, relatorio",
     "workflow-test-support.mjs: jobsOf, jobOf, stepsOf, valueOf, nestedValue, permission",
@@ -96156,6 +96170,8 @@
     "scripts/ci/branch-podaveis.unit.mjs",
     "scripts/ci/bump-toolchain.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/ci/github-settings-guard.mjs",
+    "scripts/ci/github-settings-guard.unit.mjs",
     "scripts/ci/issue-rotativa.mjs",
     "scripts/ci/issue-rotativa.unit.mjs",
     "scripts/ci/notifica-falha.mjs",
@@ -96167,9 +96183,7 @@
     "scripts/db/schema-inventory.sql",
     "scripts/diag/run-sql-diag.mjs",
     "scripts/e2e/ensure-fixtures.mjs",
-    "scripts/e2e/seed.mjs",
-    "scripts/e2e/verify-seed.mjs",
-    "scripts/inventario/banco.sql"
+    "scripts/e2e/seed.mjs"
    ]
   },
   {
@@ -102743,6 +102757,9 @@
    ]
   },
   "env": {
+   "ADMIN_READ_TOKEN": [
+    "scripts/ci/github-settings-guard.mjs"
+   ],
    "AI_CONTEXT_DIR": [
     "scripts/ai-context/gerar.mjs"
    ],
@@ -103014,9 +103031,11 @@
     "scripts/probes/run-probes.mjs"
    ],
    "GITHUB_REPOSITORY": [
-    "scripts/ci/actions-kpi.mjs"
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/github-settings-guard.mjs"
    ],
    "GITHUB_RUN_ID": [
+    "scripts/ci/github-settings-guard.mjs",
     "scripts/probes/print-summary.mjs"
    ],
    "GITHUB_SHA": [
@@ -103030,6 +103049,7 @@
     "scripts/audit-required-checks.mjs",
     "scripts/ci/actions-kpi.mjs",
     "scripts/ci/bump-toolchain.mjs",
+    "scripts/ci/github-settings-guard.mjs",
     "scripts/report-workflows.mjs"
    ],
    "GOVBR_BASE_URL": [
@@ -103089,6 +103109,9 @@
     "scripts/graphify-local.unit.mjs",
     "scripts/tests/contexto-publicacao.test.mjs",
     "scripts/tests/run-sql-diag-guard.test.mjs"
+   ],
+   "PERIMETER_SNAPSHOT_PATH": [
+    "scripts/ci/github-settings-guard.mjs"
    ],
    "PGDUMP": [
     "scripts/supabase_snapshot/snapshot.py"
@@ -103174,6 +103197,9 @@
    ],
    "SENTRY_RELEASE": [
     "supabase/functions/_shared/sentry.ts"
+   ],
+   "SETTINGS_GUARD_AUTOR": [
+    "scripts/ci/github-settings-guard.mjs"
    ],
    "SLACK_WEBHOOK_URL": [
     "supabase/functions/folha-metrics/index.ts"
@@ -106884,6 +106910,10 @@
    {
     "file": "scripts/ci/branch-podaveis.mjs",
     "msg": "falta --${obrigatorio}"
+   },
+   {
+    "file": "scripts/ci/github-settings-guard.mjs",
+    "msg": "GitHub API ${method} ${path} → ${res.status}: ${text}"
    },
    {
     "file": "scripts/ci/issue-rotativa.unit.mjs",
@@ -229455,6 +229485,101 @@
     "* Verifica: arquivo existe, cabecalhos obrigatorios presentes, nao encolheu >30% vs a base."
    ]
   },
+  "scripts/ci/github-settings-guard.mjs": {
+   "path": "scripts/ci/github-settings-guard.mjs",
+   "lines": 562,
+   "exports": [
+    "function assinaturaDe"
+   ],
+   "env": [
+    "ADMIN_READ_TOKEN",
+    "GITHUB_REPOSITORY",
+    "GITHUB_RUN_ID",
+    "GITHUB_TOKEN",
+    "PERIMETER_SNAPSHOT_PATH",
+    "SETTINGS_GUARD_AUTOR"
+   ],
+   "errors": [
+    "GitHub API ${method} ${path} → ${res.status}: ${text}"
+   ],
+   "params": [
+    {
+     "name": "RUNBOOK_SEGREDOS",
+     "value": "'AGENTS.md § 7 (Fluxo Git) + docs/agentes/banco.md'"
+    },
+    {
+     "name": "ISSUE_LABEL",
+     "value": "'settings-guard'"
+    },
+    {
+     "name": "ISSUE_TITLE",
+     "value": "'[settings-guard] perimeter regression detected'"
+    },
+    {
+     "name": "BRANCH",
+     "value": "'main'"
+    },
+    {
+     "name": "SEIS_HORAS_MS",
+     "value": "6"
+    },
+    {
+     "name": "SETE_DIAS_MS",
+     "value": "7"
+    }
+   ],
+   "rule_comments": [
+    "W04: o GET /repos so devolve os campos de merge para quem tem permissao push/admin.",
+    ")`, 200, 'resposta sem os campos de merge: o token nao tem permissao push/admin para le-los');"
+   ],
+   "doc": "!/usr/bin/env node",
+   "temporal": [
+    "const SEIS_HORAS_MS = 6 * 60 * 60 * 1000;",
+    "const SETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "scripts/ci/github-settings-guard.unit.mjs": {
+   "path": "scripts/ci/github-settings-guard.unit.mjs",
+   "lines": 353,
+   "params": [
+    {
+     "name": "TITULO",
+     "value": "'[settings-guard] perimeter regression detected'"
+    },
+    {
+     "name": "SEM_ESCOPO",
+     "value": "\"send({ message: '"
+    },
+    {
+     "name": "BP_404",
+     "value": "\"send({ message: '"
+    },
+    {
+     "name": "ACTIONS_OK",
+     "value": "\"send({ enabled: true, allowed_actions: '"
+    },
+    {
+     "name": "WORKFLOW_PERMS_OK",
+     "value": "\"send({ default_workflow_permissions: '"
+    },
+    {
+     "name": "SELECTED_PATTERNS",
+     "value": "\"['"
+    },
+    {
+     "name": "SELECTED_OK",
+     "value": "\"send({ patterns_allowed: ['"
+    },
+    {
+     "name": "ENVS_OK",
+     "value": "\"send({ environments: [{ name: '"
+    },
+    {
+     "name": "GUARD",
+     "value": "'github-actions[bot]'"
+    }
+   ]
+  },
   "scripts/ci/issue-rotativa.mjs": {
    "path": "scripts/ci/issue-rotativa.mjs",
    "lines": 149,
@@ -277591,10 +277716,24 @@
   }
  },
  "git": {
-  "sha": "24cadd442795495cd5ab8f7eb3d5abee326044ff",
+  "sha": "225d5912d736014cad7d26647b644816b725aa53",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "225d591",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)",
+    "files": [
+     ".github/workflows/settings-guard.yml",
+     "scripts/automation.config.json",
+     "scripts/ci/README.md",
+     "scripts/ci/github-settings-baseline.json",
+     "scripts/ci/github-settings-guard.mjs",
+     "scripts/ci/github-settings-guard.unit.mjs"
+    ]
+   },
    {
     "sha": "24cadd4",
     "date": "2026-11-10",
@@ -278218,15 +278357,6 @@
      "scripts/autofix/regras/verificar.mjs",
      "scripts/autofix/run.mjs"
     ]
-   },
-   {
-    "sha": "d03a83b",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)",
-    "files": [
-     "scripts/audit-migration-style.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -278263,6 +278393,10 @@
     4
    ],
    [
+    "scripts/automation.config.json",
+    3
+   ],
+   [
     "scripts/autofix/lib.mjs",
     3
    ],
@@ -278283,15 +278417,11 @@
     3
    ],
    [
-    "scripts/automation.config.json",
+    "scripts/ci/README.md",
     2
    ],
    [
     "src/components/AdminRoute.tsx",
-    2
-   ],
-   [
-    "scripts/audit-migration-style.mjs",
     2
    ],
    [
