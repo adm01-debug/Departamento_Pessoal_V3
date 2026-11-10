@@ -3,7 +3,7 @@
 // Consumido por dashboards internos / alertas.
 //
 // Segurança: JWT obrigatório, role admin/rh, CSRF fail-closed, no-store.
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
