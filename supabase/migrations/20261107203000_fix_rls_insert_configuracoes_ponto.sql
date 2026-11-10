@@ -10,6 +10,7 @@
 -- DROP POLICY IF EXISTS + CREATE POLICY = idempotente. Sem alteração de dados.
 -- =============================================================================
 
+-- audit-migration-style: allow-silent-drop policy ausente no banco por drift; recriada logo abaixo
 DROP POLICY IF EXISTS "configuracoes_ponto_tenant_manage" ON public.configuracoes_ponto;
 
 CREATE POLICY "configuracoes_ponto_tenant_manage"
