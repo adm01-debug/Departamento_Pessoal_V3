@@ -3,12 +3,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$ROOT/supabase/migrations/20260912209000_p1_tenant_telemetry_contract.sql"
 NAME="dp-p1-tenant-tel-$$"; IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
-cleanup(){ docker rm -f "$NAME" >/dev/null 2>&1 || true; }; trap cleanup EXIT
+cleanup(){ docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }; trap cleanup EXIT
 psqlc(){ docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 bash "$ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"; docker cp "$MIGRATION" "$NAME":/tmp/m.sql
 psqlc <<'SQL'
 CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE TABLE query_telemetry(id uuid PRIMARY KEY DEFAULT gen_random_uuid(), operation text NOT NULL,
  table_name text, rpc_name text, duration_ms int NOT NULL, record_count int, query_limit int,
  query_offset int, count_mode text, severity text NOT NULL, error_message text, user_id uuid,
@@ -22,4 +23,5 @@ psqlc -qAtc "INSERT INTO query_telemetry(operation,table_name,duration_ms,severi
 [ "$(psqlc -qAtc "SELECT data_type FROM information_schema.columns WHERE table_schema='public' AND table_name='query_telemetry' AND column_name='trace_id'")" = 'text' ] || { echo 'trace_id compatibility column missing' >&2; exit 1; }
 set +e; denied="$(psqlc -c 'SET ROLE authenticated; SELECT * FROM query_telemetry;' 2>&1)"; status=$?; set -e
 [ "$status" -ne 0 ] && [[ "$denied" == *'permission denied'* ]] || { echo 'authenticated read telemetry' >&2; exit 1; }
+[ "$(psqlc -qAtc "SELECT has_function_privilege('authenticated','public.refresh_telemetry_views()','EXECUTE')")" = 'f' ] || { echo 'authenticated can refresh telemetry views' >&2; exit 1; }
 echo 'P1_TENANT_TELEMETRY_OK: attribution column, separated MV, legacy exclusion, ACL and idempotency passed.'

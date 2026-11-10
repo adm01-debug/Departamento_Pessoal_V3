@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { ListOptions, ListResponse } from '@/services/baseService';
+import type { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';

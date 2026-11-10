@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
-import { BaseService, ListOptions, ListResponse } from './baseService';
+import type { ListOptions, ListResponse } from './baseService';
+import { BaseService } from './baseService';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 
 class WebhookService extends BaseService<Tables<'webhooks'>, Insertable<'webhooks'>, Updatable<'webhooks'>> {

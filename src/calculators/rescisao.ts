@@ -78,7 +78,7 @@ export function calcularAvisoPrevioIndenizado(salarioBase: number, anosServico: 
   return { dias, valor };
 }
 
-export function calcularSeguroDesemprego(ultimosSalarios: number[], mesesVinculo: number = 0) {
+export function calcularSeguroDesemprego(ultimosSalarios: number[], mesesVinculo = 0) {
   if (!ultimosSalarios.length) return { valorParcela: SALARIO_MINIMO_2026, parcelas: 3 };
   const media = ultimosSalarios.reduce((a, b) => a + b, 0) / ultimosSalarios.length;
   const sd = FAIXAS_SEGURO_DESEMPREGO_2026;
@@ -103,7 +103,7 @@ export function calcularMultaFGTS(
 // CLT Art. 477 §8°: multa de um salário mensal quando o empregador não quita as verbas rescisórias
 // no prazo legal (10 dias corridos para aviso prévio trabalhado; 1° dia útil para demissão imediata).
 // Retorna 0 quando o empregador não é o culpado pelo atraso (e.g., força maior, culpa do empregado).
-export function calcularMulta477(salarioBase: number, empregadorCulpado: boolean = false): number {
+export function calcularMulta477(salarioBase: number, empregadorCulpado = false): number {
   if (!empregadorCulpado) return 0;
   return Math.trunc(salarioBase * 100) / 100;
 }
@@ -124,11 +124,7 @@ export function calcularProvisao13(salarioBase: number, mesesTrabalhados: number
   return { provisao13, provisaoEncargos, total };
 }
 
-export function calcularEncargos(
-  salarioBase: number,
-  percentualRAT: number = 0.03,
-  percentualTerceiros: number = 0.058
-) {
+export function calcularEncargos(salarioBase: number, percentualRAT = 0.03, percentualTerceiros = 0.058) {
   const inssEmpregado = calcularINSS(salarioBase);
   const irrfEmpregado = calcularIRRF(salarioBase);
   const fgts = calcularFGTS(salarioBase);

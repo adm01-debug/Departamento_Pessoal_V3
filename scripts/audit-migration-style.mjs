@@ -57,7 +57,7 @@ const migrationsDir = resolve(import.meta.dirname, '../supabase/migrations');
 const CUTOFF_VERSION = '20260924300000';
 
 const DROP_POLICY_RE =
-  /^\s*DROP\s+POLICY\s+IF\s+EXISTS\s+"?([A-Za-z0-9_]+)"?\s+ON\s+(?:"?[A-Za-z0-9_]+"?\.)? "?([A-Za-z0-9_]+)"?/i;
+  /^\s*DROP\s+POLICY\s+IF\s+EXISTS\s+"?([A-Za-z0-9_]+)"?\s+ON\s+(?:"?[A-Za-z0-9_]+"?\.)?"?([A-Za-z0-9_]+)"?/i;
 const ALLOW_ANNOTATION_RE = /^\s*--\s*audit-migration-style:\s*allow-silent-drop\b/i;
 
 function escapeRegex(s) {
