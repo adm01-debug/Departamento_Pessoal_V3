@@ -33,7 +33,11 @@ const TSC_LINE = /^(.+?)\((\d+),(\d+)\): error (TS\d+): (.*)$/;
  * rodadas repetidas do codemod custarem segundos, não ~20s cada.
  */
 export async function typecheck(cwd, buildInfo) {
-  const r = await sh(bin(cwd, 'tsc'), ['--noEmit', '--incremental', '--tsBuildInfoFile', buildInfo, '--pretty', 'false'], { cwd });
+  const r = await sh(
+    bin(cwd, 'tsc'),
+    ['--noEmit', '--incremental', '--tsBuildInfoFile', buildInfo, '--pretty', 'false'],
+    { cwd }
+  );
   const errors = [];
   for (const line of r.stdout.split('\n')) {
     const m = TSC_LINE.exec(line);
@@ -65,6 +69,9 @@ export function newErrors(base, now) {
 /** Roda o eslint do projeto em modo JSON. Falha alto se a saída não for JSON (nunca "verde falso"). */
 export async function eslintJson(cwd, targets, extraArgs = []) {
   const r = await sh(bin(cwd, 'eslint'), [...targets, ...extraArgs, '-f', 'json'], { cwd });
+  if (r.code !== 0 && r.code !== 1) {
+    throw new Error(`eslint falhou (exit ${r.code}):\n${(r.stderr || r.stdout).slice(0, 2000)}`);
+  }
   let data;
   try {
     data = JSON.parse(r.stdout);
@@ -127,7 +134,11 @@ export async function prettierCheck(cwd, files) {
   const bad = [];
   for (let i = 0; i < files.length; i += 150) {
     const r = await sh(bin(cwd, 'prettier'), ['--list-different', ...files.slice(i, i + 150)], { cwd });
-    bad.push(...r.stdout.split('\n').filter(Boolean));
+    const different = r.stdout.split('\n').filter(Boolean);
+    if ((r.code !== 0 && r.code !== 1) || (r.code === 1 && !different.length)) {
+      throw new Error(`prettier --list-different falhou (exit ${r.code}):\n${r.stderr || r.stdout}`);
+    }
+    bad.push(...different);
   }
   return bad;
 }
