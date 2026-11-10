@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `8391bcc91ed87c7a5156b680082ed604745567c5` (2026-11-10T17:48:01-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3668b50c56c0621fa4a0ff0ce35f72534a37b145` (2026-11-10T17:49:04-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (819), Markdown (289), JavaScript (102), JSON (55), Shell (54), YAML (52), Python (5)
+- linguagens: TypeScript (1418), SQL (821), Markdown (289), JavaScript (114), JSON (56), Shell (54), YAML (54), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2836 |
-| arquivos_codigo | 1524 |
-| linhas_codigo | 265172 |
+| arquivos_total | 2853 |
+| arquivos_codigo | 1536 |
+| linhas_codigo | 267291 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -46,11 +46,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
-| migrations | 783 |
+| migrations | 785 |
 | cron_jobs | 41 |
-| testes | 579 |
-| workflows | 17 |
-| scripts | 100 |
+| testes | 584 |
+| workflows | 19 |
+| scripts | 107 |
 | docs_md | 289 |
 
 ## Onde ficam as coisas
@@ -61,7 +61,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - testes: co-localizado (__tests__) (468), co-localizado (*.test) (69), e2e/ (27)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
-- scripts: scripts/simulacao (12), scripts/autofix (10), scripts/sync (7)
+- scripts: scripts/simulacao (12), scripts/autofix (10), scripts/ci (8)
 - docs: docs (72), (raiz) (31), .github (1)
 - nomenclatura: {"componentes":"PascalCase (87%)","hooks":"use + PascalCase","servicos":"camelCase (99%)","edge_functions":"kebab-case (68%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
@@ -355,7 +355,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: departamento-pessoal-v3.vercel.app, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, ai-gateway.lovable.dev, api.lovable.dev, brasilapi.com.br, example.test, frjbfeamybqsejlvmqbl.supabase.co, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, signed.url, viacep.com.br, www.esocial.gov.br, x.supabase.co
+- hosts mais citados: departamento-pessoal-v3.vercel.app, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, ai-gateway.lovable.dev, api.lovable.dev, brasilapi.com.br, example.invalid, example.test, frjbfeamybqsejlvmqbl.supabase.co, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, signed.url, viacep.com.br, www.esocial.gov.br
 - webhooks recebidos: admissao-publica, auth-gov-br, auth-login, healthcheck, metrics, webhook
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, LOVABLE_API_KEY, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TURNSTILE_SECRET_KEY, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
@@ -383,14 +383,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21631 nós · 45204 arestas · 2135 comunidades · grafo do commit `8391bcc9`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (346), lucide-react (338), @tanstack/react-query (330), vitest (303), client.ts (213), contract.ts (183), "public"."empresas" (164), useEmpresas (162), App.tsx (157), "public"."colaboradores" (155)
+- 21742 nós · 45459 arestas · 2095 comunidades · grafo do commit `3668b50c`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (439), react (397), button.tsx (367), useEmpresas (355), cn (343), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146), rateLimit.ts (145)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (73)
-- package-lock.json (69)
+- package.json (72)
+- package-lock.json (68)
 - .github/workflows/canonical-migrations.yml (48)
 - CLAUDE.md (29)
 - .github/workflows/ci.yml (22)
@@ -399,13 +399,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/functions/external-db-bridge/validation.ts (15)
 - .github/workflows/e2e.yml (14)
 - src/services/cnabService.ts (14)
-- .github/workflows/security.yml (13)
 - AGENTS.md (13)
+- .github/workflows/security.yml (12)
 - PENDENCIAS.md (12)
 - .github/workflows/deploy.yml (11)
 - deno.lock (11)
 
 ## Workflows
+- `branch-hygiene-audit.yml` — Branch Hygiene Audit (schedule, workflow_dispatch; cron 56 7 * * 1)
 - `canonical-edge-functions.yml` — Canonical Supabase — Edge Functions (pull_request, push, workflow_dispatch)
 - `canonical-migrations.yml` — Canonical database — scoped migrations (workflow_dispatch)
 - `canonical-probes.yml` — Canonical database — read-only security probes (schedule, workflow_call, workflow_dispatch; cron 23 6 * * *)
@@ -417,6 +418,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `gitleaks.yml` — Gitleaks (pull_request, push, workflow_dispatch)
 - `healthcheck.yml` — Environment Healthcheck (schedule, workflow_dispatch; cron 17 */6 * * *)
 - `inventario-estado-semanal.yml` — Inventário do estado real (semanal) (schedule, workflow_dispatch; cron 23 10 * * 1)
+- `notifica-falha-main.yml` — Notifica falha na main (workflow_run)
 - `ossf-scorecard.yml` — OSSF Scorecard (schedule, workflow_dispatch; cron 15 7 * * 2)
 - `post-deploy-smoke.yml` — Post-deploy smoke (deployment_status)
 - `ruleset-sync.yml` — Ruleset sync (schedule, workflow_dispatch; cron 41 7 * * 1)
@@ -596,6 +598,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-10 `3668b50` fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)
+- 2026-11-10 `36a404f` ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)
 - 2026-11-10 `8391bcc` fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)
 - 2026-11-10 `bc5d927` infra: migra imports esm.sh para npm: pinados nas edge functions (#362)
 - 2026-11-10 `4921f71` fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com ide
@@ -609,8 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `7aba28e` fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)
 - 2026-11-10 `34e22ec` feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)
 - 2026-11-09 `1dbce64` fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)
-- 2026-11-09 `8597905` fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)
-- 2026-11-09 `f9261e3` fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

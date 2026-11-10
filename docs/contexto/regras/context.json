@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "8391bcc91ed87c7a5156b680082ed604745567c5",
+  "sha": "3668b50c56c0621fa4a0ff0ce35f72534a37b145",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 20:49 UTC",
-  "files_total": 2857,
-  "code_files": 2341,
-  "code_lines": 313097
+  "generated_at": "2026-11-10 20:51 UTC",
+  "files_total": 2874,
+  "code_files": 2355,
+  "code_lines": 315233
  },
  "version": "1.3.2",
- "facts_hash": "2ad9a3b78486a027",
+ "facts_hash": "c2a1b96c6128a3dd",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -201,6 +201,14 @@
   ],
   "ci": [
    {
+    "file": ".github/workflows/branch-hygiene-audit.yml",
+    "name": "Branch Hygiene Audit",
+    "triggers": [
+     "schedule",
+     "workflow_dispatch"
+    ]
+   },
+   {
     "file": ".github/workflows/canonical-edge-functions.yml",
     "name": "Canonical Supabase — Edge Functions",
     "triggers": [
@@ -292,6 +300,11 @@
     ]
    },
    {
+    "file": ".github/workflows/notifica-falha-main.yml",
+    "name": "Notifica falha na main",
+    "triggers": []
+   },
+   {
     "file": ".github/workflows/ossf-scorecard.yml",
     "name": "OSSF Scorecard",
     "triggers": [
@@ -341,10 +354,10 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 819,
+   ".sql": 821,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 77,
+   ".mjs": 89,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -49442,6 +49455,16 @@
     "src": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql"
    },
    {
+    "name": "Admins podem inserir configurações de ponto",
+    "table": "configuracoes_ponto",
+    "cmd": "INSERT",
+    "roles": "public",
+    "mode": "permissive",
+    "using": "",
+    "check": "pertence_a_empresa(empresa_id)",
+    "src": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql"
+   },
+   {
     "name": "Acesso aos itens via folha",
     "table": "itens_folha",
     "cmd": "ALL",
@@ -70169,6 +70192,8 @@
    "supabase/migrations/20261029120000_whatsapp_pending_trigger_retire.verify.sql",
    "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
    "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
+   "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
+   "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -94754,6 +94779,11 @@
    },
    {
     "kind": "GitHub Actions cron",
+    "detail": "56 7 * * 1",
+    "file": ".github/workflows/branch-hygiene-audit.yml"
+   },
+   {
+    "kind": "GitHub Actions cron",
     "detail": "23 6 * * *",
     "file": ".github/workflows/canonical-probes.yml"
    },
@@ -95916,8 +95946,8 @@
   },
   {
    "module": "scripts",
-   "files": 107,
-   "lines": 21894,
+   "files": 119,
+   "lines": 24015,
    "tables": [
     "a",
     "anexos",
@@ -95968,6 +95998,11 @@
     "dados.mjs: dividirStatements, reconstruirSchema, regrasDados, AVISO_REPLAY",
     "motores.mjs: carregarMotores",
     "referencia.mjs: TABELAS, refINSS, refIRRFTabela, refIRRF, refFGTS, refDiasAviso",
+    "actions-kpi.mjs: textoSeguro, duracaoMinutos, runsNaJanela, agregar, paginaTemMais, maisLentos",
+    "branch-podaveis.mjs: DIAS_MINIMOS, SEMPRE_FORA, motivoNomeInseguro, nomeVisivel, selecionarPodaveis, relatorio",
+    "issue-rotativa.mjs: LIMITE_COMENTARIOS, contarComentarios, encontrarIssue, abrirOuRotacionar, fecharSeAberta",
+    "sla-code-scanning.mjs: SLA_DIAS, nivel, avaliarSla, relatorio",
+    "workflow-test-support.mjs: jobsOf, jobOf, stepsOf, valueOf, nestedValue, permission",
     "derive-pending-migrations.mjs: DEFAULT_MAX_PENDING, derivePendingMigrations",
     "gerar-banco.mjs: PROJETO_CANONICO, SECOES_OBRIGATORIAS, LIMIARES, PARECE_CREDENCIAL, lerSecoes, limparErro",
     "gerar-rotas.mjs: resolverImport, extrairImports, extrairChamadas, semComentarios, PASTAS_LIVRES, MAX_SALTOS_FEATURE",
@@ -96006,14 +96041,14 @@
     "node:child_process",
     "node:crypto",
     "node:fs",
+    "node:http",
+    "node:https",
     "node:module",
+    "node:net",
     "node:os",
     "node:path",
     "node:test",
-    "node:url",
-    "node:vm",
-    "path",
-    "react"
+    "node:tls"
    ],
    "imports_modules": [
     "src/b",
@@ -96083,7 +96118,19 @@
     "scripts/autofix/regras/motores.mjs",
     "scripts/autofix/regras/referencia.mjs",
     "scripts/autofix/regras/verificar.mjs",
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/actions-kpi.unit.mjs",
+    "scripts/ci/branch-hygiene-runtime.unit.mjs",
+    "scripts/ci/branch-podaveis.mjs",
+    "scripts/ci/branch-podaveis.unit.mjs",
+    "scripts/ci/bump-toolchain.mjs",
     "scripts/ci/check-claude-md-integrity.mjs",
+    "scripts/ci/issue-rotativa.mjs",
+    "scripts/ci/issue-rotativa.unit.mjs",
+    "scripts/ci/notifica-falha.mjs",
+    "scripts/ci/sla-code-scanning.mjs",
+    "scripts/ci/sla-code-scanning.unit.mjs",
+    "scripts/ci/workflow-test-support.mjs",
     "scripts/db/classify-migration-drift.mjs",
     "scripts/db/derive-pending-migrations.mjs",
     "scripts/db/schema-inventory.sql",
@@ -96096,19 +96143,7 @@
     "scripts/inventario/gerar-repo.mjs",
     "scripts/inventario/gerar-rotas.mjs",
     "scripts/inventario/mudou-conteudo.mjs",
-    "scripts/load/bridge-load.k6.js",
-    "scripts/probes/print-summary.mjs",
-    "scripts/probes/run-probes.mjs",
-    "scripts/probes/rv-probes.sql",
-    "scripts/regras_negocio/generate.py",
-    "scripts/regras_negocio/indice.py",
-    "scripts/regras_negocio/test_generate.py",
-    "scripts/simulacao/run-all.mjs",
-    "scripts/simulacao/run-exhaustive-v3.mjs",
-    "scripts/simulacao/run-exhaustive.mjs",
-    "scripts/simulacao/simulate_adiant_13.cjs",
-    "scripts/simulacao/simulate_art145.cjs",
-    "scripts/simulacao/simulate_irrf.cjs"
+    "scripts/load/bridge-load.k6.js"
    ]
   },
   {
@@ -96214,7 +96249,7 @@
   {
    "module": "src/components",
    "files": 567,
-   "lines": 72893,
+   "lines": 72891,
    "tables": [
     "admissoes",
     "afastamentos",
@@ -98064,8 +98099,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 783,
-   "lines": 66410,
+   "files": 785,
+   "lines": 66427,
    "tables": [
     "profiles",
     "user_roles"
@@ -102909,6 +102944,18 @@
     "supabase/functions/_shared/contract.ts",
     "supabase/functions/_shared/csrf.ts"
    ],
+   "FIXTURE_CALLS": [
+    "scripts/ci/branch-hygiene-runtime.unit.mjs"
+   ],
+   "FIXTURE_CONFIG": [
+    "scripts/ci/branch-hygiene-runtime.unit.mjs"
+   ],
+   "FIXTURE_NETWORK": [
+    "scripts/ci/branch-hygiene-runtime.unit.mjs"
+   ],
+   "FIXTURE_PUBLISHED": [
+    "scripts/ci/branch-hygiene-runtime.unit.mjs"
+   ],
    "FOLHA_ALERT_CONFLICT_THRESHOLD": [
     "supabase/functions/folha-metrics/index.ts"
    ],
@@ -102918,11 +102965,18 @@
    "GEN_TYPES": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
+   "GH_TOKEN": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/bump-toolchain.mjs"
+   ],
    "GITHUB_ACTIONS": [
     "src/tests/rpc-permissions.test.ts"
    ],
    "GITHUB_ACTOR": [
     "src/tests/rpc-permissions.test.ts"
+   ],
+   "GITHUB_API_URL": [
+    "scripts/ci/actions-kpi.mjs"
    ],
    "GITHUB_HEAD_REF": [
     "src/tests/rpc-permissions.test.ts"
@@ -102930,14 +102984,23 @@
    "GITHUB_OUTPUT": [
     "scripts/probes/run-probes.mjs"
    ],
+   "GITHUB_REPOSITORY": [
+    "scripts/ci/actions-kpi.mjs"
+   ],
    "GITHUB_RUN_ID": [
     "scripts/probes/print-summary.mjs"
    ],
    "GITHUB_SHA": [
     "vite.config.ts"
    ],
+   "GITHUB_STEP_SUMMARY": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/bump-toolchain.mjs"
+   ],
    "GITHUB_TOKEN": [
     "scripts/audit-required-checks.mjs",
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/bump-toolchain.mjs",
     "scripts/report-workflows.mjs"
    ],
    "GOVBR_BASE_URL": [
@@ -102951,6 +103014,9 @@
    ],
    "INVENTARIO_PERMITIR_OUTRO_PROJETO": [
     "scripts/inventario/gerar-banco.mjs"
+   ],
+   "JANELA_DIAS": [
+    "scripts/ci/actions-kpi.mjs"
    ],
    "LOVABLE_API_KEY": [
     "supabase/functions/OCR/index.ts",
@@ -103018,6 +103084,9 @@
    ],
    "PY2": [
     "scripts/ai-context/cenarios.mjs"
+   ],
+   "REPO": [
+    "scripts/ci/notifica-falha.mjs"
    ],
    "REPORT_SCHEDULER_SECRET": [
     "supabase/functions/enviar-relatorio/index.ts",
@@ -103435,6 +103504,21 @@
    ],
    "WEBHOOK_SECRET": [
     "supabase/functions/webhook/index.ts"
+   ],
+   "WF_AT": [
+    "scripts/ci/notifica-falha.mjs"
+   ],
+   "WF_BRANCH": [
+    "scripts/ci/notifica-falha.mjs"
+   ],
+   "WF_NAME": [
+    "scripts/ci/notifica-falha.mjs"
+   ],
+   "WF_SHA": [
+    "scripts/ci/notifica-falha.mjs"
+   ],
+   "WF_URL": [
+    "scripts/ci/notifica-falha.mjs"
    ],
    "XDG_CACHE_HOME": [
     "scripts/autofix/run.mjs"
@@ -106700,6 +106784,42 @@
    {
     "file": "scripts/autofix/run.mjs",
     "msg": "tsc quebrou na linha de base:\\n${baseTsc.raw.slice(0, 1500)}"
+   },
+   {
+    "file": "scripts/ci/actions-kpi.mjs",
+    "msg": "${metodo} ${caminho} -> ${r.status}"
+   },
+   {
+    "file": "scripts/ci/branch-hygiene-runtime.unit.mjs",
+    "msg": "network disabled in fixture"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "PR sem headRefName"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "a lista de PRs abertas não é um array"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "argumento inválido: ${chave}"
+   },
+   {
+    "file": "scripts/ci/branch-podaveis.mjs",
+    "msg": "falta --${obrigatorio}"
+   },
+   {
+    "file": "scripts/ci/issue-rotativa.unit.mjs",
+    "msg": "gh mock não coberto: ${method} ${path}"
+   },
+   {
+    "file": "scripts/ci/issue-rotativa.unit.mjs",
+    "msg": "loop sem teto: mock abortou após 150 chamadas"
    },
    {
     "file": "scripts/db/classify-migration-drift.mjs",
@@ -182786,6 +182906,16 @@
     "src": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql"
    },
    {
+    "name": "Admins podem inserir configurações de ponto",
+    "table": "configuracoes_ponto",
+    "cmd": "INSERT",
+    "roles": "public",
+    "mode": "permissive",
+    "using": "",
+    "check": "pertence_a_empresa(empresa_id)",
+    "src": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql"
+   },
+   {
     "name": "Acesso aos itens via folha",
     "table": "itens_folha",
     "cmd": "ALL",
@@ -203965,7 +204095,8 @@
      "authenticated: (\"empresa_id\" IN ( SELECT \"public\".\"get_user_empresas\"(\"auth\".\"uid\"()) AS \"get_user_empresas\"))"
     ],
     "INSERT": [
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "public: pertence_a_empresa(empresa_id)"
     ],
     "UPDATE": [
      "public: public.pertence_a_empresa(empresa_id)",
@@ -228964,6 +229095,145 @@
    ],
    "doc": "!/usr/bin/env node"
   },
+  "scripts/ci/actions-kpi.mjs": {
+   "path": "scripts/ci/actions-kpi.mjs",
+   "lines": 264,
+   "exports": [
+    "function textoSeguro",
+    "function duracaoMinutos",
+    "function runsNaJanela",
+    "function agregar",
+    "function paginaTemMais",
+    "function maisLentos",
+    "function tabela",
+    "function tabelaLentos",
+    "function corpoDoKpi",
+    "function coletarRuns",
+    "function coletarJobs",
+    "function publicarIssue"
+   ],
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_API_URL",
+    "GITHUB_REPOSITORY",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN",
+    "JANELA_DIAS"
+   ],
+   "errors": [
+    "${metodo} ${caminho} -> ${r.status}"
+   ],
+   "params": [
+    {
+     "name": "UM_DIA",
+     "value": "24"
+    },
+    {
+     "name": "POR_PAGINA",
+     "value": "100"
+    }
+   ],
+   "doc": "!/usr/bin/env node E79: KPI de uso do GitHub Actions, para o branch-hygiene-audit semanal. Medido antes de escrever (03/10/2026): a API devolve `run_started_at` e `updated_at` por run, e o `/timing` devolve `billable: {}` em repositorio publico -- por isso a duracao sai da diferenca entre os dois ca …",
+   "calc_fns": [
+    {
+     "name": "maisLentos",
+     "params": "jobs, { limite = 5 } = {}",
+     "body": "return (jobs ?? []) .map((j) => ({ job: j.name, workflow: j.workflow_name ?? '', minutos: Math.round(duracaoMinutos({ run_started_at: j.started_at, updated_at: j.completed_at }) * 10) / 10, })) .sort((a, b) => b.minutos - a.minutos) .slice(0, limite);"
+    }
+   ],
+   "temporal": [
+    "const UM_DIA = 24 * 60 * 60 * 1000;"
+   ]
+  },
+  "scripts/ci/actions-kpi.unit.mjs": {
+   "path": "scripts/ci/actions-kpi.unit.mjs",
+   "lines": 221
+  },
+  "scripts/ci/branch-hygiene-runtime.unit.mjs": {
+   "path": "scripts/ci/branch-hygiene-runtime.unit.mjs",
+   "lines": 266,
+   "env": [
+    "FIXTURE_CALLS",
+    "FIXTURE_CONFIG",
+    "FIXTURE_NETWORK",
+    "FIXTURE_PUBLISHED"
+   ],
+   "errors": [
+    "network disabled in fixture"
+   ],
+   "rule_comments": [
+    "Implementa somente a superficie usada pelos corpos atuais. Sem delegar a gh/git.",
+    "day).toISOString(), rule: { id: 'fixture-rule', security_severity_level: severity }, most_recent_instance: { location: { path: 'fixture.ts' } } });"
+   ],
+   "doc": "Executa os run bodies reais com gh/git locais: nenhuma API ou poda real.",
+   "temporal": [
+    "const result = spawnSync('/bin/bash', ['--noprofile', '--norc', '-euo', 'pipefail', script], { cwd: root, env, encoding: 'utf8', timeout: 30_000, maxBuffer: 102 …"
+   ]
+  },
+  "scripts/ci/branch-podaveis.mjs": {
+   "path": "scripts/ci/branch-podaveis.mjs",
+   "lines": 193,
+   "exports": [
+    "const DIAS_MINIMOS",
+    "const SEMPRE_FORA",
+    "function motivoNomeInseguro",
+    "function nomeVisivel",
+    "function selecionarPodaveis",
+    "function relatorio",
+    "function relatorioIndisponivel",
+    "function lerEquivalentes",
+    "function lerPrsAbertas",
+    "function lerProtegidas",
+    "function executar"
+   ],
+   "errors": [
+    "PR sem headRefName",
+    "a lista de PRs abertas não é um array",
+    "a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio",
+    "argumento inválido: ${chave}",
+    "falta --${obrigatorio}"
+   ],
+   "params": [
+    {
+     "name": "DIAS_MINIMOS",
+     "value": "7"
+    }
+   ],
+   "rule_comments": [
+    "pronto, um por linha, com a regra explicada.",
+    "// Regra de elegibilidade (todas ao mesmo tempo):",
+    "se a lista de PRs vier cheia até o limite (pode haver mais PRs que não vieram),",
+    "--protegidas <txt> [--limite-prs N]",
+    "## Comando pronto para poda (W98)', '', REGRA, ''];",
+    "## Comando pronto para poda (W98)\\n\\n${REGRA}\\n\\nComando não gerado: ${motivo}. `"
+   ],
+   "doc": "!/usr/bin/env node W98 — comando pronto de poda de branches (usado pelo branch-hygiene-audit.yml). O plano oferecia duas saídas: apagar sozinho ou só gerar o comando. Apagar é decisão do dono, então este script NUNCA apaga nada: ele escreve no relatório (e, por ele, na issue [branch-hygiene]) um blo …"
+  },
+  "scripts/ci/branch-podaveis.unit.mjs": {
+   "path": "scripts/ci/branch-podaveis.unit.mjs",
+   "lines": 181,
+   "rule_comments": [
+    "relatório. Os testes cobrem a regra (elegível, com PR, recente, main, protegida),"
+   ],
+   "doc": "W98 — comando pronto de poda (scripts/ci/branch-podaveis.mjs). O script nunca apaga nada: só escreve o bloco `git push origin --delete` no relatório. Os testes cobrem a regra (elegível, com PR, recente, main, protegida), a recusa de nome perigoso e a falha fechada quando falta informação."
+  },
+  "scripts/ci/bump-toolchain.mjs": {
+   "path": "scripts/ci/bump-toolchain.mjs",
+   "lines": 164,
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN"
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "maisNova",
+     "params": "local, remota",
+     "body": "const lp = semver(local).split('.').map((x) => parseInt(x, 10) || 0); const rp = semver(remota).split('.').map((x) => parseInt(x, 10) || 0); for (let i = 0; i < Math.max(lp.length, rp.length); i++) { const l = lp[i] ?? 0; const r = rp[i] ?? 0; if (r > l) return true; if (l > r) return false; } return false;"
+    }
+   ]
+  },
   "scripts/ci/check-claude-md-integrity.mjs": {
    "path": "scripts/ci/check-claude-md-integrity.mjs",
    "lines": 74,
@@ -228987,6 +229257,103 @@
    "percents": [
     "* Verifica: arquivo existe, cabecalhos obrigatorios presentes, nao encolheu >30% vs a base."
    ]
+  },
+  "scripts/ci/issue-rotativa.mjs": {
+   "path": "scripts/ci/issue-rotativa.mjs",
+   "lines": 149,
+   "exports": [
+    "const LIMITE_COMENTARIOS",
+    "function contarComentarios",
+    "function encontrarIssue",
+    "function abrirOuRotacionar",
+    "function fecharSeAberta"
+   ],
+   "params": [
+    {
+     "name": "LIMITE_COMENTARIOS",
+     "value": "20"
+    },
+    {
+     "name": "MAX_PAGINAS",
+     "value": "100"
+    }
+   ],
+   "rule_comments": [
+    "Esta função implementa a rotação: quando o limite é atingido, fecha a issue",
+    "* `gh(method, path, body?)` deve ser a função que faz chamadas à API do GitHub,",
+    "Retorna o total real, não apenas os da primeira página.",
+    "Resposta que não é array (erro de API/rate-limit) é diferente de \"sem mais"
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/ci/issue-rotativa.unit.mjs": {
+   "path": "scripts/ci/issue-rotativa.unit.mjs",
+   "lines": 259,
+   "errors": [
+    "gh mock não coberto: ${method} ${path}",
+    "loop sem teto: mock abortou após 150 chamadas"
+   ],
+   "rule_comments": [
+    "7\"), \"nova issue deve linkar para a anterior\");"
+   ]
+  },
+  "scripts/ci/notifica-falha.mjs": {
+   "path": "scripts/ci/notifica-falha.mjs",
+   "lines": 43,
+   "env": [
+    "REPO",
+    "WF_AT",
+    "WF_BRANCH",
+    "WF_NAME",
+    "WF_SHA",
+    "WF_URL"
+   ],
+   "doc": "!/usr/bin/env node Glue: lê o contexto do workflow_run via env vars e chama abrirOuRotacionar de issue-rotativa.mjs. Chamado por notifica-falha-main.yml. Corrige dois bugs do github-script inline que substituiu: 1. listForRepo sem paginação (default 30) → perdia issues em repos com muita atividade 2 …"
+  },
+  "scripts/ci/sla-code-scanning.mjs": {
+   "path": "scripts/ci/sla-code-scanning.mjs",
+   "lines": 111,
+   "exports": [
+    "const SLA_DIAS",
+    "function nivel",
+    "function avaliarSla",
+    "function relatorio"
+   ],
+   "rule_comments": [
+    "JSON se perdia; e a severidade vinha de `rule.severity` (error/warning/note),",
+    "seguranca; regras sem ele (qualidade) usam rule.severity: error conta como alto.",
+    "created_at ausente/malformado dava NaN: `NaN > prazo` é sempre falso, então o",
+    "${a.number}: ${textoSeguro(a.rule?.id)} em ${local}`);",
+    "## ⚠️ Code Scanning — SLA (W83)\\n\\nNão foi possível consultar os alertas (permissão ou API).\\n');"
+   ],
+   "doc": "!/usr/bin/env node W83 — SLA dos alertas abertos de Code Scanning (usado pelo branch-hygiene-audit.yml). high/critical → 14 dias; medium/low → 30 dias. Violação → exit 1. Saiu do YAML em 15/10/2026: inline no workflow, o heredoc do Node estava menos indentado que o `run: |` e o arquivo inteiro virou …"
+  },
+  "scripts/ci/sla-code-scanning.unit.mjs": {
+   "path": "scripts/ci/sla-code-scanning.unit.mjs",
+   "lines": 136
+  },
+  "scripts/ci/workflow-test-support.mjs": {
+   "path": "scripts/ci/workflow-test-support.mjs",
+   "lines": 134,
+   "exports": [
+    "function jobsOf",
+    "function jobOf",
+    "function stepsOf",
+    "function valueOf",
+    "const nestedValue",
+    "const permission",
+    "const runOf",
+    "const scriptOf",
+    "const shellCode",
+    "const conditionOf",
+    "function onlyStep",
+    "function assertBlocking",
+    "function conditionAllows"
+   ],
+   "rule_comments": [
+    "Avalia apenas o subconjunto booleano usado nos guards sob teste. Identificadores"
+   ],
+   "doc": "Leitores restritos ao formato em blocos dos workflows deste repositorio. Nao sao um parser YAML geral: formatos nao reconhecidos falham nos contratos. Isolar job/step evita que comentarios e passos vizinhos satisfaçam garantias."
   },
   "scripts/db/classify-migration-drift.mjs": {
    "path": "scripts/db/classify-migration-drift.mjs",
@@ -232217,7 +232584,7 @@
   },
   "src/components/AdminRoute.tsx": {
    "path": "src/components/AdminRoute.tsx",
-   "lines": 212,
+   "lines": 210,
    "exports": [
     "function AdminRoute"
    ],
@@ -276718,6 +277085,14 @@
    "path": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
    "lines": 8
   },
+  "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql": {
+   "path": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
+   "lines": 9
+  },
+  "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql": {
+   "path": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
+   "lines": 8
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -276933,10 +277308,46 @@
   }
  },
  "git": {
-  "sha": "8391bcc91ed87c7a5156b680082ed604745567c5",
+  "sha": "3668b50c56c0621fa4a0ff0ce35f72534a37b145",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3668b50",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
+    "files": [
+     "src/components/AdminRoute.tsx",
+     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
+     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql"
+    ]
+   },
+   {
+    "sha": "36a404f",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)",
+    "files": [
+     ".github/toolchain.json",
+     ".github/workflows/branch-hygiene-audit.yml",
+     ".github/workflows/notifica-falha-main.yml",
+     "infra/github/action-pins.json",
+     "scripts/ci/README.md",
+     "scripts/ci/actions-kpi.mjs",
+     "scripts/ci/actions-kpi.unit.mjs",
+     "scripts/ci/branch-hygiene-runtime.unit.mjs",
+     "scripts/ci/branch-podaveis.mjs",
+     "scripts/ci/branch-podaveis.unit.mjs",
+     "scripts/ci/bump-toolchain.mjs",
+     "scripts/ci/issue-rotativa.mjs",
+     "scripts/ci/issue-rotativa.unit.mjs",
+     "scripts/ci/notifica-falha.mjs",
+     "scripts/ci/sla-code-scanning.mjs",
+     "scripts/ci/sla-code-scanning.unit.mjs",
+     "scripts/ci/workflow-test-support.mjs"
+    ]
+   },
    {
     "sha": "8391bcc",
     "date": "2026-11-10",
@@ -277522,24 +277933,6 @@
      "docs/agentes/graphify.md",
      "scripts/ci/README.md"
     ]
-   },
-   {
-    "sha": "98f0f59",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)",
-    "files": [
-     ".github/workflows/ci.yml"
-    ]
-   },
-   {
-    "sha": "61d37e7",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)",
-    "files": [
-     "scripts/audit-edge-authz.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -277572,6 +277965,10 @@
     4
    ],
    [
+    "scripts/ci/README.md",
+    3
+   ],
+   [
     "scripts/autofix/README.md",
     3
    ],
@@ -277592,7 +277989,7 @@
     3
    ],
    [
-    "scripts/audit-edge-authz.mjs",
+    "src/components/AdminRoute.tsx",
     2
    ],
    [
@@ -277617,10 +278014,6 @@
    ],
    [
     "scripts/sync/install-all-timers.sh",
-    2
-   ],
-   [
-    "scripts/sync/install-autocommit-timer.sh",
     2
    ]
   ]

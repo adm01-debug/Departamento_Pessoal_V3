@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `8391bcc91e` · branch `main` · 2026-11-10 20:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3668b50c56` · branch `main` · 2026-11-10 20:51 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `historico_cargo` | tenant_historico_cargo | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `periodos_experiencia` | tenant_periodos_experiencia | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `promocoes` | tenant_promocoes | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| … +838 linhas — lista completa em `context.json` | | | | | | |
+| … +839 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -4272,6 +4272,15 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | eslint --fix restrito falhou (exit ${r.code}): ${(r.stderr \|\| r.stdout).slice(0, 500)} | `scripts/autofix/run.mjs` |
 | outra execução do autofix está ativa (${LOCK}) | `scripts/autofix/run.mjs` |
 | tsc quebrou na linha de base:\n${baseTsc.raw.slice(0, 1500)} | `scripts/autofix/run.mjs` |
+| ${metodo} ${caminho} -> ${r.status} | `scripts/ci/actions-kpi.mjs` |
+| network disabled in fixture | `scripts/ci/branch-hygiene-runtime.unit.mjs` |
+| PR sem headRefName | `scripts/ci/branch-podaveis.mjs` |
+| a lista de PRs abertas não é um array | `scripts/ci/branch-podaveis.mjs` |
+| a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio | `scripts/ci/branch-podaveis.mjs` |
+| argumento inválido: ${chave} | `scripts/ci/branch-podaveis.mjs` |
+| falta --${obrigatorio} | `scripts/ci/branch-podaveis.mjs` |
+| gh mock não coberto: ${method} ${path} | `scripts/ci/issue-rotativa.unit.mjs` |
+| loop sem teto: mock abortou após 150 chamadas | `scripts/ci/issue-rotativa.unit.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/classify-migration-drift.mjs` |
 | --max-pending inválido: ${args.get( | `scripts/db/derive-pending-migrations.mjs` |
 | Argumento inválido: ${key ??  | `scripts/db/derive-pending-migrations.mjs` |
@@ -4525,16 +4534,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione uma folha de pagamento | `src/pages/ContabilidadePage.tsx` |
 | Atenção: ${result.error \|\|  | `src/pages/ContratacaoPage.tsx` |
 | Falha ao carregar histórico | `src/pages/ContratosGeradosPage.tsx` |
-| Falha ao gerar link de assinatura | `src/pages/ContratosGeradosPage.tsx` |
-| Nenhum contrato para exportar | `src/pages/ContratosGeradosPage.tsx` |
-| Não foi possível gerar o link de download | `src/pages/ContratosGeradosPage.tsx` |
-| Erro ao registrar | `src/pages/ControleAcessoPage.tsx` |
-| Erro ao vincular | `src/pages/ConveniosPage.tsx` |
-| Empresa não selecionada | `src/pages/DashboardPage.tsx` |
-| Empresa ativa não carregada. | `src/pages/DesligamentosPage.tsx` |
-| Erro ao excluir desligamento | `src/pages/DesligamentosPage.tsx` |
-| Não foi possível gerar link do comprovante | `src/pages/DespesasPage.tsx` |
-| … +455 linhas — lista completa em `context.json` | |
+| … +464 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

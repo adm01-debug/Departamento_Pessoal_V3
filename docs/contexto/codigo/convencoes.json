@@ -31,7 +31,7 @@
   "scripts": [
    "scripts/simulacao (12)",
    "scripts/autofix (10)",
-   "scripts/sync (7)"
+   "scripts/ci (8)"
   ],
   "docs": [
    "docs (72)",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
+   "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)",
    "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)",
    "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)",
-   "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com identificador entre aspas (#420)",
-   "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o trabalho (#419)",
-   "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417)"
+   "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com identificador entre aspas (#420)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 100,
+ "total": 107,
  "scripts": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -422,6 +422,50 @@
    "orfao": false
   },
   {
+   "arquivo": "scripts/ci/actions-kpi.mjs",
+   "descricao": "E79: KPI de uso do GitHub Actions, para o branch-hygiene-audit semanal. Medido antes de escrever (03/10/2026): a API devolve `run_started_at` e",
+   "linhas": 264,
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_API_URL",
+    "GITHUB_REPOSITORY",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN",
+    "JANELA_DIAS"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/branch-podaveis.mjs",
+   "descricao": "W98 — comando pronto de poda de branches (usado pelo branch-hygiene-audit.yml). O plano oferecia duas saídas: apagar sozinho ou só gerar o comando. Apagar é",
+   "linhas": 193,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/bump-toolchain.mjs",
+   "descricao": "* W40: Verifica se há versão mais nova das ferramentas em .github/toolchain.json.",
+   "linhas": 164,
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
    "arquivo": "scripts/ci/check-claude-md-integrity.mjs",
    "descricao": "* GA02: garante que o CLAUDE.md nao foi apagado ou esvaziado por outra sessao.",
    "linhas": 74,
@@ -432,6 +476,53 @@
    "workflows": [
     "ci.yml"
    ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/issue-rotativa.mjs",
+   "descricao": "* W91 / E51 — política de rotação de issue de alerta.",
+   "linhas": 149,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/notifica-falha.mjs",
+   "descricao": "Glue: lê o contexto do workflow_run via env vars e chama abrirOuRotacionar de issue-rotativa.mjs. Chamado por notifica-falha-main.yml.",
+   "linhas": 43,
+   "env": [
+    "REPO",
+    "WF_AT",
+    "WF_BRANCH",
+    "WF_NAME",
+    "WF_SHA",
+    "WF_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "notifica-falha-main.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/sla-code-scanning.mjs",
+   "descricao": "W83 — SLA dos alertas abertos de Code Scanning (usado pelo branch-hygiene-audit.yml). high/critical → 14 dias; medium/low → 30 dias. Violação → exit 1.",
+   "linhas": 111,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/workflow-test-support.mjs",
+   "descricao": "Leitores restritos ao formato em blocos dos workflows deste repositorio. Nao sao um parser YAML geral: formatos nao reconhecidos falham nos contratos.",
+   "linhas": 134,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
    "orfao": false
   },
   {

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 783,
+ "migrations": 785,
  "seeds": [],
  "avisos": [
   "176 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -16923,6 +16923,12 @@
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "Admins podem inserir configurações de ponto",
+     "comando": "insert",
+     "para": "public",
+     "tipo": "permissive"
+    },
     {
      "nome": "Apenas admins podem atualizar configurações de ponto",
      "comando": "update",

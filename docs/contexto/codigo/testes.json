@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 579,
+ "total": 584,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 541
+  "unit": 546
  },
  "onde_ficam": [
   {
@@ -27,7 +27,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 13
+   "arquivos": 18
   }
  ],
  "arquivos": [
@@ -237,6 +237,54 @@
     "scripts/autofix/regras/dados.mjs"
    ],
    "casos": 21
+  },
+  {
+   "arquivo": "scripts/ci/actions-kpi.unit.mjs",
+   "tipo": "unit",
+   "linhas": 221,
+   "testa": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/ci/branch-hygiene-runtime.unit.mjs",
+   "tipo": "unit",
+   "linhas": 266,
+   "testa": [
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "scripts/ci/branch-podaveis.unit.mjs",
+   "tipo": "unit",
+   "linhas": 181,
+   "testa": [
+    "scripts/ci/branch-podaveis.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "scripts/ci/issue-rotativa.unit.mjs",
+   "tipo": "unit",
+   "linhas": 259,
+   "testa": [
+    "scripts/ci/issue-rotativa.mjs"
+   ],
+   "casos": 20
+  },
+  {
+   "arquivo": "scripts/ci/sla-code-scanning.unit.mjs",
+   "tipo": "unit",
+   "linhas": 136,
+   "testa": [
+    "scripts/ci/sla-code-scanning.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 12
   },
   {
    "arquivo": "scripts/e2e/ensure-fixtures.mjs",
@@ -5264,6 +5312,11 @@
  ],
  "cobertura_por_arquivo": {
   "scripts/autofix/regras/dados.mjs": 1,
+  "scripts/ci/actions-kpi.mjs": 1,
+  "scripts/ci/branch-podaveis.mjs": 1,
+  "scripts/ci/issue-rotativa.mjs": 1,
+  "scripts/ci/sla-code-scanning.mjs": 1,
+  "scripts/ci/workflow-test-support.mjs": 4,
   "scripts/inventario/gerar-banco.mjs": 1,
   "scripts/inventario/gerar-rotas.mjs": 1,
   "scripts/inventario/mudou-conteudo.mjs": 1,

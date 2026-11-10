@@ -4,12 +4,12 @@
  "stack": {
   "linguagens": [
    "TypeScript (1418)",
-   "SQL (819)",
+   "SQL (821)",
    "Markdown (289)",
-   "JavaScript (102)",
-   "JSON (55)",
+   "JavaScript (114)",
+   "JSON (56)",
    "Shell (54)",
-   "YAML (52)",
+   "YAML (54)",
    "Python (5)"
   ],
   "linguagem_principal": "TypeScript",
@@ -174,6 +174,37 @@
   "vitest.config.ts"
  ],
  "workflows": [
+  {
+   "arquivo": ".github/workflows/branch-hygiene-audit.yml",
+   "nome": "Branch Hygiene Audit",
+   "gatilhos": [
+    "schedule",
+    "workflow_dispatch"
+   ],
+   "crons": [
+    "56 7 * * 1"
+   ],
+   "branches": [],
+   "jobs": [
+    "audit"
+   ],
+   "permissoes": [
+    "contents: read",
+    "pull-requests: read"
+   ],
+   "scripts_usados": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/branch-podaveis.mjs",
+    "scripts/ci/bump-toolchain.mjs",
+    "scripts/ci/sla-code-scanning.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
   {
    "arquivo": ".github/workflows/canonical-edge-functions.yml",
    "nome": "Canonical Supabase — Edge Functions",
@@ -589,6 +620,29 @@
     "actions/checkout",
     "actions/setup-node",
     "actions/upload-artifact"
+   ]
+  },
+  {
+   "arquivo": ".github/workflows/notifica-falha-main.yml",
+   "nome": "Notifica falha na main",
+   "gatilhos": [
+    "workflow_run"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "notificar"
+   ],
+   "permissoes": [],
+   "scripts_usados": [
+    "scripts/ci/notifica-falha.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout"
    ]
   },
   {
@@ -1600,6 +1654,10 @@
     "arquivos": 2
    },
    {
+    "host": "example.invalid",
+    "arquivos": 2
+   },
+   {
     "host": "example.test",
     "arquivos": 2
    },
@@ -1693,10 +1751,6 @@
    },
    {
     "host": "evo.exemplo.com",
-    "arquivos": 1
-   },
-   {
-    "host": "example.invalid",
     "arquivos": 1
    },
    {

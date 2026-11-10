@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "8391bcc91ed87c7a5156b680082ed604745567c5",
+  "commit": "3668b50c56c0621fa4a0ff0ce35f72534a37b145",
   "branch": "main",
-  "data_commit": "2026-11-10T17:48:01-03:00",
+  "data_commit": "2026-11-10T17:49:04-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3668b50",
+    "data": "2026-11-10",
+    "assunto": "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)"
+   },
+   {
+    "sha": "36a404f",
+    "data": "2026-11-10",
+    "assunto": "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)"
+   },
    {
     "sha": "8391bcc",
     "data": "2026-11-10",
@@ -121,19 +131,9 @@
     "sha": "4e36ab2",
     "data": "2026-11-09",
     "assunto": "chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)"
-   },
-   {
-    "sha": "4584235",
-    "data": "2026-11-09",
-    "assunto": "feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)"
-   },
-   {
-    "sha": "b590d3f",
-    "data": "2026-11-09",
-    "assunto": "feat(autofix): autofix sem IA e verificador de regras de negócio (#402)"
    }
   ],
-  "arquivos_mudados_7d": 376,
+  "arquivos_mudados_7d": 393,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -192,18 +192,18 @@
     "mudancas": 9
    },
    {
-    "pasta": "src/components/folha",
+    "pasta": "infra/github/action-pins.json",
     "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 73
+    "mudancas": 72
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 69
+    "mudancas": 68
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -238,12 +238,12 @@
     "mudancas": 14
    },
    {
-    "arquivo": ".github/workflows/security.yml",
+    "arquivo": "AGENTS.md",
     "mudancas": 13
    },
    {
-    "arquivo": "AGENTS.md",
-    "mudancas": 13
+    "arquivo": ".github/workflows/security.yml",
+    "mudancas": 12
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 95
+    "commits": 97
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2836,
-  "arquivos_codigo": 1524,
-  "linhas_codigo": 265172,
+  "arquivos_total": 2853,
+  "arquivos_codigo": 1536,
+  "linhas_codigo": 267291,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -334,11 +334,11 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 783,
+  "migrations": 785,
   "cron_jobs": 41,
-  "testes": 579,
-  "workflows": 17,
-  "scripts": 100,
+  "testes": 584,
+  "workflows": 19,
+  "scripts": 107,
   "docs_md": 289
  },
  "por_pasta": {
@@ -487,8 +487,8 @@
    "linhas": 143
   },
   "scripts/ci": {
-   "arquivos": 1,
-   "linhas": 74
+   "arquivos": 13,
+   "linhas": 2195
   },
   "scripts/db": {
    "arquivos": 2,
@@ -612,7 +612,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72893
+   "linhas": 72891
   },
   "src/constants": {
    "arquivos": 6,
@@ -819,7 +819,7 @@
  ],
  "qualidade": {
   "any": 73,
-  "console_log": 252,
+  "console_log": 261,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,

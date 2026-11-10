@@ -32,6 +32,9 @@
    "scripts/autofix/any-codemod.mjs",
    "scripts/autofix/lib.mjs"
   ],
+  "scripts/ci/notifica-falha.mjs": [
+   "scripts/ci/issue-rotativa.mjs"
+  ],
   "scripts/generate-page.js": [
    "src/components/layout/PageHeader.tsx"
   ],
