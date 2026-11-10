@@ -142,7 +142,8 @@ WITH RECURSIVE alcanca_tenant(oid, profundidade) AS (
   FROM pg_class c
   JOIN pg_namespace n ON n.oid = c.relnamespace
   JOIN pg_attribute a ON a.attrelid = c.oid AND a.attname = 'empresa_id' AND NOT a.attisdropped
-  WHERE n.nspname = 'public' AND c.relkind = 'r'
+  -- 'p' = tabela particionada: a política vive no pai e vale para todo acesso por ele
+  WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p')
   UNION
   -- passo: filha que aponta, por FK, para algo que já alcança o tenant
   SELECT fk.conrelid, at.profundidade + 1
@@ -181,12 +182,26 @@ function runQuery(sql) {
   return execFileSync('psql', args, { encoding: 'utf8' });
 }
 
+/**
+ * Testes de "está logado?" são retirados do predicado antes de procurar um
+ * correlacionador. SEM_CORRELACAO só casa o predicado INTEIRO; sem isto, o
+ * mesmo teste na forma initplan `(SELECT auth.uid()) IS NOT NULL` (a que o
+ * linter do Supabase recomenda) ou composto com outro termo que não isola
+ * (`auth.uid() IS NOT NULL AND empresa_id IS NOT NULL`) passava como
+ * correlacionado só por conter `auth.uid()`.
+ */
+const SO_AUTENTICACAO = [
+  /(?:\(\s*select\s+)?auth\.uid\s*\(\s*\)(?:\s+as\s+\w+\s*\))?\s+is\s+not\s+null/gi,
+  /(?:\(\s*select\s+)?auth\.jwt\s*\(\s*\)(?:\s+as\s+\w+\s*\))?\s*->>\s*'role'(?:::text)?\s*\)?\s*=\s*'authenticated'/gi,
+];
+
 /** Um predicado vazio em política PERMISSIVA equivale a `true`. */
 function irrestrito(pred) {
   const p = (pred ?? '').trim();
   if (p === '') return true;
   if (SEM_CORRELACAO.some((r) => r.test(p))) return true;
-  return !CORRELACIONADORES.some((r) => r.test(p));
+  const semLogin = SO_AUTENTICACAO.reduce((s, r) => s.replace(r, ''), p);
+  return !CORRELACIONADORES.some((r) => r.test(semLogin));
 }
 
 function main() {

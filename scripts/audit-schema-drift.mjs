@@ -55,6 +55,12 @@ import path from 'node:path';
 // Exemplo: --since=20260924 (data em que a convenção de ledger foi adotada).
 const sinceArg = process.argv.find(a => a.startsWith('--since='));
 const SINCE_VERSION = sinceArg ? sinceArg.split('=')[1] : null;
+// O filtro é comparação de string com a versão: valor não numérico
+// (--since=abc, --since=2026-09-24) descartava TODAS as migrations e saía "OK".
+if (sinceArg && !/^\d{8,14}$/.test(SINCE_VERSION)) {
+  console.error(`[schema-drift] --since inválido: "${SINCE_VERSION}" (use AAAAMMDD ou a versão de 14 dígitos).`);
+  process.exit(1);
+}
 
 const MIGRATIONS_DIR = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -101,7 +107,9 @@ function main() {
     ledger = new Set(ledgerVersions());
   } catch (err) {
     console.error('[schema-drift] A consulta ao ledger falhou — gate reprovado.');
-    console.error(err.message);
+    // err.message traz a linha de comando do psql, isto é, a DATABASE_URL com
+    // a senha. O stderr do psql já explica a falha sem expor a credencial.
+    console.error(String(err.stderr || err.message).trim());
     return 1;
   }
 
@@ -111,6 +119,12 @@ function main() {
   if (SINCE_VERSION) {
     const ignoradas = local.size - localFiltrado.size;
     console.log(`[schema-drift] Filtro --since=${SINCE_VERSION}: ignorando ${ignoradas} migration(ões) históricas.`);
+  }
+
+  // Guard de falso verde: sem nenhuma migration no escopo não há o que aprovar.
+  if (localFiltrado.size === 0) {
+    console.error(`[schema-drift] ERRO: nenhuma migration avaliada em ${MIGRATIONS_DIR} — diretório vazio ou --since além da última versão.`);
+    return 1;
   }
 
   const naoAplicadas = [...localFiltrado].filter((v) => !ledger.has(v)).sort();

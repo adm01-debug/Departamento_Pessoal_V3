@@ -40,6 +40,9 @@ expect(
   new RegExp(`^project_id\\s*=\\s*"${CANONICAL_REF}"\\s*$`, 'm').test(configToml),
   `supabase/config.toml usa exclusivamente ${CANONICAL_REF}`
 );
+// "Exclusivamente" precisa da metade negativa: a linha canônica presente não
+// impede uma segunda chave (outra seção, redirect URL) apontando ao legado.
+expect(!configToml.includes(LEGACY_REF), 'supabase/config.toml não referencia o projeto legado');
 
 console.log('2. Proxy de desenvolvimento');
 expect(viteConfig.includes(canonicalUrl), 'vite.config.ts encaminha Edge Functions ao projeto canônico');
@@ -68,7 +71,9 @@ expect(
 console.log('5. Allowlist de URL');
 expect(safeUrl.includes(CANONICAL_REF), 'allowlist nomeia o host Supabase canônico');
 expect(!safeUrl.includes(LEGACY_REF), 'allowlist não nomeia o host legado');
-expect(!safeUrl.includes("'.supabase.co'"), 'allowlist não libera projetos Supabase arbitrários por sufixo');
+// Qualquer tipo de aspas e com ou sem o ponto inicial: ".supabase.co" e
+// 'supabase.co' liberam o mesmo sufixo que '.supabase.co'.
+expect(!/['"`]\.?supabase\.co['"`]/.test(safeUrl), 'allowlist não libera projetos Supabase arbitrários por sufixo');
 
 console.log('6. Contrato da workflow E2E');
 const publicJobStart = workflow.indexOf('  playwright-public:');
