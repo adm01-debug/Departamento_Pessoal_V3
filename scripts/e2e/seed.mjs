@@ -241,6 +241,9 @@ async function seedColaboradores(asAdminClient, empresaId) {
     const { data: existing, error: selErr } = await asAdminClient
       .from('colaboradores')
       .select('id')
+      // Só a empresa sintética: o mesmo CPF em outra empresa visível ao admin
+      // contava como "garantido" e a empresa do seed ficava sem colaboradores.
+      .eq('empresa_id', empresaId)
       .eq('cpf', colaborador.marker_cpf)
       .maybeSingle();
     if (selErr) throw selErr;
