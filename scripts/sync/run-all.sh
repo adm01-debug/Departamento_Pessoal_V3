@@ -5,7 +5,7 @@
 #   run-all.sh autocommit [--only <nome>] [--dry-run]   commit automático + push da branch computador_local (hh:30)
 #   (ambos aceitam --quiet-min N: quantos minutos sem edição antes de agir; 0 = agir já)
 #
-# Lista: ${XDG_CONFIG_HOME:-~/.config}/dp-sync/repos.conf — uma linha por repositório, campos separados por |
+# Lista: ${XDG_CONFIG_HOME:-~/.config}/dp-sync/repos.conf — uma linha por repositório, campos separados por | (repo|worktree|branch|mirror|pii[|push]; push=0 = só commit local, sem enviar a computador_local)
 #   repo|worktree_dev|branch_padrao|mirror|pii
 #     repo          caminho do checkout principal (o ESPELHO)
 #     worktree_dev  caminho do worktree de desenvolvimento na branch computador_local (vazio = sem autocommit)
@@ -54,9 +54,9 @@ resultado() { # resultado <nome> <rc>
   fi
   falha=$((falha+1))
 }
-while IFS='|' read -r repo wt branch mirror pii || [ -n "${repo:-}" ]; do
+while IFS='|' read -r repo wt branch mirror pii push || [ -n "${repo:-}" ]; do
   repo="$(trim "$repo")"; [ -z "$repo" ] && continue; case "$repo" in \#*) continue ;; esac
-  wt="$(trim "${wt:-}")"; branch="$(trim "${branch:-}")"; mirror="$(trim "${mirror:-}")"; pii="${pii//[[:space:]]/}"; pii="${pii%$'\r'}"
+  wt="$(trim "${wt:-}")"; branch="$(trim "${branch:-}")"; mirror="$(trim "${mirror:-}")"; pii="${pii//[[:space:]]/}"; pii="${pii%$'\r'}"; push="${push//[[:space:]]/}"; push="${push%$'\r'}"; NOPUSH=(); [ "$push" = 0 ] && NOPUSH=(--no-push)
   name="$(basename "$repo")"; [ -n "$ONLY" ] && [ "$ONLY" != "$name" ] && continue
   [ -d "$repo/.git" ] || [ -f "$repo/.git" ] || { echo "$(date '+%F %T') [$name] run-all: caminho não é um repositório ($repo)" >> "$LOG"; falha=$((falha+1)); continue; }
   case "$MODE" in
@@ -72,7 +72,7 @@ while IFS='|' read -r repo wt branch mirror pii || [ -n "${repo:-}" ]; do
       esac ;;
     autocommit)
       [ -n "$wt" ] || { pulado=$((pulado+1)); continue; }
-      timeout 25m nice -n 10 bash "$HERE/autocommit-local.sh" --worktree "$wt" --branch computador_local ${pii:+--pii "$pii"} --quiet "${QM[@]}" "${DRY[@]}" </dev/null; resultado "$name" $? ;;
+      timeout 25m nice -n 10 bash "$HERE/autocommit-local.sh" --worktree "$wt" --branch computador_local ${pii:+--pii "$pii"} "${NOPUSH[@]}" --quiet "${QM[@]}" "${DRY[@]}" </dev/null; resultado "$name" $? ;;
   esac
 done < "$CONF"
 echo "$(date '+%F %T') run-all $MODE: $ok ok, $atencao com atenção (1ª/2ª vez), $falha com erro, $pulado pulado(s)" >> "$LOG"
