@@ -5,6 +5,8 @@ Scripts que rodam no CI e podem ser executados localmente antes de abrir PR.
 | Script | O que faz | Quando rodar |
 |---|---|---|
 | `check-claude-md-integrity.mjs` | Verifica que `AGENTS.md` existe, tem as 4 seções obrigatórias (`## 1. Contexto`, `## 2. Como trabalhar`, `## 7. Fluxo Git`, `## 8. Específico deste repositório`) e não encolheu >30% vs a base | Sempre que tocar em `AGENTS.md` (o `CLAUDE.md` é só `@AGENTS.md`) |
+| `github-settings-guard.mjs` | Confere o perímetro do GitHub (repo, actions, workflow permissions, selected actions, rulesets, environments) contra o baseline versionado (`github-settings-baseline.json`) e abre/atualiza a issue `[settings-guard]` se houver divergência ou ponto cego | Rodado diariamente pelo `settings-guard.yml`; disparar manualmente após mudar uma config intencional |
+| `github-settings-baseline.json` | Baseline das configurações esperadas para este repo (medido em 2026-11-09) | Atualizar manualmente quando mudar uma config intencional |
 | `actions-kpi.mjs` | Runs/semana por workflow, taxa de cancelamento/falha, minutos, 5 jobs mais lentos; mantém a issue `[kpi-actions]` | `.github/workflows/branch-hygiene-audit.yml` (semanal) |
 | `branch-podaveis.mjs` | Monta (sem executar) comandos de poda para branches patch-equivalentes a `main`, sem commit há 30d, sem PR aberta | idem |
 | `sla-code-scanning.mjs` | SLA de alertas de code scanning: high/critical 14d, medium/low 30d | idem |
