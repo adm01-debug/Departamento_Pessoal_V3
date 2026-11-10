@@ -1286,6 +1286,102 @@
       "manual": ["sh", "scripts/tests/sync-lab.test.sh"],
       "triggers": ["manual"],
       "reason": "Legado mantido no fluxo existente; cobertura do sync remoto/push via sh. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-61819edfe724919c",
+      "kind": "legacy",
+      "files": ["scripts/ci/actions-kpi.mjs"],
+      "manual": ["node", "scripts/ci/actions-kpi.mjs"],
+      "triggers": ["manual"],
+      "reason": "pacote de higiene de branches (PR #397); chamado literal: .github/workflows/branch-hygiene-audit.yml (run: node scripts/ci/actions-kpi.mjs). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-c29f252692806070",
+      "kind": "legacy",
+      "files": ["scripts/ci/actions-kpi.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/actions-kpi.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "teste node --test do pacote de higiene de branches (PR #397); citado literal: .github/workflows/branch-hygiene-audit.yml (node --test .../actions-kpi.unit.mjs). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-971e1e6a7e067966",
+      "kind": "legacy",
+      "files": ["scripts/ci/branch-hygiene-runtime.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/branch-hygiene-runtime.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "teste node --test do pacote de higiene de branches (PR #397); citado literal: .github/workflows/branch-hygiene-audit.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-70193326af6a063e",
+      "kind": "legacy",
+      "files": ["scripts/ci/branch-podaveis.mjs"],
+      "manual": ["node", "scripts/ci/branch-podaveis.mjs"],
+      "triggers": ["manual"],
+      "reason": "pacote de higiene de branches (PR #397); chamado literal: .github/workflows/branch-hygiene-audit.yml (run: node scripts/ci/branch-podaveis.mjs). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-1ea05051d90d2127",
+      "kind": "legacy",
+      "files": ["scripts/ci/branch-podaveis.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/branch-podaveis.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "teste node --test do pacote de higiene de branches (PR #397); citado literal: .github/workflows/branch-hygiene-audit.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-c463b10071f8e6d6",
+      "kind": "legacy",
+      "files": ["scripts/ci/bump-toolchain.mjs"],
+      "manual": ["node", "scripts/ci/bump-toolchain.mjs"],
+      "triggers": ["manual"],
+      "reason": "pacote de higiene de branches (PR #397); chamado literal: .github/workflows/branch-hygiene-audit.yml (run: node scripts/ci/bump-toolchain.mjs). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-42855cd988677d4e",
+      "kind": "legacy",
+      "files": ["scripts/ci/issue-rotativa.mjs"],
+      "manual": ["node", "scripts/ci/issue-rotativa.mjs"],
+      "triggers": ["manual"],
+      "reason": "pacote de higiene de branches (PR #397); chamado literal: .github/workflows/notifica-falha-main.yml e importado por scripts/ci/actions-kpi.mjs. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-ce4bd13cf9c9e03b",
+      "kind": "legacy",
+      "files": ["scripts/ci/issue-rotativa.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/issue-rotativa.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "teste node --test do pacote de higiene de branches (PR #397); citado literal: .github/workflows/branch-hygiene-audit.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-35de4efa2c1279bf",
+      "kind": "legacy",
+      "files": ["scripts/ci/notifica-falha.mjs"],
+      "manual": ["node", "scripts/ci/notifica-falha.mjs"],
+      "triggers": ["manual"],
+      "reason": "pacote de higiene de branches (PR #397); chamado literal: .github/workflows/notifica-falha-main.yml (run: node scripts/ci/notifica-falha.mjs). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-c2d16dd633e47947",
+      "kind": "legacy",
+      "files": ["scripts/ci/sla-code-scanning.mjs"],
+      "manual": ["node", "scripts/ci/sla-code-scanning.mjs"],
+      "triggers": ["manual"],
+      "reason": "pacote de higiene de branches (PR #397); chamado literal: .github/workflows/branch-hygiene-audit.yml e importado por scripts/ci/branch-podaveis.mjs. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-8657b6ac2fabe10a",
+      "kind": "legacy",
+      "files": ["scripts/ci/sla-code-scanning.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/sla-code-scanning.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "teste node --test do pacote de higiene de branches (PR #397); citado literal: .github/workflows/branch-hygiene-audit.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-9e6e4fc0fa91fbf6",
+      "kind": "legacy",
+      "files": ["scripts/ci/workflow-test-support.mjs"],
+      "manual": ["node", "scripts/ci/workflow-test-support.mjs"],
+      "triggers": ["manual"],
+      "reason": "helper puro do pacote de higiene de branches (PR #397); importado literais: scripts/ci/actions-kpi.unit.mjs, scripts/ci/branch-hygiene-runtime.unit.mjs, scripts/ci/branch-podaveis.unit.mjs e scripts/ci/sla-code-scanning.unit.mjs. O dispatcher nao executa esta operacao."
     }
   ],
   "ci": [
