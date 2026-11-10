@@ -24,6 +24,12 @@ test('tokenizador: comentário de bloco aninhado e dollar-quote aninhado', () =>
   assert.equal(dividirStatements('CREATE FUNCTION f() RETURNS void AS $a$ BEGIN EXECUTE $b$ select 1; select 2; $b$; END $a$ LANGUAGE plpgsql; select 1;').length, 2);
 });
 
+test("tokenizador: em E'...' a barra escapa a aspa (o ; de dentro não parte o statement); sem o E a barra é literal", () => {
+  assert.deepEqual(dividirStatements(String.raw`select E'it\'s; x'; select 2;`), [String.raw`select E'it\'s; x'`, 'select 2']);
+  assert.deepEqual(dividirStatements(String.raw`select 'c:\'; select 2;`), [String.raw`select 'c:\'`, 'select 2']);
+  assert.equal(dividirStatements(String.raw`select nome'x\'; select 2;`).length, 2); // identificador terminado em "e" não é o prefixo E
+});
+
 test('CREATE POLICY "nua" dentro de DO (idiom EXCEPTION duplicate_object) é vista', (t) => {
   const s = schema(t, "create table a(id int, cpf text); alter table a enable row level security; DO $$ BEGIN CREATE POLICY p ON a FOR SELECT USING (true); EXCEPTION WHEN duplicate_object THEN NULL; END $$;");
   assert.ok(s.policies.has('a|p'));

@@ -113,17 +113,45 @@ export function extrairChamadas(texto) {
     rpcs: [...pegar(/(?:\.|\b)rpc\(\s*['"`]([A-Za-z0-9_]+)['"`]/g), ...pegar(/\/rest\/v1\/rpc\/([A-Za-z0-9_]+)/g)],
     // `functions.invoke` (inclusive quebrado em linha) e o atalho `invokeEdge<T>(...)` de
     // src/lib/invokeEdge.ts; `invoke('evolution-api/connect')` conta como a edge `evolution-api`.
+    // No DP o wrapper e `handleInvoke('x')` (src/services/edgeFunctionsService.ts); o generico pode
+    // ter um nivel aninhado e quebra de linha: `invoke<\n Partial<T> & { ok?: boolean }\n>('x')`.
     // `fetch(`${SUPABASE_URL}/functions/v1/get-call-recording`)` (chamada direta pela URL): so dentro
     // de string/template; a URL mostrada como texto em JSX (ex.: GmailWebhookMonitor) nao e chamada.
     edges: [
-      ...pegar(/(?:functions\s*\.\s*invoke|\binvokeEdge)(?:<[^>()]*>)?\(\s*['"`]([A-Za-z0-9_-]+)(?:\/[^'"`]*)?['"`]/g),
+      ...pegar(/(?:functions\s*\.\s*invoke|\binvokeEdge|\bhandleInvoke)(?:<(?:[^<>()]|<[^<>()]*>)*>)?\(\s*['"`]([A-Za-z0-9_-]+)(?:\/[^'"`]*)?['"`]/g),
       ...pegar(/['"`][^'"`\n]*\/functions\/v1\/([A-Za-z0-9_-]+)/g),
     ],
   };
 }
 
-/** Tira comentarios de bloco e linhas inteiras de `//` (nao mexe em `//` dentro de string, ex.: URL). */
-export const semComentarios = (texto) => texto.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+/** O `/*` da posicao i esta dentro de string na mesma linha (accept="image/*", path="/x/*")? Aspa colada em letra e apostrofo de texto. */
+function dentroDeString(texto, i) {
+  let aspas = null;
+  for (let j = texto.lastIndexOf('\n', i) + 1; j < i; j += 1) {
+    const c = texto[j];
+    if (aspas) { if (c === '\\') j += 1; else if (c === aspas) aspas = null; }
+    else if ((c === '"' || c === "'" || c === '`') && !/[\p{L}\p{N}_]/u.test(texto[j - 1] || '')) aspas = c;
+  }
+  return aspas !== null;
+}
+
+/**
+ * Tira comentarios de bloco e linhas inteiras de `//` (nao mexe em `//` dentro de string, ex.: URL).
+ * `/*` dentro de string nao abre comentario: sem isso, tudo ate o proximo fim de comentario sumia.
+ */
+export function semComentarios(texto) {
+  let out = '';
+  let i = 0;
+  for (;;) {
+    const a = texto.indexOf('/*', i);
+    if (a === -1) { out += texto.slice(i); break; }
+    const b = dentroDeString(texto, a) ? -1 : texto.indexOf('*/', a + 2);
+    if (b === -1) { out += texto.slice(i, a + 2); i = a + 2; continue; }
+    out += texto.slice(i, a);
+    i = b + 2;
+  }
+  return out.replace(/^\s*\/\/.*$/gm, '');
+}
 
 const ehTeste = (p) => /(\.test\.|\.spec\.|__tests__|\.stories\.)/.test(p);
 
@@ -150,13 +178,14 @@ export function fechoDaTela(raiz, arquivoTelaAbs) {
     if (saltosVistos.has(atual) && saltosVistos.get(atual) <= saltos) continue;
     const primeiraVez = !saltosVistos.has(atual);
     saltosVistos.set(atual, saltos);
-    const texto = fs.readFileSync(atual, 'utf8');
+    // Comentario nao e codigo: `// export * from './X'` desligado nao pode virar import quebrado, e o
+    // exemplo de um JSDoc (`* supabase.functions.invoke('calcular-folha')`) nao e chamada da tela.
+    const texto = semComentarios(fs.readFileSync(atual, 'utf8'));
     if (primeiraVez) {
       const c = extrairChamadas(texto);
       for (const k of Object.keys(chamadas)) chamadas[k].push(...c[k]);
     }
-    // Comentario nao e import: `// export * from './X'` desligado nao pode virar import quebrado.
-    for (const imp of extrairImports(semComentarios(texto))) {
+    for (const imp of extrairImports(texto)) {
       const alvo = resolverImport(raiz, atual, imp.especificador);
       if (alvo === undefined && !/\.(css|scss|svg|png|jpe?g|webp|gif|json)(\?.*)?$|\?/.test(imp.especificador)) {
         quebrados.add(`${rel(raiz, atual)} -> ${imp.especificador}`);
@@ -240,7 +269,7 @@ export function importsDeComponentes(texto) {
 
 /** URLs do react-router em src/App.tsx, com caminho completo e protecao herdada dos pais. */
 export function lerUrls(raiz) {
-  const texto = ler(raiz, ARQ_ROTAS);
+  const texto = semComentarios(ler(raiz, ARQ_ROTAS)); // rota comentada ({/* <Route .../> */} ou //) nao e rota
   const abs = path.join(raiz, ARQ_ROTAS);
   const imports = importsDeComponentes(texto);
   const tags = lerTagsDeRota(texto);
@@ -276,7 +305,7 @@ export function lerUrls(raiz) {
 /** Itens do menu lateral: [{ grupo, rotulo, caminho }] de `menuGroups` (+ `portalItem`). */
 export function lerMenu(raiz) {
   if (!fs.existsSync(path.join(raiz, ARQ_MENU))) return [];
-  const texto = ler(raiz, ARQ_MENU);
+  const texto = semComentarios(ler(raiz, ARQ_MENU)); // item de menu comentado nao e item
   const ini = texto.indexOf('const menuGroups');
   const itens = [];
   if (ini !== -1) {
@@ -294,7 +323,7 @@ export function lerMenu(raiz) {
 
 /** O caminho do menu casa com algum padrao de rota (`:param` casa um segmento; `*` nao conta)? */
 export function casaRota(caminho, padroes) {
-  const partes = caminho.replace(/\/$/, '').split('/');
+  const partes = caminho.replace(/[?#].*$/, '').replace(/\/$/, '').split('/'); // `/x?aba=1` e `/x#secao` abrem a rota `/x`
   return padroes.some((p) => {
     if (p.endsWith('*')) return false;
     const pp = p.replace(/\/$/, '').split('/');
