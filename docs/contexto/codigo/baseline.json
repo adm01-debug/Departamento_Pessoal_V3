@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3668b50c56c0621fa4a0ff0ce35f72534a37b145",
+  "commit": "b4f9205b61eb842b6d961f4eab87ada8c5d660b7",
   "branch": "main",
-  "data_commit": "2026-11-10T17:49:04-03:00",
+  "data_commit": "2026-11-10T18:25:45-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b4f9205",
+    "data": "2026-11-10",
+    "assunto": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)"
+   },
    {
     "sha": "3668b50",
     "data": "2026-11-10",
@@ -126,25 +131,20 @@
     "sha": "2b341de",
     "data": "2026-11-09",
     "assunto": "fix(autofix): reconhece branch autofix/* já squash-mergeada e a remove sozinha (#405)"
-   },
-   {
-    "sha": "4e36ab2",
-    "data": "2026-11-09",
-    "assunto": "chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)"
    }
   ],
-  "arquivos_mudados_7d": 393,
+  "arquivos_mudados_7d": 410,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 36
    },
    {
-    "pasta": "CLAUDE.md",
-    "mudancas": 20
+    "pasta": "package.json",
+    "mudancas": 21
    },
    {
-    "pasta": "package.json",
+    "pasta": "CLAUDE.md",
     "mudancas": 20
    },
    {
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 68
+    "mudancas": 67
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -211,38 +211,34 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 29
+    "mudancas": 28
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 22
+    "mudancas": 21
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
     "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 14
-   },
-   {
-    "arquivo": "src/services/cnabService.ts",
-    "mudancas": 14
-   },
-   {
-    "arquivo": "AGENTS.md",
     "mudancas": 13
    },
    {
-    "arquivo": ".github/workflows/security.yml",
+    "arquivo": "src/services/cnabService.ts",
+    "mudancas": 13
+   },
+   {
+    "arquivo": "AGENTS.md",
     "mudancas": 12
    },
    {
@@ -250,7 +246,7 @@
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": ".github/workflows/security.yml",
     "mudancas": 11
    },
    {
@@ -258,31 +254,15 @@
     "mudancas": 11
    },
    {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 10
+   },
+   {
     "arquivo": "src/integrations/supabase/client.ts",
-    "mudancas": 11
+    "mudancas": 10
    },
    {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "src/services/__tests__/cnabService.test.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/services/edgeFunctionsService.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/services/folha/__tests__/calculoLoteService.test.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "src/services/folha/calculoLoteService.ts",
-    "mudancas": 10
-   },
-   {
-    "arquivo": "vite.config.ts",
     "mudancas": 10
    },
    {
@@ -294,14 +274,34 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/healthcheck.yml",
+    "arquivo": "infra/github/action-pins.json",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/services/__tests__/cnabService.test.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/services/edgeFunctionsService.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/services/folha/__tests__/calculoLoteService.test.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/services/folha/calculoLoteService.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "vite.config.ts",
     "mudancas": 9
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 97
+    "commits": 98
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2853,
-  "arquivos_codigo": 1536,
-  "linhas_codigo": 267291,
+  "arquivos_total": 2870,
+  "arquivos_codigo": 1545,
+  "linhas_codigo": 272348,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -336,10 +336,10 @@
   "tabelas": 417,
   "migrations": 785,
   "cron_jobs": 41,
-  "testes": 584,
-  "workflows": 19,
-  "scripts": 107,
-  "docs_md": 289
+  "testes": 588,
+  "workflows": 20,
+  "scripts": 113,
+  "docs_md": 291
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -471,8 +471,16 @@
    "linhas": 136
   },
   "scripts/autofix": {
-   "arquivos": 10,
-   "linhas": 1952
+   "arquivos": 11,
+   "linhas": 2011
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 869
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 555
   },
   "scripts/build-rebaseline.mjs": {
    "arquivos": 1,
@@ -530,6 +538,14 @@
    "arquivos": 1,
    "linhas": 36
   },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 997
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 452
+  },
   "scripts/index.js": {
    "arquivos": 1,
    "linhas": 2
@@ -541,6 +557,10 @@
   "scripts/load": {
    "arquivos": 1,
    "linhas": 80
+  },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 2125
   },
   "scripts/probes": {
    "arquivos": 2,
@@ -737,8 +757,16 @@
    "linhas": 1199
   },
   {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 997
+  },
+  {
    "arquivo": "scripts/ai-context/gerar.mjs",
    "linhas": 940
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 869
   },
   {
    "arquivo": "src/pages/TreinamentosPage.tsx",
@@ -793,6 +821,10 @@
    "linhas": 698
   },
   {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "linhas": 690
+  },
+  {
    "arquivo": "src/components/ui/command-palette.tsx",
    "linhas": 686
   },
@@ -803,27 +835,15 @@
   {
    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
    "linhas": 646
-  },
-  {
-   "arquivo": "src/components/ui/sidebar.tsx",
-   "linhas": 643
-  },
-  {
-   "arquivo": "src/pages/RecrutamentoPage.tsx",
-   "linhas": 634
-  },
-  {
-   "arquivo": "src/pages/PassivoTrabalhistaPage.tsx",
-   "linhas": 624
   }
  ],
  "qualidade": {
   "any": 73,
-  "console_log": 261,
+  "console_log": 278,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
-  "arquivos_acima_500_linhas": 49
+  "arquivos_acima_500_linhas": 53
  },
  "todos": [
   {

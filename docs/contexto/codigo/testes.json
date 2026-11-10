@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 584,
+ "total": 588,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 546
+  "unit": 550
  },
  "onde_ficam": [
   {
@@ -27,7 +27,7 @@
   },
   {
    "padrao": "outro",
-   "arquivos": 18
+   "arquivos": 22
   }
  ],
  "arquivos": [
@@ -230,6 +230,15 @@
    "casos": 28
   },
   {
+   "arquivo": "scripts/autofix/lib.unit.mjs",
+   "tipo": "unit",
+   "linhas": 48,
+   "testa": [
+    "scripts/autofix/lib.mjs"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "scripts/autofix/regras/dados.test.mjs",
    "tipo": "unit",
    "linhas": 154,
@@ -237,6 +246,15 @@
     "scripts/autofix/regras/dados.mjs"
    ],
    "casos": 21
+  },
+  {
+   "arquivo": "scripts/automation.unit.mjs",
+   "tipo": "unit",
+   "linhas": 555,
+   "testa": [
+    "scripts/automation.mjs"
+   ],
+   "casos": 32
   },
   {
    "arquivo": "scripts/ci/actions-kpi.unit.mjs",
@@ -306,6 +324,25 @@
    "linhas": 150,
    "testa": [],
    "casos": 0
+  },
+  {
+   "arquivo": "scripts/graphify-local.unit.mjs",
+   "tipo": "unit",
+   "linhas": 452,
+   "testa": [
+    "scripts/graphify-local.mjs"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "scripts/maintenance/maintenance.unit.mjs",
+   "tipo": "unit",
+   "linhas": 724,
+   "testa": [
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/run.mjs"
+   ],
+   "casos": 44
   },
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
@@ -5311,15 +5348,20 @@
   "supabase/tests/plano100/20_asserts.sql"
  ],
  "cobertura_por_arquivo": {
+  "scripts/autofix/lib.mjs": 1,
   "scripts/autofix/regras/dados.mjs": 1,
+  "scripts/automation.mjs": 1,
   "scripts/ci/actions-kpi.mjs": 1,
   "scripts/ci/branch-podaveis.mjs": 1,
   "scripts/ci/issue-rotativa.mjs": 1,
   "scripts/ci/sla-code-scanning.mjs": 1,
   "scripts/ci/workflow-test-support.mjs": 4,
+  "scripts/graphify-local.mjs": 1,
   "scripts/inventario/gerar-banco.mjs": 1,
   "scripts/inventario/gerar-rotas.mjs": 1,
   "scripts/inventario/mudou-conteudo.mjs": 1,
+  "scripts/maintenance/lib.mjs": 1,
+  "scripts/maintenance/run.mjs": 1,
   "scripts/validate-canonical-db-url.mjs": 1,
   "src/calculators/auditHelper.ts": 1,
   "src/calculators/beneficios.ts": 2,

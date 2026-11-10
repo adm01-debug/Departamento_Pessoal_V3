@@ -38,6 +38,12 @@
   "scripts/generate-page.js": [
    "src/components/layout/PageHeader.tsx"
   ],
+  "scripts/maintenance/run.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
+  "scripts/maintenance/typecheck.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
   "src/App.tsx": [
    "src/components/AdminRoute.tsx",
    "src/components/ProtectedRoute.tsx",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3668b50c56c0621fa4a0ff0ce35f72534a37b145",
+  "sha": "b4f9205b61eb842b6d961f4eab87ada8c5d660b7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 20:51 UTC",
-  "files_total": 2874,
-  "code_files": 2355,
-  "code_lines": 315233
+  "generated_at": "2026-11-10 21:26 UTC",
+  "files_total": 2891,
+  "code_files": 2364,
+  "code_lines": 320290
  },
  "version": "1.3.2",
- "facts_hash": "c2a1b96c6128a3dd",
+ "facts_hash": "d295f4cf06d14ad3",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -103,6 +103,10 @@
    }
   },
   "scripts": {
+   "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+   "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+   "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
+   "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
    "dev": "vite",
    "build": "node scripts/check-dependencies.js && node scripts/generate-audit-pdf.js && vite build",
    "audit:pdf": "node scripts/generate-audit-pdf.js",
@@ -163,7 +167,16 @@
    "build:mobile": "./scripts/capacitor-build.sh",
    "build:mobile:android": "./scripts/capacitor-build.sh --apk",
    "cap:check": "./scripts/capacitor-build.sh --check",
-   "prepare": "husky"
+   "prepare": "husky",
+   "automation:doctor": "node scripts/automation.mjs doctor",
+   "automation:test": "node scripts/automation.mjs test",
+   "automation:check": "node scripts/automation.mjs check --ref HEAD",
+   "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+   "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+   "automation:graph": "node scripts/automation.mjs graph",
+   "automation:status": "node scripts/automation.mjs graph status",
+   "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+   "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks"
   },
   "infra": [
    {
@@ -200,6 +213,15 @@
    }
   ],
   "ci": [
+   {
+    "file": ".github/workflows/automation-local.yml",
+    "name": "Automação local",
+    "triggers": [
+     "pull_request",
+     "push",
+     "workflow_dispatch"
+    ]
+   },
    {
     "file": ".github/workflows/branch-hygiene-audit.yml",
     "name": "Branch Hygiene Audit",
@@ -357,7 +379,7 @@
    ".sql": 821,
    ".ts": 739,
    ".tsx": 679,
-   ".mjs": 89,
+   ".mjs": 98,
    ".js": 15,
    ".cjs": 10,
    ".py": 5
@@ -95946,8 +95968,8 @@
   },
   {
    "module": "scripts",
-   "files": 119,
-   "lines": 24015,
+   "files": 128,
+   "lines": 29072,
    "tables": [
     "a",
     "anexos",
@@ -95984,12 +96006,14 @@
     "user_roles"
    ],
    "exports": [
+    "automation.mjs: parseArgs, validateConfig, execute, appendExclude, removeExclude, main",
     "eslint-tests-any.config.mjs: tseslint",
     "gen-table-columns.mjs: TABLE_COLUMNS",
     "generate-component.js: $",
     "generate-hook.js: $",
     "generate-page.js: $",
     "generate-service.js: $",
+    "graphify-local.mjs: GraphError, run, acquire, validateConfig, fingerprint, validateGraph",
     "validate-canonical-db-url.mjs: CANONICAL_PROJECT_REF, validateCanonicalDbUrl",
     "gerar.unit.mjs: AppRoutes, useContacts, salvar, fim, depois, Texto",
     "any-codemod.mjs: collectCandidates, applyEdits, runAnyPass",
@@ -96008,6 +96032,8 @@
     "gerar-rotas.mjs: resolverImport, extrairImports, extrairChamadas, semComentarios, PASTAS_LIVRES, MAX_SALTOS_FEATURE",
     "mudou-conteudo.mjs: PADRAO, semCarimbos, mudou",
     "bridge-load.k6.js: options, function",
+    "lib.mjs: MaintenanceError, fail, digest, exists, safeEnv, stopChildren",
+    "run.mjs: parseArgs, networkPrefix, allowedSourceFiles, prettierCandidates, main",
     "generate.py: is_app_code, log, read_text, redact, rel, is_archived_sql",
     "indice.py: git, parse_dt, read_manifest, producer_health, entry_file, main",
     "test_generate.py: CurrentSqlSourcesTests",
@@ -96040,6 +96066,7 @@
     "node:assert",
     "node:child_process",
     "node:crypto",
+    "node:events",
     "node:fs",
     "node:http",
     "node:https",
@@ -96047,8 +96074,7 @@
     "node:net",
     "node:os",
     "node:path",
-    "node:test",
-    "node:tls"
+    "node:string_decoder"
    ],
    "imports_modules": [
     "src/b",
@@ -96080,6 +96106,8 @@
     "scripts/audit-secdef-authz.mjs",
     "scripts/audit-security-config.mjs",
     "scripts/audit-types-drift.mjs",
+    "scripts/automation.mjs",
+    "scripts/automation.unit.mjs",
     "scripts/build-rebaseline.mjs",
     "scripts/canonical-invariants.sql",
     "scripts/check-bundle-budget.mjs",
@@ -96091,6 +96119,8 @@
     "scripts/generate-hook.js",
     "scripts/generate-page.js",
     "scripts/generate-service.js",
+    "scripts/graphify-local.mjs",
+    "scripts/graphify-local.unit.mjs",
     "scripts/index.js",
     "scripts/provision-e2e-users.mjs",
     "scripts/ratchet-any-tests.mjs",
@@ -96111,6 +96141,7 @@
     "scripts/autofix/any-codemod.mjs",
     "scripts/autofix/eslint-safe-fix.mjs",
     "scripts/autofix/lib.mjs",
+    "scripts/autofix/lib.unit.mjs",
     "scripts/autofix/run.mjs",
     "scripts/autofix/regras/catalogo.mjs",
     "scripts/autofix/regras/dados.mjs",
@@ -96138,12 +96169,7 @@
     "scripts/e2e/ensure-fixtures.mjs",
     "scripts/e2e/seed.mjs",
     "scripts/e2e/verify-seed.mjs",
-    "scripts/inventario/banco.sql",
-    "scripts/inventario/gerar-banco.mjs",
-    "scripts/inventario/gerar-repo.mjs",
-    "scripts/inventario/gerar-rotas.mjs",
-    "scripts/inventario/mudou-conteudo.mjs",
-    "scripts/load/bridge-load.k6.js"
+    "scripts/inventario/banco.sql"
    ]
   },
   {
@@ -102950,6 +102976,9 @@
    "FIXTURE_CONFIG": [
     "scripts/ci/branch-hygiene-runtime.unit.mjs"
    ],
+   "FIXTURE_GRAPH_EXIT": [
+    "scripts/automation.unit.mjs"
+   ],
    "FIXTURE_NETWORK": [
     "scripts/ci/branch-hygiene-runtime.unit.mjs"
    ],
@@ -103012,6 +103041,12 @@
    "GOVBR_CLIENT_SECRET": [
     "supabase/functions/auth-gov-br/index.ts"
    ],
+   "GRAPHIFY_FIXTURE_": [
+    "scripts/graphify-local.unit.mjs"
+   ],
+   "GRAPHIFY_FIXTURE_SECRET": [
+    "scripts/graphify-local.unit.mjs"
+   ],
    "INVENTARIO_PERMITIR_OUTRO_PROJETO": [
     "scripts/inventario/gerar-banco.mjs"
    ],
@@ -103034,16 +103069,24 @@
    "MAILOSAUR_SERVER_ID": [
     "e2e/public/reset-password-callback.spec.ts"
    ],
+   "MAINTENANCE_TEST_": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
+   "MAINTENANCE_TEST_SECRET": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
    "MODE": [
     "src/main.tsx"
    ],
    "NODE_ENV": [
-    "scripts/ai-context/cenarios.mjs"
+    "scripts/ai-context/cenarios.mjs",
+    "scripts/maintenance/maintenance.unit.mjs"
    ],
    "OPENAI_API_KEY": [
     "supabase/functions/alertas-preditivos/index.ts"
    ],
    "PATH": [
+    "scripts/graphify-local.unit.mjs",
     "scripts/tests/contexto-publicacao.test.mjs",
     "scripts/tests/run-sql-diag-guard.test.mjs"
    ],
@@ -103092,6 +103135,9 @@
     "supabase/functions/enviar-relatorio/index.ts",
     "supabase/functions/processar-agendamentos/index.ts"
    ],
+   "REPO_AUTOMATION_CHAINING": [
+    "scripts/automation.mjs"
+   ],
    "REPO_ROOT": [
     "scripts/supabase_snapshot/snapshot.py"
    ],
@@ -103113,6 +103159,9 @@
    ],
    "SCRIPT_ONLY": [
     "scripts/ai-context/cenarios.mjs"
+   ],
+   "SECRET_KEY": [
+    "scripts/maintenance/maintenance.unit.mjs"
    ],
    "SENTRY_AUTH_TOKEN": [
     "vite.config.ts"
@@ -103465,12 +103514,16 @@
     "src/integrations/supabase/client.ts",
     "src/services/assistenteIAService.ts"
    ],
+   "VITE_SUPABASE_PROJECT_ID": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
    "VITE_SUPABASE_PUBLISHABLE_KEY": [
     "e2e/auth.setup.ts",
     "e2e/cleanup/seed-cleanup.spec.ts",
     "e2e/public/api-auth-errors.spec.ts",
     "scripts/e2e/ensure-fixtures.mjs",
     "scripts/e2e/seed.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
     "scripts/simulacao/run-exhaustive-v3.mjs",
     "scripts/simulacao/run-exhaustive.mjs",
     "src/contexts/AuthContext.tsx",
@@ -103485,6 +103538,7 @@
     "e2e/public/api-auth-errors.spec.ts",
     "scripts/ai-context/gerar.unit.mjs",
     "scripts/audit-canonical-project.mjs",
+    "scripts/maintenance/maintenance.unit.mjs",
     "scripts/simulacao/run-all.mjs",
     "scripts/simulacao/run-exhaustive-v3.mjs",
     "scripts/simulacao/run-exhaustive.mjs",
@@ -103522,6 +103576,9 @@
    ],
    "XDG_CACHE_HOME": [
     "scripts/autofix/run.mjs"
+   ],
+   "XDG_STATE_HOME": [
+    "scripts/maintenance/run.mjs"
    ]
   },
   "rpc": {
@@ -104124,6 +104181,9 @@
    ]
   },
   "external": {
+   "http://192.0.2.1:9": [
+    "scripts/maintenance/maintenance.unit.mjs"
+   ],
    "https://api.github.com": [
     "scripts/audit-required-checks.mjs"
    ],
@@ -106674,6 +106734,10 @@
     "msg": "TypeScript não carregou ${file}"
    },
    {
+    "file": "scripts/automation.unit.mjs",
+    "msg": "falha fixture"
+   },
+   {
     "file": "scripts/build-rebaseline.mjs",
     "msg": "A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído."
    },
@@ -106759,7 +106823,15 @@
    },
    {
     "file": "scripts/autofix/lib.mjs",
+    "msg": "eslint falhou (exit ${r.code}):\\n${(r.stderr || r.stdout).slice(0, 2000)}"
+   },
+   {
+    "file": "scripts/autofix/lib.mjs",
     "msg": "eslint não devolveu JSON (exit ${r.code}):\\n${(r.stderr || r.stdout).slice(0, 2000)}"
+   },
+   {
+    "file": "scripts/autofix/lib.mjs",
+    "msg": "prettier --list-different falhou (exit ${r.code}):\\n${r.stderr || r.stdout}"
    },
    {
     "file": "scripts/autofix/lib.mjs",
@@ -106880,6 +106952,30 @@
    {
     "file": "scripts/inventario/gerar-banco.mjs",
     "msg": "sem --entrada e sem DATABASE_URL: nada para ler (veja o cabecalho do script)."
+   },
+   {
+    "file": "scripts/maintenance/lib.mjs",
+    "msg": "failed"
+   },
+   {
+    "file": "scripts/maintenance/lib.mjs",
+    "msg": "missing_dependencies"
+   },
+   {
+    "file": "scripts/maintenance/lib.mjs",
+    "msg": "skipped_busy"
+   },
+   {
+    "file": "scripts/maintenance/maintenance.unit.mjs",
+    "msg": "formatter fixture failed"
+   },
+   {
+    "file": "scripts/maintenance/run.mjs",
+    "msg": "blocked_network_sandbox"
+   },
+   {
+    "file": "scripts/maintenance/run.mjs",
+    "msg": "pending_patch"
    },
    {
     "file": "scripts/regras_negocio/test_generate.py",
@@ -228118,6 +228214,51 @@
     "* ficar 100% correto quando o schema vivo estiver reconciliado com o repo."
    ]
   },
+  "scripts/automation.mjs": {
+   "path": "scripts/automation.mjs",
+   "lines": 869,
+   "exports": [
+    "function parseArgs",
+    "function validateConfig",
+    "function execute",
+    "function appendExclude",
+    "function removeExclude",
+    "function main"
+   ],
+   "env": [
+    "REPO_AUTOMATION_CHAINING"
+   ],
+   "rule_comments": [
+    "Não trunque: um append concorrente deve sobreviver à reversão.",
+    "Remove somente os arquivos conhecidos criados por esta instalação."
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "validateConfig",
+     "params": "c",
+     "body": "onlyKeys( c, [ 'version', 'name', 'entrypoint', 'testSuites', 'motor', 'graph', 'graphConfig', 'aliases', 'registrations', 'ci', 'nightly', 'timeoutMs', 'toolingPatterns', 'sourcePatterns', 'requirements', 'snapshot', 'motorConfig', 'motorSource', ], 'config' ); if (c.version !== 1 || typeof c.name !== 'string' || !c.name) throw fail('config: version 1 e name obrigatórios'); if (typeof c.entrypoint !== 'string' || !c.entrypoint) throw fail('entrypoint obrigatório'); if ( !Array.isArray(c.testSui …"
+    }
+   ],
+   "temporal": [
+    "const r = await execute(['git', '-C', root, ...args], { cwd: root, capture: true, timeout: 15000 });",
+    "export async function execute(argv, { cwd, timeout = 300000, capture = false, env = process.env } = {}) {"
+   ]
+  },
+  "scripts/automation.unit.mjs": {
+   "path": "scripts/automation.unit.mjs",
+   "lines": 555,
+   "env": [
+    "FIXTURE_GRAPH_EXIT"
+   ],
+   "errors": [
+    "falha fixture"
+   ],
+   "temporal": [
+    "timeout: 100,",
+    "timeout: 15000,"
+   ]
+  },
   "scripts/build-rebaseline.mjs": {
    "path": "scripts/build-rebaseline.mjs",
    "lines": 141,
@@ -228246,6 +228387,56 @@
     "const $"
    ],
    "doc": "!/usr/bin/env node"
+  },
+  "scripts/graphify-local.mjs": {
+   "path": "scripts/graphify-local.mjs",
+   "lines": 997,
+   "exports": [
+    "class GraphError",
+    "function run",
+    "function acquire",
+    "function validateConfig",
+    "function fingerprint",
+    "function validateGraph",
+    "function assertResources",
+    "function adoptInitial",
+    "function main",
+    "function acquireGlobal"
+   ],
+   "rule_comments": [
+    "1024 * 1024) fail('Arquivo de código excede o limite de512MB');"
+   ],
+   "doc": "!/usr/bin/env node",
+   "calc_fns": [
+    {
+     "name": "validateConfig",
+     "params": "c",
+     "body": "const keys = [ 'version', 'project', 'environment', 'pin', 'pythonVersion', 'state', 'output', 'adapter', 'scope', 'partial', 'timeoutMs', 'minAvailableMb', 'metadata', ]; if ( !c || c.version !== 1 || Object.keys(c).some((k) => !keys.includes(k)) || !/^[A-Za-z0-9_.-]+$/.test(c.project || '') || !/^\\d+\\.\\d+\\.\\d+$/.test(c.pin || '') ) fail('Configuração Graphify inválida'); for (const key of ['environment', 'state', 'output']) if (!safeRelative(c[key])) fail('Caminho da configuração deve ser rela …"
+    },
+    {
+     "name": "validateGraph",
+     "params": "file, partial = false",
+     "body": "const descriptor = await open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK); try { const info = await descriptor.stat({ bigint: true }); if (!info.isFile() || info.size > 512n * 1024n * 1024n) fail('Artefato do grafo não é arquivo regular ou excede512MB'); const bytes = await descriptor.readFile(), after = await descriptor.stat({ bigint: true }); if ( BigInt(bytes.length) !== info.size || after.size !== info.size || after.mtimeNs !== info.mtimeNs || after.ctimeNs !== in …"
+    },
+    {
+     "name": "generate",
+     "params": "ctx, fp, expectedGraph",
+     "body": "await resources(ctx); const prefix = await offline(ctx); const job = path.join(ctx.state, 'runs', `${Date.now()}-${randomUUID()}`); await mkdir(job, { recursive: true, mode: 0o700 }); let step = 0; const execute = async (argv, env = ctx.env) => { if (ctx.interrupted()) fail('Execução interrompida'); const result = await run([...prefix, ...argv], ctx.root, env, ctx.config.timeoutMs); const log = path.join(job, `${step++}.log`); await writeFile(log, redact(result.output), { mode: 0o600 }); if (res …"
+    }
+   ],
+   "temporal": [
+    "const timeout = setTimeout(() => { kill(); done(); }, 1500);",
+    "hard ||= setTimeout(() => { kill('SIGKILL'); finish(1); }, 1000);"
+   ]
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "path": "scripts/graphify-local.unit.mjs",
+   "lines": 452,
+   "env": [
+    "GRAPHIFY_FIXTURE_",
+    "GRAPHIFY_FIXTURE_SECRET",
+    "PATH"
+   ]
   },
   "scripts/index.js": {
    "path": "scripts/index.js",
@@ -228925,7 +229116,7 @@
   },
   "scripts/autofix/lib.mjs": {
    "path": "scripts/autofix/lib.mjs",
-   "lines": 134,
+   "lines": 145,
    "exports": [
     "const log",
     "function sh",
@@ -228943,10 +229134,16 @@
     "function prettierCheck"
    ],
    "errors": [
+    "eslint falhou (exit ${r.code}):\\n${(r.stderr || r.stdout).slice(0, 2000)}",
     "eslint não devolveu JSON (exit ${r.code}):\\n${(r.stderr || r.stdout).slice(0, 2000)}",
+    "prettier --list-different falhou (exit ${r.code}):\\n${r.stderr || r.stdout}",
     "prettier falhou:\\n${r.stderr || r.stdout}"
    ],
    "doc": "Utilitários compartilhados do autofix. Zero IA: só ferramentas determinísticas (tsc, eslint, prettier, git). Nada aqui faz chamada de rede além do git fetch."
+  },
+  "scripts/autofix/lib.unit.mjs": {
+   "path": "scripts/autofix/lib.unit.mjs",
+   "lines": 48
   },
   "scripts/autofix/run.mjs": {
    "path": "scripts/autofix/run.mjs",
@@ -229856,6 +230053,92 @@
    "percents": [
     "// livre — o corpo antigo ({ query, params }) era recusado com 400 em 100% das chamadas."
    ]
+  },
+  "scripts/maintenance/lib.mjs": {
+   "path": "scripts/maintenance/lib.mjs",
+   "lines": 690,
+   "exports": [
+    "class MaintenanceError",
+    "const fail",
+    "const digest",
+    "const exists",
+    "const safeEnv",
+    "function stopChildren",
+    "function run",
+    "function checked",
+    "const git",
+    "function commitWithHooks",
+    "function readRegularDependency",
+    "function dependencyFingerprint",
+    "function reuseDependencies",
+    "const localRequire",
+    "function tool",
+    "function validateConfig",
+    "function inspect",
+    "function acquire",
+    "function writeJson"
+   ],
+   "errors": [
+    "failed",
+    "missing_dependencies",
+    "skipped_busy"
+   ],
+   "calc_fns": [
+    {
+     "name": "validateConfig",
+     "params": "c",
+     "body": "const keys = ['version', 'manager', 'tsconfigs', 'gates', 'fix', 'timeoutMs', 'maxFiles', 'maxChangedLines']; if (!c || typeof c !== 'object' || Object.keys(c).some((k) => !keys.includes(k)) || c.version !== 1) fail('Configuração inválida ou versão desconhecida'); if (!['npm', 'bun'].includes(c.manager)) fail('Gerenciador deve ser npm ou bun'); const relative = (x) => typeof x === 'string' && x.length && !path.isAbsolute(x) && !x.split(/[\\\\/]/).includes('..') && !x.startsWith('-'); if (!Array.is …"
+    }
+   ],
+   "webhook_events": [
+    "string"
+   ]
+  },
+  "scripts/maintenance/maintenance.unit.mjs": {
+   "path": "scripts/maintenance/maintenance.unit.mjs",
+   "lines": 724,
+   "external_urls": [
+    "http://192.0.2.1:9"
+   ],
+   "env": [
+    "MAINTENANCE_TEST_",
+    "MAINTENANCE_TEST_SECRET",
+    "NODE_ENV",
+    "SECRET_KEY",
+    "VITE_SUPABASE_PROJECT_ID",
+    "VITE_SUPABASE_PUBLISHABLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "errors": [
+    "formatter fixture failed"
+   ],
+   "temporal": [
+    "const gates = `import fs from 'node:fs';import {spawnSync} from 'node:child_process';\\nconst text=fs.readFileSync('src/value.ts','utf8'); const phase=process.ar …"
+   ]
+  },
+  "scripts/maintenance/run.mjs": {
+   "path": "scripts/maintenance/run.mjs",
+   "lines": 635,
+   "exports": [
+    "function parseArgs",
+    "function networkPrefix",
+    "function allowedSourceFiles",
+    "function prettierCandidates",
+    "function main"
+   ],
+   "env": [
+    "XDG_STATE_HOME"
+   ],
+   "errors": [
+    "blocked_network_sandbox",
+    "pending_patch"
+   ],
+   "doc": "!/usr/bin/env node"
+  },
+  "scripts/maintenance/typecheck.mjs": {
+   "path": "scripts/maintenance/typecheck.mjs",
+   "lines": 76,
+   "doc": "!/usr/bin/env node"
   },
   "scripts/probes/print-summary.mjs": {
    "path": "scripts/probes/print-summary.mjs",
@@ -277308,10 +277591,39 @@
   }
  },
  "git": {
-  "sha": "3668b50c56c0621fa4a0ff0ce35f72534a37b145",
+  "sha": "b4f9205b61eb842b6d961f4eab87ada8c5d660b7",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b4f9205",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)",
+    "files": [
+     ".github/workflows/automation-local.yml",
+     ".gitignore",
+     "docs/AUTOMACAO_LOCAL.md",
+     "graphify.local.json",
+     "package.json",
+     "scripts/autofix/README.md",
+     "scripts/autofix/lib.mjs",
+     "scripts/autofix/lib.unit.mjs",
+     "scripts/automation.config.json",
+     "scripts/automation.mjs",
+     "scripts/automation.unit.mjs",
+     "scripts/graphify-local.mjs",
+     "scripts/graphify-local.unit.mjs",
+     "scripts/maintenance/README.md",
+     "scripts/maintenance/config.example.json",
+     "scripts/maintenance/config.json",
+     "scripts/maintenance/lib.mjs",
+     "scripts/maintenance/maintenance.unit.mjs",
+     "scripts/maintenance/run.mjs",
+     "scripts/maintenance/run.sh",
+     "scripts/maintenance/typecheck.mjs"
+    ]
+   },
    {
     "sha": "3668b50",
     "date": "2026-11-10",
@@ -277917,22 +278229,6 @@
      "docs/agentes/banco.md",
      "scripts/ci/README.md"
     ]
-   },
-   {
-    "sha": "28a1191",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "Replica no DP V3 o padrão de instruções para agentes do Zapp Web V2 (#395)",
-    "files": [
-     "AGENTS.md",
-     "docs/agentes/arquitetura.md",
-     "docs/agentes/banco.md",
-     "docs/agentes/contexto-inventario.md",
-     "docs/agentes/decisoes-e-gaps.md",
-     "docs/agentes/fluxo-git.md",
-     "docs/agentes/graphify.md",
-     "scripts/ci/README.md"
-    ]
    }
   ],
   "hot_files": [
@@ -277961,15 +278257,15 @@
     5
    ],
    [
+    "scripts/autofix/README.md",
+    4
+   ],
+   [
     "scripts/autofix/regras/dados.mjs",
     4
    ],
    [
-    "scripts/ci/README.md",
-    3
-   ],
-   [
-    "scripts/autofix/README.md",
+    "scripts/autofix/lib.mjs",
     3
    ],
    [
@@ -277993,15 +278289,15 @@
     2
    ],
    [
+    "scripts/ci/README.md",
+    2
+   ],
+   [
     "scripts/audit-migration-style.mjs",
     2
    ],
    [
     "scripts/autofix/install-timer.sh",
-    2
-   ],
-   [
-    "scripts/autofix/lib.mjs",
     2
    ],
    [

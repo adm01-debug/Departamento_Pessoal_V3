@@ -34,7 +34,7 @@
    "scripts/ci (8)"
   ],
   "docs": [
-   "docs (72)",
+   "docs (73)",
    "(raiz) (31)",
    ".github (1)"
   ]
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)",
    "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
    "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)",
    "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)",
-   "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)",
-   "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com identificador entre aspas (#420)"
+   "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

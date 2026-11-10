@@ -5,11 +5,11 @@
   "linguagens": [
    "TypeScript (1418)",
    "SQL (821)",
-   "Markdown (289)",
-   "JavaScript (114)",
-   "JSON (56)",
-   "Shell (54)",
-   "YAML (54)",
+   "Markdown (291)",
+   "JavaScript (123)",
+   "JSON (60)",
+   "Shell (55)",
+   "YAML (55)",
    "Python (5)"
   ],
   "linguagem_principal": "TypeScript",
@@ -66,6 +66,15 @@
    "audit:search-path": "node scripts/audit-db-search-path.mjs",
    "audit:secdef": "node scripts/audit-secdef-authz.mjs",
    "audit:types-drift": "node scripts/audit-types-drift.mjs",
+   "automation:check": "node scripts/automation.mjs check --ref HEAD",
+   "automation:doctor": "node scripts/automation.mjs doctor",
+   "automation:graph": "node scripts/automation.mjs graph",
+   "automation:heal": "node scripts/automation.mjs heal --ref origin/main",
+   "automation:install-hooks": "node scripts/automation.mjs install-hooks",
+   "automation:nightly": "node scripts/automation.mjs nightly --ref origin/main",
+   "automation:status": "node scripts/automation.mjs graph status",
+   "automation:test": "node scripts/automation.mjs test",
+   "automation:uninstall-hooks": "node scripts/automation.mjs uninstall-hooks",
    "build": "node scripts/check-dependencies.js && node scripts/generate-audit-pdf.js && vite build",
    "build:dev": "vite build --mode development",
    "build:mobile": "./scripts/capacitor-build.sh",
@@ -85,6 +94,9 @@
    "lint": "eslint src --ext ts,tsx",
    "lint:ci": "eslint src --ext ts,tsx --max-warnings=1",
    "lint:edge": "eslint supabase/functions --ext ts --no-warn-ignored --max-warnings=0",
+   "maintenance:check": "sh scripts/maintenance/run.sh check --root . --ref origin/main",
+   "maintenance:doctor": "sh scripts/maintenance/run.sh doctor --root .",
+   "maintenance:heal": "sh scripts/maintenance/run.sh heal --root . --ref origin/main",
    "prepare": "husky",
    "preview": "vite preview",
    "smoke:selos": "node scripts/smoke-hash-triggers.mjs",
@@ -99,6 +111,7 @@
    "test:e2e:report": "playwright show-report",
    "test:e2e:ui": "playwright test --ui",
    "test:lighthouse": "npm run build && ./node_modules/.bin/lhci autorun",
+   "test:maintenance": "node --test scripts/maintenance/maintenance.unit.mjs",
    "test:migrations": "bash scripts/tests/migrations-plano100.sh",
    "test:migrations:p0": "bash scripts/tests/migrations-p0-hash-search-path.sh",
    "test:migrations:p0:auth": "bash scripts/tests/migrations-p0-auth-lockout.sh",
@@ -174,6 +187,34 @@
   "vitest.config.ts"
  ],
  "workflows": [
+  {
+   "arquivo": ".github/workflows/automation-local.yml",
+   "nome": "Automação local",
+   "gatilhos": [
+    "pull_request",
+    "push",
+    "workflow_dispatch"
+   ],
+   "crons": [],
+   "branches": [
+    "main"
+   ],
+   "jobs": [
+    "contracts"
+   ],
+   "permissoes": [
+    "contents: read"
+   ],
+   "scripts_usados": [
+    "scripts/automation.mjs"
+   ],
+   "npm_scripts": [],
+   "secrets": [],
+   "actions": [
+    "actions/checkout",
+    "actions/setup-node"
+   ]
+  },
   {
    "arquivo": ".github/workflows/branch-hygiene-audit.yml",
    "nome": "Branch Hygiene Audit",
@@ -1031,6 +1072,11 @@
    "linhas": 179
   },
   {
+   "arquivo": "docs/AUTOMACAO_LOCAL.md",
+   "titulo": "Automação local — Departamento_Pessoal_V3",
+   "linhas": 224
+  },
+  {
    "arquivo": "docs/BACKUP.md",
    "titulo": "💾 BACKUP.md - Estratégia de Backup",
    "linhas": 23
@@ -1778,11 +1824,23 @@
     "arquivos": 1
    },
    {
+    "host": "maintenance.invalid",
+    "arquivos": 1
+   },
+   {
     "host": "myapp.lovable.app",
     "arquivos": 1
    },
    {
     "host": "o123.ingest.sentry.io",
+    "arquivos": 1
+   },
+   {
+    "host": "production.invalid",
+    "arquivos": 1
+   },
+   {
+    "host": "production.supabase.co",
     "arquivos": 1
    },
    {

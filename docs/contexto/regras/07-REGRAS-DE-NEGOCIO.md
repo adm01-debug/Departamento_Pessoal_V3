@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3668b50c56` · branch `main` · 2026-11-10 20:51 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b4f9205b61` · branch `main` · 2026-11-10 21:26 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4244,6 +4244,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Payload too large | `public/sw-custom.js` |
 | Não foi possível localizar ${name} | `scripts/audit-bridge-frontend-contract.mjs` |
 | TypeScript não carregou ${file} | `scripts/audit-edge-syntax.mjs` |
+| falha fixture | `scripts/automation.unit.mjs` |
 | A migração gerada não contém a role dp_mcp_role — o prelude não foi incluído. | `scripts/build-rebaseline.mjs` |
 | A migração gerada não contém nenhum CREATE TABLE — o dump pode estar vazio ou corrompido. | `scripts/build-rebaseline.mjs` |
 | A migração gerada tem apenas ${result.length} bytes — esperado > 50 kB para um dump completo. | `scripts/build-rebaseline.mjs` |
@@ -4265,7 +4266,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | SUPABASE_DB_URL não pode sobrescrever host, porta, database, usuário ou sslmode na query string | `scripts/validate-canonical-db-url.mjs` |
 | SUPABASE_DB_URL não é uma URI válida | `scripts/validate-canonical-db-url.mjs` |
 | ${msg}: esperado ${JSON.stringify(b)} obtido ${JSON.stringify(a)} | `scripts/ai-context/cenarios.mjs` |
+| eslint falhou (exit ${r.code}):\n${(r.stderr \|\| r.stdout).slice(0, 2000)} | `scripts/autofix/lib.mjs` |
 | eslint não devolveu JSON (exit ${r.code}):\n${(r.stderr \|\| r.stdout).slice(0, 2000)} | `scripts/autofix/lib.mjs` |
+| prettier --list-different falhou (exit ${r.code}):\n${r.stderr \|\| r.stdout} | `scripts/autofix/lib.mjs` |
 | prettier falhou:\n${r.stderr \|\| r.stdout} | `scripts/autofix/lib.mjs` |
 | ${wt} existe mas não é um worktree do autofix (branch  | `scripts/autofix/run.mjs` |
 | ${wt} tem alterações não commitadas; resolva antes (git -C ${wt} status) | `scripts/autofix/run.mjs` |
@@ -4296,6 +4299,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | entrada sem tabelas | `scripts/inventario/gerar-banco.mjs` |
 | secao obrigatoria  | `scripts/inventario/gerar-banco.mjs` |
 | sem --entrada e sem DATABASE_URL: nada para ler (veja o cabecalho do script). | `scripts/inventario/gerar-banco.mjs` |
+| failed | `scripts/maintenance/lib.mjs` |
+| missing_dependencies | `scripts/maintenance/lib.mjs` |
+| skipped_busy | `scripts/maintenance/lib.mjs` |
+| formatter fixture failed | `scripts/maintenance/maintenance.unit.mjs` |
+| blocked_network_sandbox | `scripts/maintenance/run.mjs` |
+| pending_patch | `scripts/maintenance/run.mjs` |
 | Bearer ausente no header Authorization | `scripts/regras_negocio/test_generate.py` |
 | chave obrigatória {secret_key} | `scripts/regras_negocio/test_generate.py` |
 | header inválido: Bearer {bearer} | `scripts/regras_negocio/test_generate.py` |
@@ -4525,16 +4534,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Não foi possível abrir anexo | `src/pages/CanalContabilidadePage.tsx` |
 | ; import { Skeleton } from  | `src/pages/CienciaMedidaPage.tsx` |
 | Empresa atual não identificada | `src/pages/ColaboradorFormPage.tsx` |
-| Falha ao exportar PDF | `src/pages/ColaboradoresPage.tsx` |
-| Falha ao exportar dados | `src/pages/ColaboradoresPage.tsx` |
-| Nenhum dado encontrado para exportar | `src/pages/ColaboradoresPage.tsx` |
-| Erro ao publicar | `src/pages/ComunicacaoInternaPage.tsx` |
-| Erro ao registrar | `src/pages/ComunicacaoInternaPage.tsx` |
-| Erro ao exportar SPED | `src/pages/ContabilidadePage.tsx` |
-| Selecione uma folha de pagamento | `src/pages/ContabilidadePage.tsx` |
-| Atenção: ${result.error \|\|  | `src/pages/ContratacaoPage.tsx` |
-| Falha ao carregar histórico | `src/pages/ContratosGeradosPage.tsx` |
-| … +464 linhas — lista completa em `context.json` | |
+| … +473 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 

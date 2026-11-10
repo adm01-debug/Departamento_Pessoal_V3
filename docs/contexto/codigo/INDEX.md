@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3668b50c56c0621fa4a0ff0ce35f72534a37b145` (2026-11-10T17:49:04-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b4f9205b61eb842b6d961f4eab87ada8c5d660b7` (2026-11-10T18:25:45-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (821), Markdown (289), JavaScript (114), JSON (56), Shell (54), YAML (54), Python (5)
+- linguagens: TypeScript (1418), SQL (821), Markdown (291), JavaScript (123), JSON (60), Shell (55), YAML (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2853 |
-| arquivos_codigo | 1536 |
-| linhas_codigo | 267291 |
+| arquivos_total | 2870 |
+| arquivos_codigo | 1545 |
+| linhas_codigo | 272348 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,10 +48,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 417 |
 | migrations | 785 |
 | cron_jobs | 41 |
-| testes | 584 |
-| workflows | 19 |
-| scripts | 107 |
-| docs_md | 289 |
+| testes | 588 |
+| workflows | 20 |
+| scripts | 113 |
+| docs_md | 291 |
 
 ## Onde ficam as coisas
 - telas: src/pages (108), src/components (1)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (12), scripts/autofix (10), scripts/ci (8)
-- docs: docs (72), (raiz) (31), .github (1)
+- docs: docs (73), (raiz) (31), .github (1)
 - nomenclatura: {"componentes":"PascalCase (87%)","hooks":"use + PascalCase","servicos":"camelCase (99%)","edge_functions":"kebab-case (68%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
@@ -383,29 +383,30 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21742 nós · 45459 arestas · 2095 comunidades · grafo do commit `3668b50c`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (439), react (397), button.tsx (367), useEmpresas (355), cn (343), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146), rateLimit.ts (145)
+- 21915 nós · 46002 arestas · 2148 comunidades · grafo do commit `b4f9205b`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (459), cn (449), card.tsx (297), button.tsx (272), react (256), vitest (195), contract.ts (179), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - package.json (72)
-- package-lock.json (68)
+- package-lock.json (67)
 - .github/workflows/canonical-migrations.yml (48)
-- CLAUDE.md (29)
-- .github/workflows/ci.yml (22)
-- src/integrations/supabase/types.ts (15)
-- supabase/functions/external-db-bridge/index.ts (15)
-- supabase/functions/external-db-bridge/validation.ts (15)
-- .github/workflows/e2e.yml (14)
-- src/services/cnabService.ts (14)
-- AGENTS.md (13)
-- .github/workflows/security.yml (12)
+- CLAUDE.md (28)
+- .github/workflows/ci.yml (21)
+- src/integrations/supabase/types.ts (14)
+- supabase/functions/external-db-bridge/index.ts (14)
+- supabase/functions/external-db-bridge/validation.ts (14)
+- .github/workflows/e2e.yml (13)
+- src/services/cnabService.ts (13)
+- AGENTS.md (12)
 - PENDENCIAS.md (12)
-- .github/workflows/deploy.yml (11)
+- .github/workflows/security.yml (11)
 - deno.lock (11)
+- .github/workflows/deploy.yml (10)
 
 ## Workflows
+- `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
 - `branch-hygiene-audit.yml` — Branch Hygiene Audit (schedule, workflow_dispatch; cron 56 7 * * 1)
 - `canonical-edge-functions.yml` — Canonical Supabase — Edge Functions (pull_request, push, workflow_dispatch)
 - `canonical-migrations.yml` — Canonical database — scoped migrations (workflow_dispatch)
@@ -427,6 +428,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `workflows-report.yml` — Workflows report (schedule, workflow_dispatch; cron 10 8 * * 3)
 
 ## Scripts npm
+- `maintenance:doctor`: `sh scripts/maintenance/run.sh doctor --root .`
+- `maintenance:check`: `sh scripts/maintenance/run.sh check --root . --ref origin/main`
+- `maintenance:heal`: `sh scripts/maintenance/run.sh heal --root . --ref origin/main`
+- `test:maintenance`: `node --test scripts/maintenance/maintenance.unit.mjs`
 - `dev`: `vite`
 - `build`: `node scripts/check-dependencies.js && node scripts/generate-audit-pdf.js && vite build`
 - `audit:pdf`: `node scripts/generate-audit-pdf.js`
@@ -488,6 +493,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `build:mobile:android`: `./scripts/capacitor-build.sh --apk`
 - `cap:check`: `./scripts/capacitor-build.sh --check`
 - `prepare`: `husky`
+- `automation:doctor`: `node scripts/automation.mjs doctor`
+- `automation:test`: `node scripts/automation.mjs test`
+- `automation:check`: `node scripts/automation.mjs check --ref HEAD`
+- `automation:heal`: `node scripts/automation.mjs heal --ref origin/main`
+- `automation:nightly`: `node scripts/automation.mjs nightly --ref origin/main`
+- `automation:graph`: `node scripts/automation.mjs graph`
+- `automation:status`: `node scripts/automation.mjs graph status`
+- `automation:install-hooks`: `node scripts/automation.mjs install-hooks`
+- `automation:uninstall-hooks`: `node scripts/automation.mjs uninstall-hooks`
 
 ## Documentos (raiz e docs/)
 - `.github/PULL_REQUEST_TEMPLATE.md` — cole aqui o trecho do log, resultado de query ou request que prova que funciona (29 linhas)
@@ -530,6 +544,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/AUDIT_REPORT.md` — 📋 RELATÓRIO DE AUDITORIA - DEPARTAMENTO PESSOAL (116 linhas)
 - `docs/AUDIT_REPORT_GITHUB.md` — 🔍 RELATÓRIO DE AUDITORIA GITHUB - DEPARTAMENTO-PESSOAL (185 linhas)
 - `docs/AUDIT_REPORT_V7.md` — 🔍 RELATÓRIO DE AUDITORIA COMPLETA V7 (179 linhas)
+- `docs/AUTOMACAO_LOCAL.md` — Automação local — Departamento_Pessoal_V3 (224 linhas)
 - `docs/BACKUP.md` — 💾 BACKUP.md - Estratégia de Backup (23 linhas)
 - `docs/CALCULO_FOLHA.md` — Cálculo de Folha de Pagamento (38 linhas)
 - `docs/CALCULO_RESCISAO.md` — Cálculo de Rescisão Trabalhista (44 linhas)
@@ -598,6 +613,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-10 `b4f9205` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)
 - 2026-11-10 `3668b50` fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)
 - 2026-11-10 `36a404f` ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)
 - 2026-11-10 `8391bcc` fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)
@@ -612,7 +628,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `6e2024f` feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a t
 - 2026-11-10 `7aba28e` fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)
 - 2026-11-10 `34e22ec` feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)
-- 2026-11-09 `1dbce64` fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
