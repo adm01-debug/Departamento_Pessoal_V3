@@ -30,7 +30,7 @@ Opções: `--steps eslint,any,format,ratchet` · `--max-runs 150` (orçamento de
   `ratchet-any` passando. Se qualquer um falha, **tudo é desfeito**.
 - O modo padrão nunca toca no seu checkout e nunca faz push. Cada etapa vira um commit na branch `autofix/<data>`.
 - Idempotente: se existe uma branch `autofix/*` com conteúdo ainda não integrado na base, a execução é pulada (não empilha PRs). Como os PRs entram por squash, a branch é considerada integrada quando simular o merge na base não altera a árvore (`git merge-tree --write-tree`); nesse caso ela é removida sozinha. Conflito ou erro conta como pendente.
-- Uma execução por vez (trava em `/tmp/dp-autofix.lock`) e prioridade baixa (`nice 10`).
+- Uma execução por vez (trava em `~/.cache/dp-autofix/run.lock`) e prioridade baixa (`nice 10`).
 - Relatório em `~/.autofix-reports/Departamento_Pessoal_V3/<data>.{md,json}`.
 
 ## Fora do escopo (de propósito)
