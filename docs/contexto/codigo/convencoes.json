@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (468)",
-   "co-localizado (*.test) (65)",
+   "co-localizado (*.test) (69)",
    "e2e/ (27)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417)",
+   "fix: auditorias de segurança/RLS/edge sem falso verde, falso positivo nem vazamento de senha (#416)",
    "fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruição de arquivo (#418)",
    "fix: testes de migration e contratos detectam o que prometem (sem falso verde) e param de vazar volume Docker (#424)",
-   "fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)",
-   "feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a trava (#421)",
-   "fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)"
+   "fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

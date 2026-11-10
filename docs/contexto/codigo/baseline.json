@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e11272ee00cbd92e60ea4891183f2f5fa8db508d",
+  "commit": "2d6010b679a6a6b7d9d7b0f97b22c6d03126a221",
   "branch": "main",
-  "data_commit": "2026-11-10T15:11:28-03:00",
+  "data_commit": "2026-11-10T15:24:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2d6010b",
+    "data": "2026-11-10",
+    "assunto": "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417"
+   },
+   {
+    "sha": "4a18fa5",
+    "data": "2026-11-10",
+    "assunto": "fix: auditorias de segurança/RLS/edge sem falso verde, falso positivo nem vazamento de senha (#416)"
+   },
    {
     "sha": "e11272e",
     "data": "2026-11-10",
@@ -121,19 +131,9 @@
     "sha": "98f0f59",
     "data": "2026-11-08",
     "assunto": "ci: liga o guard de integridade das instruções para agentes (GA02) no CI (#396)"
-   },
-   {
-    "sha": "61d37e7",
-    "data": "2026-11-08",
-    "assunto": "fix: corrige regex TEM_AUTH para casar auth.getUser() multi-linha (#393)"
-   },
-   {
-    "sha": "cf32bad",
-    "data": "2026-11-08",
-    "assunto": "chore: atualiza WORKFLOWS_STATUS.md removendo bloco REPORT stale"
    }
   ],
-  "arquivos_mudados_7d": 293,
+  "arquivos_mudados_7d": 300,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 78
+    "mudancas": 76
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 74
+    "mudancas": 72
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 89
+    "commits": 91
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2829,
-  "arquivos_codigo": 1520,
-  "linhas_codigo": 264281,
+  "arquivos_total": 2833,
+  "arquivos_codigo": 1524,
+  "linhas_codigo": 265123,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 417,
   "migrations": 781,
   "cron_jobs": 41,
-  "testes": 575,
+  "testes": 579,
   "workflows": 17,
   "scripts": 100,
   "docs_md": 289
@@ -408,59 +408,59 @@
   },
   "scripts/audit-bridge-frontend-contract.mjs": {
    "arquivos": 1,
-   "linhas": 221
+   "linhas": 226
   },
   "scripts/audit-canonical-project.mjs": {
    "arquivos": 1,
-   "linhas": 115
+   "linhas": 120
   },
   "scripts/audit-db-search-path.mjs": {
    "arquivos": 1,
-   "linhas": 120
+   "linhas": 144
   },
   "scripts/audit-edge-audit-log-contract.mjs": {
    "arquivos": 1,
-   "linhas": 221
+   "linhas": 223
   },
   "scripts/audit-edge-authz.mjs": {
    "arquivos": 1,
-   "linhas": 192
+   "linhas": 230
   },
   "scripts/audit-edge-syntax.mjs": {
    "arquivos": 1,
-   "linhas": 79
+   "linhas": 81
   },
   "scripts/audit-embed-hints.mjs": {
    "arquivos": 1,
-   "linhas": 180
+   "linhas": 202
   },
   "scripts/audit-migration-style.mjs": {
    "arquivos": 1,
-   "linhas": 144
+   "linhas": 151
   },
   "scripts/audit-required-checks.mjs": {
    "arquivos": 1,
-   "linhas": 178
+   "linhas": 185
   },
   "scripts/audit-rls-least-privilege.mjs": {
    "arquivos": 1,
-   "linhas": 311
+   "linhas": 315
   },
   "scripts/audit-rls-pii.mjs": {
    "arquivos": 1,
-   "linhas": 303
+   "linhas": 317
   },
   "scripts/audit-rls-tenant-open.mjs": {
    "arquivos": 1,
-   "linhas": 285
+   "linhas": 300
   },
   "scripts/audit-schema-drift.mjs": {
    "arquivos": 1,
-   "linhas": 145
+   "linhas": 159
   },
   "scripts/audit-secdef-authz.mjs": {
    "arquivos": 1,
-   "linhas": 276
+   "linhas": 277
   },
   "scripts/audit-security-config.mjs": {
    "arquivos": 1,
@@ -468,7 +468,7 @@
   },
   "scripts/audit-types-drift.mjs": {
    "arquivos": 1,
-   "linhas": 135
+   "linhas": 136
   },
   "scripts/autofix": {
    "arquivos": 10,
@@ -564,7 +564,7 @@
   },
   "scripts/regras_negocio": {
    "arquivos": 3,
-   "linhas": 2539
+   "linhas": 2756
   },
   "scripts/report-workflows.mjs": {
    "arquivos": 1,
@@ -580,11 +580,11 @@
   },
   "scripts/supabase_snapshot": {
    "arquivos": 2,
-   "linhas": 2690
+   "linhas": 2867
   },
   "scripts/tests": {
-   "arquivos": 15,
-   "linhas": 1873
+   "arquivos": 19,
+   "linhas": 2160
   },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
@@ -726,11 +726,11 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linhas": 2138
+   "linhas": 2183
   },
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
-   "linhas": 1772
+   "linhas": 1802
   },
   {
    "arquivo": "src/services/cnabService.ts",
@@ -819,7 +819,7 @@
  ],
  "qualidade": {
   "any": 73,
-  "console_log": 250,
+  "console_log": 252,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
@@ -912,7 +912,7 @@
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
-   "linha": 570,
+   "linha": 579,
    "tipo": "TODO",
    "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
   }

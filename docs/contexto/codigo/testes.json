@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 575,
+ "total": 579,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 537
+  "unit": 541
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 65
+   "arquivos": 69
   },
   {
    "padrao": "e2e/",
@@ -262,21 +262,35 @@
   {
    "arquivo": "scripts/regras_negocio/test_generate.py",
    "tipo": "pytest",
-   "linhas": 164,
+   "linhas": 329,
    "testa": [],
    "casos": 0
   },
   {
    "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
    "tipo": "pytest",
-   "linhas": 918,
+   "linhas": 1065,
    "testa": [],
    "casos": 0
   },
   {
    "arquivo": "scripts/tests/audit-edge-audit-log-contract.test.mjs",
    "tipo": "contrato",
-   "linhas": 66,
+   "linhas": 86,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/audit-edge-authz.test.mjs",
+   "tipo": "unit",
+   "linhas": 71,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "scripts/tests/audit-migration-style.test.mjs",
+   "tipo": "unit",
+   "linhas": 47,
    "testa": [],
    "casos": 0
   },
@@ -286,6 +300,13 @@
    "linhas": 3,
    "testa": [],
    "casos": 0
+  },
+  {
+   "arquivo": "scripts/tests/contexto-indice-data.test.mjs",
+   "tipo": "unit",
+   "linhas": 53,
+   "testa": [],
+   "casos": 4
   },
   {
    "arquivo": "scripts/tests/contexto-indice.test.mjs",
@@ -300,6 +321,13 @@
    "linhas": 374,
    "testa": [],
    "casos": 15
+  },
+  {
+   "arquivo": "scripts/tests/contexto-publish-sh.test.mjs",
+   "tipo": "unit",
+   "linhas": 96,
+   "testa": [],
+   "casos": 4
   },
   {
    "arquivo": "scripts/tests/contexto-regras-negocio.test.mjs",

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e11272ee00` · branch `main` · 2026-11-10 18:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2d6010b679` · branch `main` · 2026-11-10 18:25 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -54,7 +54,7 @@
 | `auth.users` | Auth: Stores user login data within a secure schema. | 35 colunas | migration |
 | `auth.webauthn_challenges` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `auth.webauthn_credentials` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
-| `auth_gov_br_sessions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `auth_gov_br_sessions` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `automacao_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `avaliacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `backup_logs` | [P1-024] Policy default adicionada (tenant-scoped). | 13 colunas | migration |
@@ -74,7 +74,7 @@
 | `beneficios_movimentacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `bitrix24_config` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
 | `bitrix24_sync_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `blocked_ips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
+| `blocked_ips` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `cache_tabelas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `campos_customizados` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `canal_etica` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
@@ -97,11 +97,11 @@
 | `clinicas_partners_servicos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `cnab_configuracoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `cnab_itens` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
-| `cnab_remessas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `cnab_remessas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `cnab_sequencias` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `cnae` | Catálogo CNAE. Carga via importação de domínio. | 3 colunas | migration |
 | `colaborador_beneficios` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
-| `colaboradores` | [P0-001] RLS tenant-scoped via get_auth_empresa_id(). | 148 colunas | migration |
+| `colaboradores` | [P0-001] RLS tenant-scoped via get_auth_empresa_id(). | 149 colunas | migration |
 | `colaboradores_historico` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `colaboradores_pin` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
 | `comissoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
@@ -129,7 +129,7 @@
 | `contrato_token_eventos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `contratos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `contratos_gerados` | _(sem COMMENT ON TABLE — significado não documentado)_ | 21 colunas | migration |
-| `controle_acesso` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `controle_acesso` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `convenios` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `convenios_colaboradores` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `curriculos_arquivos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
@@ -142,16 +142,16 @@
 | `dependentes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 20 colunas | migration |
 | `dependentes_beneficios` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `descricoes_logradouro` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
-| `desligamentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 48 colunas | migration |
+| `desligamentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 49 colunas | migration |
 | `despesas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `despesas_aprovacoes_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `documento_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `documentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `documentos_admissao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `documentos_afastamento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
-| `documentos_assinatura` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `documentos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `documentos_admissao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `documentos_afastamento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `documentos_assinatura` | _(sem COMMENT ON TABLE — significado não documentado)_ | 16 colunas | migration |
 | `documentos_assinaturas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
-| `documentos_colaborador` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `documentos_colaborador` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `documentos_historico` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `documentos_pessoais_arquivos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `documentos_versoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
@@ -170,7 +170,7 @@
 | `dp_mcp_config` | Configuracao e versoes do MCP e schema. Usar como fonte de verdade para CI/CD. Item 13: antes de cada deploy, verificar: SELECT config_val FROM dp_mcp_config WHERE config_key='schema_version' | 5 colunas | migration |
 | `dp_retention_policy` | Politicas retencao LGPD. dry_run+disabled por padrao — ativar somente apos validar. | 12 colunas | migration |
 | `dp_user_roles` | Atribuicao de roles a usuarios. Gerenciado pelo role rh ou admin. Integracao: JWT claims devem incluir role via custom claim (Supabase Auth hook). Exemplo de hook SQL: SELECT role FROM dp_user_roles WHERE user_id = uid AND active = true LIMIT 1. | 8 colunas | migration |
-| `empresas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 26 colunas | migration |
+| `empresas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 29 colunas | migration |
 | `emprestimos_consignados` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
 | `entity_versions` | Histórico de versões de registros para auditoria e recuperação | 8 colunas | migration |
 | `epis` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
@@ -179,8 +179,8 @@
 | `epis_fichas_assinaturas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `epis_fichas_itens` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `escalas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `escalas_trabalho` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
-| `esocial_eventos` | [P0-001] RLS tenant-scoped. Eventos eSocial sensíveis (LGPD). | 22 colunas | migration |
+| `escalas_trabalho` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
+| `esocial_eventos` | [P0-001] RLS tenant-scoped. Eventos eSocial sensíveis (LGPD). | 25 colunas | migration |
 | `esocial_lotes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `esocial_retornos` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `esocial_transmissao_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
@@ -205,7 +205,7 @@
 | `ferias_coletivas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 19 colunas | migration |
 | `ferias_programacao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 22 colunas | migration |
 | `ferias_reconciliacao_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
-| `ferias_solicitacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
+| `ferias_solicitacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | migration |
 | `fgts_digital_logs` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `fila_notificacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `fila_processamento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 17 colunas | migration |
@@ -283,15 +283,15 @@
 | `motivos_afastamento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
 | `mv_refresh_log` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `nacionalidades` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
-| `notificacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
+| `notificacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `notificacoes_admissao` | _(sem COMMENT ON TABLE — significado não documentado)_ | 9 colunas | migration |
 | `notificacoes_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 3 colunas | migration |
 | `onboarding_colaborador` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `onboarding_documentos_obrigatorios` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `onboarding_kits` | _(sem COMMENT ON TABLE — significado não documentado)_ | 6 colunas | migration |
-| `onboarding_tarefas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | migration |
+| `onboarding_tarefas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
 | `onboarding_template_tarefas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
-| `onboarding_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
+| `onboarding_templates` | _(sem COMMENT ON TABLE — significado não documentado)_ | 8 colunas | migration |
 | `paises` | _(sem COMMENT ON TABLE — significado não documentado)_ | 4 colunas | migration |
 | `parametros_fiscais` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `parametros_sistema` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
@@ -415,98 +415,28 @@
 | status | valor `insert` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/gerar-contrato-pdf/index.ts`<br>`escreve:supabase/functions/upload-certificado/index.ts` |
 | status | valor `encrypt_senha` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/upload-certificado/index.ts` |
 | status | valor `encrypt_arquivo` para `step` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/upload-certificado/index.ts` |
-| coluna | coluna `cei` usada no código não existe no schema de `empresas` |  |
-| coluna | coluna `endereco` usada no código não existe no schema de `empresas` |  |
-| coluna | coluna `nome` usada no código não existe no schema de `empresas` |  |
-| coluna | coluna `cargo_id` usada no código não existe no schema de `colaboradores` |  |
 | coluna | coluna `departamento_id` usada no código não existe no schema de `colaboradores` |  |
-| coluna | coluna `idade` usada no código não existe no schema de `colaboradores` |  |
 | coluna | coluna `metadata` usada no código não existe no schema de `colaboradores` |  |
-| coluna | coluna `nome` usada no código não existe no schema de `colaboradores` |  |
 | coluna | coluna `salario` usada no código não existe no schema de `colaboradores` |  |
 | coluna | coluna `data_fim` usada no código não existe no schema de `afastamentos` |  |
 | coluna | coluna `horas_falta` usada no código não existe no schema de `batidas_ponto` |  |
 | coluna | coluna `data_hora` usada no código não existe no schema de `registros_ponto` |  |
-| coluna | coluna `he_banco_horas` usada no código não existe no schema de `registros_ponto` |  |
-| coluna | coluna `horas_extras_100` usada no código não existe no schema de `registros_ponto` |  |
-| coluna | coluna `horas_extras_50` usada no código não existe no schema de `registros_ponto` |  |
-| coluna | coluna `horas_noturnas` usada no código não existe no schema de `registros_ponto` |  |
-| coluna | coluna `dispatch_claim_token` usada no código não existe no schema de `relatorios_agendados` |  |
-| coluna | coluna `empresa_id` usada no código não existe no schema de `documentos` |  |
-| coluna | coluna `empresa_id` usada no código não existe no schema de `query_telemetry` |  |
-| coluna | coluna `empresa_id` usada no código não existe no schema de `pensoes` |  |
-| coluna | coluna `arquivo_remessa` usada no código não existe no schema de `cnab_remessas` |  |
-| coluna | coluna `folha_id` usada no código não existe no schema de `cnab_remessas` |  |
+| coluna | coluna `cei` usada no código não existe no schema de `empresas` |  |
+| coluna | coluna `endereco` usada no código não existe no schema de `empresas` |  |
+| coluna | coluna `nome` usada no código não existe no schema de `empresas` |  |
 | coluna | coluna `ativo` usada no código não existe no schema de `integracoes` |  |
 | coluna | coluna `empresa_id` usada no código não existe no schema de `integracoes` |  |
 | coluna | coluna `empresa_id` usada no código não existe no schema de `metricas_processamento` |  |
-| tabela | tabela `a` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `anexos` usada no código não existe nas migrations/types do repo | `scripts/tests/inventario-rotas.test.mjs` |
-| tabela | tabela `backups` usada no código não existe nas migrations/types do repo | `supabase/functions/backup-automatico/index.ts` |
-| tabela | tabela `comentada_bloco` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `comentada_jsx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `contacts` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `dashboard_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `emails` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `fantasma` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `fixture_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `ghost_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `mv_folha_summary` usada no código não existe nas migrations/types do repo | `supabase/functions/metricas/index.ts` |
-| tabela | tabela `payments` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `runtime_glob` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `runtime_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `runtime_uploads` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `so_teste` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `t` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs`<br>`src/integrations/supabase/__tests__/clientBridge.test.ts` |
-| tabela | tabela `t1` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `tabela` usada no código não existe nas migrations/types do repo | `scripts/inventario/gerar-banco.mjs`<br>`scripts/inventario/gerar-repo.mjs` |
-| tabela | tabela `tabela_comentada` usada no código não existe nas migrations/types do repo | `scripts/tests/inventario-rotas.test.mjs` |
-| tabela | tabela `tools_runtime` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
-| tabela | tabela `tx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
-| tabela | tabela `x` usada no código não existe nas migrations/types do repo | `src/integrations/supabase/__tests__/clientBridge.test.ts`<br>`src/test/supabaseMock.ts` |
 | rls | `config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | rls | `config_alertas_indicadores`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | rls | `configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
 | rls | `lancamentos_contabeis`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/contabilidadeService.ts` |
-| rls | `medidas_disciplinares_integracao`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/medidasDisciplinaresService.ts` |
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_grades`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
-| rls | `ponto_auditoria`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pontoMonitorService.ts` |
 | rls | `query_telemetry`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/AdminTelemetriaPage.tsx` |
 | rls | `report_dispatch_attempts`: RLS ligado sem nenhuma política → só service_role acessa |  |
-| rls | `tarefas_onboarding`: RLS ligado sem nenhuma política → só service_role acessa | `src/components/admissoes/OnboardingPageContent.tsx`<br>`src/pages/OnboardingPage.tsx` |
-| edge | edge function `dashboard-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `fixture-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `ghost-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `inexistente` invocada mas não existe em supabase/functions/ | `scripts/ai-context/cenarios.mjs` |
-| edge | edge function `minha-fn` invocada mas não existe em supabase/functions/ | `src/integrations/supabase/__tests__/clientFunctionsProxy.test.ts` |
-| edge | edge function `orphan-fn` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `other` invocada mas não existe em supabase/functions/ | `scripts/ai-context/cenarios.mjs` |
-| edge | edge function `runtime-fn` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `runtime-missing` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `send-email` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| edge | edge function `tools-edge` invocada mas não existe em supabase/functions/ | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `complete_admission_esocial_event` chamada mas não definida nas migrations/types | `src/services/esocialService.ts` |
-| rpc | RPC `dashboard_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `demo` chamada mas não definida nas migrations/types | `scripts/supabase_snapshot/test_snapshot.py` |
-| rpc | RPC `drenar_fila_limpeza_lgpd` chamada mas não definida nas migrations/types | `supabase/functions/limpeza/index.ts` |
-| rpc | RPC `exec_sql_readonly` chamada mas não definida nas migrations/types | `supabase/tests/migration_consistency.test.ts` |
-| rpc | RPC `fail_admission_esocial_event` chamada mas não definida nas migrations/types | `src/services/esocialService.ts` |
-| rpc | RPC `fechar_folha` chamada mas não definida nas migrations/types | `scripts/tests/inventario-rotas.test.mjs` |
-| rpc | RPC `fixture_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `fn` chamada mas não definida nas migrations/types | `scripts/supabase_snapshot/snapshot.py` |
 | rpc | RPC `foo` chamada mas não definida nas migrations/types | `eslint.config.js` |
-| rpc | RPC `ghost_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `name` chamada mas não definida nas migrations/types | `scripts/audit-bridge-frontend-contract.mjs` |
-| rpc | RPC `nome` chamada mas não definida nas migrations/types | `scripts/supabase_snapshot/snapshot.py` |
-| rpc | RPC `r1` chamada mas não definida nas migrations/types | `scripts/ai-context/cenarios.mjs` |
-| rpc | RPC `runtime_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `tools_rpc` chamada mas não definida nas migrations/types | `scripts/ai-context/gerar.unit.mjs` |
-| rpc | RPC `x` chamada mas não definida nas migrations/types | `scripts/inventario/gerar-rotas.mjs` |
-| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/audit-bridge-frontend-contract.mjs` |
-| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/inventario/gerar-banco.mjs` |
-| dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `scripts/regras_negocio/generate.py` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/components/portal/PortalDocumentosTab.tsx` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/integrations/supabase/client.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/pages/AdminDiagnosticoMigracaoPage.tsx` |
@@ -646,7 +576,77 @@
 | segurança | função `medida_rejeitar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `medida_responder_contestacao` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `medida_verificar_ciencia_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +93 linhas — lista completa em `context.json` | | |
+| segurança | função `medidas_analytics_reincidencia` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `notificar_divergencias_afdt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `notificar_ferias_pagamento_d5` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `notificar_ferias_reconciliacao_sla_baixo` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `pertence_a_empresa` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `process_audit_log` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `process_ferias_audit` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `process_lgpd_cleanup_queue` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `processar_auditoria_premiacao` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `programacao_ferias_aprovar_gestor` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `programacao_ferias_aprovar_rh` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `programacao_ferias_converter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `programacao_ferias_mover` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `programacao_ferias_rejeitar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `purgar_ferias_reconciliacao_logs_antigos` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `purge_audit_log_old` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `purge_expired_idempotency_keys` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `purge_expired_security_data` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `purge_old_lock_conflicts` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `purge_pii_access_logs` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `reconciliar_afdt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `reconciliar_ferias_folha_batch` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `record_pii_access` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `refresh_dashboard_mvs` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `registrar_auditoria` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `registrar_auditoria_contratual` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `registrar_auditoria_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `registrar_comunicado_ferias_coletivas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `registrar_pagamento_ferias` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `rejeitar_despesa` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `reset_login_attempts` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `resolve_security_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `resolver_divergencia_afdt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `revogar_espelho_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `rls_auto_enable` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `search_audit_unified` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sec_audit_policies` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `solicitar_adiantamento_13_ferias` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_cat_dashboard` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_dashboard_sla` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_extintores_dashboard` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_regimento_dashboard` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_regimento_notificar_pendentes` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_regimento_pendentes_lista` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sst_regimento_publicar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `sugerir_proxima_medida` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_audit_status_change` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_contab_msg_bump_thread` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_contrato_token_auditar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_detect_status_anomaly` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_ferias_gerar_rubricas` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_ferias_reconciliacao_alert` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_medida_aplicada_integrar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_medida_contestacao_notify` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `validate_ponto_compliance` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `verificar_espelho_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `create_entity_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
+| segurança | função `get_default_filter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
+| segurança | função `check_login_lock` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `record_failed_login` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `detectar_fraude_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| segurança | função `cleanup_expired_rate_limits` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
+| segurança | função `cleanup_old_login_attempts` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
+| segurança | função `encrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
+| segurança | função `decrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
+| … +23 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -760,7 +760,6 @@
 - `health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - 397/460 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
-- Há tabelas usadas no código sem migration no repo — o schema real pode ter sido alterado pelo painel.
 
 ## Regras manuais presentes
 

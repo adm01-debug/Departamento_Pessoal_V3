@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e11272ee00` · branch `main` · 2026-11-10 18:15 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2d6010b679` · branch `main` · 2026-11-10 18:25 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -11,8 +11,40 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 
 | Tabela | Política | Comando | Roles | Modo | USING | WITH CHECK |
 |---|---|---|---|---|---|---|
+| `ponto_auditoria` | Users can view their own point audit | SELECT | authenticated | permissive | `(("usuario_id" = "auth"."uid"()) OR (EXISTS ( SELECT 1 FROM "public"."registros_ponto" "rp" WHERE (("rp"."id" = "ponto_auditoria"."registro_id") AND ("rp"."colaborador_id" IN ( SELECT "colaboradores"."id" FROM "public"."colaboradores" WHERE ("colaboradores"."empresa_id" IN ( SELECT "public"."get_use …` |  |
 | `user_empresas` | Usuários podem ver suas associações | SELECT | public | permissive | `("user_id" = "auth"."uid"())` |  |
 | `fila_notificacoes` | Usuários podem ver suas próprias notificações | SELECT | public | permissive | `("auth"."uid"() = "user_id")` |  |
+| `dp_user_roles` | admin_full | ALL | authenticated | permissive | `(("auth"."jwt"() ->> 'role'::"text") = ANY (ARRAY['admin'::"text", 'rh'::"text"]))` |  |
+| `dp_audit_log` | auth_own_events | SELECT | authenticated | permissive | `("actor_user_id" = "auth"."uid"())` |  |
+| `curriculos_arquivos` | empresa_isolation_curriculos_arquivos | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
+| `onboarding_documentos_obrigatorios` | empresa_isolation_onboarding_documentos_obrigatorios | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
+| `onboarding_kits` | empresa_isolation_onboarding_kits | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
+| `triagem_notas` | empresa_isolation_triagem_notas | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
+| `vaga_entrevistas` | empresa_isolation_vaga_entrevistas | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
+| `vaga_etapas` | empresa_isolation_vaga_etapas | ALL | authenticated | permissive | `("empresa_id" = "public"."get_auth_empresa_id"())` | `("empresa_id" = "public"."get_auth_empresa_id"())` |
+| `dp_user_roles` | own_roles | SELECT | authenticated | permissive | `("user_id" = "auth"."uid"())` |  |
+| `dp_data_catalog` | rh_readonly | SELECT | authenticated | permissive | `(("auth"."jwt"() ->> 'role'::"text") = ANY (ARRAY['rh'::"text", 'admin'::"text", 'auditoria'::"text"]))` |  |
+| `dp_user_roles` | service_full | ALL | service_role | permissive | `true` | `true` |
+| `dp_environments` | service_role_env | ALL | service_role | permissive | `true` | `true` |
+| `dp_data_catalog` | service_role_full | ALL | service_role | permissive | `true` | `true` |
+| `dp_audit_config` | service_role_full_audit_config | ALL | service_role | permissive | `true` | `true` |
+| `dp_backup_runbook` | service_role_full_runbook | ALL | service_role | permissive | `true` | `true` |
+| `dp_audit_log` | service_role_insert_only | INSERT | service_role | permissive |  | `true` |
+| `dp_mcp_config` | service_role_mcp_config | ALL | service_role | permissive | `true` | `true` |
+| `dp_retention_policy` | service_role_only_retention | ALL | service_role | permissive | `true` | `true` |
+| `dp_audit_log` | service_role_select | SELECT | service_role | permissive | `true` |  |
+| `medidas_disciplinares_integracao` | tenant_medidas_integracao_admin | ALL | authenticated | permissive | `(("empresa_id" IN ( SELECT "public"."get_user_empresas"("auth"."uid"()) AS "get_user_empresas")) AND ("public"."has_role"("auth"."uid"(), 'admin'::"public"."app_role") OR "public"."has_role"("auth"."uid"(), 'rh'::"public"."app_role")))` | `("empresa_id" IN ( SELECT "public"."get_user_empresas"("auth"."uid"()) AS "get_user_empresas"))` |
+| `medidas_disciplinares_integracao` | tenant_medidas_integracao_select | SELECT | authenticated | permissive | `("empresa_id" IN ( SELECT "public"."get_user_empresas"("auth"."uid"()) AS "get_user_empresas"))` |  |
+| `storage.objects` | tenant_delete_comprovantes_despesas | DELETE | authenticated | permissive | `(("bucket_id" = 'comprovantes-despesas'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` |  |
+| `storage.objects` | tenant_delete_contabilidade_anexos | DELETE | authenticated | permissive | `(("bucket_id" = 'contabilidade-anexos'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` |  |
+| `storage.objects` | tenant_insert_comprovantes_despesas | INSERT | authenticated | permissive |  | `(("bucket_id" = 'comprovantes-despesas'::"text") AND ("owner" = "auth"."uid"()) AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")))` |
+| `storage.objects` | tenant_insert_contabilidade_anexos | INSERT | authenticated | permissive |  | `(("bucket_id" = 'contabilidade-anexos'::"text") AND ("owner" = "auth"."uid"()) AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")))` |
+| `storage.objects` | tenant_select_comprovantes_despesas | SELECT | authenticated | permissive | `(("bucket_id" = 'comprovantes-despesas'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")))` |  |
+| `storage.objects` | tenant_select_contabilidade_anexos | SELECT | authenticated | permissive | `(("bucket_id" = 'contabilidade-anexos'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")))` |  |
+| `storage.objects` | tenant_select_relatorios_privados | SELECT | authenticated | permissive | `(("bucket_id" = 'relatorios-privados'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")))` |  |
+| `storage.objects` | tenant_select_sst_programas | SELECT | authenticated | permissive | `(("bucket_id" = 'sst-programas'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")))` |  |
+| `storage.objects` | tenant_update_comprovantes_despesas | UPDATE | authenticated | permissive | `(("bucket_id" = 'comprovantes-despesas'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` | `(("bucket_id" = 'comprovantes-despesas'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` |
+| `storage.objects` | tenant_update_contabilidade_anexos | UPDATE | authenticated | permissive | `(("bucket_id" = 'contabilidade-anexos'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` | `(("bucket_id" = 'contabilidade-anexos'::"text") AND "public"."user_belongs_to_empresa"("auth"."uid"(), "public"."storage_path_empresa_id"("name")) AND (("owner" = "auth"."uid"()) OR "public"."user_can_manage_tenant_storage"("auth"."uid"(), "public"."storage_path_empresa_id"("name"))))` |
 | `empresas` | empresa_select | SELECT | public | permissive | `id = public.user_empresa_id() OR auth.jwt() ->> 'role' = 'super_admin'` |  |
 | `empresas` | empresa_insert | INSERT | public | permissive |  | `auth.jwt() ->> 'role' = 'super_admin'` |
 | `empresas` | empresa_update | UPDATE | public | permissive | `id = public.user_empresa_id() AND auth.jwt() ->> 'role' IN ('admin', 'super_admin')` |  |
@@ -146,37 +178,15 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `cache_tabelas` | cache_tabelas_select | SELECT | public | permissive | `auth.role() = 'authenticated'` |  |
 | `cache_tabelas` | cache_tabelas_insert | INSERT | public | permissive |  | `auth.role() = 'authenticated'` |
 | `cache_tabelas` | cache_tabelas_update | UPDATE | public | permissive | `auth.role() = 'authenticated'` |  |
-| `rate_limit_logs` | Admins can view rate limit logs | SELECT | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `blocked_ips` | Admins can manage blocked IPs | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `ip_whitelist` | Admins can manage IP whitelist | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `rate_limit_config` | Admins can manage rate limit config | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
 | `user_sessions` | Users can view own sessions | SELECT | authenticated | permissive | `user_id = auth.uid() OR public.is_admin(auth.uid())` |  |
-| `user_sessions` | Users can manage own sessions | ALL | authenticated | permissive | `user_id = auth.uid()` |  |
-| `user_mfa` | Users can manage own MFA | ALL | authenticated | permissive | `user_id = auth.uid()` |  |
-| `login_attempts` | Admins can view login attempts | SELECT | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `verification_tokens` | Users can manage own tokens | ALL | authenticated | permissive | `user_id = auth.uid()` |  |
-| `security_alerts` | Admins can view security alerts | SELECT | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `security_alerts` | Admins can update security alerts | UPDATE | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `password_policies` | All can read password policies | SELECT | authenticated | permissive | `true` |  |
-| `password_policies` | Admins can manage password policies | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
 | `password_history` | Users can view own password history | SELECT | authenticated | permissive | `user_id = auth.uid()` |  |
 | `webauthn_credentials` | Users can view their own credentials | SELECT | public | permissive | `auth.uid() = user_id` |  |
 | `webauthn_credentials` | Users can update their own credentials | UPDATE | public | permissive | `auth.uid() = user_id` |  |
 | `webauthn_challenges` | Allow all operations on challenges | ALL | public | permissive | `true` | `true` |
 | `role_permissions` | Usuários autenticados podem visualizar role_permissions | SELECT | public | permissive | `auth.role() = 'authenticated'` |  |
-| `geo_allowed_countries` | Admins can manage geo_allowed_countries | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `geo_blocking_config` | Admins can manage geo_blocking_config | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `geo_blocked_attempts` | Admins can view geo_blocked_attempts | SELECT | authenticated | permissive | `public.is_admin(auth.uid())` |  |
-| `password_reset_requests` | Admins can manage password_reset_requests | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
 | `password_reset_requests` | Users can view their own requests | SELECT | authenticated | permissive | `user_id = auth.uid()` |  |
-| `password_reset_requests` | Users can create their own requests | INSERT | authenticated | permissive |  | `user_id = auth.uid()` |
-| `password_reset_config` | Admins can manage password_reset_config | ALL | authenticated | permissive | `public.is_admin(auth.uid())` |  |
 | `saved_filters` | Users manage own filters | ALL | authenticated | permissive | `auth.uid() = user_id` | `auth.uid() = user_id` |
 | `storage.objects` | Auth users upload contratacao | ALL | authenticated | permissive | `bucket_id = 'contratacao'` | `bucket_id = 'contratacao'` |
-| `notificacoes` | Users can manage scoped notifications | ALL | authenticated | permissive | `public.is_admin(auth.uid()) OR user_id = auth.uid() OR ( empresa_id IS NOT NULL AND public.user_belongs_to_empresa(auth.uid(), empresa_id) )` | `public.is_admin(auth.uid()) OR user_id = auth.uid() OR ( empresa_id IS NOT NULL AND public.user_belongs_to_empresa(auth.uid(), empresa_id) )` |
-| `periodos_aquisitivos` | Users can manage periodos by empresa | ALL | authenticated | permissive | `public.is_admin(auth.uid()) OR EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = periodos_aquisitivos.colaborador_id AND c.empresa_id IS NOT NULL AND public.user_belongs_to_empresa(auth.uid(), c.empresa_id) )` | `public.is_admin(auth.uid()) OR EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = periodos_aquisitivos.colaborador_id AND c.empresa_id IS NOT NULL AND public.user_belongs_to_empresa(auth.uid(), c.empresa_id) )` |
-| `tipos_admissao` | Read tipos_admissao | SELECT | authenticated | permissive | `true` |  |
-| `tipos_estabilidade` | Read tipos_estabilidade | SELECT | authenticated | permissive | `true` |  |
 | `tipos_desligamento` | tipos_desligamento_read | SELECT | authenticated | permissive | `true` |  |
 | `tipos_aviso_previo` | tipos_aviso_previo_read | SELECT | authenticated | permissive | `true` |  |
 | `tipos_deficiencia` | tipos_deficiencia_read | SELECT | authenticated | permissive | `true` |  |
@@ -301,17 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `historico_cargo` | tenant_historico_cargo | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `periodos_experiencia` | tenant_periodos_experiencia | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `promocoes` | tenant_promocoes | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `recargas_vale` | tenant_recargas_vale | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `seguros_colaboradores` | tenant_seguros_colaboradores | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `sinistros_seguro` | tenant_sinistros_seguro | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `transferencias` | tenant_transferencias | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `treinamento_participantes` | tenant_treinamento_participantes | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `vales_transporte` | tenant_vales_transporte | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `valores_campos_customizados` | tenant_valores_campos_customizados | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `vinculos` | tenant_vinculos | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `ferias_aprovacoes` | tenant_ferias_aprovacoes | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| `ferias_arquivos` | tenant_ferias_arquivos | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| … +793 linhas — lista completa em `context.json` | | | | | | |
+| … +838 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,12 +617,13 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4289 linhas — lista completa em `context.json` | | |
+| … +4323 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
 | Trigger | Quando | Tabela | Executa | Condição |
 |---|---|---|---|---|
+| enforce_bucket_name_length_trigger | BEFORE INSERT OR UPDATE OF "NAME" | `storage.buckets` | `enforce_bucket_name_length` |  |
 | protect_buckets_delete | BEFORE DELETE | `storage.buckets` | `protect_delete` |  |
 | protect_objects_delete | BEFORE DELETE | `storage.objects` | `protect_delete` |  |
 | update_objects_updated_at | BEFORE UPDATE | `storage.objects` | `update_updated_at_column` |  |
@@ -680,36 +681,25 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trigger_integracao_logs_updated_at | BEFORE UPDATE | `integracao_logs` | `update_integracao_logs_updated_at` |  |
 | trigger_cache_tabelas_updated_at | BEFORE UPDATE | `cache_tabelas` | `update_cache_tabelas_updated_at` |  |
 | on_auth_user_created_role | AFTER INSERT | `auth.users` | `handle_new_user_role` |  |
-| tr_monitor_timeout | AFTER UPDATE OF STATUS | `fila_processamento` | `check_processamento_timeout` | `NEW.status = 'failed'` |
-| trg_colab_cpf_hash | BEFORE INSERT OR UPDATE OF CPF | `colaboradores` | `fn_colab_cpf_hash` |  |
-| ferias_status_transition | BEFORE UPDATE OF STATUS | `ferias` | `trg_ferias_status_transition` |  |
-| faltas_status_transition | BEFORE UPDATE OF STATUS | `faltas` | `trg_faltas_status_transition` |  |
-| ajuste_ponto_status_transition | BEFORE UPDATE OF STATUS | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
-| ciclos_status_transition | BEFORE UPDATE OF STATUS | `ciclos_avaliacao` | `trg_ciclos_status_transition` |  |
-| desligamentos_status_transition | BEFORE UPDATE OF STATUS | `desligamentos` | `trg_desligamentos_status_transition` |  |
-| pdis_status_transition | BEFORE UPDATE OF STATUS | `pdis` | `trg_pdis_status_transition` |  |
-| pesquisas_status_transition | BEFORE UPDATE OF STATUS | `pesquisas` | `trg_pesquisas_status_transition` |  |
-| vagas_status_transition | BEFORE UPDATE OF STATUS | `vagas` | `trg_vagas_status_transition` |  |
-| trg_despesas_log | AFTER INSERT OR UPDATE OF STATUS | `despesas` | `log_despesa_status_change` |  |
-| tr_asos_auto_marcar_agendamento | AFTER UPDATE OF STATUS | `asos` | `asos_auto_marcar_agendamento_realizado` |  |
 | trg_audit_log_mask_sensitive | BEFORE INSERT | `audit_log` | `mask_sensitive_audit_data` |  |
-| trg_periodos_aquisitivos_recalc_dias | BEFORE INSERT OR UPDATE OF FALTAS_PERIODO | `periodos_aquisitivos` | `trg_periodos_aquisitivos_recalc_dias` |  |
-| ferias_bloquear_gozo_sem_pagamento | BEFORE UPDATE OF STATUS | `ferias` | `trg_ferias_bloquear_gozo_sem_pagamento` |  |
 | trg_audit_default_source | BEFORE INSERT | `audit_log_unified` | `audit_log_unified_default_source` |  |
 | trg_pensoes_set_empresa | BEFORE INSERT OR UPDATE OF COLABORADOR_ID | `pensoes` | `fn_pensoes_set_empresa` |  |
 | trg_documentos_afastamento_validacao | BEFORE UPDATE OF VALIDADO | `documentos_afastamento` | `fn_documentos_afastamento_validacao` |  |
 | trg_colaborador_sync_cargo_texto | BEFORE INSERT OR UPDATE OF CARGO_ID | `colaboradores` | `fn_colaborador_sync_cargo_texto` |  |
+| tr_set_provisoes_folha_total | BEFORE INSERT OR UPDATE OF VALOR_13_SALARIO, VALOR_FERIAS, ENCARGOS_PROVISAO, VALOR_TOTAL | `provisoes_folha` | `set_provisoes_folha_total` |  |
 | tr_enforce_report_schedule_authorship | BEFORE INSERT OR UPDATE | `relatorios_agendados` | `enforce_report_schedule_authorship` |  |
 | trg_pcs_planos_audit | BEFORE INSERT OR UPDATE | `pcs_planos` | `pcs_set_audit_fields` |  |
 | trg_pcs_validate_factor | BEFORE INSERT OR UPDATE | `pcs_fatores` | `pcs_validate_factor` |  |
 | trg_pcs_recalc_pontos | BEFORE INSERT OR UPDATE | `pcs_avaliacoes_cargo` | `pcs_recalc_pontos` |  |
 | tr_protect_esocial_transport_fields | BEFORE UPDATE | `esocial_eventos` | `protect_esocial_transport_fields` |  |
+| trg_sync_holerite_folha_item | AFTER INSERT OR DELETE OR UPDATE OF SALARIO_BASE, TOTAL_PROVENTOS, TOTAL_DESCONTOS, TOTAL_LIQUIDO, INSS_MES, IRRF_MES, FGTS_MES | `folha_itens` | `fn_sync_holerite_from_folha_item` |  |
 | trg_provisao_auditoria_empresa | BEFORE INSERT | `provisao_auditoria` | `provisao_auditoria_set_empresa` |  |
 | trg_documentos_sync_empresa_id | BEFORE INSERT OR UPDATE OF COLABORADOR_ID | `documentos` | `documentos_sync_empresa_id` |  |
 | trg_lgpd_retencao_logs_updated_at | BEFORE UPDATE | `lgpd_retencao_logs` | `update_updated_at_column` |  |
 | trg_contas_bancarias_encrypt | BEFORE INSERT OR UPDATE | `contas_bancarias` | `encrypt_contas_bancarias_fields` |  |
 | trg_pix_itens_encrypt | BEFORE INSERT OR UPDATE | `pix_itens` | `encrypt_pix_itens_fields` |  |
 | trg_faltas_sync_faltas_periodo | AFTER INSERT OR UPDATE OR DELETE | `faltas` | `fn_faltas_sync_faltas_periodo` |  |
+| ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
 | audit_beneficios | AFTER INSERT OR DELETE OR UPDATE | `beneficios` | `log_audit_change` |  |
@@ -722,6 +712,16 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | audit_folhas_pagamento | AFTER INSERT OR DELETE OR UPDATE | `folhas_pagamento` | `log_audit_change` |  |
 | audit_holerites | AFTER INSERT OR DELETE OR UPDATE | `holerites` | `log_audit_change` |  |
 | audit_registros_ponto | AFTER INSERT OR DELETE OR UPDATE | `registros_ponto` | `log_audit_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `ciclos_avaliacao` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `desligamentos` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `faltas` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `ferias` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `pdis` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `pesquisas` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_audit_status_change` |  |
+| audit_status_change | AFTER UPDATE OF "STATUS" | `vagas` | `trg_audit_status_change` |  |
+| ciclos_status_transition | BEFORE UPDATE OF "STATUS" | `ciclos_avaliacao` | `trg_ciclos_status_transition` |  |
+| desligamentos_status_transition | BEFORE UPDATE OF "STATUS" | `desligamentos` | `trg_desligamentos_status_transition` |  |
 | detect_status_anomaly | AFTER INSERT | `audit_log` | `trg_detect_status_anomaly` |  |
 | dp_audit_log_integrity_check | BEFORE INSERT | `dp_audit_log` | `dp_audit_log_prevent_future` |  |
 | dp_audit_log_no_delete | BEFORE DELETE | `dp_audit_log` | `dp_audit_log_immutable` |  |
@@ -729,6 +729,11 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | dp_data_catalog_audit | AFTER INSERT OR DELETE OR UPDATE | `dp_data_catalog` | `dp_track_pii_access` |  |
 | dp_data_catalog_updated_at | BEFORE UPDATE | `dp_data_catalog` | `dp_set_updated_at` |  |
 | dp_retention_updated_at | BEFORE UPDATE | `dp_retention_policy` | `dp_set_updated_at` |  |
+| faltas_status_transition | BEFORE UPDATE OF "STATUS" | `faltas` | `trg_faltas_status_transition` |  |
+| ferias_bloquear_gozo_sem_pagamento | BEFORE UPDATE OF "STATUS" | `ferias` | `trg_ferias_bloquear_gozo_sem_pagamento` |  |
+| ferias_status_transition | BEFORE UPDATE OF "STATUS" | `ferias` | `trg_ferias_status_transition` |  |
+| pdis_status_transition | BEFORE UPDATE OF "STATUS" | `pdis` | `trg_pdis_status_transition` |  |
+| pesquisas_status_transition | BEFORE UPDATE OF "STATUS" | `pesquisas` | `trg_pesquisas_status_transition` |  |
 | set_candidatos_updated_at | BEFORE UPDATE | `candidatos` | `update_updated_at_column` |  |
 | set_candidaturas_updated_at | BEFORE UPDATE | `candidaturas` | `update_updated_at_column` |  |
 | set_timestamp_beneficio_regras | BEFORE UPDATE | `beneficio_regras_elegibilidade` | `update_updated_at_column` |  |
@@ -745,6 +750,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | tr_admissao_tokens_updated_at | BEFORE UPDATE | `admissao_tokens` | `update_updated_at_column` |  |
 | tr_admissoes_updated_at | BEFORE UPDATE | `admissoes` | `update_updated_at_column` |  |
 | tr_alert_severe_measure | AFTER INSERT | `medidas_disciplinares` | `fn_alert_severe_disciplinary_measure` |  |
+| tr_asos_auto_marcar_agendamento | AFTER UPDATE OF "STATUS" | `asos` | `asos_auto_marcar_agendamento_realizado` |  |
 | tr_asos_validar_restricoes | BEFORE INSERT OR UPDATE | `asos` | `asos_validar_restricoes` |  |
 | tr_asos_validar_transicao | BEFORE UPDATE | `asos` | `asos_validar_transicao_status` |  |
 | tr_audit_biometric_failure | AFTER INSERT OR UPDATE | `batidas_ponto` | `fn_audit_biometric_failure` |  |
@@ -780,6 +786,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | tr_increment_version_colab | BEFORE UPDATE | `colaboradores` | `increment_version` |  |
 | tr_increment_version_folhas | BEFORE UPDATE | `folhas_pagamento` | `increment_version` |  |
 | tr_increment_version_ponto | BEFORE UPDATE | `registros_ponto` | `increment_version` |  |
+| tr_monitor_timeout | AFTER UPDATE OF "STATUS" | `fila_processamento` | `check_processamento_timeout` | `("new"."status" = 'failed'::"text")` |
 | tr_notify_new_holerite | AFTER INSERT | `holerites` | `fn_enqueue_notification` |  |
 | tr_proibir_delete_afastamento_encerrado | BEFORE DELETE | `afastamentos` | `proibir_delete_afastamento_encerrado` |  |
 | tr_proibir_delete_aso_emitido | BEFORE DELETE | `asos` | `proibir_delete_aso_emitido` |  |
@@ -841,10 +848,12 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_bitrix24_sync_logs_no_delete | BEFORE DELETE | `bitrix24_sync_logs` | `audit_log_append_only` |  |
 | trg_bitrix24_sync_logs_no_update | BEFORE UPDATE | `bitrix24_sync_logs` | `audit_log_append_only` |  |
 | trg_bump_contab_thread | AFTER INSERT | `contabilidade_mensagens` | `trg_contab_msg_bump_thread` |  |
+| trg_candidatura_set_empresa | BEFORE INSERT OR UPDATE OF "VAGA_ID", "EMPRESA_ID" | `candidaturas` | `fn_candidatura_set_empresa` |  |
 | trg_catalogo_infracoes_updated_at | BEFORE UPDATE | `catalogo_infracoes` | `tg_catalogo_infracoes_updated_at` |  |
 | trg_clinicas_horarios_upd | BEFORE UPDATE | `clinicas_partners_horarios` | `update_updated_at_column` |  |
 | trg_clinicas_partners_upd | BEFORE UPDATE | `clinicas_partners` | `update_updated_at_column` |  |
 | trg_clinicas_servicos_upd | BEFORE UPDATE | `clinicas_partners_servicos` | `update_updated_at_column` |  |
+| trg_colab_cpf_hash | BEFORE INSERT OR UPDATE OF "CPF" | `colaboradores` | `fn_colab_cpf_hash` |  |
 | trg_conformidade_ponto_logs_append_only | BEFORE DELETE OR UPDATE | `conformidade_ponto_logs` | `audit_log_append_only` |  |
 | trg_conformidade_ponto_logs_no_delete | BEFORE DELETE | `conformidade_ponto_logs` | `audit_log_append_only` |  |
 | trg_conformidade_ponto_logs_no_update | BEFORE UPDATE | `conformidade_ponto_logs` | `audit_log_append_only` |  |
@@ -854,6 +863,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_contrato_templates_updated | BEFORE UPDATE | `contrato_templates` | `update_updated_at_column` |  |
 | trg_contrato_token_auditar | AFTER INSERT OR UPDATE | `contrato_assinatura_tokens` | `trg_contrato_token_auditar` |  |
 | trg_contratos_gerados_updated | BEFORE UPDATE | `contratos_gerados` | `update_updated_at_column` |  |
+| trg_despesas_log | AFTER INSERT OR UPDATE OF "STATUS" | `despesas` | `log_despesa_status_change` |  |
 | trg_enforce_batida_ponto_hash | BEFORE INSERT | `batidas_ponto` | `enforce_batida_ponto_hash` |  |
 | trg_enforce_cnab_remessa_hash | BEFORE INSERT OR UPDATE | `cnab_remessas` | `enforce_cnab_remessa_hash` |  |
 | trg_enforce_desligamento_hash | BEFORE INSERT OR UPDATE | `desligamentos` | `enforce_desligamento_hash` |  |
@@ -873,7 +883,11 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_ferias_audit_log_append_only | BEFORE DELETE OR UPDATE | `ferias_audit_log` | `audit_log_append_only` |  |
 | trg_ferias_audit_no_delete | BEFORE DELETE | `ferias_audit_log` | `audit_log_append_only` |  |
 | trg_ferias_audit_no_update | BEFORE UPDATE | `ferias_audit_log` | `audit_log_append_only` |  |
+| trg_ferias_gerar_rubricas | AFTER UPDATE OF "STATUS", "ENVIADO_CONTABILIDADE" | `ferias` | `trg_ferias_gerar_rubricas` |  |
 | trg_ferias_reconciliacao_alert | AFTER INSERT | `ferias_reconciliacao_logs` | `trg_ferias_reconciliacao_alert` |  |
+| trg_ferias_validar_aquisitivo | BEFORE INSERT OR UPDATE OF "PERIODO_AQUISITIVO_ID", "COLABORADOR_ID", "CANCELADO" | `ferias` | `trg_ferias_validar_aquisitivo` |  |
+| trg_ferias_validar_inicio | BEFORE INSERT OR UPDATE OF "DATA_INICIO", "FERIAS_COLETIVA_ID", "CANCELADO" | `ferias` | `trg_ferias_validar_inicio` |  |
+| trg_ferias_validar_split | BEFORE INSERT OR UPDATE OF "DIAS_GOZO", "PERIODO_AQUISITIVO_ID", "CANCELADO" | `ferias` | `trg_ferias_validar_split` |  |
 | trg_fgts_digital_logs_no_delete | BEFORE DELETE | `fgts_digital_logs` | `audit_log_append_only` |  |
 | trg_fgts_digital_logs_no_update | BEFORE UPDATE | `fgts_digital_logs` | `audit_log_append_only` |  |
 | trg_fila_dlq_check | BEFORE UPDATE | `fila_processamento` | `fn_fila_dlq_check` |  |
@@ -909,21 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_gerar_qr_extintor | BEFORE INSERT | `sst_extintores` | `gerar_qr_extintor` |  |
 | trg_holerite_dist_updated | BEFORE UPDATE | `holerite_distribuicoes` | `update_updated_at_column` |  |
 | trg_impedir_alteracao_batida_periodo_fechado_upd | BEFORE UPDATE | `batidas_ponto` | `impedir_alteracao_batida_em_periodo_fechado` |  |
-| trg_impedir_alteracao_cnab_transmitida | BEFORE UPDATE | `cnab_remessas` | `impedir_alteracao_cnab_transmitida` |  |
-| trg_impedir_alteracao_desligamento_homologado | BEFORE UPDATE | `desligamentos` | `impedir_alteracao_desligamento_homologado` |  |
-| trg_impedir_alteracao_esocial_transmitido | BEFORE UPDATE | `esocial_eventos` | `impedir_alteracao_esocial_transmitido` |  |
-| trg_impedir_alteracao_ferias_concluidas | BEFORE UPDATE | `ferias` | `impedir_alteracao_ferias_concluidas` |  |
-| trg_impedir_alteracao_folha_fechada | BEFORE UPDATE | `folhas_pagamento` | `impedir_alteracao_folha_fechada` |  |
-| trg_impedir_alteracao_holerite_assinado | BEFORE UPDATE | `holerites` | `impedir_alteracao_holerite_assinado` |  |
-| trg_impedir_alteracao_periodo_ponto_fechado | BEFORE UPDATE | `periodos_ponto` | `impedir_alteracao_periodo_ponto_fechado` |  |
-| trg_impedir_delete_batida_periodo_fechado | BEFORE DELETE | `batidas_ponto` | `impedir_alteracao_batida_em_periodo_fechado` |  |
-| trg_integracao_logs_no_delete | BEFORE DELETE | `integracao_logs` | `audit_log_append_only` |  |
-| trg_integracao_logs_no_update | BEFORE UPDATE | `integracao_logs` | `audit_log_append_only` |  |
-| trg_log_envio_relatorios_no_delete | BEFORE DELETE | `log_envio_relatorios` | `audit_log_append_only` |  |
-| trg_log_envio_relatorios_no_update | BEFORE UPDATE | `log_envio_relatorios` | `audit_log_append_only` |  |
-| trg_logs_integracoes_no_delete | BEFORE DELETE | `logs_integracoes` | `audit_log_append_only` |  |
-| trg_logs_integracoes_no_update | BEFORE UPDATE | `logs_integracoes` | `audit_log_append_only` |  |
-| … +134 linhas — lista completa em `context.json` | | | | |
+| … +154 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -2461,12 +2461,22 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `v_filter_stats` | `SELECT user_id, entity_type, COUNT(*) AS filter_count FROM public.saved_filters GROUP BY user_id, entity_type` |
 | `mv_status_change_daily` | `SELECT date_trunc('day', created_at)::date AS dia, tabela, acao, count(*)::bigint AS total, count(DISTINCT user_id)::bigint AS usuarios_distintos, count(DISTINCT registro_id)::bigint AS registros_distintos, min(created_at) AS primeiro_evento, max(created_at) AS ultimo_evento FROM public.audit_log WH …` |
 | `mv_anomalies_hourly` | `SELECT date_trunc('hour', created_at) AS hora, type AS tipo, severity AS severidade, count(*)::bigint AS total, count(*) FILTER (WHERE resolved = false)::bigint AS abertos, count(*) FILTER (WHERE resolved = true )::bigint AS resolvidos FROM public.security_alerts WHERE created_at >= now() - interval …` |
+| `mv_telemetry_dashboard` | `SELECT empresa_id, date_trunc('hour', created_at) AS hour, table_name, operation, severity, count(*) AS query_count, avg(duration_ms) AS avg_ms, min(duration_ms) AS min_ms, max(duration_ms) AS max_ms, percentile_cont(0.50) WITHIN GROUP (ORDER BY duration_ms) AS p50_ms, percentile_cont(0.75) WITHIN G …` |
 | `v_telemetry_last_hour` | `SELECT empresa_id, table_name, operation, severity, count(*) AS query_count, avg(duration_ms)::integer AS avg_ms, max(duration_ms)::integer AS max_ms, count(*) FILTER (WHERE severity IN ('error','fatal')) AS error_count FROM public.query_telemetry WHERE empresa_id IS NOT NULL AND created_at >= now() …` |
 | `v_telemetry_slow_queries` | `SELECT id, empresa_id, created_at, user_id, table_name, operation, duration_ms, severity FROM public.query_telemetry WHERE empresa_id IS NOT NULL AND created_at >= now() - interval '1 hour' AND duration_ms > 5000 ORDER BY created_at DESC` |
 | `v_login_anomalies_ip` | `SELECT ip_address, COUNT(*) AS total_attempts, COUNT(*) FILTER (WHERE success = false) AS failed_attempts, COUNT(*) FILTER (WHERE success = true) AS successful_attempts, ROUND( COUNT(*) FILTER (WHERE success = false)::numeric / NULLIF(COUNT(*), 0) * 100, 2 ) AS failure_rate_pct, MIN(created_at) AS f …` |
 | `v_login_anomalies_email` | `SELECT email, COUNT(*) AS total_attempts, COUNT(*) FILTER (WHERE success = false) AS failed_attempts, COUNT(*) FILTER (WHERE success = true) AS successful_attempts, ROUND( COUNT(*) FILTER (WHERE success = false)::numeric / NULLIF(COUNT(*), 0) * 100, 2 ) AS failure_rate_pct, MIN(created_at) AS first_ …` |
 | `v_login_anomalies` | `SELECT 'ip' AS anomaly_type, ip_address AS identifier, failed_attempts, successful_attempts, failure_rate_pct, first_attempt, last_attempt, NULLIF(failures_per_minute_proj, 'NaN') AS failures_per_minute, last_failure_reason, NULL::text AS last_ip, NULL::text AS ip_type FROM v_login_anomalies_ip UNIO …` |
+| `mv_headcount_daily` | `SELECT empresa_id, DATE_TRUNC('day', created_at)::DATE AS snapshot_date, status, departamento, COUNT(*) AS headcount, COUNT(*) FILTER (WHERE status = 'ativo') AS ativos, COUNT(*) FILTER (WHERE status = 'desligado') AS desligados, COUNT(*) FILTER (WHERE status = 'ferias') AS em_ferias, COUNT(*) FILTE …` |
+| `mv_folha_summary` | `SELECT f.empresa_id, to_date(f.competencia \|\| '-01', 'YYYY-MM-DD') AS competencia_month, SUM(f.total_colaboradores) AS headcount_folha, SUM(f.total_proventos) AS total_bruto, SUM(f.total_descontos) AS total_descontos, SUM(f.total_liquido) AS total_liquido, SUM(f.total_fgts) AS total_fgts, SUM(f.tota …` |
+| `mv_turnover_rate` | `WITH meses AS ( SELECT generate_series( DATE_TRUNC('month', NOW() - INTERVAL '3 years')::date, DATE_TRUNC('month', NOW())::date, '1 month'::interval )::date AS mes ), mensal AS ( SELECT e.empresa_id, m.mes, (SELECT COUNT(*) FROM public.colaboradores c WHERE c.empresa_id = e.empresa_id AND DATE_TRUNC …` |
+| `mv_ferias_balance` | `SELECT c.empresa_id, c.departamento, c.id AS colaborador_id, c.nome_completo AS colaborador_nome, c.data_admissao, GREATEST(0, (EXTRACT(YEAR FROM AGE(NOW(), c.data_admissao)) * 30 - COALESCE( (SELECT SUM(f.dias_gozo) FROM public.ferias f WHERE f.colaborador_id = c.id AND f.status IN ('aprovada','age …` |
+| `mv_afastamento_summary` | `SELECT a.empresa_id, DATE_TRUNC('month', a.data_inicio)::DATE AS mes, a.tipo AS tipo_afastamento, COUNT(*) AS total_afastamentos, SUM(a.dias_total) FILTER (WHERE a.dias_total IS NOT NULL) AS dias_totais, AVG(a.dias_total) FILTER (WHERE a.dias_total IS NOT NULL) AS media_dias, COUNT(*) FILTER (WHERE …` |
 | `v_dashboard_refresh_status` | `SELECT 'mv_headcount_daily' AS view_name, pg_class.relname AS table_name, n_live_tup::BIGINT AS row_count, last_vacuum, last_autovacuum, last_analyze, last_autoanalyze, GREATEST(COALESCE(last_autovacuum, last_vacuum), COALESCE(last_autoanalyze, last_analyze)) AS last_refresh_hint FROM pg_stat_user_t …` |
+| `mv_saldo_ferias` | `SELECT f.id AS ferias_id, f.colaborador_id, c.empresa_id, c.nome_completo AS colaborador_nome, c.data_admissao, f.periodo_aquisitivo_inicio, f.periodo_aquisitivo_fim, f.dias_gozo AS dias_totais, GREATEST(0, 30 - COALESCE(f.dias_gozo, 0))::INTEGER AS dias_saldo, ROUND( (c.salario_base / 12) * (1 + 1. …` |
+| `mv_provisao_13` | `SELECT c.id AS colaborador_id, c.empresa_id, c.nome_completo AS colaborador_nome, c.salario_base, ROUND(c.salario_base / 12, 2) AS provisao_mensal_13, GREATEST(0, EXTRACT(MONTH FROM CURRENT_DATE) - 1) AS meses_devidos, ROUND( c.salario_base / 12 * GREATEST(0, EXTRACT(MONTH FROM CURRENT_DATE) - 1) , …` |
+| `mv_fgts_passivo` | `SELECT c.id AS colaborador_id, c.empresa_id, c.nome_completo AS colaborador_nome, c.salario_base, ROUND(c.salario_base * 0.08, 2) AS fgts_mensal, ROUND(c.salario_base * 0.08 / 12, 2) AS provisao_mensal_fgts, ROUND(c.salario_base * 3.2, 2) AS provisao_multa_estimada, ROUND(c.salario_base * 0.31 / 12, …` |
+| `mv_passivo_trabalhista` | `WITH ultima_folha AS ( SELECT DISTINCT ON (empresa_id) empresa_id, competencia, total_liquido FROM folhas_pagamento WHERE status IN ('calculada', 'paga', 'fechada') ORDER BY empresa_id, competencia DESC ), ferias_vencidas AS ( SELECT c.empresa_id, COUNT(DISTINCT pa.colaborador_id) AS qtde_colabs_ven …` |
 | `v_passivo_summary` | `SELECT empresa_id, COUNT(*) AS total_colaboradores, SUM(total_passivo)::DECIMAL(15,2) AS total_passivo_empresa, SUM(provisao_ferias)::DECIMAL(15,2) AS total_ferias, SUM(provisao_13)::DECIMAL(15,2) AS total_13, SUM(provisao_mensal_fgts)::DECIMAL(15,2) AS total_fgts_mensal, SUM(provisao_multa_fgts)::D …` |
 | `v_documentos_unificado` | `SELECT 'admissao'::TEXT as contexto, d.id, a.empresa_id, d.admissao_id as referencia_id, d.tipo, NULL::TEXT as titulo, d.url as arquivo_url, NULL::TEXT as conteudo_html, NULL::TEXT as status, d.created_at, NULL::TIMESTAMPTZ as updated_at FROM public.documentos_admissao d JOIN public.admissoes a ON a …` |
 | `admin.v_pgbouncer_stats` | `SELECT datname as database, count(*) as total_connections, count(*) FILTER (WHERE state = 'active') as active_connections, count(*) FILTER (WHERE state = 'idle') as idle_connections, count(*) FILTER (WHERE state = 'idle in transaction') as idle_in_tx_connections, count(*) FILTER (WHERE wait_event IS …` |
@@ -2475,11 +2485,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `admin.v_open_transactions` | `SELECT pid, usename, now() - xact_start as transaction_duration, state, left(query, 100) as query_preview FROM pg_stat_activity WHERE xact_start IS NOT NULL AND state = 'idle in transaction' ORDER BY transaction_duration DESC` |
 | `mv_kpi_turnover_absenteismo` | `WITH admissoes AS ( SELECT empresa_id, DATE_TRUNC('month', data_admissao) AS mes, COUNT(*) AS total_admissoes FROM colaboradores WHERE data_admissao >= CURRENT_DATE - INTERVAL '12 months' AND data_admissao < CURRENT_DATE + INTERVAL '1 day' GROUP BY 1, 2 ), desligamentos AS ( SELECT empresa_id, DATE_ …` |
 | `mv_dashboard_headcount` | `SELECT empresa_id, DATE_TRUNC('month', CURRENT_DATE)::DATE AS mes, COUNT(*) AS total_colaboradores, COUNT(*) FILTER (WHERE status = 'ativo') AS ativos, COUNT(*) FILTER (WHERE status = 'ferias') AS em_ferias, COUNT(*) FILTER (WHERE status = 'afastado') AS afastados, COUNT(*) FILTER (WHERE status = 'd …` |
-| `mv_passivo_trabalhista` | `WITH ultima_folha AS ( SELECT DISTINCT ON (empresa_id) empresa_id, competencia, total_liquido FROM folhas_pagamento WHERE status IN ('calculada', 'paga', 'fechada') ORDER BY empresa_id, competencia DESC ), ferias_vencidas AS ( SELECT c.empresa_id, COUNT(DISTINCT pa.colaborador_id) AS qtde_colabs_ven …` |
 | `mv_esocial_status` | `SELECT empresa_id, competencia, tipo_evento, status, COUNT(*) AS quantidade, MIN(created_at) AS primeira_criacao, MAX(created_at) AS ultima_criacao, COUNT(*) FILTER (WHERE status = 'rejeitado') AS total_rejeitados, COUNT(*) FILTER (WHERE status = 'pendente' AND created_at < CURRENT_DATE - INTERVAL ' …` |
 | `mv_absenteismo_mensal` | `WITH dias_uteis AS ( SELECT e.id AS empresa_id, DATE_TRUNC('month', CURRENT_DATE)::DATE AS mes, COUNT(*) AS dias_uteis_mes FROM empresas e CROSS JOIN generate_series( DATE_TRUNC('month', CURRENT_DATE), DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day', '1 day' ) AS d(data) WH …` |
 | `contas_bancarias_decrypted` | `SELECT id, colaborador_id, empresa_id, banco_nome, banco_codigo, public.decrypt_dados_bancarios_tenant(agencia_encrypted, empresa_id) AS agencia, public.decrypt_dados_bancarios_tenant(conta_encrypted, empresa_id) AS conta, public.decrypt_dados_bancarios_tenant(digito_encrypted, empresa_id) AS digito …` |
-| `mv_telemetry_dashboard` | `SELECT empresa_id, date_trunc('hour', created_at) AS hour, table_name, operation, severity, count(*) AS query_count, avg(duration_ms) AS avg_ms, min(duration_ms) AS min_ms, max(duration_ms) AS max_ms, percentile_cont(0.50) WITHIN GROUP (ORDER BY duration_ms) AS p50_ms, percentile_cont(0.75) WITHIN G …` |
 
 ### G.3 Funções de cálculo/decisão no código
 
@@ -4279,11 +4287,16 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | entrada sem tabelas | `scripts/inventario/gerar-banco.mjs` |
 | secao obrigatoria  | `scripts/inventario/gerar-banco.mjs` |
 | sem --entrada e sem DATABASE_URL: nada para ler (veja o cabecalho do script). | `scripts/inventario/gerar-banco.mjs` |
+| Bearer ausente no header Authorization | `scripts/regras_negocio/test_generate.py` |
+| chave obrigatória {secret_key} | `scripts/regras_negocio/test_generate.py` |
+| header inválido: Bearer {bearer} | `scripts/regras_negocio/test_generate.py` |
+| token obrigatório {access_token} | `scripts/regras_negocio/test_generate.py` |
 | cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável | `scripts/supabase_snapshot/snapshot.py` |
 | O teste offline não permite consultas ao banco | `scripts/supabase_snapshot/test_snapshot.py` |
 | banco indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
 | catálogo indisponível na fixture | `scripts/supabase_snapshot/test_snapshot.py` |
 | permission denied for schema auth | `scripts/supabase_snapshot/test_snapshot.py` |
+| permission denied for schema pgmq | `scripts/supabase_snapshot/test_snapshot.py` |
 | permission denied for schema storage | `scripts/supabase_snapshot/test_snapshot.py` |
 | relation  | `scripts/supabase_snapshot/test_snapshot.py` |
 | statement timeout simulado | `scripts/supabase_snapshot/test_snapshot.py` |
@@ -4521,12 +4534,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Empresa ativa não carregada. | `src/pages/DesligamentosPage.tsx` |
 | Erro ao excluir desligamento | `src/pages/DesligamentosPage.tsx` |
 | Não foi possível gerar link do comprovante | `src/pages/DespesasPage.tsx` |
-| Arquivo não encontrado | `src/pages/DocumentosPage.tsx` |
-| Empresa ativa não carregada. | `src/pages/DocumentosPage.tsx` |
-| Selecione um arquivo e tipo | `src/pages/DocumentosPage.tsx` |
-| Evento ${evento.tipo_evento} possui ${result.errors.length} erro(s) de validação. | `src/pages/ESocialPage.tsx` |
-| Falha ao validar evento | `src/pages/ESocialPage.tsx` |
-| … +450 linhas — lista completa em `context.json` | |
+| … +455 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4571,7 +4579,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6772 testes em 545 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6780 testes em 547 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4875,7 +4883,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/SectionHeader.test.tsx` | 9 | SectionHeader · renders title · renders subtitle when provided · does not render subtitle when absent … |
 | `src/components/__tests__/SignaturePad.test.tsx` | 9 | SignaturePad · renders canvas element · shows  · renders Limpar button … |
 | `src/components/__tests__/Simulador13Dialog.test.tsx` | 9 | Simulador13Dialog · renders 13º Salário trigger button · renders Simulador 13º Salário dialog title · renders Salário Base label … |
-| … +245 linhas — lista completa em `context.json` | | |
+| … +247 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

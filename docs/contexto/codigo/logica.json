@@ -28,6 +28,7 @@
     "header",
     "is_app_code",
     "is_archived_sql",
+    "is_system_code",
     "is_test_file",
     "llm_synthesis",
     "log",
@@ -57,7 +58,7 @@
     "upsert_pointer",
     "walk_repo"
    ],
-   "linhas": 2138,
+   "linhas": 2183,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -99,7 +100,7 @@
     "producer_health",
     "read_manifest"
    ],
-   "linhas": 237,
+   "linhas": 244,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -197,7 +198,7 @@
     "uslug",
     "write"
    ],
-   "linhas": 1772,
+   "linhas": 1802,
    "tabelas": [],
    "rpcs": [],
    "edges": [],

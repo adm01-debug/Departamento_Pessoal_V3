@@ -43,7 +43,7 @@
   {
    "arquivo": "scripts/audit-bridge-frontend-contract.mjs",
    "descricao": "* Fail-closed contract gate between production frontend calls and the generic",
-   "linhas": 221,
+   "linhas": 226,
    "env": [],
    "npm_scripts": [
     "audit:bridge-contract"
@@ -56,7 +56,7 @@
   {
    "arquivo": "scripts/audit-canonical-project.mjs",
    "descricao": "* Gate estático para impedir que configuração executável volte a apontar para",
-   "linhas": 115,
+   "linhas": 120,
    "env": [
     "CANONICAL_SUPABASE_REF",
     "VITE_SUPABASE_URL"
@@ -72,7 +72,7 @@
   {
    "arquivo": "scripts/audit-db-search-path.mjs",
    "descricao": "* Gate de integridade: search_path x extensões isoladas.",
-   "linhas": 120,
+   "linhas": 144,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -89,7 +89,7 @@
   {
    "arquivo": "scripts/audit-edge-audit-log-contract.mjs",
    "descricao": "* Validates the physical contract of Edge Function inserts into the legacy",
-   "linhas": 221,
+   "linhas": 223,
    "env": [],
    "npm_scripts": [
     "audit:edge-audit-log"
@@ -100,7 +100,7 @@
   {
    "arquivo": "scripts/audit-edge-authz.mjs",
    "descricao": "* Gate de CI — autorização nas Edge Functions.",
-   "linhas": 192,
+   "linhas": 230,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -109,7 +109,7 @@
   {
    "arquivo": "scripts/audit-edge-syntax.mjs",
    "descricao": "* Gate de CI — sintaxe das Edge Functions (Deno).",
-   "linhas": 79,
+   "linhas": 81,
    "env": [],
    "npm_scripts": [
     "audit:edge-syntax"
@@ -120,7 +120,7 @@
   {
    "arquivo": "scripts/audit-embed-hints.mjs",
    "descricao": "* Gate de integridade dos \"embed hints\" do PostgREST.",
-   "linhas": 180,
+   "linhas": 202,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -137,7 +137,7 @@
   {
    "arquivo": "scripts/audit-migration-style.mjs",
    "descricao": "* Gate estático (sem DATABASE_URL): reprova migration nova com",
-   "linhas": 144,
+   "linhas": 151,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -148,7 +148,7 @@
   {
    "arquivo": "scripts/audit-required-checks.mjs",
    "descricao": "* E08 — Guard: verifica se todo check obrigatório do ruleset tem um job",
-   "linhas": 178,
+   "linhas": 185,
    "env": [
     "GITHUB_TOKEN"
    ],
@@ -162,7 +162,7 @@
   {
    "arquivo": "scripts/audit-rls-least-privilege.mjs",
    "descricao": "* Gate de menor privilégio em RLS.",
-   "linhas": 311,
+   "linhas": 315,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -179,7 +179,7 @@
   {
    "arquivo": "scripts/audit-rls-pii.mjs",
    "descricao": "* Gate de regressão de RLS: políticas sobre tabelas com PII precisam",
-   "linhas": 303,
+   "linhas": 317,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -196,7 +196,7 @@
   {
    "arquivo": "scripts/audit-rls-tenant-open.mjs",
    "descricao": "* Gate de regressão: política PERMISSIVA irrestrita sobre tabela multi-tenant.",
-   "linhas": 285,
+   "linhas": 300,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -213,7 +213,7 @@
   {
    "arquivo": "scripts/audit-schema-drift.mjs",
    "descricao": "* Gate de regressão: migration presente no repositório sem registro no ledger",
-   "linhas": 145,
+   "linhas": 159,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -226,7 +226,7 @@
   {
    "arquivo": "scripts/audit-secdef-authz.mjs",
    "descricao": "* Gate de regressão de funções SECURITY DEFINER.",
-   "linhas": 276,
+   "linhas": 277,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -254,7 +254,7 @@
   {
    "arquivo": "scripts/audit-types-drift.mjs",
    "descricao": "* Ratchet de drift: tabela criada em migration/baseline sem entrada em",
-   "linhas": 135,
+   "linhas": 136,
    "env": [],
    "npm_scripts": [
     "audit:types-drift"
@@ -777,7 +777,7 @@
   {
    "arquivo": "scripts/regras_negocio/generate.py",
    "descricao": null,
-   "linhas": 2138,
+   "linhas": 2183,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -788,7 +788,7 @@
   {
    "arquivo": "scripts/regras_negocio/indice.py",
    "descricao": null,
-   "linhas": 237,
+   "linhas": 244,
    "env": [],
    "npm_scripts": [],
    "workflows": [
@@ -799,7 +799,7 @@
   {
    "arquivo": "scripts/regras_negocio/publish.sh",
    "descricao": "Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida. Variáveis:",
-   "linhas": 106,
+   "linhas": 114,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1009,7 +1009,7 @@
   {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
    "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
-   "linhas": 1772,
+   "linhas": 1802,
    "env": [],
    "npm_scripts": [],
    "workflows": [
