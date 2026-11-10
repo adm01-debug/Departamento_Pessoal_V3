@@ -26,10 +26,10 @@ DRY=0
 QUIET=0
 while [ $# -gt 0 ]; do
   case "$1" in
-    --repo) REPO="${2:-}"; shift 2 ;;
+    --repo) REPO="${2:?--repo exige um valor}"; shift 2 ;;
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
-    -h|--help) sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "opção desconhecida: $1" >&2; exit 2 ;;
   esac
 done
@@ -67,7 +67,9 @@ flock -n 9 || { say "outra sincronização em andamento; pulando"; exit 0; }
 export GIT_TERMINAL_PROMPT=0   # nunca ficar esperando senha
 
 # 1. fetch
-if ! timeout 180 "${G[@]}" fetch --all --prune --quiet 2>"$STATE/$KEY.err"; then
+# `9>&-` nos git que podem disparar o gc automático: o gc fica em segundo plano e, herdando o fd do trinco, o segurava depois
+# do fim do script — o script seguinte do mesmo timer (mirror -> sync) saía com "outra sincronização em andamento".
+if ! timeout 180 "${G[@]}" fetch --all --prune --quiet 2>"$STATE/$KEY.err" 9>&-; then
   say "fetch falhou (rede/credencial?): $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ') — tentarei na próxima execução"
   exit 0
 fi
@@ -84,7 +86,7 @@ done < <("${G[@]}" worktree list --porcelain)
 
 atualizados=0; pulados=0; avisos=0
 
-while IFS='|' read -r branch upstream track; do
+while IFS='|' read -r branch upstream track upref; do
   [ -n "$upstream" ] || continue
   case "$track" in
     "") continue ;;                                   # já em dia
@@ -102,13 +104,15 @@ while IFS='|' read -r branch upstream track; do
       say "PULEI $branch ($track): há alterações locais não commitadas em $wt"; pulados=$((pulados+1)); continue
     fi
     if [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $branch ($track) por fast-forward em $wt"; continue; fi
-    if git -C "$wt" merge --ff-only --quiet "$upstream" 2>/dev/null; then say "ATUALIZADO $branch ($track) em $wt"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git"; pulados=$((pulados+1)); fi
+    # --no-overwrite-ignore: sem isso o fast-forward sobrescreve calado um arquivo IGNORADO local (.env) que o remoto passou a rastrear
+    if git -C "$wt" merge --ff-only --no-overwrite-ignore --quiet "$upstream" 2>/dev/null 9>&-; then say "ATUALIZADO $branch ($track) em $wt"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git (arquivo não rastreado ou ignorado no caminho?)"; pulados=$((pulados+1)); fi
   else
     if [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $branch ($track) por fast-forward"; continue; fi
-    # `fetch . origem:destino` só aceita fast-forward; recusa qualquer outra coisa
-    if "${G[@]}" fetch --quiet . "refs/remotes/$upstream:refs/heads/$branch" 2>/dev/null; then say "ATUALIZADO $branch ($track)"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git"; pulados=$((pulados+1)); fi
+    # `fetch . origem:destino` só aceita fast-forward; recusa qualquer outra coisa. Origem = ref completa do upstream (pode
+    # ser uma branch LOCAL: `refs/remotes/<nome curto>` não existia e a branch era pulada a cada hora, para sempre)
+    if "${G[@]}" fetch --quiet . "$upref:refs/heads/$branch" 2>/dev/null 9>&-; then say "ATUALIZADO $branch ($track)"; atualizados=$((atualizados+1)); else say "PULEI $branch: fast-forward recusado pelo git"; pulados=$((pulados+1)); fi
   fi
-done < <("${G[@]}" for-each-ref --format='%(refname:short)|%(upstream:short)|%(upstream:track)' refs/heads)
+done < <("${G[@]}" for-each-ref --format='%(refname:short)|%(upstream:short)|%(upstream:track)|%(upstream)' refs/heads)
 
 # 3. computador_local acompanha a branch padrão ENQUANTO não tem commits próprios (o upstream dela é ela mesma, então o passo 2
 #    nunca a avança e ela ficava para trás da main). Com commits próprios só avisa; com alterações locais não mexe.
@@ -128,8 +132,8 @@ if "${G[@]}" rev-parse -q --verify "refs/heads/$CL" >/dev/null 2>&1 && [ -n "${W
           if [ -n "$(git -C "$wt" status --porcelain --untracked-files=no 2>/dev/null)" ]; then
             say "PULEI $CL (${n} atrás de $DEF): há alterações locais não commitadas em $wt"; pulados=$((pulados+1))
           elif [ "$DRY" -eq 1 ]; then say "[dry-run] avançaria $CL ${n} commit(s) até $DEF em $wt"
-          elif git -C "$wt" merge --ff-only --quiet "$DEF" 2>/dev/null; then say "ATUALIZADO $CL (+${n} commit(s) de $DEF) em $wt"; atualizados=$((atualizados+1))
-          else say "PULEI $CL: fast-forward para $DEF recusado pelo git (arquivo não rastreado no caminho?)"; pulados=$((pulados+1)); fi
+          elif git -C "$wt" merge --ff-only --no-overwrite-ignore --quiet "$DEF" 2>/dev/null 9>&-; then say "ATUALIZADO $CL (+${n} commit(s) de $DEF) em $wt"; atualizados=$((atualizados+1))
+          else say "PULEI $CL: fast-forward para $DEF recusado pelo git (arquivo não rastreado ou ignorado no caminho?)"; pulados=$((pulados+1)); fi
         else
           own="$("${G[@]}" rev-list --count "$DEF..$hw")"; beh="$("${G[@]}" rev-list --count "$hw..$hd")"
           aviso "$CL" proprios "$CL tem $own commit(s) próprio(s) fora de $DEF e está $beh atrás dela: integre (PR/rebase) quando quiser; não mexo"; avisos=$((avisos+1))
