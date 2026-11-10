@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-10 20:57 UTC
+
+- **functions** alterado (2): `public.pertence_a_empresa(_empresa_id uuid)`, `public.rls_tenant_or_admin(row_empresa_id uuid)`
+
 ## 2026-11-07 01:27 UTC
 
 - **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_10`

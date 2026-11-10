@@ -97883,9 +97883,13 @@
             {
               "file": "supabase/migrations/20260924220000_p0_secdef_authz_remediation.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 19,
+          "code_total_files": 20,
           "cron": [],
           "db": [
             "public.clinicas_proximas",
@@ -100845,9 +100849,13 @@
             {
               "file": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 7,
+          "code_total_files": 8,
           "cron": [],
           "db": [],
           "triggers": [],
