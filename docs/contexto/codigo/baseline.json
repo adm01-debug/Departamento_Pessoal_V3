@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7aba28e3ba72cd30b8026c164c05f7a021f1547d",
+  "commit": "6e2024fb3cde2bf2dba644a71652938620fa1bb4",
   "branch": "main",
-  "data_commit": "2026-11-10T10:35:47Z",
+  "data_commit": "2026-11-10T14:46:33-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6e2024f",
+    "data": "2026-11-10",
+    "assunto": "feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a t"
+   },
    {
     "sha": "7aba28e",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "20761bc",
     "data": "2026-11-08",
     "assunto": "fix: guard falso verde em audit-rls-least-privilege quando 0 políticas inspecionadas"
-   },
-   {
-    "sha": "1822a56",
-    "data": "2026-11-08",
-    "assunto": "feat: guards false-green + auto-assertions em 5 scripts de auditoria"
    }
   ],
   "arquivos_mudados_7d": 255,
@@ -138,14 +138,6 @@
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 39
-   },
-   {
-    "pasta": "src/services/__tests__",
-    "mudancas": 36
-   },
-   {
-    "pasta": "src/components/__tests__",
-    "mudancas": 25
    },
    {
     "pasta": "CLAUDE.md",
@@ -160,20 +152,24 @@
     "mudancas": 19
    },
    {
-    "pasta": "supabase/functions/external-db-bridge",
-    "mudancas": 18
+    "pasta": "src/components/__tests__",
+    "mudancas": 19
    },
    {
-    "pasta": "src/hooks/__tests__",
-    "mudancas": 17
+    "pasta": "supabase/functions/external-db-bridge",
+    "mudancas": 18
    },
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 16
    },
    {
+    "pasta": "src/services/__tests__",
+    "mudancas": 15
+   },
+   {
     "pasta": "src/integrations/supabase",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "pasta": "PENDENCIAS.md",
@@ -184,8 +180,8 @@
     "mudancas": 12
    },
    {
-    "pasta": "src/utils/__tests__",
-    "mudancas": 11
+    "pasta": "src/hooks/__tests__",
+    "mudancas": 12
    },
    {
     "pasta": "src/services/folha",
@@ -193,6 +189,10 @@
    },
    {
     "pasta": ".github/workflows/ci.yml",
+    "mudancas": 9
+   },
+   {
+    "pasta": "AGENTS.md",
     "mudancas": 9
    }
   ],
@@ -300,12 +300,12 @@
   ],
   "autores_30d": [
    {
-    "autor": "devin-ai-integration[bot]",
-    "commits": 88
+    "autor": "adm01-debug",
+    "commits": 86
    },
    {
-    "autor": "adm01-debug",
-    "commits": 85
+    "autor": "devin-ai-integration[bot]",
+    "commits": 73
    },
    {
     "autor": "dependabot[bot]",

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "7aba28e3ba72cd30b8026c164c05f7a021f1547d",
+  "sha": "6e2024fb3cde2bf2dba644a71652938620fa1bb4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 10:36 UTC",
+  "generated_at": "2026-11-10 17:50 UTC",
   "files_total": 2849,
   "code_files": 2335,
   "code_lines": 312038
@@ -275140,10 +275140,22 @@
   }
  },
  "git": {
-  "sha": "7aba28e3ba72cd30b8026c164c05f7a021f1547d",
+  "sha": "6e2024fb3cde2bf2dba644a71652938620fa1bb4",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6e2024f",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "feat(sync): modo sem push por repositório (push=0) com valor inválido barrado e --pii desconhecido deixa de desligar a trava (#421)",
+    "files": [
+     "scripts/sync/README.md",
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/repos.conf.example",
+     "scripts/sync/run-all.sh"
+    ]
+   },
    {
     "sha": "7aba28e",
     "date": "2026-11-10",
@@ -275580,32 +275592,24 @@
      "scripts/check-dependencies.js",
      "scripts/validate-plan-50.mjs"
     ]
-   },
-   {
-    "sha": "3358bc1",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "feat: guards contra falso verde nos ratchets e build-rebaseline",
-    "files": [
-     "scripts/build-rebaseline.mjs",
-     "scripts/ratchet-any-tests.mjs",
-     "scripts/ratchet-any.mjs",
-     "scripts/ratchet-lint-warnings.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/sync/autocommit-local.sh",
-    5
+    6
    ],
    [
     "scripts/sync/run-all.sh",
-    5
+    6
    ],
    [
     "scripts/sync/mirror-github.sh",
     5
+   ],
+   [
+    "scripts/sync/README.md",
+    4
    ],
    [
     "scripts/autofix/run.mjs",
@@ -275614,10 +275618,6 @@
    [
     "scripts/sync/sync-github.sh",
     4
-   ],
-   [
-    "scripts/ratchet-lint-warnings.mjs",
-    3
    ],
    [
     "scripts/autofix/any-codemod.mjs",
@@ -275632,19 +275632,15 @@
     3
    ],
    [
-    "scripts/sync/README.md",
-    3
+    "scripts/sync/repos.conf.example",
+    2
    ],
    [
     "scripts/check-bundle-budget.mjs",
     2
    ],
    [
-    "scripts/ratchet-any-tests.mjs",
-    2
-   ],
-   [
-    "scripts/ratchet-any.mjs",
+    "scripts/ratchet-lint-warnings.mjs",
     2
    ],
    [
@@ -275673,6 +275669,10 @@
    ],
    [
     "docs/agentes/arquitetura.md",
+    2
+   ],
+   [
+    "docs/agentes/banco.md",
     2
    ]
   ]
