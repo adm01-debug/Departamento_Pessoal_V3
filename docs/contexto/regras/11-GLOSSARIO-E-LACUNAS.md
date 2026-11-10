@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `34e22ec5df` · branch `main` · 2026-11-10 10:28 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7aba28e3ba` · branch `main` · 2026-11-10 10:36 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -441,7 +441,10 @@
 | coluna | coluna `empresa_id` usada no código não existe no schema de `integracoes` |  |
 | coluna | coluna `empresa_id` usada no código não existe no schema de `metricas_processamento` |  |
 | tabela | tabela `a` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
+| tabela | tabela `anexos` usada no código não existe nas migrations/types do repo | `scripts/tests/inventario-rotas.test.mjs` |
 | tabela | tabela `backups` usada no código não existe nas migrations/types do repo | `supabase/functions/backup-automatico/index.ts` |
+| tabela | tabela `comentada_bloco` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
+| tabela | tabela `comentada_jsx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `contacts` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `dashboard_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `emails` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
@@ -450,11 +453,14 @@
 | tabela | tabela `ghost_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `mv_folha_summary` usada no código não existe nas migrations/types do repo | `supabase/functions/metricas/index.ts` |
 | tabela | tabela `payments` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
+| tabela | tabela `runtime_glob` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `runtime_table` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
+| tabela | tabela `runtime_uploads` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `so_teste` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `t` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs`<br>`src/integrations/supabase/__tests__/clientBridge.test.ts` |
 | tabela | tabela `t1` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `tabela` usada no código não existe nas migrations/types do repo | `scripts/inventario/gerar-banco.mjs`<br>`scripts/inventario/gerar-repo.mjs` |
+| tabela | tabela `tabela_comentada` usada no código não existe nas migrations/types do repo | `scripts/tests/inventario-rotas.test.mjs` |
 | tabela | tabela `tools_runtime` usada no código não existe nas migrations/types do repo | `scripts/ai-context/gerar.unit.mjs` |
 | tabela | tabela `tx` usada no código não existe nas migrations/types do repo | `scripts/ai-context/cenarios.mjs` |
 | tabela | tabela `x` usada no código não existe nas migrations/types do repo | `src/integrations/supabase/__tests__/clientBridge.test.ts`<br>`src/test/supabaseMock.ts` |
@@ -640,13 +646,7 @@
 | segurança | função `medida_rejeitar` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `medida_responder_contestacao` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `medida_verificar_ciencia_hash` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `medidas_analytics_reincidencia` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `notificar_divergencias_afdt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `notificar_ferias_pagamento_d5` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `notificar_ferias_reconciliacao_sla_baixo` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `pertence_a_empresa` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `process_audit_log` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +87 linhas — lista completa em `context.json` | | |
+| … +93 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

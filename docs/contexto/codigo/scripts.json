@@ -6,7 +6,7 @@
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
    "descricao": "Simulação de cenários do gerador: monta centenas de repositórios sintéticos (variantes de SQL, rotas, menus, edges, workflows, monorepo, Python, arquivos corrompidos, fuzz) e confere:",
-   "linhas": 173,
+   "linhas": 174,
    "env": [
     "A",
     "K",
@@ -26,7 +26,7 @@
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
    "descricao": "Gera o contexto de projeto para agentes de IA (padrão: inventario/ia/*). Zero dependências. Node >= 18. Genérico: funciona em qualquer repositório.",
-   "linhas": 926,
+   "linhas": 940,
    "env": [
     "AI_CONTEXT_DIR",
     "AI_CONTEXT_PUBLICACAO",
@@ -609,7 +609,7 @@
   {
    "arquivo": "scripts/inventario/banco.sql",
    "descricao": null,
-   "linhas": 169,
+   "linhas": 175,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -647,7 +647,7 @@
   {
    "arquivo": "scripts/inventario/gerar-rotas.mjs",
    "descricao": "* Inventario das rotas do front -> inventario/estado/rotas.json (fonte de consulta dos agentes).",
-   "linhas": 387,
+   "linhas": 416,
    "env": [],
    "npm_scripts": [
     "inventario:rotas"
@@ -660,7 +660,7 @@
   {
    "arquivo": "scripts/inventario/mudou-conteudo.mjs",
    "descricao": "* O inventario mudou de verdade? Compara cada arquivo de inventario/estado/ com a versao do",
-   "linhas": 78,
+   "linhas": 83,
    "env": [],
    "npm_scripts": [],
    "workflows": [

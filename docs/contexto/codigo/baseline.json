@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "34e22ec5df8bc4a83aa012a093a82f66828fbec8",
+  "commit": "7aba28e3ba72cd30b8026c164c05f7a021f1547d",
   "branch": "main",
-  "data_commit": "2026-11-10T07:14:36-03:00",
+  "data_commit": "2026-11-10T10:35:47Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7aba28e",
+    "data": "2026-11-10",
+    "assunto": "fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)"
+   },
    {
     "sha": "34e22ec",
     "data": "2026-11-10",
@@ -126,11 +131,6 @@
     "sha": "1822a56",
     "data": "2026-11-08",
     "assunto": "feat: guards false-green + auto-assertions em 5 scripts de auditoria"
-   },
-   {
-    "sha": "e9086da",
-    "data": "2026-11-08",
-    "assunto": "feat: guards false-green em audit-rls-pii, rls-tenant-open e security-config"
    }
   ],
   "arquivos_mudados_7d": 255,
@@ -305,7 +305,7 @@
    },
    {
     "autor": "adm01-debug",
-    "commits": 84
+    "commits": 85
    },
    {
     "autor": "dependabot[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2828,
   "arquivos_codigo": 1520,
-  "linhas_codigo": 263837,
+  "linhas_codigo": 264141,
   "rotas": 113,
   "rotas_http_backend": 19,
   "vistas_por_id": 0,
@@ -333,7 +333,7 @@
   "componentes": 429,
   "hooks": 102,
   "edge_functions": 65,
-  "tabelas": 436,
+  "tabelas": 417,
   "migrations": 781,
   "cron_jobs": 41,
   "testes": 575,
@@ -404,7 +404,7 @@
   },
   "scripts/ai-context": {
    "arquivos": 3,
-   "linhas": 1475
+   "linhas": 1631
   },
   "scripts/audit-bridge-frontend-contract.mjs": {
    "arquivos": 1,
@@ -536,7 +536,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 920
+   "linhas": 954
   },
   "scripts/load": {
    "arquivos": 1,
@@ -584,7 +584,7 @@
   },
   "scripts/tests": {
    "arquivos": 15,
-   "linhas": 1754
+   "linhas": 1868
   },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
@@ -738,7 +738,7 @@
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
-   "linhas": 926
+   "linhas": 940
   },
   {
    "arquivo": "src/pages/TreinamentosPage.tsx",
@@ -834,13 +834,13 @@
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
-   "linha": 190,
+   "linha": 198,
    "tipo": "TODO",
    "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
   },
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
-   "linha": 224,
+   "linha": 232,
    "tipo": "TODO",
    "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
   },
@@ -924,41 +924,19 @@
    "Ações -> /quick-actions"
   ],
   "edges_orfas": [
-   "OCR",
    "adiantamento-salarial",
-   "alertas-dp",
    "alertas-preditivos",
-   "assinaturaDigital",
    "assistente-ia",
    "auditoria",
    "backup",
-   "backup-automatico",
-   "cache",
-   "calcular-ferias",
-   "calcular-folha",
-   "calcular-provisoes",
-   "calcular-rescisao",
    "cnab-remessa",
-   "criptografia",
    "dctfweb",
    "emprestimo-consignado",
-   "exportacao",
-   "external-db-bridge",
    "fgts-digital",
-   "gerar-guias",
-   "gerar-holerite",
-   "gerar-medida-disciplinar-pdf",
-   "importacao",
    "integracao",
-   "limpeza",
-   "notificacao",
    "pix-lote",
-   "processar-agendamentos",
-   "processar-ponto",
-   "rateLimit",
    "relatorio",
    "tabelas-dominio",
-   "validar-biometria",
    "warmup"
   ],
   "edges_chamadas_sem_pasta": [],
@@ -980,7 +958,93 @@
    "vaga_etapas"
   ],
   "tabelas_usadas_sem_definicao": [],
-  "tabelas_com_drift_migration_vs_types": [],
+  "tabelas_com_drift_migration_vs_types": [
+   "admissao_tokens",
+   "admissoes",
+   "afastamentos",
+   "asos",
+   "audit_log",
+   "audit_logs",
+   "auditoria",
+   "auditoria_contratual",
+   "auditoria_logs",
+   "auth_gov_br_sessions",
+   "automacao_logs",
+   "beneficios",
+   "blocked_ips",
+   "cargos",
+   "ciencia_rate_limits",
+   "cnab_remessas",
+   "colaborador_beneficios",
+   "colaboradores",
+   "config_afastamentos",
+   "configuracoes",
+   "configuracoes_esocial",
+   "configuracoes_intervalo",
+   "configuracoes_ponto",
+   "contas_bancarias",
+   "contrato_assinatura_tokens",
+   "controle_acesso",
+   "departamentos",
+   "dependentes",
+   "documento_templates",
+   "documentos_admissao",
+   "documentos_assinatura",
+   "documentos_colaborador",
+   "empresas",
+   "emprestimos_consignados",
+   "epis",
+   "escalas",
+   "escalas_trabalho",
+   "esocial_eventos",
+   "esocial_lotes",
+   "faltas",
+   "feriados",
+   "ferias_solicitacoes",
+   "folha_itens",
+   "folhas_pagamento",
+   "govbr_auth_state",
+   "guias_fgts",
+   "guias_inss",
+   "historico_cargo",
+   "holerites",
+   "integracao_logs",
+   "jornadas",
+   "lancamentos_folha",
+   "login_attempts",
+   "logs_sistema",
+   "medidas_disciplinares",
+   "metas_okrs",
+   "notificacoes",
+   "notificacoes_admissao",
+   "onboarding_tarefas",
+   "onboarding_templates",
+   "pensoes",
+   "periodos_aquisitivos",
+   "periodos_ponto",
+   "pix_itens",
+   "pix_lotes",
+   "planos_saude",
+   "ponto_espelhos_assinados",
+   "profiles",
+   "prorrogacoes_afastamento",
+   "provisao_auditoria",
+   "provisao_logs",
+   "provisoes_mensais",
+   "push_subscriptions",
+   "rate_limits",
+   "recibos_ferias",
+   "recrutamento_anotacoes",
+   "recrutamento_entrevistas",
+   "recrutamento_testes",
+   "rubricas_folha",
+   "seguros_vida",
+   "sindicatos",
+   "treinamento_instancias",
+   "treinamentos",
+   "trilhas_aprendizado",
+   "turnos"
+  ],
   "rpcs_sem_definicao": [
    "aplicar_medida_folha_ponto",
    "complete_admission_esocial_event",
@@ -1047,8 +1111,8 @@
   ],
   "ciclos_de_import": 3,
   "possiveis_segredos_no_codigo": [
-   "e2e/public/api-auth-errors.spec.ts:44",
-   "scripts/ai-context/cenarios.mjs:102"
+   "e2e/public/api-auth-errors.spec.ts:56",
+   "scripts/ai-context/cenarios.mjs:120"
   ]
  },
  "erros_do_gerador": []

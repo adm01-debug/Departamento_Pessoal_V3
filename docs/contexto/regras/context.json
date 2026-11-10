@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "34e22ec5df8bc4a83aa012a093a82f66828fbec8",
+  "sha": "7aba28e3ba72cd30b8026c164c05f7a021f1547d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 10:28 UTC",
+  "generated_at": "2026-11-10 10:36 UTC",
   "files_total": 2849,
   "code_files": 2335,
-  "code_lines": 311728
+  "code_lines": 312038
  },
  "version": "1.3.2",
- "facts_hash": "96597acfac073bb7",
+ "facts_hash": "c084c5bce84c3204",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -92848,6 +92848,13 @@
     "file": "src/pages/__tests__/CienciaMedidaPage.test.tsx"
    },
    {
+    "path": "/depois",
+    "component": "Home",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "/falso",
     "component": "A",
     "guard": "",
@@ -93359,6 +93366,13 @@
     "file": "src/App.tsx"
    },
    {
+    "path": "filha",
+    "component": "ContactPage",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/ai-context/gerar.unit.mjs"
+   },
+   {
     "path": "financeiro-bancario",
     "component": "LazyPage",
     "guard": "",
@@ -93672,6 +93686,20 @@
     "guard": "",
     "roles": [],
     "file": "src/App.tsx"
+   },
+   {
+    "path": "velha",
+    "component": "LazyPage",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/tests/inventario-rotas.test.mjs"
+   },
+   {
+    "path": "velha2",
+    "component": "LazyPage",
+    "guard": "",
+    "roles": [],
+    "file": "scripts/tests/inventario-rotas.test.mjs"
    },
    {
     "path": "workflows",
@@ -94894,11 +94922,14 @@
   {
    "module": "scripts",
    "files": 103,
-   "lines": 20553,
+   "lines": 20863,
    "tables": [
     "a",
+    "anexos",
     "audit_log",
     "colaboradores",
+    "comentada_bloco",
+    "comentada_jsx",
     "configuracoes_ponto",
     "contacts",
     "dashboard_table",
@@ -94910,11 +94941,14 @@
     "folhas_pagamento",
     "ghost_table",
     "payments",
+    "runtime_glob",
     "runtime_table",
+    "runtime_uploads",
     "so_teste",
     "t",
     "t1",
     "tabela",
+    "tabela_comentada",
     "tools_runtime",
     "tx",
     "user_empresas",
@@ -94928,7 +94962,7 @@
     "generate-page.js: $",
     "generate-service.js: $",
     "validate-canonical-db-url.mjs: CANONICAL_PROJECT_REF, validateCanonicalDbUrl",
-    "gerar.unit.mjs: AppRoutes, useContacts",
+    "gerar.unit.mjs: AppRoutes, useContacts, salvar, fim, depois, Texto",
     "any-codemod.mjs: collectCandidates, applyEdits, runAnyPass",
     "lib.mjs: log, sh, git, bin, typecheck, errKey",
     "catalogo.mjs: regras",
@@ -97310,6 +97344,11 @@
      "src/services/tabelas/pontoService.ts"
     ]
    },
+   "anexos": {
+    "ref": [
+     "scripts/tests/inventario-rotas.test.mjs"
+    ]
+   },
    "anotacoes_colaborador": {
     "select": [
      "src/services/colaboradorDetalhesService.ts"
@@ -97821,6 +97860,16 @@
     ],
     "upsert": [
      "supabase/functions/sincronizar-bitrix/index.ts"
+    ]
+   },
+   "comentada_bloco": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "comentada_jsx": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
     ]
    },
    "competencias_config": {
@@ -99601,8 +99650,18 @@
      "src/services/tabelas/folhaService.ts"
     ]
    },
+   "runtime_glob": {
+    "ref": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
    "runtime_table": {
     "select": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   "runtime_uploads": {
+    "insert": [
      "scripts/ai-context/gerar.unit.mjs"
     ]
    },
@@ -99806,6 +99865,11 @@
     "ref": [
      "scripts/inventario/gerar-banco.mjs",
      "scripts/inventario/gerar-repo.mjs"
+    ]
+   },
+   "tabela_comentada": {
+    "ref": [
+     "scripts/tests/inventario-rotas.test.mjs"
     ]
    },
    "tarefas_onboarding": {
@@ -102753,6 +102817,7 @@
     "src/hooks/useCalcular13Salario.ts"
    ],
    "calcular-folha": [
+    "scripts/inventario/gerar-rotas.mjs",
     "scripts/tests/inventario-rotas.test.mjs",
     "src/lib/retry.ts"
    ],
@@ -103539,7 +103604,10 @@
   },
   "tables_only_in_code": [
    "a",
+   "anexos",
    "backups",
+   "comentada_bloco",
+   "comentada_jsx",
    "contacts",
    "dashboard_table",
    "emails",
@@ -103548,11 +103616,14 @@
    "ghost_table",
    "mv_folha_summary",
    "payments",
+   "runtime_glob",
    "runtime_table",
+   "runtime_uploads",
    "so_teste",
    "t",
    "t1",
    "tabela",
+   "tabela_comentada",
    "tools_runtime",
    "tx",
    "x"
@@ -146170,6 +146241,14 @@
    },
    {
     "file": "scripts/tests/inventario-banco.test.mjs",
+    "name": "banco.sql: nome de tabela entra escapado na regex de citada_no_banco"
+   },
+   {
+    "file": "scripts/tests/inventario-banco.test.mjs",
+    "name": "banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS)"
+   },
+   {
+    "file": "scripts/tests/inventario-banco.test.mjs",
     "name": "secao obrigatoria ausente aborta; opcional ausente vira coleta_parcial com o motivo"
    },
    {
@@ -146245,12 +146324,28 @@
     "name": "texto que nao e JSON volta como esta"
    },
    {
+    "file": "scripts/tests/inventario-mudou.test.mjs",
+    "name": "CLI: o resultado nao depende do cwd (subpasta do repo ou fora dele)"
+   },
+   {
+    "file": "scripts/tests/inventario-mudou.test.mjs",
+    "name": "CLI: arquivo com mais de 1 MiB no HEAD e so a data mudando nao abre PR"
+   },
+   {
     "file": "scripts/tests/inventario-rotas.test.mjs",
     "name": "caminhos aninhados, index, protecao herdada e admin"
    },
    {
     "file": "scripts/tests/inventario-rotas.test.mjs",
     "name": "helpers: tags com > dentro de element, juntar caminho e casar padrao"
+   },
+   {
+    "file": "scripts/tests/inventario-rotas.test.mjs",
+    "name": "edges: wrapper do DP (handleInvoke) e functions.invoke com generico aninhado"
+   },
+   {
+    "file": "scripts/tests/inventario-rotas.test.mjs",
+    "name": "rota, item de menu e chamada comentados nao contam"
    },
    {
     "file": "scripts/tests/inventario-rotas.test.mjs",
@@ -223041,9 +223136,30 @@
    },
    {
     "kind": "tabela",
+    "msg": "tabela `anexos` usada no código não existe nas migrations/types do repo",
+    "where": [
+     "scripts/tests/inventario-rotas.test.mjs"
+    ]
+   },
+   {
+    "kind": "tabela",
     "msg": "tabela `backups` usada no código não existe nas migrations/types do repo",
     "where": [
      "supabase/functions/backup-automatico/index.ts"
+    ]
+   },
+   {
+    "kind": "tabela",
+    "msg": "tabela `comentada_bloco` usada no código não existe nas migrations/types do repo",
+    "where": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   {
+    "kind": "tabela",
+    "msg": "tabela `comentada_jsx` usada no código não existe nas migrations/types do repo",
+    "where": [
+     "scripts/ai-context/gerar.unit.mjs"
     ]
    },
    {
@@ -223104,7 +223220,21 @@
    },
    {
     "kind": "tabela",
+    "msg": "tabela `runtime_glob` usada no código não existe nas migrations/types do repo",
+    "where": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   {
+    "kind": "tabela",
     "msg": "tabela `runtime_table` usada no código não existe nas migrations/types do repo",
+    "where": [
+     "scripts/ai-context/gerar.unit.mjs"
+    ]
+   },
+   {
+    "kind": "tabela",
+    "msg": "tabela `runtime_uploads` usada no código não existe nas migrations/types do repo",
     "where": [
      "scripts/ai-context/gerar.unit.mjs"
     ]
@@ -223137,6 +223267,13 @@
     "where": [
      "scripts/inventario/gerar-banco.mjs",
      "scripts/inventario/gerar-repo.mjs"
+    ]
+   },
+   {
+    "kind": "tabela",
+    "msg": "tabela `tabela_comentada` usada no código não existe nas migrations/types do repo",
+    "where": [
+     "scripts/tests/inventario-rotas.test.mjs"
     ]
    },
    {
@@ -226548,7 +226685,7 @@
   },
   "scripts/ai-context/cenarios.mjs": {
    "path": "scripts/ai-context/cenarios.mjs",
-   "lines": 173,
+   "lines": 174,
    "tables": [
     {
      "table": "t",
@@ -226804,7 +226941,7 @@
   },
   "scripts/ai-context/gerar.mjs": {
    "path": "scripts/ai-context/gerar.mjs",
-   "lines": 926,
+   "lines": 940,
    "storage": [
     "bucket"
    ],
@@ -226833,10 +226970,16 @@
   },
   "scripts/ai-context/gerar.unit.mjs": {
    "path": "scripts/ai-context/gerar.unit.mjs",
-   "lines": 376,
+   "lines": 517,
    "exports": [
     "function AppRoutes",
-    "function useContacts"
+    "function useContacts",
+    "function salvar",
+    "const fim",
+    "const depois",
+    "const Texto",
+    "const Extra",
+    "const svc"
    ],
    "tables": [
     {
@@ -226874,6 +227017,22 @@
     {
      "table": "runtime_table",
      "op": "select"
+    },
+    {
+     "table": "runtime_uploads",
+     "op": "insert"
+    },
+    {
+     "table": "runtime_glob",
+     "op": "ref"
+    },
+    {
+     "table": "comentada_bloco",
+     "op": "ref"
+    },
+    {
+     "table": "comentada_jsx",
+     "op": "ref"
     }
    ],
    "rpc": [
@@ -226937,6 +227096,18 @@
      "component": "Navigate",
      "guard": "",
      "roles": []
+    },
+    {
+     "path": "filha",
+     "component": "ContactPage",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "/depois",
+     "component": "Home",
+     "guard": "",
+     "roles": []
     }
    ],
    "server_routes": [
@@ -226950,6 +227121,9 @@
    ],
    "guards": [
     "ProtectedRoute"
+   ],
+   "rule_comments": [
+    "chave falsa montada em duas partes: este arquivo não pode virar alerta de segredo no repo real"
    ],
    "doc": "Teste do gerador de contexto (scripts/ai-context/gerar.mjs). Monta um repositório sintético em pasta temporária cobrindo os casos que o gerador precisa entender (rotas aninhadas, lazy, menu, hooks, edge functions, migrations em ordem, barrel re-export, backend HTTP, Python, nested tsconfig) e confer …",
    "hooks": [
@@ -227493,7 +227667,7 @@
   },
   "scripts/inventario/banco.sql": {
    "path": "scripts/inventario/banco.sql",
-   "lines": 169,
+   "lines": 175,
    "temporal": [
     "'mais_de_7_dias', (SELECT count(*) FROM cron.job_run_details WHERE start_time <= now() - interval '7 days'),",
     "FROM cron.job_run_details d WHERE d.start_time > now() - interval '7 days'",
@@ -227593,12 +227767,12 @@
   },
   "scripts/inventario/gerar-rotas.mjs": {
    "path": "scripts/inventario/gerar-rotas.mjs",
-   "lines": 387,
+   "lines": 416,
    "exports": [
     "function resolverImport",
     "function extrairImports",
     "function extrairChamadas",
-    "const semComentarios",
+    "function semComentarios",
     "const PASTAS_LIVRES",
     "const MAX_SALTOS_FEATURE",
     "function fechoDaTela",
@@ -227613,6 +227787,9 @@
    ],
    "rpc": [
     "x"
+   ],
+   "invokes": [
+    "calcular-folha"
    ],
    "params": [
     {
@@ -227642,7 +227819,7 @@
    ],
    "rule_comments": [
     "* Fecho de imports a partir do arquivo da tela. Segue sem limite a pasta da tela e PASTAS_LIVRES",
-    "Comentario nao e import: `// export * from './X'` desligado nao pode virar import quebrado."
+    "Comentario nao e codigo: `// export * from './X'` desligado nao pode virar import quebrado, e o"
    ],
    "doc": "!/usr/bin/env node",
    "calc_fns": [
@@ -227658,7 +227835,7 @@
   },
   "scripts/inventario/mudou-conteudo.mjs": {
    "path": "scripts/inventario/mudou-conteudo.mjs",
-   "lines": 78,
+   "lines": 83,
    "exports": [
     "const PADRAO",
     "function semCarimbos",
@@ -228482,15 +228659,21 @@
   },
   "scripts/tests/inventario-banco.test.mjs": {
    "path": "scripts/tests/inventario-banco.test.mjs",
-   "lines": 185,
+   "lines": 204,
    "is_test": true,
+   "errors": [
+    "spawnSync psql ENOENT"
+   ],
    "rule_comments": [
-    "independentes, credencial somente-leitura, origem conferida e nenhum segredo na saida."
+    "independentes, credencial somente-leitura, origem conferida e nenhum segredo na saida.",
+    "psql fora do PATH (ENOENT) ou travado (ETIMEDOUT) nao tem stderr: o motivo nao pode virar \"falha sem mensagem\"."
    ],
    "doc": "Contrato de scripts/inventario/gerar-banco.mjs (porte do Zapp Web V2 para o DP V3): secoes independentes, credencial somente-leitura, origem conferida e nenhum segredo na saida.",
    "tests": [
     "banco.sql tem as secoes esperadas e cada uma devolve a coluna j",
     "banco.sql so le: nenhum comando de escrita e nada do command do cron",
+    "banco.sql: nome de tabela entra escapado na regex de citada_no_banco",
+    "banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS)",
     "secao obrigatoria ausente aborta; opcional ausente vira coleta_parcial com o motivo",
     "lerEntrada aceita objeto por secao, resposta do MCP por secao e envelope tools/call",
     "sem problema nenhum (e coleta completa), nenhum alerta",
@@ -228508,7 +228691,7 @@
   },
   "scripts/tests/inventario-mudou.test.mjs": {
    "path": "scripts/tests/inventario-mudou.test.mjs",
-   "lines": 46,
+   "lines": 99,
    "is_test": true,
    "doc": "Contrato de scripts/inventario/mudou-conteudo.mjs: o workflow semanal so abre PR quando o inventario mudou alem das datas e da telemetria viva (inclusive no edges.json, gravado numa linha so).",
    "tests": [
@@ -228517,12 +228700,14 @@
     "arquivo novo ou apagado conta como mudanca",
     "telemetria do cron e estimativas de linhas/bytes nao abrem PR",
     "mudanca estrutural (RLS, alerta novo, job saindo da lista) abre PR",
-    "texto que nao e JSON volta como esta"
+    "texto que nao e JSON volta como esta",
+    "CLI: o resultado nao depende do cwd (subpasta do repo ou fora dele)",
+    "CLI: arquivo com mais de 1 MiB no HEAD e so a data mudando nao abre PR"
    ]
   },
   "scripts/tests/inventario-rotas.test.mjs": {
    "path": "scripts/tests/inventario-rotas.test.mjs",
-   "lines": 147,
+   "lines": 189,
    "is_test": true,
    "exports": [
     "function App"
@@ -228534,6 +228719,14 @@
     },
     {
      "table": "ferias",
+     "op": "ref"
+    },
+    {
+     "table": "tabela_comentada",
+     "op": "ref"
+    },
+    {
+     "table": "anexos",
      "op": "ref"
     }
    ],
@@ -228594,6 +228787,18 @@
      "component": "B",
      "guard": "",
      "roles": []
+    },
+    {
+     "path": "velha",
+     "component": "LazyPage",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "velha2",
+     "component": "LazyPage",
+     "guard": "",
+     "roles": []
     }
    ],
    "guards": [
@@ -228604,6 +228809,8 @@
    "tests": [
     "caminhos aninhados, index, protecao herdada e admin",
     "helpers: tags com > dentro de element, juntar caminho e casar padrao",
+    "edges: wrapper do DP (handleInvoke) e functions.invoke com generico aninhado",
+    "rota, item de menu e chamada comentados nao contam",
     "rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)"
    ],
    "side_effects": [
@@ -274933,10 +275140,28 @@
   }
  },
  "git": {
-  "sha": "34e22ec5df8bc4a83aa012a093a82f66828fbec8",
+  "sha": "7aba28e3ba72cd30b8026c164c05f7a021f1547d",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7aba28e",
+    "date": "2026-11-10",
+    "author": "adm01-debug",
+    "subject": "fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)",
+    "files": [
+     "scripts/ai-context/cenarios.mjs",
+     "scripts/ai-context/gerar.mjs",
+     "scripts/ai-context/gerar.unit.mjs",
+     "scripts/inventario/banco.sql",
+     "scripts/inventario/gerar-banco.mjs",
+     "scripts/inventario/gerar-rotas.mjs",
+     "scripts/inventario/mudou-conteudo.mjs",
+     "scripts/tests/inventario-banco.test.mjs",
+     "scripts/tests/inventario-mudou.test.mjs",
+     "scripts/tests/inventario-rotas.test.mjs"
+    ]
+   },
    {
     "sha": "34e22ec",
     "date": "2026-11-10",
@@ -275367,15 +275592,6 @@
      "scripts/ratchet-any.mjs",
      "scripts/ratchet-lint-warnings.mjs"
     ]
-   },
-   {
-    "sha": "4fcdb15",
-    "date": "2026-11-08",
-    "author": "adm01-debug",
-    "subject": "fix: audit-migration-style — counter correto + guard de diretório ausente (#384)",
-    "files": [
-     "scripts/audit-migration-style.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -275456,7 +275672,7 @@
     2
    ],
    [
-    "scripts/audit-migration-style.mjs",
+    "docs/agentes/arquitetura.md",
     2
    ]
   ]

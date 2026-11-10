@@ -718,7 +718,7 @@
    "usado_por_modulos": [
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -2487,7 +2487,31 @@
    "linhas": 303,
    "tabelas": [],
    "rpcs": [],
-   "edges": [],
+   "edges": [
+    "OCR",
+    "alertas-dp",
+    "assinaturaDigital",
+    "backup-automatico",
+    "cache",
+    "calcular-ferias",
+    "calcular-folha",
+    "calcular-rescisao",
+    "criptografia",
+    "enviar-relatorio",
+    "exportacao",
+    "external-db-bridge",
+    "gerar-guias",
+    "gerar-holerite",
+    "healthcheck",
+    "importacao",
+    "limpeza",
+    "metricas",
+    "notificacao",
+    "processar-agendamentos",
+    "processar-ponto",
+    "rateLimit",
+    "sincronizar-bitrix"
+   ],
    "env": [],
    "externos": [],
    "zod_schemas": 0,
@@ -2533,6 +2557,7 @@
    "exports": [
     "maskCNPJ",
     "maskCPF",
+    "maskContaBancaria",
     "sanitizeForLogging",
     "validateCNPJ",
     "validateCPF"
@@ -3167,7 +3192,9 @@
     "medida_responder_contestacao",
     "sugerir_proxima_medida"
    ],
-   "edges": [],
+   "edges": [
+    "gerar-medida-disciplinar-pdf"
+   ],
    "env": [],
    "externos": [],
    "zod_schemas": 0,
@@ -3431,7 +3458,9 @@
    "rpcs": [
     "registrar_batida_ponto"
    ],
-   "edges": [],
+   "edges": [
+    "validar-biometria"
+   ],
    "env": [],
    "externos": [
     "crypto-js",
@@ -3524,7 +3553,9 @@
     "provisoes_mensais"
    ],
    "rpcs": [],
-   "edges": [],
+   "edges": [
+    "calcular-provisoes"
+   ],
    "env": [],
    "externos": [],
    "zod_schemas": 0,

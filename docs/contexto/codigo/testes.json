@@ -223,11 +223,11 @@
   {
    "arquivo": "scripts/ai-context/gerar.unit.mjs",
    "tipo": "unit",
-   "linhas": 376,
+   "linhas": 517,
    "testa": [
     "src/components/ui/index.ts"
    ],
-   "casos": 19
+   "casos": 28
   },
   {
    "arquivo": "scripts/autofix/regras/dados.test.mjs",
@@ -325,35 +325,36 @@
   {
    "arquivo": "scripts/tests/inventario-banco.test.mjs",
    "tipo": "unit",
-   "linhas": 185,
+   "linhas": 204,
    "testa": [
     "scripts/inventario/gerar-banco.mjs"
    ],
-   "casos": 16
+   "casos": 18
   },
   {
    "arquivo": "scripts/tests/inventario-mudou.test.mjs",
    "tipo": "unit",
-   "linhas": 46,
+   "linhas": 99,
    "testa": [
     "scripts/inventario/mudou-conteudo.mjs"
    ],
-   "casos": 6
+   "casos": 8
   },
   {
    "arquivo": "scripts/tests/inventario-rotas.test.mjs",
    "tipo": "unit",
-   "linhas": 147,
+   "linhas": 189,
    "testa": [
     "scripts/inventario/gerar-rotas.mjs",
     "src/components/layout/index.ts",
     "src/hooks/useFolha.ts",
+    "src/lib/retry.ts",
     "src/pages/FolhaPage.tsx",
     "src/pages/LoginPage.tsx",
     "src/pages/NotFoundPage.tsx",
     "src/pages/UsuariosPage.tsx"
    ],
-   "casos": 2
+   "casos": 6
   },
   {
    "arquivo": "scripts/tests/rebaseline-artifact.test.mjs",
@@ -5105,7 +5106,7 @@
     "supabase/functions/external-db-bridge/request-schema.ts",
     "supabase/functions/external-db-bridge/validation.ts"
    ],
-   "casos": 26
+   "casos": 27
   },
   {
    "arquivo": "supabase/functions/fechar-folha/e2e_concorrencia.test.ts",
@@ -5588,7 +5589,7 @@
   "src/lib/masks.ts": 1,
   "src/lib/queryClient.ts": 1,
   "src/lib/reciboAssinaturaPdf.ts": 1,
-  "src/lib/retry.ts": 1,
+  "src/lib/retry.ts": 2,
   "src/lib/utils.ts": 1,
   "src/pages/CienciaMedidaPage.tsx": 1,
   "src/pages/FolhaPage.tsx": 1,

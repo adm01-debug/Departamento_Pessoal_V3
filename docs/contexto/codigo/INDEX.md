@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `34e22ec5df8bc4a83aa012a093a82f66828fbec8` (2026-11-10T07:14:36-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `7aba28e3ba72cd30b8026c164c05f7a021f1547d` (2026-11-10T10:35:47Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2828 |
 | arquivos_codigo | 1520 |
-| linhas_codigo | 263837 |
+| linhas_codigo | 264141 |
 | rotas | 113 |
 | rotas_http_backend | 19 |
 | vistas_por_id | 0 |
@@ -45,7 +45,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | componentes | 429 |
 | hooks | 102 |
 | edge_functions | 65 |
-| tabelas | 436 |
+| tabelas | 417 |
 | migrations | 781 |
 | cron_jobs | 41 |
 | testes | 575 |
@@ -70,37 +70,37 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | módulo | itens de menu | telas/rotas | arquivos | hooks locais | edges | tabelas |
 |---|---|---|---|---|---|---|
 | calculators | 0 | 0 | 8 | 0 | 0 | 0 |
-| components | 0 | 0 | 5 | 17 | 1 | 6 |
+| components | 0 | 0 | 5 | 17 | 23 | 6 |
 | components/admin | 0 | 0 | 7 | 1 | 0 | 1 |
-| components/admissoes | 0 | 0 | 5 | 7 | 5 | 89 |
+| components/admissoes | 0 | 0 | 5 | 7 | 8 | 89 |
 | components/afastamentos | 0 | 0 | 5 | 7 | 0 | 7 |
 | components/colaborador-detalhes | 0 | 0 | 17 | 63 | 0 | 33 |
-| components/dashboard | 0 | 0 | 16 | 7 | 0 | 59 |
+| components/dashboard | 0 | 0 | 16 | 7 | 23 | 59 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
 | components/desligamentos | 0 | 0 | 8 | 3 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/esocial | 0 | 0 | 22 | 2 | 2 | 7 |
 | components/exames | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/ferias | 0 | 0 | 21 | 135 | 5 | 116 |
-| components/folha | 0 | 0 | 20 | 129 | 10 | 124 |
+| components/ferias | 0 | 0 | 21 | 135 | 8 | 116 |
+| components/folha | 0 | 0 | 20 | 129 | 13 | 124 |
 | components/forms | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/layout | 0 | 1 | 28 | 17 | 1 | 6 |
-| components/medidas-disciplinares | 0 | 0 | 9 | 125 | 5 | 111 |
+| components/layout | 0 | 1 | 28 | 17 | 23 | 6 |
+| components/medidas-disciplinares | 0 | 0 | 9 | 125 | 8 | 111 |
 | components/notifications | 0 | 0 | 5 | 4 | 0 | 5 |
 | components/pcs | 0 | 0 | 6 | 9 | 0 | 8 |
-| components/ponto | 0 | 0 | 17 | 126 | 8 | 113 |
-| components/portal | 0 | 0 | 5 | 4 | 0 | 80 |
-| components/settings | 0 | 0 | 11 | 127 | 5 | 119 |
+| components/ponto | 0 | 0 | 17 | 126 | 11 | 113 |
+| components/portal | 0 | 0 | 5 | 4 | 3 | 80 |
+| components/settings | 0 | 0 | 11 | 127 | 31 | 119 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 8 |
 | components/ui | 0 | 0 | 58 | 15 | 2 | 5 |
-| hooks | 0 | 0 | 83 | 167 | 9 | 136 |
+| hooks | 0 | 0 | 83 | 167 | 12 | 136 |
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 7 | 0 | 0 | 0 |
-| pages | 92 | 111 | 111 | 176 | 24 | 261 |
+| pages | 92 | 111 | 111 | 176 | 48 | 261 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
-| services | 0 | 0 | 71 | 0 | 9 | 182 |
+| services | 0 | 0 | 71 | 0 | 35 | 182 |
 | services/tabelas | 0 | 0 | 8 | 0 | 0 | 47 |
 | types | 0 | 0 | 12 | 0 | 0 | 0 |
 | utils | 0 | 0 | 26 | 0 | 0 | 1 |
@@ -246,68 +246,68 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - (nenhum)
 
 ## Edge functions
-- `OCR` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `OCR` — tabelas: -; chamada por 1 arquivo(s) do front
 - `adiantamento-salarial` — tabelas: adiantamentos_salariais, auditoria, colaboradores, parametros_sistema; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `admissao-publica` (verify_jwt=false) — tabelas: admissao_tokens; chamada por 1 arquivo(s) do front
-- `alertas-dp` — tabelas: asos, colaboradores, notificacoes, user_empresas, user_roles, v_login_anomalies; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `alertas-dp` — tabelas: asos, colaboradores, notificacoes, user_empresas, user_roles, v_login_anomalies; chamada por 1 arquivo(s) do front
 - `alertas-preditivos` — tabelas: afastamentos, colaboradores, desligamentos, faltas, notificacoes, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `assinaturaDigital` — tabelas: admissao_tokens, audit_log; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `assinaturaDigital` — tabelas: admissao_tokens, audit_log; chamada por 1 arquivo(s) do front
 - `assistente-ia` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `auditoria` — tabelas: auditoria; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `auth-gov-br` (verify_jwt=false) — tabelas: colaboradores, govbr_auth_state, profiles; chamada por 2 arquivo(s) do front
 - `auth-login` (verify_jwt=false) — tabelas: -; chamada por 0 arquivo(s) do front
 - `backup` — tabelas: audit_log, user_roles; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `backup-automatico` — tabelas: audit_log; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `cache` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `backup-automatico` — tabelas: audit_log; chamada por 1 arquivo(s) do front
+- `cache` — tabelas: -; chamada por 1 arquivo(s) do front
 - `calcular-13-salario` — tabelas: audit_log; chamada por 1 arquivo(s) do front
-- `calcular-ferias` — tabelas: audit_log, colaboradores, ferias, periodos_aquisitivos, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `calcular-folha` — tabelas: adiantamentos_salariais, audit_log, beneficios_colaborador, colaboradores, dependentes, emprestimos_consignados, eventos_variaveis, feriados, folha_itens, folha_lock_conflicts, folhas_pagamento, pensoes, registros_ponto, vales_alimentacao, vales_transporte; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `calcular-provisoes` — tabelas: colaboradores, provisao_logs; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `calcular-rescisao` — tabelas: audit_log, colaboradores; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `calcular-ferias` — tabelas: audit_log, colaboradores, ferias, periodos_aquisitivos, registros_ponto; chamada por 1 arquivo(s) do front
+- `calcular-folha` — tabelas: adiantamentos_salariais, audit_log, beneficios_colaborador, colaboradores, dependentes, emprestimos_consignados, eventos_variaveis, feriados, folha_itens, folha_lock_conflicts, folhas_pagamento, pensoes, registros_ponto, vales_alimentacao, vales_transporte; chamada por 1 arquivo(s) do front
+- `calcular-provisoes` — tabelas: colaboradores, provisao_logs; chamada por 1 arquivo(s) do front
+- `calcular-rescisao` — tabelas: audit_log, colaboradores; chamada por 1 arquivo(s) do front
 - `cnab-remessa` — tabelas: auditoria, cnab_itens, cnab_remessas; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `consultarCEP` — tabelas: -; chamada por 1 arquivo(s) do front
 - `consultarCNPJ` — tabelas: -; chamada por 1 arquivo(s) do front
-- `criptografia` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `criptografia` — tabelas: -; chamada por 1 arquivo(s) do front
 - `dctfweb` — tabelas: auditoria, dctfweb_declaracoes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `distribuir-holerites` — tabelas: colaboradores, folhas_pagamento, holerite_distribuicoes, holerites, notificacoes; chamada por 1 arquivo(s) do front
 - `emprestimo-consignado` — tabelas: auditoria, colaboradores, convenios, emprestimos_consignados; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `enviar-email-admissao` — tabelas: admissao_tokens, admissoes, audit_log, notificacoes_admissao; chamada por 1 arquivo(s) do front
 - `enviar-esocial` — tabelas: audit_log, configuracoes_esocial, esocial_eventos, esocial_transmissao_logs; chamada por 1 arquivo(s) do front
-- `enviar-relatorio` — tabelas: afastamentos, audit_log, colaboradores, ferias, folhas_pagamento, log_envio_relatorios, relatorios_agendados, report_dispatch_attempts; chamada por 0 arquivo(s) do front
-- `exportacao` — tabelas: audit_log, colaboradores, folhas_pagamento; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `external-db-bridge` — tabelas: query_telemetry; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `enviar-relatorio` — tabelas: afastamentos, audit_log, colaboradores, ferias, folhas_pagamento, log_envio_relatorios, relatorios_agendados, report_dispatch_attempts; chamada por 1 arquivo(s) do front
+- `exportacao` — tabelas: audit_log, colaboradores, folhas_pagamento; chamada por 1 arquivo(s) do front
+- `external-db-bridge` — tabelas: query_telemetry; chamada por 1 arquivo(s) do front
 - `fechar-folha` — tabelas: audit_log, folhas_pagamento, provisoes_mensais; chamada por 1 arquivo(s) do front
 - `fgts-digital` — tabelas: auditoria, fgts_digital_logs, guias_fgts_digital; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `folha-metrics` — tabelas: audit_log, idempotency_keys; chamada por 1 arquivo(s) do front
 - `gerar-aej` — tabelas: aej_geracoes, batidas_ponto, colaboradores, empresas, pii_access_logs, registros_ponto; chamada por 1 arquivo(s) do front
 - `gerar-afd` — tabelas: afd_geracoes, batidas_ponto, colaboradores, empresas, pii_access_logs; chamada por 1 arquivo(s) do front
 - `gerar-contrato-pdf` — tabelas: admissoes, contrato_templates, contratos_gerados; chamada por 1 arquivo(s) do front
-- `gerar-guias` — tabelas: audit_log, colaboradores, logs_integracoes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `gerar-holerite` — tabelas: audit_log, beneficios_colaborador, colaboradores, dependentes, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `gerar-guias` — tabelas: audit_log, colaboradores, logs_integracoes; chamada por 1 arquivo(s) do front
+- `gerar-holerite` — tabelas: audit_log, beneficios_colaborador, colaboradores, dependentes, registros_ponto; chamada por 1 arquivo(s) do front
 - `gerar-ltcat-os` — tabelas: empresas, sst_ltcat_laudos, sst_ordens_servico, user_empresas; chamada por 1 arquivo(s) do front
-- `gerar-medida-disciplinar-pdf` — tabelas: audit_log, colaboradores, empresas, medidas_disciplinares; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `gerar-medida-disciplinar-pdf` — tabelas: audit_log, colaboradores, empresas, medidas_disciplinares; chamada por 1 arquivo(s) do front
 - `gerar-pgr` — tabelas: empresas, sst_programas, sst_riscos_ambientais, user_empresas; chamada por 1 arquivo(s) do front
-- `healthcheck` (verify_jwt=false) — tabelas: colaboradores, health_checks, query_telemetry; chamada por 0 arquivo(s) do front
-- `importacao` — tabelas: audit_log; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `healthcheck` (verify_jwt=false) — tabelas: colaboradores, health_checks, query_telemetry; chamada por 1 arquivo(s) do front
+- `importacao` — tabelas: audit_log; chamada por 1 arquivo(s) do front
 - `integracao` — tabelas: audit_log, integracao_logs, integracoes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `limpeza` — tabelas: auditoria, blocked_ips, login_attempts, rate_limit_logs, user_roles, user_sessions, verification_tokens; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `metricas` — tabelas: colaboradores, esocial_eventos, metricas_processamento, mv_folha_summary, mv_telemetry_dashboard, query_telemetry; chamada por 1 arquivo(s) do front
+- `limpeza` — tabelas: auditoria, blocked_ips, login_attempts, rate_limit_logs, user_roles, user_sessions, verification_tokens; chamada por 1 arquivo(s) do front
+- `metricas` — tabelas: colaboradores, esocial_eventos, metricas_processamento, mv_folha_summary, mv_telemetry_dashboard, query_telemetry; chamada por 2 arquivo(s) do front
 - `metrics` (verify_jwt=false) — tabelas: colaboradores, health_checks, mv_telemetry_dashboard, query_telemetry; chamada por 0 arquivo(s) do front
-- `notificacao` — tabelas: audit_log, fila_notificacoes, notificacoes, user_empresas; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `notificacao` — tabelas: audit_log, fila_notificacoes, notificacoes, user_empresas; chamada por 1 arquivo(s) do front
 - `pagar-desligamento` — tabelas: desligamentos; chamada por 1 arquivo(s) do front
 - `parse-afdt` — tabelas: afdt_importacoes, afdt_registros_raw, user_empresas; chamada por 1 arquivo(s) do front
 - `pix-lote` — tabelas: auditoria, pix_itens, pix_lotes; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `process-document-ocr` — tabelas: -; chamada por 1 arquivo(s) do front
-- `processar-agendamentos` — tabelas: fila_notificacoes, log_envio_relatorios; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `processar-ponto` — tabelas: banco_horas, banco_horas_config, batidas_ponto, colaboradores, escalas_trabalho, feriados, jornadas, jornadas_horarios, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `processar-agendamentos` — tabelas: fila_notificacoes, log_envio_relatorios; chamada por 1 arquivo(s) do front
+- `processar-ponto` — tabelas: banco_horas, banco_horas_config, batidas_ponto, colaboradores, escalas_trabalho, feriados, jornadas, jornadas_horarios, registros_ponto; chamada por 1 arquivo(s) do front
 - `processar-ponto-offline` — tabelas: batidas_ponto, colaboradores, user_empresas; chamada por 1 arquivo(s) do front
-- `rateLimit` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `rateLimit` — tabelas: -; chamada por 1 arquivo(s) do front
 - `reabrir-folha` — tabelas: audit_log, folhas_pagamento; chamada por 1 arquivo(s) do front
 - `relatorio` — tabelas: audit_log, auditoria_logs, colaboradores, ferias_solicitacoes, folhas_pagamento, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
-- `sincronizar-bitrix` — tabelas: audit_log, bitrix24_config, bitrix24_sync_logs, colaboradores, departamentos; chamada por 1 arquivo(s) do front
+- `sincronizar-bitrix` — tabelas: audit_log, bitrix24_config, bitrix24_sync_logs, colaboradores, departamentos; chamada por 2 arquivo(s) do front
 - `tabelas-dominio` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `upload-certificado` — tabelas: certificados_digitais; chamada por 1 arquivo(s) do front
-- `validar-biometria` — tabelas: batidas_ponto, colaboradores; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `validar-biometria` — tabelas: batidas_ponto, colaboradores; chamada por 1 arquivo(s) do front
 - `warmup` — tabelas: -; chamada por 0 arquivo(s) do front — **ÓRFÃ**
 - `webhook` (verify_jwt=false) — tabelas: webhook_logs; chamada por 0 arquivo(s) do front
 - `whatsapp-send` — tabelas: whatsapp_mensagens_logs, whatsapp_templates; chamada por 1 arquivo(s) do front
@@ -371,22 +371,22 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - rotas_sem_arquivo: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 1 — ex.: Ações -> /quick-actions
-- edges_orfas: 36 — ex.: OCR, adiantamento-salarial, alertas-dp
+- edges_orfas: 14 — ex.: adiantamento-salarial, alertas-preditivos, assistente-ia
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 15 — ex.: cbo, cnae, config_retencao
 - tabelas_usadas_sem_definicao: 0
-- tabelas_com_drift_migration_vs_types: 0
+- tabelas_com_drift_migration_vs_types: 85 — ex.: admissao_tokens, admissoes, afastamentos
 - rpcs_sem_definicao: 4 — ex.: aplicar_medida_folha_ponto, complete_admission_esocial_event, drenar_fila_limpeza_lgpd
 - componentes_orfaos: 21 — ex.: src/components/dashboard/SectionHeader.tsx, src/components/layout/Breadcrumb.tsx, src/components/layout/Column.tsx
 - componentes_com_nome_duplicado: 17 — ex.: AlertasRHWidget, CadastroIncompletoWidget, ESocialMonitorWidget
 - scripts_orfaos: 0
 - env_usadas_nao_declaradas: 13 — ex.: CI, DEV, GITHUB_ACTIONS
 - ciclos_de_import: 3
-- possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:44, scripts/ai-context/cenarios.mjs:102
+- possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21542 nós · 44967 arestas · 2143 comunidades · grafo do commit `34e22ec5`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (434), button.tsx (384), lucide-react (324), cn (296), vitest (283), App.tsx (172), "public"."empresas" (164), usePiiMask (156), "public"."colaboradores" (155), "public"."empresas" (154)
+- 21552 nós · 44991 arestas · 2080 comunidades · grafo do commit `7aba28e3`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), react (407), cn (365), lucide-react (364), useEmpresas (356), button.tsx (306), App.tsx (239), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), "public"."colaboradores" (146)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -598,6 +598,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-10 `7aba28e` fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)
 - 2026-11-10 `34e22ec` feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)
 - 2026-11-09 `1dbce64` fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)
 - 2026-11-09 `8597905` fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)
@@ -612,7 +613,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-09 `4e36ab2` chore(autofix): eslint --fix com regras seguras + prettier (85 arquivos) (#404)
 - 2026-11-09 `4584235` feat(sync): script que atualiza o repositório local com o GitHub de hora em hora (#403)
 - 2026-11-09 `b590d3f` feat(autofix): autofix sem IA e verificador de regras de negócio (#402)
-- 2026-11-09 `d03a83b` fix: corrige regex DROP_POLICY_RE em audit-migration-style — espaço literal tornava gate inoperante (#390)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

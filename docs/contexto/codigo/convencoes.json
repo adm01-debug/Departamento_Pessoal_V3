@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)",
    "feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)",
    "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)",
    "fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)",
-   "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)",
-   "fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)"
+   "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
