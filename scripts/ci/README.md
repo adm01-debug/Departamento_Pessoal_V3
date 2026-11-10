@@ -5,6 +5,13 @@ Scripts que rodam no CI e podem ser executados localmente antes de abrir PR.
 | Script | O que faz | Quando rodar |
 |---|---|---|
 | `check-claude-md-integrity.mjs` | Verifica que `AGENTS.md` existe, tem as 4 seções obrigatórias (`## 1. Contexto`, `## 2. Como trabalhar`, `## 7. Fluxo Git`, `## 8. Específico deste repositório`) e não encolheu >30% vs a base | Sempre que tocar em `AGENTS.md` (o `CLAUDE.md` é só `@AGENTS.md`) |
+| `actions-kpi.mjs` | Runs/semana por workflow, taxa de cancelamento/falha, minutos, 5 jobs mais lentos; mantém a issue `[kpi-actions]` | `.github/workflows/branch-hygiene-audit.yml` (semanal) |
+| `branch-podaveis.mjs` | Monta (sem executar) comandos de poda para branches patch-equivalentes a `main`, sem commit há 30d, sem PR aberta | idem |
+| `sla-code-scanning.mjs` | SLA de alertas de code scanning: high/critical 14d, medium/low 30d | idem |
+| `issue-rotativa.mjs` | Abre/comenta/rotaciona issue de alerta quando passa de 20 comentários | biblioteca — chamada por `notifica-falha.mjs` |
+| `notifica-falha.mjs` | Glue para `notifica-falha-main.yml`: lê o contexto do `workflow_run` via env vars e chama `abrirOuRotacionar` (paginação correta + rotação) | `.github/workflows/notifica-falha-main.yml` |
+| `bump-toolchain.mjs` | Avisa (informativo, nunca falha) quando há versão mais nova de `supabase-cli`/`playwright`/`actionlint` em `.github/toolchain.json` | idem |
+| `workflow-test-support.mjs` | Helper de leitura de YAML de workflow usado pelos `.unit.mjs` acima — não roda sozinho | — |
 
 ## Uso local
 
@@ -39,6 +46,10 @@ comparação de bytes.
 ## Portado de
 
 Zapp Web V2 (`scripts/ci/check-claude-md-integrity.mjs`), adaptado para a estrutura do DP V3.
+
+Também do Zapp Web V2: `actions-kpi.mjs`, `branch-podaveis.mjs`, `sla-code-scanning.mjs`, `issue-rotativa.mjs`,
+`bump-toolchain.mjs`, `workflow-test-support.mjs` e o workflow `branch-hygiene-audit.yml` — mesmo pacote
+"scripts autônomos" citado em `.github/workflows/contexto.yml` e `scripts/supabase_snapshot/README.md`.
 
 Pendente: a versão endurecida do Zapp também vigia o **conjunto** `AGENTS.md` + `CLAUDE.md` +
 `docs/agentes/*.md` (−30% no total e −50% por arquivo, mais existência de cada arquivo que havia na base).
