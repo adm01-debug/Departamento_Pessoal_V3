@@ -82,7 +82,7 @@ const corsWild = /Access-Control-Allow-Origin["'`]?\s*\]?\s*[:=,]\s*[^;,\n)}]*?[
 // Valor vindo de constante do mesmo arquivo: const ANY = '*' ... 'Access-Control-Allow-Origin': ANY
 const corsIdent = /Access-Control-Allow-Origin["'`]?\s*\]?\s*[:=,]\s*([A-Za-z_$][\w$]*)/gi;
 const hasCorsWildcard = (src) => corsWild.test(src) || [...src.matchAll(corsIdent)].some(([, id]) =>
-  new RegExp(`\\b(?:const|let|var)\\s+${id.replace(/\$/g, '\\$')}\\b[^;\\n]*["'\`]\\*["'\`]\\s*;?\\s*$`, 'm').test(src));
+  new RegExp(`\\b(?:const|let|var)\\s+${id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b[^;\\n]*["'\`]\\*["'\`]\\s*;?\\s*$`, 'm').test(src));
 for (const { rel, src } of edgeSources) {
   if (hasCorsWildcard(src)) fail(`CORS '*' em ${rel}`);
 }
