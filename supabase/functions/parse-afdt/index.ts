@@ -2,7 +2,7 @@
 // Recebe { conteudo: string, nome_arquivo: string, tipo?: 'AFDT'|'ACJEF'|'AEJ' }
 // Retorna { importacao_id, total_linhas, total_registros, total_erros }
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
