@@ -1382,6 +1382,22 @@
       "manual": ["node", "scripts/ci/workflow-test-support.mjs"],
       "triggers": ["manual"],
       "reason": "helper puro do pacote de higiene de branches (PR #397); importado literais: scripts/ci/actions-kpi.unit.mjs, scripts/ci/branch-hygiene-runtime.unit.mjs, scripts/ci/branch-podaveis.unit.mjs e scripts/ci/sla-code-scanning.unit.mjs. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-4c92b871e7b7e840",
+      "kind": "legacy",
+      "files": ["scripts/ci/github-settings-guard.mjs"],
+      "manual": ["node", "scripts/ci/github-settings-guard.mjs"],
+      "triggers": ["manual"],
+      "reason": "settings-guard portado do Zapp Web V2 (PR #399); chamado literal: .github/workflows/settings-guard.yml (run: node scripts/ci/github-settings-guard.mjs). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-8721e4465d0413f3",
+      "kind": "legacy",
+      "files": ["scripts/ci/github-settings-guard.unit.mjs"],
+      "manual": ["node", "--test", "scripts/ci/github-settings-guard.unit.mjs"],
+      "triggers": ["manual"],
+      "reason": "teste node --test do settings-guard (PR #399), contratos do GitHub. O dispatcher nao executa esta operacao."
     }
   ],
   "ci": [
