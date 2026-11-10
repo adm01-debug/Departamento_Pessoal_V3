@@ -28,6 +28,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/migration.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE ROLE service_role NOLOGIN BYPASSRLS;
 CREATE SCHEMA auth;
 CREATE TYPE public.app_role AS ENUM ('admin','rh','user');

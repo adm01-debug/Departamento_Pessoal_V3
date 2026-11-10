@@ -42,6 +42,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-holerite-espelho.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE SCHEMA auth;
 CREATE TABLE auth.users (id uuid PRIMARY KEY);
 CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT NULL::uuid $$;

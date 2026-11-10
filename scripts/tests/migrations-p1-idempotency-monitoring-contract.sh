@@ -9,6 +9,7 @@ docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 bash "$ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"; docker cp "$MIGRATION" "$NAME":/tmp/m.sql
 psqlc <<'SQL'
 CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE TABLE idempotency_keys(id uuid DEFAULT gen_random_uuid(), endpoint text, status text,
   created_at timestamptz DEFAULT now(), expires_at timestamptz DEFAULT now()+interval '1 day');
 CREATE TABLE security_alerts(id uuid DEFAULT gen_random_uuid(), type text, severity text,

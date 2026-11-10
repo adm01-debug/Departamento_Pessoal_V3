@@ -56,6 +56,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-bridge-membership.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE SCHEMA auth;
 CREATE OR REPLACE FUNCTION auth.uid()
 RETURNS uuid LANGUAGE sql STABLE
