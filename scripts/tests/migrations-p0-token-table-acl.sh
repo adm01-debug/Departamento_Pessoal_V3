@@ -7,7 +7,7 @@ MIGRATION="$REPO_ROOT/supabase/migrations/20260912191000_p0_token_table_acl.sql"
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p0-token-acl-$$"
 
-cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"

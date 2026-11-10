@@ -8,7 +8,7 @@ NAME="dp-p1-admission-esocial-$$"
 RESULT_DIR="$(mktemp -d)"
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
 trap cleanup EXIT

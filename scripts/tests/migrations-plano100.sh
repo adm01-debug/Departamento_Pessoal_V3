@@ -19,11 +19,11 @@ MIGS=$(ls "$REPO_ROOT"/supabase/migrations/2026083*_plano100_*.sql 2>/dev/null |
 command -v docker >/dev/null || { echo "❌ docker necessário"; exit 1; }
 
 LOG_DIR="$(mktemp -d)"
-cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; rm -rf "$LOG_DIR"; }
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true; rm -rf "$LOG_DIR"; }
 trap cleanup EXIT
 
 echo "── Container $IMAGE ($NAME)"
-docker rm -f "$NAME" >/dev/null 2>&1 || true
+docker rm -f -v "$NAME" >/dev/null 2>&1 || true
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 
 # O entrypoint oficial inicia primeiro um servidor temporário somente via socket
