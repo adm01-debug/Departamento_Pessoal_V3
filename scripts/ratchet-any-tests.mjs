@@ -33,9 +33,10 @@ const results = await eslint.lintFiles([
   'src/**/__tests__/**/*.{ts,tsx}',
   'src/**/__mocks__/**/*.{ts,tsx}',
   // Helpers/fixtures fora dos padrões *.test/__tests__ — antes uma zona
-  // cega onde `any` crescia invisível (src/test/, src/tests/).
-  'src/test/**/*.{ts,tsx}',
-  'src/tests/**/*.{ts,tsx}',
+  // cega onde `any` crescia invisível (test/ e tests/ em qualquer nível,
+  // igual ao ignore `**/test/**` do eslint.config.js).
+  'src/**/test/**/*.{ts,tsx}',
+  'src/**/tests/**/*.{ts,tsx}',
 ]);
 
 // Garantia estrutural: 0 arquivos indica que os padrões de teste não
@@ -72,6 +73,11 @@ if (write) {
 let baseline;
 try {
   baseline = JSON.parse(await readFile(baselinePath, 'utf8'));
+  // Valor não numérico (edição manual/merge ruim) fazia `after > before` ser
+  // sempre falso — qualquer regressão passava como "sem regressão".
+  if (!baseline || typeof baseline !== 'object' || Object.values(baseline).some((v) => typeof v !== 'number')) {
+    throw new Error('esperado um objeto { diretório: número }');
+  }
 } catch (err) {
   console.error(`❌ Baseline ausente ou inválido em ${relative(root, baselinePath)}: ${err.message}`);
   console.error('   Rode com --write para criar um baseline inicial após revisão.');
