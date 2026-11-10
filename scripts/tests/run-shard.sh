@@ -30,10 +30,14 @@ esac
 SHARD="${ARG%%/*}"
 TOTAL="${ARG##*/}"
 
-if ! [[ "$SHARD" =~ ^[0-9]+$ ]] || ! [[ "$TOTAL" =~ ^[0-9]+$ ]]; then
+if [[ "$SHARD/$TOTAL" != "$ARG" ]] || ! [[ "$SHARD" =~ ^[0-9]+$ ]] || ! [[ "$TOTAL" =~ ^[0-9]+$ ]]; then
   echo "argumento inválido: '$ARG' — N e TOTAL devem ser inteiros" >&2
   exit 1
 fi
+# Base 10 explícita: "08" seria lido como octal inválido e o shard sairia
+# verde sem rodar nenhum script.
+SHARD=$((10#$SHARD))
+TOTAL=$((10#$TOTAL))
 if [[ "$TOTAL" -lt 1 ]] || [[ "$SHARD" -lt 1 ]] || [[ "$SHARD" -gt "$TOTAL" ]]; then
   echo "argumento inválido: '$ARG' — esperado 1 <= N <= TOTAL" >&2
   exit 1

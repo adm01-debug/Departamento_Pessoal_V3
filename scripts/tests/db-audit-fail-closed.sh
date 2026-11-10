@@ -24,7 +24,8 @@ for script in "${scripts[@]}"; do
     exit 1
   fi
 
-  if DATABASE_URL='postgresql://127.0.0.1:1/postgres?connect_timeout=1' \
+  # PGHOST/SUPABASE_DB_URL herdados do ambiente venceriam a URL inalcançável.
+  if env -u PGHOST -u SUPABASE_DB_URL DATABASE_URL='postgresql://127.0.0.1:1/postgres?connect_timeout=1' \
     node "$script" >/dev/null 2>&1; then
     echo "❌ $script aprovou um alvo de auditoria inalcançável" >&2
     exit 1

@@ -14,7 +14,7 @@ test -f "$LEGACY_MIGRATION" || { echo "legacy view migration not found: $LEGACY_
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
