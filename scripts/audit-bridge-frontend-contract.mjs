@@ -43,7 +43,10 @@ function walk(dir) {
 function exportedSet(source, name) {
   const match = source.match(new RegExp(`export const ${name}\\s*=\\s*new Set<[^>]+>\\(\\[([\\s\\S]*?)\\]\\);`));
   if (!match) throw new Error(`Não foi possível localizar ${name}`);
-  return new Set([...match[1].matchAll(/["']([A-Za-z0-9_]+)["']/g)].map((item) => item[1]));
+  // Comentários saem antes: uma entrada comentada (`// "rpc_removida",`) não
+  // está no Set em runtime e não pode contar como admitida pela allowlist.
+  const body = match[1].replace(/\/\/[^\n]*|\/\*[\s\S]*?\*\//g, '');
+  return new Set([...body.matchAll(/["']([A-Za-z0-9_]+)["']/g)].map((item) => item[1]));
 }
 
 function lineAt(source, index) {
@@ -100,12 +103,14 @@ for (const file of srcFiles) {
   for (const match of source.matchAll(/\.from\s*\(\s*["']audit_log["']\s*\)/g)) {
     directLegacyAuditCalls.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
   }
-  for (const match of source.matchAll(/\.rpc\s*\(\s*["']([A-Za-z0-9_]+)["']/g)) {
+  // `(?:<[^(]*>)?` cobre argumentos de tipo: `.rpc<Row>('nome')` não casava
+  // nenhum dos dois padrões e a chamada escapava da allowlist.
+  for (const match of source.matchAll(/\.rpc\s*(?:<[^(]*>)?\s*\(\s*["']([A-Za-z0-9_]+)["']/g)) {
     const locations = calls.get(match[1]) ?? [];
     locations.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
     calls.set(match[1], locations);
   }
-  for (const match of source.matchAll(/\.rpc\s*\(\s*([^"'\s)][^,)\n]*)/g)) {
+  for (const match of source.matchAll(/\.rpc\s*(?:<[^(]*>)?\s*\(\s*([^"'\s)][^,)\n]*)/g)) {
     dynamicRpcCalls.push(`${relative(root, file)}:${lineAt(source, match.index)}`);
   }
 

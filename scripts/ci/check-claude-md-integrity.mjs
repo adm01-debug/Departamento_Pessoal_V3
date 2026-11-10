@@ -5,7 +5,7 @@
  * Base: CLAUDE_MD_BASE (no CI, a main buscada; localmente, sem a variavel, compara com o HEAD).
  */
 import { readFileSync } from 'node:fs';
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 
 // CLAUDE.md é agora um arquivo de redirect (@AGENTS.md); as regras reais vivem em AGENTS.md.
 const CHECKED_FILE = 'AGENTS.md';
@@ -26,9 +26,23 @@ try {
   process.exit();
 }
 
-const missing = REQUIRED_SECTIONS.filter((s) => !content.includes(s));
+const lines = content.split(/\r?\n/);
+const missing = REQUIRED_SECTIONS.filter((s) => !lines.some((l) => l.startsWith(s)));
 if (missing.length > 0) {
   for (const s of missing) console.error(`::error::${CHECKED_FILE}: secao obrigatoria ausente: ${s}`);
+  process.exitCode = 1;
+  process.exit();
+}
+
+// Sem a linha @AGENTS.md no CLAUDE.md as regras deixam de ser carregadas, mesmo com o AGENTS.md intacto.
+let redirect = '';
+try {
+  redirect = readFileSync('CLAUDE.md', 'utf8');
+} catch {
+  // arquivo ausente = redirect ausente (tratado abaixo)
+}
+if (!/^@AGENTS\.md\s*$/m.test(redirect)) {
+  console.error(`::error::CLAUDE.md ausente ou sem a linha @${CHECKED_FILE}. Outra sessao pode ter apagado o redirect.`);
   process.exitCode = 1;
   process.exit();
 }
@@ -36,8 +50,14 @@ if (missing.length > 0) {
 const BASE = process.env.CLAUDE_MD_BASE || 'HEAD';
 let headContent;
 try {
-  headContent = execSync(`git show ${BASE}:${CHECKED_FILE}`, { encoding: 'utf8' });
+  headContent = execFileSync('git', ['show', `${BASE}:${CHECKED_FILE}`], { encoding: 'utf8' });
 } catch {
+  // Base pedida explicitamente (CI) e ilegivel: a checagem de encolhimento nao rodaria — nao pode passar.
+  if (process.env.CLAUDE_MD_BASE) {
+    console.error(`::error::Nao foi possivel ler ${CHECKED_FILE} na base ${BASE}; checagem de encolhimento nao executada.`);
+    process.exitCode = 1;
+    process.exit();
+  }
   headContent = null;
 }
 

@@ -101,7 +101,8 @@ API_ROLES = ("anon", "authenticated", "service_role", "PUBLIC")
 MGMT_API = "https://api.supabase.com/v1"
 REDACT_RE = re.compile(
     r"(secret|password|passwd|token|private_key|api_key|apikey|smtp_pass|client_secret|"
-    r"signing_key|service_key|anon_key|service_role|jwt|credential|encryption_key|connection_string|dsn)",
+    r"signing_key|service_key|anon_key|service_role|jwt|credential|encryption_key|connection_string|dsn|"
+    r"access_key|test_otp)",  # sms_messagebird_access_key e sms_test_otp (telefone=código) do auth config
     re.I,
 )
 
@@ -216,7 +217,9 @@ def write(path: pathlib.Path, content: str) -> None:
 
 def redact(obj: Any) -> Any:
     if isinstance(obj, dict):
-        return {k: ("[REDACTED]" if REDACT_RE.search(str(k)) else redact(v)) for k, v in obj.items()}
+        # bool/número/null não carregam segredo: redigi-los escondia jwt_exp e fazia todo hook_*_token_enabled parecer ligado
+        return {k: ("[REDACTED]" if REDACT_RE.search(str(k)) and not isinstance(v, (bool, int, float, type(None))) else redact(v))
+                for k, v in obj.items()}
     if isinstance(obj, list):
         return [redact(v) for v in obj]
     if isinstance(obj, str):
@@ -251,8 +254,9 @@ SCRUB_RULES: list[tuple[re.Pattern, str]] = [
     (re.compile(r"""(?i)((?:apikey|api_key|x-api-key|authorization|token|secret|password|passwd|service_role_key|anon_key)\s*["']?\s*[:=]\s*["']?)(?=[^"'\s,;)}]*\d)[^"'\s,;)}]{16,}"""), r"\1[REDACTED]"),
     # PASSWORD 'x' em DDL de role
     (re.compile(r"(?i)(password\s+)'[^']*'"), r"\1'[REDACTED]'"),
-    # DSN com senha
-    (re.compile(r"(\w+://[^/\s:@]+:)[^@\s]+(@)"), r"\1[REDACTED]\2"),
+    # DSN com senha: redige usuário:senha inteiro — `usuario:[REDACTED]@` ainda casa com o guard de segredos
+    # do workflow (postgres://...:...@) e derrubaria toda coleta enquanto o texto existisse no banco.
+    (re.compile(r"(\w+://)[^/\s:@]+:[^@\s]+(@)"), r"\1[REDACTED]\2"),
     # chaves de provedores comuns
     (re.compile(r"\b(?:sk-[A-Za-z0-9_-]{20,}|sk_live_[A-Za-z0-9]{10,}|sk_test_[A-Za-z0-9]{10,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,})\b"), "[REDACTED_KEY]"),
 ]
@@ -383,9 +387,12 @@ def get_constraints(conn):
                CASE con.contype WHEN 'p' THEN 'PRIMARY KEY' WHEN 'f' THEN 'FOREIGN KEY' WHEN 'u' THEN 'UNIQUE'
                     WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' ELSE con.contype::text END AS type,
                pg_get_constraintdef(con.oid, true) AS definition,
-               ARRAY(SELECT a.attname FROM unnest(con.conkey) k JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = k) AS columns,
+               -- WITH ORDINALITY + ORDER BY: sem isso a ordem vem do join (attnum), não da chave, e (b, a) -> (x, y) sai trocado
+               ARRAY(SELECT a.attname FROM unnest(con.conkey) WITH ORDINALITY k(attnum, ord)
+                     JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = k.attnum ORDER BY k.ord) AS columns,
                fn.nspname AS ref_schema, fc.relname AS ref_table,
-               ARRAY(SELECT a.attname FROM unnest(con.confkey) k JOIN pg_attribute a ON a.attrelid = con.confrelid AND a.attnum = k) AS ref_columns,
+               ARRAY(SELECT a.attname FROM unnest(con.confkey) WITH ORDINALITY k(attnum, ord)
+                     JOIN pg_attribute a ON a.attrelid = con.confrelid AND a.attnum = k.attnum ORDER BY k.ord) AS ref_columns,
                CASE con.confdeltype WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE'
                     WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END AS on_delete,
                CASE con.confupdtype WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE'
@@ -714,7 +721,8 @@ def get_lints(conn):
                     "detail": "Sem chave primária: Realtime/replicação e updates por linha ficam frágeis."})
     for r in q(conn, f"""
         SELECT n.nspname AS schema, c.relname AS "table", con.conname,
-               ARRAY(SELECT a.attname FROM unnest(con.conkey) k JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = k) AS cols
+               ARRAY(SELECT a.attname FROM unnest(con.conkey) WITH ORDINALITY k(attnum, ord)
+                     JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = k.attnum ORDER BY k.ord) AS cols
         FROM pg_constraint con JOIN pg_class c ON c.oid = con.conrelid JOIN pg_namespace n ON n.oid = c.relnamespace
         WHERE con.contype = 'f' AND {excluded_sql()}
           AND NOT EXISTS (SELECT 1 FROM pg_index ix WHERE ix.indrelid = con.conrelid
@@ -827,7 +835,16 @@ def get_db_stats(conn):
     except Exception as e:  # noqa: BLE001
         record_error("db_stats.auth", e)
         out["auth"] = {}
-    out["queues"] = q(conn, "SELECT queue_name, queue_length, newest_msg_age_sec, oldest_msg_age_sec, total_messages FROM pgmq.metrics_all() ORDER BY 1") if has_ext(conn, "pgmq") else []
+    # Mesmo contrato de storage/auth: papel sem acesso ao schema pgmq não pode derrubar as demais métricas.
+    try:
+        out["queues"] = q(conn, "SELECT queue_name, queue_length, newest_msg_age_sec, oldest_msg_age_sec, total_messages FROM pgmq.metrics_all() ORDER BY 1") if has_ext(conn, "pgmq") else []
+    except Exception as e:  # noqa: BLE001
+        record_error("db_stats.queues", e)
+        try:
+            conn.rollback()
+        except Exception:  # noqa: BLE001
+            pass
+        out["queues"] = None
     if STAT_STATEMENTS_TOP > 0:
         try:
             extension = q(conn, """
@@ -952,6 +969,13 @@ def introspect_api(previous_api: dict | None) -> tuple[dict[str, Any], dict[str,
     out["backups_config"] = keep(backups, ("region", "pitr_enabled", "walg_enabled")) if isinstance(backups, dict) else None
     stats["backups"] = backups
     stats["health"] = api_section("health", f"/projects/{ref}/health?services=auth,db,pooler,realtime,rest,storage", redact, optional=True)
+    # Falha de coleta (HTTP 5xx/401, timeout) não é "config removida": reaproveita a anterior, como nas seções
+    # do banco; senão o CHANGELOG registrava `config: ... removido` e os secrets saíam como "_nenhum_".
+    for key in out:
+        name = {"secrets_names": "secrets", "backups_config": "backups"}.get(key, key)
+        if out[key] is None and (previous_api or {}).get(key) is not None and any(e["section"] == f"api.{name}" for e in ERRORS):
+            out[key] = previous_api[key]
+            CARRIED.append(f"api.{name}")
 
     # Edge functions: a API devolve bundle binário (eszip), não fonte. Guardamos só metadados por função;
     # o fonte canônico é supabase/functions/<slug>/ no repo.
@@ -997,7 +1021,8 @@ def run_pg_dump() -> str | None:
         return None
     lines = [ln for ln in res.stdout.splitlines()
              if not ln.startswith(("-- Dumped from", "-- Dumped by", "\\restrict", "\\unrestrict"))]
-    text = re.sub(r"\n{3,}", "\n\n", "\n".join(lines))
+    # pg_dump não passa por q(): sem o scrub, segredo embutido em corpo de função ia cru para schema.sql.
+    text = scrub(re.sub(r"\n{3,}", "\n\n", "\n".join(lines)))
     log(f"pg_dump: ok ({len(text)} bytes)")
     return text
 
@@ -1086,11 +1111,14 @@ def rx_name_keys(names: list[str]) -> set[str]:
     return set(names)
 
 
-def build_function_callers(db: dict) -> dict[str, str]:
+def build_function_callers(db: dict, previous_db: dict | None = None) -> dict[str, str]:
     """Atualiza cada categoria disponível e informa a origem atual/anterior das referências."""
     fns = db.get("functions") or []
     if not fns:
         return {}
+    # Funções lidas agora não trazem `callers`: sem isto, fonte indisponível (código ilegível, cron negado)
+    # zerava as referências já publicadas e o CHANGELOG registrava `functions alterado`.
+    known = {(g["schema"], g["name"], g.get("args")): g.get("callers") for g in ((previous_db or {}).get("functions") or [])}
     if "functions" in CARRIED:
         # introspect_db reutiliza a lista anterior; não altere a base do changelog.
         fns = [{**f} for f in fns]
@@ -1128,7 +1156,7 @@ def build_function_callers(db: dict) -> dict[str, str]:
     for f in fns:
         n = f["name"]
         code = sorted(code_hits.get(n, {}).items())
-        previous = f.get("callers") or {}
+        previous = f.get("callers") or known.get((f["schema"], n, f.get("args"))) or {}
         callers = {
             "code": [{"file": rel, "hits": c} for rel, c in code[:30]],
             "code_total_files": len(code),
@@ -1706,11 +1734,13 @@ def main() -> int:
             previous = None
 
     db, stats = introspect_db((previous or {}).get("db"))
-    if all(v is None for v in db.values()):
+    # Seção reaproveitada (CARRIED) também não foi lida agora: com snapshot anterior, um banco que não
+    # respondia nada passava por aqui e era republicado como coleta concluída (exit 0, manifest renovado).
+    if all(v is None or name in CARRIED for name, v in db.items()):
         log("Banco inteiro indisponível — nada será sobrescrito.")
         return 1
 
-    caller_sources = build_function_callers(db)
+    caller_sources = build_function_callers(db, (previous or {}).get("db"))
     api_, api_stats = introspect_api((previous or {}).get("api"))
     schema_sql = run_pg_dump()
     types_ts = run_gen_types()

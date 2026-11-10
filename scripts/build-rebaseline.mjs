@@ -113,7 +113,8 @@ const result = [prelude, sanitizedDump, ...remediations.map((content) => content
 if (/^\\(?:un)?restrict\b/m.test(result)) {
   throw new Error('A migração não pode conter metacomandos exclusivos do psql.');
 }
-if (/^COPY\s|^INSERT INTO auth\.|^INSERT INTO public\./m.test(result)) {
+// O dump usa identificadores entre aspas (CREATE SCHEMA "public"): dado vazado viria como INSERT INTO "public"."t".
+if (/^COPY\s|^INSERT INTO "?(?:auth|public)"?\./im.test(result)) {
   throw new Error('A migração squash não pode conter dados de Auth ou negócio.');
 }
 if (/CREATE SCHEMA "public";/.test(result)) {

@@ -69,7 +69,9 @@ for (const file of files) {
 }
 
 if (failures.length > 0) {
-  console.error(`[edge-syntax] ${failures.length} arquivo(s) com erro de sintaxe:\n`);
+  // `failures` tem uma entrada por diagnóstico, não por arquivo.
+  const arquivos = new Set(failures.map(({ file }) => file)).size;
+  console.error(`[edge-syntax] ${failures.length} erro(s) de sintaxe em ${arquivos} arquivo(s):\n`);
   for (const { file, message } of failures) console.error(`  ✗ ${file}: ${message}`);
   console.error('\nEssas funções falhariam no bundle do deploy Supabase.');
   process.exit(1);
