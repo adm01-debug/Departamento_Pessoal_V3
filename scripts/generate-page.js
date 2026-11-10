@@ -9,10 +9,6 @@ if (!pageName || !/^[A-Z][A-Za-z0-9]*$/.test(pageName)) {
 }
 
 const pagePath = path.join(import.meta.dirname, '../src/pages', `${pageName}Page.tsx`);
-if (fs.existsSync(pagePath)) {
-  console.error(`${pagePath} already exists; nothing was written.`);
-  process.exit(1);
-}
 
 const pageContent = `import React from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -29,5 +25,14 @@ export default function ${pageName}Page() {
 }
 `;
 
-fs.writeFileSync(pagePath, pageContent);
+// 'wx' cria de forma exclusiva e atômica: não sobrescreve arquivo existente nem corre contra outro processo.
+try {
+  fs.writeFileSync(pagePath, pageContent, { flag: 'wx' });
+} catch (err) {
+  if (err.code === 'EEXIST') {
+    console.error(`${pagePath} already exists; nothing was written.`);
+    process.exit(1);
+  }
+  throw err;
+}
 console.log(`Page ${pageName}Page created!`);

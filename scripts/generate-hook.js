@@ -9,10 +9,6 @@ if (!hookName || !/^use[A-Z][A-Za-z0-9]*$/.test(hookName)) {
 }
 
 const hookPath = path.join(import.meta.dirname, '../src/hooks', `${hookName}.ts`);
-if (fs.existsSync(hookPath)) {
-  console.error(`${hookPath} already exists; nothing was written.`);
-  process.exit(1);
-}
 
 const hookContent = `import { useState, useCallback } from 'react';
 
@@ -27,5 +23,14 @@ export function ${hookName}() {
 }
 `;
 
-fs.writeFileSync(hookPath, hookContent);
+// 'wx' cria de forma exclusiva e atômica: não sobrescreve arquivo existente nem corre contra outro processo.
+try {
+  fs.writeFileSync(hookPath, hookContent, { flag: 'wx' });
+} catch (err) {
+  if (err.code === 'EEXIST') {
+    console.error(`${hookPath} already exists; nothing was written.`);
+    process.exit(1);
+  }
+  throw err;
+}
 console.log(`Hook ${hookName} created!`);
