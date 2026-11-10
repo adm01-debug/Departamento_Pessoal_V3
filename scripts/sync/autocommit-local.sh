@@ -25,7 +25,7 @@ export PATH="$HOME/.local/bin:$HOME/.local/opt/node/bin:/usr/local/bin:/usr/bin:
 # husky). Vale para todos os `git` deste script e dos filhos.
 _n="${GIT_CONFIG_COUNT:-0}"; export "GIT_CONFIG_KEY_$_n=core.hooksPath" "GIT_CONFIG_VALUE_$_n=/dev/null" GIT_CONFIG_COUNT=$((_n+1))   # acrescenta; não apaga a config do usuário via ambiente
 
-WT=""; BRANCH="computador_local"; REMOTE="origin"; QUIET_MIN=2; MAX_MB=5; PII="cpf"; DRY=0; QUIET=0
+WT=""; BRANCH="computador_local"; REMOTE="origin"; QUIET_MIN=2; MAX_MB=5; PII="cpf"; DRY=0; QUIET=0; NOPUSH=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --worktree) WT="${2:-}"; shift 2 ;;
@@ -34,6 +34,7 @@ while [ $# -gt 0 ]; do
     --quiet-min) QUIET_MIN="${2:-}"; shift 2 ;;
     --max-mb) MAX_MB="${2:-}"; shift 2 ;;
     --pii) PII="${2:-}"; shift 2 ;;
+    --no-push) NOPUSH=1; shift ;;   # só commit LOCAL (repos públicos em que cada branch enviada dispara preview/CI; o git-autosave já copia para refs/autosave)
     --dry-run) DRY=1; shift ;;
     --quiet) QUIET=1; shift ;;
     -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
@@ -86,6 +87,7 @@ for f in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISEC
 done
 
 push_pendente() {
+  [ "$NOPUSH" -eq 1 ] && return 0   # modo sem push: o commit fica local (e o git-autosave o leva ao GitHub em refs/autosave, sem CI)
   local ahead; ahead="$("${G[@]}" rev-list --count "$REMOTE/$BRANCH..HEAD" 2>/dev/null || echo novo)"
   [ "$ahead" = "0" ] && return 0
   if [ "$DRY" -eq 1 ]; then say "[dry-run] enviaria $BRANCH ao GitHub ($ahead commit(s) à frente)"; return 0; fi
