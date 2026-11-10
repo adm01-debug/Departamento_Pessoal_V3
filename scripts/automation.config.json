@@ -1246,6 +1246,46 @@
       "manual": ["node", "scripts/validate-plan-50.mjs"],
       "triggers": ["manual"],
       "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts, .github/workflows/ci.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-6ab0aae4ac9b4456",
+      "kind": "legacy",
+      "files": ["scripts/tests/audit-edge-authz.test.mjs"],
+      "manual": ["node", "--test", "scripts/tests/audit-edge-authz.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; cobertura do script scripts/audit-edge-authz.mjs via node --test. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-351f9f2d0347491e",
+      "kind": "legacy",
+      "files": ["scripts/tests/audit-migration-style.test.mjs"],
+      "manual": ["node", "--test", "scripts/tests/audit-migration-style.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referência literal do script: .github/workflows/ci.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-310e56a038ef453a",
+      "kind": "legacy",
+      "files": ["scripts/tests/contexto-indice-data.test.mjs"],
+      "manual": ["node", "--test", "scripts/tests/contexto-indice-data.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; valida metadados/data-escopo dos geradores de contexto via node --test. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-5ddbafd927764e08",
+      "kind": "legacy",
+      "files": ["scripts/tests/contexto-publish-sh.test.mjs"],
+      "manual": ["node", "--test", "scripts/tests/contexto-publish-sh.test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; valida scripts de publish do contexto via node --test. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-8639ac557e27480d",
+      "kind": "legacy",
+      "files": ["scripts/tests/sync-lab.test.sh"],
+      "manual": ["sh", "scripts/tests/sync-lab.test.sh"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; cobertura do sync remoto/push via sh. O dispatcher não executa esta operação."
     }
   ],
   "ci": [

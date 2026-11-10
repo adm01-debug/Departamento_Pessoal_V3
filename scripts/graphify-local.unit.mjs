@@ -381,7 +381,7 @@ for (const mode of ['symlink', 'regular', 'write'])
     const target = path.join(f.dir, 'replacement.json');
     await writeFile(target, replacement);
     const originalStats = await lstat(f.graph, { bigint: true });
-    const probe = await open(f.graph, 'r'),
+    const probe = await open(f.graph, 'r'), // codeql[js/file-system-race] troca concorrente deliberada do teste
       prototype = Object.getPrototypeOf(probe);
     await probe.close();
     const stat = prototype.stat;

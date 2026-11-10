@@ -511,7 +511,7 @@ test('info/exclude append e reversao preservam inode e linhas concorrentes', (t)
   writeFileSync(file, '# contexto original\n*.local\n');
   const inode = statSync(file).ino;
   const addition = appendExclude(file, () => appendFileSync(file, 'concurrent-before\n'));
-  appendFileSync(file, 'concurrent-after\n');
+  appendFileSync(file, 'concurrent-after\n'); // codeql[js/file-system-race] corrida concorrente deliberada do teste
   assert.ok(text(file).includes('/.tools/repo-automation/'));
   assert.equal(removeExclude(file, addition), true);
   assert.equal(statSync(file).ino, inode);
