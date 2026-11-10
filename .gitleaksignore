@@ -1,1 +1,3 @@
 1c8187064704046d03a7e6792ff503e502799258:inventario/ia/grafo-graphify.json:generic-api-key:4457
+62384ad70a300418eb01f7939735624a23d7fabe:scripts/supabase_snapshot/test_snapshot.py:generic-api-key:361
+695d1cba1476c4a42d6d6e15739bf80c2fd82faf:scripts/supabase_snapshot/test_snapshot.py:jwt:380

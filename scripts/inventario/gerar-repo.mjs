@@ -7,24 +7,31 @@
 import { readdirSync, readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const RAIZ = new URL('../../', import.meta.url).pathname;
+const RAIZ = fileURLToPath(new URL('../../', import.meta.url));
 const FDIR = join(RAIZ, 'supabase/functions');
 const OUT = join(RAIZ, 'inventario/estado');
 mkdirSync(OUT, { recursive: true });
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// rg sai 1 quando nao ha ocorrencia; qualquer outra falha (rg ausente, erro de E/S) nao pode virar "zero chamadas".
+const existentes = (paths) => paths.map((p) => join(RAIZ, p)).filter(existsSync);
 function rgCount(pattern, paths) {
+  const alvos = existentes(paths);
+  if (!alvos.length) return 0;
   try {
-    const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' });
+    const out = execFileSync('rg', ['-c', '--no-messages', pattern, ...alvos], { encoding: 'utf8' });
     return out.split('\n').filter(Boolean).reduce((n, l) => n + Number(l.slice(l.lastIndexOf(':') + 1)), 0);
-  } catch { return 0; }
+  } catch (e) { if (e.status === 1) return 0; throw e; }
 }
 function rgFiles(pattern, paths) {
+  const alvos = existentes(paths);
+  if (!alvos.length) return [];
   try {
-    return execFileSync('rg', ['-l', '--no-messages', pattern, ...paths.map((p) => join(RAIZ, p))], { encoding: 'utf8' })
+    return execFileSync('rg', ['-l', '--no-messages', pattern, ...alvos], { encoding: 'utf8' })
       .split('\n').filter(Boolean).map((f) => f.slice(RAIZ.length));
-  } catch { return []; }
+  } catch (e) { if (e.status === 1) return []; throw e; }
 }
 
 const edges = readdirSync(FDIR, { withFileTypes: true })
