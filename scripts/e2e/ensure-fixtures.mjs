@@ -93,6 +93,10 @@ async function main() {
     const { data: existing, error: selErr } = await client
       .from('colaboradores')
       .select('id, email')
+      // Só a empresa sintética: sem este filtro, o mesmo CPF em OUTRA empresa
+      // visível ao admin era tratado como fixture (insert pulado) e tinha o
+      // e-mail sobrescrito logo abaixo.
+      .eq('empresa_id', empresaId)
       .eq('cpf', colaborador.cpf)
       .maybeSingle();
     if (selErr) throw selErr;

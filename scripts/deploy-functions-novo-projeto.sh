@@ -69,3 +69,8 @@ echo "=========================================================="
 if [ "${#FAIL[@]}" -gt 0 ]; then
   exit 2
 fi
+# Nenhuma function encontrada não é um deploy bem-sucedido.
+if [ "${#OK[@]}" -eq 0 ]; then
+  echo "❌ Nenhuma Edge Function com index.ts em $FUNCTIONS_DIR — nada foi publicado." >&2
+  exit 1
+fi

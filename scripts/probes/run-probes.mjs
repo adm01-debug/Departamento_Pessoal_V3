@@ -26,7 +26,15 @@ function psql(sql) {
     [DB_URL, '--no-psqlrc', '-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-c', sql],
     { encoding: 'utf8' },
   );
-  if (result.status !== 0) return null;
+  if (result.status !== 0) {
+    // Sem isto a causa real (rede, objeto ausente, psql fora do PATH) era engolida.
+    // Só erro de SQL (ERROR:) sai literal: a mensagem de conexão do libpq pode
+    // ecoar pedaços da URL (host/usuário) no log.
+    const line = (result.stderr ?? '').trim().split('\n')[0];
+    const cause = line.startsWith('ERROR:') ? line : `psql não conectou (exit ${result.status})`;
+    console.error(`  erro: ${result.error?.message ?? cause}`);
+    return null;
+  }
   return result.stdout.trim();
 }
 
@@ -60,13 +68,21 @@ ROLLBACK;`,
     id: 'rv03',
     label: 'Zero permissive policies on critical tables',
     sql: `BEGIN TRANSACTION READ ONLY;
-SELECT count(*) FROM pg_catalog.pg_policies
+SELECT CASE WHEN (SELECT count(*) FROM pg_catalog.pg_tables
+                  WHERE schemaname='public'
+                    AND tablename IN ('audit_log','cnab_configuracoes','historico_rescisoes')) < 3
+  THEN 'tabela_ausente'
+  ELSE (SELECT count(*) FROM pg_catalog.pg_policies
 WHERE schemaname='public'
   AND tablename IN ('audit_log','cnab_configuracoes','historico_rescisoes')
-  AND regexp_replace(COALESCE(qual,''), '\\s+', '', 'g') ~* '(^|\\()(true)(\\)|$)';
+  AND regexp_replace(COALESCE(qual,''), '\\s+', '', 'g') ~* '(^|\\()(true)(\\)|$)')::text END;
 ROLLBACK;`,
     expect: (v) => v === '0',
-    failMsg: (v) => `RV-03: ${v} policy(s) permissiva(s) nas tabelas críticas`,
+    // 'tabela_ausente': tabela renomeada/removida dava count 0 = "pass" sem inspecionar nada.
+    failMsg: (v) =>
+      v === 'tabela_ausente'
+        ? 'RV-03: tabela crítica ausente — nenhuma policy foi inspecionada'
+        : `RV-03: ${v} policy(s) permissiva(s) nas tabelas críticas`,
   },
   {
     id: 'rv04',
@@ -112,7 +128,9 @@ for (const probe of probes) {
   const pass = raw !== null && probe.expect(raw);
   results.push({ probe: probe.id, result: raw ?? 'error', pass });
   if (!pass && probe.id !== 'ledger') {
-    failures.push(probe.failMsg(raw ?? 'null'));
+    // raw === null é "não executou", não "o controle falhou": a mensagem do
+    // probe afirmava uma regressão de segurança que ninguém mediu.
+    failures.push(raw === null ? `${probe.id}: probe não executou (erro no psql — ver acima)` : probe.failMsg(raw));
   }
   const icon = pass ? '✓' : '✗';
   console.log(`${icon} ${probe.id.padEnd(8)} ${raw ?? 'error'}  — ${probe.label}`);

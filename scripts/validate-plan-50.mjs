@@ -88,7 +88,9 @@ for (const fileName of planFiles) {
     }
   }
 
-  const depRe = new RegExp(`${prefix}-(\\d{3})(?:–(\\d{3}))?`, 'g');
+  // Intervalo aceita en dash, em dash ou hífen: com só `–`, um `E51-001-049`
+  // digitado com hífen validava apenas o início e a dependência futura passava.
+  const depRe = new RegExp(`${prefix}-(\\d{3})(?:[–—-](\\d{3}))?`, 'g');
   for (const stage of stages) {
     const dependencyCell = stage.text.match(/\| Dependências \|([^|]*)\|/);
     expect(dependencyCell !== null, `${label(stage.number)} declara dependências`);
