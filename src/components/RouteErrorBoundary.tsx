@@ -21,10 +21,14 @@ export class RouteErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    loggerService.fatal('Route rendering error', {
-      componentStack: info.componentStack,
-      location: window.location.pathname
-    }, error);
+    loggerService.fatal(
+      'Route rendering error',
+      {
+        componentStack: info.componentStack,
+        location: window.location.pathname,
+      },
+      error
+    );
   }
 
   handleRetry = () => {
@@ -50,15 +54,16 @@ export class RouteErrorBoundary extends Component<Props, State> {
             </div>
           </div>
           <div className="text-center space-y-3 max-w-lg">
-            <h2 className="text-2xl font-display font-bold text-foreground tracking-tight">
-              Instabilidade Detectada
-            </h2>
+            <h2 className="text-2xl font-display font-bold text-foreground tracking-tight">Instabilidade Detectada</h2>
             <p className="text-base text-muted-foreground font-body leading-relaxed">
-              Ocorreu uma falha na renderização deste módulo. Nossa equipe de engenharia já foi notificada automaticamente via telemetria.
+              Ocorreu uma falha na renderização deste módulo. Nossa equipe de engenharia já foi notificada
+              automaticamente via telemetria.
             </p>
             {this.state.error && import.meta.env.DEV && (
               <div className="mt-6 p-4 bg-muted/30 border border-border/40 rounded-2xl text-left">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2 tracking-widest">Stack Trace Resume</p>
+                <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2 tracking-widest">
+                  Stack Trace Resume
+                </p>
                 <code className="text-xs text-destructive/80 font-mono break-all line-clamp-3">
                   {this.state.error.message}
                 </code>
@@ -69,11 +74,14 @@ export class RouteErrorBoundary extends Component<Props, State> {
             <Button variant="outline" onClick={this.handleRetry} className="flex-1 h-11 rounded-xl gap-2 shadow-xs">
               <RefreshCw className="h-4 w-4" /> Tentar novamente
             </Button>
-            <Button onClick={this.handleGoHome} className="flex-1 h-11 rounded-xl gap-2 bg-foreground text-background hover:bg-foreground/90">
+            <Button
+              onClick={this.handleGoHome}
+              className="flex-1 h-11 rounded-xl gap-2 bg-foreground text-background hover:bg-foreground/90"
+            >
               <Home className="h-4 w-4" /> Ir ao início
             </Button>
           </div>
-          <button 
+          <button
             onClick={this.handleReport}
             className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors mt-4"
           >

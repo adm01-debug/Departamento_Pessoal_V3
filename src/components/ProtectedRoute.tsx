@@ -20,9 +20,7 @@ type MfaGate = 'checking' | 'ok' | 'pending-challenge';
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isReady, loading } = useAuth();
-  const [mfaGate, setMfaGate] = useState<MfaGate>(
-    import.meta.env.VITE_E2E_BYPASS_MFA === 'true' ? 'ok' : 'checking'
-  );
+  const [mfaGate, setMfaGate] = useState<MfaGate>(import.meta.env.VITE_E2E_BYPASS_MFA === 'true' ? 'ok' : 'checking');
   const [factorId, setFactorId] = useState('');
   const [totpCode, setTotpCode] = useState('');
   const [challengeLoading, setChallengeLoading] = useState(false);
@@ -34,7 +32,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     if (import.meta.env.VITE_E2E_BYPASS_MFA === 'true') return;
 
     let cancelled = false;
-    supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+    supabase.auth.mfa
+      .getAuthenticatorAssuranceLevel()
       .then(async ({ data }) => {
         if (cancelled) return;
         // Already at aal2 or no MFA enrolled → grant access
@@ -44,7 +43,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         }
         // Enrolled TOTP but session is still at aal1 — must complete challenge.
         const { data: factors } = await supabase.auth.mfa.listFactors();
-        const totp = factors?.totp?.find(f => f.status === 'verified');
+        const totp = factors?.totp?.find((f) => f.status === 'verified');
         if (totp && !cancelled) {
           setFactorId(totp.id);
           setMfaGate('pending-challenge');
@@ -59,7 +58,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         if (!cancelled) setMfaGate('ok');
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [isReady, user]);
 
   useEffect(() => {
@@ -98,18 +99,18 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.1, 0.2, 0.1],
-              rotate: [0, 90, 0]
+              rotate: [0, 90, 0],
             }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
             className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-primary/10 rounded-full blur-[100px]"
           />
           <motion.div
             animate={{
               scale: [1, 1.3, 1],
               opacity: [0.1, 0.15, 0.1],
-              rotate: [0, -90, 0]
+              rotate: [0, -90, 0],
             }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
             className="absolute -bottom-1/4 -left-1/4 w-1/2 h-1/2 bg-primary/5 rounded-full blur-[100px]"
           />
         </div>
@@ -122,7 +123,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           <div className="relative">
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
               className="absolute inset-0 rounded-full border-2 border-primary/20 border-t-primary"
             />
             <div className="p-8 rounded-full bg-card shadow-glass border border-border/50 relative m-2">
@@ -131,7 +132,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
             <motion.div
               animate={{
                 y: [0, -4, 0],
-                opacity: [0.5, 1, 0.5]
+                opacity: [0.5, 1, 0.5],
               }}
               transition={{ duration: 2, repeat: Infinity }}
               className="absolute -top-2 -right-2 p-2 rounded-lg bg-primary shadow-glow-sm"
@@ -191,7 +192,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         <div className="space-y-2 max-w-sm">
           <h2 className="text-h2 font-display text-foreground">Verificação em Dois Fatores</h2>
           <p className="text-body text-muted-foreground">
-            Sua conta possui autenticação de dois fatores ativa. Informe o código de 6 dígitos do seu app TOTP para continuar.
+            Sua conta possui autenticação de dois fatores ativa. Informe o código de 6 dígitos do seu app TOTP para
+            continuar.
           </p>
         </div>
         <form onSubmit={handleTotpSubmit} className="w-full max-w-xs space-y-4">
@@ -207,14 +209,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
               maxLength={7}
               placeholder="000 000"
               value={totpCode}
-              onChange={e => setTotpCode(e.target.value)}
+              onChange={(e) => setTotpCode(e.target.value)}
               className="text-center text-xl tracking-widest rounded-xl"
               disabled={challengeLoading}
             />
           </div>
-          {challengeError && (
-            <p className="text-sm text-destructive text-center">{challengeError}</p>
-          )}
+          {challengeError && <p className="text-sm text-destructive text-center">{challengeError}</p>}
           <Button
             type="submit"
             className="w-full gap-2"
