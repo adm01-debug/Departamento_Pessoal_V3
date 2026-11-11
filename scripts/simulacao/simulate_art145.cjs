@@ -34,6 +34,18 @@ function deadlineLegal(dataInicio) {
   return deadline;
 }
 
+// Motor real do produto (view v_ferias_alerta_pagamento_d2, migration
+// 20260723112647:26-32): severidade por dias-até-início com limiares FIXOS,
+// sem antecipar o deadline em fim de semana/feriado (sem TST OJ-123). Usada
+// só para medir a lacuna abaixo — não é alterada nem corrigida aqui, pois
+// mudar a view é DDL de produção e decisão do dono.
+function severidadeRealProduto(diasAntesInicio) {
+  if (diasAntesInicio < 0) return 'violacao_grave';
+  if (diasAntesInicio <= 2) return 'critico';
+  if (diasAntesInicio <= 5) return 'atencao';
+  return 'ok';
+}
+
 function classificar(dataInicio, dataPagamento) {
   const diff = diffDays(dataInicio, dataPagamento); // positivo = pagamento antes
   const deadline = deadlineLegal(dataInicio);
@@ -52,6 +64,7 @@ const base = new Date('2026-01-05T00:00:00Z'); // início: segunda-feira
 let total = 0, violacoes = 0, graves = 0, limites = 0, errosAssertion = 0;
 const exemplosViolacao = [];
 const violacoesPorDow = { 0:0,1:0,2:0,3:0,4:0,5:0,6:0 };
+let gapNaoEscalado = 0; // violação legal (OJ-123) que o produto real não mostra como crítico/grave
 
 for (let inicioOffset = 0; inicioOffset < 180; inicioOffset++) {
   const inicio = addDays(base, inicioOffset);
@@ -69,6 +82,16 @@ for (let inicioOffset = 0; inicioOffset < 180; inicioOffset++) {
         violacoesPorDow[dowInicio]++;
       }
       if (status === 'limite') limites++;
+
+      // Lacuna conhecida (não bloqueante — ver nota em severidadeRealProduto):
+      // já é violação legal (deadline com OJ-123 passou) mas o produto real
+      // ainda mostraria severidade 'atencao' ou 'ok' (não escala a crítico).
+      if (
+        (status === 'violacao' || status === 'violacao_grave') &&
+        !['critico', 'violacao_grave'].includes(severidadeRealProduto(diff))
+      ) {
+        gapNaoEscalado++;
+      }
 
       // — Auto-validação —
       // 1. D-7 sempre deve ser OK (antecipação ampla)
@@ -108,6 +131,13 @@ for (const [dow, cnt] of Object.entries(violacoesPorDow)) {
 }
 console.log(`Auto-validação: ${errosAssertion === 0 ? '✅ 0 erros de assertion' : `❌ ${errosAssertion} ERROS`}`);
 console.log(`Regra: alertar quando (data_inicio - hoje) <= 2 dias úteis E status_pagamento != 'pago'`);
+console.log(
+  `\nGAP CONHECIDO (não bloqueante — produto real, não a simulação): ${gapNaoEscalado.toLocaleString('pt-BR')} ` +
+  `cenários já em violação legal (deadline com antecipação TST OJ-123) em que a view ` +
+  `v_ferias_alerta_pagamento_d2 ainda não mostraria severidade 'critico'/'violacao_grave' ` +
+  `(ela usa só dias-até-início, sem antecipar para dia útil). Corrigir é mudar uma view em ` +
+  `produção — decisão do dono, não desta simulação.`
+);
 
 if (errosAssertion > 0) {
   console.error('\nErros encontrados:');
