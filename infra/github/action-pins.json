@@ -1,6 +1,6 @@
 {
   "_comment": "Tabela offline: SHA → versão esperada no comentário '# vX'. Manter sincronizado com os workflows.",
-  "_updated": "2026-11-08",
+  "_updated": "2026-11-11",
   "pins": {
     "3d3c42e5aac5ba805825da76410c181273ba90b1": {
       "action": "actions/checkout",
@@ -81,6 +81,18 @@
     "e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e": {
       "action": "gitleaks/gitleaks-action",
       "version": "v3.0.0"
+    },
+    "689adcfb80d947100a1eab127289b97d1fb07b13": {
+      "action": "supabase/setup-cli",
+      "version": "v3.2.0"
+    },
+    "33d7b85da1a04171e211befe2c739303b9a4c066": {
+      "action": "github/codeql-action/*",
+      "version": "v4.39.3"
+    },
+    "45d7276c9ca790aabd705e31ca99c6185c3e76dd": {
+      "action": "zizmorcore/zizmor-action",
+      "version": "v0.8.1"
     }
   }
 }
