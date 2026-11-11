@@ -28,7 +28,7 @@ permissions:
 jobs:
   scoped-migrations:
     name: ${{ inputs.mode }} migrations no canônico
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 15
     environment: production
     env:
