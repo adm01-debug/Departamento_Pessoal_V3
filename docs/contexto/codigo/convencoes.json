@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)",
    "style(manutencao): aplica correcoes locais verificadas (#439)",
    "feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)",
    "fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)",
-   "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)",
-   "fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)"
+   "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `71b9957abe6ab07720ed486ec831dcc1758d5420` (2026-11-11T21:13:48Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `6ddd6bdc882a0808f929da9c2a1b3bc1e248fd63` (2026-11-11T21:29:55Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,7 +383,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21971 nós · 46097 arestas · 2149 comunidades · grafo do commit `71b9957a`
+- 21971 nós · 46097 arestas · 2149 comunidades · grafo do commit `6ddd6bdc`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), @tanstack/react-query (314), lucide-react (306), button.tsx (277), vitest (274), useEmpresas (272), cn (256), client.ts (248), utils.ts (233), contract.ts (179), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -401,8 +401,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - supabase/functions/external-db-bridge/validation.ts (13)
 - AGENTS.md (12)
 - PENDENCIAS.md (12)
+- deno.lock (12)
 - .github/workflows/security.yml (11)
-- deno.lock (11)
 - .github/workflows/deploy.yml (10)
 
 ## Workflows
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-11 `6ddd6bd` fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)
 - 2026-11-11 `71b9957` style(manutencao): aplica correcoes locais verificadas (#439)
 - 2026-11-11 `bdb0189` feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)
 - 2026-11-11 `c42d57d` fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `b4f9205` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)
 - 2026-11-10 `3668b50` fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)
 - 2026-11-10 `36a404f` ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)
-- 2026-11-10 `8391bcc` fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

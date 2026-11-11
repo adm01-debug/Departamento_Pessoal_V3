@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "71b9957abe6ab07720ed486ec831dcc1758d5420",
+  "sha": "6ddd6bdc882a0808f929da9c2a1b3bc1e248fd63",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-11 21:14 UTC",
+  "generated_at": "2026-11-11 22:47 UTC",
   "files_total": 2898,
   "code_files": 2369,
   "code_lines": 321360
@@ -277826,10 +277826,19 @@
   }
  },
  "git": {
-  "sha": "71b9957abe6ab07720ed486ec831dcc1758d5420",
+  "sha": "6ddd6bdc882a0808f929da9c2a1b3bc1e248fd63",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "6ddd6bd",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)",
+    "files": [
+     "deno.lock"
+    ]
+   },
    {
     "sha": "71b9957",
     "date": "2026-11-11",
@@ -278372,22 +278381,6 @@
      "scripts/sync/run-all.sh",
      "scripts/sync/sync-github.sh"
     ]
-   },
-   {
-    "sha": "2e54da5",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix(autofix): verificador de dados sem falsos verdes, eslint --fix restrito e espelho de bytes robusto (#411)",
-    "files": [
-     "scripts/autofix/any-codemod.mjs",
-     "scripts/autofix/eslint-safe-fix.mjs",
-     "scripts/autofix/regras/catalogo.mjs",
-     "scripts/autofix/regras/dados.mjs",
-     "scripts/autofix/regras/dados.test.mjs",
-     "scripts/autofix/regras/referencia.mjs",
-     "scripts/autofix/run.mjs",
-     "scripts/sync/mirror-github.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -278404,24 +278397,12 @@
     3
    ],
    [
-    "scripts/autofix/regras/dados.mjs",
-    3
-   ],
-   [
-    "scripts/autofix/regras/dados.test.mjs",
-    3
-   ],
-   [
-    "scripts/autofix/run.mjs",
-    3
-   ],
-   [
-    "scripts/sync/mirror-github.sh",
-    3
-   ],
-   [
     "scripts/sync/autocommit-local.sh",
     3
+   ],
+   [
+    "deno.lock",
+    2
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -278452,7 +278433,23 @@
     2
    ],
    [
+    "scripts/autofix/regras/dados.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/dados.test.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/run.mjs",
+    2
+   ],
+   [
     "scripts/sync/README.md",
+    2
+   ],
+   [
+    "scripts/sync/mirror-github.sh",
     2
    ],
    [
@@ -278460,16 +278457,12 @@
     2
    ],
    [
-    "scripts/autofix/any-codemod.mjs",
-    2
+    "src/calculators/__tests__/auditHelper.test.ts",
+    1
    ],
    [
-    "scripts/autofix/eslint-safe-fix.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/catalogo.mjs",
-    2
+    "src/calculators/__tests__/beneficios.test.ts",
+    1
    ]
   ]
  }
