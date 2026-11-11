@@ -10,8 +10,10 @@ compartilham o grupo de concorrência `canonical-database`
 (cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL.
 `canonical-probes` (READ ONLY + ROLLBACK) tem fila própria `canonical-probes`
 (cancel-in-progress: true): um probe agendado esperando aprovação do
-environment Production travava as migrations por dias. Custo aceito: um probe
-que coincida com um `apply` pode ler estado intermediário e dar falso alarme.
+environment Production travava as migrations por dias. Sem estado intermediário:
+o `apply` roda o lote num único BEGIN/COMMIT, então o probe vê o antes ou o
+depois. O probe roda com `lock_timeout=5s`/`statement_timeout=60s` para nunca
+segurar um `apply` esperando lock.
 
 | Workflow                       | Trigger              | Acesso                | Concorrência               |
 | ------------------------------ | -------------------- | --------------------- | -------------------------- |
@@ -23,7 +25,7 @@ que coincida com um `apply` pode ler estado intermediário e dar falso alarme.
 
 > **Regra de ouro:** o YAML dos workflows canônicos **NUNCA** muda em lotes de migrations. Qualquer alteração nesses workflows requer PR aprovado por humano, separado do lote de SQL.
 >
-> **Reviewer obrigatório:** o environment `production` ainda não tem reviewer obrigatório (W26 — pendente de configuração via API). Até W26 ser aplicado, o gate é o PR + required checks.
+> **Reviewer obrigatório:** o environment `Production` exige aprovação de `adm01-debug` (W26 aplicado). Probe agendado sem aprovação fica em `waiting` até ser substituído pelo do dia seguinte (fila própria, cancel-in-progress).
 
 ---
 

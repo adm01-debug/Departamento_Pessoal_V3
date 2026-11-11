@@ -43,6 +43,8 @@ jobs:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       CANONICAL_REF: frjbfeamybqsejlvmqbl
       CONFIRM_PROJECT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.confirm_project_ref || 'frjbfeamybqsejlvmqbl' }}
+      # Probe nunca espera lock de um apply concorrente nem roda solto.
+      PGOPTIONS: -c lock_timeout=5s -c statement_timeout=60s
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
