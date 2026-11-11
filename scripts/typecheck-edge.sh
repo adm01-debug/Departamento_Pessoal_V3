@@ -13,6 +13,10 @@
 # gap let through once.
 set -euo pipefail
 
+# Edge Functions não importam nada do package.json (só npm:/jsr:/https:); sem isto
+# todo bump de dependência do front exigia regenerar deno.lock e quebrava --frozen.
+export DENO_NO_PACKAGE_JSON=1
+
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
