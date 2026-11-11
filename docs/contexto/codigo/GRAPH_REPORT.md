@@ -1,4 +1,4 @@
-# Graph Report - Departamento_Pessoal_V3  (2026-11-10)
+# Graph Report - Departamento_Pessoal_V3  (2026-11-11)
 
 ## Corpus Check
 - 2782 files · ~2,455,259 words
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bba79fdd`
+- Built from commit: `207e914f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

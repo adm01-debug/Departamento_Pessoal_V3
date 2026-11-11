@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bba79fdd12bcb48bad659e56f153a812a640e780",
+  "commit": "207e914f616869219da5086c1286422c95e97aab",
   "branch": "main",
-  "data_commit": "2026-11-10T20:56:09-03:00",
+  "data_commit": "2026-11-11T12:24:43Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "207e914",
+    "data": "2026-11-11",
+    "assunto": "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)"
+   },
    {
     "sha": "bba79fd",
     "data": "2026-11-10",
@@ -126,25 +131,24 @@
     "sha": "8597905",
     "data": "2026-11-09",
     "assunto": "fix(sync): run-all roda o sync (só fast-forward) também nos repos de espelho próprio (#413)"
-   },
-   {
-    "sha": "f9261e3",
-    "data": "2026-11-09",
-    "assunto": "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)"
    }
   ],
   "arquivos_mudados_7d": 419,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "pasta": "package.json",
-    "mudancas": 21
+    "mudancas": 22
    },
    {
     "pasta": "CLAUDE.md",
+    "mudancas": 20
+   },
+   {
+    "pasta": "package-lock.json",
     "mudancas": 20
    },
    {
@@ -152,20 +156,16 @@
     "mudancas": 20
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 19
-   },
-   {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
    },
    {
-    "pasta": "src/components/__tests__",
-    "mudancas": 18
-   },
-   {
     "pasta": "scripts/autofix/regras",
     "mudancas": 16
+   },
+   {
+    "pasta": "src/components/__tests__",
+    "mudancas": 15
    },
    {
     "pasta": "src/services/__tests__",
@@ -180,19 +180,19 @@
     "mudancas": 12
    },
    {
-    "pasta": "src/services/folha",
-    "mudancas": 10
-   },
-   {
-    "pasta": ".github/workflows/ci.yml",
-    "mudancas": 9
-   },
-   {
     "pasta": "AGENTS.md",
     "mudancas": 9
    },
    {
     "pasta": "infra/github/action-pins.json",
+    "mudancas": 9
+   },
+   {
+    "pasta": "src/components/layout",
+    "mudancas": 9
+   },
+   {
+    "pasta": "src/hooks/__tests__",
     "mudancas": 9
    }
   ],
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 105
+    "commits": 101
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 17
+    "commits": 18
    },
    {
     "autor": "github-actions[bot]",

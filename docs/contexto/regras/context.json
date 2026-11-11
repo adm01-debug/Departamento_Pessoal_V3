@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "bba79fdd12bcb48bad659e56f153a812a640e780",
+  "sha": "207e914f616869219da5086c1286422c95e97aab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-10 23:56 UTC",
+  "generated_at": "2026-11-11 12:34 UTC",
   "files_total": 2896,
   "code_files": 2367,
   "code_lines": 321143
@@ -277634,10 +277634,20 @@
   }
  },
  "git": {
-  "sha": "bba79fdd12bcb48bad659e56f153a812a640e780",
+  "sha": "207e914f616869219da5086c1286422c95e97aab",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "207e914",
+    "date": "2026-11-11",
+    "author": "dependabot[bot]",
+    "subject": "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "bba79fd",
     "date": "2026-11-10",
@@ -278176,24 +278186,9 @@
      "scripts/sync/autocommit-local.sh",
      "scripts/sync/install-autocommit-timer.sh"
     ]
-   },
-   {
-    "sha": "a7e645d",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "feat(sync): espelho exato do GitHub no checkout local, de hora em hora (#406)",
-    "files": [
-     "scripts/sync/README.md",
-     "scripts/sync/install-timer.sh",
-     "scripts/sync/mirror-github.sh"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "scripts/sync/mirror-github.sh",
-    6
-   ],
    [
     "scripts/sync/autocommit-local.sh",
     6
@@ -278203,11 +278198,15 @@
     6
    ],
    [
-    "scripts/sync/README.md",
+    "scripts/sync/mirror-github.sh",
     5
    ],
    [
     "scripts/automation.config.json",
+    4
+   ],
+   [
+    "scripts/sync/README.md",
     4
    ],
    [
@@ -278231,6 +278230,10 @@
     3
    ],
    [
+    "package.json",
+    2
+   ],
+   [
     "scripts/simulacao/_lib/ts-require.cjs",
     2
    ],
@@ -278252,10 +278255,6 @@
    ],
    [
     "scripts/sync/install-autocommit-timer.sh",
-    2
-   ],
-   [
-    "scripts/sync/install-timer.sh",
     2
    ],
    [

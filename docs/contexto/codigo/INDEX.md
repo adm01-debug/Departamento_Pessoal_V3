@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bba79fdd12bcb48bad659e56f153a812a640e780` (2026-11-10T20:56:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `207e914f616869219da5086c1286422c95e97aab` (2026-11-11T12:24:43Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,7 +383,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21964 nós · 46092 arestas · 2107 comunidades · grafo do commit `bba79fdd`
+- 21964 nós · 46092 arestas · 2107 comunidades · grafo do commit `207e914f`
 - comunidades maiores: 20260831_corrected_public.sql (493), useEmpresas (491), canonical_schema.sql (476), lucide-react (446), cn (315), vitest (272), contract.ts (192), framer-motion (190), App.tsx (183), "public"."empresas" (164), ProvisoesPage.tsx (158), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-11 `207e914` build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)
 - 2026-11-10 `bba79fd` fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)
 - 2026-11-10 `9a0babf` feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)
 - 2026-11-10 `7f6d195` fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `bc5d927` infra: migra imports esm.sh para npm: pinados nas edge functions (#362)
 - 2026-11-10 `4921f71` fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com ide
 - 2026-11-10 `f8dace8` fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o 
-- 2026-11-10 `2d6010b` fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

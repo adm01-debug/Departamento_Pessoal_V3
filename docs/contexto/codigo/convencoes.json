@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)",
    "fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)",
    "feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)",
    "fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)",
-   "fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)",
-   "infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)"
+   "fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
