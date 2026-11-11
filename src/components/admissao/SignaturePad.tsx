@@ -98,7 +98,12 @@ export function SignaturePad({ onSave, onClear }: SignaturePadProps) {
         )}
       </div>
       <div className="flex justify-between items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={clear} className="text-muted-foreground hover:text-destructive shrink-0 rounded-xl">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={clear}
+          className="text-muted-foreground hover:text-destructive shrink-0 rounded-xl"
+        >
           <Eraser className="w-4 h-4 mr-2" /> Limpar
         </Button>
         <div className="flex-1 text-[10px] text-muted-foreground bg-muted/20 p-2 rounded-lg border border-border/10 leading-tight">

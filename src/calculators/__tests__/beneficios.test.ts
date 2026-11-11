@@ -100,7 +100,7 @@ describe('calcularDSR', () => {
 describe('calcularAdicionalNoturno', () => {
   it('computes 20% for default percentual', () => {
     const valorHora = 3000 / 220;
-    const expected = valorHora * 0.20 * 44;
+    const expected = valorHora * 0.2 * 44;
     expect(calcularAdicionalNoturno(3000, 44)).toBeCloseTo(expected, 1);
   });
 
