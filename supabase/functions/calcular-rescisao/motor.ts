@@ -3,19 +3,10 @@
 // Edge functions não podem importar de src/: qualquer mudança no motor
 // canônico exige porte manual para este arquivo (mesmas regras/valores).
 import { calcularINSS } from '../_shared/inss.ts';
+import { calcIRRF } from '../_shared/irrf.ts';
 
 export const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 const DIA_MS = 1000 * 60 * 60 * 24;
-const DEDUCAO_SIMPLIFICADA_IRRF = 564.80; // Lei 14.663/2023
-const DEDUCAO_DEPENDENTE_IRRF = 189.59;
-
-const FAIXAS_IRRF = [
-  { l: 2259.20, a: 0, d: 0 },
-  { l: 2826.65, a: 0.075, d: 169.44 },
-  { l: 3751.05, a: 0.15, d: 381.44 },
-  { l: 4664.68, a: 0.225, d: 662.77 },
-  { l: Infinity, a: 0.275, d: 896.00 },
-];
 
 // Seguro-desemprego 2026 — espelha FAIXAS_SEGURO_DESEMPREGO_2026 e
 // SALARIO_MINIMO_2026 de src/calculators/tabelas.ts.
@@ -28,23 +19,6 @@ const SEGURO_DESEMPREGO = {
   faixa2Mult: 0.5,
   teto: 2313.74,
 };
-
-// Replica src/calculators/impostos.ts::calcularIRRF (base mais benéfica ao
-// contribuinte: legal com deduções vs. simplificada). `referencia` só serve
-// para escolher a tabela de INSS do ano-calendário no cálculo da base legal.
-function calcIRRF(bruto: number, dependentes = 0, referencia: string): number {
-  if (!Number.isFinite(bruto) || bruto <= 0) return 0;
-  const inss = calcularINSS(bruto, referencia);
-  const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
-  const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
-  const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
-  if (base <= 0) return 0;
-  // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal
-  for (const f of FAIXAS_IRRF) {
-    if (base <= f.l) return Math.max(0, trunc2(base * f.a - f.d));
-  }
-  return 0;
-}
 
 // Avos proporcionais (CLT): fração >= 15 dias conta como mês integral.
 // Portado de src/utils/rescisaoCalc.ts::calcularAvos (motor canônico).
