@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c42d57d30e80405bc4b04ce8a7f8587dbd21d5d5",
+  "commit": "bdb01891af735f4e897f032bfa3cb54a6d525f78",
   "branch": "main",
-  "data_commit": "2026-11-11T10:00:52-03:00",
+  "data_commit": "2026-11-11T18:53:07Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bdb0189",
+    "data": "2026-11-11",
+    "assunto": "feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)"
+   },
    {
     "sha": "c42d57d",
     "data": "2026-11-11",
@@ -126,18 +131,13 @@
     "sha": "34e22ec",
     "data": "2026-11-10",
     "assunto": "feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)"
-   },
-   {
-    "sha": "1dbce64",
-    "data": "2026-11-09",
-    "assunto": "fix: scripts de ratchet, db, probes, diag, e2e e CI sem falso verde nem vazamento (#415)"
    }
   ],
-  "arquivos_mudados_7d": 403,
+  "arquivos_mudados_7d": 404,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 36
+    "mudancas": 37
    },
    {
     "pasta": "package.json",
@@ -152,31 +152,31 @@
     "mudancas": 20
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 20
-   },
-   {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
+   },
+   {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 17
    },
    {
     "pasta": "scripts/autofix/regras",
     "mudancas": 16
    },
    {
-    "pasta": "src/components/__tests__",
-    "mudancas": 15
-   },
-   {
     "pasta": "src/services/__tests__",
-    "mudancas": 15
+    "mudancas": 14
    },
    {
-    "pasta": "src/integrations/supabase",
+    "pasta": "src/components/__tests__",
     "mudancas": 13
    },
    {
     "pasta": "PENDENCIAS.md",
+    "mudancas": 12
+   },
+   {
+    "pasta": "src/integrations/supabase",
     "mudancas": 12
    },
    {
@@ -188,26 +188,26 @@
     "mudancas": 9
    },
    {
-    "pasta": "src/components/layout",
+    "pasta": "src/hooks/__tests__",
     "mudancas": 9
    },
    {
-    "pasta": "src/hooks/__tests__",
-    "mudancas": 9
+    "pasta": ".github/workflows/ci.yml",
+    "mudancas": 8
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 64
+    "mudancas": 63
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 59
+    "mudancas": 58
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 49
+    "mudancas": 50
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 102
+    "commits": 103
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 69
+    "commits": 65
    },
    {
     "autor": "dependabot[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2875,
+  "arquivos_total": 2877,
   "arquivos_codigo": 1548,
   "linhas_codigo": 273182,
   "rotas": 113,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 785,
+  "migrations": 787,
   "cron_jobs": 41,
   "testes": 589,
   "workflows": 21,

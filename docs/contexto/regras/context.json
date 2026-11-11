@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "c42d57d30e80405bc4b04ce8a7f8587dbd21d5d5",
+  "sha": "bdb01891af735f4e897f032bfa3cb54a6d525f78",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-11 13:20 UTC",
-  "files_total": 2896,
-  "code_files": 2367,
-  "code_lines": 321144
+  "generated_at": "2026-11-11 19:56 UTC",
+  "files_total": 2898,
+  "code_files": 2369,
+  "code_lines": 321265
  },
  "version": "1.3.2",
- "facts_hash": "ca9b13f14499b8d9",
+ "facts_hash": "71ad1d5079669e1f",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 821,
+   ".sql": 823,
    ".ts": 739,
    ".tsx": 679,
    ".mjs": 100,
@@ -63040,6 +63040,41 @@
      "periodos_aquisitivos"
     ]
    },
+   "eh_feriado_fixo_br": {
+    "args": "p_data date",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT to_char(p_data, 'MM-DD') IN ( '01-01', '04-21', '05-01', '09-07', '10-12', '11-02', '11-15', '12-25' );",
+    "raises": [],
+    "tables": []
+   },
+   "eh_dia_util_br": {
+    "args": "p_data date",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT EXTRACT(ISODOW FROM p_data) BETWEEN 1 AND 5 AND NOT public.eh_feriado_fixo_br(p_data);",
+    "raises": [],
+    "tables": [
+     "p_data"
+    ]
+   },
+   "deadline_legal_pagamento_ferias": {
+    "args": "p_data_inicio date",
+    "returns": "date",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_deadline date := p_data_inicio - 2; BEGIN WHILE NOT public.eh_dia_util_br(v_deadline) LOOP v_deadline := v_deadline - 1; END LOOP; RETURN v_deadline; END;",
+    "raises": [],
+    "tables": []
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -70224,6 +70259,8 @@
    "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
+   "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+   "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -80936,6 +80973,62 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "eh_feriado_fixo_br",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "eh_dia_util_br",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "deadline_legal_pagamento_ferias",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "eh_feriado_fixo_br",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "eh_dia_util_br",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "deadline_legal_pagamento_ferias",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "v_ferias_alerta_pagamento_d2",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
    },
    {
     "kind": "revoke",
@@ -98139,8 +98232,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 785,
-   "lines": 66428,
+   "files": 787,
+   "lines": 66549,
    "tables": [
     "profiles",
     "user_roles"
@@ -196575,6 +196668,41 @@
      "periodos_aquisitivos"
     ]
    },
+   "eh_feriado_fixo_br": {
+    "args": "p_data date",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT to_char(p_data, 'MM-DD') IN ( '01-01', '04-21', '05-01', '09-07', '10-12', '11-02', '11-15', '12-25' );",
+    "raises": [],
+    "tables": []
+   },
+   "eh_dia_util_br": {
+    "args": "p_data date",
+    "returns": "boolean",
+    "lang": "sql",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "SELECT EXTRACT(ISODOW FROM p_data) BETWEEN 1 AND 5 AND NOT public.eh_feriado_fixo_br(p_data);",
+    "raises": [],
+    "tables": [
+     "p_data"
+    ]
+   },
+   "deadline_legal_pagamento_ferias": {
+    "args": "p_data_inicio date",
+    "returns": "date",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "DECLARE v_deadline date := p_data_inicio - 2; BEGIN WHILE NOT public.eh_dia_util_br(v_deadline) LOOP v_deadline := v_deadline - 1; END LOOP; RETURN v_deadline; END;",
+    "raises": [],
+    "tables": []
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -220537,6 +220665,62 @@
     "objkind": "table",
     "roles": "service_role",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "eh_feriado_fixo_br",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "eh_dia_util_br",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "deadline_legal_pagamento_ferias",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "eh_feriado_fixo_br",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "eh_dia_util_br",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "deadline_legal_pagamento_ferias",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "v_ferias_alerta_pagamento_d2",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql"
    },
    {
     "kind": "revoke",
@@ -277418,6 +277602,14 @@
    "path": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
    "lines": 9
   },
+  "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql": {
+   "path": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+   "lines": 101
+  },
+  "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql": {
+   "path": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
+   "lines": 20
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -277634,10 +277826,21 @@
   }
  },
  "git": {
-  "sha": "c42d57d30e80405bc4b04ce8a7f8587dbd21d5d5",
+  "sha": "bdb01891af735f4e897f032bfa3cb54a6d525f78",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bdb0189",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+     "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql"
+    ]
+   },
    {
     "sha": "c42d57d",
     "date": "2026-11-11",
@@ -278169,34 +278372,11 @@
      "scripts/sync/run-all.sh",
      "scripts/sync/sync-github.sh"
     ]
-   },
-   {
-    "sha": "bff8377",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "feat(sync): orquestrador para aplicar espelho + computador_local a vários repositórios (#408)",
-    "files": [
-     "scripts/sync/README.md",
-     "scripts/sync/autocommit-local.sh",
-     "scripts/sync/install-all-timers.sh",
-     "scripts/sync/mirror-github.sh",
-     "scripts/sync/repos.conf.example",
-     "scripts/sync/run-all.sh",
-     "scripts/sync/sync-github.sh"
-    ]
    }
   ],
   "hot_files": [
    [
     "scripts/sync/run-all.sh",
-    6
-   ],
-   [
-    "scripts/sync/mirror-github.sh",
-    5
-   ],
-   [
-    "scripts/sync/autocommit-local.sh",
     5
    ],
    [
@@ -278204,7 +278384,11 @@
     4
    ],
    [
-    "scripts/sync/sync-github.sh",
+    "scripts/sync/mirror-github.sh",
+    4
+   ],
+   [
+    "scripts/sync/autocommit-local.sh",
     4
    ],
    [
@@ -278224,8 +278408,12 @@
     3
    ],
    [
-    "scripts/sync/README.md",
+    "scripts/sync/sync-github.sh",
     3
+   ],
+   [
+    ".github/workflows/canonical-migrations.yml",
+    2
    ],
    [
     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
@@ -278252,11 +278440,7 @@
     2
    ],
    [
-    "scripts/sync/install-all-timers.sh",
-    2
-   ],
-   [
-    "scripts/sync/repos.conf.example",
+    "scripts/sync/README.md",
     2
    ],
    [
@@ -278265,6 +278449,10 @@
    ],
    [
     "scripts/autofix/eslint-safe-fix.mjs",
+    2
+   ],
+   [
+    "scripts/autofix/regras/catalogo.mjs",
     2
    ]
   ]

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 785,
+ "migrations": 787,
  "seeds": [],
  "avisos": [
   "176 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -287,6 +287,7 @@
   "contratos_enviar_lembretes_assinatura",
   "create_entity_version",
   "criar_batida_da_divergencia_afdt",
+  "deadline_legal_pagamento_ferias",
   "decrypt_dados_bancarios",
   "decrypt_dados_bancarios_tenant",
   "decrypt_pii",
@@ -319,7 +320,9 @@
   "dp_table_template",
   "dp_track_pii_access",
   "edge_rate_limit_check",
+  "eh_dia_util_br",
   "eh_dia_valido_inicio_ferias",
+  "eh_feriado_fixo_br",
   "empresa_do_colaborador",
   "encrypt_contas_bancarias_fields",
   "encrypt_dados_bancarios",
