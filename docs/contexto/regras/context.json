@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "6ddd6bdc882a0808f929da9c2a1b3bc1e248fd63",
+  "sha": "bfb3cb01ba817ea416d8f8d763a9247b1dff5705",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-11 22:47 UTC",
+  "generated_at": "2026-11-11 23:14 UTC",
   "files_total": 2898,
   "code_files": 2369,
   "code_lines": 321360
@@ -277826,10 +277826,22 @@
   }
  },
  "git": {
-  "sha": "6ddd6bdc882a0808f929da9c2a1b3bc1e248fd63",
+  "sha": "bfb3cb01ba817ea416d8f8d763a9247b1dff5705",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bfb3cb0",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     ".github/workflows/canonical-probes.yml",
+     ".github/workflows/canonical-sql-diag.yml",
+     ".github/workflows/ci.yml"
+    ]
+   },
    {
     "sha": "6ddd6bd",
     "date": "2026-11-11",
@@ -278362,25 +278374,6 @@
     "files": [
      "scripts/sync/run-all.sh"
     ]
-   },
-   {
-    "sha": "f9261e3",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "fix: 2ª auditoria — vazamento no autocommit, espelho sem perda de dado, replay de DO fiel (#412)",
-    "files": [
-     "scripts/autofix/any-codemod.mjs",
-     "scripts/autofix/eslint-safe-fix.mjs",
-     "scripts/autofix/regras/catalogo.mjs",
-     "scripts/autofix/regras/dados.mjs",
-     "scripts/autofix/regras/dados.test.mjs",
-     "scripts/autofix/run.mjs",
-     "scripts/sync/autocommit-local.sh",
-     "scripts/sync/autocommit-local.sh.orig",
-     "scripts/sync/mirror-github.sh",
-     "scripts/sync/run-all.sh",
-     "scripts/sync/sync-github.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -278389,23 +278382,19 @@
     4
    ],
    [
-    "scripts/sync/run-all.sh",
-    4
+    ".github/workflows/canonical-migrations.yml",
+    3
    ],
    [
     "scripts/simulacao/verify_rescisao_fix.cjs",
     3
    ],
    [
-    "scripts/sync/autocommit-local.sh",
+    "scripts/sync/run-all.sh",
     3
    ],
    [
     "deno.lock",
-    2
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
@@ -278433,28 +278422,24 @@
     2
    ],
    [
-    "scripts/autofix/regras/dados.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/regras/dados.test.mjs",
-    2
-   ],
-   [
-    "scripts/autofix/run.mjs",
-    2
-   ],
-   [
     "scripts/sync/README.md",
     2
    ],
    [
-    "scripts/sync/mirror-github.sh",
+    "scripts/sync/autocommit-local.sh",
     2
    ],
    [
-    "scripts/sync/sync-github.sh",
-    2
+    ".github/workflows/canonical-probes.yml",
+    1
+   ],
+   [
+    ".github/workflows/canonical-sql-diag.yml",
+    1
+   ],
+   [
+    ".github/workflows/ci.yml",
+    1
    ],
    [
     "src/calculators/__tests__/auditHelper.test.ts",
@@ -278462,6 +278447,14 @@
    ],
    [
     "src/calculators/__tests__/beneficios.test.ts",
+    1
+   ],
+   [
+    "src/calculators/__tests__/tabelas.test.ts",
+    1
+   ],
+   [
+    "src/calculators/auditHelper.ts",
     1
    ]
   ]
