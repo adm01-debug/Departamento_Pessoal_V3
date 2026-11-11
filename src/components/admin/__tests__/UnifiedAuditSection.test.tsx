@@ -61,9 +61,7 @@ describe('UnifiedAuditSection — integração', () => {
 
     expect(rpc).not.toHaveBeenCalled();
     // Mensagem inicial exibe o teto correto
-    expect(
-      screen.getByText(new RegExp(`últimos ${AUDIT_UNIFIED_LIMIT} eventos`, 'i'))
-    ).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`últimos ${AUDIT_UNIFIED_LIMIT} eventos`, 'i'))).toBeInTheDocument();
   });
 
   it('ao clicar em Buscar sem filtro, chama RPC com _source_table=null e _limit=100', async () => {
@@ -89,10 +87,7 @@ describe('UnifiedAuditSection — integração', () => {
     const user = userEvent.setup();
     renderWithClient();
 
-    await user.type(
-      screen.getByLabelText(/filtro por tabela de origem/i),
-      'ponto_auditoria'
-    );
+    await user.type(screen.getByLabelText(/filtro por tabela de origem/i), 'ponto_auditoria');
     await user.click(screen.getByRole('button', { name: /buscar/i }));
 
     await waitFor(() => expect(rpc).toHaveBeenCalled());
@@ -131,9 +126,7 @@ describe('UnifiedAuditSection — integração', () => {
 
     await user.click(screen.getByRole('button', { name: /buscar/i }));
 
-    await waitFor(() =>
-      expect(screen.getByText(/nenhum evento no período/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText(/nenhum evento no período/i)).toBeInTheDocument());
     expect(screen.queryByTestId('audit-list')).not.toBeInTheDocument();
   });
 
@@ -149,9 +142,7 @@ describe('UnifiedAuditSection — integração', () => {
 
     await user.click(screen.getByRole('button', { name: /buscar/i }));
 
-    await waitFor(() =>
-      expect(screen.getByText(/requer admin/i)).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByText(/requer admin/i)).toBeInTheDocument());
     // Nenhum dado listado
     expect(screen.queryByTestId('audit-list')).not.toBeInTheDocument();
   });
