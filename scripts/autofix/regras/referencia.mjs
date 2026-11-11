@@ -23,10 +23,11 @@ export const TABELAS = {
 
   irrf2026: {
     fonte: 'Lei 15.270/2025 (vigência 01/01/2026) + tabela progressiva mensal vigente desde 05/2025',
-    confianca: 'media',
+    confianca: 'alta',
     nota:
-      'Tabela progressiva mantida; parcelas a deduzir são consistentes com as faixas (validado em TABELAS_CONSISTENTES). ' +
-      'O redutor e a base "rendimento tributável" (bruto) vêm do exemplo da Senior/Alterdata: conferir na IN RFB.',
+      'Redutor (978,62 − 0,133145 × rendimento), base = salário BRUTO ("e não a base de cálculo") e desconto simplificado de R$607,20 ' +
+      'confirmados nos exemplos da Receita Federal (Lei 15.270/2025). A política de ARREDONDAMENTO do redutor segue INCERTA ' +
+      '(a Receita não a especifica): diferenças de poucos centavos viram "revisar", nunca "divergente"; na isenção, sempre divergente.',
     // [limite superior, alíquota, parcela a deduzir]
     faixas: [
       [2428.8, 0, 0],

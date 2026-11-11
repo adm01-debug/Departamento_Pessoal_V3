@@ -5,7 +5,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260912200000_p1_backup_storage_bucket.sql"
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p1-backup-bucket-$$"
-cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 run_psql() { docker exec "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 
@@ -45,8 +45,8 @@ set -e
 [ "$insert_status" -ne 0 ] && [[ "$anon_insert" == *'row-level security'* ]] || {
   echo "anonymous caller inserted a backup object" >&2; echo "$anon_insert" >&2; exit 1;
 }
-run_psql -c "SET ROLE anon; UPDATE storage.objects SET name='tampered.json' WHERE bucket_id='backups';" >/dev/null
-run_psql -c "SET ROLE anon; DELETE FROM storage.objects WHERE bucket_id='backups';" >/dev/null
+run_psql -c "SET ROLE anon; UPDATE storage.objects SET name='tampered.json';" >/dev/null
+run_psql -c "SET ROLE anon; DELETE FROM storage.objects;" >/dev/null
 unchanged="$(run_psql -qAtc "SET ROLE service_role; SELECT name FROM storage.objects WHERE bucket_id='backups';")"
 [ "$unchanged" = "tenant/backup.json" ] || { echo "anonymous UPDATE/DELETE changed backup object: $unchanged" >&2; exit 1; }
 

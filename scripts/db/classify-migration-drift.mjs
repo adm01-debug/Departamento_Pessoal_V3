@@ -45,13 +45,17 @@ function main() {
   const migrationsDir = resolve(args.get('migrations') ?? 'supabase/migrations');
   const ledgerPath = resolve(args.get('ledger-json') ?? 'migration-list.json');
   const lastSuccessfulOrdinal = Number(args.get('last-successful-ordinal') ?? '0');
+  // NaN fazia `ordinal <= NaN` ser sempre falso: tudo virava "nao_alcancada" em silêncio.
+  if (!Number.isInteger(lastSuccessfulOrdinal) || lastSuccessfulOrdinal < 0) {
+    throw new Error(`--last-successful-ordinal inválido: ${args.get('last-successful-ordinal')}`);
+  }
   const failedFile = args.get('failed-file') ?? '';
   const outputPath = resolve(args.get('output') ?? 'migration-classification.csv');
   const summaryPath = resolve(args.get('summary') ?? 'migration-classification.summary.json');
 
   if (!existsSync(ledgerPath)) {
     console.error(`::error::Arquivo de ledger não encontrado: ${ledgerPath}`);
-    console.error('::error::Passe --ledger-json=<caminho> com o JSON exportado do ledger de migrations.');
+    console.error('::error::Passe --ledger-json <caminho> com o JSON exportado do ledger de migrations.');
     console.error('::error::Veja infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md para instruções.');
     process.exit(1);
   }
@@ -64,7 +68,10 @@ function main() {
   );
 
   const files = readdirSync(migrationsDir)
-    .filter((file) => file.endsWith('.sql'))
+    // Sidecars de verificação (`<versão>_x.verify.sql`, W69) não são migrations:
+    // contados aqui, deslocavam os ordinais e marcavam a migration real como
+    // "versão duplicada" (mesmo filtro de derive-pending-migrations.mjs).
+    .filter((file) => file.endsWith('.sql') && !file.endsWith('.verify.sql'))
     .sort();
   const versionCounts = new Map();
   for (const file of files) {
@@ -90,7 +97,7 @@ function main() {
       classification = 'ja_aplicada';
       replayStatus = ordinal <= lastSuccessfulOrdinal ? 'replay_ok' : 'nao_alcancada';
       evidence = 'versao_exata_presente_no_ledger_remoto';
-    } else if (file === failedFile) {
+    } else if (file === basename(failedFile)) {
       classification = 'obsoleta';
       replayStatus = 'falhou';
       evidence = 'falha_SQLSTATE_42703_coluna_bytes_sent_inexistente';

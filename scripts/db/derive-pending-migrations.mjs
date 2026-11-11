@@ -37,8 +37,9 @@
  * runbook (classify-migration-drift.mjs + revisão humana), não de
  * auto-detecção.
  */
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 // Ver nota "Codex review (P1, PR #238)" no cabeçalho — acima disso é drift
 // histórico a reconciliar via runbook, não um lote normal de migrations novas.
@@ -106,6 +107,10 @@ function main() {
   const appliedPath = args.get('applied-versions');
   const appliedVersionsRaw = appliedPath ? readFileSync(resolve(appliedPath), 'utf8') : readStdin();
   const maxPending = Number(args.get('max-pending') ?? DEFAULT_MAX_PENDING);
+  // NaN fazia `pending_count > NaN` ser sempre falso: o gate nunca reprovava.
+  if (!Number.isInteger(maxPending) || maxPending < 0) {
+    throw new Error(`--max-pending inválido: ${args.get('max-pending')}`);
+  }
 
   const result = derivePendingMigrations({ migrationsDir, appliedVersionsRaw });
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
@@ -126,6 +131,9 @@ function main() {
   }
 }
 
-if (process.argv[1] && import.meta.url === `file://${resolve(process.argv[1])}`) {
+// pathToFileURL + realpath: com espaço no caminho (import.meta.url vem
+// percent-encoded) ou chamado por symlink a comparação falhava e o script
+// saía com 0 sem imprimir nada.
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   main();
 }

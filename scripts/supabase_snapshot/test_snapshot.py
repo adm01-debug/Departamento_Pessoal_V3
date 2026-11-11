@@ -307,6 +307,31 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
         self.assertIsNone(out["storage"])
         self.assertEqual({e["section"] for e in s.ERRORS}, {"db_stats.storage", "db_stats.auth"})
 
+    def test_queue_metrics_without_permission_keep_the_other_database_stats(self):
+        s = self.snapshot
+        s.ERRORS.clear()
+
+        def q(_conn, sql, params=None):
+            if "pgmq.metrics_all" in sql:
+                raise PermissionError("permission denied for schema pgmq")
+            if "pg_database_size" in sql:
+                return [{"s": 123}]
+            if "pg_extension" in sql:
+                return [{"present": 1}]
+            if "count(*) AS c" in sql:
+                return [{"c": 1}]
+            return []
+
+        with mock.patch.object(s, "q", side_effect=q), mock.patch.object(s, "STAT_STATEMENTS_TOP", 0), \
+                contextlib.redirect_stdout(io.StringIO()):
+            out = s.get_db_stats(OfflineConnection())
+        self.assertEqual(out["database_bytes"], 123)
+        self.assertIsNone(out["queues"])
+        self.assertEqual({e["section"] for e in s.ERRORS}, {"db_stats.queues"})
+        self.out.mkdir(parents=True, exist_ok=True)
+        s.render_stats({"db_stats": out}, {}, {})
+        self.assertIn("| tamanho | 123 B |", (self.out / "stats.md").read_text(encoding="utf-8"))
+
     def test_failed_edge_function_listing_preserves_previous_edges(self):
         s = self.snapshot
         s.ERRORS.clear()
@@ -332,6 +357,32 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
         self.assertIsNone(out["edge_functions"])
         self.assertNotIn("api.edge_functions", s.CARRIED)
 
+    def test_management_api_outage_keeps_previous_configs_instead_of_recording_removal(self):
+        s = self.snapshot
+        previous = {"enabled": True, "edge_functions": [], "secrets_names": ["RESEND_API_KEY"], "auth_config": {"jwt_exp": 3600},
+                    "postgrest_config": {"max_rows": 1000}, "pooler_config": [{"pool_mode": "transaction"}],
+                    "storage_config": {"fileSizeLimit": 1}, "backups_config": {"pitr_enabled": False}}
+
+        def collect(status):
+            s.ERRORS.clear()
+            s.CARRIED.clear()
+            error = s.urllib.error.HTTPError("http://offline.invalid", status, "falha simulada", None, None)
+            with mock.patch.object(s, "PROJECT_REF", "ref"), mock.patch.object(s, "ACCESS_TOKEN", "x"), \
+                    mock.patch.object(s, "api", side_effect=error), contextlib.redirect_stdout(io.StringIO()):
+                return s.introspect_api(previous)[0]
+
+        out = collect(500)
+        self.assertEqual({key: out[key] for key in previous}, previous)
+        self.assertEqual(s.fingerprints({"api": out}), s.fingerprints({"api": previous}))
+        self.assertTrue({"api.secrets", "api.auth_config", "api.postgrest_config", "api.pooler_config", "api.storage_config",
+                         "api.backups"}.issubset(s.CARRIED))
+        self.assertIn("api.auth_config", {error["section"] for error in s.ERRORS})
+        # 404 em endpoint opcional é "não existe neste projeto": não é falha e não reaproveita a versão anterior.
+        out = collect(404)
+        self.assertIsNone(out["storage_config"])
+        self.assertNotIn("api.storage_config", s.CARRIED)
+        self.assertEqual(out["auth_config"], previous["auth_config"], "404 em endpoint obrigatório continua sendo falha")
+
     def test_failed_db_stats_renders_storage_as_unavailable(self):
         s = self.snapshot
         self.out.mkdir(parents=True, exist_ok=True)
@@ -340,6 +391,73 @@ class SnapshotPartialPermissionTests(SnapshotFixture):
             self.assertIn("_indisponível nesta coleta", (self.out / "stats.md").read_text().split("## Storage", 1)[1])
             s.render_stats({"db_stats": {"storage": []}}, {}, {})
             self.assertIn("_nenhum_", (self.out / "stats.md").read_text().split("## Storage", 1)[1].split("##", 1)[0])
+
+    def test_constraint_columns_are_requested_in_key_order(self):
+        # FOREIGN KEY (b, a) REFERENCES t (x, y): sem ORDER BY na posição da chave o Postgres devolve
+        # as colunas na ordem do join (attnum) e o par publicado sai trocado (a→x, b→y).
+        s = self.snapshot
+        seen = []
+        with mock.patch.object(s, "q", side_effect=lambda _conn, sql, params=None: seen.append(sql) or []), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(s.get_constraints(OfflineConnection()), [])
+            self.assertEqual(s.get_lints(OfflineConnection()), [])
+        arrays = [a for sql in seen for a in re.findall(r"ARRAY\(SELECT a\.attname FROM unnest\(con\.conf?key\)[\s\S]*?\) AS \w+", sql)]
+        self.assertEqual([a.rsplit(" ", 1)[1] for a in arrays], ["columns", "ref_columns", "cols"])
+        for array in arrays:
+            self.assertIn("WITH ORDINALITY k(attnum, ord)", array)
+            self.assertIn("ORDER BY k.ord", array)
+
+    def test_pg_dump_output_is_scrubbed_like_every_other_database_text(self):
+        s = self.snapshot
+        token = "abcdef0123456789" * 2  # valor falso
+        dump = ("-- Dumped from database version 17\nCREATE FUNCTION public.notify() RETURNS void LANGUAGE plpgsql AS $$\n"
+                f"BEGIN PERFORM net.http_post(headers := '{{\"Authorization\": \"Bearer {token}\"}}'); END $$;\n")
+        completed = types.SimpleNamespace(returncode=0, stdout=dump, stderr="")
+        with mock.patch.object(s, "PGDUMP", True), mock.patch.object(s.shutil, "which", return_value="/usr/bin/pg_dump"), \
+                mock.patch.object(s.subprocess, "run", return_value=completed), contextlib.redirect_stdout(io.StringIO()):
+            text = s.run_pg_dump()
+        self.assertNotIn(token, text)
+        self.assertIn('"Authorization": "Bearer [REDACTED]"', text)
+        self.assertNotIn("Dumped from", text)
+
+    def test_scrubbed_text_does_not_trip_the_workflow_secret_guard(self):
+        # O job `banco` aborta a publicação se o grep abaixo casar: o texto já redigido não pode casar.
+        workflow = (pathlib.Path(__file__).resolve().parents[2] / ".github/workflows/contexto.yml").read_text(encoding="utf-8")
+        guard = re.compile(re.search(r"grep -rIEl '([^']+)' \"\$SNAPSHOT_DIR\"", workflow).group(1))
+        password = "SenhaForte" + "123"  # valores falsos
+        samples = [
+            f"SELECT dblink_connect('postgresql://postgres.ref:{password}@db.example.co:5432/postgres');",
+            f"postgres://app:{password}@10.0.0.1/db e https://user:{password}@api.example.com/v1",
+            "headers:='{\"Authorization\": \"Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIn0.abcdefghijklmnop\"}'",
+            "apikey: sb_" + "secret_AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+        ]
+        for sample in samples:
+            self.assertRegex(sample, guard)
+            scrubbed = self.snapshot.scrub(sample)
+            self.assertNotRegex(scrubbed, guard)
+            self.assertNotIn(password, scrubbed)
+        self.assertEqual(self.snapshot.scrub(samples[0]), "SELECT dblink_connect('postgresql://[REDACTED]@db.example.co:5432/postgres');")
+
+    def test_auth_config_redacts_every_credential_but_keeps_flags_and_limits(self):
+        s = self.snapshot
+        config = {  # nomes de campos do GET /v1/projects/{ref}/config/auth; valores falsos
+            "smtp_pass": "valor-falso-1", "external_google_secret": "valor-falso-2", "sms_twilio_auth_token": "valor-falso-3",
+            "sms_messagebird_access_key": "valor-falso-4", "sms_test_otp": "5511999990000=123456",
+            "jwt_exp": 3600, "password_min_length": 12, "refresh_token_rotation_enabled": True,
+            "hook_custom_access_token_enabled": False, "hook_send_email_enabled": True, "site_url": "https://app.example.com",
+        }
+        redacted = s.redact(config)
+        self.assertEqual({k for k, v in redacted.items() if v == "[REDACTED]"},
+                         {"smtp_pass", "external_google_secret", "sms_twilio_auth_token", "sms_messagebird_access_key", "sms_test_otp"})
+        self.assertEqual({k: redacted[k] for k in ("jwt_exp", "password_min_length", "refresh_token_rotation_enabled",
+                                                   "hook_custom_access_token_enabled", "site_url")},
+                         {"jwt_exp": 3600, "password_min_length": 12, "refresh_token_rotation_enabled": True,
+                          "hook_custom_access_token_enabled": False, "site_url": "https://app.example.com"})
+        self.out.mkdir(parents=True, exist_ok=True)
+        s.render_simple({}, {"enabled": True, "url": "https://ref.supabase.co", "auth_config": redacted})
+        summary = (self.out / "auth.md").read_text(encoding="utf-8").split("## Configuração completa", 1)[0]
+        self.assertIn("| jwt_exp (s) | 3600 |", summary)
+        self.assertIn("| hooks | hook_send_email_enabled |", summary)
 
 
 class SnapshotFailureMatrixTests(SnapshotFixture):
@@ -618,6 +736,25 @@ class SnapshotCallerFreshnessTests(SnapshotFixture):
         self.assertIn("indisponível", states["code"])
         self.assertTrue(any(e["section"] == "callers.code" for e in self.snapshot.ERRORS))
 
+    def test_freshly_collected_functions_keep_published_references_of_unavailable_sources(self):
+        # Caso comum: functions lida agora (sem `callers` nas linhas) e outra fonte indisponível.
+        previous = self.previous_database()
+        expected = copy.deepcopy(previous["functions"][0]["callers"])
+        current = {"functions": self.database("old")["functions"], "cron": None, "triggers": None, "views": None}
+        self.snapshot.CARRIED.clear()
+        with mock.patch.object(self.snapshot, "scan_code_files", return_value=None), contextlib.redirect_stdout(io.StringIO()):
+            states = self.snapshot.build_function_callers(current, previous)
+        self.assertEqual(current["functions"][0]["callers"], expected)
+        self.assertIn("indisponível", states["code"])
+        self.assertIn("coleta atual", states["db"])
+        self.assertEqual(self.snapshot.fingerprints({"db": current})["functions"], self.snapshot.fingerprints({"db": previous})["functions"])
+        # Fonte lida com sucesso e vazia continua removendo a referência antiga.
+        current = {"functions": self.database("old")["functions"], "cron": {"jobs": []}, "triggers": [], "views": []}
+        with mock.patch.object(self.snapshot, "scan_code_files", return_value=[]), contextlib.redirect_stdout(io.StringIO()):
+            self.snapshot.build_function_callers(current, previous)
+        self.assertEqual({k: current["functions"][0]["callers"][k] for k in ("code", "cron", "triggers", "views")},
+                         {"code": [], "cron": [], "triggers": [], "views": []})
+
     def test_database_callers_include_defaults_on_the_first_definition_line(self):
         consumer = function("consumer")
         consumer["definition"] = (
@@ -711,6 +848,16 @@ class SnapshotHeartbeatTests(SnapshotFixture):
             with contextlib.redirect_stdout(io.StringIO()):
                 self.assertEqual(self.snapshot.main(), 1)
         self.assertEqual((self.out / "manifest.json").read_bytes(), before)
+
+    def test_database_that_answers_nothing_is_unavailable_even_with_a_previous_snapshot(self):
+        # Caminho real: introspect_db reaproveita cada seção que falhou; nenhuma foi lida nesta coleta.
+        self.assertEqual(self.collect(), 0)
+        before = {path.relative_to(self.out): path.read_bytes() for path in self.out.rglob("*") if path.is_file()}
+        self.assertEqual(self.collect(failures={"server", "functions", "migrations"}), 1)
+        self.assertEqual(set(self.snapshot.CARRIED), {"server", "functions", "migrations"})
+        after = {path.relative_to(self.out): path.read_bytes() for path in self.out.rglob("*") if path.is_file()}
+        self.assertEqual(after, before)
+        self.assertEqual(self.collect(failures={"functions", "migrations"}), 0, "falha parcial continua publicando")
 
     def test_interrupted_render_does_not_publish_a_completed_heartbeat(self):
         with mock.patch.object(self.snapshot, "render_simple", side_effect=RuntimeError("falha de escrita simulada")):

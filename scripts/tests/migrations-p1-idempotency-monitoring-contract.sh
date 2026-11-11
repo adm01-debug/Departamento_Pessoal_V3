@@ -3,12 +3,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$ROOT/supabase/migrations/20260912207000_p1_idempotency_monitoring_contract.sql"
 NAME="dp-p1-idem-monitor-$$"; IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
-cleanup(){ docker rm -f "$NAME" >/dev/null 2>&1 || true; }; trap cleanup EXIT
+cleanup(){ docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }; trap cleanup EXIT
 psqlc(){ docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 bash "$ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"; docker cp "$MIGRATION" "$NAME":/tmp/m.sql
 psqlc <<'SQL'
 CREATE ROLE anon NOLOGIN; CREATE ROLE authenticated NOLOGIN; CREATE ROLE service_role NOLOGIN BYPASSRLS;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE TABLE idempotency_keys(id uuid DEFAULT gen_random_uuid(), endpoint text, status text,
   created_at timestamptz DEFAULT now(), expires_at timestamptz DEFAULT now()+interval '1 day');
 CREATE TABLE security_alerts(id uuid DEFAULT gen_random_uuid(), type text, severity text,

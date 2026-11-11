@@ -30,7 +30,7 @@ stage() {
   for f in CLAUDE.md AGENTS.md; do [ -f "$f" ] && git add "$f" || true; done
 }
 
-if git check-ignore -q "$OUT_DIR"; then
+if [ "$MODE" != "branch" ] && git check-ignore -q "$OUT_DIR"; then   # em MODE=branch a saída pode ser ignorada na origem (stage usa -f)
   echo "ERRO: $OUT_DIR está no .gitignore — os docs nunca seriam commitados. Remova a regra ou mude AI_CONTEXT_OUT."; exit 1
 fi
 if [ "$MODE" = "branch" ]; then
@@ -43,7 +43,15 @@ if [ "$MODE" = "branch" ]; then
   stage
   git commit -q -m "$MSG" --allow-empty
   OURS=$(git rev-parse HEAD)
-  HAS_OLD=0; git fetch -q origin "$BRANCH_OUT" 2>/dev/null && HAS_OLD=1
+  # Só "a branch ainda não existe" (ls-remote sai com 2) autoriza publicar do zero. Falha de rede/credencial aborta:
+  # tratá-la como branch nova faria o force-push apagar as pastas dos outros produtores (KEEP_DIRS).
+  HAS_OLD=0
+  if git ls-remote --exit-code "${PUSH_URL:-origin}" "refs/heads/$BRANCH_OUT" >/dev/null 2>&1; then
+    # refspec explícito: clone raso/single-branch não cria origin/$BRANCH_OUT com `git fetch origin <branch>`
+    git fetch -q "${PUSH_URL:-origin}" "+refs/heads/$BRANCH_OUT:refs/remotes/origin/$BRANCH_OUT"; HAS_OLD=1
+  elif [ $? -ne 2 ]; then
+    echo "ERRO: não foi possível consultar a branch $BRANCH_OUT no remoto — nada publicado"; exit 1
+  fi
   git checkout -q --detach "$SRC"
   if [ "$HAS_OLD" = 1 ]; then
     for d in ${KEEP_DIRS:-}; do git checkout -q "origin/$BRANCH_OUT" -- "$d" 2>/dev/null || true; done   # saídas dos outros produtores
@@ -51,7 +59,7 @@ if [ "$MODE" = "branch" ]; then
   git checkout -q "$OURS" -- "$OUT_DIR"                                                            # a nossa saída
   for f in CLAUDE.md AGENTS.md; do git checkout -q "$OURS" -- "$f" 2>/dev/null || true; done
   if [ -n "${INDEX_CMD:-}" ]; then eval "$INDEX_CMD"; git add -A "$(dirname "$OUT_DIR")"; fi
-  git add -A "$OUT_DIR" ${KEEP_DIRS:-} 2>/dev/null || git add -A "$OUT_DIR"
+  git add -f -A "$OUT_DIR" ${KEEP_DIRS:-} 2>/dev/null || git add -f -A "$OUT_DIR"
   for f in CLAUDE.md AGENTS.md; do [ -f "$f" ] && git add "$f" || true; done
   if [ "$HAS_OLD" = 1 ] && git diff --quiet --cached "origin/$BRANCH_OUT" -- && [ "$(git rev-parse origin/$BRANCH_OUT^ 2>/dev/null)" = "$SRC" ]; then
     echo "branch $BRANCH_OUT já reflete este estado — nada a publicar"; git checkout -q "$SRC_REF" 2>/dev/null || true; exit 0
@@ -71,7 +79,7 @@ git commit -q -m "$MSG"
 
 if [ "$MODE" = "push" ]; then
   for attempt in 1 2 3; do
-    if git push -q origin "HEAD:$BRANCH" 2>/tmp/push.err; then
+    if git push -q "${PUSH_URL:-origin}" "HEAD:$BRANCH" 2>/tmp/push.err; then
       echo "contexto publicado em $(git rev-parse --short HEAD) ($BRANCH)"; exit 0
     fi
     if grep -qiE "protected|GH006|pre-receive|required status|review|rule" /tmp/push.err; then
@@ -95,7 +103,7 @@ fi
 if ! command -v gh >/dev/null; then
   echo "ERRO: branch protegida e gh CLI ausente — não há como abrir PR"; exit 1
 fi
-git push -q --force origin "HEAD:refs/heads/$PR_BRANCH"
+git push -q --force "${PUSH_URL:-origin}" "HEAD:refs/heads/$PR_BRANCH"
 if gh pr list --head "$PR_BRANCH" --base "$BRANCH" --state open --json number -q '.[0].number' | grep -q .; then
   echo "PR existente atualizada (branch $PR_BRANCH)"
 else

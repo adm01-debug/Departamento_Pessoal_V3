@@ -85,9 +85,18 @@ if (tsVersion) {
 } else {
   console.warn('AVISO: typescript não declarado em package.json.');
 }
+// Range (^6.0.3, "latest", ">=6") pode resolver para ≥ 6.1: vale a versão instalada.
+const tsInstalledPath = path.join(nodeModulesPath, 'typescript', 'package.json');
+if (fs.existsSync(tsInstalledPath)) {
+  const tsInstalled = JSON.parse(fs.readFileSync(tsInstalledPath, 'utf-8')).version;
+  if (violatesTs61(tsInstalled)) {
+    console.error(`ERRO: typescript instalado "${tsInstalled}" viola "não bumpar para ≥ 6.1" (AGENTS.md).`);
+    failures++;
+  }
+}
 
 // 3. Lockfiles de executores banidos (npm ci é o único executor autorizado)
-const FORBIDDEN_LOCKFILES = ['yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', '.yarn'];
+const FORBIDDEN_LOCKFILES = ['yarn.lock', 'pnpm-lock.yaml', 'bun.lockb', 'bun.lock', '.yarn'];
 for (const lockfile of FORBIDDEN_LOCKFILES) {
   if (fs.existsSync(path.resolve(root, lockfile))) {
     console.error(`ERRO: lockfile de executor banido encontrado: ${lockfile} (usar somente npm).`);
@@ -106,7 +115,7 @@ const prodDeps = Object.keys(pkg.dependencies ?? {});
 const notInstalled = [];
 if (fs.existsSync(nodeModulesPath)) {
   for (const dep of prodDeps) {
-    const depPath = path.join(nodeModulesPath, dep);
+    const depPath = path.join(nodeModulesPath, dep, 'package.json');
     if (!fs.existsSync(depPath)) notInstalled.push(dep);
   }
   if (notInstalled.length > 0) {
@@ -119,7 +128,8 @@ if (fs.existsSync(nodeModulesPath)) {
     console.log(`ok: ${prodDeps.length} dependências de produção instaladas ✓`);
   }
 } else {
-  console.warn(`AVISO: node_modules não encontrado — execute npm ci antes de verificar.`);
+  console.error('ERRO: node_modules não encontrado — nada foi verificado. Execute: npm ci');
+  failures++;
 }
 
 // 6. Sumário

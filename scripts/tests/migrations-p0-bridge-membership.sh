@@ -6,15 +6,15 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
 IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p0-bridge-membership-$$"
-RESULT_DIR="$(mktemp -d)"
 
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
 
 cleanup() {
-  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true
+  [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true
   rm -rf "$RESULT_DIR"
 }
+RESULT_DIR="$(mktemp -d)"
 trap cleanup EXIT
 
 run_psql() {
@@ -56,6 +56,7 @@ docker cp "$MIGRATION" "$NAME":/tmp/p0-bridge-membership.sql
 run_psql <<'SQL'
 CREATE ROLE anon NOLOGIN;
 CREATE ROLE authenticated NOLOGIN;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO anon, authenticated; -- default do Supabase: REVOKE só de PUBLIC não basta
 CREATE SCHEMA auth;
 CREATE OR REPLACE FUNCTION auth.uid()
 RETURNS uuid LANGUAGE sql STABLE
@@ -126,6 +127,14 @@ admin_default="$(run_psql -Atc "SELECT empresa_id FROM public.user_empresas WHER
 
 # Twenty competing tabs must still leave one and only one default.
 pids=()
+# One switch stays uncommitted while the others race: without the advisory
+# lock a racer works on a stale snapshot and violates the one-default index.
+(run_as_authenticated "$USER_A" "SELECT public.set_own_default_empresa('$EMP_A1'); SELECT pg_sleep(3);" >/dev/null) >"$RESULT_DIR/0" 2>&1 &
+pids+=("$!")
+for _ in $(seq 1 50); do
+  [ "$(run_psql -Atc "SELECT count(*) FROM pg_stat_activity WHERE wait_event = 'PgSleep'")" = '1' ] && break
+  sleep 0.2
+done
 for i in $(seq 1 20); do
   target="$EMP_A1"
   [ $((i % 2)) -eq 0 ] && target="$EMP_A2"

@@ -63,6 +63,8 @@ const TEM_PAPEL = [
 const OR_ADMIN = [
   /!\s*\w*[Bb]elongs?\w*\s*&&\s*!\s*\w*(?:isAdm|is_admin|isAdmin)\w*/,
   /!\s*\w*pertence\w*\s*&&\s*!\s*\w*(?:isAdm|isAdmin)\w*/,
+  // A mesma condição com os operandos trocados: `!isAdmin && !belongs`.
+  /!\s*\w*(?:isAdm|is_admin|isAdmin)\w*\s*&&\s*!\s*\w*(?:[Bb]elongs?|pertence)\w*/,
 ];
 
 /** Check que parece autorização mas é só tenant. */
@@ -88,11 +90,35 @@ const TEM_AUTH = [/auth\s*\.\s*getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\
  * Sem isto o gate acusa a própria documentação: os comentários que explicam o
  * anti-padrão `!belongs && !isAdmin` contêm o texto que o regex procura, e o
  * arquivo corrigido era reportado como vulnerável.
+ *
+ * Um único passo, da esquerda para a direita, que PRESERVA literais de
+ * string, template e regex: a sequência barra-asterisco dentro de uma string
+ * (header Accept com asterisco-barra-asterisco, a máscara de CNPJ do pix-lote)
+ * abria um "comentário" que engolia código real até o próximo fechamento —
+ * apagando tanto o anti-padrão quanto o `requireRh` do arquivo. O literal de
+ * regex entra para que uma aspa solta dentro dele (`/[",]/`) não desalinhe o
+ * pareamento das strings.
  */
+const LITERAL_OU_COMENTARIO = new RegExp(
+  [
+    '("(?:\\\\.|[^"\\\\\\n])*"', // "string"
+    "'(?:\\\\.|[^'\\\\\\n])*'", // 'string'
+    '`(?:\\\\[\\s\\S]|[^`\\\\])*`', // `template`
+    '(?<=(?:[(,=:\\[!&|?{};>]|\\breturn)\\s*)\\/(?![*/])(?:\\\\.|\\[(?:\\\\.|[^\\]\\\\\\n])*\\]|[^/\\\\\\n\\[])+\\/)', // /regex/
+    '\\/\\*[\\s\\S]*?\\*\\/', // comentário de bloco
+    '\\/\\/[^\\n]*', // comentário de linha
+  ].join('|'),
+  'g'
+);
+
 function semComentarios(src) {
-  return src
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  return src.replace(LITERAL_OU_COMENTARIO, (_m, literal) => {
+    if (literal === undefined) return '';
+    // A interpolação `${...}` de um template é CÓDIGO: um comentário ali
+    // dentro não pode contar como chamada de autorização.
+    if (literal.startsWith('`')) return literal.replace(/\$\{([^{}]*)\}/g, (_x, code) => '${' + semComentarios(code) + '}');
+    return literal;
+  });
 }
 
 function lerFuncoes() {
@@ -128,6 +154,18 @@ function main() {
   const sensiveisPresentes = funcoes.filter((f) => SENSIVEIS.has(f.nome));
   const violacoes = [];
   let auditadas = 0;
+
+  // Guard de false-green: função da lista que sumiu do diretório (renomeada ou
+  // movida) deixava de ser auditada em silêncio — o total só encolhia.
+  const presentes = new Set(funcoes.map((f) => f.nome));
+  for (const nome of SENSIVEIS) {
+    if (presentes.has(nome)) continue;
+    violacoes.push({
+      nome,
+      motivo: `listada em SENSIVEIS mas sem ${DIR}/${nome}/index.ts — se foi renomeada, `
+        + 'a pasta nova não está sendo auditada; atualize a lista',
+    });
+  }
 
   for (const { nome, src } of funcoes) {
     if (!/SERVICE_ROLE/.test(src)) continue; // sem service_role, o RLS já protege

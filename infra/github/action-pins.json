@@ -1,6 +1,6 @@
 {
   "_comment": "Tabela offline: SHA → versão esperada no comentário '# vX'. Manter sincronizado com os workflows.",
-  "_updated": "2026-11-06",
+  "_updated": "2026-11-08",
   "pins": {
     "3d3c42e5aac5ba805825da76410c181273ba90b1": {
       "action": "actions/checkout",

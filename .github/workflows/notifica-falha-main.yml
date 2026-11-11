@@ -1,0 +1,60 @@
+# docs:
+#   gatilho: workflow_run (conclusao dos workflows principais na main)
+#   prova: abre issue quando qualquer workflow critico falha na main
+#   falha: a falha do workflow original fica sem issue de acompanhamento
+#   avisa: equipe de operacao, por meio da issue criada no repositorio
+#   workflows monitorados: ci, canonical-edge-functions, canonical-migrations, canonical-probes, contexto, inventario-estado-semanal, healthcheck, post-deploy-smoke, security, ruleset-sync
+#   origem: pacote "scripts autônomos" do Zapp Web V2 (notifica-falha-main.yml), adaptado ao DP V3
+
+name: Notifica falha na main
+
+on:
+  workflow_run:  # zizmor: ignore[dangerous-triggers]
+    workflows:
+      - Continuous Integration & Delivery
+      - Canonical Supabase — Edge Functions
+      - Canonical database — scoped migrations
+      - Canonical database — read-only security probes
+      - Contexto para agentes de IA (10 min)
+      - Inventário do estado real (semanal)
+      - Environment Healthcheck
+      - Post-deploy smoke
+      - Security Scan & Code Quality
+      - Ruleset sync
+    branches: [main]
+    types: [completed]
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+permissions: {}
+
+jobs:
+  notificar:
+    name: 🔔 Notificar falha
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    permissions:
+      issues: write
+    steps:
+      - name: Checkout (sparse — apenas scripts/ci)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: scripts/ci
+          sparse-checkout-cone-mode: false
+
+      - name: 🔔 Abrir ou atualizar issue de falha
+        # issue-rotativa.mjs: pagina corretamente (listForRepo sem --paginate perdia
+        # issues quando o repo tem >30 abertas), rotaciona em >20 comentarios (E51/W91)
+        # e cria o label se necessario. O github-script inline nao fazia nenhum dos tres.
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WF_NAME: ${{ github.event.workflow_run.name }}
+          WF_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WF_SHA: ${{ github.event.workflow_run.head_sha }}
+          WF_URL: ${{ github.event.workflow_run.html_url }}
+          WF_AT: ${{ github.event.workflow_run.updated_at }}
+        run: node scripts/ci/notifica-falha.mjs

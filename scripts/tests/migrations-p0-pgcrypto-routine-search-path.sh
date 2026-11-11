@@ -9,7 +9,7 @@ IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c
 NAME="dp-p0-pgcrypto-path-$$"
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }
 test -f "$MIGRATION" || { echo "migration not found: $MIGRATION" >&2; exit 1; }
-cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
+cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f -v "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 psql_run() { docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 
@@ -57,6 +57,6 @@ fi
 for pass in 1 2; do psql_run -f /tmp/p0-pgcrypto-path.sql >/dev/null; echo "migration pass $pass succeeded"; done
 after="$(psql_run -Atc "SELECT public.assinar_desligamento('00000000-0000-0000-0000-000000000001', 'fixture')")"
 [ "${#after}" = "64" ] || { echo "pgcrypto digest was not resolved after remediation" >&2; exit 1; }
-remaining="$(psql_run -Atc "SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname = ANY (ARRAY['assinar_desligamento','assinar_espelho_ponto','contrato_assinar_por_token','contrato_consultar_por_token','contrato_gerar_token_assinatura','contrato_preview_url_por_token','gerar_hash_batida_ponto','gerar_relatorio_conformidade_ponto','medida_gerar_link_ciencia','medida_registrar_ciencia_publica','processar_ajuste_aprovado','sst_regimento_assinar','sst_regimento_publicar','verificar_espelho_ponto']) AND NOT ('search_path=pg_catalog, public, extensions'=ANY(p.proconfig))")"
+remaining="$(psql_run -Atc "SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND p.proname = ANY (ARRAY['assinar_desligamento','assinar_espelho_ponto','contrato_assinar_por_token','contrato_consultar_por_token','contrato_gerar_token_assinatura','contrato_preview_url_por_token','gerar_hash_batida_ponto','gerar_relatorio_conformidade_ponto','medida_gerar_link_ciencia','medida_registrar_ciencia_publica','processar_ajuste_aprovado','sst_regimento_assinar','sst_regimento_publicar','verificar_espelho_ponto']) AND NOT ('search_path=pg_catalog, public, extensions'=ANY(coalesce(p.proconfig, '{}'::text[])))")"
 [ "$remaining" = "0" ] || { echo "pgcrypto caller still lacks fixed path" >&2; exit 1; }
 echo 'P0_PGCRYPTO_ROUTINE_SEARCH_PATH_OK: reproduced runtime failure and validated 14 allowlisted routines idempotently.'
