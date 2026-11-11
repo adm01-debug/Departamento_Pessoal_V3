@@ -31,6 +31,7 @@ AS $$
     '10-12', -- Nossa Senhora Aparecida
     '11-02', -- Finados
     '11-15', -- Proclamação da República
+    '11-20', -- Consciência Negra (Lei 14.759/2023)
     '12-25'  -- Natal
   );
 $$;
