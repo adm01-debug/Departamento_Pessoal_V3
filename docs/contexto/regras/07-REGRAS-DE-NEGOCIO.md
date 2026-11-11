@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bdb01891af` · branch `main` · 2026-11-11 19:56 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `71b9957abe` · branch `main` · 2026-11-11 21:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -2493,7 +2493,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 - **signCalculation(data: unknown)** — `src/calculators/auditHelper.ts`
   ```
-  const encoder = new TextEncoder(); const rawData = JSON.stringify(data); const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(rawData)); const hashArray = Array.from(new Uint8Array(hashBuffer)); return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const encoder = new TextEncoder(); const rawData = JSON.stringify(data); const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(rawData)); const hashArray = Array.from(new Uint8Array(hashBuffer)); return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   ```
 - **auditCalculation(colaboradorId: string, competencia: string, resultado: FolhaResultado)** — `src/calculators/auditHelper.ts`
   ```

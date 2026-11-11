@@ -98,7 +98,7 @@
     "HealthTrendCard"
    ],
    "export_default": null,
-   "linhas": 144,
+   "linhas": 125,
    "dominio": "components/admin",
    "hooks_locais": [
     "useSystemHealthHistory"
@@ -128,7 +128,7 @@
     "TelemetryFilters"
    ],
    "export_default": null,
-   "linhas": 90,
+   "linhas": 92,
    "dominio": "components/admin",
    "hooks_locais": [],
    "tabelas": [],
@@ -170,7 +170,7 @@
     "TelemetryTopOffenders"
    ],
    "export_default": null,
-   "linhas": 49,
+   "linhas": 51,
    "dominio": "components/admin",
    "hooks_locais": [],
    "tabelas": [],
@@ -231,7 +231,7 @@
     "SignaturePad"
    ],
    "export_default": null,
-   "linhas": 116,
+   "linhas": 121,
    "dominio": "components/admissao",
    "hooks_locais": [],
    "tabelas": [],
@@ -361,7 +361,7 @@
     "AfastamentoStats"
    ],
    "export_default": null,
-   "linhas": 91,
+   "linhas": 93,
    "dominio": "components/afastamentos",
    "hooks_locais": [],
    "tabelas": [],
@@ -408,7 +408,7 @@
     "LoginForm"
    ],
    "export_default": "LoginForm",
-   "linhas": 64,
+   "linhas": 66,
    "dominio": "components/auth",
    "hooks_locais": [],
    "tabelas": [],
@@ -3746,7 +3746,7 @@
     "RouteErrorBoundary"
    ],
    "export_default": null,
-   "linhas": 90,
+   "linhas": 98,
    "dominio": "components",
    "hooks_locais": [],
    "tabelas": [],

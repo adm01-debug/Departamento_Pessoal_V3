@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bdb01891af735f4e897f032bfa3cb54a6d525f78",
+  "commit": "71b9957abe6ab07720ed486ec831dcc1758d5420",
   "branch": "main",
-  "data_commit": "2026-11-11T18:53:07Z",
+  "data_commit": "2026-11-11T21:13:48Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "71b9957",
+    "data": "2026-11-11",
+    "assunto": "style(manutencao): aplica correcoes locais verificadas (#439)"
+   },
    {
     "sha": "bdb0189",
     "data": "2026-11-11",
@@ -126,14 +131,9 @@
     "sha": "7aba28e",
     "data": "2026-11-10",
     "assunto": "fix: gerador de contexto (ai-context) e inventário (rotas, banco, mudou-conteudo) leem o código como ele é (#423)"
-   },
-   {
-    "sha": "34e22ec",
-    "data": "2026-11-10",
-    "assunto": "feat(sync): modo sem push por repositório (6ª coluna push=0 em repos.conf) (#414)"
    }
   ],
-  "arquivos_mudados_7d": 404,
+  "arquivos_mudados_7d": 423,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -156,6 +156,10 @@
     "mudancas": 19
    },
    {
+    "pasta": "src/components/__tests__",
+    "mudancas": 17
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 17
    },
@@ -166,10 +170,6 @@
    {
     "pasta": "src/services/__tests__",
     "mudancas": 14
-   },
-   {
-    "pasta": "src/components/__tests__",
-    "mudancas": 13
    },
    {
     "pasta": "PENDENCIAS.md",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 63
+    "mudancas": 62
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 58
+    "mudancas": 57
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -218,23 +218,23 @@
     "mudancas": 21
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 14
-   },
-   {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 14
-   },
-   {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 14
-   },
-   {
     "arquivo": ".github/workflows/e2e.yml",
     "mudancas": 13
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 13
+   },
+   {
     "arquivo": "src/services/cnabService.ts",
+    "mudancas": 13
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
+    "mudancas": 13
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 13
    },
    {
@@ -258,10 +258,6 @@
     "mudancas": 10
    },
    {
-    "arquivo": "src/integrations/supabase/client.ts",
-    "mudancas": 10
-   },
-   {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 10
    },
@@ -275,6 +271,10 @@
    },
    {
     "arquivo": "infra/github/action-pins.json",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/integrations/supabase/client.ts",
     "mudancas": 9
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 103
+    "commits": 104
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2877,
   "arquivos_codigo": 1548,
-  "linhas_codigo": 273182,
+  "linhas_codigo": 273277,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -632,7 +632,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72891
+   "linhas": 72987
   },
   "src/constants": {
    "arquivos": 6,
@@ -648,7 +648,7 @@
   },
   "src/hooks": {
    "arquivos": 182,
-   "linhas": 20005
+   "linhas": 20004
   },
   "src/i18n": {
    "arquivos": 2,

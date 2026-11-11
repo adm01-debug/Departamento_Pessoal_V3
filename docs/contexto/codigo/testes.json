@@ -602,7 +602,7 @@
   {
    "arquivo": "src/components/__tests__/AdminRoute.test.tsx",
    "tipo": "unit",
-   "linhas": 80,
+   "linhas": 104,
    "testa": [
     "src/components/AdminRoute.tsx"
    ],
@@ -1334,7 +1334,7 @@
   {
    "arquivo": "src/components/__tests__/ESocialPagamentosAndSST.test.tsx",
    "tipo": "unit",
-   "linhas": 79,
+   "linhas": 77,
    "testa": [
     "src/components/esocial/Periodicos.tsx",
     "src/components/esocial/SSTEvents.tsx"
@@ -1687,7 +1687,7 @@
   {
    "arquivo": "src/components/__tests__/forms.test.tsx",
    "tipo": "unit",
-   "linhas": 160,
+   "linhas": 180,
    "testa": [
     "src/components/forms/FormField.tsx",
     "src/components/forms/FormSection.tsx",
@@ -2206,7 +2206,7 @@
   {
    "arquivo": "src/components/__tests__/PageContainer.test.tsx",
    "tipo": "unit",
-   "linhas": 87,
+   "linhas": 147,
    "testa": [
     "src/components/layout/PageContainer.tsx"
    ],
@@ -2701,7 +2701,7 @@
   {
    "arquivo": "src/components/admin/__tests__/UnifiedAuditSection.test.tsx",
    "tipo": "unit",
-   "linhas": 177,
+   "linhas": 168,
    "testa": [
     "src/components/admin/UnifiedAuditSection.tsx",
     "src/integrations/supabase/client.ts"

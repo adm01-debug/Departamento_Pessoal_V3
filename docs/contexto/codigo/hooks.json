@@ -910,7 +910,7 @@
    "hooks_exportados": [
     "useCalcular13Salario"
    ],
-   "linhas": 70,
+   "linhas": 69,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
