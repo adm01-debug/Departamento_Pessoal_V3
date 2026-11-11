@@ -159,7 +159,8 @@ jobs:
             20261029120000_whatsapp_pending_trigger_retire.sql \
             20261107203000_fix_rls_insert_configuracoes_ponto.sql \
             20261109000000_configuracoes_ponto_insert_policy.sql \
-            20261111000000_ferias_art145_antecipacao_oj123.sql
+            20261111000000_ferias_art145_antecipacao_oj123.sql \
+            20261112000000_rv02_drop_inert_token_policies.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
