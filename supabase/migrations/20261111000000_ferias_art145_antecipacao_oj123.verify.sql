@@ -16,4 +16,7 @@ WHERE (
   AND public.deadline_legal_pagamento_ferias(DATE '2026-11-16') = DATE '2026-11-13'
   -- Caso sem fim de semana/feriado no meio: D-2 exato, comportamento original.
   AND public.deadline_legal_pagamento_ferias(DATE '2026-11-20') = DATE '2026-11-18'
+  -- 20/11 é feriado nacional (Lei 14.759/2023): início no domingo 22/11 →
+  -- D-2 cai em 20/11 → prazo recua para quinta 19/11.
+  AND public.deadline_legal_pagamento_ferias(DATE '2026-11-22') = DATE '2026-11-19'
 );

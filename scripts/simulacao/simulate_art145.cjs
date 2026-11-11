@@ -15,7 +15,7 @@ const diffDays = (a, b) => Math.round((a.getTime() - b.getTime()) / 86400000);
 
 // Feriados nacionais fixos (mês 1-based, dia)
 const FERIADOS_FIXOS = new Set([
-  '01-01','04-21','05-01','09-07','10-12','11-02','11-15','12-25',
+  '01-01','04-21','05-01','09-07','10-12','11-02','11-15','11-20','12-25',
 ]);
 function isFeriado(d) {
   const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
