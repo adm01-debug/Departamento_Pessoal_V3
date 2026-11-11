@@ -36,7 +36,7 @@ permissions:
 jobs:
   security-probes:
     name: probes RV-01/02/03/04 no canônico
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 10
     environment: production
     env:
