@@ -20,7 +20,7 @@ describe('tabelas 2026 — integridade dos dados', () => {
     });
 
     it('SALARIO_MINIMO_2026 vale R$ 1.621,00', () => {
-      expect(SALARIO_MINIMO_2026).toBe(1621.00);
+      expect(SALARIO_MINIMO_2026).toBe(1621.0);
     });
   });
 
@@ -134,7 +134,7 @@ describe('tabelas 2026 — integridade dos dados', () => {
 
   describe('ENCARGOS_PADRAO', () => {
     it('INSS patronal = 20%', () => {
-      expect(ENCARGOS_PADRAO.inssPatronal).toBe(0.20);
+      expect(ENCARGOS_PADRAO.inssPatronal).toBe(0.2);
     });
 
     it('FGTS = 8%', () => {

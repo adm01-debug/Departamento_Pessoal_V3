@@ -57,7 +57,6 @@ export function useCalcular13Salario() {
       // Prefixo de contexto ajuda o usuário a saber qual operação falhou.
       toast.error(`Erro ao calcular 13º: ${safeErrorMessage(err, 'tente novamente.')}`);
       return null;
-
     } finally {
       setLoading(false);
     }
