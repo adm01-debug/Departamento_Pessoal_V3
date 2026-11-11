@@ -5,15 +5,18 @@
 ## Visão Geral
 
 5 workflows operam diretamente contra o banco de dados canônico de produção
-(`frjbfeamybqsejlvmqbl`). Os três workflows com acesso direto ao PostgreSQL
+(`frjbfeamybqsejlvmqbl`). `canonical-migrations` e `canonical-sql-diag`
 compartilham o grupo de concorrência `canonical-database`
-(cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL
-e probes simultâneas contra o mesmo banco.
+(cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL.
+`canonical-probes` (READ ONLY + ROLLBACK) tem fila própria `canonical-probes`
+(cancel-in-progress: true): um probe agendado esperando aprovação do
+environment Production travava as migrations por dias. Custo aceito: um probe
+que coincida com um `apply` pode ler estado intermediário e dar falso alarme.
 
 | Workflow                       | Trigger              | Acesso                | Concorrência               |
 | ------------------------------ | -------------------- | --------------------- | -------------------------- |
 | `canonical-migrations.yml`     | workflow_dispatch    | postgres (migrations) | `canonical-database`       |
-| `canonical-probes.yml`         | schedule/dispatch    | postgres (read-only)  | `canonical-database`       |
+| `canonical-probes.yml`         | schedule/dispatch    | postgres (read-only)  | `canonical-probes`         |
 | `canonical-sql-diag.yml`       | workflow_dispatch    | postgres (read-only)  | `canonical-database`       |
 | `canonical-edge-functions.yml` | push main / dispatch | Supabase Edge Runtime | `canonical-edge-functions` |
 | `ruleset-sync.yml`             | schedule/dispatch    | GitHub API (read)     | —                          |

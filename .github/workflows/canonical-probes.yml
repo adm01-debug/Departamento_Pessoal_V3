@@ -21,8 +21,13 @@ on:
         type: string
 
 concurrency:
-  group: canonical-database
-  cancel-in-progress: false
+  # Fila própria: probes são READ ONLY + ROLLBACK, não precisam serializar com
+  # as migrations. Na fila compartilhada `canonical-database`, um probe agendado
+  # parado na aprovação do environment Production travava as migrations por
+  # dias (run 42455140261 segurou 43083970930). cancel-in-progress substitui o
+  # probe do dia anterior que ninguém aprovou pelo novo, sem acumular.
+  group: canonical-probes
+  cancel-in-progress: true
 
 permissions:
   contents: read
