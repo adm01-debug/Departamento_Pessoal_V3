@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "207e914f616869219da5086c1286422c95e97aab",
+  "sha": "c42d57d30e80405bc4b04ce8a7f8587dbd21d5d5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-11 12:34 UTC",
+  "generated_at": "2026-11-11 13:20 UTC",
   "files_total": 2896,
   "code_files": 2367,
-  "code_lines": 321143
+  "code_lines": 321144
  },
  "version": "1.3.2",
- "facts_hash": "59ae73867d47687a",
+ "facts_hash": "ca9b13f14499b8d9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -98140,7 +98140,7 @@
   {
    "module": "supabase/migrations",
    "files": 785,
-   "lines": 66427,
+   "lines": 66428,
    "tables": [
     "profiles",
     "user_roles"
@@ -277416,7 +277416,7 @@
   },
   "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql": {
    "path": "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
-   "lines": 8
+   "lines": 9
   },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
@@ -277634,10 +277634,19 @@
   }
  },
  "git": {
-  "sha": "207e914f616869219da5086c1286422c95e97aab",
+  "sha": "c42d57d30e80405bc4b04ce8a7f8587dbd21d5d5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "c42d57d",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)",
+    "files": [
+     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql"
+    ]
+   },
    {
     "sha": "207e914",
     "date": "2026-11-11",
@@ -278175,24 +278184,9 @@
      "scripts/sync/run-all.sh",
      "scripts/sync/sync-github.sh"
     ]
-   },
-   {
-    "sha": "85fc652",
-    "date": "2026-11-09",
-    "author": "adm01-debug",
-    "subject": "feat(sync): commit automático do trabalho local na branch computador_local (#407)",
-    "files": [
-     "scripts/sync/README.md",
-     "scripts/sync/autocommit-local.sh",
-     "scripts/sync/install-autocommit-timer.sh"
-    ]
    }
   ],
   "hot_files": [
-   [
-    "scripts/sync/autocommit-local.sh",
-    6
-   ],
    [
     "scripts/sync/run-all.sh",
     6
@@ -278202,11 +278196,11 @@
     5
    ],
    [
-    "scripts/automation.config.json",
-    4
+    "scripts/sync/autocommit-local.sh",
+    5
    ],
    [
-    "scripts/sync/README.md",
+    "scripts/automation.config.json",
     4
    ],
    [
@@ -278230,6 +278224,14 @@
     3
    ],
    [
+    "scripts/sync/README.md",
+    3
+   ],
+   [
+    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
+    2
+   ],
+   [
     "package.json",
     2
    ],
@@ -278251,10 +278253,6 @@
    ],
    [
     "scripts/sync/install-all-timers.sh",
-    2
-   ],
-   [
-    "scripts/sync/install-autocommit-timer.sh",
     2
    ],
    [
