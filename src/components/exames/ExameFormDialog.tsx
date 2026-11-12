@@ -33,6 +33,11 @@ interface ExameFormDialogProps {
     resultado: string;
   }) => void;
   isPending?: boolean;
+  /** Modo edição (controlado): valores iniciais, estado de abertura e título. */
+  initial?: { [K in keyof typeof emptyForm]?: string | null };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  title?: string;
 }
 
 const emptyForm = {
@@ -45,9 +50,31 @@ const emptyForm = {
   resultado: '',
 };
 
-export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFormDialogProps) {
-  const [open, setOpen] = useState(false);
+export function ExameFormDialog({
+  colaboradores,
+  onSubmit,
+  isPending,
+  initial,
+  open: openProp,
+  onOpenChange,
+  title,
+}: ExameFormDialogProps) {
+  const [openState, setOpenState] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : openState;
+  const setOpen = (o: boolean) => (controlled ? onOpenChange?.(o) : setOpenState(o));
+
+  // Modo edição: ao receber um novo registro, preenche o formulário com seus valores.
+  const [prevInitial, setPrevInitial] = useState(initial);
+  if (initial !== prevInitial) {
+    setPrevInitial(initial);
+    if (initial) {
+      const base = { ...emptyForm };
+      for (const k of Object.keys(base) as (keyof typeof emptyForm)[]) base[k] = initial[k] ?? '';
+      setForm(base);
+    }
+  }
 
   const handleSubmit = () => {
     onSubmit(form);
@@ -57,15 +84,17 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" className="rounded-xl shrink-0">
-          <Plus className="h-4 w-4 mr-1" />
-          Novo Exame
-        </Button>
-      </DialogTrigger>
+      {!controlled && (
+        <DialogTrigger asChild>
+          <Button size="sm" className="rounded-xl shrink-0">
+            <Plus className="h-4 w-4 mr-1" />
+            Novo Exame
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display">Registrar Exame Ocupacional</DialogTitle>
+          <DialogTitle className="font-display">{title ?? 'Registrar Exame Ocupacional'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div>
@@ -159,7 +188,7 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
             onClick={handleSubmit}
             disabled={!form.colaborador_id || !form.tipo || isPending}
           >
-            Registrar Exame
+            {controlled ? 'Salvar Alterações' : 'Registrar Exame'}
           </Button>
         </div>
       </DialogContent>

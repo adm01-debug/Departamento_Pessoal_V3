@@ -1,3 +1,4 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { PageTitle } from '@/components/PageTitle';
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -33,6 +34,7 @@ export default function ExamesPage() {
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
   const [resultadoFilter, setResultadoFilter] = useState('');
+  const [editando, setEditando] = useState<Tables<'exames'> | null>(null);
 
   const { data: exames = [], isLoading } = useQuery({
     queryKey: ['exames'],
@@ -84,6 +86,49 @@ export default function ExamesPage() {
       toast.success('Exame registrado com sucesso!');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar exame.')),
+  });
+
+  const atualizar = useMutation({
+    mutationFn: async ({
+      id,
+      d,
+    }: {
+      id: string;
+      d: {
+        colaborador_id: string;
+        tipo: string;
+        data_exame?: string;
+        data_validade?: string;
+        medico?: string;
+        crm?: string;
+        resultado?: string;
+      };
+    }) => {
+      const { error } = await supabase
+        .from('exames')
+        .update(
+          validateTablePayload(
+            'exames',
+            {
+              colaborador_id: d.colaborador_id,
+              tipo: d.tipo,
+              data_exame: d.data_exame || null,
+              data_validade: d.data_validade || null,
+              medico: d.medico || null,
+              crm: d.crm || null,
+              resultado: d.resultado || null,
+            },
+            'ExamesPage:exames:update'
+          )
+        )
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['exames'] });
+      toast.success('Exame atualizado com sucesso!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar exame.')),
   });
 
   const excluir = useMutation({
@@ -157,8 +202,17 @@ export default function ExamesPage() {
             {isLoading ? (
               <TableSkeleton rows={5} columns={7} />
             ) : (
-              <ExameTable data={filtered} onExcluir={(id) => excluir.mutate(id)} />
+              <ExameTable data={filtered} onExcluir={(id) => excluir.mutate(id)} onEditar={setEditando} />
             )}
+            <ExameFormDialog
+              colaboradores={colaboradores}
+              open={!!editando}
+              onOpenChange={(o) => !o && setEditando(null)}
+              initial={editando ?? undefined}
+              title="Editar Exame / Registrar Resultado"
+              onSubmit={(form) => editando && atualizar.mutate({ id: editando.id, d: form })}
+              isPending={atualizar.isPending}
+            />
           </div>
 
           <div>
