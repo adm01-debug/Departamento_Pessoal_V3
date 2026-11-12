@@ -26,10 +26,40 @@ comita e abre um PR com `gh pr create` — nunca abre PR vazio.
 
 <!-- REPORT:START -->
 
-> Última execução automática: 2026-11-08 (workflows-report.yml)
+> Última execução automática: 2026-11-11 (workflows-report.yml)
 
-[report-workflows] GitHub API 401 — token sem escopo "actions:read" ou expirado.
-Token atual: proxy-in... (primeiros 8 chars)
+# Relatório de Workflows
+
+| Workflow | Median (min) | P95 (min) | Runs |
+|----------|-------------|-----------|------|
+| Automação local | 0 | 15 | 43 |
+| Branch Hygiene Audit | — | — | 0 |
+| Canonical Supabase — Edge Functions | 3 | 60 | 41 |
+| Canonical database — scoped migrations | 2 | 7294 | 35 |
+| Canonical database — read-only security probes | 34155 ⚠️ | 40415 | 13 |
+| Canonical database — read-only SQL diagnostic | 6983 ⚠️ | 7123 | 36 |
+| Continuous Integration & Delivery | 6 | 39 | 44 |
+| Contexto para agentes de IA (10 min) | 9 | 33 | 36 |
+| DB Migration Tests (PLANO_100) | 0 | 7 | 34 |
+| Manual & Preview Deploy | 1 | 15 | 50 |
+| E2E Tests (Playwright) | 1 | 11 | 49 |
+| Gitleaks | 0 | 15 | 49 |
+| Environment Healthcheck | 0 | 4 | 50 |
+| Inventário do estado real (semanal) | 3 | 3 | 2 |
+| .github/workflows/main.yml | 0 | 0 | 1 |
+| Notifica falha na main | 11 | 11 | 2 |
+| OSSF Scorecard | 1 | 1 | 4 |
+| Post-deploy smoke | 1 | 16 | 13 |
+| Ruleset sync | 0 | 0 | 7 |
+| Security Scan & Code Quality | 3 | 20 | 46 |
+| Settings Guard | 0 | 0 | 1 |
+| Temp Prettier Dump | 0 | 0 | 4 |
+| Workflow lint (actionlint) | 1 | 24 | 46 |
+| Workflows report | 1 | 1 | 4 |
+| Copilot | 3 | 9 | 15 |
+| Copilot cloud agent | 2 | 2 | 1 |
+| Dependabot Updates | 2 | 6 | 50 |
+| Dependency Graph | 1 | 1 | 1 |
 
 <!-- REPORT:END -->
 
