@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
 import { Pencil, Plus, Scale, Trash2 } from 'lucide-react';
@@ -53,6 +54,10 @@ function toPayload(d: typeof FORM_VAZIO) {
 export default function PensoesPage() {
   const { empresaAtual } = useEmpresas();
   const pii = usePiiMask();
+  // Editar/excluir só para RH/admin (mesmo critério do usePiiMask): o form de
+  // edição traz CPF e dados bancários sem máscara.
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -63,13 +68,12 @@ export default function PensoesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['pensoes', empresaId],
     queryFn: async () => {
-      // `pensoes.empresa_id` é denormalizada e mantida por trigger a partir
-      // do colaborador. Filtro direto (indexado) + defesa em profundidade
-      // sobre a RLS, que libera todas as empresas do usuário.
+      // O banco ao vivo não tem `pensoes.empresa_id` (drift da migration
+      // 20260728172359): filtra pela empresa do colaborador via inner join.
       const { data, error } = await supabase
         .from('pensoes')
-        .select('*, colaboradores!pensoes_colaborador_id_fkey(id, nome_completo)')
-        .eq('empresa_id', empresaId!)
+        .select('*, colaboradores!pensoes_colaborador_id_fkey!inner(id, nome_completo, empresa_id)')
+        .eq('colaboradores.empresa_id', empresaId!)
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) throw error;
@@ -99,8 +103,10 @@ export default function PensoesPage() {
 
   const atualizar = useMutation({
     mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
-      const { error } = await supabase.from('pensoes').update(toPayload(d)).eq('id', id).eq('empresa_id', empresaId!);
+      // Escopo de empresa garantido pela RLS tenant_pensoes (via colaborador).
+      const { data, error } = await supabase.from('pensoes').update(toPayload(d)).eq('id', id).select('id');
       if (error) throw error;
+      if (!data?.length) throw new Error('Pensão não encontrada ou sem permissão para alterar.');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pensoes', empresaId] });
@@ -134,13 +140,15 @@ export default function PensoesPage() {
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('pensoes').delete().eq('id', id).eq('empresa_id', empresaId!);
+      const { data, error } = await supabase.from('pensoes').delete().eq('id', id).select('id');
       if (error) throw error;
+      if (!data?.length) throw new Error('Pensão não encontrada ou sem permissão para excluir.');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pensoes', empresaId] });
       toast.success('Excluída');
     },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao excluir pensão.')),
   });
 
   return (
@@ -288,12 +296,21 @@ export default function PensoesPage() {
                         <Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativa' : 'Inativa'}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => abrirEdicao(r)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        {podeGerir && (
+                          <>
+                            <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => abrirEdicao(r)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Excluir"
+                              onClick={() => excluir.mutate(r.id)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
