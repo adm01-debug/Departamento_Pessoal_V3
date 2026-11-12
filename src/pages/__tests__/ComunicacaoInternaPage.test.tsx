@@ -129,14 +129,16 @@ describe('ComunicacaoInternaPage — editar comunicado', () => {
 
     expect(await screen.findByRole('button', { name: 'Editar' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Excluir' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Novo Comunicado/ })).toBeInTheDocument();
   });
 
-  it('colaborador sem papel RH/admin não vê Editar nem Excluir', async () => {
+  it('colaborador sem papel RH/admin não vê Novo Comunicado, Editar nem Excluir', async () => {
     auth.roles = ['user'];
     renderPage();
 
     expect(await screen.findByText('Reunião geral')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Novo Comunicado/ })).not.toBeInTheDocument();
   });
 });

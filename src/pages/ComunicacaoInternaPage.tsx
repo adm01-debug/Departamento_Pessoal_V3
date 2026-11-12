@@ -380,12 +380,14 @@ export default function ComunicacaoInternaPage() {
                 </SelectContent>
               </Select>
               <Dialog open={openCom} onOpenChange={onOpenComChange}>
-                <DialogTrigger asChild>
-                  <Button className="rounded-xl">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Novo Comunicado
-                  </Button>
-                </DialogTrigger>
+                {podeGerirComunicados && (
+                  <DialogTrigger asChild>
+                    <Button className="rounded-xl">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Novo Comunicado
+                    </Button>
+                  </DialogTrigger>
+                )}
                 <DialogContent className="sm:max-w-lg">
                   <DialogHeader>
                     <DialogTitle>{editandoId ? 'Editar Comunicado' : 'Novo Comunicado'}</DialogTitle>
