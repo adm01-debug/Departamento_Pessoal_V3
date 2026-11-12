@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cab34b8eca` · branch `main` · 2026-11-12 17:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `004508da31` · branch `main` · 2026-11-12 20:14 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1722,7 +1722,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `valido` | compara, escreve | `src/hooks/useImportacaoColaboradores.ts`<br>`src/pages/ImportacaoPage.tsx`<br>`src/utils/importacao/parser.ts` |
 | `status` | `vencida` | compara | `src/components/ferias/FeriasRelatorioDialog.tsx`<br>`src/pages/FeriasPage.tsx` |
 | `status` | `vencido` | compara | `src/components/colaborador-detalhes/AquisitivosTab.tsx`<br>`src/components/ferias/GerenciamentoPeriodos.tsx` |
-| `status` | `verified` | compara | `src/components/AdminRoute.tsx`<br>`src/components/ProtectedRoute.tsx`<br>`src/components/settings/MFASetup.tsx` |
+| `status` | `verified` | compara | `src/components/AdminRoute.tsx`<br>`src/components/ProtectedRoute.tsx`<br>`src/components/settings/MFASetup.tsx`<br>`src/pages/PerfilPage.tsx` |
 | `status` | `very_slow` | compara | `supabase/functions/external-db-bridge/index.ts` |
 | … +45 linhas — lista completa em `context.json` | | | |
 
@@ -2399,6 +2399,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `totp` | pattern=[0-9 ]*, max | `src/pages/LoginPage.tsx` |
 | `forgot-email` | type=email | `src/pages/LoginPage.tsx` |
 | `email` | type=email | `src/pages/LoginPage.tsx` |
+| `nova-senha` | type=password | `src/pages/PerfilPage.tsx` |
+| `confirmar-senha` | type=password | `src/pages/PerfilPage.tsx` |
 | `estoque` | type=number | `src/pages/PromoBrindesPage.tsx` |
 | `preco` | type=number, step=0.01 | `src/pages/PromoBrindesPage.tsx` |
 
@@ -3652,6 +3654,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: 0.3 + i * 0.1 }}` | `src/pages/LoginPage.tsx` |
 | `transition={{ delay: i * 0.02 }}` | `src/pages/NotificacoesPage.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/pages/NotificacoesPage.tsx` |
+| `100%` | `src/pages/OnboardingPage.tsx` |
 | `(Math.abs(vf + tc - provF) > sal * 0.05 \|\| Math.abs(v13 - prov13) > sal * 0.05)` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `13º) e uma estimativa de 2% de reajustes ou novas admissões mensais.` | `src/pages/PassivoTrabalhistaPage.tsx` |
 | `Provisionamento registrado diverge &gt;5% do calculado — revise os valores da folha.` | `src/pages/PassivoTrabalhistaPage.tsx` |
@@ -3797,6 +3800,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `ALPHABET` | `'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'` | `src/hooks/useAdmissaoWorkflow.ts` |
 | `LOCAL_MAX_ATTEMPTS` | `5` | `src/hooks/useBruteForceProtection.ts` |
 | `LOCAL_LOCKOUT_MS` | `5` | `src/hooks/useBruteForceProtection.ts` |
+| `PAGE_SIZE` | `1000` | `src/hooks/useExecutiveDashboard.ts` |
 | `INACTIVITY_LIMIT_MS` | `30` | `src/hooks/useSessionTimeout.ts` |
 | `CHECK_INTERVAL_MS` | `60` | `src/hooks/useSessionTimeout.ts` |
 | `TOAST_LIMIT` | `1` | `src/hooks/useToast.ts` |
@@ -4518,14 +4522,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | ; import { Skeleton } from  | `src/pages/AssinarContratoPage.tsx` |
 | Falha ao gerar recibo | `src/pages/AssinarContratoPage.tsx` |
 | URL não disponível. | `src/pages/AssinarContratoPage.tsx` |
+| Admissão deste documento não encontrada na empresa atual. | `src/pages/AssinaturasPage.tsx` |
 | Faça login para usar o assistente. | `src/pages/AssistenteIAPage.tsx` |
 | Selecione uma empresa antes de realizar o backup | `src/pages/BackupPage.tsx` |
 | Erro ao buscar colaborador | `src/pages/CalculadoraRescisaoPage.tsx` |
 | Informe a data prevista de fim do contrato (arts. 479/480) | `src/pages/CalculadoraRescisaoPage.tsx` |
 | Preencha salário, data de admissão e desligamento | `src/pages/CalculadoraRescisaoPage.tsx` |
 | Servidor não retornou um resultado válido | `src/pages/CalculadoraRescisaoPage.tsx` |
-| Não foi possível abrir anexo | `src/pages/CanalContabilidadePage.tsx` |
-| … +475 linhas — lista completa em `context.json` | |
+| … +478 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4574,7 +4578,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6786 testes em 548 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6792 testes em 548 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4694,6 +4698,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/calculators/__tests__/auditHelper.test.ts` | 15 | signCalculation · returns a hex string · returns the same hash for identical data · returns different hashes for different data … |
 | `src/components/__tests__/ESocialEventComponents.test.tsx` | 15 | S2200Admissao (NaoPeriodicos) · renders trabalhador name · renders CPF · renders admissao date … |
 | `src/hooks/__tests__/useEmpresas.test.ts` | 15 | useEmpresas · returns expected shape · returns loadingEmpresas=true initially · loads todasEmpresas when isAdmin=true … |
+| `src/hooks/__tests__/useExecutiveDashboard.test.ts` | 15 | useExecutiveKPIs · is disabled when no empresaId · returns data when empresaId provided · returns totalAtivos=0 when no employees … |
 | `src/hooks/__tests__/useGrupo.test.tsx` | 15 | useGrupo · initial state: isLoading=true, empty arrays · returns all empresas after query resolves · empresasAtivas only includes ativa=true entries … |
 | `src/lib/__tests__/queryClient.test.ts` | 15 | queryClient · is a QueryClient instance · has staleTime of 5 minutes · has gcTime of 30 minutes … |
 | `src/utils/__tests__/dateLocal.test.ts` | 15 | dateLocal · formata YYYY-MM-DD com zero-padding no fuso local · não sofre shift de UTC quando a hora local é próxima da meia-noite · retorna string vazia para entrada inválida (contrato defensivo) … |
@@ -4727,7 +4732,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MedidasDisciplinares.test.tsx` | 12 | MedidasKPIs · renders Total Registros label · renders all KPI labels · renders stat values … |
 | `src/components/__tests__/NovaAdmissaoDialog.test.tsx` | 12 | NovaAdmissaoDialog · renders Nova Admissão trigger button by default · renders Nova Admissão dialog title · renders Nome completo label … |
 | `src/hooks/__tests__/useCalcular13Salario.test.tsx` | 12 | useCalcular13Salario · initial state: loading=false, resultado=null · exposes calcular function · sets loading=true while calculating … |
-| `src/hooks/__tests__/useExecutiveDashboard.test.ts` | 12 | useExecutiveKPIs · is disabled when no empresaId · returns data when empresaId provided · returns totalAtivos=0 when no employees … |
 | `src/hooks/__tests__/useGenericCrud.test.ts` | 12 | useGenericCrud · passes queryKey and queryFn to useQuery · exposes items from query data · exposes total from query data … |
 | `src/hooks/__tests__/useLocalStorage.test.ts` | 12 | useLocalStorage · returns initial value when key does not exist · returns stored value when key exists · stores value and updates state … |
 | `src/hooks/__tests__/useMediaQuery.test.ts` | 12 | useMediaQuery · returns initial match state · returns false when query does not match · updates when media query changes … |
@@ -4741,6 +4745,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `scripts/tests/contexto-publicacao.test.mjs` | 11 | cada upload fornece um ID e cada download usa destino explícito sem ocultar falhas · produtores independentes falham de verdade e o publisher ainda aceita as fontes disponíveis · falha fatal de ${failed} mantém sua versão anterior e publica as duas fontes saudáveis · publisher ${previousBranch ?  … |
 | `src/components/__tests__/EmprestimosFinanceiros.test.tsx` | 11 | EmprestimosTable · renders table headers · renders colaborador names · renders instituicao or dash for null … |
 | `src/components/__tests__/GerarPgrButton.test.tsx` | 11 | GerarPgrButton · renders trigger button with  · renders dialog title · renders Responsável Técnico label … |
+| `src/components/__tests__/GestaoPontoAnalytics.test.tsx` | 11 | GestaoPontoAnalytics · renders Painel de Gestão Estratégica title · renders subtitle text · renders IA Monitorando badge … |
 | `src/components/__tests__/MedidaContestacaoDialog.test.tsx` | 11 | MedidaContestacaoDialog · returns null when medida is null · does not render dialog content when open is false · renders dialog when open is true with medida … |
 | `src/components/__tests__/MobileBottomNav.test.tsx` | 11 | MobileBottomNav · renders nav with aria-label · renders Home link · renders Equipe link … |
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
@@ -4773,6 +4778,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useFeriasAprovacao.test.ts` | 10 | useFeriasAprovacao · starts with isLoading=false · aprovarGestor calls feriasService.aprovarGestor with id and userId · aprovarGestor shows success toast … |
 | `src/hooks/__tests__/useHorasExtras.test.ts` | 10 | useHorasExtras · returns initial solicitacoes empty array · calls horaExtraService.listar with empresaId · returns solicitacoes from service … |
 | `src/hooks/__tests__/useRealTimeSubscription.test.tsx` | 10 | useRealTimeSubscription · does NOT subscribe when empresaId is undefined · does NOT subscribe when empresaId is empty string · creates a channel when empresaId is provided … |
+| `src/hooks/__tests__/useSystemHealth.test.ts` | 10 | useSystemHealth · returns initial status as online · returns initial latency as null · sets latency after health check … |
 | `src/services/__tests__/folhaPagamentoService.test.ts` | 10 | folhaPagamentoService · assinarHolerite · should call upsert with correct data and return hash · fecharFolha … |
 | `src/services/__tests__/loggerService.test.ts` | 10 | loggerService · should buffer info logs and not call supabase rpc immediately · should flush error logs immediately via rpc · should flush warn logs immediately via rpc for security audit … |
 | `src/services/tabelas/__tests__/pontoService.test.ts` | 10 | ajustesPontoService · listar queries ajustes_ponto · listar returns [] when data is null · criar calls insert on ajustes_ponto … |
@@ -4831,7 +4837,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FolhaKPIs.test.tsx` | 9 | FolhaKPIs · shows skeleton cards when loading · renders Colaboradores label · renders Total Bruto label … |
 | `src/components/__tests__/FolhaValidationAlerts.test.tsx` | 9 | FolhaValidationAlerts · renders Audit Smart Validation title · renders score badge · does not claim eSocial S-1010 sync it never checked … |
 | `src/components/__tests__/GerarAEJDialog.test.tsx` | 9 | GerarAEJDialog · renders Gerar AEJ trigger button · renders dialog title · renders dialog description … |
-| `src/components/__tests__/GestaoPontoAnalytics.test.tsx` | 9 | GestaoPontoAnalytics · renders Painel de Gestão Estratégica title · renders subtitle text · renders IA Monitorando badge … |
 | `src/components/__tests__/GuidedTour.test.tsx` | 9 | GuidedTour · renders nothing before 2s when localStorage empty · renders tour card after 2s on first visit · shows first step title Sidebar de Navegação … |
 | `src/components/__tests__/HealthTrendCard.test.tsx` | 9 | HealthTrendCard · renders Saúde da bridge title · renders Status stat label · renders Latência stat label … |
 | `src/components/__tests__/HistoricoContratosTab.test.tsx` | 9 | HistoricoContratosTab · shows loading state · renders Histórico de Contratos title · renders Nova Alteração button … |
@@ -4877,7 +4882,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/SSTRiscosTab.test.tsx` | 9 | SSTRiscosTab · renders Risco Físico category card · renders Risco Químico category card · renders Risco Biológico category card … |
 | `src/components/__tests__/SectionHeader.test.tsx` | 9 | SectionHeader · renders title · renders subtitle when provided · does not render subtitle when absent … |
 | `src/components/__tests__/SignaturePad.test.tsx` | 9 | SignaturePad · renders canvas element · shows  · renders Limpar button … |
-| `src/components/__tests__/Simulador13Dialog.test.tsx` | 9 | Simulador13Dialog · renders 13º Salário trigger button · renders Simulador 13º Salário dialog title · renders Salário Base label … |
 | … +248 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)

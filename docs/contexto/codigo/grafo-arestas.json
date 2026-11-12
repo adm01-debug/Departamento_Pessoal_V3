@@ -615,7 +615,6 @@
    "src/components/colaboradores/ColaboradorHistory.tsx"
   ],
   "src/components/contratacao/TokenInput.tsx": [
-   "src/assets/govbr-logo.svg",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/input.tsx",
@@ -649,7 +648,6 @@
    "src/components/dashboard/AnimatedNumber.tsx",
    "src/components/dashboard/BarChartWidget.tsx",
    "src/components/dashboard/DonutChart.tsx",
-   "src/components/dashboard/MiniSparkline.tsx",
    "src/components/dashboard/analytics/NotificationsDialog.tsx",
    "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
    "src/components/dashboard/analytics/widgets.tsx",
@@ -669,8 +667,6 @@
   ],
   "src/components/dashboard/DashboardHeader.tsx": [
    "src/components/ui/button.tsx",
-   "src/components/ui/dropdown-menu.tsx",
-   "src/components/ui/input.tsx",
    "src/lib/utils.ts"
   ],
   "src/components/dashboard/EventTimeline.tsx": [
@@ -2066,7 +2062,6 @@
    "src/utils/safeError.ts"
   ],
   "src/components/relatorios/RelatoriosAnalyticsTab.tsx": [
-   "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
    "src/lib/utils.ts"
   ],
@@ -3291,13 +3286,16 @@
   ],
   "src/pages/AssinaturasPage.tsx": [
    "src/components/PageTitle.tsx",
+   "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
    "src/components/layout/PageLayout.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/skeleton.tsx",
+   "src/hooks/useAdmissoes.ts",
    "src/hooks/useAssinaturas.ts",
+   "src/integrations/supabase/types.ts",
    "src/lib/utils.ts"
   ],
   "src/pages/AssistenteIAPage.tsx": [
@@ -3510,6 +3508,7 @@
    "src/components/ui/tabs.tsx",
    "src/hooks/useDataAccessLog.ts",
    "src/hooks/useEmpresas.ts",
+   "src/hooks/usePDFExport.ts",
    "src/hooks/usePiiMask.ts",
    "src/services/index.ts"
   ],
@@ -4381,12 +4380,14 @@
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/contexts/AuthContext.tsx",
    "src/integrations/supabase/client.ts",
    "src/lib/utils.ts",
    "src/schemas/validate.ts",
+   "src/services/authService.ts",
    "src/services/pushNotificationService.ts",
    "src/utils/safeError.ts",
    "src/utils/uploadValidation.ts"
@@ -4470,7 +4471,6 @@
    "src/components/ponto/PontoCharts.tsx",
    "src/components/ponto/PontoClockRegister.tsx",
    "src/components/ponto/PontoGeoAnalytics.tsx",
-   "src/components/ponto/PontoLeaderboard.tsx",
    "src/components/ponto/PontoStreakCard.tsx",
    "src/components/ponto/PontoTodayCard.tsx",
    "src/components/ponto/PontoWeekSummary.tsx",

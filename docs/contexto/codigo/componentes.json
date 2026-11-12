@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "total": 428,
- "orfaos": 21,
+ "orfaos": 22,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -271,7 +271,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -310,7 +310,7 @@
     "OnboardingPageContent"
    ],
    "export_default": "OnboardingPageContent",
-   "linhas": 164,
+   "linhas": 160,
    "dominio": "components/admissoes",
    "hooks_locais": [],
    "tabelas": [
@@ -810,7 +810,7 @@
     "TokenInput"
    ],
    "export_default": null,
-   "linhas": 102,
+   "linhas": 95,
    "dominio": "components/contratacao",
    "hooks_locais": [],
    "tabelas": [],
@@ -888,7 +888,7 @@
     "PendenciasDetailDialog"
    ],
    "export_default": null,
-   "linhas": 554,
+   "linhas": 550,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "useEmpresas"
@@ -932,7 +932,7 @@
     "QuickStat"
    ],
    "export_default": null,
-   "linhas": 797,
+   "linhas": 778,
    "dominio": "components/dashboard",
    "hooks_locais": [
     "usePendencias",
@@ -980,7 +980,7 @@
     "DashboardHeader"
    ],
    "export_default": null,
-   "linhas": 110,
+   "linhas": 61,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
@@ -1046,7 +1046,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -3308,7 +3308,7 @@
     "GestaoPontoAnalytics"
    ],
    "export_default": null,
-   "linhas": 401,
+   "linhas": 408,
    "dominio": "components/ponto",
    "hooks_locais": [],
    "tabelas": [],
@@ -3322,7 +3322,7 @@
     "GestaoRegistrosPonto"
    ],
    "export_default": null,
-   "linhas": 506,
+   "linhas": 465,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useEmpresas"
@@ -3467,8 +3467,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
-   "orfao": false
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/components/ponto/PontoStreakCard.tsx",
@@ -3703,7 +3703,7 @@
     "RelatoriosAnalyticsTab"
    ],
    "export_default": null,
-   "linhas": 234,
+   "linhas": 216,
    "dominio": "components/relatorios",
    "hooks_locais": [],
    "tabelas": [],
@@ -4202,7 +4202,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 193,
+   "usado_por": 192,
    "orfao": false
   },
   {
@@ -4439,7 +4439,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 124,
+   "usado_por": 125,
    "orfao": false
   },
   {
@@ -4461,7 +4461,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -5454,9 +5454,10 @@
     "AssinaturasPage"
    ],
    "export_default": "AssinaturasPage",
-   "linhas": 193,
+   "linhas": 222,
    "dominio": "pages",
    "hooks_locais": [
+    "useAdmissoes",
     "useAssinaturas"
    ],
    "tabelas": [],
@@ -5706,11 +5707,12 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 436,
+   "linhas": 463,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",
     "useEmpresas",
+    "usePDFExport",
     "usePiiMask"
    ],
    "tabelas": [],
@@ -5785,7 +5787,7 @@
     "ConfiguracoesPage"
    ],
    "export_default": "ConfiguracoesPage",
-   "linhas": 101,
+   "linhas": 145,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"
@@ -5906,7 +5908,7 @@
     "DashboardExecutivoPage"
    ],
    "export_default": "DashboardExecutivoPage",
-   "linhas": 591,
+   "linhas": 606,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -5925,7 +5927,7 @@
     "DashboardPage"
    ],
    "export_default": "DashboardPage",
-   "linhas": 438,
+   "linhas": 457,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -6039,7 +6041,7 @@
     "DocumentosPage"
    ],
    "export_default": "DocumentosPage",
-   "linhas": 608,
+   "linhas": 620,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -6231,7 +6233,7 @@
     "FinanceiroBancarioPage"
    ],
    "export_default": "FinanceiroBancarioPage",
-   "linhas": 604,
+   "linhas": 535,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6578,7 +6580,7 @@
     "OnboardingPage"
    ],
    "export_default": "OnboardingPage",
-   "linhas": 211,
+   "linhas": 216,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [
@@ -6651,7 +6653,7 @@
     "PerfilPage"
    ],
    "export_default": "PerfilPage",
-   "linhas": 394,
+   "linhas": 516,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth"
@@ -6740,7 +6742,7 @@
     "PontoPage"
    ],
    "export_default": "PontoPage",
-   "linhas": 671,
+   "linhas": 697,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -6901,7 +6903,7 @@
     "SegurancaPage"
    ],
    "export_default": "SegurancaPage",
-   "linhas": 506,
+   "linhas": 509,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],

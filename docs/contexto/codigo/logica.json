@@ -506,7 +506,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 73,
+   "usado_por": 74,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -1716,8 +1716,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "pages",
     "services"
    ],
    "coberto_por_testes": 1,

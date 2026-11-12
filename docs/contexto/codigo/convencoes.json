@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: Conciliação do eSocial e card \"Insights da IA\" deixam de mostrar dados inventados (#471)",
-   "fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)",
-   "fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)",
-   "fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)",
-   "fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)"
+   "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)",
+   "fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)",
+   "fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)",
+   "fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)",
+   "fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

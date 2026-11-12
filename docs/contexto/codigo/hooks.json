@@ -677,11 +677,12 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
     "src/components/admissoes/NovaAdmissaoDialog.tsx",
     "src/hooks/index.ts",
-    "src/pages/AdmissoesPage.tsx"
+    "src/pages/AdmissoesPage.tsx",
+    "src/pages/AssinaturasPage.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -1521,7 +1522,7 @@
     "useExecutiveKPIs",
     "useStrategicFinancials"
    ],
-   "linhas": 185,
+   "linhas": 241,
    "dominio": "hooks",
    "tabelas": [
     "afastamentos",
@@ -1529,6 +1530,7 @@
     "colaboradores",
     "desligamentos",
     "ferias",
+    "folha_itens",
     "folhas_pagamento",
     "personnel_budget",
     "solicitacoes_ajuste_ponto"
@@ -2129,9 +2131,10 @@
     "useCallback"
    ],
    "canais_realtime": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_arquivos": [
     "src/hooks/index.ts",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     "src/pages/ColaboradoresPage.tsx",
     "src/pages/FolhaPage.tsx",
     "src/pages/RelatoriosPage.tsx"
@@ -2510,7 +2513,7 @@
    "hooks_exportados": [
     "useSystemHealth"
    ],
-   "linhas": 76,
+   "linhas": 78,
    "dominio": "hooks",
    "tabelas": [
     "versao_banco"

@@ -2,11 +2,66 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "cab34b8eca54e5aa71f9d1a09d3b3242424f1265",
+  "commit": "004508da31bfdda3428697315821c87ae8e803f1",
   "branch": "main",
-  "data_commit": "2026-11-12T12:44:37-03:00",
+  "data_commit": "2026-11-12T14:20:28-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "004508d",
+    "data": "2026-11-12",
+    "assunto": "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)"
+   },
+   {
+    "sha": "773c7af",
+    "data": "2026-11-12",
+    "assunto": "fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)"
+   },
+   {
+    "sha": "81eb705",
+    "data": "2026-11-12",
+    "assunto": "fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)"
+   },
+   {
+    "sha": "47fe444",
+    "data": "2026-11-12",
+    "assunto": "fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)"
+   },
+   {
+    "sha": "7e8d170",
+    "data": "2026-11-12",
+    "assunto": "fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)"
+   },
+   {
+    "sha": "965a624",
+    "data": "2026-11-12",
+    "assunto": "fix: indicador de saúde do sistema lê a taxa de sucesso no formato que a edge devolve (#495)"
+   },
+   {
+    "sha": "e3f108d",
+    "data": "2026-11-12",
+    "assunto": "fix: exportar ficha do colaborador em PDF e remover item 'Outras Ações' sem ação (#476)"
+   },
+   {
+    "sha": "7fa11b6",
+    "data": "2026-11-12",
+    "assunto": "fix: remove aba de Taxas de Câmbio com cotações fixas no Financeiro Bancário (#475)"
+   },
+   {
+    "sha": "e8d162f",
+    "data": "2026-11-12",
+    "assunto": "fix: perfil troca senha de verdade e firewall leva ao bloqueio de IP (#474)"
+   },
+   {
+    "sha": "8ac54f1",
+    "data": "2026-11-12",
+    "assunto": "fix: dashboards mostram só indicadores reais e perdem botões sem ação (#473)"
+   },
+   {
+    "sha": "13ee3ba",
+    "data": "2026-11-12",
+    "assunto": "fix: KPIs do Ponto calculados de registros reais e ranking fictício removido (#472)"
+   },
    {
     "sha": "cab34b8",
     "data": "2026-11-12",
@@ -76,80 +131,17 @@
     "sha": "e0cd6bc",
     "data": "2026-11-12",
     "assunto": "feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)"
-   },
-   {
-    "sha": "e8472e9",
-    "data": "2026-11-12",
-    "assunto": "fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)"
-   },
-   {
-    "sha": "9f7a4e4",
-    "data": "2026-11-12",
-    "assunto": "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)"
-   },
-   {
-    "sha": "364b6d6",
-    "data": "2026-11-12",
-    "assunto": "feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)"
-   },
-   {
-    "sha": "1aa6b3c",
-    "data": "2026-11-12",
-    "assunto": "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)"
-   },
-   {
-    "sha": "2914cb9",
-    "data": "2026-11-12",
-    "assunto": "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)"
-   },
-   {
-    "sha": "c926aa1",
-    "data": "2026-11-12",
-    "assunto": "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)"
-   },
-   {
-    "sha": "3fe5d63",
-    "data": "2026-11-11",
-    "assunto": "fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)"
-   },
-   {
-    "sha": "98a0bd5",
-    "data": "2026-11-11",
-    "assunto": "fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)"
-   },
-   {
-    "sha": "145cb90",
-    "data": "2026-11-11",
-    "assunto": "fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)"
-   },
-   {
-    "sha": "bfb3cb0",
-    "data": "2026-11-11",
-    "assunto": "infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)"
-   },
-   {
-    "sha": "6ddd6bd",
-    "data": "2026-11-11",
-    "assunto": "fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)"
    }
   ],
-  "arquivos_mudados_7d": 456,
+  "arquivos_mudados_7d": 481,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 35
    },
    {
-    "pasta": "package.json",
-    "mudancas": 23
-   },
-   {
     "pasta": "src/components/__tests__",
-    "mudancas": 23
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 21
+    "mudancas": 27
    },
    {
     "pasta": "CLAUDE.md",
@@ -162,6 +154,14 @@
    {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 18
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 16
    },
    {
     "pasta": "scripts/autofix/regras",
@@ -180,6 +180,10 @@
     "mudancas": 13
    },
    {
+    "pasta": "src/hooks/__tests__",
+    "mudancas": 11
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
     "mudancas": 10
    },
@@ -190,24 +194,20 @@
    {
     "pasta": "AGENTS.md",
     "mudancas": 9
-   },
-   {
-    "pasta": "deno.lock",
-    "mudancas": 9
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 52
+    "mudancas": 51
    },
    {
     "arquivo": "package.json",
-    "mudancas": 48
+    "mudancas": 42
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 43
+    "mudancas": 37
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 126
+    "commits": 137
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 20
+    "commits": 15
    },
    {
     "autor": "github-actions[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2882,
   "arquivos_codigo": 1549,
-  "linhas_codigo": 273338,
+  "linhas_codigo": 273606,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -632,7 +632,7 @@
   },
   "src/components": {
    "arquivos": 566,
-   "linhas": 72962
+   "linhas": 72839
   },
   "src/constants": {
    "arquivos": 6,
@@ -648,7 +648,7 @@
   },
   "src/hooks": {
    "arquivos": 182,
-   "linhas": 20004
+   "linhas": 20162
   },
   "src/i18n": {
    "arquivos": 2,
@@ -668,7 +668,7 @@
   },
   "src/pages": {
    "arquivos": 114,
-   "linhas": 39406
+   "linhas": 39639
   },
   "src/providers": {
    "arquivos": 4,
@@ -793,12 +793,12 @@
    "linhas": 810
   },
   {
-   "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
-   "linhas": 797
-  },
-  {
    "arquivo": "src/pages/ESocialPage.tsx",
    "linhas": 788
+  },
+  {
+   "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
+   "linhas": 778
   },
   {
    "arquivo": "src/pages/WorkflowsPage.tsx",
@@ -821,16 +821,16 @@
    "linhas": 698
   },
   {
+   "arquivo": "src/pages/PontoPage.tsx",
+   "linhas": 697
+  },
+  {
    "arquivo": "scripts/maintenance/lib.mjs",
    "linhas": 690
   },
   {
    "arquivo": "src/components/ui/command-palette.tsx",
    "linhas": 686
-  },
-  {
-   "arquivo": "src/pages/PontoPage.tsx",
-   "linhas": 671
   },
   {
    "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
@@ -1087,6 +1087,7 @@
    "src/components/layout/SidebarFooter.tsx",
    "src/components/layout/Stack.tsx",
    "src/components/notifications/NotificationCenter.tsx",
+   "src/components/ponto/PontoLeaderboard.tsx",
    "src/components/ui/data-table.tsx",
    "src/components/ui/form.tsx",
    "src/components/ui/masked-input.tsx",

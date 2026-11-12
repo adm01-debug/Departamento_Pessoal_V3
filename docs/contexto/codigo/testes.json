@@ -979,7 +979,7 @@
   {
    "arquivo": "src/components/__tests__/DashboardHeader.test.tsx",
    "tipo": "unit",
-   "linhas": 63,
+   "linhas": 66,
    "testa": [
     "src/components/dashboard/DashboardHeader.tsx"
    ],
@@ -1736,12 +1736,12 @@
   {
    "arquivo": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
    "tipo": "unit",
-   "linhas": 96,
+   "linhas": 107,
    "testa": [
     "src/components/ponto/GestaoPontoAnalytics.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
@@ -2655,7 +2655,7 @@
   {
    "arquivo": "src/components/__tests__/TokenInput.test.tsx",
    "tipo": "unit",
-   "linhas": 114,
+   "linhas": 112,
    "testa": [
     "src/components/contratacao/TokenInput.tsx"
    ],
@@ -3126,11 +3126,11 @@
   {
    "arquivo": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
    "tipo": "unit",
-   "linhas": 115,
+   "linhas": 197,
    "testa": [
     "src/hooks/useExecutiveDashboard.ts"
    ],
-   "casos": 10
+   "casos": 13
   },
   {
    "arquivo": "src/hooks/__tests__/useFeriados.test.ts",
@@ -3522,11 +3522,11 @@
   {
    "arquivo": "src/hooks/__tests__/useSystemHealth.test.ts",
    "tipo": "unit",
-   "linhas": 129,
+   "linhas": 147,
    "testa": [
     "src/hooks/useSystemHealth.ts"
    ],
-   "casos": 8
+   "casos": 9
   },
   {
    "arquivo": "src/hooks/__tests__/useSystemHealthHistory.test.ts",

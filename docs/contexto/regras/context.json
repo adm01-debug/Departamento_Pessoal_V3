@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "cab34b8eca54e5aa71f9d1a09d3b3242424f1265",
+  "sha": "004508da31bfdda3428697315821c87ae8e803f1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 17:00 UTC",
+  "generated_at": "2026-11-12 20:14 UTC",
   "files_total": 2903,
   "code_files": 2374,
-  "code_lines": 321732
+  "code_lines": 322000
  },
  "version": "1.3.2",
- "facts_hash": "6297c3da0e45d853",
+ "facts_hash": "1c2d28284eb1f525",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -84226,15 +84226,127 @@
     "component": "AssinaturasPage",
     "tables_transitive": [
      "admissao_tokens",
+     "admissoes",
+     "afastamentos",
+     "banco_horas",
+     "banco_horas_config",
+     "batidas_ponto",
+     "beneficiarios_plano",
+     "beneficios",
+     "beneficios_colaborador",
+     "canal_etica",
+     "catalogo_cursos",
+     "certificados_digitais",
+     "ciclos_avaliacao",
+     "cid10",
+     "cnab_configuracoes",
+     "cnab_itens",
+     "cnab_remessas",
      "colaboradores",
-     "empresas"
+     "competencias_config",
+     "comunicados",
+     "comunicados_leituras",
+     "config_afastamentos",
+     "configuracoes_esocial",
+     "configuracoes_intervalo",
+     "configuracoes_ponto",
+     "contas_bancarias",
+     "contrato_templates",
+     "contrato_token_eventos",
+     "contratos",
+     "contratos_gerados",
+     "controle_acesso",
+     "dependentes",
+     "despesas",
+     "despesas_aprovacoes_log",
+     "documentos_afastamento",
+     "empresas",
+     "epis",
+     "epis_entregas",
+     "escalas_trabalho",
+     "esocial_eventos",
+     "esocial_transmissao_logs",
+     "faltas",
+     "feedbacks_360",
+     "ferias_aprovacoes_log",
+     "folha_itens",
+     "folhas_pagamento",
+     "historico_contratos",
+     "inscricoes_cursos",
+     "jornadas_horarios",
+     "lancamentos_contabeis",
+     "lgpd_consentimentos",
+     "lgpd_solicitacoes",
+     "medidas_disciplinares",
+     "medidas_disciplinares_contestacao_anexos",
+     "medidas_disciplinares_integracao",
+     "medidas_disciplinares_workflow_log",
+     "metas_okrs",
+     "notificacoes",
+     "notificacoes_admissao",
+     "pdi_plano_desenvolvimento",
+     "periodos_aquisitivos",
+     "periodos_ponto",
+     "pesquisas",
+     "pesquisas_perguntas",
+     "pesquisas_respostas",
+     "pix_lotes",
+     "plano_contas",
+     "ponto_auditoria",
+     "pontos_abertos",
+     "prorrogacoes_afastamento",
+     "provisoes_mensais",
+     "recargas_vale",
+     "registros_ponto",
+     "solicitacoes_hora_extra",
+     "treinamento_certificados",
+     "treinamento_feedback",
+     "treinamento_instancias",
+     "trilhas_aprendizado",
+     "trilhas_cursos",
+     "turnos",
+     "webhook_logs",
+     "workflows_definicoes",
+     "workflows_etapas",
+     "workflows_execucoes",
+     "workflows_historico"
     ],
-    "invokes_transitive": [],
+    "invokes_transitive": [
+     "enviar-email-admissao",
+     "enviar-esocial",
+     "gerar-contrato-pdf",
+     "upload-certificado"
+    ],
     "rpc_transitive": [
+     "admin_associar_usuario_empresa",
+     "aplicar_medida_folha_ponto",
+     "aprovar_despesa",
+     "claim_admission_esocial_event",
+     "complete_admission_esocial_event",
+     "contrato_estender_expiracao",
+     "contrato_gerar_token_assinatura",
+     "contrato_revogar_token",
+     "fail_admission_esocial_event",
+     "get_audit_trail",
+     "get_my_user_empresas",
      "get_user_roles",
-     "log_frontend_error"
+     "listar_auditoria",
+     "log_frontend_error",
+     "medida_aprovar",
+     "medida_arquivar",
+     "medida_contestar",
+     "medida_enviar_aprovacao",
+     "medida_rejeitar",
+     "medida_responder_contestacao",
+     "next_cnab_sequencial",
+     "record_pii_access",
+     "registrar_auditoria",
+     "registrar_batida_ponto",
+     "rejeitar_despesa",
+     "set_own_default_empresa",
+     "sugerir_proxima_medida"
     ],
-    "deps_count": 21
+    "deps_count": 109
    },
    {
     "path": "",
@@ -85409,7 +85521,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 171
+    "deps_count": 172
    },
    {
     "path": "",
@@ -86375,6 +86487,7 @@
      "desligamentos",
      "empresas",
      "ferias",
+     "folha_itens",
      "folhas_pagamento",
      "notificacoes",
      "pendencias",
@@ -89524,7 +89637,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 69
+    "deps_count": 70
    },
    {
     "path": "",
@@ -90088,7 +90201,7 @@
      "sugerir_proxima_medida",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 217
+    "deps_count": 216
    },
    {
     "path": "",
@@ -96492,7 +96605,7 @@
   {
    "module": "src/components",
    "files": 566,
-   "lines": 72962,
+   "lines": 72839,
    "tables": [
     "admissoes",
     "afastamentos",
@@ -96624,7 +96737,6 @@
     "react"
    ],
    "imports_modules": [
-    "src/assets",
     "src/constants",
     "src/contexts",
     "src/hooks",
@@ -96822,7 +96934,7 @@
   {
    "module": "src/hooks",
    "files": 182,
-   "lines": 20004,
+   "lines": 20162,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -97134,7 +97246,7 @@
   {
    "module": "src/pages",
    "files": 114,
-   "lines": 39406,
+   "lines": 39639,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -99950,6 +100062,7 @@
      "src/components/folha/CalculoFolhaWizard.tsx",
      "src/components/folha/RelatorioContabilDialog.tsx",
      "src/hooks/useCalculoFolha.ts",
+     "src/hooks/useExecutiveDashboard.ts",
      "src/integrations/supabase/__tests__/idempotency.test.ts",
      "src/pages/HoleritesPage.tsx",
      "src/services/cnabService.ts",
@@ -102244,6 +102357,7 @@
     "colaborador_id",
     "fgts_mes",
     "folha_id",
+    "id",
     "total_descontos",
     "total_liquido",
     "total_proventos"
@@ -106614,6 +106728,16 @@
     "rules": "type=email"
    },
    {
+    "file": "src/pages/PerfilPage.tsx",
+    "field": "nova-senha",
+    "rules": "type=password"
+   },
+   {
+    "file": "src/pages/PerfilPage.tsx",
+    "field": "confirmar-senha",
+    "rules": "type=password"
+   },
+   {
     "file": "src/pages/PromoBrindesPage.tsx",
     "field": "estoque",
     "rules": "type=number"
@@ -108095,6 +108219,10 @@
     "msg": "URL não disponível."
    },
    {
+    "file": "src/pages/AssinaturasPage.tsx",
+    "msg": "Admissão deste documento não encontrada na empresa atual."
+   },
+   {
     "file": "src/pages/AssistenteIAPage.tsx",
     "msg": "Faça login para usar o assistente."
    },
@@ -108212,6 +108340,10 @@
    },
    {
     "file": "src/pages/DocumentosPage.tsx",
+    "msg": "Não foi possível copiar o texto extraído"
+   },
+   {
+    "file": "src/pages/DocumentosPage.tsx",
     "msg": "Selecione um arquivo e tipo"
    },
    {
@@ -108309,6 +108441,10 @@
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
     "msg": "Erro ao gerar guia"
+   },
+   {
+    "file": "src/pages/PerfilPage.tsx",
+    "msg": "As senhas não coincidem."
    },
    {
     "file": "src/pages/PerfilPage.tsx",
@@ -135434,6 +135570,11 @@
     "value": "5"
    },
    {
+    "file": "src/hooks/useExecutiveDashboard.ts",
+    "name": "PAGE_SIZE",
+    "value": "1000"
+   },
+   {
     "file": "src/hooks/useSessionTimeout.ts",
     "name": "INACTIVITY_LIMIT_MS",
     "value": "30"
@@ -140591,6 +140732,12 @@
     "field": "tipo",
     "value": "alimenticia",
     "kind": "escreve"
+   },
+   {
+    "file": "src/pages/PerfilPage.tsx",
+    "field": "status",
+    "value": "verified",
+    "kind": "compara"
    },
    {
     "file": "src/pages/PesquisasClimaPage.tsx",
@@ -146875,6 +147022,10 @@
     "line": "transition={{ delay: i * 0.05 }}"
    },
    {
+    "file": "src/pages/OnboardingPage.tsx",
+    "line": "100%"
+   },
+   {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
     "line": "(Math.abs(vf + tc - provF) > sal * 0.05 || Math.abs(v13 - prov13) > sal * 0.05)"
    },
@@ -150646,7 +150797,7 @@
    },
    {
     "file": "src/components/__tests__/DashboardHeader.test.tsx",
-    "name": "renders Exportar button"
+    "name": "does not render inert Exportar menu"
    },
    {
     "file": "src/components/__tests__/DashboardHeader.test.tsx",
@@ -150654,15 +150805,15 @@
    },
    {
     "file": "src/components/__tests__/DashboardHeader.test.tsx",
-    "name": "renders search input with placeholder"
+    "name": "does not render inert search input"
    },
    {
     "file": "src/components/__tests__/DashboardHeader.test.tsx",
-    "name": "renders month filter button"
+    "name": "renders current competência instead of a fixed month"
    },
    {
     "file": "src/components/__tests__/DashboardHeader.test.tsx",
-    "name": "renders Todos os Departamentos filter"
+    "name": "does not render inert department filter"
    },
    {
     "file": "src/components/__tests__/DashboardWidgets.test.tsx",
@@ -153498,6 +153649,14 @@
    },
    {
     "file": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
+    "name": "calcula a taxa de assiduidade a partir dos registros"
+   },
+   {
+    "file": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
+    "name": "mostra traço na taxa de assiduidade sem registros"
+   },
+   {
+    "file": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
     "name": "renders 0h projection when no registros"
    },
    {
@@ -155494,7 +155653,7 @@
    },
    {
     "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
-    "name": "renders Enviar E-mail de Boas-Vindas button"
+    "name": "does not render a welcome-email button without a backend to send it"
    },
    {
     "file": "src/components/__tests__/OnboardingPageContent.test.tsx",
@@ -157450,7 +157609,7 @@
    },
    {
     "file": "src/components/__tests__/TokenInput.test.tsx",
-    "name": "renders Gov.br logo"
+    "name": "does not render the unfinished Gov.br placeholder"
    },
    {
     "file": "src/components/__tests__/TokenInput.test.tsx",
@@ -159630,6 +159789,18 @@
    },
    {
     "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "computes real per-department cost from folha_itens of current payroll"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "includes payroll items of employees terminated in the month in department cost"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+    "name": "paginates folha_itens beyond the 1000-row PostgREST limit"
+   },
+   {
+    "file": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
     "name": "computes variacaoFolha=0 when no previous payroll data"
    },
    {
@@ -161419,6 +161590,10 @@
    {
     "file": "src/hooks/__tests__/useSystemHealth.test.ts",
     "name": "sets status to slow when success_rate drops below 90%"
+   },
+   {
+    "file": "src/hooks/__tests__/useSystemHealth.test.ts",
+    "name": "keeps status online when there is no telemetry yet (success_rate_pct null)"
    },
    {
     "file": "src/hooks/__tests__/useSystemHealth.test.ts",
@@ -201850,7 +202025,8 @@
      "verified": [
       "compara:src/components/AdminRoute.tsx",
       "compara:src/components/ProtectedRoute.tsx",
-      "compara:src/components/settings/MFASetup.tsx"
+      "compara:src/components/settings/MFASetup.tsx",
+      "compara:src/pages/PerfilPage.tsx"
      ],
      "offline": [
       "compara:src/components/admin/HealthTrendCard.tsx",
@@ -234110,18 +234286,18 @@
   },
   "src/components/__tests__/DashboardHeader.test.tsx": {
    "path": "src/components/__tests__/DashboardHeader.test.tsx",
-   "lines": 63,
+   "lines": 66,
    "is_test": true,
    "tests": [
     "DashboardHeader",
     "renders greeting with wave emoji",
     "renders subtitle text",
     "renders Sincronizar button",
-    "renders Exportar button",
+    "does not render inert Exportar menu",
     "renders Configurações button",
-    "renders search input with placeholder",
-    "renders month filter button",
-    "renders Todos os Departamentos filter"
+    "does not render inert search input",
+    "renders current competência instead of a fixed month",
+    "does not render inert department filter"
    ]
   },
   "src/components/__tests__/DashboardWidgets.test.tsx": {
@@ -235395,7 +235571,7 @@
   },
   "src/components/__tests__/GestaoPontoAnalytics.test.tsx": {
    "path": "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
-   "lines": 96,
+   "lines": 107,
    "is_test": true,
    "tests": [
     "GestaoPontoAnalytics",
@@ -235406,6 +235582,8 @@
     "renders Previsão IA badge",
     "renders with non-empty registros",
     "renders MTP 671 reference in subtitle",
+    "calcula a taxa de assiduidade a partir dos registros",
+    "mostra traço na taxa de assiduidade sem registros",
     "renders 0h projection when no registros"
    ]
   },
@@ -236240,7 +236418,7 @@
     "renders Progresso do Onboarding text",
     "renders Tarefas Críticas section",
     "renders task titles from onboarding",
-    "renders Enviar E-mail de Boas-Vindas button",
+    "does not render a welcome-email button without a backend to send it",
     "shows no-tasks message when tarefas array is empty"
    ]
   },
@@ -237111,7 +237289,7 @@
   },
   "src/components/__tests__/TokenInput.test.tsx": {
    "path": "src/components/__tests__/TokenInput.test.tsx",
-   "lines": 114,
+   "lines": 112,
    "is_test": true,
    "tests": [
     "TokenInput",
@@ -237121,7 +237299,7 @@
     "Acessar Portal button is disabled when token is empty",
     "renders process description text",
     "button enables when token is typed",
-    "renders Gov.br logo",
+    "does not render the unfinished Gov.br placeholder",
     "renders Powered by Lovable Cloud text"
    ]
   },
@@ -237622,7 +237800,7 @@
   },
   "src/components/admissoes/OnboardingPageContent.tsx": {
    "path": "src/components/admissoes/OnboardingPageContent.tsx",
-   "lines": 164,
+   "lines": 160,
    "exports": [
     "function OnboardingPageContent"
    ],
@@ -238078,7 +238256,7 @@
   },
   "src/components/contratacao/TokenInput.tsx": {
    "path": "src/components/contratacao/TokenInput.tsx",
-   "lines": 102,
+   "lines": 95,
    "exports": [
     "function TokenInput"
    ],
@@ -238121,7 +238299,7 @@
   },
   "src/components/dashboard/AnalyticsSection.tsx": {
    "path": "src/components/dashboard/AnalyticsSection.tsx",
-   "lines": 797,
+   "lines": 778,
    "exports": [
     "function AnalyticsSection"
    ],
@@ -238259,7 +238437,7 @@
   },
   "src/components/dashboard/DashboardHeader.tsx": {
    "path": "src/components/dashboard/DashboardHeader.tsx",
-   "lines": 110,
+   "lines": 61,
    "exports": [
     "function DashboardHeader"
    ]
@@ -238534,7 +238712,7 @@
   },
   "src/components/dashboard/analytics/PendenciasDetailDialog.tsx": {
    "path": "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
-   "lines": 554,
+   "lines": 550,
    "exports": [
     "type PendenciaListItem",
     "function PendenciasDetailDialog"
@@ -241419,7 +241597,7 @@
   },
   "src/components/ponto/GestaoPontoAnalytics.tsx": {
    "path": "src/components/ponto/GestaoPontoAnalytics.tsx",
-   "lines": 401,
+   "lines": 408,
    "exports": [
     "function GestaoPontoAnalytics"
    ],
@@ -241432,7 +241610,7 @@
   },
   "src/components/ponto/GestaoRegistrosPonto.tsx": {
    "path": "src/components/ponto/GestaoRegistrosPonto.tsx",
-   "lines": 506,
+   "lines": 465,
    "exports": [
     "function GestaoRegistrosPonto"
    ],
@@ -242313,7 +242491,7 @@
   },
   "src/components/relatorios/RelatoriosAnalyticsTab.tsx": {
    "path": "src/components/relatorios/RelatoriosAnalyticsTab.tsx",
-   "lines": 234,
+   "lines": 216,
    "exports": [
     "function RelatoriosAnalyticsTab"
    ],
@@ -245338,7 +245516,7 @@
   },
   "src/hooks/useExecutiveDashboard.ts": {
    "path": "src/hooks/useExecutiveDashboard.ts",
-   "lines": 185,
+   "lines": 241,
    "exports": [
     "function useExecutiveKPIs",
     "function useStrategicFinancials"
@@ -245389,6 +245567,14 @@
      "op": "select"
     },
     {
+     "table": "folha_itens",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
      "table": "personnel_budget",
      "op": "select"
     },
@@ -245402,11 +245588,13 @@
      "data_admissao",
      "departamento",
      "empresa_id",
+     "id",
      "status"
     ],
     "folhas_pagamento": [
      "competencia",
      "empresa_id",
+     "id",
      "total_descontos",
      "total_liquido",
      "total_proventos"
@@ -245432,6 +245620,12 @@
      "data_desligamento",
      "empresa_id"
     ],
+    "folha_itens": [
+     "colaborador_id",
+     "folha_id",
+     "id",
+     "total_liquido"
+    ],
     "personnel_budget": [
      "ano",
      "empresa_id"
@@ -245439,6 +245633,12 @@
    },
    "rpc": [
     "get_personnel_cost_projection"
+   ],
+   "params": [
+    {
+     "name": "PAGE_SIZE",
+     "value": "1000"
+    }
    ],
    "status_values": [
     {
@@ -246503,7 +246703,7 @@
   },
   "src/hooks/useSystemHealth.ts": {
    "path": "src/hooks/useSystemHealth.ts",
-   "lines": 76,
+   "lines": 78,
    "exports": [
     "function useSystemHealth"
    ],
@@ -247473,7 +247673,7 @@
   },
   "src/hooks/__tests__/useExecutiveDashboard.test.ts": {
    "path": "src/hooks/__tests__/useExecutiveDashboard.test.ts",
-   "lines": 115,
+   "lines": 197,
    "is_test": true,
    "tests": [
     "useExecutiveKPIs",
@@ -247483,6 +247683,9 @@
     "returns feriasPendentes=0 when none pending",
     "returns evolucao array with correct length for default 6 months",
     "returns custosMensal array matching period length",
+    "computes real per-department cost from folha_itens of current payroll",
+    "includes payroll items of employees terminated in the month in department cost",
+    "paginates folha_itens beyond the 1000-row PostgREST limit",
     "computes variacaoFolha=0 when no previous payroll data",
     "useStrategicFinancials",
     "is disabled when no empresaId",
@@ -248239,7 +248442,7 @@
   },
   "src/hooks/__tests__/useSystemHealth.test.ts": {
    "path": "src/hooks/__tests__/useSystemHealth.test.ts",
-   "lines": 129,
+   "lines": 147,
    "is_test": true,
    "errors": [
     "connection refused"
@@ -248253,6 +248456,7 @@
     "sets status to offline when DB ping throws",
     "fetches metrics when session exists",
     "sets status to slow when success_rate drops below 90%",
+    "keeps status online when there is no telemetry yet (success_rate_pct null)",
     "returns null metrics initially"
    ]
   },
@@ -250449,9 +250653,15 @@
   },
   "src/pages/AssinaturasPage.tsx": {
    "path": "src/pages/AssinaturasPage.tsx",
-   "lines": 193,
+   "lines": 222,
    "exports": [
     "function AssinaturasPage"
+   ],
+   "navigates": [
+    "/admissoes"
+   ],
+   "errors": [
+    "Admissão deste documento não encontrada na empresa atual."
    ]
   },
   "src/pages/AssistenteIAPage.tsx": {
@@ -250887,7 +251097,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 436,
+   "lines": 463,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -251012,7 +251222,7 @@
   },
   "src/pages/ConfiguracoesPage.tsx": {
    "path": "src/pages/ConfiguracoesPage.tsx",
-   "lines": 101,
+   "lines": 145,
    "exports": [
     "function ConfiguracoesPage"
    ]
@@ -251353,7 +251563,7 @@
   },
   "src/pages/DashboardExecutivoPage.tsx": {
    "path": "src/pages/DashboardExecutivoPage.tsx",
-   "lines": 591,
+   "lines": 606,
    "exports": [
     "function DashboardExecutivoPage"
    ],
@@ -251385,7 +251595,7 @@
   },
   "src/pages/DashboardPage.tsx": {
    "path": "src/pages/DashboardPage.tsx",
-   "lines": 438,
+   "lines": 457,
    "exports": [
     "function DashboardPage"
    ],
@@ -251435,6 +251645,10 @@
      "op": "select"
     },
     {
+     "table": "folhas_pagamento",
+     "op": "select"
+    },
+    {
      "table": "ferias",
      "op": "select"
     },
@@ -251465,6 +251679,7 @@
     ],
     "folhas_pagamento": [
      "competencia",
+     "empresa_id",
      "total_liquido"
     ],
     "ferias": [
@@ -251759,13 +251974,14 @@
   },
   "src/pages/DocumentosPage.tsx": {
    "path": "src/pages/DocumentosPage.tsx",
-   "lines": 608,
+   "lines": 620,
    "exports": [
     "function DocumentosPage"
    ],
    "errors": [
     "Arquivo não encontrado",
     "Empresa ativa não carregada.",
+    "Não foi possível copiar o texto extraído",
     "Selecione um arquivo e tipo"
    ],
    "params": [
@@ -252080,7 +252296,7 @@
   },
   "src/pages/FinanceiroBancarioPage.tsx": {
    "path": "src/pages/FinanceiroBancarioPage.tsx",
-   "lines": 604,
+   "lines": 535,
    "exports": [
     "function FinanceiroBancarioPage"
    ],
@@ -252892,7 +253108,7 @@
   },
   "src/pages/OnboardingPage.tsx": {
    "path": "src/pages/OnboardingPage.tsx",
-   "lines": 211,
+   "lines": 216,
    "exports": [
     "function OnboardingPage"
    ],
@@ -252905,6 +253121,9 @@
      "table": "tarefas_onboarding",
      "op": "ref"
     }
+   ],
+   "percents": [
+    "100%"
    ]
   },
   "src/pages/OrganogramaPage.tsx": {
@@ -253076,7 +253295,7 @@
   },
   "src/pages/PerfilPage.tsx": {
    "path": "src/pages/PerfilPage.tsx",
-   "lines": 394,
+   "lines": 516,
    "exports": [
     "function PerfilPage"
    ],
@@ -253103,8 +253322,30 @@
    "storage": [
     "avatars"
    ],
+   "navigates": [
+    "/auditoria",
+    "/configuracoes?tab=seguranca"
+   ],
    "errors": [
+    "As senhas não coincidem.",
     "Avatar deve ser JPG, PNG ou WebP"
+   ],
+   "html_constraints": [
+    {
+     "field": "nova-senha",
+     "rules": "type=password"
+    },
+    {
+     "field": "confirmar-senha",
+     "rules": "type=password"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "verified",
+     "kind": "compara"
+    }
    ]
   },
   "src/pages/PesquisasClimaPage.tsx": {
@@ -253287,7 +253528,7 @@
   },
   "src/pages/PontoPage.tsx": {
    "path": "src/pages/PontoPage.tsx",
-   "lines": 671,
+   "lines": 697,
    "exports": [
     "function PontoPage"
    ],
@@ -253997,7 +254238,7 @@
   },
   "src/pages/SegurancaPage.tsx": {
    "path": "src/pages/SegurancaPage.tsx",
-   "lines": 506,
+   "lines": 509,
    "exports": [
     "function SegurancaPage"
    ],
@@ -278030,10 +278271,126 @@
   }
  },
  "git": {
-  "sha": "cab34b8eca54e5aa71f9d1a09d3b3242424f1265",
+  "sha": "004508da31bfdda3428697315821c87ae8e803f1",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "004508d",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)",
+    "files": [
+     "src/pages/PerfilPage.tsx"
+    ]
+   },
+   {
+    "sha": "773c7af",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)",
+    "files": [
+     "src/pages/AssinaturasPage.tsx"
+    ]
+   },
+   {
+    "sha": "81eb705",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)",
+    "files": [
+     "src/components/__tests__/OnboardingPageContent.test.tsx",
+     "src/components/admissoes/OnboardingPageContent.tsx",
+     "src/pages/OnboardingPage.tsx"
+    ]
+   },
+   {
+    "sha": "47fe444",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)",
+    "files": [
+     "src/pages/DocumentosPage.tsx"
+    ]
+   },
+   {
+    "sha": "7e8d170",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)",
+    "files": [
+     "src/components/__tests__/TokenInput.test.tsx",
+     "src/components/contratacao/TokenInput.tsx"
+    ]
+   },
+   {
+    "sha": "965a624",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: indicador de saúde do sistema lê a taxa de sucesso no formato que a edge devolve (#495)",
+    "files": [
+     "src/hooks/__tests__/useSystemHealth.test.ts",
+     "src/hooks/useSystemHealth.ts"
+    ]
+   },
+   {
+    "sha": "e3f108d",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: exportar ficha do colaborador em PDF e remover item 'Outras Ações' sem ação (#476)",
+    "files": [
+     "src/pages/ColaboradorDetalhesPage.tsx"
+    ]
+   },
+   {
+    "sha": "7fa11b6",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: remove aba de Taxas de Câmbio com cotações fixas no Financeiro Bancário (#475)",
+    "files": [
+     "src/pages/FinanceiroBancarioPage.tsx"
+    ]
+   },
+   {
+    "sha": "e8d162f",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: perfil troca senha de verdade e firewall leva ao bloqueio de IP (#474)",
+    "files": [
+     "src/pages/ConfiguracoesPage.tsx",
+     "src/pages/PerfilPage.tsx",
+     "src/pages/SegurancaPage.tsx"
+    ]
+   },
+   {
+    "sha": "8ac54f1",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: dashboards mostram só indicadores reais e perdem botões sem ação (#473)",
+    "files": [
+     "src/components/__tests__/DashboardHeader.test.tsx",
+     "src/components/dashboard/AnalyticsSection.tsx",
+     "src/components/dashboard/DashboardHeader.tsx",
+     "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
+     "src/components/relatorios/RelatoriosAnalyticsTab.tsx",
+     "src/hooks/__tests__/useExecutiveDashboard.test.ts",
+     "src/hooks/useExecutiveDashboard.ts",
+     "src/pages/DashboardExecutivoPage.tsx",
+     "src/pages/DashboardPage.tsx"
+    ]
+   },
+   {
+    "sha": "13ee3ba",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: KPIs do Ponto calculados de registros reais e ranking fictício removido (#472)",
+    "files": [
+     "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
+     "src/components/ponto/GestaoPontoAnalytics.tsx",
+     "src/components/ponto/GestaoRegistrosPonto.tsx",
+     "src/pages/PontoPage.tsx"
+    ]
+   },
    {
     "sha": "cab34b8",
     "date": "2026-11-12",
@@ -278238,156 +278595,11 @@
      "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
      "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.verify.sql"
     ]
-   },
-   {
-    "sha": "c926aa1",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
-     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
-     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
-     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql"
-    ]
-   },
-   {
-    "sha": "3fe5d63",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)",
-    "files": [
-     "supabase/functions/_shared/outboundDelivery.test.ts",
-     "supabase/functions/_shared/outboundDelivery.ts",
-     "supabase/functions/alertas-dp/index.ts",
-     "supabase/functions/enviar-relatorio/index.ts"
-    ]
-   },
-   {
-    "sha": "98a0bd5",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)",
-    "files": [
-     "scripts/simulacao/simulate_art145.cjs",
-     "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
-     "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql"
-    ]
-   },
-   {
-    "sha": "145cb90",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)",
-    "files": [
-     ".github/workflows/ci.yml",
-     "deno.lock",
-     "scripts/typecheck-edge.sh"
-    ]
-   },
-   {
-    "sha": "bfb3cb0",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     ".github/workflows/canonical-probes.yml",
-     ".github/workflows/canonical-sql-diag.yml",
-     ".github/workflows/ci.yml"
-    ]
-   },
-   {
-    "sha": "6ddd6bd",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)",
-    "files": [
-     "deno.lock"
-    ]
-   },
-   {
-    "sha": "71b9957",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "style(manutencao): aplica correcoes locais verificadas (#439)",
-    "files": [
-     "src/calculators/__tests__/auditHelper.test.ts",
-     "src/calculators/__tests__/beneficios.test.ts",
-     "src/calculators/__tests__/tabelas.test.ts",
-     "src/calculators/auditHelper.ts",
-     "src/components/ProtectedRoute.tsx",
-     "src/components/RouteErrorBoundary.tsx",
-     "src/components/__tests__/AdminRoute.test.tsx",
-     "src/components/__tests__/ESocialPagamentosAndSST.test.tsx",
-     "src/components/__tests__/PageContainer.test.tsx",
-     "src/components/__tests__/forms.test.tsx",
-     "src/components/admin/HealthTrendCard.tsx",
-     "src/components/admin/__tests__/UnifiedAuditSection.test.tsx",
-     "src/components/admin/telemetry/TelemetryFilters.tsx",
-     "src/components/admin/telemetry/TelemetryStatsCards.tsx",
-     "src/components/admin/telemetry/TelemetryTopOffenders.tsx",
-     "src/components/admissao/SignaturePad.tsx",
-     "src/components/afastamentos/AfastamentoStats.tsx",
-     "src/components/auth/LoginForm.tsx",
-     "src/components/auth/index.ts",
-     "src/hooks/useCalcular13Salario.ts"
-    ]
-   },
-   {
-    "sha": "bdb0189",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
-     "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql"
-    ]
-   },
-   {
-    "sha": "c42d57d",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)",
-    "files": [
-     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql"
-    ]
-   },
-   {
-    "sha": "207e914",
-    "date": "2026-11-11",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "bba79fd",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)",
-    "files": [
-     "scripts/simulacao/_lib/ts-require.cjs",
-     "scripts/simulacao/verify_rescisao_fix.cjs",
-     "supabase/functions/calcular-rescisao/motor.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    ".github/workflows/canonical-migrations.yml",
-    5
-   ],
-   [
-    "package-lock.json",
-    2
-   ],
-   [
-    "package.json",
+    "src/pages/PerfilPage.tsx",
     2
    ],
    [
@@ -278395,67 +278607,75 @@
     2
    ],
    [
-    ".github/workflows/canonical-probes.yml",
+    ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
-    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
-    2
-   ],
-   [
-    "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
-    2
-   ],
-   [
-    "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
-    2
-   ],
-   [
-    ".github/workflows/ci.yml",
-    2
-   ],
-   [
-    "deno.lock",
-    2
-   ],
-   [
-    "src/components/__tests__/ESocialAIInsights.test.tsx",
+    "src/pages/AssinaturasPage.tsx",
     1
    ],
    [
-    "src/components/__tests__/ESocialConciliacao.test.tsx",
+    "src/components/__tests__/OnboardingPageContent.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "src/components/admissoes/OnboardingPageContent.tsx",
     1
    ],
    [
-    "src/components/esocial/ESocialAIInsights.tsx",
+    "src/pages/OnboardingPage.tsx",
     1
    ],
    [
-    "src/components/esocial/ESocialConciliacao.tsx",
+    "src/pages/DocumentosPage.tsx",
     1
    ],
    [
-    "src/pages/ESocialPage.tsx",
+    "src/components/__tests__/TokenInput.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
+    "src/components/contratacao/TokenInput.tsx",
     1
    ],
    [
-    "src/components/folha/FolhaComposicao.tsx",
+    "src/hooks/__tests__/useSystemHealth.test.ts",
     1
    ],
    [
-    "src/components/folha/PagamentoBancarioWizard.tsx",
+    "src/hooks/useSystemHealth.ts",
     1
    ],
    [
-    "src/pages/AdminPontoDivergenciasPage.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    1
+   ],
+   [
+    "src/pages/FinanceiroBancarioPage.tsx",
+    1
+   ],
+   [
+    "src/pages/ConfiguracoesPage.tsx",
+    1
+   ],
+   [
+    "src/pages/SegurancaPage.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/DashboardHeader.test.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/AnalyticsSection.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/DashboardHeader.tsx",
+    1
+   ],
+   [
+    "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
     1
    ]
   ]

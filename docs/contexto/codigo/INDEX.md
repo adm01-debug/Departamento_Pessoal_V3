@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cab34b8eca54e5aa71f9d1a09d3b3242424f1265` (2026-11-12T12:44:37-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `004508da31bfdda3428697315821c87ae8e803f1` (2026-11-12T14:20:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2882 |
 | arquivos_codigo | 1549 |
-| linhas_codigo | 273338 |
+| linhas_codigo | 273606 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -375,7 +375,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - tabelas_usadas_sem_definicao: 0
 - tabelas_com_drift_migration_vs_types: 85 — ex.: admissao_tokens, admissoes, afastamentos
 - rpcs_sem_definicao: 4 — ex.: aplicar_medida_folha_ponto, complete_admission_esocial_event, drenar_fila_limpeza_lgpd
-- componentes_orfaos: 21 — ex.: src/components/dashboard/SectionHeader.tsx, src/components/layout/Breadcrumb.tsx, src/components/layout/Column.tsx
+- componentes_orfaos: 22 — ex.: src/components/dashboard/SectionHeader.tsx, src/components/layout/Breadcrumb.tsx, src/components/layout/Column.tsx
 - componentes_com_nome_duplicado: 17 — ex.: AlertasRHWidget, CadastroIncompletoWidget, ESocialMonitorWidget
 - scripts_orfaos: 0
 - env_usadas_nao_declaradas: 13 — ex.: CI, DEV, GITHUB_ACTIONS
@@ -383,15 +383,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21993 nós · 46131 arestas · 2103 comunidades · grafo do commit `cab34b8e`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (319), cn (312), vitest (281), lucide-react (279), validate.ts (233), useEmpresas (223), deepChain (206), rateLimit.ts (172), @tanstack/react-query (168), "public"."empresas" (164)
+- 21994 nós · 46142 arestas · 2128 comunidades · grafo do commit `004508da`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (318), lucide-react (293), useEmpresas (194), cn (187), client.ts (186), @testing-library/react (171), contract.ts (169), services/index.ts (164), "public"."empresas" (164), supabase/types.ts (161)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (52)
-- package.json (48)
-- package-lock.json (43)
+- .github/workflows/canonical-migrations.yml (51)
+- package.json (42)
+- package-lock.json (37)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (19)
 - PENDENCIAS.md (13)
@@ -614,21 +614,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `004508d` fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)
+- 2026-11-12 `773c7af` fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)
+- 2026-11-12 `81eb705` fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)
+- 2026-11-12 `47fe444` fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)
+- 2026-11-12 `7e8d170` fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)
+- 2026-11-12 `965a624` fix: indicador de saúde do sistema lê a taxa de sucesso no formato que a edge devolve (#495)
+- 2026-11-12 `e3f108d` fix: exportar ficha do colaborador em PDF e remover item 'Outras Ações' sem ação (#476)
+- 2026-11-12 `7fa11b6` fix: remove aba de Taxas de Câmbio com cotações fixas no Financeiro Bancário (#475)
+- 2026-11-12 `e8d162f` fix: perfil troca senha de verdade e firewall leva ao bloqueio de IP (#474)
+- 2026-11-12 `8ac54f1` fix: dashboards mostram só indicadores reais e perdem botões sem ação (#473)
+- 2026-11-12 `13ee3ba` fix: KPIs do Ponto calculados de registros reais e ranking fictício removido (#472)
 - 2026-11-12 `cab34b8` fix: Conciliação do eSocial e card "Insights da IA" deixam de mostrar dados inventados (#471)
 - 2026-11-12 `884e312` fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)
 - 2026-11-12 `cf95554` fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)
 - 2026-11-12 `b3493b3` fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)
-- 2026-11-12 `d82b6a3` fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)
-- 2026-11-12 `770823e` fix: gerar-aej e gerar-afd não sobem em produção (BOOT_ERROR no import de CORS) (#465)
-- 2026-11-12 `c9af606` fix: menu lateral esconde de não-admin os 21 itens que levam a rotas AdminRoute (#463)
-- 2026-11-12 `3b8df28` fix: RV-04 — migration de remediação das 5 RPCs ausentes + correção da assinatura no probe (#459)
-- 2026-11-12 `2bdd7bd` build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)
-- 2026-11-12 `23dd510` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)
-- 2026-11-12 `688c78f` build(deps): bump the actions group across 1 directory with 5 updates (#426)
-- 2026-11-12 `97ce91a` infra: probes canônicos em fila própria (destrava migrations) (#442)
-- 2026-11-12 `0a089f2` fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)
-- 2026-11-12 `e0cd6bc` feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)
-- 2026-11-12 `e8472e9` fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
