@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c926aa18b9cc5ed9134eb684f4c08571ce5cf424` (2026-11-12T01:32:35Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2914cb9cdcd44339c6ffd6787b5060388454ba75` (2026-11-12T02:29:44Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (821), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1418), SQL (823), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2875 |
+| arquivos_total | 2877 |
 | arquivos_codigo | 1548 |
 | linhas_codigo | 273297 |
 | rotas | 113 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
-| migrations | 785 |
+| migrations | 787 |
 | cron_jobs | 41 |
 | testes | 589 |
 | workflows | 21 |
@@ -361,7 +361,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Permissões / papéis
 - papéis no código: dialog (33), alert (11), user (9), admin (8), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), rh (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), gestor (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), tooltip (1)
-- enums de papel: app_role: admin|moderator|user; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
+- enums de papel: app_role: admin|moderator|user|supervisor|coordenador; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
 - guards: src/components/ProtectedRoute.tsx · rotas protegidas: 107 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
 - feature flags: FEATURE_X, nova-tela, novo-inbox
 
@@ -383,15 +383,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21971 nós · 46101 arestas · 2153 comunidades · grafo do commit `c926aa18`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), @tanstack/react-query (317), lucide-react (311), vitest (258), client.ts (249), cn (234), validate.ts (218), useEmpresas (169), contract.ts (168), "public"."empresas" (164), supabase/types.ts (164)
+- 21975 nós · 46103 arestas · 2207 comunidades · grafo do commit `2914cb9c`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (324), button.tsx (293), react (291), vitest (268), App.tsx (258), cn (231), services/index.ts (212), contract.ts (190), useEmpresas (170), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (59)
-- package-lock.json (56)
-- .github/workflows/canonical-migrations.yml (52)
+- package.json (58)
+- package-lock.json (55)
+- .github/workflows/canonical-migrations.yml (53)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (20)
 - src/services/cnabService.ts (13)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `2914cb9` fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)
 - 2026-11-12 `c926aa1` fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)
 - 2026-11-11 `3fe5d63` fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)
 - 2026-11-11 `98a0bd5` fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `9a0babf` feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)
 - 2026-11-10 `7f6d195` fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)
 - 2026-11-10 `e87dcb7` fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)
-- 2026-11-10 `75460b7` infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

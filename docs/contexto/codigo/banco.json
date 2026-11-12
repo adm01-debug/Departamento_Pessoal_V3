@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 785,
+ "migrations": 787,
  "seeds": [],
  "avisos": [
   "176 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -22,7 +22,9 @@
   "app_role": [
    "admin",
    "moderator",
-   "user"
+   "user",
+   "supervisor",
+   "coordenador"
   ],
   "dp_pii_sensitivity": [
    "publico",
@@ -469,6 +471,7 @@
   "pcs_touch_updated_at",
   "pcs_validate_factor",
   "pertence_a_empresa",
+  "pode_gerir_config_ponto",
   "pode_gerir_pessoas",
   "pode_gerir_pessoas_para",
   "pode_gerir_rh",
@@ -16933,12 +16936,6 @@
      "tipo": "permissive"
     },
     {
-     "nome": "Apenas admins podem atualizar configurações de ponto",
-     "comando": "update",
-     "para": "public",
-     "tipo": "permissive"
-    },
-    {
      "nome": "Config ponto atualizacao por admin da empresa",
      "comando": "update",
      "para": "authenticated",
@@ -16959,6 +16956,18 @@
     {
      "nome": "configuracoes_ponto_tenant_select",
      "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Supervisor ou coordenador alteram configurações de ponto",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "Supervisor ou coordenador inserem configurações de ponto",
+     "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     }

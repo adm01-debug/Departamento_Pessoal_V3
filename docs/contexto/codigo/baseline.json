@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "c926aa18b9cc5ed9134eb684f4c08571ce5cf424",
+  "commit": "2914cb9cdcd44339c6ffd6787b5060388454ba75",
   "branch": "main",
-  "data_commit": "2026-11-12T01:32:35Z",
+  "data_commit": "2026-11-12T02:29:44Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2914cb9",
+    "data": "2026-11-12",
+    "assunto": "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)"
+   },
    {
     "sha": "c926aa1",
     "data": "2026-11-12",
@@ -126,18 +131,13 @@
     "sha": "f8dace8",
     "data": "2026-11-10",
     "assunto": "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o "
-   },
-   {
-    "sha": "2d6010b",
-    "data": "2026-11-10",
-    "assunto": "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417"
    }
   ],
-  "arquivos_mudados_7d": 425,
+  "arquivos_mudados_7d": 427,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 40
    },
    {
     "pasta": "package.json",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 59
+    "mudancas": 58
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 56
+    "mudancas": 55
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 52
+    "mudancas": 53
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 110
+    "commits": 111
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2875,
+  "arquivos_total": 2877,
   "arquivos_codigo": 1548,
   "linhas_codigo": 273297,
   "rotas": 113,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 785,
+  "migrations": 787,
   "cron_jobs": 41,
   "testes": 589,
   "workflows": 21,
