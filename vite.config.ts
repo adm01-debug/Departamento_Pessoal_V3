@@ -43,7 +43,7 @@ export default defineConfig(({ mode }) => {
       // inline do react-refresh e quebraria o HMR — removemos só em `vite dev`.
       {
         name: 'strip-csp-meta-in-dev',
-        apply: 'serve',
+        apply: 'serve' as const,
         transformIndexHtml: (html: string) => html.replace(/\s*<meta http-equiv="Content-Security-Policy"[^>]*>/, ''),
       },
       // W91a: injeta <meta name="build-sha"> no HTML publicado para o
@@ -64,27 +64,28 @@ export default defineConfig(({ mode }) => {
           return html.includes('</head>') ? html.replace('</head>', `${tag}  </head>`) : html + tag;
         },
       },
-      // P1-022: Babel-based plugin required for React Compiler
+      // P1-022: React Compiler — compila automaticamente components/hooks com
+      // dependências estáveis (elimina useMemo/useCallback redundantes).
+      // @vitejs/plugin-react v6 removeu a opção `babel` (era ignorada em
+      // silêncio); agora é `compiler`, que exige `oxc-transform-react`.
+      // Experimental, desligado por padrão — ativar com:
+      //   VITE_REACT_COMPILER=1 npm run build
       react({
-        // React Compiler: compila automaticamente components/hooks com dependências
-        // estáveis — elimina useMemo/useCallback redundantes automaticamente.
-        // babel-plugin-react-compiler@^1.0.0. Experimental — ativar com:
-        //   VITE_REACT_COMPILER=1 npm run build
-        babel: {
-          plugins: process.env.VITE_REACT_COMPILER === '1' ? [['babel-plugin-react-compiler', { target: '19' }]] : [],
-        },
+        compiler: process.env.VITE_REACT_COMPILER === '1',
       }),
       imagetools(),
       // P3-053: source maps upload automático para Sentry em builds de prod
       mode === 'production' &&
-        process.env.VITE_SENTRY_DSN &&
+        Boolean(process.env.VITE_SENTRY_DSN) &&
         sentryVitePlugin({
           org: process.env.VITE_SENTRY_ORG ?? 'dp-team',
           project: process.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
           authToken: process.env.SENTRY_AUTH_TOKEN,
-          telemetries: 'debug',
-          setCommits: { auto: true },
-          deploy: { env: mode },
+          // `setCommits`/`deploy`/`telemetries` estavam no nível errado e eram
+          // ignorados pelo plugin v5 (o lugar certo é `release: { setCommits,
+          // deploy }`). Removidos sem mudar o comportamento atual; ligá-los faz
+          // o build criar release/deploy no Sentry e, por padrão, FALHAR se isso
+          // falhar — decisão pendente, validar num deploy de preview antes.
         }),
       // Service worker único: public/sw-custom.js (allowlist E-037, fail-closed).
       // O vite-plugin-pwa gerava um segundo SW (workbox sw.js) + registerSW.js —
@@ -104,20 +105,20 @@ export default defineConfig(({ mode }) => {
     build: {
       // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI
       sourcemap: !!process.env.VITE_SENTRY_DSN,
-      // P2-038: Vite 8 usa minifier oxc (mais rápido que terser). esbuild.drop
-      // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
-      // `minify: { compress: { drop_console: true } }` — habilitada abaixo.
-      // console.error/warn são MANTIDOS para integração com Sentry (P3-053).
-      // Forma de objeto: além de selecionar o minifier oxc, remove chamadas de
-      // console.log/debug/info do bundle de produção (a string 'oxc' sozinha
-      // não aplica nenhum `compress`). console.error/warn permanecem para o Sentry.
-      minify: {
-        type: 'oxc',
-        compress: {
-          dropConsole: ['log', 'debug', 'info', 'trace'],
-        },
-      },
+      // P2-038: minificação oxc (padrão do Vite 8). ATENÇÃO: a forma de objeto
+      // `minify: { type: 'oxc', compress: { dropConsole: [...] } }` não existe
+      // no Vite 8 — ele só aceita boolean | 'oxc' | 'terser' | 'esbuild' e, com
+      // um objeto, caía em `output.minify = false`: o bundle de produção saía
+      // SEM minificação (1,7 MB / 45 mil linhas no maior chunk, medido 12/11).
+      // console.log/debug/info/trace saem via `manualPureFunctions` (chamada
+      // pura sem uso é removida no tree-shaking). console.error/warn são
+      // MANTIDOS para integração com Sentry (P3-053). Obs.: o `dropConsole`
+      // do oxc é só boolean e removeria também error/warn.
+      minify: 'oxc',
       rollupOptions: {
+        treeshake: {
+          manualPureFunctions: ['console.log', 'console.debug', 'console.info', 'console.trace'],
+        },
         output: {
           // Forma de função exigida pelo Vite 8 (rolldown). A forma de objeto
           // dispara "manualChunks is not a function" durante o build.
