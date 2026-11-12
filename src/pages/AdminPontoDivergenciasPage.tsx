@@ -101,7 +101,7 @@ export default function AdminPontoDivergenciasPage() {
         .select('id,nome:nome_completo,matricula')
         .eq('empresa_id', empresaId!)
         .eq('status', 'ativo')
-        .order('nome')
+        .order('nome_completo')
         .limit(500);
       if (error) throw error;
       return (data ?? []) as ColaboradorMin[];
