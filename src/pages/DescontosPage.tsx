@@ -131,12 +131,16 @@ export default function DescontosPage() {
       id: string;
       patch: { status?: 'quitado' | 'cancelado'; parcelas_pagas?: number };
     }) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('emprestimos_consignados')
         .update(validateTablePayload('emprestimos_consignados', patch, 'DescontosPage:emprestimos_consignados'))
         .eq('id', id)
-        .eq('empresa_id', empresaAtual!.id);
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('Empréstimo não atualizado: você não tem permissão ou o registro não existe mais.');
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['emprestimos-consignados'] });

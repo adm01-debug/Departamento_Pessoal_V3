@@ -205,6 +205,49 @@ describe('edgeFunctionsService error handling', () => {
     });
   });
 
+  it('rejeições 4xx de negócio não abrem o circuit breaker compartilhado', async () => {
+    const { CircuitBreaker } = await vi.importActual<typeof import('@/lib/circuitBreaker')>('@/lib/circuitBreaker');
+    const realBreaker = new CircuitBreaker({ failureThreshold: 3, resetTimeout: 15000 });
+    mockGenericExecute.mockImplementation((fn: () => Promise<unknown>) => realBreaker.execute(fn));
+    mockInvoke.mockImplementation(async () => ({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(
+        JSON.stringify({
+          error: { code: 'AMOUNT_ABOVE_LIMIT', message: 'Valor excede o limite de 40% do salário base' },
+        }),
+        { status: 422 }
+      ),
+    }));
+    const params = { empresa_id: 'emp-1', colaborador_id: 'col-1', valor_centavos: 999999, competencia: '2026-11' };
+    for (let i = 0; i < 4; i++) {
+      await expect(edgeFunctionsService.solicitarAdiantamentoSalarial(params)).rejects.toMatchObject({
+        status: 422,
+        message: 'Valor excede o limite de 40% do salário base',
+      });
+    }
+    expect(mockInvoke).toHaveBeenCalledTimes(4);
+    expect(realBreaker.getState()).toBe('CLOSED');
+
+    mockInvoke.mockResolvedValue({ data: { success: true }, error: null });
+    await expect(edgeFunctionsService.dispararAlertasDP('emp-1')).resolves.toEqual({ success: true });
+  });
+
+  it('erros 5xx continuam abrindo o circuit breaker', async () => {
+    const { CircuitBreaker } = await vi.importActual<typeof import('@/lib/circuitBreaker')>('@/lib/circuitBreaker');
+    const realBreaker = new CircuitBreaker({ failureThreshold: 3, resetTimeout: 15000 });
+    mockGenericExecute.mockImplementation((fn: () => Promise<unknown>) => realBreaker.execute(fn));
+    mockInvoke.mockImplementation(async () => ({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(JSON.stringify({ error: 'boom' }), { status: 500 }),
+    }));
+    for (let i = 0; i < 3; i++) {
+      await expect(edgeFunctionsService.healthcheck()).rejects.toThrow('boom');
+    }
+    expect(realBreaker.getState()).toBe('OPEN');
+  });
+
   it('mantém a chave para estado indeterminado ou falha de transporte', () => {
     expect(
       isDefinitiveIdempotencyFailure(
