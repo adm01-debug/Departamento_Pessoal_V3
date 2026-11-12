@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
@@ -67,6 +67,7 @@ vi.mock('sonner', () => ({
 }));
 
 import { CampaignWizard } from '../premiacoes/CampaignWizard';
+import { premiacoesService } from '@/services/premiacoesService';
 
 const defaultProps = { isOpen: true, onClose: vi.fn(), empresaId: 'emp-001' };
 
@@ -110,5 +111,25 @@ describe('CampaignWizard', () => {
     render(<CampaignWizard {...defaultProps} />);
     fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
     expect(screen.getByText('Regras de Premiação')).toBeInTheDocument();
+  });
+
+  it('Salvar Rascunho cria a campanha com status rascunho', async () => {
+    vi.mocked(premiacoesService.criarCampanha).mockClear();
+    render(<CampaignWizard {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Salvar Rascunho/i }));
+    await waitFor(() => expect(premiacoesService.criarCampanha).toHaveBeenCalledTimes(1));
+    expect(premiacoesService.criarCampanha).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'rascunho', empresa_id: 'emp-001' })
+    );
+  });
+
+  it('Lançar Campanha cria a campanha com status ativo', async () => {
+    vi.mocked(premiacoesService.criarCampanha).mockClear();
+    render(<CampaignWizard {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Lançar Campanha/i }));
+    await waitFor(() => expect(premiacoesService.criarCampanha).toHaveBeenCalledTimes(1));
+    expect(premiacoesService.criarCampanha).toHaveBeenCalledWith(expect.objectContaining({ status: 'ativo' }));
   });
 });
