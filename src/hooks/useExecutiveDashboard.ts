@@ -47,10 +47,10 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
           .select('*', { count: 'exact', head: true })
           .eq('status', 'ativo')
           .eq('empresa_id', empresaId!),
-        supabase.from('colaboradores').select('departamento').eq('status', 'ativo').eq('empresa_id', empresaId!),
+        supabase.from('colaboradores').select('id, departamento').eq('status', 'ativo').eq('empresa_id', empresaId!),
         supabase
           .from('folhas_pagamento')
-          .select('total_liquido')
+          .select('id, total_liquido')
           .eq('competencia', mesAtual)
           .eq('empresa_id', empresaId!),
         supabase
@@ -116,13 +116,26 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
         };
       });
 
+      // Custo real por departamento: itens da folha da competência atual (escopo da empresa via folha_id)
+      const folhaIds = (folhaAtual ?? []).map((f) => f.id);
+      const { data: itensFolha } = folhaIds.length
+        ? await supabase.from('folha_itens').select('colaborador_id, total_liquido').in('folha_id', folhaIds)
+        : { data: [] as { colaborador_id: string; total_liquido: number | null }[] };
+
       const deptMap: Record<string, number> = {};
+      const deptPorColab: Record<string, string> = {};
       colabs?.forEach((c) => {
         const dept = c.departamento ?? 'Sem departamento';
         deptMap[dept] = (deptMap[dept] || 0) + 1;
+        deptPorColab[c.id] = dept;
+      });
+      const custoDept: Record<string, number> = {};
+      itensFolha?.forEach((it) => {
+        const dept = deptPorColab[it.colaborador_id];
+        if (dept) custoDept[dept] = (custoDept[dept] || 0) + (it.total_liquido || 0);
       });
       const departamentos = Object.entries(deptMap)
-        .map(([nome, value]) => ({ nome, value }))
+        .map(([nome, value]) => ({ nome, value, custo: custoDept[nome] || 0 }))
         .sort((a, b) => b.value - a.value)
         .slice(0, 8);
 

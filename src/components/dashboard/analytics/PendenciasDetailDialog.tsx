@@ -27,7 +27,6 @@ import {
   X,
   Check,
   Eye,
-  Forward,
   MoreHorizontal,
   History,
   ChevronLeft,
@@ -336,9 +335,6 @@ export function PendenciasDetailDialog({
                               >
                                 <Activity className="h-4 w-4" />{' '}
                                 {item.source === 'ponto' ? 'Recusar' : 'Marcar Revisão'}
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer">
-                                <Forward className="h-4 w-4" /> Encaminhar
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>

@@ -464,10 +464,8 @@ export default function DashboardExecutivoPage() {
                         data={
                           data?.departamentos?.map((d) => ({
                             nome: d.nome,
-                            actual: Math.round((d.value / (data?.totalAtivos || 1)) * (data?.totalFolhaAtual || 0)),
-                            budget:
-                              strategic?.budgets?.find((b) => b.departamento === d.nome)?.valor_orcado ||
-                              ((data?.totalFolhaAtual || 0) / (data?.departamentos?.length || 1)) * 1.1,
+                            actual: Math.round(d.custo),
+                            budget: strategic?.budgets?.find((b) => b.departamento === d.nome)?.valor_orcado ?? null,
                           })) || []
                         }
                       >
@@ -489,6 +487,11 @@ export default function DashboardExecutivoPage() {
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+                  {!strategic?.budgets?.length && (
+                    <p className="mt-2 text-[10px] text-muted-foreground">
+                      Sem orçamento cadastrado para {new Date().getFullYear()}.
+                    </p>
+                  )}
                   <div className="mt-4 flex items-center justify-between">
                     <div className="flex gap-4">
                       <div className="flex items-center gap-1.5">
@@ -500,9 +503,6 @@ export default function DashboardExecutivoPage() {
                         <span className="text-[10px] text-muted-foreground">Excesso orçamentário</span>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-7 text-[10px] text-primary">
-                      Ajustar Metas
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

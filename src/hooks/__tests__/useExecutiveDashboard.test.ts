@@ -76,6 +76,39 @@ describe('useExecutiveKPIs', () => {
     expect(result.current.data?.custosMensal).toHaveLength(3);
   });
 
+  it('computes real per-department cost from folha_itens of current payroll', async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'colaboradores')
+        return makeChain({
+          data: [
+            { id: 'c1', departamento: 'RH' },
+            { id: 'c2', departamento: 'RH' },
+            { id: 'c3', departamento: 'TI' },
+          ],
+          count: 3,
+          error: null,
+        });
+      if (table === 'folhas_pagamento')
+        return makeChain({ data: [{ id: 'f1', total_liquido: 9000 }], count: 1, error: null });
+      if (table === 'folha_itens')
+        return makeChain({
+          data: [
+            { colaborador_id: 'c1', total_liquido: 2000 },
+            { colaborador_id: 'c2', total_liquido: 3000 },
+            { colaborador_id: 'c3', total_liquido: 4000 },
+          ],
+          error: null,
+        });
+      return makeChain({ data: [], count: 0, error: null });
+    });
+    const { result } = renderHook(() => useExecutiveKPIs('emp-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data?.departamentos).toEqual([
+      { nome: 'RH', value: 2, custo: 5000 },
+      { nome: 'TI', value: 1, custo: 4000 },
+    ]);
+  });
+
   it('computes variacaoFolha=0 when no previous payroll data', async () => {
     const { result } = renderHook(() => useExecutiveKPIs('emp-1'), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));

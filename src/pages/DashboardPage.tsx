@@ -24,6 +24,7 @@ import { HealthTrendCard } from '@/components/admin/HealthTrendCard';
 interface DashboardStats {
   colaboradoresAtivos: number;
   folhaMensal: number;
+  folhaVariacao: number | null;
   feriasPendentes: number;
   bancoHoras: number;
   turnover: number;
@@ -52,6 +53,7 @@ function useDashboardStats(enabled: boolean) {
 
       const now = new Date();
       const mesAtual = formatCompetenciaLocal(now);
+      const mesAnterior = formatCompetenciaLocal(new Date(now.getFullYear(), now.getMonth() - 1, 1));
       const em30Dias = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
       const inicioMes = `${mesAtual}-01`;
 
@@ -68,6 +70,7 @@ function useDashboardStats(enabled: boolean) {
         { data: absenteismoData },
         { data: colabsAll },
         { data: feriasAll },
+        { data: folhaAnteriorData },
       ] = await Promise.all([
         supabase.from('colaboradores').select('id', { count: 'exact', head: true }).eq('status', 'ativo'),
         supabase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAtual),
@@ -85,9 +88,13 @@ function useDashboardStats(enabled: boolean) {
         supabase.from('vw_kpi_absenteismo').select('dias_faltados, mes').order('mes', { ascending: false }).limit(1),
         supabase.from('colaboradores').select('id, salario_base, data_admissao').eq('status', 'ativo'),
         supabase.from('ferias').select('colaborador_id, data_fim').neq('status', 'cancelado'),
+        supabase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAnterior),
       ]);
 
       const folhaMensal = folhaData?.reduce((acc, f) => acc + (f.total_liquido || 0), 0) || 0;
+      const folhaAnterior = folhaAnteriorData?.reduce((acc, f) => acc + (f.total_liquido || 0), 0) || 0;
+      const folhaVariacao =
+        folhaAnterior > 0 ? Number((((folhaMensal - folhaAnterior) / folhaAnterior) * 100).toFixed(1)) : null;
       const bancoHoras =
         bancoData?.reduce((acc, b) => {
           const [h, m] = (b.horas || '00:00').split(':').map(Number);
@@ -140,6 +147,7 @@ function useDashboardStats(enabled: boolean) {
       return {
         colaboradoresAtivos: colaboradoresAtivos || 0,
         folhaMensal,
+        folhaVariacao,
         feriasPendentes: feriasPendentes || 0,
         bancoHoras: Math.round(bancoHoras / 60),
         turnover: Number(turnoverVal),
@@ -356,7 +364,6 @@ export default function DashboardPage() {
               value={stats?.colaboradoresAtivos || 0}
               rawValue={stats?.colaboradoresAtivos || 0}
               icon={Users}
-              trend={stats?.colaboradoresAtivos ? { value: 2.5, label: 'vs mês anterior' } : undefined}
               gradient="from-primary to-primary-glow"
               sparkline={emptySparkline}
               index={0}
@@ -366,7 +373,11 @@ export default function DashboardPage() {
               value={formatCurrency(stats?.folhaMensal || 0)}
               rawValue={stats?.folhaMensal || 0}
               icon={DollarSign}
-              trend={stats?.folhaMensal ? { value: -1.2, label: 'vs mês anterior' } : undefined}
+              trend={
+                stats?.folhaMensal && stats.folhaVariacao != null
+                  ? { value: stats.folhaVariacao, label: 'vs mês anterior' }
+                  : undefined
+              }
               gradient="from-primary/80 to-primary"
               sparkline={emptySparkline}
               index={1}
