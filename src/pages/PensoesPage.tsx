@@ -99,6 +99,7 @@ export default function PensoesPage() {
       setOpen(false);
       toast.success('Pensão cadastrada');
     },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao cadastrar pensão.')),
   });
 
   const atualizar = useMutation({
@@ -161,12 +162,14 @@ export default function PensoesPage() {
       >
         <div className="flex justify-end">
           <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={abrirNova}>
-                <Plus className="mr-2 h-4 w-4" />
-                Nova Pensão
-              </Button>
-            </DialogTrigger>
+            {podeGerir && (
+              <DialogTrigger asChild>
+                <Button onClick={abrirNova}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Nova Pensão
+                </Button>
+              </DialogTrigger>
+            )}
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{editId ? 'Editar Pensão' : 'Nova Pensão'}</DialogTitle>

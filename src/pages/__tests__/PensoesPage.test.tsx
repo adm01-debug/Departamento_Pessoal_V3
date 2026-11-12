@@ -137,10 +137,11 @@ describe('PensoesPage — edição', () => {
     expect(toast.success).not.toHaveBeenCalled();
   });
 
-  it('não mostra Editar/Excluir para quem não é RH/admin (CPF e conta ficam mascarados)', async () => {
+  it('não mostra Nova Pensão/Editar/Excluir para quem não é RH/admin (CPF e conta ficam mascarados)', async () => {
     roles = ['user'];
     renderPage();
     await screen.findByText('Maria Souza');
+    expect(screen.queryByRole('button', { name: /Nova Pensão/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
   });
