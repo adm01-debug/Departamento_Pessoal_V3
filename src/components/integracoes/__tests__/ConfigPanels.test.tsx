@@ -107,6 +107,49 @@ describe('CnabConfigPanel', () => {
     expect(screen.getByRole('button', { name: 'Salvar Configurações' })).toBeDisabled();
     expect(svc.saveConfig).not.toHaveBeenCalled();
   });
+
+  it('Download baixa o conteúdo salvo da remessa e fica desabilitado sem arquivo', async () => {
+    svc.getConfig.mockResolvedValue(null);
+    svc.getRemessas.mockResolvedValue([
+      {
+        id: 'rem-1',
+        banco_codigo: '341',
+        sequencial_arquivo: 7,
+        status: 'enviado',
+        arquivo_remessa: 'LINHA1\r\nLINHA2',
+        created_at: null,
+      },
+      {
+        id: 'rem-2',
+        banco_codigo: '341',
+        sequencial_arquivo: 8,
+        status: 'processando',
+        arquivo_remessa: null,
+        created_at: null,
+      },
+    ]);
+    const createObjectURL = vi.fn((_blob: Blob) => 'blob:remessa');
+    const revokeObjectURL = vi.fn();
+    Object.assign(window.URL, { createObjectURL, revokeObjectURL });
+    let baixado: string | undefined;
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement
+    ) {
+      baixado = this.download;
+    });
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    const botoes = await screen.findAllByRole('button', { name: 'Download' });
+    expect(botoes[1]).toBeDisabled();
+    await user.click(botoes[0]);
+
+    expect(baixado).toBe('REMESSA_7.txt');
+    expect(await createObjectURL.mock.calls[0][0].text()).toBe('LINHA1\r\nLINHA2');
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:remessa');
+    clickSpy.mockRestore();
+  });
 });
 
 describe('WebhookConfigPanel', () => {

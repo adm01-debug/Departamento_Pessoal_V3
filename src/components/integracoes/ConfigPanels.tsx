@@ -251,6 +251,27 @@ export function Bitrix24ConfigPanel() {
   );
 }
 
+type CnabRemessa = Awaited<ReturnType<typeof cnabService.getRemessas>>[number];
+
+const nomeArquivoRemessa = (r: CnabRemessa) => `REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`;
+
+function baixarRemessa(r: CnabRemessa) {
+  if (!r.arquivo_remessa) return;
+  try {
+    const blob = new Blob([r.arquivo_remessa], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomeArquivoRemessa(r);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    toast.error(safeErrorMessage(err, 'Erro ao baixar o arquivo de remessa'));
+  }
+}
+
 export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
   const { empresaAtual } = useEmpresas();
@@ -366,16 +387,21 @@ export function CnabConfigPanel() {
                         {r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}
                       </TableCell>
                       <TableCell className="font-medium text-sm">{r.banco_codigo || '—'}</TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {`REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`}
-                      </TableCell>
+                      <TableCell className="font-mono text-xs">{nomeArquivoRemessa(r)}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-success/10 text-success border-0">
                           {r.status || 'Processado'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="h-8 rounded-lg">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-lg"
+                          disabled={!r.arquivo_remessa}
+                          title={r.arquivo_remessa ? undefined : 'Arquivo de remessa ainda não disponível'}
+                          onClick={() => baixarRemessa(r)}
+                        >
                           <ExternalLink className="h-3 w-3 mr-2" />
                           Download
                         </Button>
