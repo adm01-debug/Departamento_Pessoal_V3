@@ -81,11 +81,15 @@ export default defineConfig(({ mode }) => {
           org: process.env.VITE_SENTRY_ORG ?? 'dp-team',
           project: process.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
           authToken: process.env.SENTRY_AUTH_TOKEN,
-          // `setCommits`/`deploy`/`telemetries` estavam no nível errado e eram
-          // ignorados pelo plugin v5 (o lugar certo é `release: { setCommits,
-          // deploy }`). Removidos sem mudar o comportamento atual; ligá-los faz
-          // o build criar release/deploy no Sentry e, por padrão, FALHAR se isso
-          // falhar — decisão pendente, validar num deploy de preview antes.
+          // Associação de commits e registro de deploy no Sentry (intenção original, que
+          // estava no nível errado e era ignorada pelo plugin v5). Opt-in: com
+          // SENTRY_RELEASE_TRACKING=1 o build cria release/deploy no Sentry e, por padrão,
+          // FALHA se o Sentry falhar — validar num deploy de preview antes de ligar.
+          // (A chave original `telemetries: 'debug'` não existe no plugin; a opção
+          // válida é `telemetry: boolean` — mantido o padrão.)
+          ...(process.env.SENTRY_RELEASE_TRACKING === '1'
+            ? { release: { setCommits: { auto: true }, deploy: { env: mode } } }
+            : {}),
         }),
       // Service worker único: public/sw-custom.js (allowlist E-037, fail-closed).
       // O vite-plugin-pwa gerava um segundo SW (workbox sw.js) + registerSW.js —
