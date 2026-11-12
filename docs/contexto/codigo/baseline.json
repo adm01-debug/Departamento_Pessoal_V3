@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0a089f23340bd34347d66c6b9759a64772aea1f2",
+  "commit": "97ce91a91a804a5acb11444acceb6604872fea87",
   "branch": "main",
-  "data_commit": "2026-11-12T04:49:36Z",
+  "data_commit": "2026-11-12T05:08:24Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "97ce91a",
+    "data": "2026-11-12",
+    "assunto": "infra: probes canônicos em fila própria (destrava migrations) (#442)"
+   },
    {
     "sha": "0a089f2",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "24cadd4",
     "data": "2026-11-10",
     "assunto": "chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)"
-   },
-   {
-    "sha": "b4f9205",
-    "data": "2026-11-10",
-    "assunto": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)"
    }
   ],
-  "arquivos_mudados_7d": 438,
+  "arquivos_mudados_7d": 439,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 50
+    "mudancas": 49
    },
    {
     "arquivo": "CLAUDE.md",
@@ -238,6 +238,10 @@
     "mudancas": 12
    },
    {
+    "arquivo": ".github/workflows/canonical-probes.yml",
+    "mudancas": 11
+   },
+   {
     "arquivo": ".github/workflows/e2e.yml",
     "mudancas": 11
    },
@@ -251,10 +255,6 @@
    },
    {
     "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 10
-   },
-   {
-    "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 10
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 117
+    "commits": 118
    },
    {
     "autor": "devin-ai-integration[bot]",

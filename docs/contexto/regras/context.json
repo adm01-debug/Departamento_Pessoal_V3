@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "0a089f23340bd34347d66c6b9759a64772aea1f2",
+  "sha": "97ce91a91a804a5acb11444acceb6604872fea87",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 05:13 UTC",
+  "generated_at": "2026-11-12 05:29 UTC",
   "files_total": 2902,
   "code_files": 2373,
   "code_lines": 321637
@@ -278009,10 +278009,20 @@
   }
  },
  "git": {
-  "sha": "0a089f23340bd34347d66c6b9759a64772aea1f2",
+  "sha": "97ce91a91a804a5acb11444acceb6604872fea87",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "97ce91a",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "infra: probes canônicos em fila própria (destrava migrations) (#442)",
+    "files": [
+     ".github/workflows/canonical-probes.yml",
+     "infra/runbooks/CANONICAL_WORKFLOWS.md"
+    ]
+   },
    {
     "sha": "0a089f2",
     "date": "2026-11-12",
@@ -278446,16 +278456,6 @@
      "supabase/functions/warmup/index.ts",
      "supabase/functions/whatsapp-send/index.ts"
     ]
-   },
-   {
-    "sha": "4921f71",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com identificador entre aspas (#420)",
-    "files": [
-     "scripts/audit-security-config.mjs",
-     "scripts/build-rebaseline.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -278474,6 +278474,10 @@
    [
     "deno.lock",
     3
+   ],
+   [
+    ".github/workflows/canonical-probes.yml",
+    2
    ],
    [
     "supabase/functions/OCR/index.ts",
@@ -278533,10 +278537,6 @@
    ],
    [
     ".github/workflows/ci.yml",
-    2
-   ],
-   [
-    "package.json",
     2
    ]
   ]
