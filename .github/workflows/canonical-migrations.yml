@@ -157,7 +157,6 @@ jobs:
             20261028130000_revoke_orphan_secdef_v2.sql \
             20261029000000_gaps_v2_verificacao.sql \
             20261029120000_whatsapp_pending_trigger_retire.sql \
-            20261107203000_fix_rls_insert_configuracoes_ponto.sql \
             20261109000000_configuracoes_ponto_insert_policy.sql \
             20261111000000_ferias_art145_antecipacao_oj123.sql
           do
