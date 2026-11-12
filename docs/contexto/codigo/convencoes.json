@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)",
    "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)",
    "feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)",
    "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)",
-   "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)",
-   "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)"
+   "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

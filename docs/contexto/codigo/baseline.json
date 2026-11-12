@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "9f7a4e49cb9db38cc2b04a837842fc8927c57127",
+  "commit": "e8472e91f05eb333d888a60d41e8fd96fa1572d6",
   "branch": "main",
-  "data_commit": "2026-11-12T03:55:02Z",
+  "data_commit": "2026-11-12T04:16:34Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e8472e9",
+    "data": "2026-11-12",
+    "assunto": "fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)"
+   },
    {
     "sha": "9f7a4e4",
     "data": "2026-11-12",
@@ -126,18 +131,13 @@
     "sha": "36a404f",
     "data": "2026-11-10",
     "assunto": "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)"
-   },
-   {
-    "sha": "8391bcc",
-    "data": "2026-11-10",
-    "assunto": "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)"
    }
   ],
-  "arquivos_mudados_7d": 433,
+  "arquivos_mudados_7d": 435,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 41
    },
    {
     "pasta": "package.json",
@@ -198,16 +198,16 @@
   ],
   "arquivos_mais_mudados_90d": [
    {
-    "arquivo": "package.json",
-    "mudancas": 55
+    "arquivo": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 54
    },
    {
-    "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 53
+    "arquivo": "package.json",
+    "mudancas": 54
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 52
+    "mudancas": 51
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 114
+    "commits": 115
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2877,
+  "arquivos_total": 2879,
   "arquivos_codigo": 1548,
   "linhas_codigo": 273378,
   "rotas": 113,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 787,
+  "migrations": 789,
   "cron_jobs": 41,
   "testes": 589,
   "workflows": 21,

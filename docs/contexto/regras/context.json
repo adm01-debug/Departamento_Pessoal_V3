@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "9f7a4e49cb9db38cc2b04a837842fc8927c57127",
+  "sha": "e8472e91f05eb333d888a60d41e8fd96fa1572d6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 04:17 UTC",
-  "files_total": 2898,
-  "code_files": 2369,
-  "code_lines": 321556
+  "generated_at": "2026-11-12 04:26 UTC",
+  "files_total": 2900,
+  "code_files": 2371,
+  "code_lines": 321575
  },
  "version": "1.3.2",
- "facts_hash": "d6a943cf12570833",
+ "facts_hash": "b265c1995bb09a31",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 823,
+   ".sql": 825,
    ".ts": 739,
    ".tsx": 679,
    ".mjs": 100,
@@ -70272,6 +70272,8 @@
    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
    "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
    "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
+   "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql",
+   "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql",
    "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
    "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
@@ -98263,8 +98265,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 787,
-   "lines": 66636,
+   "files": 789,
+   "lines": 66655,
    "tables": [
     "profiles",
     "user_roles"
@@ -277732,6 +277734,14 @@
    "path": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
    "lines": 23
   },
+  "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql": {
+   "path": "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql",
+   "lines": 11
+  },
+  "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql": {
+   "path": "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql",
+   "lines": 8
+  },
   "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql": {
    "path": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
    "lines": 65
@@ -277956,10 +277966,21 @@
   }
  },
  "git": {
-  "sha": "9f7a4e49cb9db38cc2b04a837842fc8927c57127",
+  "sha": "e8472e91f05eb333d888a60d41e8fd96fa1572d6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e8472e9",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql",
+     "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql"
+    ]
+   },
    {
     "sha": "9f7a4e4",
     "date": "2026-11-12",
@@ -278398,38 +278419,12 @@
      "scripts/tests/contexto-indice-data.test.mjs",
      "scripts/tests/contexto-publish-sh.test.mjs"
     ]
-   },
-   {
-    "sha": "4a18fa5",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: auditorias de segurança/RLS/edge sem falso verde, falso positivo nem vazamento de senha (#416)",
-    "files": [
-     "scripts/audit-bridge-frontend-contract.mjs",
-     "scripts/audit-canonical-project.mjs",
-     "scripts/audit-db-search-path.mjs",
-     "scripts/audit-edge-audit-log-contract.mjs",
-     "scripts/audit-edge-authz.mjs",
-     "scripts/audit-edge-syntax.mjs",
-     "scripts/audit-embed-hints.mjs",
-     "scripts/audit-migration-style.mjs",
-     "scripts/audit-required-checks.mjs",
-     "scripts/audit-rls-least-privilege.mjs",
-     "scripts/audit-rls-pii.mjs",
-     "scripts/audit-rls-tenant-open.mjs",
-     "scripts/audit-schema-drift.mjs",
-     "scripts/audit-secdef-authz.mjs",
-     "scripts/audit-types-drift.mjs",
-     "scripts/tests/audit-edge-audit-log-contract.test.mjs",
-     "scripts/tests/audit-edge-authz.test.mjs",
-     "scripts/tests/audit-migration-style.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    5
+    6
    ],
    [
     "scripts/automation.config.json",
@@ -278442,10 +278437,6 @@
    [
     "deno.lock",
     3
-   ],
-   [
-    "scripts/audit-rls-tenant-open.mjs",
-    2
    ],
    [
     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
@@ -278504,7 +278495,11 @@
     2
    ],
    [
-    "src/components/__tests__/InlineTabs.test.tsx",
+    "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql",
     1
    ]
   ]
