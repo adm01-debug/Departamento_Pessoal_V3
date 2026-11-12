@@ -12,16 +12,31 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
-import { useEmpresas } from '@/hooks';
+import { useAuth, useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Plus, Shield } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+import { comunicacaoService } from '@/services/comunicacaoService';
+import { safeErrorMessage } from '@/utils/safeError';
+import type { Tables } from '@/integrations/supabase/types';
+
+// 'aberto' é o DEFAULT da coluna; 'em_analise' e 'resolvido' são os estados já exibidos na listagem.
+const STATUS_DENUNCIA = [
+  { value: 'aberto', label: 'Aberto' },
+  { value: 'em_analise', label: 'Em análise' },
+  { value: 'resolvido', label: 'Resolvido' },
+];
 
 export default function CanalEticaPage() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ categoria: '', descricao: '', prioridade: 'media', anonimo: false });
+  const { isAdmin, hasRole } = useAuth();
+  // Espelha a policy canal_etica_rh_manage (pode_gerir_rh): só RH/admin trata denúncias.
+  const podeTratar = isAdmin || hasRole('rh');
+  const [selecionada, setSelecionada] = useState<Tables<'canal_etica'> | null>(null);
+  const [tratamento, setTratamento] = useState({ status: 'aberto', resposta: '' });
 
   const { data, isLoading } = useQuery({
     queryKey: ['canal-etica', empresaAtual?.id],
@@ -54,6 +69,28 @@ export default function CanalEticaPage() {
       toast.success('Denúncia registrada');
     },
   });
+
+  const tratar = useMutation({
+    mutationFn: async () => {
+      if (!selecionada || !empresaAtual?.id) throw new Error('Denúncia ou empresa não selecionada');
+      return comunicacaoService.atualizarDenuncia(
+        selecionada.id,
+        { status: tratamento.status, resposta: tratamento.resposta.trim() || null },
+        empresaAtual.id
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['canal-etica'] });
+      setSelecionada(null);
+      toast.success('Denúncia atualizada');
+    },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao atualizar denúncia')),
+  });
+
+  const abrirTratamento = (r: Tables<'canal_etica'>) => {
+    setSelecionada(r);
+    setTratamento({ status: r.status || 'aberto', resposta: r.resposta || '' });
+  };
 
   const statusColor = (s: string | null) =>
     s === 'resolvido' ? 'default' : s === 'em_analise' ? 'secondary' : 'outline';
@@ -151,6 +188,7 @@ export default function CanalEticaPage() {
                     <TableHead>Status</TableHead>
                     <TableHead>Anônimo</TableHead>
                     <TableHead>Data</TableHead>
+                    {podeTratar && <TableHead className="text-right">Ações</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -166,11 +204,18 @@ export default function CanalEticaPage() {
                       </TableCell>
                       <TableCell>{r.anonimo ? 'Sim' : 'Não'}</TableCell>
                       <TableCell>{r.created_at ? new Date(r.created_at).toLocaleDateString('pt-BR') : '-'}</TableCell>
+                      {podeTratar && (
+                        <TableCell className="text-right">
+                          <Button size="sm" variant="outline" onClick={() => abrirTratamento(r)}>
+                            Tratar
+                          </Button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                   {!data?.length && (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={podeTratar ? 7 : 6} className="text-center text-muted-foreground py-8">
                         Nenhuma denúncia registrada
                       </TableCell>
                     </TableRow>
@@ -180,6 +225,52 @@ export default function CanalEticaPage() {
             )}
           </CardContent>
         </Card>
+
+        <Dialog open={!!selecionada} onOpenChange={(o) => !o && setSelecionada(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Denúncia {selecionada?.protocolo}</DialogTitle>
+            </DialogHeader>
+            {selecionada && (
+              <div className="space-y-4">
+                <div className="text-sm text-muted-foreground">
+                  <span className="capitalize">{selecionada.categoria}</span> · prioridade {selecionada.prioridade} ·{' '}
+                  {selecionada.anonimo ? 'anônima' : 'identificada'}
+                </div>
+                <div>
+                  <Label>Descrição</Label>
+                  <p className="mt-1 whitespace-pre-wrap rounded-md border p-3 text-sm">{selecionada.descricao}</p>
+                </div>
+                <div>
+                  <Label>Status</Label>
+                  <Select value={tratamento.status} onValueChange={(v) => setTratamento((p) => ({ ...p, status: v }))}>
+                    <SelectTrigger aria-label="Status">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS_DENUNCIA.map((s) => (
+                        <SelectItem key={s.value} value={s.value}>
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="canal-etica-resposta">Parecer / resposta</Label>
+                  <Textarea
+                    id="canal-etica-resposta"
+                    value={tratamento.resposta}
+                    onChange={(e) => setTratamento((p) => ({ ...p, resposta: e.target.value }))}
+                  />
+                </div>
+                <Button onClick={() => tratar.mutate()} disabled={tratar.isPending} className="w-full">
+                  {tratar.isPending ? 'Salvando...' : 'Salvar tratamento'}
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </PageLayout>
     </>
   );
