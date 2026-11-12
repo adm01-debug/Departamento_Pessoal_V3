@@ -52,7 +52,7 @@ const actions: QuickAction[] = [
     label: 'Solicitar Férias',
     icon: Calendar,
     gradient: 'from-primary-glow to-primary',
-    path: '/ferias',
+    path: '/ferias?solicitar=1',
     desc: 'Nova solicitação',
   },
   {
