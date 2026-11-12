@@ -40,6 +40,10 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogTrigger: ({ children }: { children?: ReactNode }) => children,
 }));
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-1' } }),
+}));
+
 vi.mock('@/components/forms', () => ({
   FormSwitch: ({
     label,
@@ -59,7 +63,8 @@ vi.mock('@/components/forms', () => ({
   ),
 }));
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { BeneficiosSettingsTab } from '../settings/BeneficiosSettingsTab';
 
 const MOCK_REGRAS = [
@@ -100,6 +105,50 @@ describe('BeneficiosSettingsTab', () => {
     vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<BeneficiosSettingsTab />);
     expect(screen.getByText(/próximos fechamentos de folha/)).toBeInTheDocument();
+  });
+
+  it('Excluir pede confirmação e exclui o plano filtrando pela empresa atual', async () => {
+    const user = userEvent.setup();
+    const mutate = vi.fn();
+    vi.mocked(useMutation).mockReturnValue({ mutate, isPending: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGRAS, isLoading: false } as never);
+    render(<BeneficiosSettingsTab />);
+
+    await user.click(screen.getAllByRole('button', { name: 'Excluir' })[0]);
+    expect(screen.getByText('Excluir o plano VR Master?')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Excluir' }));
+    expect(mutate).toHaveBeenCalledWith('b1');
+
+    const opts = vi.mocked(useMutation).mock.calls.map((c) => c[0] as { mutationFn: (v: string) => Promise<void> });
+    const eq = vi.fn().mockReturnThis();
+    const select = vi.fn(async () => ({ data: [{ id: 'b1' }], error: null }));
+    const chain = { delete: vi.fn(() => chain), eq: vi.fn((...a: unknown[]) => (eq(...a), chain)), select };
+    vi.mocked(supabase.from).mockReturnValue(chain as never);
+    const excluir = opts[opts.length - 1].mutationFn;
+    await excluir('b1');
+    expect(supabase.from).toHaveBeenCalledWith('beneficios');
+    expect(chain.delete).toHaveBeenCalled();
+    expect(eq).toHaveBeenCalledWith('id', 'b1');
+    expect(eq).toHaveBeenCalledWith('empresa_id', 'empresa-1');
+    expect(eq).toHaveBeenCalledWith('obrigatorio_por_lei', false);
+    expect(select).toHaveBeenCalledWith('id');
+
+    // Plano de outra empresa (0 linhas afetadas) não pode virar "Plano excluído".
+    select.mockResolvedValueOnce({ data: [], error: null });
+    await expect(excluir('b1')).rejects.toThrow(/não pertence à empresa selecionada/);
+  });
+
+  it('Excluir fica desativado para benefício obrigatório por lei', () => {
+    vi.mocked(useQuery).mockReturnValue({
+      data: [
+        { id: 'b3', nome: 'Vale-Transporte', tipo: 'Transporte', valor: 0, ativo: true, obrigatorio_por_lei: true },
+      ],
+      isLoading: false,
+    } as never);
+    render(<BeneficiosSettingsTab />);
+    const btn = screen.getByRole('button', { name: 'Excluir' });
+    expect(btn).toBeDisabled();
+    expect(btn.parentElement).toHaveAttribute('title', 'Benefício obrigatório por lei não pode ser excluído');
   });
 
   it('shows dialog when Novo Plano clicked', async () => {
