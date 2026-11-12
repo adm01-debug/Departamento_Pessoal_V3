@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { validateTablePayload } from '@/schemas/validate';
 import { criarNotificacao } from '@/services/notificacoesService';
+import { useAuth } from '@/contexts';
 
 interface Inconsistency {
   id: string;
@@ -30,6 +31,9 @@ export type RegistroComColaborador = Tables<'registros_ponto'> & {
 
 export function PontoInconsistencyPanel({ registros }: { registros: RegistroComColaborador[] }) {
   const queryClient = useQueryClient();
+  const { isAdmin, hasRole } = useAuth();
+  // Mesma regra da aprovação em GestaoRegistrosPonto (pode_gerir_pessoas: admin/RH/gestor).
+  const podeTratar = isAdmin || hasRole('rh') || hasRole('gestor');
   const [resolvedIds, setResolvedIds] = useState<string[]>([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -311,7 +315,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                 </div>
 
                 <div className="flex items-center gap-1.5 mt-auto border-t pt-2 border-border/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity duration-300">
-                  {inc.tipo === 'forgotten_out' && (
+                  {podeTratar && inc.tipo === 'forgotten_out' && (
                     <Button
                       size="sm"
                       variant="secondary"
@@ -322,7 +326,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                       <MessageSquare className="h-3 w-3" /> Cobrar Justificativa
                     </Button>
                   )}
-                  {inc.tipo === 'short_break' && (
+                  {podeTratar && inc.tipo === 'short_break' && (
                     <Button
                       size="sm"
                       variant="outline"

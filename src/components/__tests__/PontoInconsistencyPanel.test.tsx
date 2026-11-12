@@ -16,6 +16,14 @@ const mocks = vi.hoisted(() => ({
   from: vi.fn(),
   getUser: vi.fn(),
   invalidateQueries: vi.fn(),
+  roles: ['gestor'] as string[],
+}));
+
+vi.mock('@/contexts', () => ({
+  useAuth: () => ({
+    isAdmin: mocks.roles.includes('admin'),
+    hasRole: (r: string) => mocks.roles.includes(r),
+  }),
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -78,6 +86,7 @@ const FORGOTTEN_OUT_REGISTROS = [
 describe('PontoInconsistencyPanel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.roles = ['gestor'];
     mocks.getUser.mockResolvedValue({ data: { user: { id: 'gestor-1' } } });
   });
 
@@ -194,6 +203,22 @@ describe('PontoInconsistencyPanel', () => {
     expect(mocks.criarNotificacao).not.toHaveBeenCalled();
     expect(mocks.toastSuccess).not.toHaveBeenCalled();
     expect(screen.getByText('João Lima')).toBeInTheDocument();
+  });
+
+  it('sem papel admin/RH/gestor não mostra Cobrar/Aprovar Exceção, só Ocultar', () => {
+    mocks.roles = ['user'];
+    render(<PontoInconsistencyPanel registros={[...SHORT_BREAK_REGISTROS, ...FORGOTTEN_OUT_REGISTROS]} />);
+    expect(screen.getByText(/Intervalo curto/)).toBeInTheDocument();
+    expect(screen.queryByText('Aprovar Exceção')).not.toBeInTheDocument();
+    expect(screen.queryByText('Cobrar Justificativa')).not.toBeInTheDocument();
+    expect(screen.getAllByLabelText('Ocultar')).toHaveLength(2);
+  });
+
+  it.each([['admin'], ['rh'], ['gestor']])('papel %s vê Cobrar Justificativa e Aprovar Exceção', (role) => {
+    mocks.roles = [role];
+    render(<PontoInconsistencyPanel registros={[...SHORT_BREAK_REGISTROS, ...FORGOTTEN_OUT_REGISTROS]} />);
+    expect(screen.getByText('Aprovar Exceção')).toBeInTheDocument();
+    expect(screen.getByText('Cobrar Justificativa')).toBeInTheDocument();
   });
 
   it('não exibe ações sem efeito real (Sugerir Saída, Compensar, Alerta Gestor)', () => {
