@@ -201,6 +201,14 @@ export default function JornadasPage() {
       qc.invalidateQueries({ queryKey: ['jornadas'] });
       setOpen(false);
       setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: 'padrao',
+        carga_horaria_semanal: '44',
+        horario_entrada: '08:00',
+        horario_saida: '17:00',
+        intervalo_minutos: '60',
+      });
       toast.success('Jornada atualizada!');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar jornada.')),
