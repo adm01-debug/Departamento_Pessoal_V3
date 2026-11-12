@@ -412,9 +412,17 @@ jsonb_build_object(
     WHERE n.nspname = 'public'
       AND p.proname = 'fn_trigger_whatsapp_on_event'
   ),
+  -- whatsapp_mensagens_logs é append-only: a 20261029120000 não apaga a
+  -- linha 'pending_trigger', grava uma sucessora 'cancelled' citando a
+  -- origem. Drenado = nenhuma pendência sem essa sucessora.
   'wa_backlog_drained', NOT EXISTS (
-    SELECT 1 FROM public.whatsapp_mensagens_logs
-    WHERE status = 'pending_trigger'
+    SELECT 1 FROM public.whatsapp_mensagens_logs p
+    WHERE p.status = 'pending_trigger'
+      AND NOT EXISTS (
+        SELECT 1 FROM public.whatsapp_mensagens_logs s
+        WHERE s.status = 'cancelled'
+          AND s.error_message LIKE '%origem: ' || p.id || '%'
+      )
   ),
   'wa_retire_stmts_recorded', EXISTS (
     SELECT 1 FROM supabase_migrations.schema_migrations
