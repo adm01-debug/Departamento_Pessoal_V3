@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2bdd7bd628a228d3516444000a30f22893654af9",
+  "commit": "3b8df28a50afe42b11d5cecb7cdfb29de0fa9162",
   "branch": "main",
-  "data_commit": "2026-11-12T09:03:04-03:00",
+  "data_commit": "2026-11-12T09:39:24-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3b8df28",
+    "data": "2026-11-12",
+    "assunto": "fix: RV-04 — migration de remediação das 5 RPCs ausentes + correção da assinatura no probe (#459)"
+   },
    {
     "sha": "2bdd7bd",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "7f6d195",
     "data": "2026-11-10",
     "assunto": "fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)"
-   },
-   {
-    "sha": "e87dcb7",
-    "data": "2026-11-10",
-    "assunto": "fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)"
    }
   ],
-  "arquivos_mudados_7d": 442,
+  "arquivos_mudados_7d": 444,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 52
+    "mudancas": 51
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 47
+    "mudancas": 46
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 118
+    "commits": 119
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2881,
+  "arquivos_total": 2883,
   "arquivos_codigo": 1550,
   "linhas_codigo": 273440,
   "rotas": 113,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 789,
+  "migrations": 791,
   "cron_jobs": 41,
   "testes": 590,
   "workflows": 21,

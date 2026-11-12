@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2bdd7bd628a228d3516444000a30f22893654af9",
+  "sha": "3b8df28a50afe42b11d5cecb7cdfb29de0fa9162",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 12:16 UTC",
-  "files_total": 2902,
-  "code_files": 2373,
-  "code_lines": 321637
+  "generated_at": "2026-11-12 13:00 UTC",
+  "files_total": 2904,
+  "code_files": 2375,
+  "code_lines": 321834
  },
  "version": "1.3.2",
- "facts_hash": "ca1782b2c3417eb8",
+ "facts_hash": "acfb6ea5f6dfbbed",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 825,
+   ".sql": 827,
    ".ts": 741,
    ".tsx": 679,
    ".mjs": 100,
@@ -62270,7 +62270,7 @@
     "args": "_user_id uuid, _empresa_id uuid",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20260912190000_p0_identity_rls_authz.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT _user_id IS NOT NULL AND _empresa_id IS NOT NULL AND ( public.is_admin(_user_id) OR ( EXISTS ( SELECT 1 FROM public.user_empresas AS ue WHERE ue.user_id = _user_id AND ue.empresa_id = _empresa_id ) AND public.has_role(_user_id, 'rh'::public.app_role) ) )",
@@ -62283,7 +62283,7 @@
     "args": "_user_id uuid, _empresa_id uuid",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20260912190000_p0_identity_rls_authz.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT _user_id IS NOT NULL AND _empresa_id IS NOT NULL AND ( public.is_admin(_user_id) OR ( EXISTS ( SELECT 1 FROM public.user_empresas AS ue WHERE ue.user_id = _user_id AND ue.empresa_id = _empresa_id ) AND ( public.has_role(_user_id, 'rh'::public.app_role) OR public.has_role(_user_id, 'gestor'::public.app_role) ) ) )",
@@ -62417,9 +62417,9 @@
    },
    "get_my_user_empresas": {
     "args": "",
-    "returns": "TABLE (\n  id uuid,\n  user_id uuid,\n  empresa_id uuid,\n  is_default boolean,\n  created_at timestamptz\n)",
+    "returns": "TABLE (\n  id          uuid,\n  user_id     uuid,\n  empresa_id  uuid,\n  is_default  boolean,\n  created_at  timestamptz\n)",
     "lang": "sql",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT ue.id, ue.user_id, ue.empresa_id, COALESCE(ue.is_default, false), ue.created_at FROM public.user_empresas ue WHERE ue.user_id = auth.uid() ORDER BY ue.created_at ASC, ue.id ASC",
@@ -62432,7 +62432,7 @@
     "args": "p_empresa_id uuid",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_user_id uuid := auth.uid(); BEGIN IF v_user_id IS NULL THEN RAISE EXCEPTION 'Autenticação obrigatória' USING ERRCODE = '42501'; END IF; PERFORM pg_advisory_xact_lock(hashtext(v_user_id::text)); IF NOT EXISTS ( SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = v_user_id AND ue.empresa_id = p_empresa_id ) THEN RAISE EXCEPTION 'Empresa não vinculada ao usuário autenticado' USING ERRCODE = '42501'; END IF; UPDATE public.user_empresas SET is_default = false WHERE user_id = v_user_id AND is_default IS TRUE; UPDATE public.user_empresas SET is_default = true WHERE user_id = v_user_id AND empresa_id = p_empresa_id; END;",
@@ -62446,9 +62446,9 @@
    },
    "admin_associar_usuario_empresa": {
     "args": "p_user_id uuid, p_empresa_id uuid, p_is_default boolean DEFAULT false",
-    "returns": "TABLE (\n  id uuid,\n  user_id uuid,\n  empresa_id uuid,\n  is_default boolean,\n  created_at timestamptz\n)",
+    "returns": "TABLE (\n  id          uuid,\n  user_id     uuid,\n  empresa_id  uuid,\n  is_default  boolean,\n  created_at  timestamptz\n)",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "#variable_conflict use_column BEGIN IF auth.uid() IS NULL OR NOT public.is_admin(auth.uid()) THEN RAISE EXCEPTION 'Apenas administradores podem associar usuários a empresas' USING ERRCODE = '42501'; END IF; PERFORM pg_advisory_xact_lock(hashtext(p_user_id::text)); IF p_is_default THEN UPDATE public.user_empresas AS ue SET is_default = false WHERE ue.user_id = p_user_id AND ue.is_default IS TRUE; END IF; RETURN QUERY INSERT INTO public.user_empresas AS ue (user_id, empresa_id, is_default) VALUES (p_user_id, p_empresa_id, p_is_default) ON CONFLICT (user_id, empresa_id) DO UPDATE SET is_default = CASE WHEN p_is_default THEN true ELSE ue.is_default END RETURNING ue.id, ue.user_id, ue.empresa_id, …",
@@ -70276,6 +70276,8 @@
    "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql",
    "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
    "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.verify.sql",
+   "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+   "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -81064,6 +81066,86 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "get_my_user_empresas",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_my_user_empresas",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "set_own_default_empresa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "set_own_default_empresa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "admin_associar_usuario_empresa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "admin_associar_usuario_empresa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "pode_gerir_rh_para",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "pode_gerir_rh_para",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "pode_gerir_pessoas_para",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "pode_gerir_pessoas_para",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -81735,21 +81817,6 @@
     "src": "supabase/migrations/20260911194000_p0_restore_atomic_rate_limit.sql"
    },
    {
-    "function": "set_own_default_empresa",
-    "msg": "Autenticação obrigatória",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
-   },
-   {
-    "function": "set_own_default_empresa",
-    "msg": "Empresa não vinculada ao usuário autenticado",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
-   },
-   {
-    "function": "admin_associar_usuario_empresa",
-    "msg": "Apenas administradores podem associar usuários a empresas",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
-   },
-   {
     "function": "dp_mig_set_search_path",
     "msg": "requires routine %",
     "src": "supabase/migrations/20260912150000_p0_secdef_search_path.sql"
@@ -82058,6 +82125,21 @@
     "function": "ponto_espelhos_assinados_guard_delete",
     "msg": "Espelhos de ponto assinados são append-only (Portaria MTP 671/21). DELETE não é permitido.",
     "src": "supabase/migrations/20261027120000_qa_r5_fixes.sql"
+   },
+   {
+    "function": "set_own_default_empresa",
+    "msg": "Autenticação obrigatória",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "function": "set_own_default_empresa",
+    "msg": "Empresa não vinculada ao usuário autenticado",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "function": "admin_associar_usuario_empresa",
+    "msg": "Apenas administradores podem associar usuários a empresas",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -98260,8 +98342,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 789,
-   "lines": 66655,
+   "files": 791,
+   "lines": 66852,
    "tables": [
     "profiles",
     "user_roles"
@@ -110093,6 +110175,14 @@
    },
    {
     "file": "supabase/migrations/20260912190000_p0_identity_rls_authz.sql",
+    "value": "rh"
+   },
+   {
+    "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+    "value": "gestor"
+   },
+   {
+    "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "value": "rh"
    },
    {
@@ -195981,7 +196071,7 @@
     "args": "_user_id uuid, _empresa_id uuid",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20260912190000_p0_identity_rls_authz.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT _user_id IS NOT NULL AND _empresa_id IS NOT NULL AND ( public.is_admin(_user_id) OR ( EXISTS ( SELECT 1 FROM public.user_empresas AS ue WHERE ue.user_id = _user_id AND ue.empresa_id = _empresa_id ) AND public.has_role(_user_id, 'rh'::public.app_role) ) )",
@@ -195994,7 +196084,7 @@
     "args": "_user_id uuid, _empresa_id uuid",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20260912190000_p0_identity_rls_authz.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT _user_id IS NOT NULL AND _empresa_id IS NOT NULL AND ( public.is_admin(_user_id) OR ( EXISTS ( SELECT 1 FROM public.user_empresas AS ue WHERE ue.user_id = _user_id AND ue.empresa_id = _empresa_id ) AND ( public.has_role(_user_id, 'rh'::public.app_role) OR public.has_role(_user_id, 'gestor'::public.app_role) ) ) )",
@@ -196128,9 +196218,9 @@
    },
    "get_my_user_empresas": {
     "args": "",
-    "returns": "TABLE (\n  id uuid,\n  user_id uuid,\n  empresa_id uuid,\n  is_default boolean,\n  created_at timestamptz\n)",
+    "returns": "TABLE (\n  id          uuid,\n  user_id     uuid,\n  empresa_id  uuid,\n  is_default  boolean,\n  created_at  timestamptz\n)",
     "lang": "sql",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "SELECT ue.id, ue.user_id, ue.empresa_id, COALESCE(ue.is_default, false), ue.created_at FROM public.user_empresas ue WHERE ue.user_id = auth.uid() ORDER BY ue.created_at ASC, ue.id ASC",
@@ -196143,7 +196233,7 @@
     "args": "p_empresa_id uuid",
     "returns": "void",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "DECLARE v_user_id uuid := auth.uid(); BEGIN IF v_user_id IS NULL THEN RAISE EXCEPTION 'Autenticação obrigatória' USING ERRCODE = '42501'; END IF; PERFORM pg_advisory_xact_lock(hashtext(v_user_id::text)); IF NOT EXISTS ( SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = v_user_id AND ue.empresa_id = p_empresa_id ) THEN RAISE EXCEPTION 'Empresa não vinculada ao usuário autenticado' USING ERRCODE = '42501'; END IF; UPDATE public.user_empresas SET is_default = false WHERE user_id = v_user_id AND is_default IS TRUE; UPDATE public.user_empresas SET is_default = true WHERE user_id = v_user_id AND empresa_id = p_empresa_id; END;",
@@ -196157,9 +196247,9 @@
    },
    "admin_associar_usuario_empresa": {
     "args": "p_user_id uuid, p_empresa_id uuid, p_is_default boolean DEFAULT false",
-    "returns": "TABLE (\n  id uuid,\n  user_id uuid,\n  empresa_id uuid,\n  is_default boolean,\n  created_at timestamptz\n)",
+    "returns": "TABLE (\n  id          uuid,\n  user_id     uuid,\n  empresa_id  uuid,\n  is_default  boolean,\n  created_at  timestamptz\n)",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
     "security_definer": true,
     "search_path": true,
     "body": "#variable_conflict use_column BEGIN IF auth.uid() IS NULL OR NOT public.is_admin(auth.uid()) THEN RAISE EXCEPTION 'Apenas administradores podem associar usuários a empresas' USING ERRCODE = '42501'; END IF; PERFORM pg_advisory_xact_lock(hashtext(p_user_id::text)); IF p_is_default THEN UPDATE public.user_empresas AS ue SET is_default = false WHERE ue.user_id = p_user_id AND ue.is_default IS TRUE; END IF; RETURN QUERY INSERT INTO public.user_empresas AS ue (user_id, empresa_id, is_default) VALUES (p_user_id, p_empresa_id, p_is_default) ON CONFLICT (user_id, empresa_id) DO UPDATE SET is_default = CASE WHEN p_is_default THEN true ELSE ue.is_default END RETURNING ue.id, ue.user_id, ue.empresa_id, …",
@@ -197133,21 +197223,6 @@
     "src": "supabase/migrations/20260911194000_p0_restore_atomic_rate_limit.sql"
    },
    {
-    "function": "set_own_default_empresa",
-    "msg": "Autenticação obrigatória",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
-   },
-   {
-    "function": "set_own_default_empresa",
-    "msg": "Empresa não vinculada ao usuário autenticado",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
-   },
-   {
-    "function": "admin_associar_usuario_empresa",
-    "msg": "Apenas administradores podem associar usuários a empresas",
-    "src": "supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql"
-   },
-   {
     "function": "dp_mig_set_search_path",
     "msg": "requires routine %",
     "src": "supabase/migrations/20260912150000_p0_secdef_search_path.sql"
@@ -197456,6 +197531,21 @@
     "function": "ponto_espelhos_assinados_guard_delete",
     "msg": "Espelhos de ponto assinados são append-only (Portaria MTP 671/21). DELETE não é permitido.",
     "src": "supabase/migrations/20261027120000_qa_r5_fixes.sql"
+   },
+   {
+    "function": "set_own_default_empresa",
+    "msg": "Autenticação obrigatória",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "function": "set_own_default_empresa",
+    "msg": "Empresa não vinculada ao usuário autenticado",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "function": "admin_associar_usuario_empresa",
+    "msg": "Apenas administradores podem associar usuários a empresas",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -210207,6 +210297,7 @@
    "supabase/migrations/20261024000000_qa_r4_fixes.sql",
    "supabase/migrations/20261028220000_pagar_desligamento_transacional.sql",
    "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
+   "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -220836,6 +220927,86 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "get_my_user_empresas",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "get_my_user_empresas",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "set_own_default_empresa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "set_own_default_empresa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "admin_associar_usuario_empresa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "admin_associar_usuario_empresa",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "pode_gerir_rh_para",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "pode_gerir_rh_para",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "pode_gerir_pessoas_para",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "pode_gerir_pessoas_para",
+    "objkind": "function",
+    "roles": "service_role",
+    "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
    },
    {
     "kind": "revoke",
@@ -277793,6 +277964,19 @@
    "path": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.verify.sql",
    "lines": 28
   },
+  "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql": {
+   "path": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+   "lines": 190,
+   "role_checks": [
+    "gestor",
+    "rh"
+   ],
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql": {
+   "path": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+   "lines": 7
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -278009,10 +278193,21 @@
   }
  },
  "git": {
-  "sha": "2bdd7bd628a228d3516444000a30f22893654af9",
+  "sha": "3b8df28a50afe42b11d5cecb7cdfb29de0fa9162",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "3b8df28",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: RV-04 — migration de remediação das 5 RPCs ausentes + correção da assinatura no probe (#459)",
+    "files": [
+     "scripts/probes/run-probes.mjs",
+     "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+     "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql"
+    ]
+   },
    {
     "sha": "2bdd7bd",
     "date": "2026-11-12",
@@ -278363,17 +278558,6 @@
      "scripts/maintenance/run.sh",
      "scripts/maintenance/typecheck.mjs"
     ]
-   },
-   {
-    "sha": "3668b50",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)",
-    "files": [
-     "src/components/AdminRoute.tsx",
-     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
-     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -278390,10 +278574,6 @@
     3
    ],
    [
-    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
-    3
-   ],
-   [
     "package-lock.json",
     2
    ],
@@ -278406,7 +278586,7 @@
     2
    ],
    [
-    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
+    "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
     2
    ],
    [
@@ -278438,6 +278618,18 @@
     2
    ],
    [
+    "scripts/probes/run-probes.mjs",
+    1
+   ],
+   [
+    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+    1
+   ],
+   [
     "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     1
    ],
@@ -278447,14 +278639,6 @@
    ],
    [
     ".github/workflows/security.yml",
-    1
-   ],
-   [
-    ".github/workflows/workflow-lint.yml",
-    1
-   ],
-   [
-    "infra/github/action-pins.json",
     1
    ]
   ]

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `2bdd7bd628` · branch `main` · 2026-11-12 12:16 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3b8df28a50` · branch `main` · 2026-11-12 13:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -940,9 +940,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `edge_rate_limit_check` | p_key must contain between 1 and 512 characters | `supabase/migrations/20260911194000_p0_restore_atomic_rate_limit.sql` |
 | `edge_rate_limit_check` | p_limit must be between 1 and 10000 | `supabase/migrations/20260911194000_p0_restore_atomic_rate_limit.sql` |
 | `edge_rate_limit_check` | p_window_sec must be between 1 and 86400 seconds | `supabase/migrations/20260911194000_p0_restore_atomic_rate_limit.sql` |
-| `set_own_default_empresa` | Autenticação obrigatória | `supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql` |
-| `set_own_default_empresa` | Empresa não vinculada ao usuário autenticado | `supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql` |
-| `admin_associar_usuario_empresa` | Apenas administradores podem associar usuários a empresas | `supabase/migrations/20260911200000_p0_bridge_membership_authorization.sql` |
 | `dp_mig_set_search_path` | requires routine % | `supabase/migrations/20260912150000_p0_secdef_search_path.sql` |
 | `claim_due_report_schedules` | invalid report schedule claim arguments | `supabase/migrations/20260912192000_p0_report_schedule_claims.sql` |
 | `replace_monthly_provisions` | invalid monthly provision replacement arguments | `supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql` |
@@ -1005,6 +1002,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `ponto_espelhos_assinados_guard_update` | Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %. | `supabase/migrations/20261023000000_qa_r3_fixes.sql` |
 | `ponto_espelhos_assinados_guard_delete` | Espelhos de ponto assinados são append-only (Portaria MTP 671/21). DELETE não é permitido. | `supabase/migrations/20261027120000_qa_r5_fixes.sql` |
+| `set_own_default_empresa` | Autenticação obrigatória | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
+| `set_own_default_empresa` | Empresa não vinculada ao usuário autenticado | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
+| `admin_associar_usuario_empresa` | Apenas administradores podem associar usuários a empresas | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -4575,6 +4575,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `rh` | `supabase/migrations/20260830000001_plano100_e028_storage_buckets_privados.sql` |
 | `gestor` | `supabase/migrations/20260912190000_p0_identity_rls_authz.sql` |
 | `rh` | `supabase/migrations/20260912190000_p0_identity_rls_authz.sql` |
+| `gestor` | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
+| `rh` | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
 | `admin` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
