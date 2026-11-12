@@ -15,6 +15,11 @@ const mocks = vi.hoisted(() => ({
   criarNotificacao: vi.fn(),
   from: vi.fn(),
   getUser: vi.fn(),
+  invalidateQueries: vi.fn(),
+}));
+
+vi.mock('@tanstack/react-query', () => ({
+  useQueryClient: () => ({ invalidateQueries: mocks.invalidateQueries }),
 }));
 
 vi.mock('sonner', () => ({
@@ -126,6 +131,14 @@ describe('PontoInconsistencyPanel', () => {
     expect(b.eq).toHaveBeenCalledWith('id', '1');
     expect(b.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
     expect(screen.queryByText(/Intervalo curto/)).not.toBeInTheDocument();
+    expect(mocks.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['gestao-registros-ponto'] });
+  });
+
+  it('ações ficam visíveis sem hover em telas pequenas (toque)', () => {
+    render(<PontoInconsistencyPanel registros={SHORT_BREAK_REGISTROS} />);
+    const classes = (screen.getByText('Aprovar Exceção').parentElement?.className ?? '').split(/\s+/);
+    expect(classes).toContain('opacity-100');
+    expect(classes).not.toContain('opacity-0');
   });
 
   it('"Mostrar ocultas" não traz de volta exceção já aprovada (cache ainda sem aprovado)', async () => {
@@ -143,6 +156,7 @@ describe('PontoInconsistencyPanel', () => {
     fireEvent.click(screen.getByText('Aprovar Exceção'));
     await waitFor(() => expect(mocks.toastError).toHaveBeenCalledWith('Sem permissão para aprovar este registro.'));
     expect(mocks.toastSuccess).not.toHaveBeenCalled();
+    expect(mocks.invalidateQueries).not.toHaveBeenCalled();
     expect(screen.getByText(/Intervalo curto/)).toBeInTheDocument();
   });
 

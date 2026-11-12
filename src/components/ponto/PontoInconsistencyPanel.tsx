@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { validateTablePayload } from '@/schemas/validate';
@@ -28,6 +29,7 @@ export type RegistroComColaborador = Tables<'registros_ponto'> & {
 };
 
 export function PontoInconsistencyPanel({ registros }: { registros: RegistroComColaborador[] }) {
+  const queryClient = useQueryClient();
   const [resolvedIds, setResolvedIds] = useState<string[]>([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -215,6 +217,9 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
         .select('id');
       if (error) throw error;
       if (!data?.length) throw new Error('Sem permissão para aprovar este registro.');
+      // A lista vem do cache de GestaoRegistrosPonto (staleTime global): sem isso,
+      // o registro volta como pendente (aprovado=false) ao remontar a tela.
+      void queryClient.invalidateQueries({ queryKey: ['gestao-registros-ponto'] });
       return `Exceção aprovada para ${inc.colaborador}.`;
     });
 
@@ -305,7 +310,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 mt-auto border-t pt-2 border-border/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex items-center gap-1.5 mt-auto border-t pt-2 border-border/40 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 transition-opacity duration-300">
                   {inc.tipo === 'forgotten_out' && (
                     <Button
                       size="sm"
