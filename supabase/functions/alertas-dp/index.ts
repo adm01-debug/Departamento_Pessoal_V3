@@ -447,7 +447,7 @@ serve(async (req: Request): Promise<Response> => {
             "Authorization": `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: "DP Alertas <onboarding@resend.dev>",
+            from: Deno.env.get("EMAIL_FROM") || "DP Alertas <onboarding@resend.dev>",
             to: recipientEmails,
             subject: `${alertas.length} Alerta(s) DP — ${
               hoje.toLocaleDateString("pt-BR")

@@ -27,6 +27,11 @@ export interface ResendResult {
   error: string | null;
 }
 
+/** Remetente: explícito > EMAIL_FROM (domínio verificado na Resend) > sandbox da Resend. */
+export function remetenteEmail(from?: string): string {
+  return from ?? (Deno.env.get('EMAIL_FROM') || 'Sistema DP <onboarding@resend.dev>');
+}
+
 export async function sendEmailResend(opts: {
   to: string | string[];
   subject: string;
@@ -49,7 +54,7 @@ export async function sendEmailResend(opts: {
         ...(opts.idempotencyKey ? { 'Idempotency-Key': opts.idempotencyKey } : {}),
       },
       body: JSON.stringify({
-        from: opts.from ?? 'Sistema DP <onboarding@resend.dev>',
+        from: remetenteEmail(opts.from),
         to: Array.isArray(opts.to) ? opts.to : [opts.to],
         subject: opts.subject,
         ...(opts.html ? { html: opts.html } : {}),
