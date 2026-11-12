@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: { div: ({ children }: { children?: ReactNode }) => <div>{children}</div> },
@@ -60,38 +60,53 @@ const MOCK_EVENTOS = [
 ];
 
 describe('ESocialAuditDialog', () => {
-  it('renders dialog title when open', () => {
+  it('renders honest dialog title when open (sem alegar IA)', () => {
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={MOCK_EVENTOS} />);
-    expect(screen.getByText('Auditoria Proativa IA')).toBeInTheDocument();
+    expect(screen.getByText('Checagem de consistência')).toBeInTheDocument();
+    expect(screen.queryByText(/\bIA\b/)).not.toBeInTheDocument();
   });
 
-  it('renders conformidade description', () => {
+  it('renders description with the number of eventos checked', () => {
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={MOCK_EVENTOS} />);
-    expect(screen.getByText(/Verificação profunda de conformidade eSocial/i)).toBeInTheDocument();
+    expect(screen.getByText(/Regras básicas aplicadas aos 2 eventos carregados/i)).toBeInTheDocument();
   });
 
-  it('renders Iniciar Varredura Completa button in initial state', () => {
+  it('shows results immediately, without fake progress bar', () => {
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={MOCK_EVENTOS} />);
-    expect(screen.getByText(/Iniciar Varredura Completa/i)).toBeInTheDocument();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Iniciar Varredura/i)).not.toBeInTheDocument();
+    expect(screen.getByText('Score de Conformidade')).toBeInTheDocument();
+    // 1 pendente => 100 - 2 = 98
+    expect(screen.getByText('98%')).toBeInTheDocument();
   });
 
-  it('renders IA analysis description text', () => {
+  it('flags S-1200 without matching S-1210', () => {
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={MOCK_EVENTOS} />);
-    expect(screen.getByText(/Nossa IA analisará/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 remunerações \(S-1200\) sem o respectivo pagamento \(S-1210\)/)).toBeInTheDocument();
   });
 
   it('does not render content when closed', () => {
     render(<ESocialAuditDialog open={false} onOpenChange={vi.fn()} eventos={MOCK_EVENTOS} />);
-    expect(screen.queryByText('Auditoria Proativa IA')).not.toBeInTheDocument();
+    expect(screen.queryByText('Checagem de consistência')).not.toBeInTheDocument();
   });
 
-  it('renders with empty eventos array without error', () => {
-    expect(() => render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={[]} />)).not.toThrow();
+  it('renders conformity message with empty eventos array', () => {
+    render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={[]} />);
+    expect(screen.getByText(/Todos os eventos analisados estão em conformidade/i)).toBeInTheDocument();
+    expect(screen.getByText('100%')).toBeInTheDocument();
   });
 
-  it('shows Iniciar Varredura button when eventos have errors', () => {
+  it('shows critical alert when eventos have errors', () => {
     const eventos = [evento({ id: 'e1', tipo_evento: 'S-2200', status: 'erro', dados: {} })];
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={eventos} />);
-    expect(screen.getByText(/Iniciar Varredura Completa/i)).toBeInTheDocument();
+    expect(screen.getByText(/1 eventos estão com erro e bloqueiam o fechamento da folha/i)).toBeInTheDocument();
+    expect(screen.getByText('80%')).toBeInTheDocument();
+  });
+
+  it('closes the dialog from the acknowledge button', () => {
+    const onOpenChange = vi.fn();
+    render(<ESocialAuditDialog open={true} onOpenChange={onOpenChange} eventos={MOCK_EVENTOS} />);
+    fireEvent.click(screen.getByText(/Entendido, vou ajustar/i));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

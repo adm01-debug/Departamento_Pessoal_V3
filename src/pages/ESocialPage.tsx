@@ -233,7 +233,7 @@ export default function ESocialPage() {
               onClick={() => setAuditOpen(true)}
             >
               <ShieldAlert className="h-4 w-4" />
-              Auditoria IA
+              Checagem de consistência
             </Button>
             <Button
               size="sm"
