@@ -9,14 +9,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, Handshake, Trash2 } from 'lucide-react';
+import { Plus, Handshake, Trash2, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export default function ConveniosPage() {
   const { empresaAtual } = useEmpresas();
@@ -25,7 +27,17 @@ export default function ConveniosPage() {
 
   // === Convênios ===
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ nome: '', tipo: '', limite_global: '' });
+  const formVazio = { nome: '', tipo: '', limite_global: '', ativo: true };
+  const [form, setForm] = useState(formVazio);
+  const [editId, setEditId] = useState<string | null>(null);
+
+  const onOpenChange = (v: boolean) => {
+    setOpen(v);
+    if (!v) {
+      setEditId(null);
+      setForm(formVazio);
+    }
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['convenios', empresaAtual?.id],
@@ -57,10 +69,37 @@ export default function ConveniosPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['convenios'] });
-      setOpen(false);
-      setForm({ nome: '', tipo: '', limite_global: '' });
+      onOpenChange(false);
       toast.success('Convênio criado');
     },
+  });
+
+  const editar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      const { error } = await supabase
+        .from('convenios')
+        .update(
+          validateTablePayload(
+            'convenios',
+            {
+              nome: d.nome,
+              tipo: d.tipo || null,
+              limite_global: d.limite_global ? Number(d.limite_global) : null,
+              ativo: d.ativo,
+            },
+            'ConveniosPage:convenios:update'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['convenios'] });
+      onOpenChange(false);
+      toast.success('Convênio atualizado');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar convênio')),
   });
 
   const excluir = useMutation({
@@ -155,7 +194,7 @@ export default function ConveniosPage() {
 
           <TabsContent value="convenios">
             <div className="flex justify-end mb-4">
-              <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog open={open} onOpenChange={onOpenChange}>
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
@@ -164,7 +203,7 @@ export default function ConveniosPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Novo Convênio</DialogTitle>
+                    <DialogTitle>{editId ? 'Editar Convênio' : 'Novo Convênio'}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -194,7 +233,21 @@ export default function ConveniosPage() {
                         onChange={(e) => setForm((p) => ({ ...p, limite_global: e.target.value }))}
                       />
                     </div>
-                    <Button onClick={() => criar.mutate(form)} disabled={!form.nome} className="w-full">
+                    {editId && (
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          id="convenio-ativo"
+                          checked={form.ativo}
+                          onCheckedChange={(v) => setForm((p) => ({ ...p, ativo: v }))}
+                        />
+                        <Label htmlFor="convenio-ativo">Ativo</Label>
+                      </div>
+                    )}
+                    <Button
+                      onClick={() => (editId ? editar.mutate({ id: editId, d: form }) : criar.mutate(form))}
+                      disabled={!form.nome || criar.isPending || editar.isPending}
+                      className="w-full"
+                    >
                       Salvar
                     </Button>
                   </div>
@@ -228,6 +281,23 @@ export default function ConveniosPage() {
                             <Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativo' : 'Inativo'}</Badge>
                           </TableCell>
                           <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Editar"
+                              onClick={() => {
+                                setEditId(r.id);
+                                setForm({
+                                  nome: r.nome,
+                                  tipo: r.tipo ?? '',
+                                  limite_global: r.limite_global != null ? String(r.limite_global) : '',
+                                  ativo: r.ativo ?? true,
+                                });
+                                setOpen(true);
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
