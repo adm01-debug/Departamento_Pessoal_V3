@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "364b6d6dc7bff5abd521363dc9288e1ebf0fac7c",
+  "sha": "9f7a4e49cb9db38cc2b04a837842fc8927c57127",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 04:08 UTC",
+  "generated_at": "2026-11-12 04:17 UTC",
   "files_total": 2898,
   "code_files": 2369,
-  "code_lines": 321553
+  "code_lines": 321556
  },
  "version": "1.3.2",
- "facts_hash": "be8f8a3c815bdd3a",
+ "facts_hash": "d6a943cf12570833",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -96106,7 +96106,7 @@
   {
    "module": "scripts",
    "files": 131,
-   "lines": 29940,
+   "lines": 29943,
    "tables": [
     "a",
     "anexos",
@@ -228437,7 +228437,7 @@
   },
   "scripts/audit-rls-tenant-open.mjs": {
    "path": "scripts/audit-rls-tenant-open.mjs",
-   "lines": 300,
+   "lines": 303,
    "env": [
     "DATABASE_URL",
     "PGHOST",
@@ -277956,10 +277956,19 @@
   }
  },
  "git": {
-  "sha": "364b6d6dc7bff5abd521363dc9288e1ebf0fac7c",
+  "sha": "9f7a4e49cb9db38cc2b04a837842fc8927c57127",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9f7a4e4",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)",
+    "files": [
+     "scripts/audit-rls-tenant-open.mjs"
+    ]
+   },
    {
     "sha": "364b6d6",
     "date": "2026-11-12",
@@ -278415,22 +278424,6 @@
      "scripts/tests/audit-edge-authz.test.mjs",
      "scripts/tests/audit-migration-style.test.mjs"
     ]
-   },
-   {
-    "sha": "e11272e",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruição de arquivo (#418)",
-    "files": [
-     "scripts/check-dependencies.js",
-     "scripts/generate-audit-pdf.js",
-     "scripts/generate-component.js",
-     "scripts/generate-hook.js",
-     "scripts/generate-page.js",
-     "scripts/generate-service.js",
-     "scripts/inventario/gerar-repo.mjs",
-     "scripts/regenerate-supabase-types.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -278449,6 +278442,10 @@
    [
     "deno.lock",
     3
+   ],
+   [
+    "scripts/audit-rls-tenant-open.mjs",
+    2
    ],
    [
     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
@@ -278508,10 +278505,6 @@
    ],
    [
     "src/components/__tests__/InlineTabs.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/UserRolesTab.test.tsx",
     1
    ]
   ]

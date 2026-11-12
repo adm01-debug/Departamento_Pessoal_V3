@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `364b6d6dc7bff5abd521363dc9288e1ebf0fac7c` (2026-11-12T03:33:12Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `9f7a4e49cb9db38cc2b04a837842fc8927c57127` (2026-11-12T03:55:02Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2877 |
 | arquivos_codigo | 1548 |
-| linhas_codigo | 273375 |
+| linhas_codigo | 273378 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -383,15 +383,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21976 nós · 46113 arestas · 2122 comunidades · grafo do commit `364b6d6d`
+- 21976 nós · 46113 arestas · 2122 comunidades · grafo do commit `9f7a4e49`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (385), useEmpresas (332), react (306), vitest (286), App.tsx (268), cn (252), client.ts (185), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (56)
+- package.json (55)
 - .github/workflows/canonical-migrations.yml (53)
-- package-lock.json (53)
+- package-lock.json (52)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (20)
 - src/services/cnabService.ts (13)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `9f7a4e4` fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)
 - 2026-11-12 `364b6d6` feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)
 - 2026-11-12 `1aa6b3c` fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)
 - 2026-11-12 `2914cb9` fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `c42d57d` fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)
 - 2026-11-11 `207e914` build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)
 - 2026-11-10 `bba79fd` fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)
-- 2026-11-10 `9a0babf` feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

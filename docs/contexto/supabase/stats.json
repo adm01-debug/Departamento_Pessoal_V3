@@ -21,7 +21,7 @@
           "usename": "pgbouncer"
         },
         {
-          "n": 8,
+          "n": 4,
           "state": null,
           "usename": "supabase_admin"
         }
@@ -45,12 +45,12 @@
           "total_ms": 1230597
         },
         {
-          "calls": 570,
-          "mean_ms": 657.2,
+          "calls": 571,
+          "mean_ms": 657.47,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "ci_auditor",
-          "rows": 2795850,
-          "total_ms": 374605
+          "rows": 2800755,
+          "total_ms": 375414
         },
         {
           "calls": 106,
@@ -61,20 +61,20 @@
           "total_ms": 221384
         },
         {
-          "calls": 570,
-          "mean_ms": 339.67,
+          "calls": 571,
+          "mean_ms": 339.72,
           "query": "SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE",
           "role": "ci_auditor",
           "rows": 0,
-          "total_ms": 193610
+          "total_ms": 193978
         },
         {
-          "calls": 570,
-          "mean_ms": 273.62,
+          "calls": 571,
+          "mean_ms": 273.65,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "ci_auditor",
-          "rows": 4560,
-          "total_ms": 155961
+          "rows": 4568,
+          "total_ms": 156252
         },
         {
           "calls": 480,
@@ -85,20 +85,20 @@
           "total_ms": 154412
         },
         {
-          "calls": 570,
-          "mean_ms": 187.81,
+          "calls": 571,
+          "mean_ms": 187.87,
           "query": "SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c",
           "role": "ci_auditor",
-          "rows": 30210,
-          "total_ms": 107051
+          "rows": 30263,
+          "total_ms": 107271
         },
         {
-          "calls": 570,
-          "mean_ms": 156.13,
+          "calls": 571,
+          "mean_ms": 156.14,
           "query": "SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)",
           "role": "ci_auditor",
-          "rows": 221730,
-          "total_ms": 88997
+          "rows": 222119,
+          "total_ms": 89156
         },
         {
           "calls": 588,
@@ -109,28 +109,28 @@
           "total_ms": 87127
         },
         {
-          "calls": 570,
-          "mean_ms": 149.6,
+          "calls": 571,
+          "mean_ms": 149.64,
           "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
           "role": "ci_auditor",
-          "rows": 226298,
-          "total_ms": 85275
+          "rows": 226698,
+          "total_ms": 85445
         },
         {
-          "calls": 570,
+          "calls": 571,
           "mean_ms": 136.09,
           "query": "SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.",
           "role": "ci_auditor",
-          "rows": 221730,
-          "total_ms": 77574
+          "rows": 222119,
+          "total_ms": 77710
         },
         {
-          "calls": 570,
-          "mean_ms": 108.29,
+          "calls": 571,
+          "mean_ms": 108.3,
           "query": "SELECT n.nspname AS schema, t.relname AS \"table\", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth",
           "role": "ci_auditor",
-          "rows": 745560,
-          "total_ms": 61725
+          "rows": 746868,
+          "total_ms": 61842
         },
         {
           "calls": 451,

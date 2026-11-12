@@ -196,7 +196,7 @@
   {
    "arquivo": "scripts/audit-rls-tenant-open.mjs",
    "descricao": "* Gate de regressão: política PERMISSIVA irrestrita sobre tabela multi-tenant.",
-   "linhas": 300,
+   "linhas": 303,
    "env": [
     "DATABASE_URL",
     "PGHOST",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "364b6d6dc7bff5abd521363dc9288e1ebf0fac7c",
+  "commit": "9f7a4e49cb9db38cc2b04a837842fc8927c57127",
   "branch": "main",
-  "data_commit": "2026-11-12T03:33:12Z",
+  "data_commit": "2026-11-12T03:55:02Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9f7a4e4",
+    "data": "2026-11-12",
+    "assunto": "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)"
+   },
    {
     "sha": "364b6d6",
     "data": "2026-11-12",
@@ -126,11 +131,6 @@
     "sha": "8391bcc",
     "data": "2026-11-10",
     "assunto": "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)"
-   },
-   {
-    "sha": "bc5d927",
-    "data": "2026-11-10",
-    "assunto": "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)"
    }
   ],
   "arquivos_mudados_7d": 433,
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 56
+    "mudancas": 55
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 53
+    "mudancas": 52
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 113
+    "commits": 114
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2877,
   "arquivos_codigo": 1548,
-  "linhas_codigo": 273375,
+  "linhas_codigo": 273378,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -452,7 +452,7 @@
   },
   "scripts/audit-rls-tenant-open.mjs": {
    "arquivos": 1,
-   "linhas": 300
+   "linhas": 303
   },
   "scripts/audit-schema-drift.mjs": {
    "arquivos": 1,

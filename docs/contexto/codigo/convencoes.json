@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)",
    "feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)",
    "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)",
    "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)",
-   "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)",
-   "fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)"
+   "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
