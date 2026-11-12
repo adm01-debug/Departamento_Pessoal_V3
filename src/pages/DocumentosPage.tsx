@@ -33,7 +33,7 @@ import {
   Loader2,
   File,
   Sparkles,
-  Languages,
+  Copy,
   CheckCircle2,
   Search,
   Filter,
@@ -77,6 +77,8 @@ export default function DocumentosPage() {
   // P2-050: tipo concreto para OCR result (antes sem tipo, escondia bugs)
   interface OcrResult {
     text: string;
+    /** Texto livre retornado pela edge function OCR (supabase/functions/OCR). */
+    extractedText?: string;
     confidence?: number;
     data?: Record<string, string>;
     fields?: Record<string, string>;
@@ -463,14 +465,24 @@ export default function DocumentosPage() {
                       </div>
                     ))}
                   </div>
+                  {(ocrResult.extractedText || ocrResult.text) && (
+                    <pre className="max-h-48 overflow-auto whitespace-pre-wrap rounded-xl bg-background p-3 text-xs font-mono">
+                      {ocrResult.extractedText || ocrResult.text}
+                    </pre>
+                  )}
                   <Button
                     className="w-full rounded-xl gap-2"
-                    onClick={() => {
-                      toast.info('Dados prontos para preenchimento automático!');
-                      setSelectedDocForOcr(null);
+                    disabled={!(ocrResult.extractedText || ocrResult.text)}
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(ocrResult.extractedText || ocrResult.text);
+                        toast.success('Texto extraído copiado para a área de transferência');
+                      } catch {
+                        toast.error('Não foi possível copiar o texto extraído');
+                      }
                     }}
                   >
-                    <Languages className="h-4 w-4" /> Aplicar ao Cadastro
+                    <Copy className="h-4 w-4" /> Copiar texto extraído
                   </Button>
                 </div>
               ) : (
