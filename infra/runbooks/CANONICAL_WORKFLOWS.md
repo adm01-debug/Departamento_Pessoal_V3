@@ -12,8 +12,10 @@ compartilham o grupo de concorrência `canonical-database`
 (cancel-in-progress: true): um probe agendado esperando aprovação do
 environment Production travava as migrations por dias. Sem estado intermediário:
 o `apply` roda o lote num único BEGIN/COMMIT, então o probe vê o antes ou o
-depois. O probe roda com `lock_timeout=5s`/`statement_timeout=60s` para nunca
-segurar um `apply` esperando lock.
+depois. O probe roda com `lock_timeout=5s`/`statement_timeout=60s`: ele desiste
+após 5s se não conseguir um lock e nenhuma consulta passa de 60s. Os locks de
+leitura que ele já tem ainda podem atrasar um DDL do `apply` até a consulta
+terminar (no máximo ~60s), mas não por tempo indefinido.
 
 | Workflow                       | Trigger              | Acesso                | Concorrência               |
 | ------------------------------ | -------------------- | --------------------- | -------------------------- |
