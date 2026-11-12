@@ -14,7 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, CalendarRange, Trash2 } from 'lucide-react';
+import { safeErrorMessage } from '@/utils/safeError';
+import { Plus, CalendarRange, Trash2, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
 
 export default function EscalasPage() {
@@ -29,6 +30,16 @@ export default function EscalasPage() {
     horario_entrada: '',
     horario_saida: '',
     intervalo_minutos: '',
+  });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const toPayload = (d: typeof form) => ({
+    nome: d.nome,
+    tipo: d.tipo || null,
+    dias_trabalho: d.dias_trabalho ? Number(d.dias_trabalho) : null,
+    dias_folga: d.dias_folga ? Number(d.dias_folga) : null,
+    horario_entrada: d.horario_entrada || null,
+    horario_saida: d.horario_saida || null,
+    intervalo_minutos: d.intervalo_minutos ? Number(d.intervalo_minutos) : null,
   });
 
   const { data, isLoading } = useQuery({
@@ -70,6 +81,36 @@ export default function EscalasPage() {
     },
   });
 
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('escalas')
+        .update(validateTablePayload('escalas', toPayload(d), 'EscalasPage:escalas'))
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Escala não encontrada ou sem permissão para editar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['escalas'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: '',
+        dias_trabalho: '',
+        dias_folga: '',
+        horario_entrada: '',
+        horario_saida: '',
+        intervalo_minutos: '',
+      });
+      toast.success('Escala atualizada');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar escala.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('escalas').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
@@ -79,7 +120,24 @@ export default function EscalasPage() {
       qc.invalidateQueries({ queryKey: ['escalas'] });
       toast.success('Excluída');
     },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir escala.')),
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: '',
+        dias_trabalho: '',
+        dias_folga: '',
+        horario_entrada: '',
+        horario_saida: '',
+        intervalo_minutos: '',
+      });
+    }
+  };
 
   return (
     <>
@@ -90,7 +148,7 @@ export default function EscalasPage() {
         icon={<CalendarRange className="h-5 w-5 text-primary-foreground" />}
       >
         <div className="flex justify-end">
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
@@ -99,7 +157,7 @@ export default function EscalasPage() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Nova Escala</DialogTitle>
+                <DialogTitle>{editandoId ? 'Editar Escala' : 'Nova Escala'}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -165,7 +223,11 @@ export default function EscalasPage() {
                     onChange={(e) => setForm((p) => ({ ...p, intervalo_minutos: e.target.value }))}
                   />
                 </div>
-                <Button onClick={() => criar.mutate(form)} disabled={!form.nome} className="w-full">
+                <Button
+                  onClick={() => (editandoId ? atualizar.mutate({ ...form, id: editandoId }) : criar.mutate(form))}
+                  disabled={!form.nome || atualizar.isPending}
+                  className="w-full"
+                >
                   Salvar
                 </Button>
               </div>
@@ -205,9 +267,31 @@ export default function EscalasPage() {
                         <Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativa' : 'Inativa'}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Editar"
+                            onClick={() => {
+                              setEditandoId(r.id);
+                              setForm({
+                                nome: r.nome,
+                                tipo: r.tipo ?? '',
+                                dias_trabalho: r.dias_trabalho != null ? String(r.dias_trabalho) : '',
+                                dias_folga: r.dias_folga != null ? String(r.dias_folga) : '',
+                                horario_entrada: (r.horario_entrada ?? '').slice(0, 5),
+                                horario_saida: (r.horario_saida ?? '').slice(0, 5),
+                                intervalo_minutos: r.intervalo_minutos != null ? String(r.intervalo_minutos) : '',
+                              });
+                              setOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
