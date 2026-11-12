@@ -1,13 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ReactNode } from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ConveniosPage from '@/pages/ConveniosPage';
 
-const { updateSpy, eqSpy } = vi.hoisted(() => ({ updateSpy: vi.fn(), eqSpy: vi.fn() }));
+const { updateSpy, eqSpy, deleteSpy, auth } = vi.hoisted(() => ({
+  updateSpy: vi.fn(),
+  eqSpy: vi.fn(),
+  deleteSpy: vi.fn(),
+  auth: { roles: ['rh'] as string[] },
+}));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock('@/hooks', () => ({ useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }) }));
+vi.mock('@/contexts', () => ({
+  useAuth: () => ({
+    isAdmin: auth.roles.includes('admin'),
+    hasRole: (r: string) => auth.roles.includes(r),
+  }),
+}));
 vi.mock('@/components/layout', () => ({
   PageLayout: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
@@ -31,6 +42,10 @@ vi.mock('@/integrations/supabase/client', () => {
       updateSpy(table, payload);
       return b;
     };
+    b.delete = () => {
+      deleteSpy(table);
+      return b;
+    };
     b.then = (resolve: (v: typeof result) => unknown) => Promise.resolve(result).then(resolve);
     return b;
   };
@@ -49,6 +64,8 @@ describe('ConveniosPage — edição', () => {
   beforeEach(() => {
     updateSpy.mockClear();
     eqSpy.mockClear();
+    deleteSpy.mockClear();
+    auth.roles = ['rh'];
   });
 
   it('abre o diálogo preenchido e salva via update escopado por empresa', async () => {
@@ -84,5 +101,38 @@ describe('ConveniosPage — edição', () => {
 
     await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: ['convenios-colaboradores'] }));
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ['convenios'] });
+  });
+
+  it('colaborador sem papel RH/admin não vê Editar nem Excluir', async () => {
+    auth.roles = ['user'];
+    renderPage();
+    expect(await screen.findByText('Farmácia X')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
+  });
+
+  it('admin vê Editar e Excluir', async () => {
+    auth.roles = ['admin'];
+    renderPage();
+    expect(await screen.findByRole('button', { name: 'Editar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Excluir' })).toBeInTheDocument();
+  });
+
+  it('Excluir pede confirmação: cancelar não apaga, confirmar apaga escopado por empresa', async () => {
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
+    expect(await screen.findByText('Excluir convênio?')).toBeInTheDocument();
+    expect(deleteSpy).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+    await waitFor(() => expect(screen.queryByText('Excluir convênio?')).not.toBeInTheDocument());
+    expect(deleteSpy).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+    const dialog = await screen.findByRole('alertdialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
+    await waitFor(() => expect(deleteSpy).toHaveBeenCalledWith('convenios'));
+    expect(eqSpy).toHaveBeenCalledWith('convenios', 'id', 'cv-1');
+    expect(eqSpy).toHaveBeenCalledWith('convenios', 'empresa_id', 'emp-1');
   });
 });

@@ -6,6 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -15,6 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
 import { toast } from 'sonner';
 import { Plus, Handshake, Trash2, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
@@ -22,6 +33,8 @@ import { safeErrorMessage } from '@/utils/safeError';
 
 export default function ConveniosPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [tab, setTab] = useState('convenios');
 
@@ -30,6 +43,7 @@ export default function ConveniosPage() {
   const formVazio = { nome: '', tipo: '', limite_global: '', ativo: true };
   const [form, setForm] = useState(formVazio);
   const [editId, setEditId] = useState<string | null>(null);
+  const [excluirAlvo, setExcluirAlvo] = useState<{ id: string; nome: string } | null>(null);
 
   const onOpenChange = (v: boolean) => {
     setOpen(v);
@@ -282,31 +296,35 @@ export default function ConveniosPage() {
                             <Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativo' : 'Inativo'}</Badge>
                           </TableCell>
                           <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Editar"
-                              onClick={() => {
-                                setEditId(r.id);
-                                setForm({
-                                  nome: r.nome,
-                                  tipo: r.tipo ?? '',
-                                  limite_global: r.limite_global != null ? String(r.limite_global) : '',
-                                  ativo: r.ativo ?? true,
-                                });
-                                setOpen(true);
-                              }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Excluir"
-                              onClick={() => excluir.mutate(r.id)}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+                            {podeGerir && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Editar"
+                                  onClick={() => {
+                                    setEditId(r.id);
+                                    setForm({
+                                      nome: r.nome,
+                                      tipo: r.tipo ?? '',
+                                      limite_global: r.limite_global != null ? String(r.limite_global) : '',
+                                      ativo: r.ativo ?? true,
+                                    });
+                                    setOpen(true);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Excluir"
+                                  onClick={() => setExcluirAlvo({ id: r.id, nome: r.nome })}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -449,6 +467,28 @@ export default function ConveniosPage() {
             </Card>
           </TabsContent>
         </Tabs>
+        <AlertDialog open={!!excluirAlvo} onOpenChange={(v) => !v && setExcluirAlvo(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir convênio?</AlertDialogTitle>
+              <AlertDialogDescription>
+                O convênio "{excluirAlvo?.nome}" será excluído junto com todos os vínculos de colaboradores. Esta ação
+                não pode ser desfeita. Para apenas suspender, use Editar e desmarque "Ativo".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  if (excluirAlvo) excluir.mutate(excluirAlvo.id);
+                  setExcluirAlvo(null);
+                }}
+              >
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </PageLayout>
     </>
   );
