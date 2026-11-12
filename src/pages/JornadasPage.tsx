@@ -17,7 +17,7 @@ import { useJornadaHorarios, useSalvarGradeHorarios } from '@/hooks/useNovasTabe
 import type { TablesInsert } from '@/integrations/supabase/types';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Trash2, CalendarClock } from 'lucide-react';
+import { Plus, Trash2, CalendarClock, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
 
 const DIAS_SEMANA = [
@@ -125,6 +125,7 @@ export default function JornadasPage() {
     horario_saida: '17:00',
     intervalo_minutos: '60',
   });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data: jornadas = [], isLoading } = useQuery({
     queryKey: ['jornadas', empresaAtual?.id],
@@ -174,6 +175,45 @@ export default function JornadasPage() {
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar jornada.')),
   });
 
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('jornadas')
+        .update(
+          validateTablePayload(
+            'jornadas',
+            {
+              ...d,
+              carga_horaria_semanal: Number(d.carga_horaria_semanal),
+              intervalo_minutos: Number(d.intervalo_minutos),
+            },
+            'JornadasPage:jornadas'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Jornada não encontrada ou sem permissão para editar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['jornadas'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: 'padrao',
+        carga_horaria_semanal: '44',
+        horario_entrada: '08:00',
+        horario_saida: '17:00',
+        intervalo_minutos: '60',
+      });
+      toast.success('Jornada atualizada!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar jornada.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('jornadas').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
@@ -183,7 +223,23 @@ export default function JornadasPage() {
       qc.invalidateQueries({ queryKey: ['jornadas'] });
       toast.success('Jornada excluída!');
     },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir jornada.')),
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({
+        nome: '',
+        tipo: 'padrao',
+        carga_horaria_semanal: '44',
+        horario_entrada: '08:00',
+        horario_saida: '17:00',
+        intervalo_minutos: '60',
+      });
+    }
+  };
 
   if (isLoading)
     return (
@@ -200,7 +256,7 @@ export default function JornadasPage() {
           <CardContent className="pt-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold">Jornadas ({jornadas.length})</h3>
-              <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogTrigger asChild>
                   <Button size="sm">
                     <Plus className="h-4 w-4 mr-1" />
@@ -209,7 +265,7 @@ export default function JornadasPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Nova Jornada</DialogTitle>
+                    <DialogTitle>{editandoId ? 'Editar Jornada' : 'Nova Jornada'}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3">
                     <div>
@@ -270,7 +326,11 @@ export default function JornadasPage() {
                         />
                       </div>
                     </div>
-                    <Button className="w-full" onClick={() => criar.mutate(form)} disabled={!form.nome}>
+                    <Button
+                      className="w-full"
+                      onClick={() => (editandoId ? atualizar.mutate({ ...form, id: editandoId }) : criar.mutate(form))}
+                      disabled={!form.nome || atualizar.isPending}
+                    >
                       Salvar
                     </Button>
                   </div>
@@ -302,6 +362,25 @@ export default function JornadasPage() {
                     <TableCell>{j.intervalo_minutos}min</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label="Editar"
+                          onClick={() => {
+                            setEditandoId(j.id);
+                            setForm({
+                              nome: j.nome,
+                              tipo: j.tipo ?? 'padrao',
+                              carga_horaria_semanal: String(j.carga_horaria_semanal ?? ''),
+                              horario_entrada: (j.horario_entrada ?? '').slice(0, 5),
+                              horario_saida: (j.horario_saida ?? '').slice(0, 5),
+                              intervalo_minutos: String(j.intervalo_minutos ?? ''),
+                            });
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
                         <GradeJornadaDialog jornadaId={j.id} nome={j.nome} />
                         <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(j.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
