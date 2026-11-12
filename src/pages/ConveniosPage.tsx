@@ -96,6 +96,7 @@ export default function ConveniosPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['convenios'] });
+      qc.invalidateQueries({ queryKey: ['convenios-colaboradores'] });
       onOpenChange(false);
       toast.success('Convênio atualizado');
     },
@@ -347,11 +348,13 @@ export default function ConveniosPage() {
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
-                          {data?.map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.nome}
-                            </SelectItem>
-                          ))}
+                          {data
+                            ?.filter((c) => c.ativo !== false)
+                            .map((c) => (
+                              <SelectItem key={c.id} value={c.id}>
+                                {c.nome}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </div>

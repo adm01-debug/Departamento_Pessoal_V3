@@ -37,8 +37,7 @@ vi.mock('@/integrations/supabase/client', () => {
   return { supabase: { from: (t: string) => builder(t) } };
 });
 
-function renderPage() {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+function renderPage(qc = new QueryClient({ defaultOptions: { queries: { retry: false } } })) {
   return render(
     <QueryClientProvider client={qc}>
       <ConveniosPage />
@@ -73,5 +72,17 @@ describe('ConveniosPage — edição', () => {
     );
     expect(eqSpy).toHaveBeenCalledWith('convenios', 'id', 'cv-1');
     expect(eqSpy).toHaveBeenCalledWith('convenios', 'empresa_id', 'emp-1');
+  });
+
+  it('após editar, invalida também a lista de colaboradores vinculados (nome do convênio)', async () => {
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const invalidate = vi.spyOn(qc, 'invalidateQueries');
+    renderPage(qc);
+    fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
+    fireEvent.change(screen.getByDisplayValue('Farmácia X'), { target: { value: 'Farmácia Y' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+    await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: ['convenios-colaboradores'] }));
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['convenios'] });
   });
 });
