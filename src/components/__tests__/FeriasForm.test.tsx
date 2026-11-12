@@ -2,14 +2,45 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
+const PERIODO_ID = '22222222-2222-4222-8222-222222222222';
+
+interface PeriodoFixture {
+  id: string;
+  data_inicio: string;
+  data_fim: string;
+  status: string;
+  dias_direito: number;
+  perdeu_direito: boolean;
+}
+interface UsoFixture {
+  periodo_aquisitivo_id: string;
+  dias_gozo: number;
+  dias_abono: number;
+  status: string;
+}
+
+const periodoAdquirido: PeriodoFixture = {
+  id: PERIODO_ID,
+  data_inicio: '2025-01-01',
+  data_fim: '2025-12-31',
+  status: 'adquirido',
+  dias_direito: 30,
+  perdeu_direito: false,
+};
+
 let salarioBase: number | null = 3000;
+let periodosFixture: PeriodoFixture[] = [periodoAdquirido];
+let usoFixture: UsoFixture[] = [];
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: () => ({
-    data: { id: '11111111-1111-4111-8111-111111111111', salario_base: salarioBase },
-    isLoading: false,
-    isError: false,
-  }),
+  useQuery: ({ queryKey }: { queryKey: unknown[] }) =>
+    queryKey[0] === 'ferias-uso-colaborador'
+      ? { data: usoFixture, isLoading: false, isError: false }
+      : {
+          data: { id: '11111111-1111-4111-8111-111111111111', salario_base: salarioBase },
+          isLoading: false,
+          isError: false,
+        },
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -32,20 +63,13 @@ vi.mock('@/hooks/useColaboradores', () => ({
   }),
 }));
 
+vi.mock('@/services/feriasService', () => ({
+  feriasService: { listarUsoPorColaborador: vi.fn() },
+}));
+
 vi.mock('@/hooks/usePeriodosAquisitivos', () => ({
   usePeriodosAquisitivos: (colaboradorId?: string) => ({
-    periodos: colaboradorId
-      ? [
-          {
-            id: '22222222-2222-4222-8222-222222222222',
-            data_inicio: '2025-01-01',
-            data_fim: '2025-12-31',
-            status: 'em_andamento',
-            dias_direito: 30,
-            perdeu_direito: false,
-          },
-        ]
-      : [],
+    periodos: colaboradorId ? periodosFixture : [],
     isLoading: false,
   }),
 }));
@@ -93,6 +117,8 @@ function preencher(dataInicio: string, diasGozo = '30', diasAbono = '0') {
 describe('FeriasForm', () => {
   beforeEach(() => {
     salarioBase = 3000;
+    periodosFixture = [periodoAdquirido];
+    usoFixture = [];
   });
 
   it('não renderiza quando fechado', () => {
@@ -117,7 +143,7 @@ describe('FeriasForm', () => {
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
         colaborador_id: '11111111-1111-4111-8111-111111111111',
-        periodo_aquisitivo_id: '22222222-2222-4222-8222-222222222222',
+        periodo_aquisitivo_id: PERIODO_ID,
         data_inicio: '2026-12-01',
         data_fim: '2026-12-30',
         dias_gozo: 30,
@@ -145,6 +171,99 @@ describe('FeriasForm', () => {
     preencher('2026-12-01', '30', '10');
     expect(screen.getByRole('alert').textContent).toMatch(/excedem o direito/);
     expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('desconta do saldo os dias já lançados no período (15 dias já solicitados)', async () => {
+    usoFixture = [{ periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 15, dias_abono: 0, status: 'aprovada' }];
+    const onSubmit = vi.fn().mockResolvedValue({ id: 'f-2' });
+    render(<FeriasForm open onOpenChange={vi.fn()} onSubmit={onSubmit} />);
+
+    preencher('2026-12-01', '30');
+    expect(screen.getByText(/saldo 15 de 30 dias, adquirido/)).toBeTruthy();
+    expect(screen.getByRole('alert').textContent).toMatch(
+      /excedem o direito disponível no período \(saldo 15 de 30 dias\)/
+    );
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    fireEvent.change(screen.getByLabelText('Dias de gozo'), { target: { value: '15' } });
+    fireEvent.click(screen.getByText('Solicitar').closest('button')!);
+    await vi.waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 15 })
+    );
+  });
+
+  it('ignora férias rejeitadas no saldo', async () => {
+    usoFixture = [{ periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 30, dias_abono: 0, status: 'rejeitada' }];
+    const onSubmit = vi.fn().mockResolvedValue({ id: 'f-3' });
+    render(<FeriasForm open onOpenChange={vi.fn()} onSubmit={onSubmit} />);
+    preencher('2026-12-01', '14');
+    await vi.waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+  });
+
+  it('bloqueia quarto período de férias no mesmo aquisitivo (máx. 3)', () => {
+    usoFixture = [
+      { periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 14, dias_abono: 0, status: 'aprovada' },
+      { periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 5, dias_abono: 0, status: 'aprovada' },
+      { periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 5, dias_abono: 0, status: 'aprovada' },
+    ];
+    const onSubmit = vi.fn();
+    render(<FeriasForm open onOpenChange={vi.fn()} onSubmit={onSubmit} />);
+    preencher('2026-12-01', '5');
+    expect(screen.getByRole('alert').textContent).toMatch(/3 períodos/);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('bloqueia fracionamento sem nenhum período de 14 dias', () => {
+    usoFixture = [{ periodo_aquisitivo_id: PERIODO_ID, dias_gozo: 10, dias_abono: 0, status: 'aprovada' }];
+    const onSubmit = vi.fn();
+    render(<FeriasForm open onOpenChange={vi.fn()} onSubmit={onSubmit} />);
+    preencher('2026-12-01', '10');
+    expect(screen.getByRole('alert').textContent).toMatch(/14 dias/);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('usa como padrão o período adquirido/vencido mais antigo e omite em aquisição e pago', async () => {
+    const base = { dias_direito: 30, perdeu_direito: false };
+    periodosFixture = [
+      {
+        ...base,
+        id: '33333333-3333-4333-8333-333333333331',
+        data_inicio: '2026-01-01',
+        data_fim: '2026-12-31',
+        status: 'em_aquisicao',
+      },
+      {
+        ...base,
+        id: '33333333-3333-4333-8333-333333333332',
+        data_inicio: '2025-01-01',
+        data_fim: '2025-12-31',
+        status: 'adquirido',
+      },
+      {
+        ...base,
+        id: '33333333-3333-4333-8333-333333333333',
+        data_inicio: '2024-01-01',
+        data_fim: '2024-12-31',
+        status: 'vencido',
+      },
+      {
+        ...base,
+        id: '33333333-3333-4333-8333-333333333334',
+        data_inicio: '2023-01-01',
+        data_fim: '2023-12-31',
+        status: 'pago',
+      },
+    ];
+    const onSubmit = vi.fn().mockResolvedValue({ id: 'f-4' });
+    render(<FeriasForm open onOpenChange={vi.fn()} onSubmit={onSubmit} />);
+    preencher('2026-12-01');
+    await vi.waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ periodo_aquisitivo_id: '33333333-3333-4333-8333-333333333333' })
+    );
+    expect(screen.queryByText(/em_aquisicao/)).toBeNull();
+    expect(screen.queryByText(/, pago\)/)).toBeNull();
   });
 
   it('bloqueia colaborador sem salário base', () => {

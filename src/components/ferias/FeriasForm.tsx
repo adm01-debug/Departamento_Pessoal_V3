@@ -12,6 +12,7 @@ import { useColaboradores } from '@/hooks/useColaboradores';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePeriodosAquisitivos } from '@/hooks/usePeriodosAquisitivos';
 import { colaboradorService } from '@/services/colaboradorService';
+import { feriasService } from '@/services/feriasService';
 import { feriasSchema } from '@/schemas/ferias';
 import { calculoFerias } from '@/utils/calculoFerias';
 import type { Insertable } from '@/integrations/supabase/database.types';
@@ -72,12 +73,35 @@ function FeriasFormBody({
     enabled: !!colaboradorId && !!empresaId,
   });
 
-  const periodoPadraoId = useMemo(() => {
-    const disponivel = periodos.find((p) => p.status !== 'gozado' && !p.perdeu_direito);
-    return disponivel?.id ?? '';
-  }, [periodos]);
+  const usoQuery = useQuery({
+    queryKey: ['ferias-uso-colaborador', colaboradorId, empresaId],
+    queryFn: () => feriasService.listarUsoPorColaborador(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
+  });
+
+  // Por período: dias já consumidos (gozo + abono) e partes já lançadas (critério de validar_split_ferias).
+  const usoPorPeriodo = useMemo(() => {
+    const mapa = new Map<string, { usado: number; partes: number; maiorParte: number }>();
+    for (const f of usoQuery.data ?? []) {
+      if (!f.periodo_aquisitivo_id) continue;
+      const atual = mapa.get(f.periodo_aquisitivo_id) ?? { usado: 0, partes: 0, maiorParte: 0 };
+      atual.partes += 1;
+      atual.maiorParte = Math.max(atual.maiorParte, f.dias_gozo);
+      if (f.status !== 'rejeitada' && f.status !== 'cancelada') atual.usado += f.dias_gozo + (f.dias_abono ?? 0);
+      mapa.set(f.periodo_aquisitivo_id, atual);
+    }
+    return mapa;
+  }, [usoQuery.data]);
+  const saldoDe = (p: { id: string; dias_direito: number }) => p.dias_direito - (usoPorPeriodo.get(p.id)?.usado ?? 0);
+
+  // Só períodos já adquiridos (Art. 134 CLT) ou vencidos; em aquisição, gozados e pagos ficam fora.
+  const periodosDisponiveis = periodos.filter(
+    (p) => (p.status === 'adquirido' || p.status === 'vencido') && !p.perdeu_direito
+  );
+  // Padrão: o mais antigo com saldo (lista vem por data_inicio DESC) — prioriza o vencido (risco de dobra).
+  const periodoPadraoId = [...periodosDisponiveis].reverse().find((p) => saldoDe(p) > 0)?.id ?? '';
   const periodoId = periodoIdManual || periodoPadraoId;
-  const periodo = periodos.find((p) => p.id === periodoId);
+  const periodo = periodosDisponiveis.find((p) => p.id === periodoId);
 
   const dias = Number.parseInt(diasGozo, 10);
   const abono = Number.parseInt(diasAbono, 10) || 0;
@@ -110,8 +134,20 @@ function FeriasFormBody({
       setErro('O colaborador perdeu o direito a férias neste período aquisitivo.');
       return;
     }
-    if (base.dias_gozo + abono > periodo.dias_direito) {
-      setErro(`Dias de gozo + abono excedem o direito do período (${periodo.dias_direito} dias).`);
+    const uso = usoPorPeriodo.get(periodo.id) ?? { usado: 0, partes: 0, maiorParte: 0 };
+    const saldo = periodo.dias_direito - uso.usado;
+    if (base.dias_gozo + abono > saldo) {
+      setErro(
+        `Dias de gozo + abono excedem o direito disponível no período (saldo ${Math.max(saldo, 0)} de ${periodo.dias_direito} dias).`
+      );
+      return;
+    }
+    if (uso.partes >= 3) {
+      setErro('Este período aquisitivo já tem 3 períodos de férias (máximo — Art. 134 §1º CLT).');
+      return;
+    }
+    if (uso.partes >= 1 && Math.max(uso.maiorParte, base.dias_gozo) < 14) {
+      setErro('Ao fracionar, um dos períodos deve ter no mínimo 14 dias corridos (Art. 134 §1º CLT).');
       return;
     }
     const salarioBase = Number(colaboradorQuery.data?.salario_base ?? 0);
@@ -182,12 +218,13 @@ function FeriasFormBody({
           </Select>
         </div>
 
-        {colaboradorId && !loadingPeriodos && periodos.length === 0 && (
+        {colaboradorId && !loadingPeriodos && periodosDisponiveis.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            Nenhum período aquisitivo cadastrado para este colaborador. Cadastre-o na aba Períodos Aquisitivos.
+            Nenhum período aquisitivo adquirido ou vencido para este colaborador. Cadastre-o na aba Períodos
+            Aquisitivos.
           </p>
         )}
-        {periodos.length > 0 && (
+        {periodosDisponiveis.length > 0 && (
           <div className="space-y-1.5">
             <Label>Período aquisitivo</Label>
             <Select value={periodoId} onValueChange={setPeriodoIdManual}>
@@ -195,9 +232,9 @@ function FeriasFormBody({
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
               <SelectContent>
-                {periodos.map((p) => (
+                {periodosDisponiveis.map((p) => (
                   <SelectItem key={p.id} value={p.id}>
-                    {p.data_inicio} — {p.data_fim} ({p.dias_direito} dias{p.status ? `, ${p.status}` : ''})
+                    {`${p.data_inicio} — ${p.data_fim} (saldo ${Math.max(saldoDe(p), 0)} de ${p.dias_direito} dias, ${p.status})`}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -258,6 +295,11 @@ function FeriasFormBody({
             Falha ao carregar os dados do colaborador.
           </p>
         )}
+        {usoQuery.isError && (
+          <p role="alert" className="text-sm text-destructive">
+            Falha ao carregar as férias já lançadas do colaborador; não é possível calcular o saldo.
+          </p>
+        )}
         {erro && (
           <p role="alert" className="text-sm text-destructive">
             {erro}
@@ -270,7 +312,14 @@ function FeriasFormBody({
         </Button>
         <Button
           onClick={() => void handleSalvar()}
-          disabled={!colaboradorId || !dataInicio || isSubmitting || colaboradorQuery.isLoading}
+          disabled={
+            !colaboradorId ||
+            !dataInicio ||
+            isSubmitting ||
+            colaboradorQuery.isLoading ||
+            usoQuery.isLoading ||
+            usoQuery.isError
+          }
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
           {isSubmitting ? 'Enviando...' : 'Solicitar'}

@@ -72,7 +72,9 @@ export default function FeriasPage() {
   const [calcForm, setCalcForm] = useState({ salario: '', diasFerias: '30', diasAbono: '0' });
   const [calcResult, setCalcResult] = useState<UiRecord | null>(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [openSolicitar, setOpenSolicitar] = useState(() => searchParams.get('solicitar') === '1');
+  const [openSolicitarManual, setOpenSolicitar] = useState(false);
+  // Derivado da URL (não só no mount): o atalho "Solicitar Férias" abre o diálogo mesmo já estando em /ferias.
+  const openSolicitar = openSolicitarManual || searchParams.get('solicitar') === '1';
   const { ferias, totalCount, isLoading, isFetching, error, refetch, create, isCreating } = useFerias({
     page,
     limit,
