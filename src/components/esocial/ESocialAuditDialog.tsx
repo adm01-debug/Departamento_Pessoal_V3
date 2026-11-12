@@ -94,7 +94,7 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
                 <div className="p-4 rounded-2xl bg-background border border-border/50 text-center">
                   <p className="text-sm font-medium">Nenhum evento para verificar</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Não há eventos carregados nesta competência, então nenhuma regra foi aplicada e não há score.
+                    Não há eventos carregados para esta empresa, então nenhuma regra foi aplicada e não há score.
                   </p>
                 </div>
               ) : (
