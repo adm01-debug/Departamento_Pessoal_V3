@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import type { Cargo } from '@/types/entities';
+import { parseMoedaBR } from '@/utils/format';
 
 interface CargoForm {
   nome: string;
@@ -86,8 +87,8 @@ export default function CargosPage() {
       toast.error('Informe o nome do cargo (mínimo 2 caracteres).');
       return;
     }
-    const salarioTxt = form.salario_base.trim().replace(',', '.');
-    const salario = salarioTxt ? Number(salarioTxt) : undefined;
+    const salarioTxt = form.salario_base.trim();
+    const salario = salarioTxt ? parseMoedaBR(salarioTxt) : undefined;
     if (salario !== undefined && (!Number.isFinite(salario) || salario < 0)) {
       toast.error('Salário base inválido.');
       return;

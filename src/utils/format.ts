@@ -126,11 +126,20 @@ export function formatCurrency(input: NumberInput, fallback = DEFAULT_FALLBACK):
   }).format(n);
 }
 
+/**
+ * Converte valor monetário digitado (pt-BR) em número.
+ * Aceita `1500`, `1.500`, `1.500,50`, `1500,50` e `1500.5` (valor já salvo).
+ * Ponto seguido de 3 dígitos é milhar; vazio/inválido → `NaN`.
+ */
+export function parseMoedaBR(input: string): number {
+  const s = input.trim().replace(/^R\$\s*/, '');
+  if (/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(s)) return Number(s.replace(/\./g, '').replace(',', '.'));
+  if (/^\d+([.,]\d{1,2})?$/.test(s)) return Number(s.replace(',', '.'));
+  return Number.NaN;
+}
+
 /** Formata número decimal BR: `1.234,56`. */
-export function formatNumber(
-  input: NumberInput,
-  options: { decimals?: number; fallback?: string } = {},
-): string {
+export function formatNumber(input: NumberInput, options: { decimals?: number; fallback?: string } = {}): string {
   const { decimals = 2, fallback = DEFAULT_FALLBACK } = options;
   const n = parseNumberSafe(input);
   if (n === null) return fallback;
@@ -143,7 +152,7 @@ export function formatNumber(
 /** Formata porcentagem: `12,34%` (recebe `0.1234` OU `12.34` — controlado por `alreadyPercent`). */
 export function formatPercent(
   input: NumberInput,
-  options: { decimals?: number; alreadyPercent?: boolean; fallback?: string } = {},
+  options: { decimals?: number; alreadyPercent?: boolean; fallback?: string } = {}
 ): string {
   const { decimals = 2, alreadyPercent = false, fallback = DEFAULT_FALLBACK } = options;
   const n = parseNumberSafe(input);
