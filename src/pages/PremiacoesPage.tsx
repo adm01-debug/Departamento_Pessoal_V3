@@ -14,6 +14,7 @@ import {
   Calendar,
   Filter,
   ArrowUpRight,
+  ArrowDownRight,
   AlertCircle,
   Calculator,
   FileText,
@@ -157,7 +158,7 @@ export default function PremiacoesPage() {
       .reduce((acc, p) => acc + Number(p.valor_calculado), 0),
     campanhasAtivas: campanhas.filter((c) => c.status === 'ativo').length,
     divergenciaCount: pagamentos.filter((p) => p.status_conciliacao === 'divergente').length,
-    colaboradoresPremiados: new Set(pagamentos.map((p) => p.colaborador_id)).size,
+    colaboradoresPremiados: new Set(pagamentos.filter((p) => p.status === 'pago').map((p) => p.colaborador_id)).size,
   };
 
   // Variação do total aprovado: mês atual vs anterior, por data_pagamento.
@@ -205,8 +206,11 @@ export default function PremiacoesPage() {
               </div>
               <h3 className="text-2xl font-bold mt-2">{formatCurrency(stats.totalAprovado)}</h3>
               {variacaoMensal !== null && (
-                <p className="text-[10px] text-success flex items-center gap-1 mt-1 font-medium">
-                  <ArrowUpRight className="h-3 w-3" /> {variacaoMensal > 0 ? '+' : ''}
+                <p
+                  className={`text-[10px] flex items-center gap-1 mt-1 font-medium ${variacaoMensal < 0 ? 'text-destructive' : 'text-success'}`}
+                >
+                  {variacaoMensal < 0 ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}{' '}
+                  {variacaoMensal > 0 ? '+' : ''}
                   {variacaoMensal}% vs mês anterior
                 </p>
               )}
