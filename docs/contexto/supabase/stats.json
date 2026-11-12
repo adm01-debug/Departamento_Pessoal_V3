@@ -6,7 +6,7 @@
       "auth": {},
       "connections": [
         {
-          "n": 10,
+          "n": 3,
           "state": null,
           "usename": "authenticator"
         },
@@ -26,11 +26,11 @@
           "usename": "supabase_admin"
         }
       ],
-      "database_bytes": 61598867,
+      "database_bytes": 61607059,
       "queues": [],
       "schema_bytes": [
         {
-          "bytes": 25968640,
+          "bytes": 25976832,
           "schema": "public"
         }
       ],
@@ -45,36 +45,36 @@
           "total_ms": 1230597
         },
         {
-          "calls": 607,
-          "mean_ms": 661.56,
+          "calls": 608,
+          "mean_ms": 661.58,
           "query": "SELECT n.nspname AS schema, c.relname AS \"table\", a.attnum AS position, a.attname AS name, format_type(a.atttypid, a.atttypmod) AS type, NOT a.attnotnull AS nullable, pg_get_expr(d.adbin, d.adrelid) AS \"default\", NULLIF(",
           "role": "ci_auditor",
-          "rows": 2977335,
-          "total_ms": 401565
+          "rows": 2982240,
+          "total_ms": 402243
         },
         {
-          "calls": 125,
-          "mean_ms": 2096.04,
+          "calls": 127,
+          "mean_ms": 2095.84,
           "query": "WITH ext AS ( SELECT e.extname, n.nspname AS sch FROM pg_extension e JOIN pg_namespace n ON n.oid = e.extnamespace WHERE n.nspname <> $1 ), ext_fn AS ( SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid FRO",
           "role": "ci_auditor",
           "rows": 0,
-          "total_ms": 262005
+          "total_ms": 266171
         },
         {
-          "calls": 607,
-          "mean_ms": 342,
+          "calls": 608,
+          "mean_ms": 341.48,
           "query": "SELECT jobid, runid, status, start_time, end_time, EXTRACT($2 FROM (end_time - start_time))::numeric(10,2) AS seconds, left(return_message, $3) AS return_message FROM (SELECT *, row_number() OVER (PARTITION BY jobid ORDE",
           "role": "ci_auditor",
           "rows": 0,
-          "total_ms": 207593
+          "total_ms": 207618
         },
         {
-          "calls": 607,
-          "mean_ms": 273.69,
+          "calls": 608,
+          "mean_ms": 273.72,
           "query": "SELECT e.extname AS name, e.extversion AS version, n.nspname AS schema, (SELECT default_version FROM pg_available_extensions a WHERE a.name = e.extname) AS available_version FROM pg_extension e JOIN pg_namespace n ON n.o",
           "role": "ci_auditor",
-          "rows": 4856,
-          "total_ms": 166128
+          "rows": 4864,
+          "total_ms": 166425
         },
         {
           "calls": 480,
@@ -85,52 +85,52 @@
           "total_ms": 154412
         },
         {
-          "calls": 607,
+          "calls": 608,
           "mean_ms": 187.63,
           "query": "SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 ELSE $3 END AS kind, pg_get_viewdef(c.oid, $4) AS definition, c.reloptions AS options, pg_get_userbyid(c.relowner) AS owner, obj_description(c",
           "role": "ci_auditor",
-          "rows": 32171,
-          "total_ms": 113894
+          "rows": 32224,
+          "total_ms": 114079
         },
         {
-          "calls": 607,
-          "mean_ms": 156.6,
+          "calls": 608,
+          "mean_ms": 156.64,
           "query": "SELECT n.nspname AS schema, c.relname AS name, CASE c.relkind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 THEN $6 END AS kind, c.relrowsecurity AS rls_enabled, c.relforcerowsecurity AS rls_forced, pg_get_userbyid(c.relowner)",
           "role": "ci_auditor",
-          "rows": 236123,
-          "total_ms": 95058
+          "rows": 236512,
+          "total_ms": 95236
         },
         {
-          "calls": 607,
-          "mean_ms": 149.45,
+          "calls": 608,
+          "mean_ms": 149.34,
           "query": "SELECT n.nspname AS schema, p.proname AS name, pg_get_function_identity_arguments(p.oid) AS args, pg_get_function_result(p.oid) AS returns, l.lanname AS language, CASE p.prokind WHEN $1 THEN $2 WHEN $3 THEN $4 WHEN $5 TH",
           "role": "ci_auditor",
-          "rows": 241098,
-          "total_ms": 90718
+          "rows": 241498,
+          "total_ms": 90802
         },
         {
-          "calls": 607,
-          "mean_ms": 148.27,
+          "calls": 609,
+          "mean_ms": 148.19,
           "query": "SELECT p.tablename, p.policyname, p.cmd, array_to_string(p.roles, $1), replace(coalesce(p.qual, $2) || $3 || coalesce(p.with_check, $4), $5, $6) FROM pg_policies p WHERE p.schemaname = $7 ORDER BY p.tablename, p.policyna",
           "role": "ci_auditor",
-          "rows": 371891,
-          "total_ms": 90001
+          "rows": 373121,
+          "total_ms": 90249
         },
         {
-          "calls": 607,
+          "calls": 608,
           "mean_ms": 136.37,
           "query": "SELECT n.nspname AS schema, c.relname AS name, GREATEST(c.reltuples::bigint, $1) AS est_rows, pg_total_relation_size(c.oid) AS total_bytes, pg_relation_size(c.oid) AS heap_bytes, pg_indexes_size(c.oid) AS index_bytes, s.",
           "role": "ci_auditor",
-          "rows": 236123,
-          "total_ms": 82779
+          "rows": 236512,
+          "total_ms": 82915
         },
         {
-          "calls": 607,
-          "mean_ms": 108.43,
+          "calls": 608,
+          "mean_ms": 108.42,
           "query": "SELECT n.nspname AS schema, t.relname AS \"table\", ic.relname AS name, pg_get_indexdef(ix.indexrelid) AS definition, ix.indisunique AS is_unique, ix.indisprimary AS is_primary, ix.indisvalid AS is_valid, am.amname AS meth",
           "role": "ci_auditor",
-          "rows": 793956,
-          "total_ms": 65820
+          "rows": 795264,
+          "total_ms": 65920
         },
         {
           "calls": 451,
@@ -149,12 +149,12 @@
           "total_ms": 44020
         },
         {
-          "calls": 125,
-          "mean_ms": 262.71,
+          "calls": 127,
+          "mean_ms": 261.33,
           "query": "WITH pii_tables AS ( -- Codex review (P1, PR #238): information_schema.columns só lista colunas -- de tabelas em que o role atual tem ALGUM privilégio concedido (regra do -- padrão SQL, aplicada pelo Postgres). ci_audito",
           "role": "ci_auditor",
-          "rows": 13589,
-          "total_ms": 32839
+          "rows": 13803,
+          "total_ms": 33189
         }
       ]
     },
@@ -668,7 +668,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_audit_log_created_at",
-        "scans": 17833,
+        "scans": 17842,
         "schema": "public",
         "table": "audit_log"
       },
@@ -713,7 +713,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_audit_log_status_change_scan",
-        "scans": 46,
+        "scans": 47,
         "schema": "public",
         "table": "audit_log"
       },
@@ -1888,7 +1888,7 @@
         "table": "ciencia_rate_limits"
       },
       {
-        "bytes": 8192,
+        "bytes": 16384,
         "is_primary": false,
         "is_unique": false,
         "name": "idx_ciencia_rate_limits_verif_contrato",
@@ -1901,7 +1901,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_ciencia_rl_created",
-        "scans": 62,
+        "scans": 63,
         "schema": "public",
         "table": "ciencia_rate_limits"
       },
@@ -1910,7 +1910,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_ciencia_rl_ip_time",
-        "scans": 1,
+        "scans": 2,
         "schema": "public",
         "table": "ciencia_rate_limits"
       },
@@ -5393,7 +5393,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_ferias_colab_status",
-        "scans": 2564,
+        "scans": 2568,
         "schema": "public",
         "table": "ferias"
       },
@@ -5438,7 +5438,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_ferias_empresa_status",
-        "scans": 557,
+        "scans": 596,
         "schema": "public",
         "table": "ferias"
       },
@@ -5753,7 +5753,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_fila_notificacoes_status_scheduled",
-        "scans": 1,
+        "scans": 2,
         "schema": "public",
         "table": "fila_notificacoes"
       },
@@ -6662,7 +6662,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_idempotency_status",
-        "scans": 12545,
+        "scans": 12546,
         "schema": "public",
         "table": "idempotency_keys"
       },
@@ -7112,7 +7112,7 @@
         "is_primary": false,
         "is_unique": true,
         "name": "login_lockouts_identifier_identifier_type_key",
-        "scans": 1066,
+        "scans": 1069,
         "schema": "public",
         "table": "login_lockouts"
       },
@@ -7274,7 +7274,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_medidas_ciencia_tokens_token",
-        "scans": 5,
+        "scans": 6,
         "schema": "public",
         "table": "medidas_ciencia_tokens"
       },
@@ -7508,7 +7508,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_metricas_processamento_timestamp_desc",
-        "scans": 62,
+        "scans": 63,
         "schema": "public",
         "table": "metricas_processamento"
       },
@@ -9254,7 +9254,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_query_telemetry_created_at",
-        "scans": 58953,
+        "scans": 58957,
         "schema": "public",
         "table": "query_telemetry"
       },
@@ -9353,7 +9353,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_rate_limits_key_timestamp",
-        "scans": 248168,
+        "scans": 248194,
         "schema": "public",
         "table": "rate_limits"
       },
@@ -11783,7 +11783,7 @@
         "is_primary": false,
         "is_unique": false,
         "name": "idx_whatsapp_mensagens_logs_colaborador_id",
-        "scans": 55,
+        "scans": 57,
         "schema": "public",
         "table": "whatsapp_mensagens_logs"
       },
@@ -11960,23 +11960,23 @@
         "total_bytes": 1196032
       },
       {
-        "dead_rows": 110,
+        "dead_rows": 118,
         "est_rows": 1892,
         "heap_bytes": 344064,
-        "idx_scan": 248171,
+        "idx_scan": 248197,
         "index_bytes": 663552,
         "last_autoanalyze": "2026-11-12T12:44:29.078010+00:00",
         "last_autovacuum": "2026-11-12T12:44:29.068439+00:00",
         "name": "rate_limits",
         "schema": "public",
-        "seq_scan": 1072,
+        "seq_scan": 1073,
         "total_bytes": 1048576
       },
       {
         "dead_rows": 51,
         "est_rows": 370,
         "heap_bytes": 425984,
-        "idx_scan": 17922,
+        "idx_scan": 17932,
         "index_bytes": 262144,
         "last_autoanalyze": "2026-11-12T11:45:27.725765+00:00",
         "last_autovacuum": null,
@@ -12008,7 +12008,7 @@
         "last_autovacuum": null,
         "name": "colaboradores",
         "schema": "public",
-        "seq_scan": 21220,
+        "seq_scan": 21227,
         "total_bytes": 417792
       },
       {
@@ -12047,7 +12047,7 @@
         "last_autovacuum": "2026-11-05T11:00:18.030851+00:00",
         "name": "notificacoes",
         "schema": "public",
-        "seq_scan": 12649,
+        "seq_scan": 12652,
         "total_bytes": 212992
       },
       {
@@ -12080,13 +12080,13 @@
         "dead_rows": 0,
         "est_rows": 265,
         "heap_bytes": 57344,
-        "idx_scan": 86574,
+        "idx_scan": 86578,
         "index_bytes": 114688,
         "last_autoanalyze": "2026-07-23T21:39:46.237574+00:00",
         "last_autovacuum": null,
         "name": "query_telemetry",
         "schema": "public",
-        "seq_scan": 1808,
+        "seq_scan": 1813,
         "total_bytes": 204800
       },
       {
@@ -12132,7 +12132,7 @@
         "dead_rows": 8,
         "est_rows": 0,
         "heap_bytes": 8192,
-        "idx_scan": 10097,
+        "idx_scan": 10140,
         "index_bytes": 163840,
         "last_autoanalyze": null,
         "last_autovacuum": null,
@@ -12502,7 +12502,7 @@
         "last_autovacuum": null,
         "name": "empresas",
         "schema": "public",
-        "seq_scan": 28785,
+        "seq_scan": 28789,
         "total_bytes": 98304
       },
       {
@@ -12626,13 +12626,13 @@
         "dead_rows": 16,
         "est_rows": 0,
         "heap_bytes": 16384,
-        "idx_scan": 56,
+        "idx_scan": 58,
         "index_bytes": 49152,
         "last_autoanalyze": null,
         "last_autovacuum": null,
         "name": "whatsapp_mensagens_logs",
         "schema": "public",
-        "seq_scan": 44,
+        "seq_scan": 47,
         "total_bytes": 98304
       },
       {
@@ -12645,7 +12645,7 @@
         "last_autovacuum": null,
         "name": "user_empresas",
         "schema": "public",
-        "seq_scan": 670545,
+        "seq_scan": 670554,
         "total_bytes": 90112
       },
       {
@@ -12659,6 +12659,19 @@
         "name": "adiantamentos_salariais",
         "schema": "public",
         "seq_scan": 32,
+        "total_bytes": 81920
+      },
+      {
+        "dead_rows": 1,
+        "est_rows": 0,
+        "heap_bytes": 8192,
+        "idx_scan": 67,
+        "index_bytes": 65536,
+        "last_autoanalyze": null,
+        "last_autovacuum": null,
+        "name": "ciencia_rate_limits",
+        "schema": "public",
+        "seq_scan": 16,
         "total_bytes": 81920
       },
       {
@@ -12818,16 +12831,16 @@
         "total_bytes": 81920
       },
       {
-        "dead_rows": 35,
+        "dead_rows": 38,
         "est_rows": 7,
         "heap_bytes": 8192,
-        "idx_scan": 1068,
+        "idx_scan": 1071,
         "index_bytes": 32768,
         "last_autoanalyze": "2026-11-12T04:57:18.998178+00:00",
         "last_autovacuum": "2026-11-12T05:10:19.209752+00:00",
         "name": "login_lockouts",
         "schema": "public",
-        "seq_scan": 4079,
+        "seq_scan": 4082,
         "total_bytes": 81920
       },
       {
@@ -12894,19 +12907,6 @@
         "schema": "public",
         "seq_scan": 500,
         "total_bytes": 81920
-      },
-      {
-        "dead_rows": 1,
-        "est_rows": 0,
-        "heap_bytes": 8192,
-        "idx_scan": 65,
-        "index_bytes": 57344,
-        "last_autoanalyze": null,
-        "last_autovacuum": null,
-        "name": "ciencia_rate_limits",
-        "schema": "public",
-        "seq_scan": 16,
-        "total_bytes": 73728
       },
       {
         "dead_rows": 0,
@@ -13126,7 +13126,7 @@
         "last_autovacuum": null,
         "name": "profiles",
         "schema": "public",
-        "seq_scan": 2060,
+        "seq_scan": 2061,
         "total_bytes": 65536
       },
       {
@@ -13282,7 +13282,7 @@
         "last_autovacuum": null,
         "name": "contratos_gerados",
         "schema": "public",
-        "seq_scan": 33,
+        "seq_scan": 34,
         "total_bytes": 57344
       },
       {
@@ -13341,13 +13341,13 @@
         "dead_rows": 0,
         "est_rows": 0,
         "heap_bytes": 0,
-        "idx_scan": 15771,
+        "idx_scan": 15772,
         "index_bytes": 49152,
         "last_autoanalyze": null,
         "last_autovacuum": null,
         "name": "idempotency_keys",
         "schema": "public",
-        "seq_scan": 15333,
+        "seq_scan": 15334,
         "total_bytes": 57344
       },
       {
@@ -13692,7 +13692,7 @@
         "dead_rows": 0,
         "est_rows": 0,
         "heap_bytes": 0,
-        "idx_scan": 5,
+        "idx_scan": 6,
         "index_bytes": 40960,
         "last_autoanalyze": null,
         "last_autovacuum": null,
@@ -14400,7 +14400,7 @@
         "last_autovacuum": null,
         "name": "user_roles",
         "schema": "public",
-        "seq_scan": 602375,
+        "seq_scan": 602384,
         "total_bytes": 40960
       },
       {
@@ -14745,7 +14745,7 @@
         "dead_rows": 0,
         "est_rows": 0,
         "heap_bytes": 0,
-        "idx_scan": 2,
+        "idx_scan": 3,
         "index_bytes": 24576,
         "last_autoanalyze": null,
         "last_autovacuum": null,
@@ -14927,13 +14927,13 @@
         "dead_rows": 0,
         "est_rows": 0,
         "heap_bytes": 0,
-        "idx_scan": 62,
+        "idx_scan": 63,
         "index_bytes": 24576,
         "last_autoanalyze": null,
         "last_autovacuum": null,
         "name": "metricas_processamento",
         "schema": "public",
-        "seq_scan": 25,
+        "seq_scan": 26,
         "total_bytes": 32768
       },
       {
@@ -16597,7 +16597,7 @@
         "last_autovacuum": null,
         "name": "whatsapp_config",
         "schema": "public",
-        "seq_scan": 31,
+        "seq_scan": 33,
         "total_bytes": 24576
       },
       {
@@ -16805,7 +16805,7 @@
         "last_autovacuum": null,
         "name": "health_checks",
         "schema": "public",
-        "seq_scan": 1180,
+        "seq_scan": 1182,
         "total_bytes": 16384
       },
       {
