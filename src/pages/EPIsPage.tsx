@@ -1,5 +1,5 @@
 import { todayLocalISO } from '@/utils/dateLocal';
-import type { TablesInsert } from '@/integrations/supabase/types';
+import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { episService, episEntregasService } from '@/services';
 import { colaboradorService } from '@/services';
-import { useEmpresas } from '@/hooks';
+import { useEmpresas, useAtualizarEpi } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, HardHat, Package } from 'lucide-react';
@@ -34,22 +34,24 @@ const categoriaLabels: Record<string, string> = {
   outros: 'Outros',
 };
 const categoriaOptions = categorias.map((c) => ({ value: c, label: categoriaLabels[c] }));
+const FORM_EPI_VAZIO = {
+  nome: '',
+  ca: '',
+  categoria: 'cabeca',
+  validade_ca: '',
+  fabricante: '',
+  unidade_medida: 'un',
+  estoque_atual: '0',
+  estoque_minimo: '0',
+};
 
 export default function EPIsPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [openEpi, setOpenEpi] = useState(false);
   const [openEntrega, setOpenEntrega] = useState(false);
-  const [formEpi, setFormEpi] = useState({
-    nome: '',
-    ca: '',
-    categoria: 'cabeca',
-    validade_ca: '',
-    fabricante: '',
-    unidade_medida: 'un',
-    estoque_atual: '0',
-    estoque_minimo: '0',
-  });
+  const [formEpi, setFormEpi] = useState(FORM_EPI_VAZIO);
+  const [editingEpiId, setEditingEpiId] = useState<string | null>(null);
   const [formEntrega, setFormEntrega] = useState({ epi_id: '', colaborador_id: '', data_entrega: '', quantidade: '1' });
   const [searchCatalogo, setSearchCatalogo] = useState('');
   const [catFilter, setCatFilter] = useState('');
@@ -84,20 +86,57 @@ export default function EPIsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['epis'] });
       setOpenEpi(false);
-      setFormEpi({
-        nome: '',
-        ca: '',
-        categoria: 'cabeca',
-        validade_ca: '',
-        fabricante: '',
-        unidade_medida: 'un',
-        estoque_atual: '0',
-        estoque_minimo: '0',
-      });
+      setFormEpi(FORM_EPI_VAZIO);
       toast.success('EPI cadastrado!');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar EPI.')),
   });
+
+  const atualizarEpi = useAtualizarEpi();
+
+  const fecharDialogEpi = (open: boolean) => {
+    setOpenEpi(open);
+    if (!open && editingEpiId) {
+      setEditingEpiId(null);
+      setFormEpi(FORM_EPI_VAZIO);
+    }
+  };
+
+  const abrirEdicaoEpi = (epi: Tables<'epis'>) => {
+    setEditingEpiId(epi.id);
+    setFormEpi({
+      nome: epi.nome,
+      ca: epi.ca ?? '',
+      categoria: epi.categoria ?? '',
+      validade_ca: epi.validade_ca ?? '',
+      fabricante: epi.fabricante ?? '',
+      unidade_medida: epi.unidade_medida ?? 'un',
+      estoque_atual: String(epi.estoque_atual ?? 0),
+      estoque_minimo: String(epi.estoque_minimo ?? 0),
+    });
+    setOpenEpi(true);
+  };
+
+  const salvarEpi = () => {
+    if (!editingEpiId) {
+      criarEpi.mutate(formEpi);
+      return;
+    }
+    atualizarEpi.mutate(
+      {
+        id: editingEpiId,
+        nome: formEpi.nome,
+        ca: formEpi.ca || null,
+        categoria: formEpi.categoria || null,
+        validade_ca: formEpi.validade_ca || null,
+        fabricante: formEpi.fabricante || null,
+        unidade_medida: formEpi.unidade_medida || null,
+        estoque_atual: Number(formEpi.estoque_atual) || 0,
+        estoque_minimo: Number(formEpi.estoque_minimo) || 0,
+      },
+      { onSuccess: () => fecharDialogEpi(false) }
+    );
+  };
 
   const criarEntrega = useMutation({
     mutationFn: (d: Record<string, unknown>) =>
@@ -221,7 +260,7 @@ export default function EPIsPage() {
                       setSearchCatalogo('');
                     }}
                   />
-                  <Dialog open={openEpi} onOpenChange={setOpenEpi}>
+                  <Dialog open={openEpi} onOpenChange={fecharDialogEpi}>
                     <DialogTrigger asChild>
                       <Button size="sm" className="rounded-xl shrink-0">
                         <Plus className="h-4 w-4 mr-1" />
@@ -230,7 +269,9 @@ export default function EPIsPage() {
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle className="font-display">Cadastrar EPI</DialogTitle>
+                        <DialogTitle className="font-display">
+                          {editingEpiId ? 'Editar EPI' : 'Cadastrar EPI'}
+                        </DialogTitle>
                       </DialogHeader>
                       <div className="space-y-3">
                         <div className="grid grid-cols-2 gap-3">
@@ -305,10 +346,10 @@ export default function EPIsPage() {
                         </div>
                         <Button
                           className="w-full rounded-xl"
-                          onClick={() => criarEpi.mutate(formEpi)}
-                          disabled={!formEpi.nome}
+                          onClick={salvarEpi}
+                          disabled={!formEpi.nome || atualizarEpi.isPending}
                         >
-                          Cadastrar EPI
+                          {editingEpiId ? 'Salvar alterações' : 'Cadastrar EPI'}
                         </Button>
                       </div>
                     </DialogContent>
@@ -318,7 +359,11 @@ export default function EPIsPage() {
                 {isLoading ? (
                   <TableSkeleton rows={5} columns={5} />
                 ) : (
-                  <EpiCatalogoTable data={filteredEpis} onExcluir={(id) => excluirEpi.mutate(id)} />
+                  <EpiCatalogoTable
+                    data={filteredEpis}
+                    onExcluir={(id) => excluirEpi.mutate(id)}
+                    onEditar={abrirEdicaoEpi}
+                  />
                 )}
               </div>
 

@@ -77,4 +77,19 @@ describe('EpiCatalogoTable', () => {
     await user.click(deleteButtons[0]);
     expect(onExcluir).toHaveBeenCalledWith('1');
   });
+
+  it('não mostra botão Editar sem onEditar', () => {
+    render(<EpiCatalogoTable data={DATA} onExcluir={vi.fn()} />);
+    expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
+  });
+
+  it('chama onEditar com o EPI da linha ao clicar em Editar', async () => {
+    const user = userEvent.setup();
+    const onEditar = vi.fn();
+    const onExcluir = vi.fn();
+    render(<EpiCatalogoTable data={DATA} onExcluir={onExcluir} onEditar={onEditar} />);
+    await user.click(screen.getAllByRole('button', { name: 'Editar' })[1]);
+    expect(onEditar).toHaveBeenCalledWith(DATA[1]);
+    expect(onExcluir).not.toHaveBeenCalled();
+  });
 });
