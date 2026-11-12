@@ -50,6 +50,18 @@ export default function PerfilPage() {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Estado real do MFA (mesma consulta de MFASetup): fator TOTP verificado = habilitado.
+  const { data: mfaFactors, isLoading: mfaLoading } = useQuery({
+    queryKey: ['mfa-factors', user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.mfa.listFactors();
+      if (error) throw error;
+      return data;
+    },
+  });
+  const mfaHabilitado = !!mfaFactors?.totp?.some((f) => f.status === 'verified');
+
   const { data: profile, isLoading } = useQuery({
     queryKey: ['meu-perfil', user?.id],
     enabled: !!user?.id,
@@ -394,12 +406,24 @@ export default function PerfilPage() {
                   <ShieldCheck className="h-6 w-6 text-success" />
                   <div>
                     <p className="font-bold text-sm">Autenticação de Dois Fatores (MFA)</p>
-                    <p className="text-xs text-muted-foreground">Sua conta está protegida por MFA via aplicativo.</p>
+                    <p className="text-xs text-muted-foreground">
+                      {mfaLoading
+                        ? 'Verificando…'
+                        : mfaHabilitado
+                          ? 'Sua conta está protegida por MFA via aplicativo.'
+                          : 'MFA ainda não configurado para sua conta.'}
+                    </p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-success border-success/30">
-                  Habilitado
-                </Badge>
+                {mfaLoading ? null : mfaHabilitado ? (
+                  <Badge variant="outline" className="text-success border-success/30">
+                    Habilitado
+                  </Badge>
+                ) : (
+                  <Button variant="outline" size="sm" onClick={() => navigate('/configuracoes?tab=seguranca')}>
+                    Configurar
+                  </Button>
+                )}
               </div>
 
               <div className="flex items-center justify-between p-4 rounded-xl bg-muted/20 border border-border/10">
