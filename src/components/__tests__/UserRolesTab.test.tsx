@@ -78,6 +78,12 @@ describe('UserRolesTab', () => {
     expect(screen.getByText('Tornar Admin')).toBeInTheDocument();
   });
 
+  it('oferece Adicionar perfil (supervisor/coordenador) para cada usuário', () => {
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as never);
+    render(<UserRolesTab />);
+    expect(screen.getAllByLabelText('Adicionar perfil').length).toBeGreaterThan(0);
+  });
+
   it('renders Informação de Segurança card', () => {
     vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<UserRolesTab />);

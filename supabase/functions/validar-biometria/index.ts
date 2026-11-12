@@ -10,6 +10,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
+import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -118,25 +119,26 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // Attempt real AI comparison via Lovable AI Gateway
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    const AI_API_KEY = aiApiKey();
     let isMatch = false;
     let confidence = 0;
     let analysis = 'Servico de biometria indisponivel. Validacao manual necessaria.';
 
-    if (LOVABLE_API_KEY) {
+    if (AI_API_KEY) {
       try {
         const promptIA = `Compare estas duas imagens de rostos. A primeira URL e a foto de referencia do colaborador "${colaborador.nome_completo}": ${colaborador.foto_referencia_url}. A segunda e a foto capturada em base64. Responda APENAS um JSON: {"match": boolean, "confidence": number (0-1), "analysis": "string"}. match=true se confianca >= 0.85.`;
 
         const response = await safeFetchWithRetry(
-          'https://ai-gateway.lovable.dev/v1/chat/completions',
+          AI_CHAT_URL,
           {
             method: 'POST',
             headers: {
-              'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+              'Authorization': `Bearer ${AI_API_KEY}`,
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              model: 'google/gemini-2.5-flash',
+              model: aiModel(),
+              ...AI_NO_THINKING,
               messages: [
                 { role: 'user', content: [
                   { type: 'text', text: promptIA },
@@ -169,7 +171,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // Fail-closed: if AI unavailable, mark as pending manual review
-    const status = LOVABLE_API_KEY ? (isMatch ? 'valido' : 'invalido') : 'pendente';
+    const status = AI_API_KEY ? (isMatch ? 'valido' : 'invalido') : 'pendente';
 
     const { error: updError } = await supabase
       .from('batidas_ponto')
@@ -178,7 +180,7 @@ serve(async (req: Request): Promise<Response> => {
         biometria_score: confidence,
         device_metadata: {
           biometria_analise: analysis,
-          validado_por: LOVABLE_API_KEY ? 'AI Biometry Engine' : 'Pendente - servico indisponivel',
+          validado_por: AI_API_KEY ? 'AI Biometry Engine' : 'Pendente - servico indisponivel',
         }
       })
       .eq('id', batidaId)
