@@ -456,7 +456,7 @@ serve(async (req: Request): Promise<Response> => {
             : {}),
         },
         body: JSON.stringify({
-          from: "Sistema DP <onboarding@resend.dev>",
+          from: Deno.env.get("EMAIL_FROM") || "Sistema DP <onboarding@resend.dev>",
           to: [body.emailDestinatario],
           subject,
           html,
