@@ -33,9 +33,20 @@ import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { validateTablePayload } from '@/schemas/validate';
+import { useNavigate } from 'react-router-dom';
+import { authService } from '@/services/authService';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 export default function PerfilPage() {
-  const { user } = useAuth();
+  const { user, session, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,6 +68,11 @@ export default function PerfilPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [pushStatus, setPushStatus] = useState<'supported' | 'unsupported' | 'loading'>('loading');
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [senhaDialogOpen, setSenhaDialogOpen] = useState(false);
+  const [novaSenha, setNovaSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [alterandoSenha, setAlterandoSenha] = useState(false);
+  const ultimoAcesso = session?.user?.last_sign_in_at;
 
   useEffect(() => {
     async function checkPush() {
@@ -126,6 +142,26 @@ export default function PerfilPage() {
       toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAlterarSenha = async () => {
+    if (novaSenha !== confirmarSenha) {
+      toast.error('As senhas não coincidem.');
+      return;
+    }
+    setAlterandoSenha(true);
+    try {
+      const { warnings } = await authService.resetPassword(novaSenha);
+      toast.success('Senha alterada com sucesso!');
+      warnings?.forEach((w) => toast.warning(w));
+      setSenhaDialogOpen(false);
+      setNovaSenha('');
+      setConfirmarSenha('');
+    } catch (e: unknown) {
+      toast.error(safeErrorMessage(e, 'Erro ao alterar senha.'));
+    } finally {
+      setAlterandoSenha(false);
     }
   };
 
@@ -372,18 +408,80 @@ export default function PerfilPage() {
                   <div>
                     <p className="font-bold text-sm">Último Acesso</p>
                     <p className="text-xs text-muted-foreground">
-                      {new Date().toLocaleString('pt-BR')} (IP: 187.64.21.XX)
+                      {ultimoAcesso ? new Date(ultimoAcesso).toLocaleString('pt-BR') : 'Não disponível'}
                     </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" className="text-xs text-primary">
-                  Ver Logs
-                </Button>
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-primary"
+                    onClick={() => navigate('/auditoria')}
+                  >
+                    Ver Logs
+                  </Button>
+                )}
               </div>
 
-              <Button variant="outline" className="w-full rounded-xl border-dashed">
+              <Button
+                variant="outline"
+                className="w-full rounded-xl border-dashed"
+                onClick={() => setSenhaDialogOpen(true)}
+              >
                 Alterar Senha de Acesso
               </Button>
+              <Dialog
+                open={senhaDialogOpen}
+                onOpenChange={(open) => {
+                  if (alterandoSenha) return;
+                  setSenhaDialogOpen(open);
+                  if (!open) {
+                    setNovaSenha('');
+                    setConfirmarSenha('');
+                  }
+                }}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Alterar Senha de Acesso</DialogTitle>
+                    <DialogDescription>Informe e confirme a nova senha da sua conta.</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="nova-senha">Nova senha</Label>
+                      <Input
+                        id="nova-senha"
+                        type="password"
+                        autoComplete="new-password"
+                        value={novaSenha}
+                        onChange={(e) => setNovaSenha(e.target.value)}
+                        className="rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmar-senha">Confirmar nova senha</Label>
+                      <Input
+                        id="confirmar-senha"
+                        type="password"
+                        autoComplete="new-password"
+                        value={confirmarSenha}
+                        onChange={(e) => setConfirmarSenha(e.target.value)}
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setSenhaDialogOpen(false)} disabled={alterandoSenha}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleAlterarSenha} disabled={alterandoSenha || !novaSenha || !confirmarSenha}>
+                      {alterandoSenha && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                      Alterar Senha
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </motion.div>

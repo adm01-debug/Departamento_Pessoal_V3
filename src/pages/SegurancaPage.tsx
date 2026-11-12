@@ -1,5 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -390,8 +391,10 @@ export default function SegurancaPage() {
                   <h3 className="text-sm font-semibold">Lista de IPs Bloqueados</h3>
                   <p className="text-xs text-muted-foreground">Bloqueios automáticos por detecção de brute-force</p>
                 </div>
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Lock className="h-4 w-4" /> Bloquear IP Manualmente
+                <Button variant="outline" size="sm" className="gap-2" asChild>
+                  <Link to="/configuracoes?tab=ips">
+                    <Lock className="h-4 w-4" /> Bloquear IP Manualmente
+                  </Link>
                 </Button>
               </div>
               <Table>
