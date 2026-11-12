@@ -55,8 +55,6 @@ vi.mock('@/components/ui/label', () => ({
   Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
-vi.mock('@/assets/govbr-logo.svg', () => ({ default: 'govbr-logo.svg' }));
-
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     rpc: vi.fn().mockResolvedValue({ data: null, error: { message: 'not found' } }),
@@ -100,10 +98,10 @@ describe('TokenInput', () => {
     expect(screen.getByRole('button', { name: /Acessar Portal/i })).not.toBeDisabled();
   });
 
-  it('renders Gov.br logo', () => {
+  it('does not render the unfinished Gov.br placeholder', () => {
     render(<TokenInput onValidToken={onValidToken} />);
-    const img = screen.getByAltText('Gov.br');
-    expect(img).toBeInTheDocument();
+    expect(screen.queryByAltText('Gov.br')).not.toBeInTheDocument();
+    expect(screen.queryByTitle(/Em breve/i)).not.toBeInTheDocument();
   });
 
   it('renders Powered by Lovable Cloud text', () => {
