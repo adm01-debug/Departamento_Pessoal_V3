@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Spinner } from '@/components/ui/spinner';
 import { FormField, FormSelect, FormSwitch } from '@/components/forms';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts/AuthContext';
 import { validateTablePayload } from '@/schemas/validate';
 
 type AuthUser = { name?: string } | null | undefined;
@@ -193,6 +194,9 @@ export function FolhaConfigTab() {
 export function PontoConfigTab() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
+  // RLS (20261112010000): só supervisor/coordenador da empresa alteram as regras.
+  const { hasRole } = useAuth();
+  const podeAlterar = hasRole('supervisor') || hasRole('coordenador');
   const [draft, setDraft] = useState<Record<string, string>>({});
 
   // Os switches de Tolerância/Geo/Facial/Offline agora persistem em
@@ -310,9 +314,14 @@ export function PontoConfigTab() {
               />
             </div>
           </div>
+          {!podeAlterar && (
+            <p className="text-sm text-muted-foreground font-body">
+              Somente supervisor ou coordenador podem alterar as regras de ponto.
+            </p>
+          )}
           <Button
             onClick={() => salvarConfig.mutate()}
-            disabled={salvarConfig.isPending || !empresaAtual?.id}
+            disabled={salvarConfig.isPending || !empresaAtual?.id || !podeAlterar}
             className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/90 hover:opacity-90 shadow-lg font-body px-8 h-11"
           >
             {salvarConfig.isPending ? <Spinner size="sm" className="mr-2" /> : null}

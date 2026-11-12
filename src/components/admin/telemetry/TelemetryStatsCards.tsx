@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertTriangle, Clock, Zap, Database } from "lucide-react";
+import { Card, CardContent } from '@/components/ui/card';
+import { AlertTriangle, Clock, Zap, Database } from 'lucide-react';
 
 interface TelemetryStatsCardsProps {
   verySlow: number;

@@ -5,22 +5,29 @@
 ## Visão Geral
 
 5 workflows operam diretamente contra o banco de dados canônico de produção
-(`frjbfeamybqsejlvmqbl`). Os três workflows com acesso direto ao PostgreSQL
+(`frjbfeamybqsejlvmqbl`). `canonical-migrations` e `canonical-sql-diag`
 compartilham o grupo de concorrência `canonical-database`
-(cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL
-e probes simultâneas contra o mesmo banco.
+(cancel-in-progress: false) — só um roda por vez, evitando colisões de DDL.
+`canonical-probes` (READ ONLY + ROLLBACK) tem fila própria `canonical-probes`
+(cancel-in-progress: true): um probe agendado esperando aprovação do
+environment Production travava as migrations por dias. Sem estado intermediário:
+o `apply` roda o lote num único BEGIN/COMMIT, então o probe vê o antes ou o
+depois. O probe roda com `lock_timeout=5s`/`statement_timeout=60s`: ele desiste
+após 5s se não conseguir um lock e nenhuma consulta passa de 60s. Os locks de
+leitura que ele já tem ainda podem atrasar um DDL do `apply` até a consulta
+terminar (no máximo ~60s), mas não por tempo indefinido.
 
 | Workflow                       | Trigger              | Acesso                | Concorrência               |
 | ------------------------------ | -------------------- | --------------------- | -------------------------- |
 | `canonical-migrations.yml`     | workflow_dispatch    | postgres (migrations) | `canonical-database`       |
-| `canonical-probes.yml`         | schedule/dispatch    | postgres (read-only)  | `canonical-database`       |
+| `canonical-probes.yml`         | schedule/dispatch    | postgres (read-only)  | `canonical-probes`         |
 | `canonical-sql-diag.yml`       | workflow_dispatch    | postgres (read-only)  | `canonical-database`       |
 | `canonical-edge-functions.yml` | push main / dispatch | Supabase Edge Runtime | `canonical-edge-functions` |
 | `ruleset-sync.yml`             | schedule/dispatch    | GitHub API (read)     | —                          |
 
 > **Regra de ouro:** o YAML dos workflows canônicos **NUNCA** muda em lotes de migrations. Qualquer alteração nesses workflows requer PR aprovado por humano, separado do lote de SQL.
 >
-> **Reviewer obrigatório:** o environment `production` ainda não tem reviewer obrigatório (W26 — pendente de configuração via API). Até W26 ser aplicado, o gate é o PR + required checks.
+> **Reviewer obrigatório:** o environment `Production` exige aprovação de `adm01-debug` (W26 aplicado). Probe agendado sem aprovação fica em `waiting` até ser substituído pelo do dia seguinte (fila própria, cancel-in-progress).
 
 ---
 

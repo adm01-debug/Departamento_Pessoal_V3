@@ -21,8 +21,13 @@ on:
         type: string
 
 concurrency:
-  group: canonical-database
-  cancel-in-progress: false
+  # Fila própria: probes são READ ONLY + ROLLBACK, não precisam serializar com
+  # as migrations. Na fila compartilhada `canonical-database`, um probe agendado
+  # parado na aprovação do environment Production travava as migrations por
+  # dias (run 42455140261 segurou 43083970930). cancel-in-progress substitui o
+  # probe do dia anterior que ninguém aprovou pelo novo, sem acumular.
+  group: canonical-probes
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -31,13 +36,15 @@ permissions:
 jobs:
   security-probes:
     name: probes RV-01/02/03/04 no canônico
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 10
     environment: production
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
       CANONICAL_REF: frjbfeamybqsejlvmqbl
       CONFIRM_PROJECT_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.confirm_project_ref || 'frjbfeamybqsejlvmqbl' }}
+      # Probe nunca espera lock de um apply concorrente nem roda solto.
+      PGOPTIONS: -c lock_timeout=5s -c statement_timeout=60s
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
