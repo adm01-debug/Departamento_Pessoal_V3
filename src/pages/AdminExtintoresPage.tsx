@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +12,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { AlertCircle, Flame, ShieldCheck, Timer, Plus, ClipboardCheck, QrCode } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { AlertCircle, Flame, ShieldCheck, Timer, Plus, ClipboardCheck, QrCode, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
@@ -51,6 +61,28 @@ const extintorSchema = z.object({
   data_proximo_teste_hidrostatico: z.string().min(1),
 });
 
+const STATUS = [
+  { value: 'ATIVO', label: 'Ativo' },
+  { value: 'MANUTENCAO', label: 'Em manutenção' },
+  { value: 'VENCIDO', label: 'Vencido' },
+  { value: 'DESATIVADO', label: 'Desativado (inativo)' },
+  { value: 'EXTRAVIADO', label: 'Extraviado' },
+] as const;
+
+const extintorEdicaoSchema = extintorSchema.extend({
+  status: z.enum(['ATIVO', 'MANUTENCAO', 'VENCIDO', 'DESATIVADO', 'EXTRAVIADO']),
+});
+
+const FORM_VAZIO = {
+  codigo_patrimonio: '',
+  tipo: 'PO_QUIMICO_ABC',
+  capacidade_kg: 6,
+  localizacao: '',
+  data_proxima_recarga: '',
+  data_proximo_teste_hidrostatico: '',
+  status: 'ATIVO',
+};
+
 const TIPOS = [
   { value: 'AGUA', label: 'Água' },
   { value: 'PO_QUIMICO_ABC', label: 'Pó Químico ABC' },
@@ -67,15 +99,10 @@ export default function AdminExtintoresPage() {
   const { empresaAtual } = useEmpresas();
   const [openNovo, setOpenNovo] = useState(false);
   const [openInsp, setOpenInsp] = useState<Extintor | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [excluir, setExcluir] = useState<Extintor | null>(null);
 
-  const [form, setForm] = useState({
-    codigo_patrimonio: '',
-    tipo: 'PO_QUIMICO_ABC',
-    capacidade_kg: 6,
-    localizacao: '',
-    data_proxima_recarga: '',
-    data_proximo_teste_hidrostatico: '',
-  });
+  const [form, setForm] = useState(FORM_VAZIO);
 
   const [insp, setInsp] = useState({
     lacre_ok: true,
@@ -155,15 +182,77 @@ export default function AdminExtintoresPage() {
     }
     toast.success('Extintor cadastrado');
     setOpenNovo(false);
-    setForm({
-      codigo_patrimonio: '',
-      tipo: 'PO_QUIMICO_ABC',
-      capacidade_kg: 6,
-      localizacao: '',
-      data_proxima_recarga: '',
-      data_proximo_teste_hidrostatico: '',
-    });
+    setForm(FORM_VAZIO);
     carregar();
+  };
+
+  const abrirEdicao = (e: Extintor) => {
+    setEditId(e.id);
+    setForm({
+      codigo_patrimonio: e.codigo_patrimonio,
+      tipo: e.tipo,
+      capacidade_kg: Number(e.capacidade_kg),
+      localizacao: e.localizacao,
+      data_proxima_recarga: e.data_proxima_recarga,
+      data_proximo_teste_hidrostatico: e.data_proximo_teste_hidrostatico,
+      status: e.status,
+    });
+    setOpenNovo(true);
+  };
+
+  const fecharDialogExtintor = (open: boolean) => {
+    setOpenNovo(open);
+    if (!open && editId) {
+      setEditId(null);
+      setForm(FORM_VAZIO);
+    }
+  };
+
+  const atualizarMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const parsed = extintorEdicaoSchema.safeParse({ ...form, capacidade_kg: Number(form.capacidade_kg) });
+      if (!parsed.success) throw new Error('Preencha todos os campos corretamente');
+      const { error } = await supabase
+        .from('sst_extintores')
+        .update(validateTablePayload('sst_extintores', parsed.data, 'AdminExtintoresPage:sst_extintores.update'))
+        .eq('id', id)
+        .eq('empresa_id', empresaId!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Extintor atualizado');
+      fecharDialogExtintor(false);
+      carregar();
+    },
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao atualizar extintor.')),
+  });
+
+  const excluirMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('sst_extintores')
+        .update(
+          validateTablePayload(
+            'sst_extintores',
+            { deleted_at: new Date().toISOString() },
+            'AdminExtintoresPage:sst_extintores.delete'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaId!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Extintor excluído');
+      setExcluir(null);
+      carregar();
+    },
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao excluir extintor.')),
+  });
+
+  const salvarExtintor = () => {
+    if (editId) atualizarMutation.mutate(editId);
+    else void criarExtintor();
   };
 
   const registrarInspecao = async () => {
@@ -229,7 +318,7 @@ export default function AdminExtintoresPage() {
           </h1>
           <p className="text-muted-foreground mt-1">Inventário, inspeções periódicas e vencimentos.</p>
         </div>
-        <Dialog open={openNovo} onOpenChange={setOpenNovo}>
+        <Dialog open={openNovo} onOpenChange={fecharDialogExtintor}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="h-4 w-4 mr-2" />
@@ -238,7 +327,7 @@ export default function AdminExtintoresPage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Cadastrar Extintor</DialogTitle>
+              <DialogTitle>{editId ? 'Editar Extintor' : 'Cadastrar Extintor'}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
               <div>
@@ -296,12 +385,31 @@ export default function AdminExtintoresPage() {
                   />
                 </div>
               </div>
+              {editId && (
+                <div>
+                  <Label>Status</Label>
+                  <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STATUS.map((s) => (
+                        <SelectItem key={s.value} value={s.value}>
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpenNovo(false)}>
+              <Button variant="outline" onClick={() => fecharDialogExtintor(false)}>
                 Cancelar
               </Button>
-              <Button onClick={criarExtintor}>Cadastrar</Button>
+              <Button onClick={salvarExtintor} disabled={atualizarMutation.isPending}>
+                {editId ? 'Salvar' : 'Cadastrar'}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -364,10 +472,28 @@ export default function AdminExtintoresPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Button size="sm" variant="outline" onClick={() => setOpenInsp(e)}>
-                        <ClipboardCheck className="h-4 w-4 mr-1" />
-                        Inspecionar
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="outline" onClick={() => setOpenInsp(e)}>
+                          <ClipboardCheck className="h-4 w-4 mr-1" />
+                          Inspecionar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          aria-label={`Editar ${e.codigo_patrimonio}`}
+                          onClick={() => abrirEdicao(e)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          aria-label={`Excluir ${e.codigo_patrimonio}`}
+                          onClick={() => setExcluir(e)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -413,6 +539,30 @@ export default function AdminExtintoresPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!excluir} onOpenChange={(v) => !v && setExcluir(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir extintor {excluir?.codigo_patrimonio}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O extintor sai do inventário e dos indicadores. As inspeções já registradas são mantidas. Para apenas
+              tirá-lo de uso, edite e mude o status para Desativado.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={excluirMutation.isPending}
+              onClick={(ev) => {
+                ev.preventDefault();
+                if (excluir) excluirMutation.mutate(excluir.id);
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
