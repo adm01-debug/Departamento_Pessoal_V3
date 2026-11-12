@@ -42,8 +42,8 @@ vi.mock('@/components/ui/select', () => ({
   SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => <span>{placeholder}</span>,
 }));
 
-const useQueryMock = vi.fn(() => ({
-  data: { salario_base: 5000 } as { salario_base: number } | null,
+const useQueryMock = vi.fn((): { data: { salario_base: number } | null; isSuccess: boolean; isError?: boolean } => ({
+  data: { salario_base: 5000 },
   isSuccess: true,
 }));
 vi.mock('@tanstack/react-query', () => ({
@@ -150,6 +150,18 @@ describe('NewLoanDialog', () => {
     fireEvent.change(parcelas, { target: { value: '10' } });
     expect(screen.getByText('Confirmar Registro')).toBeDisabled();
     expect(screen.getByText(/sem salário base cadastrado/)).toBeInTheDocument();
+    useQueryMock.mockReturnValue({ data: { salario_base: 5000 }, isSuccess: true });
+  });
+
+  it('explica o bloqueio quando a consulta do salário falha', () => {
+    useQueryMock.mockReturnValue({ data: null, isSuccess: false, isError: true });
+    const { container } = render(<NewLoanDialog colaboradores={COLABORADORES} onSave={vi.fn()} />);
+    const [valorTotal, parcelas] = Array.from(container.querySelectorAll('input[type="number"]'));
+    fireEvent.click(screen.getByText('pick-c1'));
+    fireEvent.change(valorTotal, { target: { value: '1000' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
+    expect(screen.getByText('Confirmar Registro')).toBeDisabled();
+    expect(screen.getByText(/Não foi possível carregar o salário do colaborador/)).toBeInTheDocument();
     useQueryMock.mockReturnValue({ data: { salario_base: 5000 }, isSuccess: true });
   });
 

@@ -178,6 +178,33 @@ describe('edgeFunctionsService error handling', () => {
     expect(isDefinitiveIdempotencyFailure(error)).toBe(true);
   });
 
+  it('lê mensagem e código do corpo aninhado de createErrorResponse', async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(
+        JSON.stringify({
+          error: { code: 'AMOUNT_ABOVE_LIMIT', message: 'Valor excede o limite de 40% do salário base' },
+        }),
+        { status: 422 }
+      ),
+    });
+    const error = await edgeFunctionsService
+      .solicitarAdiantamentoSalarial({
+        empresa_id: 'emp-1',
+        colaborador_id: 'col-1',
+        valor_centavos: 999999,
+        competencia: '2026-11',
+      })
+      .catch((caught) => caught);
+    expect(error).toBeInstanceOf(EdgeFunctionInvokeError);
+    expect(error).toMatchObject({
+      status: 422,
+      code: 'AMOUNT_ABOVE_LIMIT',
+      message: 'Valor excede o limite de 40% do salário base',
+    });
+  });
+
   it('mantém a chave para estado indeterminado ou falha de transporte', () => {
     expect(
       isDefinitiveIdempotencyFailure(

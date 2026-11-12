@@ -30,7 +30,11 @@ export function NewLoanDialog({
   });
 
   // Compliance Engine: Calculate Margin
-  const { data: colaboradorData, isSuccess: colaboradorCarregado } = useQuery({
+  const {
+    data: colaboradorData,
+    isSuccess: colaboradorCarregado,
+    isError: erroColaborador,
+  } = useQuery({
     queryKey: ['colaborador-margin', form.colaborador_id],
     queryFn: async () => {
       if (!form.colaborador_id) return null;
@@ -174,7 +178,12 @@ export function NewLoanDialog({
                   {parcelasAtivas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
               )}
-              {semSalario ? (
+              {erroColaborador ? (
+                <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                  <AlertCircle className="h-3 w-3" /> Não foi possível carregar o salário do colaborador para calcular a
+                  margem. Tente novamente.
+                </p>
+              ) : semSalario ? (
                 <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
                   <AlertCircle className="h-3 w-3" /> Colaborador sem salário base cadastrado: não é possível calcular a
                   margem.

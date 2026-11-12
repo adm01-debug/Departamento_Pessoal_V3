@@ -37,6 +37,20 @@ vi.mock('@/components/ui/button', () => ({
   ),
 }));
 
+vi.mock('@/components/ui/alert-dialog', () => ({
+  AlertDialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="alertdialog">{children}</div> : null,
+  AlertDialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AlertDialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AlertDialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AlertDialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  AlertDialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  AlertDialogCancel: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
+  AlertDialogAction: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <button onClick={onClick}>{children}</button>
+  ),
+}));
+
 import { EmprestimosTable } from '../descontos/EmprestimosTable';
 
 const fmt = (v: number | null) => `R$ ${(v ?? 0).toFixed(2)}`;
@@ -105,10 +119,23 @@ describe('EmprestimosTable', () => {
     render(<EmprestimosTable emprestimos={MOCK_EMPRESTIMOS} fmt={fmt} onUpdate={onUpdate} />);
     fireEvent.click(screen.getByLabelText('Registrar parcela paga'));
     expect(onUpdate).toHaveBeenLastCalledWith({ id: 'e1', patch: { parcelas_pagas: 6 } });
+    // Quitar/Cancelar só disparam após confirmação
     fireEvent.click(screen.getByLabelText('Quitar'));
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByText('Confirmar quitação'));
     expect(onUpdate).toHaveBeenLastCalledWith({ id: 'e1', patch: { status: 'quitado' } });
     fireEvent.click(screen.getByLabelText('Cancelar'));
+    expect(onUpdate).toHaveBeenCalledTimes(2);
+    fireEvent.click(screen.getByText('Confirmar cancelamento'));
     expect(onUpdate).toHaveBeenLastCalledWith({ id: 'e1', patch: { status: 'cancelado' } });
+  });
+
+  it('voltar no diálogo de confirmação não altera o empréstimo', () => {
+    const onUpdate = vi.fn();
+    render(<EmprestimosTable emprestimos={MOCK_EMPRESTIMOS} fmt={fmt} onUpdate={onUpdate} />);
+    fireEvent.click(screen.getByLabelText('Cancelar'));
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    expect(onUpdate).not.toHaveBeenCalled();
   });
 
   it('última parcela registrada quita o empréstimo', () => {

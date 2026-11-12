@@ -54,13 +54,24 @@ const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = g
           }
         }
         const record = typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : null;
+        // createErrorResponse (_shared/contract.ts) responde `{ error: { code, message } }`.
+        const nested =
+          record && typeof record.error === 'object' && record.error !== null
+            ? (record.error as Record<string, unknown>)
+            : null;
         throw new EdgeFunctionInvokeError(
           (record && typeof record.error === 'string' && record.error) ||
+            (nested && typeof nested.message === 'string' && nested.message) ||
             error.message ||
             `Erro ao chamar função ${name}`,
           {
             status: response?.status,
-            code: record && typeof record.code === 'string' ? record.code : undefined,
+            code:
+              record && typeof record.code === 'string'
+                ? record.code
+                : nested && typeof nested.code === 'string'
+                  ? nested.code
+                  : undefined,
             cause: error,
           }
         );
