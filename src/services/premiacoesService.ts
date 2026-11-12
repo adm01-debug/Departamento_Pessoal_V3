@@ -123,6 +123,35 @@ export const premiacoesService = {
     return data;
   },
 
+  /** Lança um rascunho (rascunho → ativo). 0 linhas = não é rascunho desta empresa ou sem permissão. */
+  async lancarRascunhoCampanha(id: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('premiacoes_campanhas')
+      .update({ status: 'ativo' })
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .eq('status', 'rascunho')
+      .select('id');
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('Rascunho não encontrado ou sem permissão para lançar.');
+    return data[0];
+  },
+
+  /** Exclui um rascunho (as regras caem por ON DELETE CASCADE). Só apaga se ainda for rascunho. */
+  async excluirRascunhoCampanha(id: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('premiacoes_campanhas')
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .eq('status', 'rascunho')
+      .select('id');
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('Rascunho não encontrado ou sem permissão para excluir.');
+  },
+
   async criarRegra(d: TablesInsert<'premiacoes_regras'>) {
     validateInput(premiacaoRegraSchema, d, 'premiacoes.criarRegra');
     const { data, error } = await supabase

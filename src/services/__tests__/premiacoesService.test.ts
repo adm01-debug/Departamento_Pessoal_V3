@@ -183,6 +183,43 @@ describe('premiacoesService.criarCampanha', () => {
   });
 });
 
+// ─── rascunhos de campanha ────────────────────────────────────────────────────
+
+describe('premiacoesService.lancarRascunhoCampanha / excluirRascunhoCampanha', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('lançar só atualiza rascunho da empresa para ativo', async () => {
+    const { updateFn, eqFn } = setupChain([{ id: 'c1' }]);
+    await premiacoesService.lancarRascunhoCampanha('c1', EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith({ status: 'ativo' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('status', 'rascunho');
+  });
+
+  it('lançar com 0 linhas afetadas lança erro', async () => {
+    setupChain([]);
+    await expect(premiacoesService.lancarRascunhoCampanha('c1', EMPRESA_ID)).rejects.toThrow(/Rascunho não encontrado/);
+  });
+
+  it('excluir só apaga rascunho da empresa', async () => {
+    const { chain, eqFn } = setupChain([{ id: 'c1' }]);
+    await premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID);
+    expect(chain.delete).toHaveBeenCalled();
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('status', 'rascunho');
+  });
+
+  it('excluir com 0 linhas afetadas lança erro', async () => {
+    setupChain([]);
+    await expect(premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID)).rejects.toThrow(
+      /Rascunho não encontrado/
+    );
+  });
+});
+
 // ─── criarRegra ───────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarRegra', () => {

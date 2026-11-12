@@ -16,6 +16,15 @@ import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 
+const REGRAS_INICIAIS = [
+  {
+    titulo: 'Bônus de Batimento',
+    tipo_calculo: 'valor_fixo',
+    valor_base: 500,
+    configuracao: { condicao_metrica: 'atingimento_meta' },
+  },
+];
+
 interface CampaignWizardProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,7 +34,7 @@ interface CampaignWizardProps {
 export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardProps) {
   const queryClient = useQueryClient();
   const [step, setStep] = React.useState(1);
-  const [formData, setFormData] = React.useState({
+  const formInicial = {
     nome: '',
     descricao: '',
     data_inicio: '',
@@ -33,28 +42,43 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
     orcamento_estimado: 0,
     empresa_id: empresaId,
     status: 'ativo',
-  });
+  };
+  const [formData, setFormData] = React.useState(formInicial);
 
-  const [rules, setRules] = React.useState([
-    {
-      titulo: 'Bônus de Batimento',
-      tipo_calculo: 'valor_fixo',
-      valor_base: 500,
-      configuracao: { condicao_metrica: 'atingimento_meta' },
-    },
-  ]);
+  const [rules, setRules] = React.useState(REGRAS_INICIAIS);
+  const [saving, setSaving] = React.useState(false);
+
+  const fechar = () => {
+    if (saving) return;
+    setStep(1);
+    setFormData(formInicial);
+    setRules(REGRAS_INICIAIS);
+    onClose();
+  };
 
   const handleSave = async (status: 'rascunho' | 'ativo') => {
+    if (saving) return;
+    if (!empresaId) {
+      toast.error('Empresa não identificada.');
+      return;
+    }
+    if (!formData.nome.trim() || !formData.data_inicio || !formData.data_fim) {
+      toast.error('Preencha nome, início e fim da campanha.');
+      return;
+    }
+    if (rules.some((r) => !r.titulo.trim())) {
+      toast.error('Toda regra precisa de um nome.');
+      return;
+    }
+    setSaving(true);
+    let campanhaCriada = false;
     try {
-      if (!empresaId) {
-        toast.error('Empresa não identificada.');
-        return;
-      }
       const campanha = await premiacoesService.criarCampanha({
         ...formData,
         status,
         empresa_id: empresaId,
       });
+      campanhaCriada = true;
 
       for (const rule of rules) {
         await premiacoesService.criarRegra({
@@ -65,14 +89,24 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
 
       queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
       toast.success(status === 'rascunho' ? 'Rascunho da campanha salvo.' : 'Campanha estratégica criada com sucesso!');
+      setStep(1);
+      setFormData(formInicial);
+      setRules(REGRAS_INICIAIS);
       onClose();
     } catch (e) {
-      toast.error('Erro ao criar campanha.');
+      if (campanhaCriada) {
+        queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
+        toast.error('A campanha foi criada, mas nem todas as regras foram salvas.');
+      } else {
+        toast.error('Erro ao criar campanha.');
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && fechar()}>
       <DialogContent className="sm:max-w-[600px] rounded-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -230,13 +264,13 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
             </Button>
           ) : (
             <div className="flex gap-2 w-full">
-              <Button variant="outline" onClick={() => setStep(1)}>
+              <Button variant="outline" disabled={saving} onClick={() => setStep(1)}>
                 Voltar
               </Button>
-              <Button variant="secondary" className="flex-1" onClick={() => handleSave('rascunho')}>
+              <Button variant="secondary" className="flex-1" disabled={saving} onClick={() => handleSave('rascunho')}>
                 Salvar Rascunho
               </Button>
-              <Button className="flex-2" onClick={() => handleSave('ativo')}>
+              <Button className="flex-2" disabled={saving} onClick={() => handleSave('ativo')}>
                 Lançar Campanha
               </Button>
             </div>

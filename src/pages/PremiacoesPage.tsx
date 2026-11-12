@@ -7,6 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Trophy,
   Target,
   DollarSign,
@@ -25,6 +35,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { premiacoesService, PERIODO_SEM_DATA } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
 import { RewardsApprovalHub } from '@/components/premiacoes/RewardsApprovalHub';
@@ -40,7 +51,10 @@ const formatCurrency = (val: number) =>
 
 export default function PremiacoesPage() {
   const { empresaAtual } = useEmpresas();
+  const { hasRole } = useAuth();
+  const podeGerirCampanhas = hasRole('admin') || hasRole('rh');
   const queryClient = useQueryClient();
+  const [rascunhoExcluir, setRascunhoExcluir] = React.useState<{ id: string; nome: string } | null>(null);
   const [activeTab, setActiveTab] = React.useState('campanhas');
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [periodoFiltro, setPeriodoFiltro] = React.useState<{ ym: string; empresaId: string | undefined } | null>(null);
@@ -102,6 +116,25 @@ export default function PremiacoesPage() {
       queryClient.invalidateQueries({ queryKey: ['premiacoes_auditoria'] });
       toast.success('Status atualizado e registrado na auditoria.');
     },
+  });
+
+  const lancarRascunho = useMutation({
+    mutationFn: (id: string) => premiacoesService.lancarRascunhoCampanha(id, empresaAtual!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
+      toast.success('Campanha lançada.');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Erro ao lançar campanha.'),
+  });
+
+  const excluirRascunho = useMutation({
+    mutationFn: (id: string) => premiacoesService.excluirRascunhoCampanha(id, empresaAtual!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
+      toast.success('Rascunho excluído.');
+      setRascunhoExcluir(null);
+    },
+    onError: (e: Error) => toast.error(e.message || 'Erro ao excluir rascunho.'),
   });
 
   const handleExport = async (format: 'csv' | 'pdf') => {
@@ -358,6 +391,29 @@ export default function PremiacoesPage() {
                         <p className="text-xs font-semibold text-muted-foreground">
                           {participantes} {participantes === 1 ? 'participante' : 'participantes'}
                         </p>
+                        {c.status === 'rascunho' && podeGerirCampanhas && (
+                          <div className="flex gap-2">
+                            {pagsCampanha.length === 0 && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="rounded-xl text-destructive"
+                                disabled={lancarRascunho.isPending || excluirRascunho.isPending}
+                                onClick={() => setRascunhoExcluir({ id: c.id, nome: c.nome })}
+                              >
+                                Excluir rascunho
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              className="rounded-xl"
+                              disabled={lancarRascunho.isPending || excluirRascunho.isPending}
+                              onClick={() => lancarRascunho.mutate(c.id)}
+                            >
+                              Lançar
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -588,6 +644,30 @@ export default function PremiacoesPage() {
         </Tabs>
 
         <CampaignWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} empresaId={empresaAtual?.id} />
+
+        <AlertDialog open={rascunhoExcluir !== null} onOpenChange={(o) => !o && setRascunhoExcluir(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir rascunho?</AlertDialogTitle>
+              <AlertDialogDescription>
+                O rascunho "{rascunhoExcluir?.nome}" e as regras dele serão excluídos permanentemente. Esta ação não
+                pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={excluirRascunho.isPending}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={excluirRascunho.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (rascunhoExcluir) excluirRascunho.mutate(rascunhoExcluir.id);
+                }}
+              >
+                {excluirRascunho.isPending ? 'Excluindo...' : 'Excluir'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </PageLayout>
     </>
   );
