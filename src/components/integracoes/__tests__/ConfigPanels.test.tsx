@@ -7,6 +7,7 @@ const svc = vi.hoisted(() => ({
   getConfig: vi.fn(),
   saveConfig: vi.fn(),
   getRemessas: vi.fn(),
+  getArquivoRemessa: vi.fn(),
   listar: vi.fn(),
   getLogs: vi.fn(),
   criar: vi.fn(),
@@ -14,7 +15,12 @@ const svc = vi.hoisted(() => ({
 }));
 
 vi.mock('@/services/integracaoService', () => ({
-  cnabService: { getConfig: svc.getConfig, saveConfig: svc.saveConfig, getRemessas: svc.getRemessas },
+  cnabService: {
+    getConfig: svc.getConfig,
+    saveConfig: svc.saveConfig,
+    getRemessas: svc.getRemessas,
+    getArquivoRemessa: svc.getArquivoRemessa,
+  },
   webhookService: { listar: svc.listar, getLogs: svc.getLogs, criar: svc.criar, excluir: svc.excluir },
 }));
 
@@ -117,26 +123,15 @@ describe('CnabConfigPanel', () => {
     expect(svc.saveConfig).not.toHaveBeenCalled();
   });
 
-  it('Download baixa o conteúdo salvo da remessa e fica desabilitado sem arquivo', async () => {
+  it('Download busca o conteúdo da remessa só no clique e desabilita quando não há arquivo', async () => {
     svc.getConfig.mockResolvedValue(null);
     svc.getRemessas.mockResolvedValue([
-      {
-        id: 'rem-1',
-        banco_codigo: '341',
-        sequencial_arquivo: 7,
-        status: 'enviado',
-        arquivo_remessa: 'LINHA1\r\nLINHA2',
-        created_at: null,
-      },
-      {
-        id: 'rem-2',
-        banco_codigo: '341',
-        sequencial_arquivo: 8,
-        status: 'processando',
-        arquivo_remessa: null,
-        created_at: null,
-      },
+      { id: 'rem-1', banco_codigo: '341', sequencial_arquivo: 7, status: 'enviado', created_at: null },
+      { id: 'rem-2', banco_codigo: '341', sequencial_arquivo: 8, status: 'processando', created_at: null },
     ]);
+    svc.getArquivoRemessa.mockImplementation(async (_empresaId: string, id: string) =>
+      id === 'rem-1' ? 'LINHA1\r\nLINHA2' : null
+    );
     const createObjectURL = vi.fn((_blob: Blob) => 'blob:remessa');
     const revokeObjectURL = vi.fn();
     Object.assign(window.URL, { createObjectURL, revokeObjectURL });
@@ -151,12 +146,20 @@ describe('CnabConfigPanel', () => {
     render(<CnabConfigPanel />, { wrapper });
 
     const botoes = await screen.findAllByRole('button', { name: 'Download' });
-    expect(botoes[1]).toBeDisabled();
+    expect(svc.getArquivoRemessa).not.toHaveBeenCalled();
     await user.click(botoes[0]);
 
-    expect(baixado).toBe('REMESSA_7.txt');
+    await waitFor(() => expect(baixado).toBe('REMESSA_7.txt'));
+    expect(svc.getArquivoRemessa).toHaveBeenCalledWith('empresa-1', 'rem-1');
     expect(await createObjectURL.mock.calls[0][0].text()).toBe('LINHA1\r\nLINHA2');
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:remessa');
+
+    expect(botoes[1]).toBeEnabled();
+    await user.click(botoes[1]);
+    await waitFor(() => expect(botoes[1]).toBeDisabled());
+    expect(toast.error).toHaveBeenCalledWith('Arquivo de remessa ainda não disponível');
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(botoes[0]).toBeEnabled();
     clickSpy.mockRestore();
   });
 
@@ -169,7 +172,6 @@ describe('CnabConfigPanel', () => {
         banco_codigo: '341',
         sequencial_arquivo: 7,
         status: 'enviado',
-        arquivo_remessa: 'LINHA1\r\nLINHA2',
         created_at: null,
       },
     ]);
@@ -189,7 +191,6 @@ describe('CnabConfigPanel', () => {
         banco_codigo: '341',
         sequencial_arquivo: 7,
         status: 'enviado',
-        arquivo_remessa: 'LINHA1',
         created_at: null,
       },
     ]);

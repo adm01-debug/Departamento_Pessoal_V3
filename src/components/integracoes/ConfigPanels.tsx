@@ -256,10 +256,15 @@ type CnabRemessa = Awaited<ReturnType<typeof cnabService.getRemessas>>[number];
 
 const nomeArquivoRemessa = (r: CnabRemessa) => `REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`;
 
-function baixarRemessa(r: CnabRemessa) {
-  if (!r.arquivo_remessa) return;
+// Busca o conteúdo só no clique (a listagem não traz o arquivo). Retorna false se não há arquivo ou a busca falhou.
+async function baixarRemessa(empresaId: string, r: CnabRemessa): Promise<boolean> {
   try {
-    const blob = new Blob([r.arquivo_remessa], { type: 'text/plain;charset=utf-8' });
+    const conteudo = await cnabService.getArquivoRemessa(empresaId, r.id);
+    if (!conteudo) {
+      toast.error('Arquivo de remessa ainda não disponível');
+      return false;
+    }
+    const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -268,8 +273,10 @@ function baixarRemessa(r: CnabRemessa) {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
+    return true;
   } catch (err) {
     toast.error(safeErrorMessage(err, 'Erro ao baixar o arquivo de remessa'));
+    return false;
   }
 }
 
@@ -280,6 +287,7 @@ export function CnabConfigPanel() {
   // O arquivo de remessa traz CPF, conta e líquido de todos os funcionários: só RH/admin baixa.
   const { isAdmin, hasRole } = useAuth();
   const podeBaixarRemessa = isAdmin || hasRole('rh');
+  const [remessasSemArquivo, setRemessasSemArquivo] = useState<Set<string>>(() => new Set());
   const {
     data: config,
     isLoading: carregandoConfig,
@@ -403,9 +411,12 @@ export function CnabConfigPanel() {
                             variant="ghost"
                             size="sm"
                             className="h-8 rounded-lg"
-                            disabled={!r.arquivo_remessa}
-                            title={r.arquivo_remessa ? undefined : 'Arquivo de remessa ainda não disponível'}
-                            onClick={() => baixarRemessa(r)}
+                            disabled={remessasSemArquivo.has(r.id)}
+                            title={remessasSemArquivo.has(r.id) ? 'Arquivo de remessa ainda não disponível' : undefined}
+                            onClick={async () => {
+                              if (!(await baixarRemessa(empresaId, r)))
+                                setRemessasSemArquivo((prev) => new Set(prev).add(r.id));
+                            }}
                           >
                             <ExternalLink className="h-3 w-3 mr-2" />
                             Download

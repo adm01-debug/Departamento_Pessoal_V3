@@ -119,7 +119,10 @@ describe('cnabService.getRemessas', () => {
     const { selectFn, orderFn, limitFn } = setupOrderLimitChain([]);
     await cnabService.getRemessas(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('cnab_remessas');
-    expect(selectFn).toHaveBeenCalledWith('*');
+    const colunas = selectFn.mock.calls[0][0] as string;
+    expect(colunas).not.toBe('*');
+    expect(colunas).not.toContain('arquivo_remessa');
+    expect(colunas).toContain('sequencial_arquivo');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(limitFn).toHaveBeenCalledWith(50);
   });
@@ -127,6 +130,34 @@ describe('cnabService.getRemessas', () => {
   it('throws on DB error', async () => {
     setupOrderLimitChain([], { message: 'fail' });
     await expect(cnabService.getRemessas(EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
+// ─── cnabService.getArquivoRemessa ────────────────────────────────────────────
+
+describe('cnabService.getArquivoRemessa', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('busca só o arquivo da remessa pelo id, dentro da empresa', async () => {
+    const { selectFn, eqFn } = setupMaybeSingleChain({ arquivo_remessa: 'LINHA1' });
+    const result = await cnabService.getArquivoRemessa(EMPRESA_ID, 'r1');
+    expect(result).toBe('LINHA1');
+    expect(mockFrom).toHaveBeenCalledWith('cnab_remessas');
+    expect(selectFn).toHaveBeenCalledWith('arquivo_remessa');
+    expect(eqFn).toHaveBeenCalledWith('id', 'r1');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('retorna null quando a remessa não tem arquivo', async () => {
+    setupMaybeSingleChain(null);
+    await expect(cnabService.getArquivoRemessa(EMPRESA_ID, 'r1')).resolves.toBeNull();
+  });
+
+  it('propaga erro do banco', async () => {
+    setupMaybeSingleChain(null, { message: 'fail' });
+    await expect(cnabService.getArquivoRemessa(EMPRESA_ID, 'r1')).rejects.toBeDefined();
   });
 });
 
