@@ -11,6 +11,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
+import { AI_CHAT_URL, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 // Só buckets de documentos de identidade/admissão fazem sentido para OCR;
 // nunca aceitar um bucket arbitrário informado pelo cliente.
@@ -111,8 +112,8 @@ serve(async (req: Request): Promise<Response> => {
       return json({ success: false, error: 'URL do arquivo não obtida' }, 400);
     }
 
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-    if (!lovableApiKey) {
+    const aiKey = aiApiKey();
+    if (!aiKey) {
       return json({ success: false, error: 'Serviço OCR não configurado', code: 'OCR_NOT_CONFIGURED' }, 503);
     }
 
@@ -126,12 +127,12 @@ serve(async (req: Request): Promise<Response> => {
     const prompt = prompts[documentType] || prompts.generic;
 
     const aiResponse = await safeFetchWithRetry(
-      'https://api.lovable.dev/v1/chat/completions',
+      AI_CHAT_URL,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${lovableApiKey}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${aiKey}` },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+          model: aiModel(),
           messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: imageUrl } }] }],
           max_tokens: 1000,
         }),

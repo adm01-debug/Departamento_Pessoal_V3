@@ -39,10 +39,12 @@ import { enforceOrigin, getCorsHeaders, handlePreflight, parseJsonBody } from '.
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
+import { AI_CHAT_URL, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 const OPENAI_API_KEY  = Deno.env.get('OPENAI_API_KEY') ?? '';
-const AI_GATEWAY_URL  = Deno.env.get('AI_GATEWAY_URL')  ?? '';
-const AI_GATEWAY_API_KEY = Deno.env.get('AI_GATEWAY_API_KEY') ?? Deno.env.get('LOVABLE_API_KEY') ?? '';
+// Sem AI_GATEWAY_URL explícito, usa a DeepSeek quando DEEPSEEK_API_KEY existe.
+const AI_GATEWAY_URL  = Deno.env.get('AI_GATEWAY_URL')  ?? (aiApiKey() ? AI_CHAT_URL.replace(/\/chat\/completions$/, '') : '');
+const AI_GATEWAY_API_KEY = Deno.env.get('AI_GATEWAY_API_KEY') ?? aiApiKey() ?? '';
 
 const BodySchema = z.object({
   empresaId: z.string().uuid(),
@@ -359,7 +361,7 @@ Responda em português brasileiro, tom profissional.`;
               'Authorization': `Bearer ${authToken}`,
             },
             body: JSON.stringify({
-              model: AI_GATEWAY_URL ? 'gpt-4o-mini' : 'gpt-4o-mini',
+              model: AI_GATEWAY_URL ? aiModel() : 'gpt-4o-mini',
               messages: [{ role: 'user', content: prompt }],
               max_tokens: 600,
               temperature: 0.3,
