@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -85,5 +85,17 @@ describe('FolhaESocialSync', () => {
     vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTOS, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByText(/2 de 2 colaboradores/)).toBeInTheDocument();
+  });
+
+  it('Conciliar mostra estado vazio honesto, sem divergências ou valores fixos', () => {
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTOS, isLoading: false, refetch: vi.fn() } as never);
+    render(<FolhaESocialSync competencia="07/2026" />);
+    fireEvent.click(screen.getByRole('button', { name: /Conciliar/i }));
+    expect(
+      screen.getByText('Conciliação com os totalizadores S-5001/S-5003 indisponível até a transmissão real ao eSocial.')
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/R\$ 42,50/)).not.toBeInTheDocument();
+    expect(screen.queryByText('FGTS Digital Conciliado')).not.toBeInTheDocument();
+    expect(screen.queryByText('Auditado')).not.toBeInTheDocument();
   });
 });

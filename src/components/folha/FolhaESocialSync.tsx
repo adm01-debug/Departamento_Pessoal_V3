@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Send, CheckCircle2, Clock, AlertCircle, RefreshCw, ExternalLink, Calculator } from 'lucide-react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Send, CheckCircle2, Clock, AlertCircle, RefreshCw, ExternalLink, Calculator, FileX } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useState, useMemo } from 'react';
@@ -185,36 +186,14 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
               exit={{ height: 0, opacity: 0 }}
               className="overflow-hidden border-t border-border/20 pt-4"
             >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold uppercase tracking-wider text-muted-foreground">
-                    Divergências Local vs eSocial
-                  </span>
-                  <Badge variant="outline" className="text-[9px] bg-success/5 text-success border-success/20">
-                    Auditado
-                  </Badge>
-                </div>
-
-                <div className="p-2.5 rounded-lg bg-warning/5 border border-warning/10 flex items-start gap-3">
-                  <AlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-bold">Diferença de INSS (R$ 42,50)</p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Rubrica 1003 (Horas Extras) com incidência divergente no S-1010.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-2.5 rounded-lg bg-success/5 border border-success/10 flex items-start gap-3">
-                  <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-bold">FGTS Digital Conciliado</p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Valores transmitidos coincidem 100% com o totalizador S-5003.
-                    </p>
-                  </div>
-                </div>
-              </div>
+              {/* Os totalizadores S-5001/S-5003 devolvidos pelo eSocial ainda não são importados pelo sistema;
+                  sem eles não há base real para apontar divergências ou conciliação. */}
+              <EmptyState
+                icon={FileX}
+                title="Conciliação indisponível"
+                description="Conciliação com os totalizadores S-5001/S-5003 indisponível até a transmissão real ao eSocial."
+                className="py-6"
+              />
             </motion.div>
           )}
         </AnimatePresence>
