@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2914cb9cdcd44339c6ffd6787b5060388454ba75` (2026-11-12T02:29:44Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1aa6b3c4158b75553b3aa3b4ddd021be2444b49e` (2026-11-12T02:53:33Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,14 +383,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21975 nós · 46103 arestas · 2207 comunidades · grafo do commit `2914cb9c`
+- 21975 nós · 46103 arestas · 2207 comunidades · grafo do commit `1aa6b3c4`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (324), button.tsx (293), react (291), vitest (268), App.tsx (258), cn (231), services/index.ts (212), contract.ts (190), useEmpresas (170), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (58)
-- package-lock.json (55)
+- package.json (57)
+- package-lock.json (54)
 - .github/workflows/canonical-migrations.yml (53)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (20)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `1aa6b3c` fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)
 - 2026-11-12 `2914cb9` fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)
 - 2026-11-12 `c926aa1` fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)
 - 2026-11-11 `3fe5d63` fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `bba79fd` fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)
 - 2026-11-10 `9a0babf` feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)
 - 2026-11-10 `7f6d195` fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)
-- 2026-11-10 `e87dcb7` fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

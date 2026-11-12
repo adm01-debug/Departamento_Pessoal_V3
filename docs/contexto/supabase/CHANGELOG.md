@@ -2,6 +2,16 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-12 03:27 UTC
+
+- **functions** adicionado (1): `public.pode_gerir_config_ponto(_empresa_id uuid)`
+- **functions** alterado (4): `public.has_role(_user_id uuid, _role app_role)`, `public.is_admin(_user_id uuid)`, `public.pertence_a_empresa(_empresa_id uuid)`, `public.rls_tenant_or_admin(row_empresa_id uuid)`
+- **lints** adicionado (1): `policy_auth_fn_not_wrapped:public.configuracoes_ponto.Admins podem inserir configurações de ponto`
+- **policies (RLS)** adicionado (2): `public.configuracoes_ponto.Supervisor ou coordenador alteram configurações de ponto`, `public.configuracoes_ponto.Supervisor ou coordenador inserem configurações de ponto`
+- **policies (RLS)** removido (2): `public.configuracoes_ponto.Apenas admins podem atualizar configurações de ponto`, `public.configuracoes_ponto.configuracoes_ponto_tenant_manage`
+- **policies (RLS)** alterado (1): `public.configuracoes_ponto.Admins podem inserir configurações de ponto`
+- **types/enums** alterado (1): `public.app_role`
+
 ## 2026-11-12 02:14 UTC
 
 - **functions** adicionado (3): `public.deadline_legal_pagamento_ferias(p_data_inicio date)`, `public.eh_dia_util_br(p_data date)`, `public.eh_feriado_fixo_br(p_data date)`

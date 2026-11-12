@@ -4,7 +4,7 @@
 |---|---|---|---|
 | public.dp_timestamp | domain | timestamp with time zone NOT NULL |  |
 | public.dp_uuid | domain | uuid |  |
-| public.app_role | enum | admin, gestor, rh, user | public.permissions.role, public.user_roles.role |
+| public.app_role | enum | admin, gestor, rh, user, supervisor, coordenador | public.permissions.role, public.user_roles.role |
 | public.dp_pii_sensitivity | enum | publico, interno, confidencial, sensivel, critico | public.dp_data_catalog.sensitivity |
 | public.dp_user_role | enum | colaborador, gestor, rh, auditoria, admin, dpo | public.dp_user_roles.role |
 | public.escolaridade | enum | fundamental_incompleto, fundamental_completo, medio_incompleto, medio_completo, superior_incompleto, superior_completo, pos_graduacao, mestrado, doutorado | public.colaboradores.escolaridade |

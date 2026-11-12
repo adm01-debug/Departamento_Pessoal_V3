@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)",
    "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)",
    "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)",
    "fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)",
-   "fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)",
-   "fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)"
+   "fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

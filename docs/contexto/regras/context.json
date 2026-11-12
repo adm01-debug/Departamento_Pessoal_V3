@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "2914cb9cdcd44339c6ffd6787b5060388454ba75",
+  "sha": "1aa6b3c4158b75553b3aa3b4ddd021be2444b49e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 02:57 UTC",
+  "generated_at": "2026-11-12 03:26 UTC",
   "files_total": 2898,
   "code_files": 2369,
-  "code_lines": 321467
+  "code_lines": 321475
  },
  "version": "1.3.2",
- "facts_hash": "8af8991875175fed",
+ "facts_hash": "3b99b83b16edd487",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -96106,7 +96106,7 @@
   {
    "module": "scripts",
    "files": 131,
-   "lines": 29932,
+   "lines": 29940,
    "tables": [
     "a",
     "anexos",
@@ -228557,7 +228557,7 @@
   },
   "scripts/canonical-invariants.sql": {
    "path": "scripts/canonical-invariants.sql",
-   "lines": 425,
+   "lines": 433,
    "side_effects": [
     "notify_fn_fixed"
    ]
@@ -277900,10 +277900,19 @@
   }
  },
  "git": {
-  "sha": "2914cb9cdcd44339c6ffd6787b5060388454ba75",
+  "sha": "1aa6b3c4158b75553b3aa3b4ddd021be2444b49e",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1aa6b3c",
+    "date": "2026-11-11",
+    "author": "adm01-debug",
+    "subject": "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)",
+    "files": [
+     "scripts/canonical-invariants.sql"
+    ]
+   },
    {
     "sha": "2914cb9",
     "date": "2026-11-11",
@@ -278400,30 +278409,6 @@
      "scripts/tests/sw-routing.test.mjs",
      "scripts/tests/workflows-contract.test.mjs"
     ]
-   },
-   {
-    "sha": "3077cf6",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: espelho/sync sem perda de dado local, autofix com rollback completo e verificador de regras funcionando (#422)",
-    "files": [
-     "scripts/autofix/README.md",
-     "scripts/autofix/install-timer.sh",
-     "scripts/autofix/lib.mjs",
-     "scripts/autofix/regras/dados.mjs",
-     "scripts/autofix/regras/dados.test.mjs",
-     "scripts/autofix/regras/motores.mjs",
-     "scripts/autofix/regras/verificar.mjs",
-     "scripts/autofix/run.mjs",
-     "scripts/graphify/setup.sh",
-     "scripts/sync/README.md",
-     "scripts/sync/install-all-timers.sh",
-     "scripts/sync/install-autocommit-timer.sh",
-     "scripts/sync/install-timer.sh",
-     "scripts/sync/mirror-github.sh",
-     "scripts/sync/sync-github.sh",
-     "scripts/tests/sync-lab.test.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -278500,12 +278485,12 @@
     2
    ],
    [
-    "scripts/autofix/README.md",
-    2
+    "scripts/canonical-invariants.sql",
+    1
    ],
    [
-    "scripts/autofix/lib.mjs",
-    2
+    "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
+    1
    ]
   ]
  }

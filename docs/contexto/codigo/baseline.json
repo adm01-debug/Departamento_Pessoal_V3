@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "2914cb9cdcd44339c6ffd6787b5060388454ba75",
+  "commit": "1aa6b3c4158b75553b3aa3b4ddd021be2444b49e",
   "branch": "main",
-  "data_commit": "2026-11-12T02:29:44Z",
+  "data_commit": "2026-11-12T02:53:33Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1aa6b3c",
+    "data": "2026-11-12",
+    "assunto": "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)"
+   },
    {
     "sha": "2914cb9",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "4921f71",
     "data": "2026-11-10",
     "assunto": "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com ide"
-   },
-   {
-    "sha": "f8dace8",
-    "data": "2026-11-10",
-    "assunto": "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o "
    }
   ],
-  "arquivos_mudados_7d": 427,
+  "arquivos_mudados_7d": 428,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -199,11 +199,11 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 58
+    "mudancas": 57
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 55
+    "mudancas": 54
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
@@ -266,15 +266,15 @@
     "mudancas": 9
    },
    {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 9
+   },
+   {
     "arquivo": "src/services/__tests__/cnabService.test.ts",
     "mudancas": 9
    },
    {
     "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 8
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 111
+    "commits": 112
    },
    {
     "autor": "devin-ai-integration[bot]",

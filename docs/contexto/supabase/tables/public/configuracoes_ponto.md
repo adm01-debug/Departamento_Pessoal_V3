@@ -54,19 +54,9 @@
 |---|---|
 | comando | INSERT |
 | tipo | PERMISSIVE |
-| roles | public |
+| roles | authenticated |
 | USING |  |
-| WITH CHECK | `pertence_a_empresa(empresa_id)` |
-
-### `Apenas admins podem atualizar configurações de ponto`
-
-| campo | valor |
-|---|---|
-| comando | UPDATE |
-| tipo | PERMISSIVE |
-| roles | public |
-| USING | `pertence_a_empresa(empresa_id)` |
-| WITH CHECK | `pertence_a_empresa(empresa_id)` |
+| WITH CHECK | `(pertence_a_empresa(empresa_id) AND (has_role(auth.uid(), 'admin'::app_role) OR has_role(auth.uid(), 'rh'::app_role)))` |
 
 ### `Configurações de ponto visíveis por membros da empresa`
 
@@ -78,15 +68,25 @@
 | USING | `pertence_a_empresa(empresa_id)` |
 | WITH CHECK |  |
 
-### `configuracoes_ponto_tenant_manage`
+### `Supervisor ou coordenador alteram configurações de ponto`
 
 | campo | valor |
 |---|---|
-| comando | ALL |
+| comando | UPDATE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
-| USING | `rls_tenant_or_admin(empresa_id)` |
-| WITH CHECK | `rls_tenant_or_admin(empresa_id)` |
+| USING | `pode_gerir_config_ponto(empresa_id)` |
+| WITH CHECK | `pode_gerir_config_ponto(empresa_id)` |
+
+### `Supervisor ou coordenador inserem configurações de ponto`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `pode_gerir_config_ponto(empresa_id)` |
 
 
 ## Triggers
