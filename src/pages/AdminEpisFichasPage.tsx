@@ -26,6 +26,16 @@ const TIPOS_MOVIMENTO = [
   { value: 'recusa', label: 'Recusa' },
 ];
 
+// status_item segue o movimento (CHECK em_uso|devolvido|substituido|descartado).
+// Só 'em_uso' passa pelo trigger validate_epi_item_ca (CA vencido), então a
+// devolução de EPI com CA vencido continua permitida.
+const STATUS_ITEM_POR_MOVIMENTO: Record<string, 'em_uso' | 'devolvido' | 'substituido' | 'descartado'> = {
+  entrega: 'em_uso',
+  devolucao: 'devolvido',
+  substituicao: 'substituido',
+  recusa: 'descartado',
+};
+
 interface ItemForm {
   epi_id: string;
   descricao: string;
@@ -101,11 +111,16 @@ export default function AdminEpisFichasPage() {
       toast.error('Informe o responsável pela entrega.');
       return;
     }
-    if (itens.some((it) => !it.descricao.trim() || !(Number(it.quantidade) > 0))) {
-      toast.error('Cada item precisa de descrição e quantidade maior que zero.');
+    if (
+      itens.some(
+        (it) => !it.descricao.trim() || !Number.isInteger(Number(it.quantidade)) || !(Number(it.quantidade) > 0)
+      )
+    ) {
+      toast.error('Cada item precisa de descrição e quantidade inteira maior que zero.');
       return;
     }
     setSalvando(true);
+    const hoje = new Date().toLocaleDateString('en-CA');
     try {
       const { data: ficha, error: fichaErr } = await supabase
         .from('epis_fichas')
@@ -137,6 +152,8 @@ export default function AdminEpisFichasPage() {
               ca: it.ca.trim() || null,
               ca_validade: it.ca_validade || null,
               quantidade: Number(it.quantidade),
+              status_item: STATUS_ITEM_POR_MOVIMENTO[tipoMovimento] ?? 'em_uso',
+              data_devolucao: tipoMovimento === 'devolucao' ? hoje : null,
             },
             'AdminEpisFichasPage:nova_itens'
           )
@@ -328,6 +345,7 @@ export default function AdminEpisFichasPage() {
                         <Input
                           type="number"
                           min={1}
+                          step={1}
                           className="w-24"
                           aria-label="Quantidade"
                           value={it.quantidade}

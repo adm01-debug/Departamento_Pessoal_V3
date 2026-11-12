@@ -15,7 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, FileText, History, CheckCircle2, Clock, ExternalLink, ShieldCheck, Send } from 'lucide-react';
+import { User, FileText, History, CheckCircle2, Clock, Link2, ShieldCheck, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -125,14 +125,15 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     }
   };
 
-  const [abrindoPortal, setAbrindoPortal] = useState(false);
+  const [copiandoLink, setCopiandoLink] = useState(false);
 
-  // Abre o portal do candidato (/contratacao?token=...) com o token vigente
-  // mais recente da admissão; sem token vigente, gera um novo pelo mesmo
-  // fluxo de AdmissoesPage (contratacaoService.enviarLinkCandidato).
-  const handleVerPortal = async () => {
-    if (!admissao) return;
-    setAbrindoPortal(true);
+  // O RH não abre o portal do candidato: o portal autentica só pelo token e
+  // permite assinar o contrato (admissao_assinar_contrato) como o candidato.
+  // Aqui só se copia o link (token vigente ou novo) para enviar ao candidato;
+  // admissão concluída/cancelada não gera nem expõe token.
+  const handleCopiarLinkPortal = async () => {
+    if (!admissao || admissao.etapa === 'concluida' || admissao.etapa === 'cancelada') return;
+    setCopiandoLink(true);
     try {
       const { data: vigente, error } = await supabase
         .from('admissao_tokens')
@@ -151,11 +152,12 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
         }
         token = (await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email)).token;
       }
-      window.open(`${window.location.origin}/contratacao?token=${encodeURIComponent(token)}`, '_blank', 'noopener');
+      await navigator.clipboard.writeText(`${window.location.origin}/contratacao?token=${encodeURIComponent(token)}`);
+      toast.success('Link copiado — envie ao candidato');
     } catch (e) {
-      toast.error(safeErrorMessage(e, 'Falha ao abrir o portal do candidato.'));
+      toast.error(safeErrorMessage(e, 'Falha ao copiar o link do portal do candidato.'));
     } finally {
-      setAbrindoPortal(false);
+      setCopiandoLink(false);
     }
   };
 
@@ -234,10 +236,11 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                 variant="outline"
                 size="sm"
                 className="rounded-xl gap-2 h-9 text-xs"
-                onClick={handleVerPortal}
-                disabled={abrindoPortal}
+                onClick={handleCopiarLinkPortal}
+                disabled={copiandoLink || terminal}
+                title={terminal ? 'Admissão encerrada — o portal do candidato não está disponível' : undefined}
               >
-                <ExternalLink className="w-4 h-4" /> Ver Portal
+                <Link2 className="w-4 h-4" /> Copiar link do Portal
               </Button>
             </div>
           </div>
