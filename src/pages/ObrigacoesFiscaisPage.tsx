@@ -181,14 +181,26 @@ export default function ObrigacoesFiscaisPage() {
     setGerandoServidor(true);
     try {
       const [mes, ano] = competencia.split('/');
-      await edgeFunctionsService.gerarGuias({
+      const r = (await edgeFunctionsService.gerarGuias({
         empresaId: empresaAtual.id,
         competencia: `${ano}-${mes}`,
         tipo: 'todos',
-      });
+      })) as { guias?: unknown[]; duplicatas_bloqueadas?: string[] } | null;
       qc.invalidateQueries({ queryKey: ['guias-fgts'] });
       qc.invalidateQueries({ queryKey: ['guias-inss'] });
-      toast.success('Guias geradas automaticamente via servidor!');
+      const geradas = r?.guias?.length ?? 0;
+      const duplicadas = r?.duplicatas_bloqueadas ?? [];
+      if (geradas > 0) {
+        toast.success(
+          `${geradas} guia(s) gerada(s)` + (duplicadas.length ? `. Já existiam: ${duplicadas.join(', ')}` : '')
+        );
+      } else {
+        toast.info(
+          duplicadas.length
+            ? `Nenhuma guia nova; já existentes nesta competência: ${duplicadas.join(', ')}`
+            : 'Nenhuma guia nova gerada.'
+        );
+      }
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar guias.'));
     } finally {
