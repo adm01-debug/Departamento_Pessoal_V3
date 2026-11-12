@@ -95,6 +95,7 @@ export default function EPIsPage() {
   const atualizarEpi = useAtualizarEpi();
 
   const fecharDialogEpi = (open: boolean) => {
+    if (!open && atualizarEpi.isPending) return;
     setOpenEpi(open);
     if (!open && editingEpiId) {
       setEditingEpiId(null);
@@ -347,7 +348,7 @@ export default function EPIsPage() {
                         <Button
                           className="w-full rounded-xl"
                           onClick={salvarEpi}
-                          disabled={!formEpi.nome || atualizarEpi.isPending}
+                          disabled={!formEpi.nome || criarEpi.isPending || atualizarEpi.isPending}
                         >
                           {editingEpiId ? 'Salvar alterações' : 'Cadastrar EPI'}
                         </Button>
