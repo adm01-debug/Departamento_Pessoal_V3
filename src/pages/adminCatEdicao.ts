@@ -33,3 +33,15 @@ export function catParaForm<T extends { data_acidente: string | null }>(
   };
   return { ...out, data_acidente: isoParaDatetimeLocal(row.data_acidente) };
 }
+
+/**
+ * Prazo legal de envio da CAT, mesma regra de `calcular_prazo_cat`
+ * (migration 20260717204215): 24h se óbito, 1 dia caso contrário. O trigger só
+ * roda no INSERT, então a correção recalcula ao mudar data ou óbito.
+ */
+export function prazoLimiteCat(dataAcidenteIso: string, houveObito: boolean): string {
+  const d = new Date(dataAcidenteIso);
+  if (houveObito) d.setTime(d.getTime() + 24 * 60 * 60 * 1000);
+  else d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString();
+}

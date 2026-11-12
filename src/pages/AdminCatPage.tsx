@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { AlertTriangle, FileText, Plus, Send, ShieldAlert, Clock, Skull, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
-import { catParaForm, podeEditarCat } from './adminCatEdicao';
+import { catParaForm, podeEditarCat, prazoLimiteCat } from './adminCatEdicao';
 
 const CAT_FORM_COLUMNS =
   'colaborador_id,data_acidente,hora_acidente,tipo_acidente,tipo_cat,cid_principal,parte_corpo_atingida,agente_causador,local_acidente,tipo_local,situacao_geradora,minutos_trabalhados_antes,houve_afastamento,dias_afastamento_estimado,houve_obito,houve_internacao,ultimo_dia_trabalhado,observacoes';
@@ -130,12 +130,17 @@ export default function AdminCatPage() {
     try {
       if (editingId) {
         // Filtro por status 'pendente' evita sobrescrever CAT transmitida entre abrir e salvar.
+        const dataAcidente = new Date(values.data_acidente).toISOString();
         const { data, error } = await supabase
           .from('sst_cat')
           .update(
             validateTablePayload(
               'sst_cat',
-              { ...values, data_acidente: new Date(values.data_acidente).toISOString() },
+              {
+                ...values,
+                data_acidente: dataAcidente,
+                prazo_limite_envio: prazoLimiteCat(dataAcidente, values.houve_obito),
+              },
               'AdminCatPage:sst_cat:update'
             )
           )
@@ -180,7 +185,8 @@ export default function AdminCatPage() {
         .eq('empresa_id', empresaId)
         .single();
       if (error) throw error;
-      form.reset(catParaForm(data) as Partial<CatForm>);
+      // keepDefaultValues: o form.reset() ao salvar/fechar volta aos padrões de "Nova CAT", não a esta CAT.
+      form.reset(catParaForm(data) as Partial<CatForm>, { keepDefaultValues: true });
       setEditingId(id);
       setOpen(true);
     } catch (e) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { catParaForm, isoParaDatetimeLocal, podeEditarCat } from '../adminCatEdicao';
+import { catParaForm, isoParaDatetimeLocal, podeEditarCat, prazoLimiteCat } from '../adminCatEdicao';
 
 describe('podeEditarCat', () => {
   const base = { status_esocial: 'pendente', protocolo_esocial: null, data_envio_esocial: null };
@@ -45,5 +45,16 @@ describe('catParaForm', () => {
       parte_corpo_atingida: undefined,
       houve_obito: false,
     });
+  });
+});
+
+describe('prazoLimiteCat', () => {
+  it('24h após o acidente com óbito e 1 dia sem óbito (regra de calcular_prazo_cat)', () => {
+    expect(prazoLimiteCat('2026-11-05T08:07:00.000Z', true)).toBe('2026-11-06T08:07:00.000Z');
+    expect(prazoLimiteCat('2026-11-05T08:07:00.000Z', false)).toBe('2026-11-06T08:07:00.000Z');
+  });
+
+  it('recalcula a partir da data corrigida', () => {
+    expect(prazoLimiteCat('2026-12-31T23:30:00.000Z', false)).toBe('2027-01-01T23:30:00.000Z');
   });
 });
