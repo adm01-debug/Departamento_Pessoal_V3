@@ -19,7 +19,11 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DropdownMenuLabel: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DropdownMenuSeparator: () => <hr />,
-  DropdownMenuItem: ({ children }: { children?: ReactNode }) => <div role="menuitem">{children}</div>,
+  DropdownMenuItem: ({ children, disabled }: { children?: ReactNode; disabled?: boolean }) => (
+    <div role="menuitem" aria-disabled={disabled}>
+      {children}
+    </div>
+  ),
 }));
 
 import { AfastamentoTable } from '../afastamentos/AfastamentoTable';
@@ -71,6 +75,17 @@ describe('AfastamentoTable', () => {
   it('renders Dias table header', () => {
     render(<AfastamentoTable {...DEFAULT_PROPS} />);
     expect(screen.getByText('Dias')).toBeInTheDocument();
+  });
+
+  it('desabilita Prorrogar em afastamento encerrado ou aprovado', () => {
+    const data = [
+      { ...MOCK_DATA[0], id: 'af-enc', status: 'encerrado' },
+      { ...MOCK_DATA[0], id: 'af-apr', status: 'ativo', aprovado_em: '2026-07-02T00:00:00Z' },
+      { ...MOCK_DATA[0], id: 'af-ok', status: 'ativo', aprovado_em: null },
+    ] as unknown as Item[];
+    render(<AfastamentoTable {...DEFAULT_PROPS} data={data} />);
+    const itens = screen.getAllByRole('menuitem').filter((el) => el.textContent?.includes('Prorrogar'));
+    expect(itens.map((el) => el.getAttribute('aria-disabled'))).toEqual(['true', 'true', 'false']);
   });
 
   it('renders colaborador name in table row', () => {

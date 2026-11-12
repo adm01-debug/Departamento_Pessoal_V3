@@ -21,6 +21,7 @@ import { Plus, ArrowRightLeft, TrendingUp, Pencil, Trash2 } from 'lucide-react';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
 import { todayLocalISO } from '@/utils/dateLocal';
+import { criarRegistroSalarial } from '@/services/colaboradorDetalhesService';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -316,9 +317,28 @@ export default function MovimentacoesPage() {
       const maisRecente =
         vigente && temAlteracao && mudou && (await ehMaisRecente('promocoes', d.colaborador_id, data.id));
       if (maisRecente) {
+        // Mudança salarial aplicada entra no histórico salarial do colaborador (não há trigger que faça isso).
+        const registrarSalario =
+          !!d.salario_novo &&
+          (!original || original.salario_novo !== data.salario_novo || original.colaborador_id !== data.colaborador_id);
+        let historicoId: string | null = null;
         try {
+          if (registrarSalario) {
+            const hist = await criarRegistroSalarial({
+              colaborador_id: d.colaborador_id,
+              empresa_id: empresaAtual!.id,
+              data_vigencia: d.data_vigencia,
+              motivo: (d.motivo || 'Promoção').slice(0, 300),
+              salario_anterior: d.salario_anterior ? Number(d.salario_anterior) : null,
+              salario_novo: Number(d.salario_novo),
+              cargo_anterior: cargos.find((c) => c.id === d.cargo_anterior_id)?.nome ?? null,
+              cargo_novo: cargoNovo?.nome ?? null,
+            });
+            historicoId = hist?.id ?? null;
+          }
           await aplicarNoColaborador(d.colaborador_id, patch);
         } catch (e) {
+          if (historicoId) await supabase.from('historico_salarial').delete().eq('id', historicoId);
           const desfeito = original
             ? await supabase
                 .from('promocoes')
