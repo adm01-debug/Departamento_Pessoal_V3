@@ -65,6 +65,7 @@ export default function CanalEticaPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['canal-etica'] });
+      queryClient.invalidateQueries({ queryKey: ['canal_etica'] });
       setOpen(false);
       toast.success('Denúncia registrada');
     },
@@ -81,6 +82,7 @@ export default function CanalEticaPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['canal-etica'] });
+      queryClient.invalidateQueries({ queryKey: ['canal_etica'] });
       setSelecionada(null);
       toast.success('Denúncia atualizada');
     },
@@ -227,7 +229,7 @@ export default function CanalEticaPage() {
         </Card>
 
         <Dialog open={!!selecionada} onOpenChange={(o) => !o && setSelecionada(null)}>
-          <DialogContent>
+          <DialogContent className="max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Denúncia {selecionada?.protocolo}</DialogTitle>
             </DialogHeader>

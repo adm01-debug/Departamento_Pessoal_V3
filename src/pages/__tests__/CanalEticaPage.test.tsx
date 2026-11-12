@@ -89,6 +89,25 @@ describe('CanalEticaPage — tratamento de denúncias', () => {
     expect(toast.success).not.toHaveBeenCalled();
   });
 
+  it('diálogo rola no mobile e salvar invalida as chaves das duas páginas', async () => {
+    vi.mocked(comunicacaoService.atualizarDenuncia).mockResolvedValue({ ...denuncia } as never);
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const invalidate = vi.spyOn(qc, 'invalidateQueries');
+    render(
+      <QueryClientProvider client={qc}>
+        <CanalEticaPage />
+      </QueryClientProvider>
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Tratar' }));
+    expect(screen.getByRole('dialog')).toHaveClass('max-h-[90vh]', 'overflow-y-auto');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar tratamento' }));
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Denúncia atualizada'));
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['canal-etica'] });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['canal_etica'] });
+  });
+
   it('usuário sem papel RH/admin não vê a ação de tratar', async () => {
     auth.hasRole = () => false;
     renderPage();
