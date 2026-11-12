@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "688c78f128f49f3de598c7e5ae32e493c86384a6",
+  "commit": "23dd5101e5d7301583f740528740f89fad26416c",
   "branch": "main",
-  "data_commit": "2026-11-12T11:21:40Z",
+  "data_commit": "2026-11-12T08:42:06-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "23dd510",
+    "data": "2026-11-12",
+    "assunto": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)"
+   },
    {
     "sha": "688c78f",
     "data": "2026-11-12",
@@ -126,18 +131,13 @@
     "sha": "75460b7",
     "data": "2026-11-10",
     "assunto": "infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)"
-   },
-   {
-    "sha": "225d591",
-    "data": "2026-11-10",
-    "assunto": "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)"
    }
   ],
   "arquivos_mudados_7d": 442,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "pasta": "package.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 48
+    "mudancas": 47
    },
    {
     "arquivo": "CLAUDE.md",
@@ -278,15 +278,15 @@
     "mudancas": 8
    },
    {
+    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 8
+   },
+   {
     "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
    {
     "arquivo": ".github/workflows/canonical-sql-diag.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     "mudancas": 7
    },
    {
@@ -305,7 +305,7 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 63
+    "commits": 62
    },
    {
     "autor": "dependabot[bot]",
@@ -313,7 +313,7 @@
    },
    {
     "autor": "github-actions[bot]",
-    "commits": 4
+    "commits": 5
    },
    {
     "autor": "Claude",

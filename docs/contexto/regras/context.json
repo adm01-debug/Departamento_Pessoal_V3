@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "688c78f128f49f3de598c7e5ae32e493c86384a6",
+  "sha": "23dd5101e5d7301583f740528740f89fad26416c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 11:31 UTC",
+  "generated_at": "2026-11-12 12:00 UTC",
   "files_total": 2902,
   "code_files": 2373,
   "code_lines": 321637
@@ -278009,10 +278009,19 @@
   }
  },
  "git": {
-  "sha": "688c78f128f49f3de598c7e5ae32e493c86384a6",
+  "sha": "23dd5101e5d7301583f740528740f89fad26416c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "23dd510",
+    "date": "2026-11-12",
+    "author": "github-actions[bot]",
+    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)",
+    "files": [
+     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
+    ]
+   },
    {
     "sha": "688c78f",
     "date": "2026-11-12",
@@ -278380,16 +278389,6 @@
      "scripts/ci/sla-code-scanning.unit.mjs",
      "scripts/ci/workflow-test-support.mjs"
     ]
-   },
-   {
-    "sha": "8391bcc",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix(db): recria policy RLS configuracoes_ponto_tenant_manage (drift migrations x banco) (#394)",
-    "files": [
-     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
-     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -278415,14 +278414,6 @@
    ],
    [
     ".github/workflows/canonical-probes.yml",
-    2
-   ],
-   [
-    "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
-    2
-   ],
-   [
-    "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql",
     2
    ],
    [
@@ -278466,11 +278457,19 @@
     2
    ],
    [
+    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    1
+   ],
+   [
     ".github/workflows/ossf-scorecard.yml",
     1
    ],
    [
     ".github/workflows/security.yml",
+    1
+   ],
+   [
+    ".github/workflows/workflow-lint.yml",
     1
    ]
   ]
