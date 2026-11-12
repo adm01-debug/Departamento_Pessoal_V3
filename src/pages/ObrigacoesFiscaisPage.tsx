@@ -181,11 +181,12 @@ export default function ObrigacoesFiscaisPage() {
     setGerandoServidor(true);
     try {
       const [mes, ano] = competencia.split('/');
-      const r = (await edgeFunctionsService.gerarGuias({
+      // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`.
+      const { data: r } = (await edgeFunctionsService.gerarGuias({
         empresaId: empresaAtual.id,
         competencia: `${ano}-${mes}`,
         tipo: 'todos',
-      })) as { guias?: unknown[]; duplicatas_bloqueadas?: string[] } | null;
+      })) as { data?: { guias?: unknown[]; duplicatas_bloqueadas?: string[] } | null };
       qc.invalidateQueries({ queryKey: ['guias-fgts'] });
       qc.invalidateQueries({ queryKey: ['guias-inss'] });
       const geradas = r?.guias?.length ?? 0;

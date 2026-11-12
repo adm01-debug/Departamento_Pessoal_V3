@@ -36,7 +36,10 @@ describe('ObrigacoesFiscaisPage — gerar guias via servidor', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('mostra quantas guias foram geradas', async () => {
-    gerarGuias.mockResolvedValue({ success: true, guias: [{}, {}], duplicatas_bloqueadas: [] } as never);
+    gerarGuias.mockResolvedValue({
+      data: { success: true, guias: [{}, {}], duplicatas_bloqueadas: [] },
+      attempts: 1,
+    } as never);
     renderPage();
     await userEvent.setup().click(screen.getByRole('button', { name: /Auto/i }));
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('2 guia(s) gerada(s)'));
@@ -45,9 +48,8 @@ describe('ObrigacoesFiscaisPage — gerar guias via servidor', () => {
 
   it('não anuncia sucesso quando tudo já existia: informa as duplicatas', async () => {
     gerarGuias.mockResolvedValue({
-      success: true,
-      guias: [],
-      duplicatas_bloqueadas: ['GPS', 'FGTS_DIGITAL'],
+      data: { success: true, guias: [], duplicatas_bloqueadas: ['GPS', 'FGTS_DIGITAL'] },
+      attempts: 1,
     } as never);
     renderPage();
     await userEvent.setup().click(screen.getByRole('button', { name: /Auto/i }));
