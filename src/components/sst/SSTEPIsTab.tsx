@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Progress } from '@/components/ui/progress';
 import { HardHat } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { format, parseISO } from 'date-fns';
 import type { Tables } from '@/integrations/supabase/types';
 
 export type EpiResumo = Pick<Tables<'epis'>, 'id' | 'nome' | 'ca' | 'categoria' | 'ca_validade'> &
@@ -62,8 +63,7 @@ export function SSTEPIsTab({ epis, entregas }: SSTEPIsTabProps) {
                   {(epi.validade_ca ?? epi.ca_validade) && (
                     <div className="mt-2">
                       <p className="text-[10px] text-muted-foreground font-body">
-                        Validade CA:{' '}
-                        {new Date((epi.validade_ca ?? epi.ca_validade) as string).toLocaleDateString('pt-BR')}
+                        Validade CA: {format(parseISO((epi.validade_ca ?? epi.ca_validade) as string), 'dd/MM/yyyy')}
                       </p>
                       <Progress
                         value={Math.min(100, ((mesesRestantes(epi.validade_ca ?? epi.ca_validade) ?? 0) / 12) * 100)}
