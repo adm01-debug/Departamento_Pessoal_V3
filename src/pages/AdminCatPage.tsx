@@ -22,6 +22,9 @@ import { catParaForm, opcaoValida, podeEditarCat, prazoLimiteCat, vazioParaNull 
 const CAT_FORM_COLUMNS =
   'colaborador_id,data_acidente,hora_acidente,tipo_acidente,tipo_cat,cid_principal,parte_corpo_atingida,agente_causador,local_acidente,tipo_local,situacao_geradora,minutos_trabalhados_antes,houve_afastamento,dias_afastamento_estimado,houve_obito,houve_internacao,ultimo_dia_trabalhado,observacoes';
 
+// Input numérico limpo ('') vira null: z.coerce mandaria 0 e o UPDATE gravaria 0 no lugar de vazio.
+const numeroOpcional = z.preprocess((v) => (v === '' ? null : v), z.coerce.number().min(0).nullable().optional());
+
 const catSchema = z.object({
   colaborador_id: z.string().uuid('Colaborador obrigatório'),
   data_acidente: z.string().min(1, 'Data obrigatória'),
@@ -34,9 +37,9 @@ const catSchema = z.object({
   local_acidente: z.string().optional(),
   tipo_local: z.enum(['estabelecimento_empregador', 'via_publica', 'area_rural', 'outros']).optional(),
   situacao_geradora: z.string().optional(),
-  minutos_trabalhados_antes: z.coerce.number().min(0).optional(),
+  minutos_trabalhados_antes: numeroOpcional,
   houve_afastamento: z.boolean().default(false),
-  dias_afastamento_estimado: z.coerce.number().min(0).optional(),
+  dias_afastamento_estimado: numeroOpcional,
   houve_obito: z.boolean().default(false),
   houve_internacao: z.boolean().default(false),
   ultimo_dia_trabalhado: z.string().optional(),
