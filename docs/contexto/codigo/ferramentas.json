@@ -127,10 +127,10 @@
   "dev_dependencias": 34,
   "principais": {
    "@supabase/supabase-js": "^2.118.0",
-   "@tanstack/react-query": "^5.105.0",
-   "@tanstack/react-query-devtools": "5.105.0",
+   "@tanstack/react-query": "^5.105.3",
+   "@tanstack/react-query-devtools": "5.105.3",
    "date-fns": "^4.4.0",
-   "framer-motion": "14.7.1",
+   "framer-motion": "14.9.0",
    "react": "19.3.1",
    "react-day-picker": "^10.0.2",
    "react-dom": "19.3.1",
@@ -1677,12 +1677,12 @@
    {
     "pacote": "@tanstack/react-query",
     "servico": "react-query",
-    "versao": "^5.105.0"
+    "versao": "^5.105.3"
    },
    {
     "pacote": "@sentry/react",
     "servico": "Sentry",
-    "versao": "11.9.0"
+    "versao": "11.10.0"
    },
    {
     "pacote": "@supabase/supabase-js",

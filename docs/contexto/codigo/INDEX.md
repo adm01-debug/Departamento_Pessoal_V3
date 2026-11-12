@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `23dd5101e5d7301583f740528740f89fad26416c` (2026-11-12T08:42:06-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `2bdd7bd628a228d3516444000a30f22893654af9` (2026-11-12T09:03:04-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,7 +383,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21985 nós · 46149 arestas · 2109 comunidades · grafo do commit `23dd5101`
+- 21985 nós · 46149 arestas · 2109 comunidades · grafo do commit `2bdd7bd6`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (363), vitest (333), Button (332), client.ts (224), cn (212), button.tsx (180), useEmpresas (167), services/index.ts (166), "public"."empresas" (164), rateLimit.ts (157)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `2bdd7bd` build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)
 - 2026-11-12 `23dd510` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)
 - 2026-11-12 `688c78f` build(deps): bump the actions group across 1 directory with 5 updates (#426)
 - 2026-11-12 `97ce91a` infra: probes canônicos em fila própria (destrava migrations) (#442)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `3fe5d63` fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)
 - 2026-11-11 `98a0bd5` fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)
 - 2026-11-11 `145cb90` fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)
-- 2026-11-11 `bfb3cb0` infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

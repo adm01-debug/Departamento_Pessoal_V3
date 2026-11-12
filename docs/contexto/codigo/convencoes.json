@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)",
    "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)",
    "build(deps): bump the actions group across 1 directory with 5 updates (#426)",
    "infra: probes canônicos em fila própria (destrava migrations) (#442)",
-   "fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)",
-   "feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)"
+   "fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

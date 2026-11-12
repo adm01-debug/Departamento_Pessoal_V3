@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "23dd5101e5d7301583f740528740f89fad26416c",
+  "commit": "2bdd7bd628a228d3516444000a30f22893654af9",
   "branch": "main",
-  "data_commit": "2026-11-12T08:42:06-03:00",
+  "data_commit": "2026-11-12T09:03:04-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "2bdd7bd",
+    "data": "2026-11-12",
+    "assunto": "build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)"
+   },
    {
     "sha": "23dd510",
     "data": "2026-11-12",
@@ -126,11 +131,6 @@
     "sha": "e87dcb7",
     "data": "2026-11-10",
     "assunto": "fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)"
-   },
-   {
-    "sha": "75460b7",
-    "data": "2026-11-10",
-    "assunto": "infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)"
    }
   ],
   "arquivos_mudados_7d": 442,
@@ -141,14 +141,14 @@
    },
    {
     "pasta": "package.json",
-    "mudancas": 22
-   },
-   {
-    "pasta": "CLAUDE.md",
-    "mudancas": 20
+    "mudancas": 23
    },
    {
     "pasta": "package-lock.json",
+    "mudancas": 21
+   },
+   {
+    "pasta": "CLAUDE.md",
     "mudancas": 20
    },
    {
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 19
+    "commits": 20
    },
    {
     "autor": "github-actions[bot]",

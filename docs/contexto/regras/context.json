@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "23dd5101e5d7301583f740528740f89fad26416c",
+  "sha": "2bdd7bd628a228d3516444000a30f22893654af9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 12:00 UTC",
+  "generated_at": "2026-11-12 12:16 UTC",
   "files_total": 2902,
   "code_files": 2373,
   "code_lines": 321637
  },
  "version": "1.3.2",
- "facts_hash": "d9e40ac9ec4f216b",
+ "facts_hash": "ca1782b2c3417eb8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -27,7 +27,7 @@
     "in": "package.json"
    },
    "@tanstack/react-query": {
-    "version": "^5.105.0",
+    "version": "^5.105.3",
     "role": "Cache/fetch de dados (TanStack Query)",
     "in": "package.json"
    },
@@ -47,7 +47,7 @@
     "in": "package.json"
    },
    "lucide-react": {
-    "version": "^1.63.0",
+    "version": "^1.67.0",
     "role": "Ícones Lucide",
     "in": "package.json"
    },
@@ -278009,10 +278009,20 @@
   }
  },
  "git": {
-  "sha": "23dd5101e5d7301583f740528740f89fad26416c",
+  "sha": "2bdd7bd628a228d3516444000a30f22893654af9",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "2bdd7bd",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "23dd510",
     "date": "2026-11-12",
@@ -278364,31 +278374,6 @@
      "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
      "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql"
     ]
-   },
-   {
-    "sha": "36a404f",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)",
-    "files": [
-     ".github/toolchain.json",
-     ".github/workflows/branch-hygiene-audit.yml",
-     ".github/workflows/notifica-falha-main.yml",
-     "infra/github/action-pins.json",
-     "scripts/ci/README.md",
-     "scripts/ci/actions-kpi.mjs",
-     "scripts/ci/actions-kpi.unit.mjs",
-     "scripts/ci/branch-hygiene-runtime.unit.mjs",
-     "scripts/ci/branch-podaveis.mjs",
-     "scripts/ci/branch-podaveis.unit.mjs",
-     "scripts/ci/bump-toolchain.mjs",
-     "scripts/ci/issue-rotativa.mjs",
-     "scripts/ci/issue-rotativa.unit.mjs",
-     "scripts/ci/notifica-falha.mjs",
-     "scripts/ci/sla-code-scanning.mjs",
-     "scripts/ci/sla-code-scanning.unit.mjs",
-     "scripts/ci/workflow-test-support.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -278401,15 +278386,19 @@
     4
    ],
    [
+    "package.json",
+    3
+   ],
+   [
     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
     3
    ],
    [
-    ".github/workflows/canonical-edge-functions.yml",
+    "package-lock.json",
     2
    ],
    [
-    "infra/github/action-pins.json",
+    ".github/workflows/canonical-edge-functions.yml",
     2
    ],
    [
@@ -278441,19 +278430,11 @@
     2
    ],
    [
-    "package.json",
-    2
-   ],
-   [
     "scripts/simulacao/_lib/ts-require.cjs",
     2
    ],
    [
     "scripts/simulacao/verify_rescisao_fix.cjs",
-    2
-   ],
-   [
-    "scripts/ci/README.md",
     2
    ],
    [
@@ -278470,6 +278451,10 @@
    ],
    [
     ".github/workflows/workflow-lint.yml",
+    1
+   ],
+   [
+    "infra/github/action-pins.json",
     1
    ]
   ]
