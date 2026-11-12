@@ -16,7 +16,7 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value);
 }
 
-export function SimuladorWhatIf() {
+export function SimuladorWhatIf({ onSaved }: { onSaved?: () => void } = {}) {
   const { empresaAtual } = useEmpresas();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -97,6 +97,7 @@ export function SimuladorWhatIf() {
         )
       );
       if (error) throw error;
+      onSaved?.();
       toast.success('Simulação salva com sucesso!');
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao salvar simulação.'));

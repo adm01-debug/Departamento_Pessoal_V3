@@ -20,7 +20,9 @@ import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, C
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
-import { DarfTab } from '@/components/obrigacoes/DarfTab';
+import { DarfTab, type DarfIrrfSituacao } from '@/components/obrigacoes/DarfTab';
+import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
+import { resumoSimulacao } from '@/components/obrigacoes/simulacaoResumo';
 import { validateTablePayload } from '@/schemas/validate';
 
 function formatCurrency(v: number) {
@@ -121,6 +123,33 @@ export default function ObrigacoesFiscaisPage() {
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
+    },
+    enabled: !!empresaAtual?.id,
+  });
+
+  const {
+    data: darfIrrf,
+    isLoading: loadingIrrf,
+    isError: erroIrrf,
+  } = useQuery({
+    queryKey: ['darf-irrf', empresaAtual?.id, competencia],
+    queryFn: async (): Promise<{ total: number | null; situacao?: DarfIrrfSituacao }> => {
+      const [mes, ano] = competencia.split('/');
+      const { data, error } = await supabase
+        .from('folhas_pagamento')
+        .select('id, status, data_calculo, folha_itens(irrf_mes)')
+        .eq('empresa_id', empresaAtual!.id)
+        .eq('competencia', `${ano}-${mes}`)
+        .eq('tipo', 'mensal')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) return { total: null, situacao: 'sem_folha' };
+      if (data.status === 'aberta' || !data.data_calculo) return { total: null, situacao: 'nao_calculada' };
+      // RLS: folha_itens só é legível com pode_gerir_rh; gestor vê o cabeçalho com itens vazios.
+      const itens = data.folha_itens ?? [];
+      if (itens.length === 0) return { total: null, situacao: 'sem_itens' };
+      if (itens.every((i) => i.irrf_mes === null)) return { total: null, situacao: 'nao_calculada' };
+      return { total: itens.reduce((acc, i) => acc + Number(i.irrf_mes || 0), 0) };
     },
     enabled: !!empresaAtual?.id,
   });
@@ -362,7 +391,13 @@ export default function ObrigacoesFiscaisPage() {
               <SefipTable data={sefip} />
             </TabsContent>
             <TabsContent value="darf">
-              <DarfTab totalFgts={totalFgts} totalInss={totalInss} />
+              <DarfTab
+                totalIrrf={darfIrrf?.total ?? null}
+                situacao={darfIrrf?.situacao}
+                competencia={competencia}
+                isLoading={loadingIrrf}
+                isError={erroIrrf}
+              />
             </TabsContent>
             <TabsContent value="certificados">
               <div className="grid gap-4 md:grid-cols-2">
@@ -407,10 +442,7 @@ export default function ObrigacoesFiscaisPage() {
                     Análise de impacto "What-If" para cenários tributários
                   </p>
                 </div>
-                <Button className="rounded-xl">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Simulação
-                </Button>
+                <SimuladorWhatIf onSaved={() => qc.invalidateQueries({ queryKey: ['simulacoes-fiscais'] })} />
               </div>
               <div className="space-y-4">
                 {simulacoes.length === 0 ? (
@@ -418,22 +450,25 @@ export default function ObrigacoesFiscaisPage() {
                     Nenhuma simulação realizada
                   </div>
                 ) : (
-                  simulacoes.map((s) => (
-                    <Card key={s.id} className="border-border/30 hover:border-primary/30 transition-colors">
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div>
-                          <h4 className="font-semibold">{s.titulo}</h4>
-                          <p className="text-sm text-muted-foreground">{s.descricao}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">Impacto Estimado</p>
-                          <p className="text-lg font-bold text-primary font-display">
-                            +{formatCurrency((s.resultado as { impacto_total?: number } | null)?.impacto_total || 0)}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
+                  simulacoes.map((s) => {
+                    const resumo = resumoSimulacao(s.resultado);
+                    return (
+                      <Card key={s.id} className="border-border/30 hover:border-primary/30 transition-colors">
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold">{s.titulo}</h4>
+                            <p className="text-sm text-muted-foreground">{s.descricao}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground mb-1">{resumo.rotulo}</p>
+                            <p className="text-lg font-bold text-primary font-display">
+                              {formatCurrency(resumo.valor)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
                 )}
               </div>
             </TabsContent>
