@@ -16,25 +16,47 @@ import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
-import { Plus, Scale, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Scale, Trash2 } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+import { safeErrorMessage } from '@/utils/safeError';
+
+const FORM_VAZIO = {
+  colaborador_id: '',
+  beneficiario: '',
+  cpf_beneficiario: '',
+  tipo: 'alimenticia',
+  percentual: '',
+  valor_fixo: '',
+  banco: '',
+  agencia: '',
+  conta: '',
+};
+
+function toPayload(d: typeof FORM_VAZIO) {
+  return validateTablePayload(
+    'pensoes',
+    {
+      colaborador_id: d.colaborador_id,
+      beneficiario: d.beneficiario,
+      cpf_beneficiario: d.cpf_beneficiario || null,
+      tipo: d.tipo,
+      percentual: d.percentual ? Number(d.percentual) : null,
+      valor_fixo: d.valor_fixo ? Number(d.valor_fixo) : null,
+      banco: d.banco || null,
+      agencia: d.agencia || null,
+      conta: d.conta || null,
+    },
+    'PensoesPage:pensoes'
+  );
+}
 
 export default function PensoesPage() {
   const { empresaAtual } = useEmpresas();
   const pii = usePiiMask();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
-    colaborador_id: '',
-    beneficiario: '',
-    cpf_beneficiario: '',
-    tipo: 'alimenticia',
-    percentual: '',
-    valor_fixo: '',
-    banco: '',
-    agencia: '',
-    conta: '',
-  });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [form, setForm] = useState(FORM_VAZIO);
 
   const empresaId = empresaAtual?.id;
 
@@ -65,23 +87,7 @@ export default function PensoesPage() {
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
-      const { error } = await supabase.from('pensoes').insert(
-        validateTablePayload(
-          'pensoes',
-          {
-            colaborador_id: d.colaborador_id,
-            beneficiario: d.beneficiario,
-            cpf_beneficiario: d.cpf_beneficiario || null,
-            tipo: d.tipo,
-            percentual: d.percentual ? Number(d.percentual) : null,
-            valor_fixo: d.valor_fixo ? Number(d.valor_fixo) : null,
-            banco: d.banco || null,
-            agencia: d.agencia || null,
-            conta: d.conta || null,
-          },
-          'PensoesPage:pensoes'
-        )
-      );
+      const { error } = await supabase.from('pensoes').insert(toPayload(d));
       if (error) throw error;
     },
     onSuccess: () => {
@@ -90,6 +96,41 @@ export default function PensoesPage() {
       toast.success('Pensão cadastrada');
     },
   });
+
+  const atualizar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      const { error } = await supabase.from('pensoes').update(toPayload(d)).eq('id', id).eq('empresa_id', empresaId!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['pensoes', empresaId] });
+      setOpen(false);
+      setEditId(null);
+      toast.success('Pensão atualizada');
+    },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao atualizar pensão.')),
+  });
+
+  type PensaoRow = NonNullable<typeof data>[number];
+  const abrirNova = () => {
+    setEditId(null);
+    setForm(FORM_VAZIO);
+  };
+  const abrirEdicao = (r: PensaoRow) => {
+    setEditId(r.id);
+    setForm({
+      colaborador_id: r.colaborador_id ?? '',
+      beneficiario: r.beneficiario ?? '',
+      cpf_beneficiario: r.cpf_beneficiario ?? '',
+      tipo: r.tipo ?? 'alimenticia',
+      percentual: r.percentual != null ? String(r.percentual) : '',
+      valor_fixo: r.valor_fixo != null ? String(r.valor_fixo) : '',
+      banco: r.banco ?? '',
+      agencia: r.agencia ?? '',
+      conta: r.conta ?? '',
+    });
+    setOpen(true);
+  };
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
@@ -113,14 +154,14 @@ export default function PensoesPage() {
         <div className="flex justify-end">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button onClick={abrirNova}>
                 <Plus className="mr-2 h-4 w-4" />
                 Nova Pensão
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Nova Pensão</DialogTitle>
+                <DialogTitle>{editId ? 'Editar Pensão' : 'Nova Pensão'}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -200,8 +241,8 @@ export default function PensoesPage() {
                   </div>
                 </div>
                 <Button
-                  onClick={() => criar.mutate(form)}
-                  disabled={!form.colaborador_id || !form.beneficiario}
+                  onClick={() => (editId ? atualizar.mutate({ id: editId, d: form }) : criar.mutate(form))}
+                  disabled={!form.colaborador_id || !form.beneficiario || criar.isPending || atualizar.isPending}
                   className="w-full"
                 >
                   Salvar
@@ -247,6 +288,9 @@ export default function PensoesPage() {
                         <Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativa' : 'Inativa'}</Badge>
                       </TableCell>
                       <TableCell>
+                        <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => abrirEdicao(r)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
                         <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}>
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
