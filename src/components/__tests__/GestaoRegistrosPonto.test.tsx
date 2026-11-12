@@ -260,6 +260,7 @@ describe('GestaoRegistrosPonto', () => {
       expect(screen.getByText('2 selecionados')).toBeInTheDocument();
       fireEvent.change(screen.getByPlaceholderText(/Buscar/i), { target: { value: 'João' } });
       expect(screen.getByText('1 selecionados')).toBeInTheDocument();
+      expect(screen.getAllByRole('checkbox')[0]).toBeChecked();
       fireEvent.click(screen.getByText('Aprovar Lote'));
 
       await waitFor(() => expect(toast.success).toHaveBeenCalledWith('1 registros aprovados em lote!'));

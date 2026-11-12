@@ -361,7 +361,7 @@ export function GestaoRegistrosPonto() {
                             <input
                               type="checkbox"
                               className="rounded border-gray-300"
-                              checked={selecionados.length === filtrados.length && filtrados.length > 0}
+                              checked={selecionadosVisiveis.length === filtrados.length && filtrados.length > 0}
                               onChange={(e) => {
                                 if (e.target.checked) setSelecionados(filtrados.map((f) => f.id));
                                 else setSelecionados([]);
