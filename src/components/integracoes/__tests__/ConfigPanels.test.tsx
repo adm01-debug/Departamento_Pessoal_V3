@@ -24,11 +24,20 @@ vi.mock('@/hooks/useEmpresas', () => ({
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
+const auth = vi.hoisted(() => ({ roles: ['rh'] as string[] }));
+vi.mock('@/contexts', () => ({
+  useAuth: () => ({
+    isAdmin: auth.roles.includes('admin'),
+    hasRole: (role: string) => auth.roles.includes(role),
+  }),
+}));
+
 import { toast } from 'sonner';
 import { CnabConfigPanel, WebhookConfigPanel } from '../ConfigPanels';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  auth.roles = ['rh'];
   svc.getRemessas.mockResolvedValue([]);
   svc.getLogs.mockResolvedValue([]);
   svc.saveConfig.mockResolvedValue(undefined);
@@ -149,6 +158,45 @@ describe('CnabConfigPanel', () => {
     expect(await createObjectURL.mock.calls[0][0].text()).toBe('LINHA1\r\nLINHA2');
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:remessa');
     clickSpy.mockRestore();
+  });
+
+  it('esconde o Download da remessa para quem não é RH nem admin', async () => {
+    auth.roles = ['user'];
+    svc.getConfig.mockResolvedValue(null);
+    svc.getRemessas.mockResolvedValue([
+      {
+        id: 'rem-1',
+        banco_codigo: '341',
+        sequencial_arquivo: 7,
+        status: 'enviado',
+        arquivo_remessa: 'LINHA1\r\nLINHA2',
+        created_at: null,
+      },
+    ]);
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    expect(await screen.findByText('REMESSA_7.txt')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Download' })).not.toBeInTheDocument();
+  });
+
+  it('admin vê o Download da remessa', async () => {
+    auth.roles = ['admin'];
+    svc.getConfig.mockResolvedValue(null);
+    svc.getRemessas.mockResolvedValue([
+      {
+        id: 'rem-1',
+        banco_codigo: '341',
+        sequencial_arquivo: 7,
+        status: 'enviado',
+        arquivo_remessa: 'LINHA1',
+        created_at: null,
+      },
+    ]);
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    expect(await screen.findByRole('button', { name: 'Download' })).toBeEnabled();
   });
 });
 

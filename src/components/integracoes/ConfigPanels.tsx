@@ -29,6 +29,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import type { WhatsAppConfig } from '@/services/whatsappService';
 import { whatsappService } from '@/services/whatsappService';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 
 export function Bitrix24ConfigPanel() {
   const qc = useQueryClient();
@@ -276,6 +277,9 @@ export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id || '';
+  // O arquivo de remessa traz CPF, conta e líquido de todos os funcionários: só RH/admin baixa.
+  const { isAdmin, hasRole } = useAuth();
+  const podeBaixarRemessa = isAdmin || hasRole('rh');
   const {
     data: config,
     isLoading: carregandoConfig,
@@ -394,17 +398,21 @@ export function CnabConfigPanel() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 rounded-lg"
-                          disabled={!r.arquivo_remessa}
-                          title={r.arquivo_remessa ? undefined : 'Arquivo de remessa ainda não disponível'}
-                          onClick={() => baixarRemessa(r)}
-                        >
-                          <ExternalLink className="h-3 w-3 mr-2" />
-                          Download
-                        </Button>
+                        {podeBaixarRemessa ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 rounded-lg"
+                            disabled={!r.arquivo_remessa}
+                            title={r.arquivo_remessa ? undefined : 'Arquivo de remessa ainda não disponível'}
+                            onClick={() => baixarRemessa(r)}
+                          >
+                            <ExternalLink className="h-3 w-3 mr-2" />
+                            Download
+                          </Button>
+                        ) : (
+                          '—'
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
