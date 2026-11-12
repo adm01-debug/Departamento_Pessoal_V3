@@ -177,4 +177,61 @@ describe('RubricasDialog', () => {
     expect(await importar.mutationFn()).toBe(0);
     expect(insert).not.toHaveBeenCalled();
   });
+
+  describe('Corrigir divergência eSocial', () => {
+    type CorrigirOpts = {
+      mutationFn: (v: { id: string; correcao: Record<string, unknown> }) => Promise<void>;
+      onSuccess: () => void;
+      onError: (e: unknown) => void;
+    };
+    const correcao = {
+      codigo: '1000',
+      descricao: 'Salário Base',
+      tipo: 'provento',
+      incide_inss: true,
+      incide_fgts: true,
+      incide_irrf: true,
+    };
+
+    function obterCorrigir(selectResult: { data: unknown; error: unknown }) {
+      vi.mocked(useMutation).mockClear();
+      render(<RubricasDialog />);
+      const corrigir = vi.mocked(useMutation).mock.calls[3][0] as unknown as CorrigirOpts;
+      const select = vi.fn(() => Promise.resolve(selectResult));
+      const eq = vi.fn(() => ({ select }));
+      const update = vi.fn(() => ({ eq }));
+      vi.mocked(supabase.from).mockImplementation(() => ({ update }) as never);
+      return { corrigir, update, eq, select };
+    }
+
+    it('conclui quando o UPDATE devolve a linha alterada', async () => {
+      const { corrigir, eq, select } = obterCorrigir({ data: [{ id: 'r1' }], error: null });
+      await expect(corrigir.mutationFn({ id: 'r1', correcao })).resolves.toBeUndefined();
+      expect(eq).toHaveBeenCalledWith('id', 'r1');
+      expect(select).toHaveBeenCalledWith('id');
+    });
+
+    it('falha quando o UPDATE retorna erro', async () => {
+      const erro = { message: 'record "new" has no field "updated_at"' };
+      const { corrigir } = obterCorrigir({ data: null, error: erro });
+      await expect(corrigir.mutationFn({ id: 'r1', correcao })).rejects.toBe(erro);
+    });
+
+    it('falha quando nenhuma linha foi alterada (ex.: bloqueado por RLS)', async () => {
+      const { corrigir } = obterCorrigir({ data: [], error: null });
+      await expect(corrigir.mutationFn({ id: 'r1', correcao })).rejects.toThrow(/Nenhuma rubrica foi alterada/);
+    });
+
+    it('mostra sucesso só no onSuccess e erro via safeErrorMessage no onError', async () => {
+      const { toast } = await import('sonner');
+      const { corrigir } = obterCorrigir({ data: [], error: null });
+      vi.mocked(toast.success).mockClear();
+      vi.mocked(toast.error).mockClear();
+      corrigir.onError(new Error('x'));
+      expect(toast.error).toHaveBeenCalledWith('Erro ao corrigir a rubrica.');
+      expect(toast.success).not.toHaveBeenCalled();
+      corrigir.onSuccess();
+      expect(toast.success).toHaveBeenCalledWith('Rubrica saneada com sucesso!');
+    });
+  });
 });

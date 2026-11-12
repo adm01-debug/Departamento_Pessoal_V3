@@ -123,6 +123,45 @@ export function RubricasDialog() {
     },
   });
 
+  const corrigirMutation = useMutation({
+    mutationFn: async ({
+      id,
+      correcao,
+    }: {
+      id: string;
+      correcao: NonNullable<ReturnType<typeof sugerirCorrecaoRubrica>>;
+    }) => {
+      const { data, error } = await supabase
+        .from('rubricas_folha')
+        .update(
+          validateTablePayload(
+            'rubricas_folha',
+            {
+              tipo: correcao.tipo as 'provento' | 'desconto' | 'informativo',
+              incide_inss: correcao.incide_inss,
+              incide_fgts: correcao.incide_fgts,
+              incide_irrf: correcao.incide_irrf,
+              descricao: correcao.descricao,
+            },
+            'RubricasDialog:rubricas_folha'
+          )
+        )
+        .eq('id', id)
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) {
+        throw new Error('Nenhuma rubrica foi alterada. Verifique se você tem permissão para editar esta rubrica.');
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+      toast.success('Rubrica saneada com sucesso!');
+    },
+    onError: (error: unknown) => {
+      toast.error(safeErrorMessage(error, 'Erro ao corrigir a rubrica.'));
+    },
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -333,26 +372,7 @@ export function RubricasDialog() {
                                   corrigida &&
                                   confirm('Deseja aplicar as correções automáticas do eSocial para esta rubrica?')
                                 ) {
-                                  supabase
-                                    .from('rubricas_folha')
-                                    .update(
-                                      validateTablePayload(
-                                        'rubricas_folha',
-                                        {
-                                          tipo: corrigida.tipo as 'provento' | 'desconto' | 'informativo',
-                                          incide_inss: corrigida.incide_inss,
-                                          incide_fgts: corrigida.incide_fgts,
-                                          incide_irrf: corrigida.incide_irrf,
-                                          descricao: corrigida.descricao,
-                                        },
-                                        'RubricasDialog:rubricas_folha'
-                                      )
-                                    )
-                                    .eq('id', rubrica.id)
-                                    .then(() => {
-                                      queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
-                                      toast.success('Rubrica saneada com sucesso!');
-                                    });
+                                  corrigirMutation.mutate({ id: rubrica.id, correcao: corrigida });
                                 }
                               }}
                             >
