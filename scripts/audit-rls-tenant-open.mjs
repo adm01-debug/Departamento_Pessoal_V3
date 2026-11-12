@@ -96,6 +96,9 @@ const CORRELACIONADORES = [
   /\bpcs_pode_ver_plano\b/i,
   /\bpcs_pode_gerir_plano\b/i,
   /\bcandidatura_na_minha_empresa\b/i,
+  // 20261112010000: pertence_a_empresa(empresa) AND papel supervisor/coordenador
+  // do próprio auth.uid() — os dois já correlacionadores.
+  /\bpode_gerir_config_ponto\b/i,
 ];
 
 /**
