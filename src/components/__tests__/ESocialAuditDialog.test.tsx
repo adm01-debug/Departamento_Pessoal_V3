@@ -90,10 +90,24 @@ describe('ESocialAuditDialog', () => {
     expect(screen.queryByText('Checagem de consistência')).not.toBeInTheDocument();
   });
 
-  it('renders conformity message with empty eventos array', () => {
-    render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={[]} />);
+  it('with empty eventos shows honest empty state, without 100%/nota A/"tudo conforme"', () => {
+    const onOpenChange = vi.fn();
+    render(<ESocialAuditDialog open={true} onOpenChange={onOpenChange} eventos={[]} />);
+    expect(screen.getByText('Nenhum evento para verificar')).toBeInTheDocument();
+    expect(screen.queryByText('100%')).not.toBeInTheDocument();
+    expect(screen.queryByText('A')).not.toBeInTheDocument();
+    expect(screen.queryByText('Score de Conformidade')).not.toBeInTheDocument();
+    expect(screen.queryByText(/em conformidade/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Fechar'));
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('with eventos all ok still reports conformity', () => {
+    const eventos = [evento({ id: 'e1', tipo_evento: 'S-2200', status: 'enviado', dados: {} })];
+    render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={eventos} />);
     expect(screen.getByText(/Todos os eventos analisados estão em conformidade/i)).toBeInTheDocument();
     expect(screen.getByText('100%')).toBeInTheDocument();
+    expect(screen.queryByText('Nenhum evento para verificar')).not.toBeInTheDocument();
   });
 
   it('shows critical alert when eventos have errors', () => {
