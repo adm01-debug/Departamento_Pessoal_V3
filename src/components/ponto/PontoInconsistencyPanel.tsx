@@ -33,6 +33,7 @@ export type RegistroComColaborador = Tables<'registros_ponto'> & {
 
 export function PontoInconsistencyPanel({ registros }: { registros: RegistroComColaborador[] }) {
   const [resolvedIds, setResolvedIds] = useState<string[]>([]);
+  const [showAll, setShowAll] = useState(false);
 
   const detectInconsistencies = (): Inconsistency[] => {
     const list: Inconsistency[] = [];
@@ -185,7 +186,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
       <CardContent className="px-4 pb-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <AnimatePresence mode="popLayout">
-            {inconsistencies.slice(0, 6).map((inc) => (
+            {(showAll ? inconsistencies : inconsistencies.slice(0, 6)).map((inc) => (
               <motion.div
                 layout
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -289,7 +290,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
               </motion.div>
             ))}
           </AnimatePresence>
-          {inconsistencies.length > 6 && (
+          {inconsistencies.length > 6 && !showAll && (
             <motion.div
               layout
               className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-border/60 bg-muted/5"
@@ -297,7 +298,12 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
               <p className="text-[11px] text-muted-foreground font-bold mb-1">
                 + {inconsistencies.length - 6} CONFLITOS
               </p>
-              <Button variant="link" size="sm" className="h-6 text-[10px] p-0 hovre:no-underline">
+              <Button
+                variant="link"
+                size="sm"
+                className="h-6 text-[10px] p-0 hovre:no-underline"
+                onClick={() => setShowAll(true)}
+              >
                 Ver lista completa
               </Button>
             </motion.div>
