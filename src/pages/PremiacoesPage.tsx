@@ -326,9 +326,11 @@ export default function PremiacoesPage() {
               <Button variant="outline" className="gap-2 rounded-xl" onClick={() => handleExport('pdf')}>
                 <Download className="h-4 w-4" /> Exportar
               </Button>
-              <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20" onClick={() => setIsWizardOpen(true)}>
-                <Plus className="h-4 w-4" /> Nova Campanha
-              </Button>
+              {podeGerirCampanhas && (
+                <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20" onClick={() => setIsWizardOpen(true)}>
+                  <Plus className="h-4 w-4" /> Nova Campanha
+                </Button>
+              )}
             </div>
           </div>
 
@@ -429,9 +431,11 @@ export default function PremiacoesPage() {
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto">
                     Comece criando sua primeira campanha de incentivo para impulsionar a performance do time.
                   </p>
-                  <Button variant="outline" className="mt-6 rounded-xl" onClick={() => setIsWizardOpen(true)}>
-                    Criar Campanha agora
-                  </Button>
+                  {podeGerirCampanhas && (
+                    <Button variant="outline" className="mt-6 rounded-xl" onClick={() => setIsWizardOpen(true)}>
+                      Criar Campanha agora
+                    </Button>
+                  )}
                 </Card>
               )}
             </div>
@@ -643,7 +647,9 @@ export default function PremiacoesPage() {
           </TabsContent>
         </Tabs>
 
-        <CampaignWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} empresaId={empresaAtual?.id} />
+        {podeGerirCampanhas && (
+          <CampaignWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} empresaId={empresaAtual?.id} />
+        )}
 
         <AlertDialog open={rascunhoExcluir !== null} onOpenChange={(o) => !o && setRascunhoExcluir(null)}>
           <AlertDialogContent>
