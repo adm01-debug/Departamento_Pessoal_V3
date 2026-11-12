@@ -27,6 +27,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Spinner } from '@/components/ui/spinner';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -94,7 +95,7 @@ export default function RecrutamentoPage() {
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
       toast.success('Etapa atualizada!');
     },
-    onError: (e: Error) => toast.error(`Erro ao atualizar etapa: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar etapa.')),
   });
 
   const quantidadeVaga = Number.parseInt(vagaForm.quantidade, 10);
@@ -137,7 +138,7 @@ export default function RecrutamentoPage() {
       toast.success(vagaEditandoId ? 'Vaga atualizada!' : 'Vaga publicada!');
       setVagaDialogOpen(false);
     },
-    onError: (e: Error) => toast.error(`Erro ao salvar vaga: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar vaga.')),
   });
 
   const excluirVaga = useMutation({
@@ -149,7 +150,7 @@ export default function RecrutamentoPage() {
       toast.success('Vaga excluída!');
       setVagaParaExcluir(null);
     },
-    onError: (e: Error) => toast.error(`Erro ao excluir vaga: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir vaga.')),
   });
 
   const adicionarAVaga = useMutation({
@@ -165,7 +166,7 @@ export default function RecrutamentoPage() {
       toast.success('Candidato adicionado à vaga!');
       setCandidatoParaVaga(null);
     },
-    onError: (e: Error) => toast.error(`Erro ao adicionar candidato: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao adicionar candidato.')),
   });
 
   const etapaAtualSelecionada = selectedCandidatura?.etapa || 'triagem';
