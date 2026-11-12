@@ -11,6 +11,7 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | MÉDIA | no_primary_key | public.audit_log_unified_archive | Sem chave primária: Realtime/replicação e updates por linha ficam frágeis. |
 | MÉDIA | rls_no_policies | public.cnab_sequencias | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.colaboradores_pin | RLS ligado sem policies: inacessível via API (só service_role). |
+| MÉDIA | rls_no_policies | public.medidas_ciencia_tokens | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.ninebox_permissoes_homologacao | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.pii_access_alerts | RLS ligado sem policies: inacessível via API (só service_role). |
 | MÉDIA | rls_no_policies | public.report_dispatch_attempts | RLS ligado sem policies: inacessível via API (só service_role). |
@@ -280,8 +281,6 @@ Verificações objetivas feitas no catálogo. Um agente deve ler isto antes de p
 | BAIXA | policy_auth_fn_not_wrapped | public.logs_sistema.Apenas administradores veem logs do sistema | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.logs_sistema.Users can insert their own logs | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.lotacoes.tenant_lotacoes | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.medidas_ciencia_tokens.RH gera tokens da empresa | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
-| BAIXA | policy_auth_fn_not_wrapped | public.medidas_ciencia_tokens.RH visualiza tokens da empresa | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.medidas_disciplinares_anexos.Gestores e RH gerenciam anexos disciplinares | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.medidas_disciplinares_contestacao_anexos.contest_anexos_delete_empresa | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |
 | BAIXA | policy_auth_fn_not_wrapped | public.medidas_disciplinares_contestacao_anexos.contest_anexos_insert_empresa | Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect. |

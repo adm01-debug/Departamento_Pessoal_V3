@@ -2,6 +2,12 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-12 04:53 UTC
+
+- **lints** adicionado (1): `rls_no_policies:public.medidas_ciencia_tokens`
+- **lints** removido (2): `policy_auth_fn_not_wrapped:public.medidas_ciencia_tokens.RH gera tokens da empresa`, `policy_auth_fn_not_wrapped:public.medidas_ciencia_tokens.RH visualiza tokens da empresa`
+- **policies (RLS)** removido (2): `public.medidas_ciencia_tokens.RH gera tokens da empresa`, `public.medidas_ciencia_tokens.RH visualiza tokens da empresa`
+
 ## 2026-11-12 04:10 UTC
 
 - **realtime** removido (5): `supabase_realtime_messages_publication:realtime.messages_2026_11_04`, `supabase_realtime_messages_publication:realtime.messages_2026_11_05`, `supabase_realtime_messages_publication:realtime.messages_2026_11_06`, `supabase_realtime_messages_publication:realtime.messages_2026_11_07`, `supabase_realtime_messages_publication:realtime.messages_2026_11_08`

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e8472e91f0` · branch `main` · 2026-11-12 04:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e0cd6bc9ec` · branch `main` · 2026-11-12 04:53 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1443,6 +1443,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `critical` | compara, escreve | `src/components/esocial/ESocialAuditDialog.tsx`<br>`src/components/ferias/FeriasInsights.tsx`<br>`src/components/folha/FolhaValidationAlerts.tsx` |
 | `type` | `ctps` | escreve | `src/pages/ContratacaoPage.tsx` |
 | `type` | `delay` | compara, escreve | `src/components/workflows/NodeInspector.tsx`<br>`src/components/workflows/WorkflowDesigner.tsx` |
+| `type` | `disabled` | escreve | `supabase/functions/_shared/aiProvider.ts` |
 | `type` | `docs` | escreve | `release.config.js` |
 | `type` | `email` | compara, escreve | `src/components/workflows/NodeInspector.tsx`<br>`src/components/workflows/WorkflowDesigner.tsx` |
 | `type` | `end` | compara, escreve | `src/components/workflows/WorkflowDesigner.tsx` |
@@ -1723,8 +1724,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `vencida` | compara | `src/components/ferias/FeriasRelatorioDialog.tsx`<br>`src/pages/FeriasPage.tsx` |
 | `status` | `vencido` | compara | `src/components/colaborador-detalhes/AquisitivosTab.tsx`<br>`src/components/ferias/GerenciamentoPeriodos.tsx` |
 | `status` | `verified` | compara | `src/components/AdminRoute.tsx`<br>`src/components/ProtectedRoute.tsx`<br>`src/components/settings/MFASetup.tsx` |
-| `status` | `very_slow` | compara | `supabase/functions/external-db-bridge/index.ts` |
-| … +45 linhas — lista completa em `context.json` | | | |
+| … +46 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -4579,7 +4579,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6784 testes em 547 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6786 testes em 548 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4883,7 +4883,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/SectionHeader.test.tsx` | 9 | SectionHeader · renders title · renders subtitle when provided · does not render subtitle when absent … |
 | `src/components/__tests__/SignaturePad.test.tsx` | 9 | SignaturePad · renders canvas element · shows  · renders Limpar button … |
 | `src/components/__tests__/Simulador13Dialog.test.tsx` | 9 | Simulador13Dialog · renders 13º Salário trigger button · renders Simulador 13º Salário dialog title · renders Salário Base label … |
-| … +247 linhas — lista completa em `context.json` | | |
+| … +248 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

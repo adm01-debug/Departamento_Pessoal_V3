@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e8472e91f05eb333d888a60d41e8fd96fa1572d6",
+  "commit": "e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44",
   "branch": "main",
-  "data_commit": "2026-11-12T04:16:34Z",
+  "data_commit": "2026-11-12T04:30:14Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "e0cd6bc",
+    "data": "2026-11-12",
+    "assunto": "feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)"
+   },
    {
     "sha": "e8472e9",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "3668b50",
     "data": "2026-11-10",
     "assunto": "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)"
-   },
-   {
-    "sha": "36a404f",
-    "data": "2026-11-10",
-    "assunto": "ci: porta do Zapp Web V2 o pacote autonomo de higiene de branches e falha na main (#397)"
    }
   ],
-  "arquivos_mudados_7d": 435,
+  "arquivos_mudados_7d": 438,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -142,6 +142,10 @@
    {
     "pasta": "package.json",
     "mudancas": 22
+   },
+   {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 21
    },
    {
     "pasta": "CLAUDE.md",
@@ -153,10 +157,6 @@
    },
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 19
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 19
    },
    {
@@ -172,12 +172,12 @@
     "mudancas": 14
    },
    {
-    "pasta": "src/integrations/supabase",
+    "pasta": "PENDENCIAS.md",
     "mudancas": 13
    },
    {
-    "pasta": "PENDENCIAS.md",
-    "mudancas": 12
+    "pasta": "src/integrations/supabase",
+    "mudancas": 13
    },
    {
     "pasta": ".github/workflows/ci.yml",
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 54
+    "mudancas": 53
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 51
+    "mudancas": 50
    },
    {
     "arquivo": "CLAUDE.md",
@@ -218,15 +218,15 @@
     "mudancas": 20
    },
    {
+    "arquivo": "PENDENCIAS.md",
+    "mudancas": 13
+   },
+   {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 13
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 12
-   },
-   {
-    "arquivo": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 115
+    "commits": 116
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2879,
-  "arquivos_codigo": 1548,
-  "linhas_codigo": 273378,
+  "arquivos_total": 2881,
+  "arquivos_codigo": 1550,
+  "linhas_codigo": 273440,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 417,
   "migrations": 789,
   "cron_jobs": 41,
-  "testes": 589,
+  "testes": 590,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 291
@@ -707,8 +707,8 @@
    "linhas": 9
   },
   "supabase/functions": {
-   "arquivos": 171,
-   "linhas": 24360
+   "arquivos": 173,
+   "linhas": 24422
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -926,7 +926,7 @@
   },
   {
    "arquivo": "supabase/functions/OCR/index.ts",
-   "linha": 120,
+   "linha": 121,
    "tipo": "XXX",
    "texto": ".XXX.XXX-XX.',"
   },

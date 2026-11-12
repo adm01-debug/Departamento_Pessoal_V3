@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1418)",
+   "TypeScript (1420)",
    "SQL (825)",
    "Markdown (291)",
    "JavaScript (126)",
@@ -1503,6 +1503,8 @@
    "BRIDGE_QUERY_TIMEOUT_MS",
    "BRIDGE_URL",
    "CRON_SECRET",
+   "DEEPSEEK_API_KEY",
+   "DEEPSEEK_MODEL",
    "E2E_ANON_KEY",
    "E2E_COLABORADOR_ID",
    "E2E_COMPETENCIA",
@@ -1528,7 +1530,6 @@
    "GOVBR_BASE_URL",
    "GOVBR_CLIENT_ID",
    "GOVBR_CLIENT_SECRET",
-   "LOVABLE_API_KEY",
    "OPENAI_API_KEY",
    "PIX_APROVACAO_DUPLA_CENTAVOS",
    "PONTO_HASH_SECRET",
@@ -1716,11 +1717,7 @@
     "arquivos": 4
    },
    {
-    "host": "ai-gateway.lovable.dev",
-    "arquivos": 2
-   },
-   {
-    "host": "api.lovable.dev",
+    "host": "api.deepseek.com",
     "arquivos": 2
    },
    {
@@ -1911,10 +1908,10 @@
   "env_de_integracao": [
    "AI_GATEWAY_API_KEY",
    "CRON_SECRET",
+   "DEEPSEEK_API_KEY",
    "E2E_PONTO_HASH_SECRET",
    "GOVBR_CLIENT_ID",
    "GOVBR_CLIENT_SECRET",
-   "LOVABLE_API_KEY",
    "OPENAI_API_KEY",
    "PONTO_HASH_SECRET",
    "REPORT_SCHEDULER_SECRET",

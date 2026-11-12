@@ -5,12 +5,12 @@
   "vitest",
   "playwright"
  ],
- "total": 589,
+ "total": 590,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 551
+  "unit": 552
  },
  "onde_ficam": [
   {
@@ -19,7 +19,7 @@
   },
   {
    "padrao": "co-localizado (*.test)",
-   "arquivos": 69
+   "arquivos": 70
   },
   {
    "padrao": "e2e/",
@@ -4981,6 +4981,15 @@
    "casos": 2
   },
   {
+   "arquivo": "supabase/functions/_shared/aiProvider.test.ts",
+   "tipo": "unit",
+   "linhas": 28,
+   "testa": [
+    "supabase/functions/_shared/aiProvider.ts"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "supabase/functions/_shared/clientIp.test.ts",
    "tipo": "unit",
    "linhas": 42,
@@ -5854,6 +5863,7 @@
   "src/utils/toError.ts": 1,
   "src/utils/uploadValidation.ts": 1,
   "supabase/functions/_shared/aal2.ts": 1,
+  "supabase/functions/_shared/aiProvider.ts": 1,
   "supabase/functions/_shared/clientIp.ts": 1,
   "supabase/functions/_shared/contract.ts": 2,
   "supabase/functions/_shared/csrf.ts": 1,

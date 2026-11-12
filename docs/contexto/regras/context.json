@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e8472e91f05eb333d888a60d41e8fd96fa1572d6",
+  "sha": "e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 04:26 UTC",
-  "files_total": 2900,
-  "code_files": 2371,
-  "code_lines": 321575
+  "generated_at": "2026-11-12 04:53 UTC",
+  "files_total": 2902,
+  "code_files": 2373,
+  "code_lines": 321637
  },
  "version": "1.3.2",
- "facts_hash": "b265c1995bb09a31",
+ "facts_hash": "d9e40ac9ec4f216b",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,7 +385,7 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 825,
-   ".ts": 739,
+   ".ts": 741,
    ".tsx": 679,
    ".mjs": 100,
    ".js": 15,
@@ -92061,7 +92061,6 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -92170,7 +92169,6 @@
     "env": [
      "AI_GATEWAY_API_KEY",
      "AI_GATEWAY_URL",
-     "LOVABLE_API_KEY",
      "OPENAI_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
@@ -92220,7 +92218,6 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -92229,9 +92226,9 @@
     "invokes": [],
     "doc": "",
     "errors": [
+     "DEEPSEEK_API_KEY not configured",
      "Erro de configuração do assistente IA.",
      "Erro do assistente IA [${response.status}]: ${errText}",
-     "LOVABLE_API_KEY not configured",
      "Limite de requisições excedido. Tente novamente em alguns minutos."
     ],
     "side_effects": [],
@@ -93426,7 +93423,6 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [],
     "env": [
-     "LOVABLE_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -93695,7 +93691,6 @@
      "colaboradores"
     ],
     "env": [
-     "LOVABLE_API_KEY",
      "SUPABASE_ANON_KEY",
      "SUPABASE_SERVICE_ROLE_KEY",
      "SUPABASE_URL"
@@ -98023,8 +98018,8 @@
   },
   {
    "module": "supabase/functions",
-   "files": 171,
-   "lines": 24360,
+   "files": 173,
+   "lines": 24422,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -98123,6 +98118,7 @@
    ],
    "exports": [
     "aal2.ts: userAal, requireAal2",
+    "aiProvider.ts: AI_CHAT_URL, aiApiKey, AI_NO_THINKING, aiModel",
     "authz.ts: AdminClient, AuthzResult, isAdmin, podeGerirRh, podeGerirPessoas, pertenceAEmpresa",
     "cache.ts: CachePolicy, cachePublic, cachePrivate, cacheNone, computeETag, CacheStats",
     "clientIp.ts: getClientIp",
@@ -98160,16 +98156,15 @@
     "config.ts: config, rateLimits, validation",
     "s2299.ts: XmlEscape, montarS2299",
     "transmissionStatus.ts: transmissionHttpStatus, assertSandboxAmbiente",
-    "signer.ts: assinarXmlSandboxNaoHomologado",
-    "config.ts: config, rateLimits, validation"
+    "signer.ts: assinarXmlSandboxNaoHomologado"
    ],
    "docs": [
     "index.ts: Remediação de auditoria (achado E3 / CRÍTICO): • JWT obrigatório (antes: sem autenticação alguma, service_role exposto) • Bucket restrito a uma allowlist de documentos (antes: qualquer bucket) • Remove o parâmetro `fileUrl` livre (antes: SSRF — URL arbitrária repassada como image_url para o gateway …",
     "aal2.ts: Step-up AAL2 (Authenticator Assurance Level 2) — verificação server-side. O Supabase/GoTrue embute o claim `aal` no access token: `aal1` (login com senha) ou `aal2` (sessão elevada por TOTP/fator adicional). Conferir no navegador é bypassável; a checagem aqui é a autoritativa: uma sessão aal1 roubad …",
+    "aiProvider.ts: Provedor de IA das Edge Functions: DeepSeek (API compatível com OpenAI). `deepseek-flash` aceita texto e imagem (image_url com data URL base64), então atende chat, OCR e biometria com um só modelo. Trocar o modelo: secret DEEPSEEK_MODEL; sem DEEPSEEK_API_KEY as funções respondem \"não configurado\".",
     "cache.ts: MP-032: Cache-Control helper for read-only Edge Function responses. Usage: return jsonResponse(data, { cache: cachePublic(300) });",
     "clientIp.test.ts: Testes do helper getClientIp — invariante: o IP vem SEMPRE do último elemento de x-forwarded-for (anexado pelo gateway), nunca do primeiro (forjável pelo cliente), e headers spoofable (cf-connecting-ip, x-real-ip) são ignorados. Executa com Deno: `deno test supabase/functions/_shared/clientIp.test.t …",
-    "clientIp.ts: Extração spoof-resistant do IP do cliente para rate limiting e auditoria. Em Supabase Edge Functions o gateway da plataforma ANEXA o IP do peer TCP como ÚLTIMO elemento de `x-forwarded-for`. O cliente pode injetar entradas arbitrárias no header — elas aparecem à ESQUERDA. Por isso: - NUNCA confiar n …",
-    "csrf.ts: MP-005: CSRF protection helper for state-changing Edge Functions. Strategy: double-submit cookie + Origin/Referer allowlist. Consumer pattern: const csrf = await verifyCsrf(req); if (!csrf.ok) return csrf.response;"
+    "clientIp.ts: Extração spoof-resistant do IP do cliente para rate limiting e auditoria. Em Supabase Edge Functions o gateway da plataforma ANEXA o IP do peer TCP como ÚLTIMO elemento de `x-forwarded-for`. O cliente pode injetar entradas arbitrárias no header — elas aparecem à ESQUERDA. Por isso: - NUNCA confiar n …"
    ],
    "deps": [
     "https:",
@@ -98184,6 +98179,8 @@
     "supabase/functions/OCR/index.ts",
     "supabase/functions/_shared/aal2.test.ts",
     "supabase/functions/_shared/aal2.ts",
+    "supabase/functions/_shared/aiProvider.test.ts",
+    "supabase/functions/_shared/aiProvider.ts",
     "supabase/functions/_shared/authz.ts",
     "supabase/functions/_shared/cache.ts",
     "supabase/functions/_shared/clientIp.test.ts",
@@ -98258,9 +98255,7 @@
     "supabase/functions/criptografia/index.ts",
     "supabase/functions/dctfweb/index.ts",
     "supabase/functions/distribuir-holerites/index.ts",
-    "supabase/functions/emprestimo-consignado/index.ts",
-    "supabase/functions/enviar-email-admissao/admissaoLink.test.ts",
-    "supabase/functions/enviar-email-admissao/admissaoLink.ts"
+    "supabase/functions/emprestimo-consignado/index.ts"
    ]
   },
   {
@@ -102973,6 +102968,14 @@
    "DB_URL": [
     "scripts/ai-context/gerar.unit.mjs"
    ],
+   "DEEPSEEK_API_KEY": [
+    "supabase/functions/_shared/aiProvider.test.ts",
+    "supabase/functions/_shared/aiProvider.ts"
+   ],
+   "DEEPSEEK_MODEL": [
+    "supabase/functions/_shared/aiProvider.test.ts",
+    "supabase/functions/_shared/aiProvider.ts"
+   ],
    "DEV": [
     "src/components/RouteErrorBoundary.tsx",
     "src/errors/ErrorBoundary.tsx",
@@ -103202,13 +103205,6 @@
    ],
    "JANELA_DIAS": [
     "scripts/ci/actions-kpi.mjs"
-   ],
-   "LOVABLE_API_KEY": [
-    "supabase/functions/OCR/index.ts",
-    "supabase/functions/alertas-preditivos/index.ts",
-    "supabase/functions/assistente-ia/index.ts",
-    "supabase/functions/process-document-ocr/index.ts",
-    "supabase/functions/validar-biometria/index.ts"
    ],
    "MAILOSAUR_API_KEY": [
     "e2e/public/reset-password-callback.spec.ts"
@@ -109423,15 +109419,15 @@
    },
    {
     "file": "supabase/functions/assistente-ia/index.ts",
+    "msg": "DEEPSEEK_API_KEY not configured"
+   },
+   {
+    "file": "supabase/functions/assistente-ia/index.ts",
     "msg": "Erro de configuração do assistente IA."
    },
    {
     "file": "supabase/functions/assistente-ia/index.ts",
     "msg": "Erro do assistente IA [${response.status}]: ${errText}"
-   },
-   {
-    "file": "supabase/functions/assistente-ia/index.ts",
-    "msg": "LOVABLE_API_KEY not configured"
    },
    {
     "file": "supabase/functions/assistente-ia/index.ts",
@@ -142234,6 +142230,12 @@
     "kind": "escreve"
    },
    {
+    "file": "supabase/functions/_shared/aiProvider.ts",
+    "field": "type",
+    "value": "disabled",
+    "kind": "escreve"
+   },
+   {
     "file": "supabase/functions/_shared/idempotency.ts",
     "field": "status",
     "value": "in_progress",
@@ -173682,6 +173684,14 @@
     "name": "aal2: só sessão aal2 passa; aal1, service_role sem aal e sem token = 403"
    },
    {
+    "file": "supabase/functions/_shared/aiProvider.test.ts",
+    "name": "aiProvider: DeepSeek, chave e modelo vêm das secrets"
+   },
+   {
+    "file": "supabase/functions/_shared/aiProvider.test.ts",
+    "name": "aiProvider: chamadas à DeepSeek desligam o modo thinking"
+   },
+   {
     "file": "supabase/functions/_shared/clientIp.test.ts",
     "name": "getClientIp: usa o ÚLTIMO elemento de x-forwarded-for (peer real)"
    },
@@ -201336,6 +201346,9 @@
       "escreve:supabase/functions/OCR/index.ts",
       "escreve:supabase/functions/process-document-ocr/index.ts",
       "escreve:supabase/functions/validar-biometria/index.ts"
+     ],
+     "disabled": [
+      "escreve:supabase/functions/_shared/aiProvider.ts"
      ],
      "event": [
       "escreve:supabase/functions/_shared/sentry.ts"
@@ -266141,9 +266154,8 @@
   },
   "supabase/functions/OCR/index.ts": {
    "path": "supabase/functions/OCR/index.ts",
-   "lines": 162,
+   "lines": 164,
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -266201,6 +266213,41 @@
     "function requireAal2"
    ],
    "doc": "Step-up AAL2 (Authenticator Assurance Level 2) — verificação server-side. O Supabase/GoTrue embute o claim `aal` no access token: `aal1` (login com senha) ou `aal2` (sessão elevada por TOTP/fator adicional). Conferir no navegador é bypassável; a checagem aqui é a autoritativa: uma sessão aal1 roubad …"
+  },
+  "supabase/functions/_shared/aiProvider.test.ts": {
+   "path": "supabase/functions/_shared/aiProvider.test.ts",
+   "lines": 28,
+   "is_test": true,
+   "env": [
+    "DEEPSEEK_API_KEY",
+    "DEEPSEEK_MODEL"
+   ],
+   "tests": [
+    "aiProvider: DeepSeek, chave e modelo vêm das secrets",
+    "aiProvider: chamadas à DeepSeek desligam o modo thinking"
+   ]
+  },
+  "supabase/functions/_shared/aiProvider.ts": {
+   "path": "supabase/functions/_shared/aiProvider.ts",
+   "lines": 19,
+   "exports": [
+    "const AI_CHAT_URL",
+    "function aiApiKey",
+    "const AI_NO_THINKING",
+    "function aiModel"
+   ],
+   "env": [
+    "DEEPSEEK_API_KEY",
+    "DEEPSEEK_MODEL"
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "disabled",
+     "kind": "escreve"
+    }
+   ],
+   "doc": "Provedor de IA das Edge Functions: DeepSeek (API compatível com OpenAI). `deepseek-flash` aceita texto e imagem (image_url com data URL base64), então atende chat, OCR e biometria com um só modelo. Trocar o modelo: secret DEEPSEEK_MODEL; sem DEEPSEEK_API_KEY as funções respondem \"não configurado\"."
   },
   "supabase/functions/_shared/authz.ts": {
    "path": "supabase/functions/_shared/authz.ts",
@@ -267402,7 +267449,7 @@
   },
   "supabase/functions/alertas-preditivos/index.ts": {
    "path": "supabase/functions/alertas-preditivos/index.ts",
-   "lines": 428,
+   "lines": 435,
    "tables": [
     {
      "table": "colaboradores",
@@ -267472,7 +267519,6 @@
    "env": [
     "AI_GATEWAY_API_KEY",
     "AI_GATEWAY_URL",
-    "LOVABLE_API_KEY",
     "OPENAI_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -267598,17 +267644,16 @@
   },
   "supabase/functions/assistente-ia/index.ts": {
    "path": "supabase/functions/assistente-ia/index.ts",
-   "lines": 166,
+   "lines": 168,
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "errors": [
+    "DEEPSEEK_API_KEY not configured",
     "Erro de configuração do assistente IA.",
     "Erro do assistente IA [${response.status}]: ${errText}",
-    "LOVABLE_API_KEY not configured",
     "Limite de requisições excedido. Tente novamente em alguns minutos."
    ],
    "status_values": [
@@ -272699,9 +272744,8 @@
   },
   "supabase/functions/process-document-ocr/index.ts": {
    "path": "supabase/functions/process-document-ocr/index.ts",
-   "lines": 149,
+   "lines": 151,
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -273864,7 +273908,7 @@
   },
   "supabase/functions/validar-biometria/index.ts": {
    "path": "supabase/functions/validar-biometria/index.ts",
-   "lines": 204,
+   "lines": 206,
    "tables": [
     {
      "table": "colaboradores",
@@ -273895,7 +273939,6 @@
     "user_belongs_to_empresa"
    ],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
@@ -277966,10 +278009,26 @@
   }
  },
  "git": {
-  "sha": "e8472e91f05eb333d888a60d41e8fd96fa1572d6",
+  "sha": "e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "e0cd6bc",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)",
+    "files": [
+     "PENDENCIAS.md",
+     "supabase/functions/OCR/index.ts",
+     "supabase/functions/_shared/aiProvider.test.ts",
+     "supabase/functions/_shared/aiProvider.ts",
+     "supabase/functions/alertas-preditivos/index.ts",
+     "supabase/functions/assistente-ia/index.ts",
+     "supabase/functions/process-document-ocr/index.ts",
+     "supabase/functions/validar-biometria/index.ts"
+    ]
+   },
    {
     "sha": "e8472e9",
     "date": "2026-11-12",
@@ -278402,23 +278461,6 @@
      "scripts/rollback.sh",
      "scripts/tests/wait-for-postgres-container.sh"
     ]
-   },
-   {
-    "sha": "2d6010b",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417)",
-    "files": [
-     ".gitleaksignore",
-     "scripts/regras_negocio/generate.py",
-     "scripts/regras_negocio/indice.py",
-     "scripts/regras_negocio/publish.sh",
-     "scripts/regras_negocio/test_generate.py",
-     "scripts/supabase_snapshot/snapshot.py",
-     "scripts/supabase_snapshot/test_snapshot.py",
-     "scripts/tests/contexto-indice-data.test.mjs",
-     "scripts/tests/contexto-publish-sh.test.mjs"
-    ]
    }
   ],
   "hot_files": [
@@ -278437,6 +278479,26 @@
    [
     "deno.lock",
     3
+   ],
+   [
+    "supabase/functions/OCR/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/alertas-preditivos/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/assistente-ia/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/process-document-ocr/index.ts",
+    2
+   ],
+   [
+    "supabase/functions/validar-biometria/index.ts",
+    2
    ],
    [
     "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
@@ -278481,26 +278543,6 @@
    [
     "package.json",
     2
-   ],
-   [
-    "scripts/simulacao/_lib/ts-require.cjs",
-    2
-   ],
-   [
-    "scripts/simulacao/verify_rescisao_fix.cjs",
-    2
-   ],
-   [
-    "scripts/ci/README.md",
-    2
-   ],
-   [
-    "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql",
-    1
    ]
   ]
  }

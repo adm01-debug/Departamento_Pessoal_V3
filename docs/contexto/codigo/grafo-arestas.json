@@ -5529,6 +5529,7 @@
    "src/utils/rescisaoCalc.ts"
   ],
   "supabase/functions/OCR/index.ts": [
+   "supabase/functions/_shared/aiProvider.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
    "supabase/functions/_shared/rateLimit.ts",
@@ -5588,6 +5589,7 @@
    "supabase/functions/alertas-dp/deliveryStatus.ts"
   ],
   "supabase/functions/alertas-preditivos/index.ts": [
+   "supabase/functions/_shared/aiProvider.ts",
    "supabase/functions/_shared/authz.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
@@ -5602,6 +5604,7 @@
    "supabase/functions/_shared/sentry.ts"
   ],
   "supabase/functions/assistente-ia/index.ts": [
+   "supabase/functions/_shared/aiProvider.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
    "supabase/functions/_shared/rateLimit.ts",
@@ -5978,6 +5981,7 @@
    "supabase/functions/_shared/sentry.ts"
   ],
   "supabase/functions/process-document-ocr/index.ts": [
+   "supabase/functions/_shared/aiProvider.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
    "supabase/functions/_shared/rateLimit.ts",
@@ -6056,6 +6060,7 @@
    "supabase/functions/upload-certificado/certRow.ts"
   ],
   "supabase/functions/validar-biometria/index.ts": [
+   "supabase/functions/_shared/aiProvider.ts",
    "supabase/functions/_shared/contract.ts",
    "supabase/functions/_shared/csrf.ts",
    "supabase/functions/_shared/rateLimit.ts",

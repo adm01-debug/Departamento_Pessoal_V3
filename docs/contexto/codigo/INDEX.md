@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e8472e91f05eb333d888a60d41e8fd96fa1572d6` (2026-11-12T04:16:34Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44` (2026-11-12T04:30:14Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (825), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1420), SQL (825), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2879 |
-| arquivos_codigo | 1548 |
-| linhas_codigo | 273378 |
+| arquivos_total | 2881 |
+| arquivos_codigo | 1550 |
+| linhas_codigo | 273440 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -48,7 +48,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | tabelas | 417 |
 | migrations | 789 |
 | cron_jobs | 41 |
-| testes | 589 |
+| testes | 590 |
 | workflows | 21 |
 | scripts | 115 |
 | docs_md | 291 |
@@ -58,7 +58,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - componentes: src/components (312), src/pages (109), src/contexts (3)
 - hooks: src/hooks (88), src/components (5), src/contexts (4)
 - servicos_logica: src/services (80), src/utils (33), src/schemas (25)
-- testes: co-localizado (__tests__) (468), co-localizado (*.test) (69), e2e/ (27)
+- testes: co-localizado (__tests__) (468), co-localizado (*.test) (70), e2e/ (27)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/autofix (10), scripts/ci (9)
@@ -355,9 +355,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: departamento-pessoal-v3.vercel.app, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, ai-gateway.lovable.dev, api.lovable.dev, brasilapi.com.br, example.invalid, example.test, frjbfeamybqsejlvmqbl.supabase.co, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, signed.url, viacep.com.br, www.esocial.gov.br
+- hosts mais citados: departamento-pessoal-v3.vercel.app, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, api.deepseek.com, brasilapi.com.br, example.invalid, example.test, frjbfeamybqsejlvmqbl.supabase.co, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, signed.url, viacep.com.br, www.esocial.gov.br, x.supabase.co
 - webhooks recebidos: admissao-publica, auth-gov-br, auth-login, healthcheck, metrics, webhook
-- env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, LOVABLE_API_KEY, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TURNSTILE_SECRET_KEY, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
+- env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, DEEPSEEK_API_KEY, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TURNSTILE_SECRET_KEY, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
 - papéis no código: dialog (33), alert (11), admin (9), user (9), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), rh (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), coordenador (1), gestor (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tooltip (1)
@@ -383,20 +383,20 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21978 nós · 46113 arestas · 2124 comunidades · grafo do commit `e8472e91`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (385), useEmpresas (332), react (306), vitest (286), App.tsx (268), cn (252), client.ts (185), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155)
+- 21984 nós · 46148 arestas · 2121 comunidades · grafo do commit `e0cd6bc9`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (372), button.tsx (321), lucide-react (301), cn (249), vitest (249), react (211), supabase/types.ts (168), deepChain (166), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (54)
-- package.json (54)
-- package-lock.json (51)
+- package.json (53)
+- package-lock.json (50)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (20)
+- PENDENCIAS.md (13)
 - src/services/cnabService.ts (13)
 - AGENTS.md (12)
-- PENDENCIAS.md (12)
 - deno.lock (12)
 - src/integrations/supabase/types.ts (12)
 - .github/workflows/e2e.yml (11)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `e0cd6bc` feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)
 - 2026-11-12 `e8472e9` fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)
 - 2026-11-12 `9f7a4e4` fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)
 - 2026-11-12 `364b6d6` feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `71b9957` style(manutencao): aplica correcoes locais verificadas (#439)
 - 2026-11-11 `bdb0189` feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)
 - 2026-11-11 `c42d57d` fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)
-- 2026-11-11 `207e914` build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

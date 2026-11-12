@@ -14,6 +14,8 @@
  "shared": [
   "supabase/functions/_shared/aal2.test.ts",
   "supabase/functions/_shared/aal2.ts",
+  "supabase/functions/_shared/aiProvider.test.ts",
+  "supabase/functions/_shared/aiProvider.ts",
   "supabase/functions/_shared/authz.ts",
   "supabase/functions/_shared/cache.ts",
   "supabase/functions/_shared/clientIp.test.ts",
@@ -53,7 +55,7 @@
    "nome": "OCR",
    "entrada": "supabase/functions/OCR/index.ts",
    "arquivos": 1,
-   "linhas": 162,
+   "linhas": 164,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -62,17 +64,15 @@
    "tabelas": [],
    "rpcs": [],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "api.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "aiProvider.ts",
     "contract.ts",
     "csrf.ts",
     "rateLimit.ts",
@@ -214,7 +214,7 @@
    "nome": "alertas-preditivos",
    "entrada": "supabase/functions/alertas-preditivos/index.ts",
    "arquivos": 1,
-   "linhas": 428,
+   "linhas": 435,
    "verify_jwt": true,
    "metodos": [
     "POST"
@@ -231,7 +231,6 @@
    "env": [
     "AI_GATEWAY_API_KEY",
     "AI_GATEWAY_URL",
-    "LOVABLE_API_KEY",
     "OPENAI_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -243,6 +242,7 @@
     "api.openai.com"
    ],
    "usa_shared": [
+    "aiProvider.ts",
     "authz.ts",
     "contract.ts",
     "csrf.ts",
@@ -299,7 +299,7 @@
    "nome": "assistente-ia",
    "entrada": "supabase/functions/assistente-ia/index.ts",
    "arquivos": 1,
-   "linhas": 166,
+   "linhas": 168,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -308,17 +308,15 @@
    "tabelas": [],
    "rpcs": [],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai-gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "aiProvider.ts",
     "contract.ts",
     "csrf.ts",
     "rateLimit.ts",
@@ -2103,7 +2101,7 @@
    "nome": "process-document-ocr",
    "entrada": "supabase/functions/process-document-ocr/index.ts",
    "arquivos": 1,
-   "linhas": 149,
+   "linhas": 151,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2112,17 +2110,15 @@
    "tabelas": [],
    "rpcs": [],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "api.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "aiProvider.ts",
     "contract.ts",
     "csrf.ts",
     "rateLimit.ts",
@@ -2506,7 +2502,7 @@
    "nome": "validar-biometria",
    "entrada": "supabase/functions/validar-biometria/index.ts",
    "arquivos": 1,
-   "linhas": 204,
+   "linhas": 206,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS",
@@ -2520,17 +2516,15 @@
     "user_belongs_to_empresa"
    ],
    "env": [
-    "LOVABLE_API_KEY",
     "SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
     "SUPABASE_URL"
    ],
    "buckets": [],
    "chama_edges": [],
-   "hosts_externos": [
-    "ai-gateway.lovable.dev"
-   ],
+   "hosts_externos": [],
    "usa_shared": [
+    "aiProvider.ts",
     "contract.ts",
     "csrf.ts",
     "rateLimit.ts",

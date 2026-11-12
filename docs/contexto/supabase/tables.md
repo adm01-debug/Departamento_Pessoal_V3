@@ -219,7 +219,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.logs_sincronizacao](tables/public/logs_sincronizacao.md) | table | sim | 1 | 9 | não |  |
 | [public.logs_sistema](tables/public/logs_sistema.md) | table | sim | 3 | 10 | não |  |
 | [public.lotacoes](tables/public/lotacoes.md) | table | sim | 1 | 9 | não |  |
-| [public.medidas_ciencia_tokens](tables/public/medidas_ciencia_tokens.md) | table | sim | 2 | 15 | não | Internal token state. Public acknowledgement is available only through hash-validating RPCs. |
+| [public.medidas_ciencia_tokens](tables/public/medidas_ciencia_tokens.md) | table | sim | 0 | 15 | não | Internal token state. Public acknowledgement is available only through hash-validating RPCs. |
 | [public.medidas_disciplinares](tables/public/medidas_disciplinares.md) | table | sim | 1 | 58 | não |  |
 | [public.medidas_disciplinares_anexos](tables/public/medidas_disciplinares_anexos.md) | table | sim | 1 | 10 | não |  |
 | [public.medidas_disciplinares_contestacao_anexos](tables/public/medidas_disciplinares_contestacao_anexos.md) | table | sim | 3 | 10 | não |  |

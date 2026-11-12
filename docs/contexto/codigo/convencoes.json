@@ -23,7 +23,7 @@
   ],
   "testes": [
    "co-localizado (__tests__) (468)",
-   "co-localizado (*.test) (69)",
+   "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
   "edge_functions": "supabase/functions",
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)",
    "fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)",
    "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)",
    "feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)",
-   "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)",
-   "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)"
+   "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
