@@ -25,6 +25,7 @@ const captured = vi.hoisted(() => ({
   } | null,
   invalidateQueries: vi.fn(),
   mutateMock: vi.fn(),
+  roles: [] as string[],
 }));
 
 const { mutateMock } = captured;
@@ -80,6 +81,10 @@ vi.mock('@tanstack/react-query', () => ({
 
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: captured.empresaAtual }),
+}));
+
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({ hasRole: (r: string) => captured.roles.includes(r) }),
 }));
 
 vi.mock('@/services/edgeFunctionsService', () => ({
@@ -183,6 +188,22 @@ describe('FolhaConfigTab', () => {
 });
 
 describe('PontoConfigTab', () => {
+  it('sem papel supervisor/coordenador: Atualizar Regras desabilitado com aviso', () => {
+    captured.roles = ['admin'];
+    render(<PontoConfigTab />);
+    expect(screen.getByText('Somente supervisor ou coordenador podem alterar as regras de ponto.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Atualizar Regras/ })).toBeDisabled();
+    captured.roles = [];
+  });
+
+  it.each(['supervisor', 'coordenador'])('papel %s: Atualizar Regras habilitado', (papel) => {
+    captured.roles = [papel];
+    render(<PontoConfigTab />);
+    expect(screen.queryByText('Somente supervisor ou coordenador podem alterar as regras de ponto.')).toBeNull();
+    expect(screen.getByRole('button', { name: /Atualizar Regras/ })).toBeEnabled();
+    captured.roles = [];
+  });
+
   it('renders Compliance de Jornada title', () => {
     render(<PontoConfigTab />);
     expect(screen.getByText('Compliance de Jornada')).toBeInTheDocument();
