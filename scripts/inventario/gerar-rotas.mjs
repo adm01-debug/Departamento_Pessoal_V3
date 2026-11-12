@@ -313,7 +313,9 @@ export function lerMenu(raiz) {
     const grupos = [...bloco.matchAll(/\bid:\s*'([^']+)',\s*\n\s*label:\s*'([^']+)'/g)].map((m) => ({ id: m[1], label: m[2], pos: m.index }));
     for (const m of bloco.matchAll(/\{\s*icon:\s*\w+,\s*label:\s*'([^']+)',\s*path:\s*'([^']+)'/g)) {
       const grupo = grupos.filter((g) => g.pos < m.index).pop();
-      itens.push({ grupo: grupo?.label ?? null, rotulo: m[1], caminho: m[2] });
+      // `adminOnly: true` no objeto do item = o AppSidebar esconde o item de quem nao e admin
+      const soAdmin = /\badminOnly:\s*true\b/.test(bloco.slice(m.index, bloco.indexOf('}', m.index)));
+      itens.push({ grupo: grupo?.label ?? null, rotulo: m[1], caminho: m[2], ...(soAdmin ? { so_admin: true } : {}) });
     }
   }
   const portal = texto.match(/const\s+portalItem[^=]*=\s*\{[^}]*label:\s*'([^']+)',\s*path:\s*'([^']+)'/);
@@ -358,7 +360,7 @@ export function gerarRotas(raiz = RAIZ_PADRAO) {
   const problemas = [
     ...menu.filter((m) => !casaRota(m.caminho, padroes))
       .map((m) => ({ tipo: 'menu_sem_rota', id: m.caminho, detalhe: `item "${m.rotulo}" (${m.grupo ?? 'sem grupo'}) nao casa com nenhuma <Route>: cai no NotFound` })),
-    ...menu.filter((m) => casaRota(m.caminho, admin))
+    ...menu.filter((m) => !m.so_admin && casaRota(m.caminho, admin))
       .map((m) => ({ tipo: 'menu_aponta_rota_admin', id: m.caminho, detalhe: `item "${m.rotulo}" aparece para todos no menu, mas a rota exige AdminRoute` })),
     ...urls.filter((u) => u.componente && !u.arquivo && !u.redireciona && !u.layout)
       .map((u) => ({ tipo: 'url_sem_arquivo', id: u.caminho, detalhe: `${u.componente} nao resolve em ${ARQ_ROTAS}` })),
