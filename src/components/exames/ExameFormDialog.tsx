@@ -23,15 +23,19 @@ const resultados = [
 
 interface ExameFormDialogProps {
   colaboradores: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo'>[];
-  onSubmit: (form: {
-    colaborador_id: string;
-    tipo: string;
-    data_exame: string;
-    data_validade: string;
-    medico: string;
-    crm: string;
-    resultado: string;
-  }) => void;
+  /** `onSaved` deve ser chamado só após salvar com sucesso: fecha e limpa o formulário. */
+  onSubmit: (
+    form: {
+      colaborador_id: string;
+      tipo: string;
+      data_exame: string;
+      data_validade: string;
+      medico: string;
+      crm: string;
+      resultado: string;
+    },
+    onSaved: () => void
+  ) => void;
   isPending?: boolean;
   /** Modo edição (controlado): valores iniciais, estado de abertura e título. */
   initial?: { [K in keyof typeof emptyForm]?: string | null };
@@ -76,10 +80,15 @@ export function ExameFormDialog({
     }
   }
 
+  // Validade anterior à data do exame viola o CHECK exames_validade_coerente no banco.
+  const validadeInvalida = !!form.data_exame && !!form.data_validade && form.data_validade < form.data_exame;
+
   const handleSubmit = () => {
-    onSubmit(form);
-    setForm(emptyForm);
-    setOpen(false);
+    // Fecha só quando o pai confirmar o sucesso; em erro o diálogo fica aberto com os dados digitados.
+    onSubmit(form, () => {
+      setForm(emptyForm);
+      setOpen(false);
+    });
   };
 
   return (
@@ -147,6 +156,9 @@ export function ExameFormDialog({
               />
             </div>
           </div>
+          {validadeInvalida && (
+            <p className="text-sm text-destructive">A validade não pode ser anterior à data do exame.</p>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -186,7 +198,7 @@ export function ExameFormDialog({
           <Button
             className="w-full rounded-xl"
             onClick={handleSubmit}
-            disabled={!form.colaborador_id || !form.tipo || isPending}
+            disabled={!form.colaborador_id || !form.tipo || validadeInvalida || isPending}
           >
             {controlled ? 'Salvar Alterações' : 'Registrar Exame'}
           </Button>

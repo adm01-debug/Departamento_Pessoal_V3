@@ -194,7 +194,7 @@ export default function ExamesPage() {
               />
               <ExameFormDialog
                 colaboradores={colaboradores}
-                onSubmit={(form) => criar.mutate(form)}
+                onSubmit={(form, onSaved) => criar.mutate(form, { onSuccess: onSaved })}
                 isPending={criar.isPending}
               />
             </div>
@@ -210,7 +210,9 @@ export default function ExamesPage() {
               onOpenChange={(o) => !o && setEditando(null)}
               initial={editando ?? undefined}
               title="Editar Exame / Registrar Resultado"
-              onSubmit={(form) => editando && atualizar.mutate({ id: editando.id, d: form })}
+              onSubmit={(form, onSaved) =>
+                editando && atualizar.mutate({ id: editando.id, d: form }, { onSuccess: onSaved })
+              }
               isPending={atualizar.isPending}
             />
           </div>
