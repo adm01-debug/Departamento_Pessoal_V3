@@ -20,6 +20,12 @@ const categoryLabels: Record<string, string> = {
   outros: 'Outros',
 };
 
+// O cadastro/edição grava `validade_ca`; `ca_validade` é coluna legada.
+function formatValidadeCa(e: Pick<Tables<'epis'>, 'validade_ca' | 'ca_validade'>): string {
+  const validade = e.validade_ca ?? e.ca_validade;
+  return validade ? format(parseISO(validade), 'dd/MM/yyyy') : '—';
+}
+
 interface EpiCatalogoTableProps {
   data: Tables<'epis'>[];
   onExcluir: (id: string) => void;
@@ -95,9 +101,7 @@ export function EpiCatalogoTable({ data, onExcluir, onEditar }: EpiCatalogoTable
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-xs font-body">
-                      {e.ca_validade ? format(parseISO(e.ca_validade), 'dd/MM/yyyy') : '—'}
-                    </TableCell>
+                    <TableCell className="text-xs font-body">{formatValidadeCa(e)}</TableCell>
                     <TableCell className="pr-6">
                       <div className="flex items-center gap-1">
                         {onEditar && (

@@ -92,4 +92,15 @@ describe('EpiCatalogoTable', () => {
     expect(onEditar).toHaveBeenCalledWith(DATA[1]);
     expect(onExcluir).not.toHaveBeenCalled();
   });
+
+  it('mostra a validade do CA gravada em validade_ca (campo do formulário)', () => {
+    render(<EpiCatalogoTable data={DATA} onExcluir={vi.fn()} />);
+    expect(screen.getByText('31/12/2025')).toBeInTheDocument();
+  });
+
+  it('usa ca_validade (legado) quando validade_ca está vazia', () => {
+    const legado = [{ ...DATA[1], validade_ca: null, ca_validade: '2027-03-15' }] as Tables<'epis'>[];
+    render(<EpiCatalogoTable data={legado} onExcluir={vi.fn()} />);
+    expect(screen.getByText('15/03/2027')).toBeInTheDocument();
+  });
 });

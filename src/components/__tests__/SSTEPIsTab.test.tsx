@@ -77,4 +77,12 @@ describe('SSTEPIsTab', () => {
     render(<SSTEPIsTab epis={MOCK_EPIS} entregas={[]} />);
     expect(screen.queryByText('Últimas Entregas')).not.toBeInTheDocument();
   });
+
+  it('mostra a validade do CA gravada em validade_ca', () => {
+    const epis = [{ ...MOCK_EPIS[0], ca_validade: null, validade_ca: '2029-06-15T12:00:00' }];
+    render(<SSTEPIsTab epis={epis} entregas={[]} />);
+    expect(
+      screen.getByText(`Validade CA: ${new Date('2029-06-15T12:00:00').toLocaleDateString('pt-BR')}`)
+    ).toBeInTheDocument();
+  });
 });
