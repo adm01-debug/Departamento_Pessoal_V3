@@ -108,6 +108,18 @@ describe('CanalEticaPage — tratamento de denúncias', () => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ['canal_etica'] });
   });
 
+  it('denúncia não anônima não é rotulada como identificada (o sistema não guarda o autor)', async () => {
+    denuncia.anonimo = false;
+    try {
+      renderPage();
+      fireEvent.click(await screen.findByRole('button', { name: 'Tratar' }));
+      expect(screen.getByText(/não anônima \(identidade não registrada\)/)).toBeInTheDocument();
+      expect(screen.queryByText(/identificada/)).not.toBeInTheDocument();
+    } finally {
+      denuncia.anonimo = true;
+    }
+  });
+
   it('usuário sem papel RH/admin não vê a ação de tratar', async () => {
     auth.hasRole = () => false;
     renderPage();

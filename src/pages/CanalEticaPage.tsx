@@ -237,7 +237,7 @@ export default function CanalEticaPage() {
               <div className="space-y-4">
                 <div className="text-sm text-muted-foreground">
                   <span className="capitalize">{selecionada.categoria}</span> · prioridade {selecionada.prioridade} ·{' '}
-                  {selecionada.anonimo ? 'anônima' : 'identificada'}
+                  {selecionada.anonimo ? 'anônima' : 'não anônima (identidade não registrada)'}
                 </div>
                 <div>
                   <Label>Descrição</Label>
