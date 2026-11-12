@@ -6,6 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -16,6 +26,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { beneficiariosSeguroService, segurosColaboradoresService } from '@/services/tabelasComplementaresService';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
 import { Pencil, Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
@@ -131,8 +142,11 @@ function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
 
 export default function SegurosVidaPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [tab, setTab] = useState('seguros');
+  const [excluirAlvo, setExcluirAlvo] = useState<{ id: string; seguradora: string | null } | null>(null);
   const [expandedSeguro, setExpandedSeguro] = useState<string | null>(null);
 
   // === Seguros ===
@@ -255,8 +269,12 @@ export default function SegurosVidaPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['seguros-vida'] });
+      qc.invalidateQueries({ queryKey: ['sinistros-seguro'] });
+      qc.invalidateQueries({ queryKey: ['seguros-colaboradores'] });
+      setExcluirAlvo(null);
       toast.success('Excluído');
     },
+    onError: (e: unknown) => toast.error(safeErrorMessage(e, 'Erro ao excluir seguro')),
   });
 
   // === Sinistros ===
@@ -486,27 +504,32 @@ export default function SegurosVidaPage() {
                             </Button>
                           </TableCell>
                           <TableCell className="whitespace-nowrap">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Editar seguro"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                abrirEdicao(r);
-                              }}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                excluir.mutate(r.id);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+                            {podeGerir && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Editar seguro"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    abrirEdicao(r);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Excluir seguro"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setExcluirAlvo({ id: r.id, seguradora: r.seguradora });
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </>
+                            )}
                           </TableCell>
                         </TableRow>
                         {expandedSeguro === r.id && (
@@ -790,6 +813,32 @@ export default function SegurosVidaPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!excluirAlvo} onOpenChange={(v) => !v && !excluir.isPending && setExcluirAlvo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir seguro de vida?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A apólice {excluirAlvo?.seguradora ? `"${excluirAlvo.seguradora}"` : ''} será excluída permanentemente,
+              junto com todos os sinistros, beneficiários e colaboradores vinculados a ela. Esta ação não pode ser
+              desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={excluir.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={excluir.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                if (excluirAlvo) excluir.mutate(excluirAlvo.id);
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageLayout>
   );
 }

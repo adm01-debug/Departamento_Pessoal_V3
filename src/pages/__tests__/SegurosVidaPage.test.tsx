@@ -8,6 +8,7 @@ import SegurosVidaPage from '@/pages/SegurosVidaPage';
 type Call = { table: string; op: string; args: unknown[] };
 const calls: Call[] = [];
 let updateRows: Array<{ id: string }> = [{ id: 'seg-1' }];
+let roles: string[] = ['rh'];
 
 const seguro = {
   id: 'seg-1',
@@ -42,6 +43,9 @@ function builder(table: string) {
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { from: (t: string) => builder(t) } }));
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock('@/hooks', () => ({ useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }) }));
+vi.mock('@/contexts', () => ({
+  useAuth: () => ({ isAdmin: roles.includes('admin'), hasRole: (r: string) => roles.includes(r) }),
+}));
 vi.mock('@/hooks/usePiiMask', () => ({ usePiiMask: () => ({ cpf: (v: string) => v }) }));
 vi.mock('@/components/layout', () => ({
   PageLayout: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -65,6 +69,7 @@ describe('SegurosVidaPage — editar apólice', () => {
   beforeEach(() => {
     calls.length = 0;
     updateRows = [{ id: 'seg-1' }];
+    roles = ['rh'];
     vi.mocked(toast.success).mockClear();
     vi.mocked(toast.error).mockClear();
   });
@@ -119,5 +124,57 @@ describe('SegurosVidaPage — editar apólice', () => {
 
     await waitFor(() => expect(toast.error).toHaveBeenCalled());
     expect(toast.success).not.toHaveBeenCalled();
+  });
+});
+
+describe('SegurosVidaPage — excluir e permissões', () => {
+  beforeEach(() => {
+    calls.length = 0;
+    roles = ['rh'];
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
+  });
+
+  it('pede confirmação antes de excluir e não apaga ao cancelar', async () => {
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Excluir seguro' }));
+
+    expect(screen.getByText('Excluir seguro de vida?')).toBeInTheDocument();
+    expect(screen.getByText(/sinistros, beneficiários e colaboradores vinculados/)).toBeInTheDocument();
+    expect(calls.some((c) => c.op === 'delete')).toBe(false);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+    await waitFor(() => expect(screen.queryByText('Excluir seguro de vida?')).not.toBeInTheDocument());
+    expect(calls.some((c) => c.op === 'delete')).toBe(false);
+  });
+
+  it('exclui filtrando por id e empresa só depois de confirmar', async () => {
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Excluir seguro' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Excluído'));
+    const del = calls.find((c) => c.table === 'seguros_vida' && c.op === 'delete');
+    expect(del).toBeDefined();
+    const idx = calls.indexOf(del!);
+    expect(calls.slice(idx + 1, idx + 3).map((c) => c.args)).toEqual([
+      ['id', 'seg-1'],
+      ['empresa_id', 'emp-1'],
+    ]);
+  });
+
+  it('admin também vê Editar e Excluir', async () => {
+    roles = ['admin'];
+    renderPage();
+    expect(await screen.findByRole('button', { name: 'Editar seguro' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Excluir seguro' })).toBeInTheDocument();
+  });
+
+  it('usuário sem papel RH/admin não vê Editar nem Excluir', async () => {
+    roles = ['user'];
+    renderPage();
+    expect(await screen.findByText('Seguradora A')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Editar seguro' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Excluir seguro' })).not.toBeInTheDocument();
   });
 });
