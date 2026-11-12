@@ -73,15 +73,21 @@ describe('SefipTable', () => {
   });
 
   it('downloads the SEFIP content when Baixar is clicked', () => {
+    const originalCreate = URL.createObjectURL;
+    const originalRevoke = URL.revokeObjectURL;
     const createObjectURL = vi.fn(() => 'blob:sefip');
     const revokeObjectURL = vi.fn();
     Object.assign(URL, { createObjectURL, revokeObjectURL });
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
-    render(<SefipTable data={SEFIP_DATA} />);
-    fireEvent.click(screen.getByText('Baixar'));
-    expect(createObjectURL).toHaveBeenCalledTimes(1);
-    expect(click).toHaveBeenCalledTimes(1);
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:sefip');
-    click.mockRestore();
+    try {
+      render(<SefipTable data={SEFIP_DATA} />);
+      fireEvent.click(screen.getByText('Baixar'));
+      expect(createObjectURL).toHaveBeenCalledTimes(1);
+      expect(click).toHaveBeenCalledTimes(1);
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:sefip');
+    } finally {
+      click.mockRestore();
+      Object.assign(URL, { createObjectURL: originalCreate, revokeObjectURL: originalRevoke });
+    }
   });
 });

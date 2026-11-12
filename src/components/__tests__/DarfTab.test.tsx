@@ -36,6 +36,21 @@ describe('DarfTab', () => {
     expect(screen.getByText(/Nenhuma folha mensal calculada para 06\/2024/)).toBeInTheDocument();
   });
 
+  it('does not show R$ 0,00 when the payroll was not calculated yet', () => {
+    render(<DarfTab totalIrrf={null} situacao="nao_calculada" competencia="06/2024" />);
+    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.queryByText(/R\$/)).not.toBeInTheDocument();
+    expect(screen.getByText(/A folha mensal de 06\/2024 ainda não foi calculada/)).toBeInTheDocument();
+  });
+
+  it('does not show R$ 0,00 when payroll items are not accessible', () => {
+    render(<DarfTab totalIrrf={null} situacao="sem_itens" competencia="06/2024" />);
+    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.queryByText(/R\$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/IRRF retido na folha/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Itens da folha mensal de 06\/2024 indisponíveis/)).toBeInTheDocument();
+  });
+
   it('shows loading and error states', () => {
     const { rerender } = render(<DarfTab totalIrrf={null} competencia="06/2024" isLoading />);
     expect(screen.getByText('Carregando...')).toBeInTheDocument();

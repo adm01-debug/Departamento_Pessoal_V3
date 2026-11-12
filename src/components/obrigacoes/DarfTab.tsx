@@ -5,15 +5,27 @@ function formatCurrency(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 }
 
+/** Por que não há valor de IRRF: sem folha, folha não calculada ou itens inacessíveis/vazios. */
+export type DarfIrrfSituacao = 'sem_folha' | 'nao_calculada' | 'sem_itens';
+
+const MENSAGEM_SEM_VALOR: Record<DarfIrrfSituacao, (competencia: string) => string> = {
+  sem_folha: (c) => `Nenhuma folha mensal calculada para ${c}.`,
+  nao_calculada: (c) => `A folha mensal de ${c} ainda não foi calculada.`,
+  sem_itens: (c) =>
+    `Itens da folha mensal de ${c} indisponíveis (sem permissão de acesso à folha ou folha sem colaboradores).`,
+};
+
 interface DarfTabProps {
-  /** Soma de folha_itens.irrf_mes da folha mensal da competência; null quando não há folha. */
+  /** Soma de folha_itens.irrf_mes da folha mensal calculada da competência; null quando não há valor real. */
   totalIrrf: number | null;
+  /** Motivo da ausência de valor quando totalIrrf é null (padrão: sem_folha). */
+  situacao?: DarfIrrfSituacao;
   competencia: string;
   isLoading?: boolean;
   isError?: boolean;
 }
 
-export function DarfTab({ totalIrrf, competencia, isLoading, isError }: DarfTabProps) {
+export function DarfTab({ totalIrrf, situacao = 'sem_folha', competencia, isLoading, isError }: DarfTabProps) {
   const irrfValor = isLoading
     ? 'Carregando...'
     : isError
@@ -50,7 +62,7 @@ export function DarfTab({ totalIrrf, competencia, isLoading, isError }: DarfTabP
             <p className="text-xs text-muted-foreground font-body flex items-center gap-2">
               <AlertTriangle className="h-3 w-3 text-warning" />
               {!isLoading && !isError && totalIrrf === null
-                ? `Nenhuma folha mensal calculada para ${competencia}.`
+                ? MENSAGEM_SEM_VALOR[situacao](competencia)
                 : `IRRF retido na folha mensal de ${competencia}.`}{' '}
               Consulte seu contador para valores exatos.
             </p>

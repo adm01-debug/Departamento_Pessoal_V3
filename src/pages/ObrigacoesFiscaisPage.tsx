@@ -20,7 +20,7 @@ import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, C
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
-import { DarfTab } from '@/components/obrigacoes/DarfTab';
+import { DarfTab, type DarfIrrfSituacao } from '@/components/obrigacoes/DarfTab';
 import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
 import { validateTablePayload } from '@/schemas/validate';
 
@@ -127,23 +127,28 @@ export default function ObrigacoesFiscaisPage() {
   });
 
   const {
-    data: totalIrrf = null,
+    data: darfIrrf,
     isLoading: loadingIrrf,
     isError: erroIrrf,
   } = useQuery({
     queryKey: ['darf-irrf', empresaAtual?.id, competencia],
-    queryFn: async () => {
+    queryFn: async (): Promise<{ total: number | null; situacao?: DarfIrrfSituacao }> => {
       const [mes, ano] = competencia.split('/');
       const { data, error } = await supabase
         .from('folhas_pagamento')
-        .select('id, folha_itens(irrf_mes)')
+        .select('id, status, data_calculo, folha_itens(irrf_mes)')
         .eq('empresa_id', empresaAtual!.id)
         .eq('competencia', `${ano}-${mes}`)
         .eq('tipo', 'mensal')
         .maybeSingle();
       if (error) throw error;
-      if (!data) return null;
-      return (data.folha_itens ?? []).reduce((acc, i) => acc + Number(i.irrf_mes || 0), 0);
+      if (!data) return { total: null, situacao: 'sem_folha' };
+      if (data.status === 'aberta' || !data.data_calculo) return { total: null, situacao: 'nao_calculada' };
+      // RLS: folha_itens só é legível com pode_gerir_rh; gestor vê o cabeçalho com itens vazios.
+      const itens = data.folha_itens ?? [];
+      if (itens.length === 0) return { total: null, situacao: 'sem_itens' };
+      if (itens.every((i) => i.irrf_mes === null)) return { total: null, situacao: 'nao_calculada' };
+      return { total: itens.reduce((acc, i) => acc + Number(i.irrf_mes || 0), 0) };
     },
     enabled: !!empresaAtual?.id,
   });
@@ -385,7 +390,13 @@ export default function ObrigacoesFiscaisPage() {
               <SefipTable data={sefip} />
             </TabsContent>
             <TabsContent value="darf">
-              <DarfTab totalIrrf={totalIrrf} competencia={competencia} isLoading={loadingIrrf} isError={erroIrrf} />
+              <DarfTab
+                totalIrrf={darfIrrf?.total ?? null}
+                situacao={darfIrrf?.situacao}
+                competencia={competencia}
+                isLoading={loadingIrrf}
+                isError={erroIrrf}
+              />
             </TabsContent>
             <TabsContent value="certificados">
               <div className="grid gap-4 md:grid-cols-2">
