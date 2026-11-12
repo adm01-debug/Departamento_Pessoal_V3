@@ -11,7 +11,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
-import { AI_CHAT_URL, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
+import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 // Só buckets de documentos de identidade/admissão fazem sentido para OCR;
 // nunca aceitar um bucket arbitrário informado pelo cliente.
@@ -133,6 +133,7 @@ serve(async (req: Request): Promise<Response> => {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${aiKey}` },
         body: JSON.stringify({
           model: aiModel(),
+          ...AI_NO_THINKING,
           messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: imageUrl } }] }],
           max_tokens: 1000,
         }),

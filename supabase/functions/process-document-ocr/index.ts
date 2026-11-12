@@ -5,7 +5,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
-import { AI_CHAT_URL, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
+import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 function isAllowedFileUrl(urlStr: string): boolean {
   try {
@@ -118,6 +118,7 @@ serve(async (req: Request): Promise<Response> => {
         },
         body: JSON.stringify({
           model: aiModel(),
+          ...AI_NO_THINKING,
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },

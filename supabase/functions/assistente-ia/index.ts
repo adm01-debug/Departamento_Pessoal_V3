@@ -4,7 +4,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
-import { AI_CHAT_URL, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
+import { AI_CHAT_URL, AI_NO_THINKING, aiApiKey, aiModel } from '../_shared/aiProvider.ts';
 
 const SYSTEM_PROMPT = `Voce e um assistente especialista em Departamento Pessoal brasileiro. Seu nome e "Assistente DP".
 
@@ -120,6 +120,7 @@ serve(async (req: Request): Promise<Response> => {
         },
         body: JSON.stringify({
           model: aiModel(),
+          ...AI_NO_THINKING,
           messages,
           max_tokens: 2048,
           temperature: 0.3,
