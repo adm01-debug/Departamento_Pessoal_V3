@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { useMutation } from '@tanstack/react-query';
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(() => ({ data: [], isLoading: false })),
@@ -23,7 +24,7 @@ vi.mock('@/validators/esocial', () => ({
   sugerirCorrecaoRubrica: vi.fn(() => []),
 }));
 
-vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() } }));
 vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 vi.mock('@/lib/utils', () => ({ cn: (...a: string[]) => a.filter(Boolean).join(' ') }));
 
@@ -79,6 +80,8 @@ vi.mock('@/components/ui/select', () => ({
 }));
 
 import { RubricasDialog } from '../folha/RubricasDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { RUBRICAS_PADRAO } from '@/constants/rubricas';
 
 describe('RubricasDialog', () => {
   it('renders Rubricas trigger button', () => {
@@ -119,5 +122,59 @@ describe('RubricasDialog', () => {
   it('renders empty state when no rubricas', () => {
     render(<RubricasDialog />);
     expect(screen.getByText(/Nenhuma rubrica/i)).toBeInTheDocument();
+  });
+
+  it('Importar Padrão dispara a mutation de importação após confirmação', () => {
+    const mutate = vi.fn();
+    vi.mocked(useMutation).mockImplementation(() => ({ mutate, isPending: false }) as never);
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<RubricasDialog />);
+    fireEvent.click(screen.getByText('Importar Padrão'));
+    expect(mutate).toHaveBeenCalledTimes(1);
+    vi.mocked(useMutation).mockImplementation(() => ({ mutate: vi.fn(), isPending: false }) as never);
+  });
+
+  it('importação insere só os códigos padrão ainda não cadastrados, com tipo válido no banco', async () => {
+    vi.mocked(useMutation).mockClear();
+    render(<RubricasDialog />);
+    const opcoes = vi.mocked(useMutation).mock.calls.map((c) => c[0] as { mutationFn: () => Promise<number> });
+    const importar = opcoes[2];
+
+    const insert = vi.fn(() => Promise.resolve({ error: null }));
+    vi.mocked(supabase.from).mockImplementation(
+      () =>
+        ({
+          select: vi.fn(() => Promise.resolve({ data: [{ codigo: '1000' }, { codigo: '5000' }], error: null })),
+          insert,
+        }) as never
+    );
+
+    const inseridas = await importar.mutationFn();
+
+    expect(inseridas).toBe(RUBRICAS_PADRAO.length - 2);
+    const payload = (insert.mock.calls[0] as unknown as [Array<{ codigo: string; tipo: string }>])[0];
+    expect(payload.map((r) => r.codigo)).not.toContain('1000');
+    expect(payload.map((r) => r.codigo)).not.toContain('5000');
+    expect(payload.every((r) => ['provento', 'desconto', 'informativo'].includes(r.tipo))).toBe(true);
+  });
+
+  it('importação não insere nada quando todos os códigos padrão já existem', async () => {
+    vi.mocked(useMutation).mockClear();
+    render(<RubricasDialog />);
+    const importar = vi.mocked(useMutation).mock.calls[2][0] as { mutationFn: () => Promise<number> };
+
+    const insert = vi.fn();
+    vi.mocked(supabase.from).mockImplementation(
+      () =>
+        ({
+          select: vi.fn(() =>
+            Promise.resolve({ data: RUBRICAS_PADRAO.map((r) => ({ codigo: r.codigo })), error: null })
+          ),
+          insert,
+        }) as never
+    );
+
+    expect(await importar.mutationFn()).toBe(0);
+    expect(insert).not.toHaveBeenCalled();
   });
 });

@@ -9,12 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Settings2, Plus, Trash2, Check, X, Save, Wrench, DownloadCloud, FileCode } from 'lucide-react';
+import { Settings2, Plus, Trash2, Check, X, Save, Wrench, DownloadCloud } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { validarRubricaESocial, sugerirCorrecaoRubrica } from '@/schemas/esocial';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateTablePayload } from '@/schemas/validate';
+import { RUBRICAS_PADRAO } from '@/constants/rubricas';
 
 export function RubricasDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -87,6 +88,41 @@ export function RubricasDialog() {
     },
   });
 
+  const importarPadraoMutation = useMutation({
+    mutationFn: async () => {
+      const { data: existentes, error: selectError } = await supabase.from('rubricas_folha').select('codigo');
+      if (selectError) throw selectError;
+      const codigosExistentes = new Set((existentes ?? []).map((r) => r.codigo));
+      const novas = RUBRICAS_PADRAO.filter((r) => !codigosExistentes.has(r.codigo)).map((r) => ({
+        codigo: r.codigo,
+        descricao: r.descricao,
+        tipo: r.tipo === 'informativa' ? ('informativo' as const) : r.tipo,
+        incide_inss: r.incide_inss,
+        incide_fgts: r.incide_fgts,
+        incide_irrf: r.incide_irrf,
+        automatico: false,
+        ativo: true,
+      }));
+      if (novas.length === 0) return 0;
+      const { error } = await supabase
+        .from('rubricas_folha')
+        .insert(validateTablePayload('rubricas_folha', novas, 'RubricasDialog:importarPadrao'));
+      if (error) throw error;
+      return novas.length;
+    },
+    onSuccess: (inseridas: number) => {
+      queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+      if (inseridas === 0) {
+        toast.info('Todas as rubricas padrão já estão cadastradas.');
+      } else {
+        toast.success(`${inseridas} rubrica(s) padrão importada(s) com sucesso.`);
+      }
+    },
+    onError: (error: unknown) => {
+      toast.error(safeErrorMessage(error, 'Erro ao importar rubricas padrão.'));
+    },
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -107,10 +143,12 @@ export function RubricasDialog() {
                 variant="outline"
                 size="sm"
                 className="gap-2 rounded-xl border-primary/20 text-primary hover:bg-primary/5"
+                disabled={importarPadraoMutation.isPending}
                 onClick={() => {
-                  if (confirm('Deseja importar as rubricas padrão do eSocial?')) {
-                    toast.success('Rubricas padrão importadas com sucesso!');
-                    queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+                  if (
+                    confirm('Deseja importar as rubricas padrão do eSocial? Códigos já cadastrados serão mantidos.')
+                  ) {
+                    importarPadraoMutation.mutate();
                   }
                 }}
               >
@@ -283,18 +321,6 @@ export function RubricasDialog() {
                           </Badge>
                         ) : (
                           <div className="flex items-center gap-1">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              aria-label="Visualizar XML"
-                              className="h-8 w-8 text-info hover:text-info hover:bg-info/10"
-                              title="Ver XML eSocial"
-                              onClick={() => {
-                                toast.info('Visualização XML (S-1010) gerada com sucesso!');
-                              }}
-                            >
-                              <FileCode className="h-4 w-4" />
-                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
