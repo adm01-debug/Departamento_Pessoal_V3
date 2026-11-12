@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -53,5 +53,19 @@ describe('PontoInconsistencyPanel', () => {
   it('shows short break description', () => {
     render(<PontoInconsistencyPanel registros={SHORT_BREAK_REGISTROS} />);
     expect(screen.getByText(/Intervalo curto/)).toBeInTheDocument();
+  });
+
+  it('"Ver lista completa" mostra todas as inconsistências além das 6 primeiras', () => {
+    const muitos = Array.from({ length: 8 }, (_, i) => ({
+      ...SHORT_BREAK_REGISTROS[0],
+      id: String(i + 1),
+      colaborador: { nome_completo: `Colab ${i + 1}` },
+    })) as unknown as RegistroComColaborador[];
+    render(<PontoInconsistencyPanel registros={muitos} />);
+    expect(screen.queryByText('Colab 8')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Ver lista completa'));
+    expect(screen.getByText('Colab 7')).toBeInTheDocument();
+    expect(screen.getByText('Colab 8')).toBeInTheDocument();
+    expect(screen.queryByText('Ver lista completa')).not.toBeInTheDocument();
   });
 });
