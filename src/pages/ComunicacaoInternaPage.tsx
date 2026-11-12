@@ -19,6 +19,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -27,6 +28,7 @@ import {
   Shield,
   AlertTriangle,
   Trash2,
+  Pencil,
   Search,
   Eye,
   EyeOff,
@@ -68,6 +70,7 @@ export default function ComunicacaoInternaPage() {
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [formCom, setFormCom] = useState({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
   const [formEtica, setFormEtica] = useState({ categoria: 'outro', descricao: '', anonimo: true });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   // Realtime for comunicados
   useEffect(() => {
@@ -129,6 +132,37 @@ export default function ComunicacaoInternaPage() {
     },
     onError: () => toast.error('Erro ao publicar'),
   });
+
+  const editarCom = useMutation({
+    mutationFn: (id: string) => comunicacaoService.atualizarComunicado(id, formCom, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['comunicados'] });
+      setOpenCom(false);
+      setEditandoId(null);
+      toast.success('Comunicado atualizado!');
+      setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar comunicado')),
+  });
+
+  const abrirEdicao = (c: Tables<'comunicados'>) => {
+    setEditandoId(c.id);
+    setFormCom({
+      titulo: c.titulo,
+      conteudo: c.conteudo ?? '',
+      tipo: c.tipo ?? 'aviso',
+      prioridade: c.prioridade ?? 1,
+    });
+    setOpenCom(true);
+  };
+
+  const onOpenComChange = (open: boolean) => {
+    setOpenCom(open);
+    if (!open && editandoId) {
+      setEditandoId(null);
+      setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
+    }
+  };
 
   const criarEtica = useMutation({
     mutationFn: () => comunicacaoService.criarDenuncia({ ...formEtica, empresa_id: empresaAtual?.id }),
@@ -215,6 +249,15 @@ export default function ComunicacaoInternaPage() {
                   )}
                 </div>
               </div>
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label="Editar"
+                className="h-8 w-8 opacity-0 group-hover:opacity-100 rounded-lg"
+                onClick={() => abrirEdicao(c)}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
               <Button
                 size="icon"
                 variant="ghost"
@@ -326,7 +369,7 @@ export default function ComunicacaoInternaPage() {
                   <SelectItem value="urgente">Urgentes</SelectItem>
                 </SelectContent>
               </Select>
-              <Dialog open={openCom} onOpenChange={setOpenCom}>
+              <Dialog open={openCom} onOpenChange={onOpenComChange}>
                 <DialogTrigger asChild>
                   <Button className="rounded-xl">
                     <Plus className="mr-2 h-4 w-4" />
@@ -335,7 +378,7 @@ export default function ComunicacaoInternaPage() {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-lg">
                   <DialogHeader>
-                    <DialogTitle>Novo Comunicado</DialogTitle>
+                    <DialogTitle>{editandoId ? 'Editar Comunicado' : 'Novo Comunicado'}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -373,11 +416,17 @@ export default function ComunicacaoInternaPage() {
                     </div>
                     <Button
                       className="w-full rounded-xl"
-                      onClick={() => criarCom.mutate()}
-                      disabled={!formCom.titulo || criarCom.isPending}
+                      onClick={() => (editandoId ? editarCom.mutate(editandoId) : criarCom.mutate())}
+                      disabled={!formCom.titulo || criarCom.isPending || editarCom.isPending}
                     >
                       <Send className="h-4 w-4 mr-2" />
-                      {criarCom.isPending ? 'Publicando...' : 'Publicar Comunicado'}
+                      {editandoId
+                        ? editarCom.isPending
+                          ? 'Salvando...'
+                          : 'Salvar Alterações'
+                        : criarCom.isPending
+                          ? 'Publicando...'
+                          : 'Publicar Comunicado'}
                     </Button>
                   </div>
                 </DialogContent>
