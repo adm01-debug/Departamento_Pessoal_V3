@@ -157,8 +157,10 @@ CREATE POLICY premiacoes_campanhas_rh_manage ON public.premiacoes_campanhas
 
 -- ---------------------------------------------------------------------------
 -- registros_ponto: o colaborador continua batendo/ajustando o próprio ponto
--- (registros_ponto_write intacta), mas só RH/admin aprova. Caminhos de sistema
--- (service_role, postgres, funções SECURITY DEFINER) não são afetados.
+-- (registros_ponto_write intacta), mas só quem pode_gerir_pessoas
+-- (admin/RH/gestor, como hoje na tela de aprovação) aprova, e dia já aprovado
+-- só eles alteram. Caminhos de sistema (service_role, postgres, funções
+-- SECURITY DEFINER) não são afetados.
 CREATE OR REPLACE FUNCTION public.bloquear_aprovacao_ponto_sem_rh()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -169,16 +171,23 @@ BEGIN
     RETURN NEW;
   END IF;
 
+  IF public.pode_gerir_pessoas(NEW.empresa_id) THEN
+    RETURN NEW;
+  END IF;
+
   IF TG_OP = 'INSERT' THEN
-    IF (COALESCE(NEW.aprovado, false) OR NEW.aprovado_por IS NOT NULL OR NEW.aprovado_em IS NOT NULL)
-       AND NOT public.pode_gerir_rh(NEW.empresa_id) THEN
+    IF COALESCE(NEW.aprovado, false) OR NEW.aprovado_por IS NOT NULL OR NEW.aprovado_em IS NOT NULL THEN
       RAISE EXCEPTION 'Somente RH/admin pode aprovar registro de ponto'
         USING ERRCODE = '42501';
     END IF;
-  ELSIF (NEW.aprovado IS DISTINCT FROM OLD.aprovado
-         OR NEW.aprovado_por IS DISTINCT FROM OLD.aprovado_por
-         OR NEW.aprovado_em IS DISTINCT FROM OLD.aprovado_em)
-        AND NOT public.pode_gerir_rh(NEW.empresa_id) THEN
+  ELSIF COALESCE(OLD.aprovado, false)
+        AND (to_jsonb(NEW) - '{updated_at,version,hash_digital}'::text[])
+            IS DISTINCT FROM (to_jsonb(OLD) - '{updated_at,version,hash_digital}'::text[]) THEN
+    RAISE EXCEPTION 'registro aprovado: só RH/gestor altera'
+      USING ERRCODE = '42501';
+  ELSIF NEW.aprovado IS DISTINCT FROM OLD.aprovado
+        OR NEW.aprovado_por IS DISTINCT FROM OLD.aprovado_por
+        OR NEW.aprovado_em IS DISTINCT FROM OLD.aprovado_em THEN
     RAISE EXCEPTION 'Somente RH/admin pode aprovar registro de ponto'
       USING ERRCODE = '42501';
   END IF;
@@ -218,3 +227,25 @@ CREATE POLICY canal_etica_rh_update ON public.canal_etica
 CREATE POLICY canal_etica_admin_delete ON public.canal_etica
   FOR DELETE TO authenticated
   USING (public.is_admin(auth.uid()));
+
+-- ---------------------------------------------------------------------------
+-- Pós-condição: policy de escrita sem helper de papel nas 8 tabelas (drift ou
+-- policy legada fora da lista acima) aborta o lote inteiro (rollback).
+DO $$
+DECLARE
+  _sobra text;
+BEGIN
+  SELECT string_agg(tablename || '.' || policyname, ', ') INTO _sobra
+  FROM pg_policies
+  WHERE schemaname = 'public'
+    AND tablename IN ('comunicados', 'convenios', 'seguros_vida', 'departamentos', 'pensoes',
+                      'premiacoes_campanhas', 'cnab_remessas', 'canal_etica')
+    AND cmd <> 'SELECT'
+    AND policyname <> 'canal_etica_reportar'
+    AND coalesce(qual, '') || coalesce(with_check, '') NOT LIKE '%pode_gerir_rh%'
+    AND coalesce(qual, '') NOT LIKE '%is_admin%';
+  IF _sobra IS NOT NULL THEN
+    RAISE EXCEPTION 'rls_escrita_por_papel: policy de escrita sem papel: %', _sobra;
+  END IF;
+END;
+$$;

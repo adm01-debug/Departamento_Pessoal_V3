@@ -1,7 +1,8 @@
 -- ok só se: as 9 tabelas não têm mais policy de escrita sem papel, as
 -- policies antigas sumiram, a tautologia de premiacoes_campanhas sumiu,
 -- cnab_remessas não tem leitura de tenant, canal_etica só deixa admin apagar
--- e o trigger de aprovação de ponto está ativo.
+-- e o trigger de aprovação de ponto está ativo (aprova admin/RH/gestor; dia
+-- aprovado só eles alteram).
 SELECT 'ok'
 WHERE NOT EXISTS (
   -- nenhuma policy de escrita (ALL/INSERT/UPDATE/DELETE) sem helper de papel,
@@ -47,4 +48,12 @@ WHERE NOT EXISTS (
   WHERE tgrelid = 'public.registros_ponto'::regclass
     AND tgname = 'tr_bloquear_aprovacao_ponto_sem_rh'
     AND tgenabled <> 'D'
+) AND EXISTS (
+  -- aprova quem pode_gerir_pessoas (admin/RH/gestor) e dia aprovado fica travado
+  SELECT 1 FROM pg_proc
+  WHERE oid = 'public.bloquear_aprovacao_ponto_sem_rh()'::regprocedure
+    AND prosrc LIKE '%pode_gerir_pessoas(NEW.empresa_id)%'
+    AND prosrc NOT LIKE '%pode_gerir_rh%'
+    AND prosrc LIKE '%COALESCE(OLD.aprovado, false)%'
+    AND prosrc LIKE '%registro aprovado: só RH/gestor altera%'
 );
