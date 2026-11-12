@@ -206,6 +206,7 @@ export default function SegurosVidaPage() {
       setOpen(false);
       toast.success('Seguro cadastrado');
     },
+    onError: (e: unknown) => toast.error(safeErrorMessage(e, 'Erro ao cadastrar seguro')),
   });
 
   const atualizar = useMutation({
@@ -390,12 +391,14 @@ export default function SegurosVidaPage() {
         <TabsContent value="seguros">
           <div className="flex justify-end mb-4">
             <Dialog open={open} onOpenChange={onOpenChangeSeguro}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Novo Seguro
-                </Button>
-              </DialogTrigger>
+              {podeGerir && (
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Novo Seguro
+                  </Button>
+                </DialogTrigger>
+              )}
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>{editId ? 'Editar Seguro de Vida' : 'Novo Seguro de Vida'}</DialogTitle>

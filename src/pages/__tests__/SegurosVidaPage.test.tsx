@@ -168,13 +168,15 @@ describe('SegurosVidaPage — excluir e permissões', () => {
     renderPage();
     expect(await screen.findByRole('button', { name: 'Editar seguro' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Excluir seguro' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Novo Seguro/ })).toBeInTheDocument();
   });
 
-  it('usuário sem papel RH/admin não vê Editar nem Excluir', async () => {
+  it('usuário sem papel RH/admin não vê Novo, Editar nem Excluir', async () => {
     roles = ['user'];
     renderPage();
     expect(await screen.findByText('Seguradora A')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Editar seguro' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Excluir seguro' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Novo Seguro/ })).not.toBeInTheDocument();
   });
 });
