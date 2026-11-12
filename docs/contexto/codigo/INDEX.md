@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bfb3cb01ba817ea416d8f8d763a9247b1dff5705` (2026-11-11T19:26:39-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `98a0bd563d3d1fd5db17d0d17f729b3960097af4` (2026-11-11T20:30:17-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,25 +383,25 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21971 nós · 46097 arestas · 2149 comunidades · grafo do commit `bfb3cb01`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), @tanstack/react-query (314), lucide-react (306), button.tsx (277), vitest (274), useEmpresas (272), cn (256), client.ts (248), utils.ts (233), contract.ts (179), "public"."empresas" (164)
+- 21972 nós · 46098 arestas · 2141 comunidades · grafo do commit `98a0bd56`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (415), button.tsx (311), lucide-react (306), vitest (262), App.tsx (255), react (245), useEmpresas (211), validate.ts (199), contract.ts (168), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (61)
+- package.json (60)
 - package-lock.json (56)
 - .github/workflows/canonical-migrations.yml (51)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (21)
-- .github/workflows/e2e.yml (13)
-- src/integrations/supabase/types.ts (13)
+- deno.lock (13)
 - src/services/cnabService.ts (13)
-- supabase/functions/external-db-bridge/index.ts (13)
-- supabase/functions/external-db-bridge/validation.ts (13)
+- .github/workflows/e2e.yml (12)
 - AGENTS.md (12)
 - PENDENCIAS.md (12)
-- deno.lock (12)
+- src/integrations/supabase/types.ts (12)
+- supabase/functions/external-db-bridge/index.ts (12)
+- supabase/functions/external-db-bridge/validation.ts (12)
 - .github/workflows/security.yml (11)
 - .github/workflows/canonical-probes.yml (10)
 
@@ -614,6 +614,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-11 `98a0bd5` fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)
+- 2026-11-11 `145cb90` fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)
 - 2026-11-11 `bfb3cb0` infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)
 - 2026-11-11 `6ddd6bd` fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)
 - 2026-11-11 `71b9957` style(manutencao): aplica correcoes locais verificadas (#439)
@@ -627,8 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `75460b7` infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)
 - 2026-11-10 `225d591` feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)
 - 2026-11-10 `24cadd4` chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)
-- 2026-11-10 `b4f9205` chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)
-- 2026-11-10 `3668b50` fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

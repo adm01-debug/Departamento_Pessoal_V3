@@ -1275,7 +1275,7 @@
   {
    "arquivo": "scripts/typecheck-edge.sh",
    "descricao": "Mirrors the CI job \"Edge Functions (deno check)\" (.github/workflows/ci.yml) so a contributor can catch a real `deno check` failure before pushing.",
-   "linhas": 46,
+   "linhas": 50,
    "env": [],
    "npm_scripts": [
     "typecheck:edge"
