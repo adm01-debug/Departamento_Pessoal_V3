@@ -212,12 +212,14 @@ export default function AdminExtintoresPage() {
     mutationFn: async (id: string) => {
       const parsed = extintorEdicaoSchema.safeParse({ ...form, capacidade_kg: Number(form.capacidade_kg) });
       if (!parsed.success) throw new Error('Preencha todos os campos corretamente');
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('sst_extintores')
         .update(validateTablePayload('sst_extintores', parsed.data, 'AdminExtintoresPage:sst_extintores.update'))
         .eq('id', id)
-        .eq('empresa_id', empresaId!);
+        .eq('empresa_id', empresaId!)
+        .select('id');
       if (error) throw error;
+      if (!data?.length) throw new Error('Registro não encontrado ou sem permissão.');
     },
     onSuccess: () => {
       toast.success('Extintor atualizado');
@@ -229,7 +231,7 @@ export default function AdminExtintoresPage() {
 
   const excluirMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('sst_extintores')
         .update(
           validateTablePayload(
@@ -239,8 +241,10 @@ export default function AdminExtintoresPage() {
           )
         )
         .eq('id', id)
-        .eq('empresa_id', empresaId!);
+        .eq('empresa_id', empresaId!)
+        .select('id');
       if (error) throw error;
+      if (!data?.length) throw new Error('Registro não encontrado ou sem permissão.');
     },
     onSuccess: () => {
       toast.success('Extintor excluído');

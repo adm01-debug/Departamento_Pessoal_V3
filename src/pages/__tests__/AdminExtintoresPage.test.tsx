@@ -1,11 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import AdminExtintoresPage from '@/pages/AdminExtintoresPage';
 
-const { updateMock, eqCalls } = vi.hoisted(() => ({
+const { updateMock, eqCalls, updateRows } = vi.hoisted(() => ({
   updateMock: vi.fn(),
   eqCalls: [] as Array<[string, unknown]>,
+  updateRows: { value: [{ id: 'ext-1' }] as Array<{ id: string }> },
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
@@ -32,8 +34,9 @@ vi.mock('@/integrations/supabase/client', () => {
   const updateChain = {
     eq: (col: string, val: unknown) => {
       eqCalls.push([col, val]);
-      return eqCalls.length % 2 === 0 ? Promise.resolve({ error: null }) : updateChain;
+      return updateChain;
     },
+    select: () => Promise.resolve({ data: updateRows.value, error: null }),
   };
   return {
     supabase: {
@@ -62,6 +65,9 @@ describe('AdminExtintoresPage — editar e excluir', () => {
   beforeEach(() => {
     updateMock.mockClear();
     eqCalls.length = 0;
+    updateRows.value = [{ id: 'ext-1' }];
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
   });
 
   it('edita localização do extintor existente', async () => {
@@ -98,5 +104,15 @@ describe('AdminExtintoresPage — editar e excluir', () => {
       ['id', 'ext-1'],
       ['empresa_id', 'emp-1'],
     ]);
+  });
+
+  it('não mostra sucesso quando a exclusão não afeta nenhuma linha', async () => {
+    updateRows.value = [];
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Excluir EXT-001' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(toast.success).not.toHaveBeenCalled();
   });
 });
