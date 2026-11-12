@@ -40,6 +40,10 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogTrigger: ({ children }: { children?: ReactNode }) => children,
 }));
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-1' } }),
+}));
+
 vi.mock('@/components/forms', () => ({
   FormSwitch: ({
     label,
@@ -59,7 +63,8 @@ vi.mock('@/components/forms', () => ({
   ),
 }));
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { BeneficiosSettingsTab } from '../settings/BeneficiosSettingsTab';
 
 const MOCK_REGRAS = [
@@ -100,6 +105,29 @@ describe('BeneficiosSettingsTab', () => {
     vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<BeneficiosSettingsTab />);
     expect(screen.getByText(/próximos fechamentos de folha/)).toBeInTheDocument();
+  });
+
+  it('Excluir pede confirmação e exclui o plano filtrando pela empresa atual', async () => {
+    const user = userEvent.setup();
+    const mutate = vi.fn();
+    vi.mocked(useMutation).mockReturnValue({ mutate, isPending: false } as never);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGRAS, isLoading: false } as never);
+    render(<BeneficiosSettingsTab />);
+
+    await user.click(screen.getAllByRole('button', { name: 'Excluir' })[0]);
+    expect(screen.getByText('Excluir o plano VR Master?')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Excluir' }));
+    expect(mutate).toHaveBeenCalledWith('b1');
+
+    const opts = vi.mocked(useMutation).mock.calls.map((c) => c[0] as { mutationFn: (v: string) => Promise<void> });
+    const eq = vi.fn().mockReturnThis();
+    const chain = { delete: vi.fn(() => chain), eq: vi.fn((...a: unknown[]) => (eq(...a), chain)), error: null };
+    vi.mocked(supabase.from).mockReturnValue(chain as never);
+    await opts[opts.length - 1].mutationFn('b1');
+    expect(supabase.from).toHaveBeenCalledWith('beneficios');
+    expect(chain.delete).toHaveBeenCalled();
+    expect(eq).toHaveBeenCalledWith('id', 'b1');
+    expect(eq).toHaveBeenCalledWith('empresa_id', 'empresa-1');
   });
 
   it('shows dialog when Novo Plano clicked', async () => {

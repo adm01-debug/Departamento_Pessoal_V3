@@ -1,0 +1,138 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { createWrapper } from '@/test/queryWrapper';
+
+const svc = vi.hoisted(() => ({
+  getConfig: vi.fn(),
+  saveConfig: vi.fn(),
+  getRemessas: vi.fn(),
+  listar: vi.fn(),
+  getLogs: vi.fn(),
+  criar: vi.fn(),
+  excluir: vi.fn(),
+}));
+
+vi.mock('@/services/integracaoService', () => ({
+  cnabService: { getConfig: svc.getConfig, saveConfig: svc.saveConfig, getRemessas: svc.getRemessas },
+  webhookService: { listar: svc.listar, getLogs: svc.getLogs, criar: svc.criar, excluir: svc.excluir },
+}));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-1' } }),
+}));
+
+vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
+
+import { toast } from 'sonner';
+import { CnabConfigPanel, WebhookConfigPanel } from '../ConfigPanels';
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  svc.getRemessas.mockResolvedValue([]);
+  svc.getLogs.mockResolvedValue([]);
+  svc.saveConfig.mockResolvedValue(undefined);
+  svc.criar.mockResolvedValue(undefined);
+  svc.excluir.mockResolvedValue(undefined);
+});
+
+describe('CnabConfigPanel', () => {
+  it('Salvar Configurações grava os dados editados e invalida a configuração', async () => {
+    svc.getConfig.mockResolvedValue({
+      id: 'cfg-1',
+      nome_empresa: 'ACME',
+      banco_codigo: '341',
+      agencia: '1234',
+      conta: '5678',
+      conta_digito: '9',
+      codigo_empresa: null,
+      convenio: 'CONV',
+    });
+    const user = userEvent.setup();
+    const { wrapper, invalidateSpy } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    await user.click(screen.getByRole('tab', { name: 'Configuração Bancária' }));
+    const agencia = await screen.findByDisplayValue('1234');
+    await user.clear(agencia);
+    await user.type(agencia, '4321');
+    await user.click(screen.getByRole('button', { name: 'Salvar Configurações' }));
+
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Configuração bancária salva!'));
+    expect(svc.saveConfig).toHaveBeenCalledWith('empresa-1', {
+      id: 'cfg-1',
+      nome_empresa: 'ACME',
+      banco_codigo: '341',
+      agencia: '4321',
+      conta: '5678',
+      conta_digito: '9',
+      codigo_empresa: null,
+      convenio: 'CONV',
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['cnab_config', 'empresa-1'] });
+  });
+
+  it('não salva sem os campos obrigatórios', async () => {
+    svc.getConfig.mockResolvedValue(null);
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    await user.click(screen.getByRole('tab', { name: 'Configuração Bancária' }));
+    await user.click(screen.getByRole('button', { name: 'Salvar Configurações' }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(svc.saveConfig).not.toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+});
+
+describe('WebhookConfigPanel', () => {
+  it('Novo Webhook cria o webhook com URL e eventos', async () => {
+    svc.listar.mockResolvedValue([]);
+    const user = userEvent.setup();
+    const { wrapper, invalidateSpy } = createWrapper();
+    render(<WebhookConfigPanel />, { wrapper });
+
+    await user.click(screen.getByRole('button', { name: /Novo Webhook/ }));
+    await user.type(screen.getByLabelText('URL de destino'), 'https://hooks.test/rh');
+    await user.type(screen.getByLabelText('Eventos (separados por vírgula)'), 'colaborador.criado, ferias.aprovadas');
+    await user.click(screen.getByRole('button', { name: 'Salvar Webhook' }));
+
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Webhook criado!'));
+    expect(svc.criar).toHaveBeenCalledWith('empresa-1', {
+      url: 'https://hooks.test/rh',
+      eventos: ['colaborador.criado', 'ferias.aprovadas'],
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['webhooks', 'empresa-1'] });
+  });
+
+  it('rejeita URL sem https', async () => {
+    svc.listar.mockResolvedValue([]);
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<WebhookConfigPanel />, { wrapper });
+
+    await user.click(screen.getByRole('button', { name: /Novo Webhook/ }));
+    await user.type(screen.getByLabelText('URL de destino'), 'http://hooks.test/rh');
+    await user.type(screen.getByLabelText('Eventos (separados por vírgula)'), 'x');
+    await user.click(screen.getByRole('button', { name: 'Salvar Webhook' }));
+
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('URL do webhook deve usar https.'));
+    expect(svc.criar).not.toHaveBeenCalled();
+  });
+
+  it('Remover pede confirmação e exclui o webhook da empresa', async () => {
+    svc.listar.mockResolvedValue([{ id: 'w1', url: 'https://hooks.test/rh', eventos: ['colaborador.criado'] }]);
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<WebhookConfigPanel />, { wrapper });
+
+    await user.click(await screen.findByRole('button', { name: 'Remover' }));
+    expect(screen.getByText('Remover webhook?')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Remover' }));
+
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Webhook removido.'));
+    expect(svc.excluir).toHaveBeenCalledWith('empresa-1', 'w1');
+  });
+});

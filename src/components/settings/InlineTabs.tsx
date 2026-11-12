@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Bell, Plug, Plus, RefreshCw, Save, Settings, Trash2, Webhook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
+import { bitrix24Service } from '@/services/tabelasComplementaresService';
+import { useTheme } from '@/providers/ThemeProvider';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
-import { FormField, FormSelect, FormSwitch } from '@/components/forms';
+import { FormField, FormSwitch } from '@/components/forms';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useAuth } from '@/contexts/AuthContext';
 import { validateTablePayload } from '@/schemas/validate';
@@ -22,6 +25,24 @@ import { validateTablePayload } from '@/schemas/validate';
 type AuthUser = { name?: string } | null | undefined;
 
 export function PreferenciasTab({ user }: { user: AuthUser }) {
+  const { theme, setTheme } = useTheme();
+  // Edição do usuário sobre o nome atual (estado derivado: acompanha o user até ele digitar).
+  const [draftNome, setDraftNome] = useState<string | null>(null);
+  const nome = draftNome ?? user?.name ?? '';
+  const modoEscuro =
+    theme === 'dark' || (theme === 'system' && !!window.matchMedia?.('(prefers-color-scheme: dark)')?.matches);
+
+  const salvar = useMutation({
+    mutationFn: async () => {
+      const name = nome.trim();
+      if (!name) throw new Error('Informe o nome de exibição.');
+      const { error } = await supabase.auth.updateUser({ data: { name } });
+      if (error) throw error;
+    },
+    onSuccess: () => toast.success('Preferências salvas!'),
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao salvar preferências.')),
+  });
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden bg-card">
@@ -32,22 +53,29 @@ export function PreferenciasTab({ user }: { user: AuthUser }) {
         </CardHeader>
         <CardContent className="space-y-6 pt-2">
           <div className="space-y-4">
-            <FormField label="Nome de Exibição" defaultValue={user?.name || 'Usuário'} className="max-w-md" />
-            <FormSelect
-              label="Idioma do Sistema"
-              options={[
-                { value: 'pt-BR', label: 'Português (Brasil)' },
-                { value: 'en-US', label: 'English (US)' },
-              ]}
+            <FormField
+              id="preferencias-nome"
+              label="Nome de Exibição"
+              value={nome}
+              onChange={(e) => setDraftNome(e.target.value)}
+              placeholder="Usuário"
               className="max-w-md"
             />
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-muted/30 border border-border/20">
-              <FormSwitch label="Modo Escuro" description="Alternar entre tema claro e escuro automaticamente" />
-              <FormSwitch label="Animações Reduzidas" description="Desativar efeitos visuais para melhor performance" />
+              <FormSwitch
+                label="Modo Escuro"
+                description="Alternar entre tema claro e escuro (aplicado na hora, neste navegador)"
+                checked={modoEscuro}
+                onCheckedChange={(v) => setTheme(v ? 'dark' : 'light')}
+              />
             </div>
           </div>
-          <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-lg font-body px-8 h-11">
-            Salvar Alterações
+          <Button
+            className="rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 shadow-lg font-body px-8 h-11"
+            onClick={() => salvar.mutate()}
+            disabled={salvar.isPending}
+          >
+            {salvar.isPending ? 'Salvando...' : 'Salvar Alterações'}
           </Button>
         </CardContent>
       </Card>
@@ -62,25 +90,12 @@ export function NotificacoesTab() {
         <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow" />
         <CardHeader>
           <CardTitle className="font-display">Central de Notificações</CardTitle>
-          <CardDescription>Configure alertas via E-mail, WhatsApp e Push</CardDescription>
+          <CardDescription>Alertas via E-mail, WhatsApp e Push</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-2 font-body">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-4 p-5 rounded-2xl bg-muted/20 border border-border/30">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-primary">Operacional</h4>
-              <FormSwitch label="Novas Admissões" description="Notificar sobre novos processos iniciados" />
-              <FormSwitch label="Férias Pendentes" description="Alertar sobre solicitações aguardando aprovação" />
-              <FormSwitch label="Afastamentos" description="Informar quando um colaborador se afastar" />
-            </div>
-            <div className="space-y-4 p-5 rounded-2xl bg-muted/20 border border-border/30">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-warning">Compliance</h4>
-              <FormSwitch label="Vencimento de ASO" description="Avisar 15 dias antes do vencimento" />
-              <FormSwitch label="Treinamentos" description="Alertar sobre convocações de cursos" />
-              <FormSwitch label="Logs de Erro" description="Notificar falhas críticas em integrações" />
-            </div>
-          </div>
-          <div className="pt-2">
-            <Button className="rounded-xl shadow-glow px-8 h-11">Salvar Preferências</Button>
+          <div className="p-5 rounded-2xl bg-muted/20 border border-border/30 text-sm text-muted-foreground">
+            A escolha de quais alertas receber por canal ainda não está disponível. Os avisos do sistema continuam
+            aparecendo no sino de notificações e na página Notificações.
           </div>
         </CardContent>
       </Card>
@@ -533,6 +548,12 @@ export function AlertasKpiTab() {
 }
 
 export function IntegracoesTab() {
+  const navigate = useNavigate();
+  const { data: bitrixConfig } = useQuery({
+    queryKey: ['bitrix24_config'],
+    queryFn: () => bitrix24Service.getConfig(),
+  });
+  const bitrixConectado = !!(bitrixConfig?.habilitado && bitrixConfig.webhook_url);
   const { data: integracoes = [], isLoading } = useQuery({
     queryKey: ['integracoes'],
     queryFn: async () => {
@@ -558,12 +579,18 @@ export function IntegracoesTab() {
                 </div>
                 Bitrix24 CRM
               </CardTitle>
-              <Badge
-                variant="outline"
-                className="text-success border-success/30 bg-success/5 text-[9px] uppercase font-bold px-2 py-0"
-              >
-                Conectado
-              </Badge>
+              {bitrixConectado ? (
+                <Badge
+                  variant="outline"
+                  className="text-success border-success/30 bg-success/5 text-[9px] uppercase font-bold px-2 py-0"
+                >
+                  Conectado
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="text-[9px] uppercase font-bold px-2 py-0">
+                  Não configurado
+                </Badge>
+              )}
             </div>
             <CardDescription className="text-[11px]">Sincronização de talentos e estrutura</CardDescription>
           </CardHeader>
@@ -584,66 +611,15 @@ export function IntegracoesTab() {
               >
                 <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Agora
               </Button>
-              <Button variant="ghost" size="sm" className="rounded-xl gap-2 font-body text-xs justify-start h-9">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="rounded-xl gap-2 font-body text-xs justify-start h-9"
+                onClick={() => navigate('/integracoes')}
+              >
                 <Settings className="h-3.5 w-3.5" /> Webhook de Mudanças
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated bg-card opacity-70 group grayscale hover:grayscale-0 hover:opacity-100 transition-all">
-          <div className="h-[2px] bg-[#FF3333]" />
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-[#FF3333]/10 flex items-center justify-center">
-                  <Plug className="w-3.5 h-3.5 text-[#FF3333]" />
-                </div>
-                RD Station
-              </CardTitle>
-              <Badge variant="secondary" className="text-[9px] font-bold">
-                EM BREVE
-              </Badge>
-            </div>
-            <CardDescription className="text-[11px]">Exportação de dados para marketing</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled
-              className="w-full rounded-xl text-xs font-body h-9 border-dashed"
-            >
-              Conectar Plataforma
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated bg-card opacity-70 group grayscale hover:grayscale-0 hover:opacity-100 transition-all">
-          <div className="h-[2px] bg-[#4285F4]" />
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-display flex items-center gap-2">
-                <div className="w-6 h-6 rounded bg-[#4285F4]/10 flex items-center justify-center">
-                  <Plug className="w-3.5 h-3.5 text-[#4285F4]" />
-                </div>
-                Google Workspace
-              </CardTitle>
-              <Badge variant="secondary" className="text-[9px] font-bold">
-                EM BREVE
-              </Badge>
-            </div>
-            <CardDescription className="text-[11px]">Provisionamento de contas e e-mail</CardDescription>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled
-              className="w-full rounded-xl text-xs font-body h-9 border-dashed"
-            >
-              Configurar Domínio
-            </Button>
           </CardContent>
         </Card>
       </div>
@@ -674,7 +650,6 @@ export function IntegracoesTab() {
                     <TableHead className="font-display font-semibold hidden sm:table-cell">
                       Última Sincronização
                     </TableHead>
-                    <TableHead className="w-[60px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -695,21 +670,11 @@ export function IntegracoesTab() {
                           ? new Date(i.ultima_sincronizacao).toLocaleString('pt-BR')
                           : 'Nunca sincronizado'}
                       </TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Configurações"
-                          className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
                     </TableRow>
                   ))}
                   {integracoes.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-16 font-body opacity-40">
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-16 font-body opacity-40">
                         <div className="flex flex-col items-center gap-3">
                           <Plug className="h-10 w-10" />
                           <p>Nenhuma integração personalizada ativa.</p>
