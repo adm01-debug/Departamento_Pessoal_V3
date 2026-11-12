@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { Shield, ShieldAlert, ShieldCheck, Users, Info } from 'lucide-react';
@@ -19,6 +20,15 @@ interface UserRoleRow {
   created_at: string;
 }
 
+// Perfis que a tela pode atribuir além de admin. supervisor/coordenador são
+// os únicos que alteram a configuração de ponto (20261112010000).
+const PERFIS_ATRIBUIVEIS: { value: Enums<'app_role'>; label: string }[] = [
+  { value: 'supervisor', label: 'Supervisor' },
+  { value: 'coordenador', label: 'Coordenador' },
+  { value: 'gestor', label: 'Gestor' },
+  { value: 'rh', label: 'RH' },
+];
+
 export function UserRolesTab() {
   const qc = useQueryClient();
   const { data: roles = [], isLoading } = useQuery({
@@ -33,26 +43,30 @@ export function UserRolesTab() {
     },
   });
 
-  const upgradeToAdmin = useMutation({
-    mutationFn: async (userId: string) => {
+  const atribuirPerfil = useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: Enums<'app_role'> }) => {
       const { error } = await supabase.rpc('admin_set_user_role', {
         _target_user_id: userId,
-        _role: 'admin',
+        _role: role,
       });
       if (error) throw error;
     },
-    onSuccess: (_, userId) => {
+    onSuccess: (_, { userId, role }) => {
       qc.invalidateQueries({ queryKey: ['user-roles-list'] });
-      toast.success('Perfil atualizado para Administrador');
+      toast.success(role === 'admin' ? 'Perfil atualizado para Administrador' : `Perfil ${role} atribuído`);
       void auditLogger.log({
         tabela: 'user_roles',
         registro_id: userId,
         acao: 'UPDATE',
-        dados_novos: { role: 'admin', user_id: userId },
+        dados_novos: { role, user_id: userId },
       });
     },
     onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.')),
   });
+
+  // Um usuário pode ter várias linhas (uma por perfil); o seletor só oferece
+  // perfis que ele ainda não tem.
+  const perfisDoUsuario = (userId: string) => new Set(roles.filter((x) => x.user_id === userId).map((x) => x.role));
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -98,16 +112,43 @@ export function UserRolesTab() {
                       {new Date(r.created_at).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right">
-                      {r.role !== 'admin' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => upgradeToAdmin.mutate(r.user_id)}
-                          className="rounded-lg h-8 text-primary hover:text-primary hover:bg-primary/5"
-                        >
-                          Tornar Admin
-                        </Button>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        {(() => {
+                          const atuais = perfisDoUsuario(r.user_id);
+                          const opcoes = PERFIS_ATRIBUIVEIS.filter((o) => !atuais.has(o.value));
+                          return opcoes.length > 0 ? (
+                            <Select
+                              value=""
+                              onValueChange={(v) =>
+                                atribuirPerfil.mutate({ userId: r.user_id, role: v as Enums<'app_role'> })
+                              }
+                              disabled={atribuirPerfil.isPending}
+                            >
+                              <SelectTrigger className="h-8 w-[170px] rounded-lg text-xs" aria-label="Adicionar perfil">
+                                <SelectValue placeholder="Adicionar perfil" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {opcoes.map((o) => (
+                                  <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : null;
+                        })()}
+                        {r.role !== 'admin' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => atribuirPerfil.mutate({ userId: r.user_id, role: 'admin' })}
+                            disabled={atribuirPerfil.isPending}
+                            className="rounded-lg h-8 text-primary hover:text-primary hover:bg-primary/5"
+                          >
+                            Tornar Admin
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
