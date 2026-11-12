@@ -110,37 +110,13 @@ describe('CnabConfigPanel', () => {
 });
 
 describe('WebhookConfigPanel', () => {
-  it('Novo Webhook cria o webhook com URL e eventos', async () => {
+  it('Novo Webhook fica desativado enquanto não existe disparo de webhooks', async () => {
     svc.listar.mockResolvedValue([]);
-    const user = userEvent.setup();
-    const { wrapper, invalidateSpy } = createWrapper();
-    render(<WebhookConfigPanel />, { wrapper });
-
-    await user.click(screen.getByRole('button', { name: /Novo Webhook/ }));
-    await user.type(screen.getByLabelText('URL de destino'), 'https://hooks.test/rh');
-    await user.type(screen.getByLabelText('Eventos (separados por vírgula)'), 'colaborador.criado, ferias.aprovadas');
-    await user.click(screen.getByRole('button', { name: 'Salvar Webhook' }));
-
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Webhook criado!'));
-    expect(svc.criar).toHaveBeenCalledWith('empresa-1', {
-      url: 'https://hooks.test/rh',
-      eventos: ['colaborador.criado', 'ferias.aprovadas'],
-    });
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['webhooks', 'empresa-1'] });
-  });
-
-  it('rejeita URL sem https', async () => {
-    svc.listar.mockResolvedValue([]);
-    const user = userEvent.setup();
     const { wrapper } = createWrapper();
     render(<WebhookConfigPanel />, { wrapper });
 
-    await user.click(screen.getByRole('button', { name: /Novo Webhook/ }));
-    await user.type(screen.getByLabelText('URL de destino'), 'http://hooks.test/rh');
-    await user.type(screen.getByLabelText('Eventos (separados por vírgula)'), 'x');
-    await user.click(screen.getByRole('button', { name: 'Salvar Webhook' }));
-
-    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('URL do webhook deve usar https.'));
+    expect(screen.getByRole('button', { name: /Novo Webhook/ })).toBeDisabled();
+    expect(screen.getByText(/Disparo de webhooks ainda não implementado/)).toBeInTheDocument();
     expect(svc.criar).not.toHaveBeenCalled();
   });
 

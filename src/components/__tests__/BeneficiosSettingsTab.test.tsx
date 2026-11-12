@@ -130,11 +130,25 @@ describe('BeneficiosSettingsTab', () => {
     expect(chain.delete).toHaveBeenCalled();
     expect(eq).toHaveBeenCalledWith('id', 'b1');
     expect(eq).toHaveBeenCalledWith('empresa_id', 'empresa-1');
+    expect(eq).toHaveBeenCalledWith('obrigatorio_por_lei', false);
     expect(select).toHaveBeenCalledWith('id');
 
     // Plano de outra empresa (0 linhas afetadas) não pode virar "Plano excluído".
     select.mockResolvedValueOnce({ data: [], error: null });
     await expect(excluir('b1')).rejects.toThrow(/não pertence à empresa selecionada/);
+  });
+
+  it('Excluir fica desativado para benefício obrigatório por lei', () => {
+    vi.mocked(useQuery).mockReturnValue({
+      data: [
+        { id: 'b3', nome: 'Vale-Transporte', tipo: 'Transporte', valor: 0, ativo: true, obrigatorio_por_lei: true },
+      ],
+      isLoading: false,
+    } as never);
+    render(<BeneficiosSettingsTab />);
+    const btn = screen.getByRole('button', { name: 'Excluir' });
+    expect(btn).toBeDisabled();
+    expect(btn.parentElement).toHaveAttribute('title', 'Benefício obrigatório por lei não pode ser excluído');
   });
 
   it('shows dialog when Novo Plano clicked', async () => {

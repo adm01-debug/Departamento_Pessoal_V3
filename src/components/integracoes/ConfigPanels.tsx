@@ -10,7 +10,6 @@ import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Spinner } from '@/components/ui/spinner';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -461,37 +460,6 @@ export function WebhookConfigPanel() {
   });
 
   const qc = useQueryClient();
-  const [novoOpen, setNovoOpen] = useState(false);
-  const [novoUrl, setNovoUrl] = useState('');
-  const [novoEventos, setNovoEventos] = useState('');
-
-  const criarWebhook = useMutation({
-    mutationFn: () => {
-      const url = novoUrl.trim();
-      let parsed: URL;
-      try {
-        parsed = new URL(url);
-      } catch {
-        throw new Error('URL do webhook inválida.');
-      }
-      if (parsed.protocol !== 'https:') throw new Error('URL do webhook deve usar https.');
-      const eventos = novoEventos
-        .split(',')
-        .map((e) => e.trim())
-        .filter(Boolean);
-      if (eventos.length === 0) throw new Error('Informe ao menos um evento.');
-      return webhookService.criar(empresaId, { url, eventos });
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['webhooks', empresaId] });
-      toast.success('Webhook criado!');
-      setNovoOpen(false);
-      setNovoUrl('');
-      setNovoEventos('');
-    },
-    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao criar webhook')),
-  });
-
   const removerWebhook = useMutation({
     mutationFn: (id: string) => webhookService.excluir(empresaId, id),
     onSuccess: () => {
@@ -527,47 +495,14 @@ export function WebhookConfigPanel() {
             <div>
               <h3 className="font-semibold text-lg">Seus Webhooks</h3>
               <p className="text-sm text-muted-foreground">Configure URLs para receber eventos do sistema</p>
+              <p className="text-xs text-warning mt-1">
+                Disparo de webhooks ainda não implementado: o cadastro de novos webhooks está desativado.
+              </p>
             </div>
-            <Dialog open={novoOpen} onOpenChange={setNovoOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" className="rounded-xl" disabled={!empresaId}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Webhook
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Novo Webhook</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="novo-webhook-url">URL de destino</Label>
-                    <Input
-                      id="novo-webhook-url"
-                      placeholder="https://..."
-                      value={novoUrl}
-                      onChange={(e) => setNovoUrl(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="novo-webhook-eventos">Eventos (separados por vírgula)</Label>
-                    <Input
-                      id="novo-webhook-eventos"
-                      placeholder="Ex: colaborador.criado, ferias.aprovadas"
-                      value={novoEventos}
-                      onChange={(e) => setNovoEventos(e.target.value)}
-                    />
-                  </div>
-                  <Button
-                    className="w-full rounded-xl"
-                    onClick={() => criarWebhook.mutate()}
-                    disabled={!novoUrl.trim() || criarWebhook.isPending}
-                  >
-                    {criarWebhook.isPending ? 'Salvando...' : 'Salvar Webhook'}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button size="sm" className="rounded-xl" disabled title="Disparo de webhooks ainda não implementado">
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Webhook
+            </Button>
           </div>
           {loadWebhooks ? (
             <Spinner />
@@ -575,7 +510,7 @@ export function WebhookConfigPanel() {
             <div className="grid gap-4">
               {webhooks.length === 0 ? (
                 <div className="p-12 text-center border border-dashed rounded-2xl text-muted-foreground">
-                  Clique em "Novo Webhook" para começar
+                  Nenhum webhook cadastrado
                 </div>
               ) : (
                 webhooks.map((w) => (

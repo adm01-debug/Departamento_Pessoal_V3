@@ -100,10 +100,13 @@ export function BeneficiosSettingsTab() {
         .delete()
         .eq('id', id)
         .eq('empresa_id', empresaAtual.id)
+        .eq('obrigatorio_por_lei', false)
         .select('id');
       if (error) throw error;
       if (!data?.length)
-        throw new Error('Plano não excluído: ele não pertence à empresa selecionada ou já foi removido.');
+        throw new Error(
+          'Plano não excluído: ele é obrigatório por lei, não pertence à empresa selecionada ou já foi removido.'
+        );
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['configuracoes-beneficios'] });
@@ -206,38 +209,52 @@ export function BeneficiosSettingsTab() {
                       />
                     </TableCell>
                     <TableCell className="text-right">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                      {regra.obrigatorio_por_lei ? (
+                        <span title="Benefício obrigatório por lei não pode ser excluído">
                           <Button
                             variant="ghost"
                             size="icon"
                             aria-label="Excluir"
                             className="h-8 w-8 rounded-xl"
-                            disabled={excluir.isPending}
+                            disabled
                           >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Excluir o plano {regra.nome}?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Esta ação não pode ser desfeita. Os vínculos de colaboradores e dependentes com este
-                              plano, as regras de elegibilidade, as movimentações e os arquivos dele também serão
-                              apagados. Para apenas suspender o plano, use a chave de status.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              onClick={() => excluir.mutate(regra.id)}
+                        </span>
+                      ) : (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Excluir"
+                              className="h-8 w-8 rounded-xl"
+                              disabled={excluir.isPending}
                             >
-                              Excluir
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Excluir o plano {regra.nome}?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Esta ação não pode ser desfeita. Os vínculos de colaboradores e dependentes com este
+                                plano, as regras de elegibilidade, as movimentações e os arquivos dele também serão
+                                apagados. Para apenas suspender o plano, use a chave de status.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                onClick={() => excluir.mutate(regra.id)}
+                              >
+                                Excluir
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
