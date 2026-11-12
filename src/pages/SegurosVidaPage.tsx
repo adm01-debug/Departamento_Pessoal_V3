@@ -220,6 +220,7 @@ export default function SegurosVidaPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['seguros-vida'] });
+      qc.invalidateQueries({ queryKey: ['sinistros-seguro'] });
       onOpenChangeSeguro(false);
       toast.success('Seguro atualizado');
     },

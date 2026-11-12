@@ -100,6 +100,17 @@ describe('SegurosVidaPage — editar apólice', () => {
     expect(calls.some((c) => c.table === 'seguros_vida' && c.op === 'insert')).toBe(false);
   });
 
+  it('recarrega os sinistros após editar (nome da seguradora exibido na aba Sinistros)', async () => {
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Editar seguro' }));
+    const sinistroSelects = () => calls.filter((c) => c.table === 'sinistros_seguro' && c.op === 'select').length;
+    const antes = sinistroSelects();
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Seguro atualizado'));
+    await waitFor(() => expect(sinistroSelects()).toBeGreaterThan(antes));
+  });
+
   it('mostra erro quando o UPDATE não altera nenhuma linha (RLS/registro inexistente)', async () => {
     updateRows = [];
     renderPage();
