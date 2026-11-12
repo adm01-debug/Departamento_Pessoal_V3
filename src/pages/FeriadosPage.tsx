@@ -109,7 +109,7 @@ export default function FeriadosPage() {
     nacional: 'bg-primary/10 text-primary',
     estadual: 'bg-info/10 text-info',
     municipal: 'bg-warning/10 text-warning',
-    empresa: 'bg-success/10 text-success',
+    facultativo: 'bg-success/10 text-success',
   };
 
   return (
@@ -153,7 +153,7 @@ export default function FeriadosPage() {
                       <SelectItem value="nacional">Nacional</SelectItem>
                       <SelectItem value="estadual">Estadual</SelectItem>
                       <SelectItem value="municipal">Municipal</SelectItem>
-                      <SelectItem value="empresa">Empresa</SelectItem>
+                      <SelectItem value="facultativo">Facultativo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
