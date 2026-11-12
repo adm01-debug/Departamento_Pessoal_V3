@@ -20,6 +20,7 @@ import { FeriasRelatorioDialog } from '@/components/ferias/FeriasRelatorioDialog
 import { useFerias } from '@/hooks/useFerias';
 import { useFeriasAprovacao } from '@/hooks/useFeriasAprovacao';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import {
   Calendar,
@@ -62,6 +63,9 @@ const statusOptions = [
 
 export default function FeriasPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  // RLS de `ferias` só permite INSERT com pode_gerir_rh (admin ou RH da empresa).
+  const podeSolicitar = isAdmin || hasRole('rh');
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -74,7 +78,7 @@ export default function FeriasPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [openSolicitarManual, setOpenSolicitar] = useState(false);
   // Derivado da URL (não só no mount): o atalho "Solicitar Férias" abre o diálogo mesmo já estando em /ferias.
-  const openSolicitar = openSolicitarManual || searchParams.get('solicitar') === '1';
+  const openSolicitar = podeSolicitar && (openSolicitarManual || searchParams.get('solicitar') === '1');
   const { ferias, totalCount, isLoading, isFetching, error, refetch, create, isCreating } = useFerias({
     page,
     limit,
@@ -160,20 +164,24 @@ export default function FeriasPage() {
         gradient="from-primary-glow to-primary"
         actions={
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              className="rounded-xl gap-1.5 font-body bg-gradient-to-r from-primary-glow to-primary"
-              onClick={() => handleOpenSolicitar(true)}
-              disabled={!empresaAtual?.id}
-            >
-              <Plus className="h-4 w-4" /> Solicitar Férias
-            </Button>
-            <FeriasForm
-              open={openSolicitar}
-              onOpenChange={handleOpenSolicitar}
-              onSubmit={create}
-              isSubmitting={isCreating}
-            />
+            {podeSolicitar && (
+              <>
+                <Button
+                  size="sm"
+                  className="rounded-xl gap-1.5 font-body bg-gradient-to-r from-primary-glow to-primary"
+                  onClick={() => handleOpenSolicitar(true)}
+                  disabled={!empresaAtual?.id}
+                >
+                  <Plus className="h-4 w-4" /> Solicitar Férias
+                </Button>
+                <FeriasForm
+                  open={openSolicitar}
+                  onOpenChange={handleOpenSolicitar}
+                  onSubmit={create}
+                  isSubmitting={isCreating}
+                />
+              </>
+            )}
             <Button size="sm" variant="outline" className="rounded-xl gap-1.5 font-body" asChild>
               <a href="/ferias/programacao">
                 <CalendarDays className="h-4 w-4" /> Programação Anual

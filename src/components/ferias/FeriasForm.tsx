@@ -15,6 +15,13 @@ import { colaboradorService } from '@/services/colaboradorService';
 import { feriasService } from '@/services/feriasService';
 import { feriasSchema } from '@/schemas/ferias';
 import { calculoFerias } from '@/utils/calculoFerias';
+import {
+  USO_VAZIO,
+  avisoAntecedenciaFerias,
+  resumirUsoPorPeriodo,
+  validarInicioFerias,
+  validarSaldoFerias,
+} from '@/utils/regrasSolicitacaoFerias';
 import type { Insertable } from '@/integrations/supabase/database.types';
 
 interface FeriasFormProps {
@@ -77,21 +84,12 @@ function FeriasFormBody({
     queryKey: ['ferias-uso-colaborador', colaboradorId, empresaId],
     queryFn: () => feriasService.listarUsoPorColaborador(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
+    // Saldo não pode vir de cache: outra solicitação pode ter sido lançada há pouco.
+    staleTime: 0,
   });
 
-  // Por período: dias já consumidos (gozo + abono) e partes já lançadas (critério de validar_split_ferias).
-  const usoPorPeriodo = useMemo(() => {
-    const mapa = new Map<string, { usado: number; partes: number; maiorParte: number }>();
-    for (const f of usoQuery.data ?? []) {
-      if (!f.periodo_aquisitivo_id) continue;
-      const atual = mapa.get(f.periodo_aquisitivo_id) ?? { usado: 0, partes: 0, maiorParte: 0 };
-      atual.partes += 1;
-      atual.maiorParte = Math.max(atual.maiorParte, f.dias_gozo);
-      if (f.status !== 'rejeitada' && f.status !== 'cancelada') atual.usado += f.dias_gozo + (f.dias_abono ?? 0);
-      mapa.set(f.periodo_aquisitivo_id, atual);
-    }
-    return mapa;
-  }, [usoQuery.data]);
+  // Por período: dias já consumidos (gozo + abono), abono convertido e partes já lançadas.
+  const usoPorPeriodo = useMemo(() => resumirUsoPorPeriodo(usoQuery.data ?? []), [usoQuery.data]);
   const saldoDe = (p: { id: string; dias_direito: number }) => p.dias_direito - (usoPorPeriodo.get(p.id)?.usado ?? 0);
 
   // Só períodos já adquiridos (Art. 134 CLT) ou vencidos; em aquisição, gozados e pagos ficam fora.
@@ -106,6 +104,8 @@ function FeriasFormBody({
   const dias = Number.parseInt(diasGozo, 10);
   const abono = Number.parseInt(diasAbono, 10) || 0;
   const dataFim = calcularDataFimFerias(dataInicio, dias);
+  const hoje = format(new Date(), 'yyyy-MM-dd');
+  const avisoAntecedencia = avisoAntecedenciaFerias(dataInicio, hoje);
 
   const ativos = (colaboradores ?? []).filter((c) => c.status !== 'desligado');
 
@@ -126,6 +126,11 @@ function FeriasFormBody({
       setErro(parsed.error.issues[0]?.message ?? 'Dados inválidos.');
       return;
     }
+    const erroInicio = validarInicioFerias(dataInicio, hoje);
+    if (erroInicio) {
+      setErro(erroInicio);
+      return;
+    }
     if (!periodo) {
       setErro('Selecione o período aquisitivo.');
       return;
@@ -134,25 +139,25 @@ function FeriasFormBody({
       setErro('O colaborador perdeu o direito a férias neste período aquisitivo.');
       return;
     }
-    const uso = usoPorPeriodo.get(periodo.id) ?? { usado: 0, partes: 0, maiorParte: 0 };
-    const saldo = periodo.dias_direito - uso.usado;
-    if (base.dias_gozo + abono > saldo) {
-      setErro(
-        `Dias de gozo + abono excedem o direito disponível no período (saldo ${Math.max(saldo, 0)} de ${periodo.dias_direito} dias).`
-      );
-      return;
-    }
-    if (uso.partes >= 3) {
-      setErro('Este período aquisitivo já tem 3 períodos de férias (máximo — Art. 134 §1º CLT).');
-      return;
-    }
-    if (uso.partes >= 1 && Math.max(uso.maiorParte, base.dias_gozo) < 14) {
-      setErro('Ao fracionar, um dos períodos deve ter no mínimo 14 dias corridos (Art. 134 §1º CLT).');
-      return;
-    }
     const salarioBase = Number(colaboradorQuery.data?.salario_base ?? 0);
     if (!(salarioBase > 0)) {
       setErro('Colaborador sem salário base cadastrado. Atualize o cadastro antes de solicitar férias.');
+      return;
+    }
+    // Saldo recalculado com dados frescos do servidor (o banco não confere o saldo do período).
+    const fresco = await usoQuery.refetch();
+    if (fresco.isError || !fresco.data) {
+      setErro('Não foi possível confirmar o saldo atualizado do período. Tente novamente.');
+      return;
+    }
+    const erroSaldo = validarSaldoFerias({
+      diasDireito: periodo.dias_direito,
+      uso: resumirUsoPorPeriodo(fresco.data).get(periodo.id) ?? USO_VAZIO,
+      diasGozo: base.dias_gozo,
+      diasAbono: abono,
+    });
+    if (erroSaldo) {
+      setErro(erroSaldo);
       return;
     }
 
@@ -300,6 +305,11 @@ function FeriasFormBody({
             Falha ao carregar as férias já lançadas do colaborador; não é possível calcular o saldo.
           </p>
         )}
+        {avisoAntecedencia && (
+          <p role="status" className="text-sm text-warning">
+            {avisoAntecedencia}
+          </p>
+        )}
         {erro && (
           <p role="alert" className="text-sm text-destructive">
             {erro}
@@ -318,6 +328,7 @@ function FeriasFormBody({
             isSubmitting ||
             colaboradorQuery.isLoading ||
             usoQuery.isLoading ||
+            usoQuery.isFetching ||
             usoQuery.isError
           }
         >
