@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -10,12 +10,45 @@ vi.mock('framer-motion', () => ({
 }));
 
 vi.mock('sonner', () => ({
-  toast: { success: vi.fn(), error: vi.fn() },
+  toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn() },
+}));
+
+const { invalidateQueries, updateChain } = vi.hoisted(() => ({
+  invalidateQueries: vi.fn(),
+  updateChain: {
+    update: vi.fn(),
+    in: vi.fn(),
+    eq: vi.fn(),
+    select: vi.fn(),
+  },
 }));
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(),
-  useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+  useQueryClient: () => ({ invalidateQueries }),
+  useMutation: (opts: {
+    mutationFn: (v: string[]) => Promise<number>;
+    onSuccess?: (r: number, v: string[]) => void;
+    onError?: (e: unknown) => void;
+  }) => ({
+    isPending: false,
+    mutate: (v: string[]) => {
+      opts.mutationFn(v).then(
+        (r) => opts.onSuccess?.(r, v),
+        (e) => opts.onError?.(e)
+      );
+    },
+  }),
+}));
+
+vi.mock('@/contexts', () => ({
+  useAuth: () => ({ user: { id: 'user-1' } }),
+}));
+
+vi.mock('../ponto/PontoAuditTimeline', () => ({
+  PontoAuditTimeline: ({ filterTabela, registroId }: { filterTabela?: string; registroId?: string }) => (
+    <div data-testid="audit-timeline">{`${filterTabela}:${registroId}`}</div>
+  ),
 }));
 
 vi.mock('@/hooks', () => ({
@@ -24,13 +57,7 @@ vi.mock('@/hooks', () => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: vi.fn(() => ({
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      gte: vi.fn().mockReturnThis(),
-      lte: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-    })),
+    from: vi.fn(() => updateChain),
   },
 }));
 
@@ -82,6 +109,8 @@ vi.mock('@/components/ui/checkbox', () => ({
 }));
 
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import { GestaoRegistrosPonto } from '../ponto/GestaoRegistrosPonto';
 
 const MOCK_REGISTROS = [
@@ -148,5 +177,57 @@ describe('GestaoRegistrosPonto', () => {
     vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText(/Nenhum registro encontrado/)).toBeInTheDocument();
+  });
+
+  describe('ações', () => {
+    const prepararUpdate = (resultado: { data: { id: string }[] | null; error: unknown }) => {
+      updateChain.update.mockReturnValue(updateChain);
+      updateChain.in.mockReturnValue(updateChain);
+      updateChain.eq.mockReturnValue(updateChain);
+      updateChain.select.mockResolvedValue(resultado);
+    };
+
+    const selecionarPrimeiro = () => {
+      const checkboxes = screen.getAllByRole('checkbox');
+      fireEvent.click(checkboxes[1]);
+    };
+
+    it('Aprovar Lote grava aprovado/aprovado_por/aprovado_em nos registros selecionados', async () => {
+      vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+      prepararUpdate({ data: [{ id: 'r1' }], error: null });
+      render(<GestaoRegistrosPonto />);
+      selecionarPrimeiro();
+      fireEvent.click(screen.getByText('Aprovar Lote'));
+
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith('1 registros aprovados em lote!'));
+      expect(supabase.from).toHaveBeenCalledWith('registros_ponto');
+      expect(updateChain.update).toHaveBeenCalledWith(
+        expect.objectContaining({ aprovado: true, aprovado_por: 'user-1', aprovado_em: expect.any(String) })
+      );
+      expect(updateChain.in).toHaveBeenCalledWith('id', ['r1']);
+      expect(updateChain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+      expect(updateChain.select).toHaveBeenCalledWith('id');
+      expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['gestao-registros-ponto'] });
+    });
+
+    it('Aprovar Lote mostra erro quando nenhuma linha é atualizada (RLS)', async () => {
+      vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+      prepararUpdate({ data: [], error: null });
+      render(<GestaoRegistrosPonto />);
+      selecionarPrimeiro();
+      fireEvent.click(screen.getByText('Aprovar Lote'));
+
+      await waitFor(() =>
+        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('Nenhum registro foi aprovado'))
+      );
+    });
+
+    it('Histórico abre a trilha de auditoria filtrada pelo registro', () => {
+      vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+      render(<GestaoRegistrosPonto />);
+      fireEvent.click(screen.getByRole('button', { name: 'Histórico' }));
+
+      expect(screen.getByTestId('audit-timeline')).toHaveTextContent('registros_ponto:r1');
+    });
   });
 });
