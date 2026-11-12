@@ -90,7 +90,7 @@ export default function ConveniosPage() {
 
   const editar = useMutation({
     mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('convenios')
         .update(
           validateTablePayload(
@@ -105,8 +105,10 @@ export default function ConveniosPage() {
           )
         )
         .eq('id', id)
-        .eq('empresa_id', empresaAtual!.id);
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
       if (error) throw error;
+      if (!data?.length) throw new Error('Convênio não encontrado ou sem permissão para alterar');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['convenios'] });
@@ -119,8 +121,14 @@ export default function ConveniosPage() {
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('convenios').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
+      const { data, error } = await supabase
+        .from('convenios')
+        .delete()
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
       if (error) throw error;
+      if (!data?.length) throw new Error('Convênio não encontrado ou sem permissão para excluir');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['convenios'] });
@@ -211,12 +219,14 @@ export default function ConveniosPage() {
           <TabsContent value="convenios">
             <div className="flex justify-end mb-4">
               <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Novo Convênio
-                  </Button>
-                </DialogTrigger>
+                {podeGerir && (
+                  <DialogTrigger asChild>
+                    <Button>
+                      <Plus className="mr-2 h-4 w-4" />
+                      Novo Convênio
+                    </Button>
+                  </DialogTrigger>
+                )}
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>{editId ? 'Editar Convênio' : 'Novo Convênio'}</DialogTitle>

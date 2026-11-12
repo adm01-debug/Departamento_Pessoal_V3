@@ -8,7 +8,7 @@ const { updateSpy, eqSpy, deleteSpy, auth } = vi.hoisted(() => ({
   updateSpy: vi.fn(),
   eqSpy: vi.fn(),
   deleteSpy: vi.fn(),
-  auth: { roles: ['rh'] as string[] },
+  auth: { roles: ['rh'] as string[], semLinhas: false },
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
@@ -40,10 +40,12 @@ vi.mock('@/integrations/supabase/client', () => {
     };
     b.update = (payload: unknown) => {
       updateSpy(table, payload);
+      if (auth.semLinhas) result.data = [];
       return b;
     };
     b.delete = () => {
       deleteSpy(table);
+      if (auth.semLinhas) result.data = [];
       return b;
     };
     b.then = (resolve: (v: typeof result) => unknown) => Promise.resolve(result).then(resolve);
@@ -66,6 +68,7 @@ describe('ConveniosPage — edição', () => {
     eqSpy.mockClear();
     deleteSpy.mockClear();
     auth.roles = ['rh'];
+    auth.semLinhas = false;
   });
 
   it('abre o diálogo preenchido e salva via update escopado por empresa', async () => {
@@ -109,6 +112,7 @@ describe('ConveniosPage — edição', () => {
     expect(await screen.findByText('Farmácia X')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Novo Convênio' })).not.toBeInTheDocument();
   });
 
   it('admin vê Editar e Excluir', async () => {
@@ -116,6 +120,32 @@ describe('ConveniosPage — edição', () => {
     renderPage();
     expect(await screen.findByRole('button', { name: 'Editar' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Excluir' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Novo Convênio' })).toBeInTheDocument();
+  });
+
+  it('update sem linha afetada mostra erro em vez de sucesso', async () => {
+    const { toast } = await import('sonner');
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
+    auth.semLinhas = true;
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('delete sem linha afetada mostra erro em vez de sucesso', async () => {
+    const { toast } = await import('sonner');
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
+    auth.semLinhas = true;
+    renderPage();
+    fireEvent.click(await screen.findByRole('button', { name: 'Excluir' }));
+    const dialog = await screen.findByRole('alertdialog');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Excluir' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
+    expect(toast.success).not.toHaveBeenCalled();
   });
 
   it('Excluir pede confirmação: cancelar não apaga, confirmar apaga escopado por empresa', async () => {
