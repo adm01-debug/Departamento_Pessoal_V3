@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
@@ -50,6 +50,13 @@ vi.mock('@/hooks/useDepartamentos', () => ({
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 
+vi.mock('@/services/departamentoService', () => ({
+  departamentoService: { contarColaboradoresVinculados: vi.fn() },
+}));
+
+import { toast } from 'sonner';
+import { useDepartamentos } from '@/hooks/useDepartamentos';
+import { departamentoService } from '@/services/departamentoService';
 import { NovoDepartamentoDialog } from '../departamentos/NovoDepartamentoDialog';
 
 describe('NovoDepartamentoDialog', () => {
@@ -95,5 +102,42 @@ describe('NovoDepartamentoDialog', () => {
   it('renders Departamento ativo switch label', () => {
     render(<NovoDepartamentoDialog open={true} onOpenChange={vi.fn()} />);
     expect(screen.getByText('Departamento ativo')).toBeInTheDocument();
+  });
+
+  describe('inativação', () => {
+    function setup(vinculados: number) {
+      const atualizar = vi.fn().mockResolvedValue({});
+      vi.mocked(useDepartamentos).mockReturnValue({
+        criar: vi.fn(),
+        atualizar,
+        empresaId: 'emp-1',
+      } as unknown as ReturnType<typeof useDepartamentos>);
+      vi.mocked(departamentoService.contarColaboradoresVinculados).mockResolvedValue(vinculados);
+      const onOpenChange = vi.fn();
+      render(
+        <NovoDepartamentoDialog
+          open={true}
+          onOpenChange={onOpenChange}
+          departamento={{ id: 'd1', nome: 'RH', ativo: true }}
+        />
+      );
+      fireEvent.click(screen.getByRole('checkbox'));
+      fireEvent.click(screen.getByRole('button', { name: /Salvar/i }));
+      return { atualizar, onOpenChange };
+    }
+
+    it('bloqueia a inativação quando há colaboradores vinculados', async () => {
+      const { atualizar, onOpenChange } = setup(3);
+      await waitFor(() => expect(toast.error).toHaveBeenCalledWith(expect.stringContaining('3 colaborador(es)')));
+      expect(departamentoService.contarColaboradoresVinculados).toHaveBeenCalledWith('RH', 'emp-1');
+      expect(atualizar).not.toHaveBeenCalled();
+      expect(onOpenChange).not.toHaveBeenCalled();
+    });
+
+    it('inativa quando não há colaboradores vinculados', async () => {
+      const { atualizar, onOpenChange } = setup(0);
+      await waitFor(() => expect(atualizar).toHaveBeenCalledWith({ id: 'd1', data: { nome: 'RH', ativo: false } }));
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
   });
 });
