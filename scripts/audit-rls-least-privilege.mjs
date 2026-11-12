@@ -147,7 +147,7 @@ const ISENCOES = new Map([
     'Canal de ética é anônimo por design (coluna `anonimo`, sem colaborador_id) ' +
       '— autoatendimento de denúncia precisa ficar aberto a qualquer colaborador ' +
       'do tenant. Leitura e tratamento da denúncia são RH-only via ' +
-      'canal_etica_rh_manage.',
+      'canal_etica_rh_select/canal_etica_rh_update; exclusão só admin.',
   ],
 ]);
 
