@@ -73,7 +73,11 @@ function useDashboardStats(enabled: boolean) {
         { data: folhaAnteriorData },
       ] = await Promise.all([
         supabase.from('colaboradores').select('id', { count: 'exact', head: true }).eq('status', 'ativo'),
-        supabase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAtual),
+        supabase
+          .from('folhas_pagamento')
+          .select('total_liquido')
+          .eq('competencia', mesAtual)
+          .eq('empresa_id', empresaAtualId),
         supabase
           .from('ferias')
           .select('id', { count: 'exact', head: true })
@@ -88,7 +92,11 @@ function useDashboardStats(enabled: boolean) {
         supabase.from('vw_kpi_absenteismo').select('dias_faltados, mes').order('mes', { ascending: false }).limit(1),
         supabase.from('colaboradores').select('id, salario_base, data_admissao').eq('status', 'ativo'),
         supabase.from('ferias').select('colaborador_id, data_fim').neq('status', 'cancelado'),
-        supabase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAnterior),
+        supabase
+          .from('folhas_pagamento')
+          .select('total_liquido')
+          .eq('competencia', mesAnterior)
+          .eq('empresa_id', empresaAtualId),
       ]);
 
       const folhaMensal = folhaData?.reduce((acc, f) => acc + (f.total_liquido || 0), 0) || 0;

@@ -24,6 +24,7 @@ function makeChain(result: unknown) {
   chain.gt = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
+  chain.range = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn);
   chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(result).catch(fn);
   chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(result).finally(fn);
@@ -107,6 +108,54 @@ describe('useExecutiveKPIs', () => {
       { nome: 'RH', value: 2, custo: 5000 },
       { nome: 'TI', value: 1, custo: 4000 },
     ]);
+  });
+
+  it('includes payroll items of employees terminated in the month in department cost', async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'colaboradores') {
+        const ativos = makeChain({ data: [{ id: 'c1', departamento: 'RH' }], count: 1, error: null });
+        const desligados = makeChain({ data: [{ id: 'c9', departamento: 'TI' }], error: null });
+        ativos.in = vi.fn().mockReturnValue(desligados);
+        return ativos;
+      }
+      if (table === 'folhas_pagamento')
+        return makeChain({ data: [{ id: 'f1', total_liquido: 5000 }], count: 1, error: null });
+      if (table === 'folha_itens')
+        return makeChain({
+          data: [
+            { id: 'i1', colaborador_id: 'c1', total_liquido: 2000 },
+            { id: 'i2', colaborador_id: 'c9', total_liquido: 3000 },
+          ],
+          error: null,
+        });
+      return makeChain({ data: [], count: 0, error: null });
+    });
+    const { result } = renderHook(() => useExecutiveKPIs('emp-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data?.departamentos).toEqual([
+      { nome: 'RH', value: 1, custo: 2000 },
+      { nome: 'TI', value: 0, custo: 3000 },
+    ]);
+  });
+
+  it('paginates folha_itens beyond the 1000-row PostgREST limit', async () => {
+    const pagina1 = Array.from({ length: 1000 }, (_, i) => ({ id: `i${i}`, colaborador_id: 'c1', total_liquido: 1 }));
+    const pagina2 = [{ id: 'i1000', colaborador_id: 'c1', total_liquido: 1 }];
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'colaboradores')
+        return makeChain({ data: [{ id: 'c1', departamento: 'RH' }], count: 1, error: null });
+      if (table === 'folhas_pagamento')
+        return makeChain({ data: [{ id: 'f1', total_liquido: 1001 }], count: 1, error: null });
+      if (table === 'folha_itens') {
+        const chain = makeChain({ data: [], error: null });
+        chain.range = vi.fn((from: number) => makeChain({ data: from === 0 ? pagina1 : pagina2, error: null }));
+        return chain;
+      }
+      return makeChain({ data: [], count: 0, error: null });
+    });
+    const { result } = renderHook(() => useExecutiveKPIs('emp-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.data?.departamentos).toEqual([{ nome: 'RH', value: 1, custo: 1001 }]);
   });
 
   it('computes variacaoFolha=0 when no previous payroll data', async () => {
