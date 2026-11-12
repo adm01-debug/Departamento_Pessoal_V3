@@ -18,8 +18,9 @@ import { beneficiariosSeguroService, segurosColaboradoresService } from '@/servi
 import { useEmpresas } from '@/hooks';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
-import { Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
+import { Pencil, Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+import { safeErrorMessage } from '@/utils/safeError';
 
 // ========== Beneficiários de um Seguro ==========
 function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
@@ -136,14 +137,24 @@ export default function SegurosVidaPage() {
 
   // === Seguros ===
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
+  const [editId, setEditId] = useState<string | null>(null);
+  const formVazio = {
     seguradora: '',
     numero_apolice: '',
     capital_segurado: '',
     premio_mensal: '',
     data_inicio: '',
     data_fim: '',
-  });
+  };
+  const [form, setForm] = useState(formVazio);
+
+  const onOpenChangeSeguro = (v: boolean) => {
+    setOpen(v);
+    if (!v) {
+      setEditId(null);
+      setForm(formVazio);
+    }
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['seguros-vida', empresaAtual?.id],
@@ -182,6 +193,59 @@ export default function SegurosVidaPage() {
       toast.success('Seguro cadastrado');
     },
   });
+
+  const atualizar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      const { data: rows, error } = await supabase
+        .from('seguros_vida')
+        .update(
+          validateTablePayload(
+            'seguros_vida',
+            {
+              seguradora: d.seguradora,
+              numero_apolice: d.numero_apolice || null,
+              capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
+              premio_mensal: d.premio_mensal ? Number(d.premio_mensal) : null,
+              data_inicio: d.data_inicio || null,
+              data_fim: d.data_fim || null,
+            },
+            'SegurosVidaPage:seguros_vida:update'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
+      if (error) throw error;
+      if (!rows?.length) throw new Error('Apólice não encontrada ou sem permissão para editar');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['seguros-vida'] });
+      onOpenChangeSeguro(false);
+      toast.success('Seguro atualizado');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar seguro')),
+  });
+
+  const abrirEdicao = (r: {
+    id: string;
+    seguradora: string | null;
+    numero_apolice: string | null;
+    capital_segurado: number | null;
+    premio_mensal: number | null;
+    data_inicio: string | null;
+    data_fim: string | null;
+  }) => {
+    setEditId(r.id);
+    setForm({
+      seguradora: r.seguradora ?? '',
+      numero_apolice: r.numero_apolice ?? '',
+      capital_segurado: r.capital_segurado != null ? String(r.capital_segurado) : '',
+      premio_mensal: r.premio_mensal != null ? String(r.premio_mensal) : '',
+      data_inicio: r.data_inicio ?? '',
+      data_fim: r.data_fim ?? '',
+    });
+    setOpen(true);
+  };
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
@@ -306,7 +370,7 @@ export default function SegurosVidaPage() {
         {/* ========= ABA APÓLICES ========= */}
         <TabsContent value="seguros">
           <div className="flex justify-end mb-4">
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={onOpenChangeSeguro}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -315,7 +379,7 @@ export default function SegurosVidaPage() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Novo Seguro de Vida</DialogTitle>
+                  <DialogTitle>{editId ? 'Editar Seguro de Vida' : 'Novo Seguro de Vida'}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
@@ -368,8 +432,12 @@ export default function SegurosVidaPage() {
                       />
                     </div>
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.seguradora} className="w-full">
-                    Salvar
+                  <Button
+                    onClick={() => (editId ? atualizar.mutate({ id: editId, d: form }) : criar.mutate(form))}
+                    disabled={!form.seguradora || atualizar.isPending}
+                    className="w-full"
+                  >
+                    {atualizar.isPending ? 'Salvando...' : 'Salvar'}
                   </Button>
                 </div>
               </DialogContent>
@@ -416,7 +484,18 @@ export default function SegurosVidaPage() {
                               <Users className="h-4 w-4 mr-1" /> Ver
                             </Button>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Editar seguro"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                abrirEdicao(r);
+                              }}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
