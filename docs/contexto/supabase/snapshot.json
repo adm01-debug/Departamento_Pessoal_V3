@@ -87895,9 +87895,17 @@
             {
               "file": "src/hooks/useEmpresas.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -94866,9 +94874,17 @@
             {
               "file": "src/hooks/useEmpresas.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -95566,7 +95582,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 75,
+          "code_total_files": 76,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -96336,7 +96352,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 71,
+          "code_total_files": 72,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -98311,9 +98327,17 @@
             {
               "file": "supabase/migrations/20260912190000_p0_identity_rls_authz.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 4,
+          "code_total_files": 6,
           "cron": [],
           "db": [
             "public.pode_gerir_pessoas"
@@ -98517,9 +98541,17 @@
             {
               "file": "supabase/migrations/20261028220000_pagar_desligamento_transacional.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 6,
+          "code_total_files": 8,
           "cron": [],
           "db": [
             "public.pode_gerir_rh"
@@ -101420,9 +101452,17 @@
             {
               "file": "src/hooks/useEmpresas.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 3,
+          "code_total_files": 5,
           "cron": [],
           "db": [],
           "triggers": [],
