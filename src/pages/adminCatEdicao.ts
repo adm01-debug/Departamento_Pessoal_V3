@@ -35,6 +35,25 @@ export function catParaForm<T extends { data_acidente: string | null }>(
 }
 
 /**
+ * Valor fora das opções do Select vira `undefined`: `tipo_acidente` não tem CHECK
+ * no banco e há linha legada ('queda_de_nivel'); assim o Select pede nova escolha
+ * e o erro de validação aparece, em vez de o "Salvar" falhar calado.
+ */
+export function opcaoValida<T extends string>(v: unknown, opcoes: readonly T[]): T | undefined {
+  return typeof v === 'string' && (opcoes as readonly string[]).includes(v) ? (v as T) : undefined;
+}
+
+/** Campo opcional limpo ('') vira `null`: colunas date/time rejeitam '' no INSERT/UPDATE. */
+export function vazioParaNull<T extends object, K extends keyof T>(
+  values: T,
+  campos: readonly K[]
+): Omit<T, K> & { [P in K]: T[P] | null } {
+  const out = { ...values } as Record<PropertyKey, unknown>;
+  for (const c of campos) if (out[c] === '') out[c] = null;
+  return out as Omit<T, K> & { [P in K]: T[P] | null };
+}
+
+/**
  * Prazo legal de envio da CAT, mesma regra de `calcular_prazo_cat`
  * (migration 20260717204215): 24h se óbito, 1 dia caso contrário. O trigger só
  * roda no INSERT, então a correção recalcula ao mudar data ou óbito.

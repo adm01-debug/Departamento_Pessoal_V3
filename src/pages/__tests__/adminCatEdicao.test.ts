@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { catParaForm, isoParaDatetimeLocal, podeEditarCat, prazoLimiteCat } from '../adminCatEdicao';
+import {
+  catParaForm,
+  isoParaDatetimeLocal,
+  opcaoValida,
+  podeEditarCat,
+  prazoLimiteCat,
+  vazioParaNull,
+} from '../adminCatEdicao';
 
 describe('podeEditarCat', () => {
   const base = { status_esocial: 'pendente', protocolo_esocial: null, data_envio_esocial: null };
@@ -56,5 +63,30 @@ describe('prazoLimiteCat', () => {
 
   it('recalcula a partir da data corrigida', () => {
     expect(prazoLimiteCat('2026-12-31T23:30:00.000Z', false)).toBe('2027-01-01T23:30:00.000Z');
+  });
+});
+
+describe('opcaoValida', () => {
+  const opcoes = ['tipico', 'trajeto', 'doenca_ocupacional'] as const;
+
+  it('mantém valor que está nas opções', () => {
+    expect(opcaoValida('trajeto', opcoes)).toBe('trajeto');
+  });
+
+  it('descarta valor legado fora das opções (ex.: queda_de_nivel)', () => {
+    expect(opcaoValida('queda_de_nivel', opcoes)).toBeUndefined();
+    expect(opcaoValida(undefined, opcoes)).toBeUndefined();
+  });
+});
+
+describe('vazioParaNull', () => {
+  it('converte campo limpo em null e preserva os demais', () => {
+    const values = { hora_acidente: '', ultimo_dia_trabalhado: '', observacoes: '', houve_obito: false };
+    expect(vazioParaNull(values, ['hora_acidente', 'ultimo_dia_trabalhado'])).toEqual({
+      hora_acidente: null,
+      ultimo_dia_trabalhado: null,
+      observacoes: '',
+      houve_obito: false,
+    });
   });
 });

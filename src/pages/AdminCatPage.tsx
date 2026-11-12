@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { AlertTriangle, FileText, Plus, Send, ShieldAlert, Clock, Skull, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
-import { catParaForm, podeEditarCat, prazoLimiteCat } from './adminCatEdicao';
+import { catParaForm, opcaoValida, podeEditarCat, prazoLimiteCat, vazioParaNull } from './adminCatEdicao';
 
 const CAT_FORM_COLUMNS =
   'colaborador_id,data_acidente,hora_acidente,tipo_acidente,tipo_cat,cid_principal,parte_corpo_atingida,agente_causador,local_acidente,tipo_local,situacao_geradora,minutos_trabalhados_antes,houve_afastamento,dias_afastamento_estimado,houve_obito,houve_internacao,ultimo_dia_trabalhado,observacoes';
@@ -26,7 +26,7 @@ const catSchema = z.object({
   colaborador_id: z.string().uuid('Colaborador obrigatório'),
   data_acidente: z.string().min(1, 'Data obrigatória'),
   hora_acidente: z.string().optional(),
-  tipo_acidente: z.enum(['tipico', 'trajeto', 'doenca_ocupacional']),
+  tipo_acidente: z.enum(['tipico', 'trajeto', 'doenca_ocupacional'], { error: 'Tipo de acidente obrigatório' }),
   tipo_cat: z.enum(['inicial', 'reabertura', 'comunicacao_obito']),
   cid_principal: z.string().min(3, 'CID obrigatório').max(10),
   parte_corpo_atingida: z.string().optional(),
@@ -44,6 +44,8 @@ const catSchema = z.object({
 });
 
 type CatForm = z.infer<typeof catSchema>;
+
+const CAMPOS_DATA_HORA_OPCIONAIS = ['hora_acidente', 'ultimo_dia_trabalhado'] as const;
 
 type CatRow = {
   id: string;
@@ -137,7 +139,7 @@ export default function AdminCatPage() {
             validateTablePayload(
               'sst_cat',
               {
-                ...values,
+                ...vazioParaNull(values, CAMPOS_DATA_HORA_OPCIONAIS),
                 data_acidente: dataAcidente,
                 prazo_limite_envio: prazoLimiteCat(dataAcidente, values.houve_obito),
               },
@@ -157,7 +159,7 @@ export default function AdminCatPage() {
           validateTablePayload(
             'sst_cat',
             {
-              ...values,
+              ...vazioParaNull(values, CAMPOS_DATA_HORA_OPCIONAIS),
               empresa_id: empresaId,
               data_acidente: new Date(values.data_acidente).toISOString(),
             },
@@ -186,7 +188,14 @@ export default function AdminCatPage() {
         .single();
       if (error) throw error;
       // keepDefaultValues: o form.reset() ao salvar/fechar volta aos padrões de "Nova CAT", não a esta CAT.
-      form.reset(catParaForm(data) as Partial<CatForm>, { keepDefaultValues: true });
+      const valores = catParaForm(data);
+      form.reset(
+        {
+          ...valores,
+          tipo_acidente: opcaoValida(valores.tipo_acidente, catSchema.shape.tipo_acidente.options),
+        } as Partial<CatForm>,
+        { keepDefaultValues: true }
+      );
       setEditingId(id);
       setOpen(true);
     } catch (e) {
@@ -240,7 +249,12 @@ export default function AdminCatPage() {
             <DialogHeader>
               <DialogTitle>{editingId ? 'Corrigir CAT (antes da transmissão)' : 'Registrar CAT'}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(onSubmit, (erros) =>
+                toast.error(Object.values(erros)[0]?.message ?? 'Revise os campos obrigatórios.')
+              )}
+              className="space-y-4"
+            >
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Colaborador *</Label>
@@ -280,11 +294,13 @@ export default function AdminCatPage() {
                 <div>
                   <Label>Tipo de acidente *</Label>
                   <Select
-                    value={tipoAcidenteSel}
-                    onValueChange={(v) => form.setValue('tipo_acidente', v as CatForm['tipo_acidente'])}
+                    value={tipoAcidenteSel ?? ''}
+                    onValueChange={(v) =>
+                      form.setValue('tipo_acidente', v as CatForm['tipo_acidente'], { shouldValidate: true })
+                    }
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="tipico">Típico</SelectItem>
@@ -292,6 +308,9 @@ export default function AdminCatPage() {
                       <SelectItem value="doenca_ocupacional">Doença Ocupacional</SelectItem>
                     </SelectContent>
                   </Select>
+                  {form.formState.errors.tipo_acidente && (
+                    <p className="text-xs text-destructive">{form.formState.errors.tipo_acidente.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label>CID Principal *</Label>
