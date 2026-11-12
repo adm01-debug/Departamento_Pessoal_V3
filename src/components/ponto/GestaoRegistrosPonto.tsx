@@ -40,7 +40,10 @@ import { todayLocalISO } from '@/utils/dateLocal';
 
 export function GestaoRegistrosPonto() {
   const { empresaAtual } = useEmpresas();
-  const { user } = useAuth();
+  const { user, isAdmin, hasRole } = useAuth();
+  // Aprovação segue pode_gerir_pessoas (RH/gestor); a trilha (get_audit_trail) é restrita a RH/admin.
+  const podeAprovar = isAdmin || hasRole('rh') || hasRole('gestor');
+  const podeVerHistorico = isAdmin || hasRole('rh');
   const queryClient = useQueryClient();
   const [selecionados, setSelecionados] = useState<string[]>([]);
   const [historico, setHistorico] = useState<{ id: string; nome: string } | null>(null);
@@ -98,17 +101,22 @@ export function GestaoRegistrosPonto() {
         )
         .in('id', ids)
         .eq('empresa_id', empresaAtual.id)
+        .or('aprovado.is.null,aprovado.eq.false')
         .select('id');
       if (error) throw error;
       if (!data || data.length === 0) {
-        throw new Error('Nenhum registro foi aprovado. Verifique se você tem permissão de RH nesta empresa.');
+        throw new Error(
+          'Nenhum registro foi aprovado: os selecionados já estavam aprovados ou você não tem permissão de RH nesta empresa.'
+        );
       }
       return data.length;
     },
     onSuccess: (aprovados, ids) => {
       queryClient.invalidateQueries({ queryKey: ['gestao-registros-ponto'] });
       if (aprovados < ids.length) {
-        toast.warning(`${aprovados} de ${ids.length} registros aprovados; os demais não puderam ser alterados.`);
+        toast.warning(
+          `${aprovados} de ${ids.length} registros aprovados; ${ids.length - aprovados} ignorados (já aprovados ou sem permissão).`
+        );
       } else {
         toast.success(`${aprovados} registros aprovados em lote!`);
       }
@@ -146,6 +154,8 @@ export function GestaoRegistrosPonto() {
 
     return buscaMatch;
   });
+  // Só aprova o que está selecionado E visível com os filtros atuais.
+  const selecionadosVisiveis = selecionados.filter((id) => filtrados.some((f) => f.id === id));
 
   const exportData = (format: 'csv' | 'pdf') => {
     if (filtrados.length === 0) {
@@ -289,20 +299,22 @@ export function GestaoRegistrosPonto() {
               </div>
 
               <AnimatePresence>
-                {selecionados.length > 0 && (
+                {podeAprovar && selecionadosVisiveis.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg border border-primary/20"
                   >
-                    <span className="text-[10px] font-bold text-primary">{selecionados.length} selecionados</span>
+                    <span className="text-[10px] font-bold text-primary">
+                      {selecionadosVisiveis.length} selecionados
+                    </span>
                     <Button
                       variant="ghost"
                       size="sm"
                       className="h-7 px-2 text-[10px] text-primary hover:bg-primary/20"
                       disabled={aprovarLote.isPending}
-                      onClick={() => aprovarLote.mutate(selecionados)}
+                      onClick={() => aprovarLote.mutate(selecionadosVisiveis)}
                     >
                       {aprovarLote.isPending ? 'Aprovando...' : 'Aprovar Lote'}
                     </Button>
@@ -477,15 +489,19 @@ export function GestaoRegistrosPonto() {
                               </TableCell>
 
                               <TableCell className="text-right">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  aria-label="Histórico"
-                                  className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
-                                  onClick={() => setHistorico({ id: r.id, nome: r.colaborador?.nome_completo || '—' })}
-                                >
-                                  <History className="h-4 w-4" />
-                                </Button>
+                                {podeVerHistorico && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Histórico"
+                                    className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
+                                    onClick={() =>
+                                      setHistorico({ id: r.id, nome: r.colaborador?.nome_completo || '—' })
+                                    }
+                                  >
+                                    <History className="h-4 w-4" />
+                                  </Button>
+                                )}
                               </TableCell>
                             </TableRow>
                           );

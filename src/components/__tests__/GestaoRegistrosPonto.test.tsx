@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { beforeEach, describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
@@ -13,12 +13,14 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn(), warning: vi.fn() },
 }));
 
-const { invalidateQueries, updateChain } = vi.hoisted(() => ({
+const { invalidateQueries, updateChain, auth } = vi.hoisted(() => ({
   invalidateQueries: vi.fn(),
+  auth: { roles: ['rh'] as string[] },
   updateChain: {
     update: vi.fn(),
     in: vi.fn(),
     eq: vi.fn(),
+    or: vi.fn(),
     select: vi.fn(),
   },
 }));
@@ -42,7 +44,11 @@ vi.mock('@tanstack/react-query', () => ({
 }));
 
 vi.mock('@/contexts', () => ({
-  useAuth: () => ({ user: { id: 'user-1' } }),
+  useAuth: () => ({
+    user: { id: 'user-1' },
+    isAdmin: auth.roles.includes('admin'),
+    hasRole: (role: string) => auth.roles.includes(role),
+  }),
 }));
 
 vi.mock('../ponto/PontoAuditTimeline', () => ({
@@ -184,8 +190,14 @@ describe('GestaoRegistrosPonto', () => {
       updateChain.update.mockReturnValue(updateChain);
       updateChain.in.mockReturnValue(updateChain);
       updateChain.eq.mockReturnValue(updateChain);
+      updateChain.or.mockReturnValue(updateChain);
       updateChain.select.mockResolvedValue(resultado);
     };
+
+    beforeEach(() => {
+      auth.roles = ['rh'];
+      vi.clearAllMocks();
+    });
 
     const selecionarPrimeiro = () => {
       const checkboxes = screen.getAllByRole('checkbox');
@@ -206,6 +218,7 @@ describe('GestaoRegistrosPonto', () => {
       );
       expect(updateChain.in).toHaveBeenCalledWith('id', ['r1']);
       expect(updateChain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+      expect(updateChain.or).toHaveBeenCalledWith('aprovado.is.null,aprovado.eq.false');
       expect(updateChain.select).toHaveBeenCalledWith('id');
       expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['gestao-registros-ponto'] });
     });
@@ -228,6 +241,63 @@ describe('GestaoRegistrosPonto', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Histórico' }));
 
       expect(screen.getByTestId('audit-timeline')).toHaveTextContent('registros_ponto:r1');
+    });
+
+    const DOIS_REGISTROS = [
+      ...MOCK_REGISTROS,
+      {
+        ...MOCK_REGISTROS[0],
+        id: 'r2',
+        colaborador: { nome_completo: 'Maria Souza', cargo: 'Gerente', departamento: 'RH', foto_url: null },
+      },
+    ];
+
+    it('Aprovar Lote envia só os selecionados que continuam visíveis após filtrar', async () => {
+      vi.mocked(useQuery).mockReturnValue({ data: DOIS_REGISTROS, isLoading: false } as never);
+      prepararUpdate({ data: [{ id: 'r1' }], error: null });
+      render(<GestaoRegistrosPonto />);
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
+      expect(screen.getByText('2 selecionados')).toBeInTheDocument();
+      fireEvent.change(screen.getByPlaceholderText(/Buscar/i), { target: { value: 'João' } });
+      expect(screen.getByText('1 selecionados')).toBeInTheDocument();
+      fireEvent.click(screen.getByText('Aprovar Lote'));
+
+      await waitFor(() => expect(toast.success).toHaveBeenCalledWith('1 registros aprovados em lote!'));
+      expect(updateChain.in).toHaveBeenCalledWith('id', ['r1']);
+    });
+
+    it('Aprovar Lote informa quantos foram aprovados e quantos ignorados (já aprovados)', async () => {
+      vi.mocked(useQuery).mockReturnValue({ data: DOIS_REGISTROS, isLoading: false } as never);
+      prepararUpdate({ data: [{ id: 'r2' }], error: null });
+      render(<GestaoRegistrosPonto />);
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
+      fireEvent.click(screen.getByText('Aprovar Lote'));
+
+      await waitFor(() =>
+        expect(toast.warning).toHaveBeenCalledWith(
+          '1 de 2 registros aprovados; 1 ignorados (já aprovados ou sem permissão).'
+        )
+      );
+    });
+
+    it('usuário sem RH/admin/gestor não vê Aprovar Lote nem Histórico', () => {
+      auth.roles = ['user'];
+      vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+      render(<GestaoRegistrosPonto />);
+      selecionarPrimeiro();
+
+      expect(screen.queryByText('Aprovar Lote')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Histórico' })).not.toBeInTheDocument();
+    });
+
+    it('gestor vê Aprovar Lote mas não Histórico (trilha restrita a RH/admin)', () => {
+      auth.roles = ['gestor'];
+      vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+      render(<GestaoRegistrosPonto />);
+      selecionarPrimeiro();
+
+      expect(screen.getByText('Aprovar Lote')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Histórico' })).not.toBeInTheDocument();
     });
   });
 });
