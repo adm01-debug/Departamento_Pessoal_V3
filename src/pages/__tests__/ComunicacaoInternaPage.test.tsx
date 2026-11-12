@@ -8,7 +8,14 @@ import { toast } from 'sonner';
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() } }));
 vi.mock('@/hooks', () => ({ useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }) }));
-vi.mock('@/contexts/AuthContext', () => ({ useAuth: () => ({ user: { id: 'user-1' } }) }));
+const auth = vi.hoisted(() => ({ roles: ['rh'] as string[] }));
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: { id: 'user-1' },
+    isAdmin: auth.roles.includes('admin'),
+    hasRole: (r: string) => auth.roles.includes(r),
+  }),
+}));
 vi.mock('@/components/layout', () => ({
   PageLayout: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
@@ -58,6 +65,7 @@ function renderPage() {
 describe('ComunicacaoInternaPage — editar comunicado', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    auth.roles = ['rh'];
     vi.mocked(comunicacaoService.listarComunicados).mockResolvedValue([comunicado] as never);
     vi.mocked(comunicacaoService.listarDenuncias).mockResolvedValue([] as never);
     vi.mocked(comunicacaoService.atualizarComunicado).mockResolvedValue({ ...comunicado } as never);
@@ -74,7 +82,12 @@ describe('ComunicacaoInternaPage — editar comunicado', () => {
     expect(screen.getByPlaceholderText('Escreva o comunicado...')).toHaveValue('Sexta às 10h');
 
     fireEvent.change(titulo, { target: { value: 'Reunião geral (adiada)' } });
-    fireEvent.click(screen.getByRole('button', { name: /Salvar Alterações/ }));
+    expect(screen.getByText(/pode ter sido lido/)).toBeInTheDocument();
+    const salvar = screen.getByRole('button', { name: /Salvar Alterações/ });
+    expect(salvar).toBeDisabled();
+    fireEvent.click(screen.getByRole('checkbox', { name: /Estou ciente/ }));
+    expect(salvar).toBeEnabled();
+    fireEvent.click(salvar);
 
     await waitFor(() =>
       expect(comunicacaoService.atualizarComunicado).toHaveBeenCalledWith(
@@ -92,9 +105,38 @@ describe('ComunicacaoInternaPage — editar comunicado', () => {
     renderPage();
 
     fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /Estou ciente/ }));
     fireEvent.click(screen.getByRole('button', { name: /Salvar Alterações/ }));
 
     await waitFor(() => expect(toast.error).toHaveBeenCalled());
     expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('não salva a edição sem a confirmação de ciência', async () => {
+    renderPage();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Editar' }));
+    const salvar = screen.getByRole('button', { name: /Salvar Alterações/ });
+    expect(salvar).toBeDisabled();
+    fireEvent.click(salvar);
+
+    expect(comunicacaoService.atualizarComunicado).not.toHaveBeenCalled();
+  });
+
+  it('admin também vê Editar e Excluir', async () => {
+    auth.roles = ['admin'];
+    renderPage();
+
+    expect(await screen.findByRole('button', { name: 'Editar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Excluir' })).toBeInTheDocument();
+  });
+
+  it('colaborador sem papel RH/admin não vê Editar nem Excluir', async () => {
+    auth.roles = ['user'];
+    renderPage();
+
+    expect(await screen.findByText('Reunião geral')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Editar' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Excluir' })).not.toBeInTheDocument();
   });
 });

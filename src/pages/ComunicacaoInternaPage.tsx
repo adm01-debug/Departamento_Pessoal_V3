@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -62,7 +63,8 @@ const statusEticaColors: Record<string, NonNullable<React.ComponentProps<typeof 
 
 export default function ComunicacaoInternaPage() {
   const { empresaAtual } = useEmpresas();
-  const { user } = useAuth();
+  const { user, isAdmin, hasRole } = useAuth();
+  const podeGerirComunicados = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [openCom, setOpenCom] = useState(false);
   const [openEtica, setOpenEtica] = useState(false);
@@ -71,6 +73,7 @@ export default function ComunicacaoInternaPage() {
   const [formCom, setFormCom] = useState({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
   const [formEtica, setFormEtica] = useState({ categoria: 'outro', descricao: '', anonimo: true });
   const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [cienteEdicao, setCienteEdicao] = useState(false);
 
   // Realtime for comunicados
   useEffect(() => {
@@ -139,6 +142,7 @@ export default function ComunicacaoInternaPage() {
       qc.invalidateQueries({ queryKey: ['comunicados'] });
       setOpenCom(false);
       setEditandoId(null);
+      setCienteEdicao(false);
       toast.success('Comunicado atualizado!');
       setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
     },
@@ -147,6 +151,7 @@ export default function ComunicacaoInternaPage() {
 
   const abrirEdicao = (c: Tables<'comunicados'>) => {
     setEditandoId(c.id);
+    setCienteEdicao(false);
     setFormCom({
       titulo: c.titulo,
       conteudo: c.conteudo ?? '',
@@ -160,6 +165,7 @@ export default function ComunicacaoInternaPage() {
     setOpenCom(open);
     if (!open && editandoId) {
       setEditandoId(null);
+      setCienteEdicao(false);
       setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1 });
     }
   };
@@ -249,24 +255,28 @@ export default function ComunicacaoInternaPage() {
                   )}
                 </div>
               </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Editar"
-                className="h-8 w-8 opacity-0 group-hover:opacity-100 rounded-lg"
-                onClick={() => abrirEdicao(c)}
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                aria-label="Excluir"
-                className="h-8 w-8 opacity-0 group-hover:opacity-100 text-destructive rounded-lg"
-                onClick={() => excluirCom.mutate(c.id)}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
+              {podeGerirComunicados && (
+                <>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Editar"
+                    className="h-8 w-8 opacity-0 group-hover:opacity-100 rounded-lg"
+                    onClick={() => abrirEdicao(c)}
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Excluir"
+                    className="h-8 w-8 opacity-0 group-hover:opacity-100 text-destructive rounded-lg"
+                    onClick={() => excluirCom.mutate(c.id)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -414,10 +424,32 @@ export default function ComunicacaoInternaPage() {
                         placeholder="Escreva o comunicado..."
                       />
                     </div>
+                    {editandoId && (
+                      <div className="rounded-lg border border-warning/40 bg-warning/10 p-3 space-y-2">
+                        <p className="text-xs text-foreground font-body flex gap-2">
+                          <AlertTriangle className="h-4 w-4 text-warning shrink-0" />
+                          Este comunicado já foi publicado e pode ter sido lido. Quem já confirmou a leitura viu o texto
+                          anterior, e a alteração não fica registrada. Para mudar o conteúdo, prefira publicar um novo
+                          comunicado.
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <Checkbox
+                            id="ciente-edicao-comunicado"
+                            checked={cienteEdicao}
+                            onCheckedChange={(v) => setCienteEdicao(v === true)}
+                          />
+                          <Label htmlFor="ciente-edicao-comunicado" className="text-xs">
+                            Estou ciente e quero alterar o comunicado publicado
+                          </Label>
+                        </div>
+                      </div>
+                    )}
                     <Button
                       className="w-full rounded-xl"
                       onClick={() => (editandoId ? editarCom.mutate(editandoId) : criarCom.mutate())}
-                      disabled={!formCom.titulo || criarCom.isPending || editarCom.isPending}
+                      disabled={
+                        !formCom.titulo || criarCom.isPending || editarCom.isPending || (!!editandoId && !cienteEdicao)
+                      }
                     >
                       <Send className="h-4 w-4 mr-2" />
                       {editandoId
