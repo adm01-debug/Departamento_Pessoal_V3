@@ -144,7 +144,7 @@
    "hooks_exportados": [
     "useAuth"
    ],
-   "linhas": 378,
+   "linhas": 379,
    "dominio": "contexts",
    "tabelas": [
     "colaboradores",
@@ -163,10 +163,11 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "usado_por_arquivos": [
     "src/components/layout/MainLayout.tsx",
     "src/components/portal/PortalRegimentoCard.tsx",
+    "src/components/settings/InlineTabs.tsx",
     "src/components/settings/MFASetup.tsx",
     "src/components/ui/user-profile-menu.tsx",
     "src/contexts/index.ts",

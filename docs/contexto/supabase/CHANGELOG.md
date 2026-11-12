@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-12 04:10 UTC
+
+- **realtime** removido (5): `supabase_realtime_messages_publication:realtime.messages_2026_11_04`, `supabase_realtime_messages_publication:realtime.messages_2026_11_05`, `supabase_realtime_messages_publication:realtime.messages_2026_11_06`, `supabase_realtime_messages_publication:realtime.messages_2026_11_07`, `supabase_realtime_messages_publication:realtime.messages_2026_11_08`
+
 ## 2026-11-12 03:27 UTC
 
 - **functions** adicionado (1): `public.pode_gerir_config_ponto(_empresa_id uuid)`

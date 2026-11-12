@@ -3864,9 +3864,10 @@
     "WebhooksLogsTab"
    ],
    "export_default": null,
-   "linhas": 821,
+   "linhas": 830,
    "dominio": "components/settings",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [
@@ -3958,7 +3959,7 @@
     "UserRolesTab"
    ],
    "export_default": null,
-   "linhas": 146,
+   "linhas": 187,
    "dominio": "components/settings",
    "hooks_locais": [],
    "tabelas": [],
@@ -4703,7 +4704,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 91,
+   "usado_por": 92,
    "orfao": false
   },
   {
@@ -5107,7 +5108,7 @@
     "User"
    ],
    "export_default": null,
-   "linhas": 378,
+   "linhas": 379,
    "dominio": "contexts",
    "hooks_locais": [
     "useAuth"
@@ -5117,7 +5118,7 @@
     "empresas"
    ],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {

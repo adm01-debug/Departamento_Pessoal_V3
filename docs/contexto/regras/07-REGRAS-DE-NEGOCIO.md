@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1aa6b3c415` · branch `main` · 2026-11-12 03:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `364b6d6dc7` · branch `main` · 2026-11-12 04:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1781,7 +1781,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | PESQUISA_TIPO | 'clima', 'engajamento', 'enps', 'pulse', 'saida', 'onboarding', '360', 'ad_hoc', | `src/constants/workflow-status.ts` |
 | AJUSTE_PONTO_STATUS | 'pendente', 'em_analise', 'aprovada', 'rejeitada', 'cancelada', 'estornada', | `src/constants/workflow-status.ts` |
 | VAGA_STATUS | 'rascunho', 'aberta', 'pausada', 'encerrada', 'preenchida', 'cancelada', 'arquivada', | `src/constants/workflow-status.ts` |
-| AppRole | admin \| gestor \| rh \| user | `src/contexts/AuthContext.tsx` |
+| AppRole | admin \| gestor \| rh \| user \| supervisor \| coordenador | `src/contexts/AuthContext.tsx` |
 | ErrorType | VALIDATION_ERROR \| AUTH_ERROR \| NETWORK_ERROR \| NOT_FOUND \| PERMISSION_DENIED \| SERVER_ERROR \| UNKNOWN_ERROR | `src/errors/types.ts` |
 | ErrorSeverity | info \| warning \| error \| critical | `src/errors/types.ts` |
 | SeveridadeContrato | vencido \| critico \| atencao \| ok | `src/hooks/useContratosVencendo.ts` |
@@ -2770,6 +2770,10 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **calculateMetrics(emp: number, sal: number, bonus: number, perf: number, ret: number)** — `src/components/premiacoes/RewardsSimulator.tsx`
   ```
   const totalBudget = emp * sal * (bonus / 100) * (perf / 100); const turnoverCost = sal * 3 * emp * 0.15; const savings = turnoverCost * (ret / 100); const roi = totalBudget > 0 ? savings / totalBudget : 0; return { totalBudget, savings, roi };
+  ```
+- **perfisDoUsuario(userId: string)** — `src/components/settings/UserRolesTab.tsx`
+  ```
+  new Set(roles.filter((x) => x.user_id === userId).map((x) => x.role));
   ```
 - **GerarLtcatOsButton()** — `src/components/sst/GerarLtcatOsButton.tsx`
   ```
@@ -4537,6 +4541,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `rh` | `src/components/ferias/FeriasTable.tsx` |
 | `confirmado` | `src/components/ponto/PontoClockRegister.tsx` |
 | `pendente` | `src/components/ponto/PontoClockRegister.tsx` |
+| `coordenador` | `src/components/settings/InlineTabs.tsx` |
+| `supervisor` | `src/components/settings/InlineTabs.tsx` |
 | `admin` | `src/components/settings/UserRolesTab.tsx` |
 | `admin` | `src/contexts/AuthContext.tsx` |
 | `role` | `src/contexts/AuthContext.tsx` |
@@ -4573,7 +4579,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6781 testes em 547 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6784 testes em 547 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4591,7 +4597,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/afastamentoService.test.ts` | 61 | afastamentoService.listar · returns data and total from supabase · returns empty data when supabase returns null · filters by empresa_id from options.empresaId … |
 | `src/services/__tests__/cnabService.test.ts` | 56 | cnabService.getConfig · returns config when found · returns null when config not found · throws on DB error … |
 | `src/hooks/__tests__/useTabelasReferencia.test.ts` | 54 | useNacionalidades · calls listarNacionalidades · useTiposDesligamento · calls listarTiposDesligamento and returns data … |
-| `src/components/__tests__/InlineTabs.test.tsx` | 46 | PreferenciasTab · renders Preferências de Interface title · renders Modo Escuro switch label · renders Salvar Alterações button … |
+| `src/components/__tests__/InlineTabs.test.tsx` | 48 | PreferenciasTab · renders Preferências de Interface title · renders Modo Escuro switch label · renders Salvar Alterações button … |
 | `src/services/__tests__/feriasService.test.ts` | 46 | feriasService.listSolicitacoes · returns data and count from supabase · returns empty data when supabase returns null · filters by empresa_id when provided … |
 | `src/services/__tests__/catalogoCursoService.test.ts` | 44 | catalogoCursoService.listarCursos · returns cursos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/components/__tests__/LayoutGridSection.test.tsx` | 43 | Row · renders children · has flex class · applies flex-wrap when wrap=true … |

@@ -2,7 +2,7 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "nos": 961,
- "arestas": 4605,
+ "arestas": 4607,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -53,12 +53,12 @@
    "importado_por": 107
   },
   {
-   "arquivo": "src/components/ui/spinner.tsx",
+   "arquivo": "src/components/ui/select.tsx",
    "importado_por": 92
   },
   {
-   "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 91
+   "arquivo": "src/components/ui/spinner.tsx",
+   "importado_por": 92
   },
   {
    "arquivo": "src/components/PageTitle.tsx",
@@ -153,11 +153,11 @@
    "importado_por": 19
   },
   {
-   "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 18
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 19
   },
   {
-   "arquivo": "src/contexts/AuthContext.tsx",
+   "arquivo": "src/components/ui/scroll-area.tsx",
    "importado_por": 18
   },
   {

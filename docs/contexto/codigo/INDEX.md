@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1aa6b3c4158b75553b3aa3b4ddd021be2444b49e` (2026-11-12T02:53:33Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `364b6d6dc7bff5abd521363dc9288e1ebf0fac7c` (2026-11-12T03:33:12Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2877 |
 | arquivos_codigo | 1548 |
-| linhas_codigo | 273297 |
+| linhas_codigo | 273375 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -360,7 +360,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, LOVABLE_API_KEY, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TURNSTILE_SECRET_KEY, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
-- papéis no código: dialog (33), alert (11), user (9), admin (8), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), rh (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), gestor (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), tooltip (1)
+- papéis no código: dialog (33), alert (11), admin (9), user (9), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), rh (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), coordenador (1), gestor (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tooltip (1)
 - enums de papel: app_role: admin|moderator|user|supervisor|coordenador; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
 - guards: src/components/ProtectedRoute.tsx · rotas protegidas: 107 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
 - feature flags: FEATURE_X, nova-tela, novo-inbox
@@ -383,23 +383,23 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21975 nós · 46103 arestas · 2207 comunidades · grafo do commit `1aa6b3c4`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (324), button.tsx (293), react (291), vitest (268), App.tsx (258), cn (231), services/index.ts (212), contract.ts (190), useEmpresas (170), "public"."empresas" (164)
+- 21976 nós · 46113 arestas · 2122 comunidades · grafo do commit `364b6d6d`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (385), useEmpresas (332), react (306), vitest (286), App.tsx (268), cn (252), client.ts (185), contract.ts (178), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (57)
-- package-lock.json (54)
+- package.json (56)
 - .github/workflows/canonical-migrations.yml (53)
+- package-lock.json (53)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (20)
 - src/services/cnabService.ts (13)
 - AGENTS.md (12)
 - PENDENCIAS.md (12)
 - deno.lock (12)
+- src/integrations/supabase/types.ts (12)
 - .github/workflows/e2e.yml (11)
-- src/integrations/supabase/types.ts (11)
 - supabase/functions/external-db-bridge/index.ts (11)
 - supabase/functions/external-db-bridge/validation.ts (11)
 - .github/workflows/canonical-probes.yml (10)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `364b6d6` feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)
 - 2026-11-12 `1aa6b3c` fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)
 - 2026-11-12 `2914cb9` fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)
 - 2026-11-12 `c926aa1` fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `207e914` build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)
 - 2026-11-10 `bba79fd` fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)
 - 2026-11-10 `9a0babf` feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)
-- 2026-11-10 `7f6d195` fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

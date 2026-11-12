@@ -1959,12 +1959,12 @@
     "ocorrencias": 11
    },
    {
-    "papel": "user",
+    "papel": "admin",
     "ocorrencias": 9
    },
    {
-    "papel": "admin",
-    "ocorrencias": 8
+    "papel": "user",
+    "ocorrencias": 9
    },
    {
     "papel": "tablist",
@@ -2035,6 +2035,10 @@
     "ocorrencias": 1
    },
    {
+    "papel": "coordenador",
+    "ocorrencias": 1
+   },
+   {
     "papel": "gestor",
     "ocorrencias": 1
    },
@@ -2064,6 +2068,10 @@
    },
    {
     "papel": "super_admin",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "supervisor",
     "ocorrencias": 1
    },
    {

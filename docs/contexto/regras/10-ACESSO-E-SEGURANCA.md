@@ -1,11 +1,11 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1aa6b3c415` · branch `main` · 2026-11-12 03:26 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `364b6d6dc7` · branch `main` · 2026-11-12 04:08 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
 
-`admin`, `assistant`, `auditoria`, `colaborador`, `confirmado`, `dpo`, `gestor`, `granted`, `pendente`, `rh`, `role`, `service_role`, `supabase_admin`, `super_admin`, `user`
+`admin`, `assistant`, `auditoria`, `colaborador`, `confirmado`, `coordenador`, `dpo`, `gestor`, `granted`, `pendente`, `rh`, `role`, `service_role`, `supabase_admin`, `super_admin`, `supervisor`, `user`
 
 - Tabelas de perfil/permissão: `controle_acesso`, `dp_user_roles`, `permissao_perfis`, `permissao_recursos`, `permissions`, `role_permissions`, `user_roles`
 - Colunas de perfil: `auth.users.role` (character varying(255)), `dp_user_roles.role` ("public"."dp_user_role" NOT NULL), `permissao_perfis.is_admin` (boolean DEFAULT false), `permissions.role` ("public"."app_role" NOT NULL), `role_permissions.role` ("text" NOT NULL), `user_roles.role` (public.app_role NOT NULL DEFAULT 'user')

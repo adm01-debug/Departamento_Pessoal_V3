@@ -7130,10 +7130,12 @@
    "papeis": [
     "admin",
     "banner",
+    "coordenador",
     "list",
     "listitem",
     "main",
     "rh",
+    "supervisor",
     "tab",
     "tablist"
    ],

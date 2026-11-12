@@ -1822,13 +1822,13 @@
   {
    "arquivo": "src/components/__tests__/InlineTabs.test.tsx",
    "tipo": "unit",
-   "linhas": 473,
+   "linhas": 494,
    "testa": [
     "src/components/settings/InlineTabs.tsx",
     "src/integrations/supabase/client.ts",
     "src/services/edgeFunctionsService.ts"
    ],
-   "casos": 38
+   "casos": 40
   },
   {
    "arquivo": "src/components/__tests__/IPBlockingTab.test.tsx",
@@ -2683,11 +2683,11 @@
   {
    "arquivo": "src/components/__tests__/UserRolesTab.test.tsx",
    "tipo": "unit",
-   "linhas": 87,
+   "linhas": 93,
    "testa": [
     "src/components/settings/UserRolesTab.tsx"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/WorkforceHealthScore.test.tsx",

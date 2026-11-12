@@ -4388,7 +4388,7 @@
    "modulo": "components/settings",
    "arquivos": 11,
    "testes": 0,
-   "linhas": 3354,
+   "linhas": 3404,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4721,7 +4721,9 @@
    "flags": [],
    "papeis": [
     "admin",
-    "rh"
+    "coordenador",
+    "rh",
+    "supervisor"
    ],
    "diretos": {
     "edges": [],
@@ -5227,7 +5229,7 @@
    "modulo": "contexts",
    "arquivos": 4,
    "testes": 0,
-   "linhas": 514,
+   "linhas": 515,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7405,11 +7407,13 @@
     "assistant",
     "banner",
     "combobox",
+    "coordenador",
     "gestor",
     "list",
     "listitem",
     "main",
     "rh",
+    "supervisor",
     "tab",
     "tablist",
     "user"

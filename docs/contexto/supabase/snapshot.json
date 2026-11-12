@@ -144762,31 +144762,6 @@
         {
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
-          "table": "messages_2026_11_04"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_05"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_06"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_07"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
-          "table": "messages_2026_11_08"
-        },
-        {
-          "publication": "supabase_realtime_messages_publication",
-          "schema": "realtime",
           "table": "messages_2026_11_09"
         },
         {

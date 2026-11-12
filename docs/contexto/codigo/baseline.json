@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1aa6b3c4158b75553b3aa3b4ddd021be2444b49e",
+  "commit": "364b6d6dc7bff5abd521363dc9288e1ebf0fac7c",
   "branch": "main",
-  "data_commit": "2026-11-12T02:53:33Z",
+  "data_commit": "2026-11-12T03:33:12Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "364b6d6",
+    "data": "2026-11-12",
+    "assunto": "feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)"
+   },
    {
     "sha": "1aa6b3c",
     "data": "2026-11-12",
@@ -126,14 +131,9 @@
     "sha": "bc5d927",
     "data": "2026-11-10",
     "assunto": "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)"
-   },
-   {
-    "sha": "4921f71",
-    "data": "2026-11-10",
-    "assunto": "fix: audit-security-config detecta o que promete (CORS, verify_jwt, client.base) e build-rebaseline barra INSERT com ide"
    }
   ],
-  "arquivos_mudados_7d": 428,
+  "arquivos_mudados_7d": 433,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -152,16 +152,16 @@
     "mudancas": 20
    },
    {
+    "pasta": "src/components/__tests__",
+    "mudancas": 19
+   },
+   {
     "pasta": "supabase/functions/_shared",
     "mudancas": 19
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
-   },
-   {
-    "pasta": "src/components/__tests__",
-    "mudancas": 17
    },
    {
     "pasta": "scripts/autofix/regras",
@@ -172,11 +172,11 @@
     "mudancas": 14
    },
    {
-    "pasta": "PENDENCIAS.md",
-    "mudancas": 12
+    "pasta": "src/integrations/supabase",
+    "mudancas": 13
    },
    {
-    "pasta": "src/integrations/supabase",
+    "pasta": "PENDENCIAS.md",
     "mudancas": 12
    },
    {
@@ -199,14 +199,14 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 57
-   },
-   {
-    "arquivo": "package-lock.json",
-    "mudancas": 54
+    "mudancas": 56
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 53
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 53
    },
    {
@@ -234,11 +234,11 @@
     "mudancas": 12
    },
    {
-    "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 11
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 12
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": ".github/workflows/e2e.yml",
     "mudancas": 11
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 112
+    "commits": 113
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2877,
   "arquivos_codigo": 1548,
-  "linhas_codigo": 273297,
+  "linhas_codigo": 273375,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -632,7 +632,7 @@
   },
   "src/components": {
    "arquivos": 567,
-   "linhas": 72987
+   "linhas": 73064
   },
   "src/constants": {
    "arquivos": 6,
@@ -640,7 +640,7 @@
   },
   "src/contexts": {
    "arquivos": 7,
-   "linhas": 967
+   "linhas": 968
   },
   "src/errors": {
    "arquivos": 4,
@@ -777,12 +777,12 @@
    "linhas": 861
   },
   {
-   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
-   "linhas": 824
+   "arquivo": "src/components/settings/InlineTabs.tsx",
+   "linhas": 830
   },
   {
-   "arquivo": "src/components/settings/InlineTabs.tsx",
-   "linhas": 821
+   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
+   "linhas": 824
   },
   {
    "arquivo": "supabase/functions/external-db-bridge/index.ts",
