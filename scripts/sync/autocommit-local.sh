@@ -163,7 +163,8 @@ fi
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
 if ! "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${GERADOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err"; then
-  say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 0
+  # (12/11) era exit 0 (sucesso invisível); disco cheio/permissão repetiria toda hora sem ninguém ver: 75 = atenção
+  say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 75
 fi
 
 # 4b. revalida o que está NO ÍNDICE. O `add -A` só filtra o que ele mesmo adiciona: o usuário pode ter feito `git add`
@@ -268,10 +269,16 @@ if [ -z "$("${G[@]}" diff --cached --name-only)" ]; then
   say "nada a commitar depois das travas"; push_pendente; exit "${RC:-0}"
 fi
 N="$("${G[@]}" diff --cached --name-only | grep -c .)"
-if "${G[@]}" commit -q --no-verify -m "autosave($BRANCH): $(date '+%F %T') — $N arquivo(s)" 2>"$STATE/ac-$KEY.err"; then
+# (12/11) Sem identidade Git (perfil novo, .gitconfig movido) o commit falhava a cada hora. A identidade do usuário vale
+# quando existe; senão, uma neutra — o trabalho continua sendo salvo.
+IDENT=(); { "${G[@]}" config user.email >/dev/null 2>&1 && "${G[@]}" config user.name >/dev/null 2>&1; } \
+  || IDENT=(-c user.name=autocommit-local -c user.email=autocommit-local@localhost)
+if git "${IDENT[@]}" -C "$WT" commit -q --no-verify -m "autosave($BRANCH): $(date '+%F %T') — $N arquivo(s)" 2>"$STATE/ac-$KEY.err"; then
   say "COMMIT $("${G[@]}" rev-parse --short HEAD) em $BRANCH ($N arquivo(s))$([ "$NOPUSH" -eq 1 ] && echo ' — só local (--no-push)')"
 else
-  "${G[@]}" reset -q; say "ERRO no commit: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 0
+  # (12/11) era exit 0: o run-all contava como sucesso e a falha ficava invisível para sempre. 75 = "precisa de atenção"
+  # (3 seguidas aparecem em systemctl --failed); o índice volta ao normal e nada é perdido.
+  "${G[@]}" reset -q; say "ERRO no commit: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 75
 fi
 push_pendente
 exit "${RC:-0}"
