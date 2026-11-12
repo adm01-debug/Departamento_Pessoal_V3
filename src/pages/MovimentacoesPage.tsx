@@ -151,6 +151,37 @@ export default function MovimentacoesPage() {
     if (!data || data.length === 0) throw new Error('Sem permissão para atualizar o cadastro do colaborador.');
   };
 
+  // A movimentação só vale para o cadastro se for a vigente mais recente do colaborador naquela tabela;
+  // senão uma edição/lançamento retroativo sobrescreveria cargo/salário/departamento atuais.
+  const ehMaisRecente = async (tabela: 'transferencias' | 'promocoes', colaboradorId: string, id: string) => {
+    const hoje = todayLocalISO();
+    const { data, error } =
+      tabela === 'promocoes'
+        ? await supabase
+            .from('promocoes')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .lte('data_vigencia', hoje)
+            .order('data_vigencia', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+        : await supabase
+            .from('transferencias')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .lte('data_vigencia', hoje)
+            .order('data_vigencia', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+    if (error) throw error;
+    return data?.id === id;
+  };
+
+  const ERRO_DESFAZER =
+    'O cadastro do colaborador não foi atualizado e não foi possível desfazer a alteração no histórico. Revise o registro.';
+
   const criarTransf = useMutation({
     mutationFn: async ({ d, id }: { d: typeof initialFormTransf; id: string | null }) => {
       const payload: Insertable<'transferencias'> = {
@@ -161,6 +192,21 @@ export default function MovimentacoesPage() {
         motivo: d.motivo || null,
       };
       const validado = validateTablePayload('transferencias', payload, 'MovimentacoesPage:transferencias');
+      if (!colaboradores.some((c) => c.id === d.colaborador_id))
+        throw new Error('Colaborador não pertence à empresa selecionada.');
+      let original: Tables<'transferencias'> | null = null;
+      if (id) {
+        const { data: atual, error: errAtual } = await supabase
+          .from('transferencias')
+          .select('*, colaborador:colaboradores!inner(empresa_id)')
+          .eq('id', id)
+          .eq('colaborador.empresa_id', empresaAtual!.id)
+          .maybeSingle();
+        if (errAtual) throw errAtual;
+        if (!atual) throw new Error('Transferência não encontrada nesta empresa.');
+        const { colaborador: _c, ...linha } = atual;
+        original = linha;
+      }
       const { data, error } = id
         ? await supabase.from('transferencias').update(validado).eq('id', id).select().maybeSingle()
         : await supabase.from('transferencias').insert(validado).select().maybeSingle();
@@ -168,15 +214,39 @@ export default function MovimentacoesPage() {
       if (!data) throw new Error('Transferência não encontrada ou sem permissão para salvar.');
       const deptoNovo = departamentos.find((x) => x.id === d.departamento_novo_id);
       const vigente = d.data_vigencia <= todayLocalISO();
-      if (vigente && deptoNovo) {
+      const mudou =
+        !original ||
+        original.colaborador_id !== data.colaborador_id ||
+        original.departamento_novo_id !== data.departamento_novo_id ||
+        original.data_vigencia !== data.data_vigencia;
+      const maisRecente =
+        vigente && !!deptoNovo && mudou && (await ehMaisRecente('transferencias', d.colaborador_id, data.id));
+      if (maisRecente && deptoNovo) {
         try {
           await aplicarNoColaborador(d.colaborador_id, { departamento: deptoNovo.nome });
         } catch (e) {
-          if (!id) await supabase.from('transferencias').delete().eq('id', data.id);
+          const desfeito = original
+            ? await supabase
+                .from('transferencias')
+                .update({
+                  colaborador_id: original.colaborador_id,
+                  departamento_anterior_id: original.departamento_anterior_id,
+                  departamento_novo_id: original.departamento_novo_id,
+                  data_vigencia: original.data_vigencia,
+                  motivo: original.motivo,
+                })
+                .eq('id', data.id)
+                .select('id')
+            : await supabase.from('transferencias').delete().eq('id', data.id).select('id');
+          if (desfeito.error || !desfeito.data?.length) throw new Error(ERRO_DESFAZER, { cause: e });
           throw e;
         }
       }
-      return { aplicado: vigente && !!deptoNovo, futura: !vigente };
+      return {
+        aplicado: maisRecente,
+        futura: !vigente,
+        temMaisRecente: vigente && !!deptoNovo && mudou && !maisRecente,
+      };
     },
     onSuccess: (r) => {
       qc.invalidateQueries({ queryKey: ['transferencias'] });
@@ -188,7 +258,9 @@ export default function MovimentacoesPage() {
           ? 'Transferência salva e aplicada ao cadastro do colaborador.'
           : r.futura
             ? 'Transferência salva. Vigência futura: o cadastro do colaborador não foi alterado.'
-            : 'Transferência salva.'
+            : r.temMaisRecente
+              ? 'Transferência salva. Há transferência mais recente: o cadastro do colaborador não foi alterado.'
+              : 'Transferência salva.'
       );
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
@@ -206,6 +278,21 @@ export default function MovimentacoesPage() {
         motivo: d.motivo || null,
       };
       const validado = validateTablePayload('promocoes', payload, 'MovimentacoesPage:promocoes');
+      if (!colaboradores.some((c) => c.id === d.colaborador_id))
+        throw new Error('Colaborador não pertence à empresa selecionada.');
+      let original: Tables<'promocoes'> | null = null;
+      if (id) {
+        const { data: atual, error: errAtual } = await supabase
+          .from('promocoes')
+          .select('*, colaborador:colaboradores!inner(empresa_id)')
+          .eq('id', id)
+          .eq('colaborador.empresa_id', empresaAtual!.id)
+          .maybeSingle();
+        if (errAtual) throw errAtual;
+        if (!atual) throw new Error('Promoção não encontrada nesta empresa.');
+        const { colaborador: _c, ...linha } = atual;
+        original = linha;
+      }
       const { data, error } = id
         ? await supabase.from('promocoes').update(validado).eq('id', id).select().maybeSingle()
         : await supabase.from('promocoes').insert(validado).select().maybeSingle();
@@ -220,15 +307,42 @@ export default function MovimentacoesPage() {
       if (d.salario_novo) patch.salario_base = Number(d.salario_novo);
       const temAlteracao = Object.keys(patch).length > 0;
       const vigente = d.data_vigencia <= todayLocalISO();
-      if (vigente && temAlteracao) {
+      const mudou =
+        !original ||
+        original.colaborador_id !== data.colaborador_id ||
+        original.cargo_novo_id !== data.cargo_novo_id ||
+        original.salario_novo !== data.salario_novo ||
+        original.data_vigencia !== data.data_vigencia;
+      const maisRecente =
+        vigente && temAlteracao && mudou && (await ehMaisRecente('promocoes', d.colaborador_id, data.id));
+      if (maisRecente) {
         try {
           await aplicarNoColaborador(d.colaborador_id, patch);
         } catch (e) {
-          if (!id) await supabase.from('promocoes').delete().eq('id', data.id);
+          const desfeito = original
+            ? await supabase
+                .from('promocoes')
+                .update({
+                  colaborador_id: original.colaborador_id,
+                  cargo_anterior_id: original.cargo_anterior_id,
+                  cargo_novo_id: original.cargo_novo_id,
+                  salario_anterior: original.salario_anterior,
+                  salario_novo: original.salario_novo,
+                  data_vigencia: original.data_vigencia,
+                  motivo: original.motivo,
+                })
+                .eq('id', data.id)
+                .select('id')
+            : await supabase.from('promocoes').delete().eq('id', data.id).select('id');
+          if (desfeito.error || !desfeito.data?.length) throw new Error(ERRO_DESFAZER, { cause: e });
           throw e;
         }
       }
-      return { aplicado: vigente && temAlteracao, futura: !vigente };
+      return {
+        aplicado: maisRecente,
+        futura: !vigente,
+        temMaisRecente: vigente && temAlteracao && mudou && !maisRecente,
+      };
     },
     onSuccess: (r) => {
       qc.invalidateQueries({ queryKey: ['promocoes'] });
@@ -240,7 +354,9 @@ export default function MovimentacoesPage() {
           ? 'Promoção salva e aplicada ao cadastro do colaborador.'
           : r.futura
             ? 'Promoção salva. Vigência futura: o cadastro do colaborador não foi alterado.'
-            : 'Promoção salva.'
+            : r.temMaisRecente
+              ? 'Promoção salva. Há promoção mais recente: o cadastro do colaborador não foi alterado.'
+              : 'Promoção salva.'
       );
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
@@ -248,6 +364,10 @@ export default function MovimentacoesPage() {
 
   const excluir = useMutation({
     mutationFn: async (alvo: { tabela: 'transferencias' | 'promocoes'; id: string }) => {
+      // Tabelas sem empresa_id: confirma pela empresa do colaborador antes de excluir.
+      const daEmpresa = alvo.tabela === 'promocoes' ? promocoes : transferencias;
+      if (!daEmpresa.some((m) => m.id === alvo.id && m.colaborador?.empresa_id === empresaAtual?.id))
+        throw new Error('Registro não encontrado nesta empresa.');
       const { data, error } =
         alvo.tabela === 'promocoes'
           ? await supabase.from('promocoes').delete().eq('id', alvo.id).select('id')
