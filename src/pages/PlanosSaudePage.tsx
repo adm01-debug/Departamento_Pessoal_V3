@@ -222,6 +222,7 @@ export default function PlanosSaudePage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['planos-saude'] });
       setOpenPlano(false);
+      setFormPlano(novoPlanoForm());
       toast.success('Plano cadastrado!');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.')),
@@ -253,6 +254,7 @@ export default function PlanosSaudePage() {
       qc.invalidateQueries({ queryKey: ['planos-saude'] });
       setOpenPlano(false);
       setEditingPlanoId(null);
+      setFormPlano(novoPlanoForm());
       toast.success('Plano atualizado!');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar plano de saúde.')),
@@ -354,7 +356,8 @@ export default function PlanosSaudePage() {
                   open={openPlano}
                   onOpenChange={(o) => {
                     setOpenPlano(o);
-                    if (!o && editingPlanoId) {
+                    // Aberto pelo botão "Novo Plano" (a edição abre via setOpenPlano direto): sempre formulário limpo.
+                    if (o || editingPlanoId) {
                       setEditingPlanoId(null);
                       setFormPlano(novoPlanoForm());
                     }

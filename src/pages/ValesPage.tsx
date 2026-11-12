@@ -135,7 +135,7 @@ export default function ValesPage() {
         tipo: d.tipo,
         valor_por_dia: valorDia,
         dias_uteis: dias,
-        valor_mensal: valorDia * dias,
+        valor_mensal: Math.round(valorDia * dias * 100) / 100,
       };
       if (editVAId) {
         const { error } = await supabase
@@ -200,10 +200,24 @@ export default function ValesPage() {
           optante: d.optante === 'sim',
           valor_diario: valorDia,
           dias_uteis: dias,
-          valor_mensal: valorDia * dias,
+          valor_mensal: Math.round(valorDia * dias * 100) / 100,
         },
         'ValesPage:vales_transporte'
       );
+      // Sem UNIQUE no banco: um 2º VT optante deixa a folha com desconto arbitrário/ausente.
+      if (d.optante === 'sim') {
+        let dup = supabase
+          .from('vales_transporte')
+          .select('id')
+          .eq('colaborador_id', d.colaborador_id)
+          .eq('optante', true);
+        if (editVTId) dup = dup.neq('id', editVTId);
+        const { data: existentes, error: dupError } = await dup.limit(1);
+        if (dupError) throw dupError;
+        if (existentes && existentes.length > 0) {
+          throw new Error('Este colaborador já possui um VT ativo. Edite o VT existente em vez de cadastrar outro.');
+        }
+      }
       // RLS de vales_transporte valida que o colaborador pertence às empresas do usuário.
       const { error } = editVTId
         ? await supabase.from('vales_transporte').update(payload).eq('id', editVTId)
