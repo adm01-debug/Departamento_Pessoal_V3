@@ -144,6 +144,9 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
   };
 
   const [busyId, setBusyId] = useState<string | null>(null);
+  // Já gravados (aprovados/cobrados): "Mostrar ocultas" não pode trazê-los de
+  // volta, pois `registros` em cache ainda tem o estado anterior à gravação.
+  const [tratadosIds, setTratadosIds] = useState<string[]>([]);
 
   // Ocultar é só local (nesta tela/sessão): nada é gravado.
   const handleOcultar = (id: string) => setResolvedIds((prev) => [...prev, id]);
@@ -154,6 +157,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
       const msg = await action();
       toast.success(msg);
       setResolvedIds((prev) => [...prev, inc.id]);
+      setTratadosIds((prev) => [...prev, inc.id]);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Não foi possível concluir a ação.');
     } finally {
@@ -234,7 +238,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: RegistroComC
                     </p>
                   </div>
                 </div>
-                <Button variant="ghost" size="sm" className="text-[10px]" onClick={() => setResolvedIds([])}>
+                <Button variant="ghost" size="sm" className="text-[10px]" onClick={() => setResolvedIds(tratadosIds)}>
                   Mostrar ocultas
                 </Button>
               </CardContent>

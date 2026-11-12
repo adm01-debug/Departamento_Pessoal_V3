@@ -128,6 +128,15 @@ describe('PontoInconsistencyPanel', () => {
     expect(screen.queryByText(/Intervalo curto/)).not.toBeInTheDocument();
   });
 
+  it('"Mostrar ocultas" não traz de volta exceção já aprovada (cache ainda sem aprovado)', async () => {
+    mocks.from.mockReturnValue(builder({ data: [{ id: '1' }], error: null }));
+    render(<PontoInconsistencyPanel registros={SHORT_BREAK_REGISTROS} />);
+    fireEvent.click(screen.getByText('Aprovar Exceção'));
+    await waitFor(() => expect(mocks.toastSuccess).toHaveBeenCalled());
+    fireEvent.click(screen.getByText('Mostrar ocultas'));
+    expect(screen.queryByText(/Intervalo curto/)).not.toBeInTheDocument();
+  });
+
   it('"Aprovar Exceção" sem linha atualizada (RLS) mostra erro e mantém o alerta', async () => {
     mocks.from.mockReturnValue(builder({ data: [], error: null }));
     render(<PontoInconsistencyPanel registros={SHORT_BREAK_REGISTROS} />);
