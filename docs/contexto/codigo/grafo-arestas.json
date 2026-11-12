@@ -905,10 +905,6 @@
    "src/components/epis/EpiEntregasTable.tsx",
    "src/components/epis/EpiKPIs.tsx"
   ],
-  "src/components/esocial/ESocialAIInsights.tsx": [
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx"
-  ],
   "src/components/esocial/ESocialAuditDialog.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/dialog.tsx",
@@ -920,11 +916,8 @@
    "src/components/ui/card.tsx"
   ],
   "src/components/esocial/ESocialConciliacao.tsx": [
-   "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
-   "src/components/ui/table.tsx",
-   "src/lib/utils.ts"
+   "src/components/ui/empty-state.tsx"
   ],
   "src/components/esocial/ESocialEventViewer.tsx": [
    "src/components/esocial/S1200Remuneracao.tsx",
@@ -1303,7 +1296,6 @@
    "src/hooks/useFolhaAuditoria.ts"
   ],
   "src/components/folha/FolhaComposicao.tsx": [
-   "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/tooltip.tsx",
    "src/lib/utils.ts"
@@ -3852,7 +3844,6 @@
   ],
   "src/pages/ESocialPage.tsx": [
    "src/components/PageTitle.tsx",
-   "src/components/esocial/ESocialAIInsights.tsx",
    "src/components/esocial/ESocialAuditDialog.tsx",
    "src/components/esocial/ESocialComplianceScore.tsx",
    "src/components/esocial/ESocialConciliacao.tsx",

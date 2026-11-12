@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 429,
+ "total": 428,
  "orfaos": 21,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -1408,20 +1408,6 @@
    "orfao": false
   },
   {
-   "arquivo": "src/components/esocial/ESocialAIInsights.tsx",
-   "exports": [
-    "ESocialAIInsights"
-   ],
-   "export_default": null,
-   "linhas": 64,
-   "dominio": "components/esocial",
-   "hooks_locais": [],
-   "tabelas": [],
-   "edges": [],
-   "usado_por": 1,
-   "orfao": false
-  },
-  {
    "arquivo": "src/components/esocial/ESocialAuditDialog.tsx",
    "exports": [
     "ESocialAuditDialog"
@@ -1455,7 +1441,7 @@
     "ESocialConciliacao"
    ],
    "export_default": null,
-   "linhas": 161,
+   "linhas": 25,
    "dominio": "components/esocial",
    "hooks_locais": [],
    "tabelas": [],
@@ -2160,7 +2146,7 @@
     "FolhaComposicao"
    ],
    "export_default": null,
-   "linhas": 107,
+   "linhas": 149,
    "dominio": "components/folha",
    "hooks_locais": [],
    "tabelas": [],
@@ -2282,7 +2268,7 @@
     "PagamentoBancarioWizard"
    ],
    "export_default": null,
-   "linhas": 249,
+   "linhas": 232,
    "dominio": "components/folha",
    "hooks_locais": [
     "useEmpresas"
@@ -2462,7 +2448,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 743,
+   "linhas": 810,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -4216,7 +4202,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 194,
+   "usado_por": 193,
    "orfao": false
   },
   {
@@ -4231,7 +4217,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 250,
+   "usado_por": 247,
    "orfao": false
   },
   {
@@ -4266,7 +4252,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 256,
+   "usado_por": 255,
    "orfao": false
   },
   {
@@ -4491,7 +4477,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -4932,7 +4918,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 107,
+   "usado_por": 106,
    "orfao": false
   },
   {
@@ -6138,7 +6124,7 @@
     "ESocialPage"
    ],
    "export_default": "ESocialPage",
-   "linhas": 790,
+   "linhas": 788,
    "dominio": "pages",
    "hooks_locais": [
     "useESocial",

@@ -1563,13 +1563,13 @@
   },
   {
    "modulo": "components/esocial",
-   "arquivos": 22,
+   "arquivos": 21,
    "testes": 0,
-   "linhas": 2273,
+   "linhas": 2073,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 18,
+   "componentes": 17,
    "hooks_locais": [
     "useAuth",
     "usePiiMask"
@@ -2035,7 +2035,7 @@
    "modulo": "components/folha",
    "arquivos": 20,
    "testes": 1,
-   "linhas": 3738,
+   "linhas": 3763,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -2593,7 +2593,7 @@
    "modulo": "components/layout",
    "arquivos": 28,
    "testes": 0,
-   "linhas": 3242,
+   "linhas": 3309,
    "itens_menu": [],
    "telas": [
     "/"
@@ -6584,7 +6584,7 @@
    "modulo": "pages",
    "arquivos": 111,
    "testes": 0,
-   "linhas": 39073,
+   "linhas": 39071,
    "itens_menu": [
     "Admissões",
     "Afastamentos",

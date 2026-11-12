@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (312)",
+   "src/components (311)",
    "src/pages (109)",
    "src/contexts (3)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 23,
  "extensao_componentes": [
-  ".tsx (429)"
+  ".tsx (428)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: RV-04 — migration de remediação das 5 RPCs ausentes + correção da assinatura no probe (#459)",
-   "build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)",
-   "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)",
-   "build(deps): bump the actions group across 1 directory with 5 updates (#426)",
-   "infra: probes canônicos em fila própria (destrava migrations) (#442)"
+   "fix: Conciliação do eSocial e card \"Insights da IA\" deixam de mostrar dados inventados (#471)",
+   "fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)",
+   "fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)",
+   "fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)",
+   "fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

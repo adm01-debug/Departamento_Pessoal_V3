@@ -1386,7 +1386,7 @@
    "nome": "gerar-aej",
    "entrada": "supabase/functions/gerar-aej/index.ts",
    "arquivos": 1,
-   "linhas": 291,
+   "linhas": 290,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1427,7 +1427,7 @@
    "nome": "gerar-afd",
    "entrada": "supabase/functions/gerar-afd/index.ts",
    "arquivos": 1,
-   "linhas": 259,
+   "linhas": 258,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"
@@ -1863,7 +1863,7 @@
    "nome": "metricas",
    "entrada": "supabase/functions/metricas/index.ts",
    "arquivos": 1,
-   "linhas": 308,
+   "linhas": 307,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `3b8df28a50afe42b11d5cecb7cdfb29de0fa9162` (2026-11-12T09:39:24-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `cab34b8eca54e5aa71f9d1a09d3b3242424f1265` (2026-11-12T12:44:37-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1420), SQL (827), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1419), SQL (827), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,15 +34,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2883 |
-| arquivos_codigo | 1550 |
-| linhas_codigo | 273440 |
+| arquivos_total | 2882 |
+| arquivos_codigo | 1549 |
+| linhas_codigo | 273338 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 93 |
 | modulos | 77 |
-| componentes | 429 |
+| componentes | 428 |
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
@@ -55,7 +55,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Onde ficam as coisas
 - telas: src/pages (108), src/components (1)
-- componentes: src/components (312), src/pages (109), src/contexts (3)
+- componentes: src/components (311), src/pages (109), src/contexts (3)
 - hooks: src/hooks (88), src/components (5), src/contexts (4)
 - servicos_logica: src/services (80), src/utils (33), src/schemas (25)
 - testes: co-localizado (__tests__) (468), co-localizado (*.test) (70), e2e/ (27)
@@ -79,7 +79,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
 | components/desligamentos | 0 | 0 | 8 | 3 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/esocial | 0 | 0 | 22 | 2 | 2 | 7 |
+| components/esocial | 0 | 0 | 21 | 2 | 2 | 7 |
 | components/exames | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/ferias | 0 | 0 | 21 | 135 | 8 | 116 |
 | components/folha | 0 | 0 | 20 | 129 | 13 | 124 |
@@ -383,27 +383,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21993 nós · 46158 arestas · 2139 comunidades · grafo do commit `3b8df28a`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), react (390), button.tsx (288), lucide-react (273), badge.tsx (262), useEmpresas (250), vitest (235), validate.ts (229), deepChain (198), contract.ts (174), client.ts (169)
+- 21993 nós · 46131 arestas · 2103 comunidades · grafo do commit `cab34b8e`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (319), cn (312), vitest (281), lucide-react (279), validate.ts (233), useEmpresas (223), deepChain (206), rateLimit.ts (172), @tanstack/react-query (168), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (54)
-- package.json (51)
-- package-lock.json (46)
+- .github/workflows/canonical-migrations.yml (52)
+- package.json (48)
+- package-lock.json (43)
 - CLAUDE.md (28)
-- .github/workflows/ci.yml (20)
+- .github/workflows/ci.yml (19)
 - PENDENCIAS.md (13)
 - src/services/cnabService.ts (13)
 - AGENTS.md (12)
 - deno.lock (12)
-- src/integrations/supabase/types.ts (12)
 - .github/workflows/canonical-edge-functions.yml (11)
-- .github/workflows/canonical-probes.yml (11)
 - .github/workflows/e2e.yml (11)
 - .github/workflows/security.yml (11)
+- src/integrations/supabase/types.ts (11)
 - supabase/functions/external-db-bridge/index.ts (11)
+- .github/workflows/canonical-probes.yml (10)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -614,6 +614,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `cab34b8` fix: Conciliação do eSocial e card "Insights da IA" deixam de mostrar dados inventados (#471)
+- 2026-11-12 `884e312` fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)
+- 2026-11-12 `cf95554` fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)
+- 2026-11-12 `b3493b3` fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)
+- 2026-11-12 `d82b6a3` fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)
+- 2026-11-12 `770823e` fix: gerar-aej e gerar-afd não sobem em produção (BOOT_ERROR no import de CORS) (#465)
+- 2026-11-12 `c9af606` fix: menu lateral esconde de não-admin os 21 itens que levam a rotas AdminRoute (#463)
 - 2026-11-12 `3b8df28` fix: RV-04 — migration de remediação das 5 RPCs ausentes + correção da assinatura no probe (#459)
 - 2026-11-12 `2bdd7bd` build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)
 - 2026-11-12 `23dd510` docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)
@@ -622,13 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `0a089f2` fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)
 - 2026-11-12 `e0cd6bc` feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)
 - 2026-11-12 `e8472e9` fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)
-- 2026-11-12 `9f7a4e4` fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)
-- 2026-11-12 `364b6d6` feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)
-- 2026-11-12 `1aa6b3c` fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)
-- 2026-11-12 `2914cb9` fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)
-- 2026-11-12 `c926aa1` fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)
-- 2026-11-11 `3fe5d63` fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)
-- 2026-11-11 `98a0bd5` fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

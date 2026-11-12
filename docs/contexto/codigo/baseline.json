@@ -2,11 +2,46 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "3b8df28a50afe42b11d5cecb7cdfb29de0fa9162",
+  "commit": "cab34b8eca54e5aa71f9d1a09d3b3242424f1265",
   "branch": "main",
-  "data_commit": "2026-11-12T09:39:24-03:00",
+  "data_commit": "2026-11-12T12:44:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "cab34b8",
+    "data": "2026-11-12",
+    "assunto": "fix: Conciliação do eSocial e card \"Insights da IA\" deixam de mostrar dados inventados (#471)"
+   },
+   {
+    "sha": "884e312",
+    "data": "2026-11-12",
+    "assunto": "fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)"
+   },
+   {
+    "sha": "cf95554",
+    "data": "2026-11-12",
+    "assunto": "fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)"
+   },
+   {
+    "sha": "b3493b3",
+    "data": "2026-11-12",
+    "assunto": "fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)"
+   },
+   {
+    "sha": "d82b6a3",
+    "data": "2026-11-12",
+    "assunto": "fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)"
+   },
+   {
+    "sha": "770823e",
+    "data": "2026-11-12",
+    "assunto": "fix: gerar-aej e gerar-afd não sobem em produção (BOOT_ERROR no import de CORS) (#465)"
+   },
+   {
+    "sha": "c9af606",
+    "data": "2026-11-12",
+    "assunto": "fix: menu lateral esconde de não-admin os 21 itens que levam a rotas AdminRoute (#463)"
+   },
    {
     "sha": "3b8df28",
     "data": "2026-11-12",
@@ -96,51 +131,20 @@
     "sha": "6ddd6bd",
     "data": "2026-11-11",
     "assunto": "fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)"
-   },
-   {
-    "sha": "71b9957",
-    "data": "2026-11-11",
-    "assunto": "style(manutencao): aplica correcoes locais verificadas (#439)"
-   },
-   {
-    "sha": "bdb0189",
-    "data": "2026-11-11",
-    "assunto": "feat: antecipa prazo do Art. 145 (D-2) para dia útil anterior — TST OJ-123 (#435)"
-   },
-   {
-    "sha": "c42d57d",
-    "data": "2026-11-11",
-    "assunto": "fix: sidecar verify da policy INSERT de configuracoes_ponto emite 'ok' literal (#430)"
-   },
-   {
-    "sha": "207e914",
-    "data": "2026-11-11",
-    "assunto": "build(deps): bump @hookform/resolvers from 6.0.2 to 7.0.1 (#401)"
-   },
-   {
-    "sha": "bba79fd",
-    "data": "2026-11-10",
-    "assunto": "fix: calcular-rescisao/motor.ts calculava IRRF errado (tabela 2025 fixa) (#434)"
-   },
-   {
-    "sha": "9a0babf",
-    "data": "2026-11-10",
-    "assunto": "feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)"
-   },
-   {
-    "sha": "7f6d195",
-    "data": "2026-11-10",
-    "assunto": "fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)"
    }
   ],
-  "arquivos_mudados_7d": 444,
+  "arquivos_mudados_7d": 456,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 39
+    "mudancas": 35
    },
    {
     "pasta": "package.json",
+    "mudancas": 23
+   },
+   {
+    "pasta": "src/components/__tests__",
     "mudancas": 23
    },
    {
@@ -154,10 +158,6 @@
    {
     "pasta": "supabase/functions/_shared",
     "mudancas": 20
-   },
-   {
-    "pasta": "src/components/__tests__",
-    "mudancas": 19
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 54
+    "mudancas": 52
    },
    {
     "arquivo": "package.json",
-    "mudancas": 51
+    "mudancas": 48
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 46
+    "mudancas": 43
    },
    {
     "arquivo": "CLAUDE.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -234,15 +234,7 @@
     "mudancas": 12
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 12
-   },
-   {
     "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 11
-   },
-   {
-    "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 11
    },
    {
@@ -254,15 +246,23 @@
     "mudancas": 11
    },
    {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 11
+   },
+   {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 11
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 11
+    "arquivo": ".github/workflows/canonical-probes.yml",
+    "mudancas": 10
    },
    {
     "arquivo": "infra/github/action-pins.json",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 10
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 119
+    "commits": 126
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 62
+    "commits": 55
    },
    {
     "autor": "dependabot[bot]",
@@ -322,15 +322,15 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2883,
-  "arquivos_codigo": 1550,
-  "linhas_codigo": 273440,
+  "arquivos_total": 2882,
+  "arquivos_codigo": 1549,
+  "linhas_codigo": 273338,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 93,
   "modulos": 77,
-  "componentes": 429,
+  "componentes": 428,
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
@@ -388,7 +388,7 @@
   },
   "playwright.config.ts": {
    "arquivos": 1,
-   "linhas": 130
+   "linhas": 133
   },
   "postcss.config.js": {
    "arquivos": 1,
@@ -552,7 +552,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 961
+   "linhas": 963
   },
   "scripts/load": {
    "arquivos": 1,
@@ -631,8 +631,8 @@
    "linhas": 2117
   },
   "src/components": {
-   "arquivos": 567,
-   "linhas": 73064
+   "arquivos": 566,
+   "linhas": 72962
   },
   "src/constants": {
    "arquivos": 6,
@@ -668,7 +668,7 @@
   },
   "src/pages": {
    "arquivos": 114,
-   "linhas": 39408
+   "linhas": 39406
   },
   "src/providers": {
    "arquivos": 4,
@@ -708,7 +708,7 @@
   },
   "supabase/functions": {
    "arquivos": 173,
-   "linhas": 24422
+   "linhas": 24419
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -785,6 +785,10 @@
    "linhas": 824
   },
   {
+   "arquivo": "src/components/layout/AppSidebar.tsx",
+   "linhas": 810
+  },
+  {
    "arquivo": "supabase/functions/external-db-bridge/index.ts",
    "linhas": 810
   },
@@ -794,15 +798,11 @@
   },
   {
    "arquivo": "src/pages/ESocialPage.tsx",
-   "linhas": 790
+   "linhas": 788
   },
   {
    "arquivo": "src/pages/WorkflowsPage.tsx",
    "linhas": 747
-  },
-  {
-   "arquivo": "src/components/layout/AppSidebar.tsx",
-   "linhas": 743
   },
   {
    "arquivo": "src/pages/ContratacaoPage.tsx",

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "3b8df28a50afe42b11d5cecb7cdfb29de0fa9162",
+  "sha": "cab34b8eca54e5aa71f9d1a09d3b3242424f1265",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 13:00 UTC",
-  "files_total": 2904,
-  "code_files": 2375,
-  "code_lines": 321834
+  "generated_at": "2026-11-12 17:00 UTC",
+  "files_total": 2903,
+  "code_files": 2374,
+  "code_lines": 321732
  },
  "version": "1.3.2",
- "facts_hash": "acfb6ea5f6dfbbed",
+ "facts_hash": "6297c3da0e45d853",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -386,7 +386,7 @@
   "languages": {
    ".sql": 827,
    ".ts": 741,
-   ".tsx": 679,
+   ".tsx": 678,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -87073,7 +87073,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 111
+    "deps_count": 110
    },
    {
     "path": "",
@@ -95066,7 +95066,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 567,
+  "components_count": 566,
   "hooks": [
    {
     "name": "useContacts",
@@ -96069,7 +96069,7 @@
   {
    "module": "(raiz)",
    "files": 13,
-   "lines": 826,
+   "lines": 829,
    "tables": [],
    "exports": [
     "capacitor.config.ts: capacitorConfig",
@@ -96185,7 +96185,7 @@
   {
    "module": "scripts",
    "files": 131,
-   "lines": 29943,
+   "lines": 29945,
    "tables": [
     "a",
     "anexos",
@@ -96491,8 +96491,8 @@
   },
   {
    "module": "src/components",
-   "files": 567,
-   "lines": 73064,
+   "files": 566,
+   "lines": 72962,
    "tables": [
     "admissoes",
     "afastamentos",
@@ -96619,9 +96619,9 @@
     "date-fns",
     "framer-motion",
     "lucide-react",
-    "react",
-    "react-day-picker",
-    "react-helmet-async"
+    "node:fs",
+    "node:path",
+    "react"
    ],
    "imports_modules": [
     "src/assets",
@@ -96700,7 +96700,6 @@
     "src/components/__tests__/DocumentoTimeline.test.tsx",
     "src/components/__tests__/DocumentosPessoaisTab.test.tsx",
     "src/components/__tests__/DonutChart.test.tsx",
-    "src/components/__tests__/ESocialAIInsights.test.tsx",
     "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
     "src/components/__tests__/ESocialAuditDialog.test.tsx",
     "src/components/__tests__/ESocialComplianceScore.test.tsx",
@@ -96712,6 +96711,7 @@
     "src/components/__tests__/ESocialPagamentosAndSST.test.tsx",
     "src/components/__tests__/ESocialPeriodicos.test.tsx",
     "src/components/__tests__/ESocialSSTandTSVTermino.test.tsx",
+    "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
     "src/components/__tests__/ESocialTSVComponents.test.tsx",
     "src/components/__tests__/ESocialTabs.test.tsx",
     "src/components/__tests__/ESocialTimeline.test.tsx",
@@ -97134,7 +97134,7 @@
   {
    "module": "src/pages",
    "files": 114,
-   "lines": 39408,
+   "lines": 39406,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -98101,7 +98101,7 @@
   {
    "module": "supabase/functions",
    "files": 173,
-   "lines": 24422,
+   "lines": 24419,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -102421,7 +102421,6 @@
     "id"
    ],
    "metricas_processamento": [
-    "empresa_id",
     "status",
     "tempo_execucao_ms"
    ],
@@ -105303,10 +105302,6 @@
    },
    {
     "table": "integracoes",
-    "column": "empresa_id"
-   },
-   {
-    "table": "metricas_processamento",
     "column": "empresa_id"
    }
   ]
@@ -136896,30 +136891,6 @@
     "kind": "compara"
    },
    {
-    "file": "src/components/esocial/ESocialAIInsights.tsx",
-    "field": "type",
-    "value": "warning",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/esocial/ESocialAIInsights.tsx",
-    "field": "type",
-    "value": "info",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/esocial/ESocialAIInsights.tsx",
-    "field": "type",
-    "value": "warning",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/esocial/ESocialAIInsights.tsx",
-    "field": "type",
-    "value": "warning",
-    "kind": "compara"
-   },
-   {
     "file": "src/components/esocial/ESocialAuditDialog.tsx",
     "field": "type",
     "value": "critical",
@@ -136983,36 +136954,6 @@
     "file": "src/components/esocial/ESocialAuditDialog.tsx",
     "field": "type",
     "value": "warning",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "field": "status",
-    "value": "ok",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "field": "status",
-    "value": "ok",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "field": "status",
-    "value": "divergente",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "field": "status",
-    "value": "ok",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "field": "status",
-    "value": "ok",
     "kind": "compara"
    },
    {
@@ -144404,12 +144345,6 @@
     "body": "return new Intl.NumberFormat(\"pt-BR\", { style: \"currency\", currency: \"BRL\", minimumFractionDigits: 0, maximumFractionDigits: 0, }).format(value);"
    },
    {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "name": "formatCurrency",
-    "params": "val: number",
-    "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);"
-   },
-   {
     "file": "src/components/esocial/NaoPeriodicos.tsx",
     "name": "formatCurrency",
     "params": "val: number | string",
@@ -145690,10 +145625,6 @@
     "line": "const isProximo = vencimento && !isVencido && isBefore(vencimento, addMonths(new Date(), 1));"
    },
    {
-    "file": "src/components/esocial/ESocialConciliacao.tsx",
-    "line": "setTimeout(() => { setIsRefreshing(false); toast.success(\"Conciliação S-5001/S-5002 atualizada com sucesso!\"); }, 1500);"
-   },
-   {
     "file": "src/components/exames/ExameKPIs.tsx",
     "line": "return !isBefore(val, now) && isBefore(val, addMonths(now, 1));"
    },
@@ -145716,10 +145647,6 @@
    {
     "file": "src/components/folha/FolhaDashboard.tsx",
     "line": "staleTime: 2 * 60 * 1000,"
-   },
-   {
-    "file": "src/components/folha/PagamentoBancarioWizard.tsx",
-    "line": "await new Promise((resolve) => setTimeout(resolve, 3000));"
    },
    {
     "file": "src/components/medidas-disciplinares/GerarLinkCienciaDialog.tsx",
@@ -146614,10 +146541,6 @@
    {
     "file": "src/components/epis/EpiKPIs.tsx",
     "line": "transition={{ delay: i * 0.05, duration: 0.3 }}"
-   },
-   {
-    "file": "src/components/esocial/ESocialAIInsights.tsx",
-    "line": "transition={{ delay: i * 0.1 }}"
    },
    {
     "file": "src/components/esocial/ESocialTimeline.tsx",
@@ -151290,38 +151213,6 @@
     "name": "renders SVG with custom size"
    },
    {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "ESocialAIInsights"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders Insights da IA Lovable title"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders Otimização de Rubricas insight"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders Aviso de Afastamento insight"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders Impacto Médio badge"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders Impacto Alto badge"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders VER RECOMENDAÇÃO links"
-   },
-   {
-    "file": "src/components/__tests__/ESocialAIInsights.test.tsx",
-    "name": "renders Ver todos os insights button"
-   },
-   {
     "file": "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
     "name": "S2205AlteracaoCadastral"
    },
@@ -151463,31 +151354,15 @@
    },
    {
     "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "renders Total Sistema card"
+    "name": "shows the unavailable state while S-5001/S-5002 returns are not imported"
    },
    {
     "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "renders Total Governo card"
+    "name": "does not render fabricated totals or rubricas"
    },
    {
     "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "renders Divergência Total card"
-   },
-   {
-    "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "renders table headers"
-   },
-   {
-    "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "renders rubrica rows"
-   },
-   {
-    "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "renders Recalcular and Relatório PDF buttons"
-   },
-   {
-    "file": "src/components/__tests__/ESocialConciliacao.test.tsx",
-    "name": "Recalcular button can be clicked"
+    "name": "does not render actions without a backend operation"
    },
    {
     "file": "src/components/__tests__/ESocialDesligamentoCDP.test.tsx",
@@ -151852,6 +151727,54 @@
    {
     "file": "src/components/__tests__/ESocialSSTandTSVTermino.test.tsx",
     "name": "renders Detalhes do Desligamento label"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "eSocial sem dados fictícios"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "conciliação não exibe valores monetários"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "conciliação não renderiza tabela de rubricas"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "conciliação não agenda timers ao montar (sem atualização simulada)"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "conciliação mantém a descrição do comparativo sistema × governo"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "conciliação não menciona colaborador ou provedor de IA fictícios"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "conciliação mostra o ícone do estado vazio"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "o componente de conciliação não contém dados fixos de rubricas"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "o componente de conciliação não simula sucesso com setTimeout/toast"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "a página do eSocial não importa mais o card de insights fictícios"
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "a página do eSocial não exibe o título "
+   },
+   {
+    "file": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+    "name": "o componente de insights fictícios foi removido do código"
    },
    {
     "file": "src/components/__tests__/ESocialTSVComponents.test.tsx",
@@ -155647,11 +155570,11 @@
    },
    {
     "file": "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
-    "name": "renders Liquidação de Folha heading"
+    "name": "renders Arquivo de Pagamento heading"
    },
    {
     "file": "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
-    "name": "renders Ambiente de Operações Bancárias subtitle"
+    "name": "renders Lote PIX ou Remessa CNAB subtitle"
    },
    {
     "file": "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
@@ -201286,26 +201209,23 @@
      "all": [
       "compara:src/components/dashboard/analytics/PendenciasDetailDialog.tsx"
      ],
-     "warning": [
-      "compara:src/components/esocial/ESocialAIInsights.tsx",
+     "critical": [
       "compara:src/components/esocial/ESocialAuditDialog.tsx",
       "compara:src/components/ferias/FeriasInsights.tsx",
       "compara:src/components/folha/FolhaValidationAlerts.tsx",
-      "escreve:src/components/esocial/ESocialAIInsights.tsx",
+      "escreve:src/components/esocial/ESocialAuditDialog.tsx",
+      "escreve:src/components/ferias/FeriasInsights.tsx",
+      "escreve:src/components/folha/FolhaValidationAlerts.tsx"
+     ],
+     "warning": [
+      "compara:src/components/esocial/ESocialAuditDialog.tsx",
+      "compara:src/components/ferias/FeriasInsights.tsx",
+      "compara:src/components/folha/FolhaValidationAlerts.tsx",
       "escreve:src/components/esocial/ESocialAuditDialog.tsx",
       "escreve:src/components/ferias/FeriasInsights.tsx",
       "escreve:src/components/folha/FolhaValidationAlerts.tsx"
      ],
      "info": [
-      "compara:src/components/folha/FolhaValidationAlerts.tsx",
-      "escreve:src/components/esocial/ESocialAIInsights.tsx",
-      "escreve:src/components/esocial/ESocialAuditDialog.tsx",
-      "escreve:src/components/ferias/FeriasInsights.tsx",
-      "escreve:src/components/folha/FolhaValidationAlerts.tsx"
-     ],
-     "critical": [
-      "compara:src/components/esocial/ESocialAuditDialog.tsx",
-      "compara:src/components/ferias/FeriasInsights.tsx",
       "compara:src/components/folha/FolhaValidationAlerts.tsx",
       "escreve:src/components/esocial/ESocialAuditDialog.tsx",
       "escreve:src/components/ferias/FeriasInsights.tsx",
@@ -202222,19 +202142,6 @@
       "compara:src/services/cnabService.ts",
       "escreve:src/services/cnabService.ts"
      ],
-     "ok": [
-      "compara:src/components/esocial/ESocialConciliacao.tsx",
-      "compara:src/components/settings/SystemHealthTab.tsx",
-      "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
-      "compara:supabase/functions/external-db-bridge/index.ts",
-      "escreve:src/components/esocial/ESocialConciliacao.tsx",
-      "escreve:src/components/settings/SystemHealthTab.tsx",
-      "escreve:src/pages/AdminDiagnosticoMigracaoPage.tsx",
-      "escreve:supabase/functions/external-db-bridge/index.ts"
-     ],
-     "divergente": [
-      "escreve:src/components/esocial/ESocialConciliacao.tsx"
-     ],
      "cancelada": [
       "compara:src/components/ferias/CalendarioFerias.tsx",
       "compara:src/components/ferias/FeriasAuditTimeline.tsx",
@@ -202352,6 +202259,14 @@
       "compara:src/pages/ContratacaoPage.tsx",
       "compara:supabase/functions/metricas/index.ts",
       "escreve:src/pages/ContratacaoPage.tsx"
+     ],
+     "ok": [
+      "compara:src/components/settings/SystemHealthTab.tsx",
+      "compara:src/pages/AdminDiagnosticoMigracaoPage.tsx",
+      "compara:supabase/functions/external-db-bridge/index.ts",
+      "escreve:src/components/settings/SystemHealthTab.tsx",
+      "escreve:src/pages/AdminDiagnosticoMigracaoPage.tsx",
+      "escreve:supabase/functions/external-db-bridge/index.ts"
      ],
      "healthy": [
       "compara:src/components/settings/SystemHealthTab.tsx",
@@ -225872,11 +225787,6 @@
     "where": []
    },
    {
-    "kind": "coluna",
-    "msg": "coluna `empresa_id` usada no código não existe no schema de `metricas_processamento`",
-    "where": []
-   },
-   {
     "kind": "rls",
     "msg": "`config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários",
     "where": [
@@ -227719,7 +227629,7 @@
   },
   "playwright.config.ts": {
    "path": "playwright.config.ts",
-   "lines": 130,
+   "lines": 133,
    "exports": [
     "default defineConfig"
    ],
@@ -230550,7 +230460,7 @@
   },
   "scripts/inventario/gerar-rotas.mjs": {
    "path": "scripts/inventario/gerar-rotas.mjs",
-   "lines": 416,
+   "lines": 418,
    "exports": [
     "function resolverImport",
     "function extrairImports",
@@ -234456,21 +234366,6 @@
     "renders SVG with custom size"
    ]
   },
-  "src/components/__tests__/ESocialAIInsights.test.tsx": {
-   "path": "src/components/__tests__/ESocialAIInsights.test.tsx",
-   "lines": 50,
-   "is_test": true,
-   "tests": [
-    "ESocialAIInsights",
-    "renders Insights da IA Lovable title",
-    "renders Otimização de Rubricas insight",
-    "renders Aviso de Afastamento insight",
-    "renders Impacto Médio badge",
-    "renders Impacto Alto badge",
-    "renders VER RECOMENDAÇÃO links",
-    "renders Ver todos os insights button"
-   ]
-  },
   "src/components/__tests__/ESocialAlteracaoComponents.test.tsx": {
    "path": "src/components/__tests__/ESocialAlteracaoComponents.test.tsx",
    "lines": 112,
@@ -234527,18 +234422,14 @@
   },
   "src/components/__tests__/ESocialConciliacao.test.tsx": {
    "path": "src/components/__tests__/ESocialConciliacao.test.tsx",
-   "lines": 65,
+   "lines": 40,
    "is_test": true,
    "tests": [
     "ESocialConciliacao",
     "renders Conciliação de Valores title",
-    "renders Total Sistema card",
-    "renders Total Governo card",
-    "renders Divergência Total card",
-    "renders table headers",
-    "renders rubrica rows",
-    "renders Recalcular and Relatório PDF buttons",
-    "Recalcular button can be clicked"
+    "shows the unavailable state while S-5001/S-5002 returns are not imported",
+    "does not render fabricated totals or rubricas",
+    "does not render actions without a backend operation"
    ]
   },
   "src/components/__tests__/ESocialDesligamentoCDP.test.tsx": {
@@ -234679,6 +234570,25 @@
     "renders motivo de desligamento",
     "renders verbas rescisórias when verbasResc is S",
     "renders Detalhes do Desligamento label"
+   ]
+  },
+  "src/components/__tests__/ESocialSemDadosFicticios.test.tsx": {
+   "path": "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+   "lines": 81,
+   "is_test": true,
+   "tests": [
+    "eSocial sem dados fictícios",
+    "conciliação não exibe valores monetários",
+    "conciliação não renderiza tabela de rubricas",
+    "conciliação não agenda timers ao montar (sem atualização simulada)",
+    "conciliação mantém a descrição do comparativo sistema × governo",
+    "conciliação não menciona colaborador ou provedor de IA fictícios",
+    "conciliação mostra o ícone do estado vazio",
+    "o componente de conciliação não contém dados fixos de rubricas",
+    "o componente de conciliação não simula sucesso com setTimeout/toast",
+    "a página do eSocial não importa mais o card de insights fictícios",
+    "a página do eSocial não exibe o título ",
+    "o componente de insights fictícios foi removido do código"
    ]
   },
   "src/components/__tests__/ESocialTSVComponents.test.tsx": {
@@ -236370,8 +236280,8 @@
     "PagamentoBancarioWizard",
     "renders Pagar Salários trigger button",
     "trigger button disabled when no folhaId",
-    "renders Liquidação de Folha heading",
-    "renders Ambiente de Operações Bancárias subtitle",
+    "renders Arquivo de Pagamento heading",
+    "renders Lote PIX ou Remessa CNAB subtitle",
     "renders Lote PIX option",
     "renders Remessa CNAB option",
     "renders TLS security notice",
@@ -239189,38 +239099,6 @@
    "path": "src/components/epis/index.ts",
    "lines": 5
   },
-  "src/components/esocial/ESocialAIInsights.tsx": {
-   "path": "src/components/esocial/ESocialAIInsights.tsx",
-   "lines": 64,
-   "exports": [
-    "function ESocialAIInsights"
-   ],
-   "status_values": [
-    {
-     "field": "type",
-     "value": "warning",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "info",
-     "kind": "escreve"
-    },
-    {
-     "field": "type",
-     "value": "warning",
-     "kind": "compara"
-    },
-    {
-     "field": "type",
-     "value": "warning",
-     "kind": "compara"
-    }
-   ],
-   "percents": [
-    "transition={{ delay: i * 0.1 }}"
-   ]
-  },
   "src/components/esocial/ESocialAuditDialog.tsx": {
    "path": "src/components/esocial/ESocialAuditDialog.tsx",
    "lines": 226,
@@ -239294,46 +239172,9 @@
   },
   "src/components/esocial/ESocialConciliacao.tsx": {
    "path": "src/components/esocial/ESocialConciliacao.tsx",
-   "lines": 161,
+   "lines": 25,
    "exports": [
     "function ESocialConciliacao"
-   ],
-   "status_values": [
-    {
-     "field": "status",
-     "value": "ok",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "ok",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "divergente",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "ok",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "ok",
-     "kind": "compara"
-    }
-   ],
-   "calc_fns": [
-    {
-     "name": "formatCurrency",
-     "params": "val: number",
-     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);"
-    }
-   ],
-   "temporal": [
-    "setTimeout(() => { setIsRefreshing(false); toast.success(\"Conciliação S-5001/S-5002 atualizada com sucesso!\"); }, 1500);"
    ]
   },
   "src/components/esocial/ESocialEventViewer.tsx": {
@@ -240201,7 +240042,7 @@
   },
   "src/components/folha/FolhaComposicao.tsx": {
    "path": "src/components/folha/FolhaComposicao.tsx",
-   "lines": 107,
+   "lines": 149,
    "exports": [
     "function FolhaComposicao"
    ],
@@ -240531,12 +240372,9 @@
   },
   "src/components/folha/PagamentoBancarioWizard.tsx": {
    "path": "src/components/folha/PagamentoBancarioWizard.tsx",
-   "lines": 249,
+   "lines": 232,
    "exports": [
     "function PagamentoBancarioWizard"
-   ],
-   "temporal": [
-    "await new Promise((resolve) => setTimeout(resolve, 3000));"
    ]
   },
   "src/components/folha/RelatorioContabilDialog.tsx": {
@@ -240766,7 +240604,7 @@
   },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
-   "lines": 743,
+   "lines": 810,
    "exports": [
     "function AppSidebar"
    ],
@@ -251949,7 +251787,7 @@
   },
   "src/pages/ESocialPage.tsx": {
    "path": "src/pages/ESocialPage.tsx",
-   "lines": 790,
+   "lines": 788,
    "exports": [
     "function ESocialPage"
    ],
@@ -271116,7 +270954,7 @@
   },
   "supabase/functions/gerar-aej/index.ts": {
    "path": "supabase/functions/gerar-aej/index.ts",
-   "lines": 291,
+   "lines": 290,
    "tables": [
     {
      "table": "pii_access_logs",
@@ -271218,7 +271056,7 @@
   },
   "supabase/functions/gerar-afd/index.ts": {
    "path": "supabase/functions/gerar-afd/index.ts",
-   "lines": 259,
+   "lines": 258,
    "tables": [
     {
      "table": "pii_access_logs",
@@ -272224,7 +272062,7 @@
   },
   "supabase/functions/metricas/index.ts": {
    "path": "supabase/functions/metricas/index.ts",
-   "lines": 308,
+   "lines": 307,
    "tables": [
     {
      "table": "mv_telemetry_dashboard",
@@ -272287,7 +272125,6 @@
      "status"
     ],
     "metricas_processamento": [
-     "empresa_id",
      "status",
      "tempo_execucao_ms"
     ]
@@ -278193,10 +278030,83 @@
   }
  },
  "git": {
-  "sha": "3b8df28a50afe42b11d5cecb7cdfb29de0fa9162",
+  "sha": "cab34b8eca54e5aa71f9d1a09d3b3242424f1265",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "cab34b8",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Conciliação do eSocial e card \"Insights da IA\" deixam de mostrar dados inventados (#471)",
+    "files": [
+     "src/components/__tests__/ESocialAIInsights.test.tsx",
+     "src/components/__tests__/ESocialConciliacao.test.tsx",
+     "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
+     "src/components/esocial/ESocialAIInsights.tsx",
+     "src/components/esocial/ESocialConciliacao.tsx",
+     "src/pages/ESocialPage.tsx"
+    ]
+   },
+   {
+    "sha": "884e312",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)",
+    "files": [
+     "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
+     "src/components/folha/FolhaComposicao.tsx",
+     "src/components/folha/PagamentoBancarioWizard.tsx"
+    ]
+   },
+   {
+    "sha": "cf95554",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)",
+    "files": [
+     "src/pages/AdminPontoDivergenciasPage.tsx"
+    ]
+   },
+   {
+    "sha": "b3493b3",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)",
+    "files": [
+     "playwright.config.ts"
+    ]
+   },
+   {
+    "sha": "d82b6a3",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)",
+    "files": [
+     "supabase/functions/metricas/index.ts"
+    ]
+   },
+   {
+    "sha": "770823e",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: gerar-aej e gerar-afd não sobem em produção (BOOT_ERROR no import de CORS) (#465)",
+    "files": [
+     "supabase/functions/gerar-aej/index.ts",
+     "supabase/functions/gerar-afd/index.ts"
+    ]
+   },
+   {
+    "sha": "c9af606",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: menu lateral esconde de não-admin os 21 itens que levam a rotas AdminRoute (#463)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/inventario/gerar-rotas.mjs",
+     "src/components/layout/AppSidebar.tsx"
+    ]
+   },
    {
     "sha": "3b8df28",
     "date": "2026-11-12",
@@ -278465,116 +278375,19 @@
      "scripts/simulacao/verify_rescisao_fix.cjs",
      "supabase/functions/calcular-rescisao/motor.ts"
     ]
-   },
-   {
-    "sha": "9a0babf",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "feat: simulate_art145 quantifica a lacuna da view real vs. prazo legal (OJ-123) (#433)",
-    "files": [
-     "scripts/simulacao/simulate_art145.cjs"
-    ]
-   },
-   {
-    "sha": "7f6d195",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)",
-    "files": [
-     "scripts/simulacao/simulate_notif_d3.cjs"
-    ]
-   },
-   {
-    "sha": "e87dcb7",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)",
-    "files": [
-     "scripts/automation.config.json",
-     "scripts/simulacao/_lib/ts-require.cjs",
-     "scripts/simulacao/simulate_adiant_13.cjs",
-     "scripts/simulacao/verify_irrf_fix.cjs",
-     "scripts/simulacao/verify_rescisao_fix.cjs",
-     "supabase/tests/plano100/20_asserts.sql"
-    ]
-   },
-   {
-    "sha": "75460b7",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml"
-    ]
-   },
-   {
-    "sha": "225d591",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)",
-    "files": [
-     ".github/workflows/settings-guard.yml",
-     "scripts/automation.config.json",
-     "scripts/ci/README.md",
-     "scripts/ci/github-settings-baseline.json",
-     "scripts/ci/github-settings-guard.mjs",
-     "scripts/ci/github-settings-guard.unit.mjs"
-    ]
-   },
-   {
-    "sha": "24cadd4",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)",
-    "files": [
-     "scripts/automation.config.json"
-    ]
-   },
-   {
-    "sha": "b4f9205",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)",
-    "files": [
-     ".github/workflows/automation-local.yml",
-     ".gitignore",
-     "docs/AUTOMACAO_LOCAL.md",
-     "graphify.local.json",
-     "package.json",
-     "scripts/autofix/README.md",
-     "scripts/autofix/lib.mjs",
-     "scripts/autofix/lib.unit.mjs",
-     "scripts/automation.config.json",
-     "scripts/automation.mjs",
-     "scripts/automation.unit.mjs",
-     "scripts/graphify-local.mjs",
-     "scripts/graphify-local.unit.mjs",
-     "scripts/maintenance/README.md",
-     "scripts/maintenance/config.example.json",
-     "scripts/maintenance/config.json",
-     "scripts/maintenance/lib.mjs",
-     "scripts/maintenance/maintenance.unit.mjs",
-     "scripts/maintenance/run.mjs",
-     "scripts/maintenance/run.sh",
-     "scripts/maintenance/typecheck.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
     ".github/workflows/canonical-migrations.yml",
-    6
-   ],
-   [
-    "scripts/automation.config.json",
-    4
-   ],
-   [
-    "package.json",
-    3
+    5
    ],
    [
     "package-lock.json",
+    2
+   ],
+   [
+    "package.json",
     2
    ],
    [
@@ -278587,10 +278400,6 @@
    ],
    [
     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.verify.sql",
-    2
-   ],
-   [
-    "scripts/simulacao/simulate_art145.cjs",
     2
    ],
    [
@@ -278610,35 +278419,43 @@
     2
    ],
    [
-    "scripts/simulacao/_lib/ts-require.cjs",
-    2
-   ],
-   [
-    "scripts/simulacao/verify_rescisao_fix.cjs",
-    2
-   ],
-   [
-    "scripts/probes/run-probes.mjs",
+    "src/components/__tests__/ESocialAIInsights.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+    "src/components/__tests__/ESocialConciliacao.test.tsx",
     1
    ],
    [
-    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
+    "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
     1
    ],
    [
-    "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "src/components/esocial/ESocialAIInsights.tsx",
     1
    ],
    [
-    ".github/workflows/ossf-scorecard.yml",
+    "src/components/esocial/ESocialConciliacao.tsx",
     1
    ],
    [
-    ".github/workflows/security.yml",
+    "src/pages/ESocialPage.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
+    1
+   ],
+   [
+    "src/components/folha/FolhaComposicao.tsx",
+    1
+   ],
+   [
+    "src/components/folha/PagamentoBancarioWizard.tsx",
+    1
+   ],
+   [
+    "src/pages/AdminPontoDivergenciasPage.tsx",
     1
    ]
   ]

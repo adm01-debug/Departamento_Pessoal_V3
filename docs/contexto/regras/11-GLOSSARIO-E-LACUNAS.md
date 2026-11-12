@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3b8df28a50` · branch `main` · 2026-11-12 13:00 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `cab34b8eca` · branch `main` · 2026-11-12 17:00 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -426,7 +426,6 @@
 | coluna | coluna `nome` usada no código não existe no schema de `empresas` |  |
 | coluna | coluna `ativo` usada no código não existe no schema de `integracoes` |  |
 | coluna | coluna `empresa_id` usada no código não existe no schema de `integracoes` |  |
-| coluna | coluna `empresa_id` usada no código não existe no schema de `metricas_processamento` |  |
 | rls | `config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | rls | `config_alertas_indicadores`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | rls | `configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
@@ -646,7 +645,8 @@
 | segurança | função `cleanup_old_login_attempts` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
 | segurança | função `encrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
 | segurança | função `decrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
-| … +23 linhas — lista completa em `context.json` | | |
+| segurança | função `hash_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
+| … +22 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
