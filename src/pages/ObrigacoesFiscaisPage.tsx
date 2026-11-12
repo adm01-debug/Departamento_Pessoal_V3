@@ -22,6 +22,7 @@ import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable'
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
 import { DarfTab, type DarfIrrfSituacao } from '@/components/obrigacoes/DarfTab';
 import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
+import { resumoSimulacao } from '@/components/obrigacoes/simulacaoResumo';
 import { validateTablePayload } from '@/schemas/validate';
 
 function formatCurrency(v: number) {
@@ -449,22 +450,25 @@ export default function ObrigacoesFiscaisPage() {
                     Nenhuma simulação realizada
                   </div>
                 ) : (
-                  simulacoes.map((s) => (
-                    <Card key={s.id} className="border-border/30 hover:border-primary/30 transition-colors">
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div>
-                          <h4 className="font-semibold">{s.titulo}</h4>
-                          <p className="text-sm text-muted-foreground">{s.descricao}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">Impacto Estimado</p>
-                          <p className="text-lg font-bold text-primary font-display">
-                            +{formatCurrency((s.resultado as { impacto_total?: number } | null)?.impacto_total || 0)}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
+                  simulacoes.map((s) => {
+                    const resumo = resumoSimulacao(s.resultado);
+                    return (
+                      <Card key={s.id} className="border-border/30 hover:border-primary/30 transition-colors">
+                        <CardContent className="p-4 flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold">{s.titulo}</h4>
+                            <p className="text-sm text-muted-foreground">{s.descricao}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground mb-1">{resumo.rotulo}</p>
+                            <p className="text-lg font-bold text-primary font-display">
+                              {formatCurrency(resumo.valor)}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
                 )}
               </div>
             </TabsContent>
