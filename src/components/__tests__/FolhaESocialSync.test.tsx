@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -26,6 +26,7 @@ vi.mock('@/services/esocialService', () => ({
 }));
 
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { FolhaESocialSync } from '../folha/FolhaESocialSync';
 
 const MOCK_EVENTOS = [
@@ -97,5 +98,28 @@ describe('FolhaESocialSync', () => {
     expect(screen.queryByText(/R\$ 42,50/)).not.toBeInTheDocument();
     expect(screen.queryByText('FGTS Digital Conciliado')).not.toBeInTheDocument();
     expect(screen.queryByText('Auditado')).not.toBeInTheDocument();
+  });
+
+  it('Atualizar só recarrega os dados locais e avisa sucesso sem citar o eSocial', async () => {
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
+    const refetch = vi.fn().mockResolvedValue({ isError: false, error: null });
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTOS, isLoading: false, refetch } as never);
+    render(<FolhaESocialSync competencia="07/2026" />);
+    fireEvent.click(screen.getByRole('button', { name: /Atualizar/i }));
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Dados recarregados'));
+    expect(refetch).toHaveBeenCalledTimes(1);
+    expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  it('Atualizar mostra erro (e não sucesso) quando a recarga falha', async () => {
+    vi.mocked(toast.success).mockClear();
+    vi.mocked(toast.error).mockClear();
+    const refetch = vi.fn().mockResolvedValue({ isError: true, error: new Error('falha') });
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTOS, isLoading: false, refetch } as never);
+    render(<FolhaESocialSync competencia="07/2026" />);
+    fireEvent.click(screen.getByRole('button', { name: /Atualizar/i }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledTimes(1));
+    expect(toast.success).not.toHaveBeenCalled();
   });
 });

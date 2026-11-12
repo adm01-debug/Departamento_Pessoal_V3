@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import { listarEventosPorCompetencia } from '@/services/esocialService';
 import { useEmpresas } from '@/hooks';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface ESocialEventStatus {
   event: string;
@@ -87,8 +88,12 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
   const handleSync = async () => {
     setIsSyncing(true);
     try {
-      await refetch();
-      toast.success('Status atualizado com o eSocial');
+      const result = await refetch();
+      if (result.isError) {
+        toast.error(safeErrorMessage(result.error, 'Erro ao recarregar os eventos do eSocial.'));
+      } else {
+        toast.success('Dados recarregados');
+      }
     } finally {
       setIsSyncing(false);
     }
