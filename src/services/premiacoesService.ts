@@ -138,9 +138,18 @@ export const premiacoesService = {
     return data[0];
   },
 
-  /** Exclui um rascunho (as regras caem por ON DELETE CASCADE). Só apaga se ainda for rascunho. */
+  /** Exclui um rascunho (as regras caem por ON DELETE CASCADE). Só apaga se ainda for rascunho e sem pagamentos. */
   async excluirRascunhoCampanha(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // premiacoes_pagamentos.campanha_id também é ON DELETE CASCADE: confere no banco
+    // (não na lista da tela, que pode estar carregando/falha) para não apagar pagamentos.
+    const { data: pags, error: errPags } = await supabase
+      .from('premiacoes_pagamentos')
+      .select('id')
+      .eq('campanha_id', id)
+      .limit(1);
+    if (errPags) throw errPags;
+    if (pags && pags.length > 0) throw new Error('Rascunho já tem pagamentos vinculados e não pode ser excluído.');
     const { data, error } = await supabase
       .from('premiacoes_campanhas')
       .delete()

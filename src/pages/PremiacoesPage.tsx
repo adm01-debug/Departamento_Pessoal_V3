@@ -393,7 +393,7 @@ export default function PremiacoesPage() {
                         </p>
                         {c.status === 'rascunho' && podeGerirCampanhas && (
                           <div className="flex gap-2">
-                            {pagsCampanha.length === 0 && (
+                            {!loadPagamentos && pagsCampanha.length === 0 && (
                               <Button
                                 size="sm"
                                 variant="outline"

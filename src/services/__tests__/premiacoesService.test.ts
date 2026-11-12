@@ -206,10 +206,18 @@ describe('premiacoesService.lancarRascunhoCampanha / excluirRascunhoCampanha', (
 
   it('excluir só apaga rascunho da empresa', async () => {
     const { chain, eqFn } = setupChain([{ id: 'c1' }]);
+    mockFrom.mockReturnValueOnce(makeChain({ data: [], error: null }));
     await premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID);
     expect(chain.delete).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('status', 'rascunho');
+  });
+
+  it('excluir recusa rascunho com pagamentos (cascade) sem chamar delete', async () => {
+    const { chain } = setupChain([{ id: 'p1' }]);
+    await expect(premiacoesService.excluirRascunhoCampanha('c1', EMPRESA_ID)).rejects.toThrow(/pagamentos vinculados/);
+    expect(mockFrom).toHaveBeenCalledWith('premiacoes_pagamentos');
+    expect(chain.delete).not.toHaveBeenCalled();
   });
 
   it('excluir com 0 linhas afetadas lança erro', async () => {
