@@ -79,7 +79,7 @@ jobs:
           fi
           mapfile -t CHANGED < <(
             git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- supabase/functions \
-              | awk -F/ 'NF>=2{print $2}' \
+              | awk -F/ 'NF>=4{print $3}' \
               | LC_ALL=C sort -u
           )
           CONFIG_CHANGED="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- supabase/config.toml)"
@@ -124,7 +124,7 @@ jobs:
           # quebrou o type-check real no CI. Mantido v2.x.
           deno-version: v2.x
 
-      - uses: supabase/setup-cli@d239d1052f6f024a8d746d7e5aeddead63b9cb53 # v3.1.0
+      - uses: supabase/setup-cli@689adcfb80d947100a1eab127289b97d1fb07b13 # v3.2.0
         with:
           version: 2.117.0
 
@@ -194,7 +194,7 @@ jobs:
               SOURCE="fallback-all"
             else
               FN_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/functions \
-                | awk -F/ 'NF>=2{print $2}' | LC_ALL=C sort -u)"
+                | awk -F/ 'NF>=4{print $3}' | LC_ALL=C sort -u)"
               CONFIG_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/config.toml)"
               # Codex review (P1, PR #238): "_shared" não é uma função (sem
               # index.ts próprio) -- é código importado pelas funções reais

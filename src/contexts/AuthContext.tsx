@@ -7,8 +7,9 @@ import { loggerService } from '@/services/loggerService';
 import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
 
-// Enum canônico do banco (migrations 20251220135248): ('admin','gestor','rh','user').
-export type AppRole = 'admin' | 'gestor' | 'rh' | 'user';
+// Enum canônico do banco (migrations 20251220135248 + 20261112010000):
+// ('admin','gestor','rh','user','supervisor','coordenador').
+export type AppRole = 'admin' | 'gestor' | 'rh' | 'user' | 'supervisor' | 'coordenador';
 
 export interface User {
   id: string;

@@ -294,6 +294,9 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # Edge Functions não usam package.json: bump do front não pode quebrar --frozen.
+    env:
+      DENO_NO_PACKAGE_JSON: '1'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         if: github.event_name != 'pull_request' || needs.changes.outputs.edge == 'true'
@@ -495,7 +498,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
        github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04 # ubuntu-latest=26.04 não tem postgresql-client-16 (W41)
     timeout-minutes: 15
     env:
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL_READONLY }}
