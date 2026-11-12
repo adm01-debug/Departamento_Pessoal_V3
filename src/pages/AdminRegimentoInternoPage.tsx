@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -10,11 +10,34 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
-import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
+import {
+  Loader2,
+  FileText,
+  ShieldCheck,
+  Users,
+  CheckCircle2,
+  Plus,
+  Send,
+  Bell,
+  UserX,
+  Download,
+  Pencil,
+  Archive,
+} from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { validateTablePayload } from '@/schemas/validate';
 
@@ -55,6 +78,10 @@ const AdminRegimentoInternoPage = () => {
   const [novoConteudo, setNovoConteudo] = useState('');
   const [saving, setSaving] = useState(false);
   const [notificando, setNotificando] = useState(false);
+  const [editando, setEditando] = useState<Documento | null>(null);
+  const [editTitulo, setEditTitulo] = useState('');
+  const [editConteudo, setEditConteudo] = useState('');
+  const [arquivando, setArquivando] = useState<Documento | null>(null);
 
   const empresaId = empresaAtual?.id;
 
@@ -161,6 +188,90 @@ const AdminRegimentoInternoPage = () => {
       toast.error('Falha ao publicar');
     }
   };
+
+  const abrirEdicao = (d: Documento) => {
+    setEditando(d);
+    setEditTitulo(d.titulo);
+    setEditConteudo(d.conteudo_html);
+  };
+
+  // Só rascunhos são editáveis: o documento publicado tem hash SHA-256 que as assinaturas referenciam.
+  const salvarEdicao = useMutation({
+    mutationFn: async (doc: Documento) => {
+      const { data, error } = await supabase
+        .from('sst_regimento_documentos')
+        .update(
+          validateTablePayload(
+            'sst_regimento_documentos',
+            { titulo: editTitulo.trim(), conteudo_html: editConteudo },
+            'AdminRegimentoInternoPage:sst_regimento_documentos:editar'
+          )
+        )
+        .eq('id', doc.id)
+        .eq('empresa_id', empresaId!)
+        .eq('status', 'RASCUNHO')
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Rascunho não encontrado ou já publicado.');
+    },
+    onSuccess: () => {
+      toast.success('Rascunho atualizado');
+      setEditando(null);
+      carregar();
+    },
+    onError: (err, doc) => {
+      loggerService.error(
+        'Falha ao editar rascunho',
+        { documentoId: doc.id },
+        err instanceof Error ? err : new Error(String(err))
+      );
+      toast.error(safeErrorMessage(err, 'Falha ao salvar o rascunho.'));
+    },
+  });
+
+  const confirmarEdicao = () => {
+    if (!editando || !empresaId) return;
+    if (!editTitulo.trim() || !editConteudo.trim()) {
+      toast.error('Título e conteúdo são obrigatórios');
+      return;
+    }
+    salvarEdicao.mutate(editando);
+  };
+
+  // Arquivar o vigente encerra a coleta de assinaturas; o histórico e as assinaturas já feitas são mantidos.
+  const arquivar = useMutation({
+    mutationFn: async (doc: Documento) => {
+      const { data, error } = await supabase
+        .from('sst_regimento_documentos')
+        .update(
+          validateTablePayload(
+            'sst_regimento_documentos',
+            { status: 'ARQUIVADO' },
+            'AdminRegimentoInternoPage:sst_regimento_documentos:arquivar'
+          )
+        )
+        .eq('id', doc.id)
+        .eq('empresa_id', empresaId!)
+        .eq('status', 'PUBLICADO')
+        .select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Documento não encontrado ou já arquivado.');
+    },
+    onSuccess: () => {
+      toast.success('Documento arquivado');
+      setArquivando(null);
+      carregar();
+    },
+    onError: (err, doc) => {
+      loggerService.error(
+        'Falha ao arquivar documento',
+        { documentoId: doc.id },
+        err instanceof Error ? err : new Error(String(err))
+      );
+      toast.error(safeErrorMessage(err, 'Falha ao arquivar o documento.'));
+    },
+  });
+
   const notificarPendentes = async () => {
     if (!empresaAtual?.id || notificando) return;
     setNotificando(true);
@@ -402,8 +513,18 @@ const AdminRegimentoInternoPage = () => {
                       {d.status}
                     </Badge>
                     {d.status === 'RASCUNHO' && (
-                      <Button size="sm" onClick={() => publicar(d.id)} className="gap-1">
-                        <Send className="h-3 w-3" /> Publicar
+                      <>
+                        <Button size="sm" variant="outline" onClick={() => abrirEdicao(d)} className="gap-1">
+                          <Pencil className="h-3 w-3" /> Editar
+                        </Button>
+                        <Button size="sm" onClick={() => publicar(d.id)} className="gap-1">
+                          <Send className="h-3 w-3" /> Publicar
+                        </Button>
+                      </>
+                    )}
+                    {d.status === 'PUBLICADO' && (
+                      <Button size="sm" variant="outline" onClick={() => setArquivando(d)} className="gap-1">
+                        <Archive className="h-3 w-3" /> Arquivar
                       </Button>
                     )}
                   </div>
@@ -413,6 +534,66 @@ const AdminRegimentoInternoPage = () => {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={!!editando} onOpenChange={(open) => !open && setEditando(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Editar Rascunho — v{editando?.versao}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Input
+              placeholder="Título"
+              aria-label="Título do rascunho"
+              value={editTitulo}
+              onChange={(e) => setEditTitulo(e.target.value)}
+            />
+            <Textarea
+              placeholder="Conteúdo (HTML permitido)"
+              aria-label="Conteúdo do rascunho"
+              value={editConteudo}
+              onChange={(e) => setEditConteudo(e.target.value)}
+              rows={16}
+            />
+            <div className="flex justify-end">
+              <Button onClick={confirmarEdicao} disabled={salvarEdicao.isPending} className="gap-2">
+                {salvarEdicao.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileText className="h-4 w-4" />
+                )}
+                Salvar alterações
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={!!arquivando} onOpenChange={(open) => !open && setArquivando(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Arquivar &quot;{arquivando?.titulo}&quot; (v{arquivando?.versao})?
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              O documento deixa de ser o vigente e os colaboradores não poderão mais assiná-lo. As assinaturas já
+              coletadas e o hash de integridade são mantidos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={arquivar.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={arquivar.isPending}
+              onClick={(e) => {
+                e.preventDefault();
+                if (arquivando) arquivar.mutate(arquivando);
+              }}
+            >
+              {arquivar.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+              Arquivar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
