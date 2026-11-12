@@ -296,6 +296,15 @@ export const edgeFunctionsService = {
   checkRateLimit: async (key: string, limit = 100, windowSeconds = 60) =>
     handleInvoke('rateLimit', { body: { key, limit, window_seconds: windowSeconds } }),
 
+  /** Solicita adiantamento salarial: o backend aplica o teto % do salário e 1 por competência. */
+  solicitarAdiantamentoSalarial: async (params: {
+    empresa_id: string;
+    colaborador_id: string;
+    valor_centavos: number;
+    competencia: string;
+    motivo?: string;
+  }) => handleInvoke<{ success: boolean; id: string }>('adiantamento-salarial', { body: params }),
+
   /** Verifica conexão com banco externo */
   checkExternalDb: async () =>
     handleInvoke('external-db-bridge', { body: { action: 'select', table: 'empresas', limit: 1 } }),

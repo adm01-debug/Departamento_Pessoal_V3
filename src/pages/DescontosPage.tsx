@@ -22,6 +22,7 @@ import { AdiantamentosTable } from '@/components/descontos/AdiantamentosTable';
 import { NewLoanDialog } from '@/components/descontos/NewLoanDialog';
 import { NewAdvanceDialog } from '@/components/descontos/NewAdvanceDialog';
 import { validateTablePayload } from '@/schemas/validate';
+import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 
 export default function DescontosPage() {
   const { empresaAtual } = useEmpresas();
@@ -92,19 +93,14 @@ export default function DescontosPage() {
 
   const criarAdiantamento = useMutation({
     mutationFn: async (values: NovoAdiantamentoInput) => {
-      const { error } = await supabase.from('adiantamentos_salariais').insert(
-        validateTablePayload(
-          'adiantamentos_salariais',
-          {
-            ...values,
-            valor_solicitado: Number(values.valor_solicitado),
-            empresa_id: empresaAtual!.id,
-            status: 'pendente',
-          },
-          'DescontosPage:adiantamentos_salariais'
-        )
-      );
-      if (error) throw error;
+      // Via edge: aplica o teto de % do salário e 1 adiantamento por competência.
+      await edgeFunctionsService.solicitarAdiantamentoSalarial({
+        empresa_id: empresaAtual!.id,
+        colaborador_id: values.colaborador_id,
+        valor_centavos: Math.round(Number(values.valor_solicitado) * 100),
+        competencia: values.competencia_desconto,
+        motivo: values.motivo || undefined,
+      });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['adiantamentos-salariais'] });
@@ -125,6 +121,28 @@ export default function DescontosPage() {
       qc.invalidateQueries({ queryKey: ['adiantamentos-salariais'] });
       toast.success('Status atualizado');
     },
+  });
+
+  const atualizarEmprestimo = useMutation({
+    mutationFn: async ({
+      id,
+      patch,
+    }: {
+      id: string;
+      patch: { status?: 'quitado' | 'cancelado'; parcelas_pagas?: number };
+    }) => {
+      const { error } = await supabase
+        .from('emprestimos_consignados')
+        .update(validateTablePayload('emprestimos_consignados', patch, 'DescontosPage:emprestimos_consignados'))
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['emprestimos-consignados'] });
+      toast.success('Empréstimo atualizado');
+    },
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao atualizar empréstimo.')),
   });
 
   const fmt = (v: number | null) =>
@@ -165,7 +183,11 @@ export default function DescontosPage() {
 
             <div className="flex gap-2">
               {activeTab === 'emprestimos' ? (
-                <NewLoanDialog colaboradores={colaboradores} onSave={(v) => criarEmprestimo.mutate(v)} />
+                <NewLoanDialog
+                  colaboradores={colaboradores}
+                  emprestimos={emprestimos}
+                  onSave={(v) => criarEmprestimo.mutate(v)}
+                />
               ) : (
                 <NewAdvanceDialog colaboradores={colaboradores} onSave={(v) => criarAdiantamento.mutate(v)} />
               )}
@@ -180,7 +202,12 @@ export default function DescontosPage() {
                     <Spinner />
                   </div>
                 ) : (
-                  <EmprestimosTable emprestimos={emprestimos} fmt={fmt} />
+                  <EmprestimosTable
+                    emprestimos={emprestimos}
+                    fmt={fmt}
+                    onUpdate={(v) => atualizarEmprestimo.mutate(v)}
+                    updating={atualizarEmprestimo.isPending}
+                  />
                 )}
               </CardContent>
             </Card>

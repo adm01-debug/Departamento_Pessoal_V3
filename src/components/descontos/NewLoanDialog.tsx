@@ -12,9 +12,12 @@ import type { ColaboradorResumoBasico, NovoEmprestimoInput } from '@/types/desco
 
 export function NewLoanDialog({
   colaboradores,
+  emprestimos = [],
   onSave,
 }: {
   colaboradores: ColaboradorResumoBasico[];
+  /** Empréstimos já carregados da empresa: as parcelas ativas consomem a mesma margem. */
+  emprestimos?: Array<{ colaborador_id: string; valor_parcela: number; status: string | null }>;
   onSave: (v: NovoEmprestimoInput) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -27,7 +30,7 @@ export function NewLoanDialog({
   });
 
   // Compliance Engine: Calculate Margin
-  const { data: colaboradorData } = useQuery({
+  const { data: colaboradorData, isSuccess: colaboradorCarregado } = useQuery({
     queryKey: ['colaborador-margin', form.colaborador_id],
     queryFn: async () => {
       if (!form.colaborador_id) return null;
@@ -42,18 +45,30 @@ export function NewLoanDialog({
     enabled: !!form.colaborador_id,
   });
 
+  const parcelasAtivas = useMemo(
+    () =>
+      emprestimos
+        .filter((e) => e.colaborador_id === form.colaborador_id && e.status === 'ativo')
+        .reduce((acc, e) => acc + Number(e.valor_parcela || 0), 0),
+    [emprestimos, form.colaborador_id]
+  );
+
+  const semSalario = colaboradorCarregado && !colaboradorData?.salario_base;
+
   const marginData = useMemo(() => {
-    if (!colaboradorData?.salario_base) return { margin: 0, percent: 0, isValid: true };
+    // Sem salário base não há como calcular a margem: bloqueia em vez de liberar.
+    if (!colaboradorData?.salario_base) return { margin: 0, percent: 0, isValid: false };
     const valor_parcela = Number(form.valor_total) / (Number(form.numero_parcelas) || 1);
     const margin = colaboradorData.salario_base * 0.3; // 30% Law
-    const currentPercent = (valor_parcela / colaboradorData.salario_base) * 100;
+    const comprometido = parcelasAtivas + valor_parcela;
+    const currentPercent = (comprometido / colaboradorData.salario_base) * 100;
 
     return {
       margin,
       percent: currentPercent,
-      isValid: valor_parcela <= margin,
+      isValid: comprometido <= margin,
     };
-  }, [colaboradorData, form.valor_total, form.numero_parcelas]);
+  }, [colaboradorData, form.valor_total, form.numero_parcelas, parcelasAtivas]);
 
   const parcelas = Number(form.numero_parcelas);
   const total = Number(form.valor_total);
@@ -153,10 +168,24 @@ export function NewLoanDialog({
                   style={{ width: `${Math.min(marginData.percent, 100)}%` }}
                 />
               </div>
-              {!marginData.isValid && (
-                <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
-                  <AlertCircle className="h-3 w-3" /> Alerta: Parcela excede a margem permitida por lei.
+              {parcelasAtivas > 0 && (
+                <p className="text-[10px] text-muted-foreground">
+                  Parcelas de empréstimos ativos: R${' '}
+                  {parcelasAtivas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                 </p>
+              )}
+              {semSalario ? (
+                <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                  <AlertCircle className="h-3 w-3" /> Colaborador sem salário base cadastrado: não é possível calcular a
+                  margem.
+                </p>
+              ) : (
+                colaboradorCarregado &&
+                !marginData.isValid && (
+                  <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                    <AlertCircle className="h-3 w-3" /> Alerta: Parcela excede a margem permitida por lei.
+                  </p>
+                )
               )}
             </div>
           )}
