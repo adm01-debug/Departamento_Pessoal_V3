@@ -21,6 +21,7 @@ import { ptBR } from 'date-fns/locale';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { contratacaoService } from '@/services/contratacaoService';
+import { supabase } from '@/integrations/supabase/client';
 import { contratoTemplateService } from '@/services/contratoTemplateService';
 import { queryClient } from '@/lib/queryClient';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -124,6 +125,40 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     }
   };
 
+  const [abrindoPortal, setAbrindoPortal] = useState(false);
+
+  // Abre o portal do candidato (/contratacao?token=...) com o token vigente
+  // mais recente da admissão; sem token vigente, gera um novo pelo mesmo
+  // fluxo de AdmissoesPage (contratacaoService.enviarLinkCandidato).
+  const handleVerPortal = async () => {
+    if (!admissao) return;
+    setAbrindoPortal(true);
+    try {
+      const { data: vigente, error } = await supabase
+        .from('admissao_tokens')
+        .select('token')
+        .eq('admissao_id', admissao.id)
+        .gt('data_expiracao', new Date().toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      let token = vigente?.token;
+      if (!token) {
+        if (!admissao.email) {
+          toast.error('Candidato sem e-mail cadastrado e sem link de portal vigente.');
+          return;
+        }
+        token = (await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email)).token;
+      }
+      window.open(`${window.location.origin}/contratacao?token=${encodeURIComponent(token)}`, '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Falha ao abrir o portal do candidato.'));
+    } finally {
+      setAbrindoPortal(false);
+    }
+  };
+
   if (!admissao) return null;
 
   const terminal = admissao.etapa === 'concluida' || admissao.etapa === 'cancelada';
@@ -195,7 +230,13 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="rounded-xl gap-2 h-9 text-xs">
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl gap-2 h-9 text-xs"
+                onClick={handleVerPortal}
+                disabled={abrindoPortal}
+              >
                 <ExternalLink className="w-4 h-4" /> Ver Portal
               </Button>
             </div>

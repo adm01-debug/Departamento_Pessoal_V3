@@ -121,9 +121,6 @@ export function SSTProgramasTab() {
                     >
                       Visualizar
                     </Button>
-                    <Button size="sm" variant="outline" className="flex-1 text-[10px] h-7 rounded-lg font-body">
-                      Renovar
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

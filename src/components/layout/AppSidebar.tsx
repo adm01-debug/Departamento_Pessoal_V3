@@ -49,6 +49,7 @@ import {
   MessageSquareText,
   Activity,
   ShieldAlert,
+  HardHat,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -241,6 +242,7 @@ const menuGroups: MenuGroup[] = [
         adminOnly: true,
       },
       { icon: FileCheck, label: 'ASO Workflow', path: '/admin/sst/aso', color: 'text-primary', adminOnly: true },
+      { icon: HardHat, label: 'EPIs', path: '/epis', color: 'text-warning' },
       { icon: Fingerprint, label: 'Fichas de EPI', path: '/admin/sst/epis', color: 'text-warning', adminOnly: true },
       {
         icon: ShieldAlert,
