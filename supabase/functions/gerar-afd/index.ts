@@ -4,8 +4,7 @@
 // cruas registradas no REP), sem a ponte para registros_ponto (timesheet
 // processado). O AEJ mantém a ponte porque representa a jornada apurada.
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { parseJsonBody } from '../_shared/contract.ts';
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { getClientIp } from '../_shared/clientIp.ts';
