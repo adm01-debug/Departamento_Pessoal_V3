@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `004508da31` · branch `main` · 2026-11-12 20:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0df27ba056` · branch `main` · 2026-11-12 22:07 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pdi_plano_desenvolvimento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
 | `pdis` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
 | `pendencias` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| … +246 linhas — lista completa em `context.json` | | | |
+| … +247 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -393,6 +393,8 @@
 | status | valor `processed_v1` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `processed_v2` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `todos` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AdmissoesPage.tsx` |
+| status | valor `triagem` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/RecrutamentoPage.tsx` |
+| status | valor `contratado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RecrutamentoPage.tsx` |
 | status | valor `finalizado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/rescisaoService.ts` |
 | status | valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
@@ -644,9 +646,7 @@
 | segurança | função `cleanup_expired_rate_limits` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
 | segurança | função `cleanup_old_login_attempts` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
 | segurança | função `encrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
-| segurança | função `decrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
-| segurança | função `hash_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
-| … +22 linhas — lista completa em `context.json` | | |
+| … +24 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 

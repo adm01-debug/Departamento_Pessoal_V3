@@ -349,7 +349,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 231,
+   "usado_por": 232,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -387,7 +387,7 @@
     "utils",
     "utils/folha"
    ],
-   "coberto_por_testes": 18,
+   "coberto_por_testes": 19,
    "orfao": false
   },
   {
@@ -506,7 +506,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 74,
+   "usado_por": 75,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -558,7 +558,7 @@
     "pages",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -1597,7 +1597,7 @@
     "afastamentoService"
    ],
    "export_default": null,
-   "linhas": 352,
+   "linhas": 358,
    "tabelas": [
     "afastamentos",
     "cid10",
@@ -1731,7 +1731,7 @@
     "avaliacaoService"
    ],
    "export_default": null,
-   "linhas": 151,
+   "linhas": 158,
    "tabelas": [
     "ciclos_avaliacao",
     "competencias_config",
@@ -2151,9 +2151,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
-    "hooks"
+    "hooks",
+    "pages"
    ],
    "coberto_por_testes": 1,
    "orfao": false
@@ -2176,7 +2177,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 3,
+   "usado_por": 5,
    "usado_por_modulos": [
     "hooks",
     "pages",
@@ -2486,11 +2487,12 @@
     "isDefinitiveIdempotencyFailure"
    ],
    "export_default": null,
-   "linhas": 303,
+   "linhas": 336,
    "tabelas": [],
    "rpcs": [],
    "edges": [
     "OCR",
+    "adiantamento-salarial",
     "alertas-dp",
     "assinaturaDigital",
     "backup-automatico",
@@ -2519,7 +2521,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 11,
+   "usado_por": 12,
    "usado_por_modulos": [
     "components/dashboard",
     "components/layout",
@@ -2599,9 +2601,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
     "hooks",
+    "pages",
     "services"
    ],
    "coberto_por_testes": 1,
@@ -3514,9 +3517,8 @@
     "premiacoesService"
    ],
    "export_default": null,
-   "linhas": 405,
+   "linhas": 377,
    "tabelas": [
-    "folha_itens",
     "notificacoes",
     "premiacoes_auditoria",
     "premiacoes_campanhas",
@@ -3540,7 +3542,7 @@
     "components/premiacoes",
     "pages"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -3602,7 +3604,7 @@
     "recrutamentoService"
    ],
    "export_default": null,
-   "linhas": 201,
+   "linhas": 203,
    "tabelas": [
     "candidatos",
     "candidaturas",
@@ -3996,10 +3998,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 4,
+   "usado_por": 5,
    "usado_por_modulos": [
     "components/dashboard",
     "components/integracoes",
+    "components/settings",
     "pages"
    ],
    "coberto_por_testes": 0,
@@ -4065,9 +4068,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
-    "hooks"
+    "hooks",
+    "pages"
    ],
    "coberto_por_testes": 1,
    "orfao": false
@@ -4370,7 +4374,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 39,
+   "usado_por": 40,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/descontos",
@@ -4611,10 +4615,11 @@
     "formatDateTime",
     "formatNumber",
     "formatPercent",
-    "parseDateSafe"
+    "parseDateSafe",
+    "parseMoedaBR"
    ],
    "export_default": null,
-   "linhas": 174,
+   "linhas": 183,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -4623,7 +4628,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
@@ -4958,7 +4963,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 114,
+   "usado_por": 116,
    "usado_por_modulos": [
     "components/admissoes",
     "components/dashboard",
@@ -4970,7 +4975,6 @@
     "components/medidas-disciplinares",
     "components/ponto",
     "components/portal",
-    "components/premiacoes",
     "components/relatorios",
     "components/settings",
     "components/sst",

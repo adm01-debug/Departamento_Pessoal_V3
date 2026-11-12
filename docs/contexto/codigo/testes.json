@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 590,
+ "total": 593,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 552
+  "unit": 555
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 468
+   "arquivos": 471
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -657,11 +657,11 @@
   {
    "arquivo": "src/components/__tests__/AfastamentoTable.test.tsx",
    "tipo": "unit",
-   "linhas": 96,
+   "linhas": 111,
    "testa": [
     "src/components/afastamentos/AfastamentoTable.tsx"
    ],
-   "casos": 8
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/AfastamentoTimeline.test.tsx",
@@ -770,11 +770,12 @@
   {
    "arquivo": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
    "tipo": "unit",
-   "linhas": 113,
+   "linhas": 162,
    "testa": [
-    "src/components/settings/BeneficiosSettingsTab.tsx"
+    "src/components/settings/BeneficiosSettingsTab.tsx",
+    "src/integrations/supabase/client.ts"
    ],
-   "casos": 6
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/BeneficiosTab.test.tsx",
@@ -970,11 +971,11 @@
   {
    "arquivo": "src/components/__tests__/DarfTab.test.tsx",
    "tipo": "unit",
-   "linhas": 47,
+   "linhas": 61,
    "testa": [
     "src/components/obrigacoes/DarfTab.tsx"
    ],
-   "casos": 8
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/DashboardHeader.test.tsx",
@@ -998,12 +999,12 @@
   {
    "arquivo": "src/components/__tests__/DeclaracoesTable.test.tsx",
    "tipo": "unit",
-   "linhas": 75,
+   "linhas": 94,
    "testa": [
     "src/components/obrigacoes/DeclaracoesTable.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 10
+   "casos": 11
   },
   {
    "arquivo": "src/components/__tests__/DependentesTab.test.tsx",
@@ -1084,12 +1085,12 @@
   {
    "arquivo": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 146,
+   "linhas": 198,
    "testa": [
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 8
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
@@ -1191,11 +1192,11 @@
   {
    "arquivo": "src/components/__tests__/EmprestimosTable.test.tsx",
    "tipo": "unit",
-   "linhas": 80,
+   "linhas": 157,
    "testa": [
     "src/components/descontos/EmprestimosTable.tsx"
    ],
-   "casos": 8
+   "casos": 13
   },
   {
    "arquivo": "src/components/__tests__/EntityPageContainer.test.tsx",
@@ -1421,11 +1422,11 @@
   {
    "arquivo": "src/components/__tests__/ExameFormDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 140,
+   "linhas": 188,
    "testa": [
     "src/components/exames/ExameFormDialog.tsx"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/ExameKPIs.test.tsx",
@@ -1440,12 +1441,12 @@
   {
    "arquivo": "src/components/__tests__/ExameTable.test.tsx",
    "tipo": "unit",
-   "linhas": 92,
+   "linhas": 101,
    "testa": [
     "src/components/exames/ExameTable.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/ExameTipoChart.test.tsx",
@@ -1822,13 +1823,13 @@
   {
    "arquivo": "src/components/__tests__/InlineTabs.test.tsx",
    "tipo": "unit",
-   "linhas": 494,
+   "linhas": 571,
    "testa": [
     "src/components/settings/InlineTabs.tsx",
     "src/integrations/supabase/client.ts",
     "src/services/edgeFunctionsService.ts"
    ],
-   "casos": 40
+   "casos": 46
   },
   {
    "arquivo": "src/components/__tests__/IPBlockingTab.test.tsx",
@@ -2059,11 +2060,11 @@
   {
    "arquivo": "src/components/__tests__/NewLoanDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 146,
+   "linhas": 198,
    "testa": [
     "src/components/descontos/NewLoanDialog.tsx"
    ],
-   "casos": 9
+   "casos": 12
   },
   {
    "arquivo": "src/components/__tests__/NineBoxMatrix.test.tsx",
@@ -2299,11 +2300,11 @@
   {
    "arquivo": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
    "tipo": "unit",
-   "linhas": 58,
+   "linhas": 72,
    "testa": [
     "src/components/ponto/PontoInconsistencyPanel.tsx"
    ],
-   "casos": 5
+   "casos": 6
   },
   {
    "arquivo": "src/components/__tests__/PontoLeaderboard.test.tsx",
@@ -2517,6 +2518,15 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/simulacaoResumo.test.ts",
+   "tipo": "unit",
+   "linhas": 27,
+   "testa": [
+    "src/components/obrigacoes/simulacaoResumo.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/components/__tests__/Simulador13Dialog.test.tsx",
    "tipo": "unit",
    "linhas": 95,
@@ -2716,6 +2726,15 @@
     "src/components/folha/folhaDashboardData.ts"
    ],
    "casos": 3
+  },
+  {
+   "arquivo": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+   "tipo": "unit",
+   "linhas": 137,
+   "testa": [
+    "src/components/integracoes/ConfigPanels.tsx"
+   ],
+   "casos": 6
   },
   {
    "arquivo": "src/components/relatorios/reportScheduleContract.test.ts",
@@ -3783,6 +3802,16 @@
    "casos": 7
   },
   {
+   "arquivo": "src/pages/__tests__/PremiacoesPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 76,
+   "testa": [
+    "src/pages/PremiacoesPage.tsx",
+    "src/services/premiacoesService.ts"
+   ],
+   "casos": 2
+  },
+  {
    "arquivo": "src/schemas/__tests__/validate.test.ts",
    "tipo": "unit",
    "linhas": 109,
@@ -3861,12 +3890,12 @@
   {
    "arquivo": "src/services/__tests__/afastamentoService.test.ts",
    "tipo": "unit",
-   "linhas": 592,
+   "linhas": 605,
    "testa": [
     "src/services/afastamentoService.ts",
     "src/types/afastamentos.ts"
    ],
-   "casos": 49
+   "casos": 50
   },
   {
    "arquivo": "src/services/__tests__/assistenteIAService.test.ts",
@@ -3899,11 +3928,11 @@
   {
    "arquivo": "src/services/__tests__/avaliacaoService.test.ts",
    "tipo": "unit",
-   "linhas": 306,
+   "linhas": 328,
    "testa": [
     "src/services/avaliacaoService.ts"
    ],
-   "casos": 24
+   "casos": 26
   },
   {
    "arquivo": "src/services/__tests__/backupService.test.ts",
@@ -4138,11 +4167,12 @@
   {
    "arquivo": "src/services/__tests__/edgeFunctionsService.test.ts",
    "tipo": "unit",
-   "linhas": 205,
+   "linhas": 275,
    "testa": [
+    "src/lib/circuitBreaker.ts",
     "src/services/edgeFunctionsService.ts"
    ],
-   "casos": 13
+   "casos": 16
   },
   {
    "arquivo": "src/services/__tests__/empresaService.test.ts",
@@ -4443,11 +4473,11 @@
   {
    "arquivo": "src/services/__tests__/recrutamentoService.test.ts",
    "tipo": "unit",
-   "linhas": 334,
+   "linhas": 347,
    "testa": [
     "src/services/recrutamentoService.ts"
    ],
-   "casos": 25
+   "casos": 26
   },
   {
    "arquivo": "src/services/__tests__/rescisaoSecurity.test.ts",
@@ -4790,11 +4820,11 @@
   {
    "arquivo": "src/utils/__tests__/format.test.ts",
    "tipo": "unit",
-   "linhas": 108,
+   "linhas": 120,
    "testa": [
     "src/utils/format.ts"
    ],
-   "casos": 22
+   "casos": 23
   },
   {
    "arquivo": "src/utils/__tests__/holeritePDF.test.ts",
@@ -5533,6 +5563,7 @@
   "src/components/forms/FormSection.tsx": 1,
   "src/components/forms/FormSelect.tsx": 1,
   "src/components/forms/FormSwitch.tsx": 1,
+  "src/components/integracoes/ConfigPanels.tsx": 1,
   "src/components/layout/BackButton.tsx": 1,
   "src/components/layout/Breadcrumbs.tsx": 1,
   "src/components/layout/Column.tsx": 1,
@@ -5568,6 +5599,7 @@
   "src/components/obrigacoes/DeclaracoesTable.tsx": 1,
   "src/components/obrigacoes/GuiasTable.tsx": 1,
   "src/components/obrigacoes/ObrigacoesKPIs.tsx": 1,
+  "src/components/obrigacoes/simulacaoResumo.ts": 1,
   "src/components/onboarding/GuidedTour.tsx": 1,
   "src/components/organograma/OrganogramaNode.tsx": 1,
   "src/components/ponto/AssinarEspelhoDialog.tsx": 1,
@@ -5721,11 +5753,11 @@
   "src/hooks/useValeTransporte.ts": 1,
   "src/hooks/useWebhooksAvancados.ts": 2,
   "src/hooks/validators.ts": 1,
-  "src/integrations/supabase/client.ts": 18,
+  "src/integrations/supabase/client.ts": 19,
   "src/integrations/supabase/database.types.ts": 10,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
-  "src/lib/circuitBreaker.ts": 1,
+  "src/lib/circuitBreaker.ts": 2,
   "src/lib/cursor.ts": 1,
   "src/lib/masks.ts": 1,
   "src/lib/queryClient.ts": 1,
@@ -5737,6 +5769,7 @@
   "src/pages/ImportacaoPage.tsx": 1,
   "src/pages/LoginPage.tsx": 1,
   "src/pages/NotFoundPage.tsx": 1,
+  "src/pages/PremiacoesPage.tsx": 1,
   "src/pages/UsuariosPage.tsx": 1,
   "src/pages/folhaResumo.ts": 1,
   "src/schemas/common.ts": 1,
@@ -5807,7 +5840,7 @@
   "src/services/pontoOfflineService.ts": 2,
   "src/services/pontoService.ts": 1,
   "src/services/pontosService.ts": 1,
-  "src/services/premiacoesService.ts": 1,
+  "src/services/premiacoesService.ts": 2,
   "src/services/provisaoService.ts": 1,
   "src/services/pushNotificationService.ts": 1,
   "src/services/recrutamentoService.ts": 1,
@@ -5952,6 +5985,7 @@
    "src/pages/DesligamentosPage.tsx",
    "src/pages/DespesasPage.tsx",
    "src/pages/DocumentosPage.tsx",
+   "src/pages/EPIsPage.tsx",
    "src/pages/ESocialPage.tsx",
    "src/pages/EmpresaFormPage.tsx",
    "src/pages/EmpresasPage.tsx",
@@ -5987,7 +6021,6 @@
    "src/pages/PontoKioskPage.tsx",
    "src/pages/PontoPage.tsx",
    "src/pages/PortalPage.tsx",
-   "src/pages/PremiacoesPage.tsx",
    "src/pages/PromoBrindesPage.tsx",
    "src/pages/ProvisoesPage.tsx",
    "src/pages/RecrutamentoPage.tsx",

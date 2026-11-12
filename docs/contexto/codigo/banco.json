@@ -3514,7 +3514,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 5,
+   "usada_no_front": 6,
    "usada_em_edges": [
     "admissao-publica",
     "assinaturaDigital",
@@ -15276,7 +15276,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 39,
+   "usada_no_front": 40,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -24711,13 +24711,13 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 0,
+   "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
     "trg_epi_item_ca"
    ],
    "sem_rls": false,
-   "nao_usada": true
+   "nao_usada": false
   },
   "escalas": {
    "colunas": {
@@ -30390,7 +30390,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 11,
+   "usada_no_front": 10,
    "usada_em_edges": [
     "_shared",
     "calcular-folha"
@@ -31206,7 +31206,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 12,
+   "usada_no_front": 13,
    "usada_em_edges": [
     "calcular-folha",
     "distribuir-holerites",
@@ -33668,7 +33668,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 1,
+   "usada_no_front": 2,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,
@@ -46980,7 +46980,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 3,
+   "usada_no_front": 4,
    "usada_em_edges": [
     "auth-gov-br"
    ],

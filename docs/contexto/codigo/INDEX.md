@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `004508da31bfdda3428697315821c87ae8e803f1` (2026-11-12T14:20:28-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0df27ba056a189d72852571b62aa538b681383fb` (2026-11-12T17:06:28-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1419), SQL (827), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1424), SQL (827), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2882 |
-| arquivos_codigo | 1549 |
-| linhas_codigo | 273606 |
-| rotas | 113 |
+| arquivos_total | 2887 |
+| arquivos_codigo | 1554 |
+| linhas_codigo | 277146 |
+| rotas | 114 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
-| itens_menu | 93 |
+| itens_menu | 94 |
 | modulos | 77 |
-| componentes | 428 |
+| componentes | 429 |
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
 | migrations | 791 |
 | cron_jobs | 41 |
-| testes | 590 |
+| testes | 593 |
 | workflows | 21 |
 | scripts | 115 |
 | docs_md | 291 |
 
 ## Onde ficam as coisas
-- telas: src/pages (108), src/components (1)
-- componentes: src/components (311), src/pages (109), src/contexts (3)
+- telas: src/pages (109), src/components (1)
+- componentes: src/components (312), src/pages (109), src/contexts (3)
 - hooks: src/hooks (88), src/components (5), src/contexts (4)
 - servicos_logica: src/services (80), src/utils (33), src/schemas (25)
-- testes: co-localizado (__tests__) (468), co-localizado (*.test) (70), e2e/ (27)
+- testes: co-localizado (__tests__) (471), co-localizado (*.test) (70), e2e/ (27)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/autofix (10), scripts/ci (9)
@@ -70,12 +70,12 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | módulo | itens de menu | telas/rotas | arquivos | hooks locais | edges | tabelas |
 |---|---|---|---|---|---|---|
 | calculators | 0 | 0 | 8 | 0 | 0 | 0 |
-| components | 0 | 0 | 5 | 17 | 23 | 6 |
+| components | 0 | 0 | 5 | 17 | 24 | 6 |
 | components/admin | 0 | 0 | 7 | 1 | 0 | 1 |
 | components/admissoes | 0 | 0 | 5 | 7 | 8 | 89 |
-| components/afastamentos | 0 | 0 | 5 | 7 | 0 | 7 |
+| components/afastamentos | 0 | 0 | 6 | 7 | 0 | 7 |
 | components/colaborador-detalhes | 0 | 0 | 17 | 63 | 0 | 33 |
-| components/dashboard | 0 | 0 | 16 | 7 | 23 | 59 |
+| components/dashboard | 0 | 0 | 16 | 7 | 24 | 59 |
 | components/descontos | 0 | 0 | 5 | 0 | 0 | 1 |
 | components/desligamentos | 0 | 0 | 8 | 3 | 1 | 6 |
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
@@ -84,23 +84,24 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/ferias | 0 | 0 | 21 | 135 | 8 | 116 |
 | components/folha | 0 | 0 | 20 | 129 | 13 | 124 |
 | components/forms | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/layout | 0 | 1 | 28 | 17 | 23 | 6 |
+| components/layout | 0 | 1 | 28 | 17 | 24 | 6 |
 | components/medidas-disciplinares | 0 | 0 | 9 | 125 | 8 | 111 |
 | components/notifications | 0 | 0 | 5 | 4 | 0 | 5 |
+| components/obrigacoes | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/pcs | 0 | 0 | 6 | 9 | 0 | 8 |
 | components/ponto | 0 | 0 | 17 | 126 | 11 | 113 |
 | components/portal | 0 | 0 | 5 | 4 | 3 | 80 |
-| components/settings | 0 | 0 | 11 | 127 | 31 | 119 |
+| components/settings | 0 | 0 | 11 | 128 | 32 | 162 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 8 |
 | components/ui | 0 | 0 | 58 | 15 | 2 | 5 |
 | hooks | 0 | 0 | 83 | 167 | 12 | 136 |
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 7 | 0 | 0 | 0 |
-| pages | 92 | 111 | 111 | 176 | 48 | 261 |
+| pages | 93 | 112 | 111 | 176 | 49 | 262 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
-| services | 0 | 0 | 71 | 0 | 35 | 182 |
+| services | 0 | 0 | 71 | 0 | 36 | 182 |
 | services/tabelas | 0 | 0 | 8 | 0 | 0 | 47 |
 | types | 0 | 0 | 12 | 0 | 0 | 0 |
 | utils | 0 | 0 | 26 | 0 | 0 | 1 |
@@ -166,6 +167,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `/empresas` [tela] → src/pages/EmpresasPage.tsx (protegida)
 - `/empresas/editar/:id` [tela] → src/pages/EmpresaFormPage.tsx (protegida)
 - `/empresas/novo` [tela] → src/pages/EmpresaFormPage.tsx (protegida)
+- `/epis` [tela] → src/pages/EPIsPage.tsx (protegida)
 - `/escalas` [tela] → src/pages/EscalasPage.tsx (protegida)
 - `/esocial` [tela] → src/pages/ESocialPage.tsx (protegida)
 - `/exames` [tela] → src/pages/ExamesPage.tsx (protegida)
@@ -245,7 +247,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Edge functions
 - `OCR` — tabelas: -; chamada por 1 arquivo(s) do front
-- `adiantamento-salarial` — tabelas: adiantamentos_salariais, auditoria, colaboradores, parametros_sistema; chamada por 0 arquivo(s) do front — **ÓRFÃ**
+- `adiantamento-salarial` — tabelas: adiantamentos_salariais, auditoria, colaboradores, parametros_sistema; chamada por 1 arquivo(s) do front
 - `admissao-publica` (verify_jwt=false) — tabelas: admissao_tokens; chamada por 1 arquivo(s) do front
 - `alertas-dp` — tabelas: asos, colaboradores, notificacoes, user_empresas, user_roles, v_login_anomalies; chamada por 1 arquivo(s) do front
 - `alertas-preditivos` — tabelas: afastamentos, colaboradores, desligamentos, faltas, notificacoes, registros_ponto; chamada por 0 arquivo(s) do front — **ÓRFÃ**
@@ -355,21 +357,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 
 ## Integrações externas
 - SDKs: Sentry, Supabase, react-query, zod
-- hosts mais citados: departamento-pessoal-v3.vercel.app, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, api.deepseek.com, brasilapi.com.br, example.invalid, example.test, frjbfeamybqsejlvmqbl.supabase.co, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, signed.url, viacep.com.br, www.esocial.gov.br, x.supabase.co
+- hosts mais citados: departamento-pessoal-v3.vercel.app, lovable.app, test.supabase.co, api.resend.com, unified-harmony-hub.lovable.app, api.deepseek.com, brasilapi.com.br, example.invalid, example.test, frjbfeamybqsejlvmqbl.supabase.co, hooks.test, id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app, signed.url, viacep.com.br, www.esocial.gov.br
 - webhooks recebidos: admissao-publica, auth-gov-br, auth-login, healthcheck, metrics, webhook
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, DEEPSEEK_API_KEY, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TURNSTILE_SECRET_KEY, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
-- papéis no código: dialog (33), alert (11), admin (9), user (9), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), rh (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), coordenador (1), gestor (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tooltip (1)
+- papéis no código: dialog (33), alert (11), admin (9), user (9), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), rh (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), coordenador (1), gestor (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tooltip (1)
 - enums de papel: app_role: admin|moderator|user|supervisor|coordenador; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
-- guards: src/components/ProtectedRoute.tsx · rotas protegidas: 107 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
+- guards: src/components/ProtectedRoute.tsx · rotas protegidas: 108 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
 - feature flags: FEATURE_X, nova-tela, novo-inbox
 
 ## Alertas (baseline.json → alertas)
 - rotas_sem_arquivo: 0
 - componentes_ambiguos: 0
 - menu_sem_destino: 1 — ex.: Ações -> /quick-actions
-- edges_orfas: 14 — ex.: adiantamento-salarial, alertas-preditivos, assistente-ia
+- edges_orfas: 13 — ex.: alertas-preditivos, assistente-ia, auditoria
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 15 — ex.: cbo, cnae, config_retencao
 - tabelas_usadas_sem_definicao: 0
@@ -383,27 +385,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21994 nós · 46142 arestas · 2128 comunidades · grafo do commit `004508da`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (318), lucide-react (293), useEmpresas (194), cn (187), client.ts (186), @testing-library/react (171), contract.ts (169), services/index.ts (164), "public"."empresas" (164), supabase/types.ts (161)
-- símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
+- 22032 nós · 46380 arestas · 2127 comunidades · grafo do commit `0df27ba0`
+- comunidades maiores: useEmpresas (507), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (424), button.tsx (318), vitest (279), App.tsx (270), cn (229), contract.ts (187), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (51)
-- package.json (42)
-- package-lock.json (37)
-- CLAUDE.md (28)
-- .github/workflows/ci.yml (19)
+- .github/workflows/canonical-migrations.yml (50)
+- package.json (35)
+- package-lock.json (31)
+- CLAUDE.md (25)
+- .github/workflows/ci.yml (17)
 - PENDENCIAS.md (13)
 - src/services/cnabService.ts (13)
 - AGENTS.md (12)
 - deno.lock (12)
-- .github/workflows/canonical-edge-functions.yml (11)
-- .github/workflows/e2e.yml (11)
-- .github/workflows/security.yml (11)
 - src/integrations/supabase/types.ts (11)
-- supabase/functions/external-db-bridge/index.ts (11)
-- .github/workflows/canonical-probes.yml (10)
+- .github/workflows/canonical-edge-functions.yml (10)
+- .github/workflows/security.yml (10)
+- infra/github/action-pins.json (10)
+- supabase/functions/external-db-bridge/index.ts (10)
+- supabase/functions/external-db-bridge/validation.ts (10)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -614,21 +616,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `0df27ba` fix: seta do passivo trabalhista abre a ficha do colaborador (#500)
+- 2026-11-12 `710fdff` fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)
+- 2026-11-12 `8c7c7a5` fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)
+- 2026-11-12 `da7bffa` fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)
+- 2026-11-12 `a98b321` fix: Feriados da empresa agora podem ser corrigidos e excluídos, e salvar feriado estadual/municipal/nacional para de fa
+- 2026-11-12 `8200dc7` fix: promoções e transferências passam a atualizar o cadastro do colaborador, e "Prorrogar" afastamento passa a registra
+- 2026-11-12 `c9ef6d7` fix: tela de Cargos passa a cadastrar, editar e ativar/inativar cargos (#487)
+- 2026-11-12 `3662037` fix: Avaliação de Desempenho: agora dá para cadastrar e excluir ciclos, metas, feedbacks e PDIs (#486)
+- 2026-11-12 `fc76699` fix: Premiações mostra orçamento, participantes e tendência reais e tira o botão "Auto" que sempre falhava (#485)
+- 2026-11-12 `db4f2ef` fix: Integrações e Configurações: salvar CNAB, criar e remover webhooks, excluir plano de benefício e tirar botões e sta
+- 2026-11-12 `913f961` fix: Obrigações Fiscais: DARF mostra o IRRF real da folha, "Nova Simulação" funciona e o SEFIP é baixado (#480)
+- 2026-11-12 `9dc8def` fix: SST: permite emitir ficha de EPI, abre a tela de EPIs no menu e faz 'Ver Portal' funcionar (#479)
+- 2026-11-12 `075db7f` fix: Descontos: adiantamento respeita limite de % do salário e 1 por mês, consignado respeita margem somada e empréstimo
+- 2026-11-12 `4fa4b7e` fix: Recrutamento passa a criar, editar e excluir vagas e a inscrever candidatos (sem KPI falso) (#477)
 - 2026-11-12 `004508d` fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)
-- 2026-11-12 `773c7af` fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)
-- 2026-11-12 `81eb705` fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)
-- 2026-11-12 `47fe444` fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)
-- 2026-11-12 `7e8d170` fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)
-- 2026-11-12 `965a624` fix: indicador de saúde do sistema lê a taxa de sucesso no formato que a edge devolve (#495)
-- 2026-11-12 `e3f108d` fix: exportar ficha do colaborador em PDF e remover item 'Outras Ações' sem ação (#476)
-- 2026-11-12 `7fa11b6` fix: remove aba de Taxas de Câmbio com cotações fixas no Financeiro Bancário (#475)
-- 2026-11-12 `e8d162f` fix: perfil troca senha de verdade e firewall leva ao bloqueio de IP (#474)
-- 2026-11-12 `8ac54f1` fix: dashboards mostram só indicadores reais e perdem botões sem ação (#473)
-- 2026-11-12 `13ee3ba` fix: KPIs do Ponto calculados de registros reais e ranking fictício removido (#472)
-- 2026-11-12 `cab34b8` fix: Conciliação do eSocial e card "Insights da IA" deixam de mostrar dados inventados (#471)
-- 2026-11-12 `884e312` fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)
-- 2026-11-12 `cf95554` fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)
-- 2026-11-12 `b3493b3` fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

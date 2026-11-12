@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 961,
- "arestas": 4605,
+ "nos": 963,
+ "arestas": 4650,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -10,11 +10,11 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 249
+   "importado_por": 251
   },
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 247
+   "importado_por": 249
   },
   {
    "arquivo": "src/components/ui/badge.tsx",
@@ -26,15 +26,15 @@
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 143
+   "importado_por": 147
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 137
+   "importado_por": 141
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 125
+   "importado_por": 127
   },
   {
    "arquivo": "src/schemas/validate.ts",
@@ -42,11 +42,11 @@
   },
   {
    "arquivo": "src/utils/safeError.ts",
-   "importado_por": 115
+   "importado_por": 117
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 111
+   "importado_por": 112
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -54,7 +54,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 92
+   "importado_por": 93
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "importado_por": 87
+   "importado_por": 88
   },
   {
    "arquivo": "src/components/layout/index.ts",
@@ -101,16 +101,16 @@
    "importado_por": 49
   },
   {
+   "arquivo": "src/utils/dateLocal.ts",
+   "importado_por": 45
+  },
+  {
    "arquivo": "src/hooks/index.ts",
    "importado_por": 44
   },
   {
-   "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 44
-  },
-  {
    "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 38
+   "importado_por": 41
   },
   {
    "arquivo": "src/hooks/usePiiMask.ts",
@@ -145,15 +145,15 @@
    "importado_por": 22
   },
   {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 20
+  },
+  {
    "arquivo": "src/contexts/index.ts",
    "importado_por": 20
   },
   {
    "arquivo": "src/components/ui/progress.tsx",
-   "importado_por": 19
-  },
-  {
-   "arquivo": "src/contexts/AuthContext.tsx",
    "importado_por": 19
   },
   {
@@ -307,12 +307,12 @@
    "importado_por": 1
   },
   {
-   "modulo": "components/ferias",
-   "depende_de": 10,
+   "modulo": "components/settings",
+   "depende_de": 11,
    "importado_por": 1
   },
   {
-   "modulo": "components/settings",
+   "modulo": "components/ferias",
    "depende_de": 10,
    "importado_por": 1
   },

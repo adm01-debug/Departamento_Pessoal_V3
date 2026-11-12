@@ -163,7 +163,7 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "usado_por_arquivos": [
     "src/components/layout/MainLayout.tsx",
     "src/components/portal/PortalRegimentoCard.tsx",
@@ -175,6 +175,7 @@
     "src/hooks/useColaboradorVinculo.ts",
     "src/hooks/useEmpresas.ts",
     "src/hooks/usePiiMask.ts",
+    "src/pages/AdminEpisFichasPage.tsx",
     "src/pages/AssistenteIAPage.tsx",
     "src/pages/ComunicacaoInternaPage.tsx",
     "src/pages/DashboardPage.tsx",
@@ -705,12 +706,13 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "usado_por_arquivos": [
     "src/components/afastamentos/AfastamentoDocumentManager.tsx",
     "src/components/afastamentos/AfastamentoForm.tsx",
     "src/components/afastamentos/AfastamentoTable.tsx",
     "src/components/afastamentos/AfastamentoTimeline.tsx",
+    "src/components/afastamentos/ProrrogacaoDialog.tsx",
     "src/hooks/index.ts",
     "src/pages/AfastamentosPage.tsx"
    ],
@@ -1432,7 +1434,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 106,
+   "usado_por": 107,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -2796,8 +2798,9 @@
     "useEffect"
    ],
    "canais_realtime": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_arquivos": [
+    "src/components/settings/InlineTabs.tsx",
     "src/components/ui/sonner.tsx",
     "src/components/ui/theme-toggle.tsx",
     "src/providers/index.ts"

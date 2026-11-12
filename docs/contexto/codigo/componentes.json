@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 428,
+ "total": 429,
  "orfaos": 22,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -80,7 +80,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 499,
+   "linhas": 501,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
@@ -261,7 +261,7 @@
     "DetalhesAdmissaoDialog"
    ],
    "export_default": null,
-   "linhas": 465,
+   "linhas": 509,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useAdmissaoWorkflow",
@@ -269,7 +269,9 @@
     "useEmpresas",
     "usePiiMask"
    ],
-   "tabelas": [],
+   "tabelas": [
+    "admissao_tokens"
+   ],
    "edges": [],
    "usado_por": 2,
    "orfao": false
@@ -375,7 +377,7 @@
     "AfastamentoTable"
    ],
    "export_default": null,
-   "linhas": 241,
+   "linhas": 253,
    "dominio": "components/afastamentos",
    "hooks_locais": [
     "useAfastamentos"
@@ -395,6 +397,22 @@
    "dominio": "components/afastamentos",
    "hooks_locais": [
     "useAfastamentos",
+    "useProrrogacoesAfastamento"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/afastamentos/ProrrogacaoDialog.tsx",
+   "exports": [
+    "ProrrogacaoDialog"
+   ],
+   "export_default": null,
+   "linhas": 121,
+   "dominio": "components/afastamentos",
+   "hooks_locais": [
     "useProrrogacoesAfastamento"
    ],
    "tabelas": [],
@@ -1147,10 +1165,11 @@
   {
    "arquivo": "src/components/descontos/EmprestimosTable.tsx",
    "exports": [
+    "EmprestimoUpdate",
     "EmprestimosTable"
    ],
    "export_default": null,
-   "linhas": 59,
+   "linhas": 169,
    "dominio": "components/descontos",
    "hooks_locais": [],
    "tabelas": [],
@@ -1192,7 +1211,7 @@
     "NewLoanDialog"
    ],
    "export_default": null,
-   "linhas": 201,
+   "linhas": 239,
    "dominio": "components/descontos",
    "hooks_locais": [],
    "tabelas": [
@@ -1683,7 +1702,7 @@
     "ExameFormDialog"
    ],
    "export_default": null,
-   "linhas": 169,
+   "linhas": 210,
    "dominio": "components/exames",
    "hooks_locais": [],
    "tabelas": [],
@@ -1711,7 +1730,7 @@
     "ExameTable"
    ],
    "export_default": null,
-   "linhas": 213,
+   "linhas": 243,
    "dominio": "components/exames",
    "hooks_locais": [],
    "tabelas": [],
@@ -2335,7 +2354,7 @@
     "SimuladorWhatIf"
    ],
    "export_default": null,
-   "linhas": 282,
+   "linhas": 283,
    "dominio": "components/folha",
    "hooks_locais": [
     "useEmpresas"
@@ -2344,7 +2363,7 @@
     "simulacoes_fiscais"
    ],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -2430,7 +2449,7 @@
     "WhatsAppConfigPanel"
    ],
    "export_default": null,
-   "linhas": 612,
+   "linhas": 722,
    "dominio": "components/integracoes",
    "hooks_locais": [
     "useEmpresas"
@@ -2448,7 +2467,7 @@
     "AppSidebar"
    ],
    "export_default": null,
-   "linhas": 810,
+   "linhas": 812,
    "dominio": "components/layout",
    "hooks_locais": [
     "useAuth",
@@ -3038,10 +3057,11 @@
   {
    "arquivo": "src/components/obrigacoes/DarfTab.tsx",
    "exports": [
+    "DarfIrrfSituacao",
     "DarfTab"
    ],
    "export_default": null,
-   "linhas": 51,
+   "linhas": 75,
    "dominio": "components/obrigacoes",
    "hooks_locais": [],
    "tabelas": [],
@@ -3056,7 +3076,7 @@
     "SefipTable"
    ],
    "export_default": null,
-   "linhas": 123,
+   "linhas": 131,
    "dominio": "components/obrigacoes",
    "hooks_locais": [],
    "tabelas": [],
@@ -3072,7 +3092,7 @@
     "GuiasTable"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 110,
    "dominio": "components/obrigacoes",
    "hooks_locais": [],
    "tabelas": [],
@@ -3448,7 +3468,7 @@
     "RegistroComColaborador"
    ],
    "export_default": null,
-   "linhas": 330,
+   "linhas": 336,
    "dominio": "components/ponto",
    "hooks_locais": [],
    "tabelas": [],
@@ -3620,7 +3640,7 @@
     "RewardsApprovalHub"
    ],
    "export_default": null,
-   "linhas": 373,
+   "linhas": 347,
    "dominio": "components/premiacoes",
    "hooks_locais": [
     "useEmpresas"
@@ -3761,9 +3781,11 @@
     "BeneficiosSettingsTab"
    ],
    "export_default": null,
-   "linhas": 199,
+   "linhas": 278,
    "dominio": "components/settings",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useEmpresas"
+   ],
    "tabelas": [
     "beneficios"
    ],
@@ -3850,11 +3872,12 @@
     "WebhooksLogsTab"
    ],
    "export_default": null,
-   "linhas": 830,
+   "linhas": 808,
    "dominio": "components/settings",
    "hooks_locais": [
     "useAuth",
-    "useEmpresas"
+    "useEmpresas",
+    "useTheme"
    ],
    "tabelas": [
     "config_alertas_indicadores",
@@ -3862,6 +3885,7 @@
     "empresas",
     "integracoes",
     "parametros_sistema",
+    "profiles",
     "webhooks_config",
     "webhooks_logs"
    ],
@@ -4090,7 +4114,7 @@
     "SSTProgramasTab"
    ],
    "export_default": null,
-   "linhas": 204,
+   "linhas": 201,
    "dominio": "components/sst",
    "hooks_locais": [
     "useEmpresa"
@@ -4155,7 +4179,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -4217,7 +4241,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 247,
+   "usado_por": 249,
    "orfao": false
   },
   {
@@ -4439,7 +4463,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 125,
+   "usado_por": 127,
    "orfao": false
   },
   {
@@ -4513,7 +4537,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 137,
+   "usado_por": 141,
    "orfao": false
   },
   {
@@ -4690,7 +4714,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 92,
+   "usado_por": 93,
    "orfao": false
   },
   {
@@ -4884,7 +4908,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -4950,7 +4974,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 38,
+   "usado_por": 41,
    "orfao": false
   },
   {
@@ -5104,7 +5128,7 @@
     "empresas"
    ],
    "edges": [],
-   "usado_por": 17,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -5253,14 +5277,16 @@
     "AdminEpisFichasPage"
    ],
    "export_default": "AdminEpisFichasPage",
-   "linhas": 187,
+   "linhas": 448,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [
     "epis_fichas",
-    "epis_fichas_assinaturas"
+    "epis_fichas_assinaturas",
+    "epis_fichas_itens"
    ],
    "edges": [],
    "usado_por": 1,
@@ -5422,7 +5448,7 @@
     "AfastamentosPage"
    ],
    "export_default": "AfastamentosPage",
-   "linhas": 523,
+   "linhas": 532,
    "dominio": "pages",
    "hooks_locais": [
     "useAfastamentos",
@@ -5521,7 +5547,7 @@
     "AvaliacaoPage"
    ],
    "export_default": "AvaliacaoPage",
-   "linhas": 306,
+   "linhas": 781,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -5659,7 +5685,7 @@
     "CargosPage"
    ],
    "export_default": "CargosPage",
-   "linhas": 135,
+   "linhas": 331,
    "dominio": "pages",
    "hooks_locais": [
     "useCargos"
@@ -5675,7 +5701,7 @@
     "CentrosCustoPage"
    ],
    "export_default": "CentrosCustoPage",
-   "linhas": 170,
+   "linhas": 212,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -5973,7 +5999,7 @@
     "DescontosPage"
    ],
    "export_default": "DescontosPage",
-   "linhas": 212,
+   "linhas": 243,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6099,7 +6125,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -6108,7 +6134,7 @@
     "EscalasPage"
    ],
    "export_default": "EscalasPage",
-   "linhas": 230,
+   "linhas": 314,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6143,7 +6169,7 @@
     "ExamesPage"
    ],
    "export_default": "ExamesPage",
-   "linhas": 172,
+   "linhas": 228,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6177,7 +6203,7 @@
     "FeriadosPage"
    ],
    "export_default": "FeriadosPage",
-   "linhas": 171,
+   "linhas": 235,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresa"
@@ -6378,7 +6404,7 @@
     "IntegracoesPage"
    ],
    "export_default": "IntegracoesPage",
-   "linhas": 282,
+   "linhas": 290,
    "dominio": "pages",
    "hooks_locais": [],
    "tabelas": [],
@@ -6392,7 +6418,7 @@
     "JornadasPage"
    ],
    "export_default": "JornadasPage",
-   "linhas": 328,
+   "linhas": 407,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -6432,7 +6458,7 @@
     "LocaisTrabalhoPage"
    ],
    "export_default": "LocaisTrabalhoPage",
-   "linhas": 197,
+   "linhas": 237,
    "dominio": "pages",
    "hooks_locais": [
     "useLocaisTrabalho"
@@ -6467,7 +6493,7 @@
     "LotacoesPage"
    ],
    "export_default": "LotacoesPage",
-   "linhas": 157,
+   "linhas": 214,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6502,14 +6528,16 @@
     "MovimentacoesPage"
    ],
    "export_default": "MovimentacoesPage",
-   "linhas": 489,
+   "linhas": 817,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
    ],
    "tabelas": [
     "cargos",
+    "colaboradores",
     "departamentos",
+    "historico_salarial",
     "promocoes",
     "transferencias"
    ],
@@ -6557,7 +6585,7 @@
     "ObrigacoesFiscaisPage"
    ],
    "export_default": "ObrigacoesFiscaisPage",
-   "linhas": 446,
+   "linhas": 481,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6565,6 +6593,7 @@
    "tabelas": [
     "certificados_digitais",
     "dctfweb_declaracoes",
+    "folhas_pagamento",
     "guias_fgts",
     "guias_inss",
     "sefip_arquivos",
@@ -6613,7 +6642,7 @@
     "PassivoTrabalhistaPage"
    ],
    "export_default": "PassivoTrabalhistaPage",
-   "linhas": 624,
+   "linhas": 628,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6792,7 +6821,7 @@
     "PremiacoesPage"
    ],
    "export_default": "PremiacoesPage",
-   "linhas": 574,
+   "linhas": 595,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6843,7 +6872,7 @@
     "RecrutamentoPage"
    ],
    "export_default": "RecrutamentoPage",
-   "linhas": 634,
+   "linhas": 861,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -6938,7 +6967,7 @@
     "SindicatosPage"
    ],
    "export_default": "SindicatosPage",
-   "linhas": 166,
+   "linhas": 223,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -7013,7 +7042,7 @@
     "TurnosPage"
    ],
    "export_default": "TurnosPage",
-   "linhas": 270,
+   "linhas": 324,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -7132,7 +7161,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {

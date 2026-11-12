@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "004508da31bfdda3428697315821c87ae8e803f1",
+  "sha": "0df27ba056a189d72852571b62aa538b681383fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 20:14 UTC",
-  "files_total": 2903,
-  "code_files": 2374,
-  "code_lines": 322000
+  "generated_at": "2026-11-12 22:07 UTC",
+  "files_total": 2908,
+  "code_files": 2379,
+  "code_lines": 325540
  },
  "version": "1.3.2",
- "facts_hash": "1c2d28284eb1f525",
+ "facts_hash": "81aff7e9df4ea059",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 827,
-   ".ts": 741,
-   ".tsx": 678,
+   ".ts": 743,
+   ".tsx": 681,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -83913,7 +83913,9 @@
     "component": "AdminEpisFichasPage",
     "tables_transitive": [
      "colaboradores",
-     "empresas"
+     "empresas",
+     "epis",
+     "epis_entregas"
     ],
     "invokes_transitive": [],
     "rpc_transitive": [
@@ -83921,9 +83923,10 @@
      "get_my_user_empresas",
      "get_user_roles",
      "log_frontend_error",
+     "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 20
+    "deps_count": 32
    },
    {
     "path": "",
@@ -84207,7 +84210,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 99
+    "deps_count": 100
    },
    {
     "path": "",
@@ -84554,7 +84557,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 187
+    "deps_count": 192
    },
    {
     "path": "",
@@ -85232,7 +85235,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 67
+    "deps_count": 72
    },
    {
     "path": "",
@@ -85860,18 +85863,23 @@
      "admissao_tokens",
      "admissoes",
      "afastamentos",
+     "ajustes_ponto",
      "anotacoes_colaborador",
      "asos",
      "banco_horas_config",
      "batidas_ponto",
      "beneficiarios_plano",
+     "beneficiarios_seguro",
      "beneficios",
      "beneficios_colaborador",
+     "bitrix24_config",
+     "bitrix24_sync_logs",
      "blocked_ips",
      "campos_customizados",
      "centros_custo",
      "certificados_digitais",
      "cid10",
+     "colaborador_beneficios",
      "colaboradores",
      "config_afastamentos",
      "config_alertas_indicadores",
@@ -85887,28 +85895,40 @@
      "deficiencias",
      "dependentes",
      "dependentes_beneficios",
+     "documento_templates",
      "documentos",
+     "documentos_admissao",
      "documentos_afastamento",
+     "documentos_assinatura",
+     "documentos_colaborador",
      "documentos_pessoais_arquivos",
      "empresas",
      "epis",
      "epis_entregas",
      "esocial_eventos",
+     "esocial_lotes",
      "esocial_transmissao_logs",
      "etnias",
+     "eventos_variaveis",
      "faltas",
      "feriados",
      "ferias",
      "ferias_aprovacoes",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "integracoes",
      "jornadas_horarios",
+     "lancamentos_folha",
+     "linhas_transporte",
+     "log_envio_relatorios",
      "logs_integracoes",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
@@ -85916,20 +85936,46 @@
      "medidas_disciplinares_workflow_log",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "parametros_sistema",
      "periodos_aquisitivos",
      "periodos_experiencia",
      "periodos_ponto",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "recargas_vale",
+     "relatorios_agendados",
+     "rubricas_folha",
+     "saved_filters",
+     "seguros_colaboradores",
      "solicitacoes_hora_extra",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
+     "treinamento_participantes",
      "user_mfa",
      "valores_campos_customizados",
      "versao_banco",
+     "vw_alertas_compensacao",
+     "vw_alertas_rh",
+     "vw_banco_horas_saldo",
+     "vw_batidas_dia",
+     "vw_batidas_resumo",
+     "vw_cadastro_incompleto",
+     "vw_colaboradores_completo",
+     "vw_dashboard_time",
+     "vw_faltas_mensal",
+     "vw_ferias_resumo",
+     "vw_folha_ponto_mensal",
+     "vw_kpi_absenteismo",
+     "vw_kpi_beneficios_custo",
+     "vw_kpi_ponto_resumo",
+     "vw_kpi_turnover",
+     "vw_saldo_compensacao_mensal",
      "webhook_logs",
      "webhooks_config",
      "webhooks_logs",
@@ -85969,7 +86015,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 176
+    "deps_count": 185
    },
    {
     "path": "",
@@ -86687,7 +86733,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 191
+    "deps_count": 194
    },
    {
     "path": "",
@@ -88412,7 +88458,7 @@
      "log_frontend_error",
      "set_own_default_empresa"
     ],
-    "deps_count": 82
+    "deps_count": 83
    },
    {
     "path": "",
@@ -89071,7 +89117,6 @@
      "cnab_configuracoes",
      "cnab_itens",
      "cnab_remessas",
-     "colaboradores",
      "competencias_config",
      "comunicados",
      "comunicados_leituras",
@@ -89112,7 +89157,6 @@
      "folhas_pagamento",
      "formacoes_academicas",
      "historico_contratos",
-     "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
      "jornadas_horarios",
@@ -89294,7 +89338,6 @@
      "ferias_arquivos",
      "ferias_coletivas",
      "folha_itens",
-     "folhas_pagamento",
      "formacoes_academicas",
      "historico_contratos",
      "historico_salarial",
@@ -89380,7 +89423,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 191
+    "deps_count": 194
    },
    {
     "path": "",
@@ -94683,6 +94726,13 @@
     "file": "src/App.tsx"
    },
    {
+    "path": "epis",
+    "component": "LazyPage",
+    "guard": "",
+    "roles": [],
+    "file": "src/App.tsx"
+   },
+   {
     "path": "escalas",
     "component": "LazyPage",
     "guard": "",
@@ -95179,7 +95229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 566,
+  "components_count": 570,
   "hooks": [
    {
     "name": "useContacts",
@@ -96505,7 +96555,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 748,
+   "lines": 750,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -96604,9 +96654,10 @@
   },
   {
    "module": "src/components",
-   "files": 566,
-   "lines": 72839,
+   "files": 570,
+   "lines": 74014,
    "tables": [
+    "admissao_tokens",
     "admissoes",
     "afastamentos",
     "batidas_ponto",
@@ -96683,6 +96734,7 @@
     "AfastamentoStats.tsx: AfastamentoStats",
     "AfastamentoTable.tsx: AfastamentoTable",
     "AfastamentoTimeline.tsx: AfastamentoTimeline",
+    "ProrrogacaoDialog.tsx: ProrrogacaoDialog",
     "LoginForm.tsx: LoginForm",
     "NineBoxMatrix.tsx: NineBoxMatrix",
     "PerformanceAuditTimeline.tsx: PerformanceAuditTimeline",
@@ -96698,8 +96750,7 @@
     "DependentesTab.tsx: DependentesTab",
     "DocumentosPessoaisTab.tsx: DocumentosPessoaisTab",
     "EmergenciaTab.tsx: EmergenciaTab",
-    "EstagiarioTab.tsx: EstagiarioTab",
-    "EstrangeiroTab.tsx: EstrangeiroTab"
+    "EstagiarioTab.tsx: EstagiarioTab"
    ],
    "docs": [
     "index.ts: V25: Components Export - active modules only",
@@ -97245,8 +97296,8 @@
   },
   {
    "module": "src/pages",
-   "files": 114,
-   "lines": 39639,
+   "files": 115,
+   "lines": 41843,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -97276,6 +97327,7 @@
     "epis_entregas",
     "epis_fichas",
     "epis_fichas_assinaturas",
+    "epis_fichas_itens",
     "escalas",
     "exames",
     "exames_agendamentos",
@@ -97287,6 +97339,7 @@
     "guias_inss",
     "historico_alertas",
     "historico_rescisoes",
+    "historico_salarial",
     "holerites",
     "jornadas",
     "lgpd_politicas_retencao",
@@ -97604,7 +97657,7 @@
   {
    "module": "src/services",
    "files": 160,
-   "lines": 33296,
+   "lines": 33434,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -98056,7 +98109,7 @@
   {
    "module": "src/utils",
    "files": 66,
-   "lines": 8318,
+   "lines": 8339,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -98626,29 +98679,29 @@
      "supabase/functions/adiantamento-salarial/index.ts",
      "supabase/functions/calcular-folha/index.ts"
     ],
-    "ref": [
-     "src/pages/DescontosPage.tsx",
-     "src/services/folha/calculoLoteService.ts"
-    ],
     "update": [
      "src/pages/DescontosPage.tsx"
+    ],
+    "ref": [
+     "src/services/folha/calculoLoteService.ts"
     ],
     "insert": [
      "supabase/functions/adiantamento-salarial/index.ts"
     ]
    },
    "admissao_tokens": {
+    "select": [
+     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+     "src/hooks/useAssinaturas.ts",
+     "supabase/functions/admissao-publica/index.ts",
+     "supabase/functions/assinaturaDigital/index.ts",
+     "supabase/functions/enviar-email-admissao/index.ts"
+    ],
     "ref": [
      "src/hooks/useAdmissaoWorkflow.ts",
      "src/hooks/useAssinaturaDigital.ts",
      "src/hooks/useContratacaoDigital.ts",
      "src/services/contratacaoService.ts"
-    ],
-    "select": [
-     "src/hooks/useAssinaturas.ts",
-     "supabase/functions/admissao-publica/index.ts",
-     "supabase/functions/assinaturaDigital/index.ts",
-     "supabase/functions/enviar-email-admissao/index.ts"
     ],
     "update": [
      "supabase/functions/assinaturaDigital/index.ts"
@@ -98931,6 +98984,9 @@
     ],
     "update": [
      "src/components/settings/BeneficiosSettingsTab.tsx"
+    ],
+    "delete": [
+     "src/components/settings/BeneficiosSettingsTab.tsx"
     ]
    },
    "beneficios_colaborador": {
@@ -99200,6 +99256,7 @@
      "src/pages/DashboardPage.tsx",
      "src/pages/DescontosPage.tsx",
      "src/pages/GeradorDocumentosPage.tsx",
+     "src/pages/MovimentacoesPage.tsx",
      "src/pages/PassivoTrabalhistaPage.tsx",
      "src/pages/PontoKioskPage.tsx",
      "src/pages/PontoPage.tsx",
@@ -99240,7 +99297,8 @@
      "supabase/tests/ferias_embed_test.ts"
     ],
     "update": [
-     "scripts/e2e/ensure-fixtures.mjs"
+     "scripts/e2e/ensure-fixtures.mjs",
+     "src/pages/MovimentacoesPage.tsx"
     ],
     "insert": [
      "scripts/e2e/ensure-fixtures.mjs",
@@ -99756,6 +99814,9 @@
      "src/pages/DescontosPage.tsx",
      "supabase/functions/emprestimo-consignado/index.ts"
     ],
+    "update": [
+     "src/pages/DescontosPage.tsx"
+    ],
     "ref": [
      "src/services/folha/calculoLoteService.ts"
     ]
@@ -99791,15 +99852,23 @@
     ]
    },
    "epis_fichas": {
-    "select": [
+    "ref": [
      "src/pages/AdminEpisFichasPage.tsx"
     ],
-    "ref": [
+    "delete": [
+     "src/pages/AdminEpisFichasPage.tsx"
+    ],
+    "select": [
      "src/pages/AdminEpisFichasPage.tsx"
     ]
    },
    "epis_fichas_assinaturas": {
     "insert": [
+     "src/pages/AdminEpisFichasPage.tsx"
+    ]
+   },
+   "epis_fichas_itens": {
+    "ref": [
      "src/pages/AdminEpisFichasPage.tsx"
     ]
    },
@@ -99884,6 +99953,9 @@
     "insert": [
      "src/pages/ExamesPage.tsx"
     ],
+    "update": [
+     "src/pages/ExamesPage.tsx"
+    ],
     "delete": [
      "src/pages/ExamesPage.tsx"
     ]
@@ -99940,7 +100012,11 @@
      "src/pages/FeriadosPage.tsx"
     ],
     "delete": [
-     "src/hooks/useFeriados.ts"
+     "src/hooks/useFeriados.ts",
+     "src/pages/FeriadosPage.tsx"
+    ],
+    "update": [
+     "src/pages/FeriadosPage.tsx"
     ]
    },
    "ferias": {
@@ -100069,7 +100145,6 @@
      "src/services/esocialService.ts",
      "src/services/folha/calculoLoteService.ts",
      "src/services/folhaPagamentoService.ts",
-     "src/services/premiacoesService.ts",
      "src/utils/folha/validadorFolha.ts",
      "supabase/functions/_shared/folhaIntegrity.ts"
     ],
@@ -100103,6 +100178,7 @@
      "src/hooks/useExecutiveDashboard.ts",
      "src/pages/DashboardPage.tsx",
      "src/pages/FolhaPagamentoPage.tsx",
+     "src/pages/ObrigacoesFiscaisPage.tsx",
      "src/pages/PassivoTrabalhistaPage.tsx",
      "src/pages/RelatoriosPage.tsx",
      "src/services/cnabService.ts",
@@ -100219,6 +100295,9 @@
     ]
    },
    "historico_salarial": {
+    "delete": [
+     "src/pages/MovimentacoesPage.tsx"
+    ],
     "select": [
      "src/services/colaboradorDetalhesService.ts"
     ],
@@ -100417,6 +100496,9 @@
      "src/pages/LotacoesPage.tsx"
     ],
     "insert": [
+     "src/pages/LotacoesPage.tsx"
+    ],
+    "update": [
      "src/pages/LotacoesPage.tsx"
     ],
     "delete": [
@@ -100847,6 +100929,7 @@
    "profiles": {
     "update": [
      "src/components/portal/PortalMeusDadosTab.tsx",
+     "src/components/settings/InlineTabs.tsx",
      "src/pages/PerfilPage.tsx",
      "supabase/functions/auth-gov-br/index.ts"
     ],
@@ -100879,7 +100962,13 @@
     "select": [
      "src/pages/MovimentacoesPage.tsx"
     ],
+    "update": [
+     "src/pages/MovimentacoesPage.tsx"
+    ],
     "insert": [
+     "src/pages/MovimentacoesPage.tsx"
+    ],
+    "delete": [
      "src/pages/MovimentacoesPage.tsx"
     ]
    },
@@ -100891,6 +100980,9 @@
      "src/services/afastamentoService.ts"
     ],
     "select": [
+     "src/services/afastamentoService.ts"
+    ],
+    "delete": [
      "src/services/afastamentoService.ts"
     ]
    },
@@ -101134,6 +101226,9 @@
     "insert": [
      "src/pages/SindicatosPage.tsx"
     ],
+    "update": [
+     "src/pages/SindicatosPage.tsx"
+    ],
     "delete": [
      "src/pages/SindicatosPage.tsx"
     ]
@@ -101343,7 +101438,13 @@
     "select": [
      "src/pages/MovimentacoesPage.tsx"
     ],
+    "update": [
+     "src/pages/MovimentacoesPage.tsx"
+    ],
     "insert": [
+     "src/pages/MovimentacoesPage.tsx"
+    ],
+    "delete": [
      "src/pages/MovimentacoesPage.tsx"
     ]
    },
@@ -101901,6 +102002,7 @@
     "empresa_id",
     "id",
     "nome",
+    "obrigatorio_por_lei",
     "status",
     "tipo",
     "valor"
@@ -102364,6 +102466,7 @@
    ],
    "folhas_pagamento": [
     "competencia",
+    "data_calculo",
     "data_fechamento",
     "empresa_id",
     "esocial_status",
@@ -102420,7 +102523,8 @@
    ],
    "historico_salarial": [
     "colaborador_id",
-    "empresa_id"
+    "empresa_id",
+    "id"
    ],
    "holerite_distribuicoes": [
     "canal",
@@ -102680,6 +102784,14 @@
     "id",
     "nome"
    ],
+   "promocoes": [
+    "colaborador_id",
+    "data_vigencia",
+    "id"
+   ],
+   "prorrogacoes_afastamento": [
+    "id"
+   ],
    "provisao_logs": [
     "competencia",
     "empresa_id",
@@ -102912,6 +103024,11 @@
     "id",
     "nome",
     "valor_padrao"
+   ],
+   "transferencias": [
+    "colaborador_id",
+    "data_vigencia",
+    "id"
    ],
    "treinamento_certificados": [
     "id"
@@ -105240,7 +105357,6 @@
    "dp_retention_policy",
    "dp_user_roles",
    "entity_versions",
-   "epis_fichas_itens",
    "esocial_retornos",
    "eventos_rh",
    "exames_medicos",
@@ -106553,6 +106669,16 @@
     "rules": "accept=.pdf,.jpg,.jpeg,.png"
    },
    {
+    "file": "src/components/afastamentos/ProrrogacaoDialog.tsx",
+    "field": "prorr-data-fim",
+    "rules": "type=date, min=fimAnterior || undefined"
+   },
+   {
+    "file": "src/components/afastamentos/ProrrogacaoDialog.tsx",
+    "field": "prorr-pericia",
+    "rules": "type=date"
+   },
+   {
     "file": "src/components/auth/LoginForm.tsx",
     "field": "email",
     "rules": "type=email"
@@ -106683,6 +106809,46 @@
     "rules": "type=date"
    },
    {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "ciclo-inicio",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "ciclo-fim",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "meta-valor",
+    "rules": "type=number"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "meta-atual",
+    "rules": "type=number"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "meta-limite",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "feedback-nota",
+    "rules": "type=number, min=1, max=5, step=0.5"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "pdi-prazo",
+    "rules": "type=date"
+   },
+   {
+    "file": "src/pages/CargosPage.tsx",
+    "field": "cargo-nivel",
+    "rules": "type=number, min=1, step=1"
+   },
+   {
     "file": "src/pages/FinanceiroBancarioPage.tsx",
     "field": "banco_codigo",
     "rules": "required"
@@ -106768,6 +106934,11 @@
     "file": "src/components/layout/PageTransition.tsx",
     "name": "TransitionDirection",
     "values": "left | right | up | down"
+   },
+   {
+    "file": "src/components/obrigacoes/DarfTab.tsx",
+    "name": "DarfIrrfSituacao",
+    "values": "sem_folha | nao_calculada | sem_itens"
    },
    {
     "file": "src/components/obrigacoes/GuiasTable.tsx",
@@ -107415,6 +107586,10 @@
     "msg": "Empresa ativa não carregada."
    },
    {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "msg": "Candidato sem e-mail cadastrado e sem link de portal vigente."
+   },
+   {
     "file": "src/components/afastamentos/AfastamentoDocumentManager.tsx",
     "msg": "Erro de Segurança"
    },
@@ -107660,6 +107835,10 @@
    },
    {
     "file": "src/components/integracoes/ConfigPanels.tsx",
+    "msg": "Preencha código do banco, agência, conta, dígito da conta e convênio."
+   },
+   {
+    "file": "src/components/integracoes/ConfigPanels.tsx",
     "msg": "URL do webhook deve usar https."
    },
    {
@@ -107824,6 +108003,14 @@
    },
    {
     "file": "src/components/settings/BeneficiosSettingsTab.tsx",
+    "msg": "Plano não excluído: ele é obrigatório por lei, não pertence à empresa selecionada ou já foi removido."
+   },
+   {
+    "file": "src/components/settings/BeneficiosSettingsTab.tsx",
+    "msg": "Selecione uma empresa."
+   },
+   {
+    "file": "src/components/settings/BeneficiosSettingsTab.tsx",
     "msg": "Valor inválido (entre 0 e 99.999,99)."
    },
    {
@@ -107861,6 +108048,10 @@
    {
     "file": "src/components/settings/InlineTabs.tsx",
     "msg": "Erro ao criar configuração"
+   },
+   {
+    "file": "src/components/settings/InlineTabs.tsx",
+    "msg": "Informe o nome de exibição."
    },
    {
     "file": "src/components/settings/InlineTabs.tsx",
@@ -108155,6 +108346,18 @@
     "msg": "Empresa não selecionada"
    },
    {
+    "file": "src/pages/AdminEpisFichasPage.tsx",
+    "msg": "Cada item precisa de descrição e quantidade inteira maior que zero."
+   },
+   {
+    "file": "src/pages/AdminEpisFichasPage.tsx",
+    "msg": "Informe o responsável pela entrega."
+   },
+   {
+    "file": "src/pages/AdminEpisFichasPage.tsx",
+    "msg": "Selecione o colaborador."
+   },
+   {
     "file": "src/pages/AdminExtintoresPage.tsx",
     "msg": "Preencha todos os campos corretamente"
    },
@@ -108227,6 +108430,14 @@
     "msg": "Faça login para usar o assistente."
    },
    {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "msg": "Erro ao excluir: ${e.message}"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "msg": "Erro ao salvar: ${e.message}"
+   },
+   {
     "file": "src/pages/BackupPage.tsx",
     "msg": "Selecione uma empresa antes de realizar o backup"
    },
@@ -108249,6 +108460,18 @@
    {
     "file": "src/pages/CanalContabilidadePage.tsx",
     "msg": "Não foi possível abrir anexo"
+   },
+   {
+    "file": "src/pages/CargosPage.tsx",
+    "msg": "Informe o nome do cargo (mínimo 2 caracteres)."
+   },
+   {
+    "file": "src/pages/CargosPage.tsx",
+    "msg": "Nível hierárquico deve ser um número inteiro maior que zero."
+   },
+   {
+    "file": "src/pages/CargosPage.tsx",
+    "msg": "Salário base inválido."
    },
    {
     "file": "src/pages/CienciaMedidaPage.tsx",
@@ -108319,6 +108542,10 @@
     "msg": "Empresa não selecionada"
    },
    {
+    "file": "src/pages/DescontosPage.tsx",
+    "msg": "Empréstimo não atualizado: você não tem permissão ou o registro não existe mais."
+   },
+   {
     "file": "src/pages/DesligamentosPage.tsx",
     "msg": "Empresa ativa não carregada."
    },
@@ -108357,6 +108584,10 @@
    {
     "file": "src/pages/ESocialPage.tsx",
     "msg": "XML não disponível. Envie o evento primeiro."
+   },
+   {
+    "file": "src/pages/EscalasPage.tsx",
+    "msg": "Escala não encontrada ou sem permissão para editar."
    },
    {
     "file": "src/pages/FeriasPage.tsx",
@@ -108411,6 +108642,10 @@
     "msg": "Falha ao processar o arquivo. Verifique o formato e tente novamente."
    },
    {
+    "file": "src/pages/JornadasPage.tsx",
+    "msg": "Jornada não encontrada ou sem permissão para editar."
+   },
+   {
     "file": "src/pages/LGPDPage.tsx",
     "msg": "Erro ao registrar"
    },
@@ -108431,12 +108666,48 @@
     "msg": "URL de redirecionamento inválida"
    },
    {
+    "file": "src/pages/LotacoesPage.tsx",
+    "msg": "Lotação não encontrada ou sem permissão para editar."
+   },
+   {
     "file": "src/pages/MedidasDisciplinaresPage.tsx",
     "msg": ";\nimport { Badge } from "
    },
    {
     "file": "src/pages/MedidasDisciplinaresPage.tsx",
     "msg": "Selecione uma empresa antes de registrar a medida."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Colaborador não pertence à empresa selecionada."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Promoção não encontrada nesta empresa."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Promoção não encontrada ou sem permissão para salvar."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Registro não encontrado nesta empresa."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Registro não encontrado ou sem permissão para excluir."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Sem permissão para atualizar o cadastro do colaborador."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Transferência não encontrada nesta empresa."
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "msg": "Transferência não encontrada ou sem permissão para salvar."
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
@@ -108551,6 +108822,10 @@
     "msg": "Erro ao vincular"
    },
    {
+    "file": "src/pages/SindicatosPage.tsx",
+    "msg": "Apenas administradores podem editar sindicatos."
+   },
+   {
     "file": "src/pages/TreinamentosPage.tsx",
     "msg": "Erro ao criar curso"
    },
@@ -108568,7 +108843,15 @@
    },
    {
     "file": "src/pages/TurnosPage.tsx",
+    "msg": "Erro ao atualizar turno"
+   },
+   {
+    "file": "src/pages/TurnosPage.tsx",
     "msg": "Erro ao criar turno"
+   },
+   {
+    "file": "src/pages/TurnosPage.tsx",
+    "msg": "Erro ao excluir turno"
    },
    {
     "file": "src/pages/ValesPage.tsx",
@@ -108705,6 +108988,10 @@
    {
     "file": "src/services/authService.ts",
     "msg": "Sessão inválida ou expirada"
+   },
+   {
+    "file": "src/services/avaliacaoService.ts",
+    "msg": "Sem permissão para excluir o ciclo."
    },
    {
     "file": "src/services/avaliacaoService.ts",
@@ -109300,10 +109587,6 @@
    },
    {
     "file": "src/services/premiacoesService.ts",
-    "msg": "Nenhum lançamento de folha encontrado para conciliação automática."
-   },
-   {
-    "file": "src/services/premiacoesService.ts",
     "msg": "empresaId é obrigatório"
    },
    {
@@ -109329,6 +109612,10 @@
    {
     "file": "src/services/pushNotificationService.ts",
     "msg": "Permissão para notificações negada."
+   },
+   {
+    "file": "src/services/recrutamentoService.ts",
+    "msg": "Candidato já inscrito nesta vaga."
    },
    {
     "file": "src/services/recrutamentoService.ts",
@@ -110451,6 +110738,10 @@
     "text": "Nenhuma lógica alterada — apenas movimentação estrutural."
    },
    {
+    "file": "src/components/exames/ExameFormDialog.tsx",
+    "text": "* `onSaved` deve ser chamado só após salvar com sucesso: fecha e limpa o formulário. */"
+   },
+   {
     "file": "src/components/ferias/FeriasAlertasPagamentoCard.tsx",
     "text": "* Exibe ao RH as férias com risco de descumprimento do prazo legal de"
    },
@@ -110903,6 +111194,10 @@
     "text": "Etapa terminal é fim de linha: cancelada não pode ser reaberta/concluída."
    },
    {
+    "file": "src/services/afastamentoService.ts",
+    "text": "Compensação: sem o afastamento atualizado, a prorrogação não pode ficar órfã."
+   },
+   {
     "file": "src/services/assistenteIAService.ts",
     "text": "30s — tempo máximo de resposta da IA"
    },
@@ -110945,6 +111240,14 @@
    {
     "file": "src/services/edgeFunctionsService.ts",
     "text": "derruba TODAS as chamadas no browser. Correlação, se necessária, deve ir no body."
+   },
+   {
+    "file": "src/services/edgeFunctionsService.ts",
+    "text": "4xx definitivo (regra de negócio, validação, permissão) prova que a função está de pé:"
+   },
+   {
+    "file": "src/services/edgeFunctionsService.ts",
+    "text": "não pode contar como falha no circuit breaker compartilhado. 408/429 seguem contando."
    },
    {
     "file": "src/services/edgeFunctionsService.ts",
@@ -136517,6 +136820,18 @@
    },
    {
     "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "etapa",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "field": "etapa",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "field": "status",
     "value": "em_andamento",
     "kind": "compara"
@@ -136549,6 +136864,18 @@
     "file": "src/components/admissoes/OnboardingDashboard.tsx",
     "field": "etapa",
     "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/afastamentos/AfastamentoTable.tsx",
+    "field": "status",
+    "value": "encerrado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/afastamentos/AfastamentoTable.tsx",
+    "field": "status",
+    "value": "cancelado",
     "kind": "compara"
    },
    {
@@ -136884,7 +137211,49 @@
    {
     "file": "src/components/descontos/EmprestimosTable.tsx",
     "field": "status",
+    "value": "quitado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
+    "value": "quitado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
+    "value": "quitado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
+    "value": "cancelado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
     "value": "ativo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
+    "value": "ativo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
+    "value": "quitado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/descontos/EmprestimosTable.tsx",
+    "field": "status",
+    "value": "quitado",
     "kind": "compara"
    },
    {
@@ -136909,6 +137278,12 @@
     "file": "src/components/descontos/FinancialSummaryCards.tsx",
     "field": "status",
     "value": "pendente",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/descontos/NewLoanDialog.tsx",
+    "field": "status",
+    "value": "ativo",
     "kind": "compara"
    },
    {
@@ -138802,12 +139177,6 @@
     "kind": "filtra"
    },
    {
-    "file": "src/hooks/useFeriados.ts",
-    "field": "tipo",
-    "value": "empresa",
-    "kind": "compara"
-   },
-   {
     "file": "src/hooks/useFeriasAprovacao.ts",
     "field": "tipo",
     "value": "ferias_aprovada",
@@ -139500,6 +139869,12 @@
    {
     "file": "src/pages/AdminEpisFichasPage.tsx",
     "field": "status",
+    "value": "pendente",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/AdminEpisFichasPage.tsx",
+    "field": "status",
     "value": "assinada",
     "kind": "escreve"
    },
@@ -139736,6 +140111,54 @@
     "field": "type",
     "value": "magiclink",
     "kind": "escreve"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "ciclo",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "meta",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "pdi",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "ciclo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "meta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "feedback",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "ciclo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "field": "tipo",
+    "value": "meta",
+    "kind": "compara"
    },
    {
     "file": "src/pages/AvaliacaoPage.tsx",
@@ -140244,12 +140667,6 @@
    {
     "file": "src/pages/DescontosPage.tsx",
     "field": "status",
-    "value": "pendente",
-    "kind": "escreve"
-   },
-   {
-    "file": "src/pages/DescontosPage.tsx",
-    "field": "status",
     "value": "ativo",
     "kind": "filtra"
    },
@@ -140395,12 +140812,6 @@
     "file": "src/pages/FaltasPage.tsx",
     "field": "status",
     "value": "rejeitada",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/FeriadosPage.tsx",
-    "field": "tipo",
-    "value": "empresa",
     "kind": "compara"
    },
    {
@@ -140590,6 +141001,18 @@
     "kind": "escreve"
    },
    {
+    "file": "src/pages/JornadasPage.tsx",
+    "field": "tipo",
+    "value": "padrao",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/JornadasPage.tsx",
+    "field": "tipo",
+    "value": "padrao",
+    "kind": "escreve"
+   },
+   {
     "file": "src/pages/LGPDPage.tsx",
     "field": "tipo",
     "value": "acesso",
@@ -140675,6 +141098,30 @@
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "situacao",
+    "value": "sem_folha",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "situacao",
+    "value": "nao_calculada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "situacao",
+    "value": "sem_itens",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "situacao",
+    "value": "nao_calculada",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
     "field": "status",
     "value": "gerada",
     "kind": "escreve"
@@ -140699,6 +141146,12 @@
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "status",
+    "value": "aberta",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
     "field": "tipo",
     "value": "fgts",
     "kind": "compara"
@@ -140708,6 +141161,12 @@
     "field": "status",
     "value": "paga",
     "kind": "compara"
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "field": "tipo",
+    "value": "mensal",
+    "kind": "filtra"
    },
    {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
@@ -140922,6 +141381,12 @@
    {
     "file": "src/pages/PremiacoesPage.tsx",
     "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/PremiacoesPage.tsx",
+    "field": "status",
     "value": "ativo",
     "kind": "compara"
    },
@@ -140984,6 +141449,18 @@
     "field": "status",
     "value": "CONCLUIDO",
     "kind": "filtra"
+   },
+   {
+    "file": "src/pages/RecrutamentoPage.tsx",
+    "field": "etapa",
+    "value": "triagem",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/RecrutamentoPage.tsx",
+    "field": "etapa",
+    "value": "contratado",
+    "kind": "compara"
    },
    {
     "file": "src/pages/RecrutamentoPage.tsx",
@@ -144462,6 +144939,12 @@
     "body": "// 1. Validação de Tamanho if (file.size > MAX_FILE_SIZE) { toast.error('O arquivo é muito grande. O limite é de 10MB.'); return false; } // 2. Validação de Tipo MIME if (!ALLOWED_TYPES.includes(file.type)) { toast.error('Tipo de arquivo não suportado. Use PDF, JPG ou PNG.'); return false; } // 3. Verificação de integridade básica if (file.size === 0) { toast.error('O arquivo está vazio ou corrompido.'); return false; } // 4. Verificação Avançada de Metadados (Excellence 10/10) try { const isVal …"
    },
    {
+    "file": "src/components/afastamentos/AfastamentoTable.tsx",
+    "name": "podeProrrogar",
+    "params": "af: AfastamentoItem",
+    "body": ""
+   },
+   {
     "file": "src/components/avaliacao/NineBoxMatrix.tsx",
     "name": "classifyScore",
     "params": "score: number",
@@ -144756,6 +145239,12 @@
     "body": "return Math.random().toString(36).substring(2, 9);"
    },
    {
+    "file": "src/pages/AvaliacaoPage.tsx",
+    "name": "formValido",
+    "params": "(",
+    "body": "if (novo === 'ciclo') return !!campo('nome').trim() && !!form.data_inicio && !!form.data_fim && form.data_fim >= form.data_inicio; if (novo === 'meta') return !!campo('titulo').trim(); if (novo === 'feedback') return !!form.avaliado_id && !!form.avaliador_id; if (novo === 'pdi') return !!campo('titulo').trim() && !!form.colaborador_id; return false;"
+   },
+   {
     "file": "src/pages/BeneficiosPage.tsx",
     "name": "formatCurrency",
     "params": "v: number | null",
@@ -144844,6 +145333,12 @@
     "name": "formatCurrency",
     "params": "value: number",
     "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value);"
+   },
+   {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "name": "aplicarNoColaborador",
+    "params": "colaboradorId: string, patch: Updatable<'colaboradores'>",
+    "body": "const { data, error } = await supabase .from('colaboradores') .update(patch) .eq('id', colaboradorId) .eq('empresa_id', empresaAtual!.id) .select('id'); if (error) throw error; if (!data || data.length === 0) throw new Error('Sem permissão para atualizar o cadastro do colaborador.');"
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
@@ -145754,6 +146249,10 @@
    {
     "file": "src/components/afastamentos/AfastamentoTable.tsx",
     "line": "setTimeout(() => setCopiedId(null), 2000);"
+   },
+   {
+    "file": "src/components/afastamentos/ProrrogacaoDialog.tsx",
+    "line": "return Math.round((fim.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));"
    },
    {
     "file": "src/components/dashboard/MorningBriefing.tsx",
@@ -146790,18 +147289,6 @@
     "line": "transition={{ delay: i * 0.04 }}"
    },
    {
-    "file": "src/components/obrigacoes/DarfTab.tsx",
-    "line": "{ label: 'CSLL (Código 2372)', value: formatCurrency(totalInss * 0.09), color: 'text-primary', venc: 'Venc. último dia útil do mês' },"
-   },
-   {
-    "file": "src/components/obrigacoes/DarfTab.tsx",
-    "line": "{ label: 'IRRF (Código 0561)', value: formatCurrency(totalInss * 0.15), color: 'text-warning', venc: 'Venc. dia 20 do mês seguinte' },"
-   },
-   {
-    "file": "src/components/obrigacoes/DarfTab.tsx",
-    "line": "{ label: 'PIS/COFINS (Código 8109)', value: formatCurrency(totalFgts * 0.065 + totalInss * 0.03), color: 'text-info', venc: 'Venc. dia 25 do mês seguinte' },"
-   },
-   {
     "file": "src/components/pcs/PcsGradesTab.tsx",
     "line": "O P50 vem da pesquisa salarial mais recente de cada cargo da grade (aba Mercado). Tolerância de ±5%."
    },
@@ -147060,10 +147547,6 @@
    {
     "file": "src/pages/PontoPage.tsx",
     "line": "// 100% e o ponto era registrado independente de qualquer checagem)."
-   },
-   {
-    "file": "src/pages/PremiacoesPage.tsx",
-    "line": "<span>45%</span>"
    },
    {
     "file": "src/pages/ProvisoesPage.tsx",
@@ -149517,6 +150000,10 @@
    },
    {
     "file": "src/components/__tests__/AfastamentoTable.test.tsx",
+    "name": "desabilita Prorrogar em afastamento encerrado ou aprovado"
+   },
+   {
+    "file": "src/components/__tests__/AfastamentoTable.test.tsx",
     "name": "renders colaborador name in table row"
    },
    {
@@ -149898,6 +150385,14 @@
    {
     "file": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
     "name": "renders footer warning about folha impact"
+   },
+   {
+    "file": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
+    "name": "Excluir pede confirmação e exclui o plano filtrando pela empresa atual"
+   },
+   {
+    "file": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
+    "name": "Excluir fica desativado para benefício obrigatório por lei"
    },
    {
     "file": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
@@ -150757,27 +151252,31 @@
    },
    {
     "file": "src/components/__tests__/DarfTab.test.tsx",
-    "name": "renders PIS/COFINS label"
+    "name": "does not render non-payroll taxes (PIS/COFINS, CSLL)"
    },
    {
     "file": "src/components/__tests__/DarfTab.test.tsx",
-    "name": "renders CSLL label"
+    "name": "renders IRRF due date label"
    },
    {
     "file": "src/components/__tests__/DarfTab.test.tsx",
-    "name": "renders estimated values disclaimer"
+    "name": "shows the IRRF withheld in the payroll as-is"
    },
    {
     "file": "src/components/__tests__/DarfTab.test.tsx",
-    "name": "renders vencimento labels"
+    "name": "shows empty state when there is no payroll for the competencia"
    },
    {
     "file": "src/components/__tests__/DarfTab.test.tsx",
-    "name": "computes IRRF as 15% of totalInss"
+    "name": "does not show R$ 0,00 when the payroll was not calculated yet"
    },
    {
     "file": "src/components/__tests__/DarfTab.test.tsx",
-    "name": "computes CSLL as 9% of totalInss"
+    "name": "does not show R$ 0,00 when payroll items are not accessible"
+   },
+   {
+    "file": "src/components/__tests__/DarfTab.test.tsx",
+    "name": "shows loading and error states"
    },
    {
     "file": "src/components/__tests__/DashboardHeader.test.tsx",
@@ -150910,6 +151409,10 @@
    {
     "file": "src/components/__tests__/DeclaracoesTable.test.tsx",
     "name": "shows Baixar button when arquivo_url present"
+   },
+   {
+    "file": "src/components/__tests__/DeclaracoesTable.test.tsx",
+    "name": "downloads the SEFIP content when Baixar is clicked"
    },
    {
     "file": "src/components/__tests__/DependentesTab.test.tsx",
@@ -151185,7 +151688,11 @@
    },
    {
     "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-    "name": "renders Ver Portal button"
+    "name": "copia o link do portal (sem abrir sessão do candidato) e gera token se não houver vigente"
+   },
+   {
+    "file": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+    "name": "desabilita o link do portal em admissão encerrada e não gera token"
    },
    {
     "file": "src/components/__tests__/DistribuirHoleritesButton.test.tsx",
@@ -152264,6 +152771,26 @@
     "name": "renders instituicao_financeira"
    },
    {
+    "file": "src/components/__tests__/EmprestimosTable.test.tsx",
+    "name": "sem onUpdate não renderiza a coluna de ações"
+   },
+   {
+    "file": "src/components/__tests__/EmprestimosTable.test.tsx",
+    "name": "dispara quitar, cancelar e registrar parcela para empréstimo ativo"
+   },
+   {
+    "file": "src/components/__tests__/EmprestimosTable.test.tsx",
+    "name": "voltar no diálogo de confirmação não altera o empréstimo"
+   },
+   {
+    "file": "src/components/__tests__/EmprestimosTable.test.tsx",
+    "name": "última parcela registrada quita o empréstimo"
+   },
+   {
+    "file": "src/components/__tests__/EmprestimosTable.test.tsx",
+    "name": "não exibe ações para empréstimo já quitado"
+   },
+   {
     "file": "src/components/__tests__/EntityPageContainer.test.tsx",
     "name": "EntityPageContainer"
    },
@@ -152564,6 +153091,14 @@
     "name": "calls onSubmit when form submitted with required fields"
    },
    {
+    "file": "src/components/__tests__/ExameFormDialog.test.tsx",
+    "name": "modo edição: só fecha após o pai confirmar sucesso (erro mantém aberto)"
+   },
+   {
+    "file": "src/components/__tests__/ExameFormDialog.test.tsx",
+    "name": "bloqueia salvar quando a validade é anterior à data do exame"
+   },
+   {
     "file": "src/components/__tests__/ExameKPIs.test.tsx",
     "name": "ExameKPIs"
    },
@@ -152622,6 +153157,10 @@
    {
     "file": "src/components/__tests__/ExameTable.test.tsx",
     "name": "calls onExcluir when delete button clicked"
+   },
+   {
+    "file": "src/components/__tests__/ExameTable.test.tsx",
+    "name": "calls onEditar with the row when edit button clicked"
    },
    {
     "file": "src/components/__tests__/ExameTipoChart.test.tsx",
@@ -153981,6 +154520,26 @@
    },
    {
     "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "Salvar Alterações grava o nome de exibição no Auth e em profiles.nome"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "Salvar Alterações com erro ao gravar profiles mostra toast.error"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "Salvar Alterações com erro do Auth mostra toast.error e não confirma"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "Modo Escuro reflete e altera o tema real"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "não exibe controles sem efeito (idioma, animações reduzidas)"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
     "name": "NotificacoesTab"
    },
    {
@@ -153989,19 +154548,7 @@
    },
    {
     "file": "src/components/__tests__/InlineTabs.test.tsx",
-    "name": "renders Operacional section"
-   },
-   {
-    "file": "src/components/__tests__/InlineTabs.test.tsx",
-    "name": "renders Compliance section"
-   },
-   {
-    "file": "src/components/__tests__/InlineTabs.test.tsx",
-    "name": "renders Novas Admissões switch"
-   },
-   {
-    "file": "src/components/__tests__/InlineTabs.test.tsx",
-    "name": "renders Salvar Preferências button"
+    "name": "informa que preferências por canal ainda não existem, sem switches nem botão de salvar"
    },
    {
     "file": "src/components/__tests__/InlineTabs.test.tsx",
@@ -154113,7 +154660,23 @@
    },
    {
     "file": "src/components/__tests__/InlineTabs.test.tsx",
-    "name": "renderiza cards de integrações nativas"
+    "name": "renderiza card do Bitrix24 sem placeholders "
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "status do Bitrix24 vem da configuração real"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "Bitrix24 habilitado com webhook aparece como Conectado"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "Webhook de Mudanças leva para a página de Integrações"
+   },
+   {
+    "file": "src/components/__tests__/InlineTabs.test.tsx",
+    "name": "linhas da tabela não oferecem botão de configurações sem ação"
    },
    {
     "file": "src/components/__tests__/InlineTabs.test.tsx",
@@ -155186,6 +155749,18 @@
    {
     "file": "src/components/__tests__/NewLoanDialog.test.tsx",
     "name": "bloqueia o envio com parcelas < 1 ou valor ≤ 0 (CHECK do banco)"
+   },
+   {
+    "file": "src/components/__tests__/NewLoanDialog.test.tsx",
+    "name": "bloqueia quando o colaborador não tem salário base (margem incalculável)"
+   },
+   {
+    "file": "src/components/__tests__/NewLoanDialog.test.tsx",
+    "name": "explica o bloqueio quando a consulta do salário falha"
+   },
+   {
+    "file": "src/components/__tests__/NewLoanDialog.test.tsx",
+    "name": "soma as parcelas de empréstimos ativos do colaborador na margem de 30%"
    },
    {
     "file": "src/components/__tests__/NewLoanDialog.test.tsx",
@@ -157968,6 +158543,22 @@
     "name": "navigates to fallback when history is short"
    },
    {
+    "file": "src/components/__tests__/simulacaoResumo.test.ts",
+    "name": "resumoSimulacao"
+   },
+   {
+    "file": "src/components/__tests__/simulacaoResumo.test.ts",
+    "name": "usa custoTotal salvo pelo SimuladorWhatIf"
+   },
+   {
+    "file": "src/components/__tests__/simulacaoResumo.test.ts",
+    "name": "cai no impacto_total legado"
+   },
+   {
+    "file": "src/components/__tests__/simulacaoResumo.test.ts",
+    "name": "retorna 0 para resultado nulo ou sem valores"
+   },
+   {
     "file": "src/components/admin/__tests__/UnifiedAuditSection.test.tsx",
     "name": "UnifiedAuditSection — integração"
    },
@@ -158014,6 +158605,38 @@
    {
     "file": "src/components/folha/__tests__/folhaDashboardData.test.ts",
     "name": "omits zero-valued composition slices instead of presenting mock percentages"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "CnabConfigPanel"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "Salvar Configurações grava os dados editados e invalida a configuração"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "não salva sem os campos obrigatórios"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "Salvar Configurações fica desabilitado enquanto a config carrega"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "Salvar Configurações fica desabilitado se a config falhou ao carregar (evita duplicar)"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "WebhookConfigPanel"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "Novo Webhook fica desativado enquanto não existe disparo de webhooks"
+   },
+   {
+    "file": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+    "name": "Remover pede confirmação e exclui o webhook da empresa"
    },
    {
     "file": "src/components/relatorios/reportScheduleContract.test.ts",
@@ -163132,6 +163755,18 @@
     "name": "dispara download do modelo ao clicar em "
    },
    {
+    "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
+    "name": "PremiacoesPage — KPIs"
+   },
+   {
+    "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
+    "name": "variação negativa usa cor destrutiva e premiados conta só pagos"
+   },
+   {
+    "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
+    "name": "variação positiva usa cor de sucesso"
+   },
+   {
     "file": "src/pages/__tests__/folhaResumo.test.ts",
     "name": "buildFolhaResumo"
    },
@@ -164457,6 +165092,10 @@
    },
    {
     "file": "src/services/__tests__/afastamentoService.test.ts",
+    "name": "criarProrrogacao apaga a prorrogação inserida quando a atualização do afastamento falha"
+   },
+   {
+    "file": "src/services/__tests__/afastamentoService.test.ts",
     "name": "criarProrrogacao embrulha falhas"
    },
    {
@@ -164714,6 +165353,14 @@
    {
     "file": "src/services/__tests__/avaliacaoService.test.ts",
     "name": "deletes ciclo by id"
+   },
+   {
+    "file": "src/services/__tests__/avaliacaoService.test.ts",
+    "name": "lança erro de permissão quando a RLS não exclui nenhuma linha"
+   },
+   {
+    "file": "src/services/__tests__/avaliacaoService.test.ts",
+    "name": "throws on DB error"
    },
    {
     "file": "src/services/__tests__/avaliacaoService.test.ts",
@@ -167286,6 +167933,18 @@
    {
     "file": "src/services/__tests__/edgeFunctionsService.test.ts",
     "name": "preserva status e código de uma rejeição HTTP definitiva"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "lê mensagem e código do corpo aninhado de createErrorResponse"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "rejeições 4xx de negócio não abrem o circuit breaker compartilhado"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "erros 5xx continuam abrindo o circuit breaker"
    },
    {
     "file": "src/services/__tests__/edgeFunctionsService.test.ts",
@@ -169961,6 +170620,10 @@
    },
    {
     "file": "src/services/__tests__/recrutamentoService.test.ts",
+    "name": "traduz unique violation (23505) para mensagem amigável"
+   },
+   {
+    "file": "src/services/__tests__/recrutamentoService.test.ts",
     "name": "recrutamentoService.atualizarCandidatura"
    },
    {
@@ -172478,6 +173141,10 @@
    {
     "file": "src/utils/__tests__/format.test.ts",
     "name": "formatPercent aceita já-em-percent"
+   },
+   {
+    "file": "src/utils/__tests__/format.test.ts",
+    "name": "parseMoedaBR trata ponto de milhar e vírgula decimal pt-BR"
    },
    {
     "file": "src/utils/__tests__/format.test.ts",
@@ -199318,6 +199985,10 @@
   },
   "pagination": [
    {
+    "file": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+    "limit": "1"
+   },
+   {
     "file": "src/components/dashboard/AnalyticsSection.tsx",
     "limit": "20"
    },
@@ -199490,6 +200161,10 @@
     "limit": "500"
    },
    {
+    "file": "src/pages/MovimentacoesPage.tsx",
+    "limit": "1"
+   },
+   {
     "file": "src/pages/NotificacoesPage.tsx",
     "limit": "100"
    },
@@ -199580,10 +200255,6 @@
    {
     "file": "src/services/pcsService.ts",
     "limit": "100"
-   },
-   {
-    "file": "src/services/premiacoesService.ts",
-    "limit": "1"
    },
    {
     "file": "src/services/securityService.ts",
@@ -201638,6 +202309,7 @@
       "filtra:src/components/folha/FolhaDashboard.tsx",
       "filtra:src/hooks/useCalculoFolha.ts",
       "filtra:src/pages/FolhaPagamentoPage.tsx",
+      "filtra:src/pages/ObrigacoesFiscaisPage.tsx",
       "filtra:src/services/folha/calculoLoteService.ts"
      ],
      "desconto": [
@@ -201780,11 +202452,6 @@
       "compara:src/schemas/esocial/rubricaValidator.ts",
       "escreve:src/constants/rubricas.ts"
      ],
-     "empresa": [
-      "compara:src/hooks/useFeriados.ts",
-      "compara:src/pages/FeriadosPage.tsx",
-      "escreve:src/services/rescisaoService.ts"
-     ],
      "ferias_aprovada": [
       "escreve:src/hooks/useFeriasAprovacao.ts"
      ],
@@ -201819,6 +202486,20 @@
      ],
      "sem_batida": [
       "compara:src/pages/AdminPontoDivergenciasPage.tsx"
+     ],
+     "ciclo": [
+      "compara:src/pages/AvaliacaoPage.tsx",
+      "escreve:src/pages/AvaliacaoPage.tsx"
+     ],
+     "meta": [
+      "compara:src/pages/AvaliacaoPage.tsx",
+      "escreve:src/pages/AvaliacaoPage.tsx"
+     ],
+     "pdi": [
+      "escreve:src/pages/AvaliacaoPage.tsx"
+     ],
+     "feedback": [
+      "compara:src/pages/AvaliacaoPage.tsx"
      ],
      "credito": [
       "compara:src/pages/BancoHorasPage.tsx",
@@ -201918,6 +202599,9 @@
      ],
      "premiacao_critica": [
       "escreve:src/services/premiacoesService.ts"
+     ],
+     "empresa": [
+      "escreve:src/services/rescisaoService.ts"
      ],
      "S-1000": [
       "compara:src/utils/esocialXmlGenerator.ts",
@@ -202074,8 +202758,8 @@
       "escreve:src/components/ponto/PontoAdjustmentRequests.tsx",
       "escreve:src/hooks/useAssinaturas.ts",
       "escreve:src/hooks/usePendencias.ts",
+      "escreve:src/pages/AdminEpisFichasPage.tsx",
       "escreve:src/pages/CalculadoraRescisaoPage.tsx",
-      "escreve:src/pages/DescontosPage.tsx",
       "escreve:src/pages/WorkflowsPage.tsx",
       "escreve:src/services/cnabService.ts",
       "escreve:src/services/contabilidadeService.ts",
@@ -202145,6 +202829,19 @@
       "escreve:src/pages/WorkflowsPage.tsx",
       "escreve:src/services/workflowService.ts"
      ],
+     "encerrado": [
+      "compara:src/components/afastamentos/AfastamentoTable.tsx",
+      "compara:src/pages/AfastamentosPage.tsx",
+      "escreve:src/pages/AfastamentosPage.tsx",
+      "escreve:src/services/contratoService.ts"
+     ],
+     "cancelado": [
+      "compara:src/components/afastamentos/AfastamentoTable.tsx",
+      "compara:src/components/contratos/ContratosVencendoPanel.tsx",
+      "escreve:src/components/descontos/EmprestimosTable.tsx",
+      "filtra:src/pages/DashboardPage.tsx",
+      "filtra:src/pages/PassivoTrabalhistaPage.tsx"
+     ],
      "vencido": [
       "compara:src/components/colaborador-detalhes/AquisitivosTab.tsx",
       "compara:src/components/ferias/GerenciamentoPeriodos.tsx"
@@ -202154,11 +202851,6 @@
       "compara:src/hooks/useAssinaturas.ts",
       "compara:src/pages/ContratosGeradosPage.tsx",
       "escreve:src/components/portal/PortalDocumentosTab.tsx"
-     ],
-     "cancelado": [
-      "compara:src/components/contratos/ContratosVencendoPanel.tsx",
-      "filtra:src/pages/DashboardPage.tsx",
-      "filtra:src/pages/PassivoTrabalhistaPage.tsx"
      ],
      "aprovado": [
       "compara:src/components/dashboard/AnalyticsSection.tsx",
@@ -202225,6 +202917,7 @@
      "ativo": [
       "compara:src/components/descontos/EmprestimosTable.tsx",
       "compara:src/components/descontos/FinancialSummaryCards.tsx",
+      "compara:src/components/descontos/NewLoanDialog.tsx",
       "compara:src/components/sst/GerarPgrButton.tsx",
       "compara:src/components/ui/status-badge.tsx",
       "compara:src/hooks/useNotificacoes.ts",
@@ -202306,8 +202999,13 @@
       "compara:src/components/descontos/AdiantamentosTable.tsx",
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
       "compara:src/components/premiacoes/RewardsApprovalHub.tsx",
+      "compara:src/pages/PremiacoesPage.tsx",
       "escreve:src/services/despesaService.ts",
       "escreve:src/services/rescisaoService.ts"
+     ],
+     "quitado": [
+      "compara:src/components/descontos/EmprestimosTable.tsx",
+      "escreve:src/components/descontos/EmprestimosTable.tsx"
      ],
      "homologado": [
       "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx"
@@ -202455,6 +203153,7 @@
       "compara:src/hooks/useAssinaturas.ts"
      ],
      "aberta": [
+      "compara:src/pages/ObrigacoesFiscaisPage.tsx",
       "compara:src/pages/RecrutamentoPage.tsx",
       "compara:src/services/folhaPagamentoService.ts",
       "compara:supabase/functions/fechar-folha/index.ts",
@@ -202541,11 +203240,6 @@
       "compara:src/pages/AfastamentosPage.tsx",
       "compara:src/services/afastamentoService.ts",
       "escreve:src/pages/AfastamentosPage.tsx"
-     ],
-     "encerrado": [
-      "compara:src/pages/AfastamentosPage.tsx",
-      "escreve:src/pages/AfastamentosPage.tsx",
-      "escreve:src/services/contratoService.ts"
      ],
      "prorrogado": [
       "escreve:src/pages/AfastamentosPage.tsx",
@@ -202795,6 +203489,12 @@
      "todos": [
       "compara:src/pages/AdmissoesPage.tsx"
      ],
+     "triagem": [
+      "escreve:src/pages/RecrutamentoPage.tsx"
+     ],
+     "contratado": [
+      "compara:src/pages/RecrutamentoPage.tsx"
+     ],
      "homologacao": [
       "escreve:src/services/rescisaoService.ts"
      ],
@@ -202886,6 +203586,15 @@
     "situacao": {
      "ok": [
       "filtra:src/hooks/ferias/useReconciliacaoFolha.ts"
+     ],
+     "sem_folha": [
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
+     ],
+     "nao_calculada": [
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
+     ],
+     "sem_itens": [
+      "escreve:src/pages/ObrigacoesFiscaisPage.tsx"
      ]
     },
     "last_status": {
@@ -225752,6 +226461,20 @@
    },
    {
     "kind": "status",
+    "msg": "valor `triagem` para `etapa` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:src/pages/RecrutamentoPage.tsx"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `contratado` para `etapa` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "compara:src/pages/RecrutamentoPage.tsx"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `finalizado` para `etapa` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:src/services/rescisaoService.ts"
@@ -231951,7 +232674,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 499,
+   "lines": 501,
    "exports": [
     "function App"
    ],
@@ -232288,6 +233011,12 @@
     },
     {
      "path": "sst",
+     "component": "LazyPage",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "epis",
      "component": "LazyPage",
      "guard": "",
      "roles": []
@@ -233700,7 +234429,7 @@
   },
   "src/components/__tests__/AfastamentoTable.test.tsx": {
    "path": "src/components/__tests__/AfastamentoTable.test.tsx",
-   "lines": 96,
+   "lines": 111,
    "is_test": true,
    "tests": [
     "AfastamentoTable",
@@ -233708,6 +234437,7 @@
     "renders Tipo / CID table header",
     "renders Período table header",
     "renders Dias table header",
+    "desabilita Prorrogar em afastamento encerrado ou aprovado",
     "renders colaborador name in table row",
     "renders Doença tipo badge",
     "renders status badge",
@@ -233876,8 +234606,11 @@
   },
   "src/components/__tests__/BeneficiosSettingsTab.test.tsx": {
    "path": "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
-   "lines": 113,
+   "lines": 162,
    "is_test": true,
+   "rule_comments": [
+    "Plano de outra empresa (0 linhas afetadas) não pode virar \"Plano excluído\"."
+   ],
    "tests": [
     "BeneficiosSettingsTab",
     "renders Regras de Benefícios title",
@@ -233885,6 +234618,8 @@
     "renders beneficio names from query data",
     "renders table headers",
     "renders footer warning about folha impact",
+    "Excluir pede confirmação e exclui o plano filtrando pela empresa atual",
+    "Excluir fica desativado para benefício obrigatório por lei",
     "shows dialog when Novo Plano clicked"
    ]
   },
@@ -234270,18 +235005,19 @@
   },
   "src/components/__tests__/DarfTab.test.tsx": {
    "path": "src/components/__tests__/DarfTab.test.tsx",
-   "lines": 47,
+   "lines": 61,
    "is_test": true,
    "tests": [
     "DarfTab",
     "renders DARF title",
     "renders IRRF label",
-    "renders PIS/COFINS label",
-    "renders CSLL label",
-    "renders estimated values disclaimer",
-    "renders vencimento labels",
-    "computes IRRF as 15% of totalInss",
-    "computes CSLL as 9% of totalInss"
+    "does not render non-payroll taxes (PIS/COFINS, CSLL)",
+    "renders IRRF due date label",
+    "shows the IRRF withheld in the payroll as-is",
+    "shows empty state when there is no payroll for the competencia",
+    "does not show R$ 0,00 when the payroll was not calculated yet",
+    "does not show R$ 0,00 when payroll items are not accessible",
+    "shows loading and error states"
    ]
   },
   "src/components/__tests__/DashboardHeader.test.tsx": {
@@ -234321,7 +235057,7 @@
   },
   "src/components/__tests__/DeclaracoesTable.test.tsx": {
    "path": "src/components/__tests__/DeclaracoesTable.test.tsx",
-   "lines": 75,
+   "lines": 94,
    "is_test": true,
    "tests": [
     "DctfTable",
@@ -234335,7 +235071,8 @@
     "shows empty state when no data",
     "renders competencias",
     "shows disponível icon for records with arquivo_url",
-    "shows Baixar button when arquivo_url present"
+    "shows Baixar button when arquivo_url present",
+    "downloads the SEFIP content when Baixar is clicked"
    ]
   },
   "src/components/__tests__/DependentesTab.test.tsx": {
@@ -234449,7 +235186,7 @@
   },
   "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx": {
    "path": "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
-   "lines": 146,
+   "lines": 198,
    "is_test": true,
    "tests": [
     "DetalhesAdmissaoDialog",
@@ -234460,7 +235197,8 @@
     "renders Geral tab",
     "renders Documentos tab",
     "renders Histórico tab",
-    "renders Ver Portal button"
+    "copia o link do portal (sem abrir sessão do candidato) e gera token se não houver vigente",
+    "desabilita o link do portal em admissão encerrada e não gera token"
    ]
   },
   "src/components/__tests__/DistribuirHoleritesButton.test.tsx": {
@@ -234900,7 +235638,7 @@
   },
   "src/components/__tests__/EmprestimosTable.test.tsx": {
    "path": "src/components/__tests__/EmprestimosTable.test.tsx",
-   "lines": 80,
+   "lines": 157,
    "is_test": true,
    "tests": [
     "EmprestimosTable",
@@ -234911,7 +235649,12 @@
     "renders Parcela header",
     "renders Status header",
     "renders colaborador name",
-    "renders instituicao_financeira"
+    "renders instituicao_financeira",
+    "sem onUpdate não renderiza a coluna de ações",
+    "dispara quitar, cancelar e registrar parcela para empréstimo ativo",
+    "voltar no diálogo de confirmação não altera o empréstimo",
+    "última parcela registrada quita o empréstimo",
+    "não exibe ações para empréstimo já quitado"
    ]
   },
   "src/components/__tests__/EntityPageContainer.test.tsx": {
@@ -235041,7 +235784,7 @@
   },
   "src/components/__tests__/ExameFormDialog.test.tsx": {
    "path": "src/components/__tests__/ExameFormDialog.test.tsx",
-   "lines": 140,
+   "lines": 188,
    "is_test": true,
    "tests": [
     "ExameFormDialog",
@@ -235052,7 +235795,9 @@
     "shows resultado options including Apto",
     "Registrar Exame button is disabled when colaborador_id is empty",
     "Registrar Exame button is disabled when isPending is true",
-    "calls onSubmit when form submitted with required fields"
+    "calls onSubmit when form submitted with required fields",
+    "modo edição: só fecha após o pai confirmar sucesso (erro mantém aberto)",
+    "bloqueia salvar quando a validade é anterior à data do exame"
    ]
   },
   "src/components/__tests__/ExameKPIs.test.tsx": {
@@ -235081,7 +235826,7 @@
   },
   "src/components/__tests__/ExameTable.test.tsx": {
    "path": "src/components/__tests__/ExameTable.test.tsx",
-   "lines": 92,
+   "lines": 101,
    "is_test": true,
    "params": [
     {
@@ -235101,7 +235846,8 @@
     "renders Apto badge for apto result",
     "renders Inapto badge for inapto result",
     "renders dash for null medico",
-    "calls onExcluir when delete button clicked"
+    "calls onExcluir when delete button clicked",
+    "calls onEditar with the row when edit button clicked"
    ]
   },
   "src/components/__tests__/ExameTipoChart.test.tsx": {
@@ -235731,9 +236477,10 @@
   },
   "src/components/__tests__/InlineTabs.test.tsx": {
    "path": "src/components/__tests__/InlineTabs.test.tsx",
-   "lines": 494,
+   "lines": 571,
    "is_test": true,
    "errors": [
+    ", async () => {\n    Object.assign(supabase.auth, {\n      updateUser: vi.fn(async () => ({ data: { user: { id: ",
     ", async () => {\n    fromMock.mockReturnValue(makeChain({ data: null, error: { message: ",
     ", async () => {\n    vi.mocked(edgeFunctionsService.sincronizarBitrix).mockRejectedValue(new Error("
    ],
@@ -235745,12 +236492,14 @@
     "renders Preferências de Interface title",
     "renders Modo Escuro switch label",
     "renders Salvar Alterações button",
+    "Salvar Alterações grava o nome de exibição no Auth e em profiles.nome",
+    "Salvar Alterações com erro ao gravar profiles mostra toast.error",
+    "Salvar Alterações com erro do Auth mostra toast.error e não confirma",
+    "Modo Escuro reflete e altera o tema real",
+    "não exibe controles sem efeito (idioma, animações reduzidas)",
     "NotificacoesTab",
     "renders Central de Notificações title",
-    "renders Operacional section",
-    "renders Compliance section",
-    "renders Novas Admissões switch",
-    "renders Salvar Preferências button",
+    "informa que preferências por canal ainda não existem, sem switches nem botão de salvar",
     "FolhaConfigTab",
     "renders Parâmetros de Folha title",
     "renders Dia de Fechamento field",
@@ -235778,7 +236527,11 @@
     "erro no insert mostra toast.error",
     "botão excluir chama delete com eq(id) e confirma",
     "IntegracoesTab",
-    "renderiza cards de integrações nativas",
+    "renderiza card do Bitrix24 sem placeholders ",
+    "status do Bitrix24 vem da configuração real",
+    "Bitrix24 habilitado com webhook aparece como Conectado",
+    "Webhook de Mudanças leva para a página de Integrações",
+    "linhas da tabela não oferecem botão de configurações sem ação",
     "renderiza tabela de integrações com status e fallback de sincronização",
     "mostra estado vazio sem integrações",
     "Sincronizar Agora chama sincronizarBitrix e confirma",
@@ -236199,7 +236952,7 @@
   },
   "src/components/__tests__/NewLoanDialog.test.tsx": {
    "path": "src/components/__tests__/NewLoanDialog.test.tsx",
-   "lines": 146,
+   "lines": 198,
    "is_test": true,
    "tests": [
     "NewLoanDialog",
@@ -236211,6 +236964,9 @@
     "renders Valor Total label",
     "renders Número de Parcelas label",
     "bloqueia o envio com parcelas < 1 ou valor ≤ 0 (CHECK do banco)",
+    "bloqueia quando o colaborador não tem salário base (margem incalculável)",
+    "explica o bloqueio quando a consulta do salário falha",
+    "soma as parcelas de empréstimos ativos do colaborador na margem de 30%",
     "renders Cancelar and Confirmar Registro buttons"
    ]
   },
@@ -236642,7 +237398,7 @@
   },
   "src/components/__tests__/PontoInconsistencyPanel.test.tsx": {
    "path": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
-   "lines": 58,
+   "lines": 72,
    "is_test": true,
    "tests": [
     "PontoInconsistencyPanel",
@@ -237440,6 +238196,17 @@
     "navigates to fallback when history is short"
    ]
   },
+  "src/components/__tests__/simulacaoResumo.test.ts": {
+   "path": "src/components/__tests__/simulacaoResumo.test.ts",
+   "lines": 27,
+   "is_test": true,
+   "tests": [
+    "resumoSimulacao",
+    "usa custoTotal salvo pelo SimuladorWhatIf",
+    "cai no impacto_total legado",
+    "retorna 0 para resultado nulo ou sem valores"
+   ]
+  },
   "src/components/admin/HealthTrendCard.tsx": {
    "path": "src/components/admin/HealthTrendCard.tsx",
    "lines": 125,
@@ -237670,9 +238437,25 @@
   },
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": {
    "path": "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
-   "lines": 465,
+   "lines": 509,
    "exports": [
     "function DetalhesAdmissaoDialog"
+   ],
+   "tables": [
+    {
+     "table": "admissao_tokens",
+     "op": "select"
+    }
+   ],
+   "table_cols": {
+    "admissao_tokens": [
+     "admissao_id",
+     "data_expiracao",
+     "token"
+    ]
+   },
+   "errors": [
+    "Candidato sem e-mail cadastrado e sem link de portal vigente."
    ],
    "html_constraints": [
     {
@@ -237730,10 +238513,23 @@
      "kind": "compara"
     },
     {
+     "field": "etapa",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "etapa",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
      "field": "status",
      "value": "em_andamento",
      "kind": "compara"
     }
+   ],
+   "pagination": [
+    "1"
    ]
   },
   "src/components/admissoes/NovaAdmissaoDialog.tsx": {
@@ -237884,9 +238680,28 @@
   },
   "src/components/afastamentos/AfastamentoTable.tsx": {
    "path": "src/components/afastamentos/AfastamentoTable.tsx",
-   "lines": 241,
+   "lines": 253,
    "exports": [
     "function AfastamentoTable"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "encerrado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "cancelado",
+     "kind": "compara"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "podeProrrogar",
+     "params": "af: AfastamentoItem",
+     "body": ""
+    }
    ],
    "temporal": [
     "setTimeout(() => setCopiedId(null), 2000);"
@@ -237897,6 +238712,26 @@
    "lines": 250,
    "exports": [
     "function AfastamentoTimeline"
+   ]
+  },
+  "src/components/afastamentos/ProrrogacaoDialog.tsx": {
+   "path": "src/components/afastamentos/ProrrogacaoDialog.tsx",
+   "lines": 121,
+   "exports": [
+    "function ProrrogacaoDialog"
+   ],
+   "html_constraints": [
+    {
+     "field": "prorr-data-fim",
+     "rules": "type=date, min=fimAnterior || undefined"
+    },
+    {
+     "field": "prorr-pericia",
+     "rules": "type=date"
+    }
+   ],
+   "temporal": [
+    "return Math.round((fim.getTime() - inicio.getTime()) / (1000 * 60 * 60 * 24));"
    ]
   },
   "src/components/auth/LoginForm.tsx": {
@@ -238890,14 +239725,50 @@
   },
   "src/components/descontos/EmprestimosTable.tsx": {
    "path": "src/components/descontos/EmprestimosTable.tsx",
-   "lines": 59,
+   "lines": 169,
    "exports": [
+    "type EmprestimoUpdate",
     "function EmprestimosTable"
    ],
    "status_values": [
     {
      "field": "status",
+     "value": "quitado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "quitado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "quitado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "cancelado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
      "value": "ativo",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "quitado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "quitado",
      "kind": "compara"
     }
    ]
@@ -238943,7 +239814,7 @@
   },
   "src/components/descontos/NewLoanDialog.tsx": {
    "path": "src/components/descontos/NewLoanDialog.tsx",
-   "lines": 201,
+   "lines": 239,
    "exports": [
     "function NewLoanDialog"
    ],
@@ -238959,6 +239830,13 @@
      "salario_base"
     ]
    },
+   "status_values": [
+    {
+     "field": "status",
+     "value": "ativo",
+     "kind": "compara"
+    }
+   ],
    "percents": [
     "const margin = colaboradorData.salario_base * 0.3; // 30% Law"
    ]
@@ -239621,9 +240499,12 @@
   },
   "src/components/exames/ExameFormDialog.tsx": {
    "path": "src/components/exames/ExameFormDialog.tsx",
-   "lines": 169,
+   "lines": 210,
    "exports": [
     "function ExameFormDialog"
+   ],
+   "rule_comments": [
+    "* `onSaved` deve ser chamado só após salvar com sucesso: fecha e limpa o formulário. */"
    ]
   },
   "src/components/exames/ExameKPIs.tsx": {
@@ -239641,7 +240522,7 @@
   },
   "src/components/exames/ExameTable.tsx": {
    "path": "src/components/exames/ExameTable.tsx",
-   "lines": 213,
+   "lines": 243,
    "exports": [
     "function ExameTable"
    ],
@@ -240658,7 +241539,7 @@
   },
   "src/components/folha/SimuladorWhatIf.tsx": {
    "path": "src/components/folha/SimuladorWhatIf.tsx",
-   "lines": 282,
+   "lines": 283,
    "exports": [
     "function SimuladorWhatIf"
    ],
@@ -240757,7 +241638,7 @@
   },
   "src/components/integracoes/ConfigPanels.tsx": {
    "path": "src/components/integracoes/ConfigPanels.tsx",
-   "lines": 612,
+   "lines": 722,
    "exports": [
     "function Bitrix24ConfigPanel",
     "function CnabConfigPanel",
@@ -240769,6 +241650,7 @@
    ],
    "errors": [
     "Erro ao salvar configuração",
+    "Preencha código do banco, agência, conta, dígito da conta e convênio.",
     "URL do webhook deve usar https.",
     "URL do webhook inválida.",
     "URL do webhook não pode apontar para host local."
@@ -240780,9 +241662,24 @@
     "invoke("
    ]
   },
+  "src/components/integracoes/__tests__/ConfigPanels.test.tsx": {
+   "path": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+   "lines": 137,
+   "is_test": true,
+   "tests": [
+    "CnabConfigPanel",
+    "Salvar Configurações grava os dados editados e invalida a configuração",
+    "não salva sem os campos obrigatórios",
+    "Salvar Configurações fica desabilitado enquanto a config carrega",
+    "Salvar Configurações fica desabilitado se a config falhou ao carregar (evita duplicar)",
+    "WebhookConfigPanel",
+    "Novo Webhook fica desativado enquanto não existe disparo de webhooks",
+    "Remover pede confirmação e exclui o webhook da empresa"
+   ]
+  },
   "src/components/layout/AppSidebar.tsx": {
    "path": "src/components/layout/AppSidebar.tsx",
-   "lines": 810,
+   "lines": 812,
    "exports": [
     "function AppSidebar"
    ],
@@ -241287,9 +242184,16 @@
   },
   "src/components/obrigacoes/DarfTab.tsx": {
    "path": "src/components/obrigacoes/DarfTab.tsx",
-   "lines": 51,
+   "lines": 75,
    "exports": [
+    "type DarfIrrfSituacao",
     "function DarfTab"
+   ],
+   "enums": [
+    {
+     "name": "DarfIrrfSituacao",
+     "values": "sem_folha | nao_calculada | sem_itens"
+    }
    ],
    "calc_fns": [
     {
@@ -241297,16 +242201,11 @@
      "params": "v: number",
      "body": "return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);"
     }
-   ],
-   "percents": [
-    "{ label: 'CSLL (Código 2372)', value: formatCurrency(totalInss * 0.09), color: 'text-primary', venc: 'Venc. último dia útil do mês' },",
-    "{ label: 'IRRF (Código 0561)', value: formatCurrency(totalInss * 0.15), color: 'text-warning', venc: 'Venc. dia 20 do mês seguinte' },",
-    "{ label: 'PIS/COFINS (Código 8109)', value: formatCurrency(totalFgts * 0.065 + totalInss * 0.03), color: 'text-info', venc: 'Venc. dia 25 do mês seguinte' },"
    ]
   },
   "src/components/obrigacoes/DeclaracoesTable.tsx": {
    "path": "src/components/obrigacoes/DeclaracoesTable.tsx",
-   "lines": 123,
+   "lines": 131,
    "exports": [
     "function DctfTable",
     "function SefipTable"
@@ -241321,7 +242220,7 @@
   },
   "src/components/obrigacoes/GuiasTable.tsx": {
    "path": "src/components/obrigacoes/GuiasTable.tsx",
-   "lines": 113,
+   "lines": 110,
    "exports": [
     "type GuiaTabela",
     "type GuiaLinha",
@@ -241359,6 +242258,14 @@
    "exports": [
     "function ObrigacoesKPIs"
    ]
+  },
+  "src/components/obrigacoes/simulacaoResumo.ts": {
+   "path": "src/components/obrigacoes/simulacaoResumo.ts",
+   "lines": 13,
+   "exports": [
+    "function resumoSimulacao"
+   ],
+   "doc": "Valor exibido na lista de simulações fiscais. O SimuladorWhatIf salva `resultado.custoTotal`; registros legados usam `impacto_total`."
   },
   "src/components/onboarding/GuidedTour.tsx": {
    "path": "src/components/onboarding/GuidedTour.tsx",
@@ -241919,7 +242826,7 @@
   },
   "src/components/ponto/PontoInconsistencyPanel.tsx": {
    "path": "src/components/ponto/PontoInconsistencyPanel.tsx",
-   "lines": 330,
+   "lines": 336,
    "exports": [
     "type RegistroComColaborador",
     "function PontoInconsistencyPanel"
@@ -242250,7 +243157,7 @@
   },
   "src/components/premiacoes/RewardsApprovalHub.tsx": {
    "path": "src/components/premiacoes/RewardsApprovalHub.tsx",
-   "lines": 373,
+   "lines": 347,
    "exports": [
     "type PagamentoComColaborador",
     "function RewardsApprovalHub"
@@ -242585,7 +243492,7 @@
   },
   "src/components/settings/BeneficiosSettingsTab.tsx": {
    "path": "src/components/settings/BeneficiosSettingsTab.tsx",
-   "lines": 199,
+   "lines": 278,
    "exports": [
     "function BeneficiosSettingsTab"
    ],
@@ -242601,15 +243508,23 @@
     {
      "table": "beneficios",
      "op": "update"
+    },
+    {
+     "table": "beneficios",
+     "op": "delete,select"
     }
    ],
    "table_cols": {
     "beneficios": [
-     "id"
+     "empresa_id",
+     "id",
+     "obrigatorio_por_lei"
     ]
    },
    "errors": [
     "Nome do plano é obrigatório.",
+    "Plano não excluído: ele é obrigatório por lei, não pertence à empresa selecionada ou já foi removido.",
+    "Selecione uma empresa.",
     "Valor inválido (entre 0 e 99.999,99)."
    ]
   },
@@ -242749,7 +243664,7 @@
   },
   "src/components/settings/InlineTabs.tsx": {
    "path": "src/components/settings/InlineTabs.tsx",
-   "lines": 830,
+   "lines": 808,
    "exports": [
     "function PreferenciasTab",
     "function NotificacoesTab",
@@ -242760,6 +243675,10 @@
     "function WebhooksLogsTab"
    ],
    "tables": [
+    {
+     "table": "profiles",
+     "op": "update"
+    },
     {
      "table": "parametros_sistema",
      "op": "select"
@@ -242806,6 +243725,9 @@
     }
    ],
    "table_cols": {
+    "profiles": [
+     "user_id"
+    ],
     "parametros_sistema": [
      "empresa_id",
      "nome",
@@ -242829,8 +243751,12 @@
      "url"
     ]
    },
+   "navigates": [
+    "/integracoes"
+   ],
    "errors": [
     "Erro ao criar configuração",
+    "Informe o nome de exibição.",
     "Nenhuma empresa selecionada"
    ],
    "role_checks": [
@@ -243237,7 +244163,7 @@
   },
   "src/components/sst/SSTProgramasTab.tsx": {
    "path": "src/components/sst/SSTProgramasTab.tsx",
-   "lines": 204,
+   "lines": 201,
    "exports": [
     "function SSTProgramasTab"
    ],
@@ -245705,13 +246631,6 @@
      "id"
     ]
    },
-   "status_values": [
-    {
-     "field": "tipo",
-     "value": "empresa",
-     "kind": "compara"
-    }
-   ],
    "hooks": [
     "useFeriados"
    ]
@@ -250166,11 +251085,23 @@
   },
   "src/pages/AdminEpisFichasPage.tsx": {
    "path": "src/pages/AdminEpisFichasPage.tsx",
-   "lines": 187,
+   "lines": 448,
    "exports": [
     "function AdminEpisFichasPage"
    ],
    "tables": [
+    {
+     "table": "epis_fichas",
+     "op": "ref"
+    },
+    {
+     "table": "epis_fichas_itens",
+     "op": "ref"
+    },
+    {
+     "table": "epis_fichas",
+     "op": "delete"
+    },
     {
      "table": "epis_fichas",
      "op": "select"
@@ -250195,7 +251126,17 @@
      "tipo_movimento"
     ]
    },
+   "errors": [
+    "Cada item precisa de descrição e quantidade inteira maior que zero.",
+    "Informe o responsável pela entrega.",
+    "Selecione o colaborador."
+   ],
    "status_values": [
+    {
+     "field": "status",
+     "value": "pendente",
+     "kind": "escreve"
+    },
     {
      "field": "status",
      "value": "assinada",
@@ -250575,7 +251516,7 @@
   },
   "src/pages/AfastamentosPage.tsx": {
    "path": "src/pages/AfastamentosPage.tsx",
-   "lines": 523,
+   "lines": 532,
    "exports": [
     "function AfastamentosPage"
    ],
@@ -250752,15 +251693,96 @@
   },
   "src/pages/AvaliacaoPage.tsx": {
    "path": "src/pages/AvaliacaoPage.tsx",
-   "lines": 306,
+   "lines": 781,
    "exports": [
     "function AvaliacaoPage"
    ],
+   "errors": [
+    "Erro ao excluir: ${e.message}",
+    "Erro ao salvar: ${e.message}"
+   ],
+   "html_constraints": [
+    {
+     "field": "ciclo-inicio",
+     "rules": "type=date"
+    },
+    {
+     "field": "ciclo-fim",
+     "rules": "type=date"
+    },
+    {
+     "field": "meta-valor",
+     "rules": "type=number"
+    },
+    {
+     "field": "meta-atual",
+     "rules": "type=number"
+    },
+    {
+     "field": "meta-limite",
+     "rules": "type=date"
+    },
+    {
+     "field": "feedback-nota",
+     "rules": "type=number, min=1, max=5, step=0.5"
+    },
+    {
+     "field": "pdi-prazo",
+     "rules": "type=date"
+    }
+   ],
    "status_values": [
+    {
+     "field": "tipo",
+     "value": "ciclo",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "meta",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "pdi",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "ciclo",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "meta",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "feedback",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "ciclo",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "meta",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "concluido",
      "kind": "compara"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "formValido",
+     "params": "(",
+     "body": "if (novo === 'ciclo') return !!campo('nome').trim() && !!form.data_inicio && !!form.data_fim && form.data_fim >= form.data_inicio; if (novo === 'meta') return !!campo('titulo').trim(); if (novo === 'feedback') return !!form.avaliado_id && !!form.avaliador_id; if (novo === 'pdi') return !!campo('titulo').trim() && !!form.colaborador_id; return false;"
     }
    ]
   },
@@ -251030,9 +252052,20 @@
   },
   "src/pages/CargosPage.tsx": {
    "path": "src/pages/CargosPage.tsx",
-   "lines": 135,
+   "lines": 331,
    "exports": [
     "function CargosPage"
+   ],
+   "errors": [
+    "Informe o nome do cargo (mínimo 2 caracteres).",
+    "Nível hierárquico deve ser um número inteiro maior que zero.",
+    "Salário base inválido."
+   ],
+   "html_constraints": [
+    {
+     "field": "cargo-nivel",
+     "rules": "type=number, min=1, step=1"
+    }
    ],
    "calc_fns": [
     {
@@ -251044,7 +252077,7 @@
   },
   "src/pages/CentrosCustoPage.tsx": {
    "path": "src/pages/CentrosCustoPage.tsx",
-   "lines": 170,
+   "lines": 212,
    "exports": [
     "function CentrosCustoPage"
    ],
@@ -251837,7 +252870,7 @@
   },
   "src/pages/DescontosPage.tsx": {
    "path": "src/pages/DescontosPage.tsx",
-   "lines": 212,
+   "lines": 243,
    "exports": [
     "function DescontosPage"
    ],
@@ -251860,11 +252893,11 @@
     },
     {
      "table": "adiantamentos_salariais",
-     "op": "ref"
+     "op": "update"
     },
     {
-     "table": "adiantamentos_salariais",
-     "op": "update"
+     "table": "emprestimos_consignados",
+     "op": "select,update"
     }
    ],
    "table_cols": {
@@ -251875,22 +252908,21 @@
      "status"
     ],
     "emprestimos_consignados": [
-     "empresa_id"
+     "empresa_id",
+     "id"
     ],
     "adiantamentos_salariais": [
      "empresa_id",
      "id"
     ]
    },
+   "errors": [
+    "Empréstimo não atualizado: você não tem permissão ou o registro não existe mais."
+   ],
    "status_values": [
     {
      "field": "status",
      "value": "ativo",
-     "kind": "escreve"
-    },
-    {
-     "field": "status",
-     "value": "pendente",
      "kind": "escreve"
     },
     {
@@ -252080,7 +253112,7 @@
   },
   "src/pages/EscalasPage.tsx": {
    "path": "src/pages/EscalasPage.tsx",
-   "lines": 230,
+   "lines": 314,
    "exports": [
     "function EscalasPage"
    ],
@@ -252088,6 +253120,10 @@
     {
      "table": "escalas",
      "op": "select"
+    },
+    {
+     "table": "escalas",
+     "op": "ref"
     },
     {
      "table": "escalas",
@@ -252103,11 +253139,14 @@
      "empresa_id",
      "id"
     ]
-   }
+   },
+   "errors": [
+    "Escala não encontrada ou sem permissão para editar."
+   ]
   },
   "src/pages/ExamesPage.tsx": {
    "path": "src/pages/ExamesPage.tsx",
-   "lines": 172,
+   "lines": 228,
    "exports": [
     "function ExamesPage"
    ],
@@ -252119,6 +253158,10 @@
     {
      "table": "exames",
      "op": "insert"
+    },
+    {
+     "table": "exames",
+     "op": "update"
     },
     {
      "table": "exames",
@@ -252202,7 +253245,7 @@
   },
   "src/pages/FeriadosPage.tsx": {
    "path": "src/pages/FeriadosPage.tsx",
-   "lines": 171,
+   "lines": 235,
    "exports": [
     "function FeriadosPage"
    ],
@@ -252213,16 +253256,23 @@
     },
     {
      "table": "feriados",
+     "op": "update"
+    },
+    {
+     "table": "feriados",
      "op": "insert"
+    },
+    {
+     "table": "feriados",
+     "op": "delete"
     }
    ],
-   "status_values": [
-    {
-     "field": "tipo",
-     "value": "empresa",
-     "kind": "compara"
-    }
-   ]
+   "table_cols": {
+    "feriados": [
+     "empresa_id",
+     "id"
+    ]
+   }
   },
   "src/pages/FeriasPage.tsx": {
    "path": "src/pages/FeriasPage.tsx",
@@ -252634,7 +253684,7 @@
   },
   "src/pages/IntegracoesPage.tsx": {
    "path": "src/pages/IntegracoesPage.tsx",
-   "lines": 282,
+   "lines": 290,
    "exports": [
     "function IntegracoesPage"
    ],
@@ -252666,7 +253716,7 @@
   },
   "src/pages/JornadasPage.tsx": {
    "path": "src/pages/JornadasPage.tsx",
-   "lines": 328,
+   "lines": 407,
    "exports": [
     "function JornadasPage"
    ],
@@ -252674,6 +253724,10 @@
     {
      "table": "jornadas",
      "op": "select"
+    },
+    {
+     "table": "jornadas",
+     "op": "ref"
     },
     {
      "table": "jornadas",
@@ -252690,7 +253744,20 @@
      "id"
     ]
    },
+   "errors": [
+    "Jornada não encontrada ou sem permissão para editar."
+   ],
    "status_values": [
+    {
+     "field": "tipo",
+     "value": "padrao",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "padrao",
+     "kind": "escreve"
+    },
     {
      "field": "tipo",
      "value": "padrao",
@@ -252773,7 +253840,7 @@
   },
   "src/pages/LocaisTrabalhoPage.tsx": {
    "path": "src/pages/LocaisTrabalhoPage.tsx",
-   "lines": 197,
+   "lines": 237,
    "exports": [
     "function LocaisTrabalhoPage"
    ]
@@ -252822,7 +253889,7 @@
   },
   "src/pages/LotacoesPage.tsx": {
    "path": "src/pages/LotacoesPage.tsx",
-   "lines": 157,
+   "lines": 214,
    "exports": [
     "function LotacoesPage"
    ],
@@ -252837,6 +253904,10 @@
     },
     {
      "table": "lotacoes",
+     "op": "select,update"
+    },
+    {
+     "table": "lotacoes",
      "op": "delete"
     }
    ],
@@ -252845,7 +253916,10 @@
      "empresa_id",
      "id"
     ]
-   }
+   },
+   "errors": [
+    "Lotação não encontrada ou sem permissão para editar."
+   ]
   },
   "src/pages/MedidasDisciplinaresPage.tsx": {
    "path": "src/pages/MedidasDisciplinaresPage.tsx",
@@ -252895,7 +253969,7 @@
   },
   "src/pages/MovimentacoesPage.tsx": {
    "path": "src/pages/MovimentacoesPage.tsx",
-   "lines": 489,
+   "lines": 817,
    "exports": [
     "function MovimentacoesPage"
    ],
@@ -252917,12 +253991,68 @@
      "op": "select"
     },
     {
+     "table": "colaboradores",
+     "op": "select,update"
+    },
+    {
+     "table": "promocoes",
+     "op": "select"
+    },
+    {
+     "table": "transferencias",
+     "op": "select"
+    },
+    {
+     "table": "transferencias",
+     "op": "select"
+    },
+    {
+     "table": "transferencias",
+     "op": "select,update"
+    },
+    {
      "table": "transferencias",
      "op": "insert,select"
     },
     {
+     "table": "transferencias",
+     "op": "select,update"
+    },
+    {
+     "table": "transferencias",
+     "op": "delete,select"
+    },
+    {
+     "table": "promocoes",
+     "op": "select"
+    },
+    {
+     "table": "promocoes",
+     "op": "select,update"
+    },
+    {
      "table": "promocoes",
      "op": "insert,select"
+    },
+    {
+     "table": "historico_salarial",
+     "op": "delete"
+    },
+    {
+     "table": "promocoes",
+     "op": "select,update"
+    },
+    {
+     "table": "promocoes",
+     "op": "delete,select"
+    },
+    {
+     "table": "promocoes",
+     "op": "delete,select"
+    },
+    {
+     "table": "transferencias",
+     "op": "delete,select"
     }
    ],
    "table_cols": {
@@ -252935,8 +254065,45 @@
      "empresa_id",
      "id",
      "nome"
+    ],
+    "colaboradores": [
+     "empresa_id",
+     "id"
+    ],
+    "promocoes": [
+     "colaborador_id",
+     "data_vigencia",
+     "id"
+    ],
+    "transferencias": [
+     "colaborador_id",
+     "data_vigencia",
+     "id"
+    ],
+    "historico_salarial": [
+     "id"
     ]
-   }
+   },
+   "errors": [
+    "Colaborador não pertence à empresa selecionada.",
+    "Promoção não encontrada nesta empresa.",
+    "Promoção não encontrada ou sem permissão para salvar.",
+    "Registro não encontrado nesta empresa.",
+    "Registro não encontrado ou sem permissão para excluir.",
+    "Sem permissão para atualizar o cadastro do colaborador.",
+    "Transferência não encontrada nesta empresa.",
+    "Transferência não encontrada ou sem permissão para salvar."
+   ],
+   "calc_fns": [
+    {
+     "name": "aplicarNoColaborador",
+     "params": "colaboradorId: string, patch: Updatable<'colaboradores'>",
+     "body": "const { data, error } = await supabase .from('colaboradores') .update(patch) .eq('id', colaboradorId) .eq('empresa_id', empresaAtual!.id) .select('id'); if (error) throw error; if (!data || data.length === 0) throw new Error('Sem permissão para atualizar o cadastro do colaborador.');"
+    }
+   ],
+   "pagination": [
+    "1"
+   ]
   },
   "src/pages/NotFoundPage.tsx": {
    "path": "src/pages/NotFoundPage.tsx",
@@ -252997,7 +254164,7 @@
   },
   "src/pages/ObrigacoesFiscaisPage.tsx": {
    "path": "src/pages/ObrigacoesFiscaisPage.tsx",
-   "lines": 446,
+   "lines": 481,
    "exports": [
     "function ObrigacoesFiscaisPage"
    ],
@@ -253025,6 +254192,10 @@
     {
      "table": "simulacoes_fiscais",
      "op": "select"
+    },
+    {
+     "table": "folhas_pagamento",
+     "op": "select"
     }
    ],
    "table_cols": {
@@ -253045,6 +254216,14 @@
     ],
     "simulacoes_fiscais": [
      "empresa_id"
+    ],
+    "folhas_pagamento": [
+     "competencia",
+     "data_calculo",
+     "empresa_id",
+     "id",
+     "status",
+     "tipo"
     ]
    },
    "dyn_from": 2,
@@ -253055,6 +254234,26 @@
     {
      "field": "tipo",
      "value": "fgts",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "sem_folha",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "nao_calculada",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "sem_itens",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "nao_calculada",
      "kind": "escreve"
     },
     {
@@ -253078,6 +254277,11 @@
      "kind": "escreve"
     },
     {
+     "field": "status",
+     "value": "aberta",
+     "kind": "compara"
+    },
+    {
      "field": "tipo",
      "value": "fgts",
      "kind": "compara"
@@ -253086,6 +254290,11 @@
      "field": "status",
      "value": "paga",
      "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "mensal",
+     "kind": "filtra"
     }
    ],
    "calc_fns": [
@@ -253135,7 +254344,7 @@
   },
   "src/pages/PassivoTrabalhistaPage.tsx": {
    "path": "src/pages/PassivoTrabalhistaPage.tsx",
-   "lines": 624,
+   "lines": 628,
    "exports": [
     "function PassivoTrabalhistaPage"
    ],
@@ -253791,7 +255000,7 @@
   },
   "src/pages/PremiacoesPage.tsx": {
    "path": "src/pages/PremiacoesPage.tsx",
-   "lines": 574,
+   "lines": 595,
    "exports": [
     "function PremiacoesPage"
    ],
@@ -253811,6 +255020,11 @@
     },
     {
      "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
      "value": "ativo",
      "kind": "compara"
     },
@@ -253826,9 +255040,6 @@
      "params": "val: number",
      "body": ""
     }
-   ],
-   "percents": [
-    "<span>45%</span>"
    ]
   },
   "src/pages/PromoBrindesPage.tsx": {
@@ -253974,11 +255185,21 @@
   },
   "src/pages/RecrutamentoPage.tsx": {
    "path": "src/pages/RecrutamentoPage.tsx",
-   "lines": 634,
+   "lines": 861,
    "exports": [
     "function RecrutamentoPage"
    ],
    "status_values": [
+    {
+     "field": "etapa",
+     "value": "triagem",
+     "kind": "escreve"
+    },
+    {
+     "field": "etapa",
+     "value": "contratado",
+     "kind": "compara"
+    },
     {
      "field": "status",
      "value": "aberta",
@@ -254332,7 +255553,7 @@
   },
   "src/pages/SindicatosPage.tsx": {
    "path": "src/pages/SindicatosPage.tsx",
-   "lines": 166,
+   "lines": 223,
    "exports": [
     "function SindicatosPage"
    ],
@@ -254347,6 +255568,10 @@
     },
     {
      "table": "sindicatos",
+     "op": "select,update"
+    },
+    {
+     "table": "sindicatos",
      "op": "delete"
     }
    ],
@@ -254354,7 +255579,10 @@
     "sindicatos": [
      "id"
     ]
-   }
+   },
+   "errors": [
+    "Apenas administradores podem editar sindicatos."
+   ]
   },
   "src/pages/TimesPage.tsx": {
    "path": "src/pages/TimesPage.tsx",
@@ -254440,12 +255668,14 @@
   },
   "src/pages/TurnosPage.tsx": {
    "path": "src/pages/TurnosPage.tsx",
-   "lines": 270,
+   "lines": 324,
    "exports": [
     "function TurnosPage"
    ],
    "errors": [
-    "Erro ao criar turno"
+    "Erro ao atualizar turno",
+    "Erro ao criar turno",
+    "Erro ao excluir turno"
    ]
   },
   "src/pages/UsuariosPage.tsx": {
@@ -254773,6 +256003,16 @@
     "mostra erro amigável quando o arquivo é inválido (sem coluna Nome)",
     "reseta o fluxo ao clicar em Cancelar",
     "dispara download do modelo ao clicar em "
+   ]
+  },
+  "src/pages/__tests__/PremiacoesPage.test.tsx": {
+   "path": "src/pages/__tests__/PremiacoesPage.test.tsx",
+   "lines": 76,
+   "is_test": true,
+   "tests": [
+    "PremiacoesPage — KPIs",
+    "variação negativa usa cor destrutiva e premiados conta só pagos",
+    "variação positiva usa cor de sucesso"
    ]
   },
   "src/pages/__tests__/folhaResumo.test.ts": {
@@ -256251,7 +257491,7 @@
   },
   "src/services/afastamentoService.ts": {
    "path": "src/services/afastamentoService.ts",
-   "lines": 352,
+   "lines": 358,
    "exports": [
     "const afastamentoService"
    ],
@@ -256315,6 +257555,10 @@
     {
      "table": "prorrogacoes_afastamento",
      "op": "insert,select"
+    },
+    {
+     "table": "prorrogacoes_afastamento",
+     "op": "delete"
     }
    ],
    "table_cols": {
@@ -256326,6 +257570,9 @@
     ],
     "documentos_afastamento": [
      "afastamento_id",
+     "id"
+    ],
+    "prorrogacoes_afastamento": [
      "id"
     ]
    },
@@ -256356,6 +257603,9 @@
      "value": "ativo",
      "kind": "filtra"
     }
+   ],
+   "rule_comments": [
+    "Compensação: sem o afastamento atualizado, a prorrogação não pode ficar órfã."
    ],
    "calc_fns": [
     {
@@ -256506,7 +257756,7 @@
   },
   "src/services/avaliacaoService.ts": {
    "path": "src/services/avaliacaoService.ts",
-   "lines": 151,
+   "lines": 158,
    "exports": [
     "const avaliacaoService"
    ],
@@ -256521,7 +257771,7 @@
     },
     {
      "table": "ciclos_avaliacao",
-     "op": "delete"
+     "op": "delete,select"
     },
     {
      "table": "metas_okrs",
@@ -256595,6 +257845,7 @@
     ]
    },
    "errors": [
+    "Sem permissão para excluir o ciclo.",
     "empresa_id obrigatório para isolamento de tenant"
    ]
   },
@@ -258394,7 +259645,7 @@
   },
   "src/services/edgeFunctionsService.ts": {
    "path": "src/services/edgeFunctionsService.ts",
-   "lines": 303,
+   "lines": 336,
    "exports": [
     "class EdgeFunctionInvokeError",
     "function isDefinitiveIdempotencyFailure",
@@ -258409,6 +259660,8 @@
    ],
    "rule_comments": [
     "derruba TODAS as chamadas no browser. Correlação, se necessária, deve ir no body.",
+    "4xx definitivo (regra de negócio, validação, permissão) prova que a função está de pé:",
+    "não pode contar como falha no circuit breaker compartilhado. 408/429 seguem contando.",
     "Chave por CLIQUE: um novo processamento deliberado deve reapurar (novas",
     "* Verifica rate limit */"
    ],
@@ -259833,7 +261086,7 @@
   },
   "src/services/premiacoesService.ts": {
    "path": "src/services/premiacoesService.ts",
-   "lines": 405,
+   "lines": 377,
    "exports": [
     "const PERIODO_SEM_DATA",
     "interface CenarioROIInput",
@@ -259884,14 +261137,6 @@
      "op": "insert"
     },
     {
-     "table": "premiacoes_pagamentos",
-     "op": "select"
-    },
-    {
-     "table": "folha_itens",
-     "op": "select"
-    },
-    {
      "table": "premiacoes_auditoria",
      "op": "ref"
     },
@@ -259923,9 +261168,6 @@
     "premiacoes_pagamentos": [
      "id"
     ],
-    "folha_itens": [
-     "colaborador_id"
-    ],
     "premiacoes_roi_cenarios": [
      "id"
     ]
@@ -259937,7 +261179,6 @@
     "DEV"
    ],
    "errors": [
-    "Nenhum lançamento de folha encontrado para conciliação automática.",
     "empresaId é obrigatório",
     "empresa_id obrigatório para isolamento de tenant"
    ],
@@ -259967,9 +261208,6 @@
      "value": "aprovado_financeiro",
      "kind": "compara"
     }
-   ],
-   "pagination": [
-    "1"
    ]
   },
   "src/services/provisaoService.ts": {
@@ -260034,7 +261272,7 @@
   },
   "src/services/recrutamentoService.ts": {
    "path": "src/services/recrutamentoService.ts",
-   "lines": 201,
+   "lines": 203,
    "exports": [
     "const recrutamentoService"
    ],
@@ -260115,6 +261353,7 @@
     ]
    },
    "errors": [
+    "Candidato já inscrito nesta vaga.",
     "Nenhum registro de candidato foi retornado.",
     "Nenhum registro de candidatura foi retornado.",
     "Nenhum registro de vaga foi retornado.",
@@ -260918,7 +262157,7 @@
   },
   "src/services/__tests__/afastamentoService.test.ts": {
    "path": "src/services/__tests__/afastamentoService.test.ts",
-   "lines": 592,
+   "lines": 605,
    "is_test": true,
    "errors": [
     "tabela inesperada: ${table}"
@@ -260981,6 +262220,7 @@
     "listarProrrogacoes filtra por afastamento e empresa do pai",
     "criarProrrogacao exige empresaId",
     "criarProrrogacao insere e atualiza o afastamento pai como prorrogado",
+    "criarProrrogacao apaga a prorrogação inserida quando a atualização do afastamento falha",
     "criarProrrogacao embrulha falhas",
     "afastamentoService.exportarRelatorio",
     "gera CSV, dispara download e devolve os dados",
@@ -261064,7 +262304,7 @@
   },
   "src/services/__tests__/avaliacaoService.test.ts": {
    "path": "src/services/__tests__/avaliacaoService.test.ts",
-   "lines": 306,
+   "lines": 328,
    "is_test": true,
    "tests": [
     "avaliacaoService.listarCiclos",
@@ -261077,6 +262317,8 @@
     "throws on DB error",
     "avaliacaoService.excluirCiclo",
     "deletes ciclo by id",
+    "lança erro de permissão quando a RLS não exclui nenhuma linha",
+    "throws on DB error",
     "avaliacaoService.listarMetas",
     "returns metas with colaborador join",
     "filters by empresa_id when provided",
@@ -261915,7 +263157,7 @@
   },
   "src/services/__tests__/edgeFunctionsService.test.ts": {
    "path": "src/services/__tests__/edgeFunctionsService.test.ts",
-   "lines": 205,
+   "lines": 275,
    "is_test": true,
    "errors": [
     "Folha bloqueada"
@@ -261936,6 +263178,9 @@
     "edgeFunctionsService error handling",
     "throws wrapped Error when invoke returns a supabase error object",
     "preserva status e código de uma rejeição HTTP definitiva",
+    "lê mensagem e código do corpo aninhado de createErrorResponse",
+    "rejeições 4xx de negócio não abrem o circuit breaker compartilhado",
+    "erros 5xx continuam abrindo o circuit breaker",
     "mantém a chave para estado indeterminado ou falha de transporte",
     "throws wrapped Error when invoke rejects with an exception",
     "throws wrapped Error with fallback message when invoke error has no message",
@@ -262820,7 +264065,7 @@
   },
   "src/services/__tests__/recrutamentoService.test.ts": {
    "path": "src/services/__tests__/recrutamentoService.test.ts",
-   "lines": 334,
+   "lines": 347,
    "is_test": true,
    "tests": [
     "recrutamentoService.listarVagas",
@@ -262853,6 +264098,7 @@
     "includes candidato and vaga joins",
     "recrutamentoService.criarCandidatura",
     "inserts and returns new candidatura",
+    "traduz unique violation (23505) para mensagem amigável",
     "recrutamentoService.atualizarCandidatura",
     "updates and returns candidatura",
     "recrutamentoService.excluirCandidatura",
@@ -264936,7 +266182,7 @@
   },
   "src/utils/format.ts": {
    "path": "src/utils/format.ts",
-   "lines": 174,
+   "lines": 183,
    "exports": [
     "function parseDateSafe",
     "function formatDate",
@@ -264944,6 +266190,7 @@
     "function formatDateLong",
     "function formatCompetencia",
     "function formatCurrency",
+    "function parseMoedaBR",
     "function formatNumber",
     "function formatPercent",
     "function formatCPF",
@@ -265620,7 +266867,7 @@
   },
   "src/utils/__tests__/format.test.ts": {
    "path": "src/utils/__tests__/format.test.ts",
-   "lines": 108,
+   "lines": 120,
    "is_test": true,
    "tests": [
     "format — resiliência a entradas inválidas",
@@ -265645,6 +266892,7 @@
     "formatNumber com decimais custom",
     "formatPercent normaliza fração",
     "formatPercent aceita já-em-percent",
+    "parseMoedaBR trata ponto de milhar e vírgula decimal pt-BR",
     "format — documentos",
     "formatCPF aplica máscara",
     "formatCPF ignora não-dígitos",
@@ -278271,10 +279519,189 @@
   }
  },
  "git": {
-  "sha": "004508da31bfdda3428697315821c87ae8e803f1",
+  "sha": "0df27ba056a189d72852571b62aa538b681383fb",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "0df27ba",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: seta do passivo trabalhista abre a ficha do colaborador (#500)",
+    "files": [
+     "src/pages/PassivoTrabalhistaPage.tsx"
+    ]
+   },
+   {
+    "sha": "710fdff",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)",
+    "files": [
+     "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+     "src/components/ponto/PontoInconsistencyPanel.tsx"
+    ]
+   },
+   {
+    "sha": "8c7c7a5",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)",
+    "files": [
+     "src/components/__tests__/ExameFormDialog.test.tsx",
+     "src/components/__tests__/ExameTable.test.tsx",
+     "src/components/exames/ExameFormDialog.tsx",
+     "src/components/exames/ExameTable.tsx",
+     "src/pages/ExamesPage.tsx"
+    ]
+   },
+   {
+    "sha": "da7bffa",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)",
+    "files": [
+     "src/pages/CentrosCustoPage.tsx",
+     "src/pages/EscalasPage.tsx",
+     "src/pages/JornadasPage.tsx",
+     "src/pages/LocaisTrabalhoPage.tsx",
+     "src/pages/LotacoesPage.tsx",
+     "src/pages/SindicatosPage.tsx",
+     "src/pages/TurnosPage.tsx"
+    ]
+   },
+   {
+    "sha": "a98b321",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Feriados da empresa agora podem ser corrigidos e excluídos, e salvar feriado estadual/municipal/nacional para de falhar (#491)",
+    "files": [
+     "src/hooks/useFeriados.ts",
+     "src/pages/FeriadosPage.tsx"
+    ]
+   },
+   {
+    "sha": "8200dc7",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: promoções e transferências passam a atualizar o cadastro do colaborador, e \"Prorrogar\" afastamento passa a registrar a prorrogação (#489)",
+    "files": [
+     "src/components/__tests__/AfastamentoTable.test.tsx",
+     "src/components/afastamentos/AfastamentoTable.tsx",
+     "src/components/afastamentos/ProrrogacaoDialog.tsx",
+     "src/pages/AfastamentosPage.tsx",
+     "src/pages/MovimentacoesPage.tsx",
+     "src/services/__tests__/afastamentoService.test.ts",
+     "src/services/afastamentoService.ts"
+    ]
+   },
+   {
+    "sha": "c9ef6d7",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: tela de Cargos passa a cadastrar, editar e ativar/inativar cargos (#487)",
+    "files": [
+     "src/pages/CargosPage.tsx",
+     "src/utils/__tests__/format.test.ts",
+     "src/utils/format.ts"
+    ]
+   },
+   {
+    "sha": "3662037",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Avaliação de Desempenho: agora dá para cadastrar e excluir ciclos, metas, feedbacks e PDIs (#486)",
+    "files": [
+     "src/pages/AvaliacaoPage.tsx",
+     "src/services/__tests__/avaliacaoService.test.ts",
+     "src/services/avaliacaoService.ts"
+    ]
+   },
+   {
+    "sha": "fc76699",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Premiações mostra orçamento, participantes e tendência reais e tira o botão \"Auto\" que sempre falhava (#485)",
+    "files": [
+     "src/components/premiacoes/RewardsApprovalHub.tsx",
+     "src/pages/PremiacoesPage.tsx",
+     "src/pages/__tests__/PremiacoesPage.test.tsx",
+     "src/services/premiacoesService.ts"
+    ]
+   },
+   {
+    "sha": "db4f2ef",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Integrações e Configurações: salvar CNAB, criar e remover webhooks, excluir plano de benefício e tirar botões e status falsos (#482)",
+    "files": [
+     "src/components/__tests__/BeneficiosSettingsTab.test.tsx",
+     "src/components/__tests__/InlineTabs.test.tsx",
+     "src/components/integracoes/ConfigPanels.tsx",
+     "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
+     "src/components/settings/BeneficiosSettingsTab.tsx",
+     "src/components/settings/InlineTabs.tsx",
+     "src/pages/IntegracoesPage.tsx"
+    ]
+   },
+   {
+    "sha": "913f961",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Obrigações Fiscais: DARF mostra o IRRF real da folha, \"Nova Simulação\" funciona e o SEFIP é baixado (#480)",
+    "files": [
+     "src/components/__tests__/DarfTab.test.tsx",
+     "src/components/__tests__/DeclaracoesTable.test.tsx",
+     "src/components/__tests__/simulacaoResumo.test.ts",
+     "src/components/folha/SimuladorWhatIf.tsx",
+     "src/components/obrigacoes/DarfTab.tsx",
+     "src/components/obrigacoes/DeclaracoesTable.tsx",
+     "src/components/obrigacoes/GuiasTable.tsx",
+     "src/components/obrigacoes/simulacaoResumo.ts",
+     "src/pages/ObrigacoesFiscaisPage.tsx"
+    ]
+   },
+   {
+    "sha": "9dc8def",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: SST: permite emitir ficha de EPI, abre a tela de EPIs no menu e faz 'Ver Portal' funcionar (#479)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "src/App.tsx",
+     "src/components/__tests__/DetalhesAdmissaoDialog.test.tsx",
+     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
+     "src/components/layout/AppSidebar.tsx",
+     "src/components/sst/SSTProgramasTab.tsx",
+     "src/pages/AdminEpisFichasPage.tsx"
+    ]
+   },
+   {
+    "sha": "075db7f",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Descontos: adiantamento respeita limite de % do salário e 1 por mês, consignado respeita margem somada e empréstimos podem ser quitados, cancelados ou ter parcela registrada (#478)",
+    "files": [
+     "src/components/__tests__/EmprestimosTable.test.tsx",
+     "src/components/__tests__/NewLoanDialog.test.tsx",
+     "src/components/descontos/EmprestimosTable.tsx",
+     "src/components/descontos/NewLoanDialog.tsx",
+     "src/pages/DescontosPage.tsx",
+     "src/services/__tests__/edgeFunctionsService.test.ts",
+     "src/services/edgeFunctionsService.ts"
+    ]
+   },
+   {
+    "sha": "4fa4b7e",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: Recrutamento passa a criar, editar e excluir vagas e a inscrever candidatos (sem KPI falso) (#477)",
+    "files": [
+     "src/pages/RecrutamentoPage.tsx",
+     "src/services/__tests__/recrutamentoService.test.ts",
+     "src/services/recrutamentoService.ts"
+    ]
+   },
    {
     "sha": "004508d",
     "date": "2026-11-12",
@@ -278442,159 +279869,6 @@
     "files": [
      "supabase/functions/metricas/index.ts"
     ]
-   },
-   {
-    "sha": "770823e",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: gerar-aej e gerar-afd não sobem em produção (BOOT_ERROR no import de CORS) (#465)",
-    "files": [
-     "supabase/functions/gerar-aej/index.ts",
-     "supabase/functions/gerar-afd/index.ts"
-    ]
-   },
-   {
-    "sha": "c9af606",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: menu lateral esconde de não-admin os 21 itens que levam a rotas AdminRoute (#463)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/inventario/gerar-rotas.mjs",
-     "src/components/layout/AppSidebar.tsx"
-    ]
-   },
-   {
-    "sha": "3b8df28",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: RV-04 — migration de remediação das 5 RPCs ausentes + correção da assinatura no probe (#459)",
-    "files": [
-     "scripts/probes/run-probes.mjs",
-     "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
-     "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql"
-    ]
-   },
-   {
-    "sha": "2bdd7bd",
-    "date": "2026-11-12",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump the minor-patch group across 1 directory with 15 updates (#427)",
-    "files": [
-     "package-lock.json",
-     "package.json"
-    ]
-   },
-   {
-    "sha": "23dd510",
-    "date": "2026-11-12",
-    "author": "github-actions[bot]",
-    "subject": "docs: atualizar WORKFLOWS_STATUS.md (relatório automático W92) (#438)",
-    "files": [
-     "docs/auditoria/estado/WORKFLOWS_STATUS.md"
-    ]
-   },
-   {
-    "sha": "688c78f",
-    "date": "2026-11-12",
-    "author": "dependabot[bot]",
-    "subject": "build(deps): bump the actions group across 1 directory with 5 updates (#426)",
-    "files": [
-     ".github/workflows/canonical-edge-functions.yml",
-     ".github/workflows/ossf-scorecard.yml",
-     ".github/workflows/security.yml",
-     ".github/workflows/workflow-lint.yml",
-     "infra/github/action-pins.json"
-    ]
-   },
-   {
-    "sha": "97ce91a",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "infra: probes canônicos em fila própria (destrava migrations) (#442)",
-    "files": [
-     ".github/workflows/canonical-probes.yml",
-     "infra/runbooks/CANONICAL_WORKFLOWS.md"
-    ]
-   },
-   {
-    "sha": "0a089f2",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)",
-    "files": [
-     ".github/workflows/canonical-edge-functions.yml"
-    ]
-   },
-   {
-    "sha": "e0cd6bc",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)",
-    "files": [
-     "PENDENCIAS.md",
-     "supabase/functions/OCR/index.ts",
-     "supabase/functions/_shared/aiProvider.test.ts",
-     "supabase/functions/_shared/aiProvider.ts",
-     "supabase/functions/alertas-preditivos/index.ts",
-     "supabase/functions/assistente-ia/index.ts",
-     "supabase/functions/process-document-ocr/index.ts",
-     "supabase/functions/validar-biometria/index.ts"
-    ]
-   },
-   {
-    "sha": "e8472e9",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: remove policies inertes de medidas_ciencia_tokens (probe de segurança RV-02) (#449)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.sql",
-     "supabase/migrations/20261112000000_rv02_drop_inert_token_policies.verify.sql"
-    ]
-   },
-   {
-    "sha": "9f7a4e4",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: gate rls-tenant-open reconhece o helper pode_gerir_config_ponto (#457)",
-    "files": [
-     "scripts/audit-rls-tenant-open.mjs"
-    ]
-   },
-   {
-    "sha": "364b6d6",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "feat: perfis supervisor e coordenador na tela de perfis e nas regras de ponto (#456)",
-    "files": [
-     "src/components/__tests__/InlineTabs.test.tsx",
-     "src/components/__tests__/UserRolesTab.test.tsx",
-     "src/components/settings/InlineTabs.tsx",
-     "src/components/settings/UserRolesTab.tsx",
-     "src/contexts/AuthContext.tsx",
-     "src/integrations/supabase/types.ts"
-    ]
-   },
-   {
-    "sha": "1aa6b3c",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: invariante wa_backlog_drained considera o tombstone 'cancelled' (#455)",
-    "files": [
-     "scripts/canonical-invariants.sql"
-    ]
-   },
-   {
-    "sha": "2914cb9",
-    "date": "2026-11-11",
-    "author": "adm01-debug",
-    "subject": "fix: configuracoes_ponto — remove FOR ALL em produção e restringe alteração a supervisor/coordenador (#453)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
-     "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -278603,79 +279877,79 @@
     2
    ],
    [
-    ".github/workflows/canonical-edge-functions.yml",
-    2
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    2
-   ],
-   [
-    "src/pages/AssinaturasPage.tsx",
+    "src/pages/PassivoTrabalhistaPage.tsx",
     1
    ],
    [
-    "src/components/__tests__/OnboardingPageContent.test.tsx",
+    "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
     1
    ],
    [
-    "src/components/admissoes/OnboardingPageContent.tsx",
+    "src/components/ponto/PontoInconsistencyPanel.tsx",
     1
    ],
    [
-    "src/pages/OnboardingPage.tsx",
+    "src/components/__tests__/ExameFormDialog.test.tsx",
     1
    ],
    [
-    "src/pages/DocumentosPage.tsx",
+    "src/components/__tests__/ExameTable.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/TokenInput.test.tsx",
+    "src/components/exames/ExameFormDialog.tsx",
     1
    ],
    [
-    "src/components/contratacao/TokenInput.tsx",
+    "src/components/exames/ExameTable.tsx",
     1
    ],
    [
-    "src/hooks/__tests__/useSystemHealth.test.ts",
+    "src/pages/ExamesPage.tsx",
     1
    ],
    [
-    "src/hooks/useSystemHealth.ts",
+    "src/pages/CentrosCustoPage.tsx",
     1
    ],
    [
-    "src/pages/ColaboradorDetalhesPage.tsx",
+    "src/pages/EscalasPage.tsx",
     1
    ],
    [
-    "src/pages/FinanceiroBancarioPage.tsx",
+    "src/pages/JornadasPage.tsx",
     1
    ],
    [
-    "src/pages/ConfiguracoesPage.tsx",
+    "src/pages/LocaisTrabalhoPage.tsx",
     1
    ],
    [
-    "src/pages/SegurancaPage.tsx",
+    "src/pages/LotacoesPage.tsx",
     1
    ],
    [
-    "src/components/__tests__/DashboardHeader.test.tsx",
+    "src/pages/SindicatosPage.tsx",
     1
    ],
    [
-    "src/components/dashboard/AnalyticsSection.tsx",
+    "src/pages/TurnosPage.tsx",
     1
    ],
    [
-    "src/components/dashboard/DashboardHeader.tsx",
+    "src/hooks/useFeriados.ts",
     1
    ],
    [
-    "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
+    "src/pages/FeriadosPage.tsx",
+    1
+   ],
+   [
+    "src/components/__tests__/AfastamentoTable.test.tsx",
+    1
+   ],
+   [
+    "src/components/afastamentos/AfastamentoTable.tsx",
     1
    ]
   ]

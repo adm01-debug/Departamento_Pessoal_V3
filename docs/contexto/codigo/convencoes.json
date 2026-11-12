@@ -3,11 +3,11 @@
  "format_version": 2,
  "onde_ficam": {
   "telas": [
-   "src/pages (108)",
+   "src/pages (109)",
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (311)",
+   "src/components (312)",
    "src/pages (109)",
    "src/contexts (3)"
   ],
@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (468)",
+   "co-localizado (__tests__) (471)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 23,
  "extensao_componentes": [
-  ".tsx (428)"
+  ".tsx (429)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)",
-   "fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)",
-   "fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)",
-   "fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)",
-   "fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)"
+   "fix: seta do passivo trabalhista abre a ficha do colaborador (#500)",
+   "fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)",
+   "fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)",
+   "fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)",
+   "fix: Feriados da empresa agora podem ser corrigidos e excluídos, e salvar feriado estadual/municipal/nacional para de falhar (#491)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
