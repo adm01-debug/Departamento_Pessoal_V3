@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { DctfTable, SefipTable } from '../obrigacoes/DeclaracoesTable';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -70,5 +70,18 @@ describe('SefipTable', () => {
   it('shows Baixar button when arquivo_url present', () => {
     render(<SefipTable data={SEFIP_DATA} />);
     expect(screen.getByText('Baixar')).toBeInTheDocument();
+  });
+
+  it('downloads the SEFIP content when Baixar is clicked', () => {
+    const createObjectURL = vi.fn(() => 'blob:sefip');
+    const revokeObjectURL = vi.fn();
+    Object.assign(URL, { createObjectURL, revokeObjectURL });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    render(<SefipTable data={SEFIP_DATA} />);
+    fireEvent.click(screen.getByText('Baixar'));
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:sefip');
+    click.mockRestore();
   });
 });

@@ -21,6 +21,7 @@ import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
 import { DarfTab } from '@/components/obrigacoes/DarfTab';
+import { SimuladorWhatIf } from '@/components/folha/SimuladorWhatIf';
 import { validateTablePayload } from '@/schemas/validate';
 
 function formatCurrency(v: number) {
@@ -121,6 +122,28 @@ export default function ObrigacoesFiscaisPage() {
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data || [];
+    },
+    enabled: !!empresaAtual?.id,
+  });
+
+  const {
+    data: totalIrrf = null,
+    isLoading: loadingIrrf,
+    isError: erroIrrf,
+  } = useQuery({
+    queryKey: ['darf-irrf', empresaAtual?.id, competencia],
+    queryFn: async () => {
+      const [mes, ano] = competencia.split('/');
+      const { data, error } = await supabase
+        .from('folhas_pagamento')
+        .select('id, folha_itens(irrf_mes)')
+        .eq('empresa_id', empresaAtual!.id)
+        .eq('competencia', `${ano}-${mes}`)
+        .eq('tipo', 'mensal')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) return null;
+      return (data.folha_itens ?? []).reduce((acc, i) => acc + Number(i.irrf_mes || 0), 0);
     },
     enabled: !!empresaAtual?.id,
   });
@@ -362,7 +385,7 @@ export default function ObrigacoesFiscaisPage() {
               <SefipTable data={sefip} />
             </TabsContent>
             <TabsContent value="darf">
-              <DarfTab totalFgts={totalFgts} totalInss={totalInss} />
+              <DarfTab totalIrrf={totalIrrf} competencia={competencia} isLoading={loadingIrrf} isError={erroIrrf} />
             </TabsContent>
             <TabsContent value="certificados">
               <div className="grid gap-4 md:grid-cols-2">
@@ -407,10 +430,7 @@ export default function ObrigacoesFiscaisPage() {
                     Análise de impacto "What-If" para cenários tributários
                   </p>
                 </div>
-                <Button className="rounded-xl">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nova Simulação
-                </Button>
+                <SimuladorWhatIf onSaved={() => qc.invalidateQueries({ queryKey: ['simulacoes-fiscais'] })} />
               </div>
               <div className="space-y-4">
                 {simulacoes.length === 0 ? (
