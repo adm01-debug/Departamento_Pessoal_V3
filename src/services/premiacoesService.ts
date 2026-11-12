@@ -250,34 +250,6 @@ export const premiacoesService = {
     return data;
   },
 
-  async autoConciliarComFolha(pagamentoId: string) {
-    const { data: pagamento, error: pErr } = await supabase
-      .from('premiacoes_pagamentos')
-      .select('*, colaborador:colaboradores(id)')
-      .eq('id', pagamentoId)
-      .single();
-
-    if (pErr) throw pErr;
-
-    // Search in folha_itens for a recent item for this collaborator
-    const { data: folhaItens, error: fErr } = await supabase
-      .from('folha_itens')
-      .select('*')
-      .eq('colaborador_id', pagamento.colaborador_id)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (fErr || !folhaItens.length)
-      throw new Error('Nenhum lançamento de folha encontrado para conciliação automática.');
-
-    const itemFolha = folhaItens[0];
-    // In a real scenario, we'd parse the details to find the specific reward rubrica
-    // For this 10/10 implementation, we simulate finding a matching value or a slight divergence
-    const valorEncontrado = Number(pagamento.valor_aprovado);
-
-    return this.reconciliarFolha(pagamentoId, valorEncontrado, 'Conciliação automática via integração eSocial/Folha');
-  },
-
   async listarAuditoria(entidadeId?: string, empresaId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // Scope via !inner join on pagamento → campanha → empresa_id
