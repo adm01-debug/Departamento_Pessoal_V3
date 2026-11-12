@@ -303,7 +303,7 @@ const staticCommands: CommandItem[] = [
     description: 'Cadastrar empresa',
     icon: Plus,
     category: 'action',
-    path: '/empresas/nova',
+    path: '/empresas/novo',
     gradient: 'from-primary/80 to-primary',
   },
   {
