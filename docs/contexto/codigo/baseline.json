@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44",
+  "commit": "0a089f23340bd34347d66c6b9759a64772aea1f2",
   "branch": "main",
-  "data_commit": "2026-11-12T04:30:14Z",
+  "data_commit": "2026-11-12T04:49:36Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0a089f2",
+    "data": "2026-11-12",
+    "assunto": "fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)"
+   },
    {
     "sha": "e0cd6bc",
     "data": "2026-11-12",
@@ -126,11 +131,6 @@
     "sha": "b4f9205",
     "data": "2026-11-10",
     "assunto": "chore(automacao): conecta testes, grafo e manutenção aos gatilhos (#425)"
-   },
-   {
-    "sha": "3668b50",
-    "data": "2026-11-10",
-    "assunto": "fix: RLS INSERT policy em configuracoes_ponto + codigo morto em AdminRoute (#410)"
    }
   ],
   "arquivos_mudados_7d": 438,
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 53
+    "mudancas": 52
    },
    {
     "arquivo": "package-lock.json",
@@ -250,16 +250,16 @@
     "mudancas": 11
    },
    {
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 10
+   },
+   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 10
    },
    {
     "arquivo": ".github/workflows/security.yml",
     "mudancas": 10
-   },
-   {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 9
    },
    {
     "arquivo": "infra/github/action-pins.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 116
+    "commits": 117
    },
    {
     "autor": "devin-ai-integration[bot]",

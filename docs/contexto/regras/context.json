@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44",
+  "sha": "0a089f23340bd34347d66c6b9759a64772aea1f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 04:53 UTC",
+  "generated_at": "2026-11-12 05:13 UTC",
   "files_total": 2902,
   "code_files": 2373,
   "code_lines": 321637
@@ -278009,10 +278009,19 @@
   }
  },
  "git": {
-  "sha": "e0cd6bc9ece9f5cdb1fd67156f1aa7cbf0275f44",
+  "sha": "0a089f23340bd34347d66c6b9759a64772aea1f2",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "0a089f2",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)",
+    "files": [
+     ".github/workflows/canonical-edge-functions.yml"
+    ]
+   },
    {
     "sha": "e0cd6bc",
     "date": "2026-11-12",
@@ -278446,20 +278455,6 @@
     "files": [
      "scripts/audit-security-config.mjs",
      "scripts/build-rebaseline.mjs"
-    ]
-   },
-   {
-    "sha": "f8dace8",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "fix: backup, deploy, rollback, capacitor-build, wait-for-postgres e guard do CLAUDE.md não reportam sucesso sem fazer o trabalho (#419)",
-    "files": [
-     "scripts/backup.sh",
-     "scripts/capacitor-build.sh",
-     "scripts/ci/check-claude-md-integrity.mjs",
-     "scripts/deploy.sh",
-     "scripts/rollback.sh",
-     "scripts/tests/wait-for-postgres-container.sh"
     ]
    }
   ],
