@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePiiMask } from '@/hooks/usePiiMask';
+import { usePDFExport } from '@/hooks/usePDFExport';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -56,6 +57,7 @@ import {
 
 export default function ColaboradorDetalhesPage() {
   const pii = usePiiMask();
+  const { exportarPDF } = usePDFExport();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { empresaAtual } = useEmpresas();
@@ -106,11 +108,36 @@ export default function ColaboradorDetalhesPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="rounded-xl">
-                <DropdownMenuItem className="gap-2 cursor-pointer">
+                <DropdownMenuItem
+                  className="gap-2 cursor-pointer"
+                  onSelect={() =>
+                    void exportarPDF(
+                      `Ficha - ${colaborador.nome_completo}`,
+                      [
+                        { Campo: 'Nome', Valor: colaborador.nome_completo },
+                        { Campo: 'CPF', Valor: colaborador.cpf ? pii.cpf(colaborador.cpf) : '—' },
+                        { Campo: 'Cargo', Valor: colaborador.cargo || '—' },
+                        { Campo: 'Departamento', Valor: colaborador.departamento || '—' },
+                        { Campo: 'Status', Valor: colaborador.status || '—' },
+                        { Campo: 'Admissão', Valor: colaborador.data_admissao || '—' },
+                        {
+                          Campo: 'Salário Base',
+                          Valor: Number(colaborador.salario_base).toLocaleString('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                          }),
+                        },
+                        { Campo: 'E-mail', Valor: colaborador.email ? pii.email(colaborador.email) : '—' },
+                        {
+                          Campo: 'Cidade/UF',
+                          Valor: colaborador.cidade ? `${colaborador.cidade} - ${colaborador.uf ?? ''}` : '—',
+                        },
+                      ],
+                      ['Campo', 'Valor']
+                    )
+                  }
+                >
                   <FileText className="h-4 w-4" /> Exportar Ficha (PDF)
-                </DropdownMenuItem>
-                <DropdownMenuItem className="gap-2 cursor-pointer text-destructive">
-                  <MoreHorizontal className="h-4 w-4" /> Outras Ações
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
