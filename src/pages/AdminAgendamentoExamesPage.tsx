@@ -16,6 +16,7 @@ import { CalendarClock, CheckCircle2, MapPin, Navigation, Plus, Stethoscope, Loa
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateTablePayload } from '@/schemas/validate';
+import { datetimeLocalToISO } from '@/utils/dateLocal';
 
 type Agend = {
   id: string;
@@ -156,7 +157,7 @@ export default function AdminAgendamentoExamesPage() {
             colaborador_id: colaboradorId,
             clinica_id: clinicaEscolhida.id,
             tipo_exame: tipoExame,
-            data_agendada: dataAgendada,
+            data_agendada: datetimeLocalToISO(dataAgendada),
             distancia_km: clinicaEscolhida.distancia_km,
             colaborador_lat: Number(lat),
             colaborador_lng: Number(lng),
@@ -544,7 +545,7 @@ export default function AdminAgendamentoExamesPage() {
                     id: acaoAlvo.ag.id,
                     patch:
                       acaoAlvo.tipo === 'remarcar'
-                        ? { status: 'reagendado', data_agendada: novaData }
+                        ? { status: 'reagendado', data_agendada: datetimeLocalToISO(novaData) }
                         : { status: 'cancelado' },
                   });
                 }}

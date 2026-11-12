@@ -82,7 +82,10 @@ describe('AdminAgendamentoExamesPage — ações por linha', () => {
     await user.click(confirmar);
 
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Exame remarcado'));
-    expect(updateChain.update).toHaveBeenCalledWith({ status: 'reagendado', data_agendada: '2030-02-01T09:30' });
+    expect(updateChain.update).toHaveBeenCalledWith({
+      status: 'reagendado',
+      data_agendada: new Date('2030-02-01T09:30').toISOString(),
+    });
   });
 
   it('acusa erro quando o UPDATE não afeta nenhuma linha (RLS/registro inexistente)', async () => {
