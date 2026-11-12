@@ -162,7 +162,20 @@ if [ "$DRY" -eq 1 ]; then
 fi
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
-if ! "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${GERADOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err"; then
+# (12/11, revisão) Um arquivo ilegível ou um repositório aninhado sem commit derrubava o `add -A` INTEIRO e nada era
+# commitado. Agora esses caminhos saem do commit (ficam no disco, registrados) e o resto segue; até 5 tentativas.
+adicionou=0
+for _tentativa in 1 2 3 4 5; do
+  if "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${GERADOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err"; then adicionou=1; break; fi
+  "${G[@]}" reset -q 2>/dev/null
+  # falha do REPOSITÓRIO (objetos sem escrita, disco cheio): não há culpado por arquivo — para tudo com 75
+  grep -qE "insufficient permission for adding an object|failed to insert into database|No space left|unable to write" "$STATE/ac-$KEY.err" && break
+  # só causas ESPECÍFICAS de um caminho ("unable to index file" sozinho também aparece em falha do repositório)
+  mapfile -t culpados < <(sed -nE "s/^error: open\\(\"(.*)\"\\): Permission denied$/\\1/p; s/^error: '(.*)\\/' does not have a commit checked out$/\\1/p" "$STATE/ac-$KEY.err" | sort -u)
+  [ ${#culpados[@]} -gt 0 ] || break
+  for c in "${culpados[@]}"; do excluir "$c" "não dá para incluir (arquivo ilegível ou repositório aninhado sem commit)"; done
+done
+if [ "$adicionou" -ne 1 ]; then
   # (12/11) era exit 0 (sucesso invisível); disco cheio/permissão repetiria toda hora sem ninguém ver: 75 = atenção
   say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 75
 fi
