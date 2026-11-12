@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import ObrigacoesFiscaisPage from '@/pages/ObrigacoesFiscaisPage';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 
-vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() } }));
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn() } }));
 vi.mock('@/hooks', () => ({ useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }) }));
 vi.mock('@/services/edgeFunctionsService', () => ({
   edgeFunctionsService: { gerarGuias: vi.fn() },
@@ -46,6 +46,17 @@ describe('ObrigacoesFiscaisPage — gerar guias via servidor', () => {
     expect(gerarGuias).toHaveBeenCalledWith(expect.objectContaining({ empresaId: 'emp-1', tipo: 'todos' }));
   });
 
+  it('avisa quando o DARF foi só calculado e não salvo (nao_persistidas)', async () => {
+    gerarGuias.mockResolvedValue({
+      data: { success: true, guias: [{}, {}], duplicatas_bloqueadas: [], nao_persistidas: [{ tipo: 'DARF' }] },
+      attempts: 1,
+    } as never);
+    renderPage();
+    await userEvent.setup().click(screen.getByRole('button', { name: /Auto/i }));
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('2 guia(s) gerada(s)'));
+    expect(toast.warning).toHaveBeenCalledWith('DARF calculado, mas não salvo: sem tabela de DARF no banco.');
+  });
+
   it('não anuncia sucesso quando tudo já existia: informa as duplicatas', async () => {
     gerarGuias.mockResolvedValue({
       data: { success: true, guias: [], duplicatas_bloqueadas: ['GPS', 'FGTS_DIGITAL'] },
@@ -57,5 +68,6 @@ describe('ObrigacoesFiscaisPage — gerar guias via servidor', () => {
       expect(toast.info).toHaveBeenCalledWith('Nenhuma guia nova; já existentes nesta competência: GPS, FGTS_DIGITAL')
     );
     expect(toast.success).not.toHaveBeenCalled();
+    expect(toast.warning).not.toHaveBeenCalled();
   });
 });

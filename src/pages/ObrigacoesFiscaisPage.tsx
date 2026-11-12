@@ -186,7 +186,13 @@ export default function ObrigacoesFiscaisPage() {
         empresaId: empresaAtual.id,
         competencia: `${ano}-${mes}`,
         tipo: 'todos',
-      })) as { data?: { guias?: unknown[]; duplicatas_bloqueadas?: string[] } | null };
+      })) as {
+        data?: {
+          guias?: unknown[];
+          duplicatas_bloqueadas?: string[];
+          nao_persistidas?: { tipo: string }[];
+        } | null;
+      };
       qc.invalidateQueries({ queryKey: ['guias-fgts'] });
       qc.invalidateQueries({ queryKey: ['guias-inss'] });
       const geradas = r?.guias?.length ?? 0;
@@ -200,6 +206,13 @@ export default function ObrigacoesFiscaisPage() {
           duplicadas.length
             ? `Nenhuma guia nova; já existentes nesta competência: ${duplicadas.join(', ')}`
             : 'Nenhuma guia nova gerada.'
+        );
+      }
+      // A edge só calcula (não grava) tipos sem tabela no banco, hoje o DARF.
+      const naoSalvas = r?.nao_persistidas ?? [];
+      if (naoSalvas.length) {
+        toast.warning(
+          `${naoSalvas.map((g) => g.tipo).join(', ')} calculado, mas não salvo: sem tabela de DARF no banco.`
         );
       }
     } catch (err) {
