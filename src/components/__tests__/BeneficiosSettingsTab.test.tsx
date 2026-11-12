@@ -121,13 +121,20 @@ describe('BeneficiosSettingsTab', () => {
 
     const opts = vi.mocked(useMutation).mock.calls.map((c) => c[0] as { mutationFn: (v: string) => Promise<void> });
     const eq = vi.fn().mockReturnThis();
-    const chain = { delete: vi.fn(() => chain), eq: vi.fn((...a: unknown[]) => (eq(...a), chain)), error: null };
+    const select = vi.fn(async () => ({ data: [{ id: 'b1' }], error: null }));
+    const chain = { delete: vi.fn(() => chain), eq: vi.fn((...a: unknown[]) => (eq(...a), chain)), select };
     vi.mocked(supabase.from).mockReturnValue(chain as never);
-    await opts[opts.length - 1].mutationFn('b1');
+    const excluir = opts[opts.length - 1].mutationFn;
+    await excluir('b1');
     expect(supabase.from).toHaveBeenCalledWith('beneficios');
     expect(chain.delete).toHaveBeenCalled();
     expect(eq).toHaveBeenCalledWith('id', 'b1');
     expect(eq).toHaveBeenCalledWith('empresa_id', 'empresa-1');
+    expect(select).toHaveBeenCalledWith('id');
+
+    // Plano de outra empresa (0 linhas afetadas) não pode virar "Plano excluído".
+    select.mockResolvedValueOnce({ data: [], error: null });
+    await expect(excluir('b1')).rejects.toThrow(/não pertence à empresa selecionada/);
   });
 
   it('shows dialog when Novo Plano clicked', async () => {

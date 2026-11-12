@@ -85,6 +85,28 @@ describe('CnabConfigPanel', () => {
     expect(svc.saveConfig).not.toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalled();
   });
+
+  it('Salvar Configurações fica desabilitado enquanto a config carrega', async () => {
+    svc.getConfig.mockReturnValue(new Promise(() => {}));
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    await user.click(screen.getByRole('tab', { name: 'Configuração Bancária' }));
+    expect(screen.getByRole('button', { name: 'Salvar Configurações' })).toBeDisabled();
+  });
+
+  it('Salvar Configurações fica desabilitado se a config falhou ao carregar (evita duplicar)', async () => {
+    svc.getConfig.mockRejectedValue(new Error('falhou'));
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    await user.click(screen.getByRole('tab', { name: 'Configuração Bancária' }));
+    await waitFor(() => expect(svc.getConfig).toHaveBeenCalled());
+    expect(screen.getByRole('button', { name: 'Salvar Configurações' })).toBeDisabled();
+    expect(svc.saveConfig).not.toHaveBeenCalled();
+  });
 });
 
 describe('WebhookConfigPanel', () => {

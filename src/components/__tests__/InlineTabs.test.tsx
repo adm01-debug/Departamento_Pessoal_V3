@@ -153,14 +153,31 @@ describe('PreferenciasTab', () => {
     expect(screen.getByRole('button', { name: 'Salvar Alterações' })).toBeInTheDocument();
   });
 
-  it('Salvar Alterações grava o nome de exibição no usuário do Auth', async () => {
-    const updateUser = vi.fn(async () => ({ data: {}, error: null }));
+  it('Salvar Alterações grava o nome de exibição no Auth e em profiles.nome', async () => {
+    const updateUser = vi.fn(async () => ({ data: { user: { id: 'user-1' } }, error: null }));
     Object.assign(supabase.auth, { updateUser });
+    const chain = makeChain({ data: null, error: null });
+    fromMock.mockImplementation(() => chain);
     render(<PreferenciasTab user={{ name: 'Ana Lima' }} />);
     fireEvent.change(screen.getByLabelText('Nome de Exibição'), { target: { value: '  Ana Souza ' } });
     fireEvent.click(screen.getByRole('button', { name: 'Salvar Alterações' }));
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Preferências salvas!'));
     expect(updateUser).toHaveBeenCalledWith({ data: { name: 'Ana Souza' } });
+    expect(fromMock).toHaveBeenCalledWith('profiles');
+    expect(chain.update).toHaveBeenCalledWith({ nome: 'Ana Souza' });
+    expect(chain.eq).toHaveBeenCalledWith('user_id', 'user-1');
+    expect(captured.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['meu-perfil'] });
+  });
+
+  it('Salvar Alterações com erro ao gravar profiles mostra toast.error', async () => {
+    Object.assign(supabase.auth, {
+      updateUser: vi.fn(async () => ({ data: { user: { id: 'user-1' } }, error: null })),
+    });
+    fromMock.mockImplementation(() => makeChain({ data: null, error: { message: 'rls' } }));
+    render(<PreferenciasTab user={{ name: 'Ana Lima' }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar Alterações' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Erro ao salvar preferências.'));
+    expect(toast.success).not.toHaveBeenCalled();
   });
 
   it('Salvar Alterações com erro do Auth mostra toast.error e não confirma', async () => {

@@ -256,7 +256,11 @@ export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id || '';
-  const { data: config } = useQuery({
+  const {
+    data: config,
+    isLoading: carregandoConfig,
+    isError: erroConfig,
+  } = useQuery({
     queryKey: ['cnab_config', empresaId],
     queryFn: () => cnabService.getConfig(empresaId),
     enabled: !!empresaId,
@@ -430,7 +434,7 @@ export function CnabConfigPanel() {
             <Button
               className="w-fit px-8 rounded-xl shadow-lg shadow-primary/20"
               onClick={() => salvarConfig.mutate()}
-              disabled={!empresaId || salvarConfig.isPending}
+              disabled={!empresaId || carregandoConfig || erroConfig || config === undefined || salvarConfig.isPending}
             >
               {salvarConfig.isPending ? 'Salvando...' : 'Salvar Configurações'}
             </Button>

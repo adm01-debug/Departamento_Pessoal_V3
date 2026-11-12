@@ -95,8 +95,15 @@ export function BeneficiosSettingsTab() {
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       if (!empresaAtual?.id) throw new Error('Selecione uma empresa.');
-      const { error } = await supabase.from('beneficios').delete().eq('id', id).eq('empresa_id', empresaAtual.id);
+      const { data, error } = await supabase
+        .from('beneficios')
+        .delete()
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual.id)
+        .select('id');
       if (error) throw error;
+      if (!data?.length)
+        throw new Error('Plano não excluído: ele não pertence à empresa selecionada ou já foi removido.');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['configuracoes-beneficios'] });

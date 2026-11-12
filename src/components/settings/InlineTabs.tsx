@@ -26,6 +26,7 @@ type AuthUser = { name?: string } | null | undefined;
 
 export function PreferenciasTab({ user }: { user: AuthUser }) {
   const { theme, setTheme } = useTheme();
+  const qc = useQueryClient();
   // Edição do usuário sobre o nome atual (estado derivado: acompanha o user até ele digitar).
   const [draftNome, setDraftNome] = useState<string | null>(null);
   const nome = draftNome ?? user?.name ?? '';
@@ -36,10 +37,22 @@ export function PreferenciasTab({ user }: { user: AuthUser }) {
     mutationFn: async () => {
       const name = nome.trim();
       if (!name) throw new Error('Informe o nome de exibição.');
-      const { error } = await supabase.auth.updateUser({ data: { name } });
+      const { data, error } = await supabase.auth.updateUser({ data: { name } });
       if (error) throw error;
+      // Mantém profiles.nome em sincronia, como a tela de Perfil faz (PerfilPage.handleSave).
+      const userId = data.user?.id;
+      if (userId) {
+        const { error: perfilError } = await supabase
+          .from('profiles')
+          .update(validateTablePayload('profiles', { nome: name }, 'PreferenciasTab:profiles'))
+          .eq('user_id', userId);
+        if (perfilError) throw perfilError;
+      }
     },
-    onSuccess: () => toast.success('Preferências salvas!'),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['meu-perfil'] });
+      toast.success('Preferências salvas!');
+    },
     onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao salvar preferências.')),
   });
 
