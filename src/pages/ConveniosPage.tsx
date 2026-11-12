@@ -126,6 +126,7 @@ export default function ConveniosPage() {
       qc.invalidateQueries({ queryKey: ['convenios'] });
       toast.success('Excluído');
     },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao excluir convênio')),
   });
 
   // === Convênios ↔ Colaboradores ===
