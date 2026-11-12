@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "97ce91a91a804a5acb11444acceb6604872fea87",
+  "sha": "688c78f128f49f3de598c7e5ae32e493c86384a6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 05:29 UTC",
+  "generated_at": "2026-11-12 11:31 UTC",
   "files_total": 2902,
   "code_files": 2373,
   "code_lines": 321637
@@ -278009,10 +278009,23 @@
   }
  },
  "git": {
-  "sha": "97ce91a91a804a5acb11444acceb6604872fea87",
+  "sha": "688c78f128f49f3de598c7e5ae32e493c86384a6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "688c78f",
+    "date": "2026-11-12",
+    "author": "dependabot[bot]",
+    "subject": "build(deps): bump the actions group across 1 directory with 5 updates (#426)",
+    "files": [
+     ".github/workflows/canonical-edge-functions.yml",
+     ".github/workflows/ossf-scorecard.yml",
+     ".github/workflows/security.yml",
+     ".github/workflows/workflow-lint.yml",
+     "infra/github/action-pins.json"
+    ]
+   },
    {
     "sha": "97ce91a",
     "date": "2026-11-12",
@@ -278377,85 +278390,6 @@
      "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
      "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.verify.sql"
     ]
-   },
-   {
-    "sha": "bc5d927",
-    "date": "2026-11-10",
-    "author": "adm01-debug",
-    "subject": "infra: migra imports esm.sh para npm: pinados nas edge functions (#362)",
-    "files": [
-     "deno.json",
-     "deno.lock",
-     "supabase/functions/OCR/index.ts",
-     "supabase/functions/_shared/folhaIntegrity.ts",
-     "supabase/functions/_shared/idempotency.ts",
-     "supabase/functions/_shared/monitor.ts",
-     "supabase/functions/_shared/outboundDelivery.ts",
-     "supabase/functions/adiantamento-salarial/index.ts",
-     "supabase/functions/admissao-publica/index.ts",
-     "supabase/functions/alertas-dp/index.ts",
-     "supabase/functions/alertas-preditivos/index.ts",
-     "supabase/functions/assinaturaDigital/index.ts",
-     "supabase/functions/assistente-ia/index.ts",
-     "supabase/functions/auditoria/index.ts",
-     "supabase/functions/auth-gov-br/index.ts",
-     "supabase/functions/auth-login/index.ts",
-     "supabase/functions/backup-automatico/index.ts",
-     "supabase/functions/backup/index.ts",
-     "supabase/functions/cache/index.ts",
-     "supabase/functions/calcular-13-salario/index.ts",
-     "supabase/functions/calcular-ferias/index.ts",
-     "supabase/functions/calcular-folha/index.ts",
-     "supabase/functions/calcular-provisoes/index.ts",
-     "supabase/functions/calcular-rescisao/index.ts",
-     "supabase/functions/cnab-remessa/index.ts",
-     "supabase/functions/consultarCEP/index.ts",
-     "supabase/functions/consultarCNPJ/index.ts",
-     "supabase/functions/criptografia/index.ts",
-     "supabase/functions/dctfweb/index.ts",
-     "supabase/functions/distribuir-holerites/index.ts",
-     "supabase/functions/emprestimo-consignado/index.ts",
-     "supabase/functions/enviar-email-admissao/index.ts",
-     "supabase/functions/enviar-esocial/index.ts",
-     "supabase/functions/enviar-relatorio/index.ts",
-     "supabase/functions/exportacao/index.ts",
-     "supabase/functions/external-db-bridge/index.ts",
-     "supabase/functions/fechar-folha/index.ts",
-     "supabase/functions/fgts-digital/index.ts",
-     "supabase/functions/folha-metrics/index.ts",
-     "supabase/functions/gerar-aej/index.ts",
-     "supabase/functions/gerar-afd/index.ts",
-     "supabase/functions/gerar-contrato-pdf/index.ts",
-     "supabase/functions/gerar-guias/index.ts",
-     "supabase/functions/gerar-holerite/index.ts",
-     "supabase/functions/gerar-ltcat-os/index.ts",
-     "supabase/functions/gerar-medida-disciplinar-pdf/index.ts",
-     "supabase/functions/gerar-pgr/index.ts",
-     "supabase/functions/healthcheck/index.ts",
-     "supabase/functions/importacao/index.ts",
-     "supabase/functions/integracao/index.ts",
-     "supabase/functions/limpeza/index.ts",
-     "supabase/functions/metricas/index.ts",
-     "supabase/functions/metrics/index.ts",
-     "supabase/functions/notificacao/index.ts",
-     "supabase/functions/pagar-desligamento/index.ts",
-     "supabase/functions/parse-afdt/index.ts",
-     "supabase/functions/pix-lote/index.ts",
-     "supabase/functions/process-document-ocr/index.ts",
-     "supabase/functions/processar-agendamentos/filaNotificacoes.ts",
-     "supabase/functions/processar-agendamentos/index.ts",
-     "supabase/functions/processar-ponto-offline/index.ts",
-     "supabase/functions/processar-ponto/index.ts",
-     "supabase/functions/rateLimit/index.ts",
-     "supabase/functions/reabrir-folha/index.ts",
-     "supabase/functions/relatorio/index.ts",
-     "supabase/functions/sincronizar-bitrix/index.ts",
-     "supabase/functions/tabelas-dominio/index.ts",
-     "supabase/functions/upload-certificado/index.ts",
-     "supabase/functions/validar-biometria/index.ts",
-     "supabase/functions/warmup/index.ts",
-     "supabase/functions/whatsapp-send/index.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -278472,31 +278406,15 @@
     3
    ],
    [
-    "deno.lock",
-    3
+    ".github/workflows/canonical-edge-functions.yml",
+    2
+   ],
+   [
+    "infra/github/action-pins.json",
+    2
    ],
    [
     ".github/workflows/canonical-probes.yml",
-    2
-   ],
-   [
-    "supabase/functions/OCR/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/alertas-preditivos/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/assistente-ia/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/process-document-ocr/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/validar-biometria/index.ts",
     2
    ],
    [
@@ -278509,18 +278427,6 @@
    ],
    [
     "supabase/migrations/20261109000000_configuracoes_ponto_insert_policy.sql",
-    2
-   ],
-   [
-    "supabase/functions/_shared/outboundDelivery.ts",
-    2
-   ],
-   [
-    "supabase/functions/alertas-dp/index.ts",
-    2
-   ],
-   [
-    "supabase/functions/enviar-relatorio/index.ts",
     2
    ],
    [
@@ -278538,6 +278444,34 @@
    [
     ".github/workflows/ci.yml",
     2
+   ],
+   [
+    "deno.lock",
+    2
+   ],
+   [
+    "package.json",
+    2
+   ],
+   [
+    "scripts/simulacao/_lib/ts-require.cjs",
+    2
+   ],
+   [
+    "scripts/simulacao/verify_rescisao_fix.cjs",
+    2
+   ],
+   [
+    "scripts/ci/README.md",
+    2
+   ],
+   [
+    ".github/workflows/ossf-scorecard.yml",
+    1
+   ],
+   [
+    ".github/workflows/security.yml",
+    1
    ]
   ]
  }

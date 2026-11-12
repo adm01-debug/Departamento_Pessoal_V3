@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `97ce91a91a804a5acb11444acceb6604872fea87` (2026-11-12T05:08:24Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `688c78f128f49f3de598c7e5ae32e493c86384a6` (2026-11-12T11:21:40Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -383,7 +383,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21984 nós · 46148 arestas · 2121 comunidades · grafo do commit `97ce91a9`
+- 21984 nós · 46148 arestas · 2121 comunidades · grafo do commit `688c78f1`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (372), button.tsx (321), lucide-react (301), cn (249), vitest (249), react (211), supabase/types.ts (168), deepChain (166), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -391,7 +391,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (54)
 - package.json (52)
-- package-lock.json (49)
+- package-lock.json (48)
 - CLAUDE.md (28)
 - .github/workflows/ci.yml (20)
 - PENDENCIAS.md (13)
@@ -399,11 +399,11 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - AGENTS.md (12)
 - deno.lock (12)
 - src/integrations/supabase/types.ts (12)
+- .github/workflows/canonical-edge-functions.yml (11)
 - .github/workflows/canonical-probes.yml (11)
 - .github/workflows/e2e.yml (11)
+- .github/workflows/security.yml (11)
 - supabase/functions/external-db-bridge/index.ts (11)
-- supabase/functions/external-db-bridge/validation.ts (11)
-- .github/workflows/canonical-edge-functions.yml (10)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -614,6 +614,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `688c78f` build(deps): bump the actions group across 1 directory with 5 updates (#426)
 - 2026-11-12 `97ce91a` infra: probes canônicos em fila própria (destrava migrations) (#442)
 - 2026-11-12 `0a089f2` fix: deploy automático de Edge Functions volta a detectar as funções alteradas (#454)
 - 2026-11-12 `e0cd6bc` feat: IA das Edge Functions passa da Lovable para a DeepSeek (deepseek-flash, texto + imagem) (#452)
@@ -628,7 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-11 `145cb90` fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)
 - 2026-11-11 `bfb3cb0` infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)
 - 2026-11-11 `6ddd6bd` fix: deno.lock desatualizado quebrava o gate Edge Functions (deno check) (#445)
-- 2026-11-11 `71b9957` style(manutencao): aplica correcoes locais verificadas (#439)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

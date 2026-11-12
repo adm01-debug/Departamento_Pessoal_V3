@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "97ce91a91a804a5acb11444acceb6604872fea87",
+  "commit": "688c78f128f49f3de598c7e5ae32e493c86384a6",
   "branch": "main",
-  "data_commit": "2026-11-12T05:08:24Z",
+  "data_commit": "2026-11-12T11:21:40Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "688c78f",
+    "data": "2026-11-12",
+    "assunto": "build(deps): bump the actions group across 1 directory with 5 updates (#426)"
+   },
    {
     "sha": "97ce91a",
     "data": "2026-11-12",
@@ -126,26 +131,17 @@
     "sha": "225d591",
     "data": "2026-11-10",
     "assunto": "feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)"
-   },
-   {
-    "sha": "24cadd4",
-    "data": "2026-11-10",
-    "assunto": "chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)"
    }
   ],
-  "arquivos_mudados_7d": 439,
+  "arquivos_mudados_7d": 442,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 41
+    "mudancas": 40
    },
    {
     "pasta": "package.json",
     "mudancas": 22
-   },
-   {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 21
    },
    {
     "pasta": "CLAUDE.md",
@@ -153,6 +149,10 @@
    },
    {
     "pasta": "package-lock.json",
+    "mudancas": 20
+   },
+   {
+    "pasta": "supabase/functions/_shared",
     "mudancas": 20
    },
    {
@@ -168,10 +168,6 @@
     "mudancas": 16
    },
    {
-    "pasta": "src/services/__tests__",
-    "mudancas": 14
-   },
-   {
     "pasta": "PENDENCIAS.md",
     "mudancas": 13
    },
@@ -180,7 +176,15 @@
     "mudancas": 13
    },
    {
+    "pasta": "src/services/__tests__",
+    "mudancas": 13
+   },
+   {
     "pasta": ".github/workflows/ci.yml",
+    "mudancas": 10
+   },
+   {
+    "pasta": "infra/github/action-pins.json",
     "mudancas": 10
    },
    {
@@ -189,10 +193,6 @@
    },
    {
     "pasta": "deno.lock",
-    "mudancas": 9
-   },
-   {
-    "pasta": "infra/github/action-pins.json",
     "mudancas": 9
    }
   ],
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 49
+    "mudancas": 48
    },
    {
     "arquivo": "CLAUDE.md",
@@ -238,11 +238,19 @@
     "mudancas": 12
    },
    {
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
+    "mudancas": 11
+   },
+   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 11
    },
    {
     "arquivo": ".github/workflows/e2e.yml",
+    "mudancas": 11
+   },
+   {
+    "arquivo": ".github/workflows/security.yml",
     "mudancas": 11
    },
    {
@@ -254,16 +262,8 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 10
-   },
-   {
-    "arquivo": ".github/workflows/security.yml",
-    "mudancas": 10
-   },
-   {
     "arquivo": "infra/github/action-pins.json",
-    "mudancas": 9
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
@@ -305,11 +305,11 @@
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 65
+    "commits": 63
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 18
+    "commits": 19
    },
    {
     "autor": "github-actions[bot]",
