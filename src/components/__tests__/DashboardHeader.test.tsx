@@ -35,9 +35,9 @@ describe('DashboardHeader', () => {
     expect(screen.getByText('Sincronizar')).toBeInTheDocument();
   });
 
-  it('renders Exportar button', () => {
+  it('does not render inert Exportar menu', () => {
     render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByText('Exportar')).toBeInTheDocument();
+    expect(screen.queryByText('Exportar')).not.toBeInTheDocument();
   });
 
   it('renders Configurações button', () => {
@@ -45,18 +45,21 @@ describe('DashboardHeader', () => {
     expect(screen.getByRole('button', { name: /Configurações/i })).toBeInTheDocument();
   });
 
-  it('renders search input with placeholder', () => {
+  it('does not render inert search input', () => {
     render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByPlaceholderText(/Pesquisar colaboradores/i)).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/Pesquisar colaboradores/i)).not.toBeInTheDocument();
   });
 
-  it('renders month filter button', () => {
+  it('renders current competência instead of a fixed month', () => {
     render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByText('05/2026')).toBeInTheDocument();
+    const now = new Date();
+    const atual = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+    expect(screen.getByLabelText('Competência exibida')).toHaveTextContent(atual);
+    expect(screen.queryByText('05/2026')).toBeNull();
   });
 
-  it('renders Todos os Departamentos filter', () => {
+  it('does not render inert department filter', () => {
     render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByText('Todos os Departamentos')).toBeInTheDocument();
+    expect(screen.queryByText('Todos os Departamentos')).not.toBeInTheDocument();
   });
 });
