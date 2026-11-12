@@ -185,7 +185,7 @@ if [ -n "$DIRTY" ] && [ "$QUIET_MIN" -gt 0 ]; then
 fi
 
 # 5. backup do que é só local (nada se perde)
-BACKUP=""
+BACKUP=""; TREE=""   # (QA4) nunca herdado do ambiente
 perde_commits=0
 if [ "$CUR" = "$BRANCH" ] || [ "$CUR" = "HEAD" ]; then
   "${G[@]}" merge-base --is-ancestor "$HEAD_SHA" "origin/$BRANCH" 2>/dev/null || perde_commits=1
@@ -218,6 +218,17 @@ fi
 SEGREDO_RE='(^|/)\.env([._-][^/]*)?$|\.(pem|key|p12|pfx|jks|kdbx)$|(^|/)(id_(rsa|dsa|ecdsa|ed25519)|\.npmrc|\.netrc|\.git-credentials|\.pgpass)$|credential|secret|token|passw|senha'
 if [ -s "$NOCAMINHO" ] && tr '\0' '\n' < "$NOCAMINHO" | grep -qiE "$SEGREDO_RE"; then
   say "ERRO: arquivo ignorado com nome de segredo ($(tr '\0' '\n' < "$NOCAMINHO" | grep -iE "$SEGREDO_RE" | head -3 | tr '\n' ' ')) está no lugar de um caminho que o GitHub rastreia; ele não vai para o backup (segredo não entra em commit) — NADA foi descartado; mova-o para fora deste checkout"; exit 1
+fi
+# (QA 11/11) NÃO rastreado e NÃO ignorado com nome de segredo (ex.: .env.production sem .gitignore): o backup o gravaria num
+# commit e o `clean -fd` o apagaria do disco. Falha fechada: nada é descartado nem gravado; mova-o ou ignore-o.
+# Padrão ESTREITO (só nome de arquivo de segredo de verdade): palavras soltas como token/senha em src/auth/tokenService.ts não
+# bloqueiam o espelho (QA4). Inclui o que está só em `git add` (diff --cached A), que também iria para o commit de backup.
+SEGREDO_ARQ_RE='(^|/)\.env($|[._-][^/]*$)|(^|/)\.envrc$|\.(pem|key|p12|pfx|jks|kdbx)$|(^|/)(id_(rsa|dsa|ecdsa|ed25519)|\.npmrc|\.netrc|\.git-credentials|\.pgpass)$|(^|/)[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)$|(^|/)(service[-_]account|client_secret)[^/]*\.json$'
+NR_LISTA="$({ "${G[@]}" ls-files -z -o --exclude-standard && "${G[@]}" diff --cached -z --name-only --diff-filter=A HEAD; } 2>"$STATE/$KEY.err")" \
+  || { say "ERRO: não consegui listar arquivos não rastreados/em stage; NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
+NAO_RASTREADO_SEGREDO="$(printf '%s' "$NR_LISTA" | tr '\0' '\n' | grep -iE "$SEGREDO_ARQ_RE" | grep -viE '\.(example|sample|template)$' | head -3 | tr '\n' ' ')"
+if [ -n "$NAO_RASTREADO_SEGREDO" ]; then
+  say "ERRO: arquivo NÃO rastreado com nome de segredo ($NAO_RASTREADO_SEGREDO) seria gravado no backup e apagado pelo espelhamento — NADA foi descartado; adicione-o ao .gitignore ou mova-o para fora deste checkout"; exit 1
 fi
 [ -s "$NOCAMINHO" ] && EXTRA="$EXTRA; inclui $(tr -cd '\0' < "$NOCAMINHO" | wc -c) arquivo(s) IGNORADO(S) que estavam no lugar de caminhos que o GitHub rastreia"
 if [ -n "$DIRTY" ] || [ "$perde_commits" -eq 1 ] || [ -s "$NOCAMINHO" ]; then
@@ -271,11 +282,19 @@ fi
 if [ "$DRY" -eq 1 ]; then say "[dry-run] espelharia: checkout $BRANCH @ ${REMOTE_SHA:0:9} (hoje: $CUR @ ${HEAD_SHA:0:9})"; exit 0; fi
 
 # 6. espelha. `clean` ANTES do checkout (arquivo não rastreado no caminho de um rastreado); sem -x: ignorados ficam.
+# (QA 11/11) janela entre o backup e o clean: se o disco mudou desde a foto, adia (nada é descartado sem backup).
+if [ -n "$TREE" ] && [ "$(snap_tree)" != "$TREE" ]; then
+  say "ADIEI: arquivos mudaram entre o backup e o espelhamento; NADA foi descartado; próxima execução${BACKUP:+ (backup: $BACKUP)}"; exit 0
+fi
+# sem backup (árvore estava limpa): qualquer coisa que apareceu desde o `git status` adia — o clean não pode apagar sem backup
+if [ -z "$TREE" ] && [ -n "$("${G[@]}" status --porcelain --ignore-submodules=all 2>/dev/null)" ]; then
+  say "ADIEI: surgiram alterações depois da verificação; NADA foi descartado; próxima execução"; exit 0
+fi
 "${G[@]}" clean -fdq
 if ! "${G[@]}" checkout -q -f -B "$BRANCH" "origin/$BRANCH" 2>"$STATE/$KEY.err"; then
   say "ERRO no checkout: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')${BACKUP:+ (backup preservado em $BACKUP)}"; exit 1
 fi
-"${G[@]}" clean -fdq
+# (QA4) sem 2º clean: arquivo criado entre o clean e o checkout seria apagado sem backup; o passo 7 acusa e a próxima faz backup
 
 # 7. confere (bytes inclusive)
 normaliza_bytes
