@@ -79,7 +79,7 @@ jobs:
           fi
           mapfile -t CHANGED < <(
             git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- supabase/functions \
-              | awk -F/ 'NF>=2{print $2}' \
+              | awk -F/ 'NF>=4{print $3}' \
               | LC_ALL=C sort -u
           )
           CONFIG_CHANGED="$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- supabase/config.toml)"
@@ -194,7 +194,7 @@ jobs:
               SOURCE="fallback-all"
             else
               FN_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/functions \
-                | awk -F/ 'NF>=2{print $2}' | LC_ALL=C sort -u)"
+                | awk -F/ 'NF>=4{print $3}' | LC_ALL=C sort -u)"
               CONFIG_DIFF="$(git diff --name-only "$LAST_GREEN_SHA" "$GITHUB_SHA" -- supabase/config.toml)"
               # Codex review (P1, PR #238): "_shared" não é uma função (sem
               # index.ts próprio) -- é código importado pelas funções reais
