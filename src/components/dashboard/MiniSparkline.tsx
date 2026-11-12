@@ -26,11 +26,13 @@ export function MiniSparkline({
   const range = max - min || 1;
   const padding = 2;
 
-  const points = data.map((v, i) => {
-    const x = padding + (i / (data.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((v - min) / range) * (height - padding * 2);
-    return `${x},${y}`;
-  }).join(' ');
+  const points = data
+    .map((v, i) => {
+      const x = padding + (i / (data.length - 1)) * (width - padding * 2);
+      const y = height - padding - ((v - min) / range) * (height - padding * 2);
+      return `${x},${y}`;
+    })
+    .join(' ');
 
   const areaPoints = `${padding},${height - padding} ${points} ${width - padding},${height - padding}`;
 

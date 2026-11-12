@@ -17,5 +17,5 @@ export {
   DonutChart,
   BarChartWidget,
   MiniSparkline,
-  AnimatedNumber
+  AnimatedNumber,
 };

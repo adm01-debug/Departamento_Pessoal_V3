@@ -18,7 +18,7 @@ export function NotificationCenter({ notifications = [], onMarkRead }: Notificat
           <p className="text-muted-foreground text-sm">Nenhuma notificação</p>
         ) : (
           <ul className="space-y-2">
-            {notifications.map(n => (
+            {notifications.map((n) => (
               <li key={n.id} onClick={() => onMarkRead?.(n.id)} className="cursor-pointer">
                 {n.title}
               </li>

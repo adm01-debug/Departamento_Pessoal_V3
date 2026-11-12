@@ -4,7 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  TrendingUp, FileSignature, Clock, XCircle, CheckCircle2, Mail, RefreshCw, Ban, CalendarPlus, History,
+  TrendingUp,
+  FileSignature,
+  Clock,
+  XCircle,
+  CheckCircle2,
+  Mail,
+  RefreshCw,
+  Ban,
+  CalendarPlus,
+  History,
 } from 'lucide-react';
 import { useContratosAssinaturaKPI } from '@/hooks/useContratosAssinaturaKPI';
 import { ContratoTokenTimelineDialog } from './ContratoTokenTimelineDialog';
@@ -19,7 +28,6 @@ function fmtHoras(h: number | null): string {
 export function ContratosAssinaturaKPICard() {
   const { kpi, pendentes, revogar, reenviar, estender } = useContratosAssinaturaKPI();
   const [timelineTokenId, setTimelineTokenId] = useState<string | null>(null);
-
 
   if (kpi.isLoading) {
     return (
@@ -76,9 +84,7 @@ export function ContratosAssinaturaKPICard() {
             <div className="flex items-center gap-1.5 text-xs text-destructive">
               <XCircle className="h-3.5 w-3.5" /> Expirados
             </div>
-            <div className="mt-1 text-2xl font-semibold text-destructive">
-              {k?.tokens_expirados ?? 0}
-            </div>
+            <div className="mt-1 text-2xl font-semibold text-destructive">{k?.tokens_expirados ?? 0}</div>
           </div>
           <div className="rounded-lg border bg-card p-3">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -127,7 +133,9 @@ export function ContratosAssinaturaKPICard() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge
-                      variant={t.dias_para_expirar <= 1 ? 'destructive' : t.dias_para_expirar <= 3 ? 'secondary' : 'outline'}
+                      variant={
+                        t.dias_para_expirar <= 1 ? 'destructive' : t.dias_para_expirar <= 3 ? 'secondary' : 'outline'
+                      }
                     >
                       {t.dias_para_expirar <= 1 ? 'Urgente' : t.dias_para_expirar <= 3 ? 'Crítico' : 'Ativo'}
                     </Badge>
@@ -196,4 +204,3 @@ export function ContratosAssinaturaKPICard() {
     </Card>
   );
 }
-
