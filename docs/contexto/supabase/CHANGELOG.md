@@ -2,6 +2,16 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-12 02:14 UTC
+
+- **functions** adicionado (3): `public.deadline_legal_pagamento_ferias(p_data_inicio date)`, `public.eh_dia_util_br(p_data date)`, `public.eh_feriado_fixo_br(p_data date)`
+- **functions** removido (1): `public.fn_trigger_whatsapp_on_event()`
+- **functions** alterado (3): `public.has_role(_user_id uuid, _role app_role)`, `public.is_admin(_user_id uuid)`, `public.rls_tenant_or_admin(row_empresa_id uuid)`
+- **policies (RLS)** adicionado (2): `public.configuracoes_ponto.Admins podem inserir configurações de ponto`, `public.configuracoes_ponto.configuracoes_ponto_tenant_manage`
+- **realtime** adicionado (5): `supabase_realtime_messages_publication:realtime.messages_2026_11_11`, `supabase_realtime_messages_publication:realtime.messages_2026_11_12`, `supabase_realtime_messages_publication:realtime.messages_2026_11_13`, `supabase_realtime_messages_publication:realtime.messages_2026_11_14`, `supabase_realtime_messages_publication:realtime.messages_2026_11_15`
+- **triggers** removido (1): `public.colaboradores.tr_whatsapp_on_new_hiring`
+- **views** alterado (1): `public.v_ferias_alerta_pagamento_d2`
+
 ## 2026-11-10 20:57 UTC
 
 - **functions** alterado (2): `public.pertence_a_empresa(_empresa_id uuid)`, `public.rls_tenant_or_admin(row_empresa_id uuid)`

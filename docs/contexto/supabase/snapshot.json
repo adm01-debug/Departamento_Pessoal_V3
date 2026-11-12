@@ -90472,6 +90472,47 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_data_inicio date",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 2,
+          "cron": [],
+          "db": [],
+          "triggers": [],
+          "views": [
+            "public.v_ferias_alerta_pagamento_d2"
+          ]
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_catalog"
+        ],
+        "definition": null,
+        "definition_sha": "1aedb292b81f8014",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "deadline_legal_pagamento_ferias",
+        "owner": "postgres",
+        "returns": "date",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "immutable"
+      },
+      {
         "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text, p_idempotencia text",
         "callers": {
           "code": [],
@@ -91715,6 +91756,43 @@
         "volatility": "volatile"
       },
       {
+        "args": "p_data date",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [
+            "public.deadline_legal_pagamento_ferias"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_catalog"
+        ],
+        "definition": null,
+        "definition_sha": "0793927963adbf7f",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "eh_dia_util_br",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "immutable"
+      },
+      {
         "args": "p_empresa_id uuid, p_data date",
         "callers": {
           "code": [
@@ -91750,6 +91828,43 @@
         "security_definer": false,
         "strict": false,
         "volatility": "stable"
+      },
+      {
+        "args": "p_data date",
+        "callers": {
+          "code": [
+            {
+              "file": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [
+            "public.eh_dia_util_br"
+          ],
+          "triggers": [],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=public, pg_catalog"
+        ],
+        "definition": null,
+        "definition_sha": "21286d1e083bec59",
+        "execute_api_roles": "authenticated, service_role",
+        "execute_public": false,
+        "is_trigger_fn": false,
+        "kind": "function",
+        "language": "sql",
+        "leakproof": false,
+        "name": "eh_feriado_fixo_br",
+        "owner": "postgres",
+        "returns": "boolean",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "immutable"
       },
       {
         "args": "",
@@ -93553,43 +93668,6 @@
         "language": "plpgsql",
         "leakproof": false,
         "name": "fn_sync_holerite_from_folha_item",
-        "owner": "postgres",
-        "returns": "trigger",
-        "schema": "public",
-        "security_definer": true,
-        "strict": false,
-        "volatility": "volatile"
-      },
-      {
-        "args": "",
-        "callers": {
-          "code": [
-            {
-              "file": "supabase/migrations/20260513191300_63701bda-a368-45cb-ab56-fcd978755c32.sql",
-              "hits": 1
-            }
-          ],
-          "code_total_files": 1,
-          "cron": [],
-          "db": [],
-          "triggers": [
-            "public.colaboradores.tr_whatsapp_on_new_hiring"
-          ],
-          "views": []
-        },
-        "comment": null,
-        "config": [
-          "search_path=public"
-        ],
-        "definition": null,
-        "definition_sha": "8c917b284fad9dfa",
-        "execute_api_roles": "service_role",
-        "execute_public": false,
-        "is_trigger_fn": true,
-        "kind": "function",
-        "language": "plpgsql",
-        "leakproof": false,
-        "name": "fn_trigger_whatsapp_on_event",
         "owner": "postgres",
         "returns": "trigger",
         "schema": "public",
@@ -95488,7 +95566,7 @@
               "hits": 6
             }
           ],
-          "code_total_files": 73,
+          "code_total_files": 74,
           "cron": [],
           "db": [
             "public._is_admin_bypass",
@@ -96258,7 +96336,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 69,
+          "code_total_files": 70,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -100849,13 +100927,9 @@
             {
               "file": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
               "hits": 2
-            },
-            {
-              "file": "supabase/migrations/20261107203000_fix_rls_insert_configuracoes_ponto.sql",
-              "hits": 2
             }
           ],
-          "code_total_files": 8,
+          "code_total_files": 7,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -138493,6 +138567,18 @@
         "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
       },
       {
+        "cmd": "INSERT",
+        "name": "Admins podem inserir configurações de ponto",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "public"
+        ],
+        "schema": "public",
+        "table": "configuracoes_ponto",
+        "using": null,
+        "with_check": "pertence_a_empresa(empresa_id)"
+      },
+      {
         "cmd": "UPDATE",
         "name": "Apenas admins podem atualizar configurações de ponto",
         "permissive": "PERMISSIVE",
@@ -138515,6 +138601,18 @@
         "table": "configuracoes_ponto",
         "using": "pertence_a_empresa(empresa_id)",
         "with_check": null
+      },
+      {
+        "cmd": "ALL",
+        "name": "configuracoes_ponto_tenant_manage",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "configuracoes_ponto",
+        "using": "rls_tenant_or_admin(empresa_id)",
+        "with_check": "rls_tenant_or_admin(empresa_id)"
       },
       {
         "cmd": "SELECT",
@@ -144645,6 +144743,31 @@
           "publication": "supabase_realtime_messages_publication",
           "schema": "realtime",
           "table": "messages_2026_11_10"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_11"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_12"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_13"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_14"
+        },
+        {
+          "publication": "supabase_realtime_messages_publication",
+          "schema": "realtime",
+          "table": "messages_2026_11_15"
         }
       ]
     },
@@ -152113,17 +152236,6 @@
         "timing": "BEFORE"
       },
       {
-        "definition": "CREATE TRIGGER tr_whatsapp_on_new_hiring AFTER INSERT ON colaboradores FOR EACH ROW EXECUTE FUNCTION fn_trigger_whatsapp_on_event()",
-        "events": "INSERT",
-        "function": "public.fn_trigger_whatsapp_on_event",
-        "level": "ROW",
-        "name": "tr_whatsapp_on_new_hiring",
-        "schema": "public",
-        "status": "enabled",
-        "table": "colaboradores",
-        "timing": "AFTER"
-      },
-      {
         "definition": "CREATE TRIGGER trg_audit_colaboradores AFTER INSERT OR DELETE OR UPDATE ON colaboradores FOR EACH ROW EXECUTE FUNCTION process_audit_log()",
         "events": "INSERT OR DELETE OR UPDATE",
         "function": "public.process_audit_log",
@@ -156410,7 +156522,7 @@
       },
       {
         "comment": null,
-        "definition": " SELECT id,\n    empresa_id,\n    colaborador_id,\n    data_inicio,\n    data_pagamento,\n    pagamento_confirmado_em,\n    status,\n    data_inicio - CURRENT_DATE AS dias_ate_inicio,\n        CASE\n            WHEN pagamento_confirmado_em IS NOT NULL THEN 'ok'::text\n            WHEN data_inicio < CURRENT_DATE THEN 'violacao_grave'::text\n            WHEN (data_inicio - CURRENT_DATE) <= 2 THEN 'critico'::text\n            WHEN (data_inicio - CURRENT_DATE) <= 5 THEN 'atencao'::text\n            ELSE 'ok'::text\n        END AS severidade\n   FROM ferias f\n  WHERE (status::text = ANY (ARRAY['aprovada'::character varying::text, 'programada'::character varying::text, 'em_gozo'::character varying::text])) AND cancelado IS NOT TRUE;",
+        "definition": " SELECT id,\n    empresa_id,\n    colaborador_id,\n    data_inicio,\n    data_pagamento,\n    pagamento_confirmado_em,\n    status,\n    data_inicio - CURRENT_DATE AS dias_ate_inicio,\n        CASE\n            WHEN pagamento_confirmado_em IS NOT NULL THEN 'ok'::text\n            WHEN data_inicio < CURRENT_DATE THEN 'violacao_grave'::text\n            WHEN CURRENT_DATE >= deadline_legal_pagamento_ferias(data_inicio) THEN 'critico'::text\n            WHEN (data_inicio - CURRENT_DATE) <= 5 THEN 'atencao'::text\n            ELSE 'ok'::text\n        END AS severidade\n   FROM ferias f\n  WHERE (status::text = ANY (ARRAY['aprovada'::character varying, 'programada'::character varying, 'em_gozo'::character varying]::text[])) AND cancelado IS NOT TRUE;",
         "depends_on": [
           "public.ferias"
         ],

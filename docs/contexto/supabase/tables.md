@@ -78,7 +78,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.configuracoes_alertas](tables/public/configuracoes_alertas.md) | table | sim | 1 | 5 | não |  |
 | [public.configuracoes_esocial](tables/public/configuracoes_esocial.md) | table | sim | 1 | 6 | não |  |
 | [public.configuracoes_intervalo](tables/public/configuracoes_intervalo.md) | table | sim | 1 | 11 | não |  |
-| [public.configuracoes_ponto](tables/public/configuracoes_ponto.md) | table | sim | 2 | 10 | não |  |
+| [public.configuracoes_ponto](tables/public/configuracoes_ponto.md) | table | sim | 4 | 10 | não |  |
 | [public.conformidade_ponto_logs](tables/public/conformidade_ponto_logs.md) | table | sim | 1 | 8 | não |  |
 | [public.contabilidade_contatos](tables/public/contabilidade_contatos.md) | table | sim | 1 | 9 | não |  |
 | [public.contabilidade_mensagens](tables/public/contabilidade_mensagens.md) | table | sim | 1 | 10 | não |  |

@@ -5047,11 +5047,11 @@
   {
    "arquivo": "supabase/functions/_shared/outboundDelivery.test.ts",
    "tipo": "unit",
-   "linhas": 18,
+   "linhas": 33,
    "testa": [
     "supabase/functions/_shared/outboundDelivery.ts"
    ],
-   "casos": 2
+   "casos": 3
   },
   {
    "arquivo": "supabase/functions/_shared/rateLimit.test.ts",

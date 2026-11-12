@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -48,6 +48,16 @@
 
 ## Policies (RLS)
 
+### `Admins podem inserir configurações de ponto`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | public |
+| USING |  |
+| WITH CHECK | `pertence_a_empresa(empresa_id)` |
+
 ### `Apenas admins podem atualizar configurações de ponto`
 
 | campo | valor |
@@ -67,6 +77,16 @@
 | roles | public |
 | USING | `pertence_a_empresa(empresa_id)` |
 | WITH CHECK |  |
+
+### `configuracoes_ponto_tenant_manage`
+
+| campo | valor |
+|---|---|
+| comando | ALL |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `rls_tenant_or_admin(empresa_id)` |
+| WITH CHECK | `rls_tenant_or_admin(empresa_id)` |
 
 
 ## Triggers

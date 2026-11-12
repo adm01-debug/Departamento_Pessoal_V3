@@ -641,12 +641,12 @@ SELECT id,
         CASE
             WHEN pagamento_confirmado_em IS NOT NULL THEN 'ok'::text
             WHEN data_inicio < CURRENT_DATE THEN 'violacao_grave'::text
-            WHEN (data_inicio - CURRENT_DATE) <= 2 THEN 'critico'::text
+            WHEN CURRENT_DATE >= deadline_legal_pagamento_ferias(data_inicio) THEN 'critico'::text
             WHEN (data_inicio - CURRENT_DATE) <= 5 THEN 'atencao'::text
             ELSE 'ok'::text
         END AS severidade
    FROM ferias f
-  WHERE (status::text = ANY (ARRAY['aprovada'::character varying::text, 'programada'::character varying::text, 'em_gozo'::character varying::text])) AND cancelado IS NOT TRUE;
+  WHERE (status::text = ANY (ARRAY['aprovada'::character varying, 'programada'::character varying, 'em_gozo'::character varying]::text[])) AND cancelado IS NOT TRUE;
 ```
 
 ## public.v_ferias_alertas_criticos (view)

@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `98a0bd563d3d1fd5db17d0d17f729b3960097af4` (2026-11-11T20:30:17-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `c926aa18b9cc5ed9134eb684f4c08571ce5cf424` (2026-11-12T01:32:35Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1418), SQL (823), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1418), SQL (821), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2877 |
+| arquivos_total | 2875 |
 | arquivos_codigo | 1548 |
-| linhas_codigo | 273277 |
+| linhas_codigo | 273297 |
 | rotas | 113 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
-| migrations | 787 |
+| migrations | 785 |
 | cron_jobs | 41 |
 | testes | 589 |
 | workflows | 21 |
@@ -383,27 +383,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 21972 nós · 46098 arestas · 2141 comunidades · grafo do commit `98a0bd56`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (415), button.tsx (311), lucide-react (306), vitest (262), App.tsx (255), react (245), useEmpresas (211), validate.ts (199), contract.ts (168), "public"."empresas" (164)
+- 21971 nós · 46101 arestas · 2153 comunidades · grafo do commit `c926aa18`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), @tanstack/react-query (317), lucide-react (311), vitest (258), client.ts (249), cn (234), validate.ts (218), useEmpresas (169), contract.ts (168), "public"."empresas" (164), supabase/types.ts (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), usePiiMask() (src/hooks/usePiiMask.ts), useAuth() (src/contexts/AuthContext.tsx), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- package.json (60)
+- package.json (59)
 - package-lock.json (56)
-- .github/workflows/canonical-migrations.yml (51)
+- .github/workflows/canonical-migrations.yml (52)
 - CLAUDE.md (28)
-- .github/workflows/ci.yml (21)
-- deno.lock (13)
+- .github/workflows/ci.yml (20)
 - src/services/cnabService.ts (13)
-- .github/workflows/e2e.yml (12)
 - AGENTS.md (12)
 - PENDENCIAS.md (12)
-- src/integrations/supabase/types.ts (12)
-- supabase/functions/external-db-bridge/index.ts (12)
-- supabase/functions/external-db-bridge/validation.ts (12)
-- .github/workflows/security.yml (11)
+- deno.lock (12)
+- .github/workflows/e2e.yml (11)
+- src/integrations/supabase/types.ts (11)
+- supabase/functions/external-db-bridge/index.ts (11)
+- supabase/functions/external-db-bridge/validation.ts (11)
 - .github/workflows/canonical-probes.yml (10)
+- .github/workflows/security.yml (10)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -614,6 +614,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `c926aa1` fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)
+- 2026-11-11 `3fe5d63` fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)
 - 2026-11-11 `98a0bd5` fix: prazo do Art. 145 considera o feriado nacional de 20/11 (Lei 14.759/2023) (#447)
 - 2026-11-11 `145cb90` fix: Deno ignora package.json — bump do Dependabot não quebra mais o deno check (#448)
 - 2026-11-11 `bfb3cb0` infra: jobs de banco em ubuntu-24.04 (ubuntu-latest perdeu postgresql-client-16) (#444)
@@ -627,8 +629,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-10 `7f6d195` fix: simulate_notif_d3 modelava sistema de notificação diferente do real (#432)
 - 2026-11-10 `e87dcb7` fix: verify_irrf_fix usa os motores reais; corrige clamp de avos e fecha 3 mutantes de ACL em plano100 (#431)
 - 2026-11-10 `75460b7` infra: inclui migrations RLS de #394/#410 na lista fechada do canonical-migrations (#428)
-- 2026-11-10 `225d591` feat: porta settings-guard do Zapp Web V2 para o DP V3 (#399)
-- 2026-11-10 `24cadd4` chore: cataloga scripts de ci do pacote branch-hygiene no catálogo da automação local (#429)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

@@ -377,7 +377,6 @@
 | tr_audit_colaboradores | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.process_audit_log |
 | tr_auto_start_workflow_on_hiring | AFTER | INSERT | ROW | enabled | public.fn_start_workflow_on_colaborador_create |
 | tr_increment_version_colab | BEFORE | UPDATE | ROW | enabled | public.increment_version |
-| tr_whatsapp_on_new_hiring | AFTER | INSERT | ROW | enabled | public.fn_trigger_whatsapp_on_event |
 | trg_audit_colaboradores | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.process_audit_log |
 | trg_colab_cpf_hash | BEFORE | INSERT OR UPDATE | ROW | enabled | public.fn_colab_cpf_hash |
 | trigger_lgpd_limpeza_desligamento | AFTER | UPDATE | ROW | enabled | public.agendar_limpeza_pos_desligamento |

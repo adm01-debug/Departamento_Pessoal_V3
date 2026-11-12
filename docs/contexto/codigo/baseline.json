@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "98a0bd563d3d1fd5db17d0d17f729b3960097af4",
+  "commit": "c926aa18b9cc5ed9134eb684f4c08571ce5cf424",
   "branch": "main",
-  "data_commit": "2026-11-11T20:30:17-03:00",
+  "data_commit": "2026-11-12T01:32:35Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "c926aa1",
+    "data": "2026-11-12",
+    "assunto": "fix: policy INSERT de configuracoes_ponto sem acesso entre empresas (substitui 20261107, nunca aplicada) (#446)"
+   },
+   {
+    "sha": "3fe5d63",
+    "data": "2026-11-11",
+    "assunto": "fix: e-mails do DP saem pelo remetente do domínio verificado (EMAIL_FROM) (#451)"
+   },
    {
     "sha": "98a0bd5",
     "data": "2026-11-11",
@@ -121,23 +131,13 @@
     "sha": "2d6010b",
     "data": "2026-11-10",
     "assunto": "fix: geradores de contexto (regras de negócio, snapshot do banco, publish, índice) sem perda de dado nem vazamento (#417"
-   },
-   {
-    "sha": "4a18fa5",
-    "data": "2026-11-10",
-    "assunto": "fix: auditorias de segurança/RLS/edge sem falso verde, falso positivo nem vazamento de senha (#416)"
-   },
-   {
-    "sha": "e11272e",
-    "data": "2026-11-10",
-    "assunto": "fix: check-dependencies, geradores, PDF de auditoria, inventário de edges e tipos Supabase sem falso verde nem destruiçã"
    }
   ],
-  "arquivos_mudados_7d": 424,
+  "arquivos_mudados_7d": 425,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 39
    },
    {
     "pasta": "package.json",
@@ -152,15 +152,15 @@
     "mudancas": 20
    },
    {
+    "pasta": "supabase/functions/_shared",
+    "mudancas": 19
+   },
+   {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
    },
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 17
-   },
-   {
-    "pasta": "supabase/functions/_shared",
     "mudancas": 17
    },
    {
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": "package.json",
-    "mudancas": 60
+    "mudancas": 59
    },
    {
     "arquivo": "package-lock.json",
@@ -207,7 +207,7 @@
    },
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 51
+    "mudancas": 52
    },
    {
     "arquivo": "CLAUDE.md",
@@ -215,19 +215,11 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 21
-   },
-   {
-    "arquivo": "deno.lock",
-    "mudancas": 13
+    "mudancas": 20
    },
    {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 13
-   },
-   {
-    "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 12
    },
    {
     "arquivo": "AGENTS.md",
@@ -238,19 +230,23 @@
     "mudancas": 12
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "deno.lock",
     "mudancas": 12
+   },
+   {
+    "arquivo": ".github/workflows/e2e.yml",
+    "mudancas": 11
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 11
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
-    "mudancas": 12
+    "mudancas": 11
    },
    {
     "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 12
-   },
-   {
-    "arquivo": ".github/workflows/security.yml",
     "mudancas": 11
    },
    {
@@ -258,11 +254,11 @@
     "mudancas": 10
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 9
+    "arquivo": ".github/workflows/security.yml",
+    "mudancas": 10
    },
    {
-    "arquivo": ".github/workflows/deploy.yml",
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
     "mudancas": 9
    },
    {
@@ -274,34 +270,38 @@
     "mudancas": 9
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 9
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 8
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 8
    },
    {
-    "arquivo": "src/integrations/supabase/client.ts",
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
    {
-    "arquivo": "src/services/edgeFunctionsService.ts",
-    "mudancas": 8
+    "arquivo": ".github/workflows/canonical-sql-diag.yml",
+    "mudancas": 7
    },
    {
-    "arquivo": "src/services/folha/__tests__/calculoLoteService.test.ts",
-    "mudancas": 8
+    "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 7
    },
    {
-    "arquivo": "src/services/folha/calculoLoteService.ts",
-    "mudancas": 8
+    "arquivo": "e2e/auth.setup.ts",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "scripts/audit-required-checks.mjs",
+    "mudancas": 7
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 108
+    "commits": 110
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2877,
+  "arquivos_total": 2875,
   "arquivos_codigo": 1548,
-  "linhas_codigo": 273277,
+  "linhas_codigo": 273297,
   "rotas": 113,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 787,
+  "migrations": 785,
   "cron_jobs": 41,
   "testes": 589,
   "workflows": 21,
@@ -708,7 +708,7 @@
   },
   "supabase/functions": {
    "arquivos": 171,
-   "linhas": 24340
+   "linhas": 24360
   },
   "supabase/tests": {
    "arquivos": 2,

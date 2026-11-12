@@ -128,8 +128,10 @@ Visão consolidada (inclui `storage.objects` e `realtime.messages`); detalhes po
 | public.configuracoes_alertas | Admins can manage alert configs | ALL | PERMISSIVE | authenticated | `(EXISTS ( SELECT 1    FROM user_roles   WHERE ((user_roles.user_id = auth.uid()) AND ((user_roles.role)::text = 'admin'::text))))` |  |
 | public.configuracoes_esocial | Empresas podem gerenciar suas configurações de eSocial | ALL | PERMISSIVE | public | `(auth.uid() IN ( SELECT user_empresas.user_id    FROM user_empresas   WHERE (user_empresas.empresa_id = configuracoes_esocial.empresa_id)))` |  |
 | public.configuracoes_intervalo | tenant_configuracoes_intervalo | ALL | PERMISSIVE | authenticated | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
+| public.configuracoes_ponto | Admins podem inserir configurações de ponto | INSERT | PERMISSIVE | public |  | `pertence_a_empresa(empresa_id)` |
 | public.configuracoes_ponto | Apenas admins podem atualizar configurações de ponto | UPDATE | PERMISSIVE | public | `pertence_a_empresa(empresa_id)` | `pertence_a_empresa(empresa_id)` |
 | public.configuracoes_ponto | Configurações de ponto visíveis por membros da empresa | SELECT | PERMISSIVE | public | `pertence_a_empresa(empresa_id)` |  |
+| public.configuracoes_ponto | configuracoes_ponto_tenant_manage | ALL | PERMISSIVE | authenticated | `rls_tenant_or_admin(empresa_id)` | `rls_tenant_or_admin(empresa_id)` |
 | public.conformidade_ponto_logs | View logs by company | SELECT | PERMISSIVE | public | `((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))` |  |
 | public.contabilidade_contatos | contabilidade_contatos_tenant_all | ALL | PERMISSIVE | authenticated | `user_belongs_to_empresa(auth.uid(), empresa_id)` | `user_belongs_to_empresa(auth.uid(), empresa_id)` |
 | public.contabilidade_mensagens | contab_msgs_tenant_all | ALL | PERMISSIVE | authenticated | `user_belongs_to_empresa(auth.uid(), empresa_id)` | `user_belongs_to_empresa(auth.uid(), empresa_id)` |
