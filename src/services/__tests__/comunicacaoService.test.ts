@@ -224,18 +224,27 @@ describe('comunicacaoService.criarDenuncia', () => {
     vi.clearAllMocks();
   });
 
-  it('inserts and returns new denuncia', async () => {
-    const created = { id: 'd-new', categoria: 'fraude' };
-    const { insertFn } = setupInsertChain(created);
+  it('inserts without RETURNING (no .select()), since only RH can SELECT canal_etica', async () => {
+    const selectFn = vi.fn();
+    const insertResult = {
+      select: selectFn,
+      then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: null, error: null }).then(fn),
+    };
+    const insertFn = vi.fn().mockReturnValue(insertResult);
+    mockFrom.mockReturnValue({ insert: insertFn });
     const payload = { categoria: 'fraude', descricao: 'Relato de irregularidade financeira' };
-    const result = await comunicacaoService.criarDenuncia(payload);
+    await expect(comunicacaoService.criarDenuncia(payload)).resolves.toBeUndefined();
+    expect(mockFrom).toHaveBeenCalledWith('canal_etica');
     expect(insertFn).toHaveBeenCalledWith(payload);
-    expect(result).toEqual(created);
+    expect(selectFn).not.toHaveBeenCalled();
   });
 
-  it('throws when data is null', async () => {
-    setupInsertChain(null);
-    await expect(comunicacaoService.criarDenuncia({} as Insertable<'canal_etica'>)).rejects.toThrow();
+  it('throws when insert returns an error', async () => {
+    const insertFn = vi.fn().mockResolvedValue({ data: null, error: { message: 'RLS', code: '42501' } });
+    mockFrom.mockReturnValue({ insert: insertFn });
+    await expect(
+      comunicacaoService.criarDenuncia({ categoria: 'fraude', descricao: 'x' } as Insertable<'canal_etica'>)
+    ).rejects.toMatchObject({ code: '42501' });
   });
 });
 
