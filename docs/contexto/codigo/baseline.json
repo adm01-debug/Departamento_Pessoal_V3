@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a295c94f2c1c91c2e19d747c6f9f45ac2ad1ee84",
+  "commit": "28e9d0cf5c3ea33de8527b77700b4ea3eda13c3a",
   "branch": "main",
-  "data_commit": "2026-11-13T01:42:16-03:00",
+  "data_commit": "2026-11-13T07:28:43-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "28e9d0c",
+    "data": "2026-11-13",
+    "assunto": "infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)"
+   },
    {
     "sha": "a295c94",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "db4f2ef",
     "data": "2026-11-12",
     "assunto": "fix: Integrações e Configurações: salvar CNAB, criar e remover webhooks, excluir plano de benefício e tirar botões e sta"
-   },
-   {
-    "sha": "913f961",
-    "data": "2026-11-12",
-    "assunto": "fix: Obrigações Fiscais: DARF mostra o IRRF real da folha, \"Nova Simulação\" funciona e o SEFIP é baixado (#480)"
    }
   ],
-  "arquivos_mudados_7d": 553,
+  "arquivos_mudados_7d": 555,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "pasta": "CLAUDE.md",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 50
+    "mudancas": 51
    },
    {
     "arquivo": "package.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 165
+    "commits": 166
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2894,
+  "arquivos_total": 2896,
   "arquivos_codigo": 1560,
   "linhas_codigo": 277892,
   "rotas": 114,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 791,
+  "migrations": 793,
   "cron_jobs": 41,
   "testes": 598,
   "workflows": 21,
