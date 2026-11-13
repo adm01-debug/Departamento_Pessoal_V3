@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
@@ -67,8 +67,16 @@ vi.mock('sonner', () => ({
 }));
 
 import { CampaignWizard } from '../premiacoes/CampaignWizard';
+import { premiacoesService } from '@/services/premiacoesService';
 
 const defaultProps = { isOpen: true, onClose: vi.fn(), empresaId: 'emp-001' };
+
+function preencherPasso1() {
+  fireEvent.change(screen.getByPlaceholderText(/Campanha de Vendas Q2/i), { target: { value: 'Campanha Q4' } });
+  const [inicio, fim] = Array.from(document.querySelectorAll('input[type="date"]'));
+  fireEvent.change(inicio, { target: { value: '2026-10-01' } });
+  fireEvent.change(fim, { target: { value: '2026-12-31' } });
+}
 
 describe('CampaignWizard', () => {
   it('renders dialog title', () => {
@@ -110,5 +118,67 @@ describe('CampaignWizard', () => {
     render(<CampaignWizard {...defaultProps} />);
     fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
     expect(screen.getByText('Regras de Premiação')).toBeInTheDocument();
+  });
+
+  it('Salvar Rascunho cria a campanha com status rascunho', async () => {
+    vi.mocked(premiacoesService.criarCampanha).mockClear();
+    render(<CampaignWizard {...defaultProps} />);
+    preencherPasso1();
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Salvar Rascunho/i }));
+    await waitFor(() => expect(premiacoesService.criarCampanha).toHaveBeenCalledTimes(1));
+    expect(premiacoesService.criarCampanha).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'rascunho', empresa_id: 'emp-001' })
+    );
+  });
+
+  it('Lançar Campanha cria a campanha com status ativo', async () => {
+    vi.mocked(premiacoesService.criarCampanha).mockClear();
+    render(<CampaignWizard {...defaultProps} />);
+    preencherPasso1();
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Lançar Campanha/i }));
+    await waitFor(() => expect(premiacoesService.criarCampanha).toHaveBeenCalledTimes(1));
+    expect(premiacoesService.criarCampanha).toHaveBeenCalledWith(expect.objectContaining({ status: 'ativo' }));
+  });
+
+  it('duplo clique em Salvar Rascunho cria uma campanha só e desabilita os botões', async () => {
+    vi.mocked(premiacoesService.criarCampanha).mockClear();
+    let resolver: (v: { id: string }) => void = () => {};
+    vi.mocked(premiacoesService.criarCampanha).mockReturnValueOnce(
+      new Promise((r) => {
+        resolver = r;
+      }) as never
+    );
+    render(<CampaignWizard {...defaultProps} />);
+    preencherPasso1();
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    const salvar = screen.getByRole('button', { name: /Salvar Rascunho/i });
+    fireEvent.click(salvar);
+    fireEvent.click(salvar);
+    expect(salvar).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Lançar Campanha/i })).toBeDisabled();
+    resolver({ id: 'camp-001' });
+    await waitFor(() => expect(defaultProps.onClose).toHaveBeenCalled());
+    expect(premiacoesService.criarCampanha).toHaveBeenCalledTimes(1);
+  });
+
+  it('não grava sem nome e datas', async () => {
+    vi.mocked(premiacoesService.criarCampanha).mockClear();
+    const { toast } = await import('sonner');
+    render(<CampaignWizard {...defaultProps} />);
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Salvar Rascunho/i }));
+    expect(toast.error).toHaveBeenCalledWith('Preencha nome, início e fim da campanha.');
+    expect(premiacoesService.criarCampanha).not.toHaveBeenCalled();
+  });
+
+  it('volta ao passo 1 com o formulário limpo depois de salvar', async () => {
+    render(<CampaignWizard {...defaultProps} />);
+    preencherPasso1();
+    fireEvent.click(screen.getByRole('button', { name: /Próximo/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Salvar Rascunho/i }));
+    await waitFor(() => expect(screen.getByText('Nome da Campanha')).toBeInTheDocument());
+    expect(screen.getByPlaceholderText(/Campanha de Vendas Q2/i)).toHaveValue('');
   });
 });

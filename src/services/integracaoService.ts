@@ -5,6 +5,9 @@ import { validateTablePayload } from '@/schemas/validate';
 export type CnabConfig = Tables<'cnab_configuracoes'>;
 export type WebhookConfig = Tables<'webhooks_config'>;
 
+const REMESSA_LISTA_COLUNAS =
+  'id, empresa_id, folha_id, banco_codigo, sequencial_arquivo, status, data_geracao, total_pagamentos, valor_total, arquivo_url, hash_integridade, created_at, updated_at';
+
 export const cnabService = {
   // BUG corrigido (E51-026): o select pedia `banco_nome` e `layout_cnab`,
   // que não existem em `cnab_configuracoes` (colunas reais incluem
@@ -40,16 +43,31 @@ export const cnabService = {
   // BUG corrigido: o select pedia `banco_nome` e `nome_arquivo`, que não
   // existem em `cnab_remessas` (colunas reais incluem `banco_codigo` e
   // `arquivo_url`, sem nome de arquivo próprio) — mesma classe de erro.
-  async getRemessas(empresaId: string): Promise<Tables<'cnab_remessas'>[]> {
+  // A listagem não traz `arquivo_remessa` (CPF, conta e líquido de todos):
+  // o conteúdo só é buscado no download, por `getArquivoRemessa`.
+  async getRemessas(empresaId: string): Promise<Omit<Tables<'cnab_remessas'>, 'arquivo_remessa'>[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório');
     const { data, error } = await supabase
       .from('cnab_remessas')
-      .select('*')
+      .select(REMESSA_LISTA_COLUNAS)
       .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false })
       .limit(50);
     if (error) throw error;
     return data || [];
+  },
+
+  async getArquivoRemessa(empresaId: string, id: string): Promise<string | null> {
+    if (!empresaId) throw new Error('empresa_id obrigatório');
+    if (!id) throw new Error('id obrigatório');
+    const { data, error } = await supabase
+      .from('cnab_remessas')
+      .select('arquivo_remessa')
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .maybeSingle();
+    if (error) throw error;
+    return data?.arquivo_remessa ?? null;
   },
 };
 

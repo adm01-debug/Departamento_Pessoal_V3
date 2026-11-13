@@ -11,7 +11,12 @@ import { ptBR } from 'date-fns/locale';
 
 interface EpiEntregasTableProps {
   data: (Tables<'epis_entregas'> & {
-    epi?: { ca_validade?: string | null; nome?: string | null; ca?: string | null } | null;
+    epi?: {
+      validade_ca?: string | null;
+      ca_validade?: string | null;
+      nome?: string | null;
+      ca?: string | null;
+    } | null;
     colaborador?: { nome_completo?: string | null } | null;
   })[];
   onDevolver?: (id: string) => void;
@@ -26,10 +31,12 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
     }
   };
 
-  const getVencimento = (entrega: { epi?: { ca_validade?: string | null } | null }) => {
-    if (!entrega.epi?.ca_validade) return null;
+  const getVencimento = (entrega: { epi?: { validade_ca?: string | null; ca_validade?: string | null } | null }) => {
+    // O cadastro/edição grava `validade_ca`; `ca_validade` é coluna legada.
+    const validade = entrega.epi?.validade_ca ?? entrega.epi?.ca_validade;
+    if (!validade) return null;
     try {
-      return parseISO(entrega.epi.ca_validade);
+      return parseISO(validade);
     } catch {
       return null;
     }
