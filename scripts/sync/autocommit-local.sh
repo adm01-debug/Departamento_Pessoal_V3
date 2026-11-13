@@ -91,6 +91,8 @@ GD="$("${G[@]}" rev-parse --absolute-git-dir)"
 for f in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD BISECT_LOG index.lock; do
   [ -e "$GD/$f" ] && { say "PULEI: operação git em andamento ($f)"; exit 0; }
 done
+# (13/11 rev2) conflito no índice SEM MERGE_HEAD (stash pop / checkout -m): commitaria os marcadores <<<<<<< e enviaria
+if [ -n "$("${G[@]}" ls-files -u 2>/dev/null | head -1)" ]; then say "PULEI: há conflito não resolvido no índice (git ls-files -u) — resolva antes; nada foi commitado"; exit 75; fi
 
 push_pendente() {
   [ "$NOPUSH" -eq 1 ] && return 0   # modo sem push: o commit fica local; nada é varrido nem enviado
@@ -98,7 +100,7 @@ push_pendente() {
   [ "$ahead" = "0" ] && return 0
   if [ "$DRY" -eq 1 ]; then say "[dry-run] enviaria $BRANCH ao GitHub ($ahead commit(s) à frente)"; return 0; fi
   # varre TUDO que vai ser enviado (inclui commits manuais do usuário), como texto — falha fechada
-  local base="$REMOTE/$BRANCH" largs=(log -p -U0 --text --format=)
+  local base="$REMOTE/$BRANCH" largs=(log -p --cc -U0 --text --format=)   # --cc: conteúdo da RESOLUÇÃO de merge também é varrido (antes passava)
   "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1 || base="$REMOTE/main"
   # commits que JÁ estão na branch padrão do GitHub são públicos e não são enviados "de novo": fora da varredura (senão uma
   # falsa detecção num commit antigo da main bloquearia o push da computador_local para sempre)
@@ -163,8 +165,11 @@ if [ "$DRY" -eq 1 ]; then
 fi
 
 # (13/11) índice do usuário antes de mexer: nos BLOQUEIOS ele volta como estava (o reset perdia o que foi `git add`ado)
-IDX0="$("${G[@]}" write-tree 2>/dev/null || true)"
-restaura_indice() { if [ -n "$IDX0" ] && "${G[@]}" read-tree "$IDX0" 2>/dev/null; then "${G[@]}" update-index -q --refresh >/dev/null 2>&1 || true; else "${G[@]}" reset -q 2>/dev/null; fi; }
+# (13/11 rev2) CÓPIA BYTE A BYTE do índice (write-tree/read-tree perdia skip-worktree/assume-unchanged/sparse/intent-to-add:
+# depois de um bloqueio, a config local escondida ia no push seguinte). Restaurar = devolver o arquivo exato.
+IDXF="$("${G[@]}" rev-parse --git-path index)"; case "$IDXF" in /*) ;; *) IDXF="$WT/$IDXF" ;; esac
+IDXB="$STATE/ac-$KEY.index-usuario"; rm -f "$IDXB"; [ -f "$IDXF" ] && cp -p "$IDXF" "$IDXB"
+restaura_indice() { if [ -f "$IDXB" ] && cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; then :; else "${G[@]}" reset -q 2>/dev/null; fi; rm -f "$IDXB"; }
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
 # (12/11, revisão) Um arquivo ilegível ou um repositório aninhado sem commit derrubava o `add -A` INTEIRO e nada era
@@ -188,14 +193,15 @@ fi
 
 # 4b. revalida o que está NO ÍNDICE. O `add -A` só filtra o que ele mesmo adiciona: o usuário pode ter feito `git add`
 # antes, e arquivos JÁ rastreados e modificados não passam pela regra de "novos". Falha fechada.
-SECRET_RE='^(.*/)?(\.env|\.env\..*|.*\.env|\.envrc|\.npmrc|\.netrc|\.pgpass|\.git-credentials|id_rsa.*|id_dsa.*|id_ed25519.*|id_ecdsa.*|[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)|(service[-_]account|client_secret)[^/]*\.json)$'
+SECRET_RE='^(.*/)?(\.env|\.env[._-].*|.*\.env|\.envrc|\.npmrc|\.netrc|\.pgpass|\.git-credentials|id_rsa.*|id_dsa.*|id_ed25519.*|id_ecdsa.*|[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)|(service[-_]account|client_secret)[^/]*\.json)$'
 # (13/11) mesma lista do mirror-github; modelos (.example/.sample/.template) não são segredo
 while IFS= read -r -d '' f; do
   lc="${f,,}"; bad=""
   case "$lc" in
     *.csv|*.xlsx|*.xls|*.xlsm|*.ods|*.dump|*.bak|*.sqlite|*.sqlite3|*.db|*.zip|*.tar|*.gz|*.tgz|*.7z|*.pdf|*.doc|*.docx|*.ppt|*.pptx|*.odt|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|*.kdbx) bad="tipo de dado/segredo" ;;
   esac
-  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && ! [[ "$lc" =~ \.(example|sample|template)(\.[a-z0-9]+)?$ ]] && bad="arquivo de segredo/ambiente"
+  # modelo só quando TERMINA como modelo (.env.example.local é segredo); workflows (.github/) são código: conteúdo vai ao gitleaks
+  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && ! [[ "$lc" =~ \.(example|sample|template)(\.(json|ya?ml|toml|ini))?$ ]] && [[ "$lc" != .github/* ]] && bad="arquivo de segredo/ambiente"
   if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":0:$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
   [ -n "$bad" ] && { unstage "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
 done < <("${G[@]}" diff --cached --name-only --no-renames --diff-filter=AM -z)
