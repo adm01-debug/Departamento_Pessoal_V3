@@ -12097,7 +12097,7 @@
       "hooks": [
         {
           "nome": "useAuth",
-          "arquivo": "src/hooks/useAuth.ts"
+          "arquivo": "src/contexts/index.ts"
         },
         {
           "nome": "useBackGesture",
