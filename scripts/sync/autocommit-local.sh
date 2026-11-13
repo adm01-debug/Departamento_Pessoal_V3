@@ -168,7 +168,9 @@ fi
 # (13/11 rev2) CÓPIA BYTE A BYTE do índice (write-tree/read-tree perdia skip-worktree/assume-unchanged/sparse/intent-to-add:
 # depois de um bloqueio, a config local escondida ia no push seguinte). Restaurar = devolver o arquivo exato.
 IDXF="$("${G[@]}" rev-parse --git-path index)"; case "$IDXF" in /*) ;; *) IDXF="$WT/$IDXF" ;; esac
-IDXB="$STATE/ac-$KEY.index-usuario"; rm -f "$IDXB"; [ -f "$IDXF" ] && cp -p "$IDXF" "$IDXB"
+IDXB="$STATE/ac-$KEY.index-usuario"; rm -f "$IDXB"
+# backup do índice com falha (disco cheio/parcial) = PARA: restaurar uma cópia incompleta corromperia o índice (Codex, PR #549)
+if [ -f "$IDXF" ] && ! { cp -p "$IDXF" "$IDXB" && cmp -s "$IDXF" "$IDXB"; }; then rm -f "$IDXB"; say "PULEI: não consegui guardar o índice antes de mexer (disco cheio?) — nada foi alterado"; exit 75; fi
 restaura_indice() { if [ -f "$IDXB" ] && cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; then :; else "${G[@]}" reset -q 2>/dev/null; fi; rm -f "$IDXB"; }
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
@@ -200,8 +202,9 @@ while IFS= read -r -d '' f; do
   case "$lc" in
     *.csv|*.xlsx|*.xls|*.xlsm|*.ods|*.dump|*.bak|*.sqlite|*.sqlite3|*.db|*.zip|*.tar|*.gz|*.tgz|*.7z|*.pdf|*.doc|*.docx|*.ppt|*.pptx|*.odt|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|*.kdbx) bad="tipo de dado/segredo" ;;
   esac
-  # modelo só quando TERMINA como modelo (.env.example.local é segredo); workflows (.github/) são código: conteúdo vai ao gitleaks
-  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && ! [[ "$lc" =~ \.(example|sample|template)(\.(json|ya?ml|toml|ini))?$ ]] && [[ "$lc" != .github/* ]] && bad="arquivo de segredo/ambiente"
+  # modelo só quando TERMINA como modelo (.env.example.local é segredo); SÓ arquivos de workflow (.github/workflows/*.yml) são código —
+  # .github/.npmrc, .github/.git-credentials etc. continuam bloqueados (Codex, PR #549)
+  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && ! [[ "$lc" =~ \.(example|sample|template)(\.(json|ya?ml|toml|ini))?$ ]] && ! [[ "$lc" =~ ^\.github/workflows/[^/]+\.ya?ml$ ]] && bad="arquivo de segredo/ambiente"
   if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":0:$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
   [ -n "$bad" ] && { unstage "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
 done < <("${G[@]}" diff --cached --name-only --no-renames --diff-filter=AM -z)
