@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "31ea570368c8551294d3553e3eff6669f7b12e36",
+  "sha": "a295c94f2c1c91c2e19d747c6f9f45ac2ad1ee84",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 04:05 UTC",
+  "generated_at": "2026-11-13 04:48 UTC",
   "files_total": 2915,
   "code_files": 2385,
   "code_lines": 326286
@@ -279870,10 +279870,19 @@
   }
  },
  "git": {
-  "sha": "31ea570368c8551294d3553e3eff6669f7b12e36",
+  "sha": "a295c94f2c1c91c2e19d747c6f9f45ac2ad1ee84",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "a295c94",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "31ea570",
     "date": "2026-11-13",
@@ -280208,20 +280217,13 @@
     "files": [
      "src/pages/AssinaturasPage.tsx"
     ]
-   },
-   {
-    "sha": "81eb705",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)",
-    "files": [
-     "src/components/__tests__/OnboardingPageContent.test.tsx",
-     "src/components/admissoes/OnboardingPageContent.tsx",
-     "src/pages/OnboardingPage.tsx"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/prod-readiness.md",
+    2
+   ],
    [
     "inventario/estado/rotas.json",
     2
@@ -280245,10 +280247,6 @@
    [
     "src/services/edgeFunctionsService.ts",
     2
-   ],
-   [
-    "docs/prod-readiness.md",
-    1
    ],
    [
     "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",

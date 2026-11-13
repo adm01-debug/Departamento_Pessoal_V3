@@ -4,11 +4,11 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "31ea570368c8551294d3553e3eff6669f7b12e36",
+ "commit_do_grafo": "a295c94f2c1c91c2e19d747c6f9f45ac2ad1ee84",
  "grafo_atual": true,
  "nos": 22065,
- "arestas": 46473,
- "comunidades_total": 2143,
+ "arestas": 46474,
+ "comunidades_total": 2142,
  "relacoes": {
   "calls": 3456,
   "cites": 7,
@@ -25,12 +25,12 @@
   "rationale_for": 26,
   "re_exports": 707,
   "reads_from": 1176,
-  "references": 2861,
+  "references": 2862,
   "triggers": 988
  },
  "origem": {
   "EXTRACTED": 45368,
-  "INFERRED": 1105
+  "INFERRED": 1106
  },
  "comunidades": [
   {
@@ -1105,6 +1105,21 @@
   },
   {
    "id": 78,
+   "nome": "admin",
+   "nos": 44,
+   "callables": 2,
+   "arquivos": 6,
+   "exemplos_arquivos": [
+    "PLANO_100.md",
+    "docs/auditoria/01_FALHAS_E_GAPS.md",
+    "docs/prod-readiness.md",
+    "docs/seguranca/MATRIZ_PAPEIS.md",
+    "infra/runbooks/BREAK_GLASS.md",
+    "supabase/tests/migration_consistency.test.ts"
+   ]
+  },
+  {
+   "id": 79,
    "nome": "feriasService",
    "nos": 44,
    "callables": 33,
@@ -1118,23 +1133,6 @@
     "src/components/ferias/FeriasTable.tsx",
     "src/lib/cursor.test.ts",
     "src/lib/cursor.ts"
-   ]
-  },
-  {
-   "id": 79,
-   "nome": "getCorsHeaders",
-   "nos": 43,
-   "callables": 21,
-   "arquivos": 13,
-   "exemplos_arquivos": [
-    "docs/EXECUCAO_PLANO_100_2026-08-30.md",
-    "supabase/functions/_shared/contract.ts",
-    "supabase/functions/_shared/originSecurity.test.ts",
-    "supabase/functions/alertas-dp/deliveryStatus.test.ts",
-    "supabase/functions/alertas-dp/deliveryStatus.ts",
-    "supabase/functions/alertas-dp/index.ts",
-    "supabase/functions/auth-gov-br/index.ts",
-    "supabase/functions/calcular-provisoes/index.ts"
    ]
   }
  ],
@@ -2002,7 +2000,7 @@
   "ESTADO_ATUAL.md": "3. Achados graves",
   "MIGRATION_GUIDE.md": "📚 Guia de Migração - Breaking Changes V18",
   "PENDENCIAS.md": "criptografia/index.ts",
-  "PLANO_100.md": "admin",
+  "PLANO_100.md": "LoginPage",
   "PLANO_50.md": "LoginPage",
   "PLANO_MELHORIAS.md": "🟡 P2 — QUALIDADE DE CÓDIGO E DX (22 itens, ~4 semanas)",
   "PLANO_REFATORACAO_TIPOS.md": "📐 Plano de Refatoração: Eliminar `any` em TypeScript",
@@ -2108,10 +2106,10 @@
   "docs/_archive/PLANO_IMPLEMENTACAO_V18_EXAUSTIVO.md": "📋 CHECKLIST MASTER V18",
   "docs/_archive/PLANO_IMPLEMENTACAO_V19_EXAUSTIVO.md": "🎯 PLANO DE IMPLEMENTAÇÃO V19 - ANÁLISE EXAUSTIVA COMPLETA",
   "docs/_archive/PLANO_IMPLEMENTACAO_V3.md": "1.1 Componentes Sem Testes (300 itens)",
-  "docs/_archive/PLANO_IMPLEMENTACAO_V4.md": "📋 PLANO DE IMPLEMENTAÇÃO V4 - DEPARTAMENTO PESSOAL",
+  "docs/_archive/PLANO_IMPLEMENTACAO_V4.md": "🔴 FASE 1: TESTES DE COMPONENTES FALTANTES (147 itens)",
   "docs/_archive/PLANO_IMPLEMENTACAO_V5.md": "📋 PLANO DE IMPLEMENTAÇÃO V5 - DEPARTAMENTO PESSOAL",
   "docs/_archive/PLANO_IMPLEMENTACAO_V6.md": "🟢 FASE 16: TESTES CONSTANTS E TYPES (79 itens)",
-  "docs/_archive/PLANO_IMPLEMENTACAO_V7.md": "⚪ FASE 9: PERFORMANCE (48 itens)",
+  "docs/_archive/PLANO_IMPLEMENTACAO_V7.md": "🏁 FASE 15: MIGRATIONS E DATABASE (50 itens)",
   "docs/_archive/PLANO_IMPLEMENTACAO_V8_COMPLETO.md": "📄 FASE 7: eSocial REAL (4-6 semanas)",
   "docs/_archive/PLANO_MASTER_V17_COMPLETO.md": "PLANO_MASTER_V17_COMPLETO.md",
   "docs/_archive/PLANO_MELHORIAS_DEPARTAMENTO_PESSOAL.md": "🟠 FASE 2: ALTA PRIORIDADE (Types, Schemas, Services)",
@@ -2151,7 +2149,7 @@
   "docs/agentes/fluxo-git.md": "2. Tabela de funcionalidades",
   "docs/agentes/graphify.md": "Grafo de conhecimento do código (graphify)",
   "docs/auditoria/00_PLANO_AUDITORIA.md": "AdminRoute",
-  "docs/auditoria/01_FALHAS_E_GAPS.md": "admin",
+  "docs/auditoria/01_FALHAS_E_GAPS.md": "rescisaoPDF.ts",
   "docs/auditoria/02_MATRIZ_TESTES_E2E.md": "auditoria/README.md",
   "docs/auditoria/03_AUDITORIA_EXAUSTIVA_V2.md": "SEÇÃO 2: ISOLAMENTO DE TENANT (empresa_id)",
   "docs/auditoria/03_SIMULACAO_CENARIOS.md": "Simulação de Cenários — Evidência Quantitativa Pré-Correção",
@@ -2190,10 +2188,10 @@
   "docs/auditoria/estado/02-paginas-D-M.md": "PontoPage.tsx",
   "docs/auditoria/estado/03-paginas-N-Z.md": "3. Achados graves",
   "docs/auditoria/estado/04-services-a-f.md": "3. Achados graves",
-  "docs/auditoria/estado/05-services-g-z.md": "3. Achados graves",
+  "docs/auditoria/estado/05-services-g-z.md": "contract.ts",
   "docs/auditoria/estado/06-hooks-e-contextos.md": "3. Achados graves",
   "docs/auditoria/estado/07-componentes.md": "3. Achados graves",
-  "docs/auditoria/estado/08-edge-functions.md": "3. Achados graves",
+  "docs/auditoria/estado/08-edge-functions.md": "contract.ts",
   "docs/auditoria/estado/09-dados-e-migrations.md": "3. Achados graves",
   "docs/auditoria/estado/10-infra-ci-testes.md": "3. Achados graves",
   "docs/auditoria/estado/11-integracoes-e-calculo.md": "errors/index.ts",
@@ -4722,7 +4720,7 @@
   "supabase/seeds/sindicatos_seed.sql": "sindicatos_seed.sql",
   "supabase/seeds/tabelas_inss_seed.sql": "tabelas_inss_seed.sql",
   "supabase/tests/ferias_embed_test.ts": "ref_https",
-  "supabase/tests/migration_consistency.test.ts": "admin",
+  "supabase/tests/migration_consistency.test.ts": "anon",
   "supabase/tests/plano100/00_setup_stubs.sql": "00_setup_stubs.sql",
   "supabase/tests/plano100/20_asserts.sql": "20_asserts.sql",
   "tailwind.config.js": "tailwind.config.js",

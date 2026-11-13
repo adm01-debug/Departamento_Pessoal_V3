@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "31ea570368c8551294d3553e3eff6669f7b12e36",
+  "commit": "a295c94f2c1c91c2e19d747c6f9f45ac2ad1ee84",
   "branch": "main",
-  "data_commit": "2026-11-13T00:39:18-03:00",
+  "data_commit": "2026-11-13T01:42:16-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "a295c94",
+    "data": "2026-11-13",
+    "assunto": "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)"
+   },
    {
     "sha": "31ea570",
     "data": "2026-11-13",
@@ -126,11 +131,6 @@
     "sha": "913f961",
     "data": "2026-11-12",
     "assunto": "fix: Obrigações Fiscais: DARF mostra o IRRF real da folha, \"Nova Simulação\" funciona e o SEFIP é baixado (#480)"
-   },
-   {
-    "sha": "9dc8def",
-    "data": "2026-11-12",
-    "assunto": "fix: SST: permite emitir ficha de EPI, abre a tela de EPIs no menu e faz 'Ver Portal' funcionar (#479)"
    }
   ],
   "arquivos_mudados_7d": 553,
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 31
+    "mudancas": 30
    },
    {
     "arquivo": "package-lock.json",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 14
+    "mudancas": 13
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -226,19 +226,15 @@
     "mudancas": 12
    },
    {
-    "arquivo": "src/services/cnabService.ts",
-    "mudancas": 12
-   },
-   {
     "arquivo": "AGENTS.md",
     "mudancas": 11
    },
    {
-    "arquivo": "infra/github/action-pins.json",
-    "mudancas": 10
+    "arquivo": "src/services/cnabService.ts",
+    "mudancas": 11
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 10
    },
    {
@@ -258,7 +254,7 @@
     "mudancas": 9
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 9
    },
    {
@@ -282,6 +278,10 @@
     "mudancas": 8
    },
    {
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "mudancas": 8
+   },
+   {
     "arquivo": ".github/workflows/canonical-sql-diag.yml",
     "mudancas": 7
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 164
+    "commits": 165
    },
    {
     "autor": "devin-ai-integration[bot]",
