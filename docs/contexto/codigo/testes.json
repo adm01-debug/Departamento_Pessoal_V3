@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 597,
+ "total": 598,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 559
+  "unit": 560
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 475
+   "arquivos": 476
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -1747,11 +1747,11 @@
   {
    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
    "tipo": "unit",
-   "linhas": 146,
+   "linhas": 153,
    "testa": [
     "src/components/ponto/GestaoRegistrosPonto.tsx"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/GlobalAuditLogTab.test.tsx",
@@ -2300,11 +2300,11 @@
   {
    "arquivo": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
    "tipo": "unit",
-   "linhas": 72,
+   "linhas": 239,
    "testa": [
     "src/components/ponto/PontoInconsistencyPanel.tsx"
    ],
-   "casos": 6
+   "casos": 17
   },
   {
    "arquivo": "src/components/__tests__/PontoLeaderboard.test.tsx",
@@ -3831,6 +3831,16 @@
    "casos": 7
   },
   {
+   "arquivo": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/pages/ObrigacoesFiscaisPage.tsx",
+    "src/services/edgeFunctionsService.ts"
+   ],
+   "casos": 3
+  },
+  {
    "arquivo": "src/pages/__tests__/PremiacoesPage.test.tsx",
    "tipo": "unit",
    "linhas": 76,
@@ -4206,12 +4216,12 @@
   {
    "arquivo": "src/services/__tests__/edgeFunctionsService.test.ts",
    "tipo": "unit",
-   "linhas": 275,
+   "linhas": 298,
    "testa": [
     "src/lib/circuitBreaker.ts",
     "src/services/edgeFunctionsService.ts"
    ],
-   "casos": 16
+   "casos": 18
   },
   {
    "arquivo": "src/services/__tests__/empresaService.test.ts",
@@ -5811,6 +5821,7 @@
   "src/pages/ImportacaoPage.tsx": 1,
   "src/pages/LoginPage.tsx": 1,
   "src/pages/NotFoundPage.tsx": 1,
+  "src/pages/ObrigacoesFiscaisPage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
   "src/pages/UsuariosPage.tsx": 1,
   "src/pages/folhaResumo.ts": 1,
@@ -5851,7 +5862,7 @@
   "src/services/desligamentoService.ts": 4,
   "src/services/despesaService.ts": 1,
   "src/services/documentoService.ts": 2,
-  "src/services/edgeFunctionsService.ts": 2,
+  "src/services/edgeFunctionsService.ts": 3,
   "src/services/empresaService.ts": 1,
   "src/services/encryptionService.ts": 1,
   "src/services/episService.ts": 1,
@@ -6051,7 +6062,6 @@
    "src/pages/MedidasDisciplinaresPage.tsx",
    "src/pages/MovimentacoesPage.tsx",
    "src/pages/NotificacoesPage.tsx",
-   "src/pages/ObrigacoesFiscaisPage.tsx",
    "src/pages/OnboardingPage.tsx",
    "src/pages/OrganogramaPage.tsx",
    "src/pages/PassivoTrabalhistaPage.tsx",

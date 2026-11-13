@@ -21940,6 +21940,7 @@
     "admin",
     "alert",
     "banner",
+    "gestor",
     "list",
     "listitem",
     "main",
@@ -21947,7 +21948,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 224
+   "arquivos_puxados": 225
   },
   {
    "protegida": true,

@@ -3371,7 +3371,7 @@
    "modulo": "components/ponto",
    "arquivos": 17,
    "testes": 0,
-   "linhas": 4148,
+   "linhas": 4190,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3681,7 +3681,9 @@
    ],
    "flags": [],
    "papeis": [
-    "alert"
+    "alert",
+    "gestor",
+    "rh"
    ],
    "diretos": {
     "edges": [
@@ -6637,7 +6639,7 @@
    "modulo": "pages",
    "arquivos": 111,
    "testes": 0,
-   "linhas": 41396,
+   "linhas": 41422,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -7670,7 +7672,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 4,
+   "testes": 5,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -7858,7 +7860,7 @@
    "modulo": "services",
    "arquivos": 71,
    "testes": 0,
-   "linhas": 12404,
+   "linhas": 12421,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

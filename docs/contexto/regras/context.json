@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0a81559b7d2926751e35d0865110c5175c561654",
+  "sha": "66b104fb6e2b3bf42cfca8693000f8600f9f6c4a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 01:13 UTC",
-  "files_total": 2913,
-  "code_files": 2384,
-  "code_lines": 325902
+  "generated_at": "2026-11-13 02:48 UTC",
+  "files_total": 2914,
+  "code_files": 2385,
+  "code_lines": 326279
  },
  "version": "1.3.2",
- "facts_hash": "248db7c135f61147",
+ "facts_hash": "e46d25ff4a548d38",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -386,7 +386,7 @@
   "languages": {
    ".sql": 827,
    ".ts": 746,
-   ".tsx": 683,
+   ".tsx": 684,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -90244,7 +90244,7 @@
      "sugerir_proxima_medida",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 216
+    "deps_count": 217
    },
    {
     "path": "",
@@ -96655,7 +96655,7 @@
   {
    "module": "src/components",
    "files": 574,
-   "lines": 74375,
+   "lines": 74591,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -97296,8 +97296,8 @@
   },
   {
    "module": "src/pages",
-   "files": 115,
-   "lines": 41807,
+   "files": 116,
+   "lines": 41907,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -97658,7 +97658,7 @@
   {
    "module": "src/services",
    "files": 160,
-   "lines": 33434,
+   "lines": 33474,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -98267,7 +98267,7 @@
   {
    "module": "supabase/functions",
    "files": 173,
-   "lines": 24419,
+   "lines": 24440,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -99238,6 +99238,7 @@
      "src/components/layout/AppSidebar.tsx",
      "src/components/ponto/PontoCharts.tsx",
      "src/components/ponto/PontoClockRegister.tsx",
+     "src/components/ponto/PontoInconsistencyPanel.tsx",
      "src/components/ponto/PontoStreakCard.tsx",
      "src/components/ui/command-palette.tsx",
      "src/contexts/AuthContext.tsx",
@@ -101095,6 +101096,9 @@
      "supabase/functions/gerar-holerite/index.ts",
      "supabase/functions/processar-ponto/index.ts",
      "supabase/functions/relatorio/index.ts"
+    ],
+    "ref": [
+     "src/components/ponto/PontoInconsistencyPanel.tsx"
     ],
     "upsert": [
      "supabase/functions/processar-ponto/index.ts"
@@ -107960,6 +107964,22 @@
     "msg": "Ponto registrado em modo OFFLINE. Será sincronizado quando a conexão voltar."
    },
    {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "msg": "${inc.colaborador} não tem login vinculado; não é possível enviar a cobrança."
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "msg": "Registro de ponto sem empresa vinculada."
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "msg": "Sem permissão para aprovar este registro."
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "msg": "Sessão expirada. Entre novamente."
+   },
+   {
     "file": "src/components/portal/PortalDocumentosTab.tsx",
     "msg": "Empresa não identificada"
    },
@@ -108714,6 +108734,10 @@
    {
     "file": "src/pages/MovimentacoesPage.tsx",
     "msg": "Transferência não encontrada ou sem permissão para salvar."
+   },
+   {
+    "file": "src/pages/ObrigacoesFiscaisPage.tsx",
+    "msg": "${naoSalvas.map((g) => g.tipo).join("
    },
    {
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
@@ -110466,6 +110490,14 @@
     "value": "pendente"
    },
    {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "value": "gestor"
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "value": "rh"
+   },
+   {
     "file": "src/components/settings/InlineTabs.tsx",
     "value": "coordenador"
    },
@@ -110806,6 +110838,14 @@
    {
     "file": "src/components/ponto/PontoClockRegister.tsx",
     "text": "biometria — risco trabalhista), mas o resultado real da validação"
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "text": "Mesma regra da aprovação em GestaoRegistrosPonto (pode_gerir_pessoas: admin/RH/gestor)."
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "text": "Já gravados (aprovados/cobrados): \"Mostrar ocultas\" não pode trazê-los de"
    },
    {
     "file": "src/components/portal/PortalRegimentoCard.tsx",
@@ -138326,6 +138366,12 @@
    {
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "field": "tipo",
+    "value": "alerta",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "field": "tipo",
     "value": "fatigue_risk",
     "kind": "compara"
    },
@@ -138345,18 +138391,6 @@
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "field": "tipo",
     "value": "short_break",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
-    "field": "tipo",
-    "value": "fatigue_risk",
-    "kind": "compara"
-   },
-   {
-    "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
-    "field": "tipo",
-    "value": "excessive_overtime",
     "kind": "compara"
    },
    {
@@ -145373,7 +145407,7 @@
     "file": "src/pages/ObrigacoesFiscaisPage.tsx",
     "name": "gerarGuiasServidor",
     "params": "",
-    "body": "if (!empresaAtual?.id) return; setGerandoServidor(true); try { const [mes, ano] = competencia.split('/'); await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos', }); qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] }); toast.success('Guias geradas automaticamente via servidor!'); } catch (err) { toast.error(safeErrorMessage(err, 'Erro ao gerar guias.')); } finally { setGerandoServidor(fals …"
+    "body": "if (!empresaAtual?.id) return; setGerandoServidor(true); try { const [mes, ano] = competencia.split('/'); // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`. const { data: r } = (await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos', })) as { data?: { guias?: unknown[]; duplicatas_bloqueadas?: string[]; nao_persistidas?: { tipo: string }[]; } | null; }; qc.invalidateQueries({ queryKey: ['guias-fgts …"
    },
    {
     "file": "src/pages/PassivoTrabalhistaPage.tsx",
@@ -154265,6 +154299,10 @@
    },
    {
     "file": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    "name": "renders the (mocked) inconsistency panel when data present"
+   },
+   {
+    "file": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     "name": "shows empty state when no registros"
    },
    {
@@ -156782,6 +156820,26 @@
    {
     "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
     "name": "shows short break description"
+   },
+   {
+    "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    "name": "ações ficam visíveis sem hover em telas pequenas (toque)"
+   },
+   {
+    "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    "name": "não alerta intervalo curto de registro já aprovado"
+   },
+   {
+    "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    "name": "sem papel admin/RH/gestor não mostra Cobrar/Aprovar Exceção, só Ocultar"
+   },
+   {
+    "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    "name": "papel %s vê Cobrar Justificativa e Aprovar Exceção"
+   },
+   {
+    "file": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    "name": "não exibe ações sem efeito real (Sugerir Saída, Compensar, Alerta Gestor)"
    },
    {
     "file": "src/components/__tests__/PontoLeaderboard.test.tsx",
@@ -163864,6 +163922,22 @@
     "name": "dispara download do modelo ao clicar em "
    },
    {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+    "name": "ObrigacoesFiscaisPage — gerar guias via servidor"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+    "name": "mostra quantas guias foram geradas"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+    "name": "avisa quando o DARF foi só calculado e não salvo (nao_persistidas)"
+   },
+   {
+    "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+    "name": "não anuncia sucesso quando tudo já existia: informa as duplicatas"
+   },
+   {
     "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
     "name": "PremiacoesPage — KPIs"
    },
@@ -168086,6 +168160,18 @@
    {
     "file": "src/services/__tests__/edgeFunctionsService.test.ts",
     "name": "throws when breaker itself throws (circuit open)"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "edgeFunctionsService.gerarGuias"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "envia o contrato da edge: empresa_id + tipo em maiúsculas (todos → TODAS)"
+   },
+   {
+    "file": "src/services/__tests__/edgeFunctionsService.test.ts",
+    "name": "mapeia fgts_digital para FGTS_DIGITAL"
    },
    {
     "file": "src/services/__tests__/empresaService.test.ts",
@@ -202519,11 +202605,13 @@
       "escreve:src/components/ponto/PontoInconsistencyPanel.tsx"
      ],
      "excessive_overtime": [
-      "compara:src/components/ponto/PontoInconsistencyPanel.tsx",
       "escreve:src/components/ponto/PontoInconsistencyPanel.tsx"
      ],
      "fatigue_risk": [
       "compara:src/components/ponto/PontoInconsistencyPanel.tsx",
+      "escreve:src/components/ponto/PontoInconsistencyPanel.tsx"
+     ],
+     "alerta": [
       "escreve:src/components/ponto/PontoInconsistencyPanel.tsx"
      ],
      "Contrato": [
@@ -236466,7 +236554,7 @@
   },
   "src/components/__tests__/GestaoRegistrosPonto.test.tsx": {
    "path": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-   "lines": 146,
+   "lines": 153,
    "is_test": true,
    "tests": [
     "GestaoRegistrosPonto",
@@ -236476,6 +236564,7 @@
     "renders export buttons",
     "renders colaborador name in table when data loaded",
     "renders table headers when data present",
+    "renders the (mocked) inconsistency panel when data present",
     "shows empty state when no registros"
    ]
   },
@@ -237529,15 +237618,24 @@
   },
   "src/components/__tests__/PontoInconsistencyPanel.test.tsx": {
    "path": "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
-   "lines": 72,
+   "lines": 239,
    "is_test": true,
+   "role_checks": [
+    "admin",
+    "r"
+   ],
    "tests": [
     "PontoInconsistencyPanel",
     "renders without crash when registros is empty",
     "shows Insights de Inteligência when inconsistency detected",
     "shows Resolução Assistida Ativa badge when inconsistencies exist",
     "shows colaborador name in inconsistency card",
-    "shows short break description"
+    "shows short break description",
+    "ações ficam visíveis sem hover em telas pequenas (toque)",
+    "não alerta intervalo curto de registro já aprovado",
+    "sem papel admin/RH/gestor não mostra Cobrar/Aprovar Exceção, só Ocultar",
+    "papel %s vê Cobrar Justificativa e Aprovar Exceção",
+    "não exibe ações sem efeito real (Sugerir Saída, Compensar, Alerta Gestor)"
    ]
   },
   "src/components/__tests__/PontoLeaderboard.test.tsx": {
@@ -242982,10 +243080,33 @@
   },
   "src/components/ponto/PontoInconsistencyPanel.tsx": {
    "path": "src/components/ponto/PontoInconsistencyPanel.tsx",
-   "lines": 336,
+   "lines": 378,
    "exports": [
     "type RegistroComColaborador",
     "function PontoInconsistencyPanel"
+   ],
+   "tables": [
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "registros_ponto",
+     "op": "ref"
+    }
+   ],
+   "table_cols": {
+    "colaboradores": [
+     "empresa_id",
+     "id",
+     "user_id"
+    ]
+   },
+   "errors": [
+    "${inc.colaborador} não tem login vinculado; não é possível enviar a cobrança.",
+    "Registro de ponto sem empresa vinculada.",
+    "Sem permissão para aprovar este registro.",
+    "Sessão expirada. Entre novamente."
    ],
    "status_values": [
     {
@@ -243015,6 +243136,11 @@
     },
     {
      "field": "tipo",
+     "value": "alerta",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
      "value": "fatigue_risk",
      "kind": "compara"
     },
@@ -243032,17 +243158,15 @@
      "field": "tipo",
      "value": "short_break",
      "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "fatigue_risk",
-     "kind": "compara"
-    },
-    {
-     "field": "tipo",
-     "value": "excessive_overtime",
-     "kind": "compara"
     }
+   ],
+   "role_checks": [
+    "gestor",
+    "rh"
+   ],
+   "rule_comments": [
+    "Mesma regra da aprovação em GestaoRegistrosPonto (pode_gerir_pessoas: admin/RH/gestor).",
+    "Já gravados (aprovados/cobrados): \"Mostrar ocultas\" não pode trazê-los de"
    ],
    "temporal": [
     "const diffHoras = (agora.getTime() - dataBatida.getTime()) / (1000 * 60 * 60);"
@@ -254365,7 +254489,7 @@
   },
   "src/pages/ObrigacoesFiscaisPage.tsx": {
    "path": "src/pages/ObrigacoesFiscaisPage.tsx",
-   "lines": 481,
+   "lines": 507,
    "exports": [
     "function ObrigacoesFiscaisPage"
    ],
@@ -254429,6 +254553,7 @@
    },
    "dyn_from": 2,
    "errors": [
+    "${naoSalvas.map((g) => g.tipo).join(",
     "Erro ao gerar guia"
    ],
    "status_values": [
@@ -254512,7 +254637,7 @@
     {
      "name": "gerarGuiasServidor",
      "params": "",
-     "body": "if (!empresaAtual?.id) return; setGerandoServidor(true); try { const [mes, ano] = competencia.split('/'); await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos', }); qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] }); toast.success('Guias geradas automaticamente via servidor!'); } catch (err) { toast.error(safeErrorMessage(err, 'Erro ao gerar guias.')); } finally { setGerandoServidor(fals …"
+     "body": "if (!empresaAtual?.id) return; setGerandoServidor(true); try { const [mes, ano] = competencia.split('/'); // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`. const { data: r } = (await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos', })) as { data?: { guias?: unknown[]; duplicatas_bloqueadas?: string[]; nao_persistidas?: { tipo: string }[]; } | null; }; qc.invalidateQueries({ queryKey: ['guias-fgts …"
     }
    ]
   },
@@ -256204,6 +256329,17 @@
     "mostra erro amigável quando o arquivo é inválido (sem coluna Nome)",
     "reseta o fluxo ao clicar em Cancelar",
     "dispara download do modelo ao clicar em "
+   ]
+  },
+  "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx": {
+   "path": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+   "lines": 74,
+   "is_test": true,
+   "tests": [
+    "ObrigacoesFiscaisPage — gerar guias via servidor",
+    "mostra quantas guias foram geradas",
+    "avisa quando o DARF foi só calculado e não salvo (nao_persistidas)",
+    "não anuncia sucesso quando tudo já existia: informa as duplicatas"
    ]
   },
   "src/pages/__tests__/PremiacoesPage.test.tsx": {
@@ -259857,7 +259993,7 @@
   },
   "src/services/edgeFunctionsService.ts": {
    "path": "src/services/edgeFunctionsService.ts",
-   "lines": 336,
+   "lines": 353,
    "exports": [
     "class EdgeFunctionInvokeError",
     "function isDefinitiveIdempotencyFailure",
@@ -263369,7 +263505,7 @@
   },
   "src/services/__tests__/edgeFunctionsService.test.ts": {
    "path": "src/services/__tests__/edgeFunctionsService.test.ts",
-   "lines": 275,
+   "lines": 298,
    "is_test": true,
    "errors": [
     "Folha bloqueada"
@@ -263396,7 +263532,10 @@
     "mantém a chave para estado indeterminado ou falha de transporte",
     "throws wrapped Error when invoke rejects with an exception",
     "throws wrapped Error with fallback message when invoke error has no message",
-    "throws when breaker itself throws (circuit open)"
+    "throws when breaker itself throws (circuit open)",
+    "edgeFunctionsService.gerarGuias",
+    "envia o contrato da edge: empresa_id + tipo em maiúsculas (todos → TODAS)",
+    "mapeia fgts_digital para FGTS_DIGITAL"
    ]
   },
   "src/services/__tests__/empresaService.test.ts": {
@@ -272928,7 +273067,7 @@
   },
   "supabase/functions/gerar-guias/index.ts": {
    "path": "supabase/functions/gerar-guias/index.ts",
-   "lines": 302,
+   "lines": 323,
    "tables": [
     {
      "table": "colaboradores",
@@ -279731,10 +279870,34 @@
   }
  },
  "git": {
-  "sha": "0a81559b7d2926751e35d0865110c5175c561654",
+  "sha": "66b104fb6e2b3bf42cfca8693000f8600f9f6c4a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "66b104f",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: ações do painel de inconsistências de ponto passam a gravar de verdade (#516)",
+    "files": [
+     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+     "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+     "src/components/ponto/PontoInconsistencyPanel.tsx"
+    ]
+   },
+   {
+    "sha": "b170bd7",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)",
+    "files": [
+     "src/pages/ObrigacoesFiscaisPage.tsx",
+     "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+     "src/services/__tests__/edgeFunctionsService.test.ts",
+     "src/services/edgeFunctionsService.ts",
+     "supabase/functions/gerar-guias/index.ts"
+    ]
+   },
    {
     "sha": "0a81559",
     "date": "2026-11-12",
@@ -280058,27 +280221,41 @@
      "src/hooks/__tests__/useSystemHealth.test.ts",
      "src/hooks/useSystemHealth.ts"
     ]
-   },
-   {
-    "sha": "e3f108d",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: exportar ficha do colaborador em PDF e remover item 'Outras Ações' sem ação (#476)",
-    "files": [
-     "src/pages/ColaboradorDetalhesPage.tsx"
-    ]
-   },
-   {
-    "sha": "7fa11b6",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: remove aba de Taxas de Câmbio com cotações fixas no Financeiro Bancário (#475)",
-    "files": [
-     "src/pages/FinanceiroBancarioPage.tsx"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    2
+   ],
+   [
+    "src/components/ponto/PontoInconsistencyPanel.tsx",
+    2
+   ],
+   [
+    "src/pages/ObrigacoesFiscaisPage.tsx",
+    2
+   ],
+   [
+    "src/services/__tests__/edgeFunctionsService.test.ts",
+    2
+   ],
+   [
+    "src/services/edgeFunctionsService.ts",
+    2
+   ],
+   [
+    "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
+    1
+   ],
+   [
+    "supabase/functions/gerar-guias/index.ts",
+    1
+   ],
    [
     "src/components/ui/__tests__/data-table-toolbar.test.tsx",
     1
@@ -280125,38 +280302,6 @@
    ],
    [
     "src/hooks/useServerValidation.ts",
-    1
-   ],
-   [
-    "src/pages/DashboardPage.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/FolhaESocialSync.test.tsx",
-    1
-   ],
-   [
-    "src/components/folha/FolhaESocialSync.tsx",
-    1
-   ],
-   [
-    "src/components/workflows/__tests__/logExecucao.test.ts",
-    1
-   ],
-   [
-    "src/components/workflows/logExecucao.ts",
-    1
-   ],
-   [
-    "src/pages/WorkflowsPage.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/esocial/ESocialAuditDialog.tsx",
     1
    ]
   ]

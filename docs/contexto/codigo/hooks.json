@@ -225,11 +225,12 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 19,
+   "usado_por": 20,
    "usado_por_arquivos": [
     "src/components/ferias/FeriasTable.tsx",
     "src/components/ponto/PontoCharts.tsx",
     "src/components/ponto/PontoClockRegister.tsx",
+    "src/components/ponto/PontoInconsistencyPanel.tsx",
     "src/components/ponto/PontoStreakCard.tsx",
     "src/components/sst/SSTIncidentesTab.tsx",
     "src/components/sst/SSTKPIs.tsx",

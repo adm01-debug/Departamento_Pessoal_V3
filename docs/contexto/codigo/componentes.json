@@ -3468,10 +3468,15 @@
     "RegistroComColaborador"
    ],
    "export_default": null,
-   "linhas": 336,
+   "linhas": 378,
    "dominio": "components/ponto",
-   "hooks_locais": [],
-   "tabelas": [],
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "colaboradores",
+    "registros_ponto"
+   ],
    "edges": [],
    "usado_por": 1,
    "orfao": false
@@ -6585,7 +6590,7 @@
     "ObrigacoesFiscaisPage"
    ],
    "export_default": "ObrigacoesFiscaisPage",
-   "linhas": 481,
+   "linhas": 507,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"

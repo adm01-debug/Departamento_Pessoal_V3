@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1429)",
+   "TypeScript (1430)",
    "SQL (827)",
    "Markdown (291)",
    "JavaScript (126)",
@@ -1961,15 +1961,19 @@
    },
    {
     "papel": "admin",
-    "ocorrencias": 9
+    "ocorrencias": 10
    },
    {
     "papel": "user",
-    "ocorrencias": 9
+    "ocorrencias": 10
    },
    {
     "papel": "tablist",
     "ocorrencias": 5
+   },
+   {
+    "papel": "rh",
+    "ocorrencias": 4
    },
    {
     "papel": "service_role",
@@ -1980,15 +1984,15 @@
     "ocorrencias": 4
    },
    {
+    "papel": "gestor",
+    "ocorrencias": 3
+   },
+   {
     "papel": "menuitem",
     "ocorrencias": 3
    },
    {
     "papel": "progressbar",
-    "ocorrencias": 3
-   },
-   {
-    "papel": "rh",
     "ocorrencias": 3
    },
    {
@@ -2041,10 +2045,6 @@
    },
    {
     "papel": "coordenador",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "gestor",
     "ocorrencias": 1
    },
    {

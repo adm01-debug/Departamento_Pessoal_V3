@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0a81559b7d2926751e35d0865110c5175c561654",
+  "commit": "66b104fb6e2b3bf42cfca8693000f8600f9f6c4a",
   "branch": "main",
-  "data_commit": "2026-11-12T20:49:36-03:00",
+  "data_commit": "2026-11-12T22:14:37-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "66b104f",
+    "data": "2026-11-12",
+    "assunto": "fix: ações do painel de inconsistências de ponto passam a gravar de verdade (#516)"
+   },
+   {
+    "sha": "b170bd7",
+    "data": "2026-11-12",
+    "assunto": "fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)"
+   },
    {
     "sha": "0a81559",
     "data": "2026-11-12",
@@ -121,23 +131,13 @@
     "sha": "004508d",
     "data": "2026-11-12",
     "assunto": "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)"
-   },
-   {
-    "sha": "773c7af",
-    "data": "2026-11-12",
-    "assunto": "fix: liga ações da tela de Assinaturas e remove botão Baixar sem origem (#481)"
-   },
-   {
-    "sha": "81eb705",
-    "data": "2026-11-12",
-    "assunto": "fix: onboarding sem botão de e-mail falso, aba Kits fictícia removida e Concluídos com dados reais (#483)"
    }
   ],
-  "arquivos_mudados_7d": 550,
+  "arquivos_mudados_7d": 551,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 42
+    "mudancas": 44
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
@@ -160,11 +160,11 @@
     "mudancas": 19
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 17
+    "pasta": "src/services/__tests__",
+    "mudancas": 18
    },
    {
-    "pasta": "src/services/__tests__",
+    "pasta": "package-lock.json",
     "mudancas": 17
    },
    {
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 34
+    "mudancas": 33
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 30
+    "mudancas": 29
    },
    {
     "arquivo": "CLAUDE.md",
@@ -234,10 +234,6 @@
     "mudancas": 11
    },
    {
-    "arquivo": ".github/workflows/canonical-edge-functions.yml",
-    "mudancas": 10
-   },
-   {
     "arquivo": "infra/github/action-pins.json",
     "mudancas": 10
    },
@@ -254,7 +250,7 @@
     "mudancas": 10
    },
    {
-    "arquivo": ".github/workflows/canonical-probes.yml",
+    "arquivo": ".github/workflows/canonical-edge-functions.yml",
     "mudancas": 9
    },
    {
@@ -266,7 +262,7 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/security.yml",
+    "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 8
    },
    {
@@ -275,6 +271,10 @@
    },
    {
     "arquivo": "src/services/__tests__/cnabService.test.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/services/edgeFunctionsService.ts",
     "mudancas": 8
    },
    {
@@ -290,18 +290,18 @@
     "mudancas": 7
    },
    {
-    "arquivo": "e2e/auth.setup.ts",
+    "arquivo": ".github/workflows/security.yml",
     "mudancas": 7
    },
    {
-    "arquivo": "scripts/audit-required-checks.mjs",
+    "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 159
+    "commits": 161
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2892,
-  "arquivos_codigo": 1559,
-  "linhas_codigo": 277508,
+  "arquivos_total": 2893,
+  "arquivos_codigo": 1560,
+  "linhas_codigo": 277885,
   "rotas": 114,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -336,7 +336,7 @@
   "tabelas": 417,
   "migrations": 791,
   "cron_jobs": 41,
-  "testes": 597,
+  "testes": 598,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 291
@@ -632,7 +632,7 @@
   },
   "src/components": {
    "arquivos": 574,
-   "linhas": 74375
+   "linhas": 74591
   },
   "src/constants": {
    "arquivos": 6,
@@ -667,8 +667,8 @@
    "linhas": 186
   },
   "src/pages": {
-   "arquivos": 115,
-   "linhas": 41807
+   "arquivos": 116,
+   "linhas": 41907
   },
   "src/providers": {
    "arquivos": 4,
@@ -680,7 +680,7 @@
   },
   "src/services": {
    "arquivos": 160,
-   "linhas": 33434
+   "linhas": 33474
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -708,7 +708,7 @@
   },
   "supabase/functions": {
    "arquivos": 173,
-   "linhas": 24419
+   "linhas": 24440
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -843,7 +843,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
-  "arquivos_acima_500_linhas": 58
+  "arquivos_acima_500_linhas": 59
  },
  "todos": [
   {

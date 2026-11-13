@@ -262,7 +262,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 19,
+   "usado_por": 20,
    "usado_por_modulos": [
     "components/ferias",
     "components/ponto",
@@ -349,7 +349,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 232,
+   "usado_por": 233,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -1513,7 +1513,7 @@
    "zod_schemas": 1,
    "flags": [],
    "papeis": [],
-   "usado_por": 116,
+   "usado_por": 117,
    "usado_por_modulos": [
     "components/admissoes",
     "components/dashboard",
@@ -2487,7 +2487,7 @@
     "isDefinitiveIdempotencyFailure"
    ],
    "export_default": null,
-   "linhas": 336,
+   "linhas": 353,
    "tabelas": [],
    "rpcs": [],
    "edges": [
@@ -2528,7 +2528,7 @@
     "components/settings",
     "pages"
    ],
-   "coberto_por_testes": 2,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -3237,8 +3237,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "components/ponto",
     "hooks"
    ],
    "coberto_por_testes": 1,

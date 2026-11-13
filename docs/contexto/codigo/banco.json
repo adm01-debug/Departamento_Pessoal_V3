@@ -15276,7 +15276,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 40,
+   "usada_no_front": 41,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -50002,7 +50002,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 8,
+   "usada_no_front": 9,
    "usada_em_edges": [
     "alertas-preditivos",
     "calcular-ferias",
