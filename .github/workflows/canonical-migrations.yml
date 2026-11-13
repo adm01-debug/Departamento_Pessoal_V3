@@ -163,7 +163,10 @@ jobs:
             20261112010000_configuracoes_ponto_corrige_policies_prod.sql \
             20261113000000_remediate_rv04_missing_rpcs.sql \
             20261114000000_remediate_ferias_art145_11_20.sql \
-            20261116000000_remediate_rbac_e2e_remove_admin.sql
+                        20261116000000_remediate_rbac_e2e_remove_admin.sql \
+                                    20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql \
+                                    20261114000200_planos_saude_updated_at.sql \
+                                    20261114000800_contas_bancarias_decrypted_security_invoker.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
