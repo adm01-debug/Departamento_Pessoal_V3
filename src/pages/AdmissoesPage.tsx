@@ -371,11 +371,7 @@ export default function AdmissoesPage() {
                 <p className="text-sm text-muted-foreground">
                   O monitoramento de auditoria eSocial e admissão digital está ativo.
                 </p>
-                <Button
-                  variant="link"
-                  className="text-xs text-primary mt-2"
-                  onClick={() => navigate('/configuracoes/logs')}
-                >
+                <Button variant="link" className="text-xs text-primary mt-2" onClick={() => navigate('/auditoria')}>
                   Ver Logs Globais
                 </Button>
               </CardContent>

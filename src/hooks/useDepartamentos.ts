@@ -23,5 +23,6 @@ export function useDepartamentos() {
   return {
     ...crud,
     departamentos: crud.items,
+    empresaId,
   };
 }

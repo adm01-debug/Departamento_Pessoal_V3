@@ -176,6 +176,7 @@ export function useAtualizarEpi() {
     mutationFn: ({ id, ...d }: { id: string } & DataRecord) => episService.atualizar(id, d, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['epis'] });
+      qc.invalidateQueries({ queryKey: ['epis-entregas'] });
       toast.success('EPI atualizado');
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),

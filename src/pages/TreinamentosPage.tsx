@@ -15,13 +15,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { catalogoCursoService, colaboradorService } from '@/services';
-import type { CertificadoComJoins } from '@/services/catalogoCursoService';
+import type { CertificadoComJoins, InscricaoComJoins } from '@/services/catalogoCursoService';
 import { useEmpresas } from '@/hooks';
 import { TrilhaCursosSection } from '@/components/treinamentos/TrilhaCursosSection';
 import { toast } from 'sonner';
-import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video, ExternalLink } from 'lucide-react';
+import {
+  GraduationCap,
+  Plus,
+  BookOpen,
+  Award,
+  Users,
+  Trash2,
+  Link,
+  Calendar,
+  Video,
+  ExternalLink,
+  Pencil,
+} from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import { parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
@@ -191,8 +203,7 @@ export default function TreinamentosPage() {
   });
 
   // === Cursos ===
-  const [openCurso, setOpenCurso] = useState(false);
-  const [cursoForm, setCursoForm] = useState({
+  const cursoFormVazio = {
     nome: '',
     descricao: '',
     categoria: '',
@@ -200,30 +211,43 @@ export default function TreinamentosPage() {
     carga_horaria: '',
     obrigatorio: false,
     nr_relacionada: '',
-  });
+  };
+  const [openCurso, setOpenCurso] = useState(false);
+  const [cursoEditId, setCursoEditId] = useState<string | null>(null);
+  const [cursoForm, setCursoForm] = useState(cursoFormVazio);
   const criarCurso = useMutation({
-    mutationFn: () =>
-      catalogoCursoService.criarCurso({
+    mutationFn: () => {
+      const payload = {
         ...cursoForm,
         carga_horaria: cursoForm.carga_horaria ? Number(cursoForm.carga_horaria) : null,
-        empresa_id: empresaAtual?.id,
-      }),
+      };
+      return cursoEditId
+        ? catalogoCursoService.atualizarCurso(cursoEditId, payload, empresaAtual!.id)
+        : catalogoCursoService.criarCurso({ ...payload, empresa_id: empresaAtual?.id });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['catalogo_cursos'] });
+      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
       setOpenCurso(false);
-      setCursoForm({
-        nome: '',
-        descricao: '',
-        categoria: '',
-        modalidade: 'presencial',
-        carga_horaria: '',
-        obrigatorio: false,
-        nr_relacionada: '',
-      });
-      toast.success('Curso criado!');
+      setCursoForm(cursoFormVazio);
+      toast.success(cursoEditId ? 'Curso atualizado!' : 'Curso criado!');
+      setCursoEditId(null);
     },
-    onError: () => toast.error('Erro ao criar curso'),
+    onError: () => toast.error(cursoEditId ? 'Erro ao atualizar curso' : 'Erro ao criar curso'),
   });
+  const editarCurso = (c: Tables<'catalogo_cursos'>) => {
+    setCursoEditId(c.id);
+    setCursoForm({
+      nome: c.nome,
+      descricao: c.descricao ?? '',
+      categoria: c.categoria ?? '',
+      modalidade: c.modalidade ?? 'presencial',
+      carga_horaria: c.carga_horaria != null ? String(c.carga_horaria) : '',
+      obrigatorio: !!c.obrigatorio,
+      nr_relacionada: c.nr_relacionada ?? '',
+    });
+    setOpenCurso(true);
+  };
   const excluirCurso = useMutation({
     mutationFn: (id: string) => catalogoCursoService.excluirCurso(id, empresaAtual!.id),
     onSuccess: () => {
@@ -266,6 +290,25 @@ export default function TreinamentosPage() {
       toast.success('Inscrição realizada!');
     },
     onError: () => toast.error('Erro ao inscrever'),
+  });
+  const atualizarInsc = useMutation({
+    mutationFn: ({ insc, status }: { insc: InscricaoComJoins; status: string }) =>
+      catalogoCursoService.atualizarInscricao(
+        insc.id,
+        {
+          colaborador_id: insc.colaborador_id,
+          curso_id: insc.curso_id,
+          status,
+          ...(status === 'concluido' ? { data_conclusao: format(new Date(), 'yyyy-MM-dd') } : {}),
+        },
+        empresaAtual!.id
+      ),
+    onSuccess: (_d, { status }) => {
+      qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] });
+      if (status === 'concluido') qc.invalidateQueries({ queryKey: ['treinamento_certificados'] });
+      toast.success('Status da inscrição atualizado!');
+    },
+    onError: () => toast.error('Erro ao atualizar inscrição'),
   });
 
   const isLoading = loadTrein || loadCursos || loadTrilhas || loadInsc || loadInst || loadCert;
@@ -505,7 +548,16 @@ export default function TreinamentosPage() {
           {/* CATÁLOGO */}
           <TabsContent value="catalogo">
             <div className="flex justify-end mb-4">
-              <Dialog open={openCurso} onOpenChange={setOpenCurso}>
+              <Dialog
+                open={openCurso}
+                onOpenChange={(o) => {
+                  setOpenCurso(o);
+                  if (!o && cursoEditId) {
+                    setCursoEditId(null);
+                    setCursoForm(cursoFormVazio);
+                  }
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
@@ -514,7 +566,7 @@ export default function TreinamentosPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Novo Curso</DialogTitle>
+                    <DialogTitle>{cursoEditId ? 'Editar Curso' : 'Novo Curso'}</DialogTitle>
                   </DialogHeader>
                   <div className="grid gap-3">
                     <div>
@@ -622,6 +674,9 @@ export default function TreinamentosPage() {
                             </Badge>
                           </TableCell>
                           <TableCell>
+                            <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => editarCurso(c)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -795,12 +850,13 @@ export default function TreinamentosPage() {
                       <TableHead>Curso</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Data Início</TableHead>
+                      <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {inscricoes.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                           Nenhuma inscrição registrada
                         </TableCell>
                       </TableRow>
@@ -815,6 +871,24 @@ export default function TreinamentosPage() {
                             </Badge>
                           </TableCell>
                           <TableCell>{i.data_inicio || '—'}</TableCell>
+                          <TableCell>
+                            <Select
+                              value={i.status || 'inscrito'}
+                              onValueChange={(status) => atualizarInsc.mutate({ insc: i, status })}
+                              disabled={i.status === 'concluido' || atualizarInsc.isPending}
+                            >
+                              <SelectTrigger className="w-40" aria-label="Alterar status da inscrição">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="inscrito">Inscrito</SelectItem>
+                                <SelectItem value="em_andamento">Em andamento</SelectItem>
+                                <SelectItem value="concluido">Concluído</SelectItem>
+                                <SelectItem value="reprovado">Reprovado</SelectItem>
+                                <SelectItem value="cancelado">Cancelado</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
                         </TableRow>
                       ))
                     )}

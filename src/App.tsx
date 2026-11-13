@@ -218,6 +218,7 @@ export default function App() {
         <Route path="faltas" element={<LazyPage Component={FaltasPage} />} />
         <Route path="beneficios" element={<LazyPage Component={BeneficiosPage} />} />
         <Route path="beneficios/novo" element={<LazyPage Component={BeneficioFormPage} />} />
+        <Route path="beneficios/:id/editar" element={<LazyPage Component={BeneficioFormPage} />} />
 
         {/* Folha e Financeiro */}
         <Route path="folha" element={<LazyPage Component={FolhaPage} />} />
