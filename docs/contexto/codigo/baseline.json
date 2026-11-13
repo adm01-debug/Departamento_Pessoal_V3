@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f5c370c7b2277b4bdb012121b5fabe98bba23d4f",
+  "commit": "5bbf7eb3c69368a10a7b25f83738898d5dc079a0",
   "branch": "main",
-  "data_commit": "2026-11-13T16:43:20-03:00",
+  "data_commit": "2026-11-13T17:46:08-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5bbf7eb",
+    "data": "2026-11-13",
+    "assunto": "chore: regenera inventario/estado/rotas.json com o gerador atual (#558)"
+   },
+   {
+    "sha": "9d2fda9",
+    "data": "2026-11-13",
+    "assunto": "fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)"
+   },
    {
     "sha": "f5c370c",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "3a8ac55",
     "data": "2026-11-13",
     "assunto": "Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)"
-   },
-   {
-    "sha": "14701f5",
-    "data": "2026-11-13",
-    "assunto": "Catálogo de EPIs passa a permitir editar EPI (CA, validade do CA, estoque) (#522)"
-   },
-   {
-    "sha": "622c734",
-    "data": "2026-11-13",
-    "assunto": "Convênios passam a poder ser editados (nome, tipo, limite e status) (#519)"
    }
   ],
-  "arquivos_mudados_7d": 632,
+  "arquivos_mudados_7d": 633,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -258,11 +258,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "inventario/estado/rotas.json",
     "mudancas": 8
    },
    {
-    "arquivo": "src/services/edgeFunctionsService.ts",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 8
    },
    {
@@ -282,10 +282,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 7
-   },
-   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 7
    },
@@ -296,12 +292,16 @@
    {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 7
+   },
+   {
+    "arquivo": "src/services/edgeFunctionsService.ts",
+    "mudancas": 7
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 201
+    "commits": 203
    },
    {
     "autor": "devin-ai-integration[bot]",

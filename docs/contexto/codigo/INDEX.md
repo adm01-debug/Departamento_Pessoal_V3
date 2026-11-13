@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `f5c370c7b2277b4bdb012121b5fabe98bba23d4f` (2026-11-13T16:43:20-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5bbf7eb3c69368a10a7b25f83738898d5dc079a0` (2026-11-13T17:46:08-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -386,7 +386,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22205 nós · 46978 arestas · 2141 comunidades · grafo do commit `f5c370c7`
+- 22205 nós · 46978 arestas · 2141 comunidades · grafo do commit `5bbf7eb3`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (465), cn (385), button.tsx (368), lucide-react (345), vitest (220), contract.ts (170), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), ref_node_fs (153)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -618,6 +618,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-13 `5bbf7eb` chore: regenera inventario/estado/rotas.json com o gerador atual (#558)
+- 2026-11-13 `9d2fda9` fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)
 - 2026-11-13 `f5c370c` chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)
 - 2026-11-13 `a49f33e` fix(logs): não silenciar console.warn em produção (#554)
 - 2026-11-13 `69cf8aa` infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)
@@ -631,8 +633,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `d49f194` fix: ocultar login com Google enquanto o provider estiver desabilitado (#551)
 - 2026-11-13 `f07255f` fix: --check do inventario de rotas compara conteudo, nao bytes (#552)
 - 2026-11-13 `4f2ebaa` docs: prod-readiness registra o merge da #520 e a #541 (#547)
-- 2026-11-13 `7438a74` fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)
-- 2026-11-13 `47e4020` docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

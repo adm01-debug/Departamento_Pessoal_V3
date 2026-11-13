@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: regenera inventario/estado/rotas.json com o gerador atual (#558)",
+   "fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)",
    "chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)",
    "fix(logs): não silenciar console.warn em produção (#554)",
-   "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)",
-   "Seguros de Vida: permitir editar apólices (#521)",
-   "fix: treinamentos permite alterar status da inscrição e editar curso (#492)"
+   "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

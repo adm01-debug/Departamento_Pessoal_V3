@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f5c370c7b2277b4bdb012121b5fabe98bba23d4f",
+  "sha": "5bbf7eb3c69368a10a7b25f83738898d5dc079a0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 20:59 UTC",
+  "generated_at": "2026-11-13 22:06 UTC",
   "files_total": 2945,
   "code_files": 2415,
   "code_lines": 332158
@@ -282073,10 +282073,28 @@
   }
  },
  "git": {
-  "sha": "f5c370c7b2277b4bdb012121b5fabe98bba23d4f",
+  "sha": "5bbf7eb3c69368a10a7b25f83738898d5dc079a0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5bbf7eb",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "chore: regenera inventario/estado/rotas.json com o gerador atual (#558)",
+    "files": [
+     "inventario/estado/rotas.json"
+    ]
+   },
+   {
+    "sha": "9d2fda9",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)",
+    "files": [
+     "index.html"
+    ]
+   },
    {
     "sha": "f5c370c",
     "date": "2026-11-13",
@@ -282385,37 +282403,12 @@
      "src/utils/__tests__/dateLocal.test.ts",
      "src/utils/dateLocal.ts"
     ]
-   },
-   {
-    "sha": "c89b176",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Premiações: \"Salvar Rascunho\" passa a gravar a campanha como rascunho (não mais como ativa) (#511)",
-    "files": [
-     "src/components/__tests__/CampaignWizard.test.tsx",
-     "src/components/premiacoes/CampaignWizard.tsx",
-     "src/pages/PremiacoesPage.tsx",
-     "src/pages/__tests__/PremiacoesPage.test.tsx",
-     "src/services/__tests__/premiacoesService.test.ts",
-     "src/services/premiacoesService.ts"
-    ]
-   },
-   {
-    "sha": "d6a9d12",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Ponto: \"Aprovar Lote\" passa a gravar a aprovação e \"Histórico\" abre a trilha do registro (#508)",
-    "files": [
-     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-     "src/components/ponto/GestaoRegistrosPonto.tsx",
-     "src/components/ponto/PontoAuditTimeline.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "inventario/estado/rotas.json",
-    3
+    4
    ],
    [
     "docs/prod-readiness.md",
@@ -282424,6 +282417,10 @@
    [
     ".github/workflows/canonical-migrations.yml",
     2
+   ],
+   [
+    "index.html",
+    1
    ],
    [
     "src/main.tsx",
@@ -282487,10 +282484,6 @@
    ],
    [
     "src/pages/__tests__/PlanosSaudePage.test.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/ValesPage.test.tsx",
     1
    ]
   ]
