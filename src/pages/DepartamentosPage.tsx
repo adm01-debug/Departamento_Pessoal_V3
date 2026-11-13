@@ -7,6 +7,7 @@ import { Building2, GitBranch, ArrowRight, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NovoDepartamentoDialog } from '@/components/departamentos/NovoDepartamentoDialog';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
+import { useAuth } from '@/contexts';
 import type { Departamento } from '@/types/entities';
 export default function DepartamentosPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -41,6 +42,9 @@ export default function DepartamentosPage() {
     [setPage]
   );
   const navigate = useNavigate();
+  // Criar/editar/inativar departamento é atribuição do RH/admin (mesma regra do #514).
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
 
   const abrirNovo = () => {
     setEditando(null);
@@ -74,8 +78,8 @@ export default function DepartamentosPage() {
         onSearchChange={handleSearchChange}
         onRefetch={refetch}
         isRefreshing={isRefreshing}
-        onAdd={abrirNovo}
-        addLabel="Novo Departamento"
+        onAdd={podeGerir ? abrirNovo : undefined}
+        addLabel={podeGerir ? 'Novo Departamento' : undefined}
         actions={
           <div className="flex gap-2">
             <Button
@@ -136,14 +140,16 @@ export default function DepartamentosPage() {
               </Badge>
             </TableCell>
             <TableCell className="text-right">
-              <Button
-                onClick={() => abrirEditar(dept)}
-                variant="ghost"
-                size="sm"
-                className="h-7 text-[10px] font-bold gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                DETALHES <ArrowRight className="h-3 w-3" />
-              </Button>
+              {podeGerir && (
+                <Button
+                  onClick={() => abrirEditar(dept)}
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[10px] font-bold gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  DETALHES <ArrowRight className="h-3 w-3" />
+                </Button>
+              )}
             </TableCell>
           </TableRow>
         )}

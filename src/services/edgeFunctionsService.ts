@@ -98,6 +98,14 @@ const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = g
   }
 };
 
+const GERAR_GUIAS_TIPO = {
+  darf: 'DARF',
+  gps: 'GPS',
+  fgts: 'FGTS',
+  fgts_digital: 'FGTS_DIGITAL',
+  todos: 'TODAS',
+} as const;
+
 export const edgeFunctionsService = {
   /** Dispara alertas automáticos no tenant selecionado. */
   dispararAlertasDP: async (empresaId: string) =>
@@ -146,7 +154,16 @@ export const edgeFunctionsService = {
   }) => {
     const idemKey = `gerar-guias:${params.empresaId}:${params.competencia}:${params.tipo}`;
     return retryWithIdempotency({
-      fn: () => handleInvoke('gerar-guias', { body: params }),
+      // Contrato da edge (BodySchema strict em supabase/functions/gerar-guias/index.ts):
+      // snake_case + tipo em maiúsculas ('todos' → 'TODAS').
+      fn: () =>
+        handleInvoke('gerar-guias', {
+          body: {
+            empresa_id: params.empresaId,
+            competencia: params.competencia,
+            tipo: GERAR_GUIAS_TIPO[params.tipo],
+          },
+        }),
       idempotencyKey: idemKey,
       onRetry: (a, d, e) => loggerService.warn('gerarGuias retry', { attempt: a, delayMs: d, error: e }),
     });

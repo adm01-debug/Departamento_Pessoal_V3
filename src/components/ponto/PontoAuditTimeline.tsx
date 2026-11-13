@@ -15,7 +15,7 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 
 const PONTO_AUDIT_TABLES = ['batidas_ponto', 'registros_ponto', 'solicitacoes_ajuste_ponto'];
 
-export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) {
+export function PontoAuditTimeline({ filterTabela, registroId }: { filterTabela?: string; registroId?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
   const { empresaAtual } = useEmpresas();
 
@@ -24,12 +24,13 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['ponto-audit-logs', empresaAtual?.id, filterTabela],
+    queryKey: ['ponto-audit-logs', empresaAtual?.id, filterTabela, registroId],
     queryFn: async () => {
       const data = await auditoriaService.listarTrilha({
         empresa_id: empresaAtual!.id,
         tabela: filterTabela,
         tabelas: filterTabela ? undefined : PONTO_AUDIT_TABLES,
+        registro_id: registroId,
         limite: 100,
       });
       return data;

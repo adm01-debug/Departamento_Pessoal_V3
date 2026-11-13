@@ -396,12 +396,23 @@ export function gerarRotas(raiz = RAIZ_PADRAO) {
 
 export const serializar = (inv) => JSON.stringify(inv, null, 2) + '\n';
 
+// Compara conteudo, nao bytes: o lint-staged roda prettier no rotas.json (.lintstagedrc.json) e muda a formatacao.
+export function emDia(atual, inv) {
+  if (!atual || !atual.trim()) return false;
+  try {
+    return JSON.stringify(JSON.parse(atual)) === JSON.stringify(inv);
+  } catch {
+    return false;
+  }
+}
+
 function main(argv) {
   const saida = path.join(RAIZ_PADRAO, SAIDA_REL);
-  const conteudo = serializar(gerarRotas(RAIZ_PADRAO));
+  const inv = gerarRotas(RAIZ_PADRAO);
+  const conteudo = serializar(inv);
   if (argv.includes('--check')) {
     const atual = fs.existsSync(saida) ? fs.readFileSync(saida, 'utf8') : '';
-    if (atual !== conteudo) {
+    if (!emDia(atual, inv)) {
       console.error(`${SAIDA_REL} desatualizado: rode node scripts/inventario/gerar-rotas.mjs e commite o resultado.`);
       process.exit(1);
     }

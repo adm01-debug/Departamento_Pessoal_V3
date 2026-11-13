@@ -121,8 +121,17 @@ function emitStructured(entry: LogEntry): void {
       console.debug(tag, entry.mensagem, entry.contexto);
     }
   } else {
-    // Em prod, JSON puro para ingestão
-    console.log(JSON.stringify(payload));
+    // Em prod, JSON puro para ingestão. O build remove console.log/debug/info/trace
+    // (vite.config.ts, manualPureFunctions) e mantém console.error/warn: erros e
+    // avisos precisam sair por eles para não sumirem do log de produção.
+    const linha = JSON.stringify(payload);
+    if (entry.nivel === 'error' || entry.nivel === 'fatal') {
+      console.error(linha);
+    } else if (entry.nivel === 'warn') {
+      console.warn(linha);
+    } else {
+      console.info(linha);
+    }
   }
 }
 

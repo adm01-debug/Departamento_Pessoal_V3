@@ -13,6 +13,7 @@ type PeriodoAquisitivo = Tables<'periodos_aquisitivos'>;
 type PeriodoAquisitivoInsert = Insertable<'periodos_aquisitivos'>;
 type PeriodoAquisitivoUpdate = Updatable<'periodos_aquisitivos'>;
 type FeriasAprovacoesLog = Tables<'ferias_aprovacoes_log'>;
+type FeriasUso = Pick<Tables<'ferias'>, 'periodo_aquisitivo_id' | 'dias_gozo' | 'dias_abono' | 'status'>;
 
 class FeriasService extends BaseService<Ferias> {
   constructor() {
@@ -241,6 +242,18 @@ class FeriasService extends BaseService<Ferias> {
       .order('data_inicio', { ascending: false });
     if (error) throw error;
     return (data as PeriodoAquisitivo[]) || [];
+  }
+
+  /** Férias não canceladas do colaborador (mesmo critério de validar_split_ferias), para saldo por período. */
+  async listarUsoPorColaborador(colaboradorId: string, empresaId: string): Promise<FeriasUso[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase.from('ferias') as unknown as QueryBuilderType)
+      .select('periodo_aquisitivo_id, dias_gozo, dias_abono, status')
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .not('cancelado', 'is', true);
+    if (error) throw error;
+    return (data as FeriasUso[]) || [];
   }
 
   async rejeitar(id: string, empresaId: string): Promise<void> {

@@ -86,4 +86,12 @@ describe('EpiEntregasTable', () => {
     await user.click(buttons[0]);
     expect(onDevolver).toHaveBeenCalledWith('1');
   });
+
+  it('mostra o vencimento a partir de epi.validade_ca (campo selecionado pelo serviço)', () => {
+    const comValidade = [
+      { ...DATA[0], epi: { nome: 'Capacete de Segurança', ca: 'CA-12345', validade_ca: '2099-08-20' } },
+    ] as unknown as typeof DATA;
+    render(<EpiEntregasTable data={comValidade} />);
+    expect(screen.getAllByText('20/08/2099').length).toBeGreaterThanOrEqual(1);
+  });
 });

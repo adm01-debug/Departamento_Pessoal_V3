@@ -6,6 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -16,10 +26,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { beneficiariosSeguroService, segurosColaboradoresService } from '@/services/tabelasComplementaresService';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
-import { Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
+import { Pencil, Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+import { safeErrorMessage } from '@/utils/safeError';
 
 // ========== Beneficiários de um Seguro ==========
 function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
@@ -130,20 +142,33 @@ function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
 
 export default function SegurosVidaPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  const podeGerir = isAdmin || hasRole('rh');
   const qc = useQueryClient();
   const [tab, setTab] = useState('seguros');
+  const [excluirAlvo, setExcluirAlvo] = useState<{ id: string; seguradora: string | null } | null>(null);
   const [expandedSeguro, setExpandedSeguro] = useState<string | null>(null);
 
   // === Seguros ===
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({
+  const [editId, setEditId] = useState<string | null>(null);
+  const formVazio = {
     seguradora: '',
     numero_apolice: '',
     capital_segurado: '',
     premio_mensal: '',
     data_inicio: '',
     data_fim: '',
-  });
+  };
+  const [form, setForm] = useState(formVazio);
+
+  const onOpenChangeSeguro = (v: boolean) => {
+    setOpen(v);
+    if (!v) {
+      setEditId(null);
+      setForm(formVazio);
+    }
+  };
 
   const { data, isLoading } = useQuery({
     queryKey: ['seguros-vida', empresaAtual?.id],
@@ -181,7 +206,62 @@ export default function SegurosVidaPage() {
       setOpen(false);
       toast.success('Seguro cadastrado');
     },
+    onError: (e: unknown) => toast.error(safeErrorMessage(e, 'Erro ao cadastrar seguro')),
   });
+
+  const atualizar = useMutation({
+    mutationFn: async ({ id, d }: { id: string; d: typeof form }) => {
+      const { data: rows, error } = await supabase
+        .from('seguros_vida')
+        .update(
+          validateTablePayload(
+            'seguros_vida',
+            {
+              seguradora: d.seguradora,
+              numero_apolice: d.numero_apolice || null,
+              capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
+              premio_mensal: d.premio_mensal ? Number(d.premio_mensal) : null,
+              data_inicio: d.data_inicio || null,
+              data_fim: d.data_fim || null,
+            },
+            'SegurosVidaPage:seguros_vida:update'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id');
+      if (error) throw error;
+      if (!rows?.length) throw new Error('Apólice não encontrada ou sem permissão para editar');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['seguros-vida'] });
+      qc.invalidateQueries({ queryKey: ['sinistros-seguro'] });
+      onOpenChangeSeguro(false);
+      toast.success('Seguro atualizado');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao atualizar seguro')),
+  });
+
+  const abrirEdicao = (r: {
+    id: string;
+    seguradora: string | null;
+    numero_apolice: string | null;
+    capital_segurado: number | null;
+    premio_mensal: number | null;
+    data_inicio: string | null;
+    data_fim: string | null;
+  }) => {
+    setEditId(r.id);
+    setForm({
+      seguradora: r.seguradora ?? '',
+      numero_apolice: r.numero_apolice ?? '',
+      capital_segurado: r.capital_segurado != null ? String(r.capital_segurado) : '',
+      premio_mensal: r.premio_mensal != null ? String(r.premio_mensal) : '',
+      data_inicio: r.data_inicio ?? '',
+      data_fim: r.data_fim ?? '',
+    });
+    setOpen(true);
+  };
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
@@ -190,8 +270,12 @@ export default function SegurosVidaPage() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['seguros-vida'] });
+      qc.invalidateQueries({ queryKey: ['sinistros-seguro'] });
+      qc.invalidateQueries({ queryKey: ['seguros-colaboradores'] });
+      setExcluirAlvo(null);
       toast.success('Excluído');
     },
+    onError: (e: unknown) => toast.error(safeErrorMessage(e, 'Erro ao excluir seguro')),
   });
 
   // === Sinistros ===
@@ -306,16 +390,18 @@ export default function SegurosVidaPage() {
         {/* ========= ABA APÓLICES ========= */}
         <TabsContent value="seguros">
           <div className="flex justify-end mb-4">
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Novo Seguro
-                </Button>
-              </DialogTrigger>
+            <Dialog open={open} onOpenChange={onOpenChangeSeguro}>
+              {podeGerir && (
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Novo Seguro
+                  </Button>
+                </DialogTrigger>
+              )}
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Novo Seguro de Vida</DialogTitle>
+                  <DialogTitle>{editId ? 'Editar Seguro de Vida' : 'Novo Seguro de Vida'}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
@@ -368,8 +454,12 @@ export default function SegurosVidaPage() {
                       />
                     </div>
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.seguradora} className="w-full">
-                    Salvar
+                  <Button
+                    onClick={() => (editId ? atualizar.mutate({ id: editId, d: form }) : criar.mutate(form))}
+                    disabled={!form.seguradora || atualizar.isPending}
+                    className="w-full"
+                  >
+                    {atualizar.isPending ? 'Salvando...' : 'Salvar'}
                   </Button>
                 </div>
               </DialogContent>
@@ -416,17 +506,33 @@ export default function SegurosVidaPage() {
                               <Users className="h-4 w-4 mr-1" /> Ver
                             </Button>
                           </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                excluir.mutate(r.id);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
+                          <TableCell className="whitespace-nowrap">
+                            {podeGerir && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Editar seguro"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    abrirEdicao(r);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label="Excluir seguro"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setExcluirAlvo({ id: r.id, seguradora: r.seguradora });
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </>
+                            )}
                           </TableCell>
                         </TableRow>
                         {expandedSeguro === r.id && (
@@ -710,6 +816,32 @@ export default function SegurosVidaPage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AlertDialog open={!!excluirAlvo} onOpenChange={(v) => !v && !excluir.isPending && setExcluirAlvo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir seguro de vida?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A apólice {excluirAlvo?.seguradora ? `"${excluirAlvo.seguradora}"` : ''} será excluída permanentemente,
+              junto com todos os sinistros, beneficiários e colaboradores vinculados a ela. Esta ação não pode ser
+              desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={excluir.isPending}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={excluir.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                if (excluirAlvo) excluir.mutate(excluirAlvo.id);
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageLayout>
   );
 }
