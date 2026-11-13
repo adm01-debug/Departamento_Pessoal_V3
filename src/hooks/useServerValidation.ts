@@ -42,12 +42,7 @@ export function useServerValidation<T extends FieldValues>() {
 
     // 2. Timeout Errors (504)
     if (errorCode === 'TIMEOUT_ERROR' || raw?.status === 504) {
-      toast.error('O servidor demorou muito para responder. Tente novamente em alguns instantes.', {
-        action: {
-          label: 'Ver Status',
-          onClick: () => (window.location.href = '/settings/system-health'),
-        },
-      });
+      toast.error('O servidor demorou muito para responder. Tente novamente em alguns instantes.');
       return true;
     }
 

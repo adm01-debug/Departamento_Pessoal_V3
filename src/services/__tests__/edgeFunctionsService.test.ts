@@ -272,3 +272,26 @@ describe('edgeFunctionsService error handling', () => {
     await expect(edgeFunctionsService.healthcheck()).rejects.toThrow('Circuit Breaker is OPEN');
   });
 });
+
+// ─── gerarGuias ───────────────────────────────────────────────────────────────
+
+describe('edgeFunctionsService.gerarGuias', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+  });
+
+  it('envia o contrato da edge: empresa_id + tipo em maiúsculas (todos → TODAS)', async () => {
+    mockInvoke.mockResolvedValue({ data: { success: true, guias: [] }, error: null });
+    await edgeFunctionsService.gerarGuias({ empresaId: 'emp-1', competencia: '2026-10', tipo: 'todos' });
+    expect(mockInvoke).toHaveBeenCalledWith('gerar-guias', {
+      body: { empresa_id: 'emp-1', competencia: '2026-10', tipo: 'TODAS' },
+    });
+  });
+
+  it('mapeia fgts_digital para FGTS_DIGITAL', async () => {
+    mockInvoke.mockResolvedValue({ data: { success: true }, error: null });
+    await edgeFunctionsService.gerarGuias({ empresaId: 'emp-1', competencia: '2026-10', tipo: 'fgts_digital' });
+    expect(mockInvoke.mock.calls[0][1].body.tipo).toBe('FGTS_DIGITAL');
+  });
+});
