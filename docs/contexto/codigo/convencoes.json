@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)",
    "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)",
    "Pensões: permitir editar uma pensão já cadastrada (#520)",
    "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)",
-   "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)",
-   "Comunicação Interna: permite editar comunicados já publicados (#523)"
+   "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "f263a09064103c02243f48f23a20d5aa37ed0929",
+  "commit": "47e402077697c68a849944e00dbfcfa005652aff",
   "branch": "main",
-  "data_commit": "2026-11-13T12:39:51-03:00",
+  "data_commit": "2026-11-13T13:17:07-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "47e4020",
+    "data": "2026-11-13",
+    "assunto": "docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)"
+   },
    {
     "sha": "f263a09",
     "data": "2026-11-13",
@@ -126,11 +131,6 @@
     "sha": "0807204",
     "data": "2026-11-12",
     "assunto": "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)"
-   },
-   {
-    "sha": "f7a2263",
-    "data": "2026-11-12",
-    "assunto": "chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)"
    }
   ],
   "arquivos_mudados_7d": 605,
@@ -242,10 +242,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "src/services/cnabService.ts",
-    "mudancas": 9
-   },
-   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 8
    },
@@ -259,6 +255,10 @@
    },
    {
     "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/services/cnabService.ts",
     "mudancas": 8
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 186
+    "commits": 187
    },
    {
     "autor": "devin-ai-integration[bot]",

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "f263a09064103c02243f48f23a20d5aa37ed0929",
+  "sha": "47e402077697c68a849944e00dbfcfa005652aff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 16:43 UTC",
+  "generated_at": "2026-11-13 17:33 UTC",
   "files_total": 2935,
   "code_files": 2405,
   "code_lines": 330727
@@ -281698,10 +281698,19 @@
   }
  },
  "git": {
-  "sha": "f263a09064103c02243f48f23a20d5aa37ed0929",
+  "sha": "47e402077697c68a849944e00dbfcfa005652aff",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "47e4020",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "f263a09",
     "date": "2026-11-13",
@@ -282024,22 +282033,12 @@
      "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
      "src/schemas/esocial/rubricaValidator.ts"
     ]
-   },
-   {
-    "sha": "e359f6c",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: item \"Ajuda\" do menu do usuário abre o e-mail de suporte (#504)",
-    "files": [
-     "src/components/ui/__tests__/user-profile-menu.test.tsx",
-     "src/components/ui/user-profile-menu.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/prod-readiness.md",
-    3
+    4
    ],
    [
     ".github/workflows/canonical-migrations.yml",

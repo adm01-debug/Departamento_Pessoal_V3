@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-13)
 
 ## Corpus Check
-- 2821 files · ~2,510,245 words
+- 2821 files · ~2,510,218 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 22172 nodes · 46894 edges · 2129 communities (1224 shown, 905 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1109 edges (avg confidence: 0.93)
+- 22172 nodes · 46893 edges · 2129 communities (1224 shown, 905 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1108 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f263a090`
+- Built from commit: `47e40207`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -6744,8 +6744,8 @@ Cohesion: 0.67
 Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete", "trg_regimento_ass_no_update"
 
 ## Knowledge Gaps
-- **6310 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+6305 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9898 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **6311 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+6306 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9899 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **905 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -6760,7 +6760,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 8 inferred relationships involving `useEmpresas()` (e.g. with `1. Cobertura` and `#1 — CRÍTICO · `useEmpresas` deixa **todo** usuário não‑admin sem contexto de empresa`) actually correct?**
   _`useEmpresas()` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**
-  _6310 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _6311 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `20260831_corrected_public.sql` be split into smaller, more focused modules?**
   _Cohesion score 0.005656425732614324 - nodes in this community are weakly interconnected._
 - **Should `canonical_schema.sql` be split into smaller, more focused modules?**
