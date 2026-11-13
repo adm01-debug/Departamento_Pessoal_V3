@@ -74,7 +74,7 @@ const quickActions = [
   {
     label: 'Comunicados',
     icon: Megaphone,
-    path: '/comunicacao',
+    path: '/comunicacao-interna',
     gradient: 'from-info to-success',
     desc: 'Avisos e mural',
   },
@@ -292,7 +292,7 @@ export function PortalOverviewTab({ nome, data, completude, navigate }: PortalOv
                 <div
                   key={c.id}
                   className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/30 transition-colors cursor-pointer"
-                  onClick={() => navigate('/comunicacao')}
+                  onClick={() => navigate('/comunicacao-interna')}
                 >
                   <Badge variant="outline" className="text-[10px]">
                     {c.tipo}

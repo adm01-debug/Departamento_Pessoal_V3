@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { beneficioService } from '@/services';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { Edit, Gift, LayoutDashboard, List, History, Settings, TrendingUp, ArrowRight } from 'lucide-react';
+import { Edit, Gift, LayoutDashboard, List, History, Settings, ArrowRight } from 'lucide-react';
 
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -47,7 +47,7 @@ export default function BeneficiosPage() {
               variant="outline"
               size="sm"
               className="rounded-xl gap-2 font-body"
-              onClick={() => navigate('/configuracoes/beneficios')}
+              onClick={() => navigate('/configuracoes')}
             >
               <Settings className="h-4 w-4" /> Regras
             </Button>
@@ -153,17 +153,9 @@ export default function BeneficiosPage() {
                                 aria-label="Editar"
                                 className="h-8 w-8 rounded-xl hover:bg-primary/10 transition-colors"
                                 title="Editar"
+                                onClick={() => navigate(`/beneficios/${b.id}/editar`)}
                               >
                                 <Edit className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                aria-label="Insights"
-                                className="h-8 w-8 rounded-xl hover:bg-info/10 transition-colors"
-                                title="Insights"
-                              >
-                                <TrendingUp className="h-4 w-4 text-muted-foreground group-hover:text-info" />
                               </Button>
                             </div>
                           </TableCell>
@@ -187,7 +179,7 @@ export default function BeneficiosPage() {
                     variant="ghost"
                     size="sm"
                     className="text-[10px] h-7 gap-1"
-                    onClick={() => navigate('/configuracoes/logs')}
+                    onClick={() => navigate('/auditoria')}
                   >
                     Auditoria Global <ArrowRight className="h-3 w-3" />
                   </Button>
