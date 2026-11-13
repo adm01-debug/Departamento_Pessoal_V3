@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)",
+   "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)",
    "Comunicação Interna: permite editar comunicados já publicados (#523)",
    "Férias: botão \"Solicitar Férias\" passa a criar a solicitação (#526)",
-   "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)",
-   "Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)",
-   "Catálogo de EPIs passa a permitir editar EPI (CA, validade do CA, estoque) (#522)"
+   "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

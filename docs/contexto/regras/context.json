@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "fe3ed82bf6f02b5f576f9471866a7e724b15bf20",
+  "sha": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 14:14 UTC",
+  "generated_at": "2026-11-13 14:50 UTC",
   "files_total": 2932,
   "code_files": 2402,
   "code_lines": 330435
@@ -281615,10 +281615,28 @@
   }
  },
  "git": {
-  "sha": "fe3ed82bf6f02b5f576f9471866a7e724b15bf20",
+  "sha": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b37db5b",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "646fe24",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)",
+    "files": [
+     "inventario/estado/rotas.json"
+    ]
+   },
    {
     "sha": "fe3ed82",
     "date": "2026-11-13",
@@ -281935,37 +281953,19 @@
      "src/components/__tests__/FolhaESocialSync.test.tsx",
      "src/components/folha/FolhaESocialSync.tsx"
     ]
-   },
-   {
-    "sha": "6303fa0",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: rastro de workflow mostra eventos reais de log_execucao (#512)",
-    "files": [
-     "src/components/workflows/__tests__/logExecucao.test.ts",
-     "src/components/workflows/logExecucao.ts",
-     "src/pages/WorkflowsPage.tsx"
-    ]
-   },
-   {
-    "sha": "25a2766",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "eSocial: checagem de consistência mostra o resultado na hora, sem barra falsa nem alegação de IA (#509)",
-    "files": [
-     "src/components/__tests__/ESocialAuditDialog.test.tsx",
-     "src/components/esocial/ESocialAuditDialog.tsx",
-     "src/pages/ESocialPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
-    "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
+    "docs/prod-readiness.md",
+    3
+   ],
+   [
+    "inventario/estado/rotas.json",
     2
    ],
    [
-    "docs/prod-readiness.md",
+    "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     2
    ],
    [
@@ -282034,10 +282034,6 @@
    ],
    [
     "src/hooks/useDepartamentos.ts",
-    1
-   ],
-   [
-    "src/pages/DepartamentosPage.tsx",
     1
    ]
   ]

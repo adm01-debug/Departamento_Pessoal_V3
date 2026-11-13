@@ -4,10 +4,10 @@
  "presente": true,
  "como_gerar": "uvx --from \"graphifyy[sql]\" graphify update .  (ou: npm run graph:update); saída em graphify-out/ — graph.json e graph.html NÃO são versionados (dezenas de MB); use `graphify query/path/explain` localmente",
  "relatorio": null,
- "commit_do_grafo": "fe3ed82bf6f02b5f576f9471866a7e724b15bf20",
+ "commit_do_grafo": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
  "grafo_atual": true,
  "nos": 22162,
- "arestas": 46869,
+ "arestas": 46870,
  "comunidades_total": 2125,
  "relacoes": {
   "calls": 3500,
@@ -25,12 +25,12 @@
   "rationale_for": 26,
   "re_exports": 708,
   "reads_from": 1176,
-  "references": 2863,
+  "references": 2864,
   "triggers": 988
  },
  "origem": {
   "EXTRACTED": 45761,
-  "INFERRED": 1108
+  "INFERRED": 1109
  },
  "comunidades": [
   {
@@ -1989,7 +1989,7 @@
   "ESTADO_ATUAL.md": "3. Achados graves",
   "MIGRATION_GUIDE.md": "📚 Guia de Migração - Breaking Changes V18",
   "PENDENCIAS.md": "createErrorResponse",
-  "PLANO_100.md": "P0 — contenção e correção de exposição ativa",
+  "PLANO_100.md": "admin",
   "PLANO_50.md": "services/index.ts",
   "PLANO_MELHORIAS.md": "🟡 P2 — QUALIDADE DE CÓDIGO E DX (22 itens, ~4 semanas)",
   "PLANO_REFATORACAO_TIPOS.md": "entities.ts",
@@ -2160,7 +2160,7 @@
   "docs/auditoria/PLANO_100_ETAPAS_2026-09-10.md": "E-031 — Criar gate de diff físico de schema",
   "docs/auditoria/PLANO_100_WORKFLOWS_2026-09-27.md": "typecheck",
   "docs/auditoria/PLANO_100_WORKFLOWS_2026-10-14.md": "typecheck",
-  "docs/auditoria/PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md": "Plano Executivo de Melhorias — 50 Etapas",
+  "docs/auditoria/PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md": "E50-001 — Rotacionar credenciais comprometidas",
   "docs/auditoria/PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md": "E51-001 — Publicar o lote local não commitado",
   "docs/auditoria/README.md": "auditoria/README.md",
   "docs/auditoria/RECONCILIACAO_LEDGER_2026-10-13.md": ".t",
@@ -4726,7 +4726,7 @@
   "supabase/seeds/sindicatos_seed.sql": "sindicatos_seed.sql",
   "supabase/seeds/tabelas_inss_seed.sql": "tabelas_inss_seed.sql",
   "supabase/tests/ferias_embed_test.ts": "ref_https",
-  "supabase/tests/migration_consistency.test.ts": "anon",
+  "supabase/tests/migration_consistency.test.ts": "admin",
   "supabase/tests/plano100/00_setup_stubs.sql": "00_setup_stubs.sql",
   "supabase/tests/plano100/20_asserts.sql": "20_asserts.sql",
   "tailwind.config.js": "tailwind.config.js",

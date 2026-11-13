@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "fe3ed82bf6f02b5f576f9471866a7e724b15bf20",
+  "commit": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
   "branch": "main",
-  "data_commit": "2026-11-13T10:36:09-03:00",
+  "data_commit": "2026-11-13T11:12:07-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b37db5b",
+    "data": "2026-11-13",
+    "assunto": "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)"
+   },
+   {
+    "sha": "646fe24",
+    "data": "2026-11-13",
+    "assunto": "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)"
+   },
    {
     "sha": "fe3ed82",
     "data": "2026-11-13",
@@ -121,16 +131,6 @@
     "sha": "b170bd7",
     "data": "2026-11-12",
     "assunto": "fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)"
-   },
-   {
-    "sha": "0a81559",
-    "data": "2026-11-12",
-    "assunto": "fix: botão de filtros no mobile abre gaveta com os filtros (#505)"
-   },
-   {
-    "sha": "11f3f53",
-    "data": "2026-11-12",
-    "assunto": "Rubricas: \"Importar Padrão\" passa a gravar as rubricas padrão; sai o botão de XML que não mostrava nada (#510)"
    }
   ],
   "arquivos_mudados_7d": 602,
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 182
+    "commits": 184
    },
    {
     "autor": "devin-ai-integration[bot]",

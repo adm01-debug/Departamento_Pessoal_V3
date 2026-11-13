@@ -1,17 +1,17 @@
 # Graph Report - Departamento_Pessoal_V3  (2026-11-13)
 
 ## Corpus Check
-- 2818 files · ~2,508,807 words
+- 2818 files · ~2,508,923 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 37 file(s) not represented in the graph (top: (none) 16, .toml 5, .conf 4)
 
 ## Summary
-- 22162 nodes · 46869 edges · 2125 communities (1223 shown, 902 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1108 edges (avg confidence: 0.93)
+- 22162 nodes · 46870 edges · 2125 communities (1223 shown, 902 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 1109 edges (avg confidence: 0.93)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fe3ed82b`
+- Built from commit: `b37db5be`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -114,7 +114,6 @@
 - q
 - 🚀 Plano de Implementação V16 - Sistema Departamento Pessoal
 - PLANO_MASTER_V17_COMPLETO.md
-- admin
 - Levantamento exaustivo de funcionalidades planejadas e não executadas — Departamento Pessoal V3
 - Plano Executivo de Melhorias — 50 Etapas
 - 20260722150821_90068dd3-c560-41f1-bd55-09da10f2a0d3.sql
@@ -125,6 +124,7 @@
 - 📅 CRONOGRAMA SUGERIDO
 - 📋 PLANO COMPLETO DE MELHORIAS - DEPARTAMENTO PESSOAL V2
 - calculoBeneficiosService.ts
+- admin
 - public.medidas_disciplinares
 - "public"."ferias"
 - github-settings-guard.mjs
@@ -135,6 +135,7 @@
 - devDependencies
 - 20260912202000_p1_pcs_contract.sql
 - gerar-banco.mjs
+- 3. Achados graves
 - Testes de Components (280+ arquivos)
 - 20260731151430_1f4efd4b-70aa-4c78-8adb-cecf5f53338b.sql
 - "public"."v_audit_events_unified"
@@ -142,7 +143,6 @@
 - medidasDisciplinares.ts
 - public.ferias
 - 📋 PLANO DE IMPLEMENTAÇÃO V5 - DEPARTAMENTO PESSOAL
-- 3. Achados graves
 - 3. Achados graves
 - 📚 Guia de Migração - Breaking Changes V18
 - workflow-status.ts
@@ -2190,49 +2190,49 @@ Nodes (36): 1.1.1 Configuração do Supabase, 1.1.2 Refatoração dos Services, 
 Cohesion: 0.05
 Nodes (36): 1.1 SERVICES CRÍTICOS DE NEGÓCIO (20 itens), 1.2 SERVICES DE FOLHA DE PAGAMENTO (15 itens), 1.3 SERVICES DE INTEGRAÇÃO GOVERNAMENTAL (15 itens), 1.4 SERVICES DE RELATÓRIOS (10 itens), 1.5 SERVICES DE SEGURANÇA (10 itens), 1.6 SERVICES DE COMUNICAÇÃO (10 itens), 1.7 SERVICES AUXILIARES (41 itens), 3.1 Eventos de Tabelas (+28 more)
 
-### Community 98 - "admin"
-Cohesion: 0.06
-Nodes (33): #1 — CRÍTICO · `useEmpresas` deixa **todo** usuário não‑admin sem contexto de empresa, Banco — advisors e migrations, BLOQUEADO / aguardando o dono, Correções desta rodada, Código pela metade (varredura), Edge functions (65 no repo · 68 publicadas), GitHub Actions — último run no `main`, Integrações externas (+25 more)
-
-### Community 99 - "Levantamento exaustivo de funcionalidades planejadas e não executadas — Departamento Pessoal V3"
+### Community 98 - "Levantamento exaustivo de funcionalidades planejadas e não executadas — Departamento Pessoal V3"
 Cohesion: 0.05
 Nodes (31): 10. Documentação que diz o contrário do código, 11. Ordem recomendada de ataque, 12.1 Anexos (evidência completa, arquivo:linha), 12.2 O que foi verificado, 12.3 Não verificado / limitações, 12. Anexos, cobertura e limitações, 1. Veredito, 2. Legenda e método (+23 more)
 
-### Community 100 - "Plano Executivo de Melhorias — 50 Etapas"
+### Community 99 - "Plano Executivo de Melhorias — 50 Etapas"
 Cohesion: 0.05
 Nodes (37): 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas (+29 more)
 
-### Community 101 - "20260722150821_90068dd3-c560-41f1-bd55-09da10f2a0d3.sql"
+### Community 100 - "20260722150821_90068dd3-c560-41f1-bd55-09da10f2a0d3.sql"
 Cohesion: 0.06
 Nodes (36): public.aej_geracoes, public.holerite_distribuicoes, public.sst_extintores, idx_aej_geracoes_gerado_por, idx_afdt_diverg_registro_raw_id, idx_asos_emitido_por_partner_user, idx_asos_recebido_rh_por, idx_asos_validado_por (+28 more)
 
-### Community 102 - "contexto-publicacao.test.mjs"
+### Community 101 - "contexto-publicacao.test.mjs"
 Cohesion: 0.06
 Nodes (29): ref_node_vm, DOWNLOADS, fixture(), run(), GIT, GIT_ENV, isTrue(), property() (+21 more)
 
-### Community 103 - "autofix/run.mjs"
+### Community 102 - "autofix/run.mjs"
 Cohesion: 0.13
 Nodes (33): bin(), eslintJson(), git(), listSrc(), log(), prettierCheck(), prettierWrite(), restore() (+25 more)
 
-### Community 104 - "gerar-rotas.mjs"
+### Community 103 - "gerar-rotas.mjs"
 Cohesion: 0.11
 Nodes (33): graphify reference: GitHub clone and cross-repo merge, Step 0 - Clone GitHub repo(s) (only if a GitHub URL was given), caminhoProprio(), casaRota(), constantesDeString(), dentroDeString(), ehTeste(), EXTENSOES (+25 more)
 
-### Community 105 - "🔴 FASE 1: TESTES DE COMPONENTES FALTANTES (147 itens)"
+### Community 104 - "🔴 FASE 1: TESTES DE COMPONENTES FALTANTES (147 itens)"
 Cohesion: 0.06
 Nodes (36): 1.10 Componentes Date (1 item), 1.11 Componentes Feedback (1 item), 1.12 Componentes File (1 item), 1.13 Componentes Form (5 itens), 1.14 Componentes Grid (3 itens), 1.15 Componentes Heading (2 itens), 1.16 Componentes Keyboard (2 itens), 1.17 Componentes Layout (3 itens) (+28 more)
 
-### Community 106 - "📅 CRONOGRAMA SUGERIDO"
+### Community 105 - "📅 CRONOGRAMA SUGERIDO"
 Cohesion: 0.06
 Nodes (35): 10.1 Testes de Componentes, 10.2 Testes de Páginas, 10.3 Testes E2E, 10. TESTES (Meta: 80% cobertura), 11. DOCUMENTAÇÃO (15 itens), 12. ACESSIBILIDADE (10 itens), 1.1 Services Críticos de Negócio, 1.2 Services de Cálculo (+27 more)
 
-### Community 107 - "📋 PLANO COMPLETO DE MELHORIAS - DEPARTAMENTO PESSOAL V2"
+### Community 106 - "📋 PLANO COMPLETO DE MELHORIAS - DEPARTAMENTO PESSOAL V2"
 Cohesion: 0.06
 Nodes (35): 1.1.1 Componentes A-B (50 itens), 1.1.2 Componentes C-D (60 itens), 1.1.3 Componentes E-I (80 itens), 1.1.4 Componentes J-O (80 itens), 1.1.5 Componentes P-Z (160 itens), 1.1 Componentes Sem Testes (430 itens), 1.2 Hooks Sem Testes (153 itens), 1.3 Services Sem Testes (25 itens) (+27 more)
 
-### Community 108 - "calculoBeneficiosService.ts"
+### Community 107 - "calculoBeneficiosService.ts"
 Cohesion: 0.06
 Nodes (30): ACHADOS POR MÓDULO (escrita incremental), Métricas, MÓDULO: Admissão / Contratos / Onboarding, MÓDULO: ADR e Guias (docs/adr, docs/guides), MÓDULO: API docs (docs/api/*.md — 37 arquivos), MÓDULO: Benefícios / Premiações, MÓDULO: CATÁLOGO HISTÓRICO DEDUPLICADO (docs/_archive/PLANO_* e PLANO_MASTER_V17) — funcionalidades de NEGÓCIO prometidas, MÓDULO: Documentos de levantamento desatualizados (DOC_DESATUALIZADA — para correção de docs) (+22 more)
+
+### Community 108 - "admin"
+Cohesion: 0.06
+Nodes (32): Banco — advisors e migrations, BLOQUEADO / aguardando o dono, Correções desta rodada, Código pela metade (varredura), Edge functions (65 no repo · 68 publicadas), GitHub Actions — último run no `main`, Integrações externas, Produção — logs desde o último deploy (+24 more)
 
 ### Community 109 - "public.medidas_disciplinares"
 Cohesion: 0.06
@@ -2285,37 +2285,37 @@ Nodes (27): public.pcs_set_audit_fields, public.pcs_validate_factor, idx_colabor
 Cohesion: 0.11
 Nodes (32): CAMPO_TODO, compararEdges(), conferirOrigem(), conferirUrl(), consultarViaPsql(), contarUsoNoCodigo(), edgesNoRepo(), edgesPublicadas() (+24 more)
 
-### Community 119 - "Testes de Components (280+ arquivos)"
+### Community 119 - "3. Achados graves"
+Cohesion: 0.06
+Nodes (28): 10. [MÉDIO] Onboarding: tabelas com dado, service sem consumidor, 12. [BAIXO] `pushNotificationService` sem VAPID key, 13. [BAIXO] `index.ts` do barrel expõe um "service" que é uma linha de aritmética, 1. [CRÍTICO] 15 RPCs chamadas pelo front estão fora da `RPC_ALLOWLIST` do bridge → 403 garantido, 2. [ALTO] `premiacoesService.autoConciliarComFolha` passa uma frase onde se espera `empresaId` — falha 100% das vezes, 3. Achados graves, 3. [ALTO] Lógica fictícia declarada em `autoConciliarComFolha`, 4. [ALTO] WhatsApp é uma fachada: nenhuma chamada externa existe (+20 more)
+
+### Community 120 - "Testes de Components (280+ arquivos)"
 Cohesion: 0.06
 Nodes (33): Admissão (14 testes), Afastamentos (5 testes), 🟡 ARQUIVOS PEQUENOS (474 arquivos - 200-499 bytes), 🟠 ARQUIVOS STUB (370 arquivos - 1-199 bytes), 🔴 ARQUIVOS VAZIOS (100 arquivos - 0 bytes), Auditoria (10 testes), Auth (4 testes), Backup (4 testes) (+25 more)
 
-### Community 120 - "20260731151430_1f4efd4b-70aa-4c78-8adb-cecf5f53338b.sql"
+### Community 121 - "20260731151430_1f4efd4b-70aa-4c78-8adb-cecf5f53338b.sql"
 Cohesion: 0.08
 Nodes (33): public.contrato_token_eventos, idx_contrato_assinatura_tokens_created_by, idx_contrato_assinatura_tokens_empresa_id, idx_contrato_assinatura_tokens_revogado_por, idx_contrato_templates_created_by, idx_contrato_templates_departamento_id, idx_contrato_token_eventos_ator_id, idx_contratos_gerados_contrato_anterior_id (+25 more)
 
-### Community 121 - ""public"."v_audit_events_unified""
+### Community 122 - ""public"."v_audit_events_unified""
 Cohesion: 0.06
 Nodes (34): "public"."ferias_audit_log", idx_audit_logs_created_at, idx_audit_logs_empresa_id, idx_audit_logs_user_id, idx_auditoria_created_at, idx_auditoria_entidade, idx_auditoria_logs_created, idx_auditoria_logs_created_at (+26 more)
 
-### Community 122 - "20260725120000_p4_071_compound_indexes.sql"
+### Community 123 - "20260725120000_p4_071_compound_indexes.sql"
 Cohesion: 0.08
 Nodes (33): public.folhas, public.pontos, idx_afastamentos_empresa_status_data, idx_auditoria_tabela_registro, idx_auditoria_usuario_data, idx_colaboradores_empresa_cpf, idx_colaboradores_empresa_depto_status, idx_colaboradores_empresa_status_admissao (+25 more)
 
-### Community 123 - "medidasDisciplinares.ts"
+### Community 124 - "medidasDisciplinares.ts"
 Cohesion: 0.09
 Nodes (24): Props, GravityScaleProps, MedidasTableProps, MedidasTimeline(), MedidasTimelineProps, DEFAULT_MUTATION, { mockUseQuery, mockUseMutation, mockUseQueryClient }, MEDIDAS (+16 more)
 
-### Community 124 - "public.ferias"
+### Community 125 - "public.ferias"
 Cohesion: 0.06
 Nodes (34): idx_ferias_adiant13_empresa, idx_ferias_aprovacoes_ferias_id, idx_ferias_aprovacoes_log_aprovador_id, idx_ferias_aprovacoes_log_ferias_id, idx_ferias_arquivos_ferias_id, idx_ferias_colab_status, idx_ferias_colaborador_id, idx_ferias_data_inicio (+26 more)
 
-### Community 125 - "📋 PLANO DE IMPLEMENTAÇÃO V5 - DEPARTAMENTO PESSOAL"
+### Community 126 - "📋 PLANO DE IMPLEMENTAÇÃO V5 - DEPARTAMENTO PESSOAL"
 Cohesion: 0.06
 Nodes (32): 5.1 Gestão de Dependentes (3 itens), 5.2 Jornada e Escalas (4 itens), 5.3 Controle de Frequência (3 itens), 5.4 Adicionais e Benefícios (5 itens), 5.5 Descontos e Consignados (3 itens), 5.6 13º Salário (2 itens), 5.7 Guias e Documentos (6 itens), 5.8 Rescisão e Homologação (3 itens) (+24 more)
-
-### Community 126 - "3. Achados graves"
-Cohesion: 0.06
-Nodes (27): 10. [MÉDIO] Onboarding: tabelas com dado, service sem consumidor, 12. [BAIXO] `pushNotificationService` sem VAPID key, 13. [BAIXO] `index.ts` do barrel expõe um "service" que é uma linha de aritmética, 1. [CRÍTICO] 15 RPCs chamadas pelo front estão fora da `RPC_ALLOWLIST` do bridge → 403 garantido, 2. [ALTO] `premiacoesService.autoConciliarComFolha` passa uma frase onde se espera `empresaId` — falha 100% das vezes, 3. Achados graves, 3. [ALTO] Lógica fictícia declarada em `autoConciliarComFolha`, 4. [ALTO] WhatsApp é uma fachada: nenhuma chamada externa existe (+19 more)
 
 ### Community 127 - "3. Achados graves"
 Cohesion: 0.07
@@ -6736,8 +6736,8 @@ Cohesion: 0.67
 Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete", "trg_regimento_ass_no_update"
 
 ## Knowledge Gaps
-- **6307 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+6302 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9892 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **6306 isolated node(s):** `session-start.sh script`, `PATH`, `capacitorConfig`, `nodeModulesDir`, `AUTH_FILE` (+6301 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 9891 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **902 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
@@ -6752,7 +6752,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 8 inferred relationships involving `useEmpresas()` (e.g. with `1. Cobertura` and `#1 — CRÍTICO · `useEmpresas` deixa **todo** usuário não‑admin sem contexto de empresa`) actually correct?**
   _`useEmpresas()` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `session-start.sh script`, `PATH`, `capacitorConfig` to the rest of the system?**
-  _6307 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _6306 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `cn` be split into smaller, more focused modules?**
   _Cohesion score 0.014500299788570167 - nodes in this community are weakly interconnected._
 - **Should `20260831_corrected_public.sql` be split into smaller, more focused modules?**

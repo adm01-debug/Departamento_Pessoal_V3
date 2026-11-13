@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fe3ed82bf6f02b5f576f9471866a7e724b15bf20` (2026-11-13T10:36:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b37db5be8a3f14a69ae1da26d9ac204e19874f2c` (2026-11-13T11:12:07-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,7 +385,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22162 nós · 46869 arestas · 2125 comunidades · grafo do commit `fe3ed82b`
+- 22162 nós · 46870 arestas · 2125 comunidades · grafo do commit `b37db5be`
 - comunidades maiores: cn (504), 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (324), useEmpresas (321), vitest (295), @tanstack/react-query (252), App.tsx (227), contract.ts (195), react-router-dom (168), services/index.ts (166), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -617,6 +617,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-13 `b37db5b` docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)
+- 2026-11-13 `646fe24` chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)
 - 2026-11-13 `fe3ed82` Comunicação Interna: permite editar comunicados já publicados (#523)
 - 2026-11-13 `136f6e0` Férias: botão "Solicitar Férias" passa a criar a solicitação (#526)
 - 2026-11-13 `e3acfad` CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)
@@ -630,8 +632,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `d6a9d12` Ponto: "Aprovar Lote" passa a gravar a aprovação e "Histórico" abre a trilha do registro (#508)
 - 2026-11-13 `66b5a7b` CNAB: botão Download das remessas geradas passa a baixar o arquivo (#507)
 - 2026-11-13 `d9ac757` fix: botão de histórico do Simulador What-if abre as simulações salvas (#506)
-- 2026-11-13 `8620df9` chore: orçamento de JS 12250 → 12400 KB para as telas de edição/exclusão da onda D (#527)
-- 2026-11-13 `71824b9` Canal de Ética: RH/admin passa a abrir a denúncia, mudar o status e registrar o parecer (#514)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
