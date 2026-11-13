@@ -535,6 +535,19 @@ describe('afastamentoService.listarProrrogacoes / criarProrrogacao', () => {
     );
   });
 
+  it('criarProrrogacao apaga a prorrogação inserida quando a atualização do afastamento falha', async () => {
+    const insertChain = makeChain({ data: { id: 'p1' }, error: null });
+    const deleteChain = makeChain({ data: null, error: null });
+    mockFrom.mockReturnValueOnce(insertChain).mockReturnValueOnce(deleteChain);
+    vi.spyOn(afastamentoService, 'atualizar').mockRejectedValue(new Error('Transição de status inválida'));
+    await expect(
+      afastamentoService.criarProrrogacao({ afastamento_id: 'af-1', data_fim_nova: '2026-02-01' } as never, EMPRESA_ID)
+    ).rejects.toThrow('Falha ao criar prorrogação');
+    expect(mockFrom).toHaveBeenNthCalledWith(2, 'prorrogacoes_afastamento');
+    expect(deleteChain.delete).toHaveBeenCalled();
+    expect(deleteChain.eq).toHaveBeenCalledWith('id', 'p1');
+  });
+
   it('criarProrrogacao embrulha falhas', async () => {
     queueTables({ prorrogacoes_afastamento: [{ data: null, error: { message: 'x' } }] });
     await expect(

@@ -26,6 +26,9 @@ const captured = vi.hoisted(() => ({
   invalidateQueries: vi.fn(),
   mutateMock: vi.fn(),
   roles: [] as string[],
+  theme: 'light' as 'light' | 'dark' | 'system',
+  setTheme: vi.fn(),
+  navigate: vi.fn(),
 }));
 
 const { mutateMock } = captured;
@@ -87,6 +90,14 @@ vi.mock('@/contexts/AuthContext', () => ({
   useAuth: () => ({ hasRole: (r: string) => captured.roles.includes(r) }),
 }));
 
+vi.mock('@/providers/ThemeProvider', () => ({
+  useTheme: () => ({ theme: captured.theme, setTheme: captured.setTheme }),
+}));
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => captured.navigate,
+}));
+
 vi.mock('@/services/edgeFunctionsService', () => ({
   edgeFunctionsService: { sincronizarBitrix: vi.fn(async () => ({ data: null, error: null })) },
 }));
@@ -141,6 +152,57 @@ describe('PreferenciasTab', () => {
     render(<PreferenciasTab user={null} />);
     expect(screen.getByRole('button', { name: 'Salvar Alterações' })).toBeInTheDocument();
   });
+
+  it('Salvar Alterações grava o nome de exibição no Auth e em profiles.nome', async () => {
+    const updateUser = vi.fn(async () => ({ data: { user: { id: 'user-1' } }, error: null }));
+    Object.assign(supabase.auth, { updateUser });
+    const chain = makeChain({ data: null, error: null });
+    fromMock.mockImplementation(() => chain);
+    render(<PreferenciasTab user={{ name: 'Ana Lima' }} />);
+    fireEvent.change(screen.getByLabelText('Nome de Exibição'), { target: { value: '  Ana Souza ' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar Alterações' }));
+    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('Preferências salvas!'));
+    expect(updateUser).toHaveBeenCalledWith({ data: { name: 'Ana Souza' } });
+    expect(fromMock).toHaveBeenCalledWith('profiles');
+    expect(chain.update).toHaveBeenCalledWith({ nome: 'Ana Souza' });
+    expect(chain.eq).toHaveBeenCalledWith('user_id', 'user-1');
+    expect(captured.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['meu-perfil'] });
+  });
+
+  it('Salvar Alterações com erro ao gravar profiles mostra toast.error', async () => {
+    Object.assign(supabase.auth, {
+      updateUser: vi.fn(async () => ({ data: { user: { id: 'user-1' } }, error: null })),
+    });
+    fromMock.mockImplementation(() => makeChain({ data: null, error: { message: 'rls' } }));
+    render(<PreferenciasTab user={{ name: 'Ana Lima' }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar Alterações' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Erro ao salvar preferências.'));
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('Salvar Alterações com erro do Auth mostra toast.error e não confirma', async () => {
+    Object.assign(supabase.auth, { updateUser: vi.fn(async () => ({ data: {}, error: new Error('falhou') })) });
+    render(<PreferenciasTab user={{ name: 'Ana Lima' }} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Salvar Alterações' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Erro ao salvar preferências.'));
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('Modo Escuro reflete e altera o tema real', () => {
+    captured.theme = 'dark';
+    render(<PreferenciasTab user={null} />);
+    const sw = screen.getByRole('switch');
+    expect(sw).toHaveAttribute('aria-checked', 'true');
+    fireEvent.click(sw);
+    expect(captured.setTheme).toHaveBeenCalledWith('light');
+    captured.theme = 'light';
+  });
+
+  it('não exibe controles sem efeito (idioma, animações reduzidas)', () => {
+    render(<PreferenciasTab user={null} />);
+    expect(screen.queryByText('Idioma do Sistema')).not.toBeInTheDocument();
+    expect(screen.queryByText('Animações Reduzidas')).not.toBeInTheDocument();
+  });
 });
 
 describe('NotificacoesTab', () => {
@@ -149,24 +211,12 @@ describe('NotificacoesTab', () => {
     expect(screen.getByText('Central de Notificações')).toBeInTheDocument();
   });
 
-  it('renders Operacional section', () => {
+  it('informa que preferências por canal ainda não existem, sem switches nem botão de salvar', () => {
     render(<NotificacoesTab />);
-    expect(screen.getByText('Operacional')).toBeInTheDocument();
-  });
-
-  it('renders Compliance section', () => {
-    render(<NotificacoesTab />);
-    expect(screen.getByText('Compliance')).toBeInTheDocument();
-  });
-
-  it('renders Novas Admissões switch', () => {
-    render(<NotificacoesTab />);
-    expect(screen.getByText('Novas Admissões')).toBeInTheDocument();
-  });
-
-  it('renders Salvar Preferências button', () => {
-    render(<NotificacoesTab />);
-    expect(screen.getByRole('button', { name: 'Salvar Preferências' })).toBeInTheDocument();
+    expect(screen.getByText(/ainda não está disponível/)).toBeInTheDocument();
+    expect(screen.queryByText('Novas Admissões')).not.toBeInTheDocument();
+    expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Salvar Preferências' })).not.toBeInTheDocument();
   });
 });
 
@@ -387,12 +437,39 @@ describe('IntegracoesTab', () => {
     { id: 'i2', nome: 'Legado', tipo: null, ativa: false, ultima_sincronizacao: null },
   ];
 
-  it('renderiza cards de integrações nativas', () => {
+  it('renderiza card do Bitrix24 sem placeholders "EM BREVE"', () => {
     render(<IntegracoesTab />);
     expect(screen.getByText('Bitrix24 CRM')).toBeInTheDocument();
-    expect(screen.getByText('RD Station')).toBeInTheDocument();
-    expect(screen.getByText('Google Workspace')).toBeInTheDocument();
-    expect(screen.getAllByText('EM BREVE')).toHaveLength(2);
+    expect(screen.queryByText('RD Station')).not.toBeInTheDocument();
+    expect(screen.queryByText('Google Workspace')).not.toBeInTheDocument();
+    expect(screen.queryByText('EM BREVE')).not.toBeInTheDocument();
+  });
+
+  it('status do Bitrix24 vem da configuração real', () => {
+    render(<IntegracoesTab />);
+    expect(screen.getByText('Não configurado')).toBeInTheDocument();
+    expect(screen.queryByText('Conectado')).not.toBeInTheDocument();
+  });
+
+  it('Bitrix24 habilitado com webhook aparece como Conectado', () => {
+    captured.queryData.set('bitrix24_config', {
+      data: { habilitado: true, webhook_url: 'https://bitrix.test/hook' },
+      isLoading: false,
+    });
+    render(<IntegracoesTab />);
+    expect(screen.getByText('Conectado')).toBeInTheDocument();
+  });
+
+  it('Webhook de Mudanças leva para a página de Integrações', () => {
+    render(<IntegracoesTab />);
+    fireEvent.click(screen.getByRole('button', { name: /Webhook de Mudanças/ }));
+    expect(captured.navigate).toHaveBeenCalledWith('/integracoes');
+  });
+
+  it('linhas da tabela não oferecem botão de configurações sem ação', () => {
+    captured.queryData.set('integracoes', { data: INTEGRACOES, isLoading: false });
+    render(<IntegracoesTab />);
+    expect(screen.queryByRole('button', { name: 'Configurações' })).not.toBeInTheDocument();
   });
 
   it('renderiza tabela de integrações com status e fallback de sincronização', () => {

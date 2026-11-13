@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('@/components/ui/table', () => ({
   Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
@@ -17,6 +17,38 @@ vi.mock('@/components/ui/badge', () => ({
 
 vi.mock('@/components/ui/progress', () => ({
   Progress: ({ value }: { value?: number }) => <div role="progressbar" aria-valuenow={value} />,
+}));
+
+vi.mock('@/components/ui/button', () => ({
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    'aria-label': ariaLabel,
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    'aria-label'?: string;
+  }) => (
+    <button onClick={onClick} disabled={disabled} aria-label={ariaLabel}>
+      {children}
+    </button>
+  ),
+}));
+
+vi.mock('@/components/ui/alert-dialog', () => ({
+  AlertDialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="alertdialog">{children}</div> : null,
+  AlertDialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AlertDialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AlertDialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AlertDialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  AlertDialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  AlertDialogCancel: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
+  AlertDialogAction: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <button onClick={onClick}>{children}</button>
+  ),
 }));
 
 import { EmprestimosTable } from '../descontos/EmprestimosTable';
@@ -75,5 +107,50 @@ describe('EmprestimosTable', () => {
   it('renders instituicao_financeira', () => {
     render(<EmprestimosTable emprestimos={MOCK_EMPRESTIMOS} fmt={fmt} />);
     expect(screen.getByText('Banco do Brasil')).toBeInTheDocument();
+  });
+
+  it('sem onUpdate não renderiza a coluna de ações', () => {
+    render(<EmprestimosTable emprestimos={MOCK_EMPRESTIMOS} fmt={fmt} />);
+    expect(screen.queryByText('Ações')).not.toBeInTheDocument();
+  });
+
+  it('dispara quitar, cancelar e registrar parcela para empréstimo ativo', () => {
+    const onUpdate = vi.fn();
+    render(<EmprestimosTable emprestimos={MOCK_EMPRESTIMOS} fmt={fmt} onUpdate={onUpdate} />);
+    fireEvent.click(screen.getByLabelText('Registrar parcela paga'));
+    expect(onUpdate).toHaveBeenLastCalledWith({ id: 'e1', patch: { parcelas_pagas: 6 } });
+    // Quitar/Cancelar só disparam após confirmação
+    fireEvent.click(screen.getByLabelText('Quitar'));
+    expect(onUpdate).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByText('Confirmar quitação'));
+    expect(onUpdate).toHaveBeenLastCalledWith({ id: 'e1', patch: { status: 'quitado' } });
+    fireEvent.click(screen.getByLabelText('Cancelar'));
+    expect(onUpdate).toHaveBeenCalledTimes(2);
+    fireEvent.click(screen.getByText('Confirmar cancelamento'));
+    expect(onUpdate).toHaveBeenLastCalledWith({ id: 'e1', patch: { status: 'cancelado' } });
+  });
+
+  it('voltar no diálogo de confirmação não altera o empréstimo', () => {
+    const onUpdate = vi.fn();
+    render(<EmprestimosTable emprestimos={MOCK_EMPRESTIMOS} fmt={fmt} onUpdate={onUpdate} />);
+    fireEvent.click(screen.getByLabelText('Cancelar'));
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    expect(onUpdate).not.toHaveBeenCalled();
+  });
+
+  it('última parcela registrada quita o empréstimo', () => {
+    const onUpdate = vi.fn();
+    render(
+      <EmprestimosTable emprestimos={[{ ...MOCK_EMPRESTIMOS[0], parcelas_pagas: 19 }]} fmt={fmt} onUpdate={onUpdate} />
+    );
+    fireEvent.click(screen.getByLabelText('Registrar parcela paga'));
+    expect(onUpdate).toHaveBeenCalledWith({ id: 'e1', patch: { parcelas_pagas: 20, status: 'quitado' } });
+  });
+
+  it('não exibe ações para empréstimo já quitado', () => {
+    render(
+      <EmprestimosTable emprestimos={[{ ...MOCK_EMPRESTIMOS[0], status: 'quitado' }]} fmt={fmt} onUpdate={vi.fn()} />
+    );
+    expect(screen.queryByLabelText('Quitar')).not.toBeInTheDocument();
   });
 });

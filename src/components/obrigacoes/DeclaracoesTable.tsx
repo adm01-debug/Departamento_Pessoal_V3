@@ -32,13 +32,12 @@ export function DctfTable({ data }: DctfTableProps) {
             <TableHead className="font-display">Status</TableHead>
             <TableHead className="font-display">Data Envio</TableHead>
             <TableHead className="font-display">Valor Total</TableHead>
-            <TableHead className="font-display">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} className="text-center text-muted-foreground py-8 font-body">
+              <TableCell colSpan={4} className="text-center text-muted-foreground py-8 font-body">
                 Nenhuma declaração DCTFWeb
               </TableCell>
             </TableRow>
@@ -57,11 +56,6 @@ export function DctfTable({ data }: DctfTableProps) {
                 <TableCell className="font-body font-semibold">
                   {d.total_debitos ? formatCurrency(Number(d.total_debitos)) : '—'}
                 </TableCell>
-                <TableCell>
-                  <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7">
-                    <Download className="h-3 w-3" />
-                  </Button>
-                </TableCell>
               </TableRow>
             ))
           )}
@@ -69,6 +63,15 @@ export function DctfTable({ data }: DctfTableProps) {
       </Table>
     </Card>
   );
+}
+
+function baixarSefip(competencia: string, conteudo: string) {
+  const url = URL.createObjectURL(new Blob([conteudo], { type: 'text/plain;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SEFIP_${competencia}.re`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 interface SefipTableProps {
@@ -106,7 +109,12 @@ export function SefipTable({ data }: SefipTableProps) {
                 <TableCell className="font-body text-sm">{s.conteudo ? '✅ Disponível' : '—'}</TableCell>
                 <TableCell>
                   {s.conteudo && (
-                    <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="rounded-lg text-xs h-7"
+                      onClick={() => baixarSefip(s.competencia, s.conteudo ?? '')}
+                    >
                       <Download className="h-3 w-3 mr-1" />
                       Baixar
                     </Button>

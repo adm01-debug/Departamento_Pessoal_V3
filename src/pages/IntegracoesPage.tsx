@@ -1,5 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,6 +23,7 @@ interface Integracao {
   status: 'ativo' | 'inativo' | 'configurando';
   gradient: string;
   icon: string;
+  rota: string;
 }
 
 const integracoesFixas: Integracao[] = [
@@ -32,6 +34,7 @@ const integracoesFixas: Integracao[] = [
     status: 'inativo',
     gradient: 'from-primary-glow to-primary',
     icon: '📊',
+    rota: '/contabilidade',
   },
   {
     id: 'esocial',
@@ -40,6 +43,7 @@ const integracoesFixas: Integracao[] = [
     status: 'configurando',
     gradient: 'from-primary to-primary-glow',
     icon: '🏛️',
+    rota: '/esocial',
   },
   {
     id: 'ponto',
@@ -48,6 +52,7 @@ const integracoesFixas: Integracao[] = [
     status: 'inativo',
     gradient: 'from-primary/60 to-primary/90',
     icon: '⏰',
+    rota: '/ponto',
   },
 ];
 
@@ -262,12 +267,15 @@ export default function IntegracoesPage() {
                   <CardContent>
                     <p className="text-sm text-muted-foreground font-body mb-4">{integ.descricao}</p>
                     <Button
+                      asChild
                       variant="outline"
                       size="sm"
                       className="w-full rounded-xl font-body gap-2 group-hover:border-primary/30"
                     >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      Configurar
+                      <Link to={integ.rota}>
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        Configurar
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>

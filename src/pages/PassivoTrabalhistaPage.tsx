@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -603,11 +604,14 @@ export default function PassivoTrabalhistaPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <Button
+                          asChild
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 rounded-full p-0 group-hover:bg-primary group-hover:text-primary-foreground"
                         >
-                          <ArrowRight className="h-4 w-4" />
+                          <Link to={`/colaboradores/${emp.id}`} aria-label={`Abrir ficha de ${emp.nome}`}>
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
                         </Button>
                       </td>
                     </tr>
