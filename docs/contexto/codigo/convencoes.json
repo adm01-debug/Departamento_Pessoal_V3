@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (487)",
+   "co-localizado (__tests__) (488)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)",
+   "Pensões: permitir editar uma pensão já cadastrada (#520)",
    "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)",
    "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)",
-   "Comunicação Interna: permite editar comunicados já publicados (#523)",
-   "Férias: botão \"Solicitar Férias\" passa a criar a solicitação (#526)",
-   "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)"
+   "Comunicação Interna: permite editar comunicados já publicados (#523)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

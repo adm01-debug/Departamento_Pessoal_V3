@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 609,
+ "total": 610,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 571
+  "unit": 572
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 487
+   "arquivos": 488
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3940,6 +3940,15 @@
    "casos": 3
   },
   {
+   "arquivo": "src/pages/__tests__/PensoesPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "src/pages/PensoesPage.tsx"
+   ],
+   "casos": 6
+  },
+  {
    "arquivo": "src/pages/__tests__/PremiacoesPage.test.tsx",
    "tipo": "unit",
    "linhas": 131,
@@ -5939,6 +5948,7 @@
   "src/pages/LoginPage.tsx": 1,
   "src/pages/NotFoundPage.tsx": 1,
   "src/pages/ObrigacoesFiscaisPage.tsx": 1,
+  "src/pages/PensoesPage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
   "src/pages/UsuariosPage.tsx": 1,
   "src/pages/adminCatEdicao.ts": 1,
@@ -6177,7 +6187,6 @@
    "src/pages/OnboardingPage.tsx",
    "src/pages/OrganogramaPage.tsx",
    "src/pages/PassivoTrabalhistaPage.tsx",
-   "src/pages/PensoesPage.tsx",
    "src/pages/PerfilPage.tsx",
    "src/pages/PesquisasClimaPage.tsx",
    "src/pages/PlanoCargosSalariosPage.tsx",

@@ -4470,11 +4470,13 @@
    "src/components/ui/select.tsx",
    "src/components/ui/spinner.tsx",
    "src/components/ui/table.tsx",
+   "src/contexts/index.ts",
    "src/hooks/index.ts",
    "src/hooks/usePiiMask.ts",
    "src/integrations/supabase/client.ts",
    "src/schemas/validate.ts",
-   "src/services/index.ts"
+   "src/services/index.ts",
+   "src/utils/safeError.ts"
   ],
   "src/pages/PerfilPage.tsx": [
    "src/components/PageTitle.tsx",

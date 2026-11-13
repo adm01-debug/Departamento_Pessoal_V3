@@ -6711,9 +6711,10 @@
     "PensoesPage"
    ],
    "export_default": "PensoesPage",
-   "linhas": 272,
+   "linhas": 336,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas",
     "usePiiMask"
    ],

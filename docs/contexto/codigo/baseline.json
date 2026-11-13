@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
+  "commit": "f263a09064103c02243f48f23a20d5aa37ed0929",
   "branch": "main",
-  "data_commit": "2026-11-13T11:12:07-03:00",
+  "data_commit": "2026-11-13T12:39:51-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f263a09",
+    "data": "2026-11-13",
+    "assunto": "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)"
+   },
+   {
+    "sha": "8f6b711",
+    "data": "2026-11-13",
+    "assunto": "Pensões: permitir editar uma pensão já cadastrada (#520)"
+   },
    {
     "sha": "b37db5b",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "f7a2263",
     "data": "2026-11-12",
     "assunto": "chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)"
-   },
-   {
-    "sha": "66b104f",
-    "data": "2026-11-12",
-    "assunto": "fix: ações do painel de inconsistências de ponto passam a gravar de verdade (#516)"
-   },
-   {
-    "sha": "b170bd7",
-    "data": "2026-11-12",
-    "assunto": "fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)"
    }
   ],
-  "arquivos_mudados_7d": 602,
+  "arquivos_mudados_7d": 605,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 36
+    "mudancas": 37
    },
    {
     "pasta": "src/services/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 47
+    "mudancas": 48
    },
    {
     "arquivo": "package.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 184
+    "commits": 186
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2911,
-  "arquivos_codigo": 1575,
-  "linhas_codigo": 281999,
+  "arquivos_total": 2914,
+  "arquivos_codigo": 1576,
+  "linhas_codigo": 282222,
   "rotas": 114,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -334,9 +334,9 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 793,
+  "migrations": 795,
   "cron_jobs": 41,
-  "testes": 609,
+  "testes": 610,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 292
@@ -667,8 +667,8 @@
    "linhas": 186
   },
   "src/pages": {
-   "arquivos": 125,
-   "linhas": 44031
+   "arquivos": 126,
+   "linhas": 44254
   },
   "src/providers": {
    "arquivos": 4,

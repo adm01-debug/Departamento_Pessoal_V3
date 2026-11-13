@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `b37db5be8a` · branch `main` · 2026-11-13 14:50 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f263a09064` · branch `main` · 2026-11-13 16:43 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4583,7 +4583,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Informe o motivo do cancelamento | `src/pages/AdminAsoWorkflowPage.tsx` |
 | Esta CAT já foi transmitida ao eSocial e não pode mais ser corrigida. | `src/pages/AdminCatPage.tsx` |
 | Empresa não selecionada | `src/pages/AdminClinicasPartnersPage.tsx` |
-| … +535 linhas — lista completa em `context.json` | |
+| … +537 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4614,6 +4614,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `rh` | `src/pages/FeriasPage.tsx` |
 | `admin` | `src/pages/FeriasProgramacaoPage.tsx` |
 | `rh` | `src/pages/FeriasProgramacaoPage.tsx` |
+| `rh` | `src/pages/PensoesPage.tsx` |
 | `admin` | `src/pages/PremiacoesPage.tsx` |
 | `rh` | `src/pages/PremiacoesPage.tsx` |
 | `granted` | `src/services/pushNotificationService.ts` |
@@ -4645,7 +4646,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (7010 testes em 567 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (7017 testes em 568 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4949,7 +4950,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PortalOverviewTab.test.tsx` | 9 | PortalOverviewTab · renders user name · renders user initials avatar · renders cargo and departamento … |
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 9 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
 | `src/components/__tests__/RelatorioContabilDialog.test.tsx` | 9 | RelatorioContabilDialog · renders Conciliação Contábil trigger button · renders dialog title · renders ERP import description … |
-| … +267 linhas — lista completa em `context.json` | | |
+| … +268 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
+  "sha": "f263a09064103c02243f48f23a20d5aa37ed0929",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 14:50 UTC",
-  "files_total": 2932,
-  "code_files": 2402,
-  "code_lines": 330435
+  "generated_at": "2026-11-13 16:43 UTC",
+  "files_total": 2935,
+  "code_files": 2405,
+  "code_lines": 330727
  },
  "version": "1.3.2",
- "facts_hash": "ab49aeb8367164bc",
+ "facts_hash": "994c2e7c42566af8",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 829,
+   ".sql": 831,
    ".ts": 750,
-   ".tsx": 695,
+   ".tsx": 696,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -70280,6 +70280,8 @@
    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
    "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.sql",
    "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
+   "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
+   "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -89675,7 +89677,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 192
+    "deps_count": 193
    },
    {
     "path": "",
@@ -97318,8 +97320,8 @@
   },
   {
    "module": "src/pages",
-   "files": 125,
-   "lines": 44031,
+   "files": 126,
+   "lines": 44254,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -98535,8 +98537,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 793,
-   "lines": 66894,
+   "files": 795,
+   "lines": 66963,
    "tables": [
     "profiles",
     "user_roles"
@@ -100770,12 +100772,17 @@
      "src/pages/PensoesPage.tsx",
      "supabase/functions/calcular-folha/index.ts"
     ],
-    "ref": [
-     "src/pages/PensoesPage.tsx",
-     "src/services/folha/calculoLoteService.ts"
+    "insert": [
+     "src/pages/PensoesPage.tsx"
+    ],
+    "update": [
+     "src/pages/PensoesPage.tsx"
     ],
     "delete": [
      "src/pages/PensoesPage.tsx"
+    ],
+    "ref": [
+     "src/services/folha/calculoLoteService.ts"
     ]
    },
    "periodos_aquisitivos": {
@@ -108901,6 +108908,14 @@
     "msg": "Erro ao gerar guia"
    },
    {
+    "file": "src/pages/PensoesPage.tsx",
+    "msg": "Pensão não encontrada ou sem permissão para alterar."
+   },
+   {
+    "file": "src/pages/PensoesPage.tsx",
+    "msg": "Pensão não encontrada ou sem permissão para excluir."
+   },
+   {
     "file": "src/pages/PerfilPage.tsx",
     "msg": "As senhas não coincidem."
    },
@@ -110744,6 +110759,10 @@
    },
    {
     "file": "src/pages/FeriasProgramacaoPage.tsx",
+    "value": "rh"
+   },
+   {
+    "file": "src/pages/PensoesPage.tsx",
     "value": "rh"
    },
    {
@@ -164758,6 +164777,34 @@
    {
     "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
     "name": "não anuncia sucesso quando tudo já existia: informa as duplicatas"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "PensoesPage — edição"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "lista filtrando pela empresa do colaborador (inner join), sem pensoes.empresa_id"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "abre o formulário preenchido e salva via update por id (escopo pela RLS)"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "mostra erro quando o update não altera nenhuma linha (RLS)"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "exclui por id e mostra erro quando nenhuma linha é removida"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "não mostra Nova Pensão/Editar/Excluir para quem não é RH/admin (CPF e conta ficam mascarados)"
+   },
+   {
+    "file": "src/pages/__tests__/PensoesPage.test.tsx",
+    "name": "mostra erro quando o update falha"
    },
    {
     "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
@@ -256222,7 +256269,7 @@
   },
   "src/pages/PensoesPage.tsx": {
    "path": "src/pages/PensoesPage.tsx",
-   "lines": 272,
+   "lines": 336,
    "exports": [
     "function PensoesPage"
    ],
@@ -256233,25 +256280,35 @@
     },
     {
      "table": "pensoes",
-     "op": "ref"
+     "op": "insert"
     },
     {
      "table": "pensoes",
-     "op": "delete"
+     "op": "select,update"
+    },
+    {
+     "table": "pensoes",
+     "op": "delete,select"
     }
    ],
    "table_cols": {
     "pensoes": [
-     "empresa_id",
      "id"
     ]
    },
+   "errors": [
+    "Pensão não encontrada ou sem permissão para alterar.",
+    "Pensão não encontrada ou sem permissão para excluir."
+   ],
    "status_values": [
     {
      "field": "tipo",
      "value": "alimenticia",
      "kind": "escreve"
     }
+   ],
+   "role_checks": [
+    "rh"
    ],
    "pagination": [
     "500"
@@ -257900,6 +257957,24 @@
     "mostra quantas guias foram geradas",
     "avisa quando o DARF foi só calculado e não salvo (nao_persistidas)",
     "não anuncia sucesso quando tudo já existia: informa as duplicatas"
+   ]
+  },
+  "src/pages/__tests__/PensoesPage.test.tsx": {
+   "path": "src/pages/__tests__/PensoesPage.test.tsx",
+   "lines": 159,
+   "is_test": true,
+   "role_checks": [
+    "admin",
+    "r"
+   ],
+   "tests": [
+    "PensoesPage — edição",
+    "lista filtrando pela empresa do colaborador (inner join), sem pensoes.empresa_id",
+    "abre o formulário preenchido e salva via update por id (escopo pela RLS)",
+    "mostra erro quando o update não altera nenhuma linha (RLS)",
+    "exclui por id e mostra erro quando nenhuma linha é removida",
+    "não mostra Nova Pensão/Editar/Excluir para quem não é RH/admin (CPF e conta ficam mascarados)",
+    "mostra erro quando o update falha"
    ]
   },
   "src/pages/__tests__/PremiacoesPage.test.tsx": {
@@ -281399,6 +281474,14 @@
    "path": "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
    "lines": 12
   },
+  "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql": {
+   "path": "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
+   "lines": 56
+  },
+  "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql": {
+   "path": "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
+   "lines": 13
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -281615,10 +281698,31 @@
   }
  },
  "git": {
-  "sha": "b37db5be8a3f14a69ae1da26d9ac204e19874f2c",
+  "sha": "f263a09064103c02243f48f23a20d5aa37ed0929",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f263a09",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
+     "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql"
+    ]
+   },
+   {
+    "sha": "8f6b711",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "Pensões: permitir editar uma pensão já cadastrada (#520)",
+    "files": [
+     "src/pages/PensoesPage.tsx",
+     "src/pages/__tests__/PensoesPage.test.tsx"
+    ]
+   },
    {
     "sha": "b37db5b",
     "date": "2026-11-13",
@@ -281930,29 +282034,6 @@
      "src/components/ui/__tests__/user-profile-menu.test.tsx",
      "src/components/ui/user-profile-menu.tsx"
     ]
-   },
-   {
-    "sha": "ad49d87",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: corrige links para /empresas/novo e remove ação de toast que levava a 404 (#503)",
-    "files": [
-     "src/components/layout/EmpresaSelector.tsx",
-     "src/components/ui/command-palette.tsx",
-     "src/hooks/__tests__/useServerValidation.test.ts",
-     "src/hooks/useServerValidation.ts",
-     "src/pages/DashboardPage.tsx"
-    ]
-   },
-   {
-    "sha": "bf4d7fc",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "Folha: botão Conciliar do eSocial deixa de mostrar divergências inventadas (#513)",
-    "files": [
-     "src/components/__tests__/FolhaESocialSync.test.tsx",
-     "src/components/folha/FolhaESocialSync.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -281961,12 +282042,32 @@
     3
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    2
+   ],
+   [
     "inventario/estado/rotas.json",
     2
    ],
    [
     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     2
+   ],
+   [
+    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
+    1
+   ],
+   [
+    "src/pages/PensoesPage.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/PensoesPage.test.tsx",
+    1
    ],
    [
     "src/pages/ComunicacaoInternaPage.tsx",
@@ -282014,26 +282115,6 @@
    ],
    [
     "src/pages/AdminCatPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/adminCatEdicao.test.ts",
-    1
-   ],
-   [
-    "src/pages/adminCatEdicao.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/NovoDepartamentoDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/departamentos/NovoDepartamentoDialog.tsx",
-    1
-   ],
-   [
-    "src/hooks/useDepartamentos.ts",
     1
    ]
   ]
