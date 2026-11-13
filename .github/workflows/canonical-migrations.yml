@@ -161,7 +161,8 @@ jobs:
             20261111000000_ferias_art145_antecipacao_oj123.sql \
             20261112000000_rv02_drop_inert_token_policies.sql \
             20261112010000_configuracoes_ponto_corrige_policies_prod.sql \
-            20261113000000_remediate_rv04_missing_rpcs.sql
+            20261113000000_remediate_rv04_missing_rpcs.sql \
+            20261114000000_remediate_ferias_art145_11_20.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -474,7 +475,7 @@ jobs:
               continue
             }
             # Codex (P2, PR #242-followup): rejeitar sidecar sem nenhuma asserção.
-            non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$')"
+            non_empty="$(printf '%s\n' "$sidecar_output" | grep -v '^[[:space:]]*$' || true)"
             if [ -z "$non_empty" ]; then
               echo "::error::Sidecar não produziu nenhuma asserção (saída vazia): $sidecar"
               verify_errors=$((verify_errors + 1))
