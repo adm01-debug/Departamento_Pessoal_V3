@@ -70,6 +70,16 @@ describe('useServerValidation', () => {
     expect(toast.error).toHaveBeenCalled();
   });
 
+  it('timeout toast não oferece ação que leve a rota inexistente', () => {
+    const { result } = renderHook(() => useServerValidation());
+
+    result.current.handleServerError({ status: 504 });
+
+    expect(toast.error).toHaveBeenCalledWith(
+      'O servidor demorou muito para responder. Tente novamente em alguns instantes.'
+    );
+  });
+
   it('handles 401 status', () => {
     const { result } = renderHook(() => useServerValidation());
 
