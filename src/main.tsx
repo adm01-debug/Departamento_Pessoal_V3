@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 import { QueryProvider, ThemeProvider, ToastProvider } from '@/providers';
 import { AuthProvider, NotificationProvider, EmpresaProvider } from '@/contexts';
 import { ErrorBoundary } from '@/errors';
@@ -16,10 +16,7 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
     // P3-053: release tracking + source maps upload
     release: import.meta.env.VITE_SENTRY_RELEASE ?? 'dp-v2@unknown',
     environment: import.meta.env.MODE,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
-    ],
+    integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
     tracesSampleRate: 0.1,
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
@@ -28,12 +25,7 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
       // Erros de bots, scrapers e browsers headless que enviam eventos falsos
       if (typeof navigator !== 'undefined' && navigator.userAgent === '') return null;
       // Erros conhecidos de extensões/chrome-devtools (ruído)
-      const chromeExtPatterns = [
-        'chrome-extension://',
-        'moz-extension://',
-        'safari-extension://',
-        'webkit-masked-url',
-      ];
+      const chromeExtPatterns = ['chrome-extension://', 'moz-extension://', 'safari-extension://', 'webkit-masked-url'];
       const reqUrl = event.request?.url ?? '';
       if (chromeExtPatterns.some((p: string) => reqUrl.includes(p))) return null;
       // Eventos sem exception values (podem ser eventos de rede ou custom)
@@ -41,10 +33,11 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
       // Erros de extensões Chrome/Firefox/Safari: filtra via frames
       // Exception.stack não existe no tipo — o caminho correto é stacktrace.frames
       const firstExc = event.exception.values[0];
-      const extFrames = firstExc?.stacktrace?.frames?.filter((f) =>
-        f?.filename?.includes('extensions/') ||
-        f?.filename?.includes('chrome-extension') ||
-        f?.filename?.includes('moz-extension')
+      const extFrames = firstExc?.stacktrace?.frames?.filter(
+        (f) =>
+          f?.filename?.includes('extensions/') ||
+          f?.filename?.includes('chrome-extension') ||
+          f?.filename?.includes('moz-extension')
       );
       if (extFrames?.length) return null;
       return event;
@@ -69,19 +62,24 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
   });
 }
 
+// console.error e console.warn ficam em produção (P3-053): o loggerService grava avisos/erros
+// estruturados por eles e o vite.config só remove log/debug/info/trace do bundle.
 if (import.meta.env.PROD) {
   const noop = () => {};
   console.log = noop;
   console.debug = noop;
   console.info = noop;
-  console.warn = noop;
   console.table = noop;
   console.trace = noop;
 }
 
 // Clickjacking defense-in-depth: break out of foreign frames
 const isInIframe = (() => {
-  try { return window.self !== window.top; } catch (e) { return true; }
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
 })();
 
 /**
@@ -97,8 +95,7 @@ const TRUSTED_FRAME_HOST_RE =
   /(^|\.)(lovable\.app|lovable\.dev|lovableproject\.com)$|^localhost$|^127\.0\.0\.1$|^\[?::1\]?$|^\d+\.\d+\.\d+\.\d+$/i;
 
 const isPreviewHost =
-  TRUSTED_FRAME_HOST_RE.test(window.location.hostname) ||
-  window.location.hostname.includes('id-preview--');
+  TRUSTED_FRAME_HOST_RE.test(window.location.hostname) || window.location.hostname.includes('id-preview--');
 
 // Clickjacking defense-in-depth: só quebra o frame em produção e apenas
 // quando o host NÃO é confiável. Nunca apaga o body (evita tela branca).
@@ -109,7 +106,6 @@ if (isInIframe && !isPreviewHost && import.meta.env.PROD) {
     /* cross-origin: navegação bloqueada pelo browser, nada a fazer */
   }
 }
-
 
 // CSP violation monitoring — detect and report policy breaches client-side
 if (import.meta.env.PROD) {
@@ -128,9 +124,18 @@ if (import.meta.env.PROD) {
 // PWA Service Worker Registration
 if (!isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw-custom.js')
-      .then(reg => { if (import.meta.env.DEV) loggerService.info('Service Worker registrado', { scope: reg.scope }); })
-      .catch(err => loggerService.error('Falha ao registrar Service Worker', {}, err instanceof Error ? err : new Error(String(err))));
+    navigator.serviceWorker
+      .register('/sw-custom.js')
+      .then((reg) => {
+        if (import.meta.env.DEV) loggerService.info('Service Worker registrado', { scope: reg.scope });
+      })
+      .catch((err) =>
+        loggerService.error(
+          'Falha ao registrar Service Worker',
+          {},
+          err instanceof Error ? err : new Error(String(err))
+        )
+      );
   });
 }
 
@@ -158,7 +163,6 @@ if (!isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
   document.body.appendChild(banner);
   throw new Error('[BOOT] Variáveis Supabase ausentes — inicialização abortada.');
 })();
-
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

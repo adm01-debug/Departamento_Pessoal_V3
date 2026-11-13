@@ -28,3 +28,15 @@ describe('paridade de security headers vercel.json x nginx.conf', () => {
     expect(nginxHeaders()).toEqual(v);
   });
 });
+
+describe('vercel.json aplica os headers em produção', () => {
+  const v = JSON.parse(readFileSync(join(root, 'vercel.json'), 'utf8')) as Record<string, unknown>;
+
+  it('não usa "routes" legado (a Vercel ignora "headers" quando "routes" existe)', () => {
+    expect(v).not.toHaveProperty('routes');
+  });
+
+  it('mantém o fallback de SPA via "rewrites"', () => {
+    expect(v.rewrites).toContainEqual({ source: '/(.*)', destination: '/index.html' });
+  });
+});
