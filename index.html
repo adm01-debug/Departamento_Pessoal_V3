@@ -10,10 +10,11 @@
            divergir, senão testes locais mascaram violações de prod.
          - upgrade-insecure-requests força https em qualquer subresource http.
          - worker-src blob: necessário para o service worker da vite-plugin-pwa.
-         - frame-src 'none' bloqueia iframes de terceiros (nenhum é usado). -->
+         - frame-src https://*.supabase.co: único frame permitido é o preview de
+           PDF do Storage (DocumentoPreview), igual aos headers vercel.json/nginx.conf. -->
     <!-- QA V26: `frame-ancestors` removido — a diretiva é ignorada quando entregue via <meta>
          (gera console warning). Deve ser configurada apenas via header HTTP no servidor. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://*.sentry.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.pwnedpasswords.com https://*.sentry.io https://viacep.com.br https://brasilapi.com.br; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://*.sentry.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.pwnedpasswords.com https://*.sentry.io https://viacep.com.br https://brasilapi.com.br; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src https://*.supabase.co; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>Sistema DP - Departamento Pessoal</title>
