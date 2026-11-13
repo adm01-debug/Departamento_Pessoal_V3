@@ -13,7 +13,7 @@
 #   3. branch adiantado, divergente ou com upstream apagado -> só avisa.
 #
 # Nunca faz: reset, rebase, merge com commit, checkout, stash, force, delete de branch, push.
-# Uma execução por vez (flock); falha de rede não é erro (tenta de novo na próxima hora).
+# Uma execução por vez (flock); falha de rede sai 75 (atenção: tenta de novo na próxima hora; 3 seguidas = erro no run-all).
 set -uo pipefail
 # PATH explícito: sob o systemd o PATH não inclui ~/.local/bin (onde está o gitleaks) e as travas falham fechadas.
 export PATH="$HOME/.local/bin:$HOME/.local/opt/node/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
@@ -71,7 +71,9 @@ export GIT_TERMINAL_PROMPT=0   # nunca ficar esperando senha
 # do fim do script — o script seguinte do mesmo timer (mirror -> sync) saía com "outra sincronização em andamento".
 if ! timeout 180 "${G[@]}" fetch --all --prune --quiet 2>"$STATE/$KEY.err" 9>&-; then
   say "fetch falhou (rede/credencial?): $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ') — tentarei na próxima execução"
-  exit 0
+  # (12/11) era exit 0: nos repositórios mirror=ext (Sicoob, Fast) o sync é o único passo da hora e uma credencial vencida
+  # deixava tudo parado sem aviso. 75 = atenção (igual ao mirror-github.sh); 3 seguidas aparecem em systemctl --failed.
+  exit 75
 fi
 
 # mapa branch -> worktree (caminho) para quem está com checkout
