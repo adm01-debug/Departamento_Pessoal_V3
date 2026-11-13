@@ -8,6 +8,8 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_PUBLISHABLE_KEY: string;
   readonly VITE_SUPABASE_PROJECT_ID?: string;
   readonly VITE_API_URL?: string;
+  /** 'true' somente se o provider Google estiver habilitado no Supabase Auth. */
+  readonly VITE_AUTH_GOOGLE_ENABLED?: string;
 }
 
 interface ImportMeta {
