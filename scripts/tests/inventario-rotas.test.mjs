@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gerarRotas, lerTagsDeRota, juntarCaminho, casaRota, extrairChamadas, semComentarios } from '../inventario/gerar-rotas.mjs';
+import { gerarRotas, lerTagsDeRota, juntarCaminho, casaRota, extrairChamadas, semComentarios, emDia, serializar } from '../inventario/gerar-rotas.mjs';
 
 const raizReal = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -185,4 +185,13 @@ test('rotas.json commitado esta em dia na parte estrutural (rode node scripts/in
   const commitado = JSON.parse(fs.readFileSync(path.join(raizReal, 'inventario/estado/rotas.json'), 'utf8'));
   assert.deepEqual(estrutura(commitado), estrutura(gerarRotas(raizReal)),
     'inventario/estado/rotas.json desatualizado: rode node scripts/inventario/gerar-rotas.mjs e commite');
+});
+
+test('--check compara conteudo, nao bytes: rotas.json formatado pelo prettier (lint-staged) continua em dia', () => {
+  const inv = { a: [1, 2], b: { c: 'x' } };
+  assert.equal(emDia(serializar(inv), inv), true);
+  assert.equal(emDia('{"a":[1,2],"b":{"c":"x"}}', inv), true, 'arrays compactados pelo prettier nao contam como diferenca');
+  assert.equal(emDia(serializar({ ...inv, a: [1] }), inv), false, 'conteudo diferente segue desatualizado');
+  assert.equal(emDia('', inv), false, 'arquivo ausente/vazio');
+  assert.equal(emDia('{ quebrado', inv), false, 'JSON invalido');
 });
