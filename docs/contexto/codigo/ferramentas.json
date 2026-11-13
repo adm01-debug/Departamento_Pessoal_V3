@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1430)",
+   "TypeScript (1445)",
    "SQL (829)",
    "Markdown (292)",
    "JavaScript (126)",
@@ -1961,24 +1961,28 @@
     "ocorrencias": 33
    },
    {
-    "papel": "alert",
-    "ocorrencias": 11
+    "papel": "rh",
+    "ocorrencias": 18
    },
    {
     "papel": "admin",
-    "ocorrencias": 10
+    "ocorrencias": 15
    },
    {
     "papel": "user",
-    "ocorrencias": 10
+    "ocorrencias": 14
+   },
+   {
+    "papel": "alert",
+    "ocorrencias": 12
+   },
+   {
+    "papel": "gestor",
+    "ocorrencias": 5
    },
    {
     "papel": "tablist",
     "ocorrencias": 5
-   },
-   {
-    "papel": "rh",
-    "ocorrencias": 4
    },
    {
     "papel": "service_role",
@@ -1987,10 +1991,6 @@
    {
     "papel": "tab",
     "ocorrencias": 4
-   },
-   {
-    "papel": "gestor",
-    "ocorrencias": 3
    },
    {
     "papel": "menuitem",
@@ -2010,6 +2010,10 @@
    },
    {
     "papel": "row",
+    "ocorrencias": 2
+   },
+   {
+    "papel": "status",
     "ocorrencias": 2
    },
    {
@@ -2062,10 +2066,6 @@
    },
    {
     "papel": "main",
-    "ocorrencias": 1
-   },
-   {
-    "papel": "status",
     "ocorrencias": 1
    },
    {

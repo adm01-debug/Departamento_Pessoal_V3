@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5c7a433008ae6a4a7f7caead7791cf7fe764f6b0` (2026-11-13T09:37:56-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `fe3ed82bf6f02b5f576f9471866a7e724b15bf20` (2026-11-13T10:36:09-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1430), SQL (829), Markdown (292), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1445), SQL (829), Markdown (292), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,31 +34,31 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2896 |
-| arquivos_codigo | 1560 |
-| linhas_codigo | 277892 |
+| arquivos_total | 2911 |
+| arquivos_codigo | 1575 |
+| linhas_codigo | 281999 |
 | rotas | 114 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
 | itens_menu | 94 |
 | modulos | 77 |
-| componentes | 429 |
+| componentes | 431 |
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
 | migrations | 793 |
 | cron_jobs | 41 |
-| testes | 598 |
+| testes | 609 |
 | workflows | 21 |
 | scripts | 115 |
 | docs_md | 292 |
 
 ## Onde ficam as coisas
 - telas: src/pages (109), src/components (1)
-- componentes: src/components (312), src/pages (109), src/contexts (3)
+- componentes: src/components (314), src/pages (109), src/contexts (3)
 - hooks: src/hooks (88), src/components (5), src/contexts (4)
-- servicos_logica: src/services (80), src/utils (33), src/schemas (25)
-- testes: co-localizado (__tests__) (476), co-localizado (*.test) (70), e2e/ (27)
+- servicos_logica: src/services (80), src/utils (34), src/schemas (25)
+- testes: co-localizado (__tests__) (487), co-localizado (*.test) (70), e2e/ (27)
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/autofix (10), scripts/ci (9)
@@ -72,7 +72,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | calculators | 0 | 0 | 8 | 0 | 0 | 0 |
 | components | 0 | 0 | 5 | 17 | 24 | 6 |
 | components/admin | 0 | 0 | 7 | 1 | 0 | 1 |
-| components/admissoes | 0 | 0 | 5 | 7 | 8 | 89 |
+| components/admissoes | 0 | 0 | 5 | 7 | 8 | 90 |
 | components/afastamentos | 0 | 0 | 6 | 7 | 0 | 7 |
 | components/colaborador-detalhes | 0 | 0 | 17 | 63 | 0 | 33 |
 | components/dashboard | 0 | 0 | 16 | 7 | 24 | 59 |
@@ -81,8 +81,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/epis | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/esocial | 0 | 0 | 21 | 2 | 2 | 7 |
 | components/exames | 0 | 0 | 5 | 0 | 0 | 0 |
-| components/ferias | 0 | 0 | 21 | 135 | 8 | 116 |
-| components/folha | 0 | 0 | 20 | 129 | 13 | 124 |
+| components/ferias | 0 | 0 | 22 | 135 | 8 | 116 |
+| components/folha | 0 | 0 | 21 | 129 | 13 | 124 |
 | components/forms | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/layout | 0 | 1 | 28 | 17 | 24 | 6 |
 | components/medidas-disciplinares | 0 | 0 | 9 | 125 | 8 | 111 |
@@ -90,7 +90,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | components/obrigacoes | 0 | 0 | 5 | 0 | 0 | 0 |
 | components/pcs | 0 | 0 | 6 | 9 | 0 | 8 |
 | components/ponto | 0 | 0 | 17 | 126 | 11 | 113 |
-| components/portal | 0 | 0 | 5 | 4 | 3 | 80 |
+| components/portal | 0 | 0 | 5 | 4 | 3 | 81 |
 | components/settings | 0 | 0 | 11 | 128 | 32 | 162 |
 | components/sst | 0 | 0 | 11 | 6 | 2 | 8 |
 | components/ui | 0 | 0 | 58 | 15 | 2 | 5 |
@@ -98,13 +98,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks/ferias | 0 | 0 | 6 | 11 | 0 | 7 |
 | integrations/supabase | 0 | 0 | 6 | 0 | 0 | 0 |
 | lib | 0 | 0 | 7 | 0 | 0 | 0 |
-| pages | 93 | 112 | 111 | 176 | 49 | 262 |
+| pages | 93 | 112 | 112 | 176 | 49 | 262 |
 | schemas | 0 | 0 | 19 | 0 | 0 | 0 |
 | schemas/esocial | 0 | 0 | 6 | 0 | 0 | 0 |
-| services | 0 | 0 | 71 | 0 | 36 | 182 |
+| services | 0 | 0 | 71 | 0 | 36 | 183 |
 | services/tabelas | 0 | 0 | 8 | 0 | 0 | 47 |
 | types | 0 | 0 | 12 | 0 | 0 | 0 |
-| utils | 0 | 0 | 26 | 0 | 0 | 1 |
+| utils | 0 | 0 | 27 | 0 | 0 | 1 |
 | utils/importacao | 0 | 0 | 5 | 0 | 0 | 0 |
 
 ## Rotas (url → arquivo)
@@ -362,7 +362,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - env de integração (só nomes): AI_GATEWAY_API_KEY, CRON_SECRET, DEEPSEEK_API_KEY, E2E_PONTO_HASH_SECRET, GOVBR_CLIENT_ID, GOVBR_CLIENT_SECRET, OPENAI_API_KEY, PONTO_HASH_SECRET, REPORT_SCHEDULER_SECRET, RESEND_API_KEY, SENTRY_DSN, SENTRY_ENVIRONMENT, SENTRY_RELEASE, SLACK_WEBHOOK_URL, TURNSTILE_SECRET_KEY, VITE_SENTRY_DSN, VITE_SENTRY_ORG, VITE_SENTRY_PROJECT, VITE_SENTRY_RELEASE, WEBHOOK_REQUIRE_TIMESTAMP, WEBHOOK_SECRET
 
 ## Permissões / papéis
-- papéis no código: dialog (33), alert (11), admin (10), user (10), tablist (5), rh (4), service_role (4), tab (4), gestor (3), menuitem (3), progressbar (3), grid (2), list (2), row (2), switch (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), coordenador (1), heading (1), listitem (1), main (1), status (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tooltip (1)
+- papéis no código: dialog (33), rh (18), admin (15), user (14), alert (12), gestor (5), tablist (5), service_role (4), tab (4), menuitem (3), progressbar (3), grid (2), list (2), row (2), status (2), switch (2), system (2), agent (1), alertdialog (1), anon (1), assistant (1), banner (1), ci_auditor (1), combobox (1), coordenador (1), heading (1), listitem (1), main (1), sup (1), supabase_admin (1), super_admin (1), supervisor (1), tooltip (1)
 - enums de papel: app_role: admin|moderator|user|supervisor|coordenador; dp_user_role: colaborador|gestor|rh|auditoria|admin|dpo
 - guards: src/components/ProtectedRoute.tsx · rotas protegidas: 108 · públicas: /assinar-contrato/:token, /ciencia-medida/:token, /contratacao, /login, /verificar-contrato, /verificar-contrato/:hash
 - feature flags: FEATURE_X, nova-tela, novo-inbox
@@ -385,27 +385,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22070 nós · 46479 arestas · 2116 comunidades · grafo do commit `5c7a4330`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (327), button.tsx (306), react (293), vitest (233), services/index.ts (226), cn (226), @tanstack/react-query (212), contract.ts (188), useEmpresas (177), client.ts (176)
+- 22162 nós · 46869 arestas · 2125 comunidades · grafo do commit `fe3ed82b`
+- comunidades maiores: cn (504), 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (324), useEmpresas (321), vitest (295), @tanstack/react-query (252), App.tsx (227), contract.ts (195), react-router-dom (168), services/index.ts (166), "public"."empresas" (164)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (51)
-- package.json (29)
-- package-lock.json (26)
-- CLAUDE.md (22)
-- .github/workflows/ci.yml (13)
+- .github/workflows/canonical-migrations.yml (47)
+- package.json (25)
+- package-lock.json (23)
+- CLAUDE.md (21)
 - PENDENCIAS.md (13)
-- deno.lock (12)
-- AGENTS.md (11)
-- src/services/cnabService.ts (11)
+- .github/workflows/ci.yml (12)
+- deno.lock (11)
+- AGENTS.md (10)
 - infra/github/action-pins.json (10)
-- supabase/functions/external-db-bridge/index.ts (10)
 - .github/workflows/canonical-edge-functions.yml (9)
-- .github/workflows/e2e.yml (9)
 - scripts/canonical-invariants.sql (9)
-- src/integrations/supabase/types.ts (9)
+- src/services/cnabService.ts (9)
+- .github/workflows/canonical-probes.yml (8)
+- .github/workflows/e2e.yml (8)
+- docs/auditoria/estado/WORKFLOWS_STATUS.md (8)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -617,21 +617,21 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
-- 2026-11-13 `5c7a433` fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)
-- 2026-11-13 `28e9d0c` infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)
-- 2026-11-13 `a295c94` docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)
-- 2026-11-13 `31ea570` docs: relatório de prontidão para produção (prod-readiness) (#535)
-- 2026-11-12 `0807204` fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)
-- 2026-11-12 `f7a2263` chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)
-- 2026-11-12 `66b104f` fix: ações do painel de inconsistências de ponto passam a gravar de verdade (#516)
-- 2026-11-12 `b170bd7` fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)
-- 2026-11-12 `0a81559` fix: botão de filtros no mobile abre gaveta com os filtros (#505)
-- 2026-11-12 `11f3f53` Rubricas: "Importar Padrão" passa a gravar as rubricas padrão; sai o botão de XML que não mostrava nada (#510)
-- 2026-11-12 `e359f6c` fix: item "Ajuda" do menu do usuário abre o e-mail de suporte (#504)
-- 2026-11-12 `ad49d87` fix: corrige links para /empresas/novo e remove ação de toast que levava a 404 (#503)
-- 2026-11-12 `bf4d7fc` Folha: botão Conciliar do eSocial deixa de mostrar divergências inventadas (#513)
-- 2026-11-12 `6303fa0` fix: rastro de workflow mostra eventos reais de log_execucao (#512)
-- 2026-11-12 `25a2766` eSocial: checagem de consistência mostra o resultado na hora, sem barra falsa nem alegação de IA (#509)
+- 2026-11-13 `fe3ed82` Comunicação Interna: permite editar comunicados já publicados (#523)
+- 2026-11-13 `136f6e0` Férias: botão "Solicitar Férias" passa a criar a solicitação (#526)
+- 2026-11-13 `e3acfad` CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)
+- 2026-11-13 `3a8ac55` Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)
+- 2026-11-13 `14701f5` Catálogo de EPIs passa a permitir editar EPI (CA, validade do CA, estoque) (#522)
+- 2026-11-13 `622c734` Convênios passam a poder ser editados (nome, tipo, limite e status) (#519)
+- 2026-11-13 `c09717f` fix: regimento interno permite editar rascunho e arquivar documento publicado (#518)
+- 2026-11-13 `f6ce961` Extintores: editar cadastro (local, datas, status) e excluir com confirmação (#517)
+- 2026-11-13 `b230988` Agendamento de exames: marcar realizado, cancelar e remarcar (#515)
+- 2026-11-13 `c89b176` Premiações: "Salvar Rascunho" passa a gravar a campanha como rascunho (não mais como ativa) (#511)
+- 2026-11-13 `d6a9d12` Ponto: "Aprovar Lote" passa a gravar a aprovação e "Histórico" abre a trilha do registro (#508)
+- 2026-11-13 `66b5a7b` CNAB: botão Download das remessas geradas passa a baixar o arquivo (#507)
+- 2026-11-13 `d9ac757` fix: botão de histórico do Simulador What-if abre as simulações salvas (#506)
+- 2026-11-13 `8620df9` chore: orçamento de JS 12250 → 12400 KB para as telas de edição/exclusão da onda D (#527)
+- 2026-11-13 `71824b9` Canal de Ética: RH/admin passa a abrir a denúncia, mudar o status e registrar o parecer (#514)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

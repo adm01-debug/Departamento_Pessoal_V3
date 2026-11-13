@@ -15276,7 +15276,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 41,
+   "usada_no_front": 42,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -27493,7 +27493,7 @@
     "valor_total": "number",
     "vender_abono": "boolean | null"
    },
-   "usada_no_front": 7,
+   "usada_no_front": 8,
    "usada_em_edges": [
     "calcular-ferias",
     "enviar-relatorio"
@@ -51982,7 +51982,7 @@
     "so_na_migration": [],
     "so_no_types": []
    },
-   "usada_no_front": 2,
+   "usada_no_front": 3,
    "usada_em_edges": [],
    "triggers": [],
    "sem_rls": false,

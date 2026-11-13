@@ -195,7 +195,7 @@
   {
    "modulo": "components/__tests__",
    "arquivos": 0,
-   "testes": 224,
+   "testes": 226,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -383,6 +383,7 @@
     "esocial_transmissao_logs",
     "faltas",
     "feedbacks_360",
+    "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
     "folhas_pagamento",
@@ -1246,7 +1247,7 @@
    "modulo": "components/departamentos",
    "arquivos": 1,
    "testes": 0,
-   "linhas": 104,
+   "linhas": 122,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1293,7 +1294,9 @@
    "depende_de_modulos": [
     "components/ui",
     "hooks",
-    "types"
+    "services",
+    "types",
+    "utils"
    ],
    "pacotes_externos": [
     "lucide-react",
@@ -1530,7 +1533,7 @@
    "modulo": "components/epis",
    "arquivos": 5,
    "testes": 0,
-   "linhas": 620,
+   "linhas": 663,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -1671,13 +1674,13 @@
   },
   {
    "modulo": "components/ferias",
-   "arquivos": 21,
+   "arquivos": 22,
    "testes": 0,
-   "linhas": 3093,
+   "linhas": 3435,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 20,
+   "componentes": 21,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -1997,7 +2000,8 @@
    "papeis": [
     "alert",
     "list",
-    "rh"
+    "rh",
+    "status"
    ],
    "diretos": {
     "edges": [],
@@ -2035,13 +2039,13 @@
   },
   {
    "modulo": "components/folha",
-   "arquivos": 20,
+   "arquivos": 21,
    "testes": 1,
-   "linhas": 3794,
+   "linhas": 3903,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 18,
+   "componentes": 19,
    "hooks_locais": [
     "useASOs",
     "useAdmissaoWorkflow",
@@ -2381,6 +2385,7 @@
    ],
    "depende_de_modulos": [
     "components/dashboard",
+    "components/obrigacoes",
     "components/ui",
     "constants",
     "hooks",
@@ -2479,15 +2484,18 @@
    "modulo": "components/integracoes",
    "arquivos": 1,
    "testes": 1,
-   "linhas": 722,
+   "linhas": 767,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
    "componentes": 1,
    "hooks_locais": [
     "useAuth",
+    "useEmpresa",
     "useEmpresaStore",
-    "useEmpresas"
+    "useEmpresas",
+    "useNotificacoes",
+    "useNotification"
    ],
    "hooks_definidos": [],
    "edges": [
@@ -2513,17 +2521,20 @@
     "empresas",
     "esocial_lotes",
     "eventos_variaveis",
+    "ferias",
     "ferias_solicitacoes",
     "historico_cargo",
     "historico_ferias",
     "lancamentos_folha",
     "linhas_transporte",
     "log_envio_relatorios",
+    "notificacoes",
     "notificacoes_admissao",
     "onboarding_colaborador",
     "onboarding_tarefas",
     "onboarding_template_tarefas",
     "onboarding_templates",
+    "periodos_aquisitivos",
     "periodos_ponto",
     "relatorios_agendados",
     "rubricas_folha",
@@ -2568,7 +2579,9 @@
     "VITE_SUPABASE_URL"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "rh"
+   ],
    "diretos": {
     "edges": [
      "sincronizar-bitrix"
@@ -2581,6 +2594,7 @@
    ],
    "depende_de_modulos": [
     "components/ui",
+    "contexts",
     "hooks",
     "integrations/supabase",
     "services",
@@ -2596,7 +2610,7 @@
    "modulo": "components/layout",
    "arquivos": 28,
    "testes": 0,
-   "linhas": 3329,
+   "linhas": 3336,
    "itens_menu": [],
    "telas": [
     "/"
@@ -3177,6 +3191,7 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/folha",
     "pages"
    ],
    "depende_de_modulos": [
@@ -3371,7 +3386,7 @@
    "modulo": "components/ponto",
    "arquivos": 17,
    "testes": 0,
-   "linhas": 4190,
+   "linhas": 4265,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -3786,6 +3801,7 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
     "folhas_pagamento",
@@ -3911,7 +3927,7 @@
    "modulo": "components/premiacoes",
    "arquivos": 3,
    "testes": 0,
-   "linhas": 906,
+   "linhas": 1018,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4828,7 +4844,7 @@
    "modulo": "components/sst",
    "arquivos": 11,
    "testes": 0,
-   "linhas": 1351,
+   "linhas": 1354,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4903,6 +4919,7 @@
    ],
    "pacotes_externos": [
     "@tanstack/react-query",
+    "date-fns",
     "framer-motion",
     "lucide-react",
     "recharts",
@@ -4960,6 +4977,7 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
     "folhas_pagamento",
@@ -5343,6 +5361,7 @@
    },
    "importado_por_outros_modulos": [
     "components/ferias",
+    "components/integracoes",
     "components/layout",
     "components/ponto",
     "components/portal",
@@ -5434,7 +5453,7 @@
    "modulo": "hooks",
    "arquivos": 83,
    "testes": 0,
-   "linhas": 7247,
+   "linhas": 7249,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -6637,9 +6656,9 @@
   },
   {
    "modulo": "pages",
-   "arquivos": 111,
+   "arquivos": 112,
    "testes": 0,
-   "linhas": 41422,
+   "linhas": 42524,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -7472,6 +7491,7 @@
     "listitem",
     "main",
     "rh",
+    "status",
     "supervisor",
     "tab",
     "tablist",
@@ -7672,7 +7692,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 5,
+   "testes": 13,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -7860,7 +7880,7 @@
    "modulo": "services",
    "arquivos": 71,
    "testes": 0,
-   "linhas": 12421,
+   "linhas": 12504,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7978,6 +7998,7 @@
     "eventos_variaveis",
     "faltas",
     "feedbacks_360",
+    "ferias",
     "ferias_aprovacoes",
     "ferias_aprovacoes_log",
     "ferias_arquivos",
@@ -8240,6 +8261,7 @@
      "etnias",
      "faltas",
      "feedbacks_360",
+     "ferias",
      "ferias_aprovacoes",
      "ferias_aprovacoes_log",
      "ferias_arquivos",
@@ -8361,6 +8383,7 @@
     "components/colaboradores",
     "components/contratos",
     "components/dashboard",
+    "components/departamentos",
     "components/desligamentos",
     "components/documents",
     "components/esocial",
@@ -8754,9 +8777,9 @@
   },
   {
    "modulo": "utils",
-   "arquivos": 26,
+   "arquivos": 27,
    "testes": 0,
-   "linhas": 3484,
+   "linhas": 3578,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -8796,6 +8819,7 @@
     "components/afastamentos",
     "components/colaborador-detalhes",
     "components/dashboard",
+    "components/departamentos",
     "components/descontos",
     "components/desligamentos",
     "components/documents",
@@ -8842,7 +8866,7 @@
   {
    "modulo": "utils/__tests__",
    "arquivos": 0,
-   "testes": 26,
+   "testes": 27,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],

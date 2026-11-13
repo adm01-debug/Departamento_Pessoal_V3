@@ -7,7 +7,7 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (312)",
+   "src/components (314)",
    "src/pages (109)",
    "src/contexts (3)"
   ],
@@ -18,11 +18,11 @@
   ],
   "servicos_logica": [
    "src/services (80)",
-   "src/utils (33)",
+   "src/utils (34)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (476)",
+   "co-localizado (__tests__) (487)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -48,7 +48,7 @@
  },
  "barrels_index": 23,
  "extensao_componentes": [
-  ".tsx (429)"
+  ".tsx (431)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)",
-   "infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)",
-   "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)",
-   "docs: relatório de prontidão para produção (prod-readiness) (#535)",
-   "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)"
+   "Comunicação Interna: permite editar comunicados já publicados (#523)",
+   "Férias: botão \"Solicitar Férias\" passa a criar a solicitação (#526)",
+   "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)",
+   "Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)",
+   "Catálogo de EPIs passa a permitir editar EPI (CA, validade do CA, estoque) (#522)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

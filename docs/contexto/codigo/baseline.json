@@ -2,11 +2,86 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5c7a433008ae6a4a7f7caead7791cf7fe764f6b0",
+  "commit": "fe3ed82bf6f02b5f576f9471866a7e724b15bf20",
   "branch": "main",
-  "data_commit": "2026-11-13T09:37:56-03:00",
+  "data_commit": "2026-11-13T10:36:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "fe3ed82",
+    "data": "2026-11-13",
+    "assunto": "Comunicação Interna: permite editar comunicados já publicados (#523)"
+   },
+   {
+    "sha": "136f6e0",
+    "data": "2026-11-13",
+    "assunto": "Férias: botão \"Solicitar Férias\" passa a criar a solicitação (#526)"
+   },
+   {
+    "sha": "e3acfad",
+    "data": "2026-11-13",
+    "assunto": "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)"
+   },
+   {
+    "sha": "3a8ac55",
+    "data": "2026-11-13",
+    "assunto": "Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)"
+   },
+   {
+    "sha": "14701f5",
+    "data": "2026-11-13",
+    "assunto": "Catálogo de EPIs passa a permitir editar EPI (CA, validade do CA, estoque) (#522)"
+   },
+   {
+    "sha": "622c734",
+    "data": "2026-11-13",
+    "assunto": "Convênios passam a poder ser editados (nome, tipo, limite e status) (#519)"
+   },
+   {
+    "sha": "c09717f",
+    "data": "2026-11-13",
+    "assunto": "fix: regimento interno permite editar rascunho e arquivar documento publicado (#518)"
+   },
+   {
+    "sha": "f6ce961",
+    "data": "2026-11-13",
+    "assunto": "Extintores: editar cadastro (local, datas, status) e excluir com confirmação (#517)"
+   },
+   {
+    "sha": "b230988",
+    "data": "2026-11-13",
+    "assunto": "Agendamento de exames: marcar realizado, cancelar e remarcar (#515)"
+   },
+   {
+    "sha": "c89b176",
+    "data": "2026-11-13",
+    "assunto": "Premiações: \"Salvar Rascunho\" passa a gravar a campanha como rascunho (não mais como ativa) (#511)"
+   },
+   {
+    "sha": "d6a9d12",
+    "data": "2026-11-13",
+    "assunto": "Ponto: \"Aprovar Lote\" passa a gravar a aprovação e \"Histórico\" abre a trilha do registro (#508)"
+   },
+   {
+    "sha": "66b5a7b",
+    "data": "2026-11-13",
+    "assunto": "CNAB: botão Download das remessas geradas passa a baixar o arquivo (#507)"
+   },
+   {
+    "sha": "d9ac757",
+    "data": "2026-11-13",
+    "assunto": "fix: botão de histórico do Simulador What-if abre as simulações salvas (#506)"
+   },
+   {
+    "sha": "8620df9",
+    "data": "2026-11-13",
+    "assunto": "chore: orçamento de JS 12250 → 12400 KB para as telas de edição/exclusão da onda D (#527)"
+   },
+   {
+    "sha": "71824b9",
+    "data": "2026-11-13",
+    "assunto": "Canal de Ética: RH/admin passa a abrir a denúncia, mudar o status e registrar o parecer (#514)"
+   },
    {
     "sha": "5c7a433",
     "data": "2026-11-13",
@@ -56,92 +131,21 @@
     "sha": "11f3f53",
     "data": "2026-11-12",
     "assunto": "Rubricas: \"Importar Padrão\" passa a gravar as rubricas padrão; sai o botão de XML que não mostrava nada (#510)"
-   },
-   {
-    "sha": "e359f6c",
-    "data": "2026-11-12",
-    "assunto": "fix: item \"Ajuda\" do menu do usuário abre o e-mail de suporte (#504)"
-   },
-   {
-    "sha": "ad49d87",
-    "data": "2026-11-12",
-    "assunto": "fix: corrige links para /empresas/novo e remove ação de toast que levava a 404 (#503)"
-   },
-   {
-    "sha": "bf4d7fc",
-    "data": "2026-11-12",
-    "assunto": "Folha: botão Conciliar do eSocial deixa de mostrar divergências inventadas (#513)"
-   },
-   {
-    "sha": "6303fa0",
-    "data": "2026-11-12",
-    "assunto": "fix: rastro de workflow mostra eventos reais de log_execucao (#512)"
-   },
-   {
-    "sha": "25a2766",
-    "data": "2026-11-12",
-    "assunto": "eSocial: checagem de consistência mostra o resultado na hora, sem barra falsa nem alegação de IA (#509)"
-   },
-   {
-    "sha": "4263300",
-    "data": "2026-11-12",
-    "assunto": "chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)"
-   },
-   {
-    "sha": "0df27ba",
-    "data": "2026-11-12",
-    "assunto": "fix: seta do passivo trabalhista abre a ficha do colaborador (#500)"
-   },
-   {
-    "sha": "710fdff",
-    "data": "2026-11-12",
-    "assunto": "fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)"
-   },
-   {
-    "sha": "8c7c7a5",
-    "data": "2026-11-12",
-    "assunto": "fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)"
-   },
-   {
-    "sha": "da7bffa",
-    "data": "2026-11-12",
-    "assunto": "fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)"
-   },
-   {
-    "sha": "a98b321",
-    "data": "2026-11-12",
-    "assunto": "fix: Feriados da empresa agora podem ser corrigidos e excluídos, e salvar feriado estadual/municipal/nacional para de fa"
-   },
-   {
-    "sha": "8200dc7",
-    "data": "2026-11-12",
-    "assunto": "fix: promoções e transferências passam a atualizar o cadastro do colaborador, e \"Prorrogar\" afastamento passa a registra"
-   },
-   {
-    "sha": "c9ef6d7",
-    "data": "2026-11-12",
-    "assunto": "fix: tela de Cargos passa a cadastrar, editar e ativar/inativar cargos (#487)"
-   },
-   {
-    "sha": "3662037",
-    "data": "2026-11-12",
-    "assunto": "fix: Avaliação de Desempenho: agora dá para cadastrar e excluir ciclos, metas, feedbacks e PDIs (#486)"
-   },
-   {
-    "sha": "fc76699",
-    "data": "2026-11-12",
-    "assunto": "fix: Premiações mostra orçamento, participantes e tendência reais e tira o botão \"Auto\" que sempre falhava (#485)"
    }
   ],
-  "arquivos_mudados_7d": 555,
+  "arquivos_mudados_7d": 602,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 44
+    "mudancas": 53
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 36
+   },
+   {
+    "pasta": "src/services/__tests__",
+    "mudancas": 21
    },
    {
     "pasta": "CLAUDE.md",
@@ -160,10 +164,6 @@
     "mudancas": 19
    },
    {
-    "pasta": "src/services/__tests__",
-    "mudancas": 18
-   },
-   {
     "pasta": "package-lock.json",
     "mudancas": 17
    },
@@ -176,69 +176,61 @@
     "mudancas": 13
    },
    {
-    "pasta": "src/integrations/supabase",
+    "pasta": "src/components/folha",
     "mudancas": 13
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
-    "pasta": "src/components/folha",
-    "mudancas": 11
+    "pasta": "src/integrations/supabase",
+    "mudancas": 13
    },
    {
     "pasta": "src/components/layout",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
-    "pasta": "src/components/ui",
-    "mudancas": 11
+    "pasta": "src/components/ponto",
+    "mudancas": 12
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 51
+    "mudancas": 47
    },
    {
     "arquivo": "package.json",
-    "mudancas": 29
+    "mudancas": 25
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 26
+    "mudancas": 23
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 22
-   },
-   {
-    "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 13
+    "mudancas": 21
    },
    {
     "arquivo": "PENDENCIAS.md",
     "mudancas": 13
    },
    {
-    "arquivo": "deno.lock",
+    "arquivo": ".github/workflows/ci.yml",
     "mudancas": 12
    },
    {
+    "arquivo": "deno.lock",
+    "mudancas": 11
+   },
+   {
     "arquivo": "AGENTS.md",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "src/services/cnabService.ts",
-    "mudancas": 11
-   },
-   {
-    "arquivo": "infra/github/action-pins.json",
     "mudancas": 10
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/index.ts",
+    "arquivo": "infra/github/action-pins.json",
     "mudancas": 10
    },
    {
@@ -246,15 +238,11 @@
     "mudancas": 9
    },
    {
-    "arquivo": ".github/workflows/e2e.yml",
-    "mudancas": 9
-   },
-   {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 9
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
+    "arquivo": "src/services/cnabService.ts",
     "mudancas": 9
    },
    {
@@ -262,11 +250,15 @@
     "mudancas": 8
    },
    {
+    "arquivo": ".github/workflows/e2e.yml",
+    "mudancas": 8
+   },
+   {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
     "mudancas": 8
    },
    {
-    "arquivo": "src/services/__tests__/cnabService.test.ts",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 8
    },
    {
@@ -278,15 +270,11 @@
     "mudancas": 8
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
+    "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 8
    },
    {
     "arquivo": ".github/workflows/canonical-sql-diag.yml",
-    "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 7
    },
    {
@@ -296,12 +284,24 @@
    {
     "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
+   },
+   {
+    "arquivo": "scripts/sync/autocommit-local.sh",
+    "mudancas": 7
+   },
+   {
+    "arquivo": "scripts/sync/mirror-github.sh",
+    "mudancas": 7
+   },
+   {
+    "arquivo": ".github/workflows/deploy.yml",
+    "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 167
+    "commits": 182
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2896,
-  "arquivos_codigo": 1560,
-  "linhas_codigo": 277892,
+  "arquivos_total": 2911,
+  "arquivos_codigo": 1575,
+  "linhas_codigo": 281999,
   "rotas": 114,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 77,
-  "componentes": 429,
+  "componentes": 431,
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
   "migrations": 793,
   "cron_jobs": 41,
-  "testes": 598,
+  "testes": 609,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 292
@@ -631,8 +631,8 @@
    "linhas": 2117
   },
   "src/components": {
-   "arquivos": 574,
-   "linhas": 74591
+   "arquivos": 578,
+   "linhas": 76203
   },
   "src/constants": {
    "arquivos": 6,
@@ -648,7 +648,7 @@
   },
   "src/hooks": {
    "arquivos": 182,
-   "linhas": 20167
+   "linhas": 20170
   },
   "src/i18n": {
    "arquivos": 2,
@@ -667,8 +667,8 @@
    "linhas": 186
   },
   "src/pages": {
-   "arquivos": 116,
-   "linhas": 41907
+   "arquivos": 125,
+   "linhas": 44031
   },
   "src/providers": {
    "arquivos": 4,
@@ -680,7 +680,7 @@
   },
   "src/services": {
    "arquivos": 160,
-   "linhas": 33474
+   "linhas": 33642
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -699,8 +699,8 @@
    "linhas": 801
   },
   "src/utils": {
-   "arquivos": 66,
-   "linhas": 8339
+   "arquivos": 68,
+   "linhas": 8539
   },
   "stylelint.config.js": {
    "arquivos": 1,
@@ -813,12 +813,12 @@
    "linhas": 778
   },
   {
-   "arquivo": "src/pages/ContratacaoPage.tsx",
-   "linhas": 736
+   "arquivo": "src/components/integracoes/ConfigPanels.tsx",
+   "linhas": 767
   },
   {
-   "arquivo": "src/components/integracoes/ConfigPanels.tsx",
-   "linhas": 722
+   "arquivo": "src/pages/ContratacaoPage.tsx",
+   "linhas": 736
   },
   {
    "arquivo": "src/pages/SegurosVidaPage.tsx",
@@ -843,7 +843,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
-  "arquivos_acima_500_linhas": 59
+  "arquivos_acima_500_linhas": 65
  },
  "todos": [
   {

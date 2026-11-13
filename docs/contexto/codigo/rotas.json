@@ -593,7 +593,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 77
   },
   {
    "protegida": true,
@@ -674,7 +674,8 @@
     "useQuery",
     "useQueryClient",
     "useRef",
-    "useState"
+    "useState",
+    "useWatch"
    ],
    "hooks_locais": [
     "useAuth",
@@ -698,7 +699,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 23
+   "arquivos_puxados": 25
   },
   {
    "protegida": true,
@@ -984,7 +985,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 25
+   "arquivos_puxados": 26
   },
   {
    "protegida": true,
@@ -1046,7 +1047,7 @@
     "admin",
     "rh"
    ],
-   "arquivos_puxados": 27
+   "arquivos_puxados": 28
   },
   {
    "protegida": true,
@@ -1585,6 +1586,7 @@
     "esocial_transmissao_logs",
     "faltas",
     "feedbacks_360",
+    "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
     "folhas_pagamento",
@@ -6797,7 +6799,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 205
+   "arquivos_puxados": 206
   },
   {
    "protegida": true,
@@ -9245,7 +9247,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 204
+   "arquivos_puxados": 205
   },
   {
    "protegida": true,
@@ -14033,6 +14035,7 @@
     "useSalvarDeficiencia",
     "useSalvarGradeHorarios",
     "useSalvarPeriodoExperiencia",
+    "useSearchParams",
     "useServerValidation",
     "useSolicitarAdiantamento13",
     "useState",
@@ -14390,10 +14393,11 @@
     "listitem",
     "main",
     "rh",
+    "status",
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 244
+   "arquivos_puxados": 247
   },
   {
    "protegida": true,
@@ -15352,7 +15356,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 245
+   "arquivos_puxados": 247
   },
   {
    "protegida": true,
@@ -19423,7 +19427,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 211
+   "arquivos_puxados": 213
   },
   {
    "protegida": true,

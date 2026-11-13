@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 598,
+ "total": 609,
  "por_tipo": {
   "contrato": 4,
   "e2e": 30,
   "pytest": 2,
-  "unit": 560
+  "unit": 571
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 476
+   "arquivos": 487
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -818,11 +818,12 @@
   {
    "arquivo": "src/components/__tests__/CampaignWizard.test.tsx",
    "tipo": "unit",
-   "linhas": 115,
+   "linhas": 185,
    "testa": [
-    "src/components/premiacoes/CampaignWizard.tsx"
+    "src/components/premiacoes/CampaignWizard.tsx",
+    "src/services/premiacoesService.ts"
    ],
-   "casos": 8
+   "casos": 13
   },
   {
    "arquivo": "src/components/__tests__/CamposCustomizadosTab.test.tsx",
@@ -1210,12 +1211,12 @@
   {
    "arquivo": "src/components/__tests__/EpiCatalogoTable.test.tsx",
    "tipo": "unit",
-   "linhas": 81,
+   "linhas": 107,
    "testa": [
     "src/components/epis/EpiCatalogoTable.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 5
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/EpiCategoryChart.test.tsx",
@@ -1229,12 +1230,12 @@
   {
    "arquivo": "src/components/__tests__/EpiEntregasTable.test.tsx",
    "tipo": "unit",
-   "linhas": 90,
+   "linhas": 98,
    "testa": [
     "src/components/epis/EpiEntregasTable.tsx",
     "src/integrations/supabase/types.ts"
    ],
-   "casos": 7
+   "casos": 8
   },
   {
    "arquivo": "src/components/__tests__/EpiKPIs.test.tsx",
@@ -1516,6 +1517,15 @@
    "casos": 8
   },
   {
+   "arquivo": "src/components/__tests__/FeriasForm.test.tsx",
+   "tipo": "unit",
+   "linhas": 351,
+   "testa": [
+    "src/components/ferias/FeriasForm.tsx"
+   ],
+   "casos": 18
+  },
+  {
    "arquivo": "src/components/__tests__/FeriasInsights.test.tsx",
    "tipo": "unit",
    "linhas": 57,
@@ -1747,11 +1757,12 @@
   {
    "arquivo": "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
    "tipo": "unit",
-   "linhas": 153,
+   "linhas": 305,
    "testa": [
-    "src/components/ponto/GestaoRegistrosPonto.tsx"
+    "src/components/ponto/GestaoRegistrosPonto.tsx",
+    "src/integrations/supabase/client.ts"
    ],
-   "casos": 8
+   "casos": 15
   },
   {
    "arquivo": "src/components/__tests__/GlobalAuditLogTab.test.tsx",
@@ -1810,6 +1821,15 @@
     "src/hooks/useColaboradorDetalhes.ts"
    ],
    "casos": 8
+  },
+  {
+   "arquivo": "src/components/__tests__/HistoricoSimulacoesDialog.test.tsx",
+   "tipo": "unit",
+   "linhas": 84,
+   "testa": [
+    "src/components/folha/HistoricoSimulacoesDialog.tsx"
+   ],
+   "casos": 5
   },
   {
    "arquivo": "src/components/__tests__/ImportarAFDTDialog.test.tsx",
@@ -2033,11 +2053,12 @@
   {
    "arquivo": "src/components/__tests__/MobileQuickActions.test.tsx",
    "tipo": "unit",
-   "linhas": 120,
+   "linhas": 144,
    "testa": [
-    "src/components/layout/MobileQuickActions.tsx"
+    "src/components/layout/MobileQuickActions.tsx",
+    "src/hooks/useAuth.ts"
    ],
-   "casos": 9
+   "casos": 11
   },
   {
    "arquivo": "src/components/__tests__/MorningBriefing.test.tsx",
@@ -2143,11 +2164,13 @@
   {
    "arquivo": "src/components/__tests__/NovoDepartamentoDialog.test.tsx",
    "tipo": "unit",
-   "linhas": 100,
+   "linhas": 144,
    "testa": [
-    "src/components/departamentos/NovoDepartamentoDialog.tsx"
+    "src/components/departamentos/NovoDepartamentoDialog.tsx",
+    "src/hooks/useDepartamentos.ts",
+    "src/services/departamentoService.ts"
    ],
-   "casos": 8
+   "casos": 10
   },
   {
    "arquivo": "src/components/__tests__/NovoDesligamentoDialog.test.tsx",
@@ -2549,11 +2572,11 @@
   {
    "arquivo": "src/components/__tests__/SSTEPIsTab.test.tsx",
    "tipo": "unit",
-   "linhas": 81,
+   "linhas": 88,
    "testa": [
     "src/components/sst/SSTEPIsTab.tsx"
    ],
-   "casos": 8
+   "casos": 9
   },
   {
    "arquivo": "src/components/__tests__/SSTExamesTab.test.tsx",
@@ -2732,11 +2755,11 @@
   {
    "arquivo": "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
    "tipo": "unit",
-   "linhas": 137,
+   "linhas": 229,
    "testa": [
     "src/components/integracoes/ConfigPanels.tsx"
    ],
-   "casos": 6
+   "casos": 9
   },
   {
    "arquivo": "src/components/relatorios/reportScheduleContract.test.ts",
@@ -3388,7 +3411,7 @@
   {
    "arquivo": "src/hooks/__tests__/useNovasTabelas.test.ts",
    "tipo": "unit",
-   "linhas": 734,
+   "linhas": 735,
    "testa": [
     "src/hooks/useNovasTabelas.ts"
    ],
@@ -3803,6 +3826,53 @@
    "casos": 26
   },
   {
+   "arquivo": "src/pages/__tests__/AdminAgendamentoExamesPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 103,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/pages/AdminAgendamentoExamesPage.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/pages/__tests__/adminCatEdicao.test.ts",
+   "tipo": "unit",
+   "linhas": 93,
+   "testa": [
+    "src/pages/adminCatEdicao.ts"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "src/pages/__tests__/AdminExtintoresPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 119,
+   "testa": [
+    "src/pages/AdminExtintoresPage.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/pages/__tests__/AdminRegimentoInternoPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 110,
+   "testa": [
+    "src/pages/AdminRegimentoInternoPage.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/pages/__tests__/CanalEticaPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 131,
+   "testa": [
+    "src/pages/CanalEticaPage.tsx",
+    "src/services/comunicacaoService.ts"
+   ],
+   "casos": 5
+  },
+  {
    "arquivo": "src/pages/__tests__/CienciaMedidaPage.test.tsx",
    "tipo": "unit",
    "linhas": 107,
@@ -3811,6 +3881,35 @@
     "src/pages/CienciaMedidaPage.tsx"
    ],
    "casos": 5
+  },
+  {
+   "arquivo": "src/pages/__tests__/ComunicacaoInternaPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 145,
+   "testa": [
+    "src/pages/ComunicacaoInternaPage.tsx",
+    "src/services/comunicacaoService.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/pages/__tests__/ConveniosPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 169,
+   "testa": [
+    "src/pages/ConveniosPage.tsx"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "src/pages/__tests__/DepartamentosPage.permissao.test.tsx",
+   "tipo": "unit",
+   "linhas": 97,
+   "testa": [
+    "src/pages/DepartamentosPage.tsx",
+    "src/types/entities.ts"
+   ],
+   "casos": 3
   },
   {
    "arquivo": "src/pages/__tests__/folhaResumo.test.ts",
@@ -3843,12 +3942,12 @@
   {
    "arquivo": "src/pages/__tests__/PremiacoesPage.test.tsx",
    "tipo": "unit",
-   "linhas": 76,
+   "linhas": 131,
    "testa": [
     "src/pages/PremiacoesPage.tsx",
     "src/services/premiacoesService.ts"
    ],
-   "casos": 2
+   "casos": 5
   },
   {
    "arquivo": "src/schemas/__tests__/validate.test.ts",
@@ -4110,7 +4209,7 @@
   {
    "arquivo": "src/services/__tests__/comunicacaoService.test.ts",
    "tipo": "unit",
-   "linhas": 265,
+   "linhas": 274,
    "testa": [
     "src/integrations/supabase/database.types.ts",
     "src/services/comunicacaoService.ts"
@@ -4329,11 +4428,11 @@
   {
    "arquivo": "src/services/__tests__/integracaoService.test.ts",
    "tipo": "unit",
-   "linhas": 252,
+   "linhas": 283,
    "testa": [
     "src/services/integracaoService.ts"
    ],
-   "casos": 22
+   "casos": 25
   },
   {
    "arquivo": "src/services/__tests__/intervaloService.test.ts",
@@ -4494,11 +4593,11 @@
   {
    "arquivo": "src/services/__tests__/premiacoesService.test.ts",
    "tipo": "unit",
-   "linhas": 457,
+   "linhas": 502,
    "testa": [
     "src/services/premiacoesService.ts"
    ],
-   "casos": 30
+   "casos": 35
   },
   {
    "arquivo": "src/services/__tests__/provisaoService.test.ts",
@@ -4813,11 +4912,11 @@
   {
    "arquivo": "src/utils/__tests__/dateLocal.test.ts",
    "tipo": "unit",
-   "linhas": 90,
+   "linhas": 109,
    "testa": [
     "src/utils/dateLocal.ts"
    ],
-   "casos": 12
+   "casos": 14
   },
   {
    "arquivo": "src/utils/__tests__/desligamentoExcel.test.ts",
@@ -4910,6 +5009,15 @@
     "src/utils/piiMask.ts"
    ],
    "casos": 15
+  },
+  {
+   "arquivo": "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
+   "tipo": "unit",
+   "linhas": 87,
+   "testa": [
+    "src/utils/regrasSolicitacaoFerias.ts"
+   ],
+   "casos": 8
   },
   {
    "arquivo": "src/utils/__tests__/rescisaoCalc.test.ts",
@@ -5578,6 +5686,7 @@
   "src/components/ferias/FeriasAuditTimeline.tsx": 1,
   "src/components/ferias/FeriasColetivasTab.tsx": 1,
   "src/components/ferias/FeriasDashboard.tsx": 1,
+  "src/components/ferias/FeriasForm.tsx": 1,
   "src/components/ferias/FeriasInsights.tsx": 1,
   "src/components/ferias/FeriasKPIs.tsx": 1,
   "src/components/ferias/FeriasReconciliacaoCard.tsx": 1,
@@ -5601,6 +5710,7 @@
   "src/components/folha/FolhaKPIs.tsx": 1,
   "src/components/folha/FolhaPipeline.tsx": 1,
   "src/components/folha/FolhaValidationAlerts.tsx": 1,
+  "src/components/folha/HistoricoSimulacoesDialog.tsx": 1,
   "src/components/folha/MetricasFolhaDashboard.tsx": 1,
   "src/components/folha/PagamentoBancarioWizard.tsx": 1,
   "src/components/folha/RelatorioContabilDialog.tsx": 1,
@@ -5730,7 +5840,7 @@
   "src/hooks/useAssinarAvisoFerias.ts": 1,
   "src/hooks/useAssinaturaDigital.ts": 1,
   "src/hooks/useAssinaturas.ts": 1,
-  "src/hooks/useAuth.ts": 1,
+  "src/hooks/useAuth.ts": 2,
   "src/hooks/useBackGesture.ts": 1,
   "src/hooks/useBeneficios.ts": 2,
   "src/hooks/useBeneficiosColaborador.ts": 2,
@@ -5750,7 +5860,7 @@
   "src/hooks/useContratosVencendo.ts": 2,
   "src/hooks/useDataAccessLog.ts": 1,
   "src/hooks/useDebounce.ts": 1,
-  "src/hooks/useDepartamentos.ts": 2,
+  "src/hooks/useDepartamentos.ts": 3,
   "src/hooks/useDesligamentos.ts": 2,
   "src/hooks/useDocumentOCR.ts": 1,
   "src/hooks/useDocumentos.ts": 2,
@@ -5805,7 +5915,7 @@
   "src/hooks/useValeTransporte.ts": 1,
   "src/hooks/useWebhooksAvancados.ts": 2,
   "src/hooks/validators.ts": 1,
-  "src/integrations/supabase/client.ts": 20,
+  "src/integrations/supabase/client.ts": 22,
   "src/integrations/supabase/database.types.ts": 10,
   "src/integrations/supabase/previewAuthStorage.ts": 1,
   "src/integrations/supabase/types.ts": 13,
@@ -5816,7 +5926,14 @@
   "src/lib/reciboAssinaturaPdf.ts": 1,
   "src/lib/retry.ts": 2,
   "src/lib/utils.ts": 1,
+  "src/pages/AdminAgendamentoExamesPage.tsx": 1,
+  "src/pages/AdminExtintoresPage.tsx": 1,
+  "src/pages/AdminRegimentoInternoPage.tsx": 1,
+  "src/pages/CanalEticaPage.tsx": 1,
   "src/pages/CienciaMedidaPage.tsx": 1,
+  "src/pages/ComunicacaoInternaPage.tsx": 1,
+  "src/pages/ConveniosPage.tsx": 1,
+  "src/pages/DepartamentosPage.tsx": 1,
   "src/pages/FolhaPage.tsx": 1,
   "src/pages/ImportacaoPage.tsx": 1,
   "src/pages/LoginPage.tsx": 1,
@@ -5824,6 +5941,7 @@
   "src/pages/ObrigacoesFiscaisPage.tsx": 1,
   "src/pages/PremiacoesPage.tsx": 1,
   "src/pages/UsuariosPage.tsx": 1,
+  "src/pages/adminCatEdicao.ts": 1,
   "src/pages/folhaResumo.ts": 1,
   "src/schemas/common.ts": 1,
   "src/schemas/esocial/helpers.ts": 1,
@@ -5852,13 +5970,13 @@
   "src/services/cnabService.ts": 2,
   "src/services/colaboradorDetalhesService.ts": 1,
   "src/services/colaboradorService.ts": 1,
-  "src/services/comunicacaoService.ts": 1,
+  "src/services/comunicacaoService.ts": 3,
   "src/services/contabilidadeService.ts": 1,
   "src/services/contratacaoService.ts": 2,
   "src/services/contratoService.ts": 1,
   "src/services/contratoTemplateService.ts": 1,
   "src/services/controleAcessoService.ts": 1,
-  "src/services/departamentoService.ts": 2,
+  "src/services/departamentoService.ts": 3,
   "src/services/desligamentoService.ts": 4,
   "src/services/despesaService.ts": 1,
   "src/services/documentoService.ts": 2,
@@ -5893,7 +6011,7 @@
   "src/services/pontoOfflineService.ts": 2,
   "src/services/pontoService.ts": 1,
   "src/services/pontosService.ts": 1,
-  "src/services/premiacoesService.ts": 2,
+  "src/services/premiacoesService.ts": 3,
   "src/services/provisaoService.ts": 1,
   "src/services/pushNotificationService.ts": 1,
   "src/services/recrutamentoService.ts": 1,
@@ -5912,7 +6030,7 @@
   "src/services/whatsappService.ts": 1,
   "src/services/workflowService.ts": 1,
   "src/types/afastamentos.ts": 1,
-  "src/types/entities.ts": 5,
+  "src/types/entities.ts": 6,
   "src/types/medidasDisciplinares.ts": 6,
   "src/types/pcs.ts": 1,
   "src/utils/afastamentoPDF.ts": 1,
@@ -5939,6 +6057,7 @@
   "src/utils/passwordPolicy.ts": 1,
   "src/utils/pgInterval.ts": 1,
   "src/utils/piiMask.ts": 4,
+  "src/utils/regrasSolicitacaoFerias.ts": 1,
   "src/utils/rescisaoCalc.ts": 1,
   "src/utils/rescisaoPDF.ts": 1,
   "src/utils/safeError.ts": 1,
@@ -5988,17 +6107,14 @@
  },
  "sem_teste": {
   "telas": [
-   "src/pages/AdminAgendamentoExamesPage.tsx",
    "src/pages/AdminAsoWorkflowPage.tsx",
    "src/pages/AdminCatPage.tsx",
    "src/pages/AdminClinicasPartnersPage.tsx",
    "src/pages/AdminDiagnosticoMigracaoPage.tsx",
    "src/pages/AdminEpisFichasPage.tsx",
-   "src/pages/AdminExtintoresPage.tsx",
    "src/pages/AdminIdempotenciaPage.tsx",
    "src/pages/AdminOperacaoPage.tsx",
    "src/pages/AdminPontoDivergenciasPage.tsx",
-   "src/pages/AdminRegimentoInternoPage.tsx",
    "src/pages/AdminSecurityPage.tsx",
    "src/pages/AdminSstDashboardPage.tsx",
    "src/pages/AdminTelemetriaPage.tsx",
@@ -6016,23 +6132,19 @@
    "src/pages/BeneficiosPage.tsx",
    "src/pages/CalculadoraRescisaoPage.tsx",
    "src/pages/CanalContabilidadePage.tsx",
-   "src/pages/CanalEticaPage.tsx",
    "src/pages/CargosPage.tsx",
    "src/pages/CentrosCustoPage.tsx",
    "src/pages/ColaboradorDetalhesPage.tsx",
    "src/pages/ColaboradorFormPage.tsx",
    "src/pages/ColaboradoresPage.tsx",
-   "src/pages/ComunicacaoInternaPage.tsx",
    "src/pages/ConfiguracoesPage.tsx",
    "src/pages/ContabilidadePage.tsx",
    "src/pages/ContratacaoPage.tsx",
    "src/pages/ContratoTemplatesPage.tsx",
    "src/pages/ContratosGeradosPage.tsx",
    "src/pages/ControleAcessoPage.tsx",
-   "src/pages/ConveniosPage.tsx",
    "src/pages/DashboardExecutivoPage.tsx",
    "src/pages/DashboardPage.tsx",
-   "src/pages/DepartamentosPage.tsx",
    "src/pages/DescontosPage.tsx",
    "src/pages/DesignSystemPage.tsx",
    "src/pages/DesligamentosPage.tsx",

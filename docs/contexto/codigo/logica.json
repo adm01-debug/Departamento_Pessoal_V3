@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 157,
+ "total": 158,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -10,7 +10,7 @@
   "python": 3,
   "schemas": 25,
   "services": 80,
-  "utils": 33
+  "utils": 34
  },
  "arquivos": [
   {
@@ -262,9 +262,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 20,
+   "usado_por": 25,
    "usado_por_modulos": [
     "components/ferias",
+    "components/integracoes",
     "components/ponto",
     "components/sst",
     "components/ui",
@@ -349,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 233,
+   "usado_por": 235,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -387,7 +388,7 @@
     "utils",
     "utils/folha"
    ],
-   "coberto_por_testes": 20,
+   "coberto_por_testes": 22,
    "orfao": false
   },
   {
@@ -420,7 +421,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 67,
+   "usado_por": 68,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -506,7 +507,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 75,
+   "usado_por": 76,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
@@ -1348,8 +1349,9 @@
    "zod_schemas": 1,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/ferias",
     "schemas",
     "services"
    ],
@@ -1513,7 +1515,7 @@
    "zod_schemas": 1,
    "flags": [],
    "papeis": [],
-   "usado_por": 117,
+   "usado_por": 118,
    "usado_por_modulos": [
     "components/admissoes",
     "components/dashboard",
@@ -2177,8 +2179,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "usado_por_modulos": [
+    "components/ferias",
     "hooks",
     "pages",
     "services"
@@ -2193,7 +2196,7 @@
     "comunicacaoService"
    ],
    "export_default": null,
-   "linhas": 105,
+   "linhas": 103,
    "tabelas": [
     "canal_etica",
     "comunicados",
@@ -2206,12 +2209,12 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
     "pages",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -2373,8 +2376,10 @@
     "departamentoService"
    ],
    "export_default": null,
-   "linhas": 16,
-   "tabelas": [],
+   "linhas": 32,
+   "tabelas": [
+    "colaboradores"
+   ],
    "rpcs": [],
    "edges": [],
    "env": [],
@@ -2382,12 +2387,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/departamentos",
     "hooks",
     "services"
    ],
-   "coberto_por_testes": 2,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -2745,8 +2751,9 @@
     "feriasService"
    ],
    "export_default": null,
-   "linhas": 268,
+   "linhas": 281,
    "tabelas": [
+    "ferias",
     "ferias_aprovacoes_log",
     "periodos_aquisitivos"
    ],
@@ -2757,8 +2764,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "components/ferias",
     "services"
    ],
    "coberto_por_testes": 1,
@@ -3002,7 +3010,7 @@
     "webhookService"
    ],
    "export_default": null,
-   "linhas": 113,
+   "linhas": 131,
    "tabelas": [
     "cnab_configuracoes",
     "cnab_remessas",
@@ -3518,7 +3526,7 @@
     "premiacoesService"
    ],
    "export_default": null,
-   "linhas": 377,
+   "linhas": 415,
    "tabelas": [
     "notificacoes",
     "premiacoes_auditoria",
@@ -3543,7 +3551,7 @@
     "components/premiacoes",
     "pages"
    ],
-   "coberto_por_testes": 2,
+   "coberto_por_testes": 3,
    "orfao": false
   },
   {
@@ -4295,8 +4303,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/ferias",
     "pages"
    ],
    "coberto_por_testes": 1,
@@ -4361,12 +4370,13 @@
    "exports": [
     "addDaysLocal",
     "currentCompetenciaLocal",
+    "datetimeLocalToISO",
     "formatCompetenciaLocal",
     "formatDateLocalISO",
     "todayLocalISO"
    ],
    "export_default": null,
-   "linhas": 68,
+   "linhas": 78,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -4375,7 +4385,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 40,
+   "usado_por": 42,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/descontos",
@@ -4629,11 +4639,12 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
     "components/esocial",
+    "components/folha",
     "components/premiacoes",
     "pages"
    ],
@@ -4886,6 +4897,38 @@
    "orfao": false
   },
   {
+   "arquivo": "src/utils/regrasSolicitacaoFerias.ts",
+   "camada": "utils",
+   "exports": [
+    "DIAS_AVISO_FERIAS",
+    "FeriasLancada",
+    "USO_VAZIO",
+    "UsoPeriodo",
+    "avisoAntecedenciaFerias",
+    "resumirUsoPorPeriodo",
+    "validarInicioFerias",
+    "validarSaldoFerias"
+   ],
+   "export_default": null,
+   "linhas": 84,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/ferias"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/utils/rescisaoCalc.ts",
    "camada": "utils",
    "exports": [
@@ -4964,10 +5007,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 117,
+   "usado_por": 123,
    "usado_por_modulos": [
     "components/admissoes",
     "components/dashboard",
+    "components/departamentos",
     "components/desligamentos",
     "components/ferias",
     "components/folha",

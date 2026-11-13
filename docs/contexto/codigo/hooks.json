@@ -225,9 +225,11 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 20,
+   "usado_por": 25,
    "usado_por_arquivos": [
     "src/components/ferias/FeriasTable.tsx",
+    "src/components/integracoes/ConfigPanels.tsx",
+    "src/components/ponto/GestaoRegistrosPonto.tsx",
     "src/components/ponto/PontoCharts.tsx",
     "src/components/ponto/PontoClockRegister.tsx",
     "src/components/ponto/PontoInconsistencyPanel.tsx",
@@ -242,8 +244,11 @@
     "src/hooks/useImportacaoColaboradores.ts",
     "src/main.tsx",
     "src/pages/ColaboradorFormPage.tsx",
+    "src/pages/ConveniosPage.tsx",
+    "src/pages/DepartamentosPage.tsx",
     "src/pages/EmpresaFormPage.tsx",
     "src/pages/FeriadosPage.tsx",
+    "src/pages/FeriasPage.tsx",
     "src/pages/GeradorDocumentosPage.tsx",
     "src/pages/PontoPage.tsx",
     "src/pages/SSTPage.tsx"
@@ -803,13 +808,14 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 13,
+   "usado_por": 15,
    "usado_por_arquivos": [
     "src/components/AdminRoute.tsx",
     "src/components/ProtectedRoute.tsx",
     "src/components/layout/AppSidebar.tsx",
     "src/components/layout/Header.tsx",
     "src/components/layout/MobileBottomNav.tsx",
+    "src/components/layout/MobileQuickActions.tsx",
     "src/hooks/index.ts",
     "src/hooks/useAssinaturas.ts",
     "src/hooks/useHorasExtras.ts",
@@ -817,9 +823,10 @@
     "src/pages/AdminAsoWorkflowPage.tsx",
     "src/pages/CalculadoraRescisaoPage.tsx",
     "src/pages/ConfiguracoesPage.tsx",
-    "src/pages/FeriasProgramacaoPage.tsx"
+    "src/pages/FeriasProgramacaoPage.tsx",
+    "src/pages/PremiacoesPage.tsx"
    ],
-   "coberto_por_testes": 1
+   "coberto_por_testes": 2
   },
   {
    "arquivo": "src/hooks/useBackGesture.ts",
@@ -1063,9 +1070,10 @@
     "useState"
    ],
    "canais_realtime": [],
-   "usado_por": 6,
+   "usado_por": 7,
    "usado_por_arquivos": [
     "src/components/afastamentos/AfastamentoForm.tsx",
+    "src/components/ferias/FeriasForm.tsx",
     "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
     "src/hooks/index.ts",
     "src/pages/ColaboradoresPage.tsx",
@@ -1322,7 +1330,7 @@
    "hooks_exportados": [
     "useDepartamentos"
    ],
-   "linhas": 28,
+   "linhas": 29,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1339,7 +1347,7 @@
     "src/pages/ColaboradoresPage.tsx",
     "src/pages/DepartamentosPage.tsx"
    ],
-   "coberto_por_testes": 2
+   "coberto_por_testes": 3
   },
   {
    "arquivo": "src/hooks/useDesligamentos.ts",
@@ -1435,7 +1443,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 107,
+   "usado_por": 108,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
@@ -1448,6 +1456,7 @@
     "src/components/ferias/AssinarAvisoDialog.tsx",
     "src/components/ferias/FeriasAuditTimeline.tsx",
     "src/components/ferias/FeriasColetivasTab.tsx",
+    "src/components/ferias/FeriasForm.tsx",
     "src/components/ferias/FeriasRelatorioDialog.tsx",
     "src/components/ferias/GerenciamentoPeriodos.tsx",
     "src/components/folha/CNABDialog.tsx",
@@ -1465,8 +1474,7 @@
     "src/components/ponto/GerarAEJDialog.tsx",
     "src/components/ponto/GerarAFDDialog.tsx",
     "src/components/ponto/ImportarAFDTDialog.tsx",
-    "src/components/ponto/PontoAuditTimeline.tsx",
-    "src/components/portal/PortalRegimentoCard.tsx"
+    "src/components/ponto/PontoAuditTimeline.tsx"
    ],
    "coberto_por_testes": 5
   },
@@ -2019,7 +2027,7 @@
     "useSalvarBancoHorasConfig",
     "useSalvarGradeHorarios"
    ],
-   "linhas": 286,
+   "linhas": 287,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2186,8 +2194,9 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
+    "src/components/ferias/FeriasForm.tsx",
     "src/components/ferias/programacao/NovaProgramacaoDialog.tsx",
     "src/hooks/index.ts"
    ],

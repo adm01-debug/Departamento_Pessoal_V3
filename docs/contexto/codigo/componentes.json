@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 429,
+ "total": 431,
  "orfaos": 22,
  "nomes_duplicados": {
   "AlertasRHWidget": [
@@ -1137,7 +1137,7 @@
     "NovoDepartamentoDialog"
    ],
    "export_default": null,
-   "linhas": 104,
+   "linhas": 122,
    "dominio": "components/departamentos",
    "hooks_locais": [
     "useDepartamentos",
@@ -1376,7 +1376,7 @@
     "EpiCatalogoTable"
    ],
    "export_default": null,
-   "linhas": 187,
+   "linhas": 223,
    "dominio": "components/epis",
    "hooks_locais": [],
    "tabelas": [],
@@ -1404,7 +1404,7 @@
     "EpiEntregasTable"
    ],
    "export_default": null,
-   "linhas": 198,
+   "linhas": 205,
    "dominio": "components/epis",
    "hooks_locais": [],
    "tabelas": [],
@@ -1872,6 +1872,24 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ferias/FeriasForm.tsx",
+   "exports": [
+    "FeriasForm"
+   ],
+   "export_default": null,
+   "linhas": 342,
+   "dominio": "components/ferias",
+   "hooks_locais": [
+    "useColaboradores",
+    "useEmpresas",
+    "usePeriodosAquisitivos"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ferias/FeriasInsights.tsx",
    "exports": [
     "FeriasInsights"
@@ -2248,6 +2266,22 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/folha/HistoricoSimulacoesDialog.tsx",
+   "exports": [
+    "HistoricoSimulacoesDialog"
+   ],
+   "export_default": null,
+   "linhas": 110,
+   "dominio": "components/folha",
+   "hooks_locais": [],
+   "tabelas": [
+    "simulacoes_fiscais"
+   ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/folha/LancamentosDialog.tsx",
    "exports": [
     "LancamentosDialog"
@@ -2354,7 +2388,7 @@
     "SimuladorWhatIf"
    ],
    "export_default": null,
-   "linhas": 283,
+   "linhas": 282,
    "dominio": "components/folha",
    "hooks_locais": [
     "useEmpresas"
@@ -2449,9 +2483,10 @@
     "WhatsAppConfigPanel"
    ],
    "export_default": null,
-   "linhas": 722,
+   "linhas": 767,
    "dominio": "components/integracoes",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [],
@@ -2710,9 +2745,11 @@
     "MobileQuickActions"
    ],
    "export_default": null,
-   "linhas": 185,
+   "linhas": 192,
    "dominio": "components/layout",
-   "hooks_locais": [],
+   "hooks_locais": [
+    "useAuth"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -3342,9 +3379,10 @@
     "GestaoRegistrosPonto"
    ],
    "export_default": null,
-   "linhas": 465,
+   "linhas": 539,
    "dominio": "components/ponto",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [
@@ -3398,14 +3436,14 @@
     "PontoAuditTimeline"
    ],
    "export_default": null,
-   "linhas": 186,
+   "linhas": 187,
    "dominio": "components/ponto",
    "hooks_locais": [
     "useEmpresas"
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -3630,7 +3668,7 @@
     "CampaignWizard"
    ],
    "export_default": null,
-   "linhas": 171,
+   "linhas": 283,
    "dominio": "components/premiacoes",
    "hooks_locais": [],
    "tabelas": [],
@@ -4041,7 +4079,7 @@
     "SSTEPIsTab"
    ],
    "export_default": null,
-   "linhas": 112,
+   "linhas": 115,
    "dominio": "components/sst",
    "hooks_locais": [],
    "tabelas": [],
@@ -4184,7 +4222,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 9,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -4246,7 +4284,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 249,
+   "usado_por": 251,
    "orfao": false
   },
   {
@@ -4314,7 +4352,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -4468,7 +4506,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 127,
+   "usado_por": 130,
    "orfao": false
   },
   {
@@ -4542,7 +4580,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 141,
+   "usado_por": 142,
    "orfao": false
   },
   {
@@ -4719,7 +4757,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 93,
+   "usado_por": 94,
    "orfao": false
   },
   {
@@ -4913,7 +4951,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -4979,7 +5017,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 41,
+   "usado_por": 42,
    "orfao": false
   },
   {
@@ -5190,7 +5228,7 @@
     "AdminAgendamentoExamesPage"
    ],
    "export_default": "AdminAgendamentoExamesPage",
-   "linhas": 444,
+   "linhas": 566,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -5228,7 +5266,7 @@
     "AdminCatPage"
    ],
    "export_default": "AdminCatPage",
-   "linhas": 371,
+   "linhas": 473,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -5303,7 +5341,7 @@
     "AdminExtintoresPage"
    ],
    "export_default": "AdminExtintoresPage",
-   "linhas": 419,
+   "linhas": 573,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -5370,7 +5408,7 @@
     "AdminRegimentoInternoPage"
    ],
    "export_default": "AdminRegimentoInternoPage",
-   "linhas": 421,
+   "linhas": 602,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -5672,9 +5710,10 @@
     "CanalEticaPage"
    ],
    "export_default": "CanalEticaPage",
-   "linhas": 187,
+   "linhas": 280,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [
@@ -5799,7 +5838,7 @@
     "ComunicacaoInternaPage"
    ],
    "export_default": "ComunicacaoInternaPage",
-   "linhas": 509,
+   "linhas": 592,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -5919,9 +5958,10 @@
     "ConveniosPage"
    ],
    "export_default": "ConveniosPage",
-   "linhas": 383,
+   "linhas": 507,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [
@@ -5988,9 +6028,10 @@
     "DepartamentosPage"
    ],
    "export_default": "DepartamentosPage",
-   "linhas": 155,
+   "linhas": 161,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useDepartamentos"
    ],
    "tabelas": [],
@@ -6123,9 +6164,10 @@
     "EPIsPage"
    ],
    "export_default": "EPIsPage",
-   "linhas": 425,
+   "linhas": 471,
    "dominio": "pages",
    "hooks_locais": [
+    "useAtualizarEpi",
     "useEmpresas"
    ],
    "tabelas": [],
@@ -6226,9 +6268,10 @@
     "FeriasPage"
    ],
    "export_default": "FeriasPage",
-   "linhas": 473,
+   "linhas": 511,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useDataAccessLog",
     "useEmpresas",
     "useFerias",
@@ -6826,9 +6869,10 @@
     "PremiacoesPage"
    ],
    "export_default": "PremiacoesPage",
-   "linhas": 595,
+   "linhas": 681,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [],
