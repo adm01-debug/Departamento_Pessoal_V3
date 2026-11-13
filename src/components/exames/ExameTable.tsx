@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, Stethoscope } from 'lucide-react';
+import { Trash2, Stethoscope, Pencil } from 'lucide-react';
 import { format, parseISO, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -43,12 +43,15 @@ const resultadoBadge = (resultado: string | null) => {
   );
 };
 
+type ExameRow = Tables<'exames'> & { colaborador?: { nome_completo?: string | null } | null };
+
 interface ExameTableProps {
-  data: (Tables<'exames'> & { colaborador?: { nome_completo?: string | null } | null })[];
+  data: ExameRow[];
   onExcluir: (id: string) => void;
+  onEditar: (row: ExameRow) => void;
 }
 
-export function ExameTable({ data, onExcluir }: ExameTableProps) {
+export function ExameTable({ data, onExcluir, onEditar }: ExameTableProps) {
   const now = new Date();
 
   const formatDate = (d: string | null) => {
@@ -132,20 +135,36 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                         )}
                       </TableCell>
                       <TableCell className="pr-6">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              aria-label="Excluir"
-                              className="h-7 w-7 rounded-lg"
-                              onClick={() => onExcluir(r.id)}
-                            >
-                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Excluir exame</TooltipContent>
-                        </Tooltip>
+                        <div className="flex items-center gap-1">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label="Editar"
+                                className="h-7 w-7 rounded-lg"
+                                onClick={() => onEditar(r)}
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Editar / registrar resultado</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label="Excluir"
+                                className="h-7 w-7 rounded-lg"
+                                onClick={() => onExcluir(r.id)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Excluir exame</TooltipContent>
+                          </Tooltip>
+                        </div>
                       </TableCell>
                     </motion.tr>
                   );
@@ -191,15 +210,26 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                     <span className="text-[10px] text-muted-foreground">
                       {r.medico || '—'} {r.crm ? `(CRM: ${r.crm})` : ''}
                     </span>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      aria-label="Excluir"
-                      className="h-7 w-7"
-                      onClick={() => onExcluir(r.id)}
-                    >
-                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label="Editar"
+                        className="h-7 w-7"
+                        onClick={() => onEditar(r)}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label="Excluir"
+                        className="h-7 w-7"
+                        onClick={() => onExcluir(r.id)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                      </Button>
+                    </div>
                   </div>
                 </motion.div>
               );

@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
 
 export default function SindicatosPage() {
@@ -21,6 +21,7 @@ export default function SindicatosPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', cnpj: '', telefone: '', email: '', data_base: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data: sindicatos = [], isLoading } = useQuery({
     queryKey: ['sindicatos', empresaAtual?.id],
@@ -50,6 +51,29 @@ export default function SindicatosPage() {
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar sindicato.')),
   });
 
+  // sindicatos é tabela global (sem empresa_id); a RLS só permite UPDATE para admin.
+  // Sem linha retornada = RLS bloqueou → erro explícito em vez de sucesso falso.
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('sindicatos')
+        .update(validateTablePayload('sindicatos', d, 'SindicatosPage:sindicatos'))
+        .eq('id', id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Apenas administradores podem editar sindicatos.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['sindicatos'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({ nome: '', cnpj: '', telefone: '', email: '', data_base: '' });
+      toast.success('Sindicato atualizado!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar sindicato.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('sindicatos').delete().eq('id', id);
@@ -59,7 +83,16 @@ export default function SindicatosPage() {
       qc.invalidateQueries({ queryKey: ['sindicatos'] });
       toast.success('Sindicato excluído!');
     },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir sindicato.')),
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({ nome: '', cnpj: '', telefone: '', email: '', data_base: '' });
+    }
+  };
 
   if (isLoading)
     return (
@@ -76,7 +109,7 @@ export default function SindicatosPage() {
           <CardContent className="pt-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold">Sindicatos ({sindicatos.length})</h3>
-              <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogTrigger asChild>
                   <Button size="sm">
                     <Plus className="h-4 w-4 mr-1" />
@@ -85,7 +118,7 @@ export default function SindicatosPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Cadastrar Sindicato</DialogTitle>
+                    <DialogTitle>{editandoId ? 'Editar Sindicato' : 'Cadastrar Sindicato'}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3">
                     <div>
@@ -117,7 +150,11 @@ export default function SindicatosPage() {
                         placeholder="E: Janeiro"
                       />
                     </div>
-                    <Button className="w-full" onClick={() => criar.mutate(form)} disabled={!form.nome}>
+                    <Button
+                      className="w-full"
+                      onClick={() => (editandoId ? atualizar.mutate({ ...form, id: editandoId }) : criar.mutate(form))}
+                      disabled={!form.nome || atualizar.isPending}
+                    >
                       Salvar
                     </Button>
                   </div>
@@ -142,9 +179,29 @@ export default function SindicatosPage() {
                     <TableCell>{s.email || s.telefone || '—'}</TableCell>
                     <TableCell>{s.data_base || '—'}</TableCell>
                     <TableCell>
-                      <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(s.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label="Editar"
+                          onClick={() => {
+                            setEditandoId(s.id);
+                            setForm({
+                              nome: s.nome,
+                              cnpj: s.cnpj ?? '',
+                              telefone: s.telefone ?? '',
+                              email: s.email ?? '',
+                              data_base: s.data_base ?? '',
+                            });
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(s.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

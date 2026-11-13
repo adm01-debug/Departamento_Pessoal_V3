@@ -23,16 +23,25 @@ const resultados = [
 
 interface ExameFormDialogProps {
   colaboradores: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo'>[];
-  onSubmit: (form: {
-    colaborador_id: string;
-    tipo: string;
-    data_exame: string;
-    data_validade: string;
-    medico: string;
-    crm: string;
-    resultado: string;
-  }) => void;
+  /** `onSaved` deve ser chamado só após salvar com sucesso: fecha e limpa o formulário. */
+  onSubmit: (
+    form: {
+      colaborador_id: string;
+      tipo: string;
+      data_exame: string;
+      data_validade: string;
+      medico: string;
+      crm: string;
+      resultado: string;
+    },
+    onSaved: () => void
+  ) => void;
   isPending?: boolean;
+  /** Modo edição (controlado): valores iniciais, estado de abertura e título. */
+  initial?: { [K in keyof typeof emptyForm]?: string | null };
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  title?: string;
 }
 
 const emptyForm = {
@@ -45,27 +54,56 @@ const emptyForm = {
   resultado: '',
 };
 
-export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFormDialogProps) {
-  const [open, setOpen] = useState(false);
+export function ExameFormDialog({
+  colaboradores,
+  onSubmit,
+  isPending,
+  initial,
+  open: openProp,
+  onOpenChange,
+  title,
+}: ExameFormDialogProps) {
+  const [openState, setOpenState] = useState(false);
   const [form, setForm] = useState(emptyForm);
+  const controlled = openProp !== undefined;
+  const open = controlled ? openProp : openState;
+  const setOpen = (o: boolean) => (controlled ? onOpenChange?.(o) : setOpenState(o));
+
+  // Modo edição: ao receber um novo registro, preenche o formulário com seus valores.
+  const [prevInitial, setPrevInitial] = useState(initial);
+  if (initial !== prevInitial) {
+    setPrevInitial(initial);
+    if (initial) {
+      const base = { ...emptyForm };
+      for (const k of Object.keys(base) as (keyof typeof emptyForm)[]) base[k] = initial[k] ?? '';
+      setForm(base);
+    }
+  }
+
+  // Validade anterior à data do exame viola o CHECK exames_validade_coerente no banco.
+  const validadeInvalida = !!form.data_exame && !!form.data_validade && form.data_validade < form.data_exame;
 
   const handleSubmit = () => {
-    onSubmit(form);
-    setForm(emptyForm);
-    setOpen(false);
+    // Fecha só quando o pai confirmar o sucesso; em erro o diálogo fica aberto com os dados digitados.
+    onSubmit(form, () => {
+      setForm(emptyForm);
+      setOpen(false);
+    });
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" className="rounded-xl shrink-0">
-          <Plus className="h-4 w-4 mr-1" />
-          Novo Exame
-        </Button>
-      </DialogTrigger>
+      {!controlled && (
+        <DialogTrigger asChild>
+          <Button size="sm" className="rounded-xl shrink-0">
+            <Plus className="h-4 w-4 mr-1" />
+            Novo Exame
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-display">Registrar Exame Ocupacional</DialogTitle>
+          <DialogTitle className="font-display">{title ?? 'Registrar Exame Ocupacional'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div>
@@ -118,6 +156,9 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
               />
             </div>
           </div>
+          {validadeInvalida && (
+            <p className="text-sm text-destructive">A validade não pode ser anterior à data do exame.</p>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -157,9 +198,9 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
           <Button
             className="w-full rounded-xl"
             onClick={handleSubmit}
-            disabled={!form.colaborador_id || !form.tipo || isPending}
+            disabled={!form.colaborador_id || !form.tipo || validadeInvalida || isPending}
           >
-            Registrar Exame
+            {controlled ? 'Salvar Alterações' : 'Registrar Exame'}
           </Button>
         </div>
       </DialogContent>

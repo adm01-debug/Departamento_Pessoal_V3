@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { turnoService } from '@/services/turnoService';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, CalendarClock, Clock, Users, Trash2 } from 'lucide-react';
+import { Plus, CalendarClock, Clock, Users, Trash2, Pencil } from 'lucide-react';
 
 export default function TurnosPage() {
   const { empresaAtual } = useEmpresas();
@@ -27,6 +27,9 @@ export default function TurnosPage() {
     intervalo_minutos: 60,
     cor: '#3b82f6',
   });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const resetForm = () =>
+    setForm({ nome: '', horario_inicio: '08:00', horario_fim: '17:00', intervalo_minutos: 60, cor: '#3b82f6' });
 
   const { data: turnos = [], isLoading } = useQuery({
     queryKey: ['turnos', empresaAtual?.id],
@@ -51,13 +54,34 @@ export default function TurnosPage() {
     onError: () => toast.error('Erro ao criar turno'),
   });
 
+  const atualizar = useMutation({
+    mutationFn: (id: string) => turnoService.atualizarTurno(id, form, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['turnos'] });
+      setOpen(false);
+      setEditandoId(null);
+      resetForm();
+      toast.success('Turno atualizado!');
+    },
+    onError: () => toast.error('Erro ao atualizar turno'),
+  });
+
   const excluir = useMutation({
     mutationFn: (id: string) => turnoService.excluirTurno(id, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['turnos'] });
       toast.success('Turno excluído');
     },
+    onError: () => toast.error('Erro ao excluir turno'),
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      resetForm();
+    }
+  };
 
   return (
     <>
@@ -104,7 +128,7 @@ export default function TurnosPage() {
               <TabsTrigger value="turnos">Turnos</TabsTrigger>
               <TabsTrigger value="escalas">Escalas</TabsTrigger>
             </TabsList>
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={handleOpenChange}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
@@ -113,7 +137,7 @@ export default function TurnosPage() {
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Novo Turno</DialogTitle>
+                  <DialogTitle>{editandoId ? 'Editar Turno' : 'Novo Turno'}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
@@ -159,9 +183,19 @@ export default function TurnosPage() {
                       className="h-10"
                     />
                   </div>
-                  <Button className="w-full" onClick={() => criar.mutate()} disabled={!form.nome || criar.isPending}>
-                    {criar.isPending ? 'Criando...' : 'Criar Turno'}
-                  </Button>
+                  {editandoId ? (
+                    <Button
+                      className="w-full"
+                      onClick={() => atualizar.mutate(editandoId)}
+                      disabled={!form.nome || atualizar.isPending}
+                    >
+                      {atualizar.isPending ? 'Salvando...' : 'Salvar Turno'}
+                    </Button>
+                  ) : (
+                    <Button className="w-full" onClick={() => criar.mutate()} disabled={!form.nome || criar.isPending}>
+                      {criar.isPending ? 'Criando...' : 'Criar Turno'}
+                    </Button>
+                  )}
                 </div>
               </DialogContent>
             </Dialog>
@@ -205,14 +239,34 @@ export default function TurnosPage() {
                             <Badge variant={t.ativo ? 'default' : 'secondary'}>{t.ativo ? 'Ativo' : 'Inativo'}</Badge>
                           </TableCell>
                           <TableCell>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              className="text-destructive"
-                              onClick={() => excluir.mutate(t.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex gap-1">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                aria-label="Editar"
+                                onClick={() => {
+                                  setEditandoId(t.id);
+                                  setForm({
+                                    nome: t.nome,
+                                    horario_inicio: (t.horario_inicio ?? '').slice(0, 5),
+                                    horario_fim: (t.horario_fim ?? '').slice(0, 5),
+                                    intervalo_minutos: t.intervalo_minutos ?? 0,
+                                    cor: t.cor || '#3b82f6',
+                                  });
+                                  setOpen(true);
+                                }}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-destructive"
+                                onClick={() => excluir.mutate(t.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))
