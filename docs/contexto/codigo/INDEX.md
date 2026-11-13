@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `28e9d0cf5c3ea33de8527b77700b4ea3eda13c3a` (2026-11-13T07:28:43-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5c7a433008ae6a4a7f7caead7791cf7fe764f6b0` (2026-11-13T09:37:56-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,15 +385,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22068 nós · 46475 arestas · 2170 comunidades · grafo do commit `28e9d0cf`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), cn (345), button.tsx (284), lucide-react (254), react (254), App.tsx (249), vitest (225), "public"."empresas" (164), ESocialPage.tsx (156), "public"."colaboradores" (155), "public"."empresas" (154)
+- 22070 nós · 46479 arestas · 2116 comunidades · grafo do commit `5c7a4330`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (327), button.tsx (306), react (293), vitest (233), services/index.ts (226), cn (226), @tanstack/react-query (212), contract.ts (188), useEmpresas (177), client.ts (176)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (51)
-- package.json (30)
-- package-lock.json (27)
+- package.json (29)
+- package-lock.json (26)
 - CLAUDE.md (22)
 - .github/workflows/ci.yml (13)
 - PENDENCIAS.md (13)
@@ -617,6 +617,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-13 `5c7a433` fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)
 - 2026-11-13 `28e9d0c` infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)
 - 2026-11-13 `a295c94` docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)
 - 2026-11-13 `31ea570` docs: relatório de prontidão para produção (prod-readiness) (#535)
@@ -631,7 +632,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `bf4d7fc` Folha: botão Conciliar do eSocial deixa de mostrar divergências inventadas (#513)
 - 2026-11-12 `6303fa0` fix: rastro de workflow mostra eventos reais de log_execucao (#512)
 - 2026-11-12 `25a2766` eSocial: checagem de consistência mostra o resultado na hora, sem barra falsa nem alegação de IA (#509)
-- 2026-11-12 `4263300` chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

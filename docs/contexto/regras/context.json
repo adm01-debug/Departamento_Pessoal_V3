@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "28e9d0cf5c3ea33de8527b77700b4ea3eda13c3a",
+  "sha": "5c7a433008ae6a4a7f7caead7791cf7fe764f6b0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 10:34 UTC",
+  "generated_at": "2026-11-13 13:43 UTC",
   "files_total": 2917,
   "code_files": 2387,
   "code_lines": 326328
@@ -279912,10 +279912,21 @@
   }
  },
  "git": {
-  "sha": "28e9d0cf5c3ea33de8527b77700b4ea3eda13c3a",
+  "sha": "5c7a433008ae6a4a7f7caead7791cf7fe764f6b0",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "5c7a433",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)",
+    "files": [
+     "scripts/sync/autocommit-local.sh",
+     "scripts/sync/mirror-github.sh",
+     "scripts/sync/sync-github.sh"
+    ]
+   },
    {
     "sha": "28e9d0c",
     "date": "2026-11-13",
@@ -280252,15 +280263,6 @@
      "src/services/__tests__/recrutamentoService.test.ts",
      "src/services/recrutamentoService.ts"
     ]
-   },
-   {
-    "sha": "004508d",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)",
-    "files": [
-     "src/pages/PerfilPage.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -280291,6 +280293,18 @@
    [
     "src/services/edgeFunctionsService.ts",
     2
+   ],
+   [
+    "scripts/sync/autocommit-local.sh",
+    1
+   ],
+   [
+    "scripts/sync/mirror-github.sh",
+    1
+   ],
+   [
+    "scripts/sync/sync-github.sh",
+    1
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -280330,18 +280344,6 @@
    ],
    [
     "src/components/__tests__/RubricasDialog.test.tsx",
-    1
-   ],
-   [
-    "src/components/folha/RubricasDialog.tsx",
-    1
-   ],
-   [
-    "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
-    1
-   ],
-   [
-    "src/schemas/esocial/rubricaValidator.ts",
     1
    ]
   ]

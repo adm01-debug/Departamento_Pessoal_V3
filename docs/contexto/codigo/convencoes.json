@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)",
    "infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)",
    "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)",
    "docs: relatório de prontidão para produção (prod-readiness) (#535)",
-   "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)",
-   "chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)"
+   "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

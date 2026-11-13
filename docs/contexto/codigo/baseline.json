@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "28e9d0cf5c3ea33de8527b77700b4ea3eda13c3a",
+  "commit": "5c7a433008ae6a4a7f7caead7791cf7fe764f6b0",
   "branch": "main",
-  "data_commit": "2026-11-13T07:28:43-03:00",
+  "data_commit": "2026-11-13T09:37:56-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "5c7a433",
+    "data": "2026-11-13",
+    "assunto": "fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)"
+   },
    {
     "sha": "28e9d0c",
     "data": "2026-11-13",
@@ -126,11 +131,6 @@
     "sha": "fc76699",
     "data": "2026-11-12",
     "assunto": "fix: Premiações mostra orçamento, participantes e tendência reais e tira o botão \"Auto\" que sempre falhava (#485)"
-   },
-   {
-    "sha": "db4f2ef",
-    "data": "2026-11-12",
-    "assunto": "fix: Integrações e Configurações: salvar CNAB, criar e remover webhooks, excluir plano de benefício e tirar botões e sta"
    }
   ],
   "arquivos_mudados_7d": 555,
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 30
+    "mudancas": 29
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 27
+    "mudancas": 26
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 166
+    "commits": 167
    },
    {
     "autor": "devin-ai-integration[bot]",

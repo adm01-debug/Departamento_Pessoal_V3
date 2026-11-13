@@ -1212,7 +1212,7 @@
   {
    "arquivo": "scripts/sync/autocommit-local.sh",
    "descricao": "Commit automático do trabalho local numa branch dedicada e envio ao GitHub, sem intervenção humana.   autocommit-local.sh --worktree <pasta> [--branch computador_local] [--remote origin]",
-   "linhas": 278,
+   "linhas": 311,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1248,7 +1248,7 @@
   {
    "arquivo": "scripts/sync/mirror-github.sh",
    "descricao": "Deixa o checkout local EXATAMENTE igual ao GitHub (espelho), sem intervenção humana.   mirror-github.sh [--repo <caminho>] [--branch main] [--quiet-min 10] [--keep-days 30] [--dry-run] [--quiet]",
-   "linhas": 294,
+   "linhas": 315,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
@@ -1266,7 +1266,7 @@
   {
    "arquivo": "scripts/sync/sync-github.sh",
    "descricao": "Mantém o repositório local atualizado com o GitHub, com segurança.   sync-github.sh [--repo <caminho>] [--dry-run] [--quiet]",
-   "linhas": 147,
+   "linhas": 149,
    "env": [],
    "npm_scripts": [],
    "workflows": [],
