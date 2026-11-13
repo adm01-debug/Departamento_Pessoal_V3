@@ -7,13 +7,26 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 interface EmpresaSelectorProps {
   collapsed: boolean;
-  empresaAtual: { id: string; nome_fantasia?: string | null; razao_social?: string | null; cnpj?: string | null } | null;
-  userEmpresas: Array<{ empresa_id: string; empresa?: { nome_fantasia?: string | null; razao_social?: string | null } | null }> | undefined;
+  empresaAtual: {
+    id: string;
+    nome_fantasia?: string | null;
+    razao_social?: string | null;
+    cnpj?: string | null;
+  } | null;
+  userEmpresas:
+    | Array<{ empresa_id: string; empresa?: { nome_fantasia?: string | null; razao_social?: string | null } | null }>
+    | undefined;
   temMultiplasEmpresas: boolean;
   trocarEmpresa: (id: string) => void;
 }
 
-export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMultiplasEmpresas, trocarEmpresa }: EmpresaSelectorProps) {
+export function EmpresaSelector({
+  collapsed,
+  empresaAtual,
+  userEmpresas,
+  temMultiplasEmpresas,
+  trocarEmpresa,
+}: EmpresaSelectorProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const empresaNome = empresaAtual?.nome_fantasia || empresaAtual?.razao_social || 'Sem empresa';
 
@@ -26,7 +39,9 @@ export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMult
               <Building2 className="h-4 w-4 text-primary" />
             </div>
           </TooltipTrigger>
-          <TooltipContent side="right"><p>{empresaNome}</p></TooltipContent>
+          <TooltipContent side="right">
+            <p>{empresaNome}</p>
+          </TooltipContent>
         </Tooltip>
       </div>
     );
@@ -36,7 +51,7 @@ export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMult
     return (
       <div className="px-3 pt-3 pb-1">
         <Link
-          to="/empresas/nova"
+          to="/empresas/novo"
           className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl transition-all duration-200 bg-primary/10 hover:bg-primary/20 border border-dashed border-primary/40 hover:border-primary/60 group"
         >
           <div className="h-8 w-8 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -68,12 +83,12 @@ export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMult
         </div>
         <div className="flex-1 min-w-0 text-left">
           <p className="text-xs font-body font-medium text-foreground truncate">{empresaNome}</p>
-          <p className="text-[10px] text-muted-foreground font-body">
-            {empresaAtual?.cnpj || 'Empresa ativa'}
-          </p>
+          <p className="text-[10px] text-muted-foreground font-body">{empresaAtual?.cnpj || 'Empresa ativa'}</p>
         </div>
         {temMultiplasEmpresas && (
-          <ChevronDown className={cn('h-3.5 w-3.5 text-muted-foreground/50 transition-transform', menuOpen && 'rotate-180')} />
+          <ChevronDown
+            className={cn('h-3.5 w-3.5 text-muted-foreground/50 transition-transform', menuOpen && 'rotate-180')}
+          />
         )}
       </button>
 
@@ -90,7 +105,10 @@ export function EmpresaSelector({ collapsed, empresaAtual, userEmpresas, temMult
               {userEmpresas?.map((ue) => (
                 <button
                   key={ue.empresa_id}
-                  onClick={() => { trocarEmpresa(ue.empresa_id); setMenuOpen(false); }}
+                  onClick={() => {
+                    trocarEmpresa(ue.empresa_id);
+                    setMenuOpen(false);
+                  }}
                   className={cn(
                     'w-full flex items-center gap-2 px-2.5 py-2 rounded-lg text-left transition-colors',
                     ue.empresa_id === empresaAtual?.id
