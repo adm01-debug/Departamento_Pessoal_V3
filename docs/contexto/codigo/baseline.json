@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1ad509dd03be61a9f308e1f8d3ac821072a4bd19",
+  "commit": "840dbdbe73463358f1433d27c9fbc6ff916186d5",
   "branch": "main",
-  "data_commit": "2026-11-13T18:49:21-03:00",
+  "data_commit": "2026-11-13T19:47:19-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "840dbdb",
+    "data": "2026-11-13",
+    "assunto": "fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)"
+   },
    {
     "sha": "1ad509d",
     "data": "2026-11-13",
@@ -126,11 +131,6 @@
     "sha": "646fe24",
     "data": "2026-11-13",
     "assunto": "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)"
-   },
-   {
-    "sha": "fe3ed82",
-    "data": "2026-11-13",
-    "assunto": "Comunicação Interna: permite editar comunicados já publicados (#523)"
    }
   ],
   "arquivos_mudados_7d": 631,
@@ -242,6 +242,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "scripts/sync/autocommit-local.sh",
+    "mudancas": 9
+   },
+   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 8
    },
@@ -255,10 +259,6 @@
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 8
-   },
-   {
-    "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 8
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 206
+    "commits": 207
    },
    {
     "autor": "devin-ai-integration[bot]",

@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "1ad509dd03be61a9f308e1f8d3ac821072a4bd19",
+  "sha": "840dbdbe73463358f1433d27c9fbc6ff916186d5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 22:48 UTC",
+  "generated_at": "2026-11-13 23:37 UTC",
   "files_total": 2945,
   "code_files": 2415,
   "code_lines": 332158
@@ -282073,10 +282073,19 @@
   }
  },
  "git": {
-  "sha": "1ad509dd03be61a9f308e1f8d3ac821072a4bd19",
+  "sha": "840dbdbe73463358f1433d27c9fbc6ff916186d5",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "840dbdb",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)",
+    "files": [
+     "scripts/sync/autocommit-local.sh"
+    ]
+   },
    {
     "sha": "1ad509d",
     "date": "2026-11-13",
@@ -282389,16 +282398,6 @@
      "src/hooks/useNovasTabelas.ts",
      "src/pages/EPIsPage.tsx"
     ]
-   },
-   {
-    "sha": "622c734",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Convênios passam a poder ser editados (nome, tipo, limite e status) (#519)",
-    "files": [
-     "src/pages/ConveniosPage.tsx",
-     "src/pages/__tests__/ConveniosPage.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -282411,6 +282410,10 @@
     4
    ],
    [
+    "scripts/sync/autocommit-local.sh",
+    2
+   ],
+   [
     "nginx.conf",
     2
    ],
@@ -282421,10 +282424,6 @@
    [
     ".github/workflows/canonical-migrations.yml",
     2
-   ],
-   [
-    "scripts/sync/autocommit-local.sh",
-    1
    ],
    [
     "index.html",
