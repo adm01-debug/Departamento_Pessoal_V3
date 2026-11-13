@@ -87916,7 +87916,7 @@
           "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "75518b466a1477a1",
+        "definition_sha": "fc4cd843cb754c35",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -90490,9 +90490,13 @@
             {
               "file": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.verify.sql",
               "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -91844,9 +91848,13 @@
             {
               "file": "supabase/migrations/20261111000000_ferias_art145_antecipacao_oj123.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "public.eh_dia_util_br"
@@ -91859,7 +91867,7 @@
           "search_path=public, pg_catalog"
         ],
         "definition": null,
-        "definition_sha": "21286d1e083bec59",
+        "definition_sha": "197fb6e8c7b1f3ec",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -94895,7 +94903,7 @@
           "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "e0b5b8be8f3e4543",
+        "definition_sha": "cd3166ebf3a8a19d",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98350,7 +98358,7 @@
           "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "4ea3e3470a62ae8a",
+        "definition_sha": "737e514edede37a8",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98564,7 +98572,7 @@
           "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "7b9e2c1de71249d8",
+        "definition_sha": "d1a9f83379396d93",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -101473,7 +101481,7 @@
           "search_path=pg_catalog, public, pg_temp"
         ],
         "definition": null,
-        "definition_sha": "7fd65d7bdee73426",
+        "definition_sha": "fa61b743e45d50e7",
         "execute_api_roles": "authenticated, service_role",
         "execute_public": false,
         "is_trigger_fn": false,
