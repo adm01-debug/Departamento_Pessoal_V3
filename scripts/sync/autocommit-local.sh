@@ -105,7 +105,7 @@ push_pendente() {
   local dref; dref="$("${G[@]}" symbolic-ref -q --short "refs/remotes/$REMOTE/HEAD" 2>/dev/null || true)"; [ -n "$dref" ] || dref="$REMOTE/main"
   if "${G[@]}" rev-parse -q --verify "$base" >/dev/null 2>&1; then
     largs+=("$base..HEAD"); "${G[@]}" rev-parse -q --verify "$dref" >/dev/null 2>&1 && largs+=("^$dref")
-  else largs+=(-1); fi
+  else largs+=(HEAD --not "--remotes=$REMOTE"); fi   # (13/11) sem base: TUDO que não está em nenhum ref do remoto (era só -1)
   local ex=(); [ -f "$GLCFG" ] && ex=(--config "$GLCFG")
   "${G[@]}" "${largs[@]}" | gitleaks stdin "${ex[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$STATE/ac-push-$KEY.json" >/dev/null 2>&1
   case $? in
@@ -127,12 +127,13 @@ push_pendente() {
 
 # Tira do índice UM arquivo, em modo LITERAL (nome com ':' no começo, '[', '*', '\\' ou '-' é pathspec/magia para o git: o
 # `reset -- nome` falhava e o arquivo ficava no commit). Falha fechada: se não conseguiu tirar, nada é commitado.
-unstage() { "${G[@]}" reset -q -- ":(literal)$1" 2>/dev/null || { "${G[@]}" reset -q 2>/dev/null; say "BLOQUEADO: não consegui tirar '$1' do índice (falha fechada) — NADA foi commitado"; exit 75; }; }
+unstage() { "${G[@]}" reset -q -- ":(literal)$1" 2>/dev/null || { restaura_indice; say "BLOQUEADO: não consegui tirar '$1' do índice (falha fechada) — NADA foi commitado"; exit 75; }; }
 
 timeout 120 "${G[@]}" fetch -q "$REMOTE" "$BRANCH" 2>/dev/null || true   # só para calcular "à frente"; falha de rede não impede o commit
 
 # 1. há o que commitar?
-if [ -z "$("${G[@]}" status --porcelain 2>/dev/null)" ]; then push_pendente; say "ok: nada novo para commitar"; exit "${RC:-0}"; fi
+ST0="$("${G[@]}" status --porcelain 2>"$STATE/ac-$KEY.err")" || { say "ERRO: git status falhou (índice corrompido?) — nada feito: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 75; }
+if [ -z "$ST0" ]; then push_pendente; say "ok: nada novo para commitar"; exit "${RC:-0}"; fi
 
 # 2. editando agora? adia
 if [ "$QUIET_MIN" -gt 0 ]; then
@@ -161,34 +162,40 @@ if [ "$DRY" -eq 1 ]; then
   say "[dry-run] commitaria $("${G[@]}" status --porcelain | grep -c .) item(ns) em $BRANCH (excluindo ${#EXCL[@]} por trava de dados)"; push_pendente; exit 0
 fi
 
+# (13/11) índice do usuário antes de mexer: nos BLOQUEIOS ele volta como estava (o reset perdia o que foi `git add`ado)
+IDX0="$("${G[@]}" write-tree 2>/dev/null || true)"
+restaura_indice() { if [ -n "$IDX0" ] && "${G[@]}" read-tree "$IDX0" 2>/dev/null; then "${G[@]}" update-index -q --refresh >/dev/null 2>&1 || true; else "${G[@]}" reset -q 2>/dev/null; fi; }
+
 # 4. stageia (respeita .gitignore; deleções incluídas)
 # (12/11, revisão) Um arquivo ilegível ou um repositório aninhado sem commit derrubava o `add -A` INTEIRO e nada era
 # commitado. Agora esses caminhos saem do commit (ficam no disco, registrados) e o resto segue; até 5 tentativas.
-adicionou=0
-for _tentativa in 1 2 3 4 5; do
+adicionou=0; declare -A VISTOS=()
+for _tentativa in $(seq 1 1000); do   # (13/11) git aponta 1 culpado por vez; para quando não surge culpado NOVO
   if "${G[@]}" add -A -- . "${SEGREDOS[@]}" "${GERADOS[@]}" "${EXCL[@]}" 2>"$STATE/ac-$KEY.err"; then adicionou=1; break; fi
   "${G[@]}" reset -q 2>/dev/null
   # falha do REPOSITÓRIO (objetos sem escrita, disco cheio): não há culpado por arquivo — para tudo com 75
   grep -qE "insufficient permission for adding an object|failed to insert into database|No space left|unable to write" "$STATE/ac-$KEY.err" && break
   # só causas ESPECÍFICAS de um caminho ("unable to index file" sozinho também aparece em falha do repositório)
   mapfile -t culpados < <(sed -nE "s/^error: open\\(\"(.*)\"\\): Permission denied$/\\1/p; s/^error: '(.*)\\/' does not have a commit checked out$/\\1/p" "$STATE/ac-$KEY.err" | sort -u)
-  [ ${#culpados[@]} -gt 0 ] || break
+  novos=0; for c in "${culpados[@]}"; do [ -n "${VISTOS[$c]+x}" ] || { VISTOS[$c]=1; novos=1; }; done
+  [ "$novos" -eq 1 ] || break
   for c in "${culpados[@]}"; do excluir "$c" "não dá para incluir (arquivo ilegível ou repositório aninhado sem commit)"; done
 done
 if [ "$adicionou" -ne 1 ]; then
   # (12/11) era exit 0 (sucesso invisível); disco cheio/permissão repetiria toda hora sem ninguém ver: 75 = atenção
-  say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; "${G[@]}" reset -q 2>/dev/null; exit 75
+  say "PULEI: não consegui stagear ($(head -c 160 "$STATE/ac-$KEY.err" | tr '\n' ' '))"; restaura_indice; exit 75
 fi
 
 # 4b. revalida o que está NO ÍNDICE. O `add -A` só filtra o que ele mesmo adiciona: o usuário pode ter feito `git add`
 # antes, e arquivos JÁ rastreados e modificados não passam pela regra de "novos". Falha fechada.
-SECRET_RE='^(.*/)?(\.env|\.env\..*|.*\.env|\.envrc|\.npmrc|\.netrc|id_rsa.*|id_ed25519.*|id_ecdsa.*)$'
+SECRET_RE='^(.*/)?(\.env|\.env\..*|.*\.env|\.envrc|\.npmrc|\.netrc|\.pgpass|\.git-credentials|id_rsa.*|id_dsa.*|id_ed25519.*|id_ecdsa.*|[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)|(service[-_]account|client_secret)[^/]*\.json)$'
+# (13/11) mesma lista do mirror-github; modelos (.example/.sample/.template) não são segredo
 while IFS= read -r -d '' f; do
   lc="${f,,}"; bad=""
   case "$lc" in
     *.csv|*.xlsx|*.xls|*.xlsm|*.ods|*.dump|*.bak|*.sqlite|*.sqlite3|*.db|*.zip|*.tar|*.gz|*.tgz|*.7z|*.pdf|*.doc|*.docx|*.ppt|*.pptx|*.odt|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|*.kdbx) bad="tipo de dado/segredo" ;;
   esac
-  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && bad="arquivo de segredo/ambiente"
+  [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && ! [[ "$lc" =~ \.(example|sample|template)(\.[a-z0-9]+)?$ ]] && bad="arquivo de segredo/ambiente"
   if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":0:$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
   [ -n "$bad" ] && { unstage "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
 done < <("${G[@]}" diff --cached --name-only --no-renames --diff-filter=AM -z)
@@ -243,18 +250,24 @@ else:             # modo 'nomes': stdin = nomes separados por NUL
     for n in raw.split('\0'):
         if n and tem(n): sys.stdout.write(n+'\0')
 PYEOF
-  if [ -n "$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" ]; then
+  ACHOU="$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" \
+    || { restaura_indice; say "BLOQUEADO: a varredura de dado pessoal falhou (python3/git) — falha fechada, NADA foi commitado"; exit 75; }
+  if [ -n "$ACHOU" ]; then
     # há algo: atribui por arquivo (caro, mas só roda quando a varredura geral achou)
     while IFS= read -r -d '' f; do
-      if "${G[@]}" diff --cached -U0 --text --no-renames -- ":(literal)$f" | python3 -c "$PIISCAN" "$PII" any 2>/dev/null | grep -q 1; then
+      if "${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames -- ":(literal)$f" | python3 -c "$PIISCAN" "$PII" any 2>/dev/null | grep -q 1; then
         unstage "$f"; MOTIVO["$f"]="dado pessoal (${PII}) no conteúdo ou no nome"
       fi
     done < <("${G[@]}" diff --cached --name-only -z)
   fi
 fi
 # 5b. TRAVA FINAL (cinto e suspensório): revarre o índice inteiro. Se ainda há dado pessoal, NADA é commitado.
-if [ "$PIIOFF" -eq 0 ] && [ -n "$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" ]; then
-  "${G[@]}" reset -q; say "BLOQUEADO: dado pessoal ainda presente no índice depois das exclusões (falha fechada) — NADA foi commitado"; exit 75
+if [ "$PIIOFF" -eq 0 ]; then
+  ACHOU="$("${G[@]}" -c core.quotePath=false diff --cached -U0 --text --no-renames | python3 -c "$PIISCAN" "$PII" any 2>/dev/null)" \
+    || { restaura_indice; say "BLOQUEADO: a trava final de dado pessoal falhou (python3/git) — falha fechada, NADA foi commitado"; exit 75; }
+fi
+if [ "$PIIOFF" -eq 0 ] && [ -n "$ACHOU" ]; then
+  restaura_indice; say "BLOQUEADO: dado pessoal ainda presente no índice depois das exclusões (falha fechada) — NADA foi commitado"; exit 75
 fi
 # avisa uma vez por arquivo (enquanto ele seguir igual), para não encher o log a cada hora
 EXCL_SEEN="$STATE/ac-$KEY.excl"; touch "$EXCL_SEEN"
@@ -272,8 +285,8 @@ if [ -n "$("${G[@]}" diff --cached --name-only)" ]; then
   "${G[@]}" diff --cached -U0 --text | gitleaks stdin "${extra[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$rep" >/dev/null 2>&1
   case $? in
     0) ;;
-    9) "${G[@]}" reset -q; say "BLOQUEADO pelo gitleaks: segredo no que seria commitado — NADA foi commitado ($rep)"; exit 75 ;;
-    *) "${G[@]}" reset -q; say "BLOQUEADO: o gitleaks falhou (falha fechada) — NADA foi commitado"; exit 75 ;;
+    9) restaura_indice; say "BLOQUEADO pelo gitleaks: segredo no que seria commitado — NADA foi commitado ($rep)"; exit 75 ;;
+    *) restaura_indice; say "BLOQUEADO: o gitleaks falhou (falha fechada) — NADA foi commitado"; exit 75 ;;
   esac
 fi
 
@@ -291,7 +304,7 @@ if git "${IDENT[@]}" -C "$WT" commit -q --no-verify -m "autosave($BRANCH): $(dat
 else
   # (12/11) era exit 0: o run-all contava como sucesso e a falha ficava invisível para sempre. 75 = "precisa de atenção"
   # (3 seguidas aparecem em systemctl --failed); o índice volta ao normal e nada é perdido.
-  "${G[@]}" reset -q; say "ERRO no commit: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 75
+  restaura_indice; say "ERRO no commit: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 75
 fi
 push_pendente
 exit "${RC:-0}"

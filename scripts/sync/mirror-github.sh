@@ -223,10 +223,10 @@ fi
 # commit e o `clean -fd` o apagaria do disco. Falha fechada: nada é descartado nem gravado; mova-o ou ignore-o.
 # Padrão ESTREITO (só nome de arquivo de segredo de verdade): palavras soltas como token/senha em src/auth/tokenService.ts não
 # bloqueiam o espelho (QA4). Inclui o que está só em `git add` (diff --cached A), que também iria para o commit de backup.
-SEGREDO_ARQ_RE='(^|/)\.env($|[._-][^/]*$)|(^|/)\.envrc$|\.(pem|key|p12|pfx|jks|kdbx)$|(^|/)(id_(rsa|dsa|ecdsa|ed25519)|\.npmrc|\.netrc|\.git-credentials|\.pgpass)$|(^|/)[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)$|(^|/)(service[-_]account|client_secret)[^/]*\.json$'
+SEGREDO_ARQ_RE='(^|/)\.env($|[._-][^/]*$)|(^|/)[^/]+\.env$|(^|/)\.envrc$|\.(pem|key|p12|pfx|jks|kdbx)$|(^|/)(id_(rsa|dsa|ecdsa|ed25519)|\.npmrc|\.netrc|\.git-credentials|\.pgpass)$|(^|/)[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)$|(^|/)(service[-_]account|client_secret)[^/]*\.json$'
 # (12/11, revisão) Lista com NUL convertida para \n ANTES de virar texto: `$(... -z ...)` descartava os NUL e os nomes
 # saíam colados ("server.keyzzz.txt"), os padrões ancorados não casavam e o segredo ia para o backup e era apagado.
-NR_LISTA="$({ "${G[@]}" ls-files -z -o --exclude-standard && "${G[@]}" diff --cached -z --name-only --diff-filter=A HEAD; } 2>"$STATE/$KEY.err" | tr '\0' '\n'; exit "${PIPESTATUS[0]}")" \
+NR_LISTA="$({ "${G[@]}" ls-files -z -o --exclude-standard && "${G[@]}" diff --cached -z --name-only --diff-filter=A HEAD; } 2>"$STATE/$KEY.err" | tr '\0' '\n'; s=("${PIPESTATUS[@]}"); [ "${s[0]}" -eq 0 ] && [ "${s[1]}" -eq 0 ])" \
   || { say "ERRO: não consegui listar arquivos não rastreados/em stage; NADA foi descartado: $(head -c 200 "$STATE/$KEY.err" | tr '\n' ' ')"; exit 1; }
 NAO_RASTREADO_SEGREDO="$(printf '%s\n' "$NR_LISTA" | grep -iE "$SEGREDO_ARQ_RE" | grep -viE '\.(example|sample|template)$' | head -3 | tr '\n' ' ')"
 if [ -n "$NAO_RASTREADO_SEGREDO" ]; then
