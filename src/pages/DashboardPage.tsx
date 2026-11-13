@@ -257,7 +257,7 @@ function OnboardingWizard() {
       title: 'Cadastrar Empresa',
       desc: 'Configure os dados da sua empresa',
       icon: Building2,
-      path: '/empresas/nova',
+      path: '/empresas/novo',
       gradient: 'from-primary to-primary-glow',
     },
     {
