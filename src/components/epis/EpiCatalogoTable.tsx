@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, ShieldCheck, ShieldAlert, HardHat } from 'lucide-react';
+import { Trash2, ShieldCheck, ShieldAlert, HardHat, Pencil } from 'lucide-react';
 
 const categoryLabels: Record<string, string> = {
   cabeca: 'Cabeça',
@@ -20,12 +20,19 @@ const categoryLabels: Record<string, string> = {
   outros: 'Outros',
 };
 
+// O cadastro/edição grava `validade_ca`; `ca_validade` é coluna legada.
+function formatValidadeCa(e: Pick<Tables<'epis'>, 'validade_ca' | 'ca_validade'>): string {
+  const validade = e.validade_ca ?? e.ca_validade;
+  return validade ? format(parseISO(validade), 'dd/MM/yyyy') : '—';
+}
+
 interface EpiCatalogoTableProps {
   data: Tables<'epis'>[];
   onExcluir: (id: string) => void;
+  onEditar?: (epi: Tables<'epis'>) => void;
 }
 
-export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
+export function EpiCatalogoTable({ data, onExcluir, onEditar }: EpiCatalogoTableProps) {
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
       <div className="h-[2px] bg-gradient-to-r from-primary via-accent to-primary/50" />
@@ -41,7 +48,7 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                   <TableHead className="font-display font-semibold text-xs">Categoria</TableHead>
                   <TableHead className="font-display font-semibold text-xs">Estoque</TableHead>
                   <TableHead className="font-display font-semibold text-xs">Validade</TableHead>
-                  <TableHead className="font-display font-semibold text-xs w-[80px] pr-6">Ações</TableHead>
+                  <TableHead className="font-display font-semibold text-xs w-[100px] pr-6">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -94,24 +101,40 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell className="text-xs font-body">
-                      {e.ca_validade ? format(parseISO(e.ca_validade), 'dd/MM/yyyy') : '—'}
-                    </TableCell>
+                    <TableCell className="text-xs font-body">{formatValidadeCa(e)}</TableCell>
                     <TableCell className="pr-6">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            aria-label="Excluir"
-                            className="h-7 w-7 rounded-lg"
-                            onClick={() => onExcluir(e.id)}
-                          >
-                            <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Excluir EPI</TooltipContent>
-                      </Tooltip>
+                      <div className="flex items-center gap-1">
+                        {onEditar && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label="Editar"
+                                className="h-7 w-7 rounded-lg"
+                                onClick={() => onEditar(e)}
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Editar EPI</TooltipContent>
+                          </Tooltip>
+                        )}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Excluir"
+                              className="h-7 w-7 rounded-lg"
+                              onClick={() => onExcluir(e.id)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Excluir EPI</TooltipContent>
+                        </Tooltip>
+                      </div>
                     </TableCell>
                   </motion.tr>
                 ))}
@@ -166,15 +189,28 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                       Estoque: {e.estoque_atual ?? 0}
                     </span>
                   </div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    aria-label="Excluir"
-                    className="h-7 w-7"
-                    onClick={() => onExcluir(e.id)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    {onEditar && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label="Editar"
+                        className="h-7 w-7"
+                        onClick={() => onEditar(e)}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label="Excluir"
+                      className="h-7 w-7"
+                      onClick={() => onExcluir(e.id)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               </motion.div>
             ))}

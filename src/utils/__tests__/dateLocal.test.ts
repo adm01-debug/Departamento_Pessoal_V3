@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { formatDateLocalISO, todayLocalISO, addDaysLocal, formatCompetenciaLocal, currentCompetenciaLocal } from '../dateLocal';
+import {
+  formatDateLocalISO,
+  todayLocalISO,
+  addDaysLocal,
+  formatCompetenciaLocal,
+  currentCompetenciaLocal,
+  datetimeLocalToISO,
+} from '../dateLocal';
 
 describe('dateLocal', () => {
   afterEach(() => {
@@ -85,5 +92,17 @@ describe('currentCompetenciaLocal', () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date(2026, 11, 1)); // dezembro 2026
     expect(currentCompetenciaLocal()).toMatch(/^\d{4}-\d{2}$/);
+  });
+
+  it('datetimeLocalToISO converte o valor do datetime-local (hora local) em ISO UTC', () => {
+    const iso = datetimeLocalToISO('2030-02-01T09:30');
+    // A hora escolhida é local: o instante gravado deve ser 09:30 no fuso do navegador.
+    expect(iso).toBe(new Date(2030, 1, 1, 9, 30).toISOString());
+    expect(iso.endsWith('Z')).toBe(true);
+  });
+
+  it('datetimeLocalToISO devolve string vazia para entrada vazia ou inválida', () => {
+    expect(datetimeLocalToISO('')).toBe('');
+    expect(datetimeLocalToISO('não é data')).toBe('');
   });
 });

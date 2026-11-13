@@ -14,6 +14,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Spinner } from '@/components/ui/spinner';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
+import { departamentoService } from '@/services/departamentoService';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useSyncedState } from '@/hooks/useSyncedState';
 import { toast } from 'sonner';
 import { Building2, Save } from 'lucide-react';
@@ -25,7 +27,7 @@ interface Props {
 }
 
 export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Props) {
-  const { criar, atualizar } = useDepartamentos();
+  const { criar, atualizar, empresaId } = useDepartamentos();
   const [saving, setSaving] = useState(false);
   // Formulário derivado do departamento em edição; ressincroniza a cada abertura do diálogo.
   const [form, setForm] = useSyncedState(
@@ -45,6 +47,22 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
     setSaving(true);
     try {
       if (departamento?.id) {
+        // Inativação bloqueada enquanto houver colaboradores vinculados ao departamento.
+        if (empresaId && departamento.ativo !== false && !form.ativo) {
+          let vinculados: number;
+          try {
+            vinculados = await departamentoService.contarColaboradoresVinculados(departamento.nome, empresaId);
+          } catch (err) {
+            toast.error(safeErrorMessage(err, 'Não foi possível verificar os colaboradores vinculados.'));
+            return;
+          }
+          if (vinculados > 0) {
+            toast.error(
+              `Não é possível inativar "${departamento.nome}": ${vinculados} colaborador(es) ainda vinculado(s). Transfira-os para outro departamento antes.`
+            );
+            return;
+          }
+        }
         await atualizar({ id: departamento.id, data: form });
       } else {
         await criar(form);

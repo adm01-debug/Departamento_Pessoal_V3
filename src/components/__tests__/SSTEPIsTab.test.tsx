@@ -77,4 +77,11 @@ describe('SSTEPIsTab', () => {
     render(<SSTEPIsTab epis={MOCK_EPIS} entregas={[]} />);
     expect(screen.queryByText('Últimas Entregas')).not.toBeInTheDocument();
   });
+
+  it('mostra a validade do CA gravada em validade_ca', () => {
+    // Coluna `date` chega como 'YYYY-MM-DD'; não pode recuar um dia em fuso negativo (BRT).
+    const epis = [{ ...MOCK_EPIS[0], ca_validade: null, validade_ca: '2029-06-15' }];
+    render(<SSTEPIsTab epis={epis} entregas={[]} />);
+    expect(screen.getByText('Validade CA: 15/06/2029')).toBeInTheDocument();
+  });
 });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -20,8 +20,13 @@ import {
   History,
 } from 'lucide-react';
 import { PontoInconsistencyPanel } from './PontoInconsistencyPanel';
+import { PontoAuditTimeline } from './PontoAuditTimeline';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/contexts';
+import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
@@ -35,7 +40,13 @@ import { todayLocalISO } from '@/utils/dateLocal';
 
 export function GestaoRegistrosPonto() {
   const { empresaAtual } = useEmpresas();
+  const { user, isAdmin, hasRole } = useAuth();
+  // Aprovação segue pode_gerir_pessoas (RH/gestor); a trilha (get_audit_trail) é restrita a RH/admin.
+  const podeAprovar = isAdmin || hasRole('rh') || hasRole('gestor');
+  const podeVerHistorico = isAdmin || hasRole('rh');
+  const queryClient = useQueryClient();
   const [selecionados, setSelecionados] = useState<string[]>([]);
+  const [historico, setHistorico] = useState<{ id: string; nome: string } | null>(null);
   const [filtroData, setFiltroData] = useState(todayLocalISO());
   const [filtroFim, setFiltroFim] = useState(todayLocalISO());
   const [tipoExcecao, setTipoExcecao] = useState('todas');
@@ -75,6 +86,47 @@ export function GestaoRegistrosPonto() {
     enabled: !!empresaAtual?.id,
   });
 
+  const aprovarLote = useMutation({
+    mutationFn: async (ids: string[]) => {
+      if (!empresaAtual?.id) throw new Error('Selecione uma empresa para aprovar registros.');
+      if (!user?.id) throw new Error('Sessão expirada. Faça login novamente.');
+      const { data, error } = await supabase
+        .from('registros_ponto')
+        .update(
+          validateTablePayload(
+            'registros_ponto',
+            { aprovado: true, aprovado_por: user.id, aprovado_em: new Date().toISOString() },
+            'GestaoRegistrosPonto:aprovarLote'
+          )
+        )
+        .in('id', ids)
+        .eq('empresa_id', empresaAtual.id)
+        .or('aprovado.is.null,aprovado.eq.false')
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error(
+          'Nenhum registro foi aprovado: os selecionados já estavam aprovados ou você não tem permissão de RH nesta empresa.'
+        );
+      }
+      return data.length;
+    },
+    onSuccess: (aprovados, ids) => {
+      queryClient.invalidateQueries({ queryKey: ['gestao-registros-ponto'] });
+      if (aprovados < ids.length) {
+        toast.warning(
+          `${aprovados} de ${ids.length} registros aprovados; ${ids.length - aprovados} ignorados (já aprovados ou sem permissão).`
+        );
+      } else {
+        toast.success(`${aprovados} registros aprovados em lote!`);
+      }
+      setSelecionados([]);
+    },
+    onError: (error: unknown) => {
+      toast.error(safeErrorMessage(error, 'Erro ao aprovar registros em lote.'));
+    },
+  });
+
   const formatTime = (val: string | null | undefined) => {
     if (!val) return '--:--';
     const m = String(val).match(/(\d+):(\d+)/);
@@ -102,6 +154,8 @@ export function GestaoRegistrosPonto() {
 
     return buscaMatch;
   });
+  // Só aprova o que está selecionado E visível com os filtros atuais.
+  const selecionadosVisiveis = selecionados.filter((id) => filtrados.some((f) => f.id === id));
 
   const exportData = (format: 'csv' | 'pdf') => {
     if (filtrados.length === 0) {
@@ -245,24 +299,24 @@ export function GestaoRegistrosPonto() {
               </div>
 
               <AnimatePresence>
-                {selecionados.length > 0 && (
+                {podeAprovar && selecionadosVisiveis.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
                     className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg border border-primary/20"
                   >
-                    <span className="text-[10px] font-bold text-primary">{selecionados.length} selecionados</span>
+                    <span className="text-[10px] font-bold text-primary">
+                      {selecionadosVisiveis.length} selecionados
+                    </span>
                     <Button
                       variant="ghost"
                       size="sm"
                       className="h-7 px-2 text-[10px] text-primary hover:bg-primary/20"
-                      onClick={() => {
-                        toast.success(`${selecionados.length} registros aprovados em lote!`);
-                        setSelecionados([]);
-                      }}
+                      disabled={aprovarLote.isPending}
+                      onClick={() => aprovarLote.mutate(selecionadosVisiveis)}
                     >
-                      Aprovar Lote
+                      {aprovarLote.isPending ? 'Aprovando...' : 'Aprovar Lote'}
                     </Button>
                   </motion.div>
                 )}
@@ -307,7 +361,7 @@ export function GestaoRegistrosPonto() {
                             <input
                               type="checkbox"
                               className="rounded border-gray-300"
-                              checked={selecionados.length === filtrados.length && filtrados.length > 0}
+                              checked={selecionadosVisiveis.length === filtrados.length && filtrados.length > 0}
                               onChange={(e) => {
                                 if (e.target.checked) setSelecionados(filtrados.map((f) => f.id));
                                 else setSelecionados([]);
@@ -397,6 +451,14 @@ export function GestaoRegistrosPonto() {
                               </TableCell>
                               <TableCell>
                                 <div className="flex gap-1">
+                                  {r.aprovado && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-[10px] h-5 px-1.5 text-primary border-primary/30"
+                                    >
+                                      Aprovado
+                                    </Badge>
+                                  )}
                                   {aberto && (
                                     <Badge
                                       variant="outline"
@@ -427,17 +489,19 @@ export function GestaoRegistrosPonto() {
                               </TableCell>
 
                               <TableCell className="text-right">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  aria-label="Histórico"
-                                  className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
-                                  onClick={() =>
-                                    toast.info(`Visualizando auditoria de ${r.colaborador?.nome_completo}...`)
-                                  }
-                                >
-                                  <History className="h-4 w-4" />
-                                </Button>
+                                {podeVerHistorico && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Histórico"
+                                    className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
+                                    onClick={() =>
+                                      setHistorico({ id: r.id, nome: r.colaborador?.nome_completo || '—' })
+                                    }
+                                  >
+                                    <History className="h-4 w-4" />
+                                  </Button>
+                                )}
                               </TableCell>
                             </TableRow>
                           );
@@ -459,6 +523,16 @@ export function GestaoRegistrosPonto() {
           </Tabs>
         </CardContent>
       </Card>
+
+      <Dialog open={!!historico} onOpenChange={(open) => !open && setHistorico(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Histórico do registro de ponto</DialogTitle>
+            <DialogDescription>{historico?.nome}</DialogDescription>
+          </DialogHeader>
+          {historico && <PontoAuditTimeline filterTabela="registros_ponto" registroId={historico.id} />}
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

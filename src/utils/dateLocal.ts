@@ -65,3 +65,13 @@ export function currentCompetenciaLocal(): string {
   return formatCompetenciaLocal(new Date());
 }
 
+/**
+ * Converte o valor de um `<input type="datetime-local">` (`YYYY-MM-DDTHH:mm`,
+ * sem fuso) em ISO UTC para colunas TIMESTAMPTZ. Enviado cru, o Postgres
+ * (sessão em UTC) interpreta a hora como UTC e grava 3h adiantada para UTC-3.
+ */
+export function datetimeLocalToISO(value: string): string {
+  const date = new Date(value);
+  if (!value || Number.isNaN(date.getTime())) return '';
+  return date.toISOString();
+}

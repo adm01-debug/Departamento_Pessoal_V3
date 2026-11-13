@@ -77,15 +77,13 @@ export const comunicacaoService = {
     return data || [];
   },
 
-  async criarDenuncia(d: Insertable<'canal_etica'>): Promise<Tables<'canal_etica'>> {
-    const { data, error } = await supabase
+  // Sem .select(): RETURNING exige a policy de SELECT, que em canal_etica é só do RH.
+  // Sem ele o PostgREST usa return=minimal e qualquer colaborador consegue relatar.
+  async criarDenuncia(d: Insertable<'canal_etica'>): Promise<void> {
+    const { error } = await supabase
       .from('canal_etica')
-      .insert(validateTablePayload('canal_etica', d, 'comunicacaoService:canal_etica'))
-      .select()
-      .maybeSingle();
+      .insert(validateTablePayload('canal_etica', d, 'comunicacaoService:canal_etica'));
     if (error) throw error;
-    if (!data) throw new Error('Nenhum registro de denúncia foi retornado.');
-    return data;
   },
 
   async atualizarDenuncia(id: string, d: Updatable<'canal_etica'>, empresaId: string): Promise<Tables<'canal_etica'>> {

@@ -12,10 +12,11 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogT
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CalendarClock, MapPin, Navigation, Plus, Stethoscope, Loader2 } from 'lucide-react';
+import { CalendarClock, CheckCircle2, MapPin, Navigation, Plus, Stethoscope, Loader2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateTablePayload } from '@/schemas/validate';
+import { datetimeLocalToISO } from '@/utils/dateLocal';
 
 type Agend = {
   id: string;
@@ -50,6 +51,11 @@ const TIPOS_EXAME = [
   { v: 'retorno_trabalho', l: 'Retorno ao trabalho' },
 ];
 
+// Status em aberto (CHECK exames_agendamentos_status_check): só estes aceitam ações na linha.
+const STATUS_EM_ABERTO = ['agendado', 'confirmado', 'reagendado'];
+
+type AcaoPatch = { status: 'realizado' | 'cancelado' | 'reagendado'; data_agendada?: string };
+
 export default function AdminAgendamentoExamesPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
@@ -63,6 +69,8 @@ export default function AdminAgendamentoExamesPage() {
   const [clinicaEscolhida, setClinicaEscolhida] = useState<ClinicaProxima | null>(null);
   const [buscando, setBuscando] = useState(false);
   const [obs, setObs] = useState('');
+  const [acaoAlvo, setAcaoAlvo] = useState<{ ag: Agend; tipo: 'remarcar' | 'cancelar' } | null>(null);
+  const [novaData, setNovaData] = useState('');
 
   const empresaId = empresaAtual?.id;
 
@@ -149,7 +157,7 @@ export default function AdminAgendamentoExamesPage() {
             colaborador_id: colaboradorId,
             clinica_id: clinicaEscolhida.id,
             tipo_exame: tipoExame,
-            data_agendada: dataAgendada,
+            data_agendada: datetimeLocalToISO(dataAgendada),
             distancia_km: clinicaEscolhida.distancia_km,
             colaborador_lat: Number(lat),
             colaborador_lng: Number(lng),
@@ -174,6 +182,34 @@ export default function AdminAgendamentoExamesPage() {
       setObs('');
     },
     onError: (e) => toast.error(safeErrorMessage(e, 'Falha ao agendar exame.')),
+  });
+
+  const atualizarAgendamento = useMutation({
+    mutationFn: async ({ id, patch }: { id: string; patch: AcaoPatch }) => {
+      if (!empresaId) throw new Error('Selecione uma empresa.');
+      const { data, error } = await supabase
+        .from('exames_agendamentos')
+        .update(validateTablePayload('exames_agendamentos', patch, 'AdminAgendamentoExamesPage:exames_agendamentos'))
+        .eq('id', id)
+        .eq('empresa_id', empresaId)
+        .select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Agendamento não encontrado ou sem permissão para alterar.');
+      return patch.status;
+    },
+    onSuccess: (status) => {
+      toast.success(
+        status === 'realizado'
+          ? 'Exame marcado como realizado'
+          : status === 'cancelado'
+            ? 'Agendamento cancelado'
+            : 'Exame remarcado'
+      );
+      qc.invalidateQueries({ queryKey: ['exames-agendamentos'] });
+      setAcaoAlvo(null);
+      setNovaData('');
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Falha ao atualizar agendamento.')),
   });
 
   const kpis = useMemo(() => {
@@ -403,6 +439,7 @@ export default function AdminAgendamentoExamesPage() {
                     <TableHead>Data</TableHead>
                     <TableHead>Distância</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -430,6 +467,41 @@ export default function AdminAgendamentoExamesPage() {
                       <TableCell>
                         <Badge variant={statusColor(a.status)}>{a.status}</Badge>
                       </TableCell>
+                      <TableCell className="text-right">
+                        {STATUS_EM_ABERTO.includes(a.status) ? (
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={atualizarAgendamento.isPending}
+                              onClick={() => atualizarAgendamento.mutate({ id: a.id, patch: { status: 'realizado' } })}
+                            >
+                              <CheckCircle2 className="mr-1 h-4 w-4" /> Realizado
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={atualizarAgendamento.isPending}
+                              onClick={() => {
+                                setNovaData('');
+                                setAcaoAlvo({ ag: a, tipo: 'remarcar' });
+                              }}
+                            >
+                              <CalendarClock className="mr-1 h-4 w-4" /> Remarcar
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={atualizarAgendamento.isPending}
+                              onClick={() => setAcaoAlvo({ ag: a, tipo: 'cancelar' })}
+                            >
+                              <XCircle className="mr-1 h-4 w-4" /> Cancelar
+                            </Button>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -437,6 +509,56 @@ export default function AdminAgendamentoExamesPage() {
             )}
           </CardContent>
         </Card>
+
+        <Dialog open={!!acaoAlvo} onOpenChange={(open) => !open && setAcaoAlvo(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{acaoAlvo?.tipo === 'remarcar' ? 'Remarcar exame' : 'Cancelar agendamento'}</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground">
+              {acaoAlvo?.ag.colaboradores?.nome_completo ?? '—'} —{' '}
+              {acaoAlvo ? new Date(acaoAlvo.ag.data_agendada).toLocaleString('pt-BR') : ''}
+            </p>
+            {acaoAlvo?.tipo === 'remarcar' ? (
+              <div>
+                <Label htmlFor="nova-data-agendada">Nova data / hora *</Label>
+                <Input
+                  id="nova-data-agendada"
+                  type="datetime-local"
+                  value={novaData}
+                  onChange={(e) => setNovaData(e.target.value)}
+                />
+              </div>
+            ) : (
+              <p className="text-sm">Confirma o cancelamento deste agendamento?</p>
+            )}
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setAcaoAlvo(null)}>
+                Voltar
+              </Button>
+              <Button
+                variant={acaoAlvo?.tipo === 'cancelar' ? 'destructive' : 'default'}
+                disabled={atualizarAgendamento.isPending || (acaoAlvo?.tipo === 'remarcar' && !novaData)}
+                onClick={() => {
+                  if (!acaoAlvo) return;
+                  atualizarAgendamento.mutate({
+                    id: acaoAlvo.ag.id,
+                    patch:
+                      acaoAlvo.tipo === 'remarcar'
+                        ? { status: 'reagendado', data_agendada: datetimeLocalToISO(novaData) }
+                        : { status: 'cancelado' },
+                  });
+                }}
+              >
+                {atualizarAgendamento.isPending
+                  ? 'Salvando...'
+                  : acaoAlvo?.tipo === 'remarcar'
+                    ? 'Confirmar remarcação'
+                    : 'Confirmar cancelamento'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </PageLayout>
     </>
   );
