@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "5bbf7eb3c69368a10a7b25f83738898d5dc079a0",
+  "sha": "1ad509dd03be61a9f308e1f8d3ac821072a4bd19",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 22:06 UTC",
+  "generated_at": "2026-11-13 22:48 UTC",
   "files_total": 2945,
   "code_files": 2415,
   "code_lines": 332158
@@ -282073,10 +282073,38 @@
   }
  },
  "git": {
-  "sha": "5bbf7eb3c69368a10a7b25f83738898d5dc079a0",
+  "sha": "1ad509dd03be61a9f308e1f8d3ac821072a4bd19",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1ad509d",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)",
+    "files": [
+     "nginx.conf",
+     "vercel.json"
+    ]
+   },
+   {
+    "sha": "3232ef1",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "a033ee8",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(sync): autocommit preserva o índice do usuário e varre resolução de merge (#549)",
+    "files": [
+     "scripts/sync/autocommit-local.sh"
+    ]
+   },
    {
     "sha": "5bbf7eb",
     "date": "2026-11-13",
@@ -282371,52 +282399,32 @@
      "src/pages/ConveniosPage.tsx",
      "src/pages/__tests__/ConveniosPage.test.tsx"
     ]
-   },
-   {
-    "sha": "c09717f",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: regimento interno permite editar rascunho e arquivar documento publicado (#518)",
-    "files": [
-     "src/pages/AdminRegimentoInternoPage.tsx",
-     "src/pages/__tests__/AdminRegimentoInternoPage.test.tsx"
-    ]
-   },
-   {
-    "sha": "f6ce961",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Extintores: editar cadastro (local, datas, status) e excluir com confirmação (#517)",
-    "files": [
-     "src/pages/AdminExtintoresPage.tsx",
-     "src/pages/__tests__/AdminExtintoresPage.test.tsx"
-    ]
-   },
-   {
-    "sha": "b230988",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Agendamento de exames: marcar realizado, cancelar e remarcar (#515)",
-    "files": [
-     "src/pages/AdminAgendamentoExamesPage.tsx",
-     "src/pages/__tests__/AdminAgendamentoExamesPage.test.tsx",
-     "src/utils/__tests__/dateLocal.test.ts",
-     "src/utils/dateLocal.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "docs/prod-readiness.md",
+    4
+   ],
    [
     "inventario/estado/rotas.json",
     4
    ],
    [
-    "docs/prod-readiness.md",
-    3
+    "nginx.conf",
+    2
+   ],
+   [
+    "vercel.json",
+    2
    ],
    [
     ".github/workflows/canonical-migrations.yml",
     2
+   ],
+   [
+    "scripts/sync/autocommit-local.sh",
+    1
    ],
    [
     "index.html",
@@ -282427,15 +282435,7 @@
     1
    ],
    [
-    "nginx.conf",
-    1
-   ],
-   [
     "src/test/securityHeadersParity.test.ts",
-    1
-   ],
-   [
-    "vercel.json",
     1
    ],
    [
@@ -282480,10 +282480,6 @@
    ],
    [
     "src/pages/ValesPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/PlanosSaudePage.test.tsx",
     1
    ]
   ]

@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "5bbf7eb3c69368a10a7b25f83738898d5dc079a0",
+  "commit": "1ad509dd03be61a9f308e1f8d3ac821072a4bd19",
   "branch": "main",
-  "data_commit": "2026-11-13T17:46:08-03:00",
+  "data_commit": "2026-11-13T18:49:21-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1ad509d",
+    "data": "2026-11-13",
+    "assunto": "infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)"
+   },
+   {
+    "sha": "3232ef1",
+    "data": "2026-11-13",
+    "assunto": "docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)"
+   },
+   {
+    "sha": "a033ee8",
+    "data": "2026-11-13",
+    "assunto": "fix(sync): autocommit preserva o índice do usuário e varre resolução de merge (#549)"
+   },
    {
     "sha": "5bbf7eb",
     "data": "2026-11-13",
@@ -116,24 +131,9 @@
     "sha": "fe3ed82",
     "data": "2026-11-13",
     "assunto": "Comunicação Interna: permite editar comunicados já publicados (#523)"
-   },
-   {
-    "sha": "136f6e0",
-    "data": "2026-11-13",
-    "assunto": "Férias: botão \"Solicitar Férias\" passa a criar a solicitação (#526)"
-   },
-   {
-    "sha": "e3acfad",
-    "data": "2026-11-13",
-    "assunto": "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)"
-   },
-   {
-    "sha": "3a8ac55",
-    "data": "2026-11-13",
-    "assunto": "Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)"
    }
   ],
-  "arquivos_mudados_7d": 633,
+  "arquivos_mudados_7d": 631,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 46
+    "mudancas": 45
    },
    {
     "arquivo": "package.json",
@@ -219,7 +219,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 12
+    "mudancas": 11
    },
    {
     "arquivo": "deno.lock",
@@ -242,10 +242,6 @@
     "mudancas": 9
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 9
-   },
-   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 8
    },
@@ -262,7 +258,15 @@
     "mudancas": 8
    },
    {
+    "arquivo": "scripts/sync/autocommit-local.sh",
+    "mudancas": 8
+   },
+   {
     "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
     "mudancas": 8
    },
    {
@@ -282,10 +286,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "scripts/sync/autocommit-local.sh",
-    "mudancas": 7
-   },
-   {
     "arquivo": "scripts/sync/mirror-github.sh",
     "mudancas": 7
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 203
+    "commits": 206
    },
    {
     "autor": "devin-ai-integration[bot]",

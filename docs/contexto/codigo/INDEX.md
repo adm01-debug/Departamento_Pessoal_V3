@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `5bbf7eb3c69368a10a7b25f83738898d5dc079a0` (2026-11-13T17:46:08-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1ad509dd03be61a9f308e1f8d3ac821072a4bd19` (2026-11-13T18:49:21-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -386,27 +386,27 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22205 nós · 46978 arestas · 2141 comunidades · grafo do commit `5bbf7eb3`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (465), cn (385), button.tsx (368), lucide-react (345), vitest (220), contract.ts (170), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154), ref_node_fs (153)
+- 22206 nós · 46980 arestas · 2141 comunidades · grafo do commit `1ad509dd`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (367), cn (354), @tanstack/react-query (340), button.tsx (322), useEmpresas (292), vitest (271), "public"."empresas" (164), rateLimit.ts (157), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (46)
+- .github/workflows/canonical-migrations.yml (45)
 - package.json (25)
 - package-lock.json (23)
 - CLAUDE.md (21)
 - PENDENCIAS.md (13)
-- .github/workflows/ci.yml (12)
+- .github/workflows/ci.yml (11)
 - deno.lock (11)
 - AGENTS.md (10)
 - infra/github/action-pins.json (10)
 - .github/workflows/canonical-edge-functions.yml (9)
 - scripts/canonical-invariants.sql (9)
-- supabase/functions/calcular-folha/index.ts (9)
 - .github/workflows/canonical-probes.yml (8)
 - .github/workflows/e2e.yml (8)
 - docs/auditoria/estado/WORKFLOWS_STATUS.md (8)
+- inventario/estado/rotas.json (8)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -613,11 +613,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
-- `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (819 linhas)
+- `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (851 linhas)
 - subpastas de docs/: docs/auditoria (48), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-13 `1ad509d` infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)
+- 2026-11-13 `3232ef1` docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)
+- 2026-11-13 `a033ee8` fix(sync): autocommit preserva o índice do usuário e varre resolução de merge (#549)
 - 2026-11-13 `5bbf7eb` chore: regenera inventario/estado/rotas.json com o gerador atual (#558)
 - 2026-11-13 `9d2fda9` fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)
 - 2026-11-13 `f5c370c` chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)
@@ -630,9 +633,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `2f13bbb` fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)
 - 2026-11-13 `1108375` fix(db): view de contas bancárias descriptografadas volta a respeitar a permissão de quem consulta (#464)
 - 2026-11-13 `e40a3d1` fix: folha filtra pensões pela empresa do colaborador (pensoes sem empresa_id) (#550)
-- 2026-11-13 `d49f194` fix: ocultar login com Google enquanto o provider estiver desabilitado (#551)
-- 2026-11-13 `f07255f` fix: --check do inventario de rotas compara conteudo, nao bytes (#552)
-- 2026-11-13 `4f2ebaa` docs: prod-readiness registra o merge da #520 e a #541 (#547)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
