@@ -7,7 +7,7 @@
     "itens_de_menu": 88,
     "urls_admin": 23,
     "urls_publicas": 7,
-    "hooks_distintos": 113,
+    "hooks_distintos": 114,
     "problemas": 0
   },
   "urls": [
@@ -1512,7 +1512,7 @@
           "rotulo": "Agendamento de Exames"
         }
       ],
-      "arquivos_lidos": 23,
+      "arquivos_lidos": 24,
       "hooks": [
         {
           "nome": "useAuth",
@@ -1623,7 +1623,7 @@
           "rotulo": "CAT Eletrônica"
         }
       ],
-      "arquivos_lidos": 6,
+      "arquivos_lidos": 8,
       "hooks": [
         {
           "nome": "useAuth",
@@ -2246,6 +2246,7 @@
         "esocial_transmissao_logs",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -2553,6 +2554,7 @@
         "esocial_transmissao_logs",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -3532,6 +3534,7 @@
         "escalas_trabalho",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -3916,7 +3919,7 @@
       "hooks": [
         {
           "nome": "useAuth",
-          "arquivo": "src/hooks/useAuth.ts"
+          "arquivo": "src/hooks/index.ts"
         },
         {
           "nome": "useBackGesture",
@@ -4699,6 +4702,7 @@
         "etnias",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes",
         "ferias_aprovacoes_log",
         "ferias_arquivos",
@@ -5719,6 +5723,7 @@
         "escalas_trabalho",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -6156,7 +6161,7 @@
       "hooks": [
         {
           "nome": "useAuth",
-          "arquivo": "src/hooks/useAuth.ts"
+          "arquivo": "src/contexts/index.ts"
         },
         {
           "nome": "useBackGesture",
@@ -6654,7 +6659,7 @@
       "hooks": [
         {
           "nome": "useAuth",
-          "arquivo": "src/contexts/AuthContext.tsx"
+          "arquivo": "src/contexts/index.ts"
         },
         {
           "nome": "useDepartamentos",
@@ -6682,7 +6687,7 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": ["empresas"],
+      "tabelas": ["colaboradores", "empresas"],
       "imports_quebrados": []
     },
     {
@@ -7408,6 +7413,7 @@
         "escalas_trabalho",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -7589,6 +7595,7 @@
         "escalas_trabalho",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -7673,6 +7680,10 @@
       ],
       "arquivos_lidos": 151,
       "hooks": [
+        {
+          "nome": "useAtualizarEpi",
+          "arquivo": "src/hooks/index.ts"
+        },
         {
           "nome": "useAuth",
           "arquivo": "src/hooks/useAuth.ts"
@@ -8771,7 +8782,7 @@
           "rotulo": "Férias"
         }
       ],
-      "arquivos_lidos": 177,
+      "arquivos_lidos": 179,
       "hooks": [
         {
           "nome": "useAlertasPagamentoD2",
@@ -8791,7 +8802,7 @@
         },
         {
           "nome": "useColaboradores",
-          "arquivo": "src/hooks/index.ts"
+          "arquivo": "src/hooks/useColaboradores.ts"
         },
         {
           "nome": "useConfirmarPagamentoFerias",
@@ -8836,6 +8847,10 @@
         {
           "nome": "useOnMount",
           "arquivo": "src/hooks/useMountEffects.ts"
+        },
+        {
+          "nome": "usePeriodosAquisitivos",
+          "arquivo": "src/hooks/usePeriodosAquisitivos.ts"
         },
         {
           "nome": "usePWA",
@@ -9237,6 +9252,7 @@
         "escalas_trabalho",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -10131,7 +10147,7 @@
       "hooks": [
         {
           "nome": "useAuth",
-          "arquivo": "src/hooks/useAuth.ts"
+          "arquivo": "src/contexts/index.ts"
         },
         {
           "nome": "useBackGesture",
@@ -11599,7 +11615,7 @@
       "componente": "ObrigacoesFiscaisPage",
       "urls": ["/obrigacoes-fiscais"],
       "menu": [],
-      "arquivos_lidos": 152,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -13926,6 +13942,7 @@
         "escalas_trabalho",
         "faltas",
         "feedbacks_360",
+        "ferias",
         "ferias_aprovacoes_log",
         "folha_itens",
         "folhas_pagamento",
@@ -16601,6 +16618,10 @@
       "arquivo": "src/hooks/useAssinaturas.ts",
       "telas": ["src/pages/AssinaturasPage.tsx"]
     },
+    "useAtualizarEpi": {
+      "arquivo": "src/hooks/index.ts",
+      "telas": ["src/pages/EPIsPage.tsx"]
+    },
     "useAuth": {
       "arquivo": "src/contexts/AuthContext.tsx",
       "telas": [
@@ -17559,7 +17580,11 @@
     },
     "usePeriodosAquisitivos": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": ["src/pages/ColaboradorDetalhesPage.tsx", "src/pages/FeriasProgramacaoPage.tsx"]
+      "telas": [
+        "src/pages/ColaboradorDetalhesPage.tsx",
+        "src/pages/FeriasPage.tsx",
+        "src/pages/FeriasProgramacaoPage.tsx"
+      ]
     },
     "usePiiMask": {
       "arquivo": "src/hooks/usePiiMask.ts",
