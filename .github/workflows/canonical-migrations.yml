@@ -162,7 +162,8 @@ jobs:
             20261112000000_rv02_drop_inert_token_policies.sql \
             20261112010000_configuracoes_ponto_corrige_policies_prod.sql \
             20261113000000_remediate_rv04_missing_rpcs.sql \
-            20261114000000_remediate_ferias_art145_11_20.sql
+            20261114000000_remediate_ferias_art145_11_20.sql \
+            20261116000000_remediate_rbac_e2e_remove_admin.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
