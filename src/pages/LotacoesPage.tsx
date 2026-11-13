@@ -13,7 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, MapPin, Trash2 } from 'lucide-react';
+import { safeErrorMessage } from '@/utils/safeError';
+import { Plus, MapPin, Trash2, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
 
 export default function LotacoesPage() {
@@ -21,6 +22,7 @@ export default function LotacoesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', codigo: '', endereco: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['lotacoes', empresaAtual?.id],
@@ -54,6 +56,34 @@ export default function LotacoesPage() {
     },
   });
 
+  const atualizar = useMutation({
+    mutationFn: async ({ id, ...d }: typeof form & { id: string }) => {
+      const { data, error } = await supabase
+        .from('lotacoes')
+        .update(
+          validateTablePayload(
+            'lotacoes',
+            { nome: d.nome, codigo: d.codigo || null, endereco: d.endereco || null },
+            'LotacoesPage:lotacoes'
+          )
+        )
+        .eq('id', id)
+        .eq('empresa_id', empresaAtual!.id)
+        .select('id')
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error('Lotação não encontrada ou sem permissão para editar.');
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lotacoes'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', endereco: '' });
+      toast.success('Lotação atualizada');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar lotação.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('lotacoes').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
@@ -63,7 +93,16 @@ export default function LotacoesPage() {
       qc.invalidateQueries({ queryKey: ['lotacoes'] });
       toast.success('Excluída');
     },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir lotação.')),
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', endereco: '' });
+    }
+  };
 
   return (
     <>
@@ -74,7 +113,7 @@ export default function LotacoesPage() {
         icon={<MapPin className="h-5 w-5 text-primary-foreground" />}
       >
         <div className="flex justify-end">
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
@@ -83,7 +122,7 @@ export default function LotacoesPage() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Nova Lotação</DialogTitle>
+                <DialogTitle>{editandoId ? 'Editar Lotação' : 'Nova Lotação'}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
@@ -98,7 +137,11 @@ export default function LotacoesPage() {
                   <Label>Endereço</Label>
                   <Input value={form.endereco} onChange={(e) => setForm((p) => ({ ...p, endereco: e.target.value }))} />
                 </div>
-                <Button onClick={() => criar.mutate(form)} disabled={!form.nome} className="w-full">
+                <Button
+                  onClick={() => (editandoId ? atualizar.mutate({ ...form, id: editandoId }) : criar.mutate(form))}
+                  disabled={!form.nome || atualizar.isPending}
+                  className="w-full"
+                >
                   Salvar
                 </Button>
               </div>
@@ -132,9 +175,23 @@ export default function LotacoesPage() {
                         <Badge variant={r.ativa ? 'default' : 'secondary'}>{r.ativa ? 'Ativa' : 'Inativa'}</Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Editar"
+                            onClick={() => {
+                              setEditandoId(r.id);
+                              setForm({ nome: r.nome, codigo: r.codigo ?? '', endereco: r.endereco ?? '' });
+                              setOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

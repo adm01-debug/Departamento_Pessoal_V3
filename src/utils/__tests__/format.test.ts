@@ -10,6 +10,7 @@ import {
   formatPercent,
   formatCPF,
   formatCNPJ,
+  parseMoedaBR,
 } from '../format';
 
 describe('format — resiliência a entradas inválidas', () => {
@@ -88,6 +89,17 @@ describe('format — números e moeda', () => {
   });
   it('formatPercent aceita já-em-percent', () => {
     expect(formatPercent(12.34, { alreadyPercent: true })).toMatch(/12,34\s*%/);
+  });
+  it('parseMoedaBR trata ponto de milhar e vírgula decimal pt-BR', () => {
+    expect(parseMoedaBR('1.500')).toBe(1500);
+    expect(parseMoedaBR('1.500,50')).toBe(1500.5);
+    expect(parseMoedaBR('1500')).toBe(1500);
+    expect(parseMoedaBR('1500,5')).toBe(1500.5);
+    expect(parseMoedaBR('1234.56')).toBe(1234.56);
+    expect(parseMoedaBR('1.234.567,89')).toBe(1234567.89);
+    expect(parseMoedaBR('R$ 2.000')).toBe(2000);
+    expect(parseMoedaBR('1,500.00')).toBeNaN();
+    expect(parseMoedaBR('abc')).toBeNaN();
   });
 });
 

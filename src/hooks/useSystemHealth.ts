@@ -6,8 +6,9 @@ export function useSystemHealth() {
   const [latency, setLatency] = useState<number | null>(null);
   const [status, setStatus] = useState<'online' | 'slow' | 'offline'>('online');
   const [metrics, setMetrics] = useState<{
-    success_rate: number;
-    avg_latency: number;
+    // Contrato da edge `metricas` (supabase/functions/metricas/index.ts: monitoring)
+    success_rate_pct: number | null;
+    avg_latency_ms: number | null;
     recent_failures: number;
   } | null>(null);
 
@@ -26,18 +27,21 @@ export function useSystemHealth() {
 
         // 2. Advanced Metrics from Edge Function
         // Only attempt if authenticated AND has empresaAtual (empresaId required by metricas)
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
         if (session && empresaAtual?.id) {
           try {
             const { data, error: metricsError } = await supabase.functions.invoke('metricas', {
-              body: { empresaId: empresaAtual.id }
+              body: { empresaId: empresaAtual.id },
             });
 
             if (!metricsError && data?.monitoring) {
               setMetrics(data.monitoring);
 
-              if (data.monitoring.success_rate < 90) setStatus('slow');
+              const successRate = data.monitoring.success_rate_pct;
+              if (typeof successRate === 'number' && successRate < 90) setStatus('slow');
               else if (duration > 500) setStatus('slow');
               else setStatus('online');
             } else {
@@ -58,7 +62,6 @@ export function useSystemHealth() {
           else if (duration > 500) setStatus('slow');
           else setStatus('online');
         }
-
       } catch (e) {
         setStatus('offline');
         setLatency(null);
@@ -72,4 +75,3 @@ export function useSystemHealth() {
 
   return { latency, status, metrics };
 }
-

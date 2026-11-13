@@ -18,6 +18,7 @@ import { Progress } from '@/components/ui/progress';
 import { workflowService } from '@/services/workflowService';
 import { WorkflowDesigner } from '@/components/workflows/WorkflowDesigner';
 import { ordenarNosPorConexoes } from '@/components/workflows/ordenarEtapas';
+import { lerLogExecucao } from '@/components/workflows/logExecucao';
 import { useEmpresas } from '@/hooks';
 import { formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
@@ -34,8 +35,6 @@ import {
   Timer,
   History,
   Zap,
-  Mail,
-  Bell,
   ArrowRight,
   type LucideIcon,
 } from 'lucide-react';
@@ -74,6 +73,7 @@ export default function WorkflowsPage() {
   const [open, setOpen] = useState(false);
   const [selectedExec, setSelectedExec] = useState<LooseRow<'workflows_execucoes'> | null>(null);
   const [showLog, setShowLog] = useState(false);
+  const logEventos = lerLogExecucao(selectedExec?.log_execucao);
   const [form, setForm] = useState({ nome: '', descricao: '', tipo: 'ferias', etapas: ETAPAS_PADRAO.slice(0, 2) });
   const [numEtapas, setNumEtapas] = useState(2);
 
@@ -660,64 +660,28 @@ export default function WorkflowsPage() {
                 </h4>
 
                 <div className="space-y-4 relative before:absolute before:inset-0 before:left-2.5 before:w-0.5 before:bg-muted before:z-0">
-                  {/* Initial Trigger Log */}
-                  <div className="relative pl-8 z-10">
-                    <div className="absolute left-0 top-1 p-1 rounded-full bg-primary text-white shadow-xs ring-4 ring-background">
-                      <Play className="h-3 w-3" />
-                    </div>
-                    <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
-                      <p className="text-xs font-bold font-display">Gatilho de Automação Acionado</p>
-                      <p className="text-[10px] text-muted-foreground font-body mt-1">
-                        A engine de workflows iniciou o processamento via `trigger_workflow_automation`.
-                      </p>
-                      <span className="text-[9px] text-muted-foreground font-mono mt-2 block">
-                        {formatDateTime(selectedExec?.created_at ?? '')}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Email Delivery Log (Simulated but showing in log) */}
-                  <div className="relative pl-8 z-10 opacity-70">
-                    <div className="absolute left-0 top-1 p-1 rounded-full bg-info text-white shadow-xs ring-4 ring-background">
-                      <Mail className="h-3 w-3" />
-                    </div>
-                    <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
-                      <p className="text-xs font-bold font-display">Notificação de Aprovação Enviada</p>
-                      <p className="text-[10px] text-muted-foreground font-body mt-1">
-                        E-mail disparado para o aprovador Nível 1 (Gestor Direto).
-                      </p>
-                      <span className="text-[9px] text-muted-foreground font-mono mt-2 block">
-                        {formatDateTime(selectedExec?.created_at ?? '')}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* DB Sync Log */}
-                  <div className="relative pl-8 z-10 opacity-50">
-                    <div className="absolute left-0 top-1 p-1 rounded-full bg-success text-white shadow-xs ring-4 ring-background">
-                      <CheckCircle className="h-3 w-3" />
-                    </div>
-                    <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
-                      <p className="text-xs font-bold font-display">Atualização de Estado do Workflow</p>
-                      <p className="text-[10px] text-muted-foreground font-body mt-1">
-                        Status alterado para `{selectedExec?.status}` com sucesso.
-                      </p>
-                      <span className="text-[9px] text-muted-foreground font-mono mt-2 block">
-                        Sincronizado com o banco de dados principal.
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-4 bg-info/5 rounded-xl border border-info/10 flex items-start gap-3">
-                <Bell className="h-4 w-4 text-info mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-info">SLA de Aprovação Ativo</p>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    A automação monitora este workflow a cada 15 minutos. Caso o SLA de 48h seja ultrapassado, um alerta
-                    de escalonamento será enviado à diretoria.
-                  </p>
+                  {logEventos.length === 0 ? (
+                    <p className="relative pl-8 z-10 text-xs text-muted-foreground font-body">
+                      Nenhum evento registrado para esta execução.
+                    </p>
+                  ) : (
+                    logEventos.map((ev, i) => (
+                      <div key={`${ev.event}-${ev.timestamp ?? ''}-${i}`} className="relative pl-8 z-10">
+                        <div className="absolute left-0 top-1 p-1 rounded-full bg-primary text-white shadow-xs ring-4 ring-background">
+                          <Play className="h-3 w-3" />
+                        </div>
+                        <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
+                          <p className="text-xs font-bold font-display">{ev.titulo}</p>
+                          {ev.message && (
+                            <p className="text-[10px] text-muted-foreground font-body mt-1">{ev.message}</p>
+                          )}
+                          <span className="text-[9px] text-muted-foreground font-mono mt-2 block">
+                            {formatDateTime(ev.timestamp ?? '')}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

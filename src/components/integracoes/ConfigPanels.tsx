@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +10,17 @@ import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Spinner } from '@/components/ui/spinner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { ExternalLink, RefreshCw, XCircle, Settings, History, Plus, Zap } from 'lucide-react';
 import { bitrix24Service } from '@/services/tabelasComplementaresService';
 import { cnabService, webhookService } from '@/services/integracaoService';
@@ -18,6 +29,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import type { WhatsAppConfig } from '@/services/whatsappService';
 import { whatsappService } from '@/services/whatsappService';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 
 export function Bitrix24ConfigPanel() {
   const qc = useQueryClient();
@@ -240,11 +252,47 @@ export function Bitrix24ConfigPanel() {
   );
 }
 
+type CnabRemessa = Awaited<ReturnType<typeof cnabService.getRemessas>>[number];
+
+const nomeArquivoRemessa = (r: CnabRemessa) => `REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`;
+
+// Busca o conteúdo só no clique (a listagem não traz o arquivo). Retorna false se não há arquivo ou a busca falhou.
+async function baixarRemessa(empresaId: string, r: CnabRemessa): Promise<boolean> {
+  try {
+    const conteudo = await cnabService.getArquivoRemessa(empresaId, r.id);
+    if (!conteudo) {
+      toast.error('Arquivo de remessa ainda não disponível');
+      return false;
+    }
+    const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomeArquivoRemessa(r);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    toast.error(safeErrorMessage(err, 'Erro ao baixar o arquivo de remessa'));
+    return false;
+  }
+}
+
 export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id || '';
-  const { data: config } = useQuery({
+  // O arquivo de remessa traz CPF, conta e líquido de todos os funcionários: só RH/admin baixa.
+  const { isAdmin, hasRole } = useAuth();
+  const podeBaixarRemessa = isAdmin || hasRole('rh');
+  const [remessasSemArquivo, setRemessasSemArquivo] = useState<Set<string>>(() => new Set());
+  const {
+    data: config,
+    isLoading: carregandoConfig,
+    isError: erroConfig,
+  } = useQuery({
     queryKey: ['cnab_config', empresaId],
     queryFn: () => cnabService.getConfig(empresaId),
     enabled: !!empresaId,
@@ -253,6 +301,54 @@ export function CnabConfigPanel() {
     queryKey: ['cnab_remessas', empresaId],
     queryFn: () => cnabService.getRemessas(empresaId),
     enabled: !!empresaId,
+  });
+
+  const qc = useQueryClient();
+  const [form, setForm] = useState({
+    nome_empresa: '',
+    banco_codigo: '',
+    agencia: '',
+    conta: '',
+    conta_digito: '',
+    codigo_empresa: '',
+    convenio: '',
+  });
+  // Recarrega o formulário quando chega a config salva (ou a ausência dela) de outra empresa.
+  const [carregadoDe, setCarregadoDe] = useState<string | null>(null);
+  const chaveConfig = config ? config.id : config === null ? `nova:${empresaId}` : null;
+  if (chaveConfig && carregadoDe !== chaveConfig) {
+    setForm({
+      nome_empresa: config?.nome_empresa ?? '',
+      banco_codigo: config?.banco_codigo ?? '',
+      agencia: config?.agencia ?? '',
+      conta: config?.conta ?? '',
+      conta_digito: config?.conta_digito ?? '',
+      codigo_empresa: config?.codigo_empresa ?? '',
+      convenio: config?.convenio ?? '',
+    });
+    setCarregadoDe(chaveConfig);
+  }
+  const setCampo = (campo: keyof typeof form) => (e: ChangeEvent<HTMLInputElement>) =>
+    setForm((f) => ({ ...f, [campo]: e.target.value }));
+
+  const salvarConfig = useMutation({
+    mutationFn: () => {
+      const d = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim()])) as typeof form;
+      if (!d.banco_codigo || !d.agencia || !d.conta || !d.conta_digito || !d.convenio) {
+        throw new Error('Preencha código do banco, agência, conta, dígito da conta e convênio.');
+      }
+      return cnabService.saveConfig(empresaId, {
+        ...d,
+        nome_empresa: d.nome_empresa || null,
+        codigo_empresa: d.codigo_empresa || null,
+        id: config?.id,
+      });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['cnab_config', empresaId] });
+      toast.success('Configuração bancária salva!');
+    },
+    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao salvar configuração bancária')),
   });
 
   return (
@@ -303,19 +399,31 @@ export function CnabConfigPanel() {
                         {r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}
                       </TableCell>
                       <TableCell className="font-medium text-sm">{r.banco_codigo || '—'}</TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {`REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`}
-                      </TableCell>
+                      <TableCell className="font-mono text-xs">{nomeArquivoRemessa(r)}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-success/10 text-success border-0">
                           {r.status || 'Processado'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="h-8 rounded-lg">
-                          <ExternalLink className="h-3 w-3 mr-2" />
-                          Download
-                        </Button>
+                        {podeBaixarRemessa ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 rounded-lg"
+                            disabled={remessasSemArquivo.has(r.id)}
+                            title={remessasSemArquivo.has(r.id) ? 'Arquivo de remessa ainda não disponível' : undefined}
+                            onClick={async () => {
+                              if (!(await baixarRemessa(empresaId, r)))
+                                setRemessasSemArquivo((prev) => new Set(prev).add(r.id));
+                            }}
+                          >
+                            <ExternalLink className="h-3 w-3 mr-2" />
+                            Download
+                          </Button>
+                        ) : (
+                          '—'
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
@@ -329,35 +437,51 @@ export function CnabConfigPanel() {
           <div className="grid gap-6 max-w-2xl">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Banco Principal</Label>
-                <Input placeholder="Ex: Itaú Unibanco" defaultValue={config?.nome_empresa ?? undefined} />
+                <Label>Nome da Empresa</Label>
+                <Input
+                  placeholder="Razão social no arquivo CNAB"
+                  value={form.nome_empresa}
+                  onChange={setCampo('nome_empresa')}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Código do Banco</Label>
-                <Input placeholder="Ex: 341" defaultValue={config?.banco_codigo} />
+                <Input placeholder="Ex: 341" value={form.banco_codigo} onChange={setCampo('banco_codigo')} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Agência</Label>
-                <Input placeholder="0000" defaultValue={config?.agencia} />
+                <Input placeholder="0000" value={form.agencia} onChange={setCampo('agencia')} />
               </div>
-              <div className="space-y-2">
-                <Label>Conta Corrente</Label>
-                <Input placeholder="00000-0" defaultValue={config?.conta} />
+              <div className="grid grid-cols-[1fr_5rem] gap-2">
+                <div className="space-y-2">
+                  <Label>Conta Corrente</Label>
+                  <Input placeholder="00000" value={form.conta} onChange={setCampo('conta')} />
+                </div>
+                <div className="space-y-2">
+                  <Label>Dígito</Label>
+                  <Input placeholder="0" value={form.conta_digito} onChange={setCampo('conta_digito')} />
+                </div>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Código da Empresa (CNAB)</Label>
-                <Input placeholder="Ex: 0001" defaultValue={config?.codigo_empresa ?? undefined} />
+                <Input placeholder="Ex: 0001" value={form.codigo_empresa} onChange={setCampo('codigo_empresa')} />
               </div>
               <div className="space-y-2">
                 <Label>Convênio</Label>
-                <Input placeholder="Código de convênio" defaultValue={config?.convenio} />
+                <Input placeholder="Código de convênio" value={form.convenio} onChange={setCampo('convenio')} />
               </div>
             </div>
-            <Button className="w-fit px-8 rounded-xl shadow-lg shadow-primary/20">Salvar Configurações</Button>
+            <Button
+              className="w-fit px-8 rounded-xl shadow-lg shadow-primary/20"
+              onClick={() => salvarConfig.mutate()}
+              disabled={!empresaId || carregandoConfig || erroConfig || config === undefined || salvarConfig.isPending}
+            >
+              {salvarConfig.isPending ? 'Salvando...' : 'Salvar Configurações'}
+            </Button>
           </div>
         </TabsContent>
       </div>
@@ -378,6 +502,17 @@ export function WebhookConfigPanel() {
     queryKey: ['webhook_logs', empresaId],
     queryFn: () => webhookService.getLogs(empresaId),
     enabled: !!empresaId,
+  });
+
+  const qc = useQueryClient();
+  const removerWebhook = useMutation({
+    mutationFn: (id: string) => webhookService.excluir(empresaId, id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks', empresaId] });
+      qc.invalidateQueries({ queryKey: ['webhook_logs', empresaId] });
+      toast.success('Webhook removido.');
+    },
+    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao remover webhook')),
   });
 
   return (
@@ -405,8 +540,11 @@ export function WebhookConfigPanel() {
             <div>
               <h3 className="font-semibold text-lg">Seus Webhooks</h3>
               <p className="text-sm text-muted-foreground">Configure URLs para receber eventos do sistema</p>
+              <p className="text-xs text-warning mt-1">
+                Disparo de webhooks ainda não implementado: o cadastro de novos webhooks está desativado.
+              </p>
             </div>
-            <Button size="sm" className="rounded-xl">
+            <Button size="sm" className="rounded-xl" disabled title="Disparo de webhooks ainda não implementado">
               <Plus className="h-4 w-4 mr-2" />
               Novo Webhook
             </Button>
@@ -417,7 +555,7 @@ export function WebhookConfigPanel() {
             <div className="grid gap-4">
               {webhooks.length === 0 ? (
                 <div className="p-12 text-center border border-dashed rounded-2xl text-muted-foreground">
-                  Clique em "Novo Webhook" para começar
+                  Nenhum webhook cadastrado
                 </div>
               ) : (
                 webhooks.map((w) => (
@@ -438,14 +576,31 @@ export function WebhookConfigPanel() {
                         <Badge variant="outline" className="bg-success/10 text-success border-0">
                           Ativo
                         </Badge>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Remover"
-                          className="text-destructive hover:bg-destructive/10"
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Remover"
+                              className="text-destructive hover:bg-destructive/10"
+                              disabled={removerWebhook.isPending}
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Remover webhook?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                {w.url} deixará de receber eventos e o histórico de entregas dele será apagado.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => removerWebhook.mutate(w.id)}>Remover</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </CardContent>
                   </Card>

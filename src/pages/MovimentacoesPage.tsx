@@ -17,9 +17,21 @@ import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, ArrowRightLeft, TrendingUp } from 'lucide-react';
-import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { Plus, ArrowRightLeft, TrendingUp, Pencil, Trash2 } from 'lucide-react';
+import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
+import { todayLocalISO } from '@/utils/dateLocal';
+import { criarRegistroSalarial } from '@/services/colaboradorDetalhesService';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 type TransferenciaComJoins = Tables<'transferencias'> & {
   colaborador: { nome_completo: string; empresa_id: string | null } | null;
@@ -57,6 +69,9 @@ export default function MovimentacoesPage() {
   const [openPromo, setOpenPromo] = useState(false);
   const [formTransf, setFormTransf] = useState(initialFormTransf);
   const [formPromo, setFormPromo] = useState(initialFormPromo);
+  const [editTransfId, setEditTransfId] = useState<string | null>(null);
+  const [editPromoId, setEditPromoId] = useState<string | null>(null);
+  const [excluirAlvo, setExcluirAlvo] = useState<{ tabela: 'transferencias' | 'promocoes'; id: string } | null>(null);
 
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
@@ -124,8 +139,52 @@ export default function MovimentacoesPage() {
     enabled: !!empresaAtual?.id,
   });
 
+  // Aplica a movimentação no cadastro do colaborador (cargo/salário/departamento).
+  // Sem linha afetada = RLS bloqueou (perfil sem gestão de RH): falha explícita, nunca sucesso falso.
+  const aplicarNoColaborador = async (colaboradorId: string, patch: Updatable<'colaboradores'>) => {
+    const { data, error } = await supabase
+      .from('colaboradores')
+      .update(patch)
+      .eq('id', colaboradorId)
+      .eq('empresa_id', empresaAtual!.id)
+      .select('id');
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('Sem permissão para atualizar o cadastro do colaborador.');
+  };
+
+  // A movimentação só vale para o cadastro se for a vigente mais recente do colaborador naquela tabela;
+  // senão uma edição/lançamento retroativo sobrescreveria cargo/salário/departamento atuais.
+  const ehMaisRecente = async (tabela: 'transferencias' | 'promocoes', colaboradorId: string, id: string) => {
+    const hoje = todayLocalISO();
+    const { data, error } =
+      tabela === 'promocoes'
+        ? await supabase
+            .from('promocoes')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .lte('data_vigencia', hoje)
+            .order('data_vigencia', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle()
+        : await supabase
+            .from('transferencias')
+            .select('id')
+            .eq('colaborador_id', colaboradorId)
+            .lte('data_vigencia', hoje)
+            .order('data_vigencia', { ascending: false })
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+    if (error) throw error;
+    return data?.id === id;
+  };
+
+  const ERRO_DESFAZER =
+    'O cadastro do colaborador não foi atualizado e não foi possível desfazer a alteração no histórico. Revise o registro.';
+
   const criarTransf = useMutation({
-    mutationFn: async (d: typeof initialFormTransf) => {
+    mutationFn: async ({ d, id }: { d: typeof initialFormTransf; id: string | null }) => {
       const payload: Insertable<'transferencias'> = {
         colaborador_id: d.colaborador_id,
         departamento_anterior_id: d.departamento_anterior_id || null,
@@ -133,24 +192,83 @@ export default function MovimentacoesPage() {
         data_vigencia: d.data_vigencia,
         motivo: d.motivo || null,
       };
-      const { data, error } = await supabase
-        .from('transferencias')
-        .insert(validateTablePayload('transferencias', payload, 'MovimentacoesPage:transferencias'))
-        .select()
-        .maybeSingle();
+      const validado = validateTablePayload('transferencias', payload, 'MovimentacoesPage:transferencias');
+      if (!colaboradores.some((c) => c.id === d.colaborador_id))
+        throw new Error('Colaborador não pertence à empresa selecionada.');
+      let original: Tables<'transferencias'> | null = null;
+      if (id) {
+        const { data: atual, error: errAtual } = await supabase
+          .from('transferencias')
+          .select('*, colaborador:colaboradores!inner(empresa_id)')
+          .eq('id', id)
+          .eq('colaborador.empresa_id', empresaAtual!.id)
+          .maybeSingle();
+        if (errAtual) throw errAtual;
+        if (!atual) throw new Error('Transferência não encontrada nesta empresa.');
+        const { colaborador: _c, ...linha } = atual;
+        original = linha;
+      }
+      const { data, error } = id
+        ? await supabase.from('transferencias').update(validado).eq('id', id).select().maybeSingle()
+        : await supabase.from('transferencias').insert(validado).select().maybeSingle();
       if (error) throw error;
-      return data;
+      if (!data) throw new Error('Transferência não encontrada ou sem permissão para salvar.');
+      const deptoNovo = departamentos.find((x) => x.id === d.departamento_novo_id);
+      const vigente = d.data_vigencia <= todayLocalISO();
+      const mudou =
+        !original ||
+        original.colaborador_id !== data.colaborador_id ||
+        original.departamento_novo_id !== data.departamento_novo_id ||
+        original.data_vigencia !== data.data_vigencia;
+      const maisRecente =
+        vigente && !!deptoNovo && mudou && (await ehMaisRecente('transferencias', d.colaborador_id, data.id));
+      if (maisRecente && deptoNovo) {
+        try {
+          await aplicarNoColaborador(d.colaborador_id, { departamento: deptoNovo.nome });
+        } catch (e) {
+          const desfeito = original
+            ? await supabase
+                .from('transferencias')
+                .update({
+                  colaborador_id: original.colaborador_id,
+                  departamento_anterior_id: original.departamento_anterior_id,
+                  departamento_novo_id: original.departamento_novo_id,
+                  data_vigencia: original.data_vigencia,
+                  motivo: original.motivo,
+                })
+                .eq('id', data.id)
+                .select('id')
+            : await supabase.from('transferencias').delete().eq('id', data.id).select('id');
+          if (desfeito.error || !desfeito.data?.length) throw new Error(ERRO_DESFAZER, { cause: e });
+          throw e;
+        }
+      }
+      return {
+        aplicado: maisRecente,
+        futura: !vigente,
+        temMaisRecente: vigente && !!deptoNovo && mudou && !maisRecente,
+      };
     },
-    onSuccess: () => {
+    onSuccess: (r) => {
       qc.invalidateQueries({ queryKey: ['transferencias'] });
+      qc.invalidateQueries({ queryKey: ['colaboradores'] });
       setOpenTransf(false);
-      toast.success('Transferência registrada!');
+      setEditTransfId(null);
+      toast.success(
+        r.aplicado
+          ? 'Transferência salva e aplicada ao cadastro do colaborador.'
+          : r.futura
+            ? 'Transferência salva. Vigência futura: o cadastro do colaborador não foi alterado.'
+            : r.temMaisRecente
+              ? 'Transferência salva. Há transferência mais recente: o cadastro do colaborador não foi alterado.'
+              : 'Transferência salva.'
+      );
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
   });
 
   const criarPromo = useMutation({
-    mutationFn: async (d: typeof initialFormPromo) => {
+    mutationFn: async ({ d, id }: { d: typeof initialFormPromo; id: string | null }) => {
       const payload: Insertable<'promocoes'> = {
         colaborador_id: d.colaborador_id || null,
         cargo_anterior_id: d.cargo_anterior_id || null,
@@ -160,21 +278,157 @@ export default function MovimentacoesPage() {
         data_vigencia: d.data_vigencia,
         motivo: d.motivo || null,
       };
-      const { data, error } = await supabase
-        .from('promocoes')
-        .insert(validateTablePayload('promocoes', payload, 'MovimentacoesPage:promocoes'))
-        .select()
-        .maybeSingle();
+      const validado = validateTablePayload('promocoes', payload, 'MovimentacoesPage:promocoes');
+      if (!colaboradores.some((c) => c.id === d.colaborador_id))
+        throw new Error('Colaborador não pertence à empresa selecionada.');
+      let original: Tables<'promocoes'> | null = null;
+      if (id) {
+        const { data: atual, error: errAtual } = await supabase
+          .from('promocoes')
+          .select('*, colaborador:colaboradores!inner(empresa_id)')
+          .eq('id', id)
+          .eq('colaborador.empresa_id', empresaAtual!.id)
+          .maybeSingle();
+        if (errAtual) throw errAtual;
+        if (!atual) throw new Error('Promoção não encontrada nesta empresa.');
+        const { colaborador: _c, ...linha } = atual;
+        original = linha;
+      }
+      const { data, error } = id
+        ? await supabase.from('promocoes').update(validado).eq('id', id).select().maybeSingle()
+        : await supabase.from('promocoes').insert(validado).select().maybeSingle();
       if (error) throw error;
-      return data;
+      if (!data) throw new Error('Promoção não encontrada ou sem permissão para salvar.');
+      const patch: Updatable<'colaboradores'> = {};
+      const cargoNovo = cargos.find((c) => c.id === d.cargo_novo_id);
+      if (cargoNovo) {
+        patch.cargo_id = cargoNovo.id;
+        patch.cargo = cargoNovo.nome;
+      }
+      if (d.salario_novo) patch.salario_base = Number(d.salario_novo);
+      const temAlteracao = Object.keys(patch).length > 0;
+      const vigente = d.data_vigencia <= todayLocalISO();
+      const mudou =
+        !original ||
+        original.colaborador_id !== data.colaborador_id ||
+        original.cargo_novo_id !== data.cargo_novo_id ||
+        original.salario_novo !== data.salario_novo ||
+        original.data_vigencia !== data.data_vigencia;
+      const maisRecente =
+        vigente && temAlteracao && mudou && (await ehMaisRecente('promocoes', d.colaborador_id, data.id));
+      if (maisRecente) {
+        // Mudança salarial aplicada entra no histórico salarial do colaborador (não há trigger que faça isso).
+        const registrarSalario =
+          !!d.salario_novo &&
+          (!original || original.salario_novo !== data.salario_novo || original.colaborador_id !== data.colaborador_id);
+        let historicoId: string | null = null;
+        try {
+          if (registrarSalario) {
+            const hist = await criarRegistroSalarial({
+              colaborador_id: d.colaborador_id,
+              empresa_id: empresaAtual!.id,
+              data_vigencia: d.data_vigencia,
+              motivo: (d.motivo || 'Promoção').slice(0, 300),
+              salario_anterior: d.salario_anterior ? Number(d.salario_anterior) : null,
+              salario_novo: Number(d.salario_novo),
+              cargo_anterior: cargos.find((c) => c.id === d.cargo_anterior_id)?.nome ?? null,
+              cargo_novo: cargoNovo?.nome ?? null,
+            });
+            historicoId = hist?.id ?? null;
+          }
+          await aplicarNoColaborador(d.colaborador_id, patch);
+        } catch (e) {
+          if (historicoId) await supabase.from('historico_salarial').delete().eq('id', historicoId);
+          const desfeito = original
+            ? await supabase
+                .from('promocoes')
+                .update({
+                  colaborador_id: original.colaborador_id,
+                  cargo_anterior_id: original.cargo_anterior_id,
+                  cargo_novo_id: original.cargo_novo_id,
+                  salario_anterior: original.salario_anterior,
+                  salario_novo: original.salario_novo,
+                  data_vigencia: original.data_vigencia,
+                  motivo: original.motivo,
+                })
+                .eq('id', data.id)
+                .select('id')
+            : await supabase.from('promocoes').delete().eq('id', data.id).select('id');
+          if (desfeito.error || !desfeito.data?.length) throw new Error(ERRO_DESFAZER, { cause: e });
+          throw e;
+        }
+      }
+      return {
+        aplicado: maisRecente,
+        futura: !vigente,
+        temMaisRecente: vigente && temAlteracao && mudou && !maisRecente,
+      };
     },
-    onSuccess: () => {
+    onSuccess: (r) => {
       qc.invalidateQueries({ queryKey: ['promocoes'] });
+      qc.invalidateQueries({ queryKey: ['colaboradores'] });
       setOpenPromo(false);
-      toast.success('Promoção registrada!');
+      setEditPromoId(null);
+      toast.success(
+        r.aplicado
+          ? 'Promoção salva e aplicada ao cadastro do colaborador.'
+          : r.futura
+            ? 'Promoção salva. Vigência futura: o cadastro do colaborador não foi alterado.'
+            : r.temMaisRecente
+              ? 'Promoção salva. Há promoção mais recente: o cadastro do colaborador não foi alterado.'
+              : 'Promoção salva.'
+      );
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
   });
+
+  const excluir = useMutation({
+    mutationFn: async (alvo: { tabela: 'transferencias' | 'promocoes'; id: string }) => {
+      // Tabelas sem empresa_id: confirma pela empresa do colaborador antes de excluir.
+      const daEmpresa = alvo.tabela === 'promocoes' ? promocoes : transferencias;
+      if (!daEmpresa.some((m) => m.id === alvo.id && m.colaborador?.empresa_id === empresaAtual?.id))
+        throw new Error('Registro não encontrado nesta empresa.');
+      const { data, error } =
+        alvo.tabela === 'promocoes'
+          ? await supabase.from('promocoes').delete().eq('id', alvo.id).select('id')
+          : await supabase.from('transferencias').delete().eq('id', alvo.id).select('id');
+      if (error) throw error;
+      if (!data || data.length === 0) throw new Error('Registro não encontrado ou sem permissão para excluir.');
+      return alvo.tabela;
+    },
+    onSuccess: (tabela) => {
+      qc.invalidateQueries({ queryKey: [tabela] });
+      setExcluirAlvo(null);
+      toast.success('Registro excluído do histórico.');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir movimentação.')),
+  });
+
+  const editarTransf = (t: TransferenciaComJoins) => {
+    setFormTransf({
+      colaborador_id: t.colaborador_id ?? '',
+      departamento_anterior_id: t.departamento_anterior_id ?? '',
+      departamento_novo_id: t.departamento_novo_id ?? '',
+      data_vigencia: t.data_vigencia ?? '',
+      motivo: t.motivo ?? '',
+    });
+    setEditTransfId(t.id);
+    setOpenTransf(true);
+  };
+
+  const editarPromo = (p: PromocaoComJoins) => {
+    setFormPromo({
+      colaborador_id: p.colaborador_id ?? '',
+      cargo_anterior_id: p.cargo_anterior_id ?? '',
+      cargo_novo_id: p.cargo_novo_id ?? '',
+      salario_anterior: p.salario_anterior != null ? String(p.salario_anterior) : '',
+      salario_novo: p.salario_novo != null ? String(p.salario_novo) : '',
+      data_vigencia: p.data_vigencia ?? '',
+      motivo: p.motivo ?? '',
+    });
+    setEditPromoId(p.id);
+    setOpenPromo(true);
+  };
 
   const isLoading = loadTransf || loadPromo;
   if (isLoading)
@@ -207,14 +461,20 @@ export default function MovimentacoesPage() {
                   <h3 className="text-lg font-semibold">Transferências</h3>
                   <Dialog open={openTransf} onOpenChange={setOpenTransf}>
                     <DialogTrigger asChild>
-                      <Button size="sm">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setEditTransfId(null);
+                          setFormTransf(initialFormTransf);
+                        }}
+                      >
                         <Plus className="h-4 w-4 mr-1" />
                         Nova Transferência
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Registrar Transferência</DialogTitle>
+                        <DialogTitle>{editTransfId ? 'Editar Transferência' : 'Registrar Transferência'}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-3">
                         <div>
@@ -290,8 +550,8 @@ export default function MovimentacoesPage() {
                         </div>
                         <Button
                           className="w-full"
-                          onClick={() => criarTransf.mutate(formTransf)}
-                          disabled={!formTransf.colaborador_id || !formTransf.data_vigencia}
+                          onClick={() => criarTransf.mutate({ d: formTransf, id: editTransfId })}
+                          disabled={!formTransf.colaborador_id || !formTransf.data_vigencia || criarTransf.isPending}
                         >
                           Salvar
                         </Button>
@@ -306,6 +566,7 @@ export default function MovimentacoesPage() {
                       <TableHead>De</TableHead>
                       <TableHead>Para</TableHead>
                       <TableHead>Data</TableHead>
+                      <TableHead className="w-24 text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -315,11 +576,29 @@ export default function MovimentacoesPage() {
                         <TableCell>{t.departamento_anterior?.nome || '—'}</TableCell>
                         <TableCell>{t.departamento_novo?.nome || '—'}</TableCell>
                         <TableCell>{t.data_vigencia}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Editar transferência"
+                            onClick={() => editarTransf(t)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Excluir transferência"
+                            onClick={() => setExcluirAlvo({ tabela: 'transferencias', id: t.id })}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                     {transferencias.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={4} className="text-center text-muted-foreground">
+                        <TableCell colSpan={5} className="text-center text-muted-foreground">
                           Nenhuma transferência
                         </TableCell>
                       </TableRow>
@@ -337,14 +616,20 @@ export default function MovimentacoesPage() {
                   <h3 className="text-lg font-semibold">Promoções</h3>
                   <Dialog open={openPromo} onOpenChange={setOpenPromo}>
                     <DialogTrigger asChild>
-                      <Button size="sm">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setEditPromoId(null);
+                          setFormPromo(initialFormPromo);
+                        }}
+                      >
                         <Plus className="h-4 w-4 mr-1" />
                         Nova Promoção
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Registrar Promoção</DialogTitle>
+                        <DialogTitle>{editPromoId ? 'Editar Promoção' : 'Registrar Promoção'}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-3">
                         <div>
@@ -438,8 +723,8 @@ export default function MovimentacoesPage() {
                         </div>
                         <Button
                           className="w-full"
-                          onClick={() => criarPromo.mutate(formPromo)}
-                          disabled={!formPromo.colaborador_id || !formPromo.data_vigencia}
+                          onClick={() => criarPromo.mutate({ d: formPromo, id: editPromoId })}
+                          disabled={!formPromo.colaborador_id || !formPromo.data_vigencia || criarPromo.isPending}
                         >
                           Salvar
                         </Button>
@@ -455,6 +740,7 @@ export default function MovimentacoesPage() {
                       <TableHead>Para</TableHead>
                       <TableHead>Salário</TableHead>
                       <TableHead>Data</TableHead>
+                      <TableHead className="w-24 text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -467,11 +753,29 @@ export default function MovimentacoesPage() {
                           {p.salario_novo ? `R$ ${Number(p.salario_novo).toLocaleString('pt-BR')}` : '—'}
                         </TableCell>
                         <TableCell>{p.data_vigencia}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Editar promoção"
+                            onClick={() => editarPromo(p)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Excluir promoção"
+                            onClick={() => setExcluirAlvo({ tabela: 'promocoes', id: p.id })}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                     {promocoes.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center text-muted-foreground">
+                        <TableCell colSpan={6} className="text-center text-muted-foreground">
                           Nenhuma promoção
                         </TableCell>
                       </TableRow>
@@ -482,6 +786,30 @@ export default function MovimentacoesPage() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        <AlertDialog open={!!excluirAlvo} onOpenChange={(o) => !o && setExcluirAlvo(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir movimentação do histórico?</AlertDialogTitle>
+              <AlertDialogDescription>
+                O registro será removido do histórico. O cadastro atual do colaborador (cargo, salário e departamento)
+                não é revertido automaticamente.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={excluir.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (excluirAlvo) excluir.mutate(excluirAlvo);
+                }}
+              >
+                Excluir
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </PageLayout>
     </>
   );

@@ -5,18 +5,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TrendingUp, Calculator, Loader2, Save, History, PieChart } from 'lucide-react';
+import { TrendingUp, Calculator, Loader2, Save, PieChart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import type { UiRecord } from '@/types/uiRecord';
 import { validateTablePayload } from '@/schemas/validate';
+import { HistoricoSimulacoesDialog } from './HistoricoSimulacoesDialog';
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value);
 }
 
-export function SimuladorWhatIf() {
+export function SimuladorWhatIf({ onSaved }: { onSaved?: () => void } = {}) {
   const { empresaAtual } = useEmpresas();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -97,6 +98,7 @@ export function SimuladorWhatIf() {
         )
       );
       if (error) throw error;
+      onSaved?.();
       toast.success('Simulação salva com sucesso!');
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao salvar simulação.'));
@@ -259,9 +261,7 @@ export function SimuladorWhatIf() {
                       {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                       Salvar
                     </Button>
-                    <Button variant="outline" size="sm" className="rounded-lg p-2">
-                      <History className="h-4 w-4" />
-                    </Button>
+                    <HistoricoSimulacoesDialog empresaId={empresaAtual?.id} />
                   </div>
                 </CardContent>
               </Card>

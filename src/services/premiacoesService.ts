@@ -123,6 +123,44 @@ export const premiacoesService = {
     return data;
   },
 
+  /** Lança um rascunho (rascunho → ativo). 0 linhas = não é rascunho desta empresa ou sem permissão. */
+  async lancarRascunhoCampanha(id: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('premiacoes_campanhas')
+      .update({ status: 'ativo' })
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .eq('status', 'rascunho')
+      .select('id');
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('Rascunho não encontrado ou sem permissão para lançar.');
+    return data[0];
+  },
+
+  /** Exclui um rascunho (as regras caem por ON DELETE CASCADE). Só apaga se ainda for rascunho e sem pagamentos. */
+  async excluirRascunhoCampanha(id: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // premiacoes_pagamentos.campanha_id também é ON DELETE CASCADE: confere no banco
+    // (não na lista da tela, que pode estar carregando/falha) para não apagar pagamentos.
+    const { data: pags, error: errPags } = await supabase
+      .from('premiacoes_pagamentos')
+      .select('id')
+      .eq('campanha_id', id)
+      .limit(1);
+    if (errPags) throw errPags;
+    if (pags && pags.length > 0) throw new Error('Rascunho já tem pagamentos vinculados e não pode ser excluído.');
+    const { data, error } = await supabase
+      .from('premiacoes_campanhas')
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .eq('status', 'rascunho')
+      .select('id');
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('Rascunho não encontrado ou sem permissão para excluir.');
+  },
+
   async criarRegra(d: TablesInsert<'premiacoes_regras'>) {
     validateInput(premiacaoRegraSchema, d, 'premiacoes.criarRegra');
     const { data, error } = await supabase
@@ -248,34 +286,6 @@ export const premiacoesService = {
     }
 
     return data;
-  },
-
-  async autoConciliarComFolha(pagamentoId: string) {
-    const { data: pagamento, error: pErr } = await supabase
-      .from('premiacoes_pagamentos')
-      .select('*, colaborador:colaboradores(id)')
-      .eq('id', pagamentoId)
-      .single();
-
-    if (pErr) throw pErr;
-
-    // Search in folha_itens for a recent item for this collaborator
-    const { data: folhaItens, error: fErr } = await supabase
-      .from('folha_itens')
-      .select('*')
-      .eq('colaborador_id', pagamento.colaborador_id)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (fErr || !folhaItens.length)
-      throw new Error('Nenhum lançamento de folha encontrado para conciliação automática.');
-
-    const itemFolha = folhaItens[0];
-    // In a real scenario, we'd parse the details to find the specific reward rubrica
-    // For this 10/10 implementation, we simulate finding a matching value or a slight divergence
-    const valorEncontrado = Number(pagamento.valor_aprovado);
-
-    return this.reconciliarFolha(pagamentoId, valorEncontrado, 'Conciliação automática via integração eSocial/Folha');
   },
 
   async listarAuditoria(entidadeId?: string, empresaId?: string) {

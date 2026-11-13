@@ -92,6 +92,7 @@ const LotacoesPage = lazy(() => import('@/pages/LotacoesPage'));
 const AssistenteIAPage = lazy(() => import('@/pages/AssistenteIAPage'));
 const GeradorDocumentosPage = lazy(() => import('@/pages/GeradorDocumentosPage'));
 const SSTPage = lazy(() => import('@/pages/SSTPage'));
+const EPIsPage = lazy(() => import('@/pages/EPIsPage'));
 const CalculadoraRescisaoPage = lazy(() => import('@/pages/CalculadoraRescisaoPage'));
 const ImportacaoPage = lazy(() => import('@/pages/ImportacaoPage'));
 const DashboardExecutivoPage = lazy(() => import('@/pages/DashboardExecutivoPage'));
@@ -217,6 +218,7 @@ export default function App() {
         <Route path="faltas" element={<LazyPage Component={FaltasPage} />} />
         <Route path="beneficios" element={<LazyPage Component={BeneficiosPage} />} />
         <Route path="beneficios/novo" element={<LazyPage Component={BeneficioFormPage} />} />
+        <Route path="beneficios/:id/editar" element={<LazyPage Component={BeneficioFormPage} />} />
 
         {/* Folha e Financeiro */}
         <Route path="folha" element={<LazyPage Component={FolhaPage} />} />
@@ -259,6 +261,7 @@ export default function App() {
         <Route path="esocial" element={<LazyPage Component={ESocialPage} />} />
         <Route path="obrigacoes-fiscais" element={<LazyPage Component={ObrigacoesFiscaisPage} />} />
         <Route path="sst" element={<LazyPage Component={SSTPage} />} />
+        <Route path="epis" element={<LazyPage Component={EPIsPage} />} />
         <Route
           path="auditoria"
           element={

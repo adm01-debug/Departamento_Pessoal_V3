@@ -262,6 +262,19 @@ describe('recrutamentoService.criarCandidatura', () => {
     });
     expect(result).toEqual(created);
   });
+
+  it('traduz unique violation (23505) para mensagem amigável', async () => {
+    setupInsertChain(null, {
+      code: '23505',
+      message: 'duplicate key value violates unique constraint "candidaturas_vaga_id_candidato_id_key"',
+    });
+    await expect(
+      recrutamentoService.criarCandidatura({
+        vaga_id: '00000000-0000-4000-8000-000000000008',
+        candidato_id: '00000000-0000-4000-8000-000000000009',
+      })
+    ).rejects.toThrow('Candidato já inscrito nesta vaga.');
+  });
 });
 
 describe('recrutamentoService.atualizarCandidatura', () => {

@@ -1,5 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { EmptyList } from '@/components/ui/empty-state';
@@ -12,12 +13,14 @@ import {
   FeriasAlertasPagamentoCard,
   FeriasReconciliacaoCard,
   FeriasReconciliacaoHistoricoCard,
+  FeriasForm,
 } from '@/components/ferias';
 import { FeriasColetivasTab } from '@/components/ferias/FeriasColetivasTab';
 import { FeriasRelatorioDialog } from '@/components/ferias/FeriasRelatorioDialog';
 import { useFerias } from '@/hooks/useFerias';
 import { useFeriasAprovacao } from '@/hooks/useFeriasAprovacao';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import {
   Calendar,
@@ -34,6 +37,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   AlertTriangle,
+  Plus,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -59,6 +63,9 @@ const statusOptions = [
 
 export default function FeriasPage() {
   const { empresaAtual } = useEmpresas();
+  const { isAdmin, hasRole } = useAuth();
+  // RLS de `ferias` só permite INSERT com pode_gerir_rh (admin ou RH da empresa).
+  const podeSolicitar = isAdmin || hasRole('rh');
   const [statusFilter, setStatusFilter] = useState('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -68,7 +75,11 @@ export default function FeriasPage() {
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [calcForm, setCalcForm] = useState({ salario: '', diasFerias: '30', diasAbono: '0' });
   const [calcResult, setCalcResult] = useState<UiRecord | null>(null);
-  const { ferias, totalCount, isLoading, isFetching, error, refetch } = useFerias({
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [openSolicitarManual, setOpenSolicitar] = useState(false);
+  // Derivado da URL (não só no mount): o atalho "Solicitar Férias" abre o diálogo mesmo já estando em /ferias.
+  const openSolicitar = podeSolicitar && (openSolicitarManual || searchParams.get('solicitar') === '1');
+  const { ferias, totalCount, isLoading, isFetching, error, refetch, create, isCreating } = useFerias({
     page,
     limit,
     search: search.length >= 3 ? search : undefined,
@@ -78,6 +89,15 @@ export default function FeriasPage() {
   useDataAccessLog('ferias', empresaAtual?.id, empresaAtual?.id);
 
   const { aprovarGestor, aprovarRH, enviarContabilidade, rejeitar, cancelar } = useFeriasAprovacao();
+
+  const handleOpenSolicitar = (open: boolean) => {
+    setOpenSolicitar(open);
+    if (!open && searchParams.has('solicitar')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('solicitar');
+      setSearchParams(next, { replace: true });
+    }
+  };
 
   const handleRefresh = async () => {
     if (!empresaAtual?.id) return;
@@ -144,6 +164,24 @@ export default function FeriasPage() {
         gradient="from-primary-glow to-primary"
         actions={
           <div className="flex gap-2">
+            {podeSolicitar && (
+              <>
+                <Button
+                  size="sm"
+                  className="rounded-xl gap-1.5 font-body bg-gradient-to-r from-primary-glow to-primary"
+                  onClick={() => handleOpenSolicitar(true)}
+                  disabled={!empresaAtual?.id}
+                >
+                  <Plus className="h-4 w-4" /> Solicitar Férias
+                </Button>
+                <FeriasForm
+                  open={openSolicitar}
+                  onOpenChange={handleOpenSolicitar}
+                  onSubmit={create}
+                  isSubmitting={isCreating}
+                />
+              </>
+            )}
             <Button size="sm" variant="outline" className="rounded-xl gap-1.5 font-body" asChild>
               <a href="/ferias/programacao">
                 <CalendarDays className="h-4 w-4" /> Programação Anual

@@ -121,6 +121,8 @@ export const recrutamentoService = {
       )
       .select()
       .maybeSingle();
+    // UNIQUE(vaga_id, candidato_id): mesmo candidato já inscrito nesta vaga.
+    if (error?.code === '23505') throw new Error('Candidato já inscrito nesta vaga.');
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de candidatura foi retornado.');
     return data;

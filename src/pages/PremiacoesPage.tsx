@@ -7,6 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Trophy,
   Target,
   DollarSign,
@@ -14,6 +24,7 @@ import {
   Calendar,
   Filter,
   ArrowUpRight,
+  ArrowDownRight,
   AlertCircle,
   Calculator,
   FileText,
@@ -24,6 +35,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { premiacoesService, PERIODO_SEM_DATA } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
+import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
 import { RewardsApprovalHub } from '@/components/premiacoes/RewardsApprovalHub';
@@ -39,7 +51,10 @@ const formatCurrency = (val: number) =>
 
 export default function PremiacoesPage() {
   const { empresaAtual } = useEmpresas();
+  const { hasRole } = useAuth();
+  const podeGerirCampanhas = hasRole('admin') || hasRole('rh');
   const queryClient = useQueryClient();
+  const [rascunhoExcluir, setRascunhoExcluir] = React.useState<{ id: string; nome: string } | null>(null);
   const [activeTab, setActiveTab] = React.useState('campanhas');
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
   const [periodoFiltro, setPeriodoFiltro] = React.useState<{ ym: string; empresaId: string | undefined } | null>(null);
@@ -103,6 +118,25 @@ export default function PremiacoesPage() {
     },
   });
 
+  const lancarRascunho = useMutation({
+    mutationFn: (id: string) => premiacoesService.lancarRascunhoCampanha(id, empresaAtual!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
+      toast.success('Campanha lançada.');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Erro ao lançar campanha.'),
+  });
+
+  const excluirRascunho = useMutation({
+    mutationFn: (id: string) => premiacoesService.excluirRascunhoCampanha(id, empresaAtual!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['premiacoes_campanhas'] });
+      toast.success('Rascunho excluído.');
+      setRascunhoExcluir(null);
+    },
+    onError: (e: Error) => toast.error(e.message || 'Erro ao excluir rascunho.'),
+  });
+
   const handleExport = async (format: 'csv' | 'pdf') => {
     toast.promise(
       (async () => {
@@ -157,7 +191,23 @@ export default function PremiacoesPage() {
       .reduce((acc, p) => acc + Number(p.valor_calculado), 0),
     campanhasAtivas: campanhas.filter((c) => c.status === 'ativo').length,
     divergenciaCount: pagamentos.filter((p) => p.status_conciliacao === 'divergente').length,
+    colaboradoresPremiados: new Set(pagamentos.filter((p) => p.status === 'pago').map((p) => p.colaborador_id)).size,
   };
+
+  // Variação do total aprovado: mês atual vs anterior, por data_pagamento.
+  // Só exibida quando o mês anterior tem valor (sem base, não há variação real).
+  const variacaoMensal = (() => {
+    const mesAtual = todayLocalISO().slice(0, 7);
+    const [ano, mes] = mesAtual.split('-').map(Number);
+    const mesAnterior = mes === 1 ? `${ano - 1}-12` : `${ano}-${String(mes - 1).padStart(2, '0')}`;
+    const somaMes = (ym: string) =>
+      pagamentos
+        .filter((p) => p.data_pagamento?.slice(0, 7) === ym)
+        .reduce((acc, p) => acc + (Number(p.valor_aprovado) || 0), 0);
+    const anterior = somaMes(mesAnterior);
+    if (anterior <= 0) return null;
+    return Math.round(((somaMes(mesAtual) - anterior) / anterior) * 100);
+  })();
 
   if (loadCampanhas)
     return (
@@ -188,9 +238,15 @@ export default function PremiacoesPage() {
                 </div>
               </div>
               <h3 className="text-2xl font-bold mt-2">{formatCurrency(stats.totalAprovado)}</h3>
-              <p className="text-[10px] text-success flex items-center gap-1 mt-1 font-medium">
-                <ArrowUpRight className="h-3 w-3" /> +12% vs mês anterior
-              </p>
+              {variacaoMensal !== null && (
+                <p
+                  className={`text-[10px] flex items-center gap-1 mt-1 font-medium ${variacaoMensal < 0 ? 'text-destructive' : 'text-success'}`}
+                >
+                  {variacaoMensal < 0 ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}{' '}
+                  {variacaoMensal > 0 ? '+' : ''}
+                  {variacaoMensal}% vs mês anterior
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -216,7 +272,9 @@ export default function PremiacoesPage() {
                 </div>
               </div>
               <h3 className="text-2xl font-bold mt-2">{stats.campanhasAtivas}</h3>
-              <p className="text-[10px] text-muted-foreground mt-1">Impactando 85% do time</p>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {stats.colaboradoresPremiados} colaboradores premiados
+              </p>
             </CardContent>
           </Card>
 
@@ -268,81 +326,101 @@ export default function PremiacoesPage() {
               <Button variant="outline" className="gap-2 rounded-xl" onClick={() => handleExport('pdf')}>
                 <Download className="h-4 w-4" /> Exportar
               </Button>
-              <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20" onClick={() => setIsWizardOpen(true)}>
-                <Plus className="h-4 w-4" /> Nova Campanha
-              </Button>
+              {podeGerirCampanhas && (
+                <Button className="gap-2 rounded-xl shadow-lg shadow-primary/20" onClick={() => setIsWizardOpen(true)}>
+                  <Plus className="h-4 w-4" /> Nova Campanha
+                </Button>
+              )}
             </div>
           </div>
 
           <TabsContent value="campanhas" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
-              {campanhas.map((c) => (
-                <Card
-                  key={c.id}
-                  className="border-border/30 hover:border-primary/20 transition-all group overflow-hidden rounded-2xl"
-                >
-                  <div
-                    className={`h-1.5 w-full bg-gradient-to-r ${c.status === 'ativo' ? 'from-success to-emerald-400' : 'from-muted to-muted-foreground/30'}`}
-                  />
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-display font-bold text-lg group-hover:text-primary transition-colors">
-                          {c.nome}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-1">{c.descricao}</p>
+              {campanhas.map((c) => {
+                const pagsCampanha = pagamentos.filter((p) => p.campanha_id === c.id);
+                const gasto = pagsCampanha.reduce((acc, p) => acc + (Number(p.valor_aprovado) || 0), 0);
+                const pctOrcamento = c.orcamento_estimado
+                  ? Math.min(100, Math.round((gasto / c.orcamento_estimado) * 100))
+                  : 0;
+                const participantes = new Set(pagsCampanha.map((p) => p.colaborador_id)).size;
+                return (
+                  <Card
+                    key={c.id}
+                    className="border-border/30 hover:border-primary/20 transition-all group overflow-hidden rounded-2xl"
+                  >
+                    <div
+                      className={`h-1.5 w-full bg-gradient-to-r ${c.status === 'ativo' ? 'from-success to-emerald-400' : 'from-muted to-muted-foreground/30'}`}
+                    />
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="font-display font-bold text-lg group-hover:text-primary transition-colors">
+                            {c.nome}
+                          </h3>
+                          <p className="text-xs text-muted-foreground mt-1">{c.descricao}</p>
+                        </div>
+                        <Badge variant={c.status === 'ativo' ? 'default' : 'secondary'} className="rounded-full px-3">
+                          {c.status.toUpperCase()}
+                        </Badge>
                       </div>
-                      <Badge variant={c.status === 'ativo' ? 'default' : 'secondary'} className="rounded-full px-3">
-                        {c.status.toUpperCase()}
-                      </Badge>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-4 my-6">
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
-                          <Calendar className="h-3 w-3" /> Período
-                        </p>
-                        <p className="text-xs font-semibold">
-                          {formatDate(c.data_inicio)} - {formatDate(c.data_fim)}
-                        </p>
-                      </div>
-                      <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
-                          <DollarSign className="h-3 w-3" /> Orçamento
-                        </p>
-                        <p className="text-xs font-semibold">{formatCurrency(c.orcamento_estimado || 0)}</p>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between text-[10px] font-bold">
-                        <span className="text-muted-foreground">Progresso do Orçamento</span>
-                        <span>45%</span>
-                      </div>
-                      <Progress value={45} className="h-1.5" />
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-border/10 flex justify-between items-center">
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className="h-7 w-7 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold"
-                          >
-                            U{i}
-                          </div>
-                        ))}
-                        <div className="h-7 w-7 rounded-full border-2 border-background bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                          +12
+                      <div className="grid grid-cols-2 gap-4 my-6">
+                        <div className="space-y-1">
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
+                            <Calendar className="h-3 w-3" /> Período
+                          </p>
+                          <p className="text-xs font-semibold">
+                            {formatDate(c.data_inicio)} - {formatDate(c.data_fim)}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
+                            <DollarSign className="h-3 w-3" /> Orçamento
+                          </p>
+                          <p className="text-xs font-semibold">{formatCurrency(c.orcamento_estimado || 0)}</p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-xs font-bold text-primary hover:bg-primary/5">
-                        Gerenciar Regras <ArrowUpRight className="ml-1 h-3 w-3" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-[10px] font-bold">
+                          <span className="text-muted-foreground">Progresso do Orçamento</span>
+                          <span>{pctOrcamento}%</span>
+                        </div>
+                        <Progress value={pctOrcamento} className="h-1.5" />
+                      </div>
+
+                      <div className="mt-6 pt-4 border-t border-border/10 flex justify-between items-center">
+                        <p className="text-xs font-semibold text-muted-foreground">
+                          {participantes} {participantes === 1 ? 'participante' : 'participantes'}
+                        </p>
+                        {c.status === 'rascunho' && podeGerirCampanhas && (
+                          <div className="flex gap-2">
+                            {!loadPagamentos && pagsCampanha.length === 0 && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="rounded-xl text-destructive"
+                                disabled={lancarRascunho.isPending || excluirRascunho.isPending}
+                                onClick={() => setRascunhoExcluir({ id: c.id, nome: c.nome })}
+                              >
+                                Excluir rascunho
+                              </Button>
+                            )}
+                            <Button
+                              size="sm"
+                              className="rounded-xl"
+                              disabled={lancarRascunho.isPending || excluirRascunho.isPending}
+                              onClick={() => lancarRascunho.mutate(c.id)}
+                            >
+                              Lançar
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
 
               {campanhas.length === 0 && (
                 <Card className="col-span-full border-dashed border-2 py-12 flex flex-col items-center justify-center text-center">
@@ -353,9 +431,11 @@ export default function PremiacoesPage() {
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto">
                     Comece criando sua primeira campanha de incentivo para impulsionar a performance do time.
                   </p>
-                  <Button variant="outline" className="mt-6 rounded-xl">
-                    Criar Campanha agora
-                  </Button>
+                  {podeGerirCampanhas && (
+                    <Button variant="outline" className="mt-6 rounded-xl" onClick={() => setIsWizardOpen(true)}>
+                      Criar Campanha agora
+                    </Button>
+                  )}
                 </Card>
               )}
             </div>
@@ -492,6 +572,7 @@ export default function PremiacoesPage() {
                               variant="ghost"
                               size="icon"
                               aria-label="Histórico"
+                              onClick={() => setActiveTab('auditoria')}
                               className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <History className="h-3 w-3" />
@@ -566,7 +647,33 @@ export default function PremiacoesPage() {
           </TabsContent>
         </Tabs>
 
-        <CampaignWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} empresaId={empresaAtual?.id} />
+        {podeGerirCampanhas && (
+          <CampaignWizard isOpen={isWizardOpen} onClose={() => setIsWizardOpen(false)} empresaId={empresaAtual?.id} />
+        )}
+
+        <AlertDialog open={rascunhoExcluir !== null} onOpenChange={(o) => !o && setRascunhoExcluir(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir rascunho?</AlertDialogTitle>
+              <AlertDialogDescription>
+                O rascunho "{rascunhoExcluir?.nome}" e as regras dele serão excluídos permanentemente. Esta ação não
+                pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={excluirRascunho.isPending}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={excluirRascunho.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (rascunhoExcluir) excluirRascunho.mutate(rascunhoExcluir.id);
+                }}
+              >
+                {excluirRascunho.isPending ? 'Excluindo...' : 'Excluir'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </PageLayout>
     </>
   );
