@@ -210,14 +210,40 @@ export default function ObrigacoesFiscaisPage() {
     setGerandoServidor(true);
     try {
       const [mes, ano] = competencia.split('/');
-      await edgeFunctionsService.gerarGuias({
+      // gerarGuias devolve o RetryResult de retryWithIdempotency: o corpo da edge vem em `.data`.
+      const { data: r } = (await edgeFunctionsService.gerarGuias({
         empresaId: empresaAtual.id,
         competencia: `${ano}-${mes}`,
         tipo: 'todos',
-      });
+      })) as {
+        data?: {
+          guias?: unknown[];
+          duplicatas_bloqueadas?: string[];
+          nao_persistidas?: { tipo: string }[];
+        } | null;
+      };
       qc.invalidateQueries({ queryKey: ['guias-fgts'] });
       qc.invalidateQueries({ queryKey: ['guias-inss'] });
-      toast.success('Guias geradas automaticamente via servidor!');
+      const geradas = r?.guias?.length ?? 0;
+      const duplicadas = r?.duplicatas_bloqueadas ?? [];
+      if (geradas > 0) {
+        toast.success(
+          `${geradas} guia(s) gerada(s)` + (duplicadas.length ? `. Já existiam: ${duplicadas.join(', ')}` : '')
+        );
+      } else {
+        toast.info(
+          duplicadas.length
+            ? `Nenhuma guia nova; já existentes nesta competência: ${duplicadas.join(', ')}`
+            : 'Nenhuma guia nova gerada.'
+        );
+      }
+      // A edge só calcula (não grava) tipos sem tabela no banco, hoje o DARF.
+      const naoSalvas = r?.nao_persistidas ?? [];
+      if (naoSalvas.length) {
+        toast.warning(
+          `${naoSalvas.map((g) => g.tipo).join(', ')} calculado, mas não salvo: sem tabela de DARF no banco.`
+        );
+      }
     } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar guias.'));
     } finally {

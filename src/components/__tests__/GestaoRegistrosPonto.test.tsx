@@ -15,6 +15,7 @@ vi.mock('sonner', () => ({
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(),
+  useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
 }));
 
 vi.mock('@/hooks', () => ({
@@ -47,7 +48,7 @@ vi.mock('@/utils/dateLocal', () => ({
   todayLocalISO: () => '2026-07-24',
 }));
 
-vi.mock('./PontoInconsistencyPanel', () => ({
+vi.mock('../ponto/PontoInconsistencyPanel', () => ({
   PontoInconsistencyPanel: () => <div data-testid="inconsistency-panel" />,
 }));
 
@@ -135,6 +136,12 @@ describe('GestaoRegistrosPonto', () => {
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('Colaborador')).toBeInTheDocument();
     expect(screen.getByText('Trabalhadas')).toBeInTheDocument();
+  });
+
+  it('renders the (mocked) inconsistency panel when data present', () => {
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
+    render(<GestaoRegistrosPonto />);
+    expect(screen.getByTestId('inconsistency-panel')).toBeInTheDocument();
   });
 
   it('shows empty state when no registros', () => {
