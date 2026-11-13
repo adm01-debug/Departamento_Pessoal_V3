@@ -42,8 +42,12 @@ vi.mock('@/components/ui/select', () => ({
   SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => <span>{placeholder}</span>,
 }));
 
+const useQueryMock = vi.fn((): { data: { salario_base: number } | null; isSuccess: boolean; isError?: boolean } => ({
+  data: { salario_base: 5000 },
+  isSuccess: true,
+}));
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: null })),
+  useQuery: () => useQueryMock(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -135,6 +139,54 @@ describe('NewLoanDialog', () => {
     expect(onSave).toHaveBeenCalledWith(
       expect.objectContaining({ colaborador_id: 'c1', valor_total: 1000, numero_parcelas: 10, valor_parcela: 100 })
     );
+  });
+
+  it('bloqueia quando o colaborador não tem salário base (margem incalculável)', () => {
+    useQueryMock.mockReturnValueOnce({ data: null, isSuccess: true }).mockReturnValue({ data: null, isSuccess: true });
+    const { container } = render(<NewLoanDialog colaboradores={COLABORADORES} onSave={vi.fn()} />);
+    const [valorTotal, parcelas] = Array.from(container.querySelectorAll('input[type="number"]'));
+    fireEvent.click(screen.getByText('pick-c1'));
+    fireEvent.change(valorTotal, { target: { value: '1000' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
+    expect(screen.getByText('Confirmar Registro')).toBeDisabled();
+    expect(screen.getByText(/sem salário base cadastrado/)).toBeInTheDocument();
+    useQueryMock.mockReturnValue({ data: { salario_base: 5000 }, isSuccess: true });
+  });
+
+  it('explica o bloqueio quando a consulta do salário falha', () => {
+    useQueryMock.mockReturnValue({ data: null, isSuccess: false, isError: true });
+    const { container } = render(<NewLoanDialog colaboradores={COLABORADORES} onSave={vi.fn()} />);
+    const [valorTotal, parcelas] = Array.from(container.querySelectorAll('input[type="number"]'));
+    fireEvent.click(screen.getByText('pick-c1'));
+    fireEvent.change(valorTotal, { target: { value: '1000' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
+    expect(screen.getByText('Confirmar Registro')).toBeDisabled();
+    expect(screen.getByText(/Não foi possível carregar o salário do colaborador/)).toBeInTheDocument();
+    useQueryMock.mockReturnValue({ data: { salario_base: 5000 }, isSuccess: true });
+  });
+
+  it('soma as parcelas de empréstimos ativos do colaborador na margem de 30%', () => {
+    const onSave = vi.fn();
+    const emprestimos = [
+      { colaborador_id: 'c1', valor_parcela: 1000, status: 'ativo' },
+      { colaborador_id: 'c1', valor_parcela: 900, status: 'quitado' },
+      { colaborador_id: 'c2', valor_parcela: 1400, status: 'ativo' },
+    ];
+    const { container } = render(
+      <NewLoanDialog colaboradores={COLABORADORES} emprestimos={emprestimos} onSave={onSave} />
+    );
+    const [valorTotal, parcelas] = Array.from(container.querySelectorAll('input[type="number"]'));
+    const confirmar = screen.getByText('Confirmar Registro');
+    fireEvent.click(screen.getByText('pick-c1'));
+
+    // margem = 1500; ativo de c1 = 1000; nova parcela 600 → 1600 > 1500
+    fireEvent.change(valorTotal, { target: { value: '6000' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
+    expect(confirmar).toBeDisabled();
+
+    // nova parcela 500 → 1500 ≤ 1500
+    fireEvent.change(valorTotal, { target: { value: '5000' } });
+    expect(confirmar).not.toBeDisabled();
   });
 
   it('renders Cancelar and Confirmar Registro buttons', () => {

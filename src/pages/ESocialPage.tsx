@@ -46,7 +46,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ESocialAIInsights } from '@/components/esocial/ESocialAIInsights';
 import { ESocialConciliacao } from '@/components/esocial/ESocialConciliacao';
 import { ESocialTimeline } from '@/components/esocial/ESocialTimeline';
 import { ESocialAuditDialog } from '@/components/esocial/ESocialAuditDialog';
@@ -234,7 +233,7 @@ export default function ESocialPage() {
               onClick={() => setAuditOpen(true)}
             >
               <ShieldAlert className="h-4 w-4" />
-              Auditoria IA
+              Checagem de consistência
             </Button>
             <Button
               size="sm"
@@ -743,7 +742,6 @@ export default function ESocialPage() {
 
           <div className="lg:col-span-1 space-y-6">
             <ESocialComplianceScore stats={stats} />
-            <ESocialAIInsights />
 
             <Card className="border border-border/30 rounded-2xl overflow-hidden bg-gradient-to-br from-background to-muted/20">
               <CardHeader className="pb-2">

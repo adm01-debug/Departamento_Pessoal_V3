@@ -16,8 +16,6 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [method, setMethod] = useState<'cnab' | 'pix' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  // Protocolo gerado uma única vez na montagem (evita Date.now() instável durante o render).
-  const [protocolo] = useState(() => `OP-${Date.now().toString().slice(-8)}`);
   const { empresaAtual } = useEmpresas();
 
   const handleProcess = async () => {
@@ -25,9 +23,6 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
     setIsProcessing(true);
 
     try {
-      // Simulate real bank communication (Open Banking API pattern)
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
       let content = '';
       if (method === 'pix') {
         content = await cnabService.generatePIXBatch(empresaAtual.id, folhaId);
@@ -52,10 +47,12 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
 
       setCurrentStep(3);
       toast.success(
-        method === 'pix' ? 'Lote PIX liquidado com sucesso!' : 'Arquivo de remessa gerado e enviado ao banco.'
+        method === 'pix'
+          ? 'Arquivo de lote PIX gerado — envie-o pelo internet banking para efetuar os pagamentos.'
+          : 'Arquivo de remessa CNAB gerado — envie-o pelo internet banking para efetuar os pagamentos.'
       );
     } catch (err) {
-      toast.error(safeErrorMessage(err, 'Falha no processamento bancário.'));
+      toast.error(safeErrorMessage(err, 'Falha ao gerar o arquivo de pagamento.'));
     } finally {
       setIsProcessing(false);
     }
@@ -86,8 +83,8 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
               <Landmark className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-bold">Liquidação de Folha</h2>
-              <p className="text-xs opacity-80 uppercase tracking-widest font-bold">Ambiente de Operações Bancárias</p>
+              <h2 className="text-xl font-display font-bold">Arquivo de Pagamento</h2>
+              <p className="text-xs opacity-80 uppercase tracking-widest font-bold">Lote PIX ou Remessa CNAB</p>
             </div>
           </div>
         </div>
@@ -179,27 +176,24 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                         <Globe className="h-8 w-8 text-primary/40 animate-pulse" />
                       </div>
                     </div>
-                    <h3 className="text-lg font-display font-bold">Comunicando com o Banco...</h3>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Autenticando convênio e validando chaves de segurança
-                    </p>
+                    <h3 className="text-lg font-display font-bold">Gerando arquivo...</h3>
                   </>
                 ) : (
                   <>
                     <div className="p-5 rounded-full bg-primary/10 mb-4">
                       <ShieldCheck className="h-10 w-10 text-primary" />
                     </div>
-                    <h3 className="text-lg font-display font-bold">Confirmar Pagamento?</h3>
+                    <h3 className="text-lg font-display font-bold">Gerar arquivo de pagamento?</h3>
                     <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-8">
-                      Você está prestes a iniciar a liquidação via {method?.toUpperCase()}. Esta ação é irreversível
-                      após o envio ao banco.
+                      Será gerado o arquivo {method?.toUpperCase()} da folha para você enviar ao banco pelo internet
+                      banking. Nenhum pagamento é feito por este sistema.
                     </p>
                     <div className="flex gap-3 w-full">
                       <Button variant="outline" className="rounded-xl flex-1" onClick={() => setCurrentStep(1)}>
                         Voltar
                       </Button>
                       <Button className="rounded-xl flex-1 bg-success hover:bg-success/90" onClick={handleProcess}>
-                        Confirmar Envio
+                        Gerar Arquivo
                       </Button>
                     </div>
                   </>
@@ -217,23 +211,12 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                 <div className="p-5 rounded-full bg-success/10 text-success mb-4 border-2 border-success/20">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h3 className="text-xl font-display font-bold">Operação Concluída!</h3>
+                <h3 className="text-xl font-display font-bold">Arquivo gerado</h3>
                 <p className="text-sm text-muted-foreground mt-2 mb-8">
                   {method === 'pix'
-                    ? 'Os salários foram liquidados instantaneamente.'
-                    : 'O arquivo de remessa foi gerado e está pronto para o processamento bancário.'}
+                    ? 'O arquivo do lote PIX foi baixado. Os pagamentos só ocorrem após você enviá-lo ao banco pelo internet banking.'
+                    : 'O arquivo de remessa CNAB foi baixado. Os pagamentos só ocorrem após você enviá-lo ao banco pelo internet banking.'}
                 </p>
-
-                <div className="p-4 bg-muted/20 rounded-2xl w-full border border-border/30 space-y-2 mb-6">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Protocolo:</span>
-                    <span className="font-mono font-bold">{protocolo}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Autenticação Digital:</span>
-                    <span className="font-mono text-[9px] truncate ml-4">8f7e2a...3c1b9d</span>
-                  </div>
-                </div>
 
                 <Button className="w-full rounded-xl" onClick={() => setIsOpen(false)}>
                   Finalizar

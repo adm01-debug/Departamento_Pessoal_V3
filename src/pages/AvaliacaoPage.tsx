@@ -1,18 +1,45 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { avaliacaoService } from '@/services/avaliacaoService';
+import { colaboradorService } from '@/services/colaboradorService';
 import { gerarPDIPDF } from '@/utils/evaluationPDF';
 import { useEmpresas } from '@/hooks';
-import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar, FileDown } from 'lucide-react';
+import {
+  Target,
+  Users,
+  TrendingUp,
+  Star,
+  LayoutGrid,
+  History,
+  BarChart2,
+  Calendar,
+  FileDown,
+  Plus,
+  Trash2,
+} from 'lucide-react';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
@@ -27,6 +54,25 @@ const statusColors: Record<string, 'default' | 'secondary' | 'outline'> = {
   em_andamento: 'default',
   concluido: 'outline',
 };
+
+type TipoRegistro = 'ciclo' | 'meta' | 'feedback' | 'pdi';
+
+const titulosNovo: Record<TipoRegistro, string> = {
+  ciclo: 'Novo ciclo de avaliação',
+  meta: 'Nova meta',
+  feedback: 'Novo feedback',
+  pdi: 'Novo PDI',
+};
+
+const queryKeys: Record<TipoRegistro, string> = {
+  ciclo: 'ciclos_avaliacao',
+  meta: 'metas_okrs',
+  feedback: 'feedbacks_360',
+  pdi: 'pdis',
+};
+
+const texto = (v: string | undefined) => (v && v.trim() ? v.trim() : null);
+const numero = (v: string | undefined) => (v && v.trim() ? Number(v) : null);
 
 export default function AvaliacaoPage() {
   const { empresaAtual } = useEmpresas();
@@ -58,6 +104,150 @@ export default function AvaliacaoPage() {
     queryFn: () => avaliacaoService.listarCompetencias(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
+  const { data: colaboradores = [] } = useQuery({
+    queryKey: ['colaboradores', empresaAtual?.id],
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
+    enabled: !!empresaAtual?.id,
+  });
+
+  // === Mutations ===
+  const queryClient = useQueryClient();
+  const [novo, setNovo] = useState<TipoRegistro | null>(null);
+  const [form, setForm] = useState<Record<string, string>>({});
+  const [excluir, setExcluir] = useState<{
+    tipo: Exclude<TipoRegistro, 'feedback'>;
+    id: string;
+    nome: string;
+  } | null>(null);
+  const campo = (k: string) => form[k] ?? '';
+  const setCampo = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const abrirNovo = (tipo: TipoRegistro) => {
+    setForm({});
+    setNovo(tipo);
+  };
+
+  const criar = useMutation({
+    mutationFn: async (tipo: TipoRegistro) => {
+      const empresa_id = empresaAtual!.id;
+      if (tipo === 'ciclo') {
+        await avaliacaoService.criarCiclo({
+          empresa_id,
+          nome: campo('nome').trim(),
+          descricao: texto(form.descricao),
+          tipo: form.tipo || 'anual',
+          data_inicio: campo('data_inicio'),
+          data_fim: campo('data_fim'),
+        });
+      } else if (tipo === 'meta') {
+        await avaliacaoService.criarMeta({
+          empresa_id,
+          titulo: campo('titulo').trim(),
+          descricao: texto(form.descricao),
+          tipo: form.tipo || 'individual',
+          colaborador_id: texto(form.colaborador_id),
+          ciclo_id: texto(form.ciclo_id),
+          meta_valor: numero(form.meta_valor),
+          valor_atual: numero(form.valor_atual) ?? 0,
+          data_limite: texto(form.data_limite),
+        });
+      } else if (tipo === 'feedback') {
+        await avaliacaoService.criarFeedback({
+          empresa_id,
+          avaliado_id: campo('avaliado_id'),
+          avaliador_id: campo('avaliador_id'),
+          ciclo_id: texto(form.ciclo_id),
+          tipo: form.tipo || 'par',
+          nota_geral: numero(form.nota_geral),
+          comentarios: texto(form.comentarios),
+        });
+      } else {
+        await avaliacaoService.criarPDI({
+          empresa_id,
+          titulo: campo('titulo').trim(),
+          colaborador_id: campo('colaborador_id'),
+          competencia_foco: texto(form.competencia_foco),
+          acao_desenvolvimento: texto(form.acao_desenvolvimento),
+          prazo: texto(form.prazo),
+        });
+      }
+      return tipo;
+    },
+    onSuccess: (tipo) => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys[tipo], empresaAtual?.id] });
+      toast.success('Registro criado com sucesso');
+      setNovo(null);
+    },
+    onError: (e: Error) => toast.error(`Erro ao salvar: ${e.message}`),
+  });
+
+  const remover = useMutation({
+    mutationFn: async (alvo: NonNullable<typeof excluir>) => {
+      const empresaId = empresaAtual!.id;
+      if (alvo.tipo === 'ciclo') await avaliacaoService.excluirCiclo(alvo.id, empresaId);
+      else if (alvo.tipo === 'meta') await avaliacaoService.excluirMeta(alvo.id, empresaId);
+      else await avaliacaoService.excluirPDI(alvo.id, empresaId);
+      return alvo.tipo;
+    },
+    onSuccess: (tipo) => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys[tipo], empresaAtual?.id] });
+      toast.success('Registro excluído');
+      setExcluir(null);
+    },
+    onError: (e: Error) => toast.error(`Erro ao excluir: ${e.message}`),
+  });
+
+  const formValido = (() => {
+    if (novo === 'ciclo')
+      return !!campo('nome').trim() && !!form.data_inicio && !!form.data_fim && form.data_fim >= form.data_inicio;
+    if (novo === 'meta') return !!campo('titulo').trim();
+    if (novo === 'feedback') return !!form.avaliado_id && !!form.avaliador_id;
+    if (novo === 'pdi') return !!campo('titulo').trim() && !!form.colaborador_id;
+    return false;
+  })();
+
+  const selectColaborador = (k: string, label: string) => (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <Select value={campo(k)} onValueChange={(v) => setCampo(k, v)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Selecione o colaborador" />
+        </SelectTrigger>
+        <SelectContent>
+          {colaboradores.map((c) => (
+            <SelectItem key={c.id} value={c.id}>
+              {c.nome_completo}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  const selectCiclo = () => (
+    <div className="space-y-2">
+      <Label>Ciclo (opcional)</Label>
+      <Select value={campo('ciclo_id')} onValueChange={(v) => setCampo('ciclo_id', v)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Sem ciclo" />
+        </SelectTrigger>
+        <SelectContent>
+          {ciclos.map((c) => (
+            <SelectItem key={c.id} value={c.id}>
+              {c.nome}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+
+  const botaoNovo = (tipo: TipoRegistro, label: string) => (
+    <div className="flex justify-end">
+      <Button className="rounded-xl gap-1.5" onClick={() => abrirNovo(tipo)} disabled={!empresaAtual?.id}>
+        <Plus className="h-4 w-4" /> {label}
+      </Button>
+    </div>
+  );
 
   return (
     <>
@@ -103,6 +293,8 @@ export default function AvaliacaoPage() {
               metas={metas}
             />
 
+            {botaoNovo('ciclo', 'Novo ciclo')}
+
             <div className="rounded-2xl border border-border/30 overflow-hidden shadow-elevated bg-card">
               <Table>
                 <TableHeader>
@@ -111,12 +303,13 @@ export default function AvaliacaoPage() {
                     <TableHead className="font-display font-semibold">Tipo</TableHead>
                     <TableHead className="font-display font-semibold">Período</TableHead>
                     <TableHead className="font-display font-semibold">Status</TableHead>
+                    <TableHead className="w-12" />
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {ciclos.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
                         Nenhum ciclo cadastrado
                       </TableCell>
                     </TableRow>
@@ -137,6 +330,16 @@ export default function AvaliacaoPage() {
                         <TableCell>
                           <Badge variant={(c.status && statusColors[c.status]) || 'secondary'}>{c.status}</Badge>
                         </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label="Excluir ciclo"
+                            onClick={() => setExcluir({ tipo: 'ciclo', id: c.id, nome: c.nome })}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
@@ -146,6 +349,7 @@ export default function AvaliacaoPage() {
           </TabsContent>
 
           <TabsContent value="metas" className="space-y-6">
+            {botaoNovo('meta', 'Nova meta')}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {metas.map((m) => (
                 <Card
@@ -158,10 +362,21 @@ export default function AvaliacaoPage() {
                       <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter">
                         {m.tipo}
                       </Badge>
-                      <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
-                        <Calendar className="h-3 w-3" />{' '}
-                        {m.data_limite ? new Date(m.data_limite).toLocaleDateString('pt-BR') : '—'}
-                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
+                          <Calendar className="h-3 w-3" />{' '}
+                          {m.data_limite ? new Date(m.data_limite).toLocaleDateString('pt-BR') : '—'}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7"
+                          aria-label="Excluir meta"
+                          onClick={() => setExcluir({ tipo: 'meta', id: m.id, nome: m.titulo })}
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        </Button>
+                      </div>
                     </div>
                     <h3 className="font-display font-bold text-sm mb-2">{m.titulo}</h3>
                     <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{m.descricao}</p>
@@ -192,6 +407,7 @@ export default function AvaliacaoPage() {
           </TabsContent>
 
           <TabsContent value="feedbacks" className="space-y-6">
+            {botaoNovo('feedback', 'Novo feedback')}
             <div className="rounded-2xl border border-border/30 overflow-hidden bg-card">
               <Table>
                 <TableHeader>
@@ -230,6 +446,7 @@ export default function AvaliacaoPage() {
           </TabsContent>
 
           <TabsContent value="pdis" className="space-y-6">
+            {botaoNovo('pdi', 'Novo PDI')}
             <div className="grid gap-4">
               {pdis.map((p) => (
                 <Card key={p.id} className="border-border/30 hover:border-primary/20 transition-all rounded-2xl">
@@ -284,6 +501,14 @@ export default function AvaliacaoPage() {
                       >
                         <FileDown className="h-4 w-4" /> PDF
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Excluir PDI"
+                        onClick={() => setExcluir({ tipo: 'pdi', id: p.id, nome: p.titulo })}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -299,6 +524,256 @@ export default function AvaliacaoPage() {
             <PerformanceAuditTimeline />
           </TabsContent>
         </Tabs>
+
+        <Dialog open={novo !== null} onOpenChange={(o) => !o && setNovo(null)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>{novo ? titulosNovo[novo] : ''}</DialogTitle>
+            </DialogHeader>
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (novo && formValido) criar.mutate(novo);
+              }}
+            >
+              {novo === 'ciclo' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="ciclo-nome">Nome *</Label>
+                    <Input id="ciclo-nome" value={campo('nome')} onChange={(e) => setCampo('nome', e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tipo</Label>
+                    <Select value={campo('tipo') || 'anual'} onValueChange={(v) => setCampo('tipo', v)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="anual">Anual</SelectItem>
+                        <SelectItem value="semestral">Semestral</SelectItem>
+                        <SelectItem value="trimestral">Trimestral</SelectItem>
+                        <SelectItem value="desempenho">Desempenho</SelectItem>
+                        <SelectItem value="360">360°</SelectItem>
+                        <SelectItem value="competencias">Competências</SelectItem>
+                        <SelectItem value="okr">OKR</SelectItem>
+                        <SelectItem value="experiencia">Experiência</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="ciclo-inicio">Início *</Label>
+                      <Input
+                        id="ciclo-inicio"
+                        type="date"
+                        value={campo('data_inicio')}
+                        onChange={(e) => setCampo('data_inicio', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="ciclo-fim">Fim *</Label>
+                      <Input
+                        id="ciclo-fim"
+                        type="date"
+                        value={campo('data_fim')}
+                        onChange={(e) => setCampo('data_fim', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ciclo-descricao">Descrição</Label>
+                    <Textarea
+                      id="ciclo-descricao"
+                      value={campo('descricao')}
+                      onChange={(e) => setCampo('descricao', e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {novo === 'meta' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="meta-titulo">Título *</Label>
+                    <Input
+                      id="meta-titulo"
+                      value={campo('titulo')}
+                      onChange={(e) => setCampo('titulo', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tipo</Label>
+                    <Select value={campo('tipo') || 'individual'} onValueChange={(v) => setCampo('tipo', v)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="individual">Individual</SelectItem>
+                        <SelectItem value="equipe">Equipe</SelectItem>
+                        <SelectItem value="empresa">Empresa</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {selectColaborador('colaborador_id', 'Responsável')}
+                  {selectCiclo()}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="meta-valor">Meta</Label>
+                      <Input
+                        id="meta-valor"
+                        type="number"
+                        value={campo('meta_valor')}
+                        onChange={(e) => setCampo('meta_valor', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="meta-atual">Valor atual</Label>
+                      <Input
+                        id="meta-atual"
+                        type="number"
+                        value={campo('valor_atual')}
+                        onChange={(e) => setCampo('valor_atual', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="meta-limite">Prazo</Label>
+                      <Input
+                        id="meta-limite"
+                        type="date"
+                        value={campo('data_limite')}
+                        onChange={(e) => setCampo('data_limite', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="meta-descricao">Descrição</Label>
+                    <Textarea
+                      id="meta-descricao"
+                      value={campo('descricao')}
+                      onChange={(e) => setCampo('descricao', e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {novo === 'feedback' && (
+                <>
+                  {selectColaborador('avaliado_id', 'Avaliado *')}
+                  {selectColaborador('avaliador_id', 'Avaliador *')}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Tipo</Label>
+                      <Select value={campo('tipo') || 'par'} onValueChange={(v) => setCampo('tipo', v)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="par">Par</SelectItem>
+                          <SelectItem value="gestor">Gestor</SelectItem>
+                          <SelectItem value="subordinado">Subordinado</SelectItem>
+                          <SelectItem value="autoavaliacao">Autoavaliação</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="feedback-nota">Nota (1 a 5)</Label>
+                      <Input
+                        id="feedback-nota"
+                        type="number"
+                        min={1}
+                        max={5}
+                        step={0.5}
+                        value={campo('nota_geral')}
+                        onChange={(e) => setCampo('nota_geral', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  {selectCiclo()}
+                  <div className="space-y-2">
+                    <Label htmlFor="feedback-comentarios">Comentários</Label>
+                    <Textarea
+                      id="feedback-comentarios"
+                      value={campo('comentarios')}
+                      onChange={(e) => setCampo('comentarios', e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {novo === 'pdi' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="pdi-titulo">Título *</Label>
+                    <Input
+                      id="pdi-titulo"
+                      value={campo('titulo')}
+                      onChange={(e) => setCampo('titulo', e.target.value)}
+                    />
+                  </div>
+                  {selectColaborador('colaborador_id', 'Colaborador *')}
+                  <div className="space-y-2">
+                    <Label htmlFor="pdi-competencia">Competência foco</Label>
+                    <Input
+                      id="pdi-competencia"
+                      value={campo('competencia_foco')}
+                      onChange={(e) => setCampo('competencia_foco', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pdi-acao">Ação de desenvolvimento</Label>
+                    <Textarea
+                      id="pdi-acao"
+                      value={campo('acao_desenvolvimento')}
+                      onChange={(e) => setCampo('acao_desenvolvimento', e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pdi-prazo">Prazo</Label>
+                    <Input
+                      id="pdi-prazo"
+                      type="date"
+                      value={campo('prazo')}
+                      onChange={(e) => setCampo('prazo', e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setNovo(null)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={!formValido || criar.isPending}>
+                  {criar.isPending ? 'Salvando...' : 'Salvar'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog open={excluir !== null} onOpenChange={(o) => !o && setExcluir(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir registro?</AlertDialogTitle>
+              <AlertDialogDescription>
+                "{excluir?.nome}" será excluído permanentemente. Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={remover.isPending}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={remover.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (excluir) remover.mutate(excluir);
+                }}
+              >
+                {remover.isPending ? 'Excluindo...' : 'Excluir'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </PageLayout>
     </>
   );

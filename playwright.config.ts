@@ -52,6 +52,9 @@ export default defineConfig({
       name: 'setup-mobile',
       testMatch: /auth\.setup\.ts/,
       grep: /autentica usuário de teste \(mobile\)/,
+      // Mesmo usuário e mesmo fator TOTP do 'setup': os dois verify MFA em paralelo
+      // davam deadlock no Auth (HTTP 500 em /auth/v1/factors/:id/verify).
+      dependencies: ['setup'],
     },
     // 1c) Setup de usuário não-admin (para specs RBAC)
     {

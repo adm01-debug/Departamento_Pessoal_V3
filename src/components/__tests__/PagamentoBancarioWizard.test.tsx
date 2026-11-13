@@ -72,14 +72,14 @@ describe('PagamentoBancarioWizard', () => {
     expect(button).toBeDisabled();
   });
 
-  it('renders Liquidação de Folha heading', () => {
+  it('renders Arquivo de Pagamento heading', () => {
     render(<PagamentoBancarioWizard folhaId="f-001" />);
-    expect(screen.getByText('Liquidação de Folha')).toBeInTheDocument();
+    expect(screen.getByText('Arquivo de Pagamento')).toBeInTheDocument();
   });
 
-  it('renders Ambiente de Operações Bancárias subtitle', () => {
+  it('renders Lote PIX ou Remessa CNAB subtitle', () => {
     render(<PagamentoBancarioWizard folhaId="f-001" />);
-    expect(screen.getByText(/Ambiente de Operações Bancárias/i)).toBeInTheDocument();
+    expect(screen.getByText('Lote PIX ou Remessa CNAB')).toBeInTheDocument();
   });
 
   it('renders Lote PIX option', () => {

@@ -178,6 +178,76 @@ describe('edgeFunctionsService error handling', () => {
     expect(isDefinitiveIdempotencyFailure(error)).toBe(true);
   });
 
+  it('lê mensagem e código do corpo aninhado de createErrorResponse', async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(
+        JSON.stringify({
+          error: { code: 'AMOUNT_ABOVE_LIMIT', message: 'Valor excede o limite de 40% do salário base' },
+        }),
+        { status: 422 }
+      ),
+    });
+    const error = await edgeFunctionsService
+      .solicitarAdiantamentoSalarial({
+        empresa_id: 'emp-1',
+        colaborador_id: 'col-1',
+        valor_centavos: 999999,
+        competencia: '2026-11',
+      })
+      .catch((caught) => caught);
+    expect(error).toBeInstanceOf(EdgeFunctionInvokeError);
+    expect(error).toMatchObject({
+      status: 422,
+      code: 'AMOUNT_ABOVE_LIMIT',
+      message: 'Valor excede o limite de 40% do salário base',
+    });
+  });
+
+  it('rejeições 4xx de negócio não abrem o circuit breaker compartilhado', async () => {
+    const { CircuitBreaker } = await vi.importActual<typeof import('@/lib/circuitBreaker')>('@/lib/circuitBreaker');
+    const realBreaker = new CircuitBreaker({ failureThreshold: 3, resetTimeout: 15000 });
+    mockGenericExecute.mockImplementation((fn: () => Promise<unknown>) => realBreaker.execute(fn));
+    mockInvoke.mockImplementation(async () => ({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(
+        JSON.stringify({
+          error: { code: 'AMOUNT_ABOVE_LIMIT', message: 'Valor excede o limite de 40% do salário base' },
+        }),
+        { status: 422 }
+      ),
+    }));
+    const params = { empresa_id: 'emp-1', colaborador_id: 'col-1', valor_centavos: 999999, competencia: '2026-11' };
+    for (let i = 0; i < 4; i++) {
+      await expect(edgeFunctionsService.solicitarAdiantamentoSalarial(params)).rejects.toMatchObject({
+        status: 422,
+        message: 'Valor excede o limite de 40% do salário base',
+      });
+    }
+    expect(mockInvoke).toHaveBeenCalledTimes(4);
+    expect(realBreaker.getState()).toBe('CLOSED');
+
+    mockInvoke.mockResolvedValue({ data: { success: true }, error: null });
+    await expect(edgeFunctionsService.dispararAlertasDP('emp-1')).resolves.toEqual({ success: true });
+  });
+
+  it('erros 5xx continuam abrindo o circuit breaker', async () => {
+    const { CircuitBreaker } = await vi.importActual<typeof import('@/lib/circuitBreaker')>('@/lib/circuitBreaker');
+    const realBreaker = new CircuitBreaker({ failureThreshold: 3, resetTimeout: 15000 });
+    mockGenericExecute.mockImplementation((fn: () => Promise<unknown>) => realBreaker.execute(fn));
+    mockInvoke.mockImplementation(async () => ({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(JSON.stringify({ error: 'boom' }), { status: 500 }),
+    }));
+    for (let i = 0; i < 3; i++) {
+      await expect(edgeFunctionsService.healthcheck()).rejects.toThrow('boom');
+    }
+    expect(realBreaker.getState()).toBe('OPEN');
+  });
+
   it('mantém a chave para estado indeterminado ou falha de transporte', () => {
     expect(
       isDefinitiveIdempotencyFailure(
@@ -200,5 +270,28 @@ describe('edgeFunctionsService error handling', () => {
   it('throws when breaker itself throws (circuit open)', async () => {
     mockGenericExecute.mockRejectedValue(new Error('Circuit Breaker is OPEN. Integration temporarily unavailable.'));
     await expect(edgeFunctionsService.healthcheck()).rejects.toThrow('Circuit Breaker is OPEN');
+  });
+});
+
+// ─── gerarGuias ───────────────────────────────────────────────────────────────
+
+describe('edgeFunctionsService.gerarGuias', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
+  });
+
+  it('envia o contrato da edge: empresa_id + tipo em maiúsculas (todos → TODAS)', async () => {
+    mockInvoke.mockResolvedValue({ data: { success: true, guias: [] }, error: null });
+    await edgeFunctionsService.gerarGuias({ empresaId: 'emp-1', competencia: '2026-10', tipo: 'todos' });
+    expect(mockInvoke).toHaveBeenCalledWith('gerar-guias', {
+      body: { empresa_id: 'emp-1', competencia: '2026-10', tipo: 'TODAS' },
+    });
+  });
+
+  it('mapeia fgts_digital para FGTS_DIGITAL', async () => {
+    mockInvoke.mockResolvedValue({ data: { success: true }, error: null });
+    await edgeFunctionsService.gerarGuias({ empresaId: 'emp-1', competencia: '2026-10', tipo: 'fgts_digital' });
+    expect(mockInvoke.mock.calls[0][1].body.tipo).toBe('FGTS_DIGITAL');
   });
 });

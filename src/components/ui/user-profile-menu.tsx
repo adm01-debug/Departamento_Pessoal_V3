@@ -14,6 +14,10 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
+// Mesmo canal de suporte do botão "Dar Feedback" da sidebar (AppSidebar.tsx).
+const SUPORTE_MAILTO =
+  'mailto:suporte@promobrindes.com.br?subject=' + encodeURIComponent('Ajuda — Departamento Pessoal V3');
+
 interface UserProfileMenuProps {
   user?: { name: string; email: string; avatar?: string };
 }
@@ -119,14 +123,16 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="gap-3 py-2.5 rounded-lg cursor-pointer">
-          <div className="p-1.5 rounded-lg bg-accent/80">
-            <HelpCircle className="h-3.5 w-3.5" />
-          </div>
-          <div>
-            <p className="text-sm font-body font-medium">Ajuda</p>
-            <p className="text-[11px] text-muted-foreground">Suporte e documentacção</p>
-          </div>
+        <DropdownMenuItem asChild className="gap-3 py-2.5 rounded-lg cursor-pointer">
+          <a href={SUPORTE_MAILTO}>
+            <div className="p-1.5 rounded-lg bg-accent/80">
+              <HelpCircle className="h-3.5 w-3.5" />
+            </div>
+            <div>
+              <p className="text-sm font-body font-medium">Ajuda</p>
+              <p className="text-[11px] text-muted-foreground">Falar com o suporte</p>
+            </div>
+          </a>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-border/30" />

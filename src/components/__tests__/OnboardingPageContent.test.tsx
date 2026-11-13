@@ -117,10 +117,10 @@ describe('OnboardingPageContent', () => {
     expect(screen.getByText('Criar conta de e-mail')).toBeInTheDocument();
   });
 
-  it('renders Enviar E-mail de Boas-Vindas button', () => {
+  it('does not render a welcome-email button without a backend to send it', () => {
     vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as never);
     render(<OnboardingPageContent />);
-    expect(screen.getByText(/Enviar E-mail de Boas-Vindas/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Enviar E-mail de Boas-Vindas/i)).not.toBeInTheDocument();
   });
 
   it('shows no-tasks message when tarefas array is empty', () => {

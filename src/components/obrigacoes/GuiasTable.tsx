@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { CheckCircle, Download } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type GuiaTabela = 'guias_fgts' | 'guias_inss';
@@ -96,9 +96,6 @@ export function GuiasTable({ guias, tabela, emptyMessage, onMarcarPaga }: GuiasT
                           Paga
                         </Button>
                       )}
-                      <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7">
-                        <Download className="h-3 w-3" />
-                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>

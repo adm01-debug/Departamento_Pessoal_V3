@@ -13,7 +13,6 @@ import {
   AlertTriangle,
   Download,
   FileText,
-  Smartphone,
   ShieldCheck,
   Activity,
   TrendingUp,
@@ -299,46 +298,6 @@ export function GestaoRegistrosPonto() {
               ) : (
                 <>
                   <PontoInconsistencyPanel registros={registros} />
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    <Card className="bg-muted/30 border-none">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                          <Smartphone className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold">Status Quiosques</p>
-                          <p className="text-sm font-display font-bold">3 Ativos / 1 Offline</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-muted/30 border-none">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-success/10 text-success">
-                          <ShieldCheck className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold">
-                            Conformidade (MTP 671)
-                          </p>
-                          <p className="text-sm font-display font-bold">100% Integridade</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-muted/30 border-none">
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-info/10 text-info">
-                          <Activity className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase text-muted-foreground font-bold">
-                            Tentativas de Sincronização
-                          </p>
-                          <p className="text-sm font-display font-bold">128 hoje (2 falhas)</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
 
                   <div className="overflow-x-auto mt-6">
                     <Table>

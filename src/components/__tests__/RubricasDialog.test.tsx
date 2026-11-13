@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { useMutation } from '@tanstack/react-query';
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn(() => ({ data: [], isLoading: false })),
@@ -23,7 +24,7 @@ vi.mock('@/validators/esocial', () => ({
   sugerirCorrecaoRubrica: vi.fn(() => []),
 }));
 
-vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
+vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn(), info: vi.fn() } }));
 vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 vi.mock('@/lib/utils', () => ({ cn: (...a: string[]) => a.filter(Boolean).join(' ') }));
 
@@ -79,6 +80,8 @@ vi.mock('@/components/ui/select', () => ({
 }));
 
 import { RubricasDialog } from '../folha/RubricasDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { RUBRICAS_PADRAO } from '@/constants/rubricas';
 
 describe('RubricasDialog', () => {
   it('renders Rubricas trigger button', () => {
@@ -119,5 +122,116 @@ describe('RubricasDialog', () => {
   it('renders empty state when no rubricas', () => {
     render(<RubricasDialog />);
     expect(screen.getByText(/Nenhuma rubrica/i)).toBeInTheDocument();
+  });
+
+  it('Importar Padrão dispara a mutation de importação após confirmação', () => {
+    const mutate = vi.fn();
+    vi.mocked(useMutation).mockImplementation(() => ({ mutate, isPending: false }) as never);
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    render(<RubricasDialog />);
+    fireEvent.click(screen.getByText('Importar Padrão'));
+    expect(mutate).toHaveBeenCalledTimes(1);
+    vi.mocked(useMutation).mockImplementation(() => ({ mutate: vi.fn(), isPending: false }) as never);
+  });
+
+  it('importação insere só os códigos padrão ainda não cadastrados, com tipo válido no banco', async () => {
+    vi.mocked(useMutation).mockClear();
+    render(<RubricasDialog />);
+    const opcoes = vi.mocked(useMutation).mock.calls.map((c) => c[0] as { mutationFn: () => Promise<number> });
+    const importar = opcoes[2];
+
+    const insert = vi.fn(() => Promise.resolve({ error: null }));
+    vi.mocked(supabase.from).mockImplementation(
+      () =>
+        ({
+          select: vi.fn(() => Promise.resolve({ data: [{ codigo: '1000' }, { codigo: '5000' }], error: null })),
+          insert,
+        }) as never
+    );
+
+    const inseridas = await importar.mutationFn();
+
+    expect(inseridas).toBe(RUBRICAS_PADRAO.length - 2);
+    const payload = (insert.mock.calls[0] as unknown as [Array<{ codigo: string; tipo: string }>])[0];
+    expect(payload.map((r) => r.codigo)).not.toContain('1000');
+    expect(payload.map((r) => r.codigo)).not.toContain('5000');
+    expect(payload.every((r) => ['provento', 'desconto', 'informativo'].includes(r.tipo))).toBe(true);
+  });
+
+  it('importação não insere nada quando todos os códigos padrão já existem', async () => {
+    vi.mocked(useMutation).mockClear();
+    render(<RubricasDialog />);
+    const importar = vi.mocked(useMutation).mock.calls[2][0] as { mutationFn: () => Promise<number> };
+
+    const insert = vi.fn();
+    vi.mocked(supabase.from).mockImplementation(
+      () =>
+        ({
+          select: vi.fn(() =>
+            Promise.resolve({ data: RUBRICAS_PADRAO.map((r) => ({ codigo: r.codigo })), error: null })
+          ),
+          insert,
+        }) as never
+    );
+
+    expect(await importar.mutationFn()).toBe(0);
+    expect(insert).not.toHaveBeenCalled();
+  });
+
+  describe('Corrigir divergência eSocial', () => {
+    type CorrigirOpts = {
+      mutationFn: (v: { id: string; correcao: Record<string, unknown> }) => Promise<void>;
+      onSuccess: () => void;
+      onError: (e: unknown) => void;
+    };
+    const correcao = {
+      codigo: '1000',
+      descricao: 'Salário Base',
+      tipo: 'provento',
+      incide_inss: true,
+      incide_fgts: true,
+      incide_irrf: true,
+    };
+
+    function obterCorrigir(selectResult: { data: unknown; error: unknown }) {
+      vi.mocked(useMutation).mockClear();
+      render(<RubricasDialog />);
+      const corrigir = vi.mocked(useMutation).mock.calls[3][0] as unknown as CorrigirOpts;
+      const select = vi.fn(() => Promise.resolve(selectResult));
+      const eq = vi.fn(() => ({ select }));
+      const update = vi.fn(() => ({ eq }));
+      vi.mocked(supabase.from).mockImplementation(() => ({ update }) as never);
+      return { corrigir, update, eq, select };
+    }
+
+    it('conclui quando o UPDATE devolve a linha alterada', async () => {
+      const { corrigir, eq, select } = obterCorrigir({ data: [{ id: 'r1' }], error: null });
+      await expect(corrigir.mutationFn({ id: 'r1', correcao })).resolves.toBeUndefined();
+      expect(eq).toHaveBeenCalledWith('id', 'r1');
+      expect(select).toHaveBeenCalledWith('id');
+    });
+
+    it('falha quando o UPDATE retorna erro', async () => {
+      const erro = { message: 'record "new" has no field "updated_at"' };
+      const { corrigir } = obterCorrigir({ data: null, error: erro });
+      await expect(corrigir.mutationFn({ id: 'r1', correcao })).rejects.toBe(erro);
+    });
+
+    it('falha quando nenhuma linha foi alterada (ex.: bloqueado por RLS)', async () => {
+      const { corrigir } = obterCorrigir({ data: [], error: null });
+      await expect(corrigir.mutationFn({ id: 'r1', correcao })).rejects.toThrow(/Nenhuma rubrica foi alterada/);
+    });
+
+    it('mostra sucesso só no onSuccess e erro via safeErrorMessage no onError', async () => {
+      const { toast } = await import('sonner');
+      const { corrigir } = obterCorrigir({ data: [], error: null });
+      vi.mocked(toast.success).mockClear();
+      vi.mocked(toast.error).mockClear();
+      corrigir.onError(new Error('x'));
+      expect(toast.error).toHaveBeenCalledWith('Erro ao corrigir a rubrica.');
+      expect(toast.success).not.toHaveBeenCalled();
+      corrigir.onSuccess();
+      expect(toast.success).toHaveBeenCalledWith('Rubrica saneada com sucesso!');
+    });
   });
 });

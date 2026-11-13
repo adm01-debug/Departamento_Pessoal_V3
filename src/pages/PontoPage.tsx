@@ -1,5 +1,5 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { ImportarAFDTDialog } from '@/components/ponto/ImportarAFDTDialog';
@@ -42,7 +42,6 @@ import { PontoAdjustmentRequests } from '@/components/ponto/PontoAdjustmentReque
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
-import { PontoLeaderboard } from '@/components/ponto/PontoLeaderboard';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
 import { PontoGeoAnalytics } from '@/components/ponto/PontoGeoAnalytics';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
@@ -166,6 +165,32 @@ export default function PontoPage() {
     },
     enabled: !!user?.id,
   });
+
+  // KPIs da aba Gestão calculados dos mesmos registros que alimentam GestaoPontoAnalytics.
+  const kpisGestao = useMemo(() => {
+    const total = registrosSemana.length;
+    if (!total) return null;
+    const toMin = (v: string | null) => {
+      if (!v) return 0;
+      const [h, m] = String(v).split(':').map(Number);
+      return (h || 0) * 60 + (m || 0);
+    };
+    const faltas = registrosSemana.filter((r) => !r.entrada_1 && !r.saida_1).length;
+    const inconsistencias = registrosSemana.filter((r) => r.entrada_1 && !r.saida_1).length;
+    const heMin = registrosSemana.reduce((acc, r) => acc + toMin(r.horas_extras), 0);
+    const comViolacao = registrosSemana.filter((r) => {
+      const jornadaExcedida = toMin(r.horas_trabalhadas) >= 10 * 60;
+      const intervalo =
+        r.saida_intervalo && r.retorno_intervalo ? toMin(r.retorno_intervalo) - toMin(r.saida_intervalo) : 0;
+      return jornadaExcedida || (intervalo > 0 && intervalo < 60);
+    }).length;
+    return {
+      assiduidade: ((total - faltas) / total) * 100,
+      inconsistencias,
+      horasExtras: `${Math.floor(heMin / 60)}h${String(heMin % 60).padStart(2, '0')}`,
+      compliance: ((total - comViolacao) / total) * 100,
+    };
+  }, [registrosSemana]);
 
   const { data: bancoResumo } = useQuery({
     queryKey: ['banco-horas-resumo', user?.id],
@@ -452,12 +477,14 @@ export default function PontoPage() {
               className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-xs flex items-center gap-2"
             >
               Gestão da Equipe
-              <Badge
-                variant="destructive"
-                className="h-4 w-4 p-0 flex items-center justify-center text-[10px] animate-bounce"
-              >
-                3
-              </Badge>
+              {!!kpisGestao?.inconsistencias && (
+                <Badge
+                  variant="destructive"
+                  className="h-4 w-4 p-0 flex items-center justify-center text-[10px] animate-bounce"
+                >
+                  {kpisGestao.inconsistencias}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
 
@@ -473,7 +500,6 @@ export default function PontoPage() {
               />
               <PontoTodayCard registroHoje={registroHoje ?? null} />
               <div className="flex flex-col gap-6">
-                <PontoLeaderboard />
                 <PontoWeekSummary registrosSemana={registrosSemana} />
                 {bancoResumo && (
                   <motion.div
@@ -544,7 +570,7 @@ export default function PontoPage() {
                   </div>
                   <div>
                     <p className="text-[10px] uppercase text-muted-foreground font-bold">Assiduidade</p>
-                    <p className="text-lg font-bold">98.5%</p>
+                    <p className="text-lg font-bold">{kpisGestao ? `${kpisGestao.assiduidade.toFixed(1)}%` : '—'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -555,7 +581,7 @@ export default function PontoPage() {
                   </div>
                   <div>
                     <p className="text-[10px] uppercase text-muted-foreground font-bold">Inconsistências</p>
-                    <p className="text-lg font-bold">12</p>
+                    <p className="text-lg font-bold">{kpisGestao ? kpisGestao.inconsistencias : '—'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -565,8 +591,8 @@ export default function PontoPage() {
                     <BrainCircuit className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Previsão HE</p>
-                    <p className="text-lg font-bold">42h</p>
+                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Horas Extras (7 dias)</p>
+                    <p className="text-lg font-bold">{kpisGestao ? kpisGestao.horasExtras : '—'}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -577,7 +603,7 @@ export default function PontoPage() {
                   </div>
                   <div>
                     <p className="text-[10px] uppercase text-muted-foreground font-bold">Compliance</p>
-                    <p className="text-lg font-bold">100%</p>
+                    <p className="text-lg font-bold">{kpisGestao ? `${kpisGestao.compliance.toFixed(1)}%` : '—'}</p>
                   </div>
                 </CardContent>
               </Card>

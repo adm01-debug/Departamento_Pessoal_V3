@@ -102,11 +102,33 @@ describe('avaliacaoService.excluirCiclo', () => {
     vi.clearAllMocks();
   });
 
+  function setupDeleteSelectChain(data: unknown, error: { message: string } | null = null) {
+    const selectFn = vi.fn().mockResolvedValue({ data, error });
+    const eqFn = vi.fn();
+    eqFn.mockReturnValue({ eq: eqFn, select: selectFn });
+    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
+    mockFrom.mockReturnValue({ delete: deleteFn });
+    return { deleteFn, eqFn, selectFn };
+  }
+
   it('deletes ciclo by id', async () => {
-    const { deleteFn, eqFn } = setupDeleteChain();
+    const { deleteFn, eqFn, selectFn } = setupDeleteSelectChain([{ id: 'ci1' }]);
     await avaliacaoService.excluirCiclo('ci1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'ci1');
+    expect(selectFn).toHaveBeenCalledWith('id');
+  });
+
+  it('lança erro de permissão quando a RLS não exclui nenhuma linha', async () => {
+    setupDeleteSelectChain([]);
+    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toThrow(
+      'Sem permissão para excluir o ciclo.'
+    );
+  });
+
+  it('throws on DB error', async () => {
+    setupDeleteSelectChain(null, { message: 'fail' });
+    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
