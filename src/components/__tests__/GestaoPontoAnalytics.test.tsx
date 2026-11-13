@@ -88,6 +88,17 @@ describe('GestaoPontoAnalytics', () => {
     expect(screen.getAllByText(/MTP 671/i).length).toBeGreaterThanOrEqual(1);
   });
 
+  it('calcula a taxa de assiduidade a partir dos registros', () => {
+    render(<GestaoPontoAnalytics registros={DEFAULT_REGISTROS} />);
+    expect(screen.getByText('100.0%')).toBeInTheDocument();
+    expect(screen.queryByText(/em relação ao mês anterior/)).not.toBeInTheDocument();
+  });
+
+  it('mostra traço na taxa de assiduidade sem registros', () => {
+    render(<GestaoPontoAnalytics registros={[]} />);
+    expect(screen.getByText('—')).toBeInTheDocument();
+  });
+
   it('renders 0h projection when no registros', () => {
     render(<GestaoPontoAnalytics registros={[]} />);
     expect(screen.getByText('0h')).toBeInTheDocument();

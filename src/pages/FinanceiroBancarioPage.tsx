@@ -3,18 +3,7 @@ import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Landmark,
-  FileDown,
-  History,
-  Settings,
-  CheckCircle,
-  Loader2,
-  Download,
-  Plus,
-  Globe,
-  Upload,
-} from 'lucide-react';
+import { Landmark, FileDown, History, Settings, CheckCircle, Loader2, Download, Plus, Upload } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import type { CNABConfig } from '@/services';
@@ -446,7 +435,6 @@ export default function FinanceiroBancarioPage() {
             <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-4">
               <TabsTrigger value="remessas">Remessas CNAB</TabsTrigger>
               <TabsTrigger value="pix">Lotes PIX</TabsTrigger>
-              <TabsTrigger value="cambio">Taxas de Câmbio</TabsTrigger>
             </TabsList>
             <TabsContent value="remessas">
               <Card className="border border-border/30 rounded-2xl overflow-hidden">
@@ -533,63 +521,6 @@ export default function FinanceiroBancarioPage() {
                           </TableRow>
                         ))
                       )}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="cambio">
-              <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-                <CardHeader>
-                  <CardTitle className="text-sm font-display flex items-center gap-2">
-                    <Globe className="h-4 w-4 text-primary" /> Conversão Multi-moeda
-                  </CardTitle>
-                  <CardDescription>Cotações para pagamento de expatriados</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="p-4 rounded-xl glass border-border/20 text-center">
-                      <p className="text-xs text-muted-foreground mb-1 uppercase">USD / BRL</p>
-                      <p className="text-xl font-bold font-display">R$ 5,24</p>
-                      <span className="text-[10px] text-success font-medium">+0.42%</span>
-                    </div>
-                    <div className="p-4 rounded-xl glass border-border/20 text-center">
-                      <p className="text-xs text-muted-foreground mb-1 uppercase">EUR / BRL</p>
-                      <p className="text-xl font-bold font-display">R$ 5,68</p>
-                      <span className="text-[10px] text-destructive font-medium">-0.15%</span>
-                    </div>
-                    <div className="p-4 rounded-xl glass border-border/20 text-center">
-                      <p className="text-xs text-muted-foreground mb-1 uppercase">GBP / BRL</p>
-                      <p className="text-xl font-bold font-display">R$ 6,55</p>
-                      <span className="text-[10px] text-success font-medium">+0.12%</span>
-                    </div>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Par de Moedas</TableHead>
-                        <TableHead>Taxa</TableHead>
-                        <TableHead>Última Atualização</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell className="font-medium">USD → BRL</TableCell>
-                        <TableCell>5.2410</TableCell>
-                        <TableCell>{formatDate(new Date())}</TableCell>
-                        <TableCell>
-                          <StatusBadge status="ativo" variant="success" />
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className="font-medium">EUR → BRL</TableCell>
-                        <TableCell>5.6822</TableCell>
-                        <TableCell>{formatDate(new Date())}</TableCell>
-                        <TableCell>
-                          <StatusBadge status="ativo" variant="success" />
-                        </TableCell>
-                      </TableRow>
                     </TableBody>
                   </Table>
                 </CardContent>

@@ -4,20 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  ShieldCheck,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  User,
-  MessageSquare,
-  Search,
-  AlertTriangle,
-  RefreshCw,
-} from 'lucide-react';
+import { ShieldCheck, CheckCircle2, XCircle, Clock, User, MessageSquare, Search, AlertTriangle } from 'lucide-react';
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
-import { safeErrorMessage } from '@/utils/safeError';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from '@/hooks';
 import {
@@ -153,21 +142,6 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
                               }}
                             >
                               <Search className="h-3 w-3 mr-1" /> Manual
-                            </Button>
-                            <Button
-                              size="sm"
-                              className="flex-1 h-7 text-[10px] bg-primary/10 text-primary hover:bg-primary/20 rounded-lg border border-primary/20"
-                              onClick={async () => {
-                                try {
-                                  await premiacoesService.autoConciliarComFolha(p.id);
-                                  queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
-                                  toast.success('Auto-conciliação concluída com sucesso!');
-                                } catch (e: unknown) {
-                                  toast.error(safeErrorMessage(e, 'Falha na conciliação automática.'));
-                                }
-                              }}
-                            >
-                              <RefreshCw className="h-3 w-3 mr-1" /> Auto
                             </Button>
                           </div>
                         ) : (

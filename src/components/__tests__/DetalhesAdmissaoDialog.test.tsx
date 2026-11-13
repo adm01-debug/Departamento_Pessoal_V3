@@ -1,6 +1,25 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+const { maybeSingleMock, enviarLinkMock, toastMock } = vi.hoisted(() => ({
+  maybeSingleMock: vi.fn(),
+  enviarLinkMock: vi.fn(),
+  toastMock: { success: vi.fn(), error: vi.fn() },
+}));
+
+vi.mock('sonner', () => ({ toast: toastMock }));
+
+vi.mock('@/integrations/supabase/client', () => {
+  const chain: Record<string, unknown> = {};
+  for (const m of ['select', 'eq', 'gt', 'order', 'limit']) chain[m] = () => chain;
+  chain.maybeSingle = maybeSingleMock;
+  return { supabase: { from: () => chain } };
+});
+
+vi.mock('@/services/contratacaoService', () => ({
+  contratacaoService: { enviarLinkCandidato: enviarLinkMock, transmitirESocial: vi.fn() },
+}));
 
 vi.mock('@tanstack/react-query', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@tanstack/react-query')>();
@@ -59,8 +78,20 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
-    <button onClick={onClick}>{children}</button>
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    title,
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    title?: string;
+  }) => (
+    <button onClick={onClick} disabled={disabled} title={title}>
+      {children}
+    </button>
   ),
 }));
 
@@ -138,8 +169,29 @@ describe('DetalhesAdmissaoDialog', () => {
     expect(screen.getByRole('tab', { name: /Histórico/i })).toBeInTheDocument();
   });
 
-  it('renders Ver Portal button', () => {
+  it('copia o link do portal (sem abrir sessão do candidato) e gera token se não houver vigente', async () => {
+    maybeSingleMock.mockResolvedValueOnce({ data: null, error: null });
+    enviarLinkMock.mockResolvedValueOnce({ token: 'tok-novo' });
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
     render(<DetalhesAdmissaoDialog admissao={MOCK_ADMISSAO} open={true} onOpenChange={vi.fn()} />);
-    expect(screen.getByText(/Ver Portal/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Copiar link do Portal/i }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(`${window.location.origin}/contratacao?token=tok-novo`));
+    expect(enviarLinkMock).toHaveBeenCalledWith('adm-1', 'fernanda@test.com');
+    expect(toastMock.success).toHaveBeenCalledWith('Link copiado — envie ao candidato');
+    expect(openSpy).not.toHaveBeenCalled();
+    openSpy.mockRestore();
+  });
+
+  it('desabilita o link do portal em admissão encerrada e não gera token', () => {
+    enviarLinkMock.mockClear();
+    const encerrada = { ...MOCK_ADMISSAO, etapa: 'concluida' } as Tables<'admissoes'>;
+    render(<DetalhesAdmissaoDialog admissao={encerrada} open={true} onOpenChange={vi.fn()} />);
+    const btn = screen.getByRole('button', { name: /Copiar link do Portal/i });
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveAttribute('title', expect.stringMatching(/Admissão encerrada/));
+    fireEvent.click(btn);
+    expect(enviarLinkMock).not.toHaveBeenCalled();
   });
 });

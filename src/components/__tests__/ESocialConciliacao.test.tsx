@@ -1,16 +1,11 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
-}));
-
-vi.mock('sonner', () => ({
-  toast: { success: vi.fn(), error: vi.fn() },
 }));
 
 import { ESocialConciliacao } from '../esocial/ESocialConciliacao';
@@ -21,44 +16,24 @@ describe('ESocialConciliacao', () => {
     expect(screen.getByText('Conciliação de Valores')).toBeInTheDocument();
   });
 
-  it('renders Total Sistema card', () => {
+  it('shows the unavailable state while S-5001/S-5002 returns are not imported', () => {
     render(<ESocialConciliacao />);
-    expect(screen.getByText('Total Sistema')).toBeInTheDocument();
+    expect(screen.getByText('Conciliação indisponível')).toBeInTheDocument();
+    expect(screen.getByText(/retornos S-5001\/S-5002/)).toBeInTheDocument();
   });
 
-  it('renders Total Governo card', () => {
+  it('does not render fabricated totals or rubricas', () => {
     render(<ESocialConciliacao />);
-    expect(screen.getByText(/Total Governo/)).toBeInTheDocument();
+    expect(screen.queryByText('Total Sistema')).not.toBeInTheDocument();
+    expect(screen.queryByText('Divergência Total')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Salário Base/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/INSS Segurado/)).not.toBeInTheDocument();
   });
 
-  it('renders Divergência Total card', () => {
+  it('does not render actions without a backend operation', () => {
     render(<ESocialConciliacao />);
-    expect(screen.getByText('Divergência Total')).toBeInTheDocument();
-  });
-
-  it('renders table headers', () => {
-    render(<ESocialConciliacao />);
-    expect(screen.getByText('Rubrica / Verba')).toBeInTheDocument();
-    expect(screen.getByText('Status')).toBeInTheDocument();
-  });
-
-  it('renders rubrica rows', () => {
-    render(<ESocialConciliacao />);
-    expect(screen.getByText(/Salário Base/)).toBeInTheDocument();
-    expect(screen.getByText(/INSS Segurado/)).toBeInTheDocument();
-  });
-
-  it('renders Recalcular and Relatório PDF buttons', () => {
-    render(<ESocialConciliacao />);
-    expect(screen.getByText('Recalcular')).toBeInTheDocument();
-    expect(screen.getByText('Relatório PDF')).toBeInTheDocument();
-  });
-
-  it('Recalcular button can be clicked', async () => {
-    const user = userEvent.setup();
-    render(<ESocialConciliacao />);
-    const btn = screen.getByText('Recalcular');
-    await user.click(btn);
-    expect(btn.closest('button')).toBeDisabled();
+    expect(screen.queryByText('Recalcular')).not.toBeInTheDocument();
+    expect(screen.queryByText('Relatório PDF')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 });

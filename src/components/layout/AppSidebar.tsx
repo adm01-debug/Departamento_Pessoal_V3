@@ -49,12 +49,13 @@ import {
   MessageSquareText,
   Activity,
   ShieldAlert,
+  HardHat,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useState, memo, useCallback, useEffect } from 'react';
+import { useState, memo, useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -73,6 +74,8 @@ interface MenuItem {
   label: string;
   path: string;
   color: string;
+  /** Rota sob AdminRoute: item some do menu para quem não é admin. */
+  adminOnly?: boolean;
 }
 interface MenuGroup {
   id: string;
@@ -126,7 +129,13 @@ const menuGroups: MenuGroup[] = [
     color: 'text-info',
     items: [
       { icon: Clock, label: 'Ponto', path: '/ponto', color: 'text-info' },
-      { icon: ClipboardList, label: 'Divergências de Ponto', path: '/admin/ponto/divergencias', color: 'text-warning' },
+      {
+        icon: ClipboardList,
+        label: 'Divergências de Ponto',
+        path: '/admin/ponto/divergencias',
+        color: 'text-warning',
+        adminOnly: true,
+      },
       { icon: Timer, label: 'Horas Extras', path: '/horas-extras', color: 'text-warning' },
       { icon: Clock, label: 'Jornadas', path: '/jornadas', color: 'text-primary' },
       { icon: CalendarClock, label: 'Escalas', path: '/escalas', color: 'text-info' },
@@ -135,7 +144,7 @@ const menuGroups: MenuGroup[] = [
       { icon: Umbrella, label: 'Férias', path: '/ferias', color: 'text-warning' },
       { icon: Heart, label: 'Afastamentos', path: '/afastamentos', color: 'text-destructive' },
       { icon: Calendar, label: 'Feriados', path: '/feriados', color: 'text-warning' },
-      { icon: Fingerprint, label: 'Controle Acesso', path: '/controle-acesso', color: 'text-primary' },
+      { icon: Fingerprint, label: 'Controle Acesso', path: '/controle-acesso', color: 'text-primary', adminOnly: true },
     ],
   },
   {
@@ -185,14 +194,21 @@ const menuGroups: MenuGroup[] = [
       { icon: FileText, label: 'Gerador Docs', path: '/gerador-documentos', color: 'text-info' },
       { icon: PenTool, label: 'Assinaturas', path: '/assinaturas', color: 'text-primary' },
       { icon: FileCheck, label: 'eSocial', path: '/esocial', color: 'text-success' },
-      { icon: History, label: 'Auditoria', path: '/auditoria', color: 'text-primary' },
-      { icon: ShieldCheck, label: 'LGPD', path: '/lgpd', color: 'text-primary' },
-      { icon: FileCheck, label: 'Contratos Gerados', path: '/contratos-gerados', color: 'text-success' },
+      { icon: History, label: 'Auditoria', path: '/auditoria', color: 'text-primary', adminOnly: true },
+      { icon: ShieldCheck, label: 'LGPD', path: '/lgpd', color: 'text-primary', adminOnly: true },
+      {
+        icon: FileCheck,
+        label: 'Contratos Gerados',
+        path: '/contratos-gerados',
+        color: 'text-success',
+        adminOnly: true,
+      },
       {
         icon: FileText,
         label: 'Templates de Contrato',
         path: '/configuracoes/contratos-templates',
         color: 'text-info',
+        adminOnly: true,
       },
       { icon: Megaphone, label: 'Canal Ética', path: '/canal-etica', color: 'text-warning' },
     ],
@@ -203,15 +219,46 @@ const menuGroups: MenuGroup[] = [
     icon: ShieldCheck,
     color: 'text-success',
     items: [
-      { icon: LayoutDashboard, label: 'Dashboard SST', path: '/admin/sst/dashboard', color: 'text-success' },
+      {
+        icon: LayoutDashboard,
+        label: 'Dashboard SST',
+        path: '/admin/sst/dashboard',
+        color: 'text-success',
+        adminOnly: true,
+      },
       { icon: Shield, label: 'Visão Geral SST', path: '/sst', color: 'text-success' },
-      { icon: Building2, label: 'Clínicas Parceiras', path: '/admin/sst/clinicas', color: 'text-info' },
-      { icon: CalendarClock, label: 'Agendamento de Exames', path: '/admin/sst/agendamentos', color: 'text-info' },
-      { icon: FileCheck, label: 'ASO Workflow', path: '/admin/sst/aso', color: 'text-primary' },
-      { icon: Fingerprint, label: 'Fichas de EPI', path: '/admin/sst/epis', color: 'text-warning' },
-      { icon: ShieldAlert, label: 'Extintores (NR-23)', path: '/admin/sst/extintores', color: 'text-destructive' },
-      { icon: FileText, label: 'CAT Eletrônica', path: '/admin/sst/cat', color: 'text-warning' },
-      { icon: ClipboardList, label: 'Regimento Interno', path: '/admin/sst/regimento', color: 'text-primary' },
+      {
+        icon: Building2,
+        label: 'Clínicas Parceiras',
+        path: '/admin/sst/clinicas',
+        color: 'text-info',
+        adminOnly: true,
+      },
+      {
+        icon: CalendarClock,
+        label: 'Agendamento de Exames',
+        path: '/admin/sst/agendamentos',
+        color: 'text-info',
+        adminOnly: true,
+      },
+      { icon: FileCheck, label: 'ASO Workflow', path: '/admin/sst/aso', color: 'text-primary', adminOnly: true },
+      { icon: HardHat, label: 'EPIs', path: '/epis', color: 'text-warning' },
+      { icon: Fingerprint, label: 'Fichas de EPI', path: '/admin/sst/epis', color: 'text-warning', adminOnly: true },
+      {
+        icon: ShieldAlert,
+        label: 'Extintores (NR-23)',
+        path: '/admin/sst/extintores',
+        color: 'text-destructive',
+        adminOnly: true,
+      },
+      { icon: FileText, label: 'CAT Eletrônica', path: '/admin/sst/cat', color: 'text-warning', adminOnly: true },
+      {
+        icon: ClipboardList,
+        label: 'Regimento Interno',
+        path: '/admin/sst/regimento',
+        color: 'text-primary',
+        adminOnly: true,
+      },
       { icon: Heart, label: 'Exames', path: '/exames', color: 'text-destructive' },
     ],
   },
@@ -227,20 +274,33 @@ const menuGroups: MenuGroup[] = [
       { icon: Calculator, label: 'Rescisão', path: '/calculadora-rescisao', color: 'text-warning' },
       { icon: Users, label: 'Importação', path: '/importacao', color: 'text-info' },
       { icon: Megaphone, label: 'Comunicação', path: '/comunicacao-interna', color: 'text-warning' },
-      { icon: Shield, label: 'Usuários', path: '/usuarios', color: 'text-warning' },
-      { icon: Settings, label: 'Configurações', path: '/configuracoes', color: 'text-muted-foreground' },
+      { icon: Shield, label: 'Usuários', path: '/usuarios', color: 'text-warning', adminOnly: true },
+      {
+        icon: Settings,
+        label: 'Configurações',
+        path: '/configuracoes',
+        color: 'text-muted-foreground',
+        adminOnly: true,
+      },
       { icon: Gift, label: 'Promo Brindes', path: '/promo-brindes', color: 'text-warning' },
       { icon: GitBranch, label: 'Vínculos Promo', path: '/promo-brindes/vinculos', color: 'text-info' },
       { icon: ClipboardList, label: 'Integrações', path: '/integracoes', color: 'text-info' },
-      { icon: Activity, label: 'Telemetria', path: '/admin/telemetria', color: 'text-primary' },
-      { icon: ShieldCheck, label: 'Idempotência', path: '/admin/idempotencia', color: 'text-success' },
-      { icon: Activity, label: 'Operação (Painel)', path: '/admin/operacao', color: 'text-primary' },
-      { icon: ShieldAlert, label: 'Segurança (Alertas)', path: '/admin/security', color: 'text-destructive' },
+      { icon: Activity, label: 'Telemetria', path: '/admin/telemetria', color: 'text-primary', adminOnly: true },
+      { icon: ShieldCheck, label: 'Idempotência', path: '/admin/idempotencia', color: 'text-success', adminOnly: true },
+      { icon: Activity, label: 'Operação (Painel)', path: '/admin/operacao', color: 'text-primary', adminOnly: true },
+      {
+        icon: ShieldAlert,
+        label: 'Segurança (Alertas)',
+        path: '/admin/security',
+        color: 'text-destructive',
+        adminOnly: true,
+      },
       {
         icon: Activity,
         label: 'Diagnóstico Migração',
         path: '/admin/diagnostico-migracao',
         color: 'text-muted-foreground',
+        adminOnly: true,
       },
     ],
   },
@@ -519,7 +579,16 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
   });
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
+  const visibleGroups = useMemo(
+    () =>
+      isAdmin
+        ? menuGroups
+        : menuGroups
+            .map((group) => ({ ...group, items: group.items.filter((item) => !item.adminOnly) }))
+            .filter((group) => group.items.length > 0),
+    [isAdmin]
+  );
   const { isInstallable, installApp } = usePWA();
 
   const handleLogout = async () => {
@@ -623,7 +692,7 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
 
         {/* Navigation */}
         <nav className="flex-1 p-2 space-y-1 overflow-y-auto scrollbar-thin">
-          {menuGroups.map((group) => (
+          {visibleGroups.map((group) => (
             <SidebarMenuGroup
               key={group.id}
               group={group}

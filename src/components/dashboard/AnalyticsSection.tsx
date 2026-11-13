@@ -23,7 +23,6 @@ import {
   Zap,
   Scale,
 } from 'lucide-react';
-import { MiniSparkline } from './MiniSparkline';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedNumber } from './AnimatedNumber';
 import { BarChartWidget } from './BarChartWidget';
@@ -559,24 +558,6 @@ export function AnalyticsSection({
                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                   Projeção Acumulada
                 </p>
-              </div>
-              <div className="h-10 w-20 opacity-60">
-                <MiniSparkline data={[40, 60, 45, 80, 55, 90]} color="hsl(var(--destructive))" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-[11px]">
-                <span className="text-muted-foreground font-medium">Provisionamento</span>
-                <span className="font-bold text-destructive">Crítico</span>
-              </div>
-              <div className="h-1.5 bg-destructive/10 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: '85%' }}
-                  transition={{ duration: 1.5, delay: 0.5 }}
-                  className="h-full bg-destructive rounded-full"
-                />
               </div>
             </div>
           </CardContent>

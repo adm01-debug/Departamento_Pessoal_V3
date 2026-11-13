@@ -15,12 +15,13 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, FileText, History, CheckCircle2, Clock, ExternalLink, ShieldCheck, Send } from 'lucide-react';
+import { User, FileText, History, CheckCircle2, Clock, Link2, ShieldCheck, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { contratacaoService } from '@/services/contratacaoService';
+import { supabase } from '@/integrations/supabase/client';
 import { contratoTemplateService } from '@/services/contratoTemplateService';
 import { queryClient } from '@/lib/queryClient';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -124,6 +125,42 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
     }
   };
 
+  const [copiandoLink, setCopiandoLink] = useState(false);
+
+  // O RH não abre o portal do candidato: o portal autentica só pelo token e
+  // permite assinar o contrato (admissao_assinar_contrato) como o candidato.
+  // Aqui só se copia o link (token vigente ou novo) para enviar ao candidato;
+  // admissão concluída/cancelada não gera nem expõe token.
+  const handleCopiarLinkPortal = async () => {
+    if (!admissao || admissao.etapa === 'concluida' || admissao.etapa === 'cancelada') return;
+    setCopiandoLink(true);
+    try {
+      const { data: vigente, error } = await supabase
+        .from('admissao_tokens')
+        .select('token')
+        .eq('admissao_id', admissao.id)
+        .gt('data_expiracao', new Date().toISOString())
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      let token = vigente?.token;
+      if (!token) {
+        if (!admissao.email) {
+          toast.error('Candidato sem e-mail cadastrado e sem link de portal vigente.');
+          return;
+        }
+        token = (await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email)).token;
+      }
+      await navigator.clipboard.writeText(`${window.location.origin}/contratacao?token=${encodeURIComponent(token)}`);
+      toast.success('Link copiado — envie ao candidato');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Falha ao copiar o link do portal do candidato.'));
+    } finally {
+      setCopiandoLink(false);
+    }
+  };
+
   if (!admissao) return null;
 
   const terminal = admissao.etapa === 'concluida' || admissao.etapa === 'cancelada';
@@ -195,8 +232,15 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="rounded-xl gap-2 h-9 text-xs">
-                <ExternalLink className="w-4 h-4" /> Ver Portal
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-xl gap-2 h-9 text-xs"
+                onClick={handleCopiarLinkPortal}
+                disabled={copiandoLink || terminal}
+                title={terminal ? 'Admissão encerrada — o portal do candidato não está disponível' : undefined}
+              >
+                <Link2 className="w-4 h-4" /> Copiar link do Portal
               </Button>
             </div>
           </div>

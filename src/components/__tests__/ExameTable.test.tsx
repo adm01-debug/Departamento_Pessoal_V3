@@ -47,45 +47,54 @@ const DATA = [
 
 describe('ExameTable', () => {
   it('renders table headers', () => {
-    render(<ExameTable data={DATA} onExcluir={vi.fn()} />);
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={vi.fn()} />);
     expect(screen.getByText('Colaborador')).toBeInTheDocument();
     expect(screen.getByText('Tipo')).toBeInTheDocument();
     expect(screen.getByText('Resultado')).toBeInTheDocument();
   });
 
   it('renders colaborador names', () => {
-    render(<ExameTable data={DATA} onExcluir={vi.fn()} />);
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={vi.fn()} />);
     expect(screen.getAllByText('Ana Lima').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Bruno Costa').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders tipo badges', () => {
-    render(<ExameTable data={DATA} onExcluir={vi.fn()} />);
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={vi.fn()} />);
     expect(screen.getAllByText('Admissional').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Demissional').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders Apto badge for apto result', () => {
-    render(<ExameTable data={DATA} onExcluir={vi.fn()} />);
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={vi.fn()} />);
     expect(screen.getAllByText('Apto').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders Inapto badge for inapto result', () => {
-    render(<ExameTable data={DATA} onExcluir={vi.fn()} />);
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={vi.fn()} />);
     expect(screen.getAllByText('Inapto').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders dash for null medico', () => {
-    render(<ExameTable data={DATA} onExcluir={vi.fn()} />);
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={vi.fn()} />);
     expect(screen.getAllByText('—').length).toBeGreaterThanOrEqual(1);
   });
 
   it('calls onExcluir when delete button clicked', async () => {
     const user = userEvent.setup();
     const onExcluir = vi.fn();
-    render(<ExameTable data={DATA} onExcluir={onExcluir} />);
-    const deleteButtons = screen.getAllByRole('button');
+    render(<ExameTable data={DATA} onExcluir={onExcluir} onEditar={vi.fn()} />);
+    const deleteButtons = screen.getAllByRole('button', { name: 'Excluir' });
     await user.click(deleteButtons[0]);
     expect(onExcluir).toHaveBeenCalledWith('1');
+  });
+
+  it('calls onEditar with the row when edit button clicked', async () => {
+    const user = userEvent.setup();
+    const onEditar = vi.fn();
+    render(<ExameTable data={DATA} onExcluir={vi.fn()} onEditar={onEditar} />);
+    const editButtons = screen.getAllByRole('button', { name: 'Editar' });
+    await user.click(editButtons[0]);
+    expect(onEditar).toHaveBeenCalledWith(DATA[0]);
   });
 });

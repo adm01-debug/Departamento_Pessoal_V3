@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Rocket, CheckCircle2, Clock, UserPlus, Package, Mail, ListTodo, Loader2 } from 'lucide-react';
+import { Rocket, CheckCircle2, Clock, ListTodo, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -78,9 +78,6 @@ export default function OnboardingPage() {
             </TabsTrigger>
             <TabsTrigger value="concluidos" className="rounded-lg gap-2">
               <CheckCircle2 className="h-4 w-4" /> Concluídos
-            </TabsTrigger>
-            <TabsTrigger value="kits" className="rounded-lg gap-2">
-              <Package className="h-4 w-4" /> Gestão de Kits
             </TabsTrigger>
           </TabsList>
 
@@ -163,10 +160,6 @@ export default function OnboardingPage() {
                               </div>
                             ))}
                           </div>
-
-                          <Button variant="outline" className="w-full rounded-xl text-xs gap-2 border-dashed">
-                            <Mail className="h-3.5 w-3.5" /> Enviar E-mail de Boas-Vindas
-                          </Button>
                         </CardContent>
                       </Card>
                     </motion.div>
@@ -176,32 +169,44 @@ export default function OnboardingPage() {
           </TabsContent>
 
           <TabsContent value="concluidos">
-            <Card className="rounded-2xl border-dashed border-2 p-12 text-center text-muted-foreground">
-              <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-20 text-success" />
-              <p className="font-display font-medium">Histórico de Integrações Concluídas</p>
-              <p className="text-sm">Todos os colaboradores recentes já estão 100% integrados.</p>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="kits">
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card className="p-6 flex flex-col items-center text-center gap-3 border-border/40 bg-card/50">
-                <div className="h-12 w-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                  <Package className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold">Kit Desenvolvedor</h3>
-                  <p className="text-xs text-muted-foreground">MacBook M3, Monitor 27", Headset</p>
-                </div>
-                <Button variant="outline" size="sm" className="rounded-xl w-full">
-                  Gerenciar Kit
-                </Button>
+            {isLoading ? (
+              <div className="flex justify-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : onboarding.some((o) => (o.tarefas?.length ?? 0) > 0 && getProgresso(o.tarefas) === 100) ? (
+              <div className="grid gap-6 md:grid-cols-2">
+                {onboarding
+                  .filter((o) => (o.tarefas?.length ?? 0) > 0 && getProgresso(o.tarefas) === 100)
+                  .map((colab) => (
+                    <Card key={colab.id} className="border-border/40 overflow-hidden">
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg font-display">{colab.nome}</CardTitle>
+                            <CardDescription>
+                              {colab.cargo} • {colab.departamento}
+                            </CardDescription>
+                          </div>
+                          <Badge variant="outline" className="bg-success/10 text-success border-success/30">
+                            100%
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-xs text-muted-foreground">
+                          {colab.tarefas?.length} tarefa(s) de onboarding concluída(s).
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
+            ) : (
+              <Card className="rounded-2xl border-dashed border-2 p-12 text-center text-muted-foreground">
+                <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-20 text-success" />
+                <p className="font-display font-medium">Histórico de Integrações Concluídas</p>
+                <p className="text-sm">Nenhum onboarding concluído até o momento.</p>
               </Card>
-              <button className="border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground">
-                <UserPlus className="h-8 w-8 opacity-20" />
-                <span className="text-sm font-bold">Novo Perfil de Kit</span>
-              </button>
-            </div>
+            )}
           </TabsContent>
         </Tabs>
       </PageLayout>

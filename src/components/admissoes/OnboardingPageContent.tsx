@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Rocket, CheckCircle2, Mail, ListTodo, Loader2 } from 'lucide-react';
+import { Rocket, CheckCircle2, ListTodo, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
@@ -141,10 +141,6 @@ export default function OnboardingPageContent() {
                       </p>
                     )}
                   </div>
-
-                  <Button variant="outline" className="w-full rounded-xl text-xs gap-2 border-dashed">
-                    <Mail className="h-3.5 w-3.5" /> Enviar E-mail de Boas-Vindas
-                  </Button>
                 </CardContent>
               </Card>
             </motion.div>

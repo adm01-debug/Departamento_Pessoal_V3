@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, MapPin } from 'lucide-react';
+import { Plus, Trash2, MapPin, Pencil } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 
@@ -24,12 +24,14 @@ export default function LocaisTrabalhoPage() {
     search,
     setSearch,
     criar,
+    atualizar,
     excluir,
     refetch,
   } = useLocaisTrabalho();
 
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ nome: '', endereco: '', cidade: '', uf: '', cep: '', telefone: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const handleSearchChange = useCallback(
     (val: string) => {
@@ -48,9 +50,29 @@ export default function LocaisTrabalhoPage() {
 
   const handleSubmit = async () => {
     if (!form.nome) return;
-    await criar(form);
+    try {
+      if (editandoId) await atualizar({ id: editandoId, data: form });
+      else await criar(form);
+    } catch {
+      // erro já notificado via toast pelo useGenericCrud
+      return;
+    }
     setForm({ nome: '', endereco: '', cidade: '', uf: '', cep: '', telefone: '' });
+    setEditandoId(null);
     setShowForm(false);
+  };
+
+  const iniciarEdicao = (l: Tables<'locais_trabalho'>) => {
+    setEditandoId(l.id);
+    setForm({
+      nome: l.nome,
+      endereco: l.endereco ?? '',
+      cidade: l.cidade ?? '',
+      uf: l.uf ?? '',
+      cep: l.cep ?? '',
+      telefone: l.telefone ?? '',
+    });
+    setShowForm(true);
   };
 
   return (
@@ -75,7 +97,16 @@ export default function LocaisTrabalhoPage() {
       onSearchChange={handleSearchChange}
       onRefetch={refetch}
       actions={
-        <Button onClick={() => setShowForm(!showForm)} className="rounded-xl shadow-glow">
+        <Button
+          onClick={() => {
+            if (showForm && editandoId) {
+              setEditandoId(null);
+              setForm({ nome: '', endereco: '', cidade: '', uf: '', cep: '', telefone: '' });
+            }
+            setShowForm(!showForm);
+          }}
+          className="rounded-xl shadow-glow"
+        >
           <Plus className="mr-2 h-4 w-4" />
           {showForm ? 'Cancelar' : 'Novo Local'}
         </Button>
@@ -144,7 +175,7 @@ export default function LocaisTrabalhoPage() {
                   </div>
                   <div className="flex justify-end mt-4">
                     <Button onClick={handleSubmit} className="rounded-xl px-8 shadow-glow">
-                      Salvar Local
+                      {editandoId ? 'Salvar Alterações' : 'Salvar Local'}
                     </Button>
                   </div>
                 </CardContent>
@@ -159,7 +190,7 @@ export default function LocaisTrabalhoPage() {
         { header: 'Cidade/UF' },
         { header: 'CEP' },
         { header: 'Status' },
-        { header: 'Ações', className: 'text-right pr-6', width: '80px' },
+        { header: 'Ações', className: 'text-right pr-6', width: '110px' },
       ]}
       renderRow={(l) => (
         <TableRow key={l.id} className="hover:bg-accent/10 transition-colors group">
@@ -179,6 +210,15 @@ export default function LocaisTrabalhoPage() {
             </Badge>
           </TableCell>
           <TableCell className="text-right pr-6">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Editar"
+              onClick={() => iniciarEdicao(l)}
+              className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"

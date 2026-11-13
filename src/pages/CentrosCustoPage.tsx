@@ -15,14 +15,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Pencil } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
+import { atualizarCentroCusto } from '@/services/tabelasReferenciaService';
 
 export default function CentrosCustoPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', codigo: '', descricao: '' });
+  const [editandoId, setEditandoId] = useState<string | null>(null);
 
   const { data: centros = [], isLoading } = useQuery({
     queryKey: ['centros-custo', empresaAtual?.id],
@@ -60,6 +62,19 @@ export default function CentrosCustoPage() {
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar centro de custo.')),
   });
 
+  const atualizar = useMutation({
+    mutationFn: (d: { id: string; nome: string; codigo: string; descricao: string }) =>
+      atualizarCentroCusto(d.id, { nome: d.nome, codigo: d.codigo, descricao: d.descricao }, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['centros-custo'] });
+      setOpen(false);
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', descricao: '' });
+      toast.success('Centro de custo atualizado!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar centro de custo.')),
+  });
+
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('centros_custo').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
@@ -69,7 +84,16 @@ export default function CentrosCustoPage() {
       qc.invalidateQueries({ queryKey: ['centros-custo'] });
       toast.success('Centro excluído!');
     },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir centro de custo.')),
   });
+
+  const handleOpenChange = (o: boolean) => {
+    setOpen(o);
+    if (!o && editandoId) {
+      setEditandoId(null);
+      setForm({ nome: '', codigo: '', descricao: '' });
+    }
+  };
 
   if (isLoading)
     return (
@@ -86,7 +110,7 @@ export default function CentrosCustoPage() {
           <CardContent className="pt-6">
             <div className="flex justify-between mb-4">
               <h3 className="text-lg font-semibold">Centros de Custo ({centros.length})</h3>
-              <Dialog open={open} onOpenChange={setOpen}>
+              <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogTrigger asChild>
                   <Button size="sm">
                     <Plus className="h-4 w-4 mr-1" />
@@ -95,7 +119,7 @@ export default function CentrosCustoPage() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Novo Centro de Custo</DialogTitle>
+                    <DialogTitle>{editandoId ? 'Editar Centro de Custo' : 'Novo Centro de Custo'}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-3">
                     <div>
@@ -117,7 +141,11 @@ export default function CentrosCustoPage() {
                         onChange={(e) => setForm((p) => ({ ...p, descricao: e.target.value }))}
                       />
                     </div>
-                    <Button className="w-full" onClick={() => criar.mutate(form)} disabled={!form.nome}>
+                    <Button
+                      className="w-full"
+                      onClick={() => (editandoId ? atualizar.mutate({ id: editandoId, ...form }) : criar.mutate(form))}
+                      disabled={!form.nome || atualizar.isPending}
+                    >
                       Salvar
                     </Button>
                   </div>
@@ -146,9 +174,23 @@ export default function CentrosCustoPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(c.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label="Editar"
+                          onClick={() => {
+                            setEditandoId(c.id);
+                            setForm({ nome: c.nome, codigo: c.codigo ?? '', descricao: c.descricao ?? '' });
+                            setOpen(true);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(c.id)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

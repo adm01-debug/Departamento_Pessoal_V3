@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({
@@ -134,6 +134,54 @@ describe('ExameFormDialog', () => {
     const btn = screen.getByText('Registrar Exame').closest('button')!;
     fireEvent.click(btn);
 
-    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 'col-1', tipo: 'admissional' }));
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ colaborador_id: 'col-1', tipo: 'admissional' }),
+      expect.any(Function)
+    );
+  });
+
+  it('modo edição: só fecha após o pai confirmar sucesso (erro mantém aberto)', () => {
+    const onSubmit = vi.fn();
+    const onOpenChange = vi.fn();
+    const ui = (initial?: { colaborador_id: string; tipo: string }) => (
+      <ExameFormDialog
+        colaboradores={MOCK_COLABORADORES}
+        onSubmit={onSubmit}
+        open
+        onOpenChange={onOpenChange}
+        initial={initial}
+      />
+    );
+    // A página monta o diálogo sem registro e depois passa o exame em edição.
+    const { rerender } = render(ui());
+    rerender(ui({ colaborador_id: 'col-1', tipo: 'periodico' }));
+
+    const salvar = () => screen.getByText('Salvar Alterações').closest('button')!;
+    fireEvent.click(salvar());
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    // Sem confirmação de sucesso, os dados digitados permanecem (formulário não foi limpo).
+    expect(salvar()).not.toBeDisabled();
+    onOpenChange.mockClear(); // o mock de Dialog propaga o clique como toggle
+
+    const onSaved = onSubmit.mock.calls[0][1] as () => void;
+    act(() => onSaved());
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(salvar()).toBeDisabled();
+  });
+
+  it('bloqueia salvar quando a validade é anterior à data do exame', () => {
+    const ui = (initial?: Record<string, string>) => (
+      <ExameFormDialog
+        colaboradores={MOCK_COLABORADORES}
+        onSubmit={vi.fn()}
+        open
+        onOpenChange={vi.fn()}
+        initial={initial}
+      />
+    );
+    const { rerender } = render(ui());
+    rerender(ui({ colaborador_id: 'col-1', tipo: 'periodico', data_exame: '2026-05-10', data_validade: '2026-05-01' }));
+    expect(screen.getByText('A validade não pode ser anterior à data do exame.')).toBeTruthy();
+    expect(screen.getByText('Salvar Alterações').closest('button')).toBeDisabled();
   });
 });

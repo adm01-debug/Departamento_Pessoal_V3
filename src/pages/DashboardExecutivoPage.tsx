@@ -464,10 +464,8 @@ export default function DashboardExecutivoPage() {
                         data={
                           data?.departamentos?.map((d) => ({
                             nome: d.nome,
-                            actual: Math.round((d.value / (data?.totalAtivos || 1)) * (data?.totalFolhaAtual || 0)),
-                            budget:
-                              strategic?.budgets?.find((b) => b.departamento === d.nome)?.valor_orcado ||
-                              ((data?.totalFolhaAtual || 0) / (data?.departamentos?.length || 1)) * 1.1,
+                            actual: Math.round(d.custo),
+                            budget: strategic?.budgets?.find((b) => b.departamento === d.nome)?.valor_orcado ?? null,
                           })) || []
                         }
                       >
@@ -485,10 +483,26 @@ export default function DashboardExecutivoPage() {
                           fill="hsl(var(--muted-foreground)/0.3)"
                           radius={[4, 4, 0, 0]}
                         />
-                        <Bar dataKey="actual" name="Realizado" fill="hsl(var(--warning))" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="actual" name="Realizado" fill="hsl(var(--warning))" radius={[4, 4, 0, 0]}>
+                          {(data?.departamentos ?? []).map((d) => {
+                            const orcado = strategic?.budgets?.find((b) => b.departamento === d.nome)?.valor_orcado;
+                            const fill =
+                              orcado == null
+                                ? 'hsl(var(--warning))'
+                                : Math.round(d.custo) > orcado
+                                  ? 'hsl(var(--destructive))'
+                                  : 'hsl(var(--success))';
+                            return <Cell key={d.nome} fill={fill} />;
+                          })}
+                        </Bar>
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
+                  {!strategic?.budgets?.length && (
+                    <p className="mt-2 text-[10px] text-muted-foreground">
+                      Sem orçamento cadastrado para {new Date().getFullYear()}.
+                    </p>
+                  )}
                   <div className="mt-4 flex items-center justify-between">
                     <div className="flex gap-4">
                       <div className="flex items-center gap-1.5">
@@ -499,10 +513,11 @@ export default function DashboardExecutivoPage() {
                         <div className="h-2 w-2 rounded-full bg-destructive" />
                         <span className="text-[10px] text-muted-foreground">Excesso orçamentário</span>
                       </div>
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-2 w-2 rounded-full bg-warning" />
+                        <span className="text-[10px] text-muted-foreground">Sem orçamento</span>
+                      </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-7 text-[10px] text-primary">
-                      Ajustar Metas
-                    </Button>
                   </div>
                 </CardContent>
               </Card>

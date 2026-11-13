@@ -22,7 +22,6 @@ import {
   Gavel,
   TrendingUp,
   AlertTriangle,
-  Zap,
   BrainCircuit,
   ShieldCheck,
 } from 'lucide-react';
@@ -43,6 +42,14 @@ export function GestaoPontoAnalytics({ registros }: { registros: Tables<'registr
     });
 
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
+  }, [registros]);
+
+  // Taxa de assiduidade real: registros com batida / total de registros do período.
+  const taxaAssiduidade = useMemo(() => {
+    const total = registros.length;
+    if (!total) return null;
+    const faltas = registros.filter((r) => !r.entrada_1 && !r.saida_1).length;
+    return ((total - faltas) / total) * 100;
   }, [registros]);
 
   // 2. Predictive: Monthly Forecast
@@ -238,10 +245,10 @@ export function GestaoPontoAnalytics({ registros }: { registros: Tables<'registr
             </div>
             <div>
               <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Taxa de Assiduidade</p>
-              <h3 className="text-2xl font-display font-bold text-info">94.2%</h3>
-              <div className="flex items-center gap-1 text-[10px] text-success mt-2 font-bold">
-                <Zap className="h-3 w-3" /> +2.1% em relação ao mês anterior
-              </div>
+              <h3 className="text-2xl font-display font-bold text-info">
+                {taxaAssiduidade === null ? '—' : `${taxaAssiduidade.toFixed(1)}%`}
+              </h3>
+              <p className="text-[10px] text-muted-foreground mt-2">No período</p>
             </div>
           </CardContent>
         </Card>

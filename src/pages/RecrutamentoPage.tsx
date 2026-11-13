@@ -27,7 +27,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Spinner } from '@/components/ui/spinner';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -42,6 +53,8 @@ const ETAPAS = [
   { id: 'contratado', label: 'Contratado', color: 'bg-success-foreground/10 border-success' },
 ];
 
+const VAGA_FORM_VAZIO = { titulo: '', departamento: '', modalidade: '', quantidade: '1', requisitos: '' };
+
 export default function RecrutamentoPage() {
   const { empresaAtual } = useEmpresas();
   const pii = usePiiMask();
@@ -49,6 +62,12 @@ export default function RecrutamentoPage() {
   const [activeTab, setActiveTab] = useState('pipeline');
   const [selectedVagaId, setSelectedVagaId] = useState<string>('all');
   const [selectedCandidatura, setSelectedCandidatura] = useState<CandidaturaComRelacoes | null>(null);
+  const [vagaDialogOpen, setVagaDialogOpen] = useState(false);
+  const [vagaEditandoId, setVagaEditandoId] = useState<string | null>(null);
+  const [vagaForm, setVagaForm] = useState(VAGA_FORM_VAZIO);
+  const [vagaParaExcluir, setVagaParaExcluir] = useState<VagaRow | null>(null);
+  const [candidatoParaVaga, setCandidatoParaVaga] = useState<CandidatoRow | null>(null);
+  const [vagaDaCandidatura, setVagaDaCandidatura] = useState('');
 
   const { data: vagas = [], isLoading: loadVagas } = useQuery({
     queryKey: ['vagas', empresaAtual?.id],
@@ -76,7 +95,87 @@ export default function RecrutamentoPage() {
       qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
       toast.success('Etapa atualizada!');
     },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar etapa.')),
   });
+
+  const quantidadeVaga = Number.parseInt(vagaForm.quantidade, 10);
+  const vagaFormValido = !!vagaForm.titulo.trim() && Number.isInteger(quantidadeVaga) && quantidadeVaga >= 1;
+
+  const abrirNovaVaga = () => {
+    setVagaEditandoId(null);
+    setVagaForm(VAGA_FORM_VAZIO);
+    setVagaDialogOpen(true);
+  };
+
+  const abrirEdicaoVaga = (vaga: VagaRow) => {
+    setVagaEditandoId(vaga.id);
+    setVagaForm({
+      titulo: vaga.titulo ?? '',
+      departamento: vaga.departamento ?? '',
+      modalidade: vaga.modalidade ?? '',
+      quantidade: String(vaga.quantidade ?? 1),
+      requisitos: vaga.requisitos ?? '',
+    });
+    setVagaDialogOpen(true);
+  };
+
+  const salvarVaga = useMutation({
+    mutationFn: () => {
+      const dados = {
+        titulo: vagaForm.titulo.trim(),
+        departamento: vagaForm.departamento.trim() || null,
+        modalidade: vagaForm.modalidade.trim() || null,
+        quantidade: quantidadeVaga,
+        requisitos: vagaForm.requisitos.trim() || null,
+      };
+      return vagaEditandoId
+        ? recrutamentoService.atualizarVaga(vagaEditandoId, dados, empresaAtual!.id)
+        : recrutamentoService.criarVaga({ ...dados, empresa_id: empresaAtual!.id });
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      toast.success(vagaEditandoId ? 'Vaga atualizada!' : 'Vaga publicada!');
+      setVagaDialogOpen(false);
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar vaga.')),
+  });
+
+  const excluirVaga = useMutation({
+    mutationFn: (id: string) => recrutamentoService.excluirVaga(id, empresaAtual!.id),
+    onSuccess: (_data, id) => {
+      if (selectedVagaId === id) setSelectedVagaId('all');
+      qc.invalidateQueries({ queryKey: ['vagas', empresaAtual?.id] });
+      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      toast.success('Vaga excluída!');
+      setVagaParaExcluir(null);
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao excluir vaga.')),
+  });
+
+  const adicionarAVaga = useMutation({
+    mutationFn: ({ candidatoId, vagaId }: { candidatoId: string; vagaId: string }) =>
+      recrutamentoService.criarCandidatura({
+        candidato_id: candidatoId,
+        vaga_id: vagaId,
+        empresa_id: empresaAtual!.id,
+        etapa: 'triagem',
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
+      toast.success('Candidato adicionado à vaga!');
+      setCandidatoParaVaga(null);
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao adicionar candidato.')),
+  });
+
+  const etapaAtualSelecionada = selectedCandidatura?.etapa || 'triagem';
+  const proximaEtapa = ETAPAS[ETAPAS.findIndex((e) => e.id === etapaAtualSelecionada) + 1];
+
+  const totalContratados = candidaturas.filter((c: CandidaturaComRelacoes) => c.etapa === 'contratado').length;
+  const taxaConversao = candidaturas.length
+    ? `${((totalContratados / candidaturas.length) * 100).toFixed(1).replace('.', ',')}%`
+    : '0%';
 
   const isLoading = loadVagas || loadCandidaturas || loadCandidatos;
 
@@ -90,39 +189,66 @@ export default function RecrutamentoPage() {
         gradient="from-success to-info"
         actions={
           <div className="flex gap-2">
-            <Dialog>
+            <Dialog open={vagaDialogOpen} onOpenChange={setVagaDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="rounded-xl shadow-lg">
+                <Button className="rounded-xl shadow-lg" onClick={abrirNovaVaga}>
                   <Plus className="h-4 w-4 mr-2" />
                   Nova Vaga
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-xl">
                 <DialogHeader>
-                  <DialogTitle>Anunciar Nova Vaga</DialogTitle>
+                  <DialogTitle>{vagaEditandoId ? 'Editar Vaga' : 'Anunciar Nova Vaga'}</DialogTitle>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4 pt-4">
                   <div className="grid gap-1">
                     <Label>Título da Vaga</Label>
-                    <Input placeholder="Ex: Desenvolvedor Senior" />
+                    <Input
+                      placeholder="Ex: Desenvolvedor Senior"
+                      value={vagaForm.titulo}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, titulo: e.target.value }))}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>Departamento</Label>
-                    <Input placeholder="Ex: Tecnologia" />
+                    <Input
+                      placeholder="Ex: Tecnologia"
+                      value={vagaForm.departamento}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, departamento: e.target.value }))}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>Modalidade</Label>
-                    <Input placeholder="Remoto, Híbrido, Presencial" />
+                    <Input
+                      placeholder="Remoto, Híbrido, Presencial"
+                      value={vagaForm.modalidade}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, modalidade: e.target.value }))}
+                    />
                   </div>
                   <div className="grid gap-1">
                     <Label>Quantidade</Label>
-                    <Input type="number" defaultValue={1} />
+                    <Input
+                      type="number"
+                      min={1}
+                      value={vagaForm.quantidade}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, quantidade: e.target.value }))}
+                    />
                   </div>
                   <div className="grid gap-1 col-span-2">
                     <Label>Requisitos (separados por vírgula)</Label>
-                    <Input placeholder="React, TypeScript, Node.js..." />
+                    <Input
+                      placeholder="React, TypeScript, Node.js..."
+                      value={vagaForm.requisitos}
+                      onChange={(e) => setVagaForm((f) => ({ ...f, requisitos: e.target.value }))}
+                    />
                   </div>
-                  <Button className="col-span-2 mt-2">Publicar Vaga</Button>
+                  <Button
+                    className="col-span-2 mt-2"
+                    disabled={!vagaFormValido || salvarVaga.isPending || !empresaAtual?.id}
+                    onClick={() => salvarVaga.mutate()}
+                  >
+                    {salvarVaga.isPending ? 'Salvando...' : vagaEditandoId ? 'Salvar Alterações' : 'Publicar Vaga'}
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -146,7 +272,7 @@ export default function RecrutamentoPage() {
               </TabsTrigger>
             </TabsList>
 
-            {activeTab === 'pipeline' && (
+            {(activeTab === 'pipeline' || activeTab === 'analytics') && (
               <div className="flex items-center gap-2 w-full md:w-64">
                 <Filter className="h-4 w-4 text-muted-foreground" />
                 <Select value={selectedVagaId} onValueChange={setSelectedVagaId}>
@@ -255,6 +381,11 @@ export default function RecrutamentoPage() {
                                       size="icon"
                                       className="h-7 w-7 rounded-lg hover:bg-blue-50 hover:text-blue-600"
                                       aria-label="Contatar candidato"
+                                      disabled={!cand.candidato?.email}
+                                      onClick={() => {
+                                        if (cand.candidato?.email)
+                                          window.location.href = `mailto:${cand.candidato.email}`;
+                                      }}
                                     >
                                       <Mail className="h-3.5 w-3.5" />
                                     </Button>
@@ -316,6 +447,10 @@ export default function RecrutamentoPage() {
                                 size="icon"
                                 className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5"
                                 aria-label="Ver análises"
+                                onClick={() => {
+                                  setSelectedVagaId(vaga.id);
+                                  setActiveTab('analytics');
+                                }}
                               >
                                 <BarChart3 className="h-4 w-4" />
                               </Button>
@@ -324,6 +459,7 @@ export default function RecrutamentoPage() {
                                 size="icon"
                                 className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5"
                                 aria-label="Excluir vaga"
+                                onClick={() => setVagaParaExcluir(vaga)}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -373,7 +509,10 @@ export default function RecrutamentoPage() {
                                   {candidaturas.filter((c: CandidaturaComRelacoes) => c.vaga_id === vaga.id).length}
                                 </span>
                               </div>
-                              <Button className="rounded-xl h-9 px-4 text-xs font-bold shadow-xs group-hover:shadow-md transition-all">
+                              <Button
+                                className="rounded-xl h-9 px-4 text-xs font-bold shadow-xs group-hover:shadow-md transition-all"
+                                onClick={() => abrirEdicaoVaga(vaga)}
+                              >
                                 Gerenciar Vaga
                                 <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
                               </Button>
@@ -382,7 +521,11 @@ export default function RecrutamentoPage() {
                         </CardContent>
                       </Card>
                     ))}
-                    <button className="border-2 border-dashed border-border/60 rounded-3xl p-8 flex flex-col items-center justify-center gap-3 hover:border-primary/40 hover:bg-primary/5 transition-all group min-h-[250px]">
+                    <button
+                      type="button"
+                      onClick={abrirNovaVaga}
+                      className="border-2 border-dashed border-border/60 rounded-3xl p-8 flex flex-col items-center justify-center gap-3 hover:border-primary/40 hover:bg-primary/5 transition-all group min-h-[250px]"
+                    >
                       <div className="h-12 w-12 rounded-2xl bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
                         <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
                       </div>
@@ -460,6 +603,11 @@ export default function RecrutamentoPage() {
                                     variant="ghost"
                                     size="icon"
                                     aria-label="Adicionar"
+                                    disabled={vagas.length === 0}
+                                    onClick={() => {
+                                      setVagaDaCandidatura('');
+                                      setCandidatoParaVaga(cand);
+                                    }}
                                     className="rounded-xl hover:bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all"
                                   >
                                     <Plus className="h-4 w-4" />
@@ -486,7 +634,7 @@ export default function RecrutamentoPage() {
                         icon: UserSearch,
                         color: 'text-primary',
                       },
-                      { label: 'Taxa de Conversão', value: '4.2%', icon: BarChart3, color: 'text-warning' },
+                      { label: 'Taxa de Conversão', value: taxaConversao, icon: BarChart3, color: 'text-warning' },
                     ].map((stat, i) => (
                       <Card key={i} className="rounded-2xl border-border/40 shadow-xs">
                         <CardContent className="p-6 flex items-center gap-4">
@@ -619,12 +767,91 @@ export default function RecrutamentoPage() {
                   >
                     Fechar Janela
                   </Button>
-                  <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-bold shadow-lg">
+                  <Button
+                    className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-bold shadow-lg"
+                    disabled={!proximaEtapa || updateEtapa.isPending}
+                    onClick={() => {
+                      if (!proximaEtapa) return;
+                      updateEtapa.mutate(
+                        { id: selectedCandidatura.id, etapa: proximaEtapa.id },
+                        { onSuccess: () => setSelectedCandidatura(null) }
+                      );
+                    }}
+                  >
                     Avançar para Próxima Etapa
                   </Button>
                 </div>
               </>
             )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Confirmação de exclusão de vaga */}
+        <AlertDialog
+          open={!!vagaParaExcluir}
+          onOpenChange={(o) => {
+            if (!o) setVagaParaExcluir(null);
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Excluir a vaga "{vagaParaExcluir?.titulo}"?</AlertDialogTitle>
+              <AlertDialogDescription>
+                As candidaturas vinculadas a esta vaga também serão excluídas. Esta ação não pode ser desfeita.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={excluirVaga.isPending}>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={excluirVaga.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (vagaParaExcluir) excluirVaga.mutate(vagaParaExcluir.id);
+                }}
+              >
+                {excluirVaga.isPending ? 'Excluindo...' : 'Excluir vaga'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Adicionar candidato a uma vaga */}
+        <Dialog
+          open={!!candidatoParaVaga}
+          onOpenChange={(o) => {
+            if (!o) setCandidatoParaVaga(null);
+          }}
+        >
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Adicionar {candidatoParaVaga?.nome} a uma vaga</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 pt-2">
+              <div className="grid gap-1">
+                <Label>Vaga</Label>
+                <Select value={vagaDaCandidatura} onValueChange={setVagaDaCandidatura}>
+                  <SelectTrigger className="rounded-xl">
+                    <SelectValue placeholder="Selecione a vaga" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vagas.map((v: VagaRow) => (
+                      <SelectItem key={v.id} value={v.id}>
+                        {v.titulo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                disabled={!vagaDaCandidatura || adicionarAVaga.isPending || !empresaAtual?.id}
+                onClick={() => {
+                  if (candidatoParaVaga && vagaDaCandidatura)
+                    adicionarAVaga.mutate({ candidatoId: candidatoParaVaga.id, vagaId: vagaDaCandidatura });
+                }}
+              >
+                {adicionarAVaga.isPending ? 'Adicionando...' : 'Adicionar à Vaga'}
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </PageLayout>

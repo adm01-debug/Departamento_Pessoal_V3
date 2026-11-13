@@ -37,9 +37,15 @@ export function isDefinitiveIdempotencyFailure(error: unknown): boolean {
   );
 }
 
+// 4xx definitivo (regra de negócio, validação, permissão) prova que a função está de pé:
+// não pode contar como falha no circuit breaker compartilhado. 408/429 seguem contando.
+const isClientRejection = (status?: number): boolean =>
+  status !== undefined && status >= 400 && status < 500 && status !== 408 && status !== 429;
+
 const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = genericBreaker): Promise<T> => {
   try {
-    return await breaker.execute(async () => {
+    let clientError: EdgeFunctionInvokeError | undefined;
+    const result = await breaker.execute(async () => {
       const { data, error, response } = await supabase.functions.invoke(
         name,
         options as Parameters<typeof supabase.functions.invoke>[1]
@@ -54,25 +60,51 @@ const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = g
           }
         }
         const record = typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : null;
-        throw new EdgeFunctionInvokeError(
+        // createErrorResponse (_shared/contract.ts) responde `{ error: { code, message } }`.
+        const nested =
+          record && typeof record.error === 'object' && record.error !== null
+            ? (record.error as Record<string, unknown>)
+            : null;
+        const invokeError = new EdgeFunctionInvokeError(
           (record && typeof record.error === 'string' && record.error) ||
+            (nested && typeof nested.message === 'string' && nested.message) ||
             error.message ||
             `Erro ao chamar função ${name}`,
           {
             status: response?.status,
-            code: record && typeof record.code === 'string' ? record.code : undefined,
+            code:
+              record && typeof record.code === 'string'
+                ? record.code
+                : nested && typeof nested.code === 'string'
+                  ? nested.code
+                  : undefined,
             cause: error,
           }
         );
+        if (isClientRejection(invokeError.status)) {
+          clientError = invokeError;
+          return undefined as T;
+        }
+        throw invokeError;
       }
       return data as T;
     });
+    if (clientError) throw clientError;
+    return result;
   } catch (e: unknown) {
     if (e instanceof EdgeFunctionInvokeError) throw e;
     const msg = e instanceof Error ? e.message : `Falha crítica na comunicação com ${name}`;
     throw new Error(msg, { cause: e });
   }
 };
+
+const GERAR_GUIAS_TIPO = {
+  darf: 'DARF',
+  gps: 'GPS',
+  fgts: 'FGTS',
+  fgts_digital: 'FGTS_DIGITAL',
+  todos: 'TODAS',
+} as const;
 
 export const edgeFunctionsService = {
   /** Dispara alertas automáticos no tenant selecionado. */
@@ -122,7 +154,16 @@ export const edgeFunctionsService = {
   }) => {
     const idemKey = `gerar-guias:${params.empresaId}:${params.competencia}:${params.tipo}`;
     return retryWithIdempotency({
-      fn: () => handleInvoke('gerar-guias', { body: params }),
+      // Contrato da edge (BodySchema strict em supabase/functions/gerar-guias/index.ts):
+      // snake_case + tipo em maiúsculas ('todos' → 'TODAS').
+      fn: () =>
+        handleInvoke('gerar-guias', {
+          body: {
+            empresa_id: params.empresaId,
+            competencia: params.competencia,
+            tipo: GERAR_GUIAS_TIPO[params.tipo],
+          },
+        }),
       idempotencyKey: idemKey,
       onRetry: (a, d, e) => loggerService.warn('gerarGuias retry', { attempt: a, delayMs: d, error: e }),
     });
@@ -295,6 +336,15 @@ export const edgeFunctionsService = {
   /** Verifica rate limit */
   checkRateLimit: async (key: string, limit = 100, windowSeconds = 60) =>
     handleInvoke('rateLimit', { body: { key, limit, window_seconds: windowSeconds } }),
+
+  /** Solicita adiantamento salarial: o backend aplica o teto % do salário e 1 por competência. */
+  solicitarAdiantamentoSalarial: async (params: {
+    empresa_id: string;
+    colaborador_id: string;
+    valor_centavos: number;
+    competencia: string;
+    motivo?: string;
+  }) => handleInvoke<{ success: boolean; id: string }>('adiantamento-salarial', { body: params }),
 
   /** Verifica conexão com banco externo */
   checkExternalDb: async () =>

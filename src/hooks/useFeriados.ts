@@ -27,7 +27,7 @@ export function useFeriados() {
         data: feriado.data,
         descricao: feriado.nome,
         tipo: feriado.tipo,
-        empresa_id: feriado.tipo === 'empresa' ? (empresaAtual?.id ?? null) : null,
+        empresa_id: empresaAtual?.id ?? null,
       };
       const { error } = await supabase
         .from('feriados')

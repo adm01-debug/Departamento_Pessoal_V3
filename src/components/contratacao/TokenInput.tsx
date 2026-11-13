@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import govbrLogo from '@/assets/govbr-logo.svg';
 
 export function TokenInput({ onValidToken }: { onValidToken: (token: string) => void }) {
   const [token, setToken] = useState('');
@@ -83,12 +82,6 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
             </Button>
 
             <div className="pt-4 flex items-center justify-center gap-2">
-              <img
-                src={govbrLogo}
-                alt="Gov.br"
-                className="h-6 opacity-50 grayscale hover:grayscale-0 transition-all cursor-not-allowed"
-                title="Em breve: Acesso via Gov.br"
-              />
               <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
                 Powered by Lovable Cloud
               </span>

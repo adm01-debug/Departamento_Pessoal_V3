@@ -9,6 +9,20 @@ type FolhaResumo = {
   total_descontos: number | null;
 };
 
+// PostgREST corta respostas em max-rows (1000 por padrão): busca todas as páginas.
+const PAGE_SIZE = 1000;
+async function fetchAllPages<T>(
+  buildPage: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: unknown }>
+): Promise<T[]> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await buildPage(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    rows.push(...(data ?? []));
+    if (!data || data.length < PAGE_SIZE) return rows;
+  }
+}
+
 export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
   return useQuery({
     queryKey: ['executive-kpis', empresaId, periodo],
@@ -33,7 +47,7 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
 
       const [
         { count: totalAtivos },
-        { data: colabs },
+        colabs,
         { data: folhaAtual },
         { data: folhaAnterior },
         { count: feriasPendentes },
@@ -47,10 +61,18 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
           .select('*', { count: 'exact', head: true })
           .eq('status', 'ativo')
           .eq('empresa_id', empresaId!),
-        supabase.from('colaboradores').select('departamento').eq('status', 'ativo').eq('empresa_id', empresaId!),
+        fetchAllPages((from, to) =>
+          supabase
+            .from('colaboradores')
+            .select('id, departamento')
+            .eq('status', 'ativo')
+            .eq('empresa_id', empresaId!)
+            .order('id')
+            .range(from, to)
+        ),
         supabase
           .from('folhas_pagamento')
-          .select('total_liquido')
+          .select('id, total_liquido')
           .eq('competencia', mesAtual)
           .eq('empresa_id', empresaId!),
         supabase
@@ -116,13 +138,47 @@ export function useExecutiveKPIs(empresaId?: string, periodo = '6') {
         };
       });
 
+      // Custo real por departamento: itens da folha da competência atual (escopo da empresa via folha_id)
+      const folhaIds = (folhaAtual ?? []).map((f) => f.id);
+      const itensFolha = folhaIds.length
+        ? await fetchAllPages((from, to) =>
+            supabase
+              .from('folha_itens')
+              .select('id, colaborador_id, total_liquido')
+              .in('folha_id', folhaIds)
+              .order('id')
+              .range(from, to)
+          )
+        : [];
+
       const deptMap: Record<string, number> = {};
-      colabs?.forEach((c) => {
+      const deptPorColab: Record<string, string> = {};
+      colabs.forEach((c) => {
         const dept = c.departamento ?? 'Sem departamento';
         deptMap[dept] = (deptMap[dept] || 0) + 1;
+        deptPorColab[c.id] = dept;
+      });
+      // Itens de quem saiu no mês (não está mais ativo) também entram no custo do departamento
+      const semDept = [...new Set(itensFolha.map((it) => it.colaborador_id).filter((id) => !deptPorColab[id]))];
+      if (semDept.length) {
+        const { data: desligados, error } = await supabase
+          .from('colaboradores')
+          .select('id, departamento')
+          .eq('empresa_id', empresaId!)
+          .in('id', semDept);
+        if (error) throw error;
+        desligados?.forEach((c) => {
+          deptPorColab[c.id] = c.departamento ?? 'Sem departamento';
+        });
+      }
+      const custoDept: Record<string, number> = {};
+      itensFolha.forEach((it) => {
+        const dept = deptPorColab[it.colaborador_id] ?? 'Sem departamento';
+        custoDept[dept] = (custoDept[dept] || 0) + (it.total_liquido || 0);
+        if (!(dept in deptMap)) deptMap[dept] = 0;
       });
       const departamentos = Object.entries(deptMap)
-        .map(([nome, value]) => ({ nome, value }))
+        .map(([nome, value]) => ({ nome, value, custo: custoDept[nome] || 0 }))
         .sort((a, b) => b.value - a.value)
         .slice(0, 8);
 

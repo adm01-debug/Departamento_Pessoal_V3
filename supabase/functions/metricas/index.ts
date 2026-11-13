@@ -234,7 +234,6 @@ serve(async (req) => {
       userClient2
         .from('metricas_processamento')
         .select('status, tempo_execucao_ms', { count: 'exact' })
-        .eq('empresa_id', empresaId)
         .gte('timestamp', new Date(Date.now() - 3600_000).toISOString())
         .limit(200),
       // Bridge KPIs (P3-054)

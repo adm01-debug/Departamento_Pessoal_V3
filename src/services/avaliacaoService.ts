@@ -29,8 +29,15 @@ export const avaliacaoService = {
   },
   async excluirCiclo(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await supabase.from('ciclos_avaliacao').delete().eq('id', id).eq('empresa_id', empresaId);
+    const { data, error } = await supabase
+      .from('ciclos_avaliacao')
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .select('id');
     if (error) throw error;
+    // RLS (pode_gerir_avaliacoes: admin/rh) bloqueia sem erro: 0 linhas afetadas.
+    if (!data || data.length === 0) throw new Error('Sem permissão para excluir o ciclo.');
   },
 
   // === Metas ===

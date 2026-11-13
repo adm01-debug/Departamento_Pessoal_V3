@@ -1,6 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Users, DollarSign, TrendingDown, PieChart, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Users, DollarSign, TrendingDown, PieChart } from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -48,39 +47,31 @@ export function RelatoriosAnalyticsTab({ analytics }: RelatoriosAnalyticsTabProp
       value: analytics?.totalAtivos || 0,
       icon: Users,
       gradient: 'from-primary to-primary-glow',
-      trend: '+5%',
-      up: true,
     },
     {
       label: 'Custo Folha Mensal',
       value: `R$ ${((analytics?.custoTotal || 0) / 1000).toFixed(0)}k`,
       icon: DollarSign,
       gradient: 'from-success to-success/70',
-      trend: '+2.3%',
-      up: true,
     },
     {
       label: 'Desligamentos',
       value: analytics?.totalDeslig || 0,
       icon: TrendingDown,
       gradient: 'from-destructive to-destructive/70',
-      trend: '-12%',
-      up: false,
     },
     {
       label: 'Custo Médio',
       value: analytics?.totalAtivos ? `R$ ${(analytics.custoTotal / analytics.totalAtivos / 1000).toFixed(1)}k` : '—',
       icon: PieChart,
       gradient: 'from-warning to-warning/70',
-      trend: '+1.8%',
-      up: true,
     },
   ];
 
   return (
     <>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        {kpis.map(({ label, value, icon: Icon, gradient, trend, up }, i) => (
+        {kpis.map(({ label, value, icon: Icon, gradient }, i) => (
           <motion.div
             key={label}
             initial={{ opacity: 0, y: 10 }}
@@ -93,15 +84,6 @@ export function RelatoriosAnalyticsTab({ analytics }: RelatoriosAnalyticsTabProp
                   <div className={cn('p-2 rounded-xl bg-gradient-to-br', gradient)}>
                     <Icon className="h-4 w-4 text-primary-foreground" />
                   </div>
-                  <Badge
-                    className={cn(
-                      'text-[10px] border-0',
-                      up ? 'bg-success/15 text-success' : 'bg-destructive/15 text-destructive'
-                    )}
-                  >
-                    {up ? <ArrowUpRight className="h-3 w-3 mr-0.5" /> : <ArrowDownRight className="h-3 w-3 mr-0.5" />}
-                    {trend}
-                  </Badge>
                 </div>
                 <p className="text-xl font-bold font-display">{value}</p>
                 <p className="text-[10px] text-muted-foreground font-body">{label}</p>
