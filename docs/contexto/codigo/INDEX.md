@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `0df27ba056a189d72852571b62aa538b681383fb` (2026-11-12T17:06:28-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `42633005ff45199e1ed3d8a1f0604e1abfa0d431` (2026-11-12T18:23:06-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -385,16 +385,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22032 nós · 46380 arestas · 2127 comunidades · grafo do commit `0df27ba0`
+- 22032 nós · 46380 arestas · 2127 comunidades · grafo do commit `42633005`
 - comunidades maiores: useEmpresas (507), 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (424), button.tsx (318), vitest (279), App.tsx (270), cn (229), contract.ts (187), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (50)
-- package.json (35)
-- package-lock.json (31)
-- CLAUDE.md (25)
+- package.json (36)
+- package-lock.json (32)
+- CLAUDE.md (24)
 - .github/workflows/ci.yml (17)
 - PENDENCIAS.md (13)
 - src/services/cnabService.ts (13)
@@ -616,6 +616,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-12 `4263300` chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)
 - 2026-11-12 `0df27ba` fix: seta do passivo trabalhista abre a ficha do colaborador (#500)
 - 2026-11-12 `710fdff` fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)
 - 2026-11-12 `8c7c7a5` fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)
@@ -630,7 +631,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `9dc8def` fix: SST: permite emitir ficha de EPI, abre a tela de EPIs no menu e faz 'Ver Portal' funcionar (#479)
 - 2026-11-12 `075db7f` fix: Descontos: adiantamento respeita limite de % do salário e 1 por mês, consignado respeita margem somada e empréstimo
 - 2026-11-12 `4fa4b7e` fix: Recrutamento passa a criar, editar e excluir vagas e a inscrever candidatos (sem KPI falso) (#477)
-- 2026-11-12 `004508d` fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

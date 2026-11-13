@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0df27ba056a189d72852571b62aa538b681383fb",
+  "commit": "42633005ff45199e1ed3d8a1f0604e1abfa0d431",
   "branch": "main",
-  "data_commit": "2026-11-12T17:06:28-03:00",
+  "data_commit": "2026-11-12T18:23:06-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4263300",
+    "data": "2026-11-12",
+    "assunto": "chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)"
+   },
    {
     "sha": "0df27ba",
     "data": "2026-11-12",
@@ -126,11 +131,6 @@
     "sha": "8ac54f1",
     "data": "2026-11-12",
     "assunto": "fix: dashboards mostram só indicadores reais e perdem botões sem ação (#473)"
-   },
-   {
-    "sha": "13ee3ba",
-    "data": "2026-11-12",
-    "assunto": "fix: KPIs do Ponto calculados de registros reais e ranking fictício removido (#472)"
    }
   ],
   "arquivos_mudados_7d": 538,
@@ -152,20 +152,20 @@
     "mudancas": 20
    },
    {
+    "pasta": "package.json",
+    "mudancas": 19
+   },
+   {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 19
    },
    {
-    "pasta": "package.json",
-    "mudancas": 18
+    "pasta": "package-lock.json",
+    "mudancas": 17
    },
    {
     "pasta": "src/services/__tests__",
     "mudancas": 17
-   },
-   {
-    "pasta": "package-lock.json",
-    "mudancas": 16
    },
    {
     "pasta": "scripts/autofix/regras",
@@ -203,15 +203,15 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 35
+    "mudancas": 36
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 31
+    "mudancas": 32
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 25
+    "mudancas": 24
    },
    {
     "arquivo": ".github/workflows/ci.yml",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 151
+    "commits": 152
    },
    {
     "autor": "devin-ai-integration[bot]",

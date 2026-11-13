@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0df27ba0`
+- Built from commit: `42633005`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -3653,7 +3653,7 @@ Nodes (10): Checklist de Ativação, Código Bridge (feature-flag ready), Métri
 
 ### Community 453 - "overrides"
 Cohesion: 0.18
-Nodes (11): uuid, uuid, overrides, brace-expansion@<1.1.21, brace-expansion@>=2.0.0 <2.1.7, brace-expansion@>=4.0.0 <5.0.12, exceljs, fast-uri@>=3.0.0 <=3.1.6 (+3 more)
+Nodes (11): uuid, uuid, overrides, brace-expansion@<1.1.21, brace-expansion@>=2.0.0 <2.1.7, brace-expansion@>=4.0.0 <5.0.12, exceljs, fast-uri@>=3.0.0 <3.1.9 (+3 more)
 
 ### Community 454 - "20260712215942_0c45a861-8424-4178-936a-cae1ebe129b2.sql"
 Cohesion: 0.24

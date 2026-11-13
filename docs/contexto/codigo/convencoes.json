@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)",
    "fix: seta do passivo trabalhista abre a ficha do colaborador (#500)",
    "fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)",
    "fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)",
-   "fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)",
-   "fix: Feriados da empresa agora podem ser corrigidos e excluídos, e salvar feriado estadual/municipal/nacional para de falhar (#491)"
+   "fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

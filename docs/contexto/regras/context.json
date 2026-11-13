@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "0df27ba056a189d72852571b62aa538b681383fb",
+  "sha": "42633005ff45199e1ed3d8a1f0604e1abfa0d431",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 22:07 UTC",
+  "generated_at": "2026-11-12 23:32 UTC",
   "files_total": 2908,
   "code_files": 2379,
   "code_lines": 325540
@@ -279519,10 +279519,20 @@
   }
  },
  "git": {
-  "sha": "0df27ba056a189d72852571b62aa538b681383fb",
+  "sha": "42633005ff45199e1ed3d8a1f0604e1abfa0d431",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4263300",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
    {
     "sha": "0df27ba",
     "date": "2026-11-12",
@@ -279860,21 +279870,20 @@
     "files": [
      "playwright.config.ts"
     ]
-   },
-   {
-    "sha": "d82b6a3",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: métricas de processamento no painel falhavam sempre (filtro por coluna inexistente) (#467)",
-    "files": [
-     "supabase/functions/metricas/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "src/pages/PerfilPage.tsx",
     2
+   ],
+   [
+    "package-lock.json",
+    1
+   ],
+   [
+    "package.json",
+    1
    ],
    [
     "src/pages/PassivoTrabalhistaPage.tsx",
@@ -279942,14 +279951,6 @@
    ],
    [
     "src/pages/FeriadosPage.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/AfastamentoTable.test.tsx",
-    1
-   ],
-   [
-    "src/components/afastamentos/AfastamentoTable.tsx",
     1
    ]
   ]
