@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `66b104fb6e2b3bf42cfca8693000f8600f9f6c4a` (2026-11-12T22:14:37-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `31ea570368c8551294d3553e3eff6669f7b12e36` (2026-11-13T00:39:18-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1430), SQL (827), Markdown (291), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1430), SQL (827), Markdown (292), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,9 +34,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2893 |
+| arquivos_total | 2894 |
 | arquivos_codigo | 1560 |
-| linhas_codigo | 277885 |
+| linhas_codigo | 277892 |
 | rotas | 114 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 598 |
 | workflows | 21 |
 | scripts | 115 |
-| docs_md | 291 |
+| docs_md | 292 |
 
 ## Onde ficam as coisas
 - telas: src/pages (109), src/components (1)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/autofix (10), scripts/ci (9)
-- docs: docs (73), (raiz) (31), .github (1)
+- docs: docs (74), (raiz) (31), .github (1)
 - nomenclatura: {"componentes":"PascalCase (87%)","hooks":"use + PascalCase","servicos":"camelCase (99%)","edge_functions":"kebab-case (68%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
@@ -385,17 +385,17 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22051 nós · 46456 arestas · 2152 comunidades · grafo do commit `66b104fb`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (408), useEmpresas (377), button.tsx (336), App.tsx (268), vitest (267), cn (238), "public"."empresas" (164), react (160), "public"."colaboradores" (155), "public"."empresas" (154)
+- 22065 nós · 46473 arestas · 2143 comunidades · grafo do commit `31ea5703`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), button.tsx (309), @tanstack/react-query (283), lucide-react (280), vitest (254), cn (237), services/index.ts (220), useEmpresas (210), client.ts (199), supabase/types.ts (192), contract.ts (177)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (50)
-- package.json (33)
-- package-lock.json (29)
+- package.json (31)
+- package-lock.json (27)
 - CLAUDE.md (22)
-- .github/workflows/ci.yml (16)
+- .github/workflows/ci.yml (14)
 - PENDENCIAS.md (13)
 - deno.lock (12)
 - src/services/cnabService.ts (12)
@@ -403,9 +403,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - infra/github/action-pins.json (10)
 - src/integrations/supabase/types.ts (10)
 - supabase/functions/external-db-bridge/index.ts (10)
-- supabase/functions/external-db-bridge/validation.ts (10)
 - .github/workflows/canonical-edge-functions.yml (9)
 - .github/workflows/e2e.yml (9)
+- scripts/canonical-invariants.sql (9)
 
 ## Workflows
 - `automation-local.yml` — Automação local (pull_request, push, workflow_dispatch)
@@ -612,10 +612,14 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
+- `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (817 linhas)
 - subpastas de docs/: docs/auditoria (48), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-13 `31ea570` docs: relatório de prontidão para produção (prod-readiness) (#535)
+- 2026-11-12 `0807204` fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)
+- 2026-11-12 `f7a2263` chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)
 - 2026-11-12 `66b104f` fix: ações do painel de inconsistências de ponto passam a gravar de verdade (#516)
 - 2026-11-12 `b170bd7` fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)
 - 2026-11-12 `0a81559` fix: botão de filtros no mobile abre gaveta com os filtros (#505)
@@ -628,9 +632,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-12 `4263300` chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)
 - 2026-11-12 `0df27ba` fix: seta do passivo trabalhista abre a ficha do colaborador (#500)
 - 2026-11-12 `710fdff` fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)
-- 2026-11-12 `8c7c7a5` fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)
-- 2026-11-12 `da7bffa` fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)
-- 2026-11-12 `a98b321` fix: Feriados da empresa agora podem ser corrigidos e excluídos, e salvar feriado estadual/municipal/nacional para de fa
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

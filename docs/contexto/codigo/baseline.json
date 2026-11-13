@@ -2,11 +2,26 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "66b104fb6e2b3bf42cfca8693000f8600f9f6c4a",
+  "commit": "31ea570368c8551294d3553e3eff6669f7b12e36",
   "branch": "main",
-  "data_commit": "2026-11-12T22:14:37-03:00",
+  "data_commit": "2026-11-13T00:39:18-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "31ea570",
+    "data": "2026-11-13",
+    "assunto": "docs: relatório de prontidão para produção (prod-readiness) (#535)"
+   },
+   {
+    "sha": "0807204",
+    "data": "2026-11-12",
+    "assunto": "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)"
+   },
+   {
+    "sha": "f7a2263",
+    "data": "2026-11-12",
+    "assunto": "chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)"
+   },
    {
     "sha": "66b104f",
     "data": "2026-11-12",
@@ -116,24 +131,9 @@
     "sha": "9dc8def",
     "data": "2026-11-12",
     "assunto": "fix: SST: permite emitir ficha de EPI, abre a tela de EPIs no menu e faz 'Ver Portal' funcionar (#479)"
-   },
-   {
-    "sha": "075db7f",
-    "data": "2026-11-12",
-    "assunto": "fix: Descontos: adiantamento respeita limite de % do salário e 1 por mês, consignado respeita margem somada e empréstimo"
-   },
-   {
-    "sha": "4fa4b7e",
-    "data": "2026-11-12",
-    "assunto": "fix: Recrutamento passa a criar, editar e excluir vagas e a inscrever candidatos (sem KPI falso) (#477)"
-   },
-   {
-    "sha": "004508d",
-    "data": "2026-11-12",
-    "assunto": "fix: Perfil mostra o estado real do MFA em vez de 'Habilitado' fixo (#496)"
    }
   ],
-  "arquivos_mudados_7d": 551,
+  "arquivos_mudados_7d": 553,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 33
+    "mudancas": 31
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 29
+    "mudancas": 27
    },
    {
     "arquivo": "CLAUDE.md",
@@ -215,7 +215,7 @@
    },
    {
     "arquivo": ".github/workflows/ci.yml",
-    "mudancas": 16
+    "mudancas": 14
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -246,10 +246,6 @@
     "mudancas": 10
    },
    {
-    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
-    "mudancas": 10
-   },
-   {
     "arquivo": ".github/workflows/canonical-edge-functions.yml",
     "mudancas": 9
    },
@@ -259,6 +255,10 @@
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "supabase/functions/external-db-bridge/validation.ts",
     "mudancas": 9
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 161
+    "commits": 164
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,9 +322,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2893,
+  "arquivos_total": 2894,
   "arquivos_codigo": 1560,
-  "linhas_codigo": 277885,
+  "linhas_codigo": 277892,
   "rotas": 114,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -339,7 +339,7 @@
   "testes": 598,
   "workflows": 21,
   "scripts": 115,
-  "docs_md": 291
+  "docs_md": 292
  },
  "por_pasta": {
   "capacitor.config.ts": {
@@ -364,7 +364,7 @@
   },
   "e2e/authenticated-non-admin": {
    "arquivos": 1,
-   "linhas": 38
+   "linhas": 45
   },
   "e2e/cleanup": {
    "arquivos": 2,

@@ -48,7 +48,7 @@
   {
    "arquivo": "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",
    "tipo": "e2e",
-   "linhas": 38,
+   "linhas": 45,
    "testa": [],
    "casos": 3
   },

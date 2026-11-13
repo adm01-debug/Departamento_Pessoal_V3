@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "66b104fb6e2b3bf42cfca8693000f8600f9f6c4a",
+  "sha": "31ea570368c8551294d3553e3eff6669f7b12e36",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 02:48 UTC",
-  "files_total": 2914,
+  "generated_at": "2026-11-13 04:05 UTC",
+  "files_total": 2915,
   "code_files": 2385,
-  "code_lines": 326279
+  "code_lines": 326286
  },
  "version": "1.3.2",
- "facts_hash": "e46d25ff4a548d38",
+ "facts_hash": "319c430c71d17255",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -96287,7 +96287,7 @@
   {
    "module": "e2e",
    "files": 27,
-   "lines": 1695,
+   "lines": 1702,
    "tables": [
     "colaboradores",
     "empresas",
@@ -229206,7 +229206,7 @@
   },
   "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts": {
    "path": "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",
-   "lines": 38,
+   "lines": 45,
    "is_test": true,
    "rule_comments": [
     "administrativas — o AdminRoute deve renderizar \"Acesso Restrito\"",
@@ -279870,10 +279870,37 @@
   }
  },
  "git": {
-  "sha": "66b104fb6e2b3bf42cfca8693000f8600f9f6c4a",
+  "sha": "31ea570368c8551294d3553e3eff6669f7b12e36",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "31ea570",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: relatório de prontidão para produção (prod-readiness) (#535)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "0807204",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)",
+    "files": [
+     "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts"
+    ]
+   },
+   {
+    "sha": "f7a2263",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)",
+    "files": [
+     "inventario/estado/rotas.json"
+    ]
+   },
    {
     "sha": "66b104f",
     "date": "2026-11-12",
@@ -280192,38 +280219,13 @@
      "src/components/admissoes/OnboardingPageContent.tsx",
      "src/pages/OnboardingPage.tsx"
     ]
-   },
-   {
-    "sha": "47fe444",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: OCR de documentos deixa de simular 'Aplicar ao Cadastro' e passa a mostrar e copiar o texto extraído (#490)",
-    "files": [
-     "src/pages/DocumentosPage.tsx"
-    ]
-   },
-   {
-    "sha": "7e8d170",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: remove placeholder Gov.br 'Em breve' do portal do candidato (#493)",
-    "files": [
-     "src/components/__tests__/TokenInput.test.tsx",
-     "src/components/contratacao/TokenInput.tsx"
-    ]
-   },
-   {
-    "sha": "965a624",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: indicador de saúde do sistema lê a taxa de sucesso no formato que a edge devolve (#495)",
-    "files": [
-     "src/hooks/__tests__/useSystemHealth.test.ts",
-     "src/hooks/useSystemHealth.ts"
-    ]
    }
   ],
   "hot_files": [
+   [
+    "inventario/estado/rotas.json",
+    2
+   ],
    [
     "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
     2
@@ -280243,6 +280245,14 @@
    [
     "src/services/edgeFunctionsService.ts",
     2
+   ],
+   [
+    "docs/prod-readiness.md",
+    1
+   ],
+   [
+    "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts",
+    1
    ],
    [
     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
@@ -280290,18 +280300,6 @@
    ],
    [
     "src/components/layout/EmpresaSelector.tsx",
-    1
-   ],
-   [
-    "src/components/ui/command-palette.tsx",
-    1
-   ],
-   [
-    "src/hooks/__tests__/useServerValidation.test.ts",
-    1
-   ],
-   [
-    "src/hooks/useServerValidation.ts",
     1
    ]
   ]

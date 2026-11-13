@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1430)",
    "SQL (827)",
-   "Markdown (291)",
+   "Markdown (292)",
    "JavaScript (126)",
    "JSON (61)",
    "YAML (56)",
@@ -1423,6 +1423,11 @@
    "arquivo": "docs/WORKFLOWS.md",
    "titulo": "🔄 WORKFLOWS.md - Fluxos de Trabalho",
    "linhas": 26
+  },
+  {
+   "arquivo": "docs/prod-readiness.md",
+   "titulo": "Prontidão para produção — Departamento Pessoal V3",
+   "linhas": 817
   }
  ],
  "docs_em_subpastas": [
