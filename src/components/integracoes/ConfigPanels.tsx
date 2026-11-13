@@ -29,6 +29,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import type { WhatsAppConfig } from '@/services/whatsappService';
 import { whatsappService } from '@/services/whatsappService';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useAuth } from '@/contexts';
 
 export function Bitrix24ConfigPanel() {
   const qc = useQueryClient();
@@ -251,10 +252,42 @@ export function Bitrix24ConfigPanel() {
   );
 }
 
+type CnabRemessa = Awaited<ReturnType<typeof cnabService.getRemessas>>[number];
+
+const nomeArquivoRemessa = (r: CnabRemessa) => `REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`;
+
+// Busca o conteúdo só no clique (a listagem não traz o arquivo). Retorna false se não há arquivo ou a busca falhou.
+async function baixarRemessa(empresaId: string, r: CnabRemessa): Promise<boolean> {
+  try {
+    const conteudo = await cnabService.getArquivoRemessa(empresaId, r.id);
+    if (!conteudo) {
+      toast.error('Arquivo de remessa ainda não disponível');
+      return false;
+    }
+    const blob = new Blob([conteudo], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomeArquivoRemessa(r);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    return true;
+  } catch (err) {
+    toast.error(safeErrorMessage(err, 'Erro ao baixar o arquivo de remessa'));
+    return false;
+  }
+}
+
 export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id || '';
+  // O arquivo de remessa traz CPF, conta e líquido de todos os funcionários: só RH/admin baixa.
+  const { isAdmin, hasRole } = useAuth();
+  const podeBaixarRemessa = isAdmin || hasRole('rh');
+  const [remessasSemArquivo, setRemessasSemArquivo] = useState<Set<string>>(() => new Set());
   const {
     data: config,
     isLoading: carregandoConfig,
@@ -366,19 +399,31 @@ export function CnabConfigPanel() {
                         {r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}
                       </TableCell>
                       <TableCell className="font-medium text-sm">{r.banco_codigo || '—'}</TableCell>
-                      <TableCell className="font-mono text-xs">
-                        {`REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`}
-                      </TableCell>
+                      <TableCell className="font-mono text-xs">{nomeArquivoRemessa(r)}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-success/10 text-success border-0">
                           {r.status || 'Processado'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" className="h-8 rounded-lg">
-                          <ExternalLink className="h-3 w-3 mr-2" />
-                          Download
-                        </Button>
+                        {podeBaixarRemessa ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 rounded-lg"
+                            disabled={remessasSemArquivo.has(r.id)}
+                            title={remessasSemArquivo.has(r.id) ? 'Arquivo de remessa ainda não disponível' : undefined}
+                            onClick={async () => {
+                              if (!(await baixarRemessa(empresaId, r)))
+                                setRemessasSemArquivo((prev) => new Set(prev).add(r.id));
+                            }}
+                          >
+                            <ExternalLink className="h-3 w-3 mr-2" />
+                            Download
+                          </Button>
+                        ) : (
+                          '—'
+                        )}
                       </TableCell>
                     </TableRow>
                   ))
