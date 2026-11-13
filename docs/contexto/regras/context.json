@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "42633005ff45199e1ed3d8a1f0604e1abfa0d431",
+  "sha": "0a81559b7d2926751e35d0865110c5175c561654",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-12 23:32 UTC",
-  "files_total": 2908,
-  "code_files": 2379,
-  "code_lines": 325540
+  "generated_at": "2026-11-13 01:13 UTC",
+  "files_total": 2913,
+  "code_files": 2384,
+  "code_lines": 325902
  },
  "version": "1.3.2",
- "facts_hash": "81aff7e9df4ea059",
+ "facts_hash": "248db7c135f61147",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 827,
-   ".ts": 743,
-   ".tsx": 681,
+   ".ts": 746,
+   ".tsx": 683,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -84405,7 +84405,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 76
+    "deps_count": 77
    },
    {
     "path": "",
@@ -84877,7 +84877,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 138
+    "deps_count": 139
    },
    {
     "path": "",
@@ -85235,7 +85235,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 72
+    "deps_count": 73
    },
    {
     "path": "",
@@ -85702,7 +85702,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 84
+    "deps_count": 85
    },
    {
     "path": "",
@@ -86582,7 +86582,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 71
+    "deps_count": 72
    },
    {
     "path": "",
@@ -87195,7 +87195,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 199
+    "deps_count": 200
    },
    {
     "path": "",
@@ -87232,7 +87232,7 @@
      "record_pii_access",
      "set_own_default_empresa"
     ],
-    "deps_count": 110
+    "deps_count": 109
    },
    {
     "path": "",
@@ -87370,7 +87370,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 58
+    "deps_count": 59
    },
    {
     "path": "",
@@ -87674,7 +87674,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 198
+    "deps_count": 199
    },
    {
     "path": "",
@@ -87978,7 +87978,7 @@
      "solicitar_adiantamento_13_ferias",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 216
+    "deps_count": 217
    },
    {
     "path": "",
@@ -88214,7 +88214,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 162
+    "deps_count": 164
    },
    {
     "path": "",
@@ -88265,7 +88265,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 107
+    "deps_count": 108
    },
    {
     "path": "",
@@ -88784,7 +88784,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 66
+    "deps_count": 67
    },
    {
     "path": "",
@@ -89089,7 +89089,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 208
+    "deps_count": 209
    },
    {
     "path": "",
@@ -92223,7 +92223,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 192
+    "deps_count": 193
    },
    {
     "path": "/auth/callback",
@@ -95229,7 +95229,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 570,
+  "components_count": 574,
   "hooks": [
    {
     "name": "useContacts",
@@ -96654,8 +96654,8 @@
   },
   {
    "module": "src/components",
-   "files": 570,
-   "lines": 74014,
+   "files": 574,
+   "lines": 74375,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -96985,7 +96985,7 @@
   {
    "module": "src/hooks",
    "files": 182,
-   "lines": 20162,
+   "lines": 20167,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -97297,7 +97297,7 @@
   {
    "module": "src/pages",
    "files": 115,
-   "lines": 41843,
+   "lines": 41807,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -97574,8 +97574,8 @@
   },
   {
    "module": "src/schemas",
-   "files": 32,
-   "lines": 8641,
+   "files": 33,
+   "lines": 8673,
    "tables": [],
    "exports": [
     "admissao.ts: admissaoSchema, AdmissaoSchema",
@@ -97650,6 +97650,7 @@
     "src/schemas/esocial/__tests__/helpers.test.ts",
     "src/schemas/esocial/__tests__/naoPeriodicosValidators.test.ts",
     "src/schemas/esocial/__tests__/periodicosValidators.test.ts",
+    "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
     "src/schemas/esocial/__tests__/rubricaValidator.test.ts",
     "src/schemas/esocial/__tests__/sstValidators.test.ts"
    ]
@@ -102877,6 +102878,7 @@
     "total_registros"
    ],
    "rubricas_folha": [
+    "codigo",
     "empresa_id",
     "id"
    ],
@@ -107828,6 +107830,10 @@
    {
     "file": "src/components/folha/RubricasDialog.tsx",
     "msg": "Divergência eSocial: ${errorMsg}"
+   },
+   {
+    "file": "src/components/folha/RubricasDialog.tsx",
+    "msg": "Nenhuma rubrica foi alterada. Verifique se você tem permissão para editar esta rubrica."
    },
    {
     "file": "src/components/integracoes/ConfigPanels.tsx",
@@ -135808,6 +135814,11 @@
     "value": "1"
    },
    {
+    "file": "src/components/ui/user-profile-menu.tsx",
+    "name": "SUPORTE_MAILTO",
+    "value": "'mailto:suporte@promobrindes.com.br?subject='"
+   },
+   {
     "file": "src/components/workflows/WorkflowDesigner.tsx",
     "name": "NODE_W",
     "value": "160"
@@ -138017,6 +138028,12 @@
     "field": "tipo",
     "value": "provento",
     "kind": "escreve"
+   },
+   {
+    "file": "src/components/folha/RubricasDialog.tsx",
+    "field": "tipo",
+    "value": "informativa",
+    "kind": "compara"
    },
    {
     "file": "src/components/folha/RubricasDialog.tsx",
@@ -145614,7 +145631,7 @@
     "file": "src/schemas/esocial/rubricaValidator.ts",
     "name": "validarRubricaESocial",
     "params": "rubrica: ESocialData",
-    "body": "const errors: ValidationError[] = []; required(rubrica.codigo, 'codigo', errors); required(rubrica.descricao, 'descricao', errors); required(rubrica.tipo, 'tipo', errors); enumValido(rubrica.tipo as string, ['provento', 'desconto', 'informativa', 'informativo'], 'tipo', errors); // Validação contra rubricas padrão (se o código for um dos conhecidos) const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo); if (padrao) { if (rubrica.tipo !== padrao.tipo) { errors.push({ campo: 'tip …"
+    "body": "const errors: ValidationError[] = []; required(rubrica.codigo, 'codigo', errors); required(rubrica.descricao, 'descricao', errors); required(rubrica.tipo, 'tipo', errors); enumValido(rubrica.tipo as string, ['provento', 'desconto', 'informativa', 'informativo'], 'tipo', errors); // Validação contra rubricas padrão (se o código for um dos conhecidos) const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo); if (padrao) { const norm = (t: unknown) => (t === 'informativa' ? 'informat …"
    },
    {
     "file": "src/schemas/esocial/sstValidators.ts",
@@ -147189,6 +147206,10 @@
     "line": "transition={{ delay: i * 0.05, duration: 0.3 }}"
    },
    {
+    "file": "src/components/esocial/ESocialAuditDialog.tsx",
+    "line": "// Sem eventos não há o que checar: não exibir score 100%/nota A nem \"tudo conforme\"."
+   },
+   {
     "file": "src/components/esocial/ESocialTimeline.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
    },
@@ -147239,10 +147260,6 @@
    {
     "file": "src/components/folha/FolhaComposicao.tsx",
     "line": "transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}"
-   },
-   {
-    "file": "src/components/folha/FolhaESocialSync.tsx",
-    "line": "Valores transmitidos coincidem 100% com o totalizador S-5003."
    },
    {
     "file": "src/components/folha/FolhaESocialSync.tsx",
@@ -151944,19 +151961,19 @@
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "name": "renders dialog title when open"
+    "name": "renders honest dialog title when open (sem alegar IA)"
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "name": "renders conformidade description"
+    "name": "renders description with the number of eventos checked"
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "name": "renders Iniciar Varredura Completa button in initial state"
+    "name": "shows results immediately, without fake progress bar"
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "name": "renders IA analysis description text"
+    "name": "flags S-1200 without matching S-1210"
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
@@ -151964,11 +151981,19 @@
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "name": "renders with empty eventos array without error"
+    "name": "with empty eventos shows honest empty state, without 100%/nota A/"
    },
    {
     "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-    "name": "shows Iniciar Varredura button when eventos have errors"
+    "name": "with eventos all ok still reports conformity"
+   },
+   {
+    "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
+    "name": "shows critical alert when eventos have errors"
+   },
+   {
+    "file": "src/components/__tests__/ESocialAuditDialog.test.tsx",
+    "name": "closes the dialog from the acknowledge button"
    },
    {
     "file": "src/components/__tests__/ESocialComplianceScore.test.tsx",
@@ -153877,6 +153902,18 @@
    {
     "file": "src/components/__tests__/FolhaESocialSync.test.tsx",
     "name": "renders correct processed counts when data provided"
+   },
+   {
+    "file": "src/components/__tests__/FolhaESocialSync.test.tsx",
+    "name": "Conciliar mostra estado vazio honesto, sem divergências ou valores fixos"
+   },
+   {
+    "file": "src/components/__tests__/FolhaESocialSync.test.tsx",
+    "name": "Atualizar só recarrega os dados locais e avisa sucesso sem citar o eSocial"
+   },
+   {
+    "file": "src/components/__tests__/FolhaESocialSync.test.tsx",
+    "name": "Atualizar mostra erro (e não sucesso) quando a recarga falha"
    },
    {
     "file": "src/components/__tests__/FolhaKPIs.test.tsx",
@@ -157487,6 +157524,38 @@
     "name": "renders empty state when no rubricas"
    },
    {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "Importar Padrão dispara a mutation de importação após confirmação"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "importação insere só os códigos padrão ainda não cadastrados, com tipo válido no banco"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "importação não insere nada quando todos os códigos padrão já existem"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "Corrigir divergência eSocial"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "conclui quando o UPDATE devolve a linha alterada"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "falha quando o UPDATE retorna erro"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "falha quando nenhuma linha foi alterada (ex.: bloqueado por RLS)"
+   },
+   {
+    "file": "src/components/__tests__/RubricasDialog.test.tsx",
+    "name": "mostra sucesso só no onSuccess e erro via safeErrorMessage no onError"
+   },
+   {
     "file": "src/components/__tests__/SSTEPIsTab.test.tsx",
     "name": "SSTEPIsTab"
    },
@@ -158671,6 +158740,26 @@
     "name": "não finge segurança quando o usuário não tem permissão de auditoria"
    },
    {
+    "file": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
+    "name": "DataTableToolbar — filtros no mobile"
+   },
+   {
+    "file": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
+    "name": "não mostra o botão de filtros quando não há filtros"
+   },
+   {
+    "file": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
+    "name": "abre uma gaveta com os filtros principais ao tocar no botão"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-profile-menu.test.tsx",
+    "name": "UserProfileMenu — item Ajuda"
+   },
+   {
+    "file": "src/components/ui/__tests__/user-profile-menu.test.tsx",
+    "name": "aponta para o e-mail de suporte"
+   },
+   {
     "file": "src/components/workflows/__tests__/WorkflowDesigner.test.tsx",
     "name": "WorkflowDesigner — conexões"
    },
@@ -158685,6 +158774,22 @@
    {
     "file": "src/components/workflows/__tests__/WorkflowDesigner.test.tsx",
     "name": "Limpar com conexão pendente não derruba o canvas"
+   },
+   {
+    "file": "src/components/workflows/__tests__/logExecucao.test.ts",
+    "name": "lerLogExecucao"
+   },
+   {
+    "file": "src/components/workflows/__tests__/logExecucao.test.ts",
+    "name": "lê o formato gravado por trigger_workflow_automation"
+   },
+   {
+    "file": "src/components/workflows/__tests__/logExecucao.test.ts",
+    "name": "retorna vazio para null, objeto ou valor inválido"
+   },
+   {
+    "file": "src/components/workflows/__tests__/logExecucao.test.ts",
+    "name": "descarta entradas não-objeto, usa o event cru como título desconhecido e ordena por data"
    },
    {
     "file": "src/components/workflows/__tests__/ordenarEtapas.test.ts",
@@ -162116,6 +162221,10 @@
    },
    {
     "file": "src/hooks/__tests__/useServerValidation.test.ts",
+    "name": "timeout toast não oferece ação que leve a rota inexistente"
+   },
+   {
+    "file": "src/hooks/__tests__/useServerValidation.test.ts",
     "name": "handles 401 status"
    },
    {
@@ -164581,6 +164690,22 @@
    {
     "file": "src/schemas/esocial/__tests__/periodicosValidators.test.ts",
     "name": "aceita beneficiário completo"
+   },
+   {
+    "file": "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
+    "name": "validarRubricaESocial com RUBRICAS_PADRAO reais"
+   },
+   {
+    "file": "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
+    "name": "aceita "
+   },
+   {
+    "file": "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
+    "name": "rubricas padrão como gravadas pela importação ficam conformes"
+   },
+   {
+    "file": "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
+    "name": "correção sugerida resulta em rubrica conforme"
    },
    {
     "file": "src/schemas/esocial/__tests__/rubricaValidator.test.ts",
@@ -202340,6 +202465,11 @@
       "escreve:src/utils/folhaCalc.ts",
       "escreve:supabase/functions/calcular-folha/index.ts"
      ],
+     "informativa": [
+      "compara:src/components/folha/RubricasDialog.tsx",
+      "compara:src/schemas/esocial/rubricaValidator.ts",
+      "escreve:src/constants/rubricas.ts"
+     ],
      "advertencia_verbal": [
       "compara:src/pages/MedidasDisciplinaresPage.tsx",
       "escreve:src/components/medidas-disciplinares/MedidasGravityScale.tsx",
@@ -202447,10 +202577,6 @@
      ],
      "fixo": [
       "escreve:src/components/workflows/WorkflowDesigner.tsx"
-     ],
-     "informativa": [
-      "compara:src/schemas/esocial/rubricaValidator.ts",
-      "escreve:src/constants/rubricas.ts"
      ],
      "ferias_aprovada": [
       "escreve:src/hooks/useFeriasAprovacao.ts"
@@ -235306,17 +235432,19 @@
   },
   "src/components/__tests__/ESocialAuditDialog.test.tsx": {
    "path": "src/components/__tests__/ESocialAuditDialog.test.tsx",
-   "lines": 98,
+   "lines": 127,
    "is_test": true,
    "tests": [
     "ESocialAuditDialog",
-    "renders dialog title when open",
-    "renders conformidade description",
-    "renders Iniciar Varredura Completa button in initial state",
-    "renders IA analysis description text",
+    "renders honest dialog title when open (sem alegar IA)",
+    "renders description with the number of eventos checked",
+    "shows results immediately, without fake progress bar",
+    "flags S-1200 without matching S-1210",
     "does not render content when closed",
-    "renders with empty eventos array without error",
-    "shows Iniciar Varredura button when eventos have errors"
+    "with empty eventos shows honest empty state, without 100%/nota A/",
+    "with eventos all ok still reports conformity",
+    "shows critical alert when eventos have errors",
+    "closes the dialog from the acknowledge button"
    ]
   },
   "src/components/__tests__/ESocialComplianceScore.test.tsx": {
@@ -236176,7 +236304,7 @@
   },
   "src/components/__tests__/FolhaESocialSync.test.tsx": {
    "path": "src/components/__tests__/FolhaESocialSync.test.tsx",
-   "lines": 90,
+   "lines": 126,
    "is_test": true,
    "tests": [
     "FolhaESocialSync",
@@ -236187,7 +236315,10 @@
     "renders Painel Geral button",
     "renders Conciliar button",
     "shows Pendente badges when no data",
-    "renders correct processed counts when data provided"
+    "renders correct processed counts when data provided",
+    "Conciliar mostra estado vazio honesto, sem divergências ou valores fixos",
+    "Atualizar só recarrega os dados locais e avisa sucesso sem citar o eSocial",
+    "Atualizar mostra erro (e não sucesso) quando a recarga falha"
    ]
   },
   "src/components/__tests__/FolhaKPIs.test.tsx": {
@@ -237736,7 +237867,7 @@
   },
   "src/components/__tests__/RubricasDialog.test.tsx": {
    "path": "src/components/__tests__/RubricasDialog.test.tsx",
-   "lines": 124,
+   "lines": 238,
    "is_test": true,
    "tests": [
     "RubricasDialog",
@@ -237747,7 +237878,15 @@
     "renders Código column header",
     "renders Descrição column header",
     "renders Tipo column header",
-    "renders empty state when no rubricas"
+    "renders empty state when no rubricas",
+    "Importar Padrão dispara a mutation de importação após confirmação",
+    "importação insere só os códigos padrão ainda não cadastrados, com tipo válido no banco",
+    "importação não insere nada quando todos os códigos padrão já existem",
+    "Corrigir divergência eSocial",
+    "conclui quando o UPDATE devolve a linha alterada",
+    "falha quando o UPDATE retorna erro",
+    "falha quando nenhuma linha foi alterada (ex.: bloqueado por RLS)",
+    "mostra sucesso só no onSuccess e erro via safeErrorMessage no onError"
    ]
   },
   "src/components/__tests__/SSTEPIsTab.test.tsx": {
@@ -240157,7 +240296,7 @@
   },
   "src/components/esocial/ESocialAuditDialog.tsx": {
    "path": "src/components/esocial/ESocialAuditDialog.tsx",
-   "lines": 226,
+   "lines": 169,
    "exports": [
     "function ESocialAuditDialog"
    ],
@@ -240217,6 +240356,9 @@
      "value": "warning",
      "kind": "compara"
     }
+   ],
+   "percents": [
+    "// Sem eventos não há o que checar: não exibir score 100%/nota A nem \"tudo conforme\"."
    ]
   },
   "src/components/esocial/ESocialComplianceScore.tsx": {
@@ -241154,7 +241296,7 @@
   },
   "src/components/folha/FolhaESocialSync.tsx": {
    "path": "src/components/folha/FolhaESocialSync.tsx",
-   "lines": 270,
+   "lines": 254,
    "exports": [
     "function FolhaESocialSync"
    ],
@@ -241266,7 +241408,6 @@
     }
    ],
    "percents": [
-    "Valores transmitidos coincidem 100% com o totalizador S-5003.",
     "transition={{ delay: i * 0.1 }}"
    ]
   },
@@ -241470,7 +241611,7 @@
   },
   "src/components/folha/RubricasDialog.tsx": {
    "path": "src/components/folha/RubricasDialog.tsx",
-   "lines": 362,
+   "lines": 408,
    "exports": [
     "function RubricasDialog"
    ],
@@ -241489,16 +241630,26 @@
     },
     {
      "table": "rubricas_folha",
-     "op": "update"
+     "op": "select"
+    },
+    {
+     "table": "rubricas_folha",
+     "op": "insert"
+    },
+    {
+     "table": "rubricas_folha",
+     "op": "select,update"
     }
    ],
    "table_cols": {
     "rubricas_folha": [
+     "codigo",
      "id"
     ]
    },
    "errors": [
-    "Divergência eSocial: ${errorMsg}"
+    "Divergência eSocial: ${errorMsg}",
+    "Nenhuma rubrica foi alterada. Verifique se você tem permissão para editar esta rubrica."
    ],
    "status_values": [
     {
@@ -241510,6 +241661,11 @@
      "field": "tipo",
      "value": "provento",
      "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "informativa",
+     "kind": "compara"
     },
     {
      "field": "tipo",
@@ -241770,7 +241926,7 @@
   },
   "src/components/layout/EmpresaSelector.tsx": {
    "path": "src/components/layout/EmpresaSelector.tsx",
-   "lines": 115,
+   "lines": 133,
    "exports": [
     "function EmpresaSelector"
    ]
@@ -244440,7 +244596,7 @@
   },
   "src/components/ui/data-table-toolbar.tsx": {
    "path": "src/components/ui/data-table-toolbar.tsx",
-   "lines": 173,
+   "lines": 210,
    "exports": [
     "function DataTableToolbar"
    ],
@@ -244750,7 +244906,7 @@
   },
   "src/components/ui/user-profile-menu.tsx": {
    "path": "src/components/ui/user-profile-menu.tsx",
-   "lines": 151,
+   "lines": 157,
    "exports": [
     "function UserProfileMenu"
    ],
@@ -244759,6 +244915,31 @@
     "/login",
     "/perfil",
     "/seguranca"
+   ],
+   "params": [
+    {
+     "name": "SUPORTE_MAILTO",
+     "value": "'mailto:suporte@promobrindes.com.br?subject='"
+    }
+   ]
+  },
+  "src/components/ui/__tests__/data-table-toolbar.test.tsx": {
+   "path": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
+   "lines": 33,
+   "is_test": true,
+   "tests": [
+    "DataTableToolbar — filtros no mobile",
+    "não mostra o botão de filtros quando não há filtros",
+    "abre uma gaveta com os filtros principais ao tocar no botão"
+   ]
+  },
+  "src/components/ui/__tests__/user-profile-menu.test.tsx": {
+   "path": "src/components/ui/__tests__/user-profile-menu.test.tsx",
+   "lines": 35,
+   "is_test": true,
+   "tests": [
+    "UserProfileMenu — item Ajuda",
+    "aponta para o e-mail de suporte"
    ]
   },
   "src/components/ui/signature/SignatureCanvas.tsx": {
@@ -244975,6 +245156,14 @@
     "function bezierPath(x1: number, y1: number, x2: number, y2: number, dx = Math.abs(x2 - x1) * 0.5): string {"
    ]
   },
+  "src/components/workflows/logExecucao.ts": {
+   "path": "src/components/workflows/logExecucao.ts",
+   "lines": 40,
+   "exports": [
+    "interface EventoLogExecucao",
+    "function lerLogExecucao"
+   ]
+  },
   "src/components/workflows/ordenarEtapas.ts": {
    "path": "src/components/workflows/ordenarEtapas.ts",
    "lines": 60,
@@ -245001,6 +245190,17 @@
     "porta de entrada do nó Fim recebe conexão e o fluxo salva",
     "porta de entrada de aprovador recebe conexão (Start → Aprovador → Fim)",
     "Limpar com conexão pendente não derruba o canvas"
+   ]
+  },
+  "src/components/workflows/__tests__/logExecucao.test.ts": {
+   "path": "src/components/workflows/__tests__/logExecucao.test.ts",
+   "lines": 40,
+   "is_test": true,
+   "tests": [
+    "lerLogExecucao",
+    "lê o formato gravado por trigger_workflow_automation",
+    "retorna vazio para null, objeto ou valor inválido",
+    "descarta entradas não-objeto, usa o event cru como título desconhecido e ordena por data"
    ]
   },
   "src/components/workflows/__tests__/ordenarEtapas.test.ts": {
@@ -247564,7 +247764,7 @@
   },
   "src/hooks/useServerValidation.ts": {
    "path": "src/hooks/useServerValidation.ts",
-   "lines": 67,
+   "lines": 62,
    "exports": [
     "function useServerValidation"
    ],
@@ -249314,7 +249514,7 @@
   },
   "src/hooks/__tests__/useServerValidation.test.ts": {
    "path": "src/hooks/__tests__/useServerValidation.test.ts",
-   "lines": 116,
+   "lines": 126,
    "is_test": true,
    "tests": [
     "useServerValidation",
@@ -249323,6 +249523,7 @@
     "handles VALIDATION_ERROR with field errors",
     "handles TIMEOUT_ERROR",
     "handles HTTP 504 status",
+    "timeout toast não oferece ação que leve a rota inexistente",
     "handles 401 status",
     "handles 403 status",
     "falls back to error message from response data",
@@ -255814,7 +256015,7 @@
   },
   "src/pages/WorkflowsPage.tsx": {
    "path": "src/pages/WorkflowsPage.tsx",
-   "lines": 747,
+   "lines": 711,
    "exports": [
     "function WorkflowsPage"
    ],
@@ -257058,7 +257259,7 @@
   },
   "src/schemas/esocial/rubricaValidator.ts": {
    "path": "src/schemas/esocial/rubricaValidator.ts",
-   "lines": 76,
+   "lines": 77,
    "exports": [
     "function validarRubricaESocial",
     "function sugerirCorrecaoRubrica"
@@ -257078,7 +257279,7 @@
     {
      "name": "validarRubricaESocial",
      "params": "rubrica: ESocialData",
-     "body": "const errors: ValidationError[] = []; required(rubrica.codigo, 'codigo', errors); required(rubrica.descricao, 'descricao', errors); required(rubrica.tipo, 'tipo', errors); enumValido(rubrica.tipo as string, ['provento', 'desconto', 'informativa', 'informativo'], 'tipo', errors); // Validação contra rubricas padrão (se o código for um dos conhecidos) const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo); if (padrao) { if (rubrica.tipo !== padrao.tipo) { errors.push({ campo: 'tip …"
+     "body": "const errors: ValidationError[] = []; required(rubrica.codigo, 'codigo', errors); required(rubrica.descricao, 'descricao', errors); required(rubrica.tipo, 'tipo', errors); enumValido(rubrica.tipo as string, ['provento', 'desconto', 'informativa', 'informativo'], 'tipo', errors); // Validação contra rubricas padrão (se o código for um dos conhecidos) const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo); if (padrao) { const norm = (t: unknown) => (t === 'informativa' ? 'informat …"
     }
    ]
   },
@@ -257355,6 +257556,17 @@
     "evtRemur booleano gera warning de confirmação S-1200",
     "validarS5001 — IRRF",
     "aceita beneficiário completo"
+   ]
+  },
+  "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts": {
+   "path": "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
+   "lines": 31,
+   "is_test": true,
+   "tests": [
+    "validarRubricaESocial com RUBRICAS_PADRAO reais",
+    "aceita ",
+    "rubricas padrão como gravadas pela importação ficam conformes",
+    "correção sugerida resulta em rubrica conforme"
    ]
   },
   "src/schemas/esocial/__tests__/rubricaValidator.test.ts": {
@@ -279519,10 +279731,87 @@
   }
  },
  "git": {
-  "sha": "42633005ff45199e1ed3d8a1f0604e1abfa0d431",
+  "sha": "0a81559b7d2926751e35d0865110c5175c561654",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "0a81559",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: botão de filtros no mobile abre gaveta com os filtros (#505)",
+    "files": [
+     "src/components/ui/__tests__/data-table-toolbar.test.tsx",
+     "src/components/ui/data-table-toolbar.tsx"
+    ]
+   },
+   {
+    "sha": "11f3f53",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "Rubricas: \"Importar Padrão\" passa a gravar as rubricas padrão; sai o botão de XML que não mostrava nada (#510)",
+    "files": [
+     "src/components/__tests__/RubricasDialog.test.tsx",
+     "src/components/folha/RubricasDialog.tsx",
+     "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
+     "src/schemas/esocial/rubricaValidator.ts"
+    ]
+   },
+   {
+    "sha": "e359f6c",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: item \"Ajuda\" do menu do usuário abre o e-mail de suporte (#504)",
+    "files": [
+     "src/components/ui/__tests__/user-profile-menu.test.tsx",
+     "src/components/ui/user-profile-menu.tsx"
+    ]
+   },
+   {
+    "sha": "ad49d87",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: corrige links para /empresas/novo e remove ação de toast que levava a 404 (#503)",
+    "files": [
+     "src/components/layout/EmpresaSelector.tsx",
+     "src/components/ui/command-palette.tsx",
+     "src/hooks/__tests__/useServerValidation.test.ts",
+     "src/hooks/useServerValidation.ts",
+     "src/pages/DashboardPage.tsx"
+    ]
+   },
+   {
+    "sha": "bf4d7fc",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "Folha: botão Conciliar do eSocial deixa de mostrar divergências inventadas (#513)",
+    "files": [
+     "src/components/__tests__/FolhaESocialSync.test.tsx",
+     "src/components/folha/FolhaESocialSync.tsx"
+    ]
+   },
+   {
+    "sha": "6303fa0",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "fix: rastro de workflow mostra eventos reais de log_execucao (#512)",
+    "files": [
+     "src/components/workflows/__tests__/logExecucao.test.ts",
+     "src/components/workflows/logExecucao.ts",
+     "src/pages/WorkflowsPage.tsx"
+    ]
+   },
+   {
+    "sha": "25a2766",
+    "date": "2026-11-12",
+    "author": "adm01-debug",
+    "subject": "eSocial: checagem de consistência mostra o resultado na hora, sem barra falsa nem alegação de IA (#509)",
+    "files": [
+     "src/components/__tests__/ESocialAuditDialog.test.tsx",
+     "src/components/esocial/ESocialAuditDialog.tsx",
+     "src/pages/ESocialPage.tsx"
+    ]
+   },
    {
     "sha": "4263300",
     "date": "2026-11-12",
@@ -279787,170 +280076,87 @@
     "files": [
      "src/pages/FinanceiroBancarioPage.tsx"
     ]
-   },
-   {
-    "sha": "e8d162f",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: perfil troca senha de verdade e firewall leva ao bloqueio de IP (#474)",
-    "files": [
-     "src/pages/ConfiguracoesPage.tsx",
-     "src/pages/PerfilPage.tsx",
-     "src/pages/SegurancaPage.tsx"
-    ]
-   },
-   {
-    "sha": "8ac54f1",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: dashboards mostram só indicadores reais e perdem botões sem ação (#473)",
-    "files": [
-     "src/components/__tests__/DashboardHeader.test.tsx",
-     "src/components/dashboard/AnalyticsSection.tsx",
-     "src/components/dashboard/DashboardHeader.tsx",
-     "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
-     "src/components/relatorios/RelatoriosAnalyticsTab.tsx",
-     "src/hooks/__tests__/useExecutiveDashboard.test.ts",
-     "src/hooks/useExecutiveDashboard.ts",
-     "src/pages/DashboardExecutivoPage.tsx",
-     "src/pages/DashboardPage.tsx"
-    ]
-   },
-   {
-    "sha": "13ee3ba",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: KPIs do Ponto calculados de registros reais e ranking fictício removido (#472)",
-    "files": [
-     "src/components/__tests__/GestaoPontoAnalytics.test.tsx",
-     "src/components/ponto/GestaoPontoAnalytics.tsx",
-     "src/components/ponto/GestaoRegistrosPonto.tsx",
-     "src/pages/PontoPage.tsx"
-    ]
-   },
-   {
-    "sha": "cab34b8",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: Conciliação do eSocial e card \"Insights da IA\" deixam de mostrar dados inventados (#471)",
-    "files": [
-     "src/components/__tests__/ESocialAIInsights.test.tsx",
-     "src/components/__tests__/ESocialConciliacao.test.tsx",
-     "src/components/__tests__/ESocialSemDadosFicticios.test.tsx",
-     "src/components/esocial/ESocialAIInsights.tsx",
-     "src/components/esocial/ESocialConciliacao.tsx",
-     "src/pages/ESocialPage.tsx"
-    ]
-   },
-   {
-    "sha": "884e312",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: pagamento bancário da folha não simula mais envio ao banco e remove botões de exportação sem ação (#470)",
-    "files": [
-     "src/components/__tests__/PagamentoBancarioWizard.test.tsx",
-     "src/components/folha/FolhaComposicao.tsx",
-     "src/components/folha/PagamentoBancarioWizard.tsx"
-    ]
-   },
-   {
-    "sha": "cf95554",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: tela de divergências de ponto não carregava colaboradores (ORDER BY coluna inexistente) (#466)",
-    "files": [
-     "src/pages/AdminPontoDivergenciasPage.tsx"
-    ]
-   },
-   {
-    "sha": "b3493b3",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: E2E não dispara dois logins MFA simultâneos do mesmo usuário (deadlock/500 no Auth) (#469)",
-    "files": [
-     "playwright.config.ts"
-    ]
    }
   ],
   "hot_files": [
    [
-    "src/pages/PerfilPage.tsx",
-    2
-   ],
-   [
-    "package-lock.json",
+    "src/components/ui/__tests__/data-table-toolbar.test.tsx",
     1
    ],
    [
-    "package.json",
+    "src/components/ui/data-table-toolbar.tsx",
     1
    ],
    [
-    "src/pages/PassivoTrabalhistaPage.tsx",
+    "src/components/__tests__/RubricasDialog.test.tsx",
     1
    ],
    [
-    "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
+    "src/components/folha/RubricasDialog.tsx",
     1
    ],
    [
-    "src/components/ponto/PontoInconsistencyPanel.tsx",
+    "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
     1
    ],
    [
-    "src/components/__tests__/ExameFormDialog.test.tsx",
+    "src/schemas/esocial/rubricaValidator.ts",
     1
    ],
    [
-    "src/components/__tests__/ExameTable.test.tsx",
+    "src/components/ui/__tests__/user-profile-menu.test.tsx",
     1
    ],
    [
-    "src/components/exames/ExameFormDialog.tsx",
+    "src/components/ui/user-profile-menu.tsx",
     1
    ],
    [
-    "src/components/exames/ExameTable.tsx",
+    "src/components/layout/EmpresaSelector.tsx",
     1
    ],
    [
-    "src/pages/ExamesPage.tsx",
+    "src/components/ui/command-palette.tsx",
     1
    ],
    [
-    "src/pages/CentrosCustoPage.tsx",
+    "src/hooks/__tests__/useServerValidation.test.ts",
     1
    ],
    [
-    "src/pages/EscalasPage.tsx",
+    "src/hooks/useServerValidation.ts",
     1
    ],
    [
-    "src/pages/JornadasPage.tsx",
+    "src/pages/DashboardPage.tsx",
     1
    ],
    [
-    "src/pages/LocaisTrabalhoPage.tsx",
+    "src/components/__tests__/FolhaESocialSync.test.tsx",
     1
    ],
    [
-    "src/pages/LotacoesPage.tsx",
+    "src/components/folha/FolhaESocialSync.tsx",
     1
    ],
    [
-    "src/pages/SindicatosPage.tsx",
+    "src/components/workflows/__tests__/logExecucao.test.ts",
     1
    ],
    [
-    "src/pages/TurnosPage.tsx",
+    "src/components/workflows/logExecucao.ts",
     1
    ],
    [
-    "src/hooks/useFeriados.ts",
+    "src/pages/WorkflowsPage.tsx",
     1
    ],
    [
-    "src/pages/FeriadosPage.tsx",
+    "src/components/__tests__/ESocialAuditDialog.test.tsx",
+    1
+   ],
+   [
+    "src/components/esocial/ESocialAuditDialog.tsx",
     1
    ]
   ]

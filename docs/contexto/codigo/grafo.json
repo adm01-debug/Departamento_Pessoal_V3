@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 963,
- "arestas": 4650,
+ "nos": 964,
+ "arestas": 4654,
  "hubs": [
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -10,7 +10,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 251
+   "importado_por": 252
   },
   {
    "arquivo": "src/components/ui/button.tsx",
@@ -37,11 +37,11 @@
    "importado_por": 127
   },
   {
-   "arquivo": "src/schemas/validate.ts",
-   "importado_por": 117
+   "arquivo": "src/utils/safeError.ts",
+   "importado_por": 118
   },
   {
-   "arquivo": "src/utils/safeError.ts",
+   "arquivo": "src/schemas/validate.ts",
    "importado_por": 117
   },
   {
@@ -154,14 +154,14 @@
   },
   {
    "arquivo": "src/components/ui/progress.tsx",
-   "importado_por": 19
+   "importado_por": 18
   },
   {
    "arquivo": "src/components/ui/scroll-area.tsx",
    "importado_por": 18
   },
   {
-   "arquivo": "src/schemas/common.ts",
+   "arquivo": "src/components/ui/empty-state.tsx",
    "importado_por": 17
   }
  ],
@@ -303,7 +303,7 @@
   },
   {
    "modulo": "components/folha",
-   "depende_de": 11,
+   "depende_de": 12,
    "importado_por": 1
   },
   {

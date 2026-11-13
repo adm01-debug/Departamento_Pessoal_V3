@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (471)",
+   "co-localizado (__tests__) (475)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "chore: corrige override fast-uri para 3.1.9 (4 alertas Dependabot) (#462)",
-   "fix: seta do passivo trabalhista abre a ficha do colaborador (#500)",
-   "fix: botão 'Ver lista completa' de inconsistências de ponto passa a mostrar todas (#501)",
-   "fix: Exames/ASO: permite editar o exame e registrar o resultado (apto/inapto) depois do cadastro (#488)",
-   "fix: cadastros básicos agora podem ser editados sem excluir e recriar (#494)"
+   "fix: botão de filtros no mobile abre gaveta com os filtros (#505)",
+   "Rubricas: \"Importar Padrão\" passa a gravar as rubricas padrão; sai o botão de XML que não mostrava nada (#510)",
+   "fix: item \"Ajuda\" do menu do usuário abre o e-mail de suporte (#504)",
+   "fix: corrige links para /empresas/novo e remove ação de toast que levava a 404 (#503)",
+   "Folha: botão Conciliar do eSocial deixa de mostrar divergências inventadas (#513)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

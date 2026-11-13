@@ -1432,7 +1432,7 @@
     "ESocialAuditDialog"
    ],
    "export_default": null,
-   "linhas": 226,
+   "linhas": 169,
    "dominio": "components/esocial",
    "hooks_locais": [],
    "tabelas": [],
@@ -2195,7 +2195,7 @@
     "FolhaESocialSync"
    ],
    "export_default": null,
-   "linhas": 270,
+   "linhas": 254,
    "dominio": "components/folha",
    "hooks_locais": [
     "useEmpresas"
@@ -2322,7 +2322,7 @@
     "RubricasDialog"
    ],
    "export_default": null,
-   "linhas": 362,
+   "linhas": 408,
    "dominio": "components/folha",
    "hooks_locais": [],
    "tabelas": [
@@ -2558,7 +2558,7 @@
     "EmpresaSelector"
    ],
    "export_default": null,
-   "linhas": 115,
+   "linhas": 133,
    "dominio": "components/layout",
    "hooks_locais": [],
    "tabelas": [],
@@ -4421,7 +4421,7 @@
     "DataTableToolbar"
    ],
    "export_default": null,
-   "linhas": 173,
+   "linhas": 210,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
@@ -4501,7 +4501,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 16,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -4648,7 +4648,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 19,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -4751,7 +4751,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "orfao": false
   },
   {
@@ -5066,7 +5066,7 @@
     "UserProfileMenu"
    ],
    "export_default": null,
-   "linhas": 151,
+   "linhas": 157,
    "dominio": "components/ui",
    "hooks_locais": [
     "useAuth"
@@ -7125,7 +7125,7 @@
     "WorkflowsPage"
    ],
    "export_default": "WorkflowsPage",
-   "linhas": 747,
+   "linhas": 711,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",

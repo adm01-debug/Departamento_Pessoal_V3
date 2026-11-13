@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `42633005ff` · branch `main` · 2026-11-12 23:32 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0a81559b7d` · branch `main` · 2026-11-13 01:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1555,7 +1555,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `geral` | escreve | `src/components/colaborador-detalhes/AnotacoesTab.tsx` |
 | `tipo` | `holerite_disponivel` | escreve | `supabase/functions/distribuir-holerites/index.ts` |
 | `tipo` | `indicadores_dp` | compara | `supabase/functions/enviar-relatorio/index.ts` |
-| `tipo` | `informativa` | compara, escreve | `src/constants/rubricas.ts`<br>`src/schemas/esocial/rubricaValidator.ts` |
+| `tipo` | `informativa` | compara, escreve | `src/components/folha/RubricasDialog.tsx`<br>`src/constants/rubricas.ts`<br>`src/schemas/esocial/rubricaValidator.ts` |
 | `tipo` | `informativo` | compara | `src/pages/RubricasPage.tsx` |
 | `tipo` | `injustificada` | compara, escreve | `src/pages/FaltasPage.tsx` |
 | `tipo` | `justa_causa` | compara, escreve | `src/components/desligamentos/TurnoverChart.tsx`<br>`src/components/medidas-disciplinares/MedidasGravityScale.tsx`<br>`src/pages/CalculadoraRescisaoPage.tsx`<br>`src/pages/MedidasDisciplinaresPage.tsx`<br>`src/utils/rescisaoCalc.ts`<br>… +1 |
@@ -3134,7 +3134,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
   ```
 - **validarRubricaESocial(rubrica: ESocialData)** — `src/schemas/esocial/rubricaValidator.ts`
   ```
-  const errors: ValidationError[] = []; required(rubrica.codigo, 'codigo', errors); required(rubrica.descricao, 'descricao', errors); required(rubrica.tipo, 'tipo', errors); enumValido(rubrica.tipo as string, ['provento', 'desconto', 'informativa', 'informativo'], 'tipo', errors); // Validação contra rubricas padrão (se o código for um dos conhecidos) const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo); if (padrao) { if (rubrica.tipo !== padrao.tipo) { errors.push({ campo: 'tip …
+  const errors: ValidationError[] = []; required(rubrica.codigo, 'codigo', errors); required(rubrica.descricao, 'descricao', errors); required(rubrica.tipo, 'tipo', errors); enumValido(rubrica.tipo as string, ['provento', 'desconto', 'informativa', 'informativo'], 'tipo', errors); // Validação contra rubricas padrão (se o código for um dos conhecidos) const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo); if (padrao) { const norm = (t: unknown) => (t === 'informativa' ? 'informat …
   ```
 - **validarS2210(dados: ESocialData)** — `src/schemas/esocial/sstValidators.ts`
   ```
@@ -3594,6 +3594,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: i * 0.02 }}` | `src/components/epis/EpiEntregasTable.tsx` |
 | `transition={{ delay: i * 0.03 }}` | `src/components/epis/EpiEntregasTable.tsx` |
 | `transition={{ delay: i * 0.05, duration: 0.3 }}` | `src/components/epis/EpiKPIs.tsx` |
+| `// Sem eventos não há o que checar: não exibir score 100%/nota A nem "tudo conforme".` | `src/components/esocial/ESocialAuditDialog.tsx` |
 | `transition={{ delay: i * 0.05 }}` | `src/components/esocial/ESocialTimeline.tsx` |
 | `transition={{ delay: i * 0.05, duration: 0.3 }}` | `src/components/exames/ExameKPIs.tsx` |
 | `transition={{ delay: i * 0.02 }}` | `src/components/exames/ExameTable.tsx` |
@@ -3607,7 +3608,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: idx * 0.05 }}` | `src/components/folha/FolhaAuditTimeline.tsx` |
 | `transition={{ delay: i * 0.08 }}` | `src/components/folha/FolhaComposicao.tsx` |
 | `transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}` | `src/components/folha/FolhaComposicao.tsx` |
-| `Valores transmitidos coincidem 100% com o totalizador S-5003.` | `src/components/folha/FolhaESocialSync.tsx` |
 | `transition={{ delay: i * 0.1 }}` | `src/components/folha/FolhaESocialSync.tsx` |
 | `transition={{ delay: index * 0.08 }}` | `src/components/folha/FolhaPipeline.tsx` |
 | `if (resumo.totalDescontos > resumo.totalProventos * 0.4) {` | `src/components/folha/FolhaValidationAlerts.tsx` |
@@ -3806,6 +3806,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `SIDEBAR_WIDTH` | `'16rem'` | `src/components/ui/sidebar.tsx` |
 | `SIDEBAR_WIDTH_MOBILE` | `'18rem'` | `src/components/ui/sidebar.tsx` |
 | `TOAST_LIMIT` | `1` | `src/components/ui/use-toast.ts` |
+| `SUPORTE_MAILTO` | `'mailto:suporte@promobrindes.com.br?subject='` | `src/components/ui/user-profile-menu.tsx` |
 | `NODE_W` | `160` | `src/components/workflows/WorkflowDesigner.tsx` |
 | `NODE_H` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |
 | `GW_W` | `56` | `src/components/workflows/WorkflowDesigner.tsx` |
@@ -4403,6 +4404,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Apenas administradores podem exportar o relatório contábil (contém CPF integral). | `src/components/folha/RelatorioContabilDialog.tsx` |
 | Nenhum dado encontrado para esta folha. | `src/components/folha/RelatorioContabilDialog.tsx` |
 | Divergência eSocial: ${errorMsg} | `src/components/folha/RubricasDialog.tsx` |
+| Nenhuma rubrica foi alterada. Verifique se você tem permissão para editar esta rubrica. | `src/components/folha/RubricasDialog.tsx` |
 | Erro ao salvar configuração | `src/components/integracoes/ConfigPanels.tsx` |
 | Preencha código do banco, agência, conta, dígito da conta e convênio. | `src/components/integracoes/ConfigPanels.tsx` |
 | URL do webhook deve usar https. | `src/components/integracoes/ConfigPanels.tsx` |
@@ -4549,8 +4551,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Erro ao gerar PDF avançado | `src/pages/AfastamentosPage.tsx` |
 | Selecione uma empresa para exportar o relatório | `src/pages/AfastamentosPage.tsx` |
 | ; import { Skeleton } from  | `src/pages/AssinarContratoPage.tsx` |
-| Falha ao gerar recibo | `src/pages/AssinarContratoPage.tsx` |
-| … +507 linhas — lista completa em `context.json` | |
+| … +508 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4599,7 +4600,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (6838 testes em 551 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (6865 testes em 555 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4694,6 +4695,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/uploadValidation.test.ts` | 18 | validateUploadFile · accepts a valid PDF file · accepts a valid JPEG image · throws when file exceeds size limit … |
 | `scripts/tests/inventario-banco.test.mjs` | 17 | banco.sql tem as secoes esperadas e cada uma devolve a coluna j · banco.sql so le: nenhum comando de escrita e nada do command do cron · banco.sql: nome de tabela entra escapado na regex de citada_no_banco · banco.sql: count(*) exato so sem RLS no caminho (tabela sem RLS ou papel que ignora RLS) … |
 | `src/components/__tests__/ESocialAlteracaoComponents.test.tsx` | 17 | S2205AlteracaoCadastral · renders trabalhador name · renders CPF · renders data de alteração … |
+| `src/components/__tests__/RubricasDialog.test.tsx` | 17 | RubricasDialog · renders Rubricas trigger button · renders Gestão de Rubricas dialog title · renders Nova Rubrica button … |
 | `src/hooks/__tests__/useMoreGenericCrudHooks.test.ts` | 17 | useWebhooksAvancados · exposes webhooks as alias for items · passes webhookService to useGenericCrud with empresa_id filter · useWebhookLogs … |
 | `src/hooks/__tests__/useNotificacoes.test.ts` | 17 | useNotificacoes · returns empty notificacoes initially · naoLidas count is 0 when all notificacoes are read · naoLidas counts unread notificacoes … |
 | `src/hooks/__tests__/usePcs.test.ts` | 17 | usePcsPlanos · lista planos da empresa atual · criar semeia os fatores da metodologia padrão no plano novo · atualizar delega ao service e toasta sucesso … |
@@ -4752,12 +4754,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/DesligamentoBadges.test.tsx` | 12 | StatusBadge · renders Pendente for pendente status · renders Em Andamento for em_andamento · renders Concluído for concluido … |
 | `src/components/__tests__/ESocialPagamentosAndSST.test.tsx` | 12 | S1210Pagamentos · renders Rendimentos Pagos label · renders payment dates · renders perApur for competência … |
 | `src/components/__tests__/ESocialSemDadosFicticios.test.tsx` | 12 | eSocial sem dados fictícios · conciliação não exibe valores monetários · conciliação não renderiza tabela de rubricas · conciliação não agenda timers ao montar (sem atualização simulada) … |
+| `src/components/__tests__/FolhaESocialSync.test.tsx` | 12 | FolhaESocialSync · renders Integração eSocial title · renders refresh button · renders Progresso Geral de Transmissão label … |
 | `src/components/__tests__/MedidasDisciplinares.test.tsx` | 12 | MedidasKPIs · renders Total Registros label · renders all KPI labels · renders stat values … |
 | `src/components/__tests__/NovaAdmissaoDialog.test.tsx` | 12 | NovaAdmissaoDialog · renders Nova Admissão trigger button by default · renders Nova Admissão dialog title · renders Nome completo label … |
 | `src/hooks/__tests__/useCalcular13Salario.test.tsx` | 12 | useCalcular13Salario · initial state: loading=false, resultado=null · exposes calcular function · sets loading=true while calculating … |
 | `src/hooks/__tests__/useGenericCrud.test.ts` | 12 | useGenericCrud · passes queryKey and queryFn to useQuery · exposes items from query data · exposes total from query data … |
 | `src/hooks/__tests__/useLocalStorage.test.ts` | 12 | useLocalStorage · returns initial value when key does not exist · returns stored value when key exists · stores value and updates state … |
 | `src/hooks/__tests__/useMediaQuery.test.ts` | 12 | useMediaQuery · returns initial match state · returns false when query does not match · updates when media query changes … |
+| `src/hooks/__tests__/useServerValidation.test.ts` | 12 | useServerValidation · returns handleServerError function · shows generic toast for unknown error · handles VALIDATION_ERROR with field errors … |
 | `src/integrations/supabase/__tests__/clientBridge.test.ts` | 12 | client.ts — callBridge via query builder · select serializa action/table/filters/order/limit no body do bridge · filtro com valor  · ilike vazio e string  … |
 | `src/services/__tests__/authService.test.ts` | 12 | authService.forgotPassword · returns success when supabase auth succeeds · throws when supabase auth returns error · throws with fallback message when error has no message … |
 | `src/services/__tests__/contratacaoService.xss.test.ts` | 12 | contratacaoService.gerarTemplateContrato — regressão XSS · escapa payload malicioso em admissao.nome: %s · escapa payload em admissao.cargo e admissao.departamento · escapa payload dentro de metadata.endereco (input do candidato) … |
@@ -4775,7 +4779,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
 | `src/contexts/__tests__/NotificationContext.test.tsx` | 11 | useNotification · throws when used outside provider · provides notifications from useNotificacoes · provides unreadCount from naoLidas … |
 | `src/hooks/__tests__/useBackGesture.test.ts` | 11 | useBackGesture · navigates back on left-edge swipe right · does not navigate when swipe starts away from left edge · does not navigate when horizontal distance is too small … |
-| `src/hooks/__tests__/useServerValidation.test.ts` | 11 | useServerValidation · returns handleServerError function · shows generic toast for unknown error · handles VALIDATION_ERROR with field errors … |
 | `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
 | `src/services/__tests__/pontoMonitorService.test.ts` | 11 | pontoMonitorService.logEvent · inserts event into ponto_auditoria · includes usuario_id from auth.getUser · swallows DB errors silently (no throw) … |
 | `src/utils/__tests__/safeError.test.ts` | 11 | safeErrorMessage · returns fallback for null/undefined error · returns custom fallback when specified · returns user-friendly message for duplicate key error … |
@@ -4786,6 +4789,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/DarfTab.test.tsx` | 10 | DarfTab · renders DARF title · renders IRRF label · does not render non-payroll taxes (PIS/COFINS, CSLL) … |
 | `src/components/__tests__/DesligamentoStatusBadge.test.tsx` | 10 | StatusBadge · renders Pendente for pendente status · renders Em Andamento for em_andamento status · renders Concluído for concluido status … |
 | `src/components/__tests__/DetalhesAdmissaoDialog.test.tsx` | 10 | DetalhesAdmissaoDialog · returns null when admissao is null · renders colaborador name in dialog title · renders etapa badge … |
+| `src/components/__tests__/ESocialAuditDialog.test.tsx` | 10 | ESocialAuditDialog · renders honest dialog title when open (sem alegar IA) · renders description with the number of eventos checked · shows results immediately, without fake progress bar … |
 | `src/components/__tests__/EmpresaSettingsTab.test.tsx` | 10 | EmpresaSettingsTab · shows spinner when loading · renders Dados da Empresa title · renders form labels … |
 | `src/components/__tests__/FeriasReconciliacaoCard.test.tsx` | 10 | FeriasReconciliacaoCard · renders Reconciliação Férias ↔ Folha title · shows empty state when no divergences · shows skeleton when loading … |
 | `src/components/__tests__/FeriasReconciliacaoHistoricoCard.test.tsx` | 10 | FeriasReconciliacaoHistoricoCard · renders Reconciliação Automática — Histórico title · shows empty state when no logs · shows skeleton when loading … |
@@ -4856,7 +4860,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeriasTable.test.tsx` | 9 | FeriasTable · renders Colaborador header · renders Período header · renders Dias header … |
 | `src/components/__tests__/FolhaAuditTimeline.test.tsx` | 9 | FolhaAuditTimeline · renders Trilha de Processamento section title · renders competencia in the title · shows empty state when no logs … |
 | `src/components/__tests__/FolhaAuditoriaTable.test.tsx` | 9 | FolhaAuditoriaTable · renders filter input · renders Data/Hora column header · renders Severidade column header … |
-| `src/components/__tests__/FolhaESocialSync.test.tsx` | 9 | FolhaESocialSync · renders Integração eSocial title · renders refresh button · renders Progresso Geral de Transmissão label … |
 | `src/components/__tests__/FolhaKPIs.test.tsx` | 9 | FolhaKPIs · shows skeleton cards when loading · renders Colaboradores label · renders Total Bruto label … |
 | `src/components/__tests__/FolhaValidationAlerts.test.tsx` | 9 | FolhaValidationAlerts · renders Audit Smart Validation title · renders score badge · does not claim eSocial S-1010 sync it never checked … |
 | `src/components/__tests__/GerarAEJDialog.test.tsx` | 9 | GerarAEJDialog · renders Gerar AEJ trigger button · renders dialog title · renders dialog description … |
@@ -4895,15 +4898,13 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RelatoriosAnalyticsTab.test.tsx` | 9 | RelatoriosAnalyticsTab · renders Colaboradores Ativos label · renders Custo Folha Mensal label · renders Desligamentos label … |
 | `src/components/__tests__/RewardsApprovalHub.test.tsx` | 9 | RewardsApprovalHub · renders Aguardando Gestor stage · renders Em Revisão stage · renders Aguardando RH stage … |
 | `src/components/__tests__/RewardsSimulator.test.tsx` | 9 | RewardsSimulator · renders Simulador de ROI title · renders subtitle text · renders Comparar Cenários button … |
-| `src/components/__tests__/RubricasDialog.test.tsx` | 9 | RubricasDialog · renders Rubricas trigger button · renders Gestão de Rubricas dialog title · renders Nova Rubrica button … |
 | `src/components/__tests__/SSTEPIsTab.test.tsx` | 9 | SSTEPIsTab · shows empty state when no EPIs · renders EPI nome when EPIs provided · renders EPI CA number … |
 | `src/components/__tests__/SSTExamesTab.test.tsx` | 9 | SSTExamesTab · renders ASOs por Tipo chart title · renders ASOs por Departamento chart title · renders Colaborador table header … |
 | `src/components/__tests__/SSTIncidentesTab.test.tsx` | 9 | SSTIncidentesTab · renders Acidentes Registrados KPI card · renders Incidentes este mês KPI card · renders Dias sem acidentes KPI card … |
 | `src/components/__tests__/SSTKPIs.test.tsx` | 9 | SSTKPIs · renders ASOs Válidos KPI · renders Vencendo 30d KPI · renders Vencidos KPI … |
 | `src/components/__tests__/SSTNRsTab.test.tsx` | 9 | SSTNRsTab · renders NR-6 EPI card · renders NR-7 PCMSO card · renders NR-9 PGR card … |
 | `src/components/__tests__/SSTProgramasTab.test.tsx` | 9 | SSTProgramasTab · shows empty state when no programas · renders PGR sigla when programs provided · renders NR badge for PGR … |
-| `src/components/__tests__/SSTRiscosTab.test.tsx` | 9 | SSTRiscosTab · renders Risco Físico category card · renders Risco Químico category card · renders Risco Biológico category card … |
-| … +251 linhas — lista completa em `context.json` | | |
+| … +255 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 

@@ -917,7 +917,6 @@
   "src/components/esocial/ESocialAuditDialog.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/dialog.tsx",
-   "src/components/ui/progress.tsx",
    "src/lib/utils.ts",
    "src/services/esocialService.ts"
   ],
@@ -1318,10 +1317,12 @@
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
+   "src/components/ui/empty-state.tsx",
    "src/components/ui/progress.tsx",
    "src/hooks/index.ts",
    "src/lib/utils.ts",
-   "src/services/esocialService.ts"
+   "src/services/esocialService.ts",
+   "src/utils/safeError.ts"
   ],
   "src/components/folha/FolhaKPIs.tsx": [
    "src/components/dashboard/AnimatedNumber.tsx",
@@ -1388,6 +1389,7 @@
    "src/components/ui/label.tsx",
    "src/components/ui/select.tsx",
    "src/components/ui/table.tsx",
+   "src/constants/rubricas.ts",
    "src/integrations/supabase/client.ts",
    "src/lib/utils.ts",
    "src/schemas/esocial/index.ts",
@@ -2388,6 +2390,7 @@
    "src/components/ui/button.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/select.tsx",
+   "src/components/ui/sheet.tsx",
    "src/lib/utils.ts"
   ],
   "src/components/ui/data-table.tsx": [
@@ -4858,6 +4861,7 @@
    "src/components/ui/tabs.tsx",
    "src/components/ui/textarea.tsx",
    "src/components/workflows/WorkflowDesigner.tsx",
+   "src/components/workflows/logExecucao.ts",
    "src/components/workflows/ordenarEtapas.ts",
    "src/hooks/index.ts",
    "src/hooks/useNow.ts",
