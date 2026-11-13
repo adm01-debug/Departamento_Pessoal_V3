@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `47e4020776` · branch `main` · 2026-11-13 17:33 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4f2ebaa623` · branch `main` · 2026-11-13 18:41 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -4283,6 +4283,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 
 | Mensagem | Arquivo |
 |---|---|
+| VITE_REACT_COMPILER=1 exige o pacote oxc-transform-react: npm i -D oxc-transform-react | `vite.config.ts` |
 | E2E_NON_ADMIN_PASSWORD não definido — configure o secret (senha não fica no repo). | `e2e/auth-non-admin.setup.ts` |
 | Desafio TOTP não completou — a página não saiu de /login. | `e2e/auth.setup.ts` |
 | E2E_TOTP_SECRET não é base32 válido | `e2e/auth.setup.ts` |
@@ -4582,8 +4583,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione uma empresa. | `src/pages/AdminAgendamentoExamesPage.tsx` |
 | Informe o motivo do cancelamento | `src/pages/AdminAsoWorkflowPage.tsx` |
 | Esta CAT já foi transmitida ao eSocial e não pode mais ser corrigida. | `src/pages/AdminCatPage.tsx` |
-| Empresa não selecionada | `src/pages/AdminClinicasPartnersPage.tsx` |
-| … +537 linhas — lista completa em `context.json` | |
+| … +538 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5021,7 +5021,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | separada); sem este override, ligar a regra globalmente reprovaria | `eslint.config.js` |
 | VITE_DEV_PORT         — porta do Vite local (default 4173; deve coincidir | `playwright.config.ts` |
 | Origin/Referer para o deployment Vercel canônico da allowlist (somente | `vite.config.ts` |
-| P1-022: Babel-based plugin required for React Compiler | `vite.config.ts` |
 | regra do time: só subir, nunca baixar (ratchet). | `vitest.config.ts` |
 | Se ambos falharem retorna null → quem chamou deve handlear. | `public/sw-custom.js` |
 | Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW. | `public/sw-custom.js` |
@@ -5316,4 +5315,5 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | - TTL clamp [5s, 15min] e limite de payload | `supabase/functions/cache/index.ts` |
 | select whitelist simples — apenas identificadores/wildcards/vírgulas | `supabase/functions/cache/index.ts` |
 | Desconto simplificado R$564,80 = 56_480 centavos (Art. 1°, Lei 13.149/2015) | `supabase/functions/calcular-13-salario/index.ts` |
-| … +191 linhas — lista completa em `context.json` | |
+| Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`) | `supabase/functions/calcular-13-salario/index.ts` |
+| … +190 linhas — lista completa em `context.json` | |

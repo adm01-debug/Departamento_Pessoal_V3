@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "47e402077697c68a849944e00dbfcfa005652aff",
+  "sha": "4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 17:33 UTC",
+  "generated_at": "2026-11-13 18:41 UTC",
   "files_total": 2935,
   "code_files": 2405,
-  "code_lines": 330727
+  "code_lines": 330754
  },
  "version": "1.3.2",
- "facts_hash": "994c2e7c42566af8",
+ "facts_hash": "a0ecf110fbba3598",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -96256,7 +96256,7 @@
   {
    "module": "(raiz)",
    "files": 13,
-   "lines": 829,
+   "lines": 847,
    "tables": [],
    "exports": [
     "capacitor.config.ts: capacitorConfig",
@@ -96283,6 +96283,7 @@
     "eslint-plugin-react-hooks",
     "eslint-plugin-react-refresh",
     "globals",
+    "node:module",
     "path",
     "rollup-plugin-visualizer",
     "tailwindcss-animate",
@@ -97683,7 +97684,7 @@
   {
    "module": "src/services",
    "files": 160,
-   "lines": 33642,
+   "lines": 33651,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -103705,6 +103706,9 @@
    "SENTRY_RELEASE": [
     "supabase/functions/_shared/sentry.ts"
    ],
+   "SENTRY_RELEASE_TRACKING": [
+    "vite.config.ts"
+   ],
    "SETTINGS_GUARD_AUTOR": [
     "scripts/ci/github-settings-guard.mjs"
    ],
@@ -107312,6 +107316,10 @@
   ],
   "error_messages": [
    {
+    "file": "vite.config.ts",
+    "msg": "VITE_REACT_COMPILER=1 exige o pacote oxc-transform-react: npm i -D oxc-transform-react"
+   },
+   {
     "file": "e2e/auth-non-admin.setup.ts",
     "msg": "E2E_NON_ADMIN_PASSWORD não definido — configure o secret (senha não fica no repo)."
    },
@@ -110906,10 +110914,6 @@
    {
     "file": "vite.config.ts",
     "text": "Origin/Referer para o deployment Vercel canônico da allowlist (somente"
-   },
-   {
-    "file": "vite.config.ts",
-    "text": "P1-022: Babel-based plugin required for React Compiler"
    },
    {
     "file": "vitest.config.ts",
@@ -229970,13 +229974,14 @@
   },
   "vite.config.ts": {
    "path": "vite.config.ts",
-   "lines": 143,
+   "lines": 161,
    "exports": [
     "default defineConfig"
    ],
    "env": [
     "GITHUB_SHA",
     "SENTRY_AUTH_TOKEN",
+    "SENTRY_RELEASE_TRACKING",
     "VERCEL_GIT_COMMIT_SHA",
     "VITE_DEV_PORT",
     "VITE_GIT_SHA",
@@ -229984,6 +229989,9 @@
     "VITE_SENTRY_DSN",
     "VITE_SENTRY_ORG",
     "VITE_SENTRY_PROJECT"
+   ],
+   "errors": [
+    "VITE_REACT_COMPILER=1 exige o pacote oxc-transform-react: npm i -D oxc-transform-react"
    ],
    "status_values": [
     {
@@ -229993,8 +230001,7 @@
     }
    ],
    "rule_comments": [
-    "Origin/Referer para o deployment Vercel canônico da allowlist (somente",
-    "P1-022: Babel-based plugin required for React Compiler"
+    "Origin/Referer para o deployment Vercel canônico da allowlist (somente"
    ]
   },
   "vitest.config.ts": {
@@ -262582,7 +262589,7 @@
   },
   "src/services/loggerService.ts": {
    "path": "src/services/loggerService.ts",
-   "lines": 269,
+   "lines": 278,
    "exports": [
     "type LogLevel",
     "interface LogEntry",
@@ -281698,10 +281705,29 @@
   }
  },
  "git": {
-  "sha": "47e402077697c68a849944e00dbfcfa005652aff",
+  "sha": "4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4f2ebaa",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs: prod-readiness registra o merge da #520 e a #541 (#547)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
+   {
+    "sha": "7438a74",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)",
+    "files": [
+     "src/services/loggerService.ts",
+     "vite.config.ts"
+    ]
+   },
    {
     "sha": "47e4020",
     "date": "2026-11-13",
@@ -282011,34 +282037,12 @@
      "src/services/edgeFunctionsService.ts",
      "supabase/functions/gerar-guias/index.ts"
     ]
-   },
-   {
-    "sha": "0a81559",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: botão de filtros no mobile abre gaveta com os filtros (#505)",
-    "files": [
-     "src/components/ui/__tests__/data-table-toolbar.test.tsx",
-     "src/components/ui/data-table-toolbar.tsx"
-    ]
-   },
-   {
-    "sha": "11f3f53",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "Rubricas: \"Importar Padrão\" passa a gravar as rubricas padrão; sai o botão de XML que não mostrava nada (#510)",
-    "files": [
-     "src/components/__tests__/RubricasDialog.test.tsx",
-     "src/components/folha/RubricasDialog.tsx",
-     "src/schemas/esocial/__tests__/rubricaValidator.padrao.test.ts",
-     "src/schemas/esocial/rubricaValidator.ts"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/prod-readiness.md",
-    4
+    5
    ],
    [
     ".github/workflows/canonical-migrations.yml",
@@ -282051,6 +282055,14 @@
    [
     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
     2
+   ],
+   [
+    "src/services/loggerService.ts",
+    1
+   ],
+   [
+    "vite.config.ts",
+    1
    ],
    [
     "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
@@ -282106,14 +282118,6 @@
    ],
    [
     "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
-    1
-   ],
-   [
-    "src/utils/regrasSolicitacaoFerias.ts",
-    1
-   ],
-   [
-    "src/pages/AdminCatPage.tsx",
     1
    ]
   ]

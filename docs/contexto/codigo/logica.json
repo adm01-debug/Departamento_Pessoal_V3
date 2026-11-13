@@ -3147,7 +3147,7 @@
     "redactLogText"
    ],
    "export_default": null,
-   "linhas": 269,
+   "linhas": 278,
    "tabelas": [],
    "rpcs": [
     "log_frontend_error"

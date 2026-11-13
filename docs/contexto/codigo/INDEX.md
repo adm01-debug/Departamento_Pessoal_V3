@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `47e402077697c68a849944e00dbfcfa005652aff` (2026-11-13T13:17:07-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66` (2026-11-13T14:26:24-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -36,7 +36,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 |---|---|
 | arquivos_total | 2914 |
 | arquivos_codigo | 1576 |
-| linhas_codigo | 282222 |
+| linhas_codigo | 282249 |
 | rotas | 114 |
 | rotas_http_backend | 17 |
 | vistas_por_id | 0 |
@@ -385,8 +385,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22172 nós · 46893 arestas · 2129 comunidades · grafo do commit `47e40207`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (460), button.tsx (348), cn (347), lucide-react (340), vitest (255), rateLimit.ts (190), App.tsx (172), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 22173 nós · 46895 arestas · 2113 comunidades · grafo do commit `4f2ebaa6`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), useEmpresas (436), button.tsx (345), lucide-react (320), vitest (259), cn (247), badge.tsx (189), App.tsx (186), rateLimit.ts (171), "public"."empresas" (164), "public"."colaboradores" (155)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -617,6 +617,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-13 `4f2ebaa` docs: prod-readiness registra o merge da #520 e a #541 (#547)
+- 2026-11-13 `7438a74` fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)
 - 2026-11-13 `47e4020` docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)
 - 2026-11-13 `f263a09` fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)
 - 2026-11-13 `8f6b711` Pensões: permitir editar uma pensão já cadastrada (#520)
@@ -630,8 +632,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `622c734` Convênios passam a poder ser editados (nome, tipo, limite e status) (#519)
 - 2026-11-13 `c09717f` fix: regimento interno permite editar rascunho e arquivar documento publicado (#518)
 - 2026-11-13 `f6ce961` Extintores: editar cadastro (local, datas, status) e excluir com confirmação (#517)
-- 2026-11-13 `b230988` Agendamento de exames: marcar realizado, cancelar e remarcar (#515)
-- 2026-11-13 `c89b176` Premiações: "Salvar Rascunho" passa a gravar a campanha como rascunho (não mais como ativa) (#511)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

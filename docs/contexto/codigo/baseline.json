@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "47e402077697c68a849944e00dbfcfa005652aff",
+  "commit": "4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66",
   "branch": "main",
-  "data_commit": "2026-11-13T13:17:07-03:00",
+  "data_commit": "2026-11-13T14:26:24-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4f2ebaa",
+    "data": "2026-11-13",
+    "assunto": "docs: prod-readiness registra o merge da #520 e a #541 (#547)"
+   },
+   {
+    "sha": "7438a74",
+    "data": "2026-11-13",
+    "assunto": "fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)"
+   },
    {
     "sha": "47e4020",
     "data": "2026-11-13",
@@ -121,19 +131,9 @@
     "sha": "a295c94",
     "data": "2026-11-13",
     "assunto": "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)"
-   },
-   {
-    "sha": "31ea570",
-    "data": "2026-11-13",
-    "assunto": "docs: relatório de prontidão para produção (prod-readiness) (#535)"
-   },
-   {
-    "sha": "0807204",
-    "data": "2026-11-12",
-    "assunto": "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)"
    }
   ],
-  "arquivos_mudados_7d": 605,
+  "arquivos_mudados_7d": 606,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -258,10 +258,6 @@
     "mudancas": 8
    },
    {
-    "arquivo": "src/services/cnabService.ts",
-    "mudancas": 8
-   },
-   {
     "arquivo": "src/services/edgeFunctionsService.ts",
     "mudancas": 8
    },
@@ -294,6 +290,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "src/services/cnabService.ts",
+    "mudancas": 7
+   },
+   {
     "arquivo": ".github/workflows/deploy.yml",
     "mudancas": 6
    }
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 187
+    "commits": 189
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -324,7 +324,7 @@
  "contagens": {
   "arquivos_total": 2914,
   "arquivos_codigo": 1576,
-  "linhas_codigo": 282222,
+  "linhas_codigo": 282249,
   "rotas": 114,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -680,7 +680,7 @@
   },
   "src/services": {
    "arquivos": 160,
-   "linhas": 33642
+   "linhas": 33651
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -728,7 +728,7 @@
   },
   "vite.config.ts": {
    "arquivos": 1,
-   "linhas": 143
+   "linhas": 161
   },
   "vitest.config.ts": {
    "arquivos": 1,
@@ -839,7 +839,7 @@
  ],
  "qualidade": {
   "any": 73,
-  "console_log": 293,
+  "console_log": 292,
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
