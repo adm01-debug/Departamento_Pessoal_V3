@@ -40,6 +40,10 @@ export const COLABORADOR_FOLHA_SELECT = `
 
 // Código, descrição e natureza do evento vêm da rubrica, não do lançamento.
 export const EVENTO_VARIAVEL_SELECT = 'colaborador_id, valor, rubrica:rubricas_folha(codigo, descricao, tipo)';
+// O banco ao vivo não tem `pensoes.empresa_id` (42703): filtra pela empresa do
+// colaborador via inner join, como em PensoesPage.
+export const PENSAO_FOLHA_SELECT =
+  'colaborador_id, percentual, valor_fixo, beneficiario, colaboradores!pensoes_colaborador_id_fkey!inner(empresa_id)';
 
 interface EventoVariavelRow {
   colaborador_id: string;
@@ -181,10 +185,11 @@ export const calculoLoteService = {
 
       // Cadastros que alimentam o cálculo (pensão, consignado e adiantamento
       // aprovado na competência) — mesma ponte da edge calcular-folha.
-      const { data: pensoesRows } = await (supabase.from('pensoes') as unknown as QueryBuilderType)
-        .select('colaborador_id, percentual, valor_fixo, beneficiario')
-        .eq('empresa_id', empresaId)
+      const { data: pensoesRows, error: pensoesError } = await (supabase.from('pensoes') as unknown as QueryBuilderType)
+        .select(PENSAO_FOLHA_SELECT)
+        .eq('colaboradores.empresa_id', empresaId)
         .eq('ativo', true);
+      if (pensoesError) throw pensoesError;
       const pensoesPorColaborador = new Map<string, PensaoRow[]>();
       for (const p of (pensoesRows ?? []) as unknown as PensaoRow[]) {
         const lista = pensoesPorColaborador.get(p.colaborador_id) ?? [];

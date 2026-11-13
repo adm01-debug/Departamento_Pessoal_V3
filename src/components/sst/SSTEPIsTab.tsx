@@ -4,9 +4,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Progress } from '@/components/ui/progress';
 import { HardHat } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { format, parseISO } from 'date-fns';
 import type { Tables } from '@/integrations/supabase/types';
 
-export type EpiResumo = Pick<Tables<'epis'>, 'id' | 'nome' | 'ca' | 'categoria' | 'ca_validade'>;
+export type EpiResumo = Pick<Tables<'epis'>, 'id' | 'nome' | 'ca' | 'categoria' | 'ca_validade'> &
+  Partial<Pick<Tables<'epis'>, 'validade_ca'>>;
 
 type EpiEntrega = Pick<Tables<'epis_entregas'>, 'id' | 'data_entrega' | 'quantidade'> & {
   colaborador?: { nome_completo: string | null } | null;
@@ -57,13 +59,14 @@ export function SSTEPIsTab({ epis, entregas }: SSTEPIsTabProps) {
                       {epi.categoria}
                     </Badge>
                   </div>
-                  {epi.ca_validade && (
+                  {/* O cadastro/edição grava `validade_ca`; `ca_validade` é coluna legada. */}
+                  {(epi.validade_ca ?? epi.ca_validade) && (
                     <div className="mt-2">
                       <p className="text-[10px] text-muted-foreground font-body">
-                        Validade CA: {new Date(epi.ca_validade).toLocaleDateString('pt-BR')}
+                        Validade CA: {format(parseISO((epi.validade_ca ?? epi.ca_validade) as string), 'dd/MM/yyyy')}
                       </p>
                       <Progress
-                        value={Math.min(100, ((mesesRestantes(epi.ca_validade) ?? 0) / 12) * 100)}
+                        value={Math.min(100, ((mesesRestantes(epi.validade_ca ?? epi.ca_validade) ?? 0) / 12) * 100)}
                         className="h-1.5 mt-1"
                       />
                     </div>

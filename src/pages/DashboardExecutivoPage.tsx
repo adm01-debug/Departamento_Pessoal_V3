@@ -590,7 +590,7 @@ export default function DashboardExecutivoPage() {
                   <Button
                     variant="outline"
                     className="w-full justify-start rounded-xl"
-                    onClick={() => navigate('/folha-pagamento')}
+                    onClick={() => navigate('/folha')}
                   >
                     <DollarSign className="mr-2 h-4 w-4" /> Folha de Pagamento
                   </Button>

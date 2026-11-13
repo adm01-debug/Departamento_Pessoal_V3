@@ -504,6 +504,7 @@ describe('useAtualizarEpi', () => {
 
     expect(mockAtualizarEpi).toHaveBeenCalledWith('e1', { nome: 'Capacete novo' }, 'emp-1');
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['epis'] });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['epis-entregas'] });
     expect(mockToastSuccess).toHaveBeenCalledWith('EPI atualizado');
   });
 

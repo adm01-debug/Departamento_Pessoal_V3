@@ -36,7 +36,12 @@ vi.mock('@/utils/folha/pontoIntegracaoUtils', () => ({
   },
 }));
 
-import { calculoLoteService, COLABORADOR_FOLHA_SELECT, EVENTO_VARIAVEL_SELECT } from '../calculoLoteService';
+import {
+  calculoLoteService,
+  COLABORADOR_FOLHA_SELECT,
+  EVENTO_VARIAVEL_SELECT,
+  PENSAO_FOLHA_SELECT,
+} from '../calculoLoteService';
 
 const colaboradoresMock = [
   {
@@ -217,6 +222,23 @@ describe('calculoLoteService.processarLote', () => {
       })
     );
     await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow('DB error');
+  });
+
+  it('filtra pensões pela empresa do colaborador (pensoes não tem empresa_id) e propaga erro', async () => {
+    const base = buildSupabaseChain();
+    const pensoesSelect = vi.fn();
+    const pensoesEqEmpresa = vi.fn();
+    const pensoesEqAtivo = vi.fn().mockResolvedValue({ data: null, error: new Error('pensoes falhou') });
+    pensoesEqEmpresa.mockReturnValue({ eq: pensoesEqAtivo });
+    pensoesSelect.mockReturnValue({ eq: pensoesEqEmpresa });
+    mockFrom.mockImplementation((table: string) => (table === 'pensoes' ? { select: pensoesSelect } : base(table)));
+
+    await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow('pensoes falhou');
+    expect(pensoesSelect).toHaveBeenCalledWith(PENSAO_FOLHA_SELECT);
+    expect(PENSAO_FOLHA_SELECT).toContain('colaboradores!pensoes_colaborador_id_fkey!inner(empresa_id)');
+    expect(pensoesEqEmpresa).toHaveBeenCalledWith('colaboradores.empresa_id', 'emp-1');
+    expect(pensoesEqEmpresa).not.toHaveBeenCalledWith('empresa_id', expect.anything());
+    expect(pensoesEqAtivo).toHaveBeenCalledWith('ativo', true);
   });
 
   it('throws conflict when header update matches 0 rows (status changed mid-batch)', async () => {

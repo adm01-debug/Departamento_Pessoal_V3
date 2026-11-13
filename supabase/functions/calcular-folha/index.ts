@@ -383,8 +383,10 @@ Deno.serve(async (req) => {
       // agregação aplicada no lote do front (calculoLoteService).
       const { data: pensoesRows, error: pensoesErr } = await admin
         .from('pensoes')
-        .select('colaborador_id, percentual, valor_fixo, beneficiario')
-        .eq('empresa_id', empresa_id)
+        // O banco ao vivo não tem `pensoes.empresa_id` (42703): filtra pela
+        // empresa do colaborador via inner join.
+        .select('colaborador_id, percentual, valor_fixo, beneficiario, colaboradores!pensoes_colaborador_id_fkey!inner(empresa_id)')
+        .eq('colaboradores.empresa_id', empresa_id)
         .eq('ativo', true)
         .in('colaborador_id', colabIds);
       if (pensoesErr) throw pensoesErr;

@@ -7,6 +7,7 @@ const svc = vi.hoisted(() => ({
   getConfig: vi.fn(),
   saveConfig: vi.fn(),
   getRemessas: vi.fn(),
+  getArquivoRemessa: vi.fn(),
   listar: vi.fn(),
   getLogs: vi.fn(),
   criar: vi.fn(),
@@ -14,7 +15,12 @@ const svc = vi.hoisted(() => ({
 }));
 
 vi.mock('@/services/integracaoService', () => ({
-  cnabService: { getConfig: svc.getConfig, saveConfig: svc.saveConfig, getRemessas: svc.getRemessas },
+  cnabService: {
+    getConfig: svc.getConfig,
+    saveConfig: svc.saveConfig,
+    getRemessas: svc.getRemessas,
+    getArquivoRemessa: svc.getArquivoRemessa,
+  },
   webhookService: { listar: svc.listar, getLogs: svc.getLogs, criar: svc.criar, excluir: svc.excluir },
 }));
 
@@ -24,11 +30,20 @@ vi.mock('@/hooks/useEmpresas', () => ({
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
+const auth = vi.hoisted(() => ({ roles: ['rh'] as string[] }));
+vi.mock('@/contexts', () => ({
+  useAuth: () => ({
+    isAdmin: auth.roles.includes('admin'),
+    hasRole: (role: string) => auth.roles.includes(role),
+  }),
+}));
+
 import { toast } from 'sonner';
 import { CnabConfigPanel, WebhookConfigPanel } from '../ConfigPanels';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  auth.roles = ['rh'];
   svc.getRemessas.mockResolvedValue([]);
   svc.getLogs.mockResolvedValue([]);
   svc.saveConfig.mockResolvedValue(undefined);
@@ -106,6 +121,83 @@ describe('CnabConfigPanel', () => {
     await waitFor(() => expect(svc.getConfig).toHaveBeenCalled());
     expect(screen.getByRole('button', { name: 'Salvar Configurações' })).toBeDisabled();
     expect(svc.saveConfig).not.toHaveBeenCalled();
+  });
+
+  it('Download busca o conteúdo da remessa só no clique e desabilita quando não há arquivo', async () => {
+    svc.getConfig.mockResolvedValue(null);
+    svc.getRemessas.mockResolvedValue([
+      { id: 'rem-1', banco_codigo: '341', sequencial_arquivo: 7, status: 'enviado', created_at: null },
+      { id: 'rem-2', banco_codigo: '341', sequencial_arquivo: 8, status: 'processando', created_at: null },
+    ]);
+    svc.getArquivoRemessa.mockImplementation(async (_empresaId: string, id: string) =>
+      id === 'rem-1' ? 'LINHA1\r\nLINHA2' : null
+    );
+    const createObjectURL = vi.fn((_blob: Blob) => 'blob:remessa');
+    const revokeObjectURL = vi.fn();
+    Object.assign(window.URL, { createObjectURL, revokeObjectURL });
+    let baixado: string | undefined;
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
+      this: HTMLAnchorElement
+    ) {
+      baixado = this.download;
+    });
+    const user = userEvent.setup();
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    const botoes = await screen.findAllByRole('button', { name: 'Download' });
+    expect(svc.getArquivoRemessa).not.toHaveBeenCalled();
+    await user.click(botoes[0]);
+
+    await waitFor(() => expect(baixado).toBe('REMESSA_7.txt'));
+    expect(svc.getArquivoRemessa).toHaveBeenCalledWith('empresa-1', 'rem-1');
+    expect(await createObjectURL.mock.calls[0][0].text()).toBe('LINHA1\r\nLINHA2');
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:remessa');
+
+    expect(botoes[1]).toBeEnabled();
+    await user.click(botoes[1]);
+    await waitFor(() => expect(botoes[1]).toBeDisabled());
+    expect(toast.error).toHaveBeenCalledWith('Arquivo de remessa ainda não disponível');
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    expect(botoes[0]).toBeEnabled();
+    clickSpy.mockRestore();
+  });
+
+  it('esconde o Download da remessa para quem não é RH nem admin', async () => {
+    auth.roles = ['user'];
+    svc.getConfig.mockResolvedValue(null);
+    svc.getRemessas.mockResolvedValue([
+      {
+        id: 'rem-1',
+        banco_codigo: '341',
+        sequencial_arquivo: 7,
+        status: 'enviado',
+        created_at: null,
+      },
+    ]);
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    expect(await screen.findByText('REMESSA_7.txt')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Download' })).not.toBeInTheDocument();
+  });
+
+  it('admin vê o Download da remessa', async () => {
+    auth.roles = ['admin'];
+    svc.getConfig.mockResolvedValue(null);
+    svc.getRemessas.mockResolvedValue([
+      {
+        id: 'rem-1',
+        banco_codigo: '341',
+        sequencial_arquivo: 7,
+        status: 'enviado',
+        created_at: null,
+      },
+    ]);
+    const { wrapper } = createWrapper();
+    render(<CnabConfigPanel />, { wrapper });
+
+    expect(await screen.findByRole('button', { name: 'Download' })).toBeEnabled();
   });
 });
 
