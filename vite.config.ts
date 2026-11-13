@@ -1,8 +1,21 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { createRequire } from 'node:module';
 import { imagetools } from 'vite-imagetools';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+
+// VITE_REACT_COMPILER=1 exige `oxc-transform-react`, que é peer OPCIONAL do
+// @vitejs/plugin-react e não está nas dependências: falha cedo e com mensagem clara.
+function reactCompilerAtivo(): boolean {
+  if (process.env.VITE_REACT_COMPILER !== '1') return false;
+  try {
+    createRequire(import.meta.url).resolve('oxc-transform-react');
+  } catch {
+    throw new Error('VITE_REACT_COMPILER=1 exige o pacote oxc-transform-react: npm i -D oxc-transform-react');
+  }
+  return true;
+}
 
 export default defineConfig(({ mode }) => {
   // O proxy de functions segue o projeto Supabase configurado — sem isso, um
@@ -71,7 +84,7 @@ export default defineConfig(({ mode }) => {
       // Experimental, desligado por padrão — ativar com:
       //   VITE_REACT_COMPILER=1 npm run build
       react({
-        compiler: process.env.VITE_REACT_COMPILER === '1',
+        compiler: reactCompilerAtivo(),
       }),
       imagetools(),
       // P3-053: source maps upload automático para Sentry em builds de prod
