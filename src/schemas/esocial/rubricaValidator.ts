@@ -17,7 +17,8 @@ export function validarRubricaESocial(rubrica: ESocialData): ValidationResult {
   const padrao = RUBRICAS_PADRAO.find((r) => r.codigo === rubrica.codigo);
 
   if (padrao) {
-    if (rubrica.tipo !== padrao.tipo) {
+    const norm = (t: unknown) => (t === 'informativa' ? 'informativo' : t);
+    if (norm(rubrica.tipo) !== norm(padrao.tipo)) {
       errors.push({
         campo: 'tipo',
         mensagem: `Tipo divergente do eSocial. Esperado: ${padrao.tipo}`,
