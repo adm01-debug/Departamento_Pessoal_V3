@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 795,
+ "migrations": 801,
  "seeds": [],
  "avisos": [
   "176 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -44408,6 +44408,13 @@
      "default": "'enfermaria'",
      "ref": null
     },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
     "valor_mensal": {
      "tipo": "numeric",
      "nn": false,
@@ -44458,9 +44465,7 @@
    },
    "drift": {
     "so_na_migration": [],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 1,
    "usada_em_edges": [],

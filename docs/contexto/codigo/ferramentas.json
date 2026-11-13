@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1446)",
-   "SQL (831)",
+   "TypeScript (1450)",
+   "SQL (837)",
    "Markdown (292)",
    "JavaScript (126)",
    "JSON (61)",
@@ -1472,6 +1472,7 @@
  "env": {
   "declaradas_no_env_example": [
    "VITE_API_URL",
+   "VITE_AUTH_GOOGLE_ENABLED",
    "VITE_SENTRY_DSN",
    "VITE_SENTRY_ORG",
    "VITE_SENTRY_PROJECT",
@@ -1493,6 +1494,7 @@
    "SUPABASE_ANON_KEY",
    "SUPABASE_PUBLISHABLE_KEY",
    "SUPABASE_URL",
+   "VITE_AUTH_GOOGLE_ENABLED",
    "VITE_E2E_BYPASS_MFA",
    "VITE_SENTRY_DSN",
    "VITE_SENTRY_RELEASE",
@@ -1670,7 +1672,7 @@
   "vercel": {
    "framework": null,
    "build": null,
-   "rewrites": 0,
+   "rewrites": 1,
    "redirects": 0,
    "headers": 3,
    "ignore_command": null,
@@ -1930,6 +1932,7 @@
    "SENTRY_RELEASE",
    "SLACK_WEBHOOK_URL",
    "TURNSTILE_SECRET_KEY",
+   "VITE_AUTH_GOOGLE_ENABLED",
    "VITE_SENTRY_DSN",
    "VITE_SENTRY_ORG",
    "VITE_SENTRY_PROJECT",
@@ -1962,15 +1965,15 @@
    },
    {
     "papel": "rh",
-    "ocorrencias": 20
+    "ocorrencias": 22
    },
    {
     "papel": "admin",
-    "ocorrencias": 16
+    "ocorrencias": 17
    },
    {
     "papel": "user",
-    "ocorrencias": 15
+    "ocorrencias": 16
    },
    {
     "papel": "alert",
@@ -2128,7 +2131,7 @@
   "guards": [
    "src/components/ProtectedRoute.tsx"
   ],
-  "rotas_protegidas": 108,
+  "rotas_protegidas": 109,
   "rotas_publicas": [
    "/assinar-contrato/:token",
    "/ciencia-medida/:token",

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4f2ebaa623` · branch `main` · 2026-11-13 18:41 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `f5c370c7b2` · branch `main` · 2026-11-13 20:59 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1491,6 +1491,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `tipo` | `S-1000` | compara | `src/utils/esocialXmlGenerator.ts`<br>`supabase/functions/enviar-esocial/index.ts` |
 | `tipo` | `S-2200` | compara | `src/utils/esocialXmlGenerator.ts`<br>`supabase/functions/enviar-esocial/index.ts` |
 | `tipo` | `TODAS` | compara | `supabase/functions/gerar-guias/index.ts` |
+| `tipo` | `VA` | escreve | `src/pages/ValesPage.tsx` |
 | `tipo` | `absenteismo` | escreve | `supabase/functions/alertas-preditivos/index.ts` |
 | `tipo` | `acesso` | escreve | `src/pages/LGPDPage.tsx` |
 | `tipo` | `acidente_grave` | compara | `src/components/sst/SSTIncidentesTab.tsx` |
@@ -1723,8 +1724,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `simulado` | escreve | `supabase/functions/enviar-esocial/index.ts` |
 | `status` | `skipped` | compara, escreve | `supabase/functions/processar-agendamentos/index.ts`<br>`supabase/functions/processar-agendamentos/scheduleContract.ts` |
 | `status` | `slow` | compara, escreve | `src/components/admin/HealthTrendCard.tsx`<br>`src/components/layout/Header.tsx`<br>`src/hooks/useSystemHealthHistory.ts`<br>`src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`supabase/functions/external-db-bridge/index.ts` |
-| `status` | `success` | compara, escreve | `src/components/settings/LogsIntegracoesTab.tsx`<br>`src/pages/ContratacaoPage.tsx`<br>`supabase/functions/metricas/index.ts` |
-| … +60 linhas — lista completa em `context.json` | | | |
+| … +61 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -4234,6 +4234,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | 10 | `src/pages/ProvisoesPage.tsx` |
 | 6 | `src/pages/ProvisoesPage.tsx` |
 | 50 | `src/pages/SSTPage.tsx` |
+| 1 | `src/pages/ValesPage.tsx` |
 | 100 | `src/pages/ValesPage.tsx` |
 | 10 | `src/services/afastamentoService.ts` |
 | 50 | `src/services/auditoriaService.ts` |
@@ -4583,7 +4584,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Selecione uma empresa. | `src/pages/AdminAgendamentoExamesPage.tsx` |
 | Informe o motivo do cancelamento | `src/pages/AdminAsoWorkflowPage.tsx` |
 | Esta CAT já foi transmitida ao eSocial e não pode mais ser corrigida. | `src/pages/AdminCatPage.tsx` |
-| … +538 linhas — lista completa em `context.json` | |
+| … +540 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -4617,6 +4618,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `rh` | `src/pages/PensoesPage.tsx` |
 | `admin` | `src/pages/PremiacoesPage.tsx` |
 | `rh` | `src/pages/PremiacoesPage.tsx` |
+| `rh` | `src/pages/SegurosVidaPage.tsx` |
 | `granted` | `src/services/pushNotificationService.ts` |
 | `service_role` | `supabase/functions/external-db-bridge/access.ts` |
 | `supabase_admin` | `supabase/functions/external-db-bridge/access.ts` |
@@ -4646,7 +4648,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (7017 testes em 568 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (7039 testes em 572 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -4774,6 +4776,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/hooks/__tests__/useExecutiveDashboard.test.ts` | 15 | useExecutiveKPIs · is disabled when no empresaId · returns data when empresaId provided · returns totalAtivos=0 when no employees … |
 | `src/hooks/__tests__/useGrupo.test.tsx` | 15 | useGrupo · initial state: isLoading=true, empty arrays · returns all empresas after query resolves · empresasAtivas only includes ativa=true entries … |
 | `src/lib/__tests__/queryClient.test.ts` | 15 | queryClient · is a QueryClient instance · has staleTime of 5 minutes · has gcTime of 30 minutes … |
+| `src/services/folha/__tests__/calculoLoteService.test.ts` | 15 | calculoLoteService.processarLote · usa somente relações existentes e lê jornada do colaborador canônico · aplica eventos variáveis da competência via rubrica e dependentes de IRRF · grava no cabeçalho os totais somados dos itens, só com a folha aberta … |
 | `src/utils/__tests__/sanitizeHtml.test.ts` | 15 | sanitizeHtml — baseline hardened profile · strips <script> entirely · preserves safe anchors (http, mailto, tel, hash) · forces rel= … |
 | `src/components/__tests__/AfastamentoForm.test.tsx` | 14 | AfastamentoForm · renders Colaborador label · renders Motivo do Afastamento label · renders Data de Início label … |
 | `src/components/__tests__/CampaignWizard.test.tsx` | 14 | CampaignWizard · renders dialog title · renders dialog description · renders Nome da Campanha label on step 1 … |
@@ -4784,7 +4787,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/lib/__tests__/circuitBreaker.test.ts` | 14 | CircuitBreaker · starts in CLOSED state · executes fn and returns its result when CLOSED · propagates errors thrown by fn when CLOSED … |
 | `src/lib/__tests__/retry.test.ts` | 14 | retryWithIdempotency · retorna na primeira tentativa sem retry · repassa idempotencyKey no resultado · faz retry em erro 5xx e devolve o sucesso seguinte … |
 | `src/services/__tests__/documentoService.test.ts` | 14 | documentoService.listarDocumentos · returns documents without filters · returns empty array when data is null · filters by empresa_id when provided … |
-| `src/services/folha/__tests__/calculoLoteService.test.ts` | 14 | calculoLoteService.processarLote · usa somente relações existentes e lê jornada do colaborador canônico · aplica eventos variáveis da competência via rubrica e dependentes de IRRF · grava no cabeçalho os totais somados dos itens, só com a folha aberta … |
 | `src/utils/__tests__/comunicadoFeriasColetivasPDF.test.ts` | 14 | gerarComunicadoMTE · returns a Blob · returns Uint8Array bytes · returns a hash string … |
 | `src/utils/folha/__tests__/pontoIntegracaoUtils.test.ts` | 14 | pontoIntegracaoUtils.intervalToDecimal · returns 0 for null · returns 0 for undefined · returns 0 for empty string … |
 | `src/components/__tests__/DeclaracoesTable.test.tsx` | 13 | DctfTable · renders table headers · shows empty state when no data · renders competencias … |
@@ -4950,7 +4952,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/PortalOverviewTab.test.tsx` | 9 | PortalOverviewTab · renders user name · renders user initials avatar · renders cargo and departamento … |
 | `src/components/__tests__/QuickActionsGrid.test.tsx` | 9 | QuickActionsGrid · renders Ações Rápidas heading · renders Novo Colaborador action · renders Lançar Ponto action … |
 | `src/components/__tests__/RelatorioContabilDialog.test.tsx` | 9 | RelatorioContabilDialog · renders Conciliação Contábil trigger button · renders dialog title · renders ERP import description … |
-| … +268 linhas — lista completa em `context.json` | | |
+| … +272 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5027,6 +5029,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | intocada quando está dentro do limite — nunca reconstrói um novo Response | `public/sw-custom.js` |
 | cacheada — o SW apenas observa a resposta passar. | `public/sw-custom.js` |
 | Clickjacking defense-in-depth: só quebra o frame em produção e apenas | `src/main.tsx` |
+| * 'true' somente se o provider Google estiver habilitado no Supabase Auth. */ | `src/vite-env.d.ts` |
 | Opção 2: Desconto Simplificado | `src/calculators/impostos.ts` |
 | CLT Art. 477 §8°: multa de um salário mensal quando o empregador não quita as verbas rescisórias | `src/calculators/rescisao.ts` |
 | no prazo legal (10 dias corridos para aviso prévio trabalhado; 1° dia útil para demissão imediata). | `src/calculators/rescisao.ts` |
@@ -5137,6 +5140,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | é apenas reportado honestamente ao usuário e gravado na batida. | `src/pages/PontoPage.tsx` |
 | exibir totais de terceiros para quem abrisse o portal, dependendo apenas do | `src/pages/PortalPage.tsx` |
 | Consultas que dependem apenas do login. | `src/pages/PortalPage.tsx` |
+| Sem UNIQUE no banco: um 2º VT optante deixa a folha com desconto arbitrário/ausente. | `src/pages/ValesPage.tsx` |
 | Rate-limit server-side pelo IP real da conexão (rightmost XFF do | `src/pages/VerificarContratoPage.tsx` |
 | e o erro de validação aparece, em vez de o "Salvar" falhar calado. | `src/pages/adminCatEdicao.ts` |
 | * Prazo legal de envio da CAT, mesma regra de `calcular_prazo_cat` | `src/pages/adminCatEdicao.ts` |
@@ -5314,6 +5318,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | tabela, em vez de um único limit() que fazia tudo acima do cap | `supabase/functions/backup-automatico/index.ts` |
 | - TTL clamp [5s, 15min] e limite de payload | `supabase/functions/cache/index.ts` |
 | select whitelist simples — apenas identificadores/wildcards/vírgulas | `supabase/functions/cache/index.ts` |
-| Desconto simplificado R$564,80 = 56_480 centavos (Art. 1°, Lei 13.149/2015) | `supabase/functions/calcular-13-salario/index.ts` |
-| Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`) | `supabase/functions/calcular-13-salario/index.ts` |
-| … +190 linhas — lista completa em `context.json` | |
+| … +192 linhas — lista completa em `context.json` | |

@@ -3459,7 +3459,10 @@
    "src/components/forms/index.ts",
    "src/components/layout/index.ts",
    "src/components/ui/button.tsx",
-   "src/hooks/useBeneficios.ts"
+   "src/components/ui/spinner.tsx",
+   "src/hooks/useBeneficios.ts",
+   "src/hooks/useEmpresas.ts",
+   "src/services/beneficioService.ts"
   ],
   "src/pages/BeneficiosPage.tsx": [
    "src/components/PageTitle.tsx",
@@ -4767,6 +4770,7 @@
   "src/pages/SegurosVidaPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
+   "src/components/ui/alert-dialog.tsx",
    "src/components/ui/badge.tsx",
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -4778,11 +4782,13 @@
    "src/components/ui/table.tsx",
    "src/components/ui/tabs.tsx",
    "src/components/ui/textarea.tsx",
+   "src/contexts/index.ts",
    "src/hooks/index.ts",
    "src/hooks/usePiiMask.ts",
    "src/integrations/supabase/client.ts",
    "src/schemas/validate.ts",
-   "src/services/tabelasComplementaresService.ts"
+   "src/services/tabelasComplementaresService.ts",
+   "src/utils/safeError.ts"
   ],
   "src/pages/SindicatosPage.tsx": [
    "src/components/PageTitle.tsx",
@@ -4879,7 +4885,8 @@
    "src/hooks/index.ts",
    "src/integrations/supabase/client.ts",
    "src/schemas/validate.ts",
-   "src/utils/dateLocal.ts"
+   "src/utils/dateLocal.ts",
+   "src/utils/safeError.ts"
   ],
   "src/pages/VerificarContratoPage.tsx": [
    "src/components/ui/alert.tsx",

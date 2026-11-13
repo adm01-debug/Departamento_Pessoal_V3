@@ -30,6 +30,7 @@ BEGIN
       SELECT DISTINCT ur.user_id
         FROM public.user_roles ur
         JOIN public.user_empresas ue ON ue.user_id = ur.user_id
+        JOIN auth.users au ON au.id = ur.user_id  -- ignora papéis de usuário apagado do Auth (FK notificacoes_user_id_fkey)
        WHERE ue.empresa_id = v_alerta.empresa_id
          AND ur.role IN ('admin','rh')
     LOOP

@@ -646,7 +646,7 @@
    "nome": "calcular-folha",
    "entrada": "supabase/functions/calcular-folha/index.ts",
    "arquivos": 2,
-   "linhas": 732,
+   "linhas": 734,
    "verify_jwt": true,
    "metodos": [
     "OPTIONS"

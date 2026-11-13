@@ -269,7 +269,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.pix_itens](tables/public/pix_itens.md) | table | sim | 2 | 11 | não |  |
 | [public.pix_lotes](tables/public/pix_lotes.md) | table | sim | 2 | 10 | não |  |
 | [public.plano_contas](tables/public/plano_contas.md) | table | sim | 1 | 8 | não |  |
-| [public.planos_saude](tables/public/planos_saude.md) | table | sim | 1 | 16 | não |  |
+| [public.planos_saude](tables/public/planos_saude.md) | table | sim | 1 | 17 | não |  |
 | [public.ponto_ajustes](tables/public/ponto_ajustes.md) | table | sim | 2 | 17 | não |  |
 | [public.ponto_auditoria](tables/public/ponto_auditoria.md) | table | sim | 1 | 11 | não |  |
 | [public.ponto_auditoria_fraude](tables/public/ponto_auditoria_fraude.md) | table | sim | 1 | 6 | não |  |

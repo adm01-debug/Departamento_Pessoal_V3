@@ -6658,7 +6658,7 @@
    "modulo": "pages",
    "arquivos": 112,
    "testes": 0,
-   "linhas": 42588,
+   "linhas": 43322,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -6781,6 +6781,7 @@
     "/backup",
     "/banco-horas",
     "/beneficios",
+    "/beneficios/:id/editar",
     "/beneficios/novo",
     "/calculadora-rescisao",
     "/canal-etica",
@@ -7474,6 +7475,7 @@
    ],
    "env": [
     "DEV",
+    "VITE_AUTH_GOOGLE_ENABLED",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
     "VITE_SUPABASE_URL"
@@ -7692,7 +7694,7 @@
   {
    "modulo": "pages/__tests__",
    "arquivos": 0,
-   "testes": 14,
+   "testes": 18,
    "linhas": 0,
    "itens_menu": [],
    "telas": [],
@@ -8463,7 +8465,7 @@
    "modulo": "services/folha",
    "arquivos": 1,
    "testes": 1,
-   "linhas": 526,
+   "linhas": 531,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],

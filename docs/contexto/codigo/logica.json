@@ -262,7 +262,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 26,
+   "usado_por": 27,
    "usado_por_modulos": [
     "components/ferias",
     "components/integracoes",
@@ -295,7 +295,7 @@
    "usado_por_modulos": [
     "pages"
    ],
-   "coberto_por_testes": 0,
+   "coberto_por_testes": 1,
    "orfao": false
   },
   {
@@ -1907,9 +1907,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
     "hooks",
+    "pages",
     "services"
    ],
    "coberto_por_testes": 1,
@@ -2779,10 +2780,11 @@
     "BatchProgress",
     "COLABORADOR_FOLHA_SELECT",
     "EVENTO_VARIAVEL_SELECT",
+    "PENSAO_FOLHA_SELECT",
     "calculoLoteService"
    ],
    "export_default": null,
-   "linhas": 526,
+   "linhas": 531,
    "tabelas": [
     "adiantamentos_salariais",
     "beneficios_colaborador",
@@ -5007,7 +5009,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 124,
+   "usado_por": 126,
    "usado_por_modulos": [
     "components/admissoes",
     "components/dashboard",

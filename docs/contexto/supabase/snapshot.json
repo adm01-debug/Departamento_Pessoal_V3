@@ -42413,6 +42413,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 17,
+        "schema": "public",
+        "table": "planos_saude",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -90618,9 +90631,13 @@
             {
               "file": "supabase/migrations/20261019000000_qa3_db_fixes.sql",
               "hits": 4
+            },
+            {
+              "file": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
+              "hits": 3
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -96360,7 +96377,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 72,
+          "code_total_files": 73,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -97427,9 +97444,17 @@
             {
               "file": "supabase/migrations/20261014120000_fix_cron_jobs_onda3b.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 2,
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -97440,7 +97465,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "80d7f945dfc9b535",
+        "definition_sha": "4bf244800241bec3",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": false,
@@ -98476,9 +98501,13 @@
             {
               "file": "supabase/migrations/20261024000000_qa_r4_fixes.sql",
               "hits": 4
+            },
+            {
+              "file": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 25,
+          "code_total_files": 26,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -103597,7 +103626,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 63,
+          "code_total_files": 64,
           "cron": [],
           "db": [],
           "triggers": [
@@ -133912,12 +133941,6 @@
       {
         "code": "view_security_definer",
         "detail": "View em public sem security_invoker: executa como owner e ignora RLS das tabelas base.",
-        "object": "public.contas_bancarias_decrypted",
-        "severity": "ALTA"
-      },
-      {
-        "code": "view_security_definer",
-        "detail": "View em public sem security_invoker: executa como owner e ignora RLS das tabelas base.",
         "object": "public.v_login_anomalies",
         "severity": "ALTA"
       },
@@ -156257,11 +156280,13 @@
         ],
         "kind": "view",
         "name": "contas_bancarias_decrypted",
-        "options": null,
+        "options": [
+          "security_invoker=true"
+        ],
         "owner": "postgres",
         "populated": null,
         "schema": "public",
-        "security_invoker": false
+        "security_invoker": true
       },
       {
         "comment": "SEGURANCA: esta view usa SECURITY INVOKER (padrao) — o RLS da tabela base eh respeitado.\nO WHERE actor_user_id = auth.uid() e o filtro de RLS garantem dupla protecao.",

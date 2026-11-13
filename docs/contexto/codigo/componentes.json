@@ -80,7 +80,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 501,
+   "linhas": 502,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
@@ -4222,7 +4222,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 13,
+   "usado_por": 14,
    "orfao": false
   },
   {
@@ -4907,7 +4907,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 92,
+   "usado_por": 93,
    "orfao": false
   },
   {
@@ -5475,7 +5475,7 @@
     "AdmissoesPage"
    ],
    "export_default": "AdmissoesPage",
-   "linhas": 395,
+   "linhas": 391,
    "dominio": "pages",
    "hooks_locais": [
     "useAdmissoes"
@@ -5640,10 +5640,11 @@
     "BeneficioFormPage"
    ],
    "export_default": "BeneficioFormPage",
-   "linhas": 134,
+   "linhas": 200,
    "dominio": "pages",
    "hooks_locais": [
-    "useBeneficios"
+    "useBeneficios",
+    "useEmpresas"
    ],
    "tabelas": [],
    "edges": [],
@@ -5656,7 +5657,7 @@
     "BeneficiosPage"
    ],
    "export_default": "BeneficiosPage",
-   "linhas": 206,
+   "linhas": 198,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -6522,7 +6523,7 @@
     "LoginPage"
    ],
    "export_default": "LoginPage",
-   "linhas": 603,
+   "linhas": 607,
    "dominio": "pages",
    "hooks_locais": [
     "useAuth",
@@ -6781,7 +6782,7 @@
     "PlanosSaudePage"
    ],
    "export_default": "PlanosSaudePage",
-   "linhas": 525,
+   "linhas": 636,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas",
@@ -6996,9 +6997,10 @@
     "SegurosVidaPage"
    ],
    "export_default": "SegurosVidaPage",
-   "linhas": 716,
+   "linhas": 848,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas",
     "usePiiMask"
    ],
@@ -7074,7 +7076,7 @@
     "TreinamentosPage"
    ],
    "export_default": "TreinamentosPage",
-   "linhas": 863,
+   "linhas": 937,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
@@ -7122,7 +7124,7 @@
     "ValesPage"
    ],
    "export_default": "ValesPage",
-   "linhas": 343,
+   "linhas": 702,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"

@@ -20,7 +20,7 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | categoria | quantidade |
 |---|---|
 | tabelas | 389 |
-| colunas | 4905 |
+| colunas | 4906 |
 | views | 53 |
 | functions | 400 |
 | triggers | 437 |
@@ -34,8 +34,8 @@ Gerado automaticamente a cada 10 min pelo workflow `contexto` (job `banco`). **N
 | buckets | n/d |
 | edge functions | n/d |
 | webhooks | 0 |
-| lints ALTA | 4 |
-| lints total | 545 |
+| lints ALTA | 3 |
+| lints total | 544 |
 
 ## Estado das fontes do mapa de referências
 

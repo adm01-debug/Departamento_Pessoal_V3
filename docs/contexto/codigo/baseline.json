@@ -2,11 +2,71 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66",
+  "commit": "f5c370c7b2277b4bdb012121b5fabe98bba23d4f",
   "branch": "main",
-  "data_commit": "2026-11-13T14:26:24-03:00",
+  "data_commit": "2026-11-13T16:43:20-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "f5c370c",
+    "data": "2026-11-13",
+    "assunto": "chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)"
+   },
+   {
+    "sha": "a49f33e",
+    "data": "2026-11-13",
+    "assunto": "fix(logs): não silenciar console.warn em produção (#554)"
+   },
+   {
+    "sha": "69cf8aa",
+    "data": "2026-11-13",
+    "assunto": "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)"
+   },
+   {
+    "sha": "2fbfb51",
+    "data": "2026-11-13",
+    "assunto": "Seguros de Vida: permitir editar apólices (#521)"
+   },
+   {
+    "sha": "daa557e",
+    "data": "2026-11-13",
+    "assunto": "fix: treinamentos permite alterar status da inscrição e editar curso (#492)"
+   },
+   {
+    "sha": "c9caf7f",
+    "data": "2026-11-13",
+    "assunto": "fix: benefícios, planos de saúde e VT/VA passam a ser editáveis e links que davam 404 foram corrigidos (#484)"
+   },
+   {
+    "sha": "9d684d7",
+    "data": "2026-11-13",
+    "assunto": "fix: adiciona planos_saude.updated_at exigida pelo trigger de UPDATE (#498)"
+   },
+   {
+    "sha": "2f13bbb",
+    "data": "2026-11-13",
+    "assunto": "fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)"
+   },
+   {
+    "sha": "1108375",
+    "data": "2026-11-13",
+    "assunto": "fix(db): view de contas bancárias descriptografadas volta a respeitar a permissão de quem consulta (#464)"
+   },
+   {
+    "sha": "e40a3d1",
+    "data": "2026-11-13",
+    "assunto": "fix: folha filtra pensões pela empresa do colaborador (pensoes sem empresa_id) (#550)"
+   },
+   {
+    "sha": "d49f194",
+    "data": "2026-11-13",
+    "assunto": "fix: ocultar login com Google enquanto o provider estiver desabilitado (#551)"
+   },
+   {
+    "sha": "f07255f",
+    "data": "2026-11-13",
+    "assunto": "fix: --check do inventario de rotas compara conteudo, nao bytes (#552)"
+   },
    {
     "sha": "4f2ebaa",
     "data": "2026-11-13",
@@ -71,69 +131,9 @@
     "sha": "622c734",
     "data": "2026-11-13",
     "assunto": "Convênios passam a poder ser editados (nome, tipo, limite e status) (#519)"
-   },
-   {
-    "sha": "c09717f",
-    "data": "2026-11-13",
-    "assunto": "fix: regimento interno permite editar rascunho e arquivar documento publicado (#518)"
-   },
-   {
-    "sha": "f6ce961",
-    "data": "2026-11-13",
-    "assunto": "Extintores: editar cadastro (local, datas, status) e excluir com confirmação (#517)"
-   },
-   {
-    "sha": "b230988",
-    "data": "2026-11-13",
-    "assunto": "Agendamento de exames: marcar realizado, cancelar e remarcar (#515)"
-   },
-   {
-    "sha": "c89b176",
-    "data": "2026-11-13",
-    "assunto": "Premiações: \"Salvar Rascunho\" passa a gravar a campanha como rascunho (não mais como ativa) (#511)"
-   },
-   {
-    "sha": "d6a9d12",
-    "data": "2026-11-13",
-    "assunto": "Ponto: \"Aprovar Lote\" passa a gravar a aprovação e \"Histórico\" abre a trilha do registro (#508)"
-   },
-   {
-    "sha": "66b5a7b",
-    "data": "2026-11-13",
-    "assunto": "CNAB: botão Download das remessas geradas passa a baixar o arquivo (#507)"
-   },
-   {
-    "sha": "d9ac757",
-    "data": "2026-11-13",
-    "assunto": "fix: botão de histórico do Simulador What-if abre as simulações salvas (#506)"
-   },
-   {
-    "sha": "8620df9",
-    "data": "2026-11-13",
-    "assunto": "chore: orçamento de JS 12250 → 12400 KB para as telas de edição/exclusão da onda D (#527)"
-   },
-   {
-    "sha": "71824b9",
-    "data": "2026-11-13",
-    "assunto": "Canal de Ética: RH/admin passa a abrir a denúncia, mudar o status e registrar o parecer (#514)"
-   },
-   {
-    "sha": "5c7a433",
-    "data": "2026-11-13",
-    "assunto": "fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)"
-   },
-   {
-    "sha": "28e9d0c",
-    "data": "2026-11-13",
-    "assunto": "infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)"
-   },
-   {
-    "sha": "a295c94",
-    "data": "2026-11-13",
-    "assunto": "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)"
    }
   ],
-  "arquivos_mudados_7d": 606,
+  "arquivos_mudados_7d": 632,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "mudancas": 38
    },
    {
     "pasta": "src/services/__tests__",
@@ -172,6 +172,10 @@
     "mudancas": 16
    },
    {
+    "pasta": "src/pages/__tests__",
+    "mudancas": 16
+   },
+   {
     "pasta": "PENDENCIAS.md",
     "mudancas": 13
    },
@@ -190,16 +194,12 @@
    {
     "pasta": "src/components/layout",
     "mudancas": 12
-   },
-   {
-    "pasta": "src/components/ponto",
-    "mudancas": 12
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 48
+    "mudancas": 46
    },
    {
     "arquivo": "package.json",
@@ -242,6 +242,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "supabase/functions/calcular-folha/index.ts",
+    "mudancas": 9
+   },
+   {
     "arquivo": ".github/workflows/canonical-probes.yml",
     "mudancas": 8
    },
@@ -262,10 +266,6 @@
     "mudancas": 8
    },
    {
-    "arquivo": "supabase/functions/calcular-folha/index.ts",
-    "mudancas": 8
-   },
-   {
     "arquivo": "supabase/functions/external-db-bridge/index.ts",
     "mudancas": 8
    },
@@ -282,6 +282,10 @@
     "mudancas": 7
    },
    {
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 7
+   },
+   {
     "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 7
    },
@@ -292,16 +296,12 @@
    {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 7
-   },
-   {
-    "arquivo": ".github/workflows/deploy.yml",
-    "mudancas": 6
    }
   ],
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 189
+    "commits": 201
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,10 +322,10 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2914,
-  "arquivos_codigo": 1576,
-  "linhas_codigo": 282249,
-  "rotas": 114,
+  "arquivos_total": 2924,
+  "arquivos_codigo": 1580,
+  "linhas_codigo": 283459,
+  "rotas": 115,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
@@ -334,9 +334,9 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 795,
+  "migrations": 801,
   "cron_jobs": 41,
-  "testes": 610,
+  "testes": 614,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 292
@@ -552,7 +552,7 @@
   },
   "scripts/inventario": {
    "arquivos": 4,
-   "linhas": 963
+   "linhas": 974
   },
   "scripts/load": {
    "arquivos": 1,
@@ -604,7 +604,7 @@
   },
   "scripts/tests": {
    "arquivos": 19,
-   "linhas": 2160
+   "linhas": 2169
   },
   "scripts/update-workflows-status.mjs": {
    "arquivos": 1,
@@ -620,7 +620,7 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 501
+   "linhas": 502
   },
   "src/assets": {
    "arquivos": 1,
@@ -664,11 +664,11 @@
   },
   "src/main.tsx": {
    "arquivos": 1,
-   "linhas": 186
+   "linhas": 190
   },
   "src/pages": {
-   "arquivos": 126,
-   "linhas": 44254
+   "arquivos": 130,
+   "linhas": 45398
   },
   "src/providers": {
    "arquivos": 4,
@@ -680,7 +680,7 @@
   },
   "src/services": {
    "arquivos": 160,
-   "linhas": 33651
+   "linhas": 33678
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -688,7 +688,7 @@
   },
   "src/test": {
    "arquivos": 6,
-   "linhas": 470
+   "linhas": 482
   },
   "src/tests": {
    "arquivos": 4,
@@ -708,7 +708,7 @@
   },
   "supabase/functions": {
    "arquivos": 173,
-   "linhas": 24440
+   "linhas": 24442
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -765,12 +765,12 @@
    "linhas": 940
   },
   {
-   "arquivo": "scripts/automation.mjs",
-   "linhas": 869
+   "arquivo": "src/pages/TreinamentosPage.tsx",
+   "linhas": 937
   },
   {
-   "arquivo": "src/pages/TreinamentosPage.tsx",
-   "linhas": 863
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 869
   },
   {
    "arquivo": "src/pages/RecrutamentoPage.tsx",
@@ -779,6 +779,10 @@
   {
    "arquivo": "src/schemas/esocial/periodicosValidators.ts",
    "linhas": 861
+  },
+  {
+   "arquivo": "src/pages/SegurosVidaPage.tsx",
+   "linhas": 848
   },
   {
    "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
@@ -821,20 +825,16 @@
    "linhas": 736
   },
   {
-   "arquivo": "src/pages/SegurosVidaPage.tsx",
-   "linhas": 716
-  },
-  {
    "arquivo": "supabase/functions/calcular-folha/index.ts",
-   "linhas": 715
+   "linhas": 717
   },
   {
    "arquivo": "src/pages/WorkflowsPage.tsx",
    "linhas": 711
   },
   {
-   "arquivo": "supabase/functions/processar-ponto/index.ts",
-   "linhas": 698
+   "arquivo": "src/pages/ValesPage.tsx",
+   "linhas": 702
   }
  ],
  "qualidade": {
@@ -843,7 +843,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 15,
-  "arquivos_acima_500_linhas": 65
+  "arquivos_acima_500_linhas": 66
  },
  "todos": [
   {
@@ -1043,7 +1043,6 @@
    "periodos_ponto",
    "pix_itens",
    "pix_lotes",
-   "planos_saude",
    "ponto_espelhos_assinados",
    "profiles",
    "prorrogacoes_afastamento",

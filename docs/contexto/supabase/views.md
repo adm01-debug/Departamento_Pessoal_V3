@@ -6,8 +6,8 @@
 | campo | valor |
 |---|---|
 | owner | postgres |
-| security_invoker | não |
-| opções |  |
+| security_invoker | sim |
+| opções | security_invoker=true |
 | depende de | public.contas_bancarias |
 | populada | n/a |
 | comentário | Leitura descriptografada de contas bancárias, restrita às empresas do usuário (ou admin). |

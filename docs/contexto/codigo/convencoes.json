@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (488)",
+   "co-localizado (__tests__) (492)",
    "co-localizado (*.test) (70)",
    "e2e/ (27)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "docs: prod-readiness registra o merge da #520 e a #541 (#547)",
-   "fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)",
-   "docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)",
-   "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)",
-   "Pensões: permitir editar uma pensão já cadastrada (#520)"
+   "chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)",
+   "fix(logs): não silenciar console.warn em produção (#554)",
+   "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)",
+   "Seguros de Vida: permitir editar apólices (#521)",
+   "fix: treinamentos permite alterar status da inscrição e editar curso (#492)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

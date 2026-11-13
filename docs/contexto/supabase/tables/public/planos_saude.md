@@ -32,6 +32,7 @@
 | 14 | `ans_registro` | `text` | sim |  |  |  |
 | 15 | `coparticipacao_teto` | `numeric(10,2)` | sim |  |  |  |
 | 16 | `abrangencia` | `text` | sim | `'nacional'::text` |  |  |
+| 17 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

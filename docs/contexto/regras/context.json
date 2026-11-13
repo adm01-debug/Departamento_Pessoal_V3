@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66",
+  "sha": "f5c370c7b2277b4bdb012121b5fabe98bba23d4f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 18:41 UTC",
-  "files_total": 2935,
-  "code_files": 2405,
-  "code_lines": 330754
+  "generated_at": "2026-11-13 20:59 UTC",
+  "files_total": 2945,
+  "code_files": 2415,
+  "code_lines": 332158
  },
  "version": "1.3.2",
- "facts_hash": "a0ecf110fbba3598",
+ "facts_hash": "abdaf93b4dda15e2",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,9 +384,9 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 831,
+   ".sql": 837,
    ".ts": 750,
-   ".tsx": 696,
+   ".tsx": 700,
    ".mjs": 100,
    ".js": 15,
    ".cjs": 11,
@@ -70280,6 +70280,12 @@
    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.verify.sql",
    "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.sql",
    "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
+   "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
+   "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql",
+   "supabase/migrations/20261114000200_planos_saude_updated_at.sql",
+   "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql",
+   "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
+   "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
@@ -81166,6 +81172,14 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "notificar_ferias_pagamento_d5",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -91275,7 +91289,7 @@
      "set_own_default_empresa",
      "sugerir_proxima_medida"
     ],
-    "deps_count": 195
+    "deps_count": 196
    },
    {
     "path": "",
@@ -94540,6 +94554,13 @@
     "file": "src/App.tsx"
    },
    {
+    "path": "beneficios/:id/editar",
+    "component": "LazyPage",
+    "guard": "",
+    "roles": [],
+    "file": "src/App.tsx"
+   },
+   {
     "path": "beneficios/novo",
     "component": "LazyPage",
     "guard": "",
@@ -96373,7 +96394,7 @@
   {
    "module": "scripts",
    "files": 131,
-   "lines": 29945,
+   "lines": 29965,
    "tables": [
     "a",
     "anexos",
@@ -96580,7 +96601,7 @@
   {
    "module": "src",
    "files": 4,
-   "lines": 750,
+   "lines": 757,
    "tables": [],
    "exports": [
     "App.tsx: App"
@@ -97321,8 +97342,8 @@
   },
   {
    "module": "src/pages",
-   "files": 126,
-   "lines": 44254,
+   "files": 130,
+   "lines": 45398,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -97684,7 +97705,7 @@
   {
    "module": "src/services",
    "files": 160,
-   "lines": 33651,
+   "lines": 33678,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -98034,7 +98055,7 @@
   {
    "module": "src/test",
    "files": 6,
-   "lines": 470,
+   "lines": 482,
    "tables": [
     "x"
    ],
@@ -98297,7 +98318,7 @@
   {
    "module": "supabase/functions",
    "files": 173,
-   "lines": 24440,
+   "lines": 24442,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -98538,8 +98559,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 795,
-   "lines": 66963,
+   "files": 801,
+   "lines": 67155,
    "tables": [
     "profiles",
     "user_roles"
@@ -100770,8 +100791,7 @@
    },
    "pensoes": {
     "select": [
-     "src/pages/PensoesPage.tsx",
-     "supabase/functions/calcular-folha/index.ts"
+     "src/pages/PensoesPage.tsx"
     ],
     "insert": [
      "src/pages/PensoesPage.tsx"
@@ -100783,7 +100803,8 @@
      "src/pages/PensoesPage.tsx"
     ],
     "ref": [
-     "src/services/folha/calculoLoteService.ts"
+     "src/services/folha/calculoLoteService.ts",
+     "supabase/functions/calcular-folha/index.ts"
     ]
    },
    "periodos_aquisitivos": {
@@ -100904,6 +100925,9 @@
      "src/pages/PlanosSaudePage.tsx"
     ],
     "ref": [
+     "src/pages/PlanosSaudePage.tsx"
+    ],
+    "delete": [
      "src/pages/PlanosSaudePage.tsx"
     ]
    },
@@ -101700,6 +101724,12 @@
      "src/pages/ValesPage.tsx",
      "src/services/folha/calculoLoteService.ts",
      "supabase/functions/calcular-folha/index.ts"
+    ],
+    "update": [
+     "src/pages/ValesPage.tsx"
+    ],
+    "insert": [
+     "src/pages/ValesPage.tsx"
     ]
    },
    "vales_transporte": {
@@ -101707,6 +101737,12 @@
      "src/pages/ValesPage.tsx",
      "src/services/folha/calculoLoteService.ts",
      "supabase/functions/calcular-folha/index.ts"
+    ],
+    "update": [
+     "src/pages/ValesPage.tsx"
+    ],
+    "insert": [
+     "src/pages/ValesPage.tsx"
     ]
    },
    "valores_campos_customizados": {
@@ -102778,13 +102814,7 @@
     "empresa_id"
    ],
    "pensoes": [
-    "ativo",
-    "beneficiario",
-    "colaborador_id",
-    "empresa_id",
-    "id",
-    "percentual",
-    "valor_fixo"
+    "id"
    ],
    "periodos_aquisitivos": [
     "colaborador_id",
@@ -102824,6 +102854,10 @@
    ],
    "plano_contas": [
     "empresa_id"
+   ],
+   "planos_saude": [
+    "empresa_id",
+    "id"
    ],
    "portal_notificacoes_settings": [
     "user_id"
@@ -103171,11 +103205,14 @@
    "vales_alimentacao": [
     "ativo",
     "colaborador_id",
+    "empresa_id",
+    "id",
     "tipo",
     "valor_mensal"
    ],
    "vales_transporte": [
     "colaborador_id",
+    "id",
     "optante",
     "valor_mensal"
    ],
@@ -104006,6 +104043,9 @@
    ],
    "VITE_ANON": [
     "scripts/ai-context/gerar.unit.mjs"
+   ],
+   "VITE_AUTH_GOOGLE_ENABLED": [
+    "src/pages/LoginPage.tsx"
    ],
    "VITE_C": [
     "scripts/ai-context/cenarios.mjs"
@@ -109021,6 +109061,10 @@
    },
    {
     "file": "src/pages/SegurosVidaPage.tsx",
+    "msg": "Apólice não encontrada ou sem permissão para editar"
+   },
+   {
+    "file": "src/pages/SegurosVidaPage.tsx",
     "msg": "Erro ao incluir"
    },
    {
@@ -109037,7 +109081,7 @@
    },
    {
     "file": "src/pages/TreinamentosPage.tsx",
-    "msg": "Erro ao criar curso"
+    "msg": "Erro ao atualizar inscrição"
    },
    {
     "file": "src/pages/TreinamentosPage.tsx",
@@ -109066,6 +109110,10 @@
    {
     "file": "src/pages/ValesPage.tsx",
     "msg": "Erro ao registrar recarga"
+   },
+   {
+    "file": "src/pages/ValesPage.tsx",
+    "msg": "Este colaborador já possui um VT ativo. Edite o VT existente em vez de cadastrar outro."
    },
    {
     "file": "src/pages/VerificarContratoPage.tsx",
@@ -110782,6 +110830,10 @@
     "value": "rh"
    },
    {
+    "file": "src/pages/SegurosVidaPage.tsx",
+    "value": "rh"
+   },
+   {
     "file": "src/services/pushNotificationService.ts",
     "value": "granted"
    },
@@ -110938,6 +110990,10 @@
    {
     "file": "src/main.tsx",
     "text": "Clickjacking defense-in-depth: só quebra o frame em produção e apenas"
+   },
+   {
+    "file": "src/vite-env.d.ts",
+    "text": "* 'true' somente se o provider Google estiver habilitado no Supabase Auth. */"
    },
    {
     "file": "src/calculators/impostos.ts",
@@ -111378,6 +111434,10 @@
    {
     "file": "src/pages/PortalPage.tsx",
     "text": "Consultas que dependem apenas do login."
+   },
+   {
+    "file": "src/pages/ValesPage.tsx",
+    "text": "Sem UNIQUE no banco: um 2º VT optante deixa a folha com desconto arbitrário/ausente."
    },
    {
     "file": "src/pages/VerificarContratoPage.tsx",
@@ -141728,6 +141788,12 @@
    },
    {
     "file": "src/pages/PlanosSaudePage.tsx",
+    "field": "tipo",
+    "value": "saude",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/PlanosSaudePage.tsx",
     "field": "status",
     "value": "excluido",
     "kind": "compara"
@@ -142063,9 +142129,33 @@
     "kind": "compara"
    },
    {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "field": "status",
+    "value": "concluido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "field": "status",
+    "value": "concluido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "field": "status",
+    "value": "concluido",
+    "kind": "compara"
+   },
+   {
     "file": "src/pages/ValesPage.tsx",
     "field": "status",
     "value": "processado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/pages/ValesPage.tsx",
+    "field": "tipo",
+    "value": "VA",
     "kind": "escreve"
    },
    {
@@ -149157,6 +149247,10 @@
    {
     "file": "scripts/tests/inventario-rotas.test.mjs",
     "name": "rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)"
+   },
+   {
+    "file": "scripts/tests/inventario-rotas.test.mjs",
+    "name": "--check compara conteudo, nao bytes: rotas.json formatado pelo prettier (lint-staged) continua em dia"
    },
    {
     "file": "scripts/tests/run-sql-diag-guard.test.mjs",
@@ -164767,6 +164861,22 @@
     "name": "dispara download do modelo ao clicar em "
    },
    {
+    "file": "src/pages/__tests__/LoginPage.google.test.tsx",
+    "name": "LoginPage — botão Google condicionado a VITE_AUTH_GOOGLE_ENABLED"
+   },
+   {
+    "file": "src/pages/__tests__/LoginPage.google.test.tsx",
+    "name": "oculta o Google e deixa o Gov.br em largura total quando a flag está ausente"
+   },
+   {
+    "file": "src/pages/__tests__/LoginPage.google.test.tsx",
+    "name": "oculta o Google para qualquer valor diferente de "
+   },
+   {
+    "file": "src/pages/__tests__/LoginPage.google.test.tsx",
+    "name": "mostra o Google lado a lado com o Gov.br e inicia o OAuth quando a flag é "
+   },
+   {
     "file": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
     "name": "ObrigacoesFiscaisPage — gerar guias via servidor"
    },
@@ -164811,6 +164921,10 @@
     "name": "mostra erro quando o update falha"
    },
    {
+    "file": "src/pages/__tests__/PlanosSaudePage.test.tsx",
+    "name": "PlanosSaudePage"
+   },
+   {
     "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
     "name": "PremiacoesPage — KPIs"
    },
@@ -164837,6 +164951,54 @@
    {
     "file": "src/pages/__tests__/PremiacoesPage.test.tsx",
     "name": "sem papel RH/admin não mostra as ações do rascunho"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "SegurosVidaPage — editar apólice"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "abre o formulário preenchido e grava UPDATE filtrado por id e empresa"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "recarrega os sinistros após editar (nome da seguradora exibido na aba Sinistros)"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "mostra erro quando o UPDATE não altera nenhuma linha (RLS/registro inexistente)"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "SegurosVidaPage — excluir e permissões"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "pede confirmação antes de excluir e não apaga ao cancelar"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "exclui filtrando por id e empresa só depois de confirmar"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "admin também vê Editar e Excluir"
+   },
+   {
+    "file": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+    "name": "usuário sem papel RH/admin não vê Novo, Editar nem Excluir"
+   },
+   {
+    "file": "src/pages/__tests__/ValesPage.test.tsx",
+    "name": "ValesPage — VT"
+   },
+   {
+    "file": "src/pages/__tests__/ValesPage.test.tsx",
+    "name": "bloqueia um segundo VT ativo para o mesmo colaborador"
+   },
+   {
+    "file": "src/pages/__tests__/ValesPage.test.tsx",
+    "name": "arredonda valor_mensal em centavos (35,70 × 22 = 785,40)"
    },
    {
     "file": "src/pages/__tests__/adminCatEdicao.test.ts",
@@ -173000,6 +173162,10 @@
    },
    {
     "file": "src/services/folha/__tests__/calculoLoteService.test.ts",
+    "name": "filtra pensões pela empresa do colaborador (pensoes não tem empresa_id) e propaga erro"
+   },
+   {
+    "file": "src/services/folha/__tests__/calculoLoteService.test.ts",
     "name": "throws conflict when header update matches 0 rows (status changed mid-batch)"
    },
    {
@@ -173569,6 +173735,18 @@
    {
     "file": "src/test/securityHeadersParity.test.ts",
     "name": "nginx.conf serve exatamente os headers globais do vercel.json"
+   },
+   {
+    "file": "src/test/securityHeadersParity.test.ts",
+    "name": "vercel.json aplica os headers em produção"
+   },
+   {
+    "file": "src/test/securityHeadersParity.test.ts",
+    "name": "não usa "
+   },
+   {
+    "file": "src/test/securityHeadersParity.test.ts",
+    "name": "mantém o fallback de SPA via "
    },
    {
     "file": "src/tests/error-handling.test.ts",
@@ -201470,6 +201648,10 @@
    },
    {
     "file": "src/pages/ValesPage.tsx",
+    "limit": "1"
+   },
+   {
+    "file": "src/pages/ValesPage.tsx",
     "limit": "100"
    },
    {
@@ -203853,6 +204035,9 @@
      ],
      "informativo": [
       "compara:src/pages/RubricasPage.tsx"
+     ],
+     "VA": [
+      "escreve:src/pages/ValesPage.tsx"
      ],
      "Manual": [
       "escreve:src/services/backupService.ts"
@@ -223125,6 +223310,14 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "notificar_ferias_pagamento_d5",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -232676,7 +232869,7 @@
   },
   "scripts/inventario/gerar-rotas.mjs": {
    "path": "scripts/inventario/gerar-rotas.mjs",
-   "lines": 418,
+   "lines": 429,
    "exports": [
     "function resolverImport",
     "function extrairImports",
@@ -232692,7 +232885,8 @@
     "function lerMenu",
     "function casaRota",
     "function gerarRotas",
-    "const serializar"
+    "const serializar",
+    "function emDia"
    ],
    "rpc": [
     "x"
@@ -233804,7 +233998,7 @@
   },
   "scripts/tests/inventario-rotas.test.mjs": {
    "path": "scripts/tests/inventario-rotas.test.mjs",
-   "lines": 189,
+   "lines": 198,
    "is_test": true,
    "exports": [
     "function App"
@@ -233908,7 +234102,8 @@
     "helpers: tags com > dentro de element, juntar caminho e casar padrao",
     "edges: wrapper do DP (handleInvoke) e functions.invoke com generico aninhado",
     "rota, item de menu e chamada comentados nao contam",
-    "rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)"
+    "rotas.json commitado esta em dia na parte estrutural (rode node scripts/inventario/gerar-rotas.mjs)",
+    "--check compara conteudo, nao bytes: rotas.json formatado pelo prettier (lint-staged) continua em dia"
    ],
    "side_effects": [
     "invoke("
@@ -233991,7 +234186,7 @@
   },
   "src/App.tsx": {
    "path": "src/App.tsx",
-   "lines": 501,
+   "lines": 502,
    "exports": [
     "function App"
    ],
@@ -234130,6 +234325,12 @@
     },
     {
      "path": "beneficios/novo",
+     "component": "LazyPage",
+     "guard": "",
+     "roles": []
+    },
+    {
+     "path": "beneficios/:id/editar",
      "component": "LazyPage",
      "guard": "",
      "roles": []
@@ -234699,7 +234900,7 @@
   },
   "src/main.tsx": {
    "path": "src/main.tsx",
-   "lines": 186,
+   "lines": 190,
    "env": [
     "DEV",
     "MODE",
@@ -234723,7 +234924,10 @@
   },
   "src/vite-env.d.ts": {
    "path": "src/vite-env.d.ts",
-   "lines": 16,
+   "lines": 18,
+   "rule_comments": [
+    "* 'true' somente se o provider Google estiver habilitado no Supabase Auth. */"
+   ],
    "doc": "V15-234: src/vite-env.d.ts / <reference types=\"vite/client\" /> / <reference types=\"vitest/globals\" />"
   },
   "src/assets/index.ts": {
@@ -244627,7 +244831,7 @@
     "function PortalOverviewTab"
    ],
    "navigates": [
-    "/comunicacao",
+    "/comunicacao-interna",
     "/ferias",
     "/notificacoes",
     "/perfil",
@@ -253255,12 +253459,12 @@
   },
   "src/pages/AdmissoesPage.tsx": {
    "path": "src/pages/AdmissoesPage.tsx",
-   "lines": 395,
+   "lines": 391,
    "exports": [
     "function AdmissoesPage"
    ],
    "navigates": [
-    "/configuracoes/logs"
+    "/auditoria"
    ],
    "errors": [
     "Admissão sem empresa vinculada — impossível enviar e-mail.",
@@ -253604,7 +253808,7 @@
   },
   "src/pages/BeneficioFormPage.tsx": {
    "path": "src/pages/BeneficioFormPage.tsx",
-   "lines": 134,
+   "lines": 200,
    "exports": [
     "function BeneficioFormPage"
    ],
@@ -253635,14 +253839,15 @@
   },
   "src/pages/BeneficiosPage.tsx": {
    "path": "src/pages/BeneficiosPage.tsx",
-   "lines": 206,
+   "lines": 198,
    "exports": [
     "function BeneficiosPage"
    ],
    "navigates": [
+    "/auditoria",
+    "/beneficios/",
     "/beneficios/novo",
-    "/configuracoes/beneficios",
-    "/configuracoes/logs"
+    "/configuracoes"
    ],
    "calc_fns": [
     {
@@ -254402,7 +254607,7 @@
    "navigates": [
     "/colaboradores/novo",
     "/ferias",
-    "/folha-pagamento"
+    "/folha"
    ],
    "status_values": [
     {
@@ -255655,12 +255860,15 @@
   },
   "src/pages/LoginPage.tsx": {
    "path": "src/pages/LoginPage.tsx",
-   "lines": 603,
+   "lines": 607,
    "exports": [
     "function LoginPage"
    ],
    "invokes": [
     "auth-gov-br"
+   ],
+   "env": [
+    "VITE_AUTH_GOOGLE_ENABLED"
    ],
    "navigates": [
     "/dashboard"
@@ -256432,7 +256640,7 @@
   },
   "src/pages/PlanosSaudePage.tsx": {
    "path": "src/pages/PlanosSaudePage.tsx",
-   "lines": 525,
+   "lines": 636,
    "exports": [
     "function PlanosSaudePage"
    ],
@@ -256450,10 +256658,24 @@
      "op": "ref"
     },
     {
+     "table": "planos_saude",
+     "op": "ref"
+    },
+    {
+     "table": "planos_saude",
+     "op": "delete"
+    },
+    {
      "table": "seguros_vida",
      "op": "ref"
     }
    ],
+   "table_cols": {
+    "planos_saude": [
+     "empresa_id",
+     "id"
+    ]
+   },
    "errors": [
     "Erro ao incluir beneficiário"
    ],
@@ -256471,6 +256693,11 @@
     {
      "field": "tipo",
      "value": "dependente",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "saude",
      "kind": "escreve"
     },
     {
@@ -257300,7 +257527,7 @@
   },
   "src/pages/SegurosVidaPage.tsx": {
    "path": "src/pages/SegurosVidaPage.tsx",
-   "lines": 716,
+   "lines": 848,
    "exports": [
     "function SegurosVidaPage"
    ],
@@ -257308,6 +257535,10 @@
     {
      "table": "seguros_vida",
      "op": "select"
+    },
+    {
+     "table": "seguros_vida",
+     "op": "ref"
     },
     {
      "table": "seguros_vida",
@@ -257342,6 +257573,7 @@
     ]
    },
    "errors": [
+    "Apólice não encontrada ou sem permissão para editar",
     "Erro ao incluir",
     "Erro ao registrar sinistro",
     "Erro ao vincular"
@@ -257377,6 +257609,9 @@
      "value": "ativo",
      "kind": "filtra"
     }
+   ],
+   "role_checks": [
+    "rh"
    ]
   },
   "src/pages/SindicatosPage.tsx": {
@@ -257445,7 +257680,7 @@
   },
   "src/pages/TreinamentosPage.tsx": {
    "path": "src/pages/TreinamentosPage.tsx",
-   "lines": 863,
+   "lines": 937,
    "exports": [
     "function TreinamentosPage"
    ],
@@ -257469,7 +257704,7 @@
     ]
    },
    "errors": [
-    "Erro ao criar curso",
+    "Erro ao atualizar inscrição",
     "Erro ao criar treinamento",
     "Erro ao criar trilha",
     "Erro ao inscrever"
@@ -257479,6 +257714,21 @@
      "field": "status",
      "value": "inscrito",
      "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "compara"
     },
     {
      "field": "status",
@@ -257518,7 +257768,7 @@
   },
   "src/pages/ValesPage.tsx": {
    "path": "src/pages/ValesPage.tsx",
-   "lines": 343,
+   "lines": 702,
    "exports": [
     "function ValesPage"
    ],
@@ -257542,22 +257792,66 @@
     {
      "table": "recargas_vale",
      "op": "ref"
+    },
+    {
+     "table": "vales_alimentacao",
+     "op": "update"
+    },
+    {
+     "table": "vales_alimentacao",
+     "op": "insert"
+    },
+    {
+     "table": "vales_alimentacao",
+     "op": "update"
+    },
+    {
+     "table": "vales_transporte",
+     "op": "select"
+    },
+    {
+     "table": "vales_transporte",
+     "op": "update"
+    },
+    {
+     "table": "vales_transporte",
+     "op": "insert"
+    },
+    {
+     "table": "vales_transporte",
+     "op": "update"
     }
    ],
    "table_cols": {
     "colaboradores": [
+     "empresa_id",
      "id",
      "nome_completo",
      "status"
+    ],
+    "vales_alimentacao": [
+     "empresa_id",
+     "id"
+    ],
+    "vales_transporte": [
+     "colaborador_id",
+     "id",
+     "optante"
     ]
    },
    "errors": [
-    "Erro ao registrar recarga"
+    "Erro ao registrar recarga",
+    "Este colaborador já possui um VT ativo. Edite o VT existente em vez de cadastrar outro."
    ],
    "status_values": [
     {
      "field": "status",
      "value": "processado",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "VA",
      "kind": "escreve"
     },
     {
@@ -257571,7 +257865,11 @@
      "kind": "filtra"
     }
    ],
+   "rule_comments": [
+    "Sem UNIQUE no banco: um 2º VT optante deixa a folha com desconto arbitrário/ausente."
+   ],
    "pagination": [
+    "1",
     "100"
    ]
   },
@@ -257955,6 +258253,17 @@
     "dispara download do modelo ao clicar em "
    ]
   },
+  "src/pages/__tests__/LoginPage.google.test.tsx": {
+   "path": "src/pages/__tests__/LoginPage.google.test.tsx",
+   "lines": 71,
+   "is_test": true,
+   "tests": [
+    "LoginPage — botão Google condicionado a VITE_AUTH_GOOGLE_ENABLED",
+    "oculta o Google e deixa o Gov.br em largura total quando a flag está ausente",
+    "oculta o Google para qualquer valor diferente de ",
+    "mostra o Google lado a lado com o Gov.br e inicia o OAuth quando a flag é "
+   ]
+  },
   "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx": {
    "path": "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
    "lines": 74,
@@ -257984,6 +258293,14 @@
     "mostra erro quando o update falha"
    ]
   },
+  "src/pages/__tests__/PlanosSaudePage.test.tsx": {
+   "path": "src/pages/__tests__/PlanosSaudePage.test.tsx",
+   "lines": 64,
+   "is_test": true,
+   "tests": [
+    "PlanosSaudePage"
+   ]
+  },
   "src/pages/__tests__/PremiacoesPage.test.tsx": {
    "path": "src/pages/__tests__/PremiacoesPage.test.tsx",
    "lines": 131,
@@ -257996,6 +258313,36 @@
     "Lançar muda o rascunho para ativo",
     "Excluir rascunho só apaga depois de confirmar",
     "sem papel RH/admin não mostra as ações do rascunho"
+   ]
+  },
+  "src/pages/__tests__/SegurosVidaPage.test.tsx": {
+   "path": "src/pages/__tests__/SegurosVidaPage.test.tsx",
+   "lines": 183,
+   "is_test": true,
+   "role_checks": [
+    "admin",
+    "r"
+   ],
+   "tests": [
+    "SegurosVidaPage — editar apólice",
+    "abre o formulário preenchido e grava UPDATE filtrado por id e empresa",
+    "recarrega os sinistros após editar (nome da seguradora exibido na aba Sinistros)",
+    "mostra erro quando o UPDATE não altera nenhuma linha (RLS/registro inexistente)",
+    "SegurosVidaPage — excluir e permissões",
+    "pede confirmação antes de excluir e não apaga ao cancelar",
+    "exclui filtrando por id e empresa só depois de confirmar",
+    "admin também vê Editar e Excluir",
+    "usuário sem papel RH/admin não vê Novo, Editar nem Excluir"
+   ]
+  },
+  "src/pages/__tests__/ValesPage.test.tsx": {
+   "path": "src/pages/__tests__/ValesPage.test.tsx",
+   "lines": 92,
+   "is_test": true,
+   "tests": [
+    "ValesPage — VT",
+    "bloqueia um segundo VT ativo para o mesmo colaborador",
+    "arredonda valor_mensal em centavos (35,70 × 22 = 785,40)"
    ]
   },
   "src/pages/__tests__/adminCatEdicao.test.ts": {
@@ -266592,11 +266939,12 @@
   },
   "src/services/folha/calculoLoteService.ts": {
    "path": "src/services/folha/calculoLoteService.ts",
-   "lines": 526,
+   "lines": 531,
    "exports": [
     "interface BatchProgress",
     "const COLABORADOR_FOLHA_SELECT",
     "const EVENTO_VARIAVEL_SELECT",
+    "const PENSAO_FOLHA_SELECT",
     "const calculoLoteService"
    ],
    "tables": [
@@ -266831,7 +267179,7 @@
   },
   "src/services/folha/__tests__/calculoLoteService.test.ts": {
    "path": "src/services/folha/__tests__/calculoLoteService.test.ts",
-   "lines": 297,
+   "lines": 319,
    "is_test": true,
    "errors": [
     "calc error"
@@ -266843,6 +267191,7 @@
     "grava no cabeçalho os totais somados dos itens, só com a folha aberta",
     "throws when no colaboradores found",
     "throws when colaboradores query returns error",
+    "filtra pensões pela empresa do colaborador (pensoes não tem empresa_id) e propaga erro",
     "throws conflict when header update matches 0 rows (status changed mid-batch)",
     "throws when folha is already fechada",
     "returns progress with success count",
@@ -267638,11 +267987,14 @@
   },
   "src/test/securityHeadersParity.test.ts": {
    "path": "src/test/securityHeadersParity.test.ts",
-   "lines": 31,
+   "lines": 43,
    "is_test": true,
    "tests": [
     "paridade de security headers vercel.json x nginx.conf",
-    "nginx.conf serve exatamente os headers globais do vercel.json"
+    "nginx.conf serve exatamente os headers globais do vercel.json",
+    "vercel.json aplica os headers em produção",
+    "não usa ",
+    "mantém o fallback de SPA via "
    ]
   },
   "src/test/supabaseMock.ts": {
@@ -272080,7 +272432,7 @@
   },
   "supabase/functions/calcular-folha/index.ts": {
    "path": "supabase/functions/calcular-folha/index.ts",
-   "lines": 715,
+   "lines": 717,
    "tables": [
     {
      "table": "audit_log",
@@ -272132,7 +272484,7 @@
     },
     {
      "table": "pensoes",
-     "op": "select"
+     "op": "ref"
     },
     {
      "table": "emprestimos_consignados",
@@ -272226,14 +272578,6 @@
      "colaborador_id",
      "tipo",
      "valor_mensal"
-    ],
-    "pensoes": [
-     "ativo",
-     "beneficiario",
-     "colaborador_id",
-     "empresa_id",
-     "percentual",
-     "valor_fixo"
     ],
     "emprestimos_consignados": [
      "colaborador_id",
@@ -281481,6 +281825,30 @@
    "path": "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
    "lines": 12
   },
+  "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql": {
+   "path": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
+   "lines": 77
+  },
+  "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql": {
+   "path": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql",
+   "lines": 8
+  },
+  "supabase/migrations/20261114000200_planos_saude_updated_at.sql": {
+   "path": "supabase/migrations/20261114000200_planos_saude_updated_at.sql",
+   "lines": 33
+  },
+  "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql": {
+   "path": "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql",
+   "lines": 20
+  },
+  "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql": {
+   "path": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
+   "lines": 46
+  },
+  "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql": {
+   "path": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql",
+   "lines": 8
+  },
   "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql": {
    "path": "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "lines": 56
@@ -281705,10 +282073,141 @@
   }
  },
  "git": {
-  "sha": "4f2ebaa623ed67eb5e6b31c477ce861bf4a71a66",
+  "sha": "f5c370c7b2277b4bdb012121b5fabe98bba23d4f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "f5c370c",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml"
+    ]
+   },
+   {
+    "sha": "a49f33e",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(logs): não silenciar console.warn em produção (#554)",
+    "files": [
+     "src/main.tsx"
+    ]
+   },
+   {
+    "sha": "69cf8aa",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)",
+    "files": [
+     "nginx.conf",
+     "src/test/securityHeadersParity.test.ts",
+     "vercel.json"
+    ]
+   },
+   {
+    "sha": "2fbfb51",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "Seguros de Vida: permitir editar apólices (#521)",
+    "files": [
+     "src/pages/SegurosVidaPage.tsx",
+     "src/pages/__tests__/SegurosVidaPage.test.tsx"
+    ]
+   },
+   {
+    "sha": "daa557e",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: treinamentos permite alterar status da inscrição e editar curso (#492)",
+    "files": [
+     "src/pages/TreinamentosPage.tsx"
+    ]
+   },
+   {
+    "sha": "c9caf7f",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: benefícios, planos de saúde e VT/VA passam a ser editáveis e links que davam 404 foram corrigidos (#484)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "src/App.tsx",
+     "src/components/portal/PortalOverviewTab.tsx",
+     "src/pages/AdmissoesPage.tsx",
+     "src/pages/BeneficioFormPage.tsx",
+     "src/pages/BeneficiosPage.tsx",
+     "src/pages/DashboardExecutivoPage.tsx",
+     "src/pages/PlanosSaudePage.tsx",
+     "src/pages/ValesPage.tsx",
+     "src/pages/__tests__/PlanosSaudePage.test.tsx",
+     "src/pages/__tests__/ValesPage.test.tsx"
+    ]
+   },
+   {
+    "sha": "9d684d7",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: adiciona planos_saude.updated_at exigida pelo trigger de UPDATE (#498)",
+    "files": [
+     "supabase/migrations/20261114000200_planos_saude_updated_at.sql",
+     "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql"
+    ]
+   },
+   {
+    "sha": "2f13bbb",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)",
+    "files": [
+     "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
+     "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql"
+    ]
+   },
+   {
+    "sha": "1108375",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix(db): view de contas bancárias descriptografadas volta a respeitar a permissão de quem consulta (#464)",
+    "files": [
+     "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
+     "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql"
+    ]
+   },
+   {
+    "sha": "e40a3d1",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: folha filtra pensões pela empresa do colaborador (pensoes sem empresa_id) (#550)",
+    "files": [
+     "src/services/folha/__tests__/calculoLoteService.test.ts",
+     "src/services/folha/calculoLoteService.ts",
+     "supabase/functions/calcular-folha/index.ts"
+    ]
+   },
+   {
+    "sha": "d49f194",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: ocultar login com Google enquanto o provider estiver desabilitado (#551)",
+    "files": [
+     ".env.example",
+     "src/pages/LoginPage.tsx",
+     "src/pages/__tests__/LoginPage.google.test.tsx",
+     "src/vite-env.d.ts"
+    ]
+   },
+   {
+    "sha": "f07255f",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "fix: --check do inventario de rotas compara conteudo, nao bytes (#552)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "scripts/inventario/gerar-rotas.mjs",
+     "scripts/tests/inventario-rotas.test.mjs"
+    ]
+   },
    {
     "sha": "4f2ebaa",
     "date": "2026-11-13",
@@ -281911,213 +282410,87 @@
      "src/components/ponto/GestaoRegistrosPonto.tsx",
      "src/components/ponto/PontoAuditTimeline.tsx"
     ]
-   },
-   {
-    "sha": "66b5a7b",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "CNAB: botão Download das remessas geradas passa a baixar o arquivo (#507)",
-    "files": [
-     "src/components/integracoes/ConfigPanels.tsx",
-     "src/components/integracoes/__tests__/ConfigPanels.test.tsx",
-     "src/services/__tests__/integracaoService.test.ts",
-     "src/services/integracaoService.ts"
-    ]
-   },
-   {
-    "sha": "d9ac757",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: botão de histórico do Simulador What-if abre as simulações salvas (#506)",
-    "files": [
-     "src/components/__tests__/HistoricoSimulacoesDialog.test.tsx",
-     "src/components/folha/HistoricoSimulacoesDialog.tsx",
-     "src/components/folha/SimuladorWhatIf.tsx"
-    ]
-   },
-   {
-    "sha": "8620df9",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "chore: orçamento de JS 12250 → 12400 KB para as telas de edição/exclusão da onda D (#527)",
-    "files": [
-     "scripts/.bundle-budget.json"
-    ]
-   },
-   {
-    "sha": "71824b9",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Canal de Ética: RH/admin passa a abrir a denúncia, mudar o status e registrar o parecer (#514)",
-    "files": [
-     "src/pages/CanalEticaPage.tsx",
-     "src/pages/__tests__/CanalEticaPage.test.tsx",
-     "src/services/__tests__/comunicacaoService.test.ts",
-     "src/services/comunicacaoService.ts"
-    ]
-   },
-   {
-    "sha": "5c7a433",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(sync): espelho, autocommit e sync sem perda de dado e sem falha silenciosa (#540)",
-    "files": [
-     "scripts/sync/autocommit-local.sh",
-     "scripts/sync/mirror-github.sh",
-     "scripts/sync/sync-github.sh"
-    ]
-   },
-   {
-    "sha": "28e9d0c",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "infra: corrige verify do canonical-migrations (grep vazio) + remediação Art.145 (11-20) para o canônico (#461)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.sql",
-     "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql"
-    ]
-   },
-   {
-    "sha": "a295c94",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "docs: prod-readiness com o resultado final dos workflows no main (31ea570) (#538)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
-   },
-   {
-    "sha": "31ea570",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "docs: relatório de prontidão para produção (prod-readiness) (#535)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
-   },
-   {
-    "sha": "0807204",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: E2E de RBAC reconfirma o bloqueio após carregar as roles (não passa mais por corrida) (#536)",
-    "files": [
-     "e2e/authenticated-non-admin/rbac-admin-blocked.spec.ts"
-    ]
-   },
-   {
-    "sha": "f7a2263",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "chore: regenera inventario/estado/rotas.json (gerar-rotas --check falhava no main) (#534)",
-    "files": [
-     "inventario/estado/rotas.json"
-    ]
-   },
-   {
-    "sha": "66b104f",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: ações do painel de inconsistências de ponto passam a gravar de verdade (#516)",
-    "files": [
-     "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-     "src/components/__tests__/PontoInconsistencyPanel.test.tsx",
-     "src/components/ponto/PontoInconsistencyPanel.tsx"
-    ]
-   },
-   {
-    "sha": "b170bd7",
-    "date": "2026-11-12",
-    "author": "adm01-debug",
-    "subject": "fix: 'Gerar guias via servidor' envia o contrato que a edge gerar-guias aceita (#502)",
-    "files": [
-     "src/pages/ObrigacoesFiscaisPage.tsx",
-     "src/pages/__tests__/ObrigacoesFiscaisPage.gerarGuias.test.tsx",
-     "src/services/__tests__/edgeFunctionsService.test.ts",
-     "src/services/edgeFunctionsService.ts",
-     "supabase/functions/gerar-guias/index.ts"
-    ]
    }
   ],
   "hot_files": [
    [
+    "inventario/estado/rotas.json",
+    3
+   ],
+   [
     "docs/prod-readiness.md",
-    5
+    3
    ],
    [
     ".github/workflows/canonical-migrations.yml",
     2
    ],
    [
-    "inventario/estado/rotas.json",
-    2
-   ],
-   [
-    "src/components/__tests__/GestaoRegistrosPonto.test.tsx",
-    2
-   ],
-   [
-    "src/services/loggerService.ts",
+    "src/main.tsx",
     1
    ],
    [
-    "vite.config.ts",
+    "nginx.conf",
     1
    ],
    [
-    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
+    "src/test/securityHeadersParity.test.ts",
     1
    ],
    [
-    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
+    "vercel.json",
     1
    ],
    [
-    "src/pages/PensoesPage.tsx",
+    "src/pages/SegurosVidaPage.tsx",
     1
    ],
    [
-    "src/pages/__tests__/PensoesPage.test.tsx",
+    "src/pages/__tests__/SegurosVidaPage.test.tsx",
     1
    ],
    [
-    "src/pages/ComunicacaoInternaPage.tsx",
+    "src/pages/TreinamentosPage.tsx",
     1
    ],
    [
-    "src/pages/__tests__/ComunicacaoInternaPage.test.tsx",
+    "src/App.tsx",
     1
    ],
    [
-    "src/components/__tests__/FeriasForm.test.tsx",
+    "src/components/portal/PortalOverviewTab.tsx",
     1
    ],
    [
-    "src/components/__tests__/MobileQuickActions.test.tsx",
+    "src/pages/AdmissoesPage.tsx",
     1
    ],
    [
-    "src/components/ferias/FeriasForm.tsx",
+    "src/pages/BeneficioFormPage.tsx",
     1
    ],
    [
-    "src/components/ferias/index.ts",
+    "src/pages/BeneficiosPage.tsx",
     1
    ],
    [
-    "src/components/layout/MobileQuickActions.tsx",
+    "src/pages/DashboardExecutivoPage.tsx",
     1
    ],
    [
-    "src/pages/FeriasPage.tsx",
+    "src/pages/PlanosSaudePage.tsx",
     1
    ],
    [
-    "src/services/feriasService.ts",
+    "src/pages/ValesPage.tsx",
     1
    ],
    [
-    "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
+    "src/pages/__tests__/PlanosSaudePage.test.tsx",
+    1
+   ],
+   [
+    "src/pages/__tests__/ValesPage.test.tsx",
     1
    ]
   ]

@@ -2,6 +2,13 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-13 21:00 UTC
+
+- **colunas** adicionado (1): `public.planos_saude.updated_at`
+- **functions** alterado (5): `public.decrypt_dados_bancarios_tenant(p_ciphertext text, p_empresa_id uuid)`, `public.is_admin(_user_id uuid)`, `public.notificar_ferias_pagamento_d5()`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.update_updated_at_column()`
+- **lints** removido (1): `view_security_definer:public.contas_bancarias_decrypted`
+- **views** alterado (1): `public.contas_bancarias_decrypted`
+
 ## 2026-11-13 11:01 UTC
 
 - **functions** alterado (7): `public.admin_associar_usuario_empresa(p_user_id uuid, p_empresa_id uuid, p_is_default boolean)`, `public.deadline_legal_pagamento_ferias(p_data_inicio date)`, `public.eh_feriado_fixo_br(p_data date)`, `public.get_my_user_empresas()`, `public.pode_gerir_pessoas_para(_user_id uuid, _empresa_id uuid)`, `public.pode_gerir_rh_para(_user_id uuid, _empresa_id uuid)`, `public.set_own_default_empresa(p_empresa_id uuid)`
