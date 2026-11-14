@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1937631958f2f52cd757d5f6e8863c032c2c1405",
+  "commit": "b4308c5a16b59ddcaf0c7434b11f41f98aaeff93",
   "branch": "main",
-  "data_commit": "2026-11-14T09:31:55-03:00",
+  "data_commit": "2026-11-14T16:58:59-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "b4308c5",
+    "data": "2026-11-14",
+    "assunto": "build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)"
+   },
+   {
+    "sha": "311ee8a",
+    "data": "2026-11-14",
+    "assunto": "chore: contexto agendado de 10 min para 1x/hora (#566)"
+   },
    {
     "sha": "1937631",
     "data": "2026-11-14",
@@ -121,19 +131,9 @@
     "sha": "e40a3d1",
     "data": "2026-11-13",
     "assunto": "fix: folha filtra pensões pela empresa do colaborador (pensoes sem empresa_id) (#550)"
-   },
-   {
-    "sha": "d49f194",
-    "data": "2026-11-13",
-    "assunto": "fix: ocultar login com Google enquanto o provider estiver desabilitado (#551)"
-   },
-   {
-    "sha": "f07255f",
-    "data": "2026-11-13",
-    "assunto": "fix: --check do inventario de rotas compara conteudo, nao bytes (#552)"
    }
   ],
-  "arquivos_mudados_7d": 642,
+  "arquivos_mudados_7d": 636,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,11 +141,15 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 37
+    "mudancas": 36
    },
    {
     "pasta": "src/services/__tests__",
     "mudancas": 21
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 19
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -156,16 +160,12 @@
     "mudancas": 19
    },
    {
-    "pasta": "package.json",
-    "mudancas": 18
-   },
-   {
     "pasta": "CLAUDE.md",
     "mudancas": 17
    },
    {
     "pasta": "package-lock.json",
-    "mudancas": 16
+    "mudancas": 17
    },
    {
     "pasta": "scripts/autofix/regras",
@@ -199,15 +199,15 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 42
+    "mudancas": 40
    },
    {
     "arquivo": "package.json",
-    "mudancas": 25
+    "mudancas": 26
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 23
+    "mudancas": 24
    },
    {
     "arquivo": "CLAUDE.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 211
+    "commits": 212
    },
    {
     "autor": "devin-ai-integration[bot]",

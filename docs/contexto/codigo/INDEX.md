@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1937631958f2f52cd757d5f6e8863c032c2c1405` (2026-11-14T09:31:55-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b4308c5a16b59ddcaf0c7434b11f41f98aaeff93` (2026-11-14T16:58:59-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -386,15 +386,15 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22252 nós · 47006 arestas · 2155 comunidades · grafo do commit `19376319`
+- 22252 nós · 47006 arestas · 2155 comunidades · grafo do commit `b4308c5a`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (440), lucide-react (362), cn (360), supabase (315), vitest (285), ref_https (194), react (161), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (42)
-- package.json (25)
-- package-lock.json (23)
+- .github/workflows/canonical-migrations.yml (40)
+- package.json (26)
+- package-lock.json (24)
 - CLAUDE.md (21)
 - PENDENCIAS.md (13)
 - .github/workflows/ci.yml (11)
@@ -416,7 +416,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `canonical-probes.yml` — Canonical database — read-only security probes (schedule, workflow_call, workflow_dispatch; cron 23 6 * * *)
 - `canonical-sql-diag.yml` — Canonical database — read-only SQL diagnostic (workflow_dispatch)
 - `ci.yml` — Continuous Integration & Delivery (pull_request, push, workflow_dispatch)
-- `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3-59/10 * * * *)
+- `contexto.yml` — Contexto para agentes de IA (10 min) (push, schedule, workflow_dispatch; cron 3 * * * *)
 - `deploy.yml` — Manual & Preview Deploy (pull_request, workflow_dispatch)
 - `e2e.yml` — E2E Tests (Playwright) (pull_request, push, workflow_dispatch)
 - `gitleaks.yml` — Gitleaks (pull_request, push, workflow_dispatch)
@@ -619,6 +619,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-14 `b4308c5` build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)
+- 2026-11-14 `311ee8a` chore: contexto agendado de 10 min para 1x/hora (#566)
 - 2026-11-14 `1937631` chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)
 - 2026-11-14 `1241a00` Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)
 - 2026-11-14 `7aa798f` Pensões: recria a coluna empresa_id que falta no banco de produção (#529)
@@ -632,8 +634,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `a033ee8` fix(sync): autocommit preserva o índice do usuário e varre resolução de merge (#549)
 - 2026-11-13 `5bbf7eb` chore: regenera inventario/estado/rotas.json com o gerador atual (#558)
 - 2026-11-13 `9d2fda9` fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)
-- 2026-11-13 `f5c370c` chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)
-- 2026-11-13 `a49f33e` fix(logs): não silenciar console.warn em produção (#554)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

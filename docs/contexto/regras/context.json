@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1937631958f2f52cd757d5f6e8863c032c2c1405",
+  "sha": "b4308c5a16b59ddcaf0c7434b11f41f98aaeff93",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-14 12:52 UTC",
+  "generated_at": "2026-11-14 19:59 UTC",
   "files_total": 2956,
   "code_files": 2425,
   "code_lines": 332989
  },
  "version": "1.3.2",
- "facts_hash": "d97d0749e2f27c09",
+ "facts_hash": "cc8f6112d21c75b9",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -95481,7 +95481,7 @@
    },
    {
     "kind": "GitHub Actions cron",
-    "detail": "3-59/10 * * * *",
+    "detail": "3 * * * *",
     "file": ".github/workflows/contexto.yml"
    },
    {
@@ -282590,10 +282590,29 @@
   }
  },
  "git": {
-  "sha": "1937631958f2f52cd757d5f6e8863c032c2c1405",
+  "sha": "b4308c5a16b59ddcaf0c7434b11f41f98aaeff93",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "b4308c5",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)",
+    "files": [
+     "package-lock.json",
+     "package.json"
+    ]
+   },
+   {
+    "sha": "311ee8a",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "chore: contexto agendado de 10 min para 1x/hora (#566)",
+    "files": [
+     ".github/workflows/contexto.yml"
+    ]
+   },
    {
     "sha": "1937631",
     "date": "2026-11-14",
@@ -282876,27 +282895,6 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "f263a09",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)",
-    "files": [
-     ".github/workflows/canonical-migrations.yml",
-     "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
-     "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql"
-    ]
-   },
-   {
-    "sha": "8f6b711",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Pensões: permitir editar uma pensão já cadastrada (#520)",
-    "files": [
-     "src/pages/PensoesPage.tsx",
-     "src/pages/__tests__/PensoesPage.test.tsx"
-    ]
    }
   ],
   "hot_files": [
@@ -282921,8 +282919,16 @@
     2
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
-    2
+    "package-lock.json",
+    1
+   ],
+   [
+    "package.json",
+    1
+   ],
+   [
+    ".github/workflows/contexto.yml",
+    1
    ],
    [
     "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
@@ -282970,14 +282976,6 @@
    ],
    [
     "AUDITORIA_10_10.md",
-    1
-   ],
-   [
-    "index.html",
-    1
-   ],
-   [
-    "src/main.tsx",
     1
    ]
   ]

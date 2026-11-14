@@ -464,7 +464,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "3-59/10 * * * *"
+    "3 * * * *"
    ],
    "branches": [
     "main"
