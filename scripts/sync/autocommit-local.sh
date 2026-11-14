@@ -46,7 +46,10 @@ done
 WT="$(cd "$WT" && pwd -P)"
 
 STATE="${XDG_CACHE_HOME:-$HOME/.cache}/dp-sync"; mkdir -p "$STATE" && chmod 700 "$STATE"
-KEY="$(printf '%s' "$WT" | sha1sum | cut -c1-10)"; LOG="$STATE/sync.log"; G=(git -C "$WT")
+KEY="$(printf '%s' "$WT" | sha1sum | cut -c1-10)"; LOG="$STATE/sync.log"; G=(git -C "$WT" -c splitIndex.sharedIndexExpire=never)   # (rev3) índice dividido: o sharedindex que o backup referencia nunca é apagado
+# (rev3) só linhas ADICIONADAS vão ao gitleaks: remover/corrigir um segredo que já é público não pode bloquear para sempre.
+# Diff comum: prefixo de 1 coluna; combinado (--cc, merge): N colunas — fica a linha cujo prefixo tem "+".
+so_adicionadas() { awk '/^@@@* /{n=0; while(substr($0,n+1,1)=="@")n++; n--; dentro=1; print; next} /^(diff |index |--- |\+\+\+ |new file|deleted file|similarity|rename|old mode|new mode|Binary)/{dentro=0; print; next} dentro && n>0 {p=substr($0,1,n); if (p ~ /\+/) print; next} {print}'; }
 # gitleaks: config própria = a do git-autosave (se existir) + regras extras (URL de banco com senha, token sbp_ do Supabase)
 GLCFG="$STATE/gitleaks-dp-sync.toml"
 cat > "$GLCFG" <<GLEOF
@@ -109,7 +112,7 @@ push_pendente() {
     largs+=("$base..HEAD"); "${G[@]}" rev-parse -q --verify "$dref" >/dev/null 2>&1 && largs+=("^$dref")
   else largs+=(HEAD --not "--remotes=$REMOTE"); fi   # (13/11) sem base: TUDO que não está em nenhum ref do remoto (era só -1)
   local ex=(); [ -f "$GLCFG" ] && ex=(--config "$GLCFG")
-  "${G[@]}" "${largs[@]}" | gitleaks stdin "${ex[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$STATE/ac-push-$KEY.json" >/dev/null 2>&1
+  "${G[@]}" "${largs[@]}" | so_adicionadas | gitleaks stdin "${ex[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$STATE/ac-push-$KEY.json" >/dev/null 2>&1
   case $? in
     0) ;;
     9) say "BLOQUEADO: segredo em commit que seria ENVIADO — não enviei nada ($STATE/ac-push-$KEY.json); remova do histórico local"; RC=75; return 0 ;;
@@ -168,10 +171,15 @@ fi
 # (13/11 rev2) CÓPIA BYTE A BYTE do índice (write-tree/read-tree perdia skip-worktree/assume-unchanged/sparse/intent-to-add:
 # depois de um bloqueio, a config local escondida ia no push seguinte). Restaurar = devolver o arquivo exato.
 IDXF="$("${G[@]}" rev-parse --git-path index)"; case "$IDXF" in /*) ;; *) IDXF="$WT/$IDXF" ;; esac
-IDXB="$STATE/ac-$KEY.index-usuario"; rm -f "$IDXB"
+IDXB="$STATE/ac-$KEY.index-usuario"
+# (rev3) execução anterior interrompida (SIGTERM/queda) deixou o backup: o índice atual pode estar poluído pelo add -A dela —
+# devolve o índice do usuário em vez de apagar a única cópia
+if [ -f "$IDXB" ]; then cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF" && say "RECUPEREI o índice do usuário deixado por uma execução interrompida"; rm -f "$IDXB"; fi
 # backup do índice com falha (disco cheio/parcial) = PARA: restaurar uma cópia incompleta corromperia o índice (Codex, PR #549)
 if [ -f "$IDXF" ] && ! { cp -p "$IDXF" "$IDXB" && cmp -s "$IDXF" "$IDXB"; }; then rm -f "$IDXB"; say "PULEI: não consegui guardar o índice antes de mexer (disco cheio?) — nada foi alterado"; exit 75; fi
 restaura_indice() { if [ -f "$IDXB" ] && cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; then :; else "${G[@]}" reset -q 2>/dev/null; fi; rm -f "$IDXB"; }
+# (rev3) SIGTERM/SIGINT/SIGHUP (systemd stop, desligamento) no meio: devolve o índice do usuário antes de sair
+trap 'restaura_indice; say "INTERROMPIDO: índice do usuário restaurado — nada foi commitado"; exit 75' TERM INT HUP
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
 # (12/11, revisão) Um arquivo ilegível ou um repositório aninhado sem commit derrubava o `add -A` INTEIRO e nada era
@@ -195,7 +203,7 @@ fi
 
 # 4b. revalida o que está NO ÍNDICE. O `add -A` só filtra o que ele mesmo adiciona: o usuário pode ter feito `git add`
 # antes, e arquivos JÁ rastreados e modificados não passam pela regra de "novos". Falha fechada.
-SECRET_RE='^(.*/)?(\.env|\.env[._-].*|.*\.env|\.envrc|\.npmrc|\.netrc|\.pgpass|\.git-credentials|id_rsa.*|id_dsa.*|id_ed25519.*|id_ecdsa.*|[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)|(service[-_]account|client_secret)[^/]*\.json)$'
+SECRET_RE='^(.*/)?(\.env|\.env[._-].*|.*\.env|\.envrc|\.npmrc|\.netrc|\.pgpass|\.git-credentials|id_rsa.*|id_dsa.*|id_ed25519.*|id_ecdsa.*|[^/]*(credentials?|secrets?)[^/]*\.(json|ya?ml|env|ini|toml)|(service[-_]account|client_secret)[^/]*\.json)(\.(old|orig|bak|save|backup)|~)?$'
 # (13/11) mesma lista do mirror-github; modelos (.example/.sample/.template) não são segredo
 while IFS= read -r -d '' f; do
   lc="${f,,}"; bad=""
@@ -207,7 +215,7 @@ while IFS= read -r -d '' f; do
   [ -z "$bad" ] && [[ "$lc" =~ $SECRET_RE ]] && ! [[ "$lc" =~ \.(example|sample|template)(\.(json|ya?ml|toml|ini))?$ ]] && ! [[ "$lc" =~ ^\.github/workflows/[^/]+\.ya?ml$ ]] && bad="arquivo de segredo/ambiente"
   if [ -z "$bad" ]; then sz="$("${G[@]}" cat-file -s ":0:$f" 2>/dev/null || echo 0)"; [ "$sz" -gt "$max_bytes" ] && bad="maior que ${MAX_MB} MB"; fi
   [ -n "$bad" ] && { unstage "$f"; MOTIVO["$f"]="$bad (já no índice/rastreado)"; }
-done < <("${G[@]}" diff --cached --name-only --no-renames --diff-filter=AM -z)
+done < <("${G[@]}" diff --cached --name-only --no-renames --diff-filter=AMT -z)   # (rev3) T: link trocado por arquivo real também passa pelas travas
 # binário fora da lista permitida (imagens/fontes/mídia): o gitleaks e a trava de PII não leem binário; UTF-16 também conta como binário
 while IFS= read -r -d '' rec; do
   case "$rec" in
@@ -217,7 +225,7 @@ while IFS= read -r -d '' rec; do
         *) unstage "$f"; MOTIVO["$f"]="binário fora da lista permitida" ;;
       esac ;;
   esac
-done < <("${G[@]}" diff --cached --numstat -z --no-renames --diff-filter=AM)
+done < <("${G[@]}" diff --cached --numstat -z --no-renames --diff-filter=AMT)
 
 # 5. dado pessoal nas linhas adicionadas e nos NOMES dos arquivos (--pii). Formatado (000.000.000-00) sempre conta;
 # sem pontuação/com espaços só conta se o dígito verificador for válido (evita barrar qualquer número de 11 dígitos).
@@ -291,7 +299,7 @@ done
 if [ -n "$("${G[@]}" diff --cached --name-only)" ]; then
   extra=(); [ -f "$GLCFG" ] && extra=(--config "$GLCFG")
   rep="$STATE/ac-gitleaks-$KEY.json"
-  "${G[@]}" diff --cached -U0 --text | gitleaks stdin "${extra[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$rep" >/dev/null 2>&1
+  "${G[@]}" diff --cached -U0 --text | so_adicionadas | gitleaks stdin "${extra[@]}" --no-banner --redact --exit-code 9 --report-format json --report-path "$rep" >/dev/null 2>&1
   case $? in
     0) ;;
     9) restaura_indice; say "BLOQUEADO pelo gitleaks: segredo no que seria commitado — NADA foi commitado ($rep)"; exit 75 ;;
@@ -301,7 +309,7 @@ fi
 
 # 7. commit + push
 if [ -z "$("${G[@]}" diff --cached --name-only)" ]; then
-  say "nada a commitar depois das travas"; push_pendente; exit "${RC:-0}"
+  restaura_indice; trap - TERM INT HUP; say "nada a commitar depois das travas"; push_pendente; exit "${RC:-0}"
 fi
 N="$("${G[@]}" diff --cached --name-only | grep -c .)"
 # (12/11) Sem identidade Git (perfil novo, .gitconfig movido) o commit falhava a cada hora. A identidade do usuário vale
@@ -309,6 +317,7 @@ N="$("${G[@]}" diff --cached --name-only | grep -c .)"
 IDENT=(); { "${G[@]}" config user.email >/dev/null 2>&1 && "${G[@]}" config user.name >/dev/null 2>&1; } \
   || IDENT=(-c user.name=autocommit-local -c user.email=autocommit-local@localhost)
 if git "${IDENT[@]}" -C "$WT" commit -q --no-verify -m "autosave($BRANCH): $(date '+%F %T') — $N arquivo(s)" 2>"$STATE/ac-$KEY.err"; then
+  rm -f "$IDXB"; trap - TERM INT HUP   # sucesso: o backup não pode ser "recuperado" pela próxima execução
   say "COMMIT $("${G[@]}" rev-parse --short HEAD) em $BRANCH ($N arquivo(s))$([ "$NOPUSH" -eq 1 ] && echo ' — só local (--no-push)')"
 else
   # (12/11) era exit 0: o run-all contava como sucesso e a falha ficava invisível para sempre. 75 = "precisa de atenção"

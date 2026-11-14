@@ -37,7 +37,12 @@ desenvolvimento (branch `computador_local`) e dá push, sem humano e sem IA. Com
 
 - `gitleaks` no que seria commitado: achou segredo => nada é commitado na rodada;
 - **excluídos do commit** (ficam só no disco/autosave, com aviso no log): arquivos **novos** de dados (`.csv .xlsx .xls .xlsm .ods .dump .bak .sqlite .db .zip .tar .gz .7z .pdf`), qualquer arquivo > 5 MB e qualquer arquivo com **CPF formatado** nas linhas adicionadas;
-- `.env*`, `*.pem`, `*.key`, `*.p12`, `id_rsa*` nunca entram.
+- `.env*`, `*.pem`, `*.key`, `*.p12`, `id_rsa*` nunca entram (nem cópias como `credentials.json.orig`, `secrets.yaml.old`, `.git-credentials~`);
+- o `gitleaks` só lê as linhas **adicionadas**: apagar um segredo que já é público não trava a rodada;
+- o índice do usuário (o que estava em `git add`) é copiado antes e devolvido em qualquer bloqueio, inclusive SIGTERM/desligamento; se uma rodada
+  morrer no meio, a seguinte recupera a cópia.
+
+Regressão: `bash scripts/tests/autocommit-lab.test.sh` (53 cenários, precisa do `gitleaks` instalado; HOME e remoto falsos, nada toca o repositório real).
 
 Nunca troca de branch, nunca usa `--force` (push rejeitado = só avisa, o commit fica local), não age com rebase/merge/cherry-pick/bisect ou `index.lock`, e adia se algo foi editado nos últimos 2 min. Commits usam `--no-verify`. Não dispara CI (o CI só roda em push na `main` e em PR para a `main`). Como a `main` só aceita squash, os commits "autosave" somem do histórico ao mergear o PR.
 
