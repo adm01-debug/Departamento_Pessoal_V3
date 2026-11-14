@@ -39,6 +39,19 @@ export function todayLocalISO(): string {
 }
 
 /**
+ * Converte um valor `YYYY-MM-DD` (cadeia guardada em formulário/banco) em
+ * `Date` no fuso local, evitando o parse UTC que desloca o dia em UTC-3.
+ * Entrada vazia ou malformada devolve `undefined` (contrato defensivo).
+ */
+export function parseDateLocalISO(iso: string | null | undefined): Date | undefined {
+  if (!iso) return undefined;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!match) return undefined;
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
+/**
  * Soma dias a uma data preservando o fuso local (ao contrário de operações
  * baseadas em UTC que podem cruzar meia-noite de forma inesperada).
  */
