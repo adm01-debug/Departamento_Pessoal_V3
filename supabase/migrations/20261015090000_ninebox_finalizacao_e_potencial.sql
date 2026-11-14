@@ -256,6 +256,7 @@ grant execute on function public.pode_validar_potencial() to authenticated, serv
 --     (INSERT direto via PostgREST), apenas com o gate correto.
 --     A trilha da criação continua sendo a tabela de auditoria por trigger/RPC —
 --     ver §0e; nada é prometido como atômico no frontend.
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists "feedbacks_360_insert" on public.feedbacks_360;
 create policy "feedbacks_360_insert" on public.feedbacks_360
   for insert to authenticated
@@ -271,6 +272,7 @@ create policy "feedbacks_360_insert" on public.feedbacks_360
 --     A destruição em MASSA (`TRUNCATE`, que ignora o RLS) é tratada em §3b.
 revoke delete on public.feedbacks_360 from authenticated;
 revoke delete on public.feedbacks_360 from anon;
+-- audit-migration-style: allow-silent-drop homologacao da regra oficial - acesso descontinuado sem recriacao (mesma reescrita da main)
 drop policy if exists "feedbacks_360_delete" on public.feedbacks_360;
 
 -- 0f) LEITURA restrita a RH/proprietário (§1): a policy de SELECT deixa de
@@ -286,6 +288,7 @@ drop policy if exists "feedbacks_360_delete" on public.feedbacks_360;
 --     imediatamente após o `create table` + `enable row level security`, com a
 --     MESMA régua (papel + empresa). Não existe definição duplicada em lugar
 --     nenhum do arquivo.
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists "feedbacks_360_select" on public.feedbacks_360;
 create policy "feedbacks_360_select" on public.feedbacks_360
   for select to authenticated
@@ -357,6 +360,7 @@ alter table public.feedbacks_360_operacoes enable row level security;
 -- Mesma régua da tabela principal: PAPEL (`pode_gerir_avaliacoes()`) **e**
 -- EMPRESA. Sem o papel, esta tabela viraria uma janela de leitura indireta do
 -- histórico de idempotência (que carrega chave, parâmetros e resultado).
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists fbo_select on public.feedbacks_360_operacoes;
 create policy fbo_select on public.feedbacks_360_operacoes
   for select to authenticated
@@ -404,6 +408,7 @@ alter table public.feedbacks_360_validacoes_potencial enable row level security;
 -- ordem de §1: antes era criada em §0f, antes do `create table`). PAPEL **e**
 -- EMPRESA: a validação de Potencial é dado sensível de RH; sem o papel, a
 -- tabela viraria leitura indireta de quem só tem vínculo de empresa.
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists fvp_select on public.feedbacks_360_validacoes_potencial;
 create policy fvp_select on public.feedbacks_360_validacoes_potencial
   for select to authenticated
@@ -642,6 +647,7 @@ grant execute on function public.finalizar_feedback(uuid, text, text, text) to a
 
 -- O único caminho de escrita de status passa a ser a RPC.
 revoke update on public.feedbacks_360 from authenticated;
+-- audit-migration-style: allow-silent-drop homologacao da regra oficial - acesso descontinuado sem recriacao (mesma reescrita da main)
 drop policy if exists "feedbacks_360_update" on public.feedbacks_360;
 
 -- ----------------------------------------------------------------------------

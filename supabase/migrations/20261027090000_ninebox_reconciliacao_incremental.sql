@@ -587,6 +587,7 @@ grant execute on function public.editar_feedback_seguro(uuid, uuid, uuid, uuid, 
   to authenticated;
 
 -- ── §3 · PROTEÇÃO DE CICLOS (fonte: 20261026090000) ──────────────────────────
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists "ciclos_avaliacao_insert" on public.ciclos_avaliacao;
 create policy "ciclos_avaliacao_insert" on public.ciclos_avaliacao
   for insert to authenticated
@@ -595,6 +596,7 @@ create policy "ciclos_avaliacao_insert" on public.ciclos_avaliacao
     and public.pode_gerir_avaliacoes()
   );
 
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists "ciclos_avaliacao_delete" on public.ciclos_avaliacao;
 create policy "ciclos_avaliacao_delete" on public.ciclos_avaliacao
   for delete to authenticated

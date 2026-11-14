@@ -273,6 +273,7 @@ grant execute on function public.finalizar_feedback(uuid, text, text, text) to a
 
 -- O único caminho de escrita de status passa a ser a RPC.
 revoke update on public.feedbacks_360 from authenticated;
+-- audit-migration-style: allow-silent-drop homologacao da regra oficial - acesso descontinuado sem recriacao (mesma reescrita da main)
 drop policy if exists "feedbacks_360_update" on public.feedbacks_360;
 
 -- ----------------------------------------------------------------------------

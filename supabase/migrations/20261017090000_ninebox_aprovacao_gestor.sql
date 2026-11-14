@@ -104,6 +104,7 @@ create index if not exists idx_fb360_consolidacoes_gestor
   on public.feedbacks_360_consolidacoes (gestor_responsavel_user_id, status);
 
 alter table public.feedbacks_360_consolidacoes enable row level security;
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists fcs_select on public.feedbacks_360_consolidacoes;
 create policy fcs_select on public.feedbacks_360_consolidacoes
   for select to authenticated
@@ -138,6 +139,7 @@ create index if not exists idx_fb360_aprov_gestor
 
 alter table public.feedbacks_360_aprovacoes_gestor enable row level security;
 
+-- audit-migration-style: allow-silent-drop substituicao idempotente - a policy e recriada logo abaixo no estado final
 drop policy if exists fag_select on public.feedbacks_360_aprovacoes_gestor;
 create policy fag_select on public.feedbacks_360_aprovacoes_gestor
   for select to authenticated
