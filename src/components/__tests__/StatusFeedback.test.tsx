@@ -11,6 +11,7 @@ import {
   validarCancelamento,
   validarConclusao,
   validarTransicao,
+  type AcaoStatus,
   type PerfilOperador,
 } from '@/components/avaliacao/statusFeedback';
 
@@ -50,7 +51,7 @@ describe('status — estados e leitura', () => {
 });
 
 describe('status — transições permitidas e proibidas', () => {
-  const t = (statusAtual: unknown, acao: any, perfil: PerfilOperador) =>
+  const t = (statusAtual: unknown, acao: AcaoStatus, perfil: PerfilOperador) =>
     validarTransicao({ statusAtual, acao, perfil });
 
   it('pendente → concluído é oferecido a gestor, RH/admin e avaliador designado', () => {

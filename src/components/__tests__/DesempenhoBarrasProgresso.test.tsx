@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import type { ElementType, ReactNode } from 'react';
 
 /**
  * Prova OBJETIVA de duas coisas:
@@ -15,9 +16,23 @@ import { render, screen } from '@testing-library/react';
  * `DesempenhoEntradaCascade.test.tsx`).
  */
 vi.mock('framer-motion', () => {
+  type MotionChildren = { children?: ReactNode };
+  type MeterProps = MotionChildren & {
+    initial?: unknown;
+    animate?: unknown;
+    transition?: unknown;
+    style?: Record<string, unknown>;
+  };
+  type MotionComponentProps = MotionChildren & {
+    custom?: unknown;
+    variants?: unknown;
+    initial?: unknown;
+    animate?: unknown;
+  };
+  type CreateProps = MotionComponentProps & Record<string, unknown>;
   const capturar =
-    (Tag: any) =>
-    ({ children, initial, animate, transition, style, ...rest }: any) => (
+    (Tag: ElementType) =>
+    ({ children, initial, animate, transition, style, ...rest }: MeterProps) => (
       <Tag
         data-initial={JSON.stringify(initial)}
         data-animate={JSON.stringify(animate)}
@@ -36,10 +51,12 @@ vi.mock('framer-motion', () => {
       p: capturar('p'),
       tr: capturar('tr'),
       create:
-        (Component: any) =>
-        ({ children, custom, variants, initial, animate, ...rest }: any) => <Component {...rest}>{children}</Component>,
+        (Component: ElementType) =>
+        ({ children, custom, variants, initial, animate, ...rest }: CreateProps) => (
+          <Component {...rest}>{children}</Component>
+        ),
     },
-    AnimatePresence: ({ children }: any) => children,
+    AnimatePresence: ({ children }: MotionChildren) => children,
     useReducedMotion: () => false,
     useInView: () => true,
   };
@@ -69,7 +86,7 @@ describe('barra de progresso — paridade com "Amplitude de Liderança"', () => 
       initial: { width: 0 },
       animate: { width: '75%' },
     });
-    expect((propsBarraProgresso(75, 3).transition as any).delay).toBeCloseTo(0.45, 5);
+    expect((propsBarraProgresso(75, 3).transition as { delay: number }).delay).toBeCloseTo(0.45, 5);
   });
 
   it('props da barra: 0 → pct%, com o stagger por índice', () => {
@@ -78,13 +95,13 @@ describe('barra de progresso — paridade com "Amplitude de Liderança"', () => 
       animate: { width: '75%' },
       transition: { duration: 0.6, delay: 0.15, ease: 'easeOut' },
     });
-    expect((propsBarraProgresso(30, 3) as any).transition.delay).toBeCloseTo(0.45, 5);
+    expect((propsBarraProgresso(30, 3).transition as { delay: number }).delay).toBeCloseTo(0.45, 5);
   });
 
   it('normaliza o percentual (limites 0–100 e valor inválido)', () => {
-    expect((propsBarraProgresso(140) as any).animate).toEqual({ width: '100%' });
-    expect((propsBarraProgresso(-20) as any).animate).toEqual({ width: '0%' });
-    expect((propsBarraProgresso(Number.NaN) as any).animate).toEqual({ width: '0%' });
+    expect((propsBarraProgresso(140) as { animate: unknown }).animate).toEqual({ width: '100%' });
+    expect((propsBarraProgresso(-20) as { animate: unknown }).animate).toEqual({ width: '0%' });
+    expect((propsBarraProgresso(Number.NaN) as { animate: unknown }).animate).toEqual({ width: '0%' });
   });
 
   it('com movimento reduzido nasce cheia, sem transição', () => {

@@ -13,20 +13,22 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-function setupListChain(data: any[], error: any = null) {
+type PostgrestErrorLike = { message?: string } | null;
+
+function setupListChain<T = unknown>(data: T[] | null, error: PostgrestErrorLike = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (value: typeof response) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (reason: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: () => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain<T = unknown>(data: T, error: PostgrestErrorLike = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -34,10 +36,10 @@ function setupInsertChain(data: any, error: any = null) {
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(data: any = { id: 'ci1' }, error: any = null) {
+function setupDeleteChain<T = unknown>(data: T = { id: 'ci1' } as T, error: PostgrestErrorLike = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const chain: any = { select: selectFn };
+  const chain: Record<string, unknown> = { select: selectFn };
   const eqFn = vi.fn().mockReturnValue(chain);
   chain.eq = eqFn;
   const deleteFn = vi.fn().mockReturnValue(chain);
@@ -66,7 +68,7 @@ describe('avaliacaoService.listarCiclos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain<unknown>(null);
     expect(await avaliacaoService.listarCiclos(EMPRESA_ID)).toEqual([]);
   });
 
@@ -125,10 +127,10 @@ describe('avaliacaoService.contarDependenciasCiclo', () => {
     };
     mockFrom.mockImplementation((tabela: string) => ({
       select: () => {
-        const chain: any = {};
+        const chain: Record<string, unknown> = {};
         chain.eq = vi.fn().mockReturnValue(chain);
-        chain.then = (fn: any) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).then(fn);
-        chain.catch = (fn: any) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).catch(fn);
+        chain.then = (fn: (value: unknown) => unknown) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).then(fn);
+        chain.catch = (fn: (reason: unknown) => unknown) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).catch(fn);
         return chain;
       },
     }));
@@ -186,7 +188,7 @@ describe('avaliacaoService.listarMetas', () => {
   });
 
   it('returns empty when null', async () => {
-    setupListChain(null as any);
+    setupListChain<unknown>(null);
     expect(await avaliacaoService.listarMetas(EMPRESA_ID)).toEqual([]);
   });
 
@@ -246,7 +248,7 @@ describe('avaliacaoService.listarPDIs', () => {
   });
 
   it('returns empty when null', async () => {
-    setupListChain(null as any);
+    setupListChain<unknown>(null);
     expect(await avaliacaoService.listarPDIs(EMPRESA_ID)).toEqual([]);
   });
 

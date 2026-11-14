@@ -1,28 +1,41 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import type { ElementType, ReactNode } from 'react';
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-    span: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
-    // `motion.create(Card)` é avaliado na CARGA de `ui/entrada-cards` (o mecanismo
-    // de entrada reutilizado pelo módulo de Desempenho) — sem `create` o import
-    // do módulo quebra antes de qualquer teste rodar.
-    create:
-      (Component: any) =>
-      ({ children, custom, variants, initial, animate, ...rest }: any) => <Component {...rest}>{children}</Component>,
-  },
-  AnimatePresence: ({ children }: any) => children,
-  // Consumidos pelo card "Feedbacks por Status" (revelação do donut) e pelo
-  // `AnimatedNumber` do percentual central.
-  useInView: () => true,
-  useReducedMotion: () => false,
-}));
+vi.mock('framer-motion', () => {
+  type MotionChildren = { children?: ReactNode };
+  type TagProps = MotionChildren & Record<string, unknown>;
+  type CompProps = MotionChildren & {
+    custom?: unknown;
+    variants?: unknown;
+    initial?: unknown;
+    animate?: unknown;
+  };
+  return {
+    motion: {
+      div: ({ children, ...rest }: TagProps) => <div {...rest}>{children}</div>,
+      span: ({ children, ...rest }: TagProps) => <span {...rest}>{children}</span>,
+      // `motion.create(Card)` é avaliado na CARGA de `ui/entrada-cards` (o mecanismo
+      // de entrada reutilizado pelo módulo de Desempenho) — sem `create` o import
+      // do módulo quebra antes de qualquer teste rodar.
+      create:
+        (Component: ElementType) =>
+        ({ children, custom, variants, initial, animate, ...rest }: CompProps & Record<string, unknown>) => (
+          <Component {...rest}>{children}</Component>
+        ),
+    },
+    AnimatePresence: ({ children }: MotionChildren) => children,
+    // Consumidos pelo card "Feedbacks por Status" (revelação do donut) e pelo
+    // `AnimatedNumber` do percentual central.
+    useInView: () => true,
+    useReducedMotion: () => false,
+  };
+});
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  BarChart: ({ children }: any) => <div>{children}</div>,
-  PieChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  PieChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Bar: () => null,
   Pie: () => null,
   Cell: () => null,

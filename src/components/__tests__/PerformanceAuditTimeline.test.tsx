@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
+import type { ReactNode } from 'react';
 
 /**
  * ============================================================================
@@ -15,6 +16,7 @@ import { render, screen, within } from '@testing-library/react';
  * ============================================================================
  */
 vi.mock('framer-motion', () => {
+  type MotionChildren = { children?: ReactNode };
   const Fake = ({
     children,
     custom,
@@ -27,13 +29,13 @@ vi.mock('framer-motion', () => {
     layout,
     transition,
     ...rest
-  }: any) => <div {...rest}>{children}</div>;
+  }: MotionChildren & Record<string, unknown>) => <div {...rest}>{children}</div>;
   return {
     motion: new Proxy({} as Record<string, unknown>, {
       get: (_alvo, prop) => (prop === 'create' ? () => Fake : Fake),
     }),
-    AnimatePresence: ({ children }: any) => children,
-    MotionConfig: ({ children }: any) => children,
+    AnimatePresence: ({ children }: MotionChildren) => children,
+    MotionConfig: ({ children }: MotionChildren) => children,
     useReducedMotion: () => false,
     useInView: () => true,
   };

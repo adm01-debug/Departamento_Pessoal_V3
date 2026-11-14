@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import type { ElementType, ReactNode } from 'react';
 
 /**
  * Prova OBJETIVA de que a entrada dos cards da Gestão de Desempenho é a MESMA
@@ -9,9 +10,17 @@ import { render, screen } from '@testing-library/react';
  * conferir os índices da cascata.
  */
 vi.mock('framer-motion', () => {
+  type MotionChildren = { children?: ReactNode };
+  type CapturarProps = MotionChildren & {
+    custom?: unknown;
+    variants?: { hidden?: unknown };
+    initial?: unknown;
+    animate?: unknown;
+  };
+  type CreateProps = CapturarProps & Record<string, unknown>;
   const capturar =
-    (Tag: any, ehCard: boolean) =>
-    ({ children, custom, variants, initial, animate, ...rest }: any) => {
+    (Tag: ElementType, ehCard: boolean) =>
+    ({ children, custom, variants, initial, animate, ...rest }: CapturarProps) => {
       const attrs = {
         'data-custom': String(custom),
         'data-initial': initial,
@@ -36,8 +45,8 @@ vi.mock('framer-motion', () => {
       p: capturar('p', false),
       tr: capturar('tr', false),
       create:
-        (Component: any) =>
-        ({ children, custom, variants, initial, animate, ...rest }: any) => (
+        (Component: ElementType) =>
+        ({ children, custom, variants, initial, animate, ...rest }: CreateProps) => (
           <div
             data-testid="entrada-card"
             data-custom={String(custom)}
@@ -49,7 +58,7 @@ vi.mock('framer-motion', () => {
           </div>
         ),
     },
-    AnimatePresence: ({ children }: any) => children,
+    AnimatePresence: ({ children }: MotionChildren) => children,
     // `ui/select` consome este hook; o mock parcial precisa expô-lo.
     useReducedMotion: () => false,
     // Revelação do donut / contador central do card "Feedbacks por Status".
@@ -58,8 +67,8 @@ vi.mock('framer-motion', () => {
 });
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  PieChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  PieChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Pie: () => null,
   Cell: () => null,
   Tooltip: () => null,

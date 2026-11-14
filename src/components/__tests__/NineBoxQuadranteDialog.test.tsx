@@ -1,19 +1,22 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import type { PontoNineBox } from '@/components/avaliacao/nineBoxComum';
 
 // Radix em duble: o conteúdo desta janela vive dentro de Portal/Overlay/Content
 // com `forceMount` — a MESMA montagem do popup "Pendências". O duble evita
 // focus-trap/portais no jsdom, o mesmo caminho de `NovaAdmissaoDialog.test.tsx`.
+type RadixChildren = { children?: ReactNode };
+
 vi.mock('@radix-ui/react-dialog', () => ({
-  Root: ({ children }: any) => <div>{children}</div>,
-  Trigger: ({ children }: any) => <div>{children}</div>,
-  Portal: ({ children }: any) => <div>{children}</div>,
-  Overlay: ({ children }: any) => <div>{children}</div>,
-  Content: ({ children }: any) => <div>{children}</div>,
-  Close: ({ children }: any) => <button>{children}</button>,
-  Title: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
-  Description: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+  Root: ({ children }: RadixChildren) => <div>{children}</div>,
+  Trigger: ({ children }: RadixChildren) => <div>{children}</div>,
+  Portal: ({ children }: RadixChildren) => <div>{children}</div>,
+  Overlay: ({ children }: RadixChildren) => <div>{children}</div>,
+  Content: ({ children }: RadixChildren) => <div>{children}</div>,
+  Close: ({ children }: RadixChildren) => <button>{children}</button>,
+  Title: ({ children, ...props }: RadixChildren) => <h2 {...props}>{children}</h2>,
+  Description: ({ children, ...props }: RadixChildren) => <p {...props}>{children}</p>,
 }));
 
 import { NineBoxQuadranteDialog } from '../avaliacao/NineBoxQuadranteDialog';
