@@ -28,6 +28,7 @@
 | 10 | `dispositivo` | `text` | sim |  |  |  |
 | 11 | `empresa_id` | `uuid` | sim |  |  |  |
 | 12 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 13 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

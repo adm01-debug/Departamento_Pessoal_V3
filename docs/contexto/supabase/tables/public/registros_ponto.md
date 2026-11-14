@@ -130,6 +130,7 @@
 |---|---|---|---|---|---|
 | audit_registros_ponto | AFTER | INSERT OR DELETE OR UPDATE | ROW | enabled | public.log_audit_change |
 | tr_auditoria_registros_ponto | AFTER | DELETE OR UPDATE | ROW | enabled | public.registrar_auditoria_ponto |
+| tr_bloquear_aprovacao_ponto_sem_rh | BEFORE | INSERT OR UPDATE | ROW | enabled | public.bloquear_aprovacao_ponto_sem_rh |
 | tr_gerar_hash_ponto | BEFORE | INSERT | ROW | enabled | public.gerar_hash_ponto |
 | tr_increment_version_ponto | BEFORE | UPDATE | ROW | enabled | public.increment_version |
 | update_registros_ponto_updated_at | BEFORE | UPDATE | ROW | enabled | public.update_updated_at_column |

@@ -25,6 +25,7 @@
 | 7 | `empresa_id` | `uuid` | sim |  |  |  |
 | 8 | `created_by` | `uuid` | sim |  |  |  |
 | 9 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 10 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

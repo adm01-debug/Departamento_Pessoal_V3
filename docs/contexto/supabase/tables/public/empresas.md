@@ -169,6 +169,7 @@
 | public.pdi_plano_desenvolvimento | pdi_plano_desenvolvimento_empresa_id_fkey | empresa_id | CASCADE |
 | public.pdis | pdis_empresa_id_fkey | empresa_id | NO ACTION |
 | public.pendencias | pendencias_empresa_id_fkey | empresa_id | CASCADE |
+| public.pensoes | pensoes_empresa_id_fkey | empresa_id | NO ACTION |
 | public.permissao_perfis | permissao_perfis_empresa_id_fkey | empresa_id | CASCADE |
 | public.personnel_budget | personnel_budget_empresa_id_fkey | empresa_id | CASCADE |
 | public.pesquisas | pesquisas_empresa_id_fkey | empresa_id | NO ACTION |

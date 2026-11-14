@@ -5,16 +5,10 @@ CREATE OR REPLACE FUNCTION public.fn_auto_generate_training_certificate()
  SET search_path TO 'public'
 AS $function$
 DECLARE
-    _curso_id UUID;
-    _validade_meses INTEGER;
+    -- catalogo_cursos não tem campo de validade: certificado sem vencimento
+    _validade_meses INTEGER := 0;
 BEGIN
     IF (NEW.status = 'concluido' AND (OLD.status IS DISTINCT FROM 'concluido')) THEN
-        -- Busca dados do curso
-        SELECT id, COALESCE((metadata->>'validade_meses')::INTEGER, 0) 
-        INTO _curso_id, _validade_meses
-        FROM public.catalogo_cursos 
-        WHERE id = NEW.curso_id;
-
         -- Insere certificado
         INSERT INTO public.treinamento_certificados (
             colaborador_id,

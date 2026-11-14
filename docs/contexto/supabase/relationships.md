@@ -374,6 +374,7 @@
 | public.pdis | empresa_id | public.empresas | id | NO ACTION | NO ACTION |
 | public.pendencias | empresa_id | public.empresas | id | CASCADE | NO ACTION |
 | public.pensoes | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
+| public.pensoes | empresa_id | public.empresas | id | NO ACTION | NO ACTION |
 | public.periodos_aquisitivos | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
 | public.periodos_experiencia | colaborador_id | public.colaboradores | id | CASCADE | NO ACTION |
 | public.permissao_perfis | empresa_id | public.empresas | id | CASCADE | NO ACTION |

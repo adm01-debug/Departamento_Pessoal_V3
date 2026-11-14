@@ -23,6 +23,7 @@
 | 5 | `data` | `text` | sim |  |  |  |
 | 6 | `carga_horaria` | `numeric` | sim |  |  |  |
 | 7 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

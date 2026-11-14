@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 1 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -72,16 +72,6 @@
 | roles | authenticated |
 | USING | `pode_gerir_rh(empresa_id)` |
 | WITH CHECK | `pode_gerir_rh(empresa_id)` |
-
-### `cnab_remessas_tenant_read`
-
-| campo | valor |
-|---|---|
-| comando | SELECT |
-| tipo | PERMISSIVE |
-| roles | authenticated |
-| USING | `pertence_a_empresa(empresa_id)` |
-| WITH CHECK |  |
 
 
 ## Triggers

@@ -24,7 +24,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.auditoria_acesso_bancario](tables/public/auditoria_acesso_bancario.md) | table | sim | 1 | 8 | não | LGPD/ISO 27001: auditoria de todo acesso a dados bancários descriptografados. |
 | [public.auditoria_contratual](tables/public/auditoria_contratual.md) | table | sim | 1 | 7 | não |  |
 | [public.auditoria_logs](tables/public/auditoria_logs.md) | table | sim | 4 | 12 | não |  |
-| [public.auth_gov_br_sessions](tables/public/auth_gov_br_sessions.md) | table | sim | 1 | 8 | não |  |
+| [public.auth_gov_br_sessions](tables/public/auth_gov_br_sessions.md) | table | sim | 1 | 9 | não |  |
 | [public.automacao_logs](tables/public/automacao_logs.md) | table | sim | 1 | 7 | não |  |
 | [public.banco_horas](tables/public/banco_horas.md) | table | sim | 2 | 12 | não |  |
 | [public.banco_horas_config](tables/public/banco_horas_config.md) | table | sim | 2 | 9 | não |  |
@@ -40,9 +40,9 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.beneficios_colaboradores](tables/public/beneficios_colaboradores.md) | table | sim | 1 | 8 | não |  |
 | [public.bitrix24_config](tables/public/bitrix24_config.md) | table | sim | 1 | 17 | não |  |
 | [public.bitrix24_sync_logs](tables/public/bitrix24_sync_logs.md) | table | sim | 2 | 11 | não |  |
-| [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 1 | 8 | não |  |
+| [public.blocked_ips](tables/public/blocked_ips.md) | table | sim | 1 | 9 | não |  |
 | [public.campos_customizados](tables/public/campos_customizados.md) | table | sim | 1 | 11 | não |  |
-| [public.canal_etica](tables/public/canal_etica.md) | table | sim | 2 | 11 | não |  |
+| [public.canal_etica](tables/public/canal_etica.md) | table | sim | 4 | 11 | não |  |
 | [public.candidatos](tables/public/candidatos.md) | table | sim | 2 | 15 | não |  |
 | [public.candidaturas](tables/public/candidaturas.md) | table | sim | 2 | 16 | não |  |
 | [public.cargo_faixas_salariais](tables/public/cargo_faixas_salariais.md) | table | sim | 1 | 7 | não |  |
@@ -61,7 +61,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.clinicas_partners_servicos](tables/public/clinicas_partners_servicos.md) | table | sim | 1 | 8 | não |  |
 | [public.cnab_configuracoes](tables/public/cnab_configuracoes.md) | table | sim | 1 | 12 | não |  |
 | [public.cnab_itens](tables/public/cnab_itens.md) | table | sim | 2 | 17 | não |  |
-| [public.cnab_remessas](tables/public/cnab_remessas.md) | table | sim | 2 | 14 | não |  |
+| [public.cnab_remessas](tables/public/cnab_remessas.md) | table | sim | 1 | 14 | não |  |
 | [public.cnab_sequencias](tables/public/cnab_sequencias.md) | table | sim | 0 | 3 | não |  |
 | [public.cnae](tables/public/cnae.md) | table | sim | 1 | 3 | não | Catálogo CNAE. Carga via importação de domínio. |
 | [public.colaborador_beneficios](tables/public/colaborador_beneficios.md) | table | sim | 2 | 5 | não |  |
@@ -69,7 +69,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.colaboradores_pin](tables/public/colaboradores_pin.md) | table | sim | 0 | 6 | não |  |
 | [public.competencias_config](tables/public/competencias_config.md) | table | sim | 1 | 8 | não |  |
 | [public.competencias_matriz](tables/public/competencias_matriz.md) | table | sim | 4 | 9 | não |  |
-| [public.comunicados](tables/public/comunicados.md) | table | sim | 1 | 11 | não |  |
+| [public.comunicados](tables/public/comunicados.md) | table | sim | 4 | 11 | não |  |
 | [public.comunicados_leituras](tables/public/comunicados_leituras.md) | table | sim | 4 | 4 | não |  |
 | [public.condicoes_ingresso](tables/public/condicoes_ingresso.md) | table | sim | 1 | 3 | não |  |
 | [public.config_afastamentos](tables/public/config_afastamentos.md) | table | sim | 1 | 10 | não |  |
@@ -90,15 +90,15 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.contrato_token_eventos](tables/public/contrato_token_eventos.md) | table | sim | 1 | 10 | não |  |
 | [public.contratos](tables/public/contratos.md) | table | sim | 1 | 10 | não |  |
 | [public.contratos_gerados](tables/public/contratos_gerados.md) | table | sim | 2 | 21 | não |  |
-| [public.controle_acesso](tables/public/controle_acesso.md) | table | sim | 1 | 12 | não |  |
-| [public.convenios](tables/public/convenios.md) | table | sim | 1 | 7 | não |  |
+| [public.controle_acesso](tables/public/controle_acesso.md) | table | sim | 1 | 13 | não |  |
+| [public.convenios](tables/public/convenios.md) | table | sim | 4 | 7 | não |  |
 | [public.convenios_colaboradores](tables/public/convenios_colaboradores.md) | table | sim | 1 | 7 | não |  |
 | [public.curriculos_arquivos](tables/public/curriculos_arquivos.md) | table | sim | 1 | 5 | não |  |
 | [public.dados_estagiario](tables/public/dados_estagiario.md) | table | sim | 1 | 27 | não |  |
 | [public.dados_estrangeiro](tables/public/dados_estrangeiro.md) | table | sim | 1 | 19 | não |  |
 | [public.dctfweb_declaracoes](tables/public/dctfweb_declaracoes.md) | table | sim | 1 | 11 | não |  |
 | [public.deficiencias](tables/public/deficiencias.md) | table | sim | 1 | 10 | não |  |
-| [public.departamentos](tables/public/departamentos.md) | table | sim | 1 | 10 | não |  |
+| [public.departamentos](tables/public/departamentos.md) | table | sim | 4 | 10 | não |  |
 | [public.dependentes](tables/public/dependentes.md) | table | sim | 2 | 20 | não |  |
 | [public.dependentes_beneficios](tables/public/dependentes_beneficios.md) | table | sim | 1 | 7 | não |  |
 | [public.descricoes_logradouro](tables/public/descricoes_logradouro.md) | table | sim | 1 | 3 | não |  |
@@ -107,10 +107,10 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.despesas_aprovacoes_log](tables/public/despesas_aprovacoes_log.md) | table | sim | 2 | 9 | não |  |
 | [public.documento_templates](tables/public/documento_templates.md) | table | sim | 2 | 11 | não |  |
 | [public.documentos](tables/public/documentos.md) | table | sim | 2 | 12 | não |  |
-| [public.documentos_admissao](tables/public/documentos_admissao.md) | table | sim | 2 | 11 | não |  |
+| [public.documentos_admissao](tables/public/documentos_admissao.md) | table | sim | 2 | 12 | não |  |
 | [public.documentos_afastamento](tables/public/documentos_afastamento.md) | table | sim | 2 | 7 | não |  |
-| [public.documentos_assinatura](tables/public/documentos_assinatura.md) | table | sim | 3 | 15 | não |  |
-| [public.documentos_colaborador](tables/public/documentos_colaborador.md) | table | sim | 2 | 11 | não |  |
+| [public.documentos_assinatura](tables/public/documentos_assinatura.md) | table | sim | 3 | 16 | não |  |
+| [public.documentos_colaborador](tables/public/documentos_colaborador.md) | table | sim | 2 | 12 | não |  |
 | [public.documentos_historico](tables/public/documentos_historico.md) | table | sim | 1 | 8 | não |  |
 | [public.documentos_pessoais_arquivos](tables/public/documentos_pessoais_arquivos.md) | table | sim | 1 | 13 | não |  |
 | [public.dp_audit_config](tables/public/dp_audit_config.md) | table | sim | 1 | 9 | não | Registro de politicas de auditoria por tabela para LGPD Art. 37 e 39. PROCEDIMENTO DE ATIVACAO pgaudit:   1. Acessar Supabase Dashboard > Database > Extensions   2. Habilitar pgaudit   3. Executar: ALTER DATABASE postgres SET pgaudit.log = 'write';   4. Executar: ALTER DATABASE postgres SET pgaudit.log_relation = 'on';   5. Para cada tabela em dp_audit_config WHERE enabled=true E audit_writes=true:      SECURITY LABEL FOR pgaudit ON TABLE public.<tabela> IS 'OBJECT';   ATENCAO: pgaudit.log = 'all' enche o disco em horas. Usar SOMENTE 'write'. |
@@ -137,7 +137,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.epis_fichas_assinaturas](tables/public/epis_fichas_assinaturas.md) | table | sim | 2 | 8 | não |  |
 | [public.epis_fichas_itens](tables/public/epis_fichas_itens.md) | table | sim | 1 | 11 | não |  |
 | [public.escalas](tables/public/escalas.md) | table | sim | 4 | 12 | não |  |
-| [public.escalas_trabalho](tables/public/escalas_trabalho.md) | table | sim | 1 | 9 | não |  |
+| [public.escalas_trabalho](tables/public/escalas_trabalho.md) | table | sim | 1 | 10 | não |  |
 | [public.esocial_eventos](tables/public/esocial_eventos.md) | table | sim | 2 | 25 | não |  |
 | [public.esocial_lotes](tables/public/esocial_lotes.md) | table | sim | 1 | 9 | não |  |
 | [public.esocial_transmissao_logs](tables/public/esocial_transmissao_logs.md) | table | sim | 1 | 9 | não |  |
@@ -162,7 +162,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.ferias_coletivas](tables/public/ferias_coletivas.md) | table | sim | 1 | 19 | não |  |
 | [public.ferias_programacao](tables/public/ferias_programacao.md) | table | sim | 4 | 22 | não |  |
 | [public.ferias_reconciliacao_logs](tables/public/ferias_reconciliacao_logs.md) | table | sim | 1 | 8 | não |  |
-| [public.ferias_solicitacoes](tables/public/ferias_solicitacoes.md) | table | sim | 1 | 12 | não |  |
+| [public.ferias_solicitacoes](tables/public/ferias_solicitacoes.md) | table | sim | 1 | 13 | não |  |
 | [public.fgts_digital_logs](tables/public/fgts_digital_logs.md) | table | sim | 1 | 7 | não |  |
 | [public.fila_notificacoes](tables/public/fila_notificacoes.md) | table | sim | 1 | 11 | não |  |
 | [public.fila_processamento](tables/public/fila_processamento.md) | table | sim | 1 | 17 | não |  |
@@ -230,14 +230,14 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.motivos_afastamento](tables/public/motivos_afastamento.md) | table | sim | 1 | 4 | não |  |
 | [public.nacionalidades](tables/public/nacionalidades.md) | table | sim | 1 | 4 | não |  |
 | [public.ninebox_permissoes_homologacao](tables/public/ninebox_permissoes_homologacao.md) | table | sim | 0 | 4 | não |  |
-| [public.notificacoes](tables/public/notificacoes.md) | table | sim | 4 | 11 | não |  |
+| [public.notificacoes](tables/public/notificacoes.md) | table | sim | 4 | 12 | não |  |
 | [public.notificacoes_admissao](tables/public/notificacoes_admissao.md) | table | sim | 1 | 9 | não |  |
 | [public.onboarding_colaborador](tables/public/onboarding_colaborador.md) | table | sim | 2 | 11 | não |  |
 | [public.onboarding_documentos_obrigatorios](tables/public/onboarding_documentos_obrigatorios.md) | table | sim | 1 | 7 | não |  |
 | [public.onboarding_kits](tables/public/onboarding_kits.md) | table | sim | 1 | 6 | não |  |
-| [public.onboarding_tarefas](tables/public/onboarding_tarefas.md) | table | sim | 2 | 14 | não |  |
+| [public.onboarding_tarefas](tables/public/onboarding_tarefas.md) | table | sim | 2 | 15 | não |  |
 | [public.onboarding_template_tarefas](tables/public/onboarding_template_tarefas.md) | table | sim | 1 | 10 | não |  |
-| [public.onboarding_templates](tables/public/onboarding_templates.md) | table | sim | 1 | 7 | não |  |
+| [public.onboarding_templates](tables/public/onboarding_templates.md) | table | sim | 1 | 8 | não |  |
 | [public.paises](tables/public/paises.md) | table | sim | 1 | 4 | não |  |
 | [public.parametros_fiscais](tables/public/parametros_fiscais.md) | table | sim | 1 | 12 | não |  |
 | [public.parametros_sistema](tables/public/parametros_sistema.md) | table | sim | 2 | 7 | não |  |
@@ -253,10 +253,10 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.pdi_plano_desenvolvimento](tables/public/pdi_plano_desenvolvimento.md) | table | sim | 1 | 11 | não |  |
 | [public.pdis](tables/public/pdis.md) | table | sim | 4 | 12 | não |  |
 | [public.pendencias](tables/public/pendencias.md) | table | sim | 2 | 11 | não |  |
-| [public.pensoes](tables/public/pensoes.md) | table | sim | 1 | 12 | não |  |
+| [public.pensoes](tables/public/pensoes.md) | table | sim | 4 | 13 | não |  |
 | [public.periodos_aquisitivos](tables/public/periodos_aquisitivos.md) | table | sim | 1 | 15 | não |  |
 | [public.periodos_experiencia](tables/public/periodos_experiencia.md) | table | sim | 1 | 11 | não |  |
-| [public.periodos_ponto](tables/public/periodos_ponto.md) | table | sim | 4 | 8 | não |  |
+| [public.periodos_ponto](tables/public/periodos_ponto.md) | table | sim | 4 | 9 | não |  |
 | [public.permissao_perfis](tables/public/permissao_perfis.md) | table | sim | 1 | 7 | não |  |
 | [public.permissao_recursos](tables/public/permissao_recursos.md) | table | sim | 1 | 6 | não |  |
 | [public.permissions](tables/public/permissions.md) | table | sim | 2 | 6 | não |  |
@@ -309,14 +309,14 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.relatorios_agendados](tables/public/relatorios_agendados.md) | table | sim | 4 | 19 | não |  |
 | [public.report_dispatch_attempts](tables/public/report_dispatch_attempts.md) | table | sim | 0 | 17 | não | Payload exato e recibo de envio de relatório agendado; impede alteração de parâmetros sob a mesma Idempotency-Key. |
 | [public.role_permissions](tables/public/role_permissions.md) | table | sim | 2 | 5 | não |  |
-| [public.rubricas_folha](tables/public/rubricas_folha.md) | table | sim | 7 | 14 | não |  |
+| [public.rubricas_folha](tables/public/rubricas_folha.md) | table | sim | 7 | 15 | não |  |
 | [public.saved_filters](tables/public/saved_filters.md) | table | sim | 1 | 8 | não |  |
 | [public.sec_policy_regressions](tables/public/sec_policy_regressions.md) | table | sim | 1 | 7 | não |  |
 | [public.sec_seal_events](tables/public/sec_seal_events.md) | table | sim | 1 | 7 | não |  |
 | [public.security_alerts](tables/public/security_alerts.md) | table | sim | 3 | 10 | sim |  |
 | [public.sefip_arquivos](tables/public/sefip_arquivos.md) | table | sim | 1 | 11 | não |  |
 | [public.seguros_colaboradores](tables/public/seguros_colaboradores.md) | table | sim | 1 | 6 | não |  |
-| [public.seguros_vida](tables/public/seguros_vida.md) | table | sim | 1 | 14 | não |  |
+| [public.seguros_vida](tables/public/seguros_vida.md) | table | sim | 4 | 15 | não |  |
 | [public.simulacoes_fiscais](tables/public/simulacoes_fiscais.md) | table | sim | 1 | 8 | não |  |
 | [public.sindicatos](tables/public/sindicatos.md) | table | sim | 4 | 8 | não |  |
 | [public.sinistros_seguro](tables/public/sinistros_seguro.md) | table | sim | 1 | 8 | não |  |
@@ -359,7 +359,7 @@ Um arquivo por tabela em `tables/<schema>/<tabela>.md` (colunas, constraints, í
 | [public.treinamento_feedbacks](tables/public/treinamento_feedbacks.md) | table | sim | 1 | 7 | não |  |
 | [public.treinamento_instancias](tables/public/treinamento_instancias.md) | table | sim | 1 | 11 | não |  |
 | [public.treinamento_participantes](tables/public/treinamento_participantes.md) | table | sim | 1 | 5 | não |  |
-| [public.treinamentos](tables/public/treinamentos.md) | table | sim | 1 | 7 | não |  |
+| [public.treinamentos](tables/public/treinamentos.md) | table | sim | 1 | 8 | não |  |
 | [public.triagem_notas](tables/public/triagem_notas.md) | table | sim | 1 | 6 | não |  |
 | [public.trilha_auditoria_ponto](tables/public/trilha_auditoria_ponto.md) | table | sim | 1 | 10 | não |  |
 | [public.trilhas_aprendizado](tables/public/trilhas_aprendizado.md) | table | sim | 5 | 8 | não |  |

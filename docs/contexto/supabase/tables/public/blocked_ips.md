@@ -24,6 +24,7 @@
 | 6 | `expires_at` | `timestamp with time zone` | sim |  |  |  |
 | 7 | `permanent` | `boolean` | sim | `false` |  |  |
 | 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

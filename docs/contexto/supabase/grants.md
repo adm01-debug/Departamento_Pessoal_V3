@@ -441,44 +441,36 @@ Roles da API: `anon` (sem login), `authenticated` (logado), `service_role` (bypa
 | public.dp_audit_config | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.dp_audit_config | dp_mcp_role | SELECT |
 | public.dp_audit_config | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log | anon | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
-| public.dp_audit_log | authenticated | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
+| public.dp_audit_log | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log | dp_mcp_role | INSERT, SELECT |
 | public.dp_audit_log | service_role | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
-| public.dp_audit_log_2026_07 | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_07 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_2026_07 | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_2026_07 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2026_07 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_08 | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_08 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_2026_08 | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_2026_08 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2026_08 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_09 | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_09 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_2026_09 | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_2026_09 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2026_09 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_10 | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_10 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_2026_10 | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_2026_10 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2026_10 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_11 | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_11 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_2026_11 | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_2026_11 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2026_11 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_12 | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_2026_12 | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_2026_12 | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_2026_12 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2026_12 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.dp_audit_log_2027_01 | dp_mcp_role | SELECT |
 | public.dp_audit_log_2027_01 | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_colaborador | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_colaborador | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_colaborador | dp_mcp_role | SELECT |
 | public.dp_audit_log_colaborador | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_default | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_default | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_default | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_default | dp_mcp_role | SELECT |
 | public.dp_audit_log_default | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
-| public.dp_audit_log_rh | authenticated | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
+| public.dp_audit_log_rh | authenticated | MAINTAIN, SELECT |
 | public.dp_audit_log_rh | dp_mcp_role | SELECT |
 | public.dp_audit_log_rh | service_role | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |
 | public.dp_backup_runbook | anon | DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE |

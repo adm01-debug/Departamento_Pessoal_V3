@@ -5,12 +5,12 @@ CREATE OR REPLACE FUNCTION public.fn_update_admissao_checklist()
  SET search_path TO 'public'
 AS $function$
 BEGIN
-    IF (NEW.status = 'aprovado' AND OLD.status != 'aprovado') THEN
-        IF (NEW.tipo_documento = 'RG' OR NEW.tipo_documento = 'CPF') THEN
+    IF (NEW.validado AND NOT COALESCE(OLD.validado, false)) THEN
+        IF (NEW.tipo = 'RG' OR NEW.tipo = 'CPF') THEN
             UPDATE public.admissoes SET checklist_documentos_pessoais = true WHERE id = NEW.admissao_id;
-        ELSIF (NEW.tipo_documento = 'COMPROVANTE_RESIDENCIA') THEN
+        ELSIF (NEW.tipo = 'COMPROVANTE_RESIDENCIA') THEN
             UPDATE public.admissoes SET checklist_comprovante_endereco = true WHERE id = NEW.admissao_id;
-        ELSIF (NEW.tipo_documento = 'ASO') THEN
+        ELSIF (NEW.tipo = 'ASO') THEN
             UPDATE public.admissoes SET checklist_exame_admissional = true WHERE id = NEW.admissao_id;
         END IF;
     END IF;

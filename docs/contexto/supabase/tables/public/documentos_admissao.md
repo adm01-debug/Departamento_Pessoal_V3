@@ -27,6 +27,7 @@
 | 9 | `validado_em` | `timestamp with time zone` | sim |  |  |  |
 | 10 | `observacoes` | `text` | sim |  |  |  |
 | 11 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

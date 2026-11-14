@@ -905,6 +905,8 @@ Uso e tamanho em `stats.md`.
 | public.pendencias | idx_pendencias_empresa_id | btree | empresa_id | não | sim |  |
 | public.pendencias | pendencias_pkey | btree | id | sim | sim |  |
 | public.pensoes | idx_pensoes_colaborador_id | btree | colaborador_id | não | sim |  |
+| public.pensoes | idx_pensoes_empresa_ativo | btree | empresa_id | não | sim | `(ativo IS TRUE)` |
+| public.pensoes | idx_pensoes_empresa_id | btree | empresa_id | não | sim |  |
 | public.pensoes | pensoes_pkey | btree | id | sim | sim |  |
 | public.periodos_aquisitivos | idx_periodos_aquisitivos_colaborador_id | btree | colaborador_id | não | sim |  |
 | public.periodos_aquisitivos | periodos_aquisitivos_colaborador_id_numero_periodo_key | btree | colaborador_id, numero_periodo | sim | sim |  |

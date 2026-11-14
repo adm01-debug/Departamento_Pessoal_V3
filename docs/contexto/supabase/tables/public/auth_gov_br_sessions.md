@@ -24,6 +24,7 @@
 | 6 | `cpf` | `text` | sim |  |  |  |
 | 7 | `metadata` | `jsonb` | sim |  |  |  |
 | 8 | `created_at` | `timestamp with time zone` | sim | `now()` |  |  |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

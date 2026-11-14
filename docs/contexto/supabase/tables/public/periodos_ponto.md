@@ -24,6 +24,7 @@
 | 6 | `fechado_em` | `timestamp with time zone` | sim |  |  |  |
 | 7 | `fechado_por` | `uuid` | sim |  |  |  |
 | 8 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
+| 9 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

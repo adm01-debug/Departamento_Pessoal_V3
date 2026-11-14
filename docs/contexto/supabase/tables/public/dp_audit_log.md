@@ -107,7 +107,6 @@ Conteúdo: metadata de eventos — NÃO armazena PII raw no payload.
 
 | role | privilégios |
 |---|---|
-| anon | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
-| authenticated | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |
+| authenticated | MAINTAIN, SELECT |
 | dp_mcp_role | INSERT, SELECT |
 | service_role | INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE |

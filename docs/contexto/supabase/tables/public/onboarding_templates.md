@@ -23,6 +23,7 @@
 | 5 | `ativo` | `boolean` | sim | `true` |  |  |
 | 6 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 7 | `created_by` | `uuid` | sim |  |  |  |
+| 8 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

@@ -27,6 +27,7 @@
 | 9 | `hash_validacao` | `text` | sim |  |  |  |
 | 10 | `verificado_ia` | `boolean` | sim | `false` |  |  |
 | 11 | `empresa_id` | `uuid` | sim |  |  |  |
+| 12 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

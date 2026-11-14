@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 1 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -30,6 +30,7 @@
 | 12 | `apolice_numero` | `text` | sim |  |  |  |
 | 13 | `data_vencimento_apolice` | `date` | sim |  |  |  |
 | 14 | `possui_assistencia_funeral` | `boolean` | sim | `false` |  |  |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints
@@ -61,15 +62,45 @@
 
 ## Policies (RLS)
 
-### `tenant_seguros_vida`
+### `seguros_vida_rh_delete`
 
 | campo | valor |
 |---|---|
-| comando | ALL |
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK |  |
+
+### `seguros_vida_rh_insert`
+
+| campo | valor |
+|---|---|
+| comando | INSERT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING |  |
+| WITH CHECK | `pode_gerir_rh(empresa_id)` |
+
+### `seguros_vida_rh_update`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK | `pode_gerir_rh(empresa_id)` |
+
+### `seguros_vida_tenant_select`
+
+| campo | valor |
+|---|---|
+| comando | SELECT |
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
-| WITH CHECK | `(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))` |
+| WITH CHECK |  |
 
 
 ## Triggers

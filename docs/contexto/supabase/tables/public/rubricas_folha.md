@@ -30,6 +30,7 @@
 | 12 | `empresa_id` | `uuid` | sim |  |  |  |
 | 13 | `codigo_esocial` | `text` | sim |  |  |  |
 | 14 | `natureza_rubrica` | `text` | sim |  |  |  |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

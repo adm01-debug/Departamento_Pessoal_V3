@@ -31,6 +31,7 @@
 | 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 14 | `created_by` | `uuid` | sim |  |  |  |
 | 15 | `validade_assinatura` | `timestamp with time zone` | sim |  |  |  |
+| 16 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

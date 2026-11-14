@@ -58,24 +58,24 @@
 
 ## Policies (RLS)
 
-### `Users can manage their own company campaigns`
+### `premiacoes_campanhas_rh_manage`
 
 | campo | valor |
 |---|---|
 | comando | ALL |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(auth.uid() IN ( SELECT profiles.user_id    FROM profiles   WHERE (premiacoes_campanhas.empresa_id = premiacoes_campanhas.empresa_id)))` |
-| WITH CHECK |  |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK | `pode_gerir_rh(empresa_id)` |
 
-### `Users can view their own company campaigns`
+### `premiacoes_campanhas_tenant_select`
 
 | campo | valor |
 |---|---|
 | comando | SELECT |
 | tipo | PERMISSIVE |
-| roles | public |
-| USING | `(auth.uid() IN ( SELECT profiles.user_id    FROM profiles   WHERE (premiacoes_campanhas.empresa_id = premiacoes_campanhas.empresa_id)))` |
+| roles | authenticated |
+| USING | `pertence_a_empresa(empresa_id)` |
 | WITH CHECK |  |
 
 

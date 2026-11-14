@@ -6,7 +6,7 @@
 | owner | postgres |
 | RLS habilitado | sim |
 | RLS forçado (owner) | não |
-| policies | 2 |
+| policies | 4 |
 | realtime (publication) | não |
 | replica identity | default |
 | vem de extensão | não |
@@ -47,6 +47,16 @@
 
 ## Policies (RLS)
 
+### `canal_etica_admin_delete`
+
+| campo | valor |
+|---|---|
+| comando | DELETE |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `is_admin(auth.uid())` |
+| WITH CHECK |  |
+
 ### `canal_etica_reportar`
 
 | campo | valor |
@@ -57,11 +67,21 @@
 | USING |  |
 | WITH CHECK | `((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))` |
 
-### `canal_etica_rh_manage`
+### `canal_etica_rh_select`
 
 | campo | valor |
 |---|---|
-| comando | ALL |
+| comando | SELECT |
+| tipo | PERMISSIVE |
+| roles | authenticated |
+| USING | `pode_gerir_rh(empresa_id)` |
+| WITH CHECK |  |
+
+### `canal_etica_rh_update`
+
+| campo | valor |
+|---|---|
+| comando | UPDATE |
 | tipo | PERMISSIVE |
 | roles | authenticated |
 | USING | `pode_gerir_rh(empresa_id)` |

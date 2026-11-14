@@ -7,6 +7,8 @@ AS $function$
 DECLARE
     v_empresa_id UUID;
     v_acao TEXT;
+    v_old JSONB;
+    v_new JSONB;
 BEGIN
     IF (TG_OP = 'DELETE') THEN
         v_empresa_id := OLD.empresa_id;
@@ -17,13 +19,15 @@ BEGIN
             v_acao := 'CREATE';
         ELSE
             v_acao := 'UPDATE';
-            -- Detecção específica de aprovação
+            -- Detecção específica de aprovação (via jsonb: coluna ausente = NULL)
             IF (TG_TABLE_NAME = 'ferias_solicitacoes') THEN
-                IF (OLD.status_gestor <> NEW.status_gestor AND NEW.status_gestor = 'aprovado') THEN
+                v_old := to_jsonb(OLD);
+                v_new := to_jsonb(NEW);
+                IF ((v_old->>'status_gestor') <> (v_new->>'status_gestor') AND (v_new->>'status_gestor') = 'aprovado') THEN
                     v_acao := 'APPROVE_GESTOR';
-                ELSIF (OLD.status_rh <> NEW.status_rh AND NEW.status_rh = 'aprovado') THEN
+                ELSIF ((v_old->>'status_rh') <> (v_new->>'status_rh') AND (v_new->>'status_rh') = 'aprovado') THEN
                     v_acao := 'APPROVE_RH';
-                ELSIF (OLD.status <> NEW.status AND NEW.status = 'rejeitado') THEN
+                ELSIF ((v_old->>'status') <> (v_new->>'status') AND (v_new->>'status') = 'rejeitado') THEN
                     v_acao := 'REJECT';
                 END IF;
             END IF;

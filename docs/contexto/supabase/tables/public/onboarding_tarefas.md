@@ -30,6 +30,7 @@
 | 12 | `observacoes` | `text` | sim |  |  |  |
 | 13 | `created_at` | `timestamp with time zone` | não | `now()` |  |  |
 | 14 | `empresa_id` | `uuid` | sim |  |  |  |
+| 15 | `updated_at` | `timestamp with time zone` | não | `now()` |  |  |
 
 
 ## Constraints

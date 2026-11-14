@@ -4063,6 +4063,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 9,
+        "schema": "public",
+        "table": "auth_gov_br_sessions",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -6735,6 +6748,19 @@
         "name": "created_at",
         "nullable": true,
         "position": 8,
+        "schema": "public",
+        "table": "blocked_ips",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 9,
         "schema": "public",
         "table": "blocked_ips",
         "type": "timestamp with time zone"
@@ -15360,6 +15386,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 13,
+        "schema": "public",
+        "table": "controle_acesso",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -18441,6 +18480,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "documentos_admissao",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -18727,6 +18779,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 16,
+        "schema": "public",
+        "table": "documentos_assinatura",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -18867,6 +18932,19 @@
         "schema": "public",
         "table": "documentos_colaborador",
         "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "documentos_colaborador",
+        "type": "timestamp with time zone"
       },
       {
         "comment": null,
@@ -23232,6 +23310,19 @@
         "name": "created_at",
         "nullable": true,
         "position": 9,
+        "schema": "public",
+        "table": "escalas_trabalho",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 10,
         "schema": "public",
         "table": "escalas_trabalho",
         "type": "timestamp with time zone"
@@ -27912,6 +28003,19 @@
         "name": "created_at",
         "nullable": false,
         "position": 12,
+        "schema": "public",
+        "table": "ferias_solicitacoes",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 13,
         "schema": "public",
         "table": "ferias_solicitacoes",
         "type": "timestamp with time zone"
@@ -37460,6 +37564,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 12,
+        "schema": "public",
+        "table": "notificacoes",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -38071,6 +38188,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 15,
+        "schema": "public",
+        "table": "onboarding_tarefas",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -38289,6 +38419,19 @@
         "schema": "public",
         "table": "onboarding_templates",
         "type": "uuid"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 8,
+        "schema": "public",
+        "table": "onboarding_templates",
+        "type": "timestamp with time zone"
       },
       {
         "comment": null,
@@ -40437,6 +40580,19 @@
       },
       {
         "comment": null,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "empresa_id",
+        "nullable": true,
+        "position": 13,
+        "schema": "public",
+        "table": "pensoes",
+        "type": "uuid"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -40873,6 +41029,19 @@
         "name": "created_at",
         "nullable": false,
         "position": 8,
+        "schema": "public",
+        "table": "periodos_ponto",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 9,
         "schema": "public",
         "table": "periodos_ponto",
         "type": "timestamp with time zone"
@@ -48328,6 +48497,19 @@
       },
       {
         "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 15,
+        "schema": "public",
+        "table": "rubricas_folha",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
         "default": "gen_random_uuid()",
         "generated": null,
         "identity": null,
@@ -49144,6 +49326,19 @@
         "schema": "public",
         "table": "seguros_vida",
         "type": "boolean"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 15,
+        "schema": "public",
+        "table": "seguros_vida",
+        "type": "timestamp with time zone"
       },
       {
         "comment": null,
@@ -54848,6 +55043,19 @@
         "name": "created_at",
         "nullable": false,
         "position": 7,
+        "schema": "public",
+        "table": "treinamentos",
+        "type": "timestamp with time zone"
+      },
+      {
+        "comment": null,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "is_enum": false,
+        "name": "updated_at",
+        "nullable": false,
+        "position": 8,
         "schema": "public",
         "table": "treinamentos",
         "type": "timestamp with time zone"
@@ -79938,6 +80146,25 @@
       },
       {
         "columns": [
+          "empresa_id"
+        ],
+        "deferrable": false,
+        "definition": "FOREIGN KEY (empresa_id) REFERENCES empresas(id)",
+        "name": "pensoes_empresa_id_fkey",
+        "on_delete": "NO ACTION",
+        "on_update": "NO ACTION",
+        "ref_columns": [
+          "id"
+        ],
+        "ref_schema": "public",
+        "ref_table": "empresas",
+        "schema": "public",
+        "table": "pensoes",
+        "type": "FOREIGN KEY",
+        "validated": true
+      },
+      {
+        "columns": [
           "id"
         ],
         "deferrable": false,
@@ -88936,6 +89163,38 @@
           "cron": [],
           "db": [],
           "triggers": [
+            "public.registros_ponto.tr_bloquear_aprovacao_ponto_sem_rh"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "615dceb140c4fac7",
+        "execute_api_roles": "anon, authenticated, service_role",
+        "execute_public": true,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "bloquear_aprovacao_ponto_sem_rh",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": false,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [],
+          "code_total_files": 0,
+          "cron": [],
+          "db": [],
+          "triggers": [
             "public.ciclos_avaliacao.ciclos_bloqueio_exclusao_com_dependencias"
           ],
           "views": []
@@ -93147,7 +93406,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "dcaa8e47c32deaca",
+        "definition_sha": "bdd30a2b829e5510",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -93563,6 +93822,43 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
+          "cron": [],
+          "db": [],
+          "triggers": [
+            "public.pensoes.trg_pensoes_set_empresa"
+          ],
+          "views": []
+        },
+        "comment": null,
+        "config": [
+          "search_path=pg_catalog, public, pg_temp"
+        ],
+        "definition": null,
+        "definition_sha": "ebde5eea7550ad06",
+        "execute_api_roles": "service_role",
+        "execute_public": false,
+        "is_trigger_fn": true,
+        "kind": "function",
+        "language": "plpgsql",
+        "leakproof": false,
+        "name": "fn_pensoes_set_empresa",
+        "owner": "postgres",
+        "returns": "trigger",
+        "schema": "public",
+        "security_definer": true,
+        "strict": false,
+        "volatility": "volatile"
+      },
+      {
+        "args": "",
+        "callers": {
+          "code": [
+            {
               "file": "supabase/migrations/20260513165148_dba8acd2-8fa3-4894-9e35-5cd1e3954394.sql",
               "hits": 1
             },
@@ -93730,7 +94026,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "50369d75362159f2",
+        "definition_sha": "cd8c56e06e8cbed4",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -98315,6 +98611,7 @@
           "code_total_files": 13,
           "cron": [],
           "db": [
+            "public.bloquear_aprovacao_ponto_sem_rh",
             "public.get_colaborador_banco_horas",
             "public.registrar_batida_ponto"
           ],
@@ -98821,7 +99118,7 @@
           "search_path=public"
         ],
         "definition": null,
-        "definition_sha": "5dc5023325508efc",
+        "definition_sha": "f8c5a4b5b10d3f4f",
         "execute_api_roles": "service_role",
         "execute_public": false,
         "is_trigger_fn": true,
@@ -107840,14 +108137,8 @@
           "table": "dp_audit_config"
         },
         {
-          "grantee": "anon",
-          "privileges": "INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE",
-          "schema": "public",
-          "table": "dp_audit_log"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log"
         },
@@ -107864,14 +108155,8 @@
           "table": "dp_audit_log"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_2026_07"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_2026_07"
         },
@@ -107888,14 +108173,8 @@
           "table": "dp_audit_log_2026_07"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_2026_08"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_2026_08"
         },
@@ -107912,14 +108191,8 @@
           "table": "dp_audit_log_2026_08"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_2026_09"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_2026_09"
         },
@@ -107936,14 +108209,8 @@
           "table": "dp_audit_log_2026_09"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_2026_10"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_2026_10"
         },
@@ -107960,14 +108227,8 @@
           "table": "dp_audit_log_2026_10"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_2026_11"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_2026_11"
         },
@@ -107984,14 +108245,8 @@
           "table": "dp_audit_log_2026_11"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_2026_12"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_2026_12"
         },
@@ -108021,7 +108276,7 @@
         },
         {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_colaborador"
         },
@@ -108038,14 +108293,8 @@
           "table": "dp_audit_log_colaborador"
         },
         {
-          "grantee": "anon",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
-          "schema": "public",
-          "table": "dp_audit_log_default"
-        },
-        {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_default"
         },
@@ -108063,7 +108312,7 @@
         },
         {
           "grantee": "authenticated",
-          "privileges": "DELETE, INSERT, MAINTAIN, REFERENCES, SELECT, TRIGGER, TRUNCATE, UPDATE",
+          "privileges": "MAINTAIN, SELECT",
           "schema": "public",
           "table": "dp_audit_log_rh"
         },
@@ -128168,6 +128417,34 @@
       },
       {
         "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_pensoes_empresa_ativo ON public.pensoes USING btree (empresa_id) WHERE (ativo IS TRUE)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_pensoes_empresa_ativo",
+        "predicate": "(ativo IS TRUE)",
+        "schema": "public",
+        "table": "pensoes"
+      },
+      {
+        "columns": [
+          "empresa_id"
+        ],
+        "definition": "CREATE INDEX idx_pensoes_empresa_id ON public.pensoes USING btree (empresa_id)",
+        "is_primary": false,
+        "is_unique": false,
+        "is_valid": true,
+        "method": "btree",
+        "name": "idx_pensoes_empresa_id",
+        "predicate": null,
+        "schema": "public",
+        "table": "pensoes"
+      },
+      {
+        "columns": [
           "id"
         ],
         "definition": "CREATE UNIQUE INDEX pensoes_pkey ON public.pensoes USING btree (id)",
@@ -134517,6 +134794,12 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
+        "object": "public.canal_etica.canal_etica_admin_delete",
+        "severity": "BAIXA"
+      },
+      {
+        "code": "policy_auth_fn_not_wrapped",
+        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.candidatos.Multi-tenant access",
         "severity": "BAIXA"
       },
@@ -134703,7 +134986,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.comunicados.empresa_comunicados",
+        "object": "public.comunicados.comunicados_tenant_select",
         "severity": "BAIXA"
       },
       {
@@ -134865,7 +135148,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.convenios.tenant_convenios",
+        "object": "public.convenios.convenios_tenant_select",
         "severity": "BAIXA"
       },
       {
@@ -134901,7 +135184,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.departamentos.tenant_departamentos",
+        "object": "public.departamentos.departamentos_tenant_select",
         "severity": "BAIXA"
       },
       {
@@ -135837,7 +136120,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.pensoes.tenant_pensoes",
+        "object": "public.pensoes.pensoes_tenant_select",
         "severity": "BAIXA"
       },
       {
@@ -136036,18 +136319,6 @@
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
         "object": "public.premiacoes_auditoria.Usuários autenticados podem ver auditoria de premiações",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.premiacoes_campanhas.Users can manage their own company campaigns",
-        "severity": "BAIXA"
-      },
-      {
-        "code": "policy_auth_fn_not_wrapped",
-        "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.premiacoes_campanhas.Users can view their own company campaigns",
         "severity": "BAIXA"
       },
       {
@@ -136371,7 +136642,7 @@
       {
         "code": "policy_auth_fn_not_wrapped",
         "detail": "Policy chama auth.uid()/jwt() sem `(select ...)`: é reavaliada por linha; envolva em subselect.",
-        "object": "public.seguros_vida.tenant_seguros_vida",
+        "object": "public.seguros_vida.seguros_vida_tenant_select",
         "severity": "BAIXA"
       },
       {
@@ -137950,6 +138221,18 @@
         "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
       },
       {
+        "cmd": "DELETE",
+        "name": "canal_etica_admin_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "canal_etica",
+        "using": "is_admin(auth.uid())",
+        "with_check": null
+      },
+      {
         "cmd": "INSERT",
         "name": "canal_etica_reportar",
         "permissive": "PERMISSIVE",
@@ -137962,8 +138245,20 @@
         "with_check": "((empresa_id IS NULL) OR pertence_a_empresa(empresa_id))"
       },
       {
-        "cmd": "ALL",
-        "name": "canal_etica_rh_manage",
+        "cmd": "SELECT",
+        "name": "canal_etica_rh_select",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "canal_etica",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "canal_etica_rh_update",
         "permissive": "PERMISSIVE",
         "roles": [
           "authenticated"
@@ -138347,18 +138642,6 @@
       },
       {
         "cmd": "SELECT",
-        "name": "cnab_remessas_tenant_read",
-        "permissive": "PERMISSIVE",
-        "roles": [
-          "authenticated"
-        ],
-        "schema": "public",
-        "table": "cnab_remessas",
-        "using": "pertence_a_empresa(empresa_id)",
-        "with_check": null
-      },
-      {
-        "cmd": "SELECT",
         "name": "cnae_read_auth",
         "permissive": "PERMISSIVE",
         "roles": [
@@ -138490,8 +138773,44 @@
         "with_check": null
       },
       {
-        "cmd": "ALL",
-        "name": "empresa_comunicados",
+        "cmd": "DELETE",
+        "name": "comunicados_rh_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "comunicados",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "comunicados_rh_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "comunicados",
+        "using": null,
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "comunicados_rh_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "comunicados",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "comunicados_tenant_select",
         "permissive": "PERMISSIVE",
         "roles": [
           "authenticated"
@@ -138499,7 +138818,7 @@
         "schema": "public",
         "table": "comunicados",
         "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
-        "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
+        "with_check": null
       },
       {
         "cmd": "DELETE",
@@ -138910,8 +139229,44 @@
         "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
       },
       {
-        "cmd": "ALL",
-        "name": "tenant_convenios",
+        "cmd": "DELETE",
+        "name": "convenios_rh_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "convenios",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "convenios_rh_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "convenios",
+        "using": null,
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "convenios_rh_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "convenios",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "convenios_tenant_select",
         "permissive": "PERMISSIVE",
         "roles": [
           "authenticated"
@@ -138919,7 +139274,7 @@
         "schema": "public",
         "table": "convenios",
         "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
-        "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
+        "with_check": null
       },
       {
         "cmd": "ALL",
@@ -138994,8 +139349,44 @@
         "with_check": "(colaborador_id IN ( SELECT colaboradores.id\n   FROM colaboradores\n  WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))"
       },
       {
-        "cmd": "ALL",
-        "name": "tenant_departamentos",
+        "cmd": "DELETE",
+        "name": "departamentos_rh_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "departamentos",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "departamentos_rh_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "departamentos",
+        "using": null,
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "departamentos_rh_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "departamentos",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "departamentos_tenant_select",
         "permissive": "PERMISSIVE",
         "roles": [
           "authenticated"
@@ -139003,7 +139394,7 @@
         "schema": "public",
         "table": "departamentos",
         "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
-        "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
+        "with_check": null
       },
       {
         "cmd": "ALL",
@@ -141694,16 +142085,52 @@
         "with_check": null
       },
       {
-        "cmd": "ALL",
-        "name": "tenant_pensoes",
+        "cmd": "DELETE",
+        "name": "pensoes_rh_delete",
         "permissive": "PERMISSIVE",
         "roles": [
           "authenticated"
         ],
         "schema": "public",
         "table": "pensoes",
-        "using": "(colaborador_id IN ( SELECT colaboradores.id\n   FROM colaboradores\n  WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))",
-        "with_check": "(colaborador_id IN ( SELECT colaboradores.id\n   FROM colaboradores\n  WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))"
+        "using": "(EXISTS ( SELECT 1\n   FROM colaboradores c\n  WHERE ((c.id = pensoes.colaborador_id) AND pode_gerir_rh(c.empresa_id))))",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "pensoes_rh_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "pensoes",
+        "using": null,
+        "with_check": "(EXISTS ( SELECT 1\n   FROM colaboradores c\n  WHERE ((c.id = pensoes.colaborador_id) AND pode_gerir_rh(c.empresa_id))))"
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "pensoes_rh_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "pensoes",
+        "using": "(EXISTS ( SELECT 1\n   FROM colaboradores c\n  WHERE ((c.id = pensoes.colaborador_id) AND pode_gerir_rh(c.empresa_id))))",
+        "with_check": "(EXISTS ( SELECT 1\n   FROM colaboradores c\n  WHERE ((c.id = pensoes.colaborador_id) AND pode_gerir_rh(c.empresa_id))))"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "pensoes_tenant_select",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "pensoes",
+        "using": "(colaborador_id IN ( SELECT c.id\n   FROM colaboradores c\n  WHERE (c.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))",
+        "with_check": null
       },
       {
         "cmd": "ALL",
@@ -142187,26 +142614,26 @@
       },
       {
         "cmd": "ALL",
-        "name": "Users can manage their own company campaigns",
+        "name": "premiacoes_campanhas_rh_manage",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "premiacoes_campanhas",
-        "using": "(auth.uid() IN ( SELECT profiles.user_id\n   FROM profiles\n  WHERE (premiacoes_campanhas.empresa_id = premiacoes_campanhas.empresa_id)))",
-        "with_check": null
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
       },
       {
         "cmd": "SELECT",
-        "name": "Users can view their own company campaigns",
+        "name": "premiacoes_campanhas_tenant_select",
         "permissive": "PERMISSIVE",
         "roles": [
-          "public"
+          "authenticated"
         ],
         "schema": "public",
         "table": "premiacoes_campanhas",
-        "using": "(auth.uid() IN ( SELECT profiles.user_id\n   FROM profiles\n  WHERE (premiacoes_campanhas.empresa_id = premiacoes_campanhas.empresa_id)))",
+        "using": "pertence_a_empresa(empresa_id)",
         "with_check": null
       },
       {
@@ -143050,8 +143477,44 @@
         "with_check": "(colaborador_id IN ( SELECT colaboradores.id\n   FROM colaboradores\n  WHERE (colaboradores.empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))))"
       },
       {
-        "cmd": "ALL",
-        "name": "tenant_seguros_vida",
+        "cmd": "DELETE",
+        "name": "seguros_vida_rh_delete",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "seguros_vida",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": null
+      },
+      {
+        "cmd": "INSERT",
+        "name": "seguros_vida_rh_insert",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "seguros_vida",
+        "using": null,
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "UPDATE",
+        "name": "seguros_vida_rh_update",
+        "permissive": "PERMISSIVE",
+        "roles": [
+          "authenticated"
+        ],
+        "schema": "public",
+        "table": "seguros_vida",
+        "using": "pode_gerir_rh(empresa_id)",
+        "with_check": "pode_gerir_rh(empresa_id)"
+      },
+      {
+        "cmd": "SELECT",
+        "name": "seguros_vida_tenant_select",
         "permissive": "PERMISSIVE",
         "roles": [
           "authenticated"
@@ -143059,7 +143522,7 @@
         "schema": "public",
         "table": "seguros_vida",
         "using": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))",
-        "with_check": "(empresa_id IN ( SELECT get_user_empresas(auth.uid()) AS get_user_empresas))"
+        "with_check": null
       },
       {
         "cmd": "ALL",
@@ -154678,6 +155141,17 @@
         "timing": "BEFORE"
       },
       {
+        "definition": "CREATE TRIGGER trg_pensoes_set_empresa BEFORE INSERT OR UPDATE OF colaborador_id, empresa_id ON pensoes FOR EACH ROW EXECUTE FUNCTION fn_pensoes_set_empresa()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.fn_pensoes_set_empresa",
+        "level": "ROW",
+        "name": "trg_pensoes_set_empresa",
+        "schema": "public",
+        "status": "enabled",
+        "table": "pensoes",
+        "timing": "BEFORE"
+      },
+      {
         "definition": "CREATE TRIGGER tr_audit_periodos_aquisitivos AFTER INSERT OR DELETE OR UPDATE ON periodos_aquisitivos FOR EACH ROW EXECUTE FUNCTION process_ferias_audit()",
         "events": "INSERT OR DELETE OR UPDATE",
         "function": "public.process_ferias_audit",
@@ -155248,6 +155722,17 @@
         "status": "enabled",
         "table": "registros_ponto",
         "timing": "AFTER"
+      },
+      {
+        "definition": "CREATE TRIGGER tr_bloquear_aprovacao_ponto_sem_rh BEFORE INSERT OR UPDATE ON registros_ponto FOR EACH ROW EXECUTE FUNCTION bloquear_aprovacao_ponto_sem_rh()",
+        "events": "INSERT OR UPDATE",
+        "function": "public.bloquear_aprovacao_ponto_sem_rh",
+        "level": "ROW",
+        "name": "tr_bloquear_aprovacao_ponto_sem_rh",
+        "schema": "public",
+        "status": "enabled",
+        "table": "registros_ponto",
+        "timing": "BEFORE"
       },
       {
         "definition": "CREATE TRIGGER tr_gerar_hash_ponto BEFORE INSERT ON registros_ponto FOR EACH ROW EXECUTE FUNCTION gerar_hash_ponto()",
