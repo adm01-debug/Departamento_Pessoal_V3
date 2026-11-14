@@ -171,15 +171,34 @@ fi
 # (13/11 rev2) CÓPIA BYTE A BYTE do índice (write-tree/read-tree perdia skip-worktree/assume-unchanged/sparse/intent-to-add:
 # depois de um bloqueio, a config local escondida ia no push seguinte). Restaurar = devolver o arquivo exato.
 IDXF="$("${G[@]}" rev-parse --git-path index)"; case "$IDXF" in /*) ;; *) IDXF="$WT/$IDXF" ;; esac
-IDXB="$STATE/ac-$KEY.index-usuario"
+IDXB="$STATE/ac-$KEY.index-usuario"; IDXH="$IDXB.head"   # (rev4) o backup anda com o HEAD da rodada que o fez
+cabeca() { "${G[@]}" rev-parse -q --verify HEAD 2>/dev/null || echo sem-head; }
+instala_backup() { cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; }
+# (rev4, Devin #565) só é backup recuperável o PAR publicado inteiro (índice + HEAD), que o git consegue ler (checksum) e cujo
+# HEAD ainda é o atual — HEAD diferente = o commit daquela rodada terminou (ou o usuário commitou): devolver o índice velho
+# deixaria reversões preparadas contra o HEAD novo
+# o git NÃO confere o checksum do índice ao ler (arquivo truncado passa no ls-files): vale o sha256 gravado na criação
+backup_valido() { [ -f "$IDXB" ] && [ -f "$IDXH" ] && [ "$(cat "$IDXH" 2>/dev/null)" = "$(cabeca) $(sha256sum < "$IDXB" | cut -c1-64)" ]; }
+rm -f "$IDXB.tmp" "$IDXH.tmp"   # cópia parcial de uma rodada morta no meio da cópia: nunca é reconhecida como backup
 # (rev3) execução anterior interrompida (SIGTERM/queda) deixou o backup: o índice atual pode estar poluído pelo add -A dela —
 # devolve o índice do usuário em vez de apagar a única cópia
-if [ -f "$IDXB" ]; then cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF" && say "RECUPEREI o índice do usuário deixado por uma execução interrompida"; rm -f "$IDXB"; fi
+if [ -f "$IDXB" ]; then
+  if ! backup_valido; then rm -f "$IDXB" "$IDXH"; say "DESCARTEI o backup do índice de uma execução interrompida: incompleto, ilegível ou o HEAD já andou (o índice atual fica)"
+  elif instala_backup; then rm -f "$IDXB" "$IDXH"; say "RECUPEREI o índice do usuário deixado por uma execução interrompida"
+  else say "BLOQUEADO: não consegui devolver o índice do usuário — backup preservado ($IDXB); nada foi alterado nesta rodada"; exit 75; fi
+fi
 # backup do índice com falha (disco cheio/parcial) = PARA: restaurar uma cópia incompleta corromperia o índice (Codex, PR #549)
-if [ -f "$IDXF" ] && ! { cp -p "$IDXF" "$IDXB" && cmp -s "$IDXF" "$IDXB"; }; then rm -f "$IDXB"; say "PULEI: não consegui guardar o índice antes de mexer (disco cheio?) — nada foi alterado"; exit 75; fi
-restaura_indice() { if [ -f "$IDXB" ] && cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; then :; else "${G[@]}" reset -q 2>/dev/null; fi; rm -f "$IDXB"; }
+# (rev4) grava em nomes .tmp, confere byte a byte e só então publica (HEAD primeiro, índice por último, ambos por rename)
+H0="$(cabeca)"
+if [ -f "$IDXF" ] && ! { cp -p "$IDXF" "$IDXB.tmp" && cmp -s "$IDXF" "$IDXB.tmp" && printf '%s %s\n' "$H0" "$(sha256sum < "$IDXB.tmp" | cut -c1-64)" > "$IDXH.tmp" && mv -f "$IDXH.tmp" "$IDXH" && mv -f "$IDXB.tmp" "$IDXB"; }; then
+  rm -f "$IDXB" "$IDXH" "$IDXB.tmp" "$IDXH.tmp"; say "PULEI: não consegui guardar o índice antes de mexer (disco cheio?) — nada foi alterado"; exit 75
+fi
+restaura_indice() {
+  # HEAD andou = o commit desta rodada terminou (sinal adiado até o git sair): o índice já é o do commit, não volta ao velho
+  if [ "$(cabeca)" != "$H0" ]; then rm -f "$IDXB" "$IDXH"; return 0; fi
+  if [ -f "$IDXB" ] && instala_backup; then :; else "${G[@]}" reset -q 2>/dev/null; fi; rm -f "$IDXB" "$IDXH"; }
 # (rev3) SIGTERM/SIGINT/SIGHUP (systemd stop, desligamento) no meio: devolve o índice do usuário antes de sair
-trap 'restaura_indice; say "INTERROMPIDO: índice do usuário restaurado — nada foi commitado"; exit 75' TERM INT HUP
+trap 'if [ "$(cabeca)" != "$H0" ]; then restaura_indice; say "INTERROMPIDO depois do commit: índice mantido igual ao commit; o push fica para a próxima rodada"; else restaura_indice; say "INTERROMPIDO: índice do usuário restaurado — nada foi commitado"; fi; exit 75' TERM INT HUP
 
 # 4. stageia (respeita .gitignore; deleções incluídas)
 # (12/11, revisão) Um arquivo ilegível ou um repositório aninhado sem commit derrubava o `add -A` INTEIRO e nada era
@@ -317,7 +336,7 @@ N="$("${G[@]}" diff --cached --name-only | grep -c .)"
 IDENT=(); { "${G[@]}" config user.email >/dev/null 2>&1 && "${G[@]}" config user.name >/dev/null 2>&1; } \
   || IDENT=(-c user.name=autocommit-local -c user.email=autocommit-local@localhost)
 if git "${IDENT[@]}" -C "$WT" commit -q --no-verify -m "autosave($BRANCH): $(date '+%F %T') — $N arquivo(s)" 2>"$STATE/ac-$KEY.err"; then
-  rm -f "$IDXB"; trap - TERM INT HUP   # sucesso: o backup não pode ser "recuperado" pela próxima execução
+  rm -f "$IDXB" "$IDXH"; trap - TERM INT HUP   # sucesso: o backup não pode ser "recuperado" pela próxima execução
   say "COMMIT $("${G[@]}" rev-parse --short HEAD) em $BRANCH ($N arquivo(s))$([ "$NOPUSH" -eq 1 ] && echo ' — só local (--no-push)')"
 else
   # (12/11) era exit 0: o run-all contava como sucesso e a falha ficava invisível para sempre. 75 = "precisa de atenção"

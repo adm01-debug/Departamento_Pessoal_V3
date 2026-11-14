@@ -131,17 +131,31 @@ novo d9; (cd "$R" && echo v1-staged > x && git add x && echo v2-disk > x && echo
 check "[D9] bloqueio devolve o índice do usuário (v1 continua em stage)" '[ $RC -eq 75 ] && [ "$(git -C "$R" show :x 2>/dev/null)" = v1-staged ] && ! git -C "$R" ls-files --error-unmatch leak.txt >/dev/null 2>&1'
 
 # --- (14/11) rev3: cada cenário falha na versão anterior ao rev3
+bk() { K=$(printf '%s' "$(cd "$R" && pwd -P)" | sha1sum | cut -c1-10); BK="$XDG_CACHE_HOME/dp-sync/ac-$K.index-usuario"; mkdir -p "$XDG_CACHE_HOME/dp-sync"; }
 novo r3a; (cd "$R" && echo "tok=$TOKEN" > velho.txt && G add velho.txt && G commit -qm vazou && G push -q origin computador_local:main && G push -q origin computador_local && : > velho.txt); roda
 check "[R3a] REMOVER segredo que já é público não bloqueia (só linhas adicionadas vão ao gitleaks)" '[ $RC -eq 0 ] && ! git --git-dir="$O" show computador_local:velho.txt | grep -q tok'
 novo r3b; (cd "$R" && echo v1 > x && git add x); K=$(printf '%s' "$(cd "$R" && pwd -P)" | sha1sum | cut -c1-10); mkdir -p "$XDG_CACHE_HOME/dp-sync"
-cp -p "$(git -C "$R" rev-parse --absolute-git-dir)/index" "$XDG_CACHE_HOME/dp-sync/ac-$K.index-usuario"; (cd "$R" && echo y > y && git add y && echo "tok=$TOKEN" > leak.txt); roda
+cp -p "$(git -C "$R" rev-parse --absolute-git-dir)/index" "$XDG_CACHE_HOME/dp-sync/ac-$K.index-usuario"; echo "$(git -C "$R" rev-parse HEAD) $(sha256sum < "$XDG_CACHE_HOME/dp-sync/ac-$K.index-usuario" | cut -c1-64)" > "$XDG_CACHE_HOME/dp-sync/ac-$K.index-usuario.head"; (cd "$R" && echo y > y && git add y && echo "tok=$TOKEN" > leak.txt); roda
 check "[R3b] backup do índice deixado por execução interrompida é DEVOLVIDO (não apagado)" '[ $RC -eq 75 ] && [ "$(git -C "$R" show :x 2>/dev/null)" = v1 ] && ! noindice y && grep -q RECUPEREI "$XDG_CACHE_HOME/dp-sync/sync.log"'
 novo r3c; rm -f "$HOME/.local/bin/gitleaks"; printf '#!/bin/bash\nif grep -q MATA-AQUI; then kill -TERM $PPID; sleep 1; fi; exit 0\n' > "$HOME/.local/bin/gitleaks"; chmod +x "$HOME/.local/bin/gitleaks"
 (cd "$R" && echo v1 > x && git add x && echo v2 > x && echo MATA-AQUI > sinal.txt); roda; rm -f "$HOME/.local/bin/gitleaks"; ln -s "$GL" "$HOME/.local/bin/gitleaks"
-check "[R3c] SIGTERM no meio: 75, índice do usuário devolvido e nada sobe" '[ $RC -eq 75 ] && [ "$(git -C "$R" show :x 2>/dev/null)" = v1 ] && ! noindice sinal.txt && ! remoto_tem && ! ls "$XDG_CACHE_HOME/dp-sync/" | grep -q index-usuario'
+check "[R3c] SIGTERM no meio: 75, índice do usuário devolvido e nada sobe" '[ $RC -eq 75 ] && [ "$(git -C "$R" show :x 2>/dev/null)" = v1 ] && ! noindice sinal.txt && ! remoto_tem && bk && [ ! -e "$BK" ]'
 novo r3d; echo '{"k":1}' > "$R/credentials.json.orig"; echo 'k: 1' > "$R/secrets.yaml.old"; echo 'https://u:p@h' > "$R/.git-credentials~"; echo limpo > "$R/b"; roda
 check "[R3d] nome de segredo com sufixo de cópia (.orig/.old/~) não sobe" '[ $RC -eq 0 ] && noremoto b && ! noremoto credentials.json.orig && ! noremoto secrets.yaml.old && ! noremoto ".git-credentials~"'
 novo r3e; (cd "$R" && ln -s a db-credentials.json && G add db-credentials.json && G commit -qm link && G push -q origin computador_local && rm db-credentials.json && echo '{"pw":"x"}' > db-credentials.json && echo limpo > b); roda
 check "[R3e] link trocado por arquivo real com nome de segredo (tipo T): não sobe" '[ $RC -eq 0 ] && noremoto b && git --git-dir="$O" ls-tree computador_local db-credentials.json | grep -q "^120000"'
+
+# --- (14/11) rev4 (Devin, PR #565): backup do índice publicado só inteiro, recuperação que falha não apaga, HEAD andou = não volta
+novo r4a; (cd "$R" && echo v1 > x && git add x); bk; IX="$(git -C "$R" rev-parse --absolute-git-dir)/index"; head -c 40 "$IX" > "$BK"; echo "$(git -C "$R" rev-parse HEAD) $(sha256sum < "$IX" | cut -c1-64)" > "$BK.head"; head -c 20 "$BK" > "$BK.tmp"; echo "tok=$TOKEN" > "$R/leak.txt"; : > "$XDG_CACHE_HOME/dp-sync/sync.log"; roda
+check "[R4a] backup parcial/corrompido (e .tmp) é DESCARTADO: índice atual intacto e git funcionando" '[ $RC -eq 75 ] && [ "$(git -C "$R" show :x 2>/dev/null)" = v1 ] && git -C "$R" status --porcelain >/dev/null && grep -q DESCARTEI "$XDG_CACHE_HOME/dp-sync/sync.log" && ! ls "$XDG_CACHE_HOME/dp-sync/" | grep -q "index-usuario"'
+novo r4b; (cd "$R" && echo v1 > x && git add x); bk; cp -p "$(git -C "$R" rev-parse --absolute-git-dir)/index" "$BK"; echo "$(git -C "$R" rev-parse HEAD) $(sha256sum < "$BK" | cut -c1-64)" > "$BK.head"; echo novo >> "$R/a"
+printf '#!/bin/sh\ncase "$*" in *index-usuario*) exit 1;; esac\nexec /bin/cp "$@"\n' > "$HOME/.local/bin/cp"; chmod +x "$HOME/.local/bin/cp"; PATH="$HOME/.local/bin:$PATH" roda; rm -f "$HOME/.local/bin/cp"
+check "[R4b] recuperação do índice falha: 75, backup PRESERVADO e nada sobe" '[ $RC -eq 75 ] && [ -f "$BK" ] && [ -f "$BK.head" ] && ! remoto_tem'
+rm -f "$BK" "$BK.head"
+novo r4c; (cd "$R" && echo v1 > x && git add x); bk; cp -p "$(git -C "$R" rev-parse --absolute-git-dir)/index" "$BK"; echo "$(git -C "$R" rev-parse HEAD) $(sha256sum < "$BK" | cut -c1-64)" > "$BK.head"; (cd "$R" && G commit -qm "usuario commitou" && echo v2 > x); : > "$XDG_CACHE_HOME/dp-sync/sync.log"; roda
+check "[R4c] HEAD andou desde o backup: backup descartado, não reinstala índice velho (commit sobe com v2)" '[ $RC -eq 0 ] && grep -q DESCARTEI "$XDG_CACHE_HOME/dp-sync/sync.log" && git --git-dir="$O" show computador_local:x | grep -q v2 && git -C "$R" diff --cached --quiet'
+novo r4d; (cd "$R" && echo v1 > x && git add x && echo v2 > x); GR=$(command -v git)
+printf '#!/bin/bash\ncase " $* " in *" commit "*) "%s" "$@"; rc=$?; kill -TERM $PPID; exit $rc;; esac\nexec "%s" "$@"\n' "$GR" "$GR" > "$HOME/.local/bin/git"; chmod +x "$HOME/.local/bin/git"; PATH="$HOME/.local/bin:$PATH" roda; rm -f "$HOME/.local/bin/git"
+check "[R4d] SIGTERM durante commit que TERMINA: 75, commit feito e índice igual ao commit (sem reversões preparadas)" '[ $RC -eq 75 ] && [ "$(git -C "$R" show HEAD:x)" = v2 ] && git -C "$R" diff --cached --quiet && bk && [ ! -e "$BK" ] && [ ! -e "$BK.head" ]'
 
 echo "autocommit-local: $PASS ok, $FAIL falha(s)"; [ "$FAIL" -eq 0 ]

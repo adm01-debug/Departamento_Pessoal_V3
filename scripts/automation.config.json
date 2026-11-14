@@ -1301,7 +1301,7 @@
       "files": ["scripts/tests/autocommit-lab.test.sh"],
       "manual": ["bash", "scripts/tests/autocommit-lab.test.sh"],
       "triggers": ["manual"],
-      "reason": "Bateria de 53 cenários do autocommit-local.sh (precisa do gitleaks instalado, por isso só manual). O dispatcher não executa esta operação."
+      "reason": "Bateria de 57 cenários do autocommit-local.sh (precisa do gitleaks instalado, por isso só manual). O dispatcher não executa esta operação."
     },
     {
       "id": "legacy-61819edfe724919c",
