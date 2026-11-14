@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "840dbdbe73463358f1433d27c9fbc6ff916186d5",
+  "sha": "10f6d9f9839d96e78beee4e37b2d25e9ae18221a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-13 23:37 UTC",
+  "generated_at": "2026-11-14 01:11 UTC",
   "files_total": 2945,
   "code_files": 2415,
   "code_lines": 332158
@@ -282073,10 +282073,19 @@
   }
  },
  "git": {
-  "sha": "840dbdbe73463358f1433d27c9fbc6ff916186d5",
+  "sha": "10f6d9f9839d96e78beee4e37b2d25e9ae18221a",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "10f6d9f",
+    "date": "2026-11-13",
+    "author": "adm01-debug",
+    "subject": "docs(prod-readiness): registra fechamento da rodada no main 840dbdb (#557/#560) (#561)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "840dbdb",
     "date": "2026-11-13",
@@ -282381,29 +282390,12 @@
      "src/pages/__tests__/DepartamentosPage.permissao.test.tsx",
      "src/services/departamentoService.ts"
     ]
-   },
-   {
-    "sha": "14701f5",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Catálogo de EPIs passa a permitir editar EPI (CA, validade do CA, estoque) (#522)",
-    "files": [
-     "src/components/__tests__/EpiCatalogoTable.test.tsx",
-     "src/components/__tests__/EpiEntregasTable.test.tsx",
-     "src/components/__tests__/SSTEPIsTab.test.tsx",
-     "src/components/epis/EpiCatalogoTable.tsx",
-     "src/components/epis/EpiEntregasTable.tsx",
-     "src/components/sst/SSTEPIsTab.tsx",
-     "src/hooks/__tests__/useNovasTabelas.test.ts",
-     "src/hooks/useNovasTabelas.ts",
-     "src/pages/EPIsPage.tsx"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/prod-readiness.md",
-    4
+    5
    ],
    [
     "inventario/estado/rotas.json",
