@@ -89158,8 +89158,17 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -93391,9 +93400,17 @@
             {
               "file": "supabase/migrations/20260513193156_bc992237-d9ae-4c9a-aebb-fcf110a1ff73.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -93824,9 +93841,17 @@
             {
               "file": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -94011,9 +94036,17 @@
             {
               "file": "supabase/migrations/20260513191939_debf0e40-10a1-46a1-80a8-f0cdb01d7505.sql",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -95524,7 +95557,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 57,
+          "code_total_files": 58,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -96673,7 +96706,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 73,
+          "code_total_files": 74,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -98314,9 +98347,13 @@
             {
               "file": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 21,
+          "code_total_files": 22,
           "cron": [],
           "db": [
             "public.clinicas_proximas",
@@ -98606,9 +98643,17 @@
             {
               "file": "supabase/migrations/20261024000000_qa_r4_fixes.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 13,
+          "code_total_files": 15,
           "cron": [],
           "db": [
             "public.bloquear_aprovacao_ponto_sem_rh",
@@ -98800,11 +98845,15 @@
               "hits": 4
             },
             {
+              "file": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+              "hits": 28
+            },
+            {
               "file": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
               "hits": 2
             }
           ],
-          "code_total_files": 26,
+          "code_total_files": 27,
           "cron": [],
           "db": [
             "public.admin_definir_pin_quiosque",
@@ -99102,9 +99151,17 @@
             {
               "file": "supabase/migrations/20260509182847_274ae2b8-4b8b-4b81-87d7-e0669c73a295.sql",
               "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [
@@ -103923,7 +103980,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 64,
+          "code_total_files": 65,
           "cron": [],
           "db": [],
           "triggers": [

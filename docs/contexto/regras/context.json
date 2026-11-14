@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "bb9a156793cd2c65761a53327e527746626fd1da",
+  "sha": "1241a0033a53294d611ddca9a7446b0d46c37a08",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-14 11:52 UTC",
-  "files_total": 2946,
-  "code_files": 2415,
-  "code_lines": 332158
+  "generated_at": "2026-11-14 12:31 UTC",
+  "files_total": 2954,
+  "code_files": 2423,
+  "code_lines": 332941
  },
  "version": "1.3.2",
- "facts_hash": "abdaf93b4dda15e2",
+ "facts_hash": "8860d9f4204a5d8c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 837,
+   ".sql": 845,
    ".ts": 750,
    ".tsx": 700,
    ".mjs": 100,
@@ -42815,16 +42815,6 @@
     "src": "supabase/migrations/20260315215434_22f1107b-4396-44b9-bfaf-cf7030e9fecd.sql"
    },
    {
-    "name": "empresa_comunicados",
-    "table": "comunicados",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315215434_22f1107b-4396-44b9-bfaf-cf7030e9fecd.sql"
-   },
-   {
     "name": "empresa_turnos",
     "table": "turnos",
     "cmd": "ALL",
@@ -43545,16 +43535,6 @@
     "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
    },
    {
-    "name": "tenant_convenios",
-    "table": "convenios",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
-   },
-   {
     "name": "tenant_dados_estagiario",
     "table": "dados_estagiario",
     "cmd": "ALL",
@@ -43567,16 +43547,6 @@
    {
     "name": "tenant_dctfweb_declaracoes",
     "table": "dctfweb_declaracoes",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
-   },
-   {
-    "name": "tenant_departamentos",
-    "table": "departamentos",
     "cmd": "ALL",
     "roles": "authenticated",
     "mode": "permissive",
@@ -43707,16 +43677,6 @@
    {
     "name": "tenant_sefip_arquivos",
     "table": "sefip_arquivos",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
-   },
-   {
-    "name": "tenant_seguros_vida",
-    "table": "seguros_vida",
     "cmd": "ALL",
     "roles": "authenticated",
     "mode": "permissive",
@@ -44523,26 +44483,6 @@
     "using": "",
     "check": "EXISTS ( SELECT 1 FROM public.inscricoes_cursos i JOIN public.profiles p ON p.id = i.colaborador_id WHERE i.id = inscricao_id AND p.user_id = auth.uid() )",
     "src": "supabase/migrations/20260513193156_bc992237-d9ae-4c9a-aebb-fcf110a1ff73.sql"
-   },
-   {
-    "name": "Users can view their own company campaigns",
-    "table": "premiacoes_campanhas",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-    "check": "",
-    "src": "supabase/migrations/20260520131308_278e1ff0-fe3b-47e9-af8e-38b653755457.sql"
-   },
-   {
-    "name": "Users can manage their own company campaigns",
-    "table": "premiacoes_campanhas",
-    "cmd": "ALL",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-    "check": "",
-    "src": "supabase/migrations/20260520131308_278e1ff0-fe3b-47e9-af8e-38b653755457.sql"
    },
    {
     "name": "Usuários podem ver seus próprios cenários de simulação",
@@ -46845,16 +46785,6 @@
     "src": "supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql"
    },
    {
-    "name": "tenant_pensoes",
-    "table": "pensoes",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "colaborador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.empresa_id IN (SELECT public.get_user_empresas(auth.uid())) )",
-    "src": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql"
-   },
-   {
     "name": "folha_auditoria_tenant_select",
     "table": "folha_auditoria",
     "cmd": "SELECT",
@@ -48765,26 +48695,6 @@
     "src": "supabase/migrations/20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql"
    },
    {
-    "name": "cnab_remessas_rh_manage",
-    "table": "cnab_remessas",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pode_gerir_rh(empresa_id)",
-    "check": "public.pode_gerir_rh(empresa_id)",
-    "src": "supabase/migrations/20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql"
-   },
-   {
-    "name": "cnab_remessas_tenant_read",
-    "table": "cnab_remessas",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pertence_a_empresa(empresa_id)",
-    "check": "",
-    "src": "supabase/migrations/20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql"
-   },
-   {
     "name": "cnab_itens_rh_manage",
     "table": "cnab_itens",
     "cmd": "ALL",
@@ -48962,16 +48872,6 @@
     "mode": "permissive",
     "using": "",
     "check": "empresa_id IS NULL OR public.pertence_a_empresa(empresa_id)",
-    "src": "supabase/migrations/20260924200000_p0_rls_least_privilege_remediation.sql"
-   },
-   {
-    "name": "canal_etica_rh_manage",
-    "table": "canal_etica",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pode_gerir_rh(empresa_id)",
-    "check": "public.pode_gerir_rh(empresa_id)",
     "src": "supabase/migrations/20260924200000_p0_rls_least_privilege_remediation.sql"
    },
    {
@@ -49493,6 +49393,266 @@
     "using": "public.pode_gerir_config_ponto(empresa_id)",
     "check": "public.pode_gerir_config_ponto(empresa_id)",
     "src": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql"
+   },
+   {
+    "name": "comunicados_tenant_select",
+    "table": "comunicados",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "comunicados_rh_insert",
+    "table": "comunicados",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "comunicados_rh_update",
+    "table": "comunicados",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "comunicados_rh_delete",
+    "table": "comunicados",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_tenant_select",
+    "table": "convenios",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_rh_insert",
+    "table": "convenios",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_rh_update",
+    "table": "convenios",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_rh_delete",
+    "table": "convenios",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_tenant_select",
+    "table": "seguros_vida",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_rh_insert",
+    "table": "seguros_vida",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_rh_update",
+    "table": "seguros_vida",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_rh_delete",
+    "table": "seguros_vida",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_tenant_select",
+    "table": "departamentos",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_rh_insert",
+    "table": "departamentos",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_rh_update",
+    "table": "departamentos",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_rh_delete",
+    "table": "departamentos",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_tenant_select",
+    "table": "pensoes",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "colaborador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.empresa_id IN (SELECT public.get_user_empresas(auth.uid())) )",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_rh_insert",
+    "table": "pensoes",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_rh_update",
+    "table": "pensoes",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "check": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_rh_delete",
+    "table": "pensoes",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "premiacoes_campanhas_tenant_select",
+    "table": "premiacoes_campanhas",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pertence_a_empresa(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "premiacoes_campanhas_rh_manage",
+    "table": "premiacoes_campanhas",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "cnab_remessas_rh_manage",
+    "table": "cnab_remessas",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "canal_etica_rh_select",
+    "table": "canal_etica",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "canal_etica_rh_update",
+    "table": "canal_etica",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "canal_etica_admin_delete",
+    "table": "canal_etica",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -52827,15 +52987,6 @@
     "src": "supabase/migrations/20260723130000_fix_ferias_prog_coletivas_audit_bucket_priv.sql"
    },
    {
-    "name": "trg_pensoes_set_empresa",
-    "when": "BEFORE INSERT OR UPDATE OF COLABORADOR_ID",
-    "table": "pensoes",
-    "function": "fn_pensoes_set_empresa",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql"
-   },
-   {
     "name": "trg_documentos_afastamento_validacao",
     "when": "BEFORE UPDATE OF VALIDADO",
     "table": "documentos_afastamento",
@@ -52969,6 +53120,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "name": "trg_pensoes_set_empresa",
+    "when": "BEFORE INSERT OR UPDATE OF COLABORADOR_ID, EMPRESA_ID",
+    "table": "pensoes",
+    "function": "fn_pensoes_set_empresa",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
+   },
+   {
+    "name": "tr_bloquear_aprovacao_ponto_sem_rh",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "registros_ponto",
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
     "name": "ajuste_ponto_status_transition",
@@ -61880,7 +62049,7 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
     "security_definer": true,
     "search_path": true,
     "body": "BEGIN IF NEW.colaborador_id IS NOT NULL THEN SELECT c.empresa_id INTO NEW.empresa_id FROM public.colaboradores c WHERE c.id = NEW.colaborador_id; END IF; RETURN NEW; END;",
@@ -63086,6 +63255,23 @@
     "raises": [],
     "tables": [
      "user_roles"
+    ]
+   },
+   "bloquear_aprovacao_ponto_sem_rh": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF current_user NOT IN ('authenticated', 'anon') THEN RETURN NEW; END IF; IF public.pode_gerir_pessoas(NEW.empresa_id) THEN RETURN NEW; END IF; IF TG_OP = 'INSERT' THEN IF COALESCE(NEW.aprovado, false) OR NEW.aprovado_por IS NOT NULL OR NEW.aprovado_em IS NOT NULL THEN RAISE EXCEPTION 'Somente RH/admin pode aprovar registro de ponto' USING ERRCODE = '42501'; END IF; ELSIF COALESCE(OLD.aprovado, false) AND (to_jsonb(NEW) - '{updated_at,version,hash_digital}'::text[]) IS DISTINCT FROM (to_jsonb(OLD) - '{updated_at,version,hash_digital}'::text[]) THEN RAISE EXCEPTION 'registro aprovado: só RH/gestor altera' USING ERRCODE = '42501'; ELSIF NEW.aprovado IS DISTINCT FROM OLD.aprovado OR NEW.a …",
+    "raises": [
+     "Somente RH/admin pode aprovar registro de ponto",
+     "registro aprovado: só RH/gestor altera",
+     "Somente RH/admin pode aprovar registro de ponto"
+    ],
+    "tables": [
+     "OLD"
     ]
    },
    "fn_trigger_whatsapp_on_event": {
@@ -68981,6 +69167,30 @@
     "unique": true,
     "where": "",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "name": "idx_pensoes_empresa_id",
+    "table": "pensoes",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
+   },
+   {
+    "name": "idx_pensoes_colaborador_id",
+    "table": "pensoes",
+    "columns": "colaborador_id",
+    "unique": false,
+    "where": "",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
+   },
+   {
+    "name": "idx_pensoes_empresa_ativo",
+    "table": "pensoes",
+    "columns": "empresa_id",
+    "unique": false,
+    "where": "WHERE ativo IS TRUE",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
    }
   ],
   "cron_jobs": [
@@ -70284,6 +70494,14 @@
    "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql",
    "supabase/migrations/20261114000200_planos_saude_updated_at.sql",
    "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql",
+   "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
+   "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql",
+   "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
+   "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
+   "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
+   "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql",
+   "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+   "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
    "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
    "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
@@ -81179,6 +81397,22 @@
    },
    {
     "kind": "revoke",
+    "privs": "execute",
+    "object": "fn_auto_generate_training_certificate",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "fn_pensoes_set_empresa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
+   },
+   {
+    "kind": "revoke",
     "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
@@ -82174,6 +82408,21 @@
     "function": "admin_associar_usuario_empresa",
     "msg": "Apenas administradores podem associar usuários a empresas",
     "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "msg": "Somente RH/admin pode aprovar registro de ponto",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "msg": "registro aprovado: só RH/gestor altera",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "msg": "Somente RH/admin pode aprovar registro de ponto",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -98559,8 +98808,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 801,
-   "lines": 67155,
+   "files": 809,
+   "lines": 67938,
    "tables": [
     "profiles",
     "user_roles"
@@ -147605,6 +147854,10 @@
     "line": "WHERE scan_at < now() - interval '180 days';"
    },
    {
+    "file": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
+    "line": "CASE WHEN _validade_meses > 0 THEN (CURRENT_DATE + (_validade_meses * interval '1 month'))::DATE ELSE NULL END"
+   },
+   {
     "file": "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
     "line": "v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;"
    }
@@ -178819,16 +179072,6 @@
     "src": "supabase/migrations/20260315215434_22f1107b-4396-44b9-bfaf-cf7030e9fecd.sql"
    },
    {
-    "name": "empresa_comunicados",
-    "table": "comunicados",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315215434_22f1107b-4396-44b9-bfaf-cf7030e9fecd.sql"
-   },
-   {
     "name": "empresa_turnos",
     "table": "turnos",
     "cmd": "ALL",
@@ -179549,16 +179792,6 @@
     "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
    },
    {
-    "name": "tenant_convenios",
-    "table": "convenios",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
-   },
-   {
     "name": "tenant_dados_estagiario",
     "table": "dados_estagiario",
     "cmd": "ALL",
@@ -179571,16 +179804,6 @@
    {
     "name": "tenant_dctfweb_declaracoes",
     "table": "dctfweb_declaracoes",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
-   },
-   {
-    "name": "tenant_departamentos",
-    "table": "departamentos",
     "cmd": "ALL",
     "roles": "authenticated",
     "mode": "permissive",
@@ -179711,16 +179934,6 @@
    {
     "name": "tenant_sefip_arquivos",
     "table": "sefip_arquivos",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "src": "supabase/migrations/20260315223605_ba6057a1-f7df-4271-8b2e-12448947b960.sql"
-   },
-   {
-    "name": "tenant_seguros_vida",
-    "table": "seguros_vida",
     "cmd": "ALL",
     "roles": "authenticated",
     "mode": "permissive",
@@ -180527,26 +180740,6 @@
     "using": "",
     "check": "EXISTS ( SELECT 1 FROM public.inscricoes_cursos i JOIN public.profiles p ON p.id = i.colaborador_id WHERE i.id = inscricao_id AND p.user_id = auth.uid() )",
     "src": "supabase/migrations/20260513193156_bc992237-d9ae-4c9a-aebb-fcf110a1ff73.sql"
-   },
-   {
-    "name": "Users can view their own company campaigns",
-    "table": "premiacoes_campanhas",
-    "cmd": "SELECT",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-    "check": "",
-    "src": "supabase/migrations/20260520131308_278e1ff0-fe3b-47e9-af8e-38b653755457.sql"
-   },
-   {
-    "name": "Users can manage their own company campaigns",
-    "table": "premiacoes_campanhas",
-    "cmd": "ALL",
-    "roles": "public",
-    "mode": "permissive",
-    "using": "auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-    "check": "",
-    "src": "supabase/migrations/20260520131308_278e1ff0-fe3b-47e9-af8e-38b653755457.sql"
    },
    {
     "name": "Usuários podem ver seus próprios cenários de simulação",
@@ -182849,16 +183042,6 @@
     "src": "supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql"
    },
    {
-    "name": "tenant_pensoes",
-    "table": "pensoes",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-    "check": "colaborador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.empresa_id IN (SELECT public.get_user_empresas(auth.uid())) )",
-    "src": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql"
-   },
-   {
     "name": "folha_auditoria_tenant_select",
     "table": "folha_auditoria",
     "cmd": "SELECT",
@@ -184769,26 +184952,6 @@
     "src": "supabase/migrations/20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql"
    },
    {
-    "name": "cnab_remessas_rh_manage",
-    "table": "cnab_remessas",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pode_gerir_rh(empresa_id)",
-    "check": "public.pode_gerir_rh(empresa_id)",
-    "src": "supabase/migrations/20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql"
-   },
-   {
-    "name": "cnab_remessas_tenant_read",
-    "table": "cnab_remessas",
-    "cmd": "SELECT",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pertence_a_empresa(empresa_id)",
-    "check": "",
-    "src": "supabase/migrations/20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql"
-   },
-   {
     "name": "cnab_itens_rh_manage",
     "table": "cnab_itens",
     "cmd": "ALL",
@@ -184966,16 +185129,6 @@
     "mode": "permissive",
     "using": "",
     "check": "empresa_id IS NULL OR public.pertence_a_empresa(empresa_id)",
-    "src": "supabase/migrations/20260924200000_p0_rls_least_privilege_remediation.sql"
-   },
-   {
-    "name": "canal_etica_rh_manage",
-    "table": "canal_etica",
-    "cmd": "ALL",
-    "roles": "authenticated",
-    "mode": "permissive",
-    "using": "public.pode_gerir_rh(empresa_id)",
-    "check": "public.pode_gerir_rh(empresa_id)",
     "src": "supabase/migrations/20260924200000_p0_rls_least_privilege_remediation.sql"
    },
    {
@@ -185497,6 +185650,266 @@
     "using": "public.pode_gerir_config_ponto(empresa_id)",
     "check": "public.pode_gerir_config_ponto(empresa_id)",
     "src": "supabase/migrations/20261112010000_configuracoes_ponto_corrige_policies_prod.sql"
+   },
+   {
+    "name": "comunicados_tenant_select",
+    "table": "comunicados",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "comunicados_rh_insert",
+    "table": "comunicados",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "comunicados_rh_update",
+    "table": "comunicados",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "comunicados_rh_delete",
+    "table": "comunicados",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_tenant_select",
+    "table": "convenios",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_rh_insert",
+    "table": "convenios",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_rh_update",
+    "table": "convenios",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "convenios_rh_delete",
+    "table": "convenios",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_tenant_select",
+    "table": "seguros_vida",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_rh_insert",
+    "table": "seguros_vida",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_rh_update",
+    "table": "seguros_vida",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "seguros_vida_rh_delete",
+    "table": "seguros_vida",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_tenant_select",
+    "table": "departamentos",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_rh_insert",
+    "table": "departamentos",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_rh_update",
+    "table": "departamentos",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "departamentos_rh_delete",
+    "table": "departamentos",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_tenant_select",
+    "table": "pensoes",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "colaborador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.empresa_id IN (SELECT public.get_user_empresas(auth.uid())) )",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_rh_insert",
+    "table": "pensoes",
+    "cmd": "INSERT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "",
+    "check": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_rh_update",
+    "table": "pensoes",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "check": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "pensoes_rh_delete",
+    "table": "pensoes",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "premiacoes_campanhas_tenant_select",
+    "table": "premiacoes_campanhas",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pertence_a_empresa(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "premiacoes_campanhas_rh_manage",
+    "table": "premiacoes_campanhas",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "cnab_remessas_rh_manage",
+    "table": "cnab_remessas",
+    "cmd": "ALL",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "canal_etica_rh_select",
+    "table": "canal_etica",
+    "cmd": "SELECT",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "canal_etica_rh_update",
+    "table": "canal_etica",
+    "cmd": "UPDATE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.pode_gerir_rh(empresa_id)",
+    "check": "public.pode_gerir_rh(empresa_id)",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "name": "canal_etica_admin_delete",
+    "table": "canal_etica",
+    "cmd": "DELETE",
+    "roles": "authenticated",
+    "mode": "permissive",
+    "using": "public.is_admin(auth.uid())",
+    "check": "",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
     "name": "Acesso aos itens via folha",
@@ -188831,15 +189244,6 @@
     "src": "supabase/migrations/20260723130000_fix_ferias_prog_coletivas_audit_bucket_priv.sql"
    },
    {
-    "name": "trg_pensoes_set_empresa",
-    "when": "BEFORE INSERT OR UPDATE OF COLABORADOR_ID",
-    "table": "pensoes",
-    "function": "fn_pensoes_set_empresa",
-    "condition": "",
-    "each": "row",
-    "src": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql"
-   },
-   {
     "name": "trg_documentos_afastamento_validacao",
     "when": "BEFORE UPDATE OF VALIDADO",
     "table": "documentos_afastamento",
@@ -188973,6 +189377,24 @@
     "condition": "",
     "each": "row",
     "src": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql"
+   },
+   {
+    "name": "trg_pensoes_set_empresa",
+    "when": "BEFORE INSERT OR UPDATE OF COLABORADOR_ID, EMPRESA_ID",
+    "table": "pensoes",
+    "function": "fn_pensoes_set_empresa",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
+   },
+   {
+    "name": "tr_bloquear_aprovacao_ponto_sem_rh",
+    "when": "BEFORE INSERT OR UPDATE",
+    "table": "registros_ponto",
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "condition": "",
+    "each": "row",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
     "name": "ajuste_ponto_status_transition",
@@ -197884,7 +198306,7 @@
     "args": "",
     "returns": "trigger",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260728172359_1df12741-473a-4e8d-92cd-7b0821eb4203.sql",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
     "security_definer": true,
     "search_path": true,
     "body": "BEGIN IF NEW.colaborador_id IS NOT NULL THEN SELECT c.empresa_id INTO NEW.empresa_id FROM public.colaboradores c WHERE c.id = NEW.colaborador_id; END IF; RETURN NEW; END;",
@@ -199092,6 +199514,23 @@
      "user_roles"
     ]
    },
+   "bloquear_aprovacao_ponto_sem_rh": {
+    "args": "",
+    "returns": "trigger",
+    "lang": "plpgsql",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+    "security_definer": false,
+    "search_path": true,
+    "body": "BEGIN IF current_user NOT IN ('authenticated', 'anon') THEN RETURN NEW; END IF; IF public.pode_gerir_pessoas(NEW.empresa_id) THEN RETURN NEW; END IF; IF TG_OP = 'INSERT' THEN IF COALESCE(NEW.aprovado, false) OR NEW.aprovado_por IS NOT NULL OR NEW.aprovado_em IS NOT NULL THEN RAISE EXCEPTION 'Somente RH/admin pode aprovar registro de ponto' USING ERRCODE = '42501'; END IF; ELSIF COALESCE(OLD.aprovado, false) AND (to_jsonb(NEW) - '{updated_at,version,hash_digital}'::text[]) IS DISTINCT FROM (to_jsonb(OLD) - '{updated_at,version,hash_digital}'::text[]) THEN RAISE EXCEPTION 'registro aprovado: só RH/gestor altera' USING ERRCODE = '42501'; ELSIF NEW.aprovado IS DISTINCT FROM OLD.aprovado OR NEW.a …",
+    "raises": [
+     "Somente RH/admin pode aprovar registro de ponto",
+     "registro aprovado: só RH/gestor altera",
+     "Somente RH/admin pode aprovar registro de ponto"
+    ],
+    "tables": [
+     "OLD"
+    ]
+   },
    "fn_trigger_whatsapp_on_event": {
     "args": "",
     "returns": "?",
@@ -199749,6 +200188,21 @@
     "function": "admin_associar_usuario_empresa",
     "msg": "Apenas administradores podem associar usuários a empresas",
     "src": "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql"
+   },
+   {
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "msg": "Somente RH/admin pode aprovar registro de ponto",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "msg": "registro aprovado: só RH/gestor altera",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
+   },
+   {
+    "function": "bloquear_aprovacao_ponto_sem_rh",
+    "msg": "Somente RH/admin pode aprovar registro de ponto",
+    "src": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -206191,7 +206645,6 @@
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "authenticated: public.pode_gerir_rh(empresa_id)",
      "authenticated: empresa_id IS NULL OR public.pertence_a_empresa(empresa_id)",
-     "authenticated: public.pode_gerir_rh(empresa_id)",
      "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "UPDATE": [
@@ -206203,7 +206656,7 @@
     "DELETE": [
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
      "authenticated: public.pode_gerir_rh(empresa_id)",
-     "authenticated: public.pode_gerir_rh(empresa_id)",
+     "authenticated: public.is_admin(auth.uid())",
      "authenticated: public.pode_gerir_rh(empresa_id)"
     ]
    },
@@ -206507,8 +206960,7 @@
     "rls": "enabled",
     "SELECT": [
      "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.pode_gerir_rh(empresa_id)",
-     "authenticated: public.pertence_a_empresa(empresa_id)"
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "INSERT": [
      "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
@@ -206666,20 +207118,20 @@
    "comunicados": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
     ],
     "INSERT": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "UPDATE": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "DELETE": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ]
    },
    "comunicados_leituras": {
@@ -207031,13 +207483,13 @@
      "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
     ],
     "INSERT": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "UPDATE": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "DELETE": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ]
    },
    "convenios_colaboradores": {
@@ -207162,27 +207614,27 @@
     "SELECT": [
      "public: empresa_id = public.user_empresa_id()",
      "public: empresa_id = public.user_empresa_id() AND auth.jwt() ->> 'role' IN ('admin', 'rh')",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
     ],
     "INSERT": [
      "public: empresa_id = public.user_empresa_id() AND auth.jwt() ->> 'role' IN ('admin', 'rh')",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "UPDATE": [
      "public: empresa_id = public.user_empresa_id() AND auth.jwt() ->> 'role' IN ('admin', 'rh')",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "DELETE": [
      "public: empresa_id = public.user_empresa_id() AND auth.jwt() ->> 'role' IN ('admin', 'rh')",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ]
    },
    "dependentes": {
@@ -209760,26 +210212,26 @@
     "SELECT": [
      "public: auth.uid() IS NOT NULL",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: colaborador_id IN ( SELECT c.id FROM public.colaboradores c WHERE c.empresa_id IN (SELECT public.get_user_empresas(auth.uid()"
     ],
     "INSERT": [
      "public: auth.uid() IS NOT NULL",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )"
     ],
     "UPDATE": [
      "public: auth.uid() IS NOT NULL",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )"
     ],
     "DELETE": [
      "public: auth.uid() IS NOT NULL",
      "authenticated: public.rls_tenant_or_admin(empresa_id)",
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: empresa_id = public.get_auth_empresa_id()"
+     "authenticated: empresa_id = public.get_auth_empresa_id()",
+     "authenticated: EXISTS ( SELECT 1 FROM public.colaboradores c WHERE c.id = pensoes.colaborador_id AND public.pode_gerir_rh(c.empresa_id) )"
     ]
    },
    "periodos_aquisitivos": {
@@ -210247,21 +210699,21 @@
    "premiacoes_campanhas": {
     "rls": "enabled",
     "SELECT": [
-     "public: auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-     "public: auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pertence_a_empresa(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "INSERT": [
-     "public: auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "UPDATE": [
-     "public: auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "DELETE": [
-     "public: auth.uid() IN (SELECT user_id FROM public.profiles WHERE empresa_id = premiacoes_campanhas.empresa_id)",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ]
    },
    "premiacoes_cenarios_simulacao": {
@@ -210892,20 +211344,20 @@
    "seguros_vida": {
     "rls": "enabled",
     "SELECT": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))"
     ],
     "INSERT": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "UPDATE": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ],
     "DELETE": [
-     "authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))",
-     "authenticated: public.rls_tenant_or_admin(empresa_id)"
+     "authenticated: public.rls_tenant_or_admin(empresa_id)",
+     "authenticated: public.pode_gerir_rh(empresa_id)"
     ]
    },
    "simulacoes_fiscais": {
@@ -212581,6 +213033,7 @@
    "supabase/migrations/20261028220000_pagar_desligamento_transacional.sql",
    "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
+   "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -223314,6 +223767,22 @@
     "objkind": "function",
     "roles": "PUBLIC, anon, authenticated",
     "src": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "execute",
+    "object": "fn_auto_generate_training_certificate",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "fn_pensoes_set_empresa",
+    "objkind": "function",
+    "roles": "PUBLIC, anon, authenticated",
+    "src": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql"
    },
    {
     "kind": "revoke",
@@ -281841,6 +282310,42 @@
    "path": "supabase/migrations/20261114000200_planos_saude_updated_at.verify.sql",
    "lines": 20
   },
+  "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql": {
+   "path": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
+   "lines": 75,
+   "temporal": [
+    "CASE WHEN _validade_meses > 0 THEN (CURRENT_DATE + (_validade_meses * interval '1 month'))::DATE ELSE NULL END"
+   ]
+  },
+  "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql": {
+   "path": "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql",
+   "lines": 13
+  },
+  "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql": {
+   "path": "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
+   "lines": 181
+  },
+  "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql": {
+   "path": "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
+   "lines": 59
+  },
+  "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql": {
+   "path": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
+   "lines": 116
+  },
+  "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql": {
+   "path": "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql",
+   "lines": 27
+  },
+  "supabase/migrations/20261114000600_rls_escrita_por_papel.sql": {
+   "path": "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+   "lines": 252,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql": {
+   "path": "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
+   "lines": 60
+  },
   "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql": {
    "path": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
    "lines": 46
@@ -282073,10 +282578,51 @@
   }
  },
  "git": {
-  "sha": "bb9a156793cd2c65761a53327e527746626fd1da",
+  "sha": "1241a0033a53294d611ddca9a7446b0d46c37a08",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1241a00",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)",
+    "files": [
+     "scripts/audit-rls-least-privilege.mjs",
+     "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+     "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql"
+    ]
+   },
+   {
+    "sha": "7aa798f",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "Pensões: recria a coluna empresa_id que falta no banco de produção (#529)",
+    "files": [
+     "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
+     "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql"
+    ]
+   },
+   {
+    "sha": "b93ea48",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)",
+    "files": [
+     "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
+     "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql"
+    ]
+   },
+   {
+    "sha": "7264f0d",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)",
+    "files": [
+     "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
+     "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql"
+    ]
+   },
    {
     "sha": "bb9a156",
     "date": "2026-11-14",
@@ -282338,53 +282884,6 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "646fe24",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "chore: regenera inventario/estado/rotas.json após os merges da onda D (#542)",
-    "files": [
-     "inventario/estado/rotas.json"
-    ]
-   },
-   {
-    "sha": "fe3ed82",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Comunicação Interna: permite editar comunicados já publicados (#523)",
-    "files": [
-     "src/pages/ComunicacaoInternaPage.tsx",
-     "src/pages/__tests__/ComunicacaoInternaPage.test.tsx"
-    ]
-   },
-   {
-    "sha": "136f6e0",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Férias: botão \"Solicitar Férias\" passa a criar a solicitação (#526)",
-    "files": [
-     "src/components/__tests__/FeriasForm.test.tsx",
-     "src/components/__tests__/MobileQuickActions.test.tsx",
-     "src/components/ferias/FeriasForm.tsx",
-     "src/components/ferias/index.ts",
-     "src/components/layout/MobileQuickActions.tsx",
-     "src/pages/FeriasPage.tsx",
-     "src/services/feriasService.ts",
-     "src/utils/__tests__/regrasSolicitacaoFerias.test.ts",
-     "src/utils/regrasSolicitacaoFerias.ts"
-    ]
-   },
-   {
-    "sha": "e3acfad",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "CAT (S-2210) pendente agora pode ser corrigida antes da transmissão (#525)",
-    "files": [
-     "src/pages/AdminCatPage.tsx",
-     "src/pages/__tests__/adminCatEdicao.test.ts",
-     "src/pages/adminCatEdicao.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -282394,7 +282893,7 @@
    ],
    [
     "inventario/estado/rotas.json",
-    4
+    3
    ],
    [
     "scripts/sync/autocommit-local.sh",
@@ -282411,6 +282910,42 @@
    [
     ".github/workflows/canonical-migrations.yml",
     2
+   ],
+   [
+    "scripts/audit-rls-least-privilege.mjs",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000500_pensoes_empresa_id_drift.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql",
+    1
    ],
    [
     "AUDITORIA_10_10.md",
@@ -282430,42 +282965,6 @@
    ],
    [
     "src/pages/SegurosVidaPage.tsx",
-    1
-   ],
-   [
-    "src/pages/__tests__/SegurosVidaPage.test.tsx",
-    1
-   ],
-   [
-    "src/pages/TreinamentosPage.tsx",
-    1
-   ],
-   [
-    "src/App.tsx",
-    1
-   ],
-   [
-    "src/components/portal/PortalOverviewTab.tsx",
-    1
-   ],
-   [
-    "src/pages/AdmissoesPage.tsx",
-    1
-   ],
-   [
-    "src/pages/BeneficioFormPage.tsx",
-    1
-   ],
-   [
-    "src/pages/BeneficiosPage.tsx",
-    1
-   ],
-   [
-    "src/pages/DashboardExecutivoPage.tsx",
-    1
-   ],
-   [
-    "src/pages/PlanosSaudePage.tsx",
     1
    ]
   ]

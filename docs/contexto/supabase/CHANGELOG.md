@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-14 12:29 UTC
+
+- **functions** alterado (11): `public.bloquear_aprovacao_ponto_sem_rh()`, `public.fn_auto_generate_training_certificate()`, `public.fn_pensoes_set_empresa()`, `public.fn_update_admissao_checklist()`, `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.pertence_a_empresa(_empresa_id uuid)`, `public.pode_gerir_pessoas(_empresa_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.process_ferias_audit()`, `public.update_updated_at_column()`
+
 ## 2026-11-14 12:11 UTC
 
 - **colunas** adicionado (16): `public.auth_gov_br_sessions.updated_at`, `public.blocked_ips.updated_at`, `public.controle_acesso.updated_at`, `public.documentos_admissao.updated_at`, `public.documentos_assinatura.updated_at`, `public.documentos_colaborador.updated_at`, `public.escalas_trabalho.updated_at`, `public.ferias_solicitacoes.updated_at`, `public.notificacoes.updated_at`, `public.onboarding_tarefas.updated_at`, `public.onboarding_templates.updated_at`, `public.pensoes.empresa_id`, `public.periodos_ponto.updated_at`, `public.rubricas_folha.updated_at`, `public.seguros_vida.updated_at`, `public.treinamentos.updated_at`

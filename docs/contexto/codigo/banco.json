@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 801,
+ "migrations": 809,
  "seeds": [],
  "avisos": [
   "176 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -251,6 +251,7 @@
   "audit_log_append_only",
   "audit_log_unified_default_source",
   "auto_vincular_admins_empresa",
+  "bloquear_aprovacao_ponto_sem_rh",
   "calcular_dias_direito_ferias",
   "calcular_dias_ferias",
   "calcular_prazo_cat",
@@ -2170,13 +2171,6 @@
    "funcao": "trg_pdis_status_transition"
   },
   {
-   "nome": "trg_pensoes_set_empresa",
-   "quando": "before",
-   "evento": "insert or update of colaborador_id",
-   "tabela": "pensoes",
-   "funcao": "fn_pensoes_set_empresa"
-  },
-  {
    "nome": "trigger_pensoes_updated_at",
    "quando": "before",
    "evento": "update",
@@ -2413,6 +2407,13 @@
    "evento": "update or delete",
    "tabela": "registros_ponto",
    "funcao": "registrar_auditoria_ponto"
+  },
+  {
+   "nome": "tr_bloquear_aprovacao_ponto_sem_rh",
+   "quando": "before",
+   "evento": "insert or update",
+   "tabela": "registros_ponto",
+   "funcao": "bloquear_aprovacao_ponto_sem_rh"
   },
   {
    "nome": "tr_gerar_hash_ponto",
@@ -7355,8 +7356,8 @@
      "ref": null
     },
     "updated_at": {
-     "tipo": "timestamp with time zone",
-     "nn": false,
+     "tipo": "timestamptz",
+     "nn": true,
      "pk": false,
      "default": "now()",
      "ref": null
@@ -10245,8 +10246,8 @@
      "ref": null
     },
     "updated_at": {
-     "tipo": "timestamp with time zone",
-     "nn": false,
+     "tipo": "timestamptz",
+     "nn": true,
      "pk": false,
      "default": "now()",
      "ref": null
@@ -10575,20 +10576,32 @@
    "rls": true,
    "policies": [
     {
+     "nome": "canal_etica_admin_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "canal_etica_reportar",
      "comando": "insert",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "canal_etica_rh_manage",
+     "nome": "canal_etica_rh_only",
      "comando": "all",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "canal_etica_rh_only",
-     "comando": "all",
+     "nome": "canal_etica_rh_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "canal_etica_rh_update",
+     "comando": "update",
      "para": "authenticated",
      "tipo": "permissive"
     },
@@ -13291,12 +13304,6 @@
      "tipo": "permissive"
     },
     {
-     "nome": "cnab_remessas_tenant_read",
-     "comando": "select",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
      "nome": "cnab_remessas_tenant_select",
      "comando": "select",
      "para": "authenticated",
@@ -15895,14 +15902,32 @@
    "rls": true,
    "policies": [
     {
+     "nome": "comunicados_rh_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "comunicados_rh_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "comunicados_rh_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "comunicados_tenant",
      "comando": "all",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "empresa_comunicados",
-     "comando": "all",
+     "nome": "comunicados_tenant_select",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -18915,8 +18940,8 @@
      "ref": null
     },
     "updated_at": {
-     "tipo": "timestamp with time zone",
-     "nn": false,
+     "tipo": "timestamptz",
+     "nn": true,
      "pk": false,
      "default": "now()",
      "ref": null
@@ -19034,8 +19059,26 @@
    "rls": true,
    "policies": [
     {
-     "nome": "tenant_convenios",
-     "comando": "all",
+     "nome": "convenios_rh_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "convenios_rh_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "convenios_rh_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "convenios_tenant_select",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -20182,6 +20225,24 @@
    "rls": true,
    "policies": [
     {
+     "nome": "departamentos_rh_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "departamentos_rh_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "departamentos_rh_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "departamentos_tenant",
      "comando": "all",
      "para": "authenticated",
@@ -20190,6 +20251,12 @@
     {
      "nome": "departamentos_tenant_all",
      "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "departamentos_tenant_select",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     },
@@ -20203,12 +20270,6 @@
      "nome": "depto_select",
      "comando": "select",
      "para": "public",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "tenant_departamentos",
-     "comando": "all",
-     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -22046,8 +22107,8 @@
      "ref": null
     },
     "updated_at": {
-     "tipo": "timestamp with time zone",
-     "nn": false,
+     "tipo": "timestamptz",
+     "nn": true,
      "pk": false,
      "default": "now()",
      "ref": null
@@ -22415,10 +22476,10 @@
      "ref": null
     },
     "updated_at": {
-     "tipo": "timestamp with time zone",
+     "tipo": "timestamptz",
      "nn": true,
      "pk": false,
-     "default": "timezone('utc'::text, now())",
+     "default": "now()",
      "ref": null
     },
     "userAgent_assinatura": {
@@ -22650,6 +22711,13 @@
      "default": null,
      "ref": null
     },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
     "url": {
      "tipo": "text",
      "nn": true,
@@ -22716,9 +22784,7 @@
     "so_na_migration": [
      "empresa_id"
     ],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 1,
    "usada_em_edges": [],
@@ -25037,6 +25103,13 @@
      "pk": false,
      "default": null,
      "ref": "turnos"
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
     }
    },
    "rls": true,
@@ -25091,9 +25164,7 @@
    },
    "drift": {
     "so_na_migration": [],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 1,
    "usada_em_edges": [
@@ -29299,6 +29370,13 @@
      "pk": false,
      "default": "'pendente'",
      "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
     }
    },
    "rls": true,
@@ -29339,9 +29417,7 @@
    },
    "drift": {
     "so_na_migration": [],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 1,
    "usada_em_edges": [
@@ -39548,6 +39624,13 @@
      "default": null,
      "ref": null
     },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
     "user_id": {
      "tipo": "uuid",
      "nn": false,
@@ -39669,9 +39752,7 @@
      "link",
      "data_leitura"
     ],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 7,
    "usada_em_edges": [
@@ -40243,8 +40324,8 @@
      "ref": null
     },
     "updated_at": {
-     "tipo": "timestamp with time zone",
-     "nn": false,
+     "tipo": "timestamptz",
+     "nn": true,
      "pk": false,
      "default": "now()",
      "ref": null
@@ -40455,6 +40536,13 @@
      "pk": false,
      "default": null,
      "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
     }
    },
    "rls": true,
@@ -40484,9 +40572,7 @@
    },
    "drift": {
     "so_na_migration": [],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 1,
    "usada_em_edges": [],
@@ -42462,6 +42548,24 @@
      "tipo": "permissive"
     },
     {
+     "nome": "pensoes_rh_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pensoes_rh_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "pensoes_rh_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "pensoes_select",
      "comando": "select",
      "para": "public",
@@ -42480,15 +42584,15 @@
      "tipo": "permissive"
     },
     {
-     "nome": "pensoes_update",
-     "comando": "update",
-     "para": "public",
+     "nome": "pensoes_tenant_select",
+     "comando": "select",
+     "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "tenant_pensoes",
-     "comando": "all",
-     "para": "authenticated",
+     "nome": "pensoes_update",
+     "comando": "update",
+     "para": "public",
      "tipo": "permissive"
     }
    ],
@@ -42580,7 +42684,6 @@
     "calcular-folha"
    ],
    "triggers": [
-    "trg_pensoes_set_empresa",
     "trigger_pensoes_updated_at",
     "update_pensoes_updated_at"
    ],
@@ -42947,6 +43050,13 @@
      "pk": false,
      "default": "'aberto'",
      "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
     }
    },
    "rls": true,
@@ -42992,9 +43102,7 @@
    },
    "drift": {
     "so_na_migration": [],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 2,
    "usada_em_edges": [],
@@ -46233,21 +46341,21 @@
    "rls": true,
    "policies": [
     {
+     "nome": "premiacoes_campanhas_rh_manage",
+     "comando": "all",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
      "nome": "premiacoes_campanhas_tenant",
      "comando": "all",
      "para": "authenticated",
      "tipo": "permissive"
     },
     {
-     "nome": "Users can manage their own company campaigns",
-     "comando": "all",
-     "para": "public",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "Users can view their own company campaigns",
+     "nome": "premiacoes_campanhas_tenant_select",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],
@@ -50020,6 +50128,7 @@
    "triggers": [
     "audit_registros_ponto",
     "tr_auditoria_registros_ponto",
+    "tr_bloquear_aprovacao_ponto_sem_rh",
     "tr_gerar_hash_ponto",
     "tr_increment_version_ponto",
     "update_registros_ponto_updated_at"
@@ -50953,9 +51062,9 @@
     },
     "updated_at": {
      "tipo": "timestamptz",
-     "nn": false,
+     "nn": true,
      "pk": false,
-     "default": "NOW()",
+     "default": "now()",
      "ref": null
     }
    },
@@ -51847,10 +51956,35 @@
      "pk": false,
      "default": null,
      "ref": null
+    },
+    "updated_at": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
     }
    },
    "rls": true,
    "policies": [
+    {
+     "nome": "seguros_vida_rh_delete",
+     "comando": "delete",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "seguros_vida_rh_insert",
+     "comando": "insert",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
+    {
+     "nome": "seguros_vida_rh_update",
+     "comando": "update",
+     "para": "authenticated",
+     "tipo": "permissive"
+    },
     {
      "nome": "seguros_vida_tenant",
      "comando": "all",
@@ -51858,8 +51992,8 @@
      "tipo": "permissive"
     },
     {
-     "nome": "tenant_seguros_vida",
-     "comando": "all",
+     "nome": "seguros_vida_tenant_select",
+     "comando": "select",
      "para": "authenticated",
      "tipo": "permissive"
     }
@@ -51889,9 +52023,7 @@
    },
    "drift": {
     "so_na_migration": [],
-    "so_no_types": [
-     "updated_at"
-    ]
+    "so_no_types": []
    },
    "usada_no_front": 2,
    "usada_em_edges": [],
@@ -57528,9 +57660,9 @@
     },
     "updated_at": {
      "tipo": "timestamptz",
-     "nn": false,
+     "nn": true,
      "pk": false,
-     "default": "NOW()",
+     "default": "now()",
      "ref": null
     },
     "updated_by": {

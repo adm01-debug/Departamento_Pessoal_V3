@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bb9a156793cd2c65761a53327e527746626fd1da` (2026-11-14T08:40:46-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1241a0033a53294d611ddca9a7446b0d46c37a08` (2026-11-14T09:02:09-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1450), SQL (837), Markdown (293), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1450), SQL (845), Markdown (293), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2925 |
+| arquivos_total | 2933 |
 | arquivos_codigo | 1580 |
 | linhas_codigo | 283459 |
 | rotas | 115 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
-| migrations | 801 |
+| migrations | 809 |
 | cron_jobs | 41 |
 | testes | 614 |
 | workflows | 21 |
@@ -376,7 +376,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edges_chamadas_sem_pasta: 0
 - tabelas_sem_rls: 15 — ex.: cbo, cnae, config_retencao
 - tabelas_usadas_sem_definicao: 0
-- tabelas_com_drift_migration_vs_types: 84 — ex.: admissao_tokens, admissoes, afastamentos
+- tabelas_com_drift_migration_vs_types: 79 — ex.: admissao_tokens, admissoes, afastamentos
 - rpcs_sem_definicao: 4 — ex.: aplicar_medida_folha_ponto, complete_admission_esocial_event, drenar_fila_limpeza_lgpd
 - componentes_orfaos: 22 — ex.: src/components/dashboard/SectionHeader.tsx, src/components/layout/Breadcrumb.tsx, src/components/layout/Column.tsx
 - componentes_com_nome_duplicado: 17 — ex.: AlertasRHWidget, CadastroIncompletoWidget, ESocialMonitorWidget
@@ -386,13 +386,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22213 nós · 46990 arestas · 2155 comunidades · grafo do commit `bb9a1567`
-- comunidades maiores: 20260831_corrected_public.sql (493), useEmpresas (486), canonical_schema.sql (476), lucide-react (395), button.tsx (364), vitest (249), cn (233), supabase/types.ts (222), react (214), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
+- 22250 nós · 47006 arestas · 2153 comunidades · grafo do commit `1241a003`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (440), lucide-react (362), cn (360), supabase (315), vitest (285), ref_https (194), react (161), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (45)
+- .github/workflows/canonical-migrations.yml (42)
 - package.json (25)
 - package-lock.json (23)
 - CLAUDE.md (21)
@@ -619,6 +619,10 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-14 `1241a00` Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)
+- 2026-11-14 `7aa798f` Pensões: recria a coluna empresa_id que falta no banco de produção (#529)
+- 2026-11-14 `b93ea48` fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)
+- 2026-11-14 `7264f0d` fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)
 - 2026-11-14 `bb9a156` chore: relatório de auditoria técnica 10/10 (squash)
 - 2026-11-13 `10f6d9f` docs(prod-readiness): registra fechamento da rodada no main 840dbdb (#557/#560) (#561)
 - 2026-11-13 `840dbdb` fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)
@@ -630,10 +634,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `f5c370c` chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)
 - 2026-11-13 `a49f33e` fix(logs): não silenciar console.warn em produção (#554)
 - 2026-11-13 `69cf8aa` infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)
-- 2026-11-13 `2fbfb51` Seguros de Vida: permitir editar apólices (#521)
-- 2026-11-13 `daa557e` fix: treinamentos permite alterar status da inscrição e editar curso (#492)
-- 2026-11-13 `c9caf7f` fix: benefícios, planos de saúde e VT/VA passam a ser editáveis e links que davam 404 foram corrigidos (#484)
-- 2026-11-13 `9d684d7` fix: adiciona planos_saude.updated_at exigida pelo trigger de UPDATE (#498)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

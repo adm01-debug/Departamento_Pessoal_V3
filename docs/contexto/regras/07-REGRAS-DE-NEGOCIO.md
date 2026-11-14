@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `bb9a156793` · branch `main` · 2026-11-14 11:52 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1241a0033a` · branch `main` · 2026-11-14 12:31 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -203,7 +203,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `motivos_afastamento` | motivos_afastamento_read | SELECT | authenticated | permissive | `true` |  |
 | `banco_horas` | empresa_banco_horas | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `pesquisas` | empresa_pesquisas | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
-| `comunicados` | empresa_comunicados | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `turnos` | empresa_turnos | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `escalas_trabalho` | empresa_escalas_trabalho | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `workflows_definicoes` | empresa_workflows_def | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
@@ -276,10 +275,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `centros_custo` | tenant_centros_custo | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `configuracoes_intervalo` | tenant_configuracoes_intervalo | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `contratos` | tenant_contratos | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
-| `convenios` | tenant_convenios | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `dados_estagiario` | tenant_dados_estagiario | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `dctfweb_declaracoes` | tenant_dctfweb_declaracoes | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
-| `departamentos` | tenant_departamentos | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `esocial_eventos` | tenant_esocial_eventos | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `esocial_lotes` | tenant_esocial_lotes | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `feriados` | tenant_feriados | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
@@ -293,7 +290,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `lotacoes` | tenant_lotacoes | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `planos_saude` | tenant_planos_saude | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `sefip_arquivos` | tenant_sefip_arquivos | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
-| `seguros_vida` | tenant_seguros_vida | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `solicitacoes_hora_extra` | tenant_solicitacoes_hora_extra | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `times` | tenant_times | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
 | `treinamentos` | tenant_treinamentos | ALL | authenticated | permissive | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` | `empresa_id IN (SELECT public.get_user_empresas(auth.uid()))` |
@@ -311,7 +307,11 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `historico_cargo` | tenant_historico_cargo | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `periodos_experiencia` | tenant_periodos_experiencia | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `promocoes` | tenant_promocoes | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| … +839 linhas — lista completa em `context.json` | | | | | | |
+| `recargas_vale` | tenant_recargas_vale | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
+| `seguros_colaboradores` | tenant_seguros_colaboradores | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
+| `sinistros_seguro` | tenant_sinistros_seguro | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
+| `transferencias` | tenant_transferencias | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
+| … +855 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -683,7 +683,6 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | on_auth_user_created_role | AFTER INSERT | `auth.users` | `handle_new_user_role` |  |
 | trg_audit_log_mask_sensitive | BEFORE INSERT | `audit_log` | `mask_sensitive_audit_data` |  |
 | trg_audit_default_source | BEFORE INSERT | `audit_log_unified` | `audit_log_unified_default_source` |  |
-| trg_pensoes_set_empresa | BEFORE INSERT OR UPDATE OF COLABORADOR_ID | `pensoes` | `fn_pensoes_set_empresa` |  |
 | trg_documentos_afastamento_validacao | BEFORE UPDATE OF VALIDADO | `documentos_afastamento` | `fn_documentos_afastamento_validacao` |  |
 | trg_colaborador_sync_cargo_texto | BEFORE INSERT OR UPDATE OF CARGO_ID | `colaboradores` | `fn_colaborador_sync_cargo_texto` |  |
 | tr_set_provisoes_folha_total | BEFORE INSERT OR UPDATE OF VALOR_13_SALARIO, VALOR_FERIAS, ENCARGOS_PROVISAO, VALOR_TOTAL | `provisoes_folha` | `set_provisoes_folha_total` |  |
@@ -699,6 +698,8 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_contas_bancarias_encrypt | BEFORE INSERT OR UPDATE | `contas_bancarias` | `encrypt_contas_bancarias_fields` |  |
 | trg_pix_itens_encrypt | BEFORE INSERT OR UPDATE | `pix_itens` | `encrypt_pix_itens_fields` |  |
 | trg_faltas_sync_faltas_periodo | AFTER INSERT OR UPDATE OR DELETE | `faltas` | `fn_faltas_sync_faltas_periodo` |  |
+| trg_pensoes_set_empresa | BEFORE INSERT OR UPDATE OF COLABORADOR_ID, EMPRESA_ID | `pensoes` | `fn_pensoes_set_empresa` |  |
+| tr_bloquear_aprovacao_ponto_sem_rh | BEFORE INSERT OR UPDATE | `registros_ponto` | `bloquear_aprovacao_ponto_sem_rh` |  |
 | ajuste_ponto_status_transition | BEFORE UPDATE OF "STATUS" | `solicitacoes_ajuste_ponto` | `trg_ajuste_ponto_status_transition` |  |
 | audit_admissoes | AFTER INSERT OR DELETE OR UPDATE | `admissoes` | `log_audit_change` |  |
 | audit_afastamentos | AFTER INSERT OR DELETE OR UPDATE | `afastamentos` | `log_audit_change` |  |
@@ -922,8 +923,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_fwd_audit_unified | AFTER INSERT | `trilha_auditoria_ponto` | `fwd_to_audit_unified` |  |
 | trg_gerar_qr_extintor | BEFORE INSERT | `sst_extintores` | `gerar_qr_extintor` |  |
 | trg_holerite_dist_updated | BEFORE UPDATE | `holerite_distribuicoes` | `update_updated_at_column` |  |
-| trg_impedir_alteracao_batida_periodo_fechado_upd | BEFORE UPDATE | `batidas_ponto` | `impedir_alteracao_batida_em_periodo_fechado` |  |
-| … +154 linhas — lista completa em `context.json` | | | | |
+| … +155 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1005,6 +1005,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `set_own_default_empresa` | Autenticação obrigatória | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
 | `set_own_default_empresa` | Empresa não vinculada ao usuário autenticado | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
 | `admin_associar_usuario_empresa` | Apenas administradores podem associar usuários a empresas | `supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql` |
+| `bloquear_aprovacao_ponto_sem_rh` | Somente RH/admin pode aprovar registro de ponto | `supabase/migrations/20261114000600_rls_escrita_por_papel.sql` |
+| `bloquear_aprovacao_ponto_sem_rh` | registro aprovado: só RH/gestor altera | `supabase/migrations/20261114000600_rls_escrita_por_papel.sql` |
+| `bloquear_aprovacao_ponto_sem_rh` | Somente RH/admin pode aprovar registro de ponto | `supabase/migrations/20261114000600_rls_escrita_por_papel.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1226,10 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `revogar_espelho_ponto` | Apenas administradores podem revogar assinaturas | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `revogar_espelho_ponto` | Motivo obrigatório (mín. 5 caracteres) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `seal_enforce` | Selo de integridade inválido para %: o código enviado não confere com o conteúdo do registro. | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `seal_enforce` | Registro selado de % não pode ser alterado: algum campo protegido pelo selo de integridade foi modificado. | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `seal_enforce` | O selo de integridade de % não pode ser substituído manualmente. | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `sec_verify_seals_admin` | Acesso restrito a administradores. | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +49 linhas — lista completa em `context.json` | | |
+| … +52 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -4172,6 +4172,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `DELETE FROM public.logs_sistema WHERE created_at < now() - interval '30 days';` | `supabase/migrations/20261013130000_fix_broken_cron_jobs.sql` |
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/migrations/20261022000000_qa5_db_fixes.sql` |
 | `WHERE scan_at < now() - interval '180 days';` | `supabase/migrations/20261024000000_qa_r4_fixes.sql` |
+| `CASE WHEN _validade_meses > 0 THEN (CURRENT_DATE + (_validade_meses * interval '1 month'))::DATE ELSE NULL END` | `supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql` |
 | `v_fim := (v_inicio + interval '1 month' - interval '1 day')::date;` | `supabase/rebaseline/20260902_secdef_authz_remediation.sql` |
 
 ### H.3 Limites de paginação

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
-   "chore: relatório de auditoria técnica 10/10 (squash)",
-   "docs(prod-readiness): registra fechamento da rodada no main 840dbdb (#557/#560) (#561)",
-   "fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)",
-   "infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)",
-   "docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)"
+   "Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)",
+   "Pensões: recria a coluna empresa_id que falta no banco de produção (#529)",
+   "fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)",
+   "fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)",
+   "chore: relatório de auditoria técnica 10/10 (squash)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -2,11 +2,31 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "bb9a156793cd2c65761a53327e527746626fd1da",
+  "commit": "1241a0033a53294d611ddca9a7446b0d46c37a08",
   "branch": "main",
-  "data_commit": "2026-11-14T08:40:46-03:00",
+  "data_commit": "2026-11-14T09:02:09-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1241a00",
+    "data": "2026-11-14",
+    "assunto": "Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)"
+   },
+   {
+    "sha": "7aa798f",
+    "data": "2026-11-14",
+    "assunto": "Pensões: recria a coluna empresa_id que falta no banco de produção (#529)"
+   },
+   {
+    "sha": "b93ea48",
+    "data": "2026-11-14",
+    "assunto": "fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)"
+   },
+   {
+    "sha": "7264f0d",
+    "data": "2026-11-14",
+    "assunto": "fix(db): certificado de treinamento não lê catalogo_cursos.metadata (#499)"
+   },
    {
     "sha": "bb9a156",
     "data": "2026-11-14",
@@ -111,49 +131,21 @@
     "sha": "4f2ebaa",
     "data": "2026-11-13",
     "assunto": "docs: prod-readiness registra o merge da #520 e a #541 (#547)"
-   },
-   {
-    "sha": "7438a74",
-    "data": "2026-11-13",
-    "assunto": "fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)"
-   },
-   {
-    "sha": "47e4020",
-    "data": "2026-11-13",
-    "assunto": "docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)"
-   },
-   {
-    "sha": "f263a09",
-    "data": "2026-11-13",
-    "assunto": "fix(db): remove role admin espurio de user@teste.local no canonico (RBAC E2E) (#541)"
-   },
-   {
-    "sha": "8f6b711",
-    "data": "2026-11-13",
-    "assunto": "Pensões: permitir editar uma pensão já cadastrada (#520)"
    }
   ],
-  "arquivos_mudados_7d": 632,
+  "arquivos_mudados_7d": 640,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 53
+    "mudancas": 41
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 38
+    "mudancas": 37
    },
    {
     "pasta": "src/services/__tests__",
     "mudancas": 21
-   },
-   {
-    "pasta": "CLAUDE.md",
-    "mudancas": 19
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 19
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -164,8 +156,16 @@
     "mudancas": 19
    },
    {
-    "pasta": "package-lock.json",
+    "pasta": "package.json",
+    "mudancas": 18
+   },
+   {
+    "pasta": "CLAUDE.md",
     "mudancas": 17
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 16
    },
    {
     "pasta": "scripts/autofix/regras",
@@ -180,26 +180,26 @@
     "mudancas": 13
    },
    {
-    "pasta": "src/components/folha",
-    "mudancas": 13
-   },
-   {
-    "pasta": "src/hooks/__tests__",
-    "mudancas": 13
-   },
-   {
     "pasta": "src/integrations/supabase",
-    "mudancas": 13
+    "mudancas": 12
    },
    {
-    "pasta": "src/components/layout",
-    "mudancas": 12
+    "pasta": "src/components/folha",
+    "mudancas": 11
+   },
+   {
+    "pasta": "src/utils/__tests__",
+    "mudancas": 11
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 10
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 45
+    "mudancas": 42
    },
    {
     "arquivo": "package.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 208
+    "commits": 210
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2925,
+  "arquivos_total": 2933,
   "arquivos_codigo": 1580,
   "linhas_codigo": 283459,
   "rotas": 115,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 801,
+  "migrations": 809,
   "cron_jobs": 41,
   "testes": 614,
   "workflows": 21,
@@ -1014,12 +1014,10 @@
    "emprestimos_consignados",
    "epis",
    "escalas",
-   "escalas_trabalho",
    "esocial_eventos",
    "esocial_lotes",
    "faltas",
    "feriados",
-   "ferias_solicitacoes",
    "folha_itens",
    "folhas_pagamento",
    "govbr_auth_state",
@@ -1037,10 +1035,8 @@
    "notificacoes",
    "notificacoes_admissao",
    "onboarding_tarefas",
-   "onboarding_templates",
    "pensoes",
    "periodos_aquisitivos",
-   "periodos_ponto",
    "pix_itens",
    "pix_lotes",
    "ponto_espelhos_assinados",
@@ -1056,7 +1052,6 @@
    "recrutamento_entrevistas",
    "recrutamento_testes",
    "rubricas_folha",
-   "seguros_vida",
    "sindicatos",
    "treinamento_instancias",
    "treinamentos",
