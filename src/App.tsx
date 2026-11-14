@@ -49,9 +49,7 @@ const BackupPage = lazy(() => import('@/pages/BackupPage'));
 const OrganogramaPage = lazy(() => import('@/pages/OrganogramaPage'));
 const PortalPage = lazy(() => import('@/pages/PortalPage'));
 const AvaliacaoPage = lazy(() => import('@/pages/AvaliacaoPage'));
-const NineBoxPreviewPage = import.meta.env.DEV
-  ? (lazy(() => import('@/pages/NineBoxPreviewPage')) as React.LazyExoticComponent<() => React.ReactElement>)
-  : null;
+const NineBoxPreviewPage = lazy(() => import('@/pages/NineBoxPreviewPage'));
 const TreinamentosPage = lazy(() => import('@/pages/TreinamentosPage'));
 const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
@@ -161,7 +159,7 @@ function PageLoader() {
   );
 }
 
-function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement> }) {
+function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement | null> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
