@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1241a0033a53294d611ddca9a7446b0d46c37a08` (2026-11-14T09:02:09-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1937631958f2f52cd757d5f6e8863c032c2c1405` (2026-11-14T09:31:55-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1450), SQL (845), Markdown (293), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1450), SQL (847), Markdown (293), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2933 |
+| arquivos_total | 2935 |
 | arquivos_codigo | 1580 |
 | linhas_codigo | 283459 |
 | rotas | 115 |
@@ -46,7 +46,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | hooks | 102 |
 | edge_functions | 65 |
 | tabelas | 417 |
-| migrations | 809 |
+| migrations | 811 |
 | cron_jobs | 41 |
 | testes | 614 |
 | workflows | 21 |
@@ -386,7 +386,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22250 nós · 47006 arestas · 2153 comunidades · grafo do commit `1241a003`
+- 22252 nós · 47006 arestas · 2155 comunidades · grafo do commit `19376319`
 - comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (440), lucide-react (362), cn (360), supabase (315), vitest (285), ref_https (194), react (161), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
@@ -619,6 +619,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-14 `1937631` chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)
 - 2026-11-14 `1241a00` Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)
 - 2026-11-14 `7aa798f` Pensões: recria a coluna empresa_id que falta no banco de produção (#529)
 - 2026-11-14 `b93ea48` fix(db): adiciona updated_at em 15 tabelas cujo trigger exige a coluna (#528)
@@ -633,7 +634,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `9d2fda9` fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)
 - 2026-11-13 `f5c370c` chore(canonical): adiciona as migrations #464/#468/#498 ao lote fechado do canônico (#555)
 - 2026-11-13 `a49f33e` fix(logs): não silenciar console.warn em produção (#554)
-- 2026-11-13 `69cf8aa` infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

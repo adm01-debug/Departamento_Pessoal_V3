@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1241a0033a53294d611ddca9a7446b0d46c37a08",
+  "commit": "1937631958f2f52cd757d5f6e8863c032c2c1405",
   "branch": "main",
-  "data_commit": "2026-11-14T09:02:09-03:00",
+  "data_commit": "2026-11-14T09:31:55-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1937631",
+    "data": "2026-11-14",
+    "assunto": "chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)"
+   },
    {
     "sha": "1241a00",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "f07255f",
     "data": "2026-11-13",
     "assunto": "fix: --check do inventario de rotas compara conteudo, nao bytes (#552)"
-   },
-   {
-    "sha": "4f2ebaa",
-    "data": "2026-11-13",
-    "assunto": "docs: prod-readiness registra o merge da #520 e a #541 (#547)"
    }
   ],
-  "arquivos_mudados_7d": 640,
+  "arquivos_mudados_7d": 642,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 210
+    "commits": 211
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2933,
+  "arquivos_total": 2935,
   "arquivos_codigo": 1580,
   "linhas_codigo": 283459,
   "rotas": 115,
@@ -334,7 +334,7 @@
   "hooks": 102,
   "edge_functions": 65,
   "tabelas": 417,
-  "migrations": 809,
+  "migrations": 811,
   "cron_jobs": 41,
   "testes": 614,
   "workflows": 21,

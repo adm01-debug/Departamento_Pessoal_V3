@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "1241a0033a53294d611ddca9a7446b0d46c37a08",
+  "sha": "1937631958f2f52cd757d5f6e8863c032c2c1405",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-14 12:31 UTC",
-  "files_total": 2954,
-  "code_files": 2423,
-  "code_lines": 332941
+  "generated_at": "2026-11-14 12:52 UTC",
+  "files_total": 2956,
+  "code_files": 2425,
+  "code_lines": 332989
  },
  "version": "1.3.2",
- "facts_hash": "8860d9f4204a5d8c",
+ "facts_hash": "d97d0749e2f27c09",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 845,
+   ".sql": 847,
    ".ts": 750,
    ".tsx": 700,
    ".mjs": 100,
@@ -70504,6 +70504,8 @@
    "supabase/migrations/20261114000600_rls_escrita_por_papel.verify.sql",
    "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
    "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql",
+   "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
+   "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.verify.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
@@ -98808,8 +98810,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 809,
-   "lines": 67938,
+   "files": 811,
+   "lines": 67986,
    "tables": [
     "profiles",
     "user_roles"
@@ -213034,6 +213036,7 @@
    "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
    "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
+   "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -282354,6 +282357,15 @@
    "path": "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql",
    "lines": 8
   },
+  "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql": {
+   "path": "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
+   "lines": 35,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.verify.sql": {
+   "path": "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.verify.sql",
+   "lines": 13
+  },
   "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql": {
    "path": "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "lines": 56
@@ -282578,10 +282590,20 @@
   }
  },
  "git": {
-  "sha": "1241a0033a53294d611ddca9a7446b0d46c37a08",
+  "sha": "1937631958f2f52cd757d5f6e8863c032c2c1405",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1937631",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)",
+    "files": [
+     "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
+     "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.verify.sql"
+    ]
+   },
    {
     "sha": "1241a00",
     "date": "2026-11-14",
@@ -282875,21 +282897,12 @@
      "src/pages/PensoesPage.tsx",
      "src/pages/__tests__/PensoesPage.test.tsx"
     ]
-   },
-   {
-    "sha": "b37db5b",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
    [
     "docs/prod-readiness.md",
-    5
+    4
    ],
    [
     "inventario/estado/rotas.json",
@@ -282910,6 +282923,14 @@
    [
     ".github/workflows/canonical-migrations.yml",
     2
+   ],
+   [
+    "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.verify.sql",
+    1
    ],
    [
     "scripts/audit-rls-least-privilege.mjs",
@@ -282957,14 +282978,6 @@
    ],
    [
     "src/main.tsx",
-    1
-   ],
-   [
-    "src/test/securityHeadersParity.test.ts",
-    1
-   ],
-   [
-    "src/pages/SegurosVidaPage.tsx",
     1
    ]
   ]
