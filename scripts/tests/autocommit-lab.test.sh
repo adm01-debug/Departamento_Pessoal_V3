@@ -158,4 +158,13 @@ novo r4d; (cd "$R" && echo v1 > x && git add x && echo v2 > x); GR=$(command -v 
 printf '#!/bin/bash\ncase " $* " in *" commit "*) "%s" "$@"; rc=$?; kill -TERM $PPID; exit $rc;; esac\nexec "%s" "$@"\n' "$GR" "$GR" > "$HOME/.local/bin/git"; chmod +x "$HOME/.local/bin/git"; PATH="$HOME/.local/bin:$PATH" roda; rm -f "$HOME/.local/bin/git"
 check "[R4d] SIGTERM durante commit que TERMINA: 75, commit feito e índice igual ao commit (sem reversões preparadas)" '[ $RC -eq 75 ] && [ "$(git -C "$R" show HEAD:x)" = v2 ] && git -C "$R" diff --cached --quiet && bk && [ ! -e "$BK" ] && [ ! -e "$BK.head" ]'
 
+# --- (14/11) rev5 (Codex, PR #565)
+novo r5a; (cd "$R" && echo v0 > x && G add x && G commit -qm x0 && echo v1 > x && git add x && echo v0 > x); bk; cp -p "$(git -C "$R" rev-parse --absolute-git-dir)/index" "$BK"; echo "$(git -C "$R" rev-parse HEAD) $(sha256sum < "$BK" | cut -c1-64)" > "$BK.head"; git -C "$R" add -A; : > "$XDG_CACHE_HOME/dp-sync/sync.log"; roda
+check "[R5a] rodada interrompida deixou o worktree LIMPO: versão preparada do usuário volta mesmo sem nada novo" '[ $RC -eq 0 ] && [ "$(git -C "$R" show :x 2>/dev/null)" = v1 ] && grep -q RECUPEREI "$XDG_CACHE_HOME/dp-sync/sync.log" && [ ! -e "$BK" ]'
+novo r5b; (cd "$R" && printf -- '-- config antiga\ntok=%s\nselect 1;\n' "$TOKEN" > s.sql && G add s.sql && G commit -qm vazou && G push -q origin computador_local:main && G push -q origin computador_local && printf 'select 1;\n' > s.sql); roda
+check "[R5b] remover trecho SQL público que começa com \"-- \" não bloqueia (\"--- \" dentro do hunk não é cabeçalho)" '[ $RC -eq 0 ] && ! git --git-dir="$O" show computador_local:s.sql | grep -q tok'
+
+novo r5c; (cd "$R" && printf -- '-- comentario\nselect 1;\n' > s.sql && G add s.sql && G commit -qm s && G push -q origin computador_local && printf 'tok=%s\n' "$TOKEN" > s.sql); roda
+check "[R5c] segredo ADICIONADO logo após um \"-- \" removido continua bloqueado" '[ $RC -eq 75 ] && ! git --git-dir="$O" show computador_local:s.sql | grep -q tok'
+
 echo "autocommit-local: $PASS ok, $FAIL falha(s)"; [ "$FAIL" -eq 0 ]

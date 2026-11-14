@@ -49,7 +49,9 @@ STATE="${XDG_CACHE_HOME:-$HOME/.cache}/dp-sync"; mkdir -p "$STATE" && chmod 700 
 KEY="$(printf '%s' "$WT" | sha1sum | cut -c1-10)"; LOG="$STATE/sync.log"; G=(git -C "$WT" -c splitIndex.sharedIndexExpire=never)   # (rev3) índice dividido: o sharedindex que o backup referencia nunca é apagado
 # (rev3) só linhas ADICIONADAS vão ao gitleaks: remover/corrigir um segredo que já é público não pode bloquear para sempre.
 # Diff comum: prefixo de 1 coluna; combinado (--cc, merge): N colunas — fica a linha cujo prefixo tem "+".
-so_adicionadas() { awk '/^@@@* /{n=0; while(substr($0,n+1,1)=="@")n++; n--; dentro=1; print; next} /^(diff |index |--- |\+\+\+ |new file|deleted file|similarity|rename|old mode|new mode|Binary)/{dentro=0; print; next} dentro && n>0 {p=substr($0,1,n); if (p ~ /\+/) print; next} {print}'; }
+# (rev5, Codex #565) dentro de um hunk SÓ "diff " (próximo arquivo) ou "@@" encerram o hunk: linha removida "-- comentário" vira
+# "--- comentário" e era confundida com cabeçalho (o resto das removidas ia para o gitleaks)
+so_adicionadas() { awk '/^@@@* /{n=0; while(substr($0,n+1,1)=="@")n++; n--; dentro=1; print; next} /^diff /{dentro=0; print; next} dentro && n>0 {p=substr($0,1,n); if (p ~ /\+/) print; next} {print}'; }
 # gitleaks: config própria = a do git-autosave (se existir) + regras extras (URL de banco com senha, token sbp_ do Supabase)
 GLCFG="$STATE/gitleaks-dp-sync.toml"
 cat > "$GLCFG" <<GLEOF
@@ -136,6 +138,27 @@ unstage() { "${G[@]}" reset -q -- ":(literal)$1" 2>/dev/null || { restaura_indic
 
 timeout 120 "${G[@]}" fetch -q "$REMOTE" "$BRANCH" 2>/dev/null || true   # só para calcular "à frente"; falha de rede não impede o commit
 
+# (rev5, Codex #565) recuperação ANTES do "nada novo": a rodada interrompida pode ter deixado o worktree limpo com a versão
+# preparada do usuário só no backup — sair por "nada novo" a esconderia até a próxima alteração
+IDXF="$("${G[@]}" rev-parse --git-path index)"; case "$IDXF" in /*) ;; *) IDXF="$WT/$IDXF" ;; esac
+IDXB="$STATE/ac-$KEY.index-usuario"; IDXH="$IDXB.head"   # (rev4) o backup anda com o HEAD da rodada que o fez
+cabeca() { "${G[@]}" rev-parse -q --verify HEAD 2>/dev/null || echo sem-head; }
+instala_backup() { cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; }
+# (rev4, Devin #565) só é backup recuperável o PAR publicado inteiro (índice + HEAD), que o git consegue ler (checksum) e cujo
+# HEAD ainda é o atual — HEAD diferente = o commit daquela rodada terminou (ou o usuário commitou): devolver o índice velho
+# deixaria reversões preparadas contra o HEAD novo
+# o git NÃO confere o checksum do índice ao ler (arquivo truncado passa no ls-files): vale o sha256 gravado na criação
+backup_valido() { [ -f "$IDXB" ] && [ -f "$IDXH" ] && [ "$(cat "$IDXH" 2>/dev/null)" = "$(cabeca) $(sha256sum < "$IDXB" | cut -c1-64)" ]; }
+rm -f "$IDXB.tmp" "$IDXH.tmp"   # cópia parcial de uma rodada morta no meio da cópia: nunca é reconhecida como backup
+# (rev3) execução anterior interrompida (SIGTERM/queda) deixou o backup: o índice atual pode estar poluído pelo add -A dela —
+# devolve o índice do usuário em vez de apagar a única cópia
+if [ -f "$IDXB" ] && [ "$DRY" -eq 1 ]; then say "[dry-run] há backup do índice de uma execução interrompida: a próxima rodada real o avalia"
+elif [ -f "$IDXB" ]; then
+  if ! backup_valido; then rm -f "$IDXB" "$IDXH"; say "DESCARTEI o backup do índice de uma execução interrompida: incompleto, ilegível ou o HEAD já andou (o índice atual fica)"
+  elif instala_backup; then rm -f "$IDXB" "$IDXH"; say "RECUPEREI o índice do usuário deixado por uma execução interrompida"
+  else say "BLOQUEADO: não consegui devolver o índice do usuário — backup preservado ($IDXB); nada foi alterado nesta rodada"; exit 75; fi
+fi
+
 # 1. há o que commitar?
 ST0="$("${G[@]}" status --porcelain 2>"$STATE/ac-$KEY.err")" || { say "ERRO: git status falhou (índice corrompido?) — nada feito: $(head -c 200 "$STATE/ac-$KEY.err" | tr '\n' ' ')"; exit 75; }
 if [ -z "$ST0" ]; then push_pendente; say "ok: nada novo para commitar"; exit "${RC:-0}"; fi
@@ -170,23 +193,6 @@ fi
 # (13/11) índice do usuário antes de mexer: nos BLOQUEIOS ele volta como estava (o reset perdia o que foi `git add`ado)
 # (13/11 rev2) CÓPIA BYTE A BYTE do índice (write-tree/read-tree perdia skip-worktree/assume-unchanged/sparse/intent-to-add:
 # depois de um bloqueio, a config local escondida ia no push seguinte). Restaurar = devolver o arquivo exato.
-IDXF="$("${G[@]}" rev-parse --git-path index)"; case "$IDXF" in /*) ;; *) IDXF="$WT/$IDXF" ;; esac
-IDXB="$STATE/ac-$KEY.index-usuario"; IDXH="$IDXB.head"   # (rev4) o backup anda com o HEAD da rodada que o fez
-cabeca() { "${G[@]}" rev-parse -q --verify HEAD 2>/dev/null || echo sem-head; }
-instala_backup() { cp -p "$IDXB" "$IDXF.dp-sync-tmp" && mv -f "$IDXF.dp-sync-tmp" "$IDXF"; }
-# (rev4, Devin #565) só é backup recuperável o PAR publicado inteiro (índice + HEAD), que o git consegue ler (checksum) e cujo
-# HEAD ainda é o atual — HEAD diferente = o commit daquela rodada terminou (ou o usuário commitou): devolver o índice velho
-# deixaria reversões preparadas contra o HEAD novo
-# o git NÃO confere o checksum do índice ao ler (arquivo truncado passa no ls-files): vale o sha256 gravado na criação
-backup_valido() { [ -f "$IDXB" ] && [ -f "$IDXH" ] && [ "$(cat "$IDXH" 2>/dev/null)" = "$(cabeca) $(sha256sum < "$IDXB" | cut -c1-64)" ]; }
-rm -f "$IDXB.tmp" "$IDXH.tmp"   # cópia parcial de uma rodada morta no meio da cópia: nunca é reconhecida como backup
-# (rev3) execução anterior interrompida (SIGTERM/queda) deixou o backup: o índice atual pode estar poluído pelo add -A dela —
-# devolve o índice do usuário em vez de apagar a única cópia
-if [ -f "$IDXB" ]; then
-  if ! backup_valido; then rm -f "$IDXB" "$IDXH"; say "DESCARTEI o backup do índice de uma execução interrompida: incompleto, ilegível ou o HEAD já andou (o índice atual fica)"
-  elif instala_backup; then rm -f "$IDXB" "$IDXH"; say "RECUPEREI o índice do usuário deixado por uma execução interrompida"
-  else say "BLOQUEADO: não consegui devolver o índice do usuário — backup preservado ($IDXB); nada foi alterado nesta rodada"; exit 75; fi
-fi
 # backup do índice com falha (disco cheio/parcial) = PARA: restaurar uma cópia incompleta corromperia o índice (Codex, PR #549)
 # (rev4) grava em nomes .tmp, confere byte a byte e só então publica (HEAD primeiro, índice por último, ambos por rename)
 H0="$(cabeca)"

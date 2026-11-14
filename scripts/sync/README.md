@@ -43,7 +43,7 @@ desenvolvimento (branch `computador_local`) e dá push, sem humano e sem IA. Com
   morrer no meio, a seguinte recupera a cópia (só se ela estiver íntegra — sha256 gravado na criação — e o HEAD não tiver andado;
   senão a cópia é descartada e o índice atual fica).
 
-Regressão: `bash scripts/tests/autocommit-lab.test.sh` (57 cenários, precisa do `gitleaks` instalado; HOME e remoto falsos, nada toca o repositório real).
+Regressão: `bash scripts/tests/autocommit-lab.test.sh` (60 cenários, precisa do `gitleaks` instalado; HOME e remoto falsos, nada toca o repositório real).
 
 Nunca troca de branch, nunca usa `--force` (push rejeitado = só avisa, o commit fica local), não age com rebase/merge/cherry-pick/bisect ou `index.lock`, e adia se algo foi editado nos últimos 2 min. Commits usam `--no-verify`. Não dispara CI (o CI só roda em push na `main` e em PR para a `main`). Como a `main` só aceita squash, os commits "autosave" somem do histórico ao mergear o PR.
 
