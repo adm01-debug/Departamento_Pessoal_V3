@@ -43,7 +43,7 @@ on:
       - 'ai-context.config.json'
       - '.github/workflows/**'
   schedule:
-    - cron: '3-59/10 * * * *' # minutos 3,13,…,53: fora do minuto 0 (fila do GitHub) e dos outros crons do repo (healthcheck :17, probes 06:23, ruleset-sync 07:41)
+    - cron: '3 * * * *' # minuto 3: fora do minuto 0 (fila do GitHub) e dos outros crons do repo (healthcheck :17, probes 06:23, ruleset-sync 07:41)
   workflow_dispatch:
     inputs:
       graphify:
