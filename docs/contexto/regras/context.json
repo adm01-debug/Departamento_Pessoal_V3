@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "10f6d9f9839d96e78beee4e37b2d25e9ae18221a",
+  "sha": "bb9a156793cd2c65761a53327e527746626fd1da",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-14 01:11 UTC",
-  "files_total": 2945,
+  "generated_at": "2026-11-14 11:52 UTC",
+  "files_total": 2946,
   "code_files": 2415,
   "code_lines": 332158
  },
@@ -282073,10 +282073,19 @@
   }
  },
  "git": {
-  "sha": "10f6d9f9839d96e78beee4e37b2d25e9ae18221a",
+  "sha": "bb9a156793cd2c65761a53327e527746626fd1da",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "bb9a156",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "chore: relatório de auditoria técnica 10/10 (squash)",
+    "files": [
+     "AUDITORIA_10_10.md"
+    ]
+   },
    {
     "sha": "10f6d9f",
     "date": "2026-11-13",
@@ -282376,20 +282385,6 @@
      "src/pages/__tests__/adminCatEdicao.test.ts",
      "src/pages/adminCatEdicao.ts"
     ]
-   },
-   {
-    "sha": "3a8ac55",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "Departamentos: bloqueia inativação quando há colaboradores vinculados (#524)",
-    "files": [
-     "src/components/__tests__/NovoDepartamentoDialog.test.tsx",
-     "src/components/departamentos/NovoDepartamentoDialog.tsx",
-     "src/hooks/useDepartamentos.ts",
-     "src/pages/DepartamentosPage.tsx",
-     "src/pages/__tests__/DepartamentosPage.permissao.test.tsx",
-     "src/services/departamentoService.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -282416,6 +282411,10 @@
    [
     ".github/workflows/canonical-migrations.yml",
     2
+   ],
+   [
+    "AUDITORIA_10_10.md",
+    1
    ],
    [
     "index.html",
@@ -282467,10 +282466,6 @@
    ],
    [
     "src/pages/PlanosSaudePage.tsx",
-    1
-   ],
-   [
-    "src/pages/ValesPage.tsx",
     1
    ]
   ]

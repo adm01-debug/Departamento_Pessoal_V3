@@ -5,7 +5,7 @@
   "linguagens": [
    "TypeScript (1450)",
    "SQL (837)",
-   "Markdown (292)",
+   "Markdown (293)",
    "JavaScript (126)",
    "JSON (61)",
    "YAML (56)",
@@ -918,6 +918,11 @@
    "arquivo": "AUDITORIA.md",
    "titulo": "Auditoria total — Departamento Pessoal V3",
    "linhas": 414
+  },
+  {
+   "arquivo": "AUDITORIA_10_10.md",
+   "titulo": null,
+   "linhas": 71
   },
   {
    "arquivo": "AUDIT_REPORT.md",

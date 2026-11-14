@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "10f6d9f9839d96e78beee4e37b2d25e9ae18221a",
+  "commit": "bb9a156793cd2c65761a53327e527746626fd1da",
   "branch": "main",
-  "data_commit": "2026-11-13T21:03:24-03:00",
+  "data_commit": "2026-11-14T08:40:46-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "bb9a156",
+    "data": "2026-11-14",
+    "assunto": "chore: relatório de auditoria técnica 10/10 (squash)"
+   },
    {
     "sha": "10f6d9f",
     "data": "2026-11-13",
@@ -126,14 +131,9 @@
     "sha": "8f6b711",
     "data": "2026-11-13",
     "assunto": "Pensões: permitir editar uma pensão já cadastrada (#520)"
-   },
-   {
-    "sha": "b37db5b",
-    "data": "2026-11-13",
-    "assunto": "docs: prod-readiness atualizado após a execução das decisões do dono (13/11) (#543)"
    }
   ],
-  "arquivos_mudados_7d": 631,
+  "arquivos_mudados_7d": 632,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 207
+    "commits": 208
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2924,
+  "arquivos_total": 2925,
   "arquivos_codigo": 1580,
   "linhas_codigo": 283459,
   "rotas": 115,
@@ -339,7 +339,7 @@
   "testes": 614,
   "workflows": 21,
   "scripts": 115,
-  "docs_md": 292
+  "docs_md": 293
  },
  "por_pasta": {
   "capacitor.config.ts": {

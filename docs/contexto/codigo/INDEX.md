@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `10f6d9f9839d96e78beee4e37b2d25e9ae18221a` (2026-11-13T21:03:24-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `bb9a156793cd2c65761a53327e527746626fd1da` (2026-11-14T08:40:46-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1450), SQL (837), Markdown (292), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1450), SQL (837), Markdown (293), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2924 |
+| arquivos_total | 2925 |
 | arquivos_codigo | 1580 |
 | linhas_codigo | 283459 |
 | rotas | 115 |
@@ -51,7 +51,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 | testes | 614 |
 | workflows | 21 |
 | scripts | 115 |
-| docs_md | 292 |
+| docs_md | 293 |
 
 ## Onde ficam as coisas
 - telas: src/pages (109), src/components (1)
@@ -62,7 +62,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - edge_functions: supabase/functions
 - migrations: supabase/migrations
 - scripts: scripts/simulacao (13), scripts/autofix (10), scripts/ci (9)
-- docs: docs (74), (raiz) (31), .github (1)
+- docs: docs (74), (raiz) (32), .github (1)
 - nomenclatura: {"componentes":"PascalCase (87%)","hooks":"use + PascalCase","servicos":"camelCase (99%)","edge_functions":"kebab-case (68%)","tabelas":"snake_case (84%)"}
 - instruções para agentes no repo: .claude/CLAUDE.md, AGENTS.md, CLAUDE.md
 
@@ -386,8 +386,8 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22206 nós · 46980 arestas · 2141 comunidades · grafo do commit `10f6d9f9`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (476), lucide-react (367), cn (354), @tanstack/react-query (340), button.tsx (322), useEmpresas (292), vitest (271), "public"."empresas" (164), rateLimit.ts (157), "public"."colaboradores" (155), "public"."empresas" (154)
+- 22213 nós · 46990 arestas · 2155 comunidades · grafo do commit `bb9a1567`
+- comunidades maiores: 20260831_corrected_public.sql (493), useEmpresas (486), canonical_schema.sql (476), lucide-react (395), button.tsx (364), vitest (249), cn (233), supabase/types.ts (222), react (214), "public"."empresas" (164), "public"."colaboradores" (155), "public"."empresas" (154)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
@@ -512,6 +512,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `AGENTS.md` — AGENTS.md — Departamento_Pessoal_V3 (116 linhas)
 - `ARCHITECTURE.md` — Arquitetura e Fluxo de Dados - RH ERP (125 linhas)
 - `AUDITORIA.md` — Auditoria total — Departamento Pessoal V3 (414 linhas)
+- `AUDITORIA_10_10.md` (71 linhas)
 - `AUDIT_REPORT.md` — Auditoria Enterprise e Inventário de Funcionalidades - Sistema de Gestão de RH (69 linhas)
 - `BACKLOG_11_ITEMS.md` — BACKLOG — 2 Itens Restantes (70 linhas)
 - `BUILD_INSTRUCTIONS.md` — 🚀 Instruções de Build - Sistema Departamento Pessoal (81 linhas)
@@ -618,6 +619,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-14 `bb9a156` chore: relatório de auditoria técnica 10/10 (squash)
 - 2026-11-13 `10f6d9f` docs(prod-readiness): registra fechamento da rodada no main 840dbdb (#557/#560) (#561)
 - 2026-11-13 `840dbdb` fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)
 - 2026-11-13 `1ad509d` infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)
@@ -632,7 +634,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `daa557e` fix: treinamentos permite alterar status da inscrição e editar curso (#492)
 - 2026-11-13 `c9caf7f` fix: benefícios, planos de saúde e VT/VA passam a ser editáveis e links que davam 404 foram corrigidos (#484)
 - 2026-11-13 `9d684d7` fix: adiciona planos_saude.updated_at exigida pelo trigger de UPDATE (#498)
-- 2026-11-13 `2f13bbb` fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
