@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `b4308c5a16b59ddcaf0c7434b11f41f98aaeff93` (2026-11-14T16:58:59-03:00).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `eb2efe596e21222239b526ffb2c88129670c4cb6` (2026-11-14T17:10:29-03:00).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -14,7 +14,7 @@ Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR
 Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua tarefa; não carregue tudo.
 
 ## Stack
-- linguagens: TypeScript (1450), SQL (847), Markdown (293), JavaScript (126), JSON (61), YAML (56), Shell (55), Python (5)
+- linguagens: TypeScript (1450), SQL (847), Markdown (293), JavaScript (126), JSON (61), Shell (56), YAML (56), Python (5)
 - linguagem_principal: TypeScript
 - framework: React
 - backend_http: n/d
@@ -34,7 +34,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 ## Números
 | item | qtd |
 |---|---|
-| arquivos_total | 2935 |
+| arquivos_total | 2936 |
 | arquivos_codigo | 1580 |
 | linhas_codigo | 283459 |
 | rotas | 115 |
@@ -386,13 +386,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 22252 nós · 47006 arestas · 2155 comunidades · grafo do commit `b4308c5a`
-- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), useEmpresas (440), lucide-react (362), cn (360), supabase (315), vitest (285), ref_https (194), react (161), "public"."empresas" (159), "public"."colaboradores" (155), "public"."empresas" (154)
+- 22271 nós · 47040 arestas · 2125 comunidades · grafo do commit `eb2efe59`
+- comunidades maiores: 20260831_corrected_public.sql (493), canonical_schema.sql (475), cn (416), @tanstack/react-query (391), react (390), lucide-react (353), useEmpresas (290), App.tsx (203), services/index.ts (184), vitest (177), contract.ts (174), "public"."empresas" (159)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts), required() (src/schemas/esocial/helpers.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
-- .github/workflows/canonical-migrations.yml (40)
+- .github/workflows/canonical-migrations.yml (39)
 - package.json (26)
 - package-lock.json (24)
 - CLAUDE.md (21)
@@ -401,9 +401,9 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - AGENTS.md (10)
 - deno.lock (10)
 - infra/github/action-pins.json (10)
+- scripts/sync/autocommit-local.sh (10)
 - .github/workflows/canonical-edge-functions.yml (9)
 - scripts/canonical-invariants.sql (9)
-- scripts/sync/autocommit-local.sh (9)
 - .github/workflows/canonical-probes.yml (8)
 - .github/workflows/e2e.yml (8)
 - docs/auditoria/estado/WORKFLOWS_STATUS.md (8)
@@ -619,6 +619,7 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-14 `eb2efe5` fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#
 - 2026-11-14 `b4308c5` build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)
 - 2026-11-14 `311ee8a` chore: contexto agendado de 10 min para 1x/hora (#566)
 - 2026-11-14 `1937631` chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)
@@ -633,7 +634,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-13 `3232ef1` docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)
 - 2026-11-13 `a033ee8` fix(sync): autocommit preserva o índice do usuário e varre resolução de merge (#549)
 - 2026-11-13 `5bbf7eb` chore: regenera inventario/estado/rotas.json com o gerador atual (#558)
-- 2026-11-13 `9d2fda9` fix: libera frame-src do Storage na CSP do index.html (preview de PDF) (#556)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`

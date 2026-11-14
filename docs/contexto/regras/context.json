@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "b4308c5a16b59ddcaf0c7434b11f41f98aaeff93",
+  "sha": "eb2efe596e21222239b526ffb2c88129670c4cb6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-14 19:59 UTC",
-  "files_total": 2956,
+  "generated_at": "2026-11-14 20:12 UTC",
+  "files_total": 2957,
   "code_files": 2425,
   "code_lines": 332989
  },
@@ -282590,10 +282590,22 @@
   }
  },
  "git": {
-  "sha": "b4308c5a16b59ddcaf0c7434b11f41f98aaeff93",
+  "sha": "eb2efe596e21222239b526ffb2c88129670c4cb6",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "eb2efe5",
+    "date": "2026-11-14",
+    "author": "adm01-debug",
+    "subject": "fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#565)",
+    "files": [
+     "scripts/automation.config.json",
+     "scripts/sync/README.md",
+     "scripts/sync/autocommit-local.sh",
+     "scripts/tests/autocommit-lab.test.sh"
+    ]
+   },
    {
     "sha": "b4308c5",
     "date": "2026-11-14",
@@ -282886,29 +282898,20 @@
      "src/services/loggerService.ts",
      "vite.config.ts"
     ]
-   },
-   {
-    "sha": "47e4020",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "docs: prod-readiness com os workflows finais do main (b37db5b) todos verdes (#545)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
    [
+    "scripts/sync/autocommit-local.sh",
+    3
+   ],
+   [
     "docs/prod-readiness.md",
-    4
+    3
    ],
    [
     "inventario/estado/rotas.json",
     3
-   ],
-   [
-    "scripts/sync/autocommit-local.sh",
-    2
    ],
    [
     "nginx.conf",
@@ -282917,6 +282920,18 @@
    [
     "vercel.json",
     2
+   ],
+   [
+    "scripts/automation.config.json",
+    1
+   ],
+   [
+    "scripts/sync/README.md",
+    1
+   ],
+   [
+    "scripts/tests/autocommit-lab.test.sh",
+    1
    ],
    [
     "package-lock.json",
@@ -282964,18 +282979,6 @@
    ],
    [
     "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261114000300_fn_certificado_treinamento_sem_metadata.verify.sql",
-    1
-   ],
-   [
-    "AUDITORIA_10_10.md",
     1
    ]
   ]

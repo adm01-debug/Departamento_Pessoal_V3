@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "b4308c5a16b59ddcaf0c7434b11f41f98aaeff93",
+  "commit": "eb2efe596e21222239b526ffb2c88129670c4cb6",
   "branch": "main",
-  "data_commit": "2026-11-14T16:58:59-03:00",
+  "data_commit": "2026-11-14T17:10:29-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "eb2efe5",
+    "data": "2026-11-14",
+    "assunto": "fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#"
+   },
    {
     "sha": "b4308c5",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "1108375",
     "data": "2026-11-13",
     "assunto": "fix(db): view de contas bancárias descriptografadas volta a respeitar a permissão de quem consulta (#464)"
-   },
-   {
-    "sha": "e40a3d1",
-    "data": "2026-11-13",
-    "assunto": "fix: folha filtra pensões pela empresa do colaborador (pensoes sem empresa_id) (#550)"
    }
   ],
-  "arquivos_mudados_7d": 636,
+  "arquivos_mudados_7d": 637,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -192,14 +192,14 @@
     "mudancas": 11
    },
    {
-    "pasta": "src/components/ui",
+    "pasta": "scripts/sync/autocommit-local.sh",
     "mudancas": 10
    }
   ],
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 40
+    "mudancas": 39
    },
    {
     "arquivo": "package.json",
@@ -234,15 +234,15 @@
     "mudancas": 10
    },
    {
+    "arquivo": "scripts/sync/autocommit-local.sh",
+    "mudancas": 10
+   },
+   {
     "arquivo": ".github/workflows/canonical-edge-functions.yml",
     "mudancas": 9
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
-    "mudancas": 9
-   },
-   {
-    "arquivo": "scripts/sync/autocommit-local.sh",
     "mudancas": 9
    },
    {
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 212
+    "commits": 213
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2935,
+  "arquivos_total": 2936,
   "arquivos_codigo": 1580,
   "linhas_codigo": 283459,
   "rotas": 115,
