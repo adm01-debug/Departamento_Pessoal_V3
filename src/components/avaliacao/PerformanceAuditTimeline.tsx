@@ -372,13 +372,7 @@ export function PerformanceAuditTimeline({ colaboradores = [], empresaId }: Perf
 
       const { data, error } = await supabase.rpc('get_audit_trail', {
         p_empresa_id: empresaId ?? null,
-        p_tabelas: [
-          'ciclos_avaliacao',
-          'metas_okrs',
-          'feedbacks_360',
-          'pdis',
-          'competencias_matriz',
-        ],
+        p_tabelas: ['ciclos_avaliacao', 'metas_okrs', 'feedbacks_360', 'pdis', 'competencias_matriz'],
         p_limit: 30,
       });
       if (error) throw error;
