@@ -129,8 +129,10 @@ describe('avaliacaoService.contarDependenciasCiclo', () => {
       select: () => {
         const chain: Record<string, unknown> = {};
         chain.eq = vi.fn().mockReturnValue(chain);
-        chain.then = (fn: (value: unknown) => unknown) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).then(fn);
-        chain.catch = (fn: (reason: unknown) => unknown) => Promise.resolve({ count: counts[tabela] ?? 0, error: null }).catch(fn);
+        chain.then = (fn: (value: unknown) => unknown) =>
+          Promise.resolve({ count: counts[tabela] ?? 0, error: null }).then(fn);
+        chain.catch = (fn: (reason: unknown) => unknown) =>
+          Promise.resolve({ count: counts[tabela] ?? 0, error: null }).catch(fn);
         return chain;
       },
     }));
