@@ -58,6 +58,8 @@ import { getMockDesempenhoAudit } from '@/mocks/desempenhoMock';
  */
 
 interface PerformanceAuditTimelineProps {
+  /** Empresa ativa (tenant). Sem ela o modo demo Ã© o Ãºnico caminho de dados. */
+  empresaId?: string | null;
   /**
    * Colaboradores já carregados pela página — usados SOMENTE para resolver
    * nome/cargo/foto do e-mail do responsável. Sem correspondência, o evento
@@ -359,7 +361,7 @@ function ItemCascata(props: PropsItemCascata & { children: ReactNode }) {
   );
 }
 
-export function PerformanceAuditTimeline({ colaboradores = [] }: PerformanceAuditTimelineProps) {
+export function PerformanceAuditTimeline({ colaboradores = [], empresaId }: PerformanceAuditTimelineProps) {
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['performance-audit-logs'],
     queryFn: async () => {
@@ -368,14 +370,17 @@ export function PerformanceAuditTimeline({ colaboradores = [] }: PerformanceAudi
       const ficticios = getMockDesempenhoAudit();
       if (ficticios) return ficticios;
 
-      const { data, error } = await (supabase as any)
-        .from('audit_log')
-        .select('*')
-        .or(
-          'tabela.eq.ciclos_avaliacao,tabela.eq.metas_okrs,tabela.eq.feedbacks_360,tabela.eq.pdis,tabela.eq.competencias_matriz'
-        )
-        .order('created_at', { ascending: false })
-        .limit(30);
+      const { data, error } = await supabase.rpc('get_audit_trail', {
+        p_empresa_id: empresaId ?? null,
+        p_tabelas: [
+          'ciclos_avaliacao',
+          'metas_okrs',
+          'feedbacks_360',
+          'pdis',
+          'competencias_matriz',
+        ],
+        p_limit: 30,
+      });
       if (error) throw error;
       return data || [];
     },

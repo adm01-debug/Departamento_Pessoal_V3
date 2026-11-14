@@ -1412,7 +1412,7 @@ export default function AvaliacaoPage() {
               {/* Aba redesenhada: filtros → chips por módulo → timeline agrupada
                   por dia. Mesma consulta de `audit_log`; `colaboradores` entra
                   apenas para resolver nome/cargo/foto do responsável. */}
-              <PerformanceAuditTimeline colaboradores={colaboradores} />
+              <PerformanceAuditTimeline colaboradores={colaboradores} empresaId={empresaAtual?.id} />
             </TabsContent>
           </Tabs>
           {/* TEMPORÁRIO (DEV/HOMOLOGAÇÃO): painel fora do layout aprovado,

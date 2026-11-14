@@ -1,0 +1,660 @@
+-- ============================================================================
+-- NINE-BOX · RECONCILIAÇÃO INCREMENTAL COM O SUPABASE PRINCIPAL
+-- ----------------------------------------------------------------------------
+-- EVIDÊNCIA DO PRINCIPAL (frjbfeamybqsejlvmqbl):
+--   • 20261021090000 já está refletida: colunas de snapshot/proposta,
+--     constraints fbc_* e snapshot_aprovado existem; sincronizar_consolidacao_
+--     avaliacao contém desempenho_proposto/aprovado e limpa o snapshot na
+--     mudança de versão;
+--   • decidir_aprovacao_gestor existe e contém uma correção REMOTA adicional
+--     (empresa_ciclo_colaborador_inconsistentes), que esta migration NÃO toca;
+--   • 20261025090000 é equivalente funcional de 20261021090000 (função
+--     decidir normalizada é idêntica); não há objeto novo a aplicar;
+--   • faltam realmente: pode_finalizar_feedback, a versão autorizada de
+--     finalizar_feedback, pode_editar_colaborador/pode_editar_feedback,
+--     editar_feedback_seguro (com autorização por registro e máquina de estados),
+--     o rótulo editar_feedback
+--     no CHECK de feedbacks_360_operacoes e a proteção de INSERT/DELETE de
+--     ciclos, incluindo histórico de auditoria.
+--
+-- Esta migration é ADITIVA e idempotente. NÃO recria colunas, não substitui
+-- decidir_aprovacao_gestor nem sincronizar_consolidacao_avaliacao e não apaga
+-- dados. Deve ser aplicada somente com autorização explícita.
+-- Rollback: supabase/rollback/20261027090000_ninebox_reconciliacao_incremental_rollback.sql
+-- ============================================================================
+
+begin;
+
+-- ── §1 · CONCLUSÃO: HELPER + RPC AUTORIZADA (fonte: 20261022090000) ─────────
+-- O helper estava ausente e a RPC em produção ainda era a versão antiga.
+create or replace function public.pode_finalizar_feedback(p_feedback_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select auth.uid() is not null
+     and (
+       public.pode_gerir_avaliacoes()
+       or exists (
+         select 1
+           from public.feedbacks_360 f
+           join public.colaboradores c on c.id = f.avaliador_id
+          where f.id = p_feedback_id
+            and c.user_id = auth.uid()
+            and f.empresa_id in (select public.get_user_empresas(auth.uid()))
+       )
+       or exists (
+         select 1
+           from public.feedbacks_360 f
+          where f.id = p_feedback_id
+            and f.empresa_id in (select public.get_user_empresas(auth.uid()))
+            and public.pode_aprovar_colaborador(f.avaliado_id)
+       )
+     )
+$$;
+
+comment on function public.pode_finalizar_feedback(uuid) is
+  'Autoriza a conclusao do feedback por RH/admin, avaliador designado ou gestor responsavel/excecao; nao depende do tipo nem de supervisor_id para o avaliador.';
+
+revoke all on function public.pode_finalizar_feedback(uuid) from public, anon;
+grant execute on function public.pode_finalizar_feedback(uuid) to authenticated;
+create or replace function public.finalizar_feedback(
+  p_feedback_id  uuid,
+  p_acao         text,
+  p_motivo       text default null,
+  p_idempotencia text default null
+) returns jsonb
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_uid          uuid := auth.uid();
+  v_email        text := nullif(current_setting('request.jwt.claims', true)::jsonb ->> 'email', '');
+  v_hash         text;
+  v_chave        text;
+  v_linha        public.feedbacks_360%rowtype;
+  v_novo         text;
+  v_auditoria_id uuid;
+  v_resultado    jsonb;
+  v_confere      text;
+  v_anterior     jsonb;
+  v_nota         numeric;
+  v_revisao      integer;
+begin
+  if v_uid is null then
+    raise exception 'nao_autenticado' using errcode = '28000';
+  end if;
+  if p_acao not in ('concluir','cancelar','reabrir') then
+    raise exception 'acao_invalida';
+  end if;
+  if p_idempotencia is null or btrim(p_idempotencia) = '' then
+    raise exception 'idempotencia_ausente';
+  end if;
+
+  -- ── AUTORIZAÇÃO PRIMEIRO; IDEMPOTÊNCIA DEPOIS ──────────────────────────────
+  -- O REENVIO É UM CAMINHO DE LEITURA: ele devolve `status_anterior`,
+  -- `auditoria_id` e o resultado gravado daquela operação. Responder ao reenvio
+  -- antes de checar papel e empresa transformava a idempotência numa PORTA
+  -- LATERAL — a função é `SECURITY DEFINER`, então quem apresentasse a chave
+  -- receberia o resultado de OUTRO tenant sem passar por policy nenhuma.
+  -- Ordem obrigatória (e é a mesma nas três RPCs):
+  --   1. autenticação .................................... (acima)
+  --   2. AUTORIZAÇÃO DO REGISTRO (`pode_finalizar_feedback`);
+  --   3. linha carregada COM TRAVA (`for update`) — serializa concorrentes;
+  --   4. EMPRESA (tenant) da própria linha;
+  --   5. SÓ ENTÃO a chave de idempotência.
+  -- AUTORIZAÇÃO DA CONCLUSÃO: RH/admin OU avaliador designado OU gestor
+  -- responsável/exceção. `tipo` não participa; `supervisor_id` ausente não
+  -- bloqueia o avaliador designado. A aprovação consolidada continua em
+  -- `decidir_aprovacao_gestor` (regra separada).
+    -- Conclusao: autorizacao do REGISTRO (avaliador designado/gestor/RH/admin).
+  -- Cancelar/reabrir continuam administrativos (pode_gerir_avaliacoes).
+  if p_acao = 'concluir' then
+    if not public.pode_finalizar_feedback(p_feedback_id) then
+      raise exception 'perfil_nao_autorizado';
+    end if;
+  elsif not public.pode_gerir_avaliacoes() then
+    raise exception 'perfil_nao_autorizado';
+  end if;
+
+  v_chave := p_acao || ':' || p_feedback_id::text || ':' || p_idempotencia;
+  v_hash  := md5(p_feedback_id::text || '|' || p_acao || '|' || coalesce(p_motivo, ''));
+
+  -- Concorrência: trava a linha antes de decidir.
+  select * into v_linha from public.feedbacks_360 where id = p_feedback_id for update;
+  if not found then
+    raise exception 'registro_inexistente';
+  end if;
+
+  -- Tenant DENTRO da função (SECURITY DEFINER não passa por RLS).
+  if v_linha.empresa_id is null
+     or v_linha.empresa_id not in (select public.get_user_empresas(v_uid)) then
+    raise exception 'nao_autorizado';
+  end if;
+
+  -- Idempotência: mesma chave + mesmos parâmetros devolve o resultado anterior.
+  -- `empresa_id` e `feedback_id` repetidos aqui de propósito: mesmo que a chave
+  -- fosse adivinhada/forjada, ela só casa com a operação da PRÓPRIA empresa e do
+  -- PRÓPRIO feedback já autorizados acima (defesa em profundidade).
+  select resultado, hash_parametros into v_anterior, v_confere
+    from public.feedbacks_360_operacoes
+   where idempotency_key = v_chave
+     and empresa_id = v_linha.empresa_id
+     and feedback_id = p_feedback_id;
+  if found then
+    if v_confere <> v_hash then
+      raise exception 'idempotencia_conflito';
+    end if;
+    return v_anterior || jsonb_build_object('idempotente', true);
+  end if;
+
+  -- Máquina de estados (§9): concluido→cancelado exige reabrir antes.
+  v_novo := case
+    when coalesce(lower(btrim(v_linha.status)), '') = 'pendente' and p_acao = 'concluir' then 'concluido'
+    when coalesce(lower(btrim(v_linha.status)), '') = 'pendente' and p_acao = 'cancelar' then 'cancelado'
+    when coalesce(lower(btrim(v_linha.status)), '') in ('concluido','cancelado')
+         and p_acao = 'reabrir' then 'pendente'
+    else null
+  end;
+  if v_novo is null then
+    raise exception 'transicao_invalida';
+  end if;
+
+  -- Reabrir é recurso de RH/proprietário (e exige justificativa, §9.3).
+  if p_acao = 'reabrir' and (p_motivo is null or length(btrim(p_motivo)) < 10) then
+    raise exception 'justificativa_obrigatoria';
+  end if;
+  if p_acao = 'cancelar' and (p_motivo is null or length(btrim(p_motivo)) < 3) then
+    raise exception 'motivo_obrigatorio';
+  end if;
+  -- ── CONCLUIR: TODAS as condições obrigatórias, POR CATEGORIA (§6.1) ────────
+  -- O servidor é o guardião: o front NÃO bloqueia "Concluir" por falta de nota
+  -- (ele só não oferece controle que o status/papel recusa — ver
+  -- `FeedbackAcoesRodape`), então estas checagens são a única barreira real.
+  if p_acao = 'concluir' then
+    -- (a) A CATEGORIA precisa ser uma das quatro do 360°. Sem isso não existe
+    --     regra aprovada de elegibilidade, e a avaliação nunca classificaria.
+    if coalesce(lower(btrim(v_linha.tipo)), '') not in ('gestor','par','auto','subordinado') then
+      raise exception 'categoria_invalida';
+    end if;
+
+    -- (b) IDENTIFICAÇÃO E RASTREABILIDADE DA ORIGEM — espelho de
+    --     `statusFeedback.validarConclusao` (os mesmos impedimentos
+    --     `avaliado_ausente`, `avaliador_ausente` e `ciclo_ausente`). O contrato
+    --     do formulário já exige avaliado E avaliador (`podeSalvar =
+    --     Boolean(avaliadoId && avaliadorId)`) e a avaliação só existe dentro de
+    --     um ciclo: sem esses três vínculos não há a quem atribuir a avaliação
+    --     nem de onde rastrear sua origem. A checagem vale tanto para os
+    --     registros da criação segura quanto para os do INSERT direto
+    --     temporário — o registro pode ter nascido com a coluna nula, e é AQUI
+    --     que a conclusão inverte para recusa. Não exige mais que isso: a
+    --     existência dos vínculos é garantida pelas FKs.
+    if v_linha.avaliado_id is null then
+      raise exception 'avaliado_ausente';
+    end if;
+    if v_linha.avaliador_id is null then
+      raise exception 'avaliador_ausente';
+    end if;
+    if v_linha.ciclo_id is null then
+      raise exception 'ciclo_ausente';
+    end if;
+
+    -- (c) TODAS as categorias: nota de desempenho NA ESCALA 1–5. "Preenchida"
+    --     não basta: `performance` é `INTEGER CHECK (1..5)`, mas **`nota_geral`
+    --     é `NUMERIC` SEM CHECK** e a regra usa `coalesce(performance,
+    --     nota_geral)` — sem o teste de faixa, concluía com 0, 7 ou −3.
+    v_nota := coalesce(v_linha.performance, v_linha.nota_geral);
+    if v_nota is null then
+      raise exception 'dados_incompletos';
+    end if;
+    if v_nota < 1 or v_nota > 5 then
+      raise exception 'nota_desempenho_fora_da_escala';
+    end if;
+
+    -- (d) Potencial, QUANDO informado, tem de estar na escala 1–5 — para
+    --     QUALQUER categoria. O `CHECK (1..5)` da coluna já barra no INSERT, mas
+    --     o servidor confere aqui também (defesa em profundidade: a coluna é
+    --     `integer` e pode ter sido tocada por via privilegiada). Não altera a
+    --     regra de obrigatoriedade — só garante a escala.
+    if v_linha.potencial is not null and (v_linha.potencial < 1 or v_linha.potencial > 5) then
+      raise exception 'potencial_fora_da_escala';
+    end if;
+
+    -- (e) OBRIGATÓRIO apenas para o GESTOR: o Potencial é campo da avaliação do
+    --     gestor — é 100% do eixo horizontal do Nine-Box (`gestor_sem_potencial`
+    --     no motor). Pares/Auto/Subordinados **NÃO** fornecem Potencial (§6.1) e
+    --     continuam concluindo sem ele: exigi-lo seria bloquear avaliação
+    --     legítima. A régua do servidor é a mesma que o front aplica — e o front
+    --     não é a barreira.
+    if lower(btrim(v_linha.tipo)) = 'gestor' and v_linha.potencial is null then
+      raise exception 'potencial_obrigatorio_para_gestor';
+    end if;
+  end if;
+
+  -- A REVISÃO (§0.1) é incrementada pelo TRIGGER `trg_feedbacks_360_revisao` a
+  -- cada UPDATE — inclusive neste. A RPC NÃO a incrementa à mão (seria contagem
+  -- DOBRADA). O `returning` devolve o número NOVO já gravado pelo trigger, para
+  -- o resultado e para a trilha.
+  update public.feedbacks_360
+     set status = v_novo,
+         updated_at = now()
+   where id = p_feedback_id
+  returning revisao into v_revisao;
+
+  -- AUDITORIA VINCULADA À EMPRESA (§0g). A `audit_log` canônica TEM a coluna
+  -- `empresa_id` — é ela que a policy `audit_log_tenant_select` e a RPC
+  -- `listar_auditoria` usam para recortar a Trilha por tenant. O vínculo vai,
+  -- portanto, na COLUNA **e** é replicado em `dados_novos.empresa_id` (defesa
+  -- em profundidade e leitura direta pela timeline) junto do `status` e da
+  -- `revisao` resultantes. Sem a coluna preenchida o evento existiria, mas
+  -- ficaria INVISÍVEL para a própria empresa.
+  insert into public.audit_log (
+    empresa_id, tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
+  ) values (
+    v_linha.empresa_id,
+    'feedbacks_360', p_feedback_id, 'UPDATE',
+    jsonb_build_object('status', v_linha.status, 'revisao', v_linha.revisao),
+    jsonb_build_object(
+      'empresa_id', v_linha.empresa_id,
+      'status', v_novo,
+      'revisao', v_revisao
+    ),
+    array['status'], v_uid, v_email
+  ) returning id into v_auditoria_id;
+
+  v_resultado := jsonb_build_object(
+    'ok', true,
+    'status_anterior', v_linha.status,
+    'status_novo', v_novo,
+    'revisao_nova', v_revisao,
+    'auditoria_id', v_auditoria_id,
+    'idempotente', false
+  );
+
+  insert into public.feedbacks_360_operacoes
+    (idempotency_key, feedback_id, empresa_id, operacao, hash_parametros, resultado)
+  values (v_chave, p_feedback_id, v_linha.empresa_id, p_acao, v_hash, v_resultado)
+  on conflict (idempotency_key) do nothing;
+
+  return v_resultado;
+end;
+$$;
+
+revoke all on function public.finalizar_feedback(uuid, text, text, text) from public, anon;
+grant execute on function public.finalizar_feedback(uuid, text, text, text) to authenticated;
+
+-- ── §2 · EDIÇÃO SEGURA + RÓTULO DE IDEMPOTÊNCIA (fonte: 20261020090000) ──────
+do $$
+declare
+  v_nome text;
+begin
+  for v_nome in
+    select conname
+      from pg_constraint
+     where conrelid = 'public.feedbacks_360_operacoes'::regclass
+       and contype = 'c'
+       and pg_get_constraintdef(oid) ilike '%operacao%'
+  loop
+    execute format('alter table public.feedbacks_360_operacoes drop constraint %I', v_nome);
+  end loop;
+end $$;
+
+alter table public.feedbacks_360_operacoes
+  add constraint feedbacks_360_operacoes_operacao_check
+  check (operacao in ('concluir','cancelar','reabrir','validar_potencial','criar',
+                      'decidir_aprovacao_gestor','enviar_avaliacao_ao_gestor',
+                      'editar_feedback'));
+
+-- ── §2 · AUTORIZAÇÃO DE EDIÇÃO POR REGISTRO ───────────────────────────────
+-- RH/admin editam qualquer feedback da empresa. Gestor só edita feedback de
+-- colaborador sob sua responsabilidade (supervisor_id) ou com exceção válida
+-- registrada em `ninebox_permissoes_homologacao`. NÃO altera
+-- `pode_gerir_avaliacoes()` e não usa e-mail/UUID fixo como regra.
+create or replace function public.pode_editar_colaborador(p_colaborador_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select auth.uid() is not null
+     and exists (
+       select 1
+         from public.colaboradores alvo
+        where alvo.id = p_colaborador_id
+          and alvo.empresa_id is not null
+          and alvo.empresa_id in (select public.get_user_empresas(auth.uid()))
+          and (
+            public.pode_gerir_avaliacoes()
+            or (
+              exists (
+                select 1 from public.user_roles ur
+                 where ur.user_id = auth.uid() and ur.role::text = 'gestor'
+              )
+              and (
+                exists (
+                  select 1
+                    from public.colaboradores gestor
+                   where gestor.id = alvo.supervisor_id
+                     and gestor.empresa_id = alvo.empresa_id
+                     and gestor.user_id = auth.uid()
+                     and gestor.id <> alvo.id
+                )
+                or (
+                  alvo.user_id is distinct from auth.uid()
+                  and exists (
+                    select 1
+                      from public.ninebox_permissoes_homologacao h
+                     where h.user_id = auth.uid()
+                       and h.habilitado = true
+                       and h.expira_em > now()
+                  )
+                )
+              )
+            )
+          )
+     )
+$$;
+
+comment on function public.pode_editar_colaborador(uuid) is
+  'Autoriza edicao de avaliacoes do colaborador por RH/admin ou gestor responsavel, sem UUID/e-mail fixo e restrito a empresa.';
+
+revoke all on function public.pode_editar_colaborador(uuid) from public, anon;
+grant execute on function public.pode_editar_colaborador(uuid) to authenticated;
+
+create or replace function public.pode_editar_feedback(p_feedback_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select auth.uid() is not null
+     and exists (
+       select 1
+         from public.feedbacks_360 f
+        where f.id = p_feedback_id
+          and f.empresa_id in (select public.get_user_empresas(auth.uid()))
+          and public.pode_editar_colaborador(f.avaliado_id)
+     )
+$$;
+
+comment on function public.pode_editar_feedback(uuid) is
+  'Autoriza edicao por RH/admin ou gestor responsavel/excecao; exige empresa do feedback e nao concede acesso entre tenants.';
+
+revoke all on function public.pode_editar_feedback(uuid) from public, anon;
+grant execute on function public.pode_editar_feedback(uuid) to authenticated;
+
+-- ── §2 · RPC DE EDIÇÃO ─────────────────────────────────────────────────────
+create or replace function public.editar_feedback_seguro(
+  p_feedback_id     uuid,
+  p_avaliado_id     uuid,
+  p_avaliador_id    uuid,
+  p_ciclo_id        uuid,
+  p_tipo            text,
+  p_nota            numeric,
+  p_potencial       numeric default null,
+  p_pontos_fortes   text default null,
+  p_pontos_melhoria text default null,
+  p_comentarios     text default null,
+  p_idempotencia    text default null
+) returns jsonb
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_uid      uuid := auth.uid();
+  v_email    text := nullif(current_setting('request.jwt.claims', true)::jsonb ->> 'email', '');
+  v_tipo     text := lower(btrim(coalesce(p_tipo, '')));
+  v_antes    public.feedbacks_360%rowtype;
+  v_depois   public.feedbacks_360%rowtype;
+  v_chave    text;
+  v_hash     text;
+  v_confere  text;
+  v_anterior jsonb;
+  v_reabriu  boolean;
+  v_status_atual text;
+  v_status_novo  text;
+  v_resultado jsonb;
+begin
+  if v_uid is null then
+    raise exception 'nao_autenticado' using errcode = '28000';
+  end if;
+  if p_idempotencia is null or btrim(p_idempotencia) = '' then
+    raise exception 'idempotencia_ausente';
+  end if;
+
+  -- EDIÇÃO por registro: RH/admin OU gestor responsável/exceção do colaborador.
+  if not public.pode_editar_feedback(p_feedback_id) then
+    raise exception 'perfil_nao_autorizado';
+  end if;
+
+  select * into v_antes from public.feedbacks_360 where id = p_feedback_id for update;
+  if not found then
+    raise exception 'registro_inexistente';
+  end if;
+  if v_antes.empresa_id is null
+     or v_antes.empresa_id not in (select public.get_user_empresas(v_uid)) then
+    raise exception 'nao_autorizado';
+  end if;
+
+  if v_tipo not in ('gestor', 'par', 'auto', 'subordinado') then
+    raise exception 'tipo_invalido';
+  end if;
+  if p_nota is null or p_nota < 1 or p_nota > 5 then
+    raise exception 'nota_invalida';
+  end if;
+  if p_potencial is not null and (p_potencial < 1 or p_potencial > 5) then
+    raise exception 'potencial_invalido';
+  end if;
+
+  -- CONTEXTO NA MESMA EMPRESA (nenhum id de outro tenant entra no registro).
+  if p_avaliado_id is null
+     or not exists (select 1 from public.colaboradores c
+                     where c.id = p_avaliado_id and c.empresa_id = v_antes.empresa_id) then
+    raise exception 'avaliado_invalido';
+  end if;
+  if p_avaliador_id is null
+     or not exists (select 1 from public.colaboradores c
+                     where c.id = p_avaliador_id and c.empresa_id = v_antes.empresa_id) then
+    raise exception 'avaliador_invalido';
+  end if;
+  if p_ciclo_id is not null
+     and not exists (select 1 from public.ciclos_avaliacao c
+                      where c.id = p_ciclo_id and c.empresa_id = v_antes.empresa_id) then
+    raise exception 'ciclo_invalido';
+  end if;
+
+  -- Gestor não pode “mover” um feedback para colaborador fora de sua
+  -- responsabilidade. RH/admin continuam com escopo de empresa.
+  if not public.pode_gerir_avaliacoes()
+     and not public.pode_editar_colaborador(p_avaliado_id) then
+    raise exception 'avaliado_fora_da_responsabilidade';
+  end if;
+
+  v_chave := 'editar_feedback:' || p_feedback_id::text || ':' || p_idempotencia;
+  v_hash  := md5(
+    p_feedback_id::text || '|' || p_avaliado_id::text || '|' || p_avaliador_id::text || '|' ||
+    coalesce(p_ciclo_id::text, '') || '|' || v_tipo || '|' || coalesce(p_nota::text, '') || '|' ||
+    coalesce(p_potencial::text, '') || '|' || coalesce(p_pontos_fortes, '') || '|' ||
+    coalesce(p_pontos_melhoria, '') || '|' || coalesce(p_comentarios, '')
+  );
+
+  select resultado, hash_parametros into v_anterior, v_confere
+    from public.feedbacks_360_operacoes
+   where idempotency_key = v_chave and empresa_id = v_antes.empresa_id;
+  if found then
+    if v_confere <> v_hash then
+      raise exception 'idempotencia_conflito';
+    end if;
+    return v_anterior || jsonb_build_object('idempotente', true);
+  end if;
+
+  v_reabriu := false;
+  v_status_atual := lower(btrim(coalesce(v_antes.status, '')));
+
+  -- MÁQUINA DE ESTADOS EXPLÍCITA: editar NUNCA reativa cancelamento.
+  -- Cancelado só volta por `finalizar_feedback(..., 'reabrir', motivo, ...)`,
+  -- operação administrativa auditada e com justificativa.
+  if v_status_atual = 'pendente' then
+    v_status_novo := 'pendente';
+  elsif v_status_atual in ('concluido', 'concluida') then
+    v_status_novo := 'pendente';
+    v_reabriu := true;
+  elsif v_status_atual = 'cancelado' then
+    raise exception 'feedback_cancelado_nao_editavel';
+  else
+    raise exception 'status_desconhecido';
+  end if;
+
+  update public.feedbacks_360
+     set avaliado_id     = p_avaliado_id,
+         avaliador_id    = p_avaliador_id,
+         ciclo_id        = p_ciclo_id,
+         tipo            = v_tipo,
+         nota_geral      = p_nota,
+         potencial       = p_potencial,
+         pontos_fortes   = nullif(btrim(coalesce(p_pontos_fortes, '')), ''),
+         pontos_melhoria = nullif(btrim(coalesce(p_pontos_melhoria, '')), ''),
+         comentarios     = nullif(btrim(coalesce(p_comentarios, '')), ''),
+         status          = v_status_novo,
+         updated_at      = now()
+   where id = p_feedback_id
+  returning * into v_depois;
+
+  insert into public.audit_log (
+    empresa_id, tabela, registro_id, acao, dados_anteriores, dados_novos, campos_alterados, user_id, user_email
+  ) values (
+    v_antes.empresa_id,
+    'feedbacks_360', p_feedback_id, 'UPDATE',
+    jsonb_build_object(
+      'avaliado_id', v_antes.avaliado_id,
+      'avaliador_id', v_antes.avaliador_id,
+      'ciclo_id', v_antes.ciclo_id,
+      'tipo', v_antes.tipo,
+      'nota_geral', v_antes.nota_geral,
+      'potencial', v_antes.potencial,
+      'status', v_antes.status,
+      'revisao', v_antes.revisao
+    ),
+    jsonb_build_object(
+      'empresa_id', v_depois.empresa_id,
+      'avaliado_id', v_depois.avaliado_id,
+      'avaliador_id', v_depois.avaliador_id,
+      'ciclo_id', v_depois.ciclo_id,
+      'tipo', v_depois.tipo,
+      'nota_geral', v_depois.nota_geral,
+      'potencial', v_depois.potencial,
+      'status', v_depois.status,
+      'revisao', v_depois.revisao,
+      'reaberta', v_reabriu,
+      'motivo', 'edicao_feedback'
+    ),
+    array['avaliado_id','avaliador_id','ciclo_id','tipo','nota_geral','potencial',
+          'pontos_fortes','pontos_melhoria','comentarios','status'],
+    v_uid, v_email
+  );
+
+  v_resultado := jsonb_build_object(
+    'ok', true,
+    'feedback_id', p_feedback_id,
+    'status', v_depois.status,
+    'revisao', v_depois.revisao,
+    'reaberta', v_reabriu,
+    'versao_avaliacao', public.versao_avaliacao_feedback(p_feedback_id),
+    'idempotente', false
+  );
+
+  insert into public.feedbacks_360_operacoes
+    (idempotency_key, feedback_id, empresa_id, operacao, hash_parametros, resultado)
+  values (v_chave, p_feedback_id, v_antes.empresa_id, 'editar_feedback', v_hash, v_resultado)
+  on conflict (idempotency_key) do nothing;
+
+  return v_resultado;
+end;
+$$;
+
+comment on function public.editar_feedback_seguro(uuid, uuid, uuid, uuid, text, numeric, numeric, text, text, text, text) is
+  'Edicao por RH/admin ou gestor responsavel/excecao: valida tenant/contexto/notas, aplica maquina de estados (cancelado nao reativa), audita antes/depois e invalida aprovacoes pela nova versao. Idempotente.';
+
+revoke all on function public.editar_feedback_seguro(uuid, uuid, uuid, uuid, text, numeric, numeric, text, text, text, text)
+  from public, anon;
+grant execute on function public.editar_feedback_seguro(uuid, uuid, uuid, uuid, text, numeric, numeric, text, text, text, text)
+  to authenticated;
+
+-- ── §3 · PROTEÇÃO DE CICLOS (fonte: 20261026090000) ──────────────────────────
+drop policy if exists "ciclos_avaliacao_insert" on public.ciclos_avaliacao;
+create policy "ciclos_avaliacao_insert" on public.ciclos_avaliacao
+  for insert to authenticated
+  with check (
+    empresa_id in (select public.get_user_empresas(auth.uid()))
+    and public.pode_gerir_avaliacoes()
+  );
+
+drop policy if exists "ciclos_avaliacao_delete" on public.ciclos_avaliacao;
+create policy "ciclos_avaliacao_delete" on public.ciclos_avaliacao
+  for delete to authenticated
+  using (
+    empresa_id in (select public.get_user_empresas(auth.uid()))
+    and public.pode_gerir_avaliacoes()
+  );
+
+-- ── BLOQUEIO DE EXCLUSÃO FÍSICA COM DEPENDÊNCIAS ───────────────────────────
+-- A FK de feedbacks/metas é ON DELETE SET NULL; sem esta trava, um DELETE
+-- direto apagaria o ciclo e deixaria os registros órfãos. O trigger recusa a
+-- operação ANTES de qualquer alteração e nunca apaga em cascata.
+-- PDI: `pdis` e `pdi_plano_desenvolvimento` NÃO possuem `ciclo_id`; suas FKs
+-- apontam para `colaboradores`/`empresas`. A exclusão do ciclo não cria PDI
+-- órfão, por isso não é tratada como dependência do ciclo.
+create or replace function public.bloquear_exclusao_ciclo_com_dependencias()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_feedbacks integer;
+  v_consolidacoes integer;
+  v_aprovacoes integer;
+  v_validacoes integer;
+  v_metas integer;
+  v_auditoria integer;
+begin
+  select count(*) into v_feedbacks from public.feedbacks_360 where ciclo_id = old.id;
+  select count(*) into v_consolidacoes from public.feedbacks_360_consolidacoes where ciclo_id = old.id;
+  select count(*) into v_aprovacoes from public.feedbacks_360_aprovacoes_gestor where ciclo_id = old.id;
+  select count(*) into v_validacoes from public.feedbacks_360_validacoes_potencial where ciclo_id = old.id;
+  select count(*) into v_metas from public.metas_okrs where ciclo_id = old.id;
+  -- Histórico do ciclo: a auditoria não tem FK para ciclos_avaliacao; sem esta
+  -- checagem o DELETE deixaria a trilha apontando para um registro inexistente.
+  select count(*) into v_auditoria
+    from public.audit_log
+   where tabela = 'ciclos_avaliacao' and registro_id = old.id;
+
+  if (v_feedbacks + v_consolidacoes + v_aprovacoes + v_validacoes + v_metas + v_auditoria) > 0 then
+    raise exception 'ciclo_com_dependencias'
+      using detail = format(
+        'feedbacks=%s consolidacoes=%s aprovacoes=%s validacoes=%s metas=%s auditoria=%s',
+        v_feedbacks, v_consolidacoes, v_aprovacoes, v_validacoes, v_metas, v_auditoria
+      ),
+      hint = 'Arquive o ciclo ou remova os vínculos com autorização; nada foi apagado.';
+  end if;
+
+  return old;
+end;
+$$;
+
+revoke all on function public.bloquear_exclusao_ciclo_com_dependencias() from public, anon;
+
+drop trigger if exists ciclos_bloqueio_exclusao_com_dependencias on public.ciclos_avaliacao;
+create trigger ciclos_bloqueio_exclusao_com_dependencias
+  before delete on public.ciclos_avaliacao
+  for each row execute function public.bloquear_exclusao_ciclo_com_dependencias();
+commit;
+
+-- A Data API mantém cache de funções; recarrega depois de criar as RPCs.
+notify pgrst, 'reload schema';
