@@ -4,26 +4,31 @@ import { avaliacaoService } from '../avaliacaoService';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
+const { mockFrom, mockRpc } = vi.hoisted(() => ({ mockFrom: vi.fn(), mockRpc: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    rpc: (...a: unknown[]) => mockRpc(...a),
+  },
 }));
 
-function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
+type PostgrestErrorLike = { message?: string } | null;
+
+function setupListChain<T = unknown>(data: T[] | null, error: PostgrestErrorLike = null) {
   const response = { data, error };
   const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (value: typeof response) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (reason: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: () => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
+function setupInsertChain<T = unknown>(data: T, error: PostgrestErrorLike = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -31,18 +36,15 @@ function setupInsertChain(data: unknown, error: { message: string; code?: string
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: { message: string; code?: string } | null = null) {
-  const eqFn = vi.fn();
-  const __delChain = {
-    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
-    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
-    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
-    eq: eqFn,
-  };
-  eqFn.mockReturnValue(__delChain);
-  const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
+function setupDeleteChain<T = unknown>(data: T = { id: 'ci1' } as T, error: PostgrestErrorLike = null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+  const selectFn = vi.fn().mockReturnValue({ maybeSingle });
+  const chain: Record<string, unknown> = { select: selectFn };
+  const eqFn = vi.fn().mockReturnValue(chain);
+  chain.eq = eqFn;
+  const deleteFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ delete: deleteFn });
-  return { deleteFn, eqFn };
+  return { deleteFn, eqFn, selectFn, maybeSingle };
 }
 
 // ─── Ciclos ───────────────────────────────────────────────────────────────────
@@ -66,7 +68,7 @@ describe('avaliacaoService.listarCiclos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as never);
+    setupListChain<unknown>(null);
     expect(await avaliacaoService.listarCiclos(EMPRESA_ID)).toEqual([]);
   });
 
@@ -79,56 +81,90 @@ describe('avaliacaoService.listarCiclos', () => {
 describe('avaliacaoService.criarCiclo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: true, error: null });
   });
 
-  const cicloInsert = { nome: 'Q2 2026', data_inicio: '2026-04-01', data_fim: '2026-06-30' };
-
   it('inserts and returns new ciclo', async () => {
-    const created = { id: 'ci-new', ...cicloInsert };
+    const created = { id: 'ci-new', nome: 'Q2 2026' };
     const { insertFn } = setupInsertChain(created);
-    const result = await avaliacaoService.criarCiclo(cicloInsert);
-    expect(insertFn).toHaveBeenCalledWith(cicloInsert);
+    const result = await avaliacaoService.criarCiclo({ nome: 'Q2 2026' });
+    expect(insertFn).toHaveBeenCalledWith({ nome: 'Q2 2026' });
     expect(result).toEqual(created);
+  });
+
+  it('throws when the database does not confirm the inserted row', async () => {
+    setupInsertChain(null);
+    await expect(avaliacaoService.criarCiclo({ nome: 'Sem confirmação' })).rejects.toThrow(
+      /perfil_nao_autorizado|não confirmou/i
+    );
+  });
+
+  it('blocks creation for a profile without RH/admin permission', async () => {
+    mockRpc.mockResolvedValue({ data: false, error: null });
+    setupInsertChain({ id: 'nao-deveria' });
+    await expect(avaliacaoService.criarCiclo({ nome: 'Sem permissão' })).rejects.toThrow(/perfil_nao_autorizado/i);
+    expect(mockFrom).not.toHaveBeenCalled();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(avaliacaoService.criarCiclo(cicloInsert)).rejects.toBeDefined();
+    await expect(avaliacaoService.criarCiclo({})).rejects.toBeDefined();
+  });
+});
+
+describe('avaliacaoService.contarDependenciasCiclo', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('soma as dependências reais por tabela (sem apagar nada)', async () => {
+    const counts: Record<string, number> = {
+      feedbacks_360: 2,
+      feedbacks_360_consolidacoes: 1,
+      feedbacks_360_aprovacoes_gestor: 1,
+      feedbacks_360_validacoes_potencial: 0,
+      metas_okrs: 3,
+    };
+    mockFrom.mockImplementation((tabela: string) => ({
+      select: () => {
+        const chain: Record<string, unknown> = {};
+        chain.eq = vi.fn().mockReturnValue(chain);
+        chain.then = (fn: (value: unknown) => unknown) =>
+          Promise.resolve({ count: counts[tabela] ?? 0, error: null }).then(fn);
+        chain.catch = (fn: (reason: unknown) => unknown) =>
+          Promise.resolve({ count: counts[tabela] ?? 0, error: null }).catch(fn);
+        return chain;
+      },
+    }));
+    const deps = await avaliacaoService.contarDependenciasCiclo('ci-1', EMPRESA_ID);
+    expect(deps.total).toBe(7);
+    expect(deps.porTabela).toMatchObject({ feedbacks_360: 2, metas_okrs: 3 });
   });
 });
 
 describe('avaliacaoService.excluirCiclo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: true, error: null });
   });
 
-  function setupDeleteSelectChain(data: unknown, error: { message: string } | null = null) {
-    const selectFn = vi.fn().mockResolvedValue({ data, error });
-    const eqFn = vi.fn();
-    eqFn.mockReturnValue({ eq: eqFn, select: selectFn });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
-    return { deleteFn, eqFn, selectFn };
-  }
-
   it('deletes ciclo by id', async () => {
-    const { deleteFn, eqFn, selectFn } = setupDeleteSelectChain([{ id: 'ci1' }]);
+    const { deleteFn, eqFn } = setupDeleteChain();
     await avaliacaoService.excluirCiclo('ci1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'ci1');
-    expect(selectFn).toHaveBeenCalledWith('id');
   });
 
-  it('lança erro de permissão quando a RLS não exclui nenhuma linha', async () => {
-    setupDeleteSelectChain([]);
-    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toThrow(
-      'Sem permissão para excluir o ciclo.'
-    );
+  it('não presume sucesso quando o banco não devolve a linha excluída', async () => {
+    setupDeleteChain(null);
+    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toThrow(/não confirmou/i);
   });
 
-  it('throws on DB error', async () => {
-    setupDeleteSelectChain(null, { message: 'fail' });
-    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toBeDefined();
+  it('blocks deletion for a profile without RH/admin permission', async () => {
+    mockRpc.mockResolvedValue({ data: false, error: null });
+    const { deleteFn } = setupDeleteChain();
+    await expect(avaliacaoService.excluirCiclo('ci1', EMPRESA_ID)).rejects.toThrow(/perfil_nao_autorizado/i);
+    expect(deleteFn).not.toHaveBeenCalled();
   });
 });
 
@@ -154,8 +190,21 @@ describe('avaliacaoService.listarMetas', () => {
   });
 
   it('returns empty when null', async () => {
-    setupListChain(null as never);
+    setupListChain<unknown>(null);
     expect(await avaliacaoService.listarMetas(EMPRESA_ID)).toEqual([]);
+  });
+
+  it('also filters by colaborador_id when provided (PARTE G)', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarMetas(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+  });
+
+  it('does not filter by colaborador_id when omitted', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarMetas(EMPRESA_ID);
+    expect(chain.eq).not.toHaveBeenCalledWith('colaborador_id', expect.anything());
   });
 });
 
@@ -201,8 +250,14 @@ describe('avaliacaoService.listarPDIs', () => {
   });
 
   it('returns empty when null', async () => {
-    setupListChain(null as never);
+    setupListChain<unknown>(null);
     expect(await avaliacaoService.listarPDIs(EMPRESA_ID)).toEqual([]);
+  });
+
+  it('also filters by colaborador_id when provided (PARTE G)', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarPDIs(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
   });
 });
 
@@ -214,7 +269,7 @@ describe('avaliacaoService.criarPDI', () => {
   it('inserts and returns new PDI', async () => {
     const created = { id: 'p-new' };
     const { insertFn } = setupInsertChain(created);
-    const result = await avaliacaoService.criarPDI({ titulo: 'Crescer' });
+    const result = await avaliacaoService.criarPDI({ objetivo: 'Crescer' });
     expect(result).toEqual(created);
   });
 });
@@ -252,6 +307,12 @@ describe('avaliacaoService.listarFeedbacks', () => {
     await avaliacaoService.listarFeedbacks('emp-2');
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-2');
   });
+
+  it('filters by avaliado_id (not avaliador_id) when provided (PARTE G)', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarFeedbacks(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('avaliado_id', 'col-1');
+  });
 });
 
 describe('avaliacaoService.criarFeedback', () => {
@@ -262,7 +323,7 @@ describe('avaliacaoService.criarFeedback', () => {
   it('inserts and returns new feedback', async () => {
     const created = { id: 'fb-new' };
     const { insertFn } = setupInsertChain(created);
-    const result = await avaliacaoService.criarFeedback({ nota_geral: 5 });
+    const result = await avaliacaoService.criarFeedback({ nota: 5 });
     expect(result).toEqual(created);
   });
 });
@@ -272,10 +333,15 @@ describe('avaliacaoService.excluirFeedback', () => {
     vi.clearAllMocks();
   });
 
-  it('deletes feedback by id', async () => {
+  it('RECUSA a exclusão física e NÃO chama o DELETE (correção R2)', async () => {
     const { eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirFeedback('fb1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'fb1');
+    await expect(avaliacaoService.excluirFeedback('fb1', EMPRESA_ID)).rejects.toThrow(/EXCLUSAO_FISICA_DESATIVADA/);
+    expect(eqFn).not.toHaveBeenCalled();
+  });
+
+  it('explica que o caminho oficial é o cancelamento auditado', async () => {
+    setupDeleteChain();
+    await expect(avaliacaoService.excluirFeedback('fb1', EMPRESA_ID)).rejects.toThrow(/cancelamento auditado/);
   });
 });
 

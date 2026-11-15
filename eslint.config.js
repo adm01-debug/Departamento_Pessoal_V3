@@ -107,4 +107,32 @@ export default tseslint.config(
       "@typescript-eslint/ban-ts-comment": "off",
     },
   },
+  {
+    // Área Avaliação/NineBox portada da branch `muri` (W1). O código original
+    // da muri era escrito sem o ratchet `no-explicit-any`; manter a regra aqui
+    // importaria ~108 warnings novos e quebraria `lint:ci` (orçamento 1). A
+    // dívida fica medida: `scripts/ratchet-any.mjs` segue vigente para `components`
+    // e `pages` e reprova qualquer subida fora destes arquivos.
+    files: [
+      "src/components/avaliacao/**/*.{ts,tsx}",
+      "src/components/animate-ui/**/*.{ts,tsx}",
+      "src/pages/AvaliacaoPage.tsx",
+      "src/services/avaliacaoService.ts",
+      "src/mocks/colaboradoresMock.ts",
+    ],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+  {
+    // Primitivos `animate-ui` vendidos da muri (W1). `set-state-in-effect` e
+    // `only-export-components` refletem o padrão interno da lib (efeitos que
+    // sincronizam altura/medidas com ResizeObserver); a regra de primeira
+    // renderização serve ao userland React, não ao primitive vendido.
+    files: ["src/components/animate-ui/**/*.{ts,tsx}"],
+    rules: {
+      "react-hooks/set-state-in-effect": "off",
+      "react-refresh/only-export-components": "off",
+    },
+  },
 );

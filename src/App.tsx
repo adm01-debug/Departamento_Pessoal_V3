@@ -49,6 +49,7 @@ const BackupPage = lazy(() => import('@/pages/BackupPage'));
 const OrganogramaPage = lazy(() => import('@/pages/OrganogramaPage'));
 const PortalPage = lazy(() => import('@/pages/PortalPage'));
 const AvaliacaoPage = lazy(() => import('@/pages/AvaliacaoPage'));
+const NineBoxPreviewPage = lazy(() => import('@/pages/NineBoxPreviewPage'));
 const TreinamentosPage = lazy(() => import('@/pages/TreinamentosPage'));
 const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
@@ -158,7 +159,7 @@ function PageLoader() {
   );
 }
 
-function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement> }) {
+function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement | null> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
@@ -249,6 +250,9 @@ export default function App() {
 
         {/* Gestão e Performance */}
         <Route path="avaliacao" element={<LazyPage Component={AvaliacaoPage} />} />
+        {import.meta.env.DEV && NineBoxPreviewPage && (
+          <Route path="avaliacao/ninebox-preview" element={<LazyPage Component={NineBoxPreviewPage} />} />
+        )}
         <Route path="treinamentos" element={<LazyPage Component={TreinamentosPage} />} />
         <Route path="recrutamento" element={<LazyPage Component={RecrutamentoPage} />} />
         <Route path="onboarding" element={<LazyPage Component={OnboardingPage} />} />
