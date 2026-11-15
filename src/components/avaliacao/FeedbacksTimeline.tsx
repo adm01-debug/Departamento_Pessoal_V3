@@ -73,6 +73,8 @@ interface FeedbacksTimelineProps {
   apresentacao?: string;
   /** Movimento reduzido (ver `useMovimentoReduzido`). */
   reduzirMovimento?: boolean;
+  /** Abre o detalhe do PRÓPRIO registro (ações de status no rodapé). */
+  onVer?: (item: FeedbackCanonico) => void;
   /** Ação dos filtros NORMAIS: abre o formulário existente em modo de edição. */
   onEditar?: (item: FeedbackCanonico) => void;
   onFiltrarAvaliador?: (nome: string) => void;
@@ -85,6 +87,7 @@ export function FeedbacksTimeline({
   grupos,
   apresentacao,
   reduzirMovimento = false,
+  onVer,
   onEditar,
   onFiltrarAvaliador,
   onFiltrarAvaliado,
@@ -146,6 +149,7 @@ export function FeedbacksTimeline({
       key={assinatura}
       grupos={comIndice}
       reduzirMovimento={reduzirMovimento}
+      onVer={onVer}
       onEditar={onEditar}
       onFiltrarAvaliador={onFiltrarAvaliador}
       onFiltrarAvaliado={onFiltrarAvaliado}
@@ -177,12 +181,14 @@ function chaveDoItem(item: FeedbackDerivado): string {
 function ListaCoordenada({
   grupos,
   reduzirMovimento,
+  onVer,
   onEditar,
   onFiltrarAvaliador,
   onFiltrarAvaliado,
 }: {
   grupos: (Omit<GrupoMes<FeedbackCanonico>, 'itens'> & { itens: ItemPosicionado[] })[];
   reduzirMovimento: boolean;
+  onVer?: (item: FeedbackCanonico) => void;
   onEditar?: (item: FeedbackCanonico) => void;
   onFiltrarAvaliador?: (nome: string) => void;
   onFiltrarAvaliado?: (nome: string) => void;
@@ -250,6 +256,7 @@ function ListaCoordenada({
                 <motion.div {...cardEntradaFeedback(indice)} style={indice === 0 ? EXPANSAO_ORIGEM : undefined}>
                   <FeedbackCard
                     item={item}
+                    onVer={onVer}
                     onEditar={onEditar}
                     onFiltrarAvaliador={onFiltrarAvaliador}
                     onFiltrarAvaliado={onFiltrarAvaliado}
