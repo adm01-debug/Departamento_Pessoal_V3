@@ -35,6 +35,10 @@ export const TABLE_ALLOWLIST = new Set<string>([
   "epis_fichas", "epis_fichas_assinaturas", "epis_fichas_itens", "escalas", "escalas_trabalho",
   "esocial_eventos", "esocial_lotes", "esocial_transmissao_logs", "etnias", "eventos_variaveis",
   "exames", "exames_agendamentos", "faixas_inss", "faixas_irrf", "faltas", "feedbacks_360",
+  // NineBox/Avaliacao 360: RLS por empresa_id ligada nas tres (policies em
+  // 20261017090000_ninebox_aprovacao_gestor.sql e irmas); a view herda do dono.
+  "feedbacks_360_aprovacoes_gestor", "feedbacks_360_consolidacoes",
+  "feedbacks_360_validacoes_potencial",
   "feriados", "ferias", "ferias_aprovacoes", "ferias_aprovacoes_log", "ferias_arquivos",
   "ferias_audit_log", "ferias_coletivas", "ferias_programacao", "ferias_reconciliacao_logs",
   "ferias_solicitacoes", "fgts_digital_logs", "fila_notificacoes", "fila_processamento",
@@ -91,7 +95,8 @@ export const TABLE_ALLOWLIST = new Set<string>([
   "vales_transporte", "valores_campos_customizados", "verbas_rescisorias", "verification_tokens",
   "versao_banco", "vinculos", "vw_alertas_compensacao", "vw_alertas_rh", "vw_banco_horas_saldo",
   "vw_batidas_dia", "vw_batidas_resumo", "vw_cadastro_incompleto", "vw_colaboradores_completo",
-  "vw_dashboard_time", "vw_faltas_mensal", "vw_ferias_resumo", "vw_folha_compliance",
+  "vw_dashboard_time", "vw_faltas_mensal", "vw_feedbacks_360_versao",
+  "vw_ferias_resumo", "vw_folha_compliance",
   "vw_folha_ponto_mensal", "vw_kpi_absenteismo", "vw_kpi_beneficios_custo", "vw_kpi_ponto_resumo",
   "vw_kpi_turnover", "vw_saldo_compensacao_mensal", "webauthn_challenges", "webauthn_credentials",
   "webhook_logs", "webhooks", "webhooks_config", "webhooks_logs", "whatsapp_config",

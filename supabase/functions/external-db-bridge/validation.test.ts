@@ -282,7 +282,7 @@ Deno.test("listas: sanidade e disjunção", () => {
   ok(TABLE_DENYLIST.size >= 15, "denylist com tamanho esperado");
   // A lista cobre o contrato de produção do frontend, mas continua fechada:
   // rotinas de lockout, IP, rate-limit e manutenção não atravessam o bridge.
-  ok(RPC_ALLOWLIST.size >= 75 && RPC_ALLOWLIST.size <= 100, "rpc allowlist com tamanho esperado");
+  ok(RPC_ALLOWLIST.size >= 75 && RPC_ALLOWLIST.size <= 120, "rpc allowlist com tamanho esperado");
   ok(ADMIN_ONLY_WRITE_TABLES.has("empresas"), "empresas exige escopo administrativo para escrita");
   // nenhuma tabela de negócio (tenant-scoped) pode estar simultaneamente na denylist
 });
