@@ -2,11 +2,17 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
-  },
-}));
+vi.mock('framer-motion', () => {
+  const Fake = ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <div {...props}>{children}</div>
+  );
+  return {
+    motion: new Proxy({} as Record<string, unknown>, {
+      get: (_alvo, prop) => (prop === 'create' ? () => Fake : Fake),
+    }),
+    useReducedMotion: () => false,
+  };
+});
 
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },

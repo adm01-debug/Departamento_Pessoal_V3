@@ -8586,6 +8586,212 @@ export type Database = {
           },
         ]
       }
+      feedbacks_360_aprovacoes_gestor: {
+        Row: {
+          ciclo_id: string
+          colaborador_id: string
+          consolidacao_id: string | null
+          decidido_em: string
+          decidido_por: string
+          decisao: string
+          empresa_id: string
+          feedback_id: string | null
+          hash_parametros: string | null
+          id: string
+          idempotency_key: string | null
+          justificativa: string | null
+          revisao: number
+          versao_avaliacao: string
+        }
+        Insert: {
+          ciclo_id: string
+          colaborador_id: string
+          consolidacao_id?: string | null
+          decidido_em?: string
+          decidido_por: string
+          decisao: string
+          empresa_id: string
+          feedback_id?: string | null
+          hash_parametros?: string | null
+          id?: string
+          idempotency_key?: string | null
+          justificativa?: string | null
+          revisao: number
+          versao_avaliacao: string
+        }
+        Update: {
+          ciclo_id?: string
+          colaborador_id?: string
+          consolidacao_id?: string | null
+          decidido_em?: string
+          decidido_por?: string
+          decisao?: string
+          empresa_id?: string
+          feedback_id?: string | null
+          hash_parametros?: string | null
+          id?: string
+          idempotency_key?: string | null
+          justificativa?: string | null
+          revisao?: number
+          versao_avaliacao?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedbacks_360_aprovacoes_gestor_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedbacks_360_aprovacoes_gestor_consolidacao_id_fkey"
+            columns: ["consolidacao_id"]
+            isOneToOne: false
+            referencedRelation: "feedbacks_360_consolidacoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feedbacks_360_aprovacoes_gestor_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedbacks_360"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedbacks_360_consolidacoes: {
+        Row: {
+          atualizado_em: string
+          atualizado_por: string | null
+          ciclo_id: string
+          colaborador_id: string
+          empresa_id: string
+          enviado_em: string | null
+          enviado_por: string | null
+          gestor_responsavel_colaborador_id: string | null
+          gestor_responsavel_user_id: string | null
+          id: string
+          revisao: number
+          status: string
+          versao_consolidada: string | null
+        }
+        Insert: {
+          atualizado_em?: string
+          atualizado_por?: string | null
+          ciclo_id: string
+          colaborador_id: string
+          empresa_id: string
+          enviado_em?: string | null
+          enviado_por?: string | null
+          gestor_responsavel_colaborador_id?: string | null
+          gestor_responsavel_user_id?: string | null
+          id?: string
+          revisao?: number
+          status?: string
+          versao_consolidada?: string | null
+        }
+        Update: {
+          atualizado_em?: string
+          atualizado_por?: string | null
+          ciclo_id?: string
+          colaborador_id?: string
+          empresa_id?: string
+          enviado_em?: string | null
+          enviado_por?: string | null
+          gestor_responsavel_colaborador_id?: string | null
+          gestor_responsavel_user_id?: string | null
+          id?: string
+          revisao?: number
+          status?: string
+          versao_consolidada?: string | null
+        }
+        Relationships: []
+      }
+      feedbacks_360_operacoes: {
+        Row: {
+          criada_em: string
+          empresa_id: string
+          feedback_id: string
+          hash_parametros: string
+          idempotency_key: string
+          operacao: string
+          resultado: Json
+        }
+        Insert: {
+          criada_em?: string
+          empresa_id: string
+          feedback_id: string
+          hash_parametros: string
+          idempotency_key: string
+          operacao: string
+          resultado: Json
+        }
+        Update: {
+          criada_em?: string
+          empresa_id?: string
+          feedback_id?: string
+          hash_parametros?: string
+          idempotency_key?: string
+          operacao?: string
+          resultado?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedbacks_360_operacoes_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedbacks_360"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feedbacks_360_validacoes_potencial: {
+        Row: {
+          ciclo_id: string | null
+          colaborador_id: string
+          empresa_id: string
+          feedback_id: string
+          id: string
+          observacao: string | null
+          potencial_validado: number
+          validado_em: string
+          validado_por: string
+          versao_avaliacao: string
+        }
+        Insert: {
+          ciclo_id?: string | null
+          colaborador_id: string
+          empresa_id: string
+          feedback_id: string
+          id?: string
+          observacao?: string | null
+          potencial_validado: number
+          validado_em?: string
+          validado_por: string
+          versao_avaliacao: string
+        }
+        Update: {
+          ciclo_id?: string | null
+          colaborador_id?: string
+          empresa_id?: string
+          feedback_id?: string
+          id?: string
+          observacao?: string | null
+          potencial_validado?: number
+          validado_em?: string
+          validado_por?: string
+          versao_avaliacao?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feedbacks_360_validacoes_potencial_feedback_id_fkey"
+            columns: ["feedback_id"]
+            isOneToOne: false
+            referencedRelation: "feedbacks_360"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       faixas_inss: {
         Row: {
           aliquota: number

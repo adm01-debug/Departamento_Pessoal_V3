@@ -187,6 +187,14 @@ export const RPC_ALLOWLIST = new Set<string>([
   // as duas verificam permissão/lockout por dentro (ver
   // 20260924160000_e50_33_pin_quiosque_ponto.sql)
   "admin_definir_pin_quiosque", "verificar_pin_quiosque",
+  // avaliacao/desempenho (NineBox) - RPCs SECURITY DEFINER portadas da muri nas
+  // migrations 20261015_20261028_ninebox_*; autorizacao fina (papel/tenant) no banco.
+  "pode_gerir_avaliacoes", "pode_validar_potencial", "finalizar_feedback",
+  "validar_potencial_avaliacao", "criar_feedback_seguro", "editar_feedback_seguro",
+  "pode_aprovar_colaborador", "enviar_avaliacao_ao_gestor", "decidir_aprovacao_gestor",
+  "pode_finalizar_feedback", "situacao_aprovacao", "listar_historico_feedback",
+  "pode_editar_feedback", "pode_editar_colaborador", "versao_consolidada_avaliacao",
+  "sincronizar_consolidacao_avaliacao",
 ]);
 
 // -------------------- Allowlist de operadores --------------------

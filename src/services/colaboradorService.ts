@@ -141,7 +141,7 @@ class ColaboradorService extends BaseService<Colaborador> {
   }
 
   // Alias for backward compatibility
-  async list(empresaId: string) {
+  async list(empresaId: string, _semMock = false) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
   }
