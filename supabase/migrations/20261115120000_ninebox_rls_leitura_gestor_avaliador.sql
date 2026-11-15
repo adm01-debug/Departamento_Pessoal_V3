@@ -47,3 +47,25 @@ CREATE POLICY feedbacks_360_select
       )
     )
   );
+
+-- Pos-condicao fail-closed (audit-migration-style): o DROP POLICY IF EXISTS
+-- acima e silencioso por natureza — se o nome nao casar, o drop nao faz nada e
+-- o CREATE seguinte poderia deixar a tabela sem a policy pretendida sem ninguem
+-- notar. Aqui a migration se autoverifica: confere em pg_policies que a policy
+-- existe com o ramo do gestor e aborta a transacao inteira se nao existir.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM pg_policies
+     WHERE schemaname = 'public'
+       AND tablename  = 'feedbacks_360'
+       AND policyname = 'feedbacks_360_select'
+       AND cmd = 'SELECT'
+       AND qual LIKE '%pode_aprovar_colaborador%'
+       AND qual LIKE '%get_user_empresas%'
+  ) THEN
+    RAISE EXCEPTION
+      'pos-condicao falhou: policy "feedbacks_360_select" em "feedbacks_360" ausente ou sem o ramo do gestor/avaliador apos o CREATE POLICY';
+  END IF;
+END $$;
