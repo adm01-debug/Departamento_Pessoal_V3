@@ -153,7 +153,7 @@
     "@eslint/js": "10.0.1",
     "@lhci/cli": "0.16.0",
     "@playwright/test": "1.64.1",
-    "@sentry/vite-plugin": "11.10.0",
+    "@sentry/vite-plugin": "11.12.0",
     "@tailwindcss/postcss": "4.3.4",
     "@tanstack/react-table": "^9.3.1",
     "@testing-library/jest-dom": "^7.0.1",

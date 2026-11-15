@@ -1296,6 +1296,14 @@
       "reason": "Legado mantido no fluxo existente; cobertura do sync remoto/push via sh. O dispatcher não executa esta operação."
     },
     {
+      "id": "legacy-da8d0c100799cbdd",
+      "kind": "legacy",
+      "files": ["scripts/tests/autocommit-lab.test.sh"],
+      "manual": ["bash", "scripts/tests/autocommit-lab.test.sh"],
+      "triggers": ["manual"],
+      "reason": "Bateria de 60 cenários do autocommit-local.sh (precisa do gitleaks instalado, por isso só manual). O dispatcher não executa esta operação."
+    },
+    {
       "id": "legacy-61819edfe724919c",
       "kind": "legacy",
       "files": ["scripts/ci/actions-kpi.mjs"],
