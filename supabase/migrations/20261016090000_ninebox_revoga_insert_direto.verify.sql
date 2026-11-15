@@ -7,18 +7,16 @@
 -- intacta; (d) que o comentario da tabela registra a regra.
 
 -- (a) Pre-condicao do bloco 1) da migration: RPC de criacao presente e segura.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM pg_proc p
      WHERE p.oid = to_regprocedure(
              'public.criar_feedback_seguro(uuid, uuid, uuid, text, numeric, numeric, uuid, text, text, text, text)')
        AND p.prosecdef IS TRUE
        AND array_to_string(p.proconfig, ',') LIKE '%search_path=%') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- (b) Bloco 2) da migration: INSERT revogado dos papeis de aplicacao; SELECT mantido.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   has_table_privilege('authenticated', 'public.feedbacks_360', 'INSERT') IS FALSE
   AND has_table_privilege('anon', 'public.feedbacks_360', 'INSERT') IS FALSE
   AND (SELECT COUNT(*) FROM information_schema.role_table_grants
@@ -27,11 +25,10 @@ WHERE (
            AND privilege_type = 'INSERT'
            AND upper(grantee) IN ('AUTHENTICATED', 'ANON', 'PUBLIC')) = 0
   AND has_table_privilege('authenticated', 'public.feedbacks_360', 'SELECT') IS TRUE
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- (c) Bloco 2)/3) da migration: nenhuma policy de INSERT, RLS ligada, SELECT preservada.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT c.relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
      WHERE n.nspname = 'public' AND c.relname = 'feedbacks_360') IS TRUE
   AND (SELECT COUNT(*) FROM pg_policy pol
@@ -44,11 +41,10 @@ WHERE (
          JOIN pg_namespace n ON n.oid = c.relnamespace
         WHERE n.nspname = 'public' AND c.relname = 'feedbacks_360'
           AND pol.polcmd = 'r') >= 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- (d) Bloco 4) da migration: comentario da tabela com a regra de criacao.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   obj_description('public.feedbacks_360'::regclass, 'pg_class') =
   'Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE.'
-);
+) THEN 'ok' ELSE 'FALHOU' END;

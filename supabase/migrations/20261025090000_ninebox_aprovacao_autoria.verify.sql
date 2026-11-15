@@ -16,7 +16,7 @@
 -- esta migration nao remove, e fixar o texto exato reprovaria esse hardening.
 
 -- 1 · assinatura unica e shape da funcao
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor') = 1
   AND EXISTS (
@@ -30,10 +30,10 @@ SELECT 'ok' WHERE (
       AND p.provolatile = 'v'
       AND p.proconfig @> ARRAY['search_path=public, pg_temp']
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 2 · privilegio: nada para PUBLIC/anon, execute para authenticated
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   has_function_privilege('authenticated', 'public.decidir_aprovacao_gestor(uuid,uuid,text,text,text)', 'execute')
   AND NOT has_function_privilege('anon', 'public.decidir_aprovacao_gestor(uuid,uuid,text,text,text)', 'execute')
   AND NOT EXISTS (
@@ -42,7 +42,7 @@ SELECT 'ok' WHERE (
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
       AND a.grantee = 0
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 3 · EFEITO CENTRAL: autoria do feedback nao bloqueia a decisao.
 --     Assertado pelos DOIS lados. Positivo: o corpo em producao tem os rotulos
@@ -53,7 +53,7 @@ SELECT 'ok' WHERE (
 --     Negativo: nenhuma barreira de autoria restou.
 --     Sem o lado positivo este assert passaria contra a versao anterior da
 --     funcao, porque a barreira de autoria nunca existiu no repo.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -68,10 +68,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc NOT ILIKE '%nao_pode_aprovar_proprio%'
       AND p.prosrc NOT ILIKE '%segregacao%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 4 · permissao preservada: papel/vinculo e empresa
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -84,10 +84,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%decisao_invalida%'
       AND p.prosrc LIKE '%justificativa_obrigatoria%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 5 · consolidacao e a chave da decisao, travada e sincronizavel
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -96,10 +96,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%public.sincronizar_consolidacao_avaliacao(p_colaborador_id, p_ciclo_id, v_uid)%'
       AND p.prosrc LIKE '%consolidacao_ausente%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 6 · guarda de versao consolidada
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -107,10 +107,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%versao_desatualizada%'
       AND p.prosrc LIKE '%sem_avaliacao%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 7 · registro de referencia PRIORIZA tipo='gestor' sem exigi-lo
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -119,10 +119,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc NOT LIKE '%and lower(btrim(coalesce(f.tipo, ''''))) = ''gestor''%'
       AND p.prosrc NOT ILIKE '%avaliacao_do_gestor_ausente%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 8 · composicao 360 (60/25/10/5) com fallback na proposta consolidada do RH
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -134,10 +134,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%avaliacao_sem_desempenho%'
       AND p.prosrc LIKE '%avaliacao_sem_potencial%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 9 · snapshot aprovado, regra aplicada e status resultante
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -145,20 +145,20 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%v_status := ''aprovada_gestor''%'
       AND p.prosrc LIKE '%v_status := ''devolvida''%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 10 · decisao so entra quando a pendencia aguarda o gestor
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
       AND p.prosrc LIKE '%public.situacao_aprovacao(p_colaborador_id, p_ciclo_id) not in (''aguardando_gestor'', ''sem_gestor'')%'
       AND p.prosrc LIKE '%pendencia_nao_aguarda_decisao%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 11 · idempotencia por chave + hash dos parametros
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -167,10 +167,10 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%jsonb_build_object(''idempotente'', true)%'
       AND p.prosrc LIKE '%on conflict (idempotency_key) do nothing%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 12 · escrita transacional: aprovacao + consolidacao + auditoria + operacao
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'decidir_aprovacao_gestor'
@@ -181,4 +181,4 @@ SELECT 'ok' WHERE (
       AND p.prosrc LIKE '%insert into public.feedbacks_360_operacoes%'
       AND p.prosrc LIKE '%''decidir_aprovacao_gestor'', v_hash, v_resultado%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;

@@ -9,7 +9,7 @@
 
 -- 1) §1 audit_log ganhou as tres colunas text, nulavel, e cada uma esta
 --    documentada com COMMENT (a migration comenta as tres).
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (SELECT count(*)
      FROM information_schema.columns
     WHERE table_schema = 'public'
@@ -23,13 +23,13 @@ SELECT 'ok' WHERE (
           AND a.attname IN ('justificativa', 'status_anterior', 'status_posterior')
           AND NOT a.attisdropped
           AND col_description(a.attrelid, a.attnum) IS NOT NULL) = 3
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 2) §2 a logica homologada vive em finalizar_feedback_base(uuid,text,text,text):
 --    plpgsql SECURITY DEFINER com search_path fixo, carregando a autorizacao por
 --    registro (pode_finalizar_feedback), e sem EXECUTE para PUBLIC, anon ou
 --    authenticated — chamada direta nao pode contornar a gravacao do motivo.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -51,14 +51,14 @@ SELECT 'ok' WHERE (
                      OR a.grantee = 'anon'::regrole
                      OR a.grantee = 'authenticated'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 3) §2 finalizar_feedback(uuid,text,text,text) passou a ser WRAPPER: publica
 --    ninebox.feedback_motivo e ninebox.feedback_acao via set_config local e
 --    delega em finalizar_feedback_base, sem reescrever a regra (a autorizacao
 --    por registro continua na base); tem COMMENT e EXECUTE so para
 --    authenticated, nunca PUBLIC/anon.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -87,13 +87,13 @@ SELECT 'ok' WHERE (
               WHERE a.privilege_type = 'EXECUTE'
                 AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 4) §3 tg_audit_log_enriquecer_feedback(): funcao de trigger plpgsql SECURITY
 --    DEFINER com search_path fixo, que le as duas GUCs locais, preenche
 --    status_anterior/status_posterior a partir do payload e copia a
 --    justificativa de feedbacks_360_aprovacoes_gestor.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -114,11 +114,11 @@ SELECT 'ok' WHERE (
        AND p.prosrc LIKE '%justificativa%'
        AND p.prosrc LIKE '%feedbacks_360_aprovacoes_gestor%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 5) §3 trigger trg_audit_log_enriquecer_feedback: BEFORE INSERT FOR EACH ROW em
 --    public.audit_log, habilitado e ligado aquela funcao (unico com esse nome).
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (SELECT count(*)
      FROM pg_trigger t
      JOIN pg_proc p ON p.oid = t.tgfoid
@@ -132,11 +132,11 @@ SELECT 'ok' WHERE (
       AND (t.tgtype & 4) = 4
       AND n.nspname = 'public'
       AND p.proname = 'tg_audit_log_enriquecer_feedback') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 6) §4 listar_historico_feedback(uuid): plpgsql STABLE SECURITY DEFINER com
 --    search_path fixo e a assinatura de saida exata das 10 colunas do historico.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -153,14 +153,14 @@ SELECT 'ok' WHERE (
        AND pg_get_function_result(p.oid)
            = 'TABLE(id uuid, tipo text, ocorrido_em timestamp with time zone, responsavel_id uuid, responsavel_email text, responsavel_nome text, justificativa text, status_anterior text, status_posterior text, detalhes jsonb)'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 7) §4 autorizacao e fontes do historico: exige sessao autenticada, recorta por
 --    get_user_empresas, aceita so RH/admin (pode_gerir_avaliacoes), gestor
 --    responsavel (pode_aprovar_colaborador) ou avaliador designado, recusando
 --    com perfil_nao_autorizado; une audit_log, feedbacks_360_consolidacoes e
 --    feedbacks_360_aprovacoes_gestor e rotula encaminhado/reaberto.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -183,11 +183,11 @@ SELECT 'ok' WHERE (
        AND p.prosrc LIKE '%aguardando_gestor%'
        AND p.prosrc LIKE '%reaberto%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 8) §4 grants do historico: COMMENT presente e EXECUTE somente para
 --    authenticated — nunca PUBLIC nem anon.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -206,4 +206,4 @@ SELECT 'ok' WHERE (
               WHERE a.privilege_type = 'EXECUTE'
                 AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;

@@ -8,8 +8,7 @@
 -- anon sem nada, authenticated com o minimo).
 
 -- 1) As 7 funcoes existem com a classe de seguranca certa e search_path fixado.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
      WHERE n.nspname = 'public'
        AND p.proname IN ('tg_feedbacks_360_revisao','versao_avaliacao_feedback',
@@ -25,12 +24,11 @@ WHERE (
   AND (SELECT COUNT(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
          WHERE n.nspname = 'public' AND NOT p.prosecdef
            AND p.proname IN ('tg_feedbacks_360_revisao','versao_avaliacao_feedback')) = 2
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 2) Assinaturas exatas das 3 RPCs (desambiguadas por identity_arguments) e
 --    volatilidade STABLE dos helpers/versao canonica.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT pg_get_function_identity_arguments(p.oid) FROM pg_proc p
      JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'finalizar_feedback')
@@ -46,11 +44,10 @@ WHERE (
   AND (SELECT COUNT(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
          WHERE n.nspname = 'public' AND p.provolatile = 's'
            AND p.proname IN ('versao_avaliacao_feedback','pode_gerir_avaliacoes','pode_validar_potencial')) = 3
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 3) Papeis dos helpers: gerir = admin|rh, validar potencial = somente rh.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT p.prosrc FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
      WHERE n.nspname = 'public' AND p.proname = 'pode_gerir_avaliacoes')
     LIKE '%ur.role::text in (''admin'',''rh'')%'
@@ -60,13 +57,12 @@ WHERE (
   AND (SELECT p.prosrc FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
          WHERE n.nspname = 'public' AND p.proname = 'pode_validar_potencial')
     NOT LIKE '%admin%'
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 4) Controle de revisao: coluna monotonica + trigger BEFORE UPDATE FOR EACH ROW,
 --    e a versao canonica carregando revisao e microssegundos (tgtype 19 =
 --    ROW|BEFORE|UPDATE).
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM information_schema.columns
      WHERE table_schema = 'public' AND table_name = 'feedbacks_360'
        AND column_name = 'revisao' AND data_type = 'integer'
@@ -88,12 +84,11 @@ WHERE (
   AND (SELECT p.prosrc FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
          WHERE n.nspname = 'public' AND p.proname = 'versao_avaliacao_feedback')
     LIKE '%YYYY-MM-DD"T"HH24:MI:SS.US%'
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 5) View de leitura da versao: security_invoker = true, 10 colunas do contrato e
 --    delega o calculo para a funcao canonica (o app nunca recalcula).
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
      WHERE n.nspname = 'public' AND c.relname = 'vw_feedbacks_360_versao'
        AND c.relkind = 'v' AND c.reloptions @> ARRAY['security_invoker=true']) = 1
@@ -103,11 +98,10 @@ WHERE (
                                'avaliador_id','tipo','status','potencial',
                                'updated_at','versao_avaliacao')) = 10
   AND pg_get_viewdef('public.vw_feedbacks_360_versao'::regclass) LIKE '%versao_avaliacao_feedback%'
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 6) Tabelas de apoio criadas com as colunas e tipos do contrato.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM information_schema.columns
      WHERE table_schema = 'public' AND table_name = 'feedbacks_360_operacoes'
        AND (column_name, data_type, is_nullable) IN (
@@ -126,13 +120,12 @@ WHERE (
   AND (SELECT numeric_precision || ',' || numeric_scale FROM information_schema.columns
          WHERE table_schema = 'public' AND table_name = 'feedbacks_360_validacoes_potencial'
            AND column_name = 'potencial_validado') = '4,2'
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 7) Historico preservado: PKs, FKs ON DELETE RESTRICT (nao CASCADE), CHECK de
 --    escala 1-5 do potencial validado, CHECK de operacao cobrindo as 5 operacoes
 --    do modulo e o indice de busca da validacao vigente.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM pg_constraint c JOIN pg_class t ON t.oid = c.conrelid
      JOIN pg_namespace n ON n.oid = t.relnamespace
      JOIN pg_class r ON r.oid = c.confrelid
@@ -162,11 +155,10 @@ WHERE (
            AND tablename = 'feedbacks_360_validacoes_potencial'
            AND indexname = 'idx_fb360_validacoes_potencial'
            AND indexdef LIKE '%(feedback_id, validado_em DESC)%') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 8) RLS ligada nas tabelas novas e policies de leitura exigindo PAPEL + EMPRESA.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
      WHERE n.nspname = 'public' AND c.relrowsecurity
        AND c.relname IN ('feedbacks_360_operacoes','feedbacks_360_validacoes_potencial')) = 2
@@ -181,7 +173,7 @@ WHERE (
          JOIN pg_namespace n ON n.oid = c.relnamespace
         WHERE n.nspname = 'public'
           AND c.relname IN ('feedbacks_360_operacoes','feedbacks_360_validacoes_potencial')) = 2
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 9) feedbacks_360: a leitura exige PAPEL (nao so vinculo de empresa) E o recorte
 --    por empresa, e NAO existe policy de UPDATE/DELETE (status so pela RPC;
@@ -191,8 +183,7 @@ WHERE (
 --    20261016090000 derruba a policy de INSERT. Fixar o texto exato aqui faria
 --    este sidecar reprovar justamente quando as migrations seguintes fossem
 --    aplicadas, e contradiria o sidecar da 20261016090000.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT pg_get_expr(p.polqual, p.polrelid) LIKE '%get_user_empresas(auth.uid())%'
       AND (pg_get_expr(p.polqual, p.polrelid) LIKE '%pode_gerir_avaliacoes()%'
         OR pg_get_expr(p.polqual, p.polrelid) LIKE '%pode_aprovar_colaborador%')
@@ -204,13 +195,12 @@ WHERE (
          JOIN pg_namespace n ON n.oid = c.relnamespace
         WHERE n.nspname = 'public' AND c.relname = 'feedbacks_360'
           AND p.polcmd IN ('w','d')) = 0
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 10) Privilegios de tabela: UPDATE/DELETE/TRUNCATE fechados para authenticated e
 --     anon em feedbacks_360 (inclusive por grant a PUBLIC, grantee 0), anon sem
 --     leitura das tabelas de apoio e da view, authenticated com o minimo necessario.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   NOT has_table_privilege('authenticated', 'public.feedbacks_360', 'UPDATE')
   AND NOT has_table_privilege('authenticated', 'public.feedbacks_360', 'DELETE')
   AND NOT has_table_privilege('authenticated', 'public.feedbacks_360', 'TRUNCATE')
@@ -233,11 +223,10 @@ WHERE (
   AND NOT has_table_privilege('anon', 'public.feedbacks_360_operacoes', 'SELECT')
   AND NOT has_table_privilege('anon', 'public.feedbacks_360_validacoes_potencial', 'SELECT')
   AND NOT has_table_privilege('anon', 'public.vw_feedbacks_360_versao', 'SELECT')
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 11) EXECUTE das funcoes: authenticated pode, anon nao (nem por grant a PUBLIC).
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   has_function_privilege('authenticated', 'public.versao_avaliacao_feedback(uuid)', 'EXECUTE')
   AND has_function_privilege('authenticated', 'public.pode_gerir_avaliacoes()', 'EXECUTE')
   AND has_function_privilege('authenticated', 'public.pode_validar_potencial()', 'EXECUTE')
@@ -250,13 +239,12 @@ WHERE (
   AND NOT has_function_privilege('anon', 'public.finalizar_feedback(uuid,text,text,text)', 'EXECUTE')
   AND NOT has_function_privilege('anon', 'public.validar_potencial_avaliacao(uuid,text,text)', 'EXECUTE')
   AND NOT has_function_privilege('anon', 'public.criar_feedback_seguro(uuid,uuid,uuid,text,numeric,numeric,uuid,text,text,text,text)', 'EXECUTE')
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 12) Trilha por tenant: audit_log tem a coluna empresa_id (uuid) que a policy de
 --     leitura da Trilha e a RPC listar_auditoria usam para recortar por empresa.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM information_schema.columns
      WHERE table_schema = 'public' AND table_name = 'audit_log'
        AND column_name = 'empresa_id' AND data_type = 'uuid') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;

@@ -13,7 +13,7 @@
 -- substitui o corpo e o comentario desta RPC (autorizacao por registro via
 -- pode_editar_feedback + maquina de estados) mantendo assinatura, rotulo e grants.
 
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (select count(*) from pg_constraint c
      where c.conrelid = 'public.feedbacks_360_operacoes'::regclass
        and c.contype = 'c'
@@ -30,9 +30,9 @@ SELECT 'ok' WHERE (
                      order by 1))
       = array['cancelar','concluir','criar','decidir_aprovacao_gestor','editar_feedback',
               'enviar_avaliacao_ao_gestor','reabrir','validar_potencial']
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (select count(*) from pg_proc p
      where p.pronamespace = 'public'::regnamespace
        and p.proname = 'editar_feedback_seguro') = 1
@@ -46,9 +46,9 @@ SELECT 'ok' WHERE (
            and p.prosecdef
            and p.provolatile = 'v'
            and p.proconfig @> array['search_path=public, pg_temp']) = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (select count(*) from pg_proc p
      where p.pronamespace = 'public'::regnamespace
        and p.proname = 'editar_feedback_seguro'
@@ -60,9 +60,9 @@ SELECT 'ok' WHERE (
        and p.prosrc like '%hash_parametros%'
        and p.prosrc like '%idempotencia_ausente%'
        and p.prosrc like '%idempotencia_conflito%') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (select count(*) from pg_proc p
      where p.pronamespace = 'public'::regnamespace
        and p.proname = 'editar_feedback_seguro'
@@ -77,21 +77,21 @@ SELECT 'ok' WHERE (
        and p.prosrc like '%''pendente''%'
        and p.prosrc like '%audit_log%'
        and p.prosrc like '%versao_avaliacao_feedback%') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (select count(*) from pg_proc p
      where p.pronamespace = 'public'::regnamespace
        and p.proname = 'editar_feedback_seguro'
        and has_function_privilege('authenticated', p.oid, 'EXECUTE')
        and not has_function_privilege('anon', p.oid, 'EXECUTE')
        and not exists (select 1 from aclexplode(p.proacl) a where a.grantee = 0)) = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (select count(*) from pg_proc p
      where p.pronamespace = 'public'::regnamespace
        and p.proname = 'editar_feedback_seguro'
        and obj_description(p.oid, 'pg_proc') like 'Edicao%'
        and obj_description(p.oid, 'pg_proc') like '%Idempotente.%') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;

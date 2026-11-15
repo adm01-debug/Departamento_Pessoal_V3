@@ -20,7 +20,7 @@
 -- trilha: 20261022090000 removeu esse campo da auditoria de `finalizar_feedback`.
 
 -- 1 · frame da RPC reescrita: assinatura, retorno, linguagem, SECURITY DEFINER, search_path
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -35,10 +35,10 @@ SELECT 'ok' WHERE (
        AND p.prosecdef
        AND p.proconfig @> ARRAY['search_path=public, pg_temp']
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 2 · exposicao: `authenticated` executa; `anon` e `PUBLIC` nao
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   has_function_privilege('authenticated', 'public.finalizar_feedback(uuid,text,text,text)', 'execute')
   AND NOT has_function_privilege('anon', 'public.finalizar_feedback(uuid,text,text,text)', 'execute')
   AND NOT EXISTS (
@@ -51,12 +51,12 @@ SELECT 'ok' WHERE (
        AND a.grantee = 0            -- 0 = PUBLIC (pseudo-papel)
        AND a.privilege_type = 'EXECUTE'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 3 · conclusao = gestor responsavel: a cadeia de autorizacao alcanca
 --     `pode_aprovar_colaborador`, mantem `pode_gerir_avaliacoes` no caminho
 --     administrativo e recusa com `perfil_nao_autorizado`
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   to_regprocedure('public.pode_aprovar_colaborador(uuid)') IS NOT NULL
   AND (
     SELECT coalesce(string_agg(p.prosrc, E'\n'), '')
@@ -79,18 +79,18 @@ SELECT 'ok' WHERE (
      WHERE n.nspname = 'public'
        AND p.proname IN ('finalizar_feedback', 'finalizar_feedback_base', 'pode_finalizar_feedback')
   ) LIKE '%perfil_nao_autorizado%'
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 4 · nenhuma escrita direta reafirmada: `authenticated` sem UPDATE/DELETE,
 --     `anon` sem DELETE em feedbacks_360 (o caminho e a RPC SECURITY DEFINER)
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   NOT has_table_privilege('authenticated', 'public.feedbacks_360', 'update')
   AND NOT has_table_privilege('authenticated', 'public.feedbacks_360', 'delete')
   AND NOT has_table_privilege('anon', 'public.feedbacks_360', 'delete')
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 5 · revogacoes novas desta migration: `anon` sem UPDATE e sem INSERT em feedbacks_360
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   NOT has_table_privilege('anon', 'public.feedbacks_360', 'update')
   AND NOT has_table_privilege('anon', 'public.feedbacks_360', 'insert')
-);
+) THEN 'ok' ELSE 'FALHOU' END;

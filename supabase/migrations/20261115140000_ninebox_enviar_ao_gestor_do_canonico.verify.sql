@@ -7,8 +7,7 @@
 -- tres. Nao executa a RPC: a transacao e read-only.
 
 -- Frame da funcao: assinatura, plpgsql, jsonb, SECURITY DEFINER, search_path fixo.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   (SELECT COUNT(*) FROM pg_proc p
      JOIN pg_namespace n ON n.oid = p.pronamespace
      JOIN pg_language l ON l.oid = p.prolang
@@ -19,11 +18,10 @@ WHERE (
       AND l.lanname = 'plpgsql'
       AND p.prosecdef IS TRUE
       AND array_to_string(p.proconfig, ',') LIKE '%search_path%') = 1
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- As tres protecoes, pelo corpo da funcao viva.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   SELECT p.prosrc LIKE '%u.empresa_id = v_empresa%'
      AND p.prosrc LIKE '%gestor_sem_conta_ou_papel%'
      AND p.prosrc LIKE '%aprovacao_ja_registrada%'
@@ -31,11 +29,10 @@ WHERE (
      AND p.prosrc LIKE '%avaliacao_do_gestor_ausente_ou_pendente%'
     FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
    WHERE n.nspname = 'public' AND p.proname = 'enviar_avaliacao_ao_gestor'
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- Exposicao minima: authenticated executa, anon e PUBLIC nao.
-SELECT 'ok'
-WHERE (
+SELECT CASE WHEN (
   has_function_privilege('authenticated', 'public.enviar_avaliacao_ao_gestor(uuid,uuid,text)', 'EXECUTE')
   AND NOT has_function_privilege('anon', 'public.enviar_avaliacao_ao_gestor(uuid,uuid,text)', 'EXECUTE')
   AND NOT EXISTS (
@@ -44,4 +41,4 @@ WHERE (
     WHERE n.nspname = 'public' AND p.proname = 'enviar_avaliacao_ao_gestor'
       AND a.grantee = 0 AND a.privilege_type = 'EXECUTE'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;

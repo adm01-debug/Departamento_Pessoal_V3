@@ -16,7 +16,7 @@
 -- 1) §1 helper pode_finalizar_feedback(uuid): SQL stable SECURITY DEFINER com
 --    search_path fixo, autorizando RH/admin, avaliador designado ou gestor, e
 --    executavel apenas por authenticated.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -40,13 +40,13 @@ SELECT 'ok' WHERE (
                         WHERE a.privilege_type = 'EXECUTE'
                           AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 2) §1 logica autorizada da conclusao: a funcao (uuid,text,text,text) que
 --    carrega a regra chama pode_finalizar_feedback e valida categoria, escala
 --    1-5 da nota e potencial obrigatorio para gestor. Aceita o nome original
 --    OU finalizar_feedback_base (renomeado por 20261028090000).
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -65,12 +65,12 @@ SELECT 'ok' WHERE (
        AND p.prosrc LIKE '%potencial_obrigatorio_para_gestor%'
        AND p.prosrc LIKE '%for update%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 3) §1 porta de entrada finalizar_feedback(uuid,text,text,text): SECURITY
 --    DEFINER com search_path fixo e EXECUTE so para authenticated (nunca
 --    PUBLIC/anon).
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -88,11 +88,11 @@ SELECT 'ok' WHERE (
                         WHERE a.privilege_type = 'EXECUTE'
                           AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 4) §2 CHECK de feedbacks_360_operacoes: um unico check sobre `operacao`, com
 --    o nome canonico e os 8 rotulos, incluindo o novo 'editar_feedback'.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   (SELECT count(*) FROM pg_constraint
     WHERE conrelid = 'public.feedbacks_360_operacoes'::regclass
       AND contype = 'c'
@@ -111,13 +111,13 @@ SELECT 'ok' WHERE (
        AND pg_get_constraintdef(oid) LIKE '%''decidir_aprovacao_gestor''%'
        AND pg_get_constraintdef(oid) LIKE '%''enviar_avaliacao_ao_gestor''%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 5) §2 pode_editar_colaborador(uuid): SQL stable SECURITY DEFINER, decide por
 --    papel 'gestor' em user_roles, responsabilidade via supervisor_id OU
 --    excecao vigente em ninebox_permissoes_homologacao, recortado por empresa;
 --    EXECUTE so para authenticated.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -146,11 +146,11 @@ SELECT 'ok' WHERE (
                         WHERE a.privilege_type = 'EXECUTE'
                           AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 6) §2 pode_editar_feedback(uuid): delega em pode_editar_colaborador e exige a
 --    empresa do proprio feedback; EXECUTE so para authenticated.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -174,14 +174,14 @@ SELECT 'ok' WHERE (
                         WHERE a.privilege_type = 'EXECUTE'
                           AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 7) §2 editar_feedback_seguro: assinatura de 11 argumentos, plpgsql SECURITY
 --    DEFINER com search_path fixo, autorizacao por registro, bloqueio de edicao
 --    de feedback cancelado, recusa de avaliado fora da responsabilidade e
 --    registro idempotente sob a operacao 'editar_feedback'; EXECUTE so para
 --    authenticated.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -208,11 +208,11 @@ SELECT 'ok' WHERE (
                         WHERE a.privilege_type = 'EXECUTE'
                           AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 8) §3 policy ciclos_avaliacao_insert: INSERT para authenticated, WITH CHECK
 --    exigindo empresa do usuario E pode_gerir_avaliacoes().
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_policy pol
@@ -225,11 +225,11 @@ SELECT 'ok' WHERE (
        AND pg_get_expr(pol.polwithcheck, pol.polrelid) LIKE '%pode_gerir_avaliacoes%'
   )
   AND (SELECT relrowsecurity FROM pg_class WHERE oid = 'public.ciclos_avaliacao'::regclass)
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 9) §3 policy ciclos_avaliacao_delete: DELETE para authenticated, USING
 --    exigindo empresa do usuario E pode_gerir_avaliacoes().
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_policy pol
@@ -241,13 +241,13 @@ SELECT 'ok' WHERE (
        AND pg_get_expr(pol.polqual, pol.polrelid) LIKE '%get_user_empresas%'
        AND pg_get_expr(pol.polqual, pol.polrelid) LIKE '%pode_gerir_avaliacoes%'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 10) §3 bloquear_exclusao_ciclo_com_dependencias(): funcao de trigger plpgsql
 --     SECURITY DEFINER com search_path fixo, que conta as seis dependencias do
 --     ciclo (feedbacks, consolidacoes, aprovacoes, validacoes, metas e trilha)
 --     e recusa com 'ciclo_com_dependencias'; sem EXECUTE para PUBLIC/anon.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_proc p
@@ -272,11 +272,11 @@ SELECT 'ok' WHERE (
                         WHERE a.privilege_type = 'EXECUTE'
                           AND (a.grantee = 0 OR a.grantee = 'anon'::regrole))
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
 
 -- 11) §3 trigger ciclos_bloqueio_exclusao_com_dependencias: BEFORE DELETE FOR
 --     EACH ROW em ciclos_avaliacao, habilitado e ligado aquela funcao.
-SELECT 'ok' WHERE (
+SELECT CASE WHEN (
   EXISTS (
     SELECT 1
       FROM pg_trigger t
@@ -292,4 +292,4 @@ SELECT 'ok' WHERE (
        AND n.nspname = 'public'
        AND p.proname = 'bloquear_exclusao_ciclo_com_dependencias'
   )
-);
+) THEN 'ok' ELSE 'FALHOU' END;
