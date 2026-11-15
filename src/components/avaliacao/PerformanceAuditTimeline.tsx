@@ -363,7 +363,11 @@ function ItemCascata(props: PropsItemCascata & { children: ReactNode }) {
 
 export function PerformanceAuditTimeline({ colaboradores = [], empresaId }: PerformanceAuditTimelineProps) {
   const { data: logs = [], isLoading } = useQuery({
-    queryKey: ['performance-audit-logs'],
+    // A empresa FAZ PARTE da identidade do cache: a queryFn passa
+    // `p_empresa_id`, entao sem ela no key trocar de empresa reusa a trilha da
+    // anterior e a auditoria aparece atribuida a empresa errada. O mock visual
+    // nao depende de empresa, mas o caminho real sim.
+    queryKey: ['performance-audit-logs', empresaId ?? null],
     queryFn: async () => {
       // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Sem isto a trilha ficaria
       // vazia no modo demonstração (a `audit_log` real não tem registros do módulo).

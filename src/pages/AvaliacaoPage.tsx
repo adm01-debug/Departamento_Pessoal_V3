@@ -300,13 +300,14 @@ export default function AvaliacaoPage() {
   });
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
-    // VISUAL: lista aprovada (com os fictícios) + os REAIS do banco, para que o
-    // formulário consiga selecionar colaborador/avaliador com IDs válidos (UUID).
-    queryFn: () =>
-      mesclar(undefined, async () => [
-        ...(await colaboradorService.list(empresaAtual!.id)),
-        ...(await colaboradorService.list(empresaAtual!.id, true)),
-      ]),
+    // VISUAL: `mesclar` junta os fictícios da demonstração aos REAIS do banco,
+    // para que o formulário selecione colaborador/avaliador com IDs válidos.
+    // UMA chamada só: `colaboradorService.list(empresaId, _semMock)` ignora o
+    // segundo argumento (o `_` no nome denuncia) e delega sempre ao mesmo
+    // `listar`, então chamar duas vezes devolvia a lista repetida — cada pessoa
+    // aparecia duas vezes nos seletores de avaliado e avaliador, com duas
+    // leituras idênticas na bridge.
+    queryFn: () => mesclar(undefined, () => colaboradorService.list(empresaAtual!.id)),
     enabled: !!empresaAtual?.id,
   });
 
