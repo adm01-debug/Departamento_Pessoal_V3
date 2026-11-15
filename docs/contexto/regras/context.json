@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "044d520a6c11f9d57ebdbc36847da3f53ea32c99",
+  "sha": "1392114674c6be55b1cd96da87d25c60f6378887",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-15 16:38 UTC",
+  "generated_at": "2026-11-15 18:05 UTC",
   "files_total": 3112,
   "code_files": 2579,
-  "code_lines": 376906
+  "code_lines": 376909
  },
  "version": "1.3.2",
- "facts_hash": "d18b3ab506beb718",
+ "facts_hash": "308d897ba6417358",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -101516,7 +101516,7 @@
   {
    "module": "supabase/migrations",
    "files": 835,
-   "lines": 74797,
+   "lines": 74800,
    "tables": [
     "profiles",
     "user_roles"
@@ -298310,7 +298310,7 @@
   },
   "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql": {
    "path": "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
-   "lines": 12
+   "lines": 15
   },
   "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql": {
    "path": "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
@@ -298621,10 +298621,28 @@
   }
  },
  "git": {
-  "sha": "044d520a6c11f9d57ebdbc36847da3f53ea32c99",
+  "sha": "1392114674c6be55b1cd96da87d25c60f6378887",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "1392114",
+    "date": "2026-11-15",
+    "author": "adm01-debug",
+    "subject": "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)",
+    "files": [
+     "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql"
+    ]
+   },
+   {
+    "sha": "49707f1",
+    "date": "2026-11-15",
+    "author": "adm01-debug",
+    "subject": "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)",
+    "files": [
+     "docs/prod-readiness.md"
+    ]
+   },
    {
     "sha": "044d520",
     "date": "2026-11-15",
@@ -299083,35 +299101,16 @@
      "src/services/folha/calculoLoteService.ts",
      "supabase/functions/calcular-folha/index.ts"
     ]
-   },
-   {
-    "sha": "d49f194",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: ocultar login com Google enquanto o provider estiver desabilitado (#551)",
-    "files": [
-     ".env.example",
-     "src/pages/LoginPage.tsx",
-     "src/pages/__tests__/LoginPage.google.test.tsx",
-     "src/vite-env.d.ts"
-    ]
-   },
-   {
-    "sha": "f07255f",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix: --check do inventario de rotas compara conteudo, nao bytes (#552)",
-    "files": [
-     "inventario/estado/rotas.json",
-     "scripts/inventario/gerar-rotas.mjs",
-     "scripts/tests/inventario-rotas.test.mjs"
-    ]
    }
   ],
   "hot_files": [
    [
+    "docs/prod-readiness.md",
+    3
+   ],
+   [
     "inventario/estado/rotas.json",
-    4
+    3
    ],
    [
     "scripts/sync/autocommit-local.sh",
@@ -299126,16 +299125,16 @@
     2
    ],
    [
-    "docs/prod-readiness.md",
-    2
-   ],
-   [
     "nginx.conf",
     2
    ],
    [
     "vercel.json",
     2
+   ],
+   [
+    "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
+    1
    ],
    [
     "eslint.config.js",
@@ -299183,10 +299182,6 @@
    ],
    [
     "src/components/__tests__/FeedbackAcoesRodape.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/FeedbackCanonico.test.ts",
     1
    ]
   ]

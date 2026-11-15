@@ -2,11 +2,21 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "044d520a6c11f9d57ebdbc36847da3f53ea32c99",
+  "commit": "1392114674c6be55b1cd96da87d25c60f6378887",
   "branch": "main",
-  "data_commit": "2026-11-15T16:37:35Z",
+  "data_commit": "2026-11-15T18:05:05Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "1392114",
+    "data": "2026-11-15",
+    "assunto": "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)"
+   },
+   {
+    "sha": "49707f1",
+    "data": "2026-11-15",
+    "assunto": "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)"
+   },
    {
     "sha": "044d520",
     "data": "2026-11-15",
@@ -121,16 +131,6 @@
     "sha": "daa557e",
     "data": "2026-11-13",
     "assunto": "fix: treinamentos permite alterar status da inscrição e editar curso (#492)"
-   },
-   {
-    "sha": "c9caf7f",
-    "data": "2026-11-13",
-    "assunto": "fix: benefícios, planos de saúde e VT/VA passam a ser editáveis e links que davam 404 foram corrigidos (#484)"
-   },
-   {
-    "sha": "9d684d7",
-    "data": "2026-11-13",
-    "assunto": "fix: adiciona planos_saude.updated_at exigida pelo trigger de UPDATE (#498)"
    }
   ],
   "arquivos_mudados_7d": 783,
@@ -203,14 +203,14 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 25
-   },
-   {
-    "arquivo": "package-lock.json",
     "mudancas": 23
    },
    {
     "arquivo": "CLAUDE.md",
+    "mudancas": 21
+   },
+   {
+    "arquivo": "package-lock.json",
     "mudancas": 21
    },
    {
@@ -262,6 +262,10 @@
     "mudancas": 8
    },
    {
+    "arquivo": "docs/prod-readiness.md",
+    "mudancas": 8
+   },
+   {
     "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 8
    },
@@ -282,10 +286,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "docs/prod-readiness.md",
-    "mudancas": 7
-   },
-   {
     "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
    },
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 214
+    "commits": 216
    },
    {
     "autor": "devin-ai-integration[bot]",

@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)",
+   "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)",
    "feat: área Avaliação/NineBox da muri (#546) na main, com CI verde — substitui a #564 (#569)",
    "chore: resgata melhorias de PRs fechadas sem merge (#570)",
-   "fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#565)",
-   "build(deps): bump glob 14.0.6 e @sentry/vite-plugin 11.12.0 (#568)",
-   "chore: contexto agendado de 10 min para 1x/hora (#566)"
+   "fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#565)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

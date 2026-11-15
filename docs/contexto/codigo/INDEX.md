@@ -1,7 +1,7 @@
 # Contexto do projeto para agentes de IA
 
 GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.
-Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `044d520a6c11f9d57ebdbc36847da3f53ea32c99` (2026-11-15T16:37:35Z).
+Publicado em `docs/contexto/codigo/` na branch `contexto` (gerada, nunca abra PR dela) a cada push em `main` e a cada 10 minutos pelo workflow `contexto.yml`; índice único das três fontes em `docs/contexto/00-INDEX.md`. Gere local com `node scripts/ai-context/gerar.mjs`. Commit-base: `1392114674c6be55b1cd96da87d25c60f6378887` (2026-11-15T18:05:05Z).
 
 ## Como usar (leia antes de planejar ou executar qualquer tarefa)
 1. **Tela/rota/menu** → `rotas.json` (url/vista/menu → arquivo → hooks → tabelas → edges; `rotas_http_backend` para APIs) e `modulos.json` (módulo inteiro + dependências entre módulos).
@@ -388,16 +388,16 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - possiveis_segredos_no_codigo: 2 — ex.: e2e/public/api-auth-errors.spec.ts:56, scripts/ai-context/cenarios.mjs:120
 
 ## Grafo de código (graphify)
-- 23594 nós · 50782 arestas · 2221 comunidades · grafo do commit `044d520a`
+- 23594 nós · 50782 arestas · 2221 comunidades · grafo do commit `13921146`
 - comunidades maiores: useEmpresas (660), 20260831_corrected_public.sql (493), canonical_schema.sql (475), lucide-react (391), button.tsx (379), cn (295), vitest (255), react (181), Tables (177), App.tsx (172), contract.ts (171), FeedbackAcoesRodape.tsx (171)
 - símbolos mais chamados: cn() (src/lib/utils.ts), useEmpresas() (src/hooks/useEmpresas.ts), safeErrorMessage() (src/utils/safeError.ts), validateTablePayload() (src/schemas/validate.ts), checkRateLimit() (supabase/functions/_shared/rateLimit.ts), rateLimitResponse() (supabase/functions/_shared/rateLimit.ts), useAuth() (src/contexts/AuthContext.tsx), findMockColaborador() (src/mocks/colaboradoresMock.ts), usePiiMask() (src/hooks/usePiiMask.ts), validateInput() (src/schemas/validate.ts), q() (scripts/supabase_snapshot/snapshot.py), registrarAcessoPII() (src/services/piiAccessLogService.ts)
 - consulta local: `graphify query "<pergunta>"`, `graphify path "<A>" "<B>"`, `graphify explain "<X>"`
 
 ## Hotspots (arquivos mais alterados, 90 dias)
 - .github/workflows/canonical-migrations.yml (39)
-- package.json (25)
-- package-lock.json (23)
+- package.json (23)
 - CLAUDE.md (21)
+- package-lock.json (21)
 - PENDENCIAS.md (13)
 - .github/workflows/ci.yml (11)
 - AGENTS.md (10)
@@ -616,11 +616,13 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - `docs/V17_INDEX.md` — 📚 V17 - ÍNDICE DE DOCUMENTAÇÃO (48 linhas)
 - `docs/VISAO_FUTURA.md` — Visão futura — E-100 (59 linhas)
 - `docs/WORKFLOWS.md` — 🔄 WORKFLOWS.md - Fluxos de Trabalho (26 linhas)
-- `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (852 linhas)
+- `docs/prod-readiness.md` — Prontidão para produção — Departamento Pessoal V3 (853 linhas)
 - subpastas de docs/: docs/auditoria (48), docs/_archive (41), docs/guides (33), docs/adr (7), docs/agentes (6), docs/contexto (2), docs/lgpd (2), docs/contratos (1), docs/seguranca (1)
 - CHANGELOG topo: [22.0.0] - 2026-07-27
 
 ## Últimos commits
+- 2026-11-15 `1392114` test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)
+- 2026-11-15 `49707f1` chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)
 - 2026-11-15 `044d520` feat: área Avaliação/NineBox da muri (#546) na main, com CI verde — substitui a #564 (#569)
 - 2026-11-15 `44cf65f` chore: resgata melhorias de PRs fechadas sem merge (#570)
 - 2026-11-14 `eb2efe5` fix(sync): autocommit rev3 — índice devolvido em SIGTERM, gitleaks só nas linhas adicionadas e bateria de 53 cenários (#
@@ -634,8 +636,6 @@ Os JSONs são grandes: filtre com `grep`/`jq` pelo caminho/arquivo/tabela da sua
 - 2026-11-14 `bb9a156` chore: relatório de auditoria técnica 10/10 (squash)
 - 2026-11-13 `10f6d9f` docs(prod-readiness): registra fechamento da rodada no main 840dbdb (#557/#560) (#561)
 - 2026-11-13 `840dbdb` fix(sync): exceção só para workflows e backup do índice com falha fechada (#560)
-- 2026-11-13 `1ad509d` infra: libera Google Fonts no connect-src da CSP (SW re-busca as fontes) (#557)
-- 2026-11-13 `3232ef1` docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)
 
 ## Arquivos deste diretório
 - `docs/contexto/codigo/rotas.json`
