@@ -11,6 +11,15 @@ SELECT CASE WHEN (
           AND p.polname = 'feedbacks_360_select' AND p.polcmd = 'r') = 1
 ) THEN 'ok' ELSE 'FALHOU' END;
 
+-- A policy vale SOMENTE para `authenticated`. Sem esta assercao, um CREATE
+-- POLICY sem clausula TO nasceria TO public (incluindo `anon`) e passaria.
+SELECT CASE WHEN (
+  SELECT p.roles::text = '{authenticated}'
+    FROM pg_policies p
+   WHERE p.schemaname = 'public' AND p.tablename = 'feedbacks_360'
+     AND p.policyname = 'feedbacks_360_select'
+) THEN 'ok' ELSE 'FALHOU' END;
+
 -- Os tres ramos de autorizacao e o recorte por empresa estao na expressao
 SELECT CASE WHEN (
   SELECT pg_get_expr(p.polqual, p.polrelid) LIKE '%get_user_empresas%'
