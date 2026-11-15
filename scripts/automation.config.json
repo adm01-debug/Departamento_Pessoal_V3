@@ -1048,6 +1048,14 @@
       "reason": "Legado mantido no fluxo existente; referências literais: .github/workflows/ci.yml. O dispatcher não executa esta operação."
     },
     {
+      "id": "legacy-871ca1aace14974a",
+      "kind": "legacy",
+      "files": ["scripts/tests/migrations-p1-rotinas-agendadas.sh"],
+      "manual": ["bash", "scripts/tests/migrations-p1-rotinas-agendadas.sh"],
+      "triggers": ["manual"],
+      "reason": "Valida em PostgreSQL descartável (Docker) a migration 20261012130000 das quatro rotinas pg_cron que falhavam a cada execução; resgatado da PR #209, fechada sem merge. Só manual: precisa de Docker. O dispatcher não executa esta operação."
+    },
+    {
       "id": "legacy-36d21c159324f3c9",
       "kind": "legacy",
       "files": ["scripts/tests/migrations-p1-atomic-provisions.sh"],
