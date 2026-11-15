@@ -5,7 +5,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowRight, BookOpen, Calendar, MoreHorizontal, Target, Trash2 } from 'lucide-react';
+import { ArrowRight, BookOpen, Calendar, FileDown, MoreHorizontal, Target, Trash2 } from 'lucide-react';
+import { gerarPDIPDF } from '@/utils/evaluationPDF';
 import { cn } from '@/lib/utils';
 import { iniciais } from './desempenhoComum';
 import { BarraProgresso } from './barraProgresso';
@@ -111,9 +112,6 @@ export function PdiCard({
   onExcluir,
 }: PdiCardProps) {
   const local = [item.cargo, item.departamento].filter(Boolean).join(' · ');
-  const podeFiltrar = Boolean(
-    (onFiltrarColaborador && item.colaboradorId) || (onFiltrarCompetencia && item.competencia)
-  );
   const podeExcluir = Boolean(onExcluir && item.id);
 
   /**
@@ -252,56 +250,68 @@ export function PdiCard({
           </div>
 
           {/* ── F · Ações (só o que o sistema realmente faz) ─────────────── */}
-          {(onVerPdi || podeFiltrar || podeExcluir) && (
-            <div className="flex items-center justify-end gap-1.5">
-              {onVerPdi && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onVerPdi(item)}
-                  className="h-8 gap-1 rounded-lg border-border/60 bg-muted/30 px-2.5 text-[11px] font-medium transition-colors group-hover:border-primary/40 group-hover:text-primary"
-                >
-                  Ver PDI
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </Button>
-              )}
+          <div className="flex items-center justify-end gap-1.5">
+            {onVerPdi && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onVerPdi(item)}
+                className="h-8 gap-1 rounded-lg border-border/60 bg-muted/30 px-2.5 text-[11px] font-medium transition-colors group-hover:border-primary/40 group-hover:text-primary"
+              >
+                Ver PDI
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            )}
 
-              {(podeFiltrar || podeExcluir) && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="Mais ações do PDI"
-                      className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground group-hover:text-foreground"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    {onFiltrarColaborador && item.colaboradorId && (
-                      <DropdownMenuItem className="text-xs" onClick={() => onFiltrarColaborador(item)}>
-                        Filtrar por este colaborador
-                      </DropdownMenuItem>
-                    )}
-                    {onFiltrarCompetencia && item.competencia && (
-                      <DropdownMenuItem className="text-xs" onClick={() => onFiltrarCompetencia(item)}>
-                        Filtrar por esta competência
-                      </DropdownMenuItem>
-                    )}
-                    {podeExcluir && (
-                      <DropdownMenuItem
-                        className="text-xs text-destructive focus:text-destructive"
-                        onClick={() => onExcluir?.(item)}
-                      >
-                        <Trash2 className="mr-2 h-3.5 w-3.5" /> Excluir PDI
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
-            </div>
-          )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Mais ações do PDI"
+                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground group-hover:text-foreground"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {/* Exportação em PDF que existia no botão da página antiga
+                        (`gerarPDIPDF`) — mesmos campos, mesma função. */}
+                <DropdownMenuItem
+                  className="text-xs"
+                  onClick={() =>
+                    void gerarPDIPDF(item.colaborador || 'Colaborador', {
+                      titulo: item.titulo,
+                      competencia: item.competencia,
+                      acao: item.acao,
+                      prazo: (item.pdi as { prazo?: string | null })?.prazo ?? null,
+                      status: (item.pdi as { status?: string | null })?.status ?? null,
+                    })
+                  }
+                >
+                  <FileDown className="mr-2 h-3.5 w-3.5" /> Exportar PDF
+                </DropdownMenuItem>
+                {onFiltrarColaborador && item.colaboradorId && (
+                  <DropdownMenuItem className="text-xs" onClick={() => onFiltrarColaborador(item)}>
+                    Filtrar por este colaborador
+                  </DropdownMenuItem>
+                )}
+                {onFiltrarCompetencia && item.competencia && (
+                  <DropdownMenuItem className="text-xs" onClick={() => onFiltrarCompetencia(item)}>
+                    Filtrar por esta competência
+                  </DropdownMenuItem>
+                )}
+                {podeExcluir && (
+                  <DropdownMenuItem
+                    className="text-xs text-destructive focus:text-destructive"
+                    onClick={() => onExcluir?.(item)}
+                  >
+                    <Trash2 className="mr-2 h-3.5 w-3.5" /> Excluir PDI
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </MotionCard>
