@@ -89199,8 +89199,17 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -90056,8 +90065,13 @@
       {
         "args": "p_empresa_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90733,8 +90747,25 @@
       {
         "args": "p_empresa_id uuid, p_avaliado_id uuid, p_ciclo_id uuid, p_tipo text, p_nota_geral numeric, p_potencial numeric, p_avaliador_id uuid, p_pontos_fortes text, p_pontos_melhoria text, p_comentarios text, p_idempotencia text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261016090000_ninebox_revoga_insert_direto.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261016090000_ninebox_revoga_insert_direto.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 4,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90808,8 +90839,21 @@
       {
         "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text, p_idempotencia text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.verify.sql",
+              "hits": 6
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92025,8 +92069,21 @@
       {
         "args": "p_feedback_id uuid, p_avaliado_id uuid, p_avaliador_id uuid, p_ciclo_id uuid, p_tipo text, p_nota numeric, p_potencial numeric, p_pontos_fortes text, p_pontos_melhoria text, p_comentarios text, p_idempotencia text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261020090000_ninebox_edicao_feedback.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92941,8 +92998,21 @@
       {
         "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_idempotencia text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -93119,8 +93189,41 @@
       {
         "args": "p_feedback_id uuid, p_acao text, p_motivo text, p_idempotencia text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261018090000_ninebox_conclusao_gestor.verify.sql",
+              "hits": 4
+            },
+            {
+              "file": "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.verify.sql",
+              "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 8,
           "cron": [],
           "db": [
             "public.editar_feedback_seguro"
@@ -93151,8 +93254,21 @@
       {
         "args": "p_feedback_id uuid, p_acao text, p_motivo text, p_idempotencia text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [
             "public.finalizar_feedback"
@@ -94735,11 +94851,15 @@
         "callers": {
           "code": [
             {
+              "file": "src/components/avaliacao/PerformanceAuditTimeline.tsx",
+              "hits": 1
+            },
+            {
               "file": "src/services/auditoriaService.ts",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -95557,7 +95677,7 @@
               "hits": 2
             }
           ],
-          "code_total_files": 58,
+          "code_total_files": 73,
           "cron": [],
           "db": [
             "public.aplicar_medida_folha_ponto",
@@ -96923,9 +97043,13 @@
             {
               "file": "src/services/auditoriaService.ts",
               "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql",
+              "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -96954,8 +97078,21 @@
       {
         "args": "p_feedback_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -98387,8 +98524,65 @@
       {
         "args": "p_colaborador_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/components/avaliacao/acoesFeedback.ts",
+              "hits": 1
+            },
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261018090000_ninebox_conclusao_gestor.sql",
+              "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261018090000_ninebox_conclusao_gestor.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
+              "hits": 4
+            }
+          ],
+          "code_total_files": 14,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -98421,8 +98615,17 @@
       {
         "args": "p_colaborador_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "public.editar_feedback_seguro",
@@ -98454,8 +98657,17 @@
       {
         "args": "p_feedback_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [
             "public.editar_feedback_seguro"
@@ -98486,8 +98698,25 @@
       {
         "args": "p_feedback_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.verify.sql",
+              "hits": 6
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 4,
           "cron": [],
           "db": [
             "public.finalizar_feedback_base"
@@ -98518,8 +98747,61 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql",
+              "hits": 11
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.verify.sql",
+              "hits": 4
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261018090000_ninebox_conclusao_gestor.sql",
+              "hits": 6
+            },
+            {
+              "file": "supabase/migrations/20261020090000_ninebox_edicao_feedback.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261022090000_ninebox_conclusao_feedback_autorizada.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 7
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
+              "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 13,
           "cron": [],
           "db": [
             "public.criar_feedback_seguro",
@@ -98965,8 +99247,25 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261018090000_ninebox_conclusao_gestor.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 4,
           "cron": [],
           "db": [
             "public.validar_potencial_avaliacao"
@@ -101388,6 +101687,10 @@
               "hits": 1
             },
             {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql",
+              "hits": 2
+            },
+            {
               "file": "supabase/migrations/20261029000000_gaps_v2_verificacao.sql",
               "hits": 2
             },
@@ -101396,7 +101699,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 8,
+          "code_total_files": 9,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -101986,8 +102289,29 @@
       {
         "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.verify.sql",
+              "hits": 4
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 5,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -102019,8 +102343,37 @@
       {
         "args": "p_colaborador_id uuid, p_ciclo_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/components/avaliacao/aprovacaoGestor.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql",
+              "hits": 3
+            }
+          ],
+          "code_total_files": 7,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -102600,8 +102953,17 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261028090000_ninebox_justificativa_historico.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -102669,8 +103031,13 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [
@@ -103045,8 +103412,17 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -104458,8 +104834,17 @@
       {
         "args": "p_feedback_id uuid, p_idempotencia text, p_observacao text",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/services/avaliacaoService.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.verify.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -104807,8 +105192,41 @@
       {
         "args": "p_feedback_id uuid",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "src/components/avaliacao/aprovacaoGestor.ts",
+              "hits": 1
+            },
+            {
+              "file": "src/components/avaliacao/motorAvaliacao360.ts",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261018090000_ninebox_conclusao_gestor.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261020090000_ninebox_edicao_feedback.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 8,
           "cron": [],
           "db": [
             "public.editar_feedback_seguro",
@@ -104845,11 +105263,31 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+              "hits": 5
+            },
+            {
+              "file": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.verify.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql",
+              "hits": 3
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
+              "hits": 2
+            },
+            {
+              "file": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.verify.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20261027000000_revoke_orphan_secdef.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 6,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
