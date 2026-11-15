@@ -39,11 +39,17 @@ for arg in "$@"; do
       exit 0
       ;;
     *)
-      echo "Argumento desconhecido: $arg (use --help)" >&2
+      printf 'Argumento desconhecido: %s (use --help)\n' "$arg" >&2
       exit 64
       ;;
   esac
 done
+
+# (#372) --apk e --check pedem coisas opostas: validar sem alterar x gerar o APK.
+if [[ "$BUILD_APK" == "true" && "$CHECK_ONLY" == "true" ]]; then
+  printf 'Use --apk ou --check, não ambos.\n' >&2
+  exit 64
+fi
 
 # ── Cores ─────────────────────────────────────────────────────
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -77,8 +83,8 @@ fi
 
 # Dependências npm
 info "Verificando dependências..."
-if [[ ! -d node_modules ]] || ! npm ci --dry-run >/dev/null 2>&1; then
-  err "Dependências ausentes ou package-lock fora de sincronia. Execute: npm ci"
+if [[ ! -x node_modules/.bin/vite ]]; then
+  err "Dependências npm ausentes ou incompletas. Execute npm ci antes do build."
   exit 1
 fi
 
