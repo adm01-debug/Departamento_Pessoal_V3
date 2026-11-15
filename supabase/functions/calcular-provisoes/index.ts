@@ -2,7 +2,7 @@
 // • JWT + CSRF fail-closed + tenant scope
 // • Zod strict (competência AAAA-MM, não-futura, ≤ 60 meses passados)
 // • BigInt centavos (zero drift)
-// • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos
+// • Férias = (salário × 4/3) / 12 + encargos por regime tributário; 13º = salário / 12 + encargos
 // • Filtra colaboradores ativos e admitidos até último dia da competência
 // • Cap 10.000 colaboradores/execução
 // • Substituição + auditoria atômicas por RPC transacional
@@ -26,6 +26,17 @@ const INSS_PATRONAL_BPS = 200n;  // 20%
 const RAT_MEDIO_BPS = 30n;       // 3% (src/calculators/tabelas.ts::ENCARGOS_PADRAO.rat)
 const TERCEIROS_BPS = 58n;       // 5.8%
 const FGTS_BPS = 80n;            // 8%
+
+// Encargos patronais por regime tributário da empresa. Espelho manual de
+// src/calculators/tabelas.ts::aliquotaEncargosProvisao (edge não pode importar
+// de src/). Simples Nacional recolhe CPP e Terceiros dentro do DAS
+// (LC 123/2006, art. 13, §3º) — sobre a folha incide só o FGTS; no Anexo IV
+// (art. 18, §5º-C) a CPP e o RAT/FAP ficam fora do DAS. Regime ausente ou
+// desconhecido mantém a alíquota cheia para não subestimar o passivo.
+function encargosPatronaisBps(regime: string | null, simplesAnexo: string | null): bigint {
+  if (regime !== 'simples_nacional') return INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS;
+  return simplesAnexo === 'IV' ? INSS_PATRONAL_BPS + RAT_MEDIO_BPS : 0n;
+}
 
 const BodySchema = z.object({
   empresa_id: z.string().uuid(),
@@ -119,6 +130,18 @@ serve(async (req: Request): Promise<Response> => {
     const dataLimite = ultimoDiaCompetencia(competencia);
     const startTime = Date.now();
 
+    // Regime tributário da empresa define a alíquota de encargos da provisão.
+    const { data: empresa, error: empresaErr } = await supabase
+      .from('empresas')
+      .select('regime_tributario, simples_anexo')
+      .eq('id', empresa_id)
+      .maybeSingle<{ regime_tributario: string | null; simples_anexo: string | null }>();
+    if (empresaErr) throw empresaErr;
+    const patronaisBps = encargosPatronaisBps(
+      empresa?.regime_tributario ?? null,
+      empresa?.simples_anexo ?? null,
+    );
+
     // Contagem prévia
     const { count: total, error: countErr } = await supabase
       .from('colaboradores')
@@ -170,7 +193,7 @@ serve(async (req: Request): Promise<Response> => {
 
         // Provisão de Férias: (salário × 4/3) / 12 = salário × 4/36
         const feriasCents = (salarioCents * 4n) / 36n;
-        const feriasINSSCents = (feriasCents * (INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS)) / 1000n;
+        const feriasINSSCents = (feriasCents * patronaisBps) / 1000n;
         const feriasFGTSCents = (feriasCents * FGTS_BPS) / 1000n;
 
         provisoes.push({
@@ -185,7 +208,7 @@ serve(async (req: Request): Promise<Response> => {
 
         // Provisão 13º: salário / 12
         const decimoCents = salarioCents / 12n;
-        const decimoINSSCents = (decimoCents * (INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS)) / 1000n;
+        const decimoINSSCents = (decimoCents * patronaisBps) / 1000n;
         const decimoFGTSCents = (decimoCents * FGTS_BPS) / 1000n;
 
         provisoes.push({

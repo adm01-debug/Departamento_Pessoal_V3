@@ -11,6 +11,8 @@ import {
   SALARIO_FAMILIA_VALOR,
   FAIXAS_PLR_2026,
   ENCARGOS_PADRAO,
+  ALIQUOTA_ENCARGOS_PROVISAO,
+  aliquotaEncargosProvisao,
 } from '../tabelas';
 
 describe('tabelas 2026 — integridade dos dados', () => {
@@ -145,6 +147,44 @@ describe('tabelas 2026 — integridade dos dados', () => {
       for (const [, value] of Object.entries(ENCARGOS_PADRAO)) {
         expect(value).toBeGreaterThan(0);
       }
+    });
+  });
+
+  describe('aliquotaEncargosProvisao — encargos da provisão por regime', () => {
+    it('alíquota cheia = CPP + RAT + Terceiros + FGTS (~36,8%)', () => {
+      expect(ALIQUOTA_ENCARGOS_PROVISAO.padrao).toBeCloseTo(0.368, 10);
+    });
+
+    it('Simples Nacional recolhe apenas FGTS 8%', () => {
+      expect(aliquotaEncargosProvisao('simples_nacional')).toBe(0.08);
+      expect(aliquotaEncargosProvisao('simples_nacional', null)).toBe(0.08);
+      expect(aliquotaEncargosProvisao('simples_nacional', 'III')).toBe(0.08);
+    });
+
+    it('Simples Anexo IV recolhe CPP + RAT + FGTS, sem Terceiros (31%)', () => {
+      expect(aliquotaEncargosProvisao('simples_nacional', 'IV')).toBe(0.31);
+    });
+
+    it('Lucro Presumido e Lucro Real mantêm a alíquota cheia de hoje', () => {
+      expect(aliquotaEncargosProvisao('lucro_presumido')).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+      expect(aliquotaEncargosProvisao('lucro_real')).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+      expect(aliquotaEncargosProvisao('lucro_real', 'IV')).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+    });
+
+    it('regime ausente ou desconhecido cai na alíquota cheia, nunca na menor', () => {
+      for (const regime of [null, undefined, '', 'mei', 'regime_inexistente']) {
+        expect(aliquotaEncargosProvisao(regime)).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+        expect(aliquotaEncargosProvisao(regime)).toBeGreaterThan(ALIQUOTA_ENCARGOS_PROVISAO.simplesNacional);
+      }
+    });
+
+    it('provisão de R$ 1.000 — Simples provisiona 28,8 p.p. menos que Lucro Presumido', () => {
+      const base = 1000;
+      const simples = base * aliquotaEncargosProvisao('simples_nacional');
+      const presumido = base * aliquotaEncargosProvisao('lucro_presumido');
+      expect(simples).toBeCloseTo(80, 10);
+      expect(presumido).toBeCloseTo(368, 10);
+      expect(presumido - simples).toBeCloseTo(288, 10);
     });
   });
 });

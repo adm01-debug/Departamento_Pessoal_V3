@@ -86,6 +86,32 @@ export const ENCARGOS_PADRAO = {
   fgts: 0.08,
 };
 
+// Encargos patronais incidentes sobre a provisão de férias e 13º, por regime
+// tributário da empresa (coluna `empresas.regime_tributario`).
+//  - Simples Nacional: a CPP (INSS patronal) e as contribuições de Terceiros
+//    estão embutidas no DAS (LC 123/2006, art. 13, §3º) — sobre a folha incide
+//    apenas o FGTS. Exceção do Anexo IV (art. 18, §5º-C): CPP e RAT/FAP são
+//    recolhidos fora do DAS; Terceiros seguem dispensados.
+//  - Lucro Real/Presumido, MEI e regime ausente/desconhecido: alíquota cheia.
+//    Na dúvida o sistema não subestima o passivo provisionado.
+// Espelhado manualmente em supabase/functions/calcular-provisoes/index.ts
+// (edge não pode importar de src/).
+export const ALIQUOTA_ENCARGOS_PROVISAO = {
+  padrao: ENCARGOS_PADRAO.inssPatronal + ENCARGOS_PADRAO.rat + ENCARGOS_PADRAO.terceiros + ENCARGOS_PADRAO.fgts,
+  simplesNacional: ENCARGOS_PADRAO.fgts,
+  simplesAnexoIV: ENCARGOS_PADRAO.inssPatronal + ENCARGOS_PADRAO.rat + ENCARGOS_PADRAO.fgts,
+};
+
+/**
+ * Alíquota de encargos patronais da provisão para o regime informado.
+ * `regime` e `simplesAnexo` chegam crus do banco (enum/texto), por isso aceitam
+ * nulo: qualquer valor fora de `simples_nacional` mantém a alíquota cheia.
+ */
+export function aliquotaEncargosProvisao(regime: string | null | undefined, simplesAnexo?: string | null): number {
+  if (regime !== 'simples_nacional') return ALIQUOTA_ENCARGOS_PROVISAO.padrao;
+  return simplesAnexo === 'IV' ? ALIQUOTA_ENCARGOS_PROVISAO.simplesAnexoIV : ALIQUOTA_ENCARGOS_PROVISAO.simplesNacional;
+}
+
 // Seguro-Desemprego 2026 (Resolução CODEFAT — base SM R$1.518,00)
 export const FAIXAS_SEGURO_DESEMPREGO_2026 = {
   faixa1Limite: 2041.39,
