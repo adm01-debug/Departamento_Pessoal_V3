@@ -222,7 +222,11 @@ WHERE (
         WHERE a.grantee = 0
           AND a.privilege_type IN ('TRUNCATE','DELETE','UPDATE')) = 0
   AND has_table_privilege('authenticated', 'public.feedbacks_360', 'SELECT')
-  AND has_table_privilege('authenticated', 'public.feedbacks_360', 'INSERT')
+  -- O INSERT de authenticated NAO e assertado aqui de proposito. Esta migration
+  -- o concede como estado INTERMEDIARIO (ver suas proprias linhas 1045 e
+  -- 1054-1055, que anunciam a revogacao como "PASSO 2") e a 20261016090000
+  -- revoga. Fixar o grant aqui contradiria o sidecar da 20261016090000 e os
+  -- dois nunca poderiam passar na mesma base.
   AND has_table_privilege('authenticated', 'public.feedbacks_360_operacoes', 'SELECT')
   AND has_table_privilege('authenticated', 'public.feedbacks_360_validacoes_potencial', 'SELECT')
   AND has_table_privilege('authenticated', 'public.vw_feedbacks_360_versao', 'SELECT')
