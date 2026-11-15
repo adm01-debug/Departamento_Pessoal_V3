@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-15 14:12 UTC
+
+- **realtime** adicionado (1): `supabase_realtime_messages_publication:realtime.messages_2026_11_18`
+
 ## 2026-11-14 12:29 UTC
 
 - **functions** alterado (11): `public.bloquear_aprovacao_ponto_sem_rh()`, `public.fn_auto_generate_training_certificate()`, `public.fn_pensoes_set_empresa()`, `public.fn_update_admissao_checklist()`, `public.get_user_empresas(_user_id uuid)`, `public.is_admin(_user_id uuid)`, `public.pertence_a_empresa(_empresa_id uuid)`, `public.pode_gerir_pessoas(_empresa_id uuid)`, `public.pode_gerir_rh(_empresa_id uuid)`, `public.process_ferias_audit()`, `public.update_updated_at_column()`

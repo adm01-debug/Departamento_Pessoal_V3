@@ -410,7 +410,7 @@
   {
    "arquivo": "scripts/capacitor-build.sh",
    "descricao": "============================================================== P5-079: Script de build Mobile (Capacitor + Android)",
-   "linhas": 184,
+   "linhas": 190,
    "env": [],
    "npm_scripts": [
     "build:mobile",

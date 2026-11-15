@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "eb2efe596e21222239b526ffb2c88129670c4cb6",
+  "commit": "44cf65f17a127ba068795a0c9cb03039743b402f",
   "branch": "main",
-  "data_commit": "2026-11-14T17:10:29-03:00",
+  "data_commit": "2026-11-15T10:48:40-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "44cf65f",
+    "data": "2026-11-15",
+    "assunto": "chore: resgata melhorias de PRs fechadas sem merge (#570)"
+   },
    {
     "sha": "eb2efe5",
     "data": "2026-11-14",
@@ -126,14 +131,9 @@
     "sha": "2f13bbb",
     "data": "2026-11-13",
     "assunto": "fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)"
-   },
-   {
-    "sha": "1108375",
-    "data": "2026-11-13",
-    "assunto": "fix(db): view de contas bancárias descriptografadas volta a respeitar a permissão de quem consulta (#464)"
    }
   ],
-  "arquivos_mudados_7d": 637,
+  "arquivos_mudados_7d": 616,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,15 +141,11 @@
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 36
+    "mudancas": 34
    },
    {
     "pasta": "src/services/__tests__",
     "mudancas": 21
-   },
-   {
-    "pasta": "package.json",
-    "mudancas": 19
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -160,12 +156,12 @@
     "mudancas": 19
    },
    {
-    "pasta": "CLAUDE.md",
-    "mudancas": 17
+    "pasta": "package.json",
+    "mudancas": 18
    },
    {
-    "pasta": "package-lock.json",
-    "mudancas": 17
+    "pasta": "CLAUDE.md",
+    "mudancas": 16
    },
    {
     "pasta": "scripts/autofix/regras",
@@ -174,6 +170,10 @@
    {
     "pasta": "src/pages/__tests__",
     "mudancas": 16
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 15
    },
    {
     "pasta": "PENDENCIAS.md",
@@ -309,7 +309,7 @@
    },
    {
     "autor": "dependabot[bot]",
-    "commits": 15
+    "commits": 12
    },
    {
     "autor": "github-actions[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2936,
+  "arquivos_total": 2937,
   "arquivos_codigo": 1580,
   "linhas_codigo": 283459,
   "rotas": 115,

@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sha": "eb2efe596e21222239b526ffb2c88129670c4cb6",
+  "sha": "44cf65f17a127ba068795a0c9cb03039743b402f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-14 20:12 UTC",
-  "files_total": 2957,
+  "generated_at": "2026-11-15 14:12 UTC",
+  "files_total": 2958,
   "code_files": 2425,
   "code_lines": 332989
  },
@@ -282590,10 +282590,21 @@
   }
  },
  "git": {
-  "sha": "eb2efe596e21222239b526ffb2c88129670c4cb6",
+  "sha": "44cf65f17a127ba068795a0c9cb03039743b402f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "44cf65f",
+    "date": "2026-11-15",
+    "author": "adm01-debug",
+    "subject": "chore: resgata melhorias de PRs fechadas sem merge (#570)",
+    "files": [
+     "scripts/automation.config.json",
+     "scripts/capacitor-build.sh",
+     "scripts/tests/migrations-p1-rotinas-agendadas.sh"
+    ]
+   },
    {
     "sha": "eb2efe5",
     "date": "2026-11-14",
@@ -282888,16 +282899,6 @@
     "files": [
      "docs/prod-readiness.md"
     ]
-   },
-   {
-    "sha": "7438a74",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(build): religa a minificação do Vite 8 e ajusta plugin-react v6 (#544)",
-    "files": [
-     "src/services/loggerService.ts",
-     "vite.config.ts"
-    ]
    }
   ],
   "hot_files": [
@@ -282914,6 +282915,10 @@
     3
    ],
    [
+    "scripts/automation.config.json",
+    2
+   ],
+   [
     "nginx.conf",
     2
    ],
@@ -282922,7 +282927,11 @@
     2
    ],
    [
-    "scripts/automation.config.json",
+    "scripts/capacitor-build.sh",
+    1
+   ],
+   [
+    "scripts/tests/migrations-p1-rotinas-agendadas.sh",
     1
    ],
    [
@@ -282971,14 +282980,6 @@
    ],
    [
     "supabase/migrations/20261114000500_pensoes_empresa_id_drift.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261114000400_adiciona_updated_at_faltante.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261114000400_adiciona_updated_at_faltante.verify.sql",
     1
    ]
   ]
