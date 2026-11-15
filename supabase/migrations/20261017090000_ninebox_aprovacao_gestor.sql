@@ -22,7 +22,6 @@
 --   • Histórico append-only, auditado em `audit_log` com `empresa_id`.
 -- ============================================================================
 
-begin;
 
 -- ── §0 · VÍNCULO VERIFICÁVEL GESTOR ↔ COLABORADOR ───────────────────────────
 create or replace function public.colaborador_id_do_usuario(p_empresa_id uuid)
@@ -919,6 +918,5 @@ $$;
 revoke all on function public.validar_potencial_avaliacao(uuid, text, text) from public, anon;
 grant execute on function public.validar_potencial_avaliacao(uuid, text, text) to authenticated;
 
-commit;
 
 

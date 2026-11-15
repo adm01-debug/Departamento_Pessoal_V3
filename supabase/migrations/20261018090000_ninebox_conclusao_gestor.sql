@@ -44,7 +44,6 @@
 --     `feedbacks_360` desde a migration anterior.
 -- ============================================================================
 
-begin;
 
 -- ── Guarda de dependências: falha alto em vez de autorizar errado ───────────
 do $$
@@ -258,4 +257,3 @@ revoke update on public.feedbacks_360 from anon;
 revoke insert on public.feedbacks_360 from anon;
 revoke delete on public.feedbacks_360 from authenticated, anon;
 
-commit;

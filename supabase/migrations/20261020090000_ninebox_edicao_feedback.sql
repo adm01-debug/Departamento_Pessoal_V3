@@ -24,7 +24,6 @@
 -- daquela migration (ou da versão calculada na hora por `situacao_aprovacao`).
 -- ============================================================================
 
-begin;
 
 -- ── §1 · RÓTULO DE IDEMPOTÊNCIA ────────────────────────────────────────────
 -- A tabela `feedbacks_360_operacoes` (já aplicada) tem CHECK fechado. Ampliá-lo
@@ -226,5 +225,4 @@ revoke all on function public.editar_feedback_seguro(uuid, uuid, uuid, uuid, tex
 grant execute on function public.editar_feedback_seguro(uuid, uuid, uuid, uuid, text, numeric, numeric, text, text, text, text)
   to authenticated;
 
-commit;
 

@@ -38,8 +38,16 @@
 
 import type { PdiDerivado } from './pdiComum';
 
-/** Interruptor único: `false` desliga o mock sem apagar nada. */
-export const MOCK_PROGRESSO_PDI_ATIVO = true;
+/**
+ * Interruptor do mock. Mesmo gate dos outros mocks visuais do repo
+ * (src/mocks/treinamentosMock.ts, admissoesMock.ts, desempenhoMock.ts): liga
+ * só em build de desenvolvimento e com opt-in explícito da env var, nunca em
+ * produção. Sem isso, qualquer PDI real cujo título caísse na tabela de
+ * PERCENTUAIS (ex.: "Certificação técnica") exibia um progresso inventado.
+ * A guarda MODE !== 'test' evita que o Vitest leia o .env.local do vite dev.
+ */
+export const MOCK_PROGRESSO_PDI_ATIVO =
+  import.meta.env.DEV && import.meta.env.MODE !== 'test' && import.meta.env.VITE_PDI_MOCK === 'true';
 
 /** O que `getMockPdiProgress` devolve quando encontra o título. */
 export interface ProgressoMock {

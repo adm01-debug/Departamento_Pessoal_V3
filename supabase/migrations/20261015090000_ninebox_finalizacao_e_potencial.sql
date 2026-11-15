@@ -89,7 +89,6 @@
 --     catálogo (rápidas), mas a duração do lock é a da transação inteira.
 -- ============================================================================
 
-begin;
 
 -- ============================================================================
 -- 0) CONTROLE DE REVISÃO DA AVALIAÇÃO — mecanismo EXPLÍCITO (coluna `revisao`)
@@ -1087,4 +1086,3 @@ grant select on public.feedbacks_360_validacoes_potencial to authenticated;
 -- `docs/ninebox-implantacao-minima.md` §5) libera os locks do ACCESS EXCLUSIVE
 -- em `feedbacks_360` sem aplicar nada.
 -- ============================================================================
-commit;

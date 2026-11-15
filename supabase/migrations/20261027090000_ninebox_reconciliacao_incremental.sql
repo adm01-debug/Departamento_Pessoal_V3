@@ -23,7 +23,6 @@
 -- Rollback: supabase/rollback/20261027090000_ninebox_reconciliacao_incremental_rollback.sql
 -- ============================================================================
 
-begin;
 
 -- ── §1 · CONCLUSÃO: HELPER + RPC AUTORIZADA (fonte: 20261022090000) ─────────
 -- O helper estava ausente e a RPC em produção ainda era a versão antiga.
@@ -656,7 +655,6 @@ drop trigger if exists ciclos_bloqueio_exclusao_com_dependencias on public.ciclo
 create trigger ciclos_bloqueio_exclusao_com_dependencias
   before delete on public.ciclos_avaliacao
   for each row execute function public.bloquear_exclusao_ciclo_com_dependencias();
-commit;
 
 -- A Data API mantém cache de funções; recarrega depois de criar as RPCs.
 notify pgrst, 'reload schema';

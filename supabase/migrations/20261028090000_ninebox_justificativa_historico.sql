@@ -36,7 +36,6 @@
 -- Rollback: supabase/rollback/20261028090000_ninebox_justificativa_historico_rollback.sql
 -- ============================================================================
 
-begin;
 
 -- ── §1 · CAMPOS EXPLÍCITOS NA AUDITORIA EXISTENTE ───────────────────────────
 alter table public.audit_log
@@ -344,4 +343,3 @@ comment on function public.listar_historico_feedback(uuid) is
 revoke all on function public.listar_historico_feedback(uuid) from public, anon;
 grant execute on function public.listar_historico_feedback(uuid) to authenticated;
 
-commit;

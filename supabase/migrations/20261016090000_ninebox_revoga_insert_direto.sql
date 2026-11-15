@@ -27,7 +27,6 @@
 --   • exclusão física continua bloqueada (§0e da etapa 1).
 -- ============================================================================
 
-begin;
 
 -- 1) Pré-condição: sem a RPC de criação não existe caminho de gravação.
 do $$
@@ -75,4 +74,3 @@ end $$;
 comment on table public.feedbacks_360 is
   'Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE.';
 
-commit;
