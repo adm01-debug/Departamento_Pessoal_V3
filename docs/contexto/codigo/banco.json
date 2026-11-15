@@ -27309,7 +27309,7 @@
     {
      "nome": "feedbacks_360_select",
      "comando": "select",
-     "para": "public",
+     "para": "authenticated",
      "tipo": "permissive"
     }
    ],

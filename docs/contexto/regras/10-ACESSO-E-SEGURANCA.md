@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `1392114674` · branch `main` · 2026-11-15 18:05 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6450ca8542` · branch `main` · 2026-11-15 18:13 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -202,7 +202,7 @@
 | `faixas_inss` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `faixas_irrf` | não encontrado | sem RLS | sem RLS | sem RLS | sem RLS |
 | `faltas` | enabled | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id()<br>authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR public.is_admin(auth.uid()) | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid()))<br>authenticated: empresa_id = public.get_auth_empresa_id() |
-| `feedbacks_360` | enabled | public: empresa_id IN (SELECT public.get_user_empresas(auth.uid())) AND ( public.pode_gerir_avaliacoes() OR public.pode_aprovar_colaborador( | — | — | — |
+| `feedbacks_360` | enabled | authenticated: empresa_id IN (SELECT public.get_user_empresas(auth.uid())) AND ( public.pode_gerir_avaliacoes() OR public.pode_aprovar_colab | — | — | — |
 | `feedbacks_360_aprovacoes_gestor` | enabled | authenticated: empresa_id in (select public.get_user_empresas(auth.uid())) and ( public.pode_gerir_avaliacoes() or public.pode_aprovar_colab | — | — | — |
 | `feedbacks_360_consolidacoes` | enabled | authenticated: empresa_id in (select public.get_user_empresas(auth.uid())) and ( public.pode_gerir_avaliacoes() or public.pode_aprovar_colab | — | — | — |
 | `feedbacks_360_operacoes` | enabled | authenticated: public.pode_gerir_avaliacoes() and empresa_id in (select public.get_user_empresas(auth.uid())) | — | — | — |

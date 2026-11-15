@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "1392114674c6be55b1cd96da87d25c60f6378887",
+  "commit": "6450ca854267c47653f98f58d928c061ab4287ea",
   "branch": "main",
-  "data_commit": "2026-11-15T18:05:05Z",
+  "data_commit": "2026-11-15T18:13:20Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "6450ca8",
+    "data": "2026-11-15",
+    "assunto": "fix(ninebox): policy de leitura volta a valer somente para authenticated (#574)"
+   },
    {
     "sha": "1392114",
     "data": "2026-11-15",
@@ -126,11 +131,6 @@
     "sha": "2fbfb51",
     "data": "2026-11-13",
     "assunto": "Seguros de Vida: permitir editar apólices (#521)"
-   },
-   {
-    "sha": "daa557e",
-    "data": "2026-11-13",
-    "assunto": "fix: treinamentos permite alterar status da inscrição e editar curso (#492)"
    }
   ],
   "arquivos_mudados_7d": 783,
@@ -203,7 +203,7 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 23
+    "mudancas": 22
    },
    {
     "arquivo": "CLAUDE.md",
@@ -211,7 +211,7 @@
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 21
+    "mudancas": 20
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 216
+    "commits": 217
    },
    {
     "autor": "devin-ai-integration[bot]",
