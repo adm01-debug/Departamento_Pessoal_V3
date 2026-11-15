@@ -92193,7 +92193,7 @@
             },
             {
               "file": "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
-              "hits": 1
+              "hits": 2
             }
           ],
           "code_total_files": 2,
