@@ -136,6 +136,7 @@
    "src/pages/LotacoesPage.tsx",
    "src/pages/MedidasDisciplinaresPage.tsx",
    "src/pages/MovimentacoesPage.tsx",
+   "src/pages/NineBoxPreviewPage.tsx",
    "src/pages/NotFoundPage.tsx",
    "src/pages/NotificacoesPage.tsx",
    "src/pages/ObrigacoesFiscaisPage.tsx",
@@ -375,6 +376,21 @@
    "src/hooks/useAfastamentos.ts",
    "src/types/afastamentos.ts"
   ],
+  "src/components/animate-ui/components/animate/tabs.tsx": [
+   "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/animate-ui/primitives/animate/slot.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/animate-ui/primitives/animate/tabs.tsx": [
+   "src/components/animate-ui/primitives/animate/slot.tsx",
+   "src/components/animate-ui/primitives/effects/highlight.tsx",
+   "src/lib/get-strict-context.tsx"
+  ],
+  "src/components/animate-ui/primitives/effects/highlight.tsx": [
+   "src/lib/utils.ts"
+  ],
   "src/components/auth/LoginForm.tsx": [
    "src/components/ui/button.tsx",
    "src/components/ui/card.tsx",
@@ -384,20 +400,534 @@
   "src/components/auth/index.ts": [
    "src/components/auth/LoginForm.tsx"
   ],
+  "src/components/avaliacao/AlertasDesempenho.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/avaliacao/AnaliticosDesempenho.tsx": [
+   "src/components/avaliacao/barraProgresso.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/AuditoriaChips.tsx": [
+   "src/components/avaliacao/ColoredFilterChip.tsx",
+   "src/components/avaliacao/auditoriaComum.ts",
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/avaliacao/entradaCards.tsx"
+  ],
+  "src/components/avaliacao/AuditoriaDetalheDialog.tsx": [
+   "src/components/avaliacao/auditoriaComum.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/AuditoriaEvento.tsx": [
+   "src/components/avaliacao/EstrelasNota.tsx",
+   "src/components/avaliacao/auditoriaComum.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/AuditoriaFiltros.tsx": [
+   "src/components/avaliacao/auditoriaComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/avaliacao/CancelamentoFeedbackResumo.tsx": [
+   "src/components/avaliacao/TextoExpansivel.tsx",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/historicoFeedback.ts",
+   "src/components/avaliacao/useHistoricoFeedback.ts",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/avaliacao/CartaoFeedbackCanonico.tsx": [
+   "src/components/avaliacao/CancelamentoFeedbackResumo.tsx",
+   "src/components/avaliacao/HistoricoFeedbackDialog.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/avaliacao/useHistoricoFeedback.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/CicloAtivoPanel.tsx": [
+   "src/components/avaliacao/barraProgresso.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/ColoredFilterChip.tsx": [
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/DialogoDevolucao.tsx": [
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/avaliacao/EstrelasNota.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/FeedbackAcoesRodape.tsx": [
+   "src/components/avaliacao/acoesFeedback.ts",
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/aprovacaoLocal.ts",
+   "src/components/avaliacao/criacaoFeedback.ts",
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/execucaoFeedback.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/avaliacao/nineBoxConsolidacao.ts",
+   "src/components/avaliacao/papeisAvaliacao.ts",
+   "src/components/avaliacao/statusFeedback.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/separator.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useAuth.ts",
+   "src/lib/utils.ts",
+   "src/services/avaliacaoService.ts"
+  ],
+  "src/components/avaliacao/FeedbackCard.tsx": [
+   "src/components/avaliacao/CartaoFeedbackCanonico.tsx",
+   "src/components/avaliacao/feedbackCanonico.ts"
+  ],
+  "src/components/avaliacao/FeedbackDetalheDialog.tsx": [
+   "src/components/avaliacao/EstrelasNota.tsx",
+   "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/FeedbacksFiltros.tsx": [
+   "src/components/avaliacao/ColoredFilterChip.tsx",
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/avaliacao/criacaoFeedback.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/FeedbacksFocoBanner.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/avaliacao/FeedbacksResumo.tsx": [
+   "src/components/avaliacao/barraProgresso.tsx",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/FeedbacksTab.tsx": [
+   "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+   "src/components/avaliacao/FeedbackDetalheDialog.tsx",
+   "src/components/avaliacao/FeedbacksFiltros.tsx",
+   "src/components/avaliacao/FeedbacksFocoBanner.tsx",
+   "src/components/avaliacao/FeedbacksResumo.tsx",
+   "src/components/avaliacao/FeedbacksTimeline.tsx",
+   "src/components/avaliacao/NovoFeedbackDialog.tsx",
+   "src/components/avaliacao/PendenciasAprovacao.tsx",
+   "src/components/avaliacao/acoesFeedback.ts",
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/edicaoFeedback.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/avaliacao/motorAvaliacao360.ts",
+   "src/components/avaliacao/nineBox360.ts",
+   "src/components/avaliacao/nineBoxModo.ts",
+   "src/components/avaliacao/papeisAvaliacao.ts",
+   "src/lib/motionMode.ts"
+  ],
+  "src/components/avaliacao/FeedbacksTimeline.tsx": [
+   "src/components/avaliacao/FeedbackCard.tsx",
+   "src/components/avaliacao/animacaoFeedbacks.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/HistoricoFeedbackDialog.tsx": [
+   "src/components/avaliacao/TextoExpansivel.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/historicoFeedback.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/IndicadorEvolucao.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/MetaCard.tsx": [
+   "src/components/avaliacao/IndicadorEvolucao.tsx",
+   "src/components/avaliacao/ProgressoDonut.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/metasComum.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/MetasCriticasBanner.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/metasComum.ts",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/avaliacao/MetasFiltros.tsx": [
+   "src/components/avaliacao/ColoredFilterChip.tsx",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/metasComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/avaliacao/MetasOKRsTab.tsx": [
+   "src/components/avaliacao/MetaCard.tsx",
+   "src/components/avaliacao/MetasCriticasBanner.tsx",
+   "src/components/avaliacao/MetasFiltros.tsx",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/metasComum.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/motionMode.ts"
+  ],
+  "src/components/avaliacao/NineBoxFiltros.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/NineBoxFocoBanner.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/avaliacao/NineBoxKpis.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/NineBoxLateral.tsx": [
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/components/ui/button.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
   "src/components/avaliacao/NineBoxMatrix.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
    "src/components/ui/tooltip.tsx"
   ],
+  "src/components/avaliacao/NineBoxMatriz.tsx": [
+   "src/components/avaliacao/NineBoxQuadrante.tsx",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/avaliacao/NineBoxQuadrante.tsx": [
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/NineBoxQuadranteDialog.tsx": [
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/NineBoxTab.tsx": [
+   "src/components/avaliacao/NineBoxFiltros.tsx",
+   "src/components/avaliacao/NineBoxFocoBanner.tsx",
+   "src/components/avaliacao/NineBoxKpis.tsx",
+   "src/components/avaliacao/NineBoxLateral.tsx",
+   "src/components/avaliacao/NineBoxMatriz.tsx",
+   "src/components/avaliacao/NineBoxQuadranteDialog.tsx",
+   "src/components/avaliacao/aprovacaoLocal.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/motorAvaliacao360.ts",
+   "src/components/avaliacao/nineBox360.ts",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/components/avaliacao/nineBoxMock.ts"
+  ],
+  "src/components/avaliacao/NovaMetaDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/avaliacao/NovoCicloDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/avaliacao/NovoFeedbackDialog.tsx": [
+   "src/components/avaliacao/edicaoFeedback.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/avaliacao/NovoPdiDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/avaliacao/OrigemHomologacao.tsx": [
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/statusFeedback.ts"
+  ],
+  "src/components/avaliacao/PdiCard.tsx": [
+   "src/components/avaliacao/barraProgresso.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/pdiComum.ts",
+   "src/components/avaliacao/pdiProgressoMock.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts",
+   "src/utils/evaluationPDF.ts"
+  ],
+  "src/components/avaliacao/PdiDetalheDialog.tsx": [
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/pdiComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/PdiFiltros.tsx": [
+   "src/components/avaliacao/ColoredFilterChip.tsx",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/pdiComum.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/avaliacao/PdiFocoBanner.tsx": [
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/avaliacao/PdiTab.tsx": [
+   "src/components/avaliacao/PdiCard.tsx",
+   "src/components/avaliacao/PdiDetalheDialog.tsx",
+   "src/components/avaliacao/PdiFiltros.tsx",
+   "src/components/avaliacao/PdiFocoBanner.tsx",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/pdiComum.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/motionMode.ts"
+  ],
+  "src/components/avaliacao/PendenciasAprovacao.tsx": [
+   "src/components/avaliacao/CartaoFeedbackCanonico.tsx",
+   "src/components/avaliacao/DialogoDevolucao.tsx",
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/avaliacao/papeisAvaliacao.ts"
+  ],
   "src/components/avaliacao/PerformanceAuditTimeline.tsx": [
-   "src/components/ui/badge.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/scroll-area.tsx",
-   "src/hooks/useEmpresas.ts",
-   "src/services/auditoriaService.ts"
+   "src/components/avaliacao/AuditoriaChips.tsx",
+   "src/components/avaliacao/AuditoriaDetalheDialog.tsx",
+   "src/components/avaliacao/AuditoriaEvento.tsx",
+   "src/components/avaliacao/AuditoriaFiltros.tsx",
+   "src/components/avaliacao/auditoriaComum.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/motionMode.ts",
+   "src/mocks/desempenhoMock.ts",
+   "src/services/exportService.ts"
   ],
   "src/components/avaliacao/PerformanceDashboard.tsx": [
-   "src/components/ui/card.tsx"
+   "src/components/avaliacao/AlertasDesempenho.tsx",
+   "src/components/avaliacao/AnaliticosDesempenho.tsx",
+   "src/components/avaliacao/CicloAtivoPanel.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx"
+  ],
+  "src/components/avaliacao/ProgressoDonut.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/TextoExpansivel.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/TodosCiclosTable.tsx": [
+   "src/components/avaliacao/barraProgresso.tsx",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-table.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/table.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/acoesFeedback.ts": [
+   "src/components/avaliacao/papeisAvaliacao.ts",
+   "src/components/avaliacao/statusFeedback.ts"
+  ],
+  "src/components/avaliacao/aprovacaoGestor.ts": [
+   "src/components/avaliacao/acoesFeedback.ts",
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/avaliacao/nineBoxConsolidacao.ts",
+   "src/components/avaliacao/papeisAvaliacao.ts"
+  ],
+  "src/components/avaliacao/aprovacaoLocal.ts": [
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/nineBoxComum.ts"
+  ],
+  "src/components/avaliacao/auditoriaComum.ts": [
+   "src/components/avaliacao/chipFiltroComum.ts"
+  ],
+  "src/components/avaliacao/barraProgresso.tsx": [
+   "src/components/avaliacao/barraProgressoAnim.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/avaliacao/barraProgressoAnim.ts": [
+   "src/components/avaliacao/desempenhoComum.ts"
+  ],
+  "src/components/avaliacao/criacaoFeedback.ts": [
+   "src/components/avaliacao/nineBoxConsolidacao.ts"
+  ],
+  "src/components/avaliacao/desempenhoDemoStore.ts": [
+   "src/components/avaliacao/edicaoFeedback.ts"
+  ],
+  "src/components/avaliacao/entradaCards.tsx": [
+   "src/components/ui/entrada-cards.tsx"
+  ],
+  "src/components/avaliacao/escritaOperacional.ts": [
+   "src/mocks/desempenhoMock.ts"
+  ],
+  "src/components/avaliacao/execucaoFeedback.ts": [
+   "src/components/avaliacao/escritaOperacional.ts"
+  ],
+  "src/components/avaliacao/feedbackCanonico.ts": [
+   "src/components/avaliacao/acoesFeedback.ts",
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/edicaoFeedback.ts",
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/avaliacao/papeisAvaliacao.ts",
+   "src/components/avaliacao/statusFeedback.ts"
+  ],
+  "src/components/avaliacao/feedbacksComum.ts": [
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/avaliacao/desempenhoComum.ts"
+  ],
+  "src/components/avaliacao/historicoFeedback.ts": [
+   "src/components/avaliacao/aprovacaoLocal.ts",
+   "src/components/avaliacao/desempenhoDemoStore.ts"
+  ],
+  "src/components/avaliacao/metasComum.ts": [
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/avaliacao/desempenhoComum.ts"
+  ],
+  "src/components/avaliacao/motorAvaliacao360.ts": [
+   "src/components/avaliacao/nineBoxConsolidacao.ts"
+  ],
+  "src/components/avaliacao/nineBox360.ts": [
+   "src/components/avaliacao/motorAvaliacao360.ts",
+   "src/components/avaliacao/nineBoxComum.ts",
+   "src/components/avaliacao/nineBoxConsolidacao.ts"
+  ],
+  "src/components/avaliacao/nineBoxComum.ts": [
+   "src/components/avaliacao/nineBoxConsolidacao.ts"
+  ],
+  "src/components/avaliacao/nineBoxMock.ts": [
+   "src/components/avaliacao/nineBoxComum.ts"
+  ],
+  "src/components/avaliacao/pdiComum.ts": [
+   "src/components/avaliacao/chipFiltroComum.ts",
+   "src/components/avaliacao/desempenhoComum.ts"
+  ],
+  "src/components/avaliacao/pdiProgressoMock.ts": [
+   "src/components/avaliacao/pdiComum.ts"
+  ],
+  "src/components/avaliacao/servicoDemo.ts": [
+   "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+   "src/components/avaliacao/aprovacaoGestor.ts",
+   "src/components/avaliacao/aprovacaoLocal.ts",
+   "src/components/avaliacao/desempenhoDemoStore.ts",
+   "src/components/avaliacao/statusFeedback.ts"
+  ],
+  "src/components/avaliacao/statusFeedback.ts": [
+   "src/components/avaliacao/auditoriaFeedback.ts",
+   "src/components/avaliacao/nineBoxConsolidacao.ts"
+  ],
+  "src/components/avaliacao/useHistoricoFeedback.ts": [
+   "src/components/avaliacao/aprovacaoLocal.ts",
+   "src/components/avaliacao/desempenhoDemoStore.ts",
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/feedbackCanonico.ts",
+   "src/components/avaliacao/historicoFeedback.ts",
+   "src/services/avaliacaoService.ts"
   ],
   "src/components/beneficios/BeneficioHistorico.tsx": [
    "src/components/ui/badge.tsx",
@@ -2373,6 +2903,18 @@
    "src/integrations/supabase/database.types.ts",
    "src/services/index.ts"
   ],
+  "src/components/ui/animated-cascade-dialog.tsx": [
+   "src/components/ui/cascade-dialog.tsx",
+   "src/components/ui/cascade-motion.ts"
+  ],
+  "src/components/ui/animated-tabs.tsx": [
+   "src/components/animate-ui/primitives/animate/tabs.tsx"
+  ],
+  "src/components/ui/app-pagination.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
   "src/components/ui/badge.tsx": [
    "src/lib/utils.ts"
   ],
@@ -2384,6 +2926,15 @@
    "src/lib/utils.ts"
   ],
   "src/components/ui/card.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/cascade-dialog.tsx": [
+   "src/components/ui/cascade-motion.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/cascade-table.tsx": [
+   "src/components/ui/table-row-reveal.ts",
+   "src/components/ui/table.tsx",
    "src/lib/utils.ts"
   ],
   "src/components/ui/cep-input.tsx": [
@@ -2437,6 +2988,13 @@
    "src/components/ui/button.tsx",
    "src/components/ui/table.tsx"
   ],
+  "src/components/ui/date-picker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/components/ui/dialog.tsx": [
    "src/lib/utils.ts"
   ],
@@ -2445,6 +3003,16 @@
   ],
   "src/components/ui/empty-state.tsx": [
    "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/entrada-cards.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/ui/filter-chip.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/flow-hover-button.tsx": [
    "src/lib/utils.ts"
   ],
   "src/components/ui/form.tsx": [
@@ -2483,11 +3051,18 @@
    "src/components/ui/toaster.tsx",
    "src/components/ui/tooltip.tsx"
   ],
+  "src/components/ui/info-tooltip.tsx": [
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
   "src/components/ui/masked-input.tsx": [
    "src/lib/masks.ts",
    "src/lib/utils.ts"
   ],
   "src/components/ui/module-skeleton.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/motion-presets.ts": [
    "src/lib/utils.ts"
   ],
   "src/components/ui/notification-center.tsx": [
@@ -2514,6 +3089,10 @@
    "src/hooks/useSyncedState.ts",
    "src/lib/utils.ts"
   ],
+  "src/components/ui/select.tsx": [
+   "src/components/ui/motion-presets.ts",
+   "src/lib/utils.ts"
+  ],
   "src/components/ui/sheet.tsx": [
    "src/lib/utils.ts"
   ],
@@ -2535,6 +3114,9 @@
    "src/lib/utils.ts"
   ],
   "src/components/ui/slider.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/sliding-indicator.tsx": [
    "src/lib/utils.ts"
   ],
   "src/components/ui/sonner.tsx": [
@@ -3102,6 +3684,15 @@
    "src/providers/index.ts",
    "src/services/loggerService.ts"
   ],
+  "src/mocks/colaboradoresMock.ts": [
+   "src/types/entities.ts",
+   "src/utils/dateLocal.ts"
+  ],
+  "src/mocks/desempenhoMock.ts": [
+   "src/components/avaliacao/nineBoxModo.ts",
+   "src/mocks/colaboradoresMock.ts",
+   "src/utils/dateLocal.ts"
+  ],
   "src/pages/AdminAgendamentoExamesPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
@@ -3409,27 +4000,37 @@
   ],
   "src/pages/AvaliacaoPage.tsx": [
    "src/components/PageTitle.tsx",
-   "src/components/avaliacao/NineBoxMatrix.tsx",
+   "src/components/avaliacao/FeedbacksTab.tsx",
+   "src/components/avaliacao/MetasOKRsTab.tsx",
+   "src/components/avaliacao/NineBoxTab.tsx",
+   "src/components/avaliacao/NovaMetaDialog.tsx",
+   "src/components/avaliacao/NovoCicloDialog.tsx",
+   "src/components/avaliacao/NovoPdiDialog.tsx",
+   "src/components/avaliacao/OrigemHomologacao.tsx",
+   "src/components/avaliacao/PdiTab.tsx",
    "src/components/avaliacao/PerformanceAuditTimeline.tsx",
    "src/components/avaliacao/PerformanceDashboard.tsx",
+   "src/components/avaliacao/TodosCiclosTable.tsx",
+   "src/components/avaliacao/aprovacaoLocal.ts",
+   "src/components/avaliacao/criacaoFeedback.ts",
+   "src/components/avaliacao/desempenhoComum.ts",
+   "src/components/avaliacao/desempenhoDemoStore.ts",
+   "src/components/avaliacao/edicaoFeedback.ts",
+   "src/components/avaliacao/entradaCards.tsx",
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/components/avaliacao/papeisAvaliacao.ts",
+   "src/components/avaliacao/servicoDemo.ts",
    "src/components/layout/index.ts",
    "src/components/ui/alert-dialog.tsx",
-   "src/components/ui/badge.tsx",
-   "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
-   "src/components/ui/dialog.tsx",
-   "src/components/ui/input.tsx",
-   "src/components/ui/label.tsx",
-   "src/components/ui/progress.tsx",
+   "src/components/ui/animated-tabs.tsx",
    "src/components/ui/select.tsx",
-   "src/components/ui/table.tsx",
    "src/components/ui/tabs.tsx",
-   "src/components/ui/textarea.tsx",
    "src/hooks/index.ts",
+   "src/hooks/useAuth.ts",
    "src/lib/utils.ts",
+   "src/mocks/desempenhoMock.ts",
    "src/services/avaliacaoService.ts",
-   "src/services/colaboradorService.ts",
-   "src/utils/evaluationPDF.ts"
+   "src/services/index.ts"
   ],
   "src/pages/BackupPage.tsx": [
    "src/components/PageTitle.tsx",
@@ -4379,6 +4980,14 @@
    "src/utils/dateLocal.ts",
    "src/utils/safeError.ts"
   ],
+  "src/pages/NineBoxPreviewPage.tsx": [
+   "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+   "src/components/avaliacao/FeedbackDetalheDialog.tsx",
+   "src/components/avaliacao/acoesFeedback.ts",
+   "src/components/avaliacao/feedbacksComum.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx"
+  ],
   "src/pages/NotFoundPage.tsx": [
    "src/components/PageTitle.tsx",
    "src/components/ui/button.tsx"
@@ -5110,9 +5719,8 @@
    "src/utils/passwordPolicy.ts"
   ],
   "src/services/avaliacaoService.ts": [
-   "src/integrations/supabase/client.ts",
-   "src/integrations/supabase/database.types.ts",
-   "src/schemas/validate.ts"
+   "src/components/avaliacao/escritaOperacional.ts",
+   "src/integrations/supabase/client.ts"
   ],
   "src/services/backupService.ts": [
    "src/integrations/supabase/client.ts",

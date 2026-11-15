@@ -2,11 +2,11 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "resumo": {
-  "urls": 115,
+  "urls": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
-  "lazy": 106
+  "lazy": 107
  },
  "urls": [
   {
@@ -402,6 +402,7 @@
     "usePiiMask",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -435,7 +436,7 @@
     "admin",
     "rh"
    ],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 27
   },
   {
    "protegida": true,
@@ -593,7 +594,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 77
+   "arquivos_puxados": 78
   },
   {
    "protegida": true,
@@ -621,6 +622,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -645,7 +647,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 27
   },
   {
    "protegida": true,
@@ -673,6 +675,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState",
     "useWatch"
@@ -699,7 +702,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 25
+   "arquivos_puxados": 26
   },
   {
    "protegida": true,
@@ -822,7 +825,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 79
   },
   {
    "protegida": true,
@@ -902,6 +905,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -931,7 +935,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 34
+   "arquivos_puxados": 35
   },
   {
    "protegida": true,
@@ -959,6 +963,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -985,7 +990,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 26
+   "arquivos_puxados": 27
   },
   {
    "protegida": true,
@@ -1065,7 +1070,8 @@
    "definida_em": "src/App.tsx",
    "redireciona": null,
    "hooks": [
-    "useMemo"
+    "useMemo",
+    "useReducedMotion"
    ],
    "hooks_locais": [],
    "tabelas": [
@@ -1078,7 +1084,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 19
+   "arquivos_puxados": 20
   },
   {
    "protegida": true,
@@ -1196,6 +1202,9 @@
     "esocial_transmissao_logs",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -1236,6 +1245,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "whatsapp_config",
     "whatsapp_mensagens_logs",
@@ -1254,12 +1264,18 @@
     "contrato_estender_expiracao",
     "contrato_gerar_token_assinatura",
     "contrato_revogar_token",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -1268,12 +1284,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -1323,7 +1342,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 166
+   "arquivos_puxados": 171
   },
   {
    "protegida": true,
@@ -1459,7 +1478,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 108
+   "arquivos_puxados": 109
   },
   {
    "protegida": false,
@@ -1529,6 +1548,7 @@
     "usePiiMask",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -1586,6 +1606,9 @@
     "esocial_transmissao_logs",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -1624,6 +1647,7 @@
     "trilhas_aprendizado",
     "trilhas_cursos",
     "turnos",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "whatsapp_config",
     "whatsapp_mensagens_logs",
@@ -1642,11 +1666,17 @@
     "contrato_estender_expiracao",
     "contrato_gerar_token_assinatura",
     "contrato_revogar_token",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -1655,12 +1685,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "calcular-provisoes",
@@ -1678,7 +1711,7 @@
     "admin",
     "rh"
    ],
-   "arquivos_puxados": 117
+   "arquivos_puxados": 122
   },
   {
    "protegida": true,
@@ -1928,7 +1961,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 84
+   "arquivos_puxados": 85
   },
   {
    "protegida": true,
@@ -2003,6 +2036,7 @@
     "useCentrosCusto",
     "useColaboradores",
     "useConfiguracoesIntervalo",
+    "useContadorCentral",
     "useContasBancarias",
     "useContatosEmergencia",
     "useContext",
@@ -2068,18 +2102,25 @@
     "useFormacoes",
     "useGrupo",
     "useGuidedTour",
+    "useHighlight",
     "useHistoricoContratos",
+    "useHistoricoFeedback",
     "useHistoricoSalarial",
     "useHorasExtras",
+    "useId",
     "useIdentidadesGenero",
+    "useImperativeHandle",
+    "useInView",
     "useIsMobile",
     "useJornadaHorarios",
+    "useLayoutEffect",
     "useLocaisTrabalho",
     "useLocation",
     "useMediaQuery",
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useMemo",
+    "useMovimentoReduzido",
     "useMutation",
     "useNavigate",
     "useNavigationGuard",
@@ -2112,7 +2153,9 @@
     "useSalvarPeriodoExperiencia",
     "useServerValidation",
     "useState",
+    "useSyncedState",
     "useSystemHealth",
+    "useTabs",
     "useTheme",
     "useTimes",
     "useTiposAdmissao",
@@ -2215,7 +2258,9 @@
     "useFormacoes",
     "useGrupo",
     "useGuidedTour",
+    "useHighlight",
     "useHistoricoContratos",
+    "useHistoricoFeedback",
     "useHistoricoSalarial",
     "useHorasExtras",
     "useIdentidadesGenero",
@@ -2225,6 +2270,7 @@
     "useMediaQuery",
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
+    "useMovimentoReduzido",
     "useNavigationGuard",
     "useNotificacoes",
     "useNotification",
@@ -2249,7 +2295,9 @@
     "useSalvarGradeHorarios",
     "useSalvarPeriodoExperiencia",
     "useServerValidation",
+    "useSyncedState",
     "useSystemHealth",
+    "useTabs",
     "useTheme",
     "useTimes",
     "useTiposAdmissao",
@@ -2315,6 +2363,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -2366,6 +2417,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -2382,12 +2434,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -2396,12 +2454,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -2443,16 +2504,88 @@
    "flags": [],
    "papeis": [
     "admin",
-    "alert",
     "banner",
+    "gestor",
+    "group",
+    "img",
     "list",
     "listitem",
     "main",
+    "option",
     "rh",
+    "status",
     "tab",
-    "tablist"
+    "tablist",
+    "tabpanel",
+    "user"
    ],
-   "arquivos_puxados": 210
+   "arquivos_puxados": 311
+  },
+  {
+   "protegida": true,
+   "wrappers": [
+    "LazyPage"
+   ],
+   "pai": "/",
+   "indice": false,
+   "lazy": true,
+   "tipo": "tela",
+   "caminho": "/avaliacao/ninebox-preview",
+   "componente": "NineBoxPreviewPage",
+   "arquivo": "src/pages/NineBoxPreviewPage.tsx",
+   "definida_em": "src/App.tsx",
+   "redireciona": null,
+   "hooks": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useRef",
+    "useState"
+   ],
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [
+    "ciclos_avaliacao",
+    "colaboradores",
+    "competencias_config",
+    "empresas",
+    "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
+    "metas_okrs",
+    "pdi_plano_desenvolvimento",
+    "vw_feedbacks_360_versao"
+   ],
+   "rpcs": [
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
+    "get_user_roles",
+    "listar_historico_feedback",
+    "log_frontend_error",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
+    "validar_potencial_avaliacao"
+   ],
+   "edges": [],
+   "canais_realtime": [],
+   "flags": [],
+   "papeis": [
+    "admin",
+    "gestor",
+    "status",
+    "user"
+   ],
+   "arquivos_puxados": 45
   },
   {
    "protegida": true,
@@ -2932,6 +3065,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -2983,6 +3119,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -2999,12 +3136,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -3013,12 +3156,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -3068,7 +3214,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 200
+   "arquivos_puxados": 204
   },
   {
    "protegida": true,
@@ -3168,6 +3314,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -3206,6 +3355,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -3216,11 +3366,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -3229,12 +3385,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -3279,7 +3438,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 151
   },
   {
    "protegida": true,
@@ -3403,7 +3562,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 85
+   "arquivos_puxados": 86
   },
   {
    "protegida": true,
@@ -3527,7 +3686,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 85
+   "arquivos_puxados": 86
   },
   {
    "protegida": true,
@@ -3655,7 +3814,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 82
+   "arquivos_puxados": 83
   },
   {
    "protegida": true,
@@ -4012,6 +4171,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -4063,6 +4225,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -4079,12 +4242,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -4093,12 +4262,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -4148,7 +4320,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -4272,7 +4444,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 96
+   "arquivos_puxados": 97
   },
   {
    "protegida": true,
@@ -4415,7 +4587,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 88
+   "arquivos_puxados": 89
   },
   {
    "protegida": true,
@@ -4772,6 +4944,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -4823,6 +4998,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -4839,12 +5015,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -4853,12 +5035,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -4908,7 +5093,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 207
   },
   {
    "protegida": false,
@@ -5075,7 +5260,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 103
+   "arquivos_puxados": 104
   },
   {
    "protegida": true,
@@ -5309,6 +5494,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes",
     "ferias_aprovacoes_log",
@@ -5359,6 +5547,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "workflows_definicoes",
@@ -5370,11 +5559,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -5383,12 +5578,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -5433,7 +5631,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 181
+   "arquivos_puxados": 186
   },
   {
    "protegida": true,
@@ -5793,6 +5991,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -5844,6 +6045,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -5861,12 +6063,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -5875,12 +6083,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -5931,7 +6142,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 215
+   "arquivos_puxados": 220
   },
   {
    "protegida": true,
@@ -6291,6 +6502,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -6342,6 +6556,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -6359,12 +6574,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -6373,12 +6594,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -6429,7 +6653,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 215
+   "arquivos_puxados": 220
   },
   {
    "protegida": true,
@@ -6786,6 +7010,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -6837,6 +7064,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -6853,12 +7081,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -6867,12 +7101,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -6923,7 +7160,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 206
+   "arquivos_puxados": 211
   },
   {
    "protegida": true,
@@ -7298,6 +7535,9 @@
     "eventos_variaveis",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -7378,6 +7618,7 @@
     "vw_colaboradores_completo",
     "vw_dashboard_time",
     "vw_faltas_mensal",
+    "vw_feedbacks_360_versao",
     "vw_ferias_resumo",
     "vw_folha_ponto_mensal",
     "vw_kpi_absenteismo",
@@ -7404,12 +7645,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -7418,12 +7665,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -7475,7 +7725,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 234
+   "arquivos_puxados": 239
   },
   {
    "protegida": true,
@@ -7507,6 +7757,7 @@
     "useMutation",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useState"
    ],
@@ -7546,7 +7797,7 @@
    "canais_realtime": [],
    "flags": [],
    "papeis": [],
-   "arquivos_puxados": 33
+   "arquivos_puxados": 34
   },
   {
    "protegida": true,
@@ -7645,6 +7896,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -7683,6 +7937,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -7693,11 +7948,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -7706,12 +7967,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -7756,7 +8020,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 141
+   "arquivos_puxados": 146
   },
   {
    "protegida": true,
@@ -8116,6 +8380,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -8167,6 +8434,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -8183,12 +8451,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -8197,12 +8471,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -8252,7 +8529,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 207
+   "arquivos_puxados": 212
   },
   {
    "protegida": false,
@@ -8740,6 +9017,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -8791,6 +9071,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -8807,12 +9088,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -8821,12 +9108,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -8876,7 +9166,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -9235,6 +9525,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -9286,6 +9579,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -9302,12 +9596,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -9316,12 +9616,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -9371,7 +9674,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 205
+   "arquivos_puxados": 210
   },
   {
    "protegida": true,
@@ -9722,7 +10025,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 115
+   "arquivos_puxados": 116
   },
   {
    "protegida": true,
@@ -9848,7 +10151,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 95
+   "arquivos_puxados": 96
   },
   {
    "protegida": true,
@@ -10207,6 +10510,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -10258,6 +10564,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -10274,12 +10581,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -10288,12 +10601,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -10343,7 +10659,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 211
+   "arquivos_puxados": 216
   },
   {
    "protegida": true,
@@ -10502,7 +10818,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 108
+   "arquivos_puxados": 109
   },
   {
    "protegida": true,
@@ -10859,6 +11175,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -10910,6 +11229,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -10926,12 +11246,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -10940,12 +11266,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -10995,7 +11324,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 206
+   "arquivos_puxados": 211
   },
   {
    "protegida": true,
@@ -11098,6 +11427,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -11136,6 +11468,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -11146,11 +11479,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -11159,12 +11498,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -11209,7 +11551,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 146
+   "arquivos_puxados": 151
   },
   {
    "protegida": true,
@@ -11333,7 +11675,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 89
+   "arquivos_puxados": 90
   },
   {
    "protegida": true,
@@ -11437,6 +11779,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -11475,6 +11820,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -11485,11 +11831,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -11498,12 +11850,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -11550,7 +11905,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 169
+   "arquivos_puxados": 174
   },
   {
    "protegida": true,
@@ -11654,6 +12009,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -11692,6 +12050,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -11702,11 +12061,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -11715,12 +12080,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -11767,7 +12135,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 169
+   "arquivos_puxados": 174
   },
   {
    "protegida": true,
@@ -12124,6 +12492,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -12175,6 +12546,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -12191,12 +12563,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -12205,12 +12583,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -12260,7 +12641,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 212
+   "arquivos_puxados": 217
   },
   {
    "protegida": true,
@@ -12618,6 +12999,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -12669,6 +13053,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -12685,12 +13070,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -12699,12 +13090,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -12754,7 +13148,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -12890,7 +13284,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 118
+   "arquivos_puxados": 119
   },
   {
    "protegida": true,
@@ -13248,6 +13642,9 @@
     "exames",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -13299,6 +13696,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -13315,12 +13713,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -13329,12 +13733,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -13384,7 +13791,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 211
+   "arquivos_puxados": 216
   },
   {
    "protegida": true,
@@ -13741,6 +14148,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -13792,6 +14202,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -13808,12 +14219,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -13822,12 +14239,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -13877,7 +14297,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 205
+   "arquivos_puxados": 210
   },
   {
    "protegida": true,
@@ -13999,7 +14419,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 77
   },
   {
    "protegida": true,
@@ -14375,6 +14795,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -14430,6 +14853,7 @@
     "v_ferias_folha_reconciliacao",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -14447,12 +14871,18 @@
     "assinar_aviso_ferias",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -14461,6 +14891,8 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
@@ -14469,7 +14901,8 @@
     "rejeitar_despesa",
     "set_own_default_empresa",
     "solicitar_adiantamento_13_ferias",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -14521,7 +14954,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 247
+   "arquivos_puxados": 252
   },
   {
    "protegida": true,
@@ -14554,6 +14987,7 @@
     "useProgramacaoMutations",
     "useQuery",
     "useQueryClient",
+    "useReducedMotion",
     "useRef",
     "useSensor",
     "useSensors",
@@ -14596,7 +15030,7 @@
     "list",
     "rh"
    ],
-   "arquivos_puxados": 45
+   "arquivos_puxados": 46
   },
   {
    "protegida": true,
@@ -14695,6 +15129,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -14733,6 +15170,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -14743,11 +15181,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -14756,12 +15200,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -14806,7 +15253,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 143
+   "arquivos_puxados": 148
   },
   {
    "protegida": true,
@@ -14962,7 +15409,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 117
+   "arquivos_puxados": 118
   },
   {
    "protegida": true,
@@ -15333,6 +15780,9 @@
     "eventos_variaveis",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -15392,6 +15842,7 @@
     "vales_transporte",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -15408,12 +15859,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -15422,12 +15879,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -15480,7 +15940,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 247
+   "arquivos_puxados": 252
   },
   {
    "protegida": true,
@@ -15604,7 +16064,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 79
   },
   {
    "protegida": true,
@@ -15726,7 +16186,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 77
   },
   {
    "protegida": true,
@@ -15980,7 +16440,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 89
+   "arquivos_puxados": 90
   },
   {
    "protegida": true,
@@ -16636,6 +17096,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -16688,6 +17151,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -16704,12 +17168,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -16718,12 +17188,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -16773,7 +17246,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -17131,6 +17604,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -17183,6 +17659,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -17199,12 +17676,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -17213,12 +17696,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -17268,7 +17754,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 204
+   "arquivos_puxados": 209
   },
   {
    "protegida": true,
@@ -17392,7 +17878,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 90
+   "arquivos_puxados": 91
   },
   {
    "protegida": false,
@@ -17797,6 +18283,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -17849,6 +18338,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -17865,12 +18355,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -17879,12 +18375,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -17934,7 +18433,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 202
+   "arquivos_puxados": 206
   },
   {
    "protegida": true,
@@ -18295,6 +18794,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -18346,6 +18848,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -18362,12 +18865,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -18377,12 +18886,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -18433,7 +18945,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 221
+   "arquivos_puxados": 226
   },
   {
    "protegida": true,
@@ -18792,6 +19304,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -18845,6 +19360,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -18861,12 +19377,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -18875,12 +19397,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -18930,7 +19455,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 205
+   "arquivos_puxados": 210
   },
   {
    "protegida": true,
@@ -19053,7 +19578,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 78
+   "arquivos_puxados": 79
   },
   {
    "protegida": true,
@@ -19411,6 +19936,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -19466,6 +19994,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -19482,12 +20011,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -19496,12 +20031,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -19551,7 +20089,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 213
+   "arquivos_puxados": 218
   },
   {
    "protegida": true,
@@ -20280,6 +20818,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -20332,6 +20873,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -20348,12 +20890,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -20362,12 +20910,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -20417,7 +20968,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -20897,6 +21448,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -20948,6 +21502,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -20964,12 +21519,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -20978,12 +21539,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -21033,7 +21597,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 204
+   "arquivos_puxados": 209
   },
   {
    "protegida": true,
@@ -21401,6 +21965,9 @@
     "eventos_variaveis",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -21478,6 +22045,7 @@
     "vw_colaboradores_completo",
     "vw_dashboard_time",
     "vw_faltas_mensal",
+    "vw_feedbacks_360_versao",
     "vw_ferias_resumo",
     "vw_folha_ponto_mensal",
     "vw_kpi_absenteismo",
@@ -21501,12 +22069,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -21515,12 +22089,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -21570,7 +22147,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 213
+   "arquivos_puxados": 218
   },
   {
    "protegida": true,
@@ -21927,6 +22504,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -21981,6 +22561,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -21998,12 +22579,18 @@
     "assinar_espelho_ponto",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -22013,6 +22600,8 @@
     "medida_responder_contestacao",
     "next_cnab_sequencial",
     "notificar_divergencias_afdt",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "processar_ajuste_aprovado",
     "reconciliar_afdt",
     "record_pii_access",
@@ -22021,6 +22610,7 @@
     "rejeitar_despesa",
     "set_own_default_empresa",
     "sugerir_proxima_medida",
+    "validar_potencial_avaliacao",
     "verificar_espelho_ponto"
    ],
    "edges": [
@@ -22076,7 +22666,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 225
+   "arquivos_puxados": 230
   },
   {
    "protegida": true,
@@ -22241,6 +22831,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -22284,6 +22877,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -22294,11 +22888,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -22307,6 +22907,8 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
@@ -22314,6 +22916,7 @@
     "set_own_default_empresa",
     "sst_regimento_assinar",
     "sugerir_proxima_medida",
+    "validar_potencial_avaliacao",
     "vincular_colaborador_ao_usuario"
    ],
    "edges": [
@@ -22359,7 +22962,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 153
+   "arquivos_puxados": 158
   },
   {
    "protegida": true,
@@ -22716,6 +23319,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -22772,6 +23378,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -22788,13 +23395,19 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_empresa_admin_ids",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -22803,12 +23416,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -22858,7 +23474,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 214
+   "arquivos_puxados": 219
   },
   {
    "protegida": true,
@@ -23104,7 +23720,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 76
+   "arquivos_puxados": 77
   },
   {
    "protegida": true,
@@ -23204,6 +23820,9 @@
     "escalas_trabalho",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "ferias",
     "ferias_aprovacoes_log",
     "folha_itens",
@@ -23243,6 +23862,7 @@
     "trilhas_cursos",
     "turnos",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "workflows_definicoes",
     "workflows_etapas",
@@ -23253,11 +23873,17 @@
     "admin_associar_usuario_empresa",
     "aplicar_medida_folha_ponto",
     "aprovar_despesa",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -23266,12 +23892,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -23316,7 +23945,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 143
+   "arquivos_puxados": 147
   },
   {
    "protegida": true,
@@ -23675,6 +24304,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -23730,6 +24362,7 @@
     "vagas",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -23746,12 +24379,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -23760,12 +24399,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -23815,7 +24457,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 207
+   "arquivos_puxados": 212
   },
   {
    "protegida": true,
@@ -23948,7 +24590,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 88
+   "arquivos_puxados": 89
   },
   {
    "protegida": true,
@@ -24305,6 +24947,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -24357,6 +25002,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -24373,12 +25019,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -24387,12 +25039,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -24442,7 +25097,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 204
+   "arquivos_puxados": 209
   },
   {
    "protegida": true,
@@ -24939,6 +25594,9 @@
     "eventos_variaveis",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -25016,6 +25674,7 @@
     "vw_colaboradores_completo",
     "vw_dashboard_time",
     "vw_faltas_mensal",
+    "vw_feedbacks_360_versao",
     "vw_ferias_resumo",
     "vw_folha_ponto_mensal",
     "vw_kpi_absenteismo",
@@ -25039,12 +25698,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -25053,12 +25718,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -25108,7 +25776,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 214
+   "arquivos_puxados": 219
   },
   {
    "protegida": true,
@@ -25465,6 +26133,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -25517,6 +26188,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -25533,12 +26205,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -25547,12 +26225,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -25602,7 +26283,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 202
+   "arquivos_puxados": 206
   },
   {
    "protegida": true,
@@ -25732,7 +26413,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 97
+   "arquivos_puxados": 98
   },
   {
    "protegida": true,
@@ -26089,6 +26770,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -26140,6 +26824,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -26156,12 +26841,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -26170,12 +26861,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -26225,7 +26919,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 204
+   "arquivos_puxados": 208
   },
   {
    "protegida": true,
@@ -26582,6 +27276,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -26634,6 +27331,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -26650,12 +27348,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -26664,12 +27368,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -26719,7 +27426,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 206
+   "arquivos_puxados": 211
   },
   {
    "protegida": true,
@@ -27076,6 +27783,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -27127,6 +27837,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -27143,12 +27854,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -27157,12 +27874,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -27212,7 +27932,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 203
+   "arquivos_puxados": 207
   },
   {
    "protegida": true,
@@ -27692,6 +28412,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -27745,6 +28468,7 @@
     "vales_transporte",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -27761,12 +28485,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -27775,12 +28505,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -27830,7 +28563,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 204
+   "arquivos_puxados": 209
   },
   {
    "protegida": false,
@@ -28249,6 +28982,9 @@
     "etnias",
     "faltas",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "feriados",
     "ferias",
     "ferias_aprovacoes",
@@ -28300,6 +29036,7 @@
     "turnos",
     "valores_campos_customizados",
     "versao_banco",
+    "vw_feedbacks_360_versao",
     "webhook_logs",
     "webhooks_config",
     "whatsapp_config",
@@ -28316,12 +29053,18 @@
     "aprovar_despesa",
     "claim_admission_esocial_event",
     "complete_admission_esocial_event",
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
     "fail_admission_esocial_event",
+    "finalizar_feedback",
     "get_audit_trail",
     "get_my_user_empresas",
     "get_security_alerts_summary",
     "get_user_roles",
     "listar_auditoria",
+    "listar_historico_feedback",
     "log_frontend_error",
     "medida_aprovar",
     "medida_arquivar",
@@ -28330,12 +29073,15 @@
     "medida_rejeitar",
     "medida_responder_contestacao",
     "next_cnab_sequencial",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
     "record_pii_access",
     "registrar_auditoria",
     "registrar_batida_ponto",
     "rejeitar_despesa",
     "set_own_default_empresa",
-    "sugerir_proxima_medida"
+    "sugerir_proxima_medida",
+    "validar_potencial_avaliacao"
    ],
    "edges": [
     "OCR",
@@ -28386,7 +29132,7 @@
     "tab",
     "tablist"
    ],
-   "arquivos_puxados": 212
+   "arquivos_puxados": 217
   }
  ],
  "rotas_http_backend": [
@@ -29668,6 +30414,7 @@
   "LotacoesPage": "src/pages/LotacoesPage.tsx",
   "MedidasDisciplinaresPage": "src/pages/MedidasDisciplinaresPage.tsx",
   "MovimentacoesPage": "src/pages/MovimentacoesPage.tsx",
+  "NineBoxPreviewPage": "src/pages/NineBoxPreviewPage.tsx",
   "NotFoundPage": "src/pages/NotFoundPage.tsx",
   "NotificacoesPage": "src/pages/NotificacoesPage.tsx",
   "ObrigacoesFiscaisPage": "src/pages/ObrigacoesFiscaisPage.tsx",

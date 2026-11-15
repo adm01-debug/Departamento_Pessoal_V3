@@ -3,8 +3,8 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1450)",
-   "SQL (847)",
+   "TypeScript (1580)",
+   "SQL (871)",
    "Markdown (293)",
    "JavaScript (126)",
    "JSON (61)",
@@ -1500,7 +1500,12 @@
    "SUPABASE_PUBLISHABLE_KEY",
    "SUPABASE_URL",
    "VITE_AUTH_GOOGLE_ENABLED",
+   "VITE_COLABORADORES_MOCK",
+   "VITE_DESEMPENHO_MOCK",
    "VITE_E2E_BYPASS_MFA",
+   "VITE_HOMOLOG_ORIGEM",
+   "VITE_NINEBOX_MODO_REAL",
+   "VITE_PDI_MOCK",
    "VITE_SENTRY_DSN",
    "VITE_SENTRY_RELEASE",
    "VITE_SUPABASE_FUNCTIONS_BASE",
@@ -1596,7 +1601,12 @@
    "SUPABASE_ANON_KEY",
    "SUPABASE_PUBLISHABLE_KEY",
    "SUPABASE_URL",
-   "VITE_E2E_BYPASS_MFA"
+   "VITE_COLABORADORES_MOCK",
+   "VITE_DESEMPENHO_MOCK",
+   "VITE_E2E_BYPASS_MFA",
+   "VITE_HOMOLOG_ORIGEM",
+   "VITE_NINEBOX_MODO_REAL",
+   "VITE_PDI_MOCK"
   ],
   "secrets_em_workflows": [
    "E2E_NON_ADMIN_EMAIL",
@@ -1754,6 +1764,10 @@
    },
    {
     "host": "id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app",
+    "arquivos": 2
+   },
+   {
+    "host": "randomuser.me",
     "arquivos": 2
    },
    {
@@ -1970,26 +1984,30 @@
    },
    {
     "papel": "rh",
-    "ocorrencias": 22
+    "ocorrencias": 25
    },
    {
     "papel": "admin",
-    "ocorrencias": 17
+    "ocorrencias": 21
    },
    {
     "papel": "user",
-    "ocorrencias": 16
+    "ocorrencias": 20
    },
    {
     "papel": "alert",
-    "ocorrencias": 12
+    "ocorrencias": 11
    },
    {
     "papel": "gestor",
-    "ocorrencias": 5
+    "ocorrencias": 11
    },
    {
     "papel": "tablist",
+    "ocorrencias": 6
+   },
+   {
+    "papel": "tab",
     "ocorrencias": 5
    },
    {
@@ -1997,8 +2015,12 @@
     "ocorrencias": 4
    },
    {
-    "papel": "tab",
+    "papel": "status",
     "ocorrencias": 4
+   },
+   {
+    "papel": "group",
+    "ocorrencias": 3
    },
    {
     "papel": "menuitem",
@@ -2018,10 +2040,6 @@
    },
    {
     "papel": "row",
-    "ocorrencias": 2
-   },
-   {
-    "papel": "status",
     "ocorrencias": 2
    },
    {
@@ -2069,11 +2087,19 @@
     "ocorrencias": 1
    },
    {
+    "papel": "img",
+    "ocorrencias": 1
+   },
+   {
     "papel": "listitem",
     "ocorrencias": 1
    },
    {
     "papel": "main",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "option",
     "ocorrencias": 1
    },
    {
@@ -2090,6 +2116,10 @@
    },
    {
     "papel": "supervisor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "tabpanel",
     "ocorrencias": 1
    },
    {
@@ -2136,7 +2166,7 @@
   "guards": [
    "src/components/ProtectedRoute.tsx"
   ],
-  "rotas_protegidas": 109,
+  "rotas_protegidas": 110,
   "rotas_publicas": [
    "/assinar-contrato/:token",
    "/ciencia-medida/:token",

@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `44cf65f17a` · branch `main` · 2026-11-15 14:12 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `044d520a6c` · branch `main` · 2026-11-15 16:38 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -193,7 +193,11 @@
 | `faixas_inss` | Faixas da tabela INSS. Carga via importação de domínio. | 4 colunas | migration |
 | `faixas_irrf` | Faixas da tabela IRRF. Carga via importação de domínio. | 4 colunas | migration |
 | `faltas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 26 colunas | migration |
-| `feedbacks_360` | _(sem COMMENT ON TABLE — significado não documentado)_ | 15 colunas | migration |
+| `feedbacks_360` | Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE. | 15 colunas | migration |
+| `feedbacks_360_aprovacoes_gestor` | Historico append-only das decisoes do GESTOR, ancoradas na versao canonica da avaliacao do gestor. | 14 colunas | migration |
+| `feedbacks_360_consolidacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 21 colunas | migration |
+| `feedbacks_360_operacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
+| `feedbacks_360_validacoes_potencial` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `feriados` | [P0-001] Feriados globais (empresa_id IS NULL) visíveis a todos; tenant-scoped editável. | 8 colunas | migration |
 | `feriados_brasileiros` | _(sem COMMENT ON TABLE — significado não documentado)_ | 5 colunas | migration |
 | `ferias` | _(sem COMMENT ON TABLE — significado não documentado)_ | 68 colunas | migration |
@@ -303,11 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| `pcs_planos` | PCS plans, versioned and tenant scoped. | 15 colunas | migration |
-| `pdi_plano_desenvolvimento` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| `pdis` | _(sem COMMENT ON TABLE — significado não documentado)_ | 12 colunas | migration |
-| `pendencias` | _(sem COMMENT ON TABLE — significado não documentado)_ | 11 colunas | migration |
-| … +247 linhas — lista completa em `context.json` | | | |
+| … +299 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -349,6 +349,7 @@
 | status | valor `offline` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/hooks/useSystemHealthHistory.ts`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
 | status | valor `online` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
 | status | valor `slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`compara:supabase/functions/external-db-bridge/index.ts` |
+| status | valor `todas` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/MetasFiltros.tsx`<br>`compara:src/components/avaliacao/MetasOKRsTab.tsx` |
 | status | valor `recusado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/dashboard/AnalyticsSection.tsx`<br>`compara:src/hooks/usePontoMelhorado.ts`<br>`escreve:src/components/dashboard/AnalyticsSection.tsx`<br>`escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx` |
 | status | valor `excellent` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/dashboard/WorkforceHealthScore.tsx` |
 | status | valor `finalizado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/DesligamentoDetailSheet.tsx`<br>`compara:src/components/desligamentos/DesligamentoKPIs.tsx`<br>`compara:src/services/cnabService.ts`<br>`escreve:src/services/cnabService.ts` |
@@ -368,7 +369,6 @@
 | status | valor `fulfilled` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AdminPontoDivergenciasPage.tsx`<br>`compara:supabase/functions/_shared/ssrf-guard.ts`<br>`compara:supabase/functions/healthcheck/index.ts`<br>`compara:supabase/functions/metricas/index.ts` |
 | status | valor `aguardando_inss` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AfastamentosPage.tsx`<br>`compara:src/services/afastamentoService.ts`<br>`escreve:src/pages/AfastamentosPage.tsx` |
 | status | valor `uploading` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ContratacaoPage.tsx`<br>`escreve:src/pages/ContratacaoPage.tsx` |
-| status | valor `todos` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ContratosGeradosPage.tsx`<br>`compara:supabase/functions/relatorio/index.ts` |
 | status | valor `descontada` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/FaltasPage.tsx` |
 | status | valor `registrada` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/FaltasPage.tsx` |
 | status | valor `duplicado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ImportacaoPage.tsx` |
@@ -392,12 +392,16 @@
 | status | valor `processed` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `processed_v1` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
 | status | valor `processed_v2` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:supabase/functions/webhook/index.ts` |
-| status | valor `todos` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/AdmissoesPage.tsx` |
 | status | valor `triagem` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/RecrutamentoPage.tsx` |
 | status | valor `contratado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/RecrutamentoPage.tsx` |
 | status | valor `finalizado` para `etapa` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/rescisaoService.ts` |
 | status | valor `financeiro` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
 | status | valor `juridico` para `etapa` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/rescisaoService.ts` |
+| status | valor `atual` para `estado` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/CicloAtivoPanel.tsx` |
+| status | valor `futura` para `estado` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/CicloAtivoPanel.tsx` |
+| status | valor `animando` para `fase` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
+| status | valor `recolhido` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
+| status | valor `recolhendo` para `fase` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/PerformanceAuditTimeline.tsx` |
 | status | valor `expanded` para `state` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/ui/sidebar.tsx` |
 | status | valor `collapsed` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/ui/sidebar.tsx` |
 | status | valor `blocked` para `state` usado no código não existe em nenhum enum do banco/TS | `compara:src/hooks/useNavigationGuard.tsx` |
@@ -431,6 +435,7 @@
 | rls | `config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | rls | `config_alertas_indicadores`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | rls | `configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
+| rls | `feedbacks_360`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/avaliacaoService.ts` |
 | rls | `lancamentos_contabeis`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/contabilidadeService.ts` |
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
@@ -442,6 +447,7 @@
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/integrations/supabase/client.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/pages/AdminDiagnosticoMigracaoPage.tsx` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/pages/ObrigacoesFiscaisPage.tsx` |
+| dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/avaliacaoService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/backupService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/baseService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/services/tabelasReferenciaService.ts` |
@@ -640,13 +646,7 @@
 | segurança | função `verificar_espelho_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `create_entity_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
 | segurança | função `get_default_filter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
-| segurança | função `check_login_lock` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `record_failed_login` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `detectar_fraude_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `cleanup_expired_rate_limits` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
-| segurança | função `cleanup_old_login_attempts` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260719160000_security_hardening_audit_retention.sql` |
-| segurança | função `encrypt_pii` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20260726100000_p1_025_encryption_pgcrypto.sql` |
-| … +24 linhas — lista completa em `context.json` | | |
+| … +30 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -759,7 +759,7 @@
 - `mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 397/460 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
+- 399/464 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
 
 ## Regras manuais presentes
 

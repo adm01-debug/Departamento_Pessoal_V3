@@ -6,10 +6,10 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 811,
+ "migrations": 835,
  "seeds": [],
  "avisos": [
-  "177 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
+  "180 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
  ],
  "extensoes": [
   "pg_cron",
@@ -206,6 +206,7 @@
   "vw_dashboard_time",
   "vw_espelho_ponto_mensal",
   "vw_faltas_mensal",
+  "vw_feedbacks_360_versao",
   "vw_ferias_resumo",
   "vw_folha_compliance",
   "vw_folha_ponto_mensal",
@@ -252,6 +253,7 @@
   "audit_log_unified_default_source",
   "auto_vincular_admins_empresa",
   "bloquear_aprovacao_ponto_sem_rh",
+  "bloquear_exclusao_ciclo_com_dependencias",
   "calcular_dias_direito_ferias",
   "calcular_dias_ferias",
   "calcular_prazo_cat",
@@ -273,6 +275,7 @@
   "cleanup_old_login_attempts",
   "cleanup_security_logs",
   "clinicas_proximas",
+  "colaborador_id_do_usuario",
   "consumir_pendencias_medida_no_holerite",
   "contrato_assinar_por_token",
   "contrato_consultar_por_token",
@@ -290,7 +293,9 @@
   "contratos_enviar_lembretes_assinatura",
   "create_entity_version",
   "criar_batida_da_divergencia_afdt",
+  "criar_feedback_seguro",
   "deadline_legal_pagamento_ferias",
+  "decidir_aprovacao_gestor",
   "decrypt_dados_bancarios",
   "decrypt_dados_bancarios_tenant",
   "decrypt_pii",
@@ -323,6 +328,7 @@
   "dp_table_template",
   "dp_track_pii_access",
   "edge_rate_limit_check",
+  "editar_feedback_seguro",
   "eh_dia_util_br",
   "eh_dia_valido_inicio_ferias",
   "eh_feriado_fixo_br",
@@ -347,9 +353,11 @@
   "enforce_medida_disciplinar_hash",
   "enforce_report_schedule_authorship",
   "ensure_single_default_filter",
+  "enviar_avaliacao_ao_gestor",
   "fill_recrutamento_child_empresa",
   "fill_treinamento_certificados_empresa",
   "fill_treinamento_instancias_empresa",
+  "finalizar_feedback",
   "finish_report_schedule_claim",
   "fn_alert_pii_access_anomaly",
   "fn_alert_severe_disciplinary_measure",
@@ -438,6 +446,7 @@
   "is_ip_whitelisted",
   "limpar_govbr_states_expirados",
   "listar_auditoria",
+  "listar_historico_feedback",
   "log_audit_change",
   "log_despesa_status_change",
   "log_esocial_transmission",
@@ -472,11 +481,17 @@
   "pcs_touch_updated_at",
   "pcs_validate_factor",
   "pertence_a_empresa",
+  "pode_aprovar_colaborador",
+  "pode_editar_colaborador",
+  "pode_editar_feedback",
+  "pode_finalizar_feedback",
+  "pode_gerir_avaliacoes",
   "pode_gerir_config_ponto",
   "pode_gerir_pessoas",
   "pode_gerir_pessoas_para",
   "pode_gerir_rh",
   "pode_gerir_rh_para",
+  "pode_validar_potencial",
   "ponto_espelhos_assinados_guard_delete",
   "ponto_espelhos_assinados_guard_update",
   "prevent_audit_log_modification",
@@ -553,6 +568,8 @@
   "set_own_default_empresa",
   "set_provisoes_folha_total",
   "set_updated_at_sst_cat",
+  "sincronizar_consolidacao_avaliacao",
+  "situacao_aprovacao",
   "solicitar_adiantamento_13_ferias",
   "sou_o_colaborador",
   "sst_cat_dashboard",
@@ -566,7 +583,9 @@
   "sst_regimento_publicar",
   "storage_path_empresa_id",
   "sugerir_proxima_medida",
+  "tg_audit_log_enriquecer_feedback",
   "tg_catalogo_infracoes_updated_at",
+  "tg_feedbacks_360_revisao",
   "trg_ajuste_ponto_status_transition",
   "trg_audit_status_change",
   "trg_ciclos_status_transition",
@@ -575,6 +594,7 @@
   "trg_desligamentos_status_transition",
   "trg_detect_status_anomaly",
   "trg_faltas_status_transition",
+  "trg_feedbacks_360_consolidacao",
   "trg_ferias_bloquear_gozo_sem_pagamento",
   "trg_ferias_gerar_rubricas",
   "trg_ferias_reconciliacao_alert",
@@ -640,6 +660,7 @@
   "user_can_manage_tenant_storage",
   "user_empresa_id",
   "validar_contrato_clt",
+  "validar_potencial_avaliacao",
   "validar_split_ferias",
   "validar_suspensao_beneficio_obrigatorio",
   "validate_epi_item_ca",
@@ -648,6 +669,8 @@
   "verificar_divergencias_folha",
   "verificar_espelho_ponto",
   "verificar_pin_quiosque",
+  "versao_avaliacao_feedback",
+  "versao_consolidada_avaliacao",
   "vincular_colaborador_ao_usuario"
  ],
  "triggers": [
@@ -839,6 +862,13 @@
    "evento": "insert",
    "tabela": "audit_log",
    "funcao": "trg_detect_status_anomaly"
+  },
+  {
+   "nome": "trg_audit_log_enriquecer_feedback",
+   "quando": "before",
+   "evento": "insert",
+   "tabela": "audit_log",
+   "funcao": "tg_audit_log_enriquecer_feedback"
   },
   {
    "nome": "trg_audit_log_mask_sensitive",
@@ -1105,6 +1135,13 @@
    "evento": "update",
    "tabela": "catalogo_infracoes",
    "funcao": "tg_catalogo_infracoes_updated_at"
+  },
+  {
+   "nome": "ciclos_bloqueio_exclusao_com_dependencias",
+   "quando": "before",
+   "evento": "delete",
+   "tabela": "ciclos_avaliacao",
+   "funcao": "bloquear_exclusao_ciclo_com_dependencias"
   },
   {
    "nome": "ciclos_status_transition",
@@ -1672,6 +1709,13 @@
    "evento": "update",
    "tabela": "faltas",
    "funcao": "update_updated_at_column"
+  },
+  {
+   "nome": "trg_feedbacks_360_revisao",
+   "quando": "before",
+   "evento": "update",
+   "tabela": "feedbacks_360",
+   "funcao": "tg_feedbacks_360_revisao"
   },
   {
    "nome": "audit_ferias",
@@ -6012,8 +6056,29 @@
      "default": null,
      "ref": null
     },
+    "justificativa": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "registro_id": {
      "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status_anterior": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status_posterior": {
+     "tipo": "text",
      "nn": false,
      "pk": false,
      "default": null,
@@ -6173,7 +6238,10 @@
      "empresa_id",
      "usuario_id",
      "dados_antigos",
-     "timestamp"
+     "timestamp",
+     "justificativa",
+     "status_anterior",
+     "status_posterior"
     ],
     "so_no_types": []
    },
@@ -6204,6 +6272,7 @@
    ],
    "triggers": [
     "detect_status_anomaly",
+    "trg_audit_log_enriquecer_feedback",
     "trg_audit_log_mask_sensitive",
     "trg_audit_log_no_delete",
     "trg_audit_log_no_update"
@@ -12187,6 +12256,7 @@
    "usada_no_front": 1,
    "usada_em_edges": [],
    "triggers": [
+    "ciclos_bloqueio_exclusao_com_dependencias",
     "ciclos_status_transition"
    ],
    "sem_rls": false,
@@ -15283,7 +15353,7 @@
     ],
     "so_no_types": []
    },
-   "usada_no_front": 42,
+   "usada_no_front": 43,
    "usada_em_edges": [
     "adiantamento-salarial",
     "alertas-dp",
@@ -27205,6 +27275,13 @@
      "default": null,
      "ref": null
     },
+    "revisao": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
     "status": {
      "tipo": "text",
      "nn": false,
@@ -27230,27 +27307,9 @@
    "rls": true,
    "policies": [
     {
-     "nome": "feedbacks_360_delete",
-     "comando": "delete",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "feedbacks_360_insert",
-     "comando": "insert",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
      "nome": "feedbacks_360_select",
      "comando": "select",
-     "para": "authenticated",
-     "tipo": "permissive"
-    },
-    {
-     "nome": "feedbacks_360_update",
-     "comando": "update",
-     "para": "authenticated",
+     "para": "public",
      "tipo": "permissive"
     }
    ],
@@ -27278,6 +27337,560 @@
     "status": "string | null",
     "tipo": "string | null",
     "updated_at": "string"
+   },
+   "drift": {
+    "so_na_migration": [
+     "revisao"
+    ],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [
+    "trg_feedbacks_360_revisao"
+   ],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "feedbacks_360_aprovacoes_gestor": {
+   "colunas": {
+    "ciclo_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "colaborador_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "consolidacao_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "feedbacks_360_consolidacoes"
+    },
+    "decidido_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "decidido_por": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "decisao": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "feedback_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "feedbacks_360"
+    },
+    "hash_parametros": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "idempotency_key": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "justificativa": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "revisao": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "versao_avaliacao": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "fag_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_fb360_aprov_gestor",
+     "colunas": "empresa_id, ciclo_id, colaborador_id, decidido_em desc",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "consolidacao_id->feedbacks_360_consolidacoes",
+    "feedback_id->feedbacks_360"
+   ],
+   "criada_em": "20261017090000_ninebox_aprovacao_gestor.sql",
+   "colunas_types": {
+    "ciclo_id": "string",
+    "colaborador_id": "string",
+    "consolidacao_id": "string | null",
+    "decidido_em": "string",
+    "decidido_por": "string",
+    "decisao": "string",
+    "empresa_id": "string",
+    "feedback_id": "string | null",
+    "hash_parametros": "string | null",
+    "id": "string",
+    "idempotency_key": "string | null",
+    "justificativa": "string | null",
+    "revisao": "number",
+    "versao_avaliacao": "string"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "feedbacks_360_consolidacoes": {
+   "colunas": {
+    "aprovacao_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "aprovado_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "aprovado_por": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "atualizado_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "atualizado_por": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "ciclo_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "colaborador_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "desempenho_aprovado": {
+     "tipo": "numeric(4,3)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "desempenho_proposto": {
+     "tipo": "numeric(4,3)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "enviado_em": {
+     "tipo": "timestamptz",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "enviado_por": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "gestor_responsavel_colaborador_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "gestor_responsavel_user_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "potencial_aprovado": {
+     "tipo": "numeric(4,3)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "potencial_proposto": {
+     "tipo": "numeric(4,3)",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "revisao": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": "0",
+     "ref": null
+    },
+    "snapshot_aprovado": {
+     "tipo": "jsonb",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "status": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": "'em_preparacao'",
+     "ref": null
+    },
+    "versao_consolidada": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "fcs_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_fb360_consolidacoes_gestor",
+     "colunas": "gestor_responsavel_user_id, status",
+     "unico": false
+    }
+   ],
+   "fks": [],
+   "criada_em": "20261017090000_ninebox_aprovacao_gestor.sql",
+   "colunas_types": {
+    "atualizado_em": "string",
+    "atualizado_por": "string | null",
+    "ciclo_id": "string",
+    "colaborador_id": "string",
+    "empresa_id": "string",
+    "enviado_em": "string | null",
+    "enviado_por": "string | null",
+    "gestor_responsavel_colaborador_id": "string | null",
+    "gestor_responsavel_user_id": "string | null",
+    "id": "string",
+    "revisao": "number",
+    "status": "string",
+    "versao_consolidada": "string | null"
+   },
+   "drift": {
+    "so_na_migration": [
+     "desempenho_proposto",
+     "potencial_proposto",
+     "desempenho_aprovado",
+     "potencial_aprovado",
+     "aprovado_por",
+     "aprovado_em",
+     "aprovacao_id",
+     "snapshot_aprovado"
+    ],
+    "so_no_types": []
+   },
+   "usada_no_front": 1,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
+  "feedbacks_360_operacoes": {
+   "colunas": {
+    "criada_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "feedback_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "feedbacks_360"
+    },
+    "hash_parametros": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "idempotency_key": {
+     "tipo": "text",
+     "nn": false,
+     "pk": true,
+     "default": null,
+     "ref": null
+    },
+    "operacao": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "resultado": {
+     "tipo": "jsonb",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "fbo_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "feedback_id->feedbacks_360"
+   ],
+   "criada_em": "20261015090000_ninebox_finalizacao_e_potencial.sql",
+   "colunas_types": {
+    "criada_em": "string",
+    "empresa_id": "string",
+    "feedback_id": "string",
+    "hash_parametros": "string",
+    "idempotency_key": "string",
+    "operacao": "string",
+    "resultado": "Json"
+   },
+   "drift": {
+    "so_na_migration": [],
+    "so_no_types": []
+   },
+   "usada_no_front": 0,
+   "usada_em_edges": [],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": true
+  },
+  "feedbacks_360_validacoes_potencial": {
+   "colunas": {
+    "ciclo_id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "colaborador_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "feedback_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "feedbacks_360"
+    },
+    "id": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": true,
+     "default": "gen_random_uuid()",
+     "ref": null
+    },
+    "observacao": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "potencial_validado": {
+     "tipo": "numeric(4,2)",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "validado_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "validado_por": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "versao_avaliacao": {
+     "tipo": "text",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "fvp_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [
+    {
+     "nome": "idx_fb360_validacoes_potencial",
+     "colunas": "feedback_id, validado_em desc",
+     "unico": false
+    }
+   ],
+   "fks": [
+    "feedback_id->feedbacks_360"
+   ],
+   "criada_em": "20261015090000_ninebox_finalizacao_e_potencial.sql",
+   "colunas_types": {
+    "ciclo_id": "string | null",
+    "colaborador_id": "string",
+    "empresa_id": "string",
+    "feedback_id": "string",
+    "id": "string",
+    "observacao": "string | null",
+    "potencial_validado": "number",
+    "validado_em": "string",
+    "validado_por": "string",
+    "versao_avaliacao": "string"
    },
    "drift": {
     "so_na_migration": [],
@@ -61948,6 +62561,16 @@
    "usada_em": 1
   },
   {
+   "nome": "criar_feedback_seguro",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "decidir_aprovacao_gestor",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "drenar_fila_limpeza_lgpd",
    "definida": false,
    "usada_em": 1
@@ -61958,13 +62581,28 @@
    "usada_em": 1
   },
   {
+   "nome": "editar_feedback_seguro",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
    "nome": "encrypt_dados_bancarios",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "enviar_avaliacao_ao_gestor",
    "definida": true,
    "usada_em": 1
   },
   {
    "nome": "fail_admission_esocial_event",
    "definida": false,
+   "usada_em": 1
+  },
+  {
+   "nome": "finalizar_feedback",
+   "definida": true,
    "usada_em": 1
   },
   {
@@ -61985,7 +62623,7 @@
   {
    "nome": "get_audit_trail",
    "definida": true,
-   "usada_em": 1
+   "usada_em": 2
   },
   {
    "nome": "get_company_rh_recipient_emails",
@@ -62049,6 +62687,11 @@
   },
   {
    "nome": "listar_auditoria",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "listar_historico_feedback",
    "definida": true,
    "usada_em": 1
   },
@@ -62134,6 +62777,16 @@
   },
   {
    "nome": "pcs_simular_impacto",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "pode_aprovar_colaborador",
+   "definida": true,
+   "usada_em": 1
+  },
+  {
+   "nome": "pode_gerir_avaliacoes",
    "definida": true,
    "usada_em": 1
   },
@@ -62301,6 +62954,11 @@
    "nome": "user_belongs_to_empresa",
    "definida": true,
    "usada_em": 9
+  },
+  {
+   "nome": "validar_potencial_avaliacao",
+   "definida": true,
+   "usada_em": 1
   },
   {
    "nome": "verificar_espelho_ponto",

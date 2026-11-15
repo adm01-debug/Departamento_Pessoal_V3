@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 431,
- "orfaos": 22,
+ "total": 495,
+ "orfaos": 29,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -30,7 +30,8 @@
   ],
   "MotionCard": [
    "src/components/dashboard/analytics/widgets.tsx",
-   "src/components/dashboard/AnalyticsSection.tsx"
+   "src/components/dashboard/AnalyticsSection.tsx",
+   "src/components/ui/entrada-cards.tsx"
   ],
   "NotificationCenter": [
    "src/components/notifications/NotificationCenter.tsx",
@@ -64,6 +65,30 @@
    "src/components/desligamentos/DesligamentoStatusBadge.tsx",
    "src/components/ui/status-badge.tsx"
   ],
+  "Tabs": [
+   "src/components/animate-ui/components/animate/tabs.tsx",
+   "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "TabsContent": [
+   "src/components/animate-ui/components/animate/tabs.tsx",
+   "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "TabsContents": [
+   "src/components/animate-ui/components/animate/tabs.tsx",
+   "src/components/animate-ui/primitives/animate/tabs.tsx"
+  ],
+  "TabsList": [
+   "src/components/animate-ui/components/animate/tabs.tsx",
+   "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "TabsTrigger": [
+   "src/components/animate-ui/components/animate/tabs.tsx",
+   "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
   "ToastProvider": [
    "src/components/ui/toast.tsx",
    "src/providers/ToastProvider.tsx"
@@ -80,7 +105,7 @@
     "App"
    ],
    "export_default": "App",
-   "linhas": 502,
+   "linhas": 506,
    "dominio": null,
    "hooks_locais": [
     "useSecureVisibility",
@@ -421,6 +446,63 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/animate-ui/components/animate/tabs.tsx",
+   "exports": [
+    "Tabs",
+    "TabsContent",
+    "TabsContents",
+    "TabsList",
+    "TabsTrigger"
+   ],
+   "export_default": null,
+   "linhas": 81,
+   "dominio": "components/animate-ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "exports": [
+    "Tabs",
+    "TabsContent",
+    "TabsContents",
+    "TabsHighlight",
+    "TabsHighlightItem",
+    "TabsList",
+    "TabsTrigger"
+   ],
+   "export_default": null,
+   "linhas": 318,
+   "dominio": "components/animate-ui",
+   "hooks_locais": [
+    "useTabs"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/animate-ui/primitives/effects/highlight.tsx",
+   "exports": [
+    "Highlight",
+    "HighlightItem"
+   ],
+   "export_default": null,
+   "linhas": 609,
+   "dominio": "components/animate-ui",
+   "hooks_locais": [
+    "useHighlight"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/auth/LoginForm.tsx",
    "exports": [
     "LoginForm"
@@ -429,6 +511,470 @@
    "linhas": 66,
    "dominio": "components/auth",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/AlertasDesempenho.tsx",
+   "exports": [
+    "AlertasDesempenho"
+   ],
+   "export_default": null,
+   "linhas": 77,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/AnaliticosDesempenho.tsx",
+   "exports": [
+    "AnaliticosDesempenho",
+    "EstadoAnimacaoLegenda"
+   ],
+   "export_default": null,
+   "linhas": 731,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/AuditoriaChips.tsx",
+   "exports": [
+    "AuditoriaChips"
+   ],
+   "export_default": null,
+   "linhas": 71,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/AuditoriaDetalheDialog.tsx",
+   "exports": [
+    "AuditoriaDetalheDialog"
+   ],
+   "export_default": null,
+   "linhas": 215,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/AuditoriaEvento.tsx",
+   "exports": [
+    "AuditoriaEvento",
+    "ResponsavelResolvido"
+   ],
+   "export_default": null,
+   "linhas": 188,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/AuditoriaFiltros.tsx",
+   "exports": [
+    "AuditoriaFiltros"
+   ],
+   "export_default": null,
+   "linhas": 199,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/barraProgresso.tsx",
+   "exports": [
+    "BarraProgresso"
+   ],
+   "export_default": null,
+   "linhas": 52,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 5,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/CancelamentoFeedbackResumo.tsx",
+   "exports": [
+    "CancelamentoFeedbackResumo"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useHistoricoFeedback"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/CartaoFeedbackCanonico.tsx",
+   "exports": [
+    "CartaoFeedbackCanonico",
+    "CartaoFeedbackProps"
+   ],
+   "export_default": null,
+   "linhas": 522,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useHistoricoFeedback"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/CicloAtivoPanel.tsx",
+   "exports": [
+    "CicloAtivoPanel"
+   ],
+   "export_default": null,
+   "linhas": 408,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/ColoredFilterChip.tsx",
+   "exports": [
+    "ColoredFilterChip"
+   ],
+   "export_default": null,
+   "linhas": 92,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/DialogoDevolucao.tsx",
+   "exports": [
+    "DialogoDevolucao",
+    "DialogoDevolucaoProps"
+   ],
+   "export_default": null,
+   "linhas": 116,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/EstrelasNota.tsx",
+   "exports": [
+    "EstrelasNota"
+   ],
+   "export_default": null,
+   "linhas": 41,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+   "exports": [
+    "ContextoAcoes",
+    "FeedbackAcoesRodape",
+    "PreviewAcoes",
+    "ServicoAcoes"
+   ],
+   "export_default": null,
+   "linhas": 914,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useAuth"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbackCard.tsx",
+   "exports": [
+    "FeedbackCard",
+    "FeedbackCardProps"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbackDetalheDialog.tsx",
+   "exports": [
+    "FeedbackDetalheDialog",
+    "FeedbackDetalheDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 342,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbacksFiltros.tsx",
+   "exports": [
+    "FeedbacksFiltros"
+   ],
+   "export_default": null,
+   "linhas": 266,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbacksFocoBanner.tsx",
+   "exports": [
+    "FeedbacksFocoBanner"
+   ],
+   "export_default": null,
+   "linhas": 65,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbacksResumo.tsx",
+   "exports": [
+    "FeedbacksResumo"
+   ],
+   "export_default": null,
+   "linhas": 251,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbacksTab.tsx",
+   "exports": [
+    "FeedbacksTab"
+   ],
+   "export_default": null,
+   "linhas": 743,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbacksTimeline.tsx",
+   "exports": [
+    "ALTURA_MARCO_MES",
+    "DESLOCAMENTO_LATERAL",
+    "FeedbacksTimeline",
+    "VAO_MARCO_CARDS"
+   ],
+   "export_default": null,
+   "linhas": 273,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/HistoricoFeedbackDialog.tsx",
+   "exports": [
+    "HistoricoFeedbackDialog",
+    "HistoricoFeedbackDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 193,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/IndicadorEvolucao.tsx",
+   "exports": [
+    "IndicadorEvolucao"
+   ],
+   "export_default": null,
+   "linhas": 57,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/MetaCard.tsx",
+   "exports": [
+    "MetaCard"
+   ],
+   "export_default": null,
+   "linhas": 245,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/MetasCriticasBanner.tsx",
+   "exports": [
+    "MetasCriticasBanner"
+   ],
+   "export_default": null,
+   "linhas": 94,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/MetasFiltros.tsx",
+   "exports": [
+    "MetasFiltros"
+   ],
+   "export_default": null,
+   "linhas": 234,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/MetasOKRsTab.tsx",
+   "exports": [
+    "MetasOKRsTab"
+   ],
+   "export_default": null,
+   "linhas": 243,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxFiltros.tsx",
+   "exports": [
+    "NineBoxFiltros"
+   ],
+   "export_default": null,
+   "linhas": 238,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxFocoBanner.tsx",
+   "exports": [
+    "NineBoxFocoBanner"
+   ],
+   "export_default": null,
+   "linhas": 143,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxKpis.tsx",
+   "exports": [
+    "IndicadorNineBox",
+    "NineBoxKpis"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxLateral.tsx",
+   "exports": [
+    "NineBoxLateral"
+   ],
+   "export_default": null,
+   "linhas": 301,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -445,6 +991,222 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxMatriz.tsx",
+   "exports": [
+    "NineBoxMatriz"
+   ],
+   "export_default": null,
+   "linhas": 285,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxQuadrante.tsx",
+   "exports": [
+    "EntradaQuadrante",
+    "NineBoxQuadrante"
+   ],
+   "export_default": null,
+   "linhas": 108,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxQuadranteDialog.tsx",
+   "exports": [
+    "NineBoxQuadranteDialog"
+   ],
+   "export_default": null,
+   "linhas": 204,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NineBoxTab.tsx",
+   "exports": [
+    "NineBoxTab"
+   ],
+   "export_default": null,
+   "linhas": 399,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NovaMetaDialog.tsx",
+   "exports": [
+    "NovaMetaDados",
+    "NovaMetaDialog"
+   ],
+   "export_default": null,
+   "linhas": 295,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NovoCicloDialog.tsx",
+   "exports": [
+    "NovoCicloDados",
+    "NovoCicloDialog"
+   ],
+   "export_default": null,
+   "linhas": 271,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NovoFeedbackDialog.tsx",
+   "exports": [
+    "NovoFeedbackDialog"
+   ],
+   "export_default": null,
+   "linhas": 353,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/NovoPdiDialog.tsx",
+   "exports": [
+    "NovoPdiDados",
+    "NovoPdiDialog"
+   ],
+   "export_default": null,
+   "linhas": 249,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/OrigemHomologacao.tsx",
+   "exports": [
+    "OrigemHomologacao"
+   ],
+   "export_default": null,
+   "linhas": 144,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PdiCard.tsx",
+   "exports": [
+    "PdiCard"
+   ],
+   "export_default": null,
+   "linhas": 320,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PdiDetalheDialog.tsx",
+   "exports": [
+    "PdiDetalheDialog"
+   ],
+   "export_default": null,
+   "linhas": 333,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PdiFiltros.tsx",
+   "exports": [
+    "PdiFiltros"
+   ],
+   "export_default": null,
+   "linhas": 287,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PdiFocoBanner.tsx",
+   "exports": [
+    "PdiFocoBanner"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PdiTab.tsx",
+   "exports": [
+    "PdiTab"
+   ],
+   "export_default": null,
+   "linhas": 291,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/PendenciasAprovacao.tsx",
+   "exports": [
+    "PendenciasAprovacao"
+   ],
+   "export_default": null,
+   "linhas": 204,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
    "usado_por": 1,
    "orfao": false
   },
@@ -454,10 +1216,10 @@
     "PerformanceAuditTimeline"
    ],
    "export_default": null,
-   "linhas": 92,
+   "linhas": 765,
    "dominio": "components/avaliacao",
    "hooks_locais": [
-    "useEmpresas"
+    "useMovimentoReduzido"
    ],
    "tabelas": [],
    "edges": [],
@@ -470,9 +1232,53 @@
     "PerformanceDashboard"
    ],
    "export_default": null,
-   "linhas": 160,
+   "linhas": 77,
    "dominio": "components/avaliacao",
    "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/ProgressoDonut.tsx",
+   "exports": [
+    "ProgressoDonut"
+   ],
+   "export_default": null,
+   "linhas": 135,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/TextoExpansivel.tsx",
+   "exports": [
+    "TextoExpansivel"
+   ],
+   "export_default": null,
+   "linhas": 47,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/avaliacao/TodosCiclosTable.tsx",
+   "exports": [
+    "TodosCiclosTable"
+   ],
+   "export_default": null,
+   "linhas": 420,
+   "dominio": "components/avaliacao",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -1045,12 +1851,12 @@
     "MetricCard"
    ],
    "export_default": null,
-   "linhas": 110,
+   "linhas": 137,
    "dominio": "components/dashboard",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -4222,7 +5028,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -4242,6 +5048,54 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ui/animated-cascade-dialog.tsx",
+   "exports": [
+    "AnimatedCascadeDialog",
+    "AnimatedCascadeDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 67,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/animated-tabs.tsx",
+   "exports": [
+    "ANIMATED_TABS_SPRING",
+    "AnimatedTabsList",
+    "AnimatedTabsListProps",
+    "AnimatedTabsTransition",
+    "AnimatedTabsTrigger"
+   ],
+   "export_default": null,
+   "linhas": 136,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/app-pagination.tsx",
+   "exports": [
+    "AppPagination",
+    "AppPaginationProps"
+   ],
+   "export_default": null,
+   "linhas": 179,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ui/avatar.tsx",
    "exports": [
     "Avatar",
@@ -4254,7 +5108,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 9,
+   "usado_por": 10,
    "orfao": false
   },
   {
@@ -4269,7 +5123,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 192,
+   "usado_por": 196,
    "orfao": false
   },
   {
@@ -4284,7 +5138,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 251,
+   "usado_por": 285,
    "orfao": false
   },
   {
@@ -4299,7 +5153,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "orfao": false
   },
   {
@@ -4320,6 +5174,36 @@
    "tabelas": [],
    "edges": [],
    "usado_por": 255,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/cascade-dialog.tsx",
+   "exports": [
+    "CascadeDialogFrame",
+    "CascadeDialogFrameProps"
+   ],
+   "export_default": null,
+   "linhas": 111,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 6,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/cascade-table.tsx",
+   "exports": [
+    "CascadeTableBody",
+    "CascadeTableRow"
+   ],
+   "export_default": null,
+   "linhas": 90,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
    "orfao": false
   },
   {
@@ -4487,6 +5371,21 @@
    "orfao": true
   },
   {
+   "arquivo": "src/components/ui/date-picker.tsx",
+   "exports": [
+    "DatePicker",
+    "DatePickerProps"
+   ],
+   "export_default": null,
+   "linhas": 111,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
    "arquivo": "src/components/ui/dialog.tsx",
    "exports": [
     "Dialog",
@@ -4506,7 +5405,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 130,
+   "usado_por": 140,
    "orfao": false
   },
   {
@@ -4528,7 +5427,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -4546,6 +5445,53 @@
    "edges": [],
    "usado_por": 17,
    "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/entrada-cards.tsx",
+   "exports": [
+    "EntradaPresenca",
+    "MAX_ENTRADA_INDEX",
+    "MotionCard"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/filter-chip.tsx",
+   "exports": [
+    "FilterChip",
+    "FilterChipProps",
+    "VarianteFilterChip"
+   ],
+   "export_default": null,
+   "linhas": 136,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/components/ui/flow-hover-button.tsx",
+   "exports": [
+    "FlowHoverButton",
+    "FlowHoverButtonProps"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/components/ui/form.tsx",
@@ -4570,6 +5516,21 @@
    "orfao": true
   },
   {
+   "arquivo": "src/components/ui/info-tooltip.tsx",
+   "exports": [
+    "InfoTooltip",
+    "TooltipHelpText"
+   ],
+   "export_default": null,
+   "linhas": 99,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
+  },
+  {
    "arquivo": "src/components/ui/label.tsx",
    "exports": [
     "Label"
@@ -4580,7 +5541,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 142,
+   "usado_por": 147,
    "orfao": false
   },
   {
@@ -4677,7 +5638,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 7,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -4691,7 +5652,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -4721,7 +5682,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 18,
+   "usado_por": 17,
    "orfao": false
   },
   {
@@ -4738,8 +5699,8 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 5,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/select.tsx",
@@ -4752,12 +5713,12 @@
     "SelectValue"
    ],
    "export_default": null,
-   "linhas": 2,
+   "linhas": 159,
    "dominio": "components/ui",
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 94,
+   "usado_por": 105,
    "orfao": false
   },
   {
@@ -4771,7 +5732,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 8,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -4877,6 +5838,20 @@
    "edges": [],
    "usado_por": 1,
    "orfao": false
+  },
+  {
+   "arquivo": "src/components/ui/sliding-indicator.tsx",
+   "exports": [
+    "SlidingIndicator"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "dominio": "components/ui",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 0,
+   "orfao": true
   },
   {
    "arquivo": "src/components/ui/sonner.tsx",
@@ -4985,7 +5960,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 106,
+   "usado_por": 107,
    "orfao": false
   },
   {
@@ -5017,7 +5992,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 42,
+   "usado_por": 47,
    "orfao": false
   },
   {
@@ -5086,7 +6061,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 32,
+   "usado_por": 34,
    "orfao": false
   },
   {
@@ -5590,9 +6565,10 @@
     "AvaliacaoPage"
    ],
    "export_default": "AvaliacaoPage",
-   "linhas": 781,
+   "linhas": 1565,
    "dominio": "pages",
    "hooks_locais": [
+    "useAuth",
     "useEmpresas"
    ],
    "tabelas": [],
@@ -6590,6 +7566,20 @@
     "promocoes",
     "transferencias"
    ],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/pages/NineBoxPreviewPage.tsx",
+   "exports": [
+    "NineBoxPreviewPage"
+   ],
+   "export_default": "NineBoxPreviewPage",
+   "linhas": 329,
+   "dominio": "pages",
+   "hooks_locais": [],
+   "tabelas": [],
    "edges": [],
    "usado_por": 1,
    "orfao": false

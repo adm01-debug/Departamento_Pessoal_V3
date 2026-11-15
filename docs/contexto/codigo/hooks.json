@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 102,
+ "total": 106,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -35,6 +35,76 @@
    "canais_realtime": [],
    "usado_por": 0,
    "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/animate-ui/primitives/animate/tabs.tsx",
+   "hooks_exportados": [
+    "useTabs"
+   ],
+   "linhas": 318,
+   "dominio": "components/animate-ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useImperativeHandle",
+    "useLayoutEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/animate-ui/components/animate/tabs.tsx",
+    "src/components/ui/animated-tabs.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/animate-ui/primitives/effects/highlight.tsx",
+   "hooks_exportados": [
+    "useHighlight"
+   ],
+   "linhas": 609,
+   "dominio": "components/animate-ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useId",
+    "useImperativeHandle",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/animate-ui/primitives/animate/tabs.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/avaliacao/useHistoricoFeedback.ts",
+   "hooks_exportados": [
+    "useHistoricoFeedback"
+   ],
+   "linhas": 48,
+   "dominio": "components/avaliacao",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/avaliacao/CancelamentoFeedbackResumo.tsx",
+    "src/components/avaliacao/CartaoFeedbackCanonico.tsx"
+   ],
    "coberto_por_testes": 0
   },
   {
@@ -810,10 +880,11 @@
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 15,
+   "usado_por": 17,
    "usado_por_arquivos": [
     "src/components/AdminRoute.tsx",
     "src/components/ProtectedRoute.tsx",
+    "src/components/avaliacao/FeedbackAcoesRodape.tsx",
     "src/components/layout/AppSidebar.tsx",
     "src/components/layout/Header.tsx",
     "src/components/layout/MobileBottomNav.tsx",
@@ -823,6 +894,7 @@
     "src/hooks/useHorasExtras.ts",
     "src/hooks/usePcs.ts",
     "src/pages/AdminAsoWorkflowPage.tsx",
+    "src/pages/AvaliacaoPage.tsx",
     "src/pages/CalculadoraRescisaoPage.tsx",
     "src/pages/ConfiguracoesPage.tsx",
     "src/pages/FeriasProgramacaoPage.tsx",
@@ -1445,12 +1517,11 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 109,
+   "usado_por": 108,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/components/afastamentos/AfastamentoForm.tsx",
-    "src/components/avaliacao/PerformanceAuditTimeline.tsx",
     "src/components/colaboradores/ColaboradorHistory.tsx",
     "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
     "src/components/desligamentos/NovoDesligamentoDialog.tsx",
@@ -1476,7 +1547,8 @@
     "src/components/ponto/GerarAEJDialog.tsx",
     "src/components/ponto/GerarAFDDialog.tsx",
     "src/components/ponto/ImportarAFDTDialog.tsx",
-    "src/components/ponto/PontoAuditTimeline.tsx"
+    "src/components/ponto/PontoAuditTimeline.tsx",
+    "src/components/portal/PortalRegimentoCard.tsx"
    ],
    "coberto_por_testes": 5
   },
@@ -2776,6 +2848,33 @@
     "src/services/feriasService.ts"
    ],
    "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/lib/motionMode.ts",
+   "hooks_exportados": [
+    "useMovimentoReduzido"
+   ],
+   "linhas": 110,
+   "dominio": "lib",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useReducedMotion"
+   ],
+   "canais_realtime": [],
+   "usado_por": 8,
+   "usado_por_arquivos": [
+    "src/components/avaliacao/AnaliticosDesempenho.tsx",
+    "src/components/avaliacao/CicloAtivoPanel.tsx",
+    "src/components/avaliacao/FeedbacksTab.tsx",
+    "src/components/avaliacao/MetasOKRsTab.tsx",
+    "src/components/avaliacao/NineBoxLateral.tsx",
+    "src/components/avaliacao/PdiTab.tsx",
+    "src/components/avaliacao/PerformanceAuditTimeline.tsx",
+    "src/components/avaliacao/TodosCiclosTable.tsx"
+   ],
+   "coberto_por_testes": 0
   },
   {
    "arquivo": "src/providers/index.ts",

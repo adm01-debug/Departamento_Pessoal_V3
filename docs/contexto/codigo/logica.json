@@ -1,11 +1,11 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 158,
+ "total": 160,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
-  "lib": 7,
+  "lib": 9,
   "providers": 1,
   "python": 3,
   "schemas": 25,
@@ -350,11 +350,12 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 235,
+   "usado_por": 236,
    "usado_por_modulos": [
     "components",
     "components/admin",
     "components/admissoes",
+    "components/avaliacao",
     "components/beneficios",
     "components/colaborador-detalhes",
     "components/contratacao",
@@ -421,7 +422,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 68,
+   "usado_por": 67,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -498,7 +499,7 @@
     "TablesUpdate"
    ],
    "export_default": null,
-   "linhas": 24625,
+   "linhas": 24831,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -592,6 +593,31 @@
    "orfao": false
   },
   {
+   "arquivo": "src/lib/get-strict-context.tsx",
+   "camada": "lib",
+   "exports": [
+    "getStrictContext"
+   ],
+   "export_default": null,
+   "linhas": 24,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "react"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/animate-ui"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
    "arquivo": "src/lib/masks.ts",
    "camada": "lib",
    "exports": [
@@ -637,6 +663,39 @@
     "components/ui"
    ],
    "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/motionMode.ts",
+   "camada": "lib",
+   "exports": [
+    "FORCE_MOTION_CLASS",
+    "FORCE_MOTION_KEY",
+    "MOTION_REDUCED_MODE",
+    "MotionReducedMode",
+    "deveReduzirMovimento",
+    "sincronizarModoMovimentoDocumento",
+    "useMovimentoReduzido"
+   ],
+   "export_default": null,
+   "linhas": 110,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [
+    "framer-motion"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 8,
+   "usado_por_modulos": [
+    "components/avaliacao"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {
@@ -748,11 +807,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 153,
+   "usado_por": 192,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
     "components/afastamentos",
+    "components/animate-ui",
+    "components/avaliacao",
     "components/dashboard",
     "components/desligamentos",
     "components/esocial",
@@ -1479,7 +1540,7 @@
     "TABLE_COLUMNS"
    ],
    "export_default": null,
-   "linhas": 4112,
+   "linhas": 4164,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -1515,7 +1576,7 @@
    "zod_schemas": 1,
    "flags": [],
    "papeis": [],
-   "usado_por": 118,
+   "usado_por": 117,
    "usado_por_modulos": [
     "components/admissoes",
     "components/dashboard",
@@ -1685,9 +1746,8 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 10,
+   "usado_por": 9,
    "usado_por_modulos": [
-    "components/avaliacao",
     "components/colaboradores",
     "components/dashboard",
     "components/ferias",
@@ -1733,27 +1793,43 @@
     "avaliacaoService"
    ],
    "export_default": null,
-   "linhas": 158,
+   "linhas": 615,
    "tabelas": [
     "ciclos_avaliacao",
+    "colaboradores",
     "competencias_config",
     "feedbacks_360",
+    "feedbacks_360_aprovacoes_gestor",
+    "feedbacks_360_consolidacoes",
+    "feedbacks_360_validacoes_potencial",
     "metas_okrs",
-    "pdi_plano_desenvolvimento"
+    "pdi_plano_desenvolvimento",
+    "vw_feedbacks_360_versao"
    ],
-   "rpcs": [],
+   "rpcs": [
+    "criar_feedback_seguro",
+    "decidir_aprovacao_gestor",
+    "editar_feedback_seguro",
+    "enviar_avaliacao_ao_gestor",
+    "finalizar_feedback",
+    "listar_historico_feedback",
+    "pode_aprovar_colaborador",
+    "pode_gerir_avaliacoes",
+    "validar_potencial_avaliacao"
+   ],
    "edges": [],
    "env": [],
    "externos": [],
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 4,
    "usado_por_modulos": [
+    "components/avaliacao",
     "pages",
     "services"
    ],
-   "coberto_por_testes": 1,
+   "coberto_por_testes": 2,
    "orfao": false
   },
   {
@@ -2180,7 +2256,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 6,
+   "usado_por": 5,
    "usado_por_modulos": [
     "components/ferias",
     "hooks",
@@ -2707,8 +2783,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 10,
+   "usado_por": 11,
    "usado_por_modulos": [
+    "components/avaliacao",
     "components/dashboard",
     "components/ponto",
     "components/settings",
@@ -2990,7 +3067,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 28,
+   "usado_por": 29,
    "usado_por_modulos": [
     "components/ferias",
     "components/medidas-disciplinares",
@@ -4375,10 +4452,11 @@
     "datetimeLocalToISO",
     "formatCompetenciaLocal",
     "formatDateLocalISO",
+    "parseDateLocalISO",
     "todayLocalISO"
    ],
    "export_default": null,
-   "linhas": 78,
+   "linhas": 91,
    "tabelas": [],
    "rpcs": [],
    "edges": [],
@@ -4387,7 +4465,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 42,
+   "usado_por": 45,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/descontos",
@@ -4395,6 +4473,8 @@
     "components/pcs",
     "components/ponto",
     "components/sst",
+    "components/ui",
+    "mocks",
     "pages",
     "services",
     "services/folha",
@@ -4477,7 +4557,7 @@
    "papeis": [],
    "usado_por": 1,
    "usado_por_modulos": [
-    "pages"
+    "components/avaliacao"
    ],
    "coberto_por_testes": 1,
    "orfao": false

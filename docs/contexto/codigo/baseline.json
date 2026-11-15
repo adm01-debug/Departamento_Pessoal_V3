@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "44cf65f17a127ba068795a0c9cb03039743b402f",
+  "commit": "044d520a6c11f9d57ebdbc36847da3f53ea32c99",
   "branch": "main",
-  "data_commit": "2026-11-15T10:48:40-03:00",
+  "data_commit": "2026-11-15T16:37:35Z",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "044d520",
+    "data": "2026-11-15",
+    "assunto": "feat: área Avaliação/NineBox da muri (#546) na main, com CI verde — substitui a #564 (#569)"
+   },
    {
     "sha": "44cf65f",
     "data": "2026-11-15",
@@ -126,33 +131,36 @@
     "sha": "9d684d7",
     "data": "2026-11-13",
     "assunto": "fix: adiciona planos_saude.updated_at exigida pelo trigger de UPDATE (#498)"
-   },
-   {
-    "sha": "2f13bbb",
-    "data": "2026-11-13",
-    "assunto": "fix: alerta diário de pagamento de férias (Art. 145) não abortar por usuário apagado do Auth (#468)"
    }
   ],
-  "arquivos_mudados_7d": 616,
+  "arquivos_mudados_7d": 783,
   "pastas_mais_mudadas_30d": [
    {
+    "pasta": "src/components/avaliacao",
+    "mudancas": 82
+   },
+   {
     "pasta": "src/components/__tests__",
-    "mudancas": 41
+    "mudancas": 71
    },
    {
     "pasta": ".github/workflows/canonical-migrations.yml",
     "mudancas": 34
    },
    {
-    "pasta": "src/services/__tests__",
-    "mudancas": 21
+    "pasta": "src/components/ui",
+    "mudancas": 26
    },
    {
-    "pasta": "supabase/functions/_shared",
-    "mudancas": 19
+    "pasta": "src/services/__tests__",
+    "mudancas": 22
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
+    "mudancas": 22
+   },
+   {
+    "pasta": "supabase/functions/_shared",
     "mudancas": 19
    },
    {
@@ -181,19 +189,11 @@
    },
    {
     "pasta": "src/integrations/supabase",
-    "mudancas": 12
+    "mudancas": 13
    },
    {
     "pasta": "src/components/folha",
     "mudancas": 11
-   },
-   {
-    "pasta": "src/utils/__tests__",
-    "mudancas": 11
-   },
-   {
-    "pasta": "scripts/sync/autocommit-local.sh",
-    "mudancas": 10
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -203,11 +203,11 @@
    },
    {
     "arquivo": "package.json",
-    "mudancas": 26
+    "mudancas": 25
    },
    {
     "arquivo": "package-lock.json",
-    "mudancas": 24
+    "mudancas": 23
    },
    {
     "arquivo": "CLAUDE.md",
@@ -242,6 +242,10 @@
     "mudancas": 9
    },
    {
+    "arquivo": "inventario/estado/rotas.json",
+    "mudancas": 9
+   },
+   {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 9
    },
@@ -258,7 +262,7 @@
     "mudancas": 8
    },
    {
-    "arquivo": "inventario/estado/rotas.json",
+    "arquivo": "src/integrations/supabase/types.ts",
     "mudancas": 8
    },
    {
@@ -290,10 +294,6 @@
     "mudancas": 7
    },
    {
-    "arquivo": "src/integrations/supabase/types.ts",
-    "mudancas": 7
-   },
-   {
     "arquivo": "src/services/cnabService.ts",
     "mudancas": 7
    }
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 213
+    "commits": 214
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,21 +322,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 2937,
-  "arquivos_codigo": 1580,
-  "linhas_codigo": 283459,
-  "rotas": 115,
+  "arquivos_total": 3091,
+  "arquivos_codigo": 1710,
+  "linhas_codigo": 320771,
+  "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
-  "modulos": 77,
-  "componentes": 431,
-  "hooks": 102,
+  "modulos": 79,
+  "componentes": 495,
+  "hooks": 106,
   "edge_functions": 65,
-  "tabelas": 417,
-  "migrations": 811,
+  "tabelas": 421,
+  "migrations": 835,
   "cron_jobs": 41,
-  "testes": 614,
+  "testes": 641,
   "workflows": 21,
   "scripts": 115,
   "docs_md": 293
@@ -380,7 +380,7 @@
   },
   "eslint.config.js": {
    "arquivos": 1,
-   "linhas": 111
+   "linhas": 139
   },
   "lighthouserc.cjs": {
    "arquivos": 1,
@@ -620,7 +620,7 @@
   },
   "src/App.tsx": {
    "arquivos": 1,
-   "linhas": 502
+   "linhas": 506
   },
   "src/assets": {
    "arquivos": 1,
@@ -631,8 +631,8 @@
    "linhas": 2117
   },
   "src/components": {
-   "arquivos": 578,
-   "linhas": 76203
+   "arquivos": 703,
+   "linhas": 108604
   },
   "src/constants": {
    "arquivos": 6,
@@ -656,19 +656,23 @@
   },
   "src/integrations": {
    "arquivos": 11,
-   "linhas": 25705
+   "linhas": 25911
   },
   "src/lib": {
-   "arquivos": 14,
-   "linhas": 1719
+   "arquivos": 16,
+   "linhas": 1853
   },
   "src/main.tsx": {
    "arquivos": 1,
    "linhas": 190
   },
+  "src/mocks": {
+   "arquivos": 2,
+   "linhas": 2825
+  },
   "src/pages": {
-   "arquivos": 130,
-   "linhas": 45398
+   "arquivos": 131,
+   "linhas": 46511
   },
   "src/providers": {
    "arquivos": 4,
@@ -676,11 +680,11 @@
   },
   "src/schemas": {
    "arquivos": 33,
-   "linhas": 8673
+   "linhas": 8725
   },
   "src/services": {
    "arquivos": 160,
-   "linhas": 33678
+   "linhas": 34201
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -700,7 +704,7 @@
   },
   "src/utils": {
    "arquivos": 68,
-   "linhas": 8539
+   "linhas": 8552
   },
   "stylelint.config.js": {
    "arquivos": 1,
@@ -708,7 +712,7 @@
   },
   "supabase/functions": {
    "arquivos": 173,
-   "linhas": 24442
+   "linhas": 24455
   },
   "supabase/tests": {
    "arquivos": 2,
@@ -738,23 +742,39 @@
  "maiores_arquivos": [
   {
    "arquivo": "src/integrations/supabase/types.ts",
-   "linhas": 24625
+   "linhas": 24831
   },
   {
    "arquivo": "src/schemas/tableColumns.ts",
-   "linhas": 4112
+   "linhas": 4164
   },
   {
    "arquivo": "scripts/regras_negocio/generate.py",
    "linhas": 2183
   },
   {
+   "arquivo": "src/mocks/colaboradoresMock.ts",
+   "linhas": 1979
+  },
+  {
    "arquivo": "scripts/supabase_snapshot/snapshot.py",
    "linhas": 1802
   },
   {
+   "arquivo": "src/pages/AvaliacaoPage.tsx",
+   "linhas": 1565
+  },
+  {
    "arquivo": "src/services/cnabService.ts",
    "linhas": 1199
+  },
+  {
+   "arquivo": "src/components/avaliacao/aprovacaoGestor.ts",
+   "linhas": 1057
+  },
+  {
+   "arquivo": "src/components/avaliacao/nineBoxConsolidacao.ts",
+   "linhas": 1044
   },
   {
    "arquivo": "scripts/graphify-local.mjs",
@@ -767,6 +787,10 @@
   {
    "arquivo": "src/pages/TreinamentosPage.tsx",
    "linhas": 937
+  },
+  {
+   "arquivo": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
+   "linhas": 914
   },
   {
    "arquivo": "scripts/automation.mjs",
@@ -783,6 +807,10 @@
   {
    "arquivo": "src/pages/SegurosVidaPage.tsx",
    "linhas": 848
+  },
+  {
+   "arquivo": "src/mocks/desempenhoMock.ts",
+   "linhas": 846
   },
   {
    "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
@@ -809,41 +837,17 @@
    "linhas": 788
   },
   {
-   "arquivo": "src/pages/AvaliacaoPage.tsx",
-   "linhas": 781
-  },
-  {
    "arquivo": "src/components/dashboard/AnalyticsSection.tsx",
    "linhas": 778
-  },
-  {
-   "arquivo": "src/components/integracoes/ConfigPanels.tsx",
-   "linhas": 767
-  },
-  {
-   "arquivo": "src/pages/ContratacaoPage.tsx",
-   "linhas": 736
-  },
-  {
-   "arquivo": "supabase/functions/calcular-folha/index.ts",
-   "linhas": 717
-  },
-  {
-   "arquivo": "src/pages/WorkflowsPage.tsx",
-   "linhas": 711
-  },
-  {
-   "arquivo": "src/pages/ValesPage.tsx",
-   "linhas": 702
   }
  ],
  "qualidade": {
-  "any": 73,
+  "any": 170,
   "console_log": 292,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 15,
-  "arquivos_acima_500_linhas": 66
+  "todos": 18,
+  "arquivos_acima_500_linhas": 82
  },
  "todos": [
   {
@@ -895,10 +899,28 @@
    "texto": "job tem timeout-minutes — antes era 1 ocorrência por arquivo,"
   },
   {
+   "arquivo": "src/components/avaliacao/escritaOperacional.ts",
+   "linha": 33,
+   "tipo": "TODO",
+   "texto": "identificador fictício do módulo (`mock-empresa-1`, ...). */"
+  },
+  {
    "arquivo": "src/components/ui/data-table.tsx",
    "linha": 2,
    "tipo": "FIXME",
    "texto": "(dep-fantasma) que exigia @ts-nocheck."
+  },
+  {
+   "arquivo": "src/lib/motionMode.ts",
+   "linha": 81,
+   "tipo": "TODO",
+   "texto": "o app"
+  },
+  {
+   "arquivo": "src/pages/AvaliacaoPage.tsx",
+   "linha": 167,
+   "tipo": "TODO",
+   "texto": "reenvio da MESMA tentativa (duplo clique, erro de"
   },
   {
    "arquivo": "src/schemas/esocial/__tests__/crossFieldValidators.test.ts",
@@ -1017,6 +1039,8 @@
    "esocial_eventos",
    "esocial_lotes",
    "faltas",
+   "feedbacks_360",
+   "feedbacks_360_consolidacoes",
    "feriados",
    "folha_itens",
    "folhas_pagamento",
@@ -1065,6 +1089,8 @@
    "fail_admission_esocial_event"
   ],
   "componentes_orfaos": [
+   "src/components/animate-ui/components/animate/tabs.tsx",
+   "src/components/avaliacao/NineBoxMatrix.tsx",
    "src/components/dashboard/SectionHeader.tsx",
    "src/components/layout/Breadcrumb.tsx",
    "src/components/layout/Column.tsx",
@@ -1081,12 +1107,17 @@
    "src/components/layout/Stack.tsx",
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
+   "src/components/ui/animated-cascade-dialog.tsx",
    "src/components/ui/data-table.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/filter-chip.tsx",
+   "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",
+   "src/components/ui/info-tooltip.tsx",
    "src/components/ui/masked-input.tsx",
    "src/components/ui/page-header.tsx",
-   "src/components/ui/search-input.tsx",
-   "src/components/ui/sidebar.tsx"
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/sliding-indicator.tsx"
   ],
   "componentes_com_nome_duplicado": [
    "AlertasRHWidget",
@@ -1104,6 +1135,11 @@
    "SidebarFooter",
    "SignaturePad",
    "StatusBadge",
+   "Tabs",
+   "TabsContent",
+   "TabsContents",
+   "TabsList",
+   "TabsTrigger",
    "ToastProvider",
    "Toaster"
   ],
@@ -1121,7 +1157,12 @@
    "SUPABASE_ANON_KEY",
    "SUPABASE_PUBLISHABLE_KEY",
    "SUPABASE_URL",
-   "VITE_E2E_BYPASS_MFA"
+   "VITE_COLABORADORES_MOCK",
+   "VITE_DESEMPENHO_MOCK",
+   "VITE_E2E_BYPASS_MFA",
+   "VITE_HOMOLOG_ORIGEM",
+   "VITE_NINEBOX_MODO_REAL",
+   "VITE_PDI_MOCK"
   ],
   "ciclos_de_import": 3,
   "possiveis_segredos_no_codigo": [

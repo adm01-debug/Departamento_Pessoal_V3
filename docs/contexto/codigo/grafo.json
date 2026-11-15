@@ -1,40 +1,40 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 968,
- "arestas": 4718,
+ "nos": 1071,
+ "arestas": 5142,
  "hubs": [
   {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 285
+  },
+  {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 257
+   "importado_por": 258
   },
   {
    "arquivo": "src/components/ui/card.tsx",
    "importado_por": 255
   },
   {
-   "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 251
-  },
-  {
    "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 192
+   "importado_por": 196
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 154
+   "importado_por": 193
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 148
+   "importado_por": 153
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 142
+   "importado_por": 147
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 130
+   "importado_por": 140
   },
   {
    "arquivo": "src/utils/safeError.ts",
@@ -42,19 +42,19 @@
   },
   {
    "arquivo": "src/schemas/validate.ts",
-   "importado_por": 119
+   "importado_por": 118
   },
   {
    "arquivo": "src/hooks/useEmpresas.ts",
-   "importado_por": 114
+   "importado_por": 113
   },
   {
    "arquivo": "src/components/ui/table.tsx",
-   "importado_por": 106
+   "importado_por": 107
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 94
+   "importado_por": 106
   },
   {
    "arquivo": "src/components/ui/spinner.tsx",
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 78
+   "importado_por": 77
   },
   {
    "arquivo": "supabase/functions/_shared/contract.ts",
@@ -97,11 +97,15 @@
    "importado_por": 54
   },
   {
+   "arquivo": "src/utils/dateLocal.ts",
+   "importado_por": 50
+  },
+  {
    "arquivo": "src/components/ui/tabs.tsx",
    "importado_por": 49
   },
   {
-   "arquivo": "src/utils/dateLocal.ts",
+   "arquivo": "src/components/ui/textarea.tsx",
    "importado_por": 47
   },
   {
@@ -109,20 +113,16 @@
    "importado_por": 44
   },
   {
-   "arquivo": "src/components/ui/textarea.tsx",
-   "importado_por": 42
-  },
-  {
    "arquivo": "src/hooks/usePiiMask.ts",
    "importado_por": 36
   },
   {
    "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 32
+   "importado_por": 34
   },
   {
    "arquivo": "src/types/entities.ts",
-   "importado_por": 32
+   "importado_por": 33
   },
   {
    "arquivo": "supabase/functions/_shared/authz.ts",
@@ -130,7 +130,7 @@
   },
   {
    "arquivo": "src/services/index.ts",
-   "importado_por": 29
+   "importado_por": 30
   },
   {
    "arquivo": "src/services/piiAccessLogService.ts",
@@ -139,6 +139,10 @@
   {
    "arquivo": "src/contexts/index.ts",
    "importado_por": 28
+  },
+  {
+   "arquivo": "src/components/avaliacao/entradaCards.tsx",
+   "importado_por": 27
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
@@ -153,16 +157,12 @@
    "importado_por": 20
   },
   {
-   "arquivo": "src/components/ui/progress.tsx",
-   "importado_por": 18
+   "arquivo": "src/components/avaliacao/desempenhoComum.ts",
+   "importado_por": 19
   },
   {
-   "arquivo": "src/components/ui/scroll-area.tsx",
-   "importado_por": 18
-  },
-  {
-   "arquivo": "src/components/ui/empty-state.tsx",
-   "importado_por": 17
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "importado_por": 19
   }
  ],
  "ciclos": {
@@ -195,7 +195,9 @@
   "lighthouserc.cjs",
   "public/sw-custom.js",
   "src/assets/index.ts",
+  "src/components/animate-ui/components/animate/tabs.tsx",
   "src/components/auth/index.ts",
+  "src/components/avaliacao/NineBoxMatrix.tsx",
   "src/components/colaboradores/index.ts",
   "src/components/dashboard/SectionHeader.tsx",
   "src/components/index.ts",
@@ -215,12 +217,17 @@
   "src/components/notifications/NotificationCenter.tsx",
   "src/components/notifications/index.ts",
   "src/components/ponto/PontoLeaderboard.tsx",
+  "src/components/ui/animated-cascade-dialog.tsx",
   "src/components/ui/data-table.tsx",
+  "src/components/ui/date-picker.tsx",
+  "src/components/ui/filter-chip.tsx",
+  "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",
+  "src/components/ui/info-tooltip.tsx",
   "src/components/ui/masked-input.tsx",
   "src/components/ui/page-header.tsx",
-  "src/components/ui/search-input.tsx",
   "src/components/ui/sidebar.tsx",
+  "src/components/ui/sliding-indicator.tsx",
   "src/components/ui/use-toast.ts",
   "src/constants/workflow-status.ts",
   "src/hooks/validators.ts",
@@ -248,13 +255,18 @@
  "modulos_mais_acoplados": [
   {
    "modulo": "components/ui",
-   "depende_de": 6,
+   "depende_de": 8,
    "importado_por": 46
   },
   {
    "modulo": "pages",
-   "depende_de": 52,
+   "depende_de": 53,
    "importado_por": 0
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 2,
+   "importado_por": 42
   },
   {
    "modulo": "hooks",
@@ -262,24 +274,19 @@
    "importado_por": 32
   },
   {
-   "modulo": "integrations/supabase",
-   "depende_de": 2,
-   "importado_por": 41
-  },
-  {
    "modulo": "services",
-   "depende_de": 8,
+   "depende_de": 9,
    "importado_por": 32
   },
   {
    "modulo": "utils",
    "depende_de": 5,
-   "importado_por": 32
+   "importado_por": 34
   },
   {
    "modulo": "lib",
    "depende_de": 1,
-   "importado_por": 28
+   "importado_por": 30
   },
   {
    "modulo": "schemas",
@@ -292,6 +299,11 @@
    "importado_por": 10
   },
   {
+   "modulo": "types",
+   "depende_de": 1,
+   "importado_por": 14
+  },
+  {
    "modulo": "components/folha",
    "depende_de": 13,
    "importado_por": 1
@@ -300,11 +312,6 @@
    "modulo": "components/layout",
    "depende_de": 12,
    "importado_por": 2
-  },
-  {
-   "modulo": "types",
-   "depende_de": 1,
-   "importado_por": 13
   },
   {
    "modulo": "components/settings",
@@ -317,14 +324,19 @@
    "importado_por": 1
   },
   {
-   "modulo": "components/admissoes",
-   "depende_de": 8,
-   "importado_por": 1
+   "modulo": "components/avaliacao",
+   "depende_de": 7,
+   "importado_por": 3
   },
   {
    "modulo": "components/dashboard",
    "depende_de": 7,
-   "importado_por": 2
+   "importado_por": 3
+  },
+  {
+   "modulo": "components/admissoes",
+   "depende_de": 8,
+   "importado_por": 1
   },
   {
    "modulo": "components/ponto",
@@ -339,11 +351,6 @@
   {
    "modulo": "components/sst",
    "depende_de": 8,
-   "importado_por": 1
-  },
-  {
-   "modulo": "components/afastamentos",
-   "depende_de": 7,
    "importado_por": 1
   }
  ],
