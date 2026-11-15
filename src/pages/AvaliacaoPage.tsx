@@ -65,6 +65,8 @@ import { EntradaPresenca } from '@/components/avaliacao/entradaCards';
 import { FeedbacksTab } from '@/components/avaliacao/FeedbacksTab';
 import { OrigemHomologacao } from '@/components/avaliacao/OrigemHomologacao';
 import { MetasOKRsTab } from '@/components/avaliacao/MetasOKRsTab';
+import { NovaMetaDialog } from '@/components/avaliacao/NovaMetaDialog';
+import { NovoPdiDialog } from '@/components/avaliacao/NovoPdiDialog';
 import { PdiTab } from '@/components/avaliacao/PdiTab';
 import { cn } from '@/lib/utils';
 import { formatarPeriodo } from '@/components/avaliacao/desempenhoComum';
@@ -1265,6 +1267,16 @@ export default function AvaliacaoPage() {
                 Toda a lógica é client-side sobre `metas` (a MESMA consulta que
                 a página já fazia) e a ação real de abrir o ciclo no painel é
                 repassada pela página. */}
+              {/* Entrada de CRIAÇÃO da aba — ligada à mutation `criarMeta`
+                desta página (a aba em si é somente leitura). */}
+              <div className="flex justify-end">
+                <NovaMetaDialog
+                  colaboradores={colaboradoresReais}
+                  ciclos={ciclosReais}
+                  onSubmit={(dados) => criarMeta.mutate(dados)}
+                  salvando={criarMeta.isPending}
+                />
+              </div>
               <MetasOKRsTab
                 metas={metas}
                 ciclos={ciclos}
@@ -1379,6 +1391,15 @@ export default function AvaliacaoPage() {
                 lógica é client-side sobre `pdis` (a MESMA consulta que a página
                 já fazia); a lista de colaboradores que a página já carrega
                 resolve cargo/departamento/foto do dono do plano. */}
+              {/* Entrada de CRIAÇÃO da aba — ligada à mutation `criarPDI`
+                desta página (a aba em si é somente leitura). */}
+              <div className="flex justify-end">
+                <NovoPdiDialog
+                  colaboradores={colaboradoresReais}
+                  onSubmit={(dados) => criarPDI.mutate(dados)}
+                  salvando={criarPDI.isPending}
+                />
+              </div>
               <PdiTab pdis={pdis} colaboradores={colaboradores} />
             </TabsContent>
 
