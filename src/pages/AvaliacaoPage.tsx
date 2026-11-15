@@ -128,6 +128,15 @@ export default function AvaliacaoPage() {
   const [seletorCiclosAberto, setSeletorCiclosAberto] = useState(false);
   /** Ciclo aguardando confirmação de exclusão/ocultação no seletor. */
   const [cicloParaExcluir, setCicloParaExcluir] = useState<any | null>(null);
+  /**
+   * Alvo da confirmação de exclusão de META/PDI. A aba só PEDE a exclusão (o
+   * card não apaga nada); a confirmação e a mutation vivem aqui, como no ciclo.
+   */
+  const [registroParaExcluir, setRegistroParaExcluir] = useState<{
+    tipo: 'meta' | 'pdi';
+    id: string;
+    nome: string;
+  } | null>(null);
 
   /**
    * O Radix Select mantém o foco no item (role=option) e não deixa o Tab
@@ -661,6 +670,42 @@ export default function AvaliacaoPage() {
     onError: (erro: unknown) => {
       setCicloParaExcluir(null);
       toast.error(`Ciclo NÃO excluído: ${mensagemDeErro(erro)}`);
+    },
+  });
+
+  /**
+   * EXCLUSÃO de META/PDI — o par das criações acima. Registro demonstrativo
+   * (`mock-*`/`demo-*`) sai só do armazenamento local; registro real vai ao
+   * Supabase com o `empresa_id` da escrita (isolamento de tenant garantido
+   * pelo próprio serviço).
+   */
+  const excluirRegistro = useMutation({
+    mutationFn: async (alvo: { tipo: 'meta' | 'pdi'; id: string; nome: string }) => {
+      const id = String(alvo?.id ?? '').trim();
+      if (!id) throw new Error('Registro sem identificador.');
+      if (idDemonstrativo(id)) {
+        excluirRegistroDemo(alvo.tipo === 'meta' ? 'metas' : 'pdis', id, {
+          por: user?.email ?? null,
+          descricao: `${alvo.tipo === 'meta' ? 'Meta' : 'PDI'} "${alvo.nome}" excluído na demonstração`,
+        });
+        return;
+      }
+      const empresaId = empresaDaEscrita();
+      if (alvo.tipo === 'meta') return avaliacaoService.excluirMeta(id, empresaId);
+      return avaliacaoService.excluirPDI(id, empresaId);
+    },
+    onSuccess: (_data, alvo) => {
+      qc.invalidateQueries({ queryKey: [alvo.tipo === 'meta' ? 'metas_okrs' : 'pdis'] });
+      setRegistroParaExcluir(null);
+      toast.success(
+        idDemonstrativo(alvo.id)
+          ? 'Demonstração: registro ocultado da lista (mocks originais intactos).'
+          : `${alvo.tipo === 'meta' ? 'Meta' : 'PDI'} excluído do Supabase.`
+      );
+    },
+    onError: (erro: unknown, alvo) => {
+      setRegistroParaExcluir(null);
+      toast.error(`${alvo.tipo === 'meta' ? 'Meta' : 'PDI'} NÃO excluído: ${mensagemDeErro(erro)}`);
     },
   });
 
@@ -1240,6 +1285,55 @@ export default function AvaliacaoPage() {
               </AlertDialogContent>
             </AlertDialog>
 
+            {/* Confirmação da exclusão de META/PDI — mesma montagem do ciclo. */}
+            <AlertDialog
+              open={!!registroParaExcluir}
+              onOpenChange={(aberto) => {
+                if (!aberto && !excluirRegistro.isPending) setRegistroParaExcluir(null);
+              }}
+            >
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {idDemonstrativo(registroParaExcluir?.id)
+                      ? 'Ocultar registro demonstrativo'
+                      : registroParaExcluir?.tipo === 'meta'
+                        ? 'Excluir meta'
+                        : 'Excluir PDI'}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {idDemonstrativo(registroParaExcluir?.id) ? (
+                      <>
+                        <strong>{registroParaExcluir?.nome}</strong> será ocultado desta lista. Os mocks originais
+                        permanecem intactos e a alteração fica salva neste navegador.
+                      </>
+                    ) : (
+                      <>
+                        <strong>{registroParaExcluir?.nome}</strong> será excluído permanentemente do banco. Esta ação
+                        não pode ser desfeita.
+                      </>
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel disabled={excluirRegistro.isPending}>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    className="bg-destructive-vivid text-white hover:bg-destructive-vivid/90"
+                    disabled={excluirRegistro.isPending}
+                    onClick={() => {
+                      if (registroParaExcluir) excluirRegistro.mutate(registroParaExcluir);
+                    }}
+                  >
+                    {excluirRegistro.isPending
+                      ? 'Processando...'
+                      : idDemonstrativo(registroParaExcluir?.id)
+                        ? 'Ocultar'
+                        : 'Excluir'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <TabsContent value="ciclos" className="space-y-5">
               <PerformanceDashboard
                 feedbacks={feedbacks}
@@ -1285,6 +1379,13 @@ export default function AvaliacaoPage() {
                   setCicloSelecionadoId(cicloId);
                   setTab('ciclos');
                 }}
+                onExcluir={(item) =>
+                  setRegistroParaExcluir({
+                    tipo: 'meta',
+                    id: String((item.meta as { id?: unknown })?.id ?? ''),
+                    nome: String((item.meta as { titulo?: unknown })?.titulo ?? 'Meta'),
+                  })
+                }
               />
             </TabsContent>
 
@@ -1400,7 +1501,17 @@ export default function AvaliacaoPage() {
                   salvando={criarPDI.isPending}
                 />
               </div>
-              <PdiTab pdis={pdis} colaboradores={colaboradores} />
+              <PdiTab
+                pdis={pdis}
+                colaboradores={colaboradores}
+                onExcluir={(item) =>
+                  setRegistroParaExcluir({
+                    tipo: 'pdi',
+                    id: String(item.id ?? ''),
+                    nome: String((item.pdi as { titulo?: unknown })?.titulo ?? 'PDI'),
+                  })
+                }
+              />
             </TabsContent>
 
             <TabsContent value="ninebox" className="space-y-6">

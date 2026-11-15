@@ -60,9 +60,11 @@ interface PdiTabProps {
   pdis: any[];
   /** Colaboradores já carregados pela página (cargo/departamento/foto). */
   colaboradores?: ColaboradorPdi[];
+  /** Pede a exclusão de um plano (confirmação e mutation vivem na página). */
+  onExcluir?: (item: PdiDerivado) => void;
 }
 
-export function PdiTab({ pdis, colaboradores = [] }: PdiTabProps) {
+export function PdiTab({ pdis, colaboradores = [], onExcluir }: PdiTabProps) {
   const reduzirMovimento = useMovimentoReduzido();
 
   const [busca, setBusca] = useState('');
@@ -251,6 +253,7 @@ export function PdiTab({ pdis, colaboradores = [] }: PdiTabProps) {
                 onVerPdi={abrirDetalhe}
                 onFiltrarColaborador={filtrarPorColaborador}
                 onFiltrarCompetencia={filtrarPorCompetencia}
+                onExcluir={onExcluir}
               />
             ))}
           </div>

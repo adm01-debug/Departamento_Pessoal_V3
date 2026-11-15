@@ -6,7 +6,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowRight, Building2, Calendar, MoreHorizontal, Target, User, Users, type LucideIcon } from 'lucide-react';
+import {
+  ArrowRight,
+  Building2,
+  Calendar,
+  MoreHorizontal,
+  Target,
+  Trash2,
+  User,
+  Users,
+  type LucideIcon,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { iniciais } from './desempenhoComum';
 import { MotionCard, entradaCard } from './entradaCards';
@@ -87,6 +97,8 @@ interface MetaCardProps {
   onAbrirCiclo?: (cicloId: string) => void;
   /** Seleciona o responsável no filtro da barra. */
   onFiltrarResponsavel?: (nome: string) => void;
+  /** Pede a exclusão da meta (a confirmação vive na página). */
+  onExcluir?: (item: MetaDerivada) => void;
 }
 
 export function MetaCard({
@@ -95,12 +107,14 @@ export function MetaCard({
   reduzirMovimento = false,
   onAbrirCiclo,
   onFiltrarResponsavel,
+  onExcluir,
 }: MetaCardProps) {
   const { meta, situacao, percentual, evolucao, responsavel, departamento, prazo } = item;
   const Icone = ICONE_TIPO[chaveIcone(meta?.tipo)] ?? Target;
   const cicloId = String(meta?.ciclo_id ?? '');
   const podeAbrirCiclo = Boolean(cicloId) && Boolean(onAbrirCiclo);
   const podeFiltrar = responsavel !== '—' && Boolean(onFiltrarResponsavel);
+  const podeExcluir = Boolean(meta?.id) && Boolean(onExcluir);
 
   return (
     <MotionCard
@@ -125,7 +139,7 @@ export function MetaCard({
           <Badge variant="outline" size="sm" className={cn(ETIQUETA_BASE, 'shrink-0', CLASSE_SITUACAO[situacao])}>
             {ROTULO_SITUACAO[situacao]}
           </Badge>
-          {(podeAbrirCiclo || podeFiltrar) && (
+          {(podeAbrirCiclo || podeFiltrar || podeExcluir) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -146,6 +160,14 @@ export function MetaCard({
                 {podeFiltrar && (
                   <DropdownMenuItem onClick={() => onFiltrarResponsavel?.(responsavel)}>
                     <User className="mr-2 h-3.5 w-3.5" /> Filtrar por este responsável
+                  </DropdownMenuItem>
+                )}
+                {podeExcluir && (
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onClick={() => onExcluir?.(item)}
+                  >
+                    <Trash2 className="mr-2 h-3.5 w-3.5" /> Excluir meta
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>

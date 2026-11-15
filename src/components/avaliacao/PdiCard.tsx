@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowRight, BookOpen, Calendar, MoreHorizontal, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, Calendar, MoreHorizontal, Target, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { iniciais } from './desempenhoComum';
 import { BarraProgresso } from './barraProgresso';
@@ -82,6 +82,8 @@ interface PdiCardProps {
   onFiltrarColaborador?: (item: PdiDerivado) => void;
   /** Filtra a lista pela competência foco (ação local real). */
   onFiltrarCompetencia?: (item: PdiDerivado) => void;
+  /** Pede a exclusão do plano (a confirmação vive na página). */
+  onExcluir?: (item: PdiDerivado) => void;
 }
 
 /** Avatar por categoria de status — a MESMA família do badge da região E. */
@@ -106,11 +108,13 @@ export function PdiCard({
   onVerPdi,
   onFiltrarColaborador,
   onFiltrarCompetencia,
+  onExcluir,
 }: PdiCardProps) {
   const local = [item.cargo, item.departamento].filter(Boolean).join(' · ');
   const podeFiltrar = Boolean(
     (onFiltrarColaborador && item.colaboradorId) || (onFiltrarCompetencia && item.competencia)
   );
+  const podeExcluir = Boolean(onExcluir && item.id);
 
   /**
    * Percentual REAL do plano. Hoje a tabela não tem o campo, então `null` —
@@ -248,7 +252,7 @@ export function PdiCard({
           </div>
 
           {/* ── F · Ações (só o que o sistema realmente faz) ─────────────── */}
-          {(onVerPdi || podeFiltrar) && (
+          {(onVerPdi || podeFiltrar || podeExcluir) && (
             <div className="flex items-center justify-end gap-1.5">
               {onVerPdi && (
                 <Button
@@ -262,7 +266,7 @@ export function PdiCard({
                 </Button>
               )}
 
-              {podeFiltrar && (
+              {(podeFiltrar || podeExcluir) && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -283,6 +287,14 @@ export function PdiCard({
                     {onFiltrarCompetencia && item.competencia && (
                       <DropdownMenuItem className="text-xs" onClick={() => onFiltrarCompetencia(item)}>
                         Filtrar por esta competência
+                      </DropdownMenuItem>
+                    )}
+                    {podeExcluir && (
+                      <DropdownMenuItem
+                        className="text-xs text-destructive focus:text-destructive"
+                        onClick={() => onExcluir?.(item)}
+                      >
+                        <Trash2 className="mr-2 h-3.5 w-3.5" /> Excluir PDI
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>

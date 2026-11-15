@@ -17,6 +17,7 @@ import {
   tiposDisponiveis,
   type ColaboradorBasico,
   type CriterioOrdem,
+  type MetaDerivada,
   type FiltroStatus,
 } from './metasComum';
 
@@ -58,9 +59,11 @@ interface MetasOKRsTabProps {
   colaboradores?: ColaboradorBasico[];
   /** Abre o ciclo da meta no painel da aba "Ciclos". */
   onAbrirCiclo?: (cicloId: string) => void;
+  /** Pede a exclusão de uma meta (confirmação e mutation vivem na página). */
+  onExcluir?: (item: MetaDerivada) => void;
 }
 
-export function MetasOKRsTab({ metas, ciclos = [], colaboradores = [], onAbrirCiclo }: MetasOKRsTabProps) {
+export function MetasOKRsTab({ metas, ciclos = [], colaboradores = [], onAbrirCiclo, onExcluir }: MetasOKRsTabProps) {
   const reduzirMovimento = useMovimentoReduzido();
 
   const [busca, setBusca] = useState('');
@@ -199,6 +202,7 @@ export function MetasOKRsTab({ metas, ciclos = [], colaboradores = [], onAbrirCi
                 indice={2 + i}
                 reduzirMovimento={reduzirMovimento}
                 onAbrirCiclo={onAbrirCiclo}
+                onExcluir={onExcluir}
                 onFiltrarResponsavel={(nome) => {
                   setResponsavel(nome);
                   setPagina(1);
