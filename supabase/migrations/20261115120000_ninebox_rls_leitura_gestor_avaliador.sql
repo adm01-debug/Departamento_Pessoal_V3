@@ -35,6 +35,10 @@ DROP POLICY IF EXISTS feedbacks_360_select ON public.feedbacks_360;
 CREATE POLICY feedbacks_360_select
   ON public.feedbacks_360
   FOR SELECT
+  -- O papel e parte do contrato da policy: sem TO, o CREATE POLICY nasce TO
+  -- public e passa a valer tambem para `anon`. A policy de producao e
+  -- TO {authenticated} (pg_policies) e precisa continuar assim.
+  TO authenticated
   USING (
     empresa_id IN (SELECT public.get_user_empresas(auth.uid()))
     AND (
