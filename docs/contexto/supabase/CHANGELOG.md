@@ -2,6 +2,10 @@
 
 Diff semântico gerado a cada coleta em que algo mudou.
 
+## 2026-11-16 12:29 UTC
+
+- **functions** alterado (8): `public.edge_rate_limit_check_dual(p_empresa_key text, p_empresa_limit integer, p_usuario_key text, p_usuario_limit integer, p_window_sec integer, p_now bigint)`, `public.enqueue_training_image_request()`, `public.is_admin(_user_id uuid)`, `public.set_training_image_autoqueue(p_enabled boolean)`, `public.training_images_track_outcomes()`, `public.update_updated_at_column()`, `public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)`, `public.versao_consolidada_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid)`
+
 ## 2026-11-16 11:16 UTC
 
 - **functions** alterado (9): `public.decidir_aprovacao_gestor(p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text, p_idempotencia text)`, `public.enviar_avaliacao_ao_gestor(p_colaborador_id uuid, p_ciclo_id uuid, p_idempotencia text)`, `public.finalizar_feedback_base(p_feedback_id uuid, p_acao text, p_motivo text, p_idempotencia text)`, `public.get_user_empresas(_user_id uuid)`, `public.pode_aprovar_colaborador(p_colaborador_id uuid)`, `public.sincronizar_consolidacao_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid)`, `public.situacao_aprovacao(p_colaborador_id uuid, p_ciclo_id uuid)`, `public.versao_avaliacao_feedback(p_feedback_id uuid)`, `public.versao_consolidada_avaliacao(p_colaborador_id uuid, p_ciclo_id uuid)`

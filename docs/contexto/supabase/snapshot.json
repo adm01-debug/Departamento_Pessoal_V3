@@ -2,7 +2,9 @@
   "api": {
     "enabled": false
   },
-  "carried": [],
+  "carried": [
+    "columns"
+  ],
   "db": {
     "columns": [
       {
@@ -92047,8 +92049,13 @@
       {
         "args": "p_empresa_key text, p_empresa_limit integer, p_usuario_key text, p_usuario_limit integer, p_window_sec integer, p_now bigint",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92973,8 +92980,13 @@
       {
         "args": "",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [
@@ -96846,7 +96858,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 74,
+          "code_total_files": 75,
           "cron": [],
           "db": [
             "public.admin_associar_usuario_empresa",
@@ -102250,8 +102262,13 @@
       {
         "args": "p_enabled boolean",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -103114,11 +103131,15 @@
         "callers": {
           "code": [
             {
+              "file": "supabase/migrations/20261023120000_training_images_infrastructure.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20261027000000_revoke_orphan_secdef.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [
@@ -104400,7 +104421,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 65,
+          "code_total_files": 67,
           "cron": [],
           "db": [],
           "triggers": [
@@ -104683,7 +104704,7 @@
               "hits": 1
             }
           ],
-          "code_total_files": 32,
+          "code_total_files": 33,
           "cron": [],
           "db": [
             "public.contrato_gerar_token_assinatura",
@@ -105337,9 +105358,13 @@
             {
               "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
               "hits": 7
+            },
+            {
+              "file": "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql",
+              "hits": 2
             }
           ],
-          "code_total_files": 7,
+          "code_total_files": 8,
           "cron": [],
           "db": [
             "public.decidir_aprovacao_gestor",
@@ -158189,6 +158214,10 @@
     "webhooks": []
   },
   "errors": [
+    {
+      "error": "canceling statement due to lock timeout",
+      "section": "columns"
+    },
     {
       "error": "cron.job filtrado pelo RLS do pg_cron para este papel (sem BYPASSRLS): lista de jobs não verificável",
       "section": "cron"
