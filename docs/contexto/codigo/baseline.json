@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "a054841a35af7db512a8516b8c2831697107e64f",
+  "commit": "3dcc001c2ba24fa4ed917cb9f18e4636bb423a2b",
   "branch": "main",
-  "data_commit": "2026-11-16T14:34:37Z",
+  "data_commit": "2026-11-16T12:15:08-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "3dcc001",
+    "data": "2026-11-16",
+    "assunto": "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)"
+   },
    {
     "sha": "a054841",
     "data": "2026-11-16",
@@ -126,25 +131,20 @@
     "sha": "1937631",
     "data": "2026-11-14",
     "assunto": "chore(db): revoga DML de anon/authenticated nas dp_audit_log* (menor privilégio) (#563)"
-   },
-   {
-    "sha": "1241a00",
-    "data": "2026-11-14",
-    "assunto": "Segurança: escrita de RH exige papel em 9 tabelas; colaborador não aprova o próprio ponto (#530)"
    }
   ],
-  "arquivos_mudados_7d": 797,
+  "arquivos_mudados_7d": 808,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
     "mudancas": 295
    },
    {
-    "pasta": "src/services/__tests__",
-    "mudancas": 96
+    "pasta": "src/hooks/__tests__",
+    "mudancas": 95
    },
    {
-    "pasta": "src/hooks/__tests__",
+    "pasta": "src/services/__tests__",
     "mudancas": 95
    },
    {
@@ -161,7 +161,7 @@
    },
    {
     "pasta": "src/utils/__tests__",
-    "mudancas": 39
+    "mudancas": 38
    },
    {
     "pasta": "src/components/layout",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3106,
+  "arquivos_total": 3117,
   "arquivos_codigo": 1710,
   "linhas_codigo": 320952,
   "rotas": 116,
@@ -339,7 +339,7 @@
   "testes": 641,
   "workflows": 21,
   "scripts": 115,
-  "docs_md": 294
+  "docs_md": 295
  },
  "por_pasta": {
   "capacitor.config.ts": {

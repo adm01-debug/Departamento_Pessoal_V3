@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a054841a35` · branch `main` · 2026-11-16 14:35 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3dcc001c2b` · branch `main` · 2026-11-16 15:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -311,7 +311,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `vinculos` | tenant_vinculos | ALL | authenticated | permissive | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `colaborador_id IN (SELECT id FROM public.colaboradores WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_aprovacoes` | tenant_ferias_aprovacoes | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
 | `ferias_arquivos` | tenant_ferias_arquivos | ALL | authenticated | permissive | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` | `ferias_id IN (SELECT id FROM public.ferias WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid())))` |
-| … +861 linhas — lista completa em `context.json` | | | | | | |
+| … +863 linhas — lista completa em `context.json` | | | | | | |
 
 ## C. Restrições de dados (obrigatório / único / default / CHECK / FK / calculada)
 
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4404 linhas — lista completa em `context.json` | | |
+| … +4397 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -698,14 +698,11 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_contas_bancarias_encrypt | BEFORE INSERT OR UPDATE | `contas_bancarias` | `encrypt_contas_bancarias_fields` |  |
 | trg_pix_itens_encrypt | BEFORE INSERT OR UPDATE | `pix_itens` | `encrypt_pix_itens_fields` |  |
 | trg_feedbacks_360_revisao | BEFORE UPDATE | `feedbacks_360` | `tg_feedbacks_360_revisao` |  |
-| trg_feedbacks_360_consolidacao | AFTER INSERT OR UPDATE OF STATUS, TIPO, NOTA_GERAL, POTENCIAL, AVALIADO_ID, AVALIADOR_ID, CICLO_ID, UPDATED_AT OR DELETE | `feedbacks_360` | `trg_feedbacks_360_consolidacao` |  |
 | update_training_images_updated_at | BEFORE UPDATE | `training_images` | `update_updated_at_column` |  |
 | track_training_images_outcomes | BEFORE UPDATE | `training_images` | `training_images_track_outcomes` |  |
 | update_training_image_settings_updated_at | BEFORE UPDATE | `training_image_settings` | `update_updated_at_column` |  |
 | enqueue_training_image_course | AFTER INSERT | `catalogo_cursos` | `enqueue_training_image_request` |  |
 | enqueue_training_image_learning_path | AFTER INSERT | `trilhas_aprendizado` | `enqueue_training_image_request` |  |
-| ciclos_bloqueio_exclusao_com_dependencias | BEFORE DELETE | `ciclos_avaliacao` | `bloquear_exclusao_ciclo_com_dependencias` |  |
-| trg_audit_log_enriquecer_feedback | BEFORE INSERT | `audit_log` | `tg_audit_log_enriquecer_feedback` |  |
 | trg_faltas_sync_faltas_periodo | AFTER INSERT OR UPDATE OR DELETE | `faltas` | `fn_faltas_sync_faltas_periodo` |  |
 | trg_pensoes_set_empresa | BEFORE INSERT OR UPDATE OF COLABORADOR_ID, EMPRESA_ID | `pensoes` | `fn_pensoes_set_empresa` |  |
 | tr_bloquear_aprovacao_ponto_sem_rh | BEFORE INSERT OR UPDATE | `registros_ponto` | `bloquear_aprovacao_ponto_sem_rh` |  |
@@ -923,7 +920,10 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_contratual` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `auditoria_logs` | `fwd_to_audit_unified` |  |
 | trg_fwd_audit_unified | AFTER INSERT | `ferias_audit_log` | `fwd_to_audit_unified` |  |
-| … +164 linhas — lista completa em `context.json` | | | | |
+| trg_fwd_audit_unified | AFTER INSERT | `folha_auditoria` | `fwd_to_audit_unified` |  |
+| trg_fwd_audit_unified | AFTER INSERT | `folha_eventos_auditoria` | `fwd_to_audit_unified` |  |
+| trg_fwd_audit_unified | AFTER INSERT | `ponto_auditoria` | `fwd_to_audit_unified` |  |
+| … +161 linhas — lista completa em `context.json` | | | | |
 
 Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banco):
 
@@ -1007,18 +1007,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `criar_feedback_seguro` | avaliador_fora_da_empresa | `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql` |
 | `criar_feedback_seguro` | ciclo_fora_da_empresa | `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql` |
 | `criar_feedback_seguro` | idempotencia_conflito | `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql` |
-| `validar_potencial_avaliacao` | nao_autenticado | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | idempotencia_ausente | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | perfil_nao_autorizado | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | registro_inexistente | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | nao_autorizado | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | idempotencia_conflito | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | nao_e_avaliacao_do_gestor | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | avaliacao_sem_colaborador | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | avaliacao_nao_concluida | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | potencial_ausente_ou_invalido | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | aprovacao_do_gestor_ausente | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
-| `validar_potencial_avaliacao` | versao_indisponivel | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `ponto_espelhos_assinados_guard_update` | Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %. | `supabase/migrations/20261023000000_qa_r3_fixes.sql` |
@@ -1074,25 +1062,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `enviar_avaliacao_ao_gestor` | avaliacao_do_gestor_ausente_ou_pendente | `supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql` |
 | `enviar_avaliacao_ao_gestor` | aprovacao_ja_registrada | `supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql` |
 | `situacao_aprovacao` | nao_autorizado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | nao_autenticado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | idempotencia_ausente | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | decisao_invalida | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | justificativa_obrigatoria | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | perfil_nao_autorizado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | consolidacao_ausente | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | nao_autorizado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | empresa_ciclo_colaborador_inconsistentes | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | sem_avaliacao | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | versao_desatualizada | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | versao_desatualizada | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_consolidada_ausente | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | idempotencia_conflito | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | pendencia_nao_aguarda_decisao | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
 | `replace_monthly_provisions` | invalid monthly provision replacement arguments | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
 | `replace_monthly_provisions` | invalid monthly provision row | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
 | `replace_monthly_provisions` | invalid monthly provision tax contract | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
@@ -1229,7 +1198,38 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_enviar_aprovacao` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | só é possível enviar medidas em rascunho (atual: %) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Sem permissão para gerar link de ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +144 linhas — lista completa em `context.json` | | |
+| `medida_gerar_link_ciencia` | Medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_gerar_link_ciencia` | Acesso negado à empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_registrar_ciencia_publica` | Ação inválida | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_registrar_ciencia_publica` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_rejeitar` | não autenticado | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_rejeitar` | motivo da rejeição obrigatório (mín. 5 caracteres) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_rejeitar` | medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_rejeitar` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_rejeitar` | só é possível rejeitar medidas em fluxo de aprovação | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_responder_contestacao` | not_authenticated | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_responder_contestacao` | resposta_minimo_10_chars | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_responder_contestacao` | medida_nao_encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_responder_contestacao` | apenas_rh_ou_admin_pode_responder | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_responder_contestacao` | medida_nao_esta_contestada | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medida_verificar_ciencia_hash` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medidas_analytics_reincidencia` | not_authenticated | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medidas_analytics_reincidencia` | forbidden | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `medidas_analytics_reincidencia` | invalid_arguments | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `notificar_divergencias_afdt` | Importação AFDT não encontrada: % | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `notificar_divergencias_afdt` | Sem permissão para notificar divergências desta empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `pagar_desligamento` | Apenas administradores podem registrar pagamento de rescisao | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `pagar_desligamento` | Desligamento nao encontrado | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `pagar_desligamento` | Rescisao so pode ser paga apos homologacao (status atual: %) | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `pagar_desligamento` | Rescisao precisa da assinatura da empresa e do colaborador antes do pagamento | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `programacao_ferias_aprovar_gestor` | Programação não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `programacao_ferias_aprovar_gestor` | Sem permissão de escopo | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `programacao_ferias_aprovar_gestor` | Apenas gestor/RH pode aprovar | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `programacao_ferias_aprovar_gestor` | Status atual não permite aprovação do gestor: % | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `programacao_ferias_aprovar_rh` | Programação não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
+| `programacao_ferias_aprovar_rh` | Sem permissão de escopo | `supabase/rebaseline/20260831_corrected_public.sql` |
+| … +159 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -1398,11 +1398,11 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `pcs_planos` | `status` | `arquivado`, `ativo`, `em_avaliacao`, `rascunho` | `rascunho` |
 | `mv_refresh_log` | `status` | **livre (sem enum/CHECK)** | `success` |
 | `report_dispatch_attempts` | `status` | `accepted`, `prepared` | `prepared` |
-| `feedbacks_360_consolidacoes` | `status` | `aguardando_gestor`, `aguardando_rh`, `aprovada_gestor`, `concluida_validada`, `devolvida`, `em_preparacao`, `sem_gestor` | `em_preparacao` |
 | `health_checks` | `status` | **livre (sem enum/CHECK)** |  |
 | `training_images` | `status` | `disabled`, `failed`, `pending`, `processing`, `succeeded` | `disabled` |
 | `training_image_requests` | `status` | `done`, `failed`, `processing`, `queued`, `skipped` | `queued` |
 | `afd_geracoes` | `status` | **livre (sem enum/CHECK)** | `gerado` |
+| `feedbacks_360_consolidacoes` | `status` | **livre (sem enum/CHECK)** |  |
 
 ### E.2 Mapas de transição declarados no código
 
@@ -5375,6 +5375,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `notify_user_on_approval` | `supabase/migrations/20251231131249_a44794d3-9ff9-45af-bdf9-68bc1af6d101.sql` |
 | `notify_user_on_rejection` | `supabase/migrations/20251231131249_a44794d3-9ff9-45af-bdf9-68bc1af6d101.sql` |
 | `notify` | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
+| `notify` | `supabase/rollback/20261027090000_ninebox_reconciliacao_incremental_rollback.sql` |
 
 ## N. Regras citadas em comentários do código
 
@@ -5680,4 +5681,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | mesmas notas; a chave por operação protege apenas o reenvio do MESMO ato. | `src/components/avaliacao/statusFeedback.ts` |
 | 4. POTENCIAL NÃO BLOQUEIA A CONCLUSÃO. `validarConclusao` exige apenas | `src/components/avaliacao/statusFeedback.ts` |
 | * Tabela de transições — a regra fica visível e testável em um só lugar. | `src/components/avaliacao/statusFeedback.ts` |
-| … +514 linhas — lista completa em `context.json` | |
+| … +517 linhas — lista completa em `context.json` | |

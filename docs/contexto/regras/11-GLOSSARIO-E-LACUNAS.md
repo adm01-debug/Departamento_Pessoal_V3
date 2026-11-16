@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `a054841a35` · branch `main` · 2026-11-16 14:35 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `3dcc001c2b` · branch `main` · 2026-11-16 15:16 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -194,8 +194,8 @@
 | `faixas_irrf` | Faixas da tabela IRRF. Carga via importação de domínio. | 4 colunas | migration |
 | `faltas` | _(sem COMMENT ON TABLE — significado não documentado)_ | 26 colunas | migration |
 | `feedbacks_360` | Criacao EXCLUSIVAMENTE pela RPC public.criar_feedback_seguro (feedback + auditoria na mesma transacao). INSERT direto revogado; correcao por CANCELAMENTO auditado, nunca DELETE. | 15 colunas | migration |
-| `feedbacks_360_aprovacoes_gestor` | Historico append-only das decisoes do GESTOR, ancoradas na versao canonica da avaliacao do gestor. | 14 colunas | migration |
-| `feedbacks_360_consolidacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 21 colunas | migration |
+| `feedbacks_360_aprovacoes_gestor` | _(sem COMMENT ON TABLE — significado não documentado)_ | 14 colunas | types.ts |
+| `feedbacks_360_consolidacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 13 colunas | types.ts |
 | `feedbacks_360_operacoes` | _(sem COMMENT ON TABLE — significado não documentado)_ | 7 colunas | migration |
 | `feedbacks_360_validacoes_potencial` | _(sem COMMENT ON TABLE — significado não documentado)_ | 10 colunas | migration |
 | `feriados` | [P0-001] Feriados globais (empresa_id IS NULL) visíveis a todos; tenant-scoped editável. | 8 colunas | migration |
@@ -349,7 +349,11 @@
 | status | valor `offline` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/hooks/useSystemHealthHistory.ts`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
 | status | valor `online` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`escreve:src/hooks/useSystemHealthHistory.ts` |
 | status | valor `slow` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/admin/HealthTrendCard.tsx`<br>`compara:src/components/layout/Header.tsx`<br>`compara:src/pages/AdminDiagnosticoMigracaoPage.tsx`<br>`compara:supabase/functions/external-db-bridge/index.ts` |
+| status | valor `aprovada_gestor` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`compara:src/components/avaliacao/FeedbacksTab.tsx`<br>`compara:src/components/avaliacao/aprovacaoGestor.ts` |
+| status | valor `concluida_validada` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`compara:src/components/avaliacao/aprovacaoGestor.ts`<br>`compara:src/components/avaliacao/feedbackCanonico.ts` |
 | status | valor `todas` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/MetasFiltros.tsx`<br>`compara:src/components/avaliacao/MetasOKRsTab.tsx` |
+| status | valor `em_preparacao` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/aprovacaoGestor.ts` |
+| status | valor `devolvida` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/feedbackCanonico.ts`<br>`compara:src/pages/AvaliacaoPage.tsx` |
 | status | valor `recusado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/dashboard/AnalyticsSection.tsx`<br>`compara:src/hooks/usePontoMelhorado.ts`<br>`escreve:src/components/dashboard/AnalyticsSection.tsx`<br>`escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx` |
 | status | valor `excellent` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/dashboard/WorkforceHealthScore.tsx` |
 | status | valor `finalizado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/DesligamentoDetailSheet.tsx`<br>`compara:src/components/desligamentos/DesligamentoKPIs.tsx`<br>`compara:src/services/cnabService.ts`<br>`escreve:src/services/cnabService.ts` |
@@ -433,7 +437,6 @@
 | rls | `config_afastamentos`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/tabelas/rhService.ts` |
 | rls | `config_alertas_indicadores`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/InlineTabs.tsx` |
 | rls | `configuracoes`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/components/settings/ConfiguracoesGeraisTab.tsx` |
-| rls | `feedbacks_360`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/avaliacaoService.ts` |
 | rls | `lancamentos_contabeis`: front faz INSERT mas nenhuma política RLS permite INSERT → vai falhar/retornar vazio para usuários | `src/services/contabilidadeService.ts` |
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
@@ -441,7 +444,11 @@
 | rls | `provisoes_competencia_tributaria`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `query_telemetry`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/AdminTelemetriaPage.tsx` |
 | rls | `report_dispatch_attempts`: RLS ligado sem nenhuma política → só service_role acessa |  |
+| rpc | RPC `editar_feedback_seguro` chamada mas não definida nas migrations/types | `src/services/avaliacaoService.ts` |
+| rpc | RPC `enviar_avaliacao_ao_gestor` chamada mas não definida nas migrations/types | `src/services/avaliacaoService.ts` |
 | rpc | RPC `foo` chamada mas não definida nas migrations/types | `eslint.config.js` |
+| rpc | RPC `listar_historico_feedback` chamada mas não definida nas migrations/types | `src/services/avaliacaoService.ts` |
+| rpc | RPC `pode_aprovar_colaborador` chamada mas não definida nas migrations/types | `src/services/avaliacaoService.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/components/portal/PortalDocumentosTab.tsx` |
 | dinâmico | 2 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/integrations/supabase/client.ts` |
 | dinâmico | 1 chamada(s) `.from(variável)` — tabela só conhecida em runtime | `src/pages/AdminDiagnosticoMigracaoPage.tsx` |
@@ -639,14 +646,7 @@
 | segurança | função `trg_medida_contestacao_notify_after` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `trg_medida_esocial_on_aplicada` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | segurança | função `update_extintor_status_vencimento` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `user_empresa_id` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `validar_contrato_clt` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `validate_ponto_compliance` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `verificar_espelho_ponto` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `create_entity_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
-| segurança | função `get_default_filter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
-| segurança | função `check_login_lock` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +29 linhas — lista completa em `context.json` | | |
+| … +36 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -759,7 +759,8 @@
 - `mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 399/468 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
+- `feedbacks_360_consolidacoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
+- 400/468 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
 
 ## Regras manuais presentes
 

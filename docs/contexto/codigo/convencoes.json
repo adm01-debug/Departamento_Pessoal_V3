@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "chore(banco): resgata os rollbacks das dez migrations ninebox já aplicadas em produção (#594)",
    "chore(deps): jsdom sai de dependencies e vira devDependency (#591)",
    "docs(auditoria): mede as versões do ledger sem arquivo e registra por que **não** canonizar (#590)",
    "fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)",
-   "build(deps): bump the minor-patch group with 11 updates (#586)",
-   "infra(ci): probes de segurança do canônico passam de diários a semanais — a fila chegava a 3,7 dias (#589)"
+   "build(deps): bump the minor-patch group with 11 updates (#586)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
