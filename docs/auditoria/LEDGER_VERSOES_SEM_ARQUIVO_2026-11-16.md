@@ -43,20 +43,19 @@ versão por versão:
   16/11/2026 (conferidas arquivo por arquivo, com normalização de CRLF) e não
   está na própria linha do ledger.
 
-As 8 recuperáveis, todas de hardening P0/P1:
+As 8 com `statements`, todas de hardening P0/P1, comparadas com o que já
+existe em `supabase/migrations/`:
 
-| versão           | `name` no ledger                     | bytes de SQL |
-| ---------------- | ------------------------------------ | ------------ |
-| versão           | `name`                               | bytes        | arquivo homônimo no repo | comparação do SQL                                                                                            |
-| ---              | ---                                  | ---          | ---                      | ---                                                                                                          |
-| `20260912142449` | `p0_hash_trigger_search_path`        | 2009         | `20260911190000_…`       | mesmas 13 funções `enforce_*_hash`, mesmo `search_path TO public, extensions, pg_catalog` — **mesmo efeito** |
-| `20260912142506` | `p0_auth_lockout_contract`           | 4292         | `20260911191000_…`       | **md5 idêntico** sem comentários (3486 chars dos dois lados)                                                 |
-| `20260912142520` | `p0_payroll_upsert_contract`         | 3225         | `20260911195000_…`       | **md5 idêntico** sem comentários (2609 chars dos dois lados)                                                 |
-| `20260912143019` | `p0_views_revoke_public`             | 2415         | `20260911192000_…`       | mesmas 42 views, mesmo `security_invoker` + `REVOKE … FROM PUBLIC, anon` — **mesmo efeito**                  |
-| `20260912143239` | `p0_secdef_search_path`              | 1969         | `20260912150000_…`       | mesmas 18 rotinas, mesmo `search_path = pg_catalog, public, extensions` — **mesmo efeito**                   |
-| `20260912143344` | `p1_function_search_path`            | 1344         | `20260912151000_…`       | o arquivo do repo cobre as **mesmas 9 rotinas + `dp_mig_set_search_path`** — **superconjunto**               |
-| `20260912144208` | `p0_pgcrypto_routine_search_path`    | 1719         | `20260912152000_…`       | o arquivo do repo cobre as **mesmas 14 rotinas + `dp_mig_set_search_path`** — **superconjunto**              |
-| `20261107203000` | `fix_rls_insert_configuracoes_ponto` | 1117         | **nenhum**               | única sem homônimo, e **obsoleta** — ver abaixo                                                              |
+| versão           | `name`                               | bytes | arquivo homônimo no repo | comparação do SQL                                                                                            |
+| ---------------- | ------------------------------------ | ----- | ------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `20260912142449` | `p0_hash_trigger_search_path`        | 2009  | `20260911190000_…`       | mesmas 13 funções `enforce_*_hash`, mesmo `search_path TO public, extensions, pg_catalog` — **mesmo efeito** |
+| `20260912142506` | `p0_auth_lockout_contract`           | 4292  | `20260911191000_…`       | **md5 idêntico** sem comentários (3486 chars dos dois lados)                                                 |
+| `20260912142520` | `p0_payroll_upsert_contract`         | 3225  | `20260911195000_…`       | **md5 idêntico** sem comentários (2609 chars dos dois lados)                                                 |
+| `20260912143019` | `p0_views_revoke_public`             | 2415  | `20260911192000_…`       | mesmas 42 views, mesmo `security_invoker` + `REVOKE … FROM PUBLIC, anon` — **mesmo efeito**                  |
+| `20260912143239` | `p0_secdef_search_path`              | 1969  | `20260912150000_…`       | mesmas 18 rotinas, mesmo `search_path = pg_catalog, public, extensions` — **mesmo efeito**                   |
+| `20260912143344` | `p1_function_search_path`            | 1344  | `20260912151000_…`       | o arquivo do repo cobre as **mesmas 9 rotinas + `dp_mig_set_search_path`** — **superconjunto**               |
+| `20260912144208` | `p0_pgcrypto_routine_search_path`    | 1719  | `20260912152000_…`       | o arquivo do repo cobre as **mesmas 14 rotinas + `dp_mig_set_search_path`** — **superconjunto**              |
+| `20261107203000` | `fix_rls_insert_configuracoes_ponto` | 1117  | **nenhum**               | única sem homônimo, e **obsoleta** — ver abaixo                                                              |
 
 **Conclusão, corrigida: nenhuma das 8 deve ser canonizada.** Ter `name` próprio e
 SQL no ledger não prova conteúdo distinto — foi preciso comparar com as fontes
@@ -68,15 +67,26 @@ que já existem, e a comparação derruba a recomendação anterior:
   arquivo do repo cobre **uma rotina a mais** que a versão do ledger. Criar
   arquivo novo para elas acrescentaria uma **segunda execução da mesma mudança**
   ao histórico reproduzível, sem recuperar nada.
-- **A 8ª (`20261107203000`) é a única sem homônimo, e canonizá-la seria uma
-  regressão de acesso.** Ela faz
+- **A 8ª (`20261107203000`) é a única sem homônimo, e o risco dela depende de
+  COMO a migration é executada.** Ela faz
   `CREATE POLICY "configuracoes_ponto_tenant_manage" … FOR ALL TO authenticated`,
-  e `20261112010000_configuracoes_ponto_corrige_policies_prod.sql:12` **dropa
-  essa policy de propósito**, trocando-a pelo conjunto restrito
-  (`pertence_a_empresa` para leitura, `pode_gerir_config_ponto` para
-  inserir/alterar). Conferido no canônico: a policy `FOR ALL` **não existe**
-  hoje; existem as 4 policies da migration posterior. Reaplicar a 8ª
-  reintroduziria o `FOR ALL` que foi removido.
+  e duas migrations posteriores removem essa policy:
+  `20261109000000_configuracoes_ponto_insert_policy.sql:9` e
+  `20261112010000_configuracoes_ponto_corrige_policies_prod.sql:12`, que a
+  substitui pelo conjunto restrito (`pertence_a_empresa` para leitura,
+  `pode_gerir_config_ponto` para inserir/alterar). Conferido em `pg_policy` no
+  canônico: a `FOR ALL` **não existe** hoje; existem as 4 policies da migration
+  posterior. Daí a distinção:
+  - num **replay cronológico a partir do zero**, restaurar o arquivo sob o
+    timestamp original `20261107203000` é **inofensivo** — as duas migrations de
+    novembro rodam depois e o estado final continua restrito;
+  - mas **não é assim que este repositório aplica DDL**. O
+    `canonical-migrations.yml` executa **só os arquivos da lista fechada**,
+    contra o banco como ele está hoje. Nesse modelo, canonizar a 8ª e incluí-la
+    na lista reintroduz a policy `FOR ALL` que foi removida de propósito.
+
+  Como o único uso real do arquivo seria a aplicação isolada, canonizá-lo
+  carrega risco de acesso sem nenhum ganho — o estado correto já está no banco.
 
 Ou seja: o trabalho destas 8 **não está perdido** — está na `main`, sob outro
 timestamp, em 7 casos, e foi deliberadamente substituído no 8º.
