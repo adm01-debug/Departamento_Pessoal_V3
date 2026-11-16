@@ -27,6 +27,12 @@ const RAT_MEDIO_BPS = 30n;       // 3% (src/calculators/tabelas.ts::ENCARGOS_PAD
 const TERCEIROS_BPS = 58n;       // 5.8%
 const FGTS_BPS = 80n;            // 8%
 
+type AliquotaVigente = {
+  encargos_aliquota_bps: number;
+  regime_tributario: string | null;
+  simples_anexo: string | null;
+};
+
 // Encargos patronais por regime tributário da empresa. Espelho manual de
 // src/calculators/tabelas.ts::aliquotaEncargosProvisao (edge não pode importar
 // de src/). Simples Nacional recolhe CPP e Terceiros dentro do DAS
@@ -159,15 +165,45 @@ serve(async (req: Request): Promise<Response> => {
       .eq('competencia', `${competencia}-01`)
       .not('encargos_aliquota_bps', 'is', null)
       .limit(1)
-      .maybeSingle<{ encargos_aliquota_bps: number; regime_tributario: string | null; simples_anexo: string | null }>();
+      .maybeSingle<AliquotaVigente>();
     if (aplicadaErr) throw aplicadaErr;
 
-    const aliquotaOrigem = aplicada ? 'competencia' : 'cadastro';
-    const patronaisBps = aplicada
-      ? BigInt(aplicada.encargos_aliquota_bps)
+    // Competencia zerada perde a aliquota com as linhas: quando todo salario
+    // elegivel e zero a edge chama a RPC com [], o DELETE apaga a competencia
+    // e com ela a unica copia do contrato tributario daquele mes. A auditoria
+    // do calculo anterior sobrevive ao DELETE e carrega os tres campos, entao
+    // ela e a segunda fonte — antes de cair no cadastro de hoje.
+    let auditado: AliquotaVigente | null = null;
+    if (!aplicada) {
+      const { data: auditoria, error: auditoriaErr } = await supabase
+        .from('audit_log')
+        .select('dados_novos')
+        .eq('tabela', 'provisoes_mensais')
+        .eq('acao', 'PROVISOES_CALC')
+        .eq('dados_novos->>empresa_id', empresa_id)
+        .eq('dados_novos->>competencia', competencia)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle<{ dados_novos: Record<string, unknown> | null }>();
+      if (auditoriaErr) throw auditoriaErr;
+      const dados = auditoria?.dados_novos ?? null;
+      const bps = Number(dados?.encargos_aliquota_bps);
+      if (dados && Number.isInteger(bps) && bps >= 0 && bps <= 1000) {
+        auditado = {
+          encargos_aliquota_bps: bps,
+          regime_tributario: (dados.regime_tributario as string | null) ?? null,
+          simples_anexo: (dados.simples_anexo as string | null) ?? null,
+        };
+      }
+    }
+
+    const vigente: AliquotaVigente | null = aplicada ?? auditado;
+    const aliquotaOrigem = aplicada ? 'competencia' : auditado ? 'auditoria' : 'cadastro';
+    const patronaisBps = vigente
+      ? BigInt(vigente.encargos_aliquota_bps)
       : encargosPatronaisBps(empresa?.regime_tributario ?? null, empresa?.simples_anexo ?? null);
-    const regimeAplicado = aplicada ? aplicada.regime_tributario : (empresa?.regime_tributario ?? null);
-    const anexoAplicado = aplicada ? aplicada.simples_anexo : (empresa?.simples_anexo ?? null);
+    const regimeAplicado = vigente ? vigente.regime_tributario : (empresa?.regime_tributario ?? null);
+    const anexoAplicado = vigente ? vigente.simples_anexo : (empresa?.simples_anexo ?? null);
     const contratoTributario = {
       encargos_aliquota_bps: Number(patronaisBps),
       regime_tributario: regimeAplicado,
