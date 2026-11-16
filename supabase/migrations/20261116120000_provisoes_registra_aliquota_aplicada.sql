@@ -85,6 +85,7 @@ DECLARE
   competence_date date;
   v_bps_recebido integer;
   v_bps_vigente integer;
+  v_aliquotas integer;
 BEGIN
   IF p_empresa_id IS NULL OR p_user_id IS NULL
      OR p_competencia !~ '^\d{4}-(0[1-9]|1[0-2])$'
@@ -137,12 +138,18 @@ BEGIN
 
   -- O lote e de UMA competencia e por isso tem UMA aliquota: se vierem
   -- valores diferentes na mesma chamada, o lote esta incoerente.
+  -- Mas lote VAZIO e legitimo e nao pode virar erro (achado da revisao desta
+  -- PR): quando todo salario elegivel e zero, a edge descarta as linhas
+  -- (index.ts pula salarioCents <= 0) e chama a RPC com [].
+  -- O contrato historico desta funcao e substituicao: com [], o DELETE zera a
+  -- competencia e a auditoria e gravada. Exigir exatamente 1 aliquota
+  -- devolveria 500 e, pior, deixaria o passivo antigo de pe.
   SELECT count(DISTINCT (item->>'encargos_aliquota_bps')::integer),
          min((item->>'encargos_aliquota_bps')::integer)
-    INTO STRICT inserted_count, v_bps_recebido
+    INTO STRICT v_aliquotas, v_bps_recebido
     FROM jsonb_array_elements(p_rows) AS item;
-  IF inserted_count <> 1 THEN
-    RAISE EXCEPTION 'monthly provision batch carries % distinct tax rates', inserted_count;
+  IF v_aliquotas > 1 THEN
+    RAISE EXCEPTION 'monthly provision batch carries % distinct tax rates', v_aliquotas;
   END IF;
 
   IF EXISTS (
@@ -174,7 +181,10 @@ BEGIN
    WHERE pm.empresa_id = p_empresa_id
      AND pm.competencia = competence_date
    LIMIT 1;
-  IF v_bps_vigente IS NOT NULL AND v_bps_vigente <> v_bps_recebido THEN
+  -- v_bps_recebido e NULL quando o lote e vazio: nesse caso nao ha aliquota
+  -- nova para conflitar com a gravada, e a substituicao vazia segue valendo.
+  IF v_bps_vigente IS NOT NULL AND v_bps_recebido IS NOT NULL
+     AND v_bps_vigente <> v_bps_recebido THEN
     RAISE EXCEPTION 'monthly provision tax rate changed under lock: stored % bps, received % bps', v_bps_vigente, v_bps_recebido
       USING ERRCODE = '40001';
   END IF;
