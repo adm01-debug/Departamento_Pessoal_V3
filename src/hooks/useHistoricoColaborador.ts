@@ -83,6 +83,9 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoading: isLoadingCargo,
     isError: isErroCargo,
   } = useQuery({
+    // Sem família a reusar: nenhuma mutation do app escreve em historico_cargo
+    // (grep por invalidateQueries não acha), então não há invalidação para
+    // acompanhar. Se um dia houver escrita, esta chave entra na família dela.
     queryKey: ['historico-cargo-timeline', colaboradorId],
     queryFn: () => timelineService.listarHistoricoCargoTimeline(colaboradorId),
     enabled: !!colaboradorId,
@@ -93,7 +96,12 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoading: isLoadingPromocoes,
     isError: isErroPromocoes,
   } = useQuery({
-    queryKey: ['promocoes-timeline', colaboradorId],
+    // Chave DENTRO da família 'promocoes': o React Query casa por prefixo, então
+    // a invalidação de [promocoes] que MovimentacoesPage já faz alcança esta
+    // leitura sem precisar listá-la lá. Chave irmã
+    // ('promocoes-timeline') ficaria fora de QUALQUER invalidação existente e
+    // serviria dado velho por 5 min (staleTime de queryClient.ts).
+    queryKey: ['promocoes', 'timeline', colaboradorId],
     queryFn: () => timelineService.listarPromocoesTimeline(colaboradorId),
     enabled: !!colaboradorId,
   });
@@ -103,7 +111,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoading: isLoadingTransferencias,
     isError: isErroTransferencias,
   } = useQuery({
-    queryKey: ['transferencias-timeline', colaboradorId],
+    queryKey: ['transferencias', 'timeline', colaboradorId],
     queryFn: () => timelineService.listarTransferenciasTimeline(colaboradorId),
     enabled: !!colaboradorId,
   });
@@ -123,7 +131,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoading: isLoadingAfastamentos,
     isError: isErroAfastamentos,
   } = useQuery({
-    queryKey: ['afastamentos-timeline', colaboradorId, empresaId],
+    queryKey: ['afastamentos', 'timeline', colaboradorId, empresaId],
     queryFn: () => timelineService.listarAfastamentosTimeline(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
   });
@@ -159,7 +167,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoading: isLoadingDesligamentos,
     isError: isErroDesligamentos,
   } = useQuery({
-    queryKey: ['desligamentos-timeline', colaboradorId, empresaId],
+    queryKey: ['desligamentos', 'timeline', colaboradorId, empresaId],
     queryFn: () => timelineService.listarDesligamentoTimeline(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
   });
