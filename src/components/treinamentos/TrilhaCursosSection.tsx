@@ -1,21 +1,56 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { catalogoCursoService } from '@/services';
-import { toast } from 'sonner';
-import { Plus, Trash2, Link } from 'lucide-react';
-import type { Tables } from '@/integrations/supabase/database.types';
+import { useRef, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { Plus, Route, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cascadeItemVariants } from '@/components/ui/cascade-motion';
+import { TreinamentosCascadeDialog, TreinamentosCascadeItem } from './TreinamentosCascadeDialog';
+import { TrilhaSequencia } from './TrilhaSequencia';
+import { catalogoCursoService } from '@/services';
+import { bloquearEscritaTreinamentos } from '@/mocks/treinamentosMock';
+import { ordenarVinculos } from './trilhasDerivacoes';
 
-export function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: Tables<'catalogo_cursos'>[] }) {
+/**
+ * Jornada de aprendizagem de UMA trilha (vincular / desvincular).
+ *
+ * Regras de negócio preservadas do componente original: mesma
+ * `queryKey` (`['trilhas_cursos', trilhaId]`), mesma ordem de inserção
+ * (`vinculados.length + 1`), mesmas mutations do `catalogoCursoService` e o
+ * mesmo guard `bloquearEscritaTreinamentos` no modo demonstração.
+ *
+ * A apresentação passou a ser a timeline vertical numerada aprovada: o
+ * cabeçalho da jornada e cada etapa são blocos de cascata do diálogo, então a
+ * entrada usa os MESMOS `cascadeItemVariants` do modal Pendências.
+ */
+export function TrilhaCursosSection({
+  trilhaId,
+  cursos,
+  categoriaPorCurso,
+  className,
+}: {
+  trilhaId: string;
+  /**
+   * Catálogo já carregado pela página. Shape estrutural (não
+   * `Tables<'catalogo_cursos'>`) porque o único chamador, `TrilhaDetalheDialog`,
+   * declara `cursos` nesta forma frouxa — só `id`, `nome` e `carga_horaria` são
+   * usados aqui. Sem `any`: a tipagem do vínculo vem de `listarTrilhasCursos`.
+   */
+  cursos: { id: string; nome?: string | null; carga_horaria?: number | string | null }[];
+  /** Categoria real do curso no catálogo → ícone/família do Design System. */
+  categoriaPorCurso?: ReadonlyMap<string, string | null>;
+  className?: string;
+}) {
   const qc = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
+  const addCursoRef = useRef<HTMLButtonElement>(null);
   const [selCurso, setSelCurso] = useState('');
 
-  const { data: vinculados = [] } = useQuery({
+  const { data: vinculados = [], isLoading } = useQuery({
     queryKey: ['trilhas_cursos', trilhaId],
     queryFn: () => catalogoCursoService.listarTrilhasCursos(trilhaId),
     enabled: !!trilhaId,
@@ -43,95 +78,112 @@ export function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cu
       qc.invalidateQueries({ queryKey: ['trilhas_cursos', trilhaId] });
       toast.success('Curso desvinculado');
     },
+    onError: () => toast.error('Erro ao desvincular curso'),
   });
 
+  const vinculadosOrdenados = ordenarVinculos(vinculados);
   const cursosDisponiveis = cursos.filter((c) => !vinculados.some((v) => v.curso_id === c.id));
 
   return (
-    <div className="mt-4 pt-4 border-t border-border/40">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-bold flex items-center gap-2">
-          <Link className="h-3.5 w-3.5 text-primary" />
-          Cursos na Trilha ({vinculados.length})
-        </h4>
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 rounded-lg">
-              <Plus className="h-3.5 w-3.5 mr-1" />
-              Adicionar Curso
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Adicionar Curso à Trilha</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label>Selecione o Curso</Label>
-                <Select value={selCurso} onValueChange={setSelCurso}>
-                  <SelectTrigger className="rounded-xl">
-                    <SelectValue placeholder="Escolha um curso do catálogo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cursosDisponiveis.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.nome} ({c.carga_horaria}h)
-                      </SelectItem>
-                    ))}
-                    {cursosDisponiveis.length === 0 && (
-                      <SelectItem value="none" disabled>
-                        Nenhum curso disponível
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button
-                onClick={() => vincular.mutate()}
-                disabled={!selCurso || vincular.isPending}
-                className="rounded-xl w-full"
-              >
-                {vincular.isPending ? 'Vinculando...' : 'Vincular à Trilha'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
+    <div className={className}>
+      <motion.div variants={cascadeItemVariants}>
+        <Separator className="mb-3.5 bg-border/50" />
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h4 className="flex items-center gap-2 text-[13.5px] font-semibold text-foreground">
+            <Route className="h-4 w-4 shrink-0 text-[hsl(var(--aqua))]" aria-hidden />
+            Jornada de aprendizagem
+            {!isLoading && (
+              <span className="text-[11.5px] font-normal tabular-nums text-muted-foreground">
+                ({vinculadosOrdenados.length})
+              </span>
+            )}
+          </h4>
 
-      {vinculados.length === 0 ? (
-        <div className="text-center py-6 border-2 border-dashed rounded-2xl bg-muted/20">
-          <p className="text-xs text-muted-foreground font-medium">Nenhum curso vinculado a esta trilha ainda.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {vinculados.map((v, i: number) => (
-            <motion.div
-              key={v.id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex items-center justify-between p-3 bg-white/50 border border-border/40 rounded-xl hover:shadow-xs transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                  {i + 1}
+          <Button
+            ref={addCursoRef}
+            variant="outline"
+            size="sm"
+            className="ml-auto h-9 gap-1.5 rounded-[9px] border-[hsl(var(--aqua)/0.3)] bg-muted/30 px-3.5 text-[12px] font-medium text-foreground hover:border-[hsl(var(--aqua)/0.5)] hover:bg-muted/50 hover:text-foreground"
+            onClick={() => setAddOpen(true)}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Adicionar curso
+          </Button>
+
+          <TreinamentosCascadeDialog
+            open={addOpen}
+            onOpenChange={setAddOpen}
+            blocks={2}
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              addCursoRef.current?.focus();
+            }}
+          >
+            <TreinamentosCascadeItem>
+              <DialogHeader>
+                <DialogTitle>Adicionar curso à trilha</DialogTitle>
+              </DialogHeader>
+            </TreinamentosCascadeItem>
+            <TreinamentosCascadeItem>
+              <div className="grid gap-4 py-2">
+                <div className="grid gap-2">
+                  <Label>Selecione o Curso</Label>
+                  <Select value={selCurso} onValueChange={setSelCurso}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Escolha um curso do catálogo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cursosDisponiveis.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.nome}
+                          {c.carga_horaria ? ` (${c.carga_horaria}h)` : ''}
+                        </SelectItem>
+                      ))}
+                      {cursosDisponiveis.length === 0 && (
+                        <SelectItem value="none" disabled>
+                          Nenhum curso disponível
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold truncate max-w-[150px]">{v.curso?.nome || 'Curso'}</p>
-                  <p className="text-[10px] text-muted-foreground">{v.curso?.carga_horaria || 0} horas de conteúdo</p>
+                <div className="flex justify-end pt-1">
+                  <Button
+                    size="sm"
+                    className="rounded-lg px-4"
+                    onClick={() => {
+                      if (bloquearEscritaTreinamentos('Vincular curso à trilha')) return;
+                      vincular.mutate();
+                    }}
+                    disabled={!selCurso || vincular.isPending}
+                  >
+                    {vincular.isPending ? 'Vinculando...' : 'Vincular à Trilha'}
+                  </Button>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Excluir"
-                className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => desvincular.mutate(v.id)}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </motion.div>
-          ))}
+            </TreinamentosCascadeItem>
+          </TreinamentosCascadeDialog>
         </div>
+      </motion.div>
+
+      <TrilhaSequencia
+        vinculos={vinculadosOrdenados}
+        carregando={isLoading}
+        categoriaPorCurso={categoriaPorCurso}
+        onRemover={(id) => {
+          if (bloquearEscritaTreinamentos('Desvincular curso da trilha')) return;
+          desvincular.mutate(id);
+        }}
+      />
+
+      {!isLoading && vinculadosOrdenados.length > 0 && (
+        <motion.p
+          variants={cascadeItemVariants}
+          className="mt-2 flex items-center gap-1 text-[10.5px] text-muted-foreground/70"
+        >
+          <Trash2 className="h-3 w-3 shrink-0" aria-hidden />
+          Use o ícone de lixeira na etapa para desvincular o curso.
+        </motion.p>
       )}
     </div>
   );
