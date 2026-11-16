@@ -5,17 +5,17 @@
   "vitest",
   "playwright"
  ],
- "total": 665,
+ "total": 666,
  "por_tipo": {
   "contrato": 4,
   "e2e": 31,
   "pytest": 2,
-  "unit": 626
+  "unit": 627
  },
  "onde_ficam": [
   {
    "padrao": "co-localizado (__tests__)",
-   "arquivos": 542
+   "arquivos": 543
   },
   {
    "padrao": "co-localizado (*.test)",
@@ -3306,6 +3306,13 @@
     "src/hooks/useEmpresas.ts"
    ],
    "casos": 4
+  },
+  {
+   "arquivo": "src/hooks/__tests__/invalidacaoColaborador.test.ts",
+   "tipo": "unit",
+   "linhas": 51,
+   "testa": [],
+   "casos": 3
   },
   {
    "arquivo": "src/hooks/__tests__/use-mobile.test.ts",

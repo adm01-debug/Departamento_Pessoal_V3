@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "7a29c0e7a6ead7be646237b9e639de53ab18ed18",
+  "commit": "0b2efa2b71d88a074f119d4e78bfa944d3dc34a0",
   "branch": "main",
-  "data_commit": "2026-11-16T19:06:23-03:00",
+  "data_commit": "2026-11-16T19:14:12-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "0b2efa2",
+    "data": "2026-11-16",
+    "assunto": "fix(dossiê): editar um colaborador passa a atualizar o dossiê dele na hora (#606)"
+   },
    {
     "sha": "7a29c0e",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "de3bf3b",
     "data": "2026-11-16",
     "assunto": "fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)"
-   },
-   {
-    "sha": "8f3efc6",
-    "data": "2026-11-16",
-    "assunto": "chore: inventario do estado real [auto] (#581)"
    }
   ],
-  "arquivos_mudados_7d": 923,
+  "arquivos_mudados_7d": 927,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -141,7 +141,7 @@
    },
    {
     "pasta": "src/hooks/__tests__",
-    "mudancas": 95
+    "mudancas": 96
    },
    {
     "pasta": "src/services/__tests__",
@@ -176,16 +176,16 @@
     "mudancas": 31
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 28
-   },
-   {
     "pasta": "src/components/esocial",
     "mudancas": 28
    },
    {
     "pasta": "supabase/functions/external-db-bridge",
     "mudancas": 28
+   },
+   {
+    "pasta": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 27
    },
    {
     "pasta": "src/components/ponto",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 28
+    "mudancas": 27
    },
    {
     "arquivo": "package.json",
@@ -318,9 +318,9 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3281,
-  "arquivos_codigo": 1815,
-  "linhas_codigo": 341794,
+  "arquivos_total": 3282,
+  "arquivos_codigo": 1816,
+  "linhas_codigo": 341864,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
@@ -332,7 +332,7 @@
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 665,
+  "testes": 666,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -636,7 +636,7 @@
   },
   "src/components": {
    "arquivos": 757,
-   "linhas": 118772
+   "linhas": 118774
   },
   "src/constants": {
    "arquivos": 6,
@@ -651,8 +651,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 188,
-   "linhas": 21410
+   "arquivos": 189,
+   "linhas": 21463
   },
   "src/i18n": {
    "arquivos": 2,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 131,
-   "linhas": 46597
+   "linhas": 46612
   },
   "src/providers": {
    "arquivos": 4,
@@ -825,12 +825,12 @@
    "linhas": 830
   },
   {
-   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
-   "linhas": 824
+   "arquivo": "src/pages/MovimentacoesPage.tsx",
+   "linhas": 827
   },
   {
-   "arquivo": "src/pages/MovimentacoesPage.tsx",
-   "linhas": 817
+   "arquivo": "src/components/workflows/WorkflowDesigner.tsx",
+   "linhas": 824
   },
   {
    "arquivo": "src/components/layout/AppSidebar.tsx",

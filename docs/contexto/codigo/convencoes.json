@@ -22,7 +22,7 @@
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (542)",
+   "co-localizado (__tests__) (543)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(dossiê): editar um colaborador passa a atualizar o dossiê dele na hora (#606)",
    "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)",
    "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)",
    "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)",
-   "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)",
-   "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)"
+   "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

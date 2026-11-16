@@ -2000,7 +2000,7 @@
    "hooks_exportados": [
     "useImportacaoColaboradores"
    ],
-   "linhas": 80,
+   "linhas": 82,
    "dominio": "hooks",
    "tabelas": [
     "colaboradores"

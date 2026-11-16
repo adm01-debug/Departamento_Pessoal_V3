@@ -270,7 +270,7 @@
     "AdmissoesKanban"
    ],
    "export_default": null,
-   "linhas": 212,
+   "linhas": 214,
    "dominio": "components/admissoes",
    "hooks_locais": [
     "useEmpresas"
@@ -7347,7 +7347,7 @@
     "ColaboradorFormPage"
    ],
    "export_default": "ColaboradorFormPage",
-   "linhas": 488,
+   "linhas": 493,
    "dominio": "pages",
    "hooks_locais": [
     "useCargos",
@@ -8105,7 +8105,7 @@
     "MovimentacoesPage"
    ],
    "export_default": "MovimentacoesPage",
-   "linhas": 817,
+   "linhas": 827,
    "dominio": "pages",
    "hooks_locais": [
     "useEmpresas"
