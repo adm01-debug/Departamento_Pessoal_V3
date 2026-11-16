@@ -89,6 +89,18 @@ A infraestrutura de banco para capas de treinamento esta viva e rodando em produ
 
 ## G4 — Camada de LEITURA de capas no cliente (service + hook)
 
+> **Pré-requisito que faltava neste plano.** O `supabase` que o serviço importa
+> **não é o cliente PostgREST**: é o proxy da `external-db-bridge`
+> (`src/integrations/supabase/client.ts`, `dbBridgeProxy`), e a bridge é
+> deny-by-default pelo `TABLE_ALLOWLIST` de
+> `supabase/functions/external-db-bridge/tableCatalog.ts`. Sem `training_images`
+> nesse catálogo, a leitura volta HTTP 403 `TABLE_NOT_CATALOGED`
+> (`external-db-bridge/index.ts:464-471`), o serviço engole o erro e devolve
+> mapa vazio — ou seja, com a flag ligada **nenhuma capa apareceria**, por mais
+> correto que estivessem GRANT e RLS. Catalogar a tabela é mexer no gateway, item
+> da regra 8: vai com aprovação do dono, e **nunca** contornando a bridge com
+> `supabaseBase`. Já corrigido na PR que recupera esta área.
+
 `RECUPERAR_COM_MERGE` · esforço medio · 8 arquivos
 
 **Valor para o negócio.** E o que faz a capa aparecer para o usuario: uma consulta por empresa, URLs assinadas de 1h renovadas antes de expirar, e heranca automatica (turma e certificado usam a capa do curso, entao nunca se paga imagem por turma).
