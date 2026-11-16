@@ -15,6 +15,7 @@ import * as service from '@/services/colaboradorDetalhesService';
 import * as timelineService from '@/services/timelineService';
 import { auditoriaService } from '@/services/auditoriaService';
 import { statusCanonico } from '@/components/avaliacao/feedbackCanonico';
+import { dataLocalDoEvento } from '@/components/colaborador-detalhes/historico/eventDate';
 import { useHistoricoContratos } from './useHistoricoContratos';
 import { useCriarRegistroSalarial, useHistoricoSalarial } from './useColaboradorDetalhes';
 import { useMedidasDisciplinaresColaborador } from './useNovasTabelas';
@@ -551,7 +552,13 @@ export function useHistoricoColaborador(colaboradorId: string) {
       });
     }
 
-    out.sort((a, b) => b.date.localeCompare(a.date));
+    // Ordena pelo INSTANTE, nao pela string: a lista mistura datas sem horario
+    // (`2026-11-17`) e timestamps UTC (`2026-11-17T01:00:00+00:00`). Em
+    // America/Sao_Paulo o segundo e 16/11 as 22h, ou seja ANTERIOR ao primeiro,
+    // mas vinha na frente na comparacao textual. Alem de desordenar as linhas,
+    // isso fazia a sidebar — que usa `allEvents[0]` — apontar o evento errado
+    // como ultima atualizacao.
+    out.sort((a, b) => dataLocalDoEvento(b.date).getTime() - dataLocalDoEvento(a.date).getTime());
     return out;
   }, [
     colaboradorId,

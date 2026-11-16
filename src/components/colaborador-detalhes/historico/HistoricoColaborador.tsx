@@ -13,7 +13,7 @@ import { HistorySidebar } from './HistorySidebar';
 import { buildEventTypeColorMap } from './eventTypeConfig';
 import { HistoryCreateSalaryDialog } from './HistoryCreateSalaryDialog';
 import { HistoryCreateContractDialog } from './HistoryCreateContractDialog';
-import { anoLocalDoEvento } from './eventDate';
+import { anoLocalDoEvento, dataLocalDoEvento } from './eventDate';
 
 interface HistoricoColaboradorProps {
   colaboradorId: string;
@@ -66,7 +66,12 @@ export function HistoricoColaborador({
     if (q) {
       list = list.filter((e) => normalize([e.title, e.description, e.secondary].filter(Boolean).join(' ')).includes(q));
     }
-    return [...list].sort((a, b) => (sortDir === 'desc' ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date)));
+    // Mesmo criterio do hook: compara instantes no fuso local, nao strings.
+    return [...list].sort((a, b) => {
+      const ta = dataLocalDoEvento(a.date).getTime();
+      const tb = dataLocalDoEvento(b.date).getTime();
+      return sortDir === 'desc' ? tb - ta : ta - tb;
+    });
   }, [events, effectiveActiveTypes, selectedYear, search, sortDir]);
 
   const hasActiveFilters =
