@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 110,
+ "total": 112,
  "hooks": [
   {
    "arquivo": "scripts/ai-context/cenarios.mjs",
@@ -515,6 +515,7 @@
     "useAdmissaoWorkflow",
     "useAdmissoes",
     "useAfastamentos",
+    "useAfastamentosRecentes",
     "useAnotacoes",
     "useAssinaturaDigital",
     "useAtualizarCentroCusto",
@@ -534,7 +535,9 @@
     "useCargos",
     "useCategoriasTrabalhador",
     "useCentrosCusto",
+    "useCertificadosColaborador",
     "useColaboradores",
+    "useCompetenciasColaborador",
     "useCondicoesIngresso",
     "useConfiguracoesIntervalo",
     "useContasBancarias",
@@ -589,11 +592,13 @@
     "useExcluirFormacao",
     "useFaltas",
     "useFaltasColaborador",
+    "useFeedbacksColaborador",
     "useFeriados",
     "useFerias",
     "useFeriasAprovacoes",
     "useFeriasArquivos",
     "useFeriasColetivas",
+    "useFeriasResumoColaborador",
     "useFolha",
     "useFormacoes",
     "useGenerosDocumento",
@@ -608,12 +613,15 @@
     "useMediaQuery",
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
+    "useMetasColaborador",
     "useMotivosAfastamento",
     "useNacionalidades",
     "useNavigationGuard",
     "useNotificacoes",
     "useNow",
+    "useOnboardingColaborador",
     "usePDFExport",
+    "usePDIsColaborador",
     "usePaises",
     "usePeriodoExperiencia",
     "usePeriodosAquisitivos",
@@ -621,8 +629,10 @@
     "usePontoOffline",
     "usePontosAbertos",
     "useRegistrarBatida",
+    "useRegistrosPontoSemana",
     "useRelacionamentosContatoEmergencia",
     "useRelacionamentosDependentes",
+    "useSaldoBancoHoras",
     "useSalvarBancoHorasConfig",
     "useSalvarDadosEstagiario",
     "useSalvarDadosEstrangeiro",
@@ -640,22 +650,35 @@
     "useTiposSalario",
     "useTiposVisto",
     "useToast",
+    "useTreinamentosColaborador",
     "useValeTransporte",
     "useVincularDependenteBeneficio",
     "useWebhookLogs",
     "useWebhooks",
     "useWebhooksAvancados"
    ],
-   "linhas": 85,
+   "linhas": 158,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
    "edges": [],
    "hooks_internos": [],
    "canais_realtime": [],
-   "usado_por": 43,
+   "usado_por": 55,
    "usado_por_arquivos": [
     "scripts/ai-context/cenarios.mjs",
+    "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+    "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
+    "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
+    "src/components/colaborador-detalhes/desenvolvimento/JornadaInternaCard.tsx",
+    "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+    "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+    "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+    "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+    "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx",
     "src/components/ferias/FeriasSaldoReport.tsx",
     "src/components/folha/FolhaESocialSync.tsx",
     "src/components/medidas-disciplinares/MedidaContestacaoDialog.tsx",
@@ -672,19 +695,7 @@
     "src/pages/ComunicacaoInternaPage.tsx",
     "src/pages/ControleAcessoPage.tsx",
     "src/pages/ConveniosPage.tsx",
-    "src/pages/DescontosPage.tsx",
-    "src/pages/DespesasPage.tsx",
-    "src/pages/EPIsPage.tsx",
-    "src/pages/EscalasPage.tsx",
-    "src/pages/ExamesPage.tsx",
-    "src/pages/FaltasPage.tsx",
-    "src/pages/JornadasPage.tsx",
-    "src/pages/LGPDPage.tsx",
-    "src/pages/LotacoesPage.tsx",
-    "src/pages/MedidasDisciplinaresPage.tsx",
-    "src/pages/MovimentacoesPage.tsx",
-    "src/pages/ObrigacoesFiscaisPage.tsx",
-    "src/pages/PensoesPage.tsx"
+    "src/pages/DescontosPage.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -769,10 +780,11 @@
    "arquivo": "src/hooks/useAfastamentos.ts",
    "hooks_exportados": [
     "useAfastamentos",
+    "useAfastamentosRecentes",
     "useDocumentosAfastamento",
     "useProrrogacoesAfastamento"
    ],
-   "linhas": 134,
+   "linhas": 150,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1113,7 +1125,7 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 13,
+   "usado_por": 15,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ASOTab.tsx",
     "src/components/colaborador-detalhes/AnotacoesTab.tsx",
@@ -1122,9 +1134,11 @@
     "src/components/colaborador-detalhes/EmergenciaTab.tsx",
     "src/components/colaborador-detalhes/EstrangeiroTab.tsx",
     "src/components/colaborador-detalhes/ExperienciaTab.tsx",
+    "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
     "src/components/colaborador-detalhes/FormacaoTab.tsx",
     "src/components/colaborador-detalhes/HistoricoSalarialTab.tsx",
     "src/components/colaborador-detalhes/PCDTab.tsx",
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/hooks/index.ts",
     "src/hooks/useHistoricoColaborador.ts",
     "src/hooks/useProximosEventos.ts"
@@ -1183,6 +1197,28 @@
    "usado_por_arquivos": [
     "src/components/portal/PortalRegimentoCard.tsx",
     "src/pages/PortalPage.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useComplianceColaborador.ts",
+   "hooks_exportados": [
+    "useConsentimentosColaborador"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEmpresas",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx"
    ],
    "coberto_por_testes": 1
   },
@@ -1437,7 +1473,7 @@
     "usePDIsColaborador",
     "useTreinamentosColaborador"
    ],
-   "linhas": 171,
+   "linhas": 174,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -1447,8 +1483,9 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_arquivos": [
+    "src/hooks/index.ts",
     "src/hooks/useHistoricoColaborador.ts",
     "src/hooks/useProximosEventos.ts"
    ],
@@ -1502,7 +1539,7 @@
    "hooks_exportados": [
     "useDocumentos"
    ],
-   "linhas": 79,
+   "linhas": 83,
    "dominio": "hooks",
    "tabelas": [
     "documentos"
@@ -1548,11 +1585,16 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 110,
+   "usado_por": 116,
    "usado_por_arquivos": [
     "src/components/admissoes/AdmissoesKanban.tsx",
     "src/components/admissoes/DetalhesAdmissaoDialog.tsx",
     "src/components/afastamentos/AfastamentoForm.tsx",
+    "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+    "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
     "src/components/colaboradores/ColaboradorHistory.tsx",
     "src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
     "src/components/desligamentos/NovoDesligamentoDialog.tsx",
@@ -1574,12 +1616,7 @@
     "src/components/layout/EmpresaSwitcher.tsx",
     "src/components/layout/Header.tsx",
     "src/components/medidas-disciplinares/MedidasKanban.tsx",
-    "src/components/pcs/PcsAvaliacaoTab.tsx",
-    "src/components/ponto/GerarAEJDialog.tsx",
-    "src/components/ponto/GerarAFDDialog.tsx",
-    "src/components/ponto/ImportarAFDTDialog.tsx",
-    "src/components/ponto/PontoAuditTimeline.tsx",
-    "src/components/portal/PortalRegimentoCard.tsx"
+    "src/components/pcs/PcsAvaliacaoTab.tsx"
    ],
    "coberto_por_testes": 5
   },
@@ -2158,10 +2195,12 @@
     "useMedidasDisciplinares",
     "useMedidasDisciplinaresColaborador",
     "useRegistrarBatida",
+    "useRegistrosPontoSemana",
+    "useSaldoBancoHoras",
     "useSalvarBancoHorasConfig",
     "useSalvarGradeHorarios"
    ],
-   "linhas": 292,
+   "linhas": 326,
    "dominio": "hooks",
    "tabelas": [],
    "rpcs": [],
@@ -2428,8 +2467,9 @@
     "useQueryClient"
    ],
    "canais_realtime": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
     "src/components/dashboard/AnalyticsSection.tsx"
    ],
    "coberto_por_testes": 1
@@ -2786,11 +2826,12 @@
     "useResultQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 5,
+   "usado_por": 6,
    "usado_por_arquivos": [
     "src/components/colaborador-detalhes/ContasBancariasTab.tsx",
     "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
     "src/components/colaborador-detalhes/EstagiarioTab.tsx",
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
     "src/hooks/index.ts",
     "src/hooks/useProximosEventos.ts"
    ],
@@ -2896,6 +2937,26 @@
     "src/hooks/index.ts"
    ],
    "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useVinculos.ts",
+   "hooks_exportados": [
+    "useVinculosColaborador"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx"
+   ],
+   "coberto_por_testes": 0
   },
   {
    "arquivo": "src/hooks/useWebhooksAvancados.ts",

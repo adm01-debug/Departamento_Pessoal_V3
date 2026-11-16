@@ -7,22 +7,22 @@
    "src/components (1)"
   ],
   "componentes": [
-   "src/components (390)",
+   "src/components (412)",
    "src/pages (110)",
    "src/contexts (3)"
   ],
   "hooks": [
-   "src/hooks (92)",
+   "src/hooks (94)",
    "src/components (8)",
    "src/contexts (4)"
   ],
   "servicos_logica": [
-   "src/services (93)",
-   "src/utils (34)",
+   "src/services (94)",
+   "src/utils (35)",
    "src/schemas (25)"
   ],
   "testes": [
-   "co-localizado (__tests__) (540)",
+   "co-localizado (__tests__) (542)",
    "co-localizado (*.test) (70)",
    "e2e/ (28)"
   ],
@@ -40,7 +40,7 @@
   ]
  },
  "nomenclatura": {
-  "componentes": "PascalCase (86%)",
+  "componentes": "PascalCase (87%)",
   "hooks": "use + PascalCase",
   "servicos": "camelCase (98%)",
   "edge_functions": "kebab-case (69%)",
@@ -48,7 +48,7 @@
  },
  "barrels_index": 24,
  "extensao_componentes": [
-  ".tsx (508)"
+  ".tsx (530)"
  ],
  "alias_imports": {
   "(raiz)": {
@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)",
    "feat(treinamentos): recupera a camada de aplicação das capas de treinamento (branch muri) (#593)",
    "feat(dossie): resgata a Timeline do colaborador da branch muri (#602)",
    "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)",
-   "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)",
-   "docs(auditoria): publica o plano de resgate por área da branch muri (#597)"
+   "test: resgata 11 suítes de testes de Avaliação/Desempenho da branch muri (+194 casos) (#600)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

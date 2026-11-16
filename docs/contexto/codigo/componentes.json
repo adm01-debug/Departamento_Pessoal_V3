@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 508,
- "orfaos": 29,
+ "total": 530,
+ "orfaos": 28,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -1439,6 +1439,259 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
+   "exports": [
+    "DesenvolvimentoProfissionalCard"
+   ],
+   "export_default": null,
+   "linhas": 190,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCompetenciasColaborador",
+    "useFeedbacksColaborador",
+    "useMetasColaborador",
+    "usePDIsColaborador"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
+   "exports": [
+    "FormacaoQualificacoesCard"
+   ],
+   "export_default": null,
+   "linhas": 300,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCertificadosColaborador",
+    "useCriarFormacao",
+    "useFormacoes"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/desenvolvimento/JornadaInternaCard.tsx",
+   "exports": [
+    "JornadaInternaCard"
+   ],
+   "export_default": null,
+   "linhas": 181,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useOnboardingColaborador",
+    "usePeriodoExperiencia"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+   "exports": [
+    "InscricaoCursoLinha",
+    "TreinamentosCard"
+   ],
+   "export_default": null,
+   "linhas": 229,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx",
+   "exports": [
+    "DesenvolvimentoResumoTab"
+   ],
+   "export_default": null,
+   "linhas": 46,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+   "exports": [
+    "AnotacoesInternasCard"
+   ],
+   "export_default": null,
+   "linhas": 193,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useAnotacoes",
+    "useCriarAnotacao"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/AnotacoesInternasDialog.tsx",
+   "exports": [
+    "AnotacaoDetalhada",
+    "AnotacoesInternasDialog"
+   ],
+   "export_default": null,
+   "linhas": 79,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+   "exports": [
+    "DocumentosDigitaisCard"
+   ],
+   "export_default": null,
+   "linhas": 269,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useDocumentos",
+    "useEmpresas"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+   "exports": [
+    "DocumentosPessoaisCard"
+   ],
+   "export_default": null,
+   "linhas": 282,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCriarDocumentoPessoal",
+    "useDocumentosPessoais",
+    "useEmpresas",
+    "useExcluirDocumentoPessoal"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx",
+   "exports": [
+    "FileTypeIcon"
+   ],
+   "export_default": null,
+   "linhas": 18,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+   "exports": [
+    "PrazosAlertasCard"
+   ],
+   "export_default": null,
+   "linhas": 160,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useDocumentos",
+    "useDocumentosPessoais"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/PrazosAlertasDialog.tsx",
+   "exports": [
+    "AlertaDetalhado",
+    "PrazosAlertasDialog"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx",
+   "exports": [
+    "StatusComplianceCard"
+   ],
+   "export_default": null,
+   "linhas": 252,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useConsentimentosColaborador",
+    "useEpisEntregasColaborador",
+    "useMedidasDisciplinaresColaborador",
+    "useTreinamentosColaborador"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/documentos/StatusComplianceDialog.tsx",
+   "exports": [
+    "ComplianceItemDetalhado",
+    "ComplianceSecao",
+    "StatusComplianceDialog"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+   "exports": [
+    "DocumentosComplianceResumoTab"
+   ],
+   "export_default": null,
+   "linhas": 184,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useConsentimentosColaborador",
+    "useDocumentos",
+    "useDocumentosPessoais",
+    "useMedidasDisciplinaresColaborador"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
    "exports": [
     "DocumentosPessoaisTab"
@@ -1452,6 +1705,20 @@
     "useExcluirDocumentoPessoal",
     "usePiiMask"
    ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+   "exports": [
+    "EditarJornadaDialog"
+   ],
+   "export_default": null,
+   "linhas": 149,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
    "tabelas": [],
    "edges": [],
    "usado_por": 1,
@@ -1518,11 +1785,44 @@
     "ExperienciaTab"
    ],
    "export_default": null,
-   "linhas": 146,
+   "linhas": 153,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "usePeriodoExperiencia",
     "useSalvarPeriodoExperiencia"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+   "exports": [
+    "FalhaConsulta"
+   ],
+   "export_default": null,
+   "linhas": 24,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 9,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+   "exports": [
+    "FeriasResumoTab"
+   ],
+   "export_default": null,
+   "linhas": 1029,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useAfastamentosRecentes",
+    "useEmpresas",
+    "useFeriasResumoColaborador",
+    "usePeriodosAquisitivos"
    ],
    "tabelas": [],
    "edges": [],
@@ -1535,7 +1835,7 @@
     "FormacaoTab"
    ],
    "export_default": null,
-   "linhas": 157,
+   "linhas": 165,
    "dominio": "components/colaborador-detalhes",
    "hooks_locais": [
     "useCriarFormacao",
@@ -1544,7 +1844,7 @@
    ],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -1765,6 +2065,26 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+   "exports": [
+    "JornadaPontoTab"
+   ],
+   "export_default": null,
+   "linhas": 203,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useEmpresas",
+    "useFaltasColaborador",
+    "usePontoMelhorado",
+    "useRegistrosPontoSemana",
+    "useSaldoBancoHoras"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/colaborador-detalhes/PCDTab.tsx",
    "exports": [
     "PCDTab"
@@ -1776,6 +2096,25 @@
     "useDeficiencia",
     "useSalvarDeficiencia",
     "useSyncedState"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+   "exports": [
+    "TrabalhoHierarquiaTab"
+   ],
+   "export_default": null,
+   "linhas": 709,
+   "dominio": "components/colaborador-detalhes",
+   "hooks_locais": [
+    "useCentrosCusto",
+    "useEmpresas",
+    "useTimes",
+    "useVinculosColaborador"
    ],
    "tabelas": [],
    "edges": [],
@@ -2040,7 +2379,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 5,
+   "usado_por": 20,
    "orfao": false
   },
   {
@@ -4421,6 +4760,20 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/ponto/PontoAjustesCard.tsx",
+   "exports": [
+    "PontoAjustesCard"
+   ],
+   "export_default": null,
+   "linhas": 37,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/PontoAuditTimeline.tsx",
    "exports": [
     "PontoAuditTimeline"
@@ -4524,6 +4877,20 @@
    "orfao": true
   },
   {
+   "arquivo": "src/components/ponto/PontoOcorrenciasCard.tsx",
+   "exports": [
+    "PontoOcorrenciasCard"
+   ],
+   "export_default": null,
+   "linhas": 74,
+   "dominio": "components/ponto",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/ponto/PontoStreakCard.tsx",
    "exports": [
     "PontoStreakCard"
@@ -4553,7 +4920,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -4567,7 +4934,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -5243,8 +5610,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 10,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/animated-tabs.tsx",
@@ -5307,7 +5674,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 200,
+   "usado_por": 213,
    "orfao": false
   },
   {
@@ -5322,7 +5689,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 291,
+   "usado_por": 303,
    "orfao": false
   },
   {
@@ -5357,7 +5724,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 259,
+   "usado_por": 274,
    "orfao": false
   },
   {
@@ -5589,7 +5956,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 143,
+   "usado_por": 144,
    "orfao": false
   },
   {
@@ -5725,7 +6092,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 150,
+   "usado_por": 156,
    "orfao": false
   },
   {
@@ -5822,7 +6189,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 14,
+   "usado_por": 15,
    "orfao": false
   },
   {
@@ -5902,7 +6269,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 107,
+   "usado_por": 112,
    "orfao": false
   },
   {
@@ -6066,7 +6433,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 94,
+   "usado_por": 107,
    "orfao": false
   },
   {
@@ -6096,7 +6463,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 12,
+   "usado_por": 13,
    "orfao": false
   },
   {
@@ -6144,7 +6511,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 107,
+   "usado_por": 109,
    "orfao": false
   },
   {
@@ -6176,7 +6543,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 48,
+   "usado_por": 49,
    "orfao": false
   },
   {
@@ -6938,7 +7305,7 @@
     "ColaboradorDetalhesPage"
    ],
    "export_default": "ColaboradorDetalhesPage",
-   "linhas": 481,
+   "linhas": 543,
    "dominio": "pages",
    "hooks_locais": [
     "useDataAccessLog",

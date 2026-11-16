@@ -1,7 +1,7 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 173,
+ "total": 175,
  "por_camada": {
   "contexts": 1,
   "integrations": 7,
@@ -9,8 +9,8 @@
   "providers": 1,
   "python": 3,
   "schemas": 25,
-  "services": 93,
-  "utils": 34
+  "services": 94,
+  "utils": 35
  },
  "arquivos": [
   {
@@ -350,7 +350,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 240,
+   "usado_por": 241,
    "usado_por_modulos": [
     "components",
     "components/admin",
@@ -509,12 +509,13 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 76,
+   "usado_por": 79,
    "usado_por_modulos": [
     "components/admin",
     "components/admissoes",
     "components/afastamentos",
     "components/beneficios",
+    "components/colaborador-detalhes",
     "components/desligamentos",
     "components/epis",
     "components/exames",
@@ -808,7 +809,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 194,
+   "usado_por": 200,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -1906,8 +1907,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "hooks",
     "services"
    ],
    "coberto_por_testes": 1,
@@ -2080,8 +2082,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/colaborador-detalhes",
     "hooks",
     "services"
    ],
@@ -2252,7 +2255,7 @@
     "colaboradorService"
    ],
    "export_default": null,
-   "linhas": 162,
+   "linhas": 181,
    "tabelas": [
     "colaboradores"
    ],
@@ -3052,6 +3055,7 @@
     "horaExtraService",
     "intervaloService",
     "jornadaHorariosService",
+    "jornadaService",
     "lgpdService",
     "localTrabalhoService",
     "medidasDisciplinaresService",
@@ -3074,8 +3078,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 30,
+   "usado_por": 34,
    "usado_por_modulos": [
+    "components/colaborador-detalhes",
     "components/ferias",
     "components/medidas-disciplinares",
     "components/portal",
@@ -3170,6 +3175,33 @@
    "orfao": false
   },
   {
+   "arquivo": "src/services/jornadaService.ts",
+   "camada": "services",
+   "exports": [
+    "Jornada",
+    "jornadaService"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "tabelas": [
+    "colaboradores",
+    "jornadas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
    "arquivo": "src/services/lgpdService.ts",
    "camada": "services",
    "exports": [
@@ -3178,7 +3210,7 @@
     "lgpdService"
    ],
    "export_default": null,
-   "linhas": 99,
+   "linhas": 102,
    "tabelas": [
     "lgpd_consentimentos",
     "lgpd_solicitacoes"
@@ -3190,8 +3222,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "hooks",
     "pages",
     "services"
    ],
@@ -3214,8 +3247,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 2,
+   "usado_por": 3,
    "usado_por_modulos": [
+    "components/colaborador-detalhes",
     "hooks",
     "services"
    ],
@@ -3614,8 +3648,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 3,
+   "usado_por": 4,
    "usado_por_modulos": [
+    "hooks",
     "pages",
     "services"
    ],
@@ -4046,6 +4081,7 @@
    "arquivo": "src/services/tabelas/rhService.ts",
    "camada": "services",
    "exports": [
+    "TreinamentoParticipanteComTurma",
     "configAfastamentosService",
     "feriasSolicitacoesService",
     "historicoCargoService",
@@ -4056,7 +4092,7 @@
     "treinamentoParticipantesService"
    ],
    "export_default": null,
-   "linhas": 251,
+   "linhas": 256,
    "tabelas": [
     "config_afastamentos",
     "ferias_solicitacoes",
@@ -4626,7 +4662,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
     "hooks"
    ],
@@ -4907,7 +4943,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 48,
+   "usado_por": 50,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/descontos",
@@ -4951,6 +4987,34 @@
     "pages"
    ],
    "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/documentFileType.ts",
+   "camada": "utils",
+   "exports": [
+    "DOC_KIND_STYLE",
+    "DocFileKind",
+    "getDocumentFileType",
+    "getUrlExtension"
+   ],
+   "export_default": null,
+   "linhas": 74,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "lucide-react"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/colaborador-detalhes"
+   ],
+   "coberto_por_testes": 0,
    "orfao": false
   },
   {
@@ -5164,10 +5228,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 16,
+   "usado_por": 19,
    "usado_por_modulos": [
     "components/admissoes",
     "components/afastamentos",
+    "components/colaborador-detalhes",
     "components/esocial",
     "components/folha",
     "components/premiacoes",
@@ -5414,8 +5479,9 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "usado_por_modulos": [
+    "components/colaborador-detalhes",
     "hooks"
    ],
    "coberto_por_testes": 4,
@@ -5532,9 +5598,10 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 126,
+   "usado_por": 128,
    "usado_por_modulos": [
     "components/admissoes",
+    "components/colaborador-detalhes",
     "components/dashboard",
     "components/departamentos",
     "components/desligamentos",
@@ -5575,7 +5642,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 10,
+   "usado_por": 12,
    "usado_por_modulos": [
     "components/afastamentos",
     "components/colaborador-detalhes",

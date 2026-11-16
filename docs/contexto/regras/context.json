@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "935356c8ab1524aed25eaac10ccfa049ff67c187",
+  "sha": "7a29c0e7a6ead7be646237b9e639de53ab18ed18",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 21:02 UTC",
-  "files_total": 3274,
-  "code_files": 2700,
-  "code_lines": 401166
+  "generated_at": "2026-11-16 22:06 UTC",
+  "files_total": 3302,
+  "code_files": 2728,
+  "code_lines": 406436
  },
  "version": "1.3.2",
- "facts_hash": "64bdd93e347254b3",
+ "facts_hash": "2b66dd3217b6c75c",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 915,
-   ".ts": 843,
-   ".tsx": 811,
+   ".ts": 847,
+   ".tsx": 835,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -87451,6 +87451,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -87539,7 +87540,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 159
+    "deps_count": 160
    },
    {
     "path": "",
@@ -87572,7 +87573,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 101
+    "deps_count": 102
    },
    {
     "path": "",
@@ -87642,6 +87643,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -87725,7 +87727,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 111
+    "deps_count": 112
    },
    {
     "path": "",
@@ -87849,17 +87851,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -87867,6 +87874,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -87878,17 +87890,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -87946,7 +87961,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 297
+    "deps_count": 302
    },
    {
     "path": "",
@@ -88040,17 +88055,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -88058,6 +88078,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -88069,17 +88094,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -88137,7 +88165,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 181
+    "deps_count": 189
    },
    {
     "path": "",
@@ -88216,6 +88244,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -88292,7 +88321,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 142
+    "deps_count": 143
    },
    {
     "path": "",
@@ -88392,17 +88421,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -88410,6 +88444,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -88421,17 +88460,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -88489,7 +88531,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 189
+    "deps_count": 197
    },
    {
     "path": "",
@@ -88556,17 +88598,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -88574,6 +88621,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -88585,17 +88637,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -88653,7 +88708,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 193
    },
    {
     "path": "",
@@ -88743,17 +88798,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -88761,6 +88821,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -88772,17 +88837,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -88840,13 +88908,14 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 184
+    "deps_count": 192
    },
    {
     "path": "",
     "file": "src/pages/ColaboradorDetalhesPage.tsx",
     "component": "ColaboradorDetalhesPage",
     "tables_transitive": [
+     "admissao_tokens",
      "admissoes",
      "afastamentos",
      "anotacoes_colaborador",
@@ -88898,6 +88967,7 @@
      "feedbacks_360_aprovacoes_gestor",
      "feedbacks_360_consolidacoes",
      "feedbacks_360_validacoes_potencial",
+     "feriados",
      "ferias",
      "ferias_aprovacoes",
      "ferias_aprovacoes_log",
@@ -88913,6 +88983,7 @@
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -88947,6 +89018,7 @@
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
+     "solicitacoes_ajuste_ponto",
      "solicitacoes_hora_extra",
      "tarefas_onboarding",
      "times",
@@ -89008,7 +89080,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 273
    },
    {
     "path": "",
@@ -89076,17 +89148,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -89094,6 +89171,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -89105,17 +89187,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -89175,7 +89260,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 208
+    "deps_count": 213
    },
    {
     "path": "",
@@ -89266,17 +89351,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -89284,6 +89374,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -89295,17 +89390,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -89363,7 +89461,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 188
+    "deps_count": 196
    },
    {
     "path": "",
@@ -89376,6 +89474,7 @@
      "ajustes_ponto",
      "anotacoes_colaborador",
      "asos",
+     "banco_horas",
      "banco_horas_config",
      "batidas_ponto",
      "beneficiarios_plano",
@@ -89386,11 +89485,14 @@
      "bitrix24_sync_logs",
      "blocked_ips",
      "campos_customizados",
+     "catalogo_cursos",
      "centros_custo",
      "certificados_digitais",
+     "ciclos_avaliacao",
      "cid10",
      "colaborador_beneficios",
      "colaboradores",
+     "competencias_config",
      "config_afastamentos",
      "config_alertas_indicadores",
      "configuracoes",
@@ -89421,6 +89523,10 @@
      "etnias",
      "eventos_variaveis",
      "faltas",
+     "feedbacks_360",
+     "feedbacks_360_aprovacoes_gestor",
+     "feedbacks_360_consolidacoes",
+     "feedbacks_360_validacoes_potencial",
      "feriados",
      "ferias",
      "ferias_aprovacoes",
@@ -89434,6 +89540,7 @@
      "historico_ferias",
      "historico_salarial",
      "identidades_genero",
+     "inscricoes_cursos",
      "integracoes",
      "jornadas_horarios",
      "lancamentos_folha",
@@ -89444,13 +89551,16 @@
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
      "medidas_disciplinares_workflow_log",
+     "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
      "onboarding_colaborador",
+     "onboarding_kits",
      "onboarding_tarefas",
      "onboarding_template_tarefas",
      "onboarding_templates",
      "parametros_sistema",
+     "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
      "periodos_ponto",
@@ -89458,15 +89568,22 @@
      "profiles",
      "prorrogacoes_afastamento",
      "recargas_vale",
+     "registros_ponto",
      "relatorios_agendados",
      "rubricas_folha",
      "saved_filters",
      "seguros_colaboradores",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
+     "treinamento_certificados",
+     "treinamento_feedback",
+     "treinamento_instancias",
      "treinamento_participantes",
+     "trilhas_aprendizado",
+     "trilhas_cursos",
      "user_mfa",
      "valores_campos_customizados",
      "versao_banco",
@@ -89479,6 +89596,7 @@
      "vw_colaboradores_completo",
      "vw_dashboard_time",
      "vw_faltas_mensal",
+     "vw_feedbacks_360_versao",
      "vw_ferias_resumo",
      "vw_folha_ponto_mensal",
      "vw_kpi_absenteismo",
@@ -89508,12 +89626,18 @@
      "aplicar_medida_folha_ponto",
      "claim_admission_esocial_event",
      "complete_admission_esocial_event",
+     "criar_feedback_seguro",
+     "decidir_aprovacao_gestor",
+     "editar_feedback_seguro",
+     "enviar_avaliacao_ao_gestor",
      "fail_admission_esocial_event",
+     "finalizar_feedback",
      "get_audit_trail",
      "get_my_user_empresas",
      "get_security_alerts_summary",
      "get_user_roles",
      "listar_auditoria",
+     "listar_historico_feedback",
      "log_frontend_error",
      "medida_aprovar",
      "medida_arquivar",
@@ -89521,11 +89645,15 @@
      "medida_enviar_aprovacao",
      "medida_rejeitar",
      "medida_responder_contestacao",
+     "pode_aprovar_colaborador",
+     "pode_gerir_avaliacoes",
      "registrar_auditoria",
+     "registrar_batida_ponto",
      "set_own_default_empresa",
-     "sugerir_proxima_medida"
+     "sugerir_proxima_medida",
+     "validar_potencial_avaliacao"
     ],
-    "deps_count": 187
+    "deps_count": 194
    },
    {
     "path": "",
@@ -89575,6 +89703,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -89651,7 +89780,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 137
+    "deps_count": 138
    },
    {
     "path": "",
@@ -89807,17 +89936,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -89825,6 +89959,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -89836,17 +89975,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -89904,7 +90046,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 200
    },
    {
     "path": "",
@@ -89971,17 +90113,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -89989,6 +90136,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -90000,17 +90152,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -90068,7 +90223,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 188
+    "deps_count": 196
    },
    {
     "path": "",
@@ -90201,17 +90356,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -90219,6 +90379,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -90230,17 +90395,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -90298,7 +90466,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 204
    },
    {
     "path": "",
@@ -90410,17 +90578,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -90428,6 +90601,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -90439,17 +90617,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -90507,7 +90688,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 203
    },
    {
     "path": "",
@@ -90558,6 +90739,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -90634,7 +90816,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 146
+    "deps_count": 147
    },
    {
     "path": "",
@@ -90702,17 +90884,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -90720,6 +90907,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -90731,17 +90923,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -90799,7 +90994,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 204
+    "deps_count": 209
    },
    {
     "path": "",
@@ -90886,6 +91081,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -90964,7 +91160,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 167
+    "deps_count": 168
    },
    {
     "path": "",
@@ -91055,17 +91251,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -91073,6 +91274,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -91084,17 +91290,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -91152,7 +91361,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 193
    },
    {
     "path": "",
@@ -91220,17 +91429,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -91238,6 +91452,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -91249,17 +91468,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -91317,7 +91539,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 208
    },
    {
     "path": "",
@@ -91385,17 +91607,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -91403,6 +91630,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -91414,17 +91646,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -91482,7 +91717,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 202
    },
    {
     "path": "",
@@ -91564,6 +91799,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -91647,7 +91883,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 224
+    "deps_count": 226
    },
    {
     "path": "",
@@ -91724,6 +91960,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -91800,7 +92037,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 139
+    "deps_count": 140
    },
    {
     "path": "",
@@ -91896,7 +92133,7 @@
      "registrar_auditoria",
      "set_own_default_empresa"
     ],
-    "deps_count": 167
+    "deps_count": 168
    },
    {
     "path": "",
@@ -92208,10 +92445,13 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
@@ -92219,6 +92459,7 @@
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -92226,6 +92467,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -92237,17 +92483,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -92305,7 +92554,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 193
    },
    {
     "path": "",
@@ -92372,17 +92621,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -92390,6 +92644,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -92401,17 +92660,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -92469,7 +92731,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 201
    },
    {
     "path": "",
@@ -92560,17 +92822,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -92578,6 +92845,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -92589,17 +92861,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -92657,7 +92932,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 183
+    "deps_count": 191
    },
    {
     "path": "",
@@ -92725,17 +93000,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -92743,6 +93023,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -92754,17 +93039,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -92823,7 +93111,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 213
+    "deps_count": 218
    },
    {
     "path": "",
@@ -92890,16 +93178,21 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -92907,6 +93200,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -92918,17 +93216,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -92986,7 +93287,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 202
    },
    {
     "path": "",
@@ -93120,16 +93421,21 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -93137,6 +93443,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -93148,17 +93459,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -93216,7 +93530,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 206
    },
    {
     "path": "",
@@ -93362,17 +93676,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -93380,6 +93699,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -93391,17 +93715,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -93459,7 +93786,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 197
+    "deps_count": 202
    },
    {
     "path": "",
@@ -93554,17 +93881,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -93572,6 +93904,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -93583,17 +93920,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -93651,7 +93991,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 186
+    "deps_count": 194
    },
    {
     "path": "",
@@ -93776,6 +94116,7 @@
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lancamentos_folha",
@@ -93791,6 +94132,7 @@
      "notificacoes",
      "notificacoes_admissao",
      "onboarding_colaborador",
+     "onboarding_kits",
      "onboarding_tarefas",
      "onboarding_template_tarefas",
      "onboarding_templates",
@@ -93805,6 +94147,7 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
@@ -93814,6 +94157,7 @@
      "saved_filters",
      "seguros_colaboradores",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
@@ -93894,7 +94238,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 196
+    "deps_count": 203
    },
    {
     "path": "",
@@ -93983,17 +94327,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -94001,6 +94350,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -94012,17 +94366,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "solicitacoes_ajuste_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilha_auditoria_ponto",
      "trilhas_aprendizado",
      "trilhas_cursos",
@@ -94089,7 +94446,7 @@
      "validar_potencial_avaliacao",
      "verificar_espelho_ponto"
     ],
-    "deps_count": 221
+    "deps_count": 226
    },
    {
     "path": "",
@@ -94137,6 +94494,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -94216,7 +94574,7 @@
      "validar_potencial_avaliacao",
      "vincular_colaborador_ao_usuario"
     ],
-    "deps_count": 147
+    "deps_count": 148
    },
    {
     "path": "",
@@ -94284,17 +94642,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -94302,6 +94665,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -94318,17 +94686,20 @@
      "premiacoes_pagamentos",
      "premiacoes_regras",
      "premiacoes_roi_cenarios",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -94387,7 +94758,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 206
    },
    {
     "path": "",
@@ -94462,6 +94833,7 @@
      "folhas_pagamento",
      "historico_contratos",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
@@ -94538,7 +94910,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 138
+    "deps_count": 139
    },
    {
     "path": "",
@@ -94608,17 +94980,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -94626,6 +95003,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -94637,6 +95019,7 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
@@ -94645,12 +95028,14 @@
      "recrutamento_testes",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -94709,7 +95094,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 190
+    "deps_count": 198
    },
    {
     "path": "",
@@ -94807,17 +95192,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -94825,6 +95215,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -94836,17 +95231,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -94904,7 +95302,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 186
+    "deps_count": 194
    },
    {
     "path": "",
@@ -95056,6 +95454,7 @@
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lancamentos_folha",
@@ -95071,6 +95470,7 @@
      "notificacoes",
      "notificacoes_admissao",
      "onboarding_colaborador",
+     "onboarding_kits",
      "onboarding_tarefas",
      "onboarding_template_tarefas",
      "onboarding_templates",
@@ -95085,6 +95485,7 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
@@ -95094,6 +95495,7 @@
      "saved_filters",
      "seguros_colaboradores",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
@@ -95174,7 +95576,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 205
    },
    {
     "path": "",
@@ -95242,17 +95644,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -95260,6 +95667,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -95271,17 +95683,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -95339,7 +95754,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 183
+    "deps_count": 191
    },
    {
     "path": "",
@@ -95407,17 +95822,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -95425,6 +95845,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -95436,16 +95861,19 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -95503,7 +95931,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 185
+    "deps_count": 193
    },
    {
     "path": "",
@@ -95571,17 +95999,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -95589,6 +96022,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -95600,17 +96038,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -95668,7 +96109,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 198
+    "deps_count": 203
    },
    {
     "path": "",
@@ -95736,17 +96177,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -95754,6 +96200,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -95765,17 +96216,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -95833,7 +96287,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 184
+    "deps_count": 192
    },
    {
     "path": "",
@@ -95926,17 +96380,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -95944,6 +96403,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -95955,16 +96419,19 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -96022,7 +96489,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 186
+    "deps_count": 194
    },
    {
     "path": "",
@@ -96127,17 +96594,22 @@
      "ferias_aprovacoes_log",
      "ferias_arquivos",
      "ferias_coletivas",
+     "ferias_solicitacoes",
      "folha_itens",
      "folhas_pagamento",
      "formacoes_academicas",
+     "historico_cargo",
      "historico_contratos",
+     "historico_ferias",
      "historico_salarial",
      "identidades_genero",
      "inscricoes_cursos",
+     "jornadas",
      "jornadas_horarios",
      "lancamentos_contabeis",
      "lgpd_consentimentos",
      "lgpd_solicitacoes",
+     "linhas_transporte",
      "medidas_disciplinares",
      "medidas_disciplinares_contestacao_anexos",
      "medidas_disciplinares_integracao",
@@ -96145,6 +96617,11 @@
      "metas_okrs",
      "notificacoes",
      "notificacoes_admissao",
+     "onboarding_colaborador",
+     "onboarding_kits",
+     "onboarding_tarefas",
+     "onboarding_template_tarefas",
+     "onboarding_templates",
      "pdi_plano_desenvolvimento",
      "periodos_aquisitivos",
      "periodos_experiencia",
@@ -96156,17 +96633,20 @@
      "plano_contas",
      "ponto_auditoria",
      "pontos_abertos",
+     "profiles",
      "prorrogacoes_afastamento",
      "provisoes_mensais",
      "recargas_vale",
      "registros_ponto",
      "solicitacoes_hora_extra",
+     "tarefas_onboarding",
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
+     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -96224,7 +96704,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 195
+    "deps_count": 203
    },
    {
     "path": "/auth/callback",
@@ -99313,7 +99793,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 733,
+  "components_count": 757,
   "hooks": [
    {
     "name": "useContacts",
@@ -99405,6 +99885,10 @@
    },
    {
     "name": "useDocumentosAfastamento",
+    "file": "src/hooks/useAfastamentos.ts"
+   },
+   {
+    "name": "useAfastamentosRecentes",
     "file": "src/hooks/useAfastamentos.ts"
    },
    {
@@ -99594,6 +100078,10 @@
    {
     "name": "useColaboradores",
     "file": "src/hooks/useColaboradores.ts"
+   },
+   {
+    "name": "useConsentimentosColaborador",
+    "file": "src/hooks/useComplianceColaborador.ts"
    },
    {
     "name": "useConfiguracoesIntervalo",
@@ -99888,6 +100376,14 @@
     "file": "src/hooks/useNovasTabelas.ts"
    },
    {
+    "name": "useSaldoBancoHoras",
+    "file": "src/hooks/useNovasTabelas.ts"
+   },
+   {
+    "name": "useRegistrosPontoSemana",
+    "file": "src/hooks/useNovasTabelas.ts"
+   },
+   {
     "name": "useNow",
     "file": "src/hooks/useNow.ts"
    },
@@ -100158,6 +100654,10 @@
    {
     "name": "useValeTransporte",
     "file": "src/hooks/useValeTransporte.ts"
+   },
+   {
+    "name": "useVinculosColaborador",
+    "file": "src/hooks/useVinculos.ts"
    },
    {
     "name": "useWebhooksAvancados",
@@ -100812,8 +101312,8 @@
   },
   {
    "module": "src/components",
-   "files": 733,
-   "lines": 113897,
+   "files": 757,
+   "lines": 118772,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101144,8 +101644,8 @@
   },
   {
    "module": "src/hooks",
-   "files": 186,
-   "lines": 21251,
+   "files": 188,
+   "lines": 21410,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101185,7 +101685,7 @@
     "use-mobile.tsx: useIsMobile, useMobile",
     "useAdmissaoWorkflow.ts: useAdmissaoWorkflow",
     "useAdmissoes.ts: useAdmissoes",
-    "useAfastamentos.ts: AfastamentoFiltros, useAfastamentos, useProrrogacoesAfastamento, useDocumentosAfastamento",
+    "useAfastamentos.ts: AfastamentoFiltros, useAfastamentos, useProrrogacoesAfastamento, useDocumentosAfastamento, useAfastamentosRecentes",
     "useAssinarAvisoFerias.ts: useAssinarAvisoFerias",
     "useAssinaturaDigital.ts: useAssinaturaDigital",
     "useAssinaturas.ts: DocumentoAssinatura, useAssinaturas",
@@ -101199,6 +101699,7 @@
     "useColaboradorDetalhes.ts: useDependentes, useCriarDependente, useAtualizarDependente, useExcluirDependente, useContatosEmergencia, useCriarContatoEmergencia",
     "useColaboradorVinculo.ts: useColaboradorVinculo",
     "useColaboradores.ts: useColaboradores",
+    "useComplianceColaborador.ts: useConsentimentosColaborador",
     "useConfiguracoesIntervalo.ts: useConfiguracoesIntervalo",
     "useContratacaoDigital.ts: useContratacaoDigital",
     "useContratoTemplates.ts: useContratoTemplates",
@@ -101220,16 +101721,15 @@
     "useFeriados.ts: useFeriados",
     "useFerias.ts: useFerias",
     "useFeriasAprovacao.ts: useFeriasAprovacao",
-    "useFolha.ts: useFolha",
-    "useFolhaAuditoria.ts: AuditoriaEvento, AuditoriaSeveridade, FolhaAuditoria, useFolhaAuditoria"
+    "useFolha.ts: useFolha"
    ],
    "docs": [
     "useAuth.ts: V19: useAuth hook - Re-export do context",
+    "useComplianceColaborador.ts: PARTE I — Dossiê do Colaborador, aba Documentos & Compliance.",
     "useDesenvolvimentoColaborador.ts: PARTE G — Dossiê do Colaborador, aba Desenvolvimento (+ Onboarding). Hooks finos por colaborador_id sobre services já existentes (avaliacaoService, catalogoCursoService, rhService), sem duplicar lógica.",
     "useEmpresas.ts: @fileoverview Hook para gerenciamento de empresas @module hooks/useEmpresas",
     "useGrupo.ts: @fileoverview Hook de contexto de GRUPO empresarial. Holding única com várias CNPJs. Expõe lista completa de empresas no escopo do usuário (via RLS / get_user_scope_empresas) e helpers agregados (cor, regime, ordem) usados por dashboards consolidados. Performance: agrega em maps Record<id, X> para O …",
-    "useHistoricoColaborador.ts: Histórico do Colaborador — substitui useTimelineFuncional.ts. Agrega os MESMOS ~13 sub-recursos de antes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamentos) MAIS o audit_log ( …",
-    "useMediaQuery.ts: V15-137: src/hooks/useMediaQuery.ts"
+    "useHistoricoColaborador.ts: Histórico do Colaborador — substitui useTimelineFuncional.ts. Agrega os MESMOS ~13 sub-recursos de antes (vínculos, histórico salarial, contratos, cargo, promoções, transferências, férias, afastamentos, treinamentos, feedbacks 360, onboarding, medidas disciplinares, desligamentos) MAIS o audit_log ( …"
    ],
    "deps": [
     "@supabase/supabase-js",
@@ -101277,6 +101777,7 @@
     "src/hooks/useColaboradorDetalhes.ts",
     "src/hooks/useColaboradorVinculo.ts",
     "src/hooks/useColaboradores.ts",
+    "src/hooks/useComplianceColaborador.ts",
     "src/hooks/useConfiguracoesIntervalo.ts",
     "src/hooks/useContratacaoDigital.ts",
     "src/hooks/useContratoTemplates.ts",
@@ -101336,8 +101837,7 @@
     "src/hooks/useSessionTimeout.ts",
     "src/hooks/useSyncedState.ts",
     "src/hooks/useSystemHealth.ts",
-    "src/hooks/useSystemHealthHistory.ts",
-    "src/hooks/useTabelasReferencia.ts"
+    "src/hooks/useSystemHealthHistory.ts"
    ]
   },
   {
@@ -101486,7 +101986,7 @@
   {
    "module": "src/pages",
    "files": 131,
-   "lines": 46535,
+   "lines": 46597,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -101848,8 +102348,8 @@
   },
   {
    "module": "src/services",
-   "files": 182,
-   "lines": 38327,
+   "files": 183,
+   "lines": 38413,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -101948,6 +102448,7 @@
     "homologacoes_rescisao",
     "identidades_genero",
     "inscricoes_cursos",
+    "jornadas",
     "jornadas_horarios",
     "lancamentos_contabeis",
     "lancamentos_folha",
@@ -102177,6 +102678,7 @@
     "src/services/integracaoService.ts",
     "src/services/intervaloService.ts",
     "src/services/jornadaHorariosService.ts",
+    "src/services/jornadaService.ts",
     "src/services/lgpdService.ts",
     "src/services/localTrabalhoService.ts",
     "src/services/loggerService.ts",
@@ -102210,8 +102712,7 @@
     "src/services/__tests__/afastamentoService.test.ts",
     "src/services/__tests__/assistenteIAService.test.ts",
     "src/services/__tests__/auditoriaService.test.ts",
-    "src/services/__tests__/authService.test.ts",
-    "src/services/__tests__/avaliacaoService.test.ts"
+    "src/services/__tests__/authService.test.ts"
    ]
   },
   {
@@ -102273,7 +102774,7 @@
   {
    "module": "src/types",
    "files": 13,
-   "lines": 854,
+   "lines": 868,
    "tables": [],
    "exports": [
     "afastamentos.ts: AfastamentoRow, AfastamentoInsert, AfastamentoUpdate, ConfigAfastamentoRow, DocumentoAfastamentoRow, ProrrogacaoAfastamentoRow",
@@ -102322,8 +102823,8 @@
   },
   {
    "module": "src/utils",
-   "files": 68,
-   "lines": 8552,
+   "files": 69,
+   "lines": 8626,
    "tables": [
     "folha_itens",
     "rubricas_folha"
@@ -102337,6 +102838,7 @@
     "cursorPagination.ts: encodeCursor, decodeCursor, CursorFilter, cursorToFilter",
     "dateLocal.ts: formatDateLocalISO, todayLocalISO, parseDateLocalISO, addDaysLocal, formatCompetenciaLocal, currentCompetenciaLocal",
     "desligamentoExcel.ts: exportarDesligamentosExcel",
+    "documentFileType.ts: DocFileKind, DOC_KIND_STYLE, getUrlExtension, getDocumentFileType",
     "esocialXmlGenerator.ts: ESocialDados, ESocialXmlParams, gerarXmlESocial",
     "evaluationPDF.ts: gerarPDIPDF",
     "feriasPDF.ts: FeriasKpiStats, FeriasRelatorioFilters, feriasPDF",
@@ -102379,6 +102881,7 @@
     "exceljs",
     "jspdf",
     "jspdf-autotable",
+    "lucide-react",
     "sonner",
     "vitest"
    ],
@@ -102397,6 +102900,7 @@
     "src/utils/cursorPagination.ts",
     "src/utils/dateLocal.ts",
     "src/utils/desligamentoExcel.ts",
+    "src/utils/documentFileType.ts",
     "src/utils/esocialXmlGenerator.ts",
     "src/utils/evaluationPDF.ts",
     "src/utils/feriasPDF.ts",
@@ -103518,6 +104022,7 @@
      "src/services/colaboradorService.ts",
      "src/services/departamentoService.ts",
      "src/services/folhaPagamentoService.ts",
+     "src/services/jornadaService.ts",
      "src/services/notificacoesService.ts",
      "src/services/onboardingJornadaService.ts",
      "src/services/pontoService.ts",
@@ -104652,6 +105157,7 @@
    "jornadas": {
     "select": [
      "src/pages/JornadasPage.tsx",
+     "src/services/jornadaService.ts",
      "supabase/functions/processar-ponto/index.ts"
     ],
     "ref": [
@@ -104659,6 +105165,9 @@
     ],
     "delete": [
      "src/pages/JornadasPage.tsx"
+    ],
+    "update": [
+     "src/services/jornadaService.ts"
     ]
    },
    "jornadas_horarios": {
@@ -106479,6 +106988,7 @@
     "id",
     "idade",
     "jornada_horas_mensais",
+    "jornada_semanal",
     "local_trabalho_id",
     "matricula",
     "metadata",
@@ -112093,6 +112603,11 @@
     "values": "vinculo | salario | contrato | cargo | promocao | transferencia | ferias | afastamento | treinamento | avaliacao | onboarding | medida_disciplinar | desligamento | auditoria"
    },
    {
+    "file": "src/utils/documentFileType.ts",
+    "name": "DocFileKind",
+    "values": "pdf | image | word | excel | archive | unknown"
+   },
+   {
     "file": "src/utils/fileSignature.ts",
     "name": "SignedFileType",
     "values": "application/pdf | image/jpeg | image/png | application/x-pkcs12"
@@ -112763,6 +113278,50 @@
    {
     "file": "src/components/colaborador-detalhes/PCDTab.tsx",
     "msg": "Tipo de deficiência é obrigatório"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
+    "msg": "Erro ao adicionar formação"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
+    "msg": "Escolaridade é obrigatória"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+    "msg": "Erro ao inscrever em treinamento"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+    "msg": "Erro ao adicionar anotação"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+    "msg": "Título é obrigatório"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "msg": "Arquivo não encontrado."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "msg": "Empresa não identificada."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "msg": "Nome do documento é obrigatório"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+    "msg": "Arquivo não encontrado."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+    "msg": "Empresa não identificada."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+    "msg": "Tipo de documento é obrigatório"
    },
    {
     "file": "src/components/colaborador-detalhes/historico/HistoricoColaborador.tsx",
@@ -114723,6 +115282,14 @@
    {
     "file": "src/services/jornadaHorariosService.ts",
     "msg": "Nenhum registro de horário de jornada foi retornado."
+   },
+   {
+    "file": "src/services/jornadaService.ts",
+    "msg": "Nenhum registro de jornada foi retornado."
+   },
+   {
+    "file": "src/services/jornadaService.ts",
+    "msg": "empresa_id obrigatório para isolamento de tenant"
    },
    {
     "file": "src/services/lgpdService.ts",
@@ -117373,6 +117940,34 @@
     "text": "* Empacota a operação inteira (validação → destino → idempotência → auditoria)."
    },
    {
+    "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "text": "existe (mesma lógica de vencimento de PrazosAlertasCard). */"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "text": "como meia-noite UTC e, em UTC-3, antecipava o vencimento em um dia."
+   },
+   {
+    "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "text": "apenas abrem o popup \"Ver todos\" (mesma coreografia do popup de"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "text": "centro), por isso um SVG local mínimo em vez de adaptar um componente"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+    "text": "(nenhum dado novo, nenhuma regra inventada): documento vencido ="
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasDialog.tsx",
+    "text": "que já venceram ou vencem em breve, com uma explicação fixa da regra"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/StatusComplianceDialog.tsx",
+    "text": "colaborador (o quê + quando), sem inventar regra nova: só detalha os"
+   },
+   {
     "file": "src/components/colaborador-detalhes/historico/LastUpdate.tsx",
     "text": "só auditoria tem — a maioria das origens de negócio não tem \"solicitante\""
    },
@@ -118447,6 +119042,10 @@
    {
     "file": "src/utils/dateLocal.ts",
     "text": "\"NaN-NaN-NaN\" que passaria pela validação de tipo mas quebraria o banco."
+   },
+   {
+    "file": "src/utils/documentFileType.ts",
+    "text": "Fallback usado apenas quando não há extensão identificável (nem por URL,"
    },
    {
     "file": "src/utils/fileSignature.ts",
@@ -143677,6 +144276,21 @@
     "value": "'historico_feedback'"
    },
    {
+    "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "name": "DIAS_ALERTA_VALIDADE",
+    "value": "60"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+    "name": "HISTORICO_REVEAL_GAP",
+    "value": "0.45"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+    "name": "DIAS_ALERTA_VALIDADE",
+    "value": "60"
+   },
+   {
     "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
     "name": "ROW_STAGGER",
     "value": "0.12"
@@ -145653,6 +146267,108 @@
     "kind": "escreve"
    },
    {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "aprovada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "em_gozo",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "cancelada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "rejeitada",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "concluida",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "vencido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "gozado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "pago",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "vencido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "field": "status",
+    "value": "vencido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+    "field": "status",
+    "value": "enviado",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+    "field": "status",
+    "value": "inscrito",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+    "field": "tipo",
+    "value": "geral",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+    "field": "tipo",
+    "value": "geral",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "field": "tipo",
+    "value": "Outros",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+    "field": "tipo",
+    "value": "Outros",
+    "kind": "escreve"
+   },
+   {
     "file": "src/components/colaborador-detalhes/historico/HistoryEventRow.tsx",
     "field": "type",
     "value": "day",
@@ -147114,6 +147830,30 @@
     "file": "src/components/ponto/PontoInconsistencyPanel.tsx",
     "field": "tipo",
     "value": "short_break",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/PontoOcorrenciasCard.tsx",
+    "field": "tipo",
+    "value": "atraso",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/PontoOcorrenciasCard.tsx",
+    "field": "tipo",
+    "value": "falta",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/ponto/PontoOcorrenciasCard.tsx",
+    "field": "tipo",
+    "value": "atraso",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/ponto/PontoOcorrenciasCard.tsx",
+    "field": "tipo",
+    "value": "atraso",
     "kind": "compara"
    },
    {
@@ -155417,6 +156157,12 @@
     "body": "Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });"
    },
    {
+    "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+    "name": "avaliarValidade",
+    "params": "id: string, titulo: string, validade: string",
+    "body": "const dataValidade = dataLocalDoEvento(validade); const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)); const validadeBR = dataValidade.toLocaleDateString('pt-BR'); if (dias < 0) { alertas.push({ id, titulo, sub: `Venceu em ${validadeBR}`, tone: 'destructive', badgeLabel: 'Vencido' }); } else if (dias <= DIAS_ALERTA_VALIDADE) { alertas.push({ id, titulo, sub: `Vence em ${dias} dia${dias === 1 ? '' : 's'} (${validadeBR})`, tone: 'warning', badgeLabel: 'Em bre …"
+   },
+   {
     "file": "src/components/dashboard/MetricCard.tsx",
     "name": "formatCurrency",
     "params": "value: number",
@@ -156843,6 +157589,30 @@
     "line": "window.setTimeout(() => setCopiado(false), 1500);"
    },
    {
+    "file": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+    "line": "Math.round((dataLocalDoEvento(validade).getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "line": "eventos.push({ data: addDays(fim, 1), titulo: 'Retorno ao trabalho', sub: 'Retorno previsto', tone: 'info' });"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "line": "if (fim) marcarIntervalo(addDays(fim, 1), addDays(fim, 1), 'retorno');"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "line": "onClick={() => setMesAtual((m) => addMonths(m, 1))}"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+    "line": "onClick={() => setMesAtual((m) => subMonths(m, 1))}"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+    "line": "const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));"
+   },
+   {
     "file": "src/components/dashboard/MorningBriefing.tsx",
     "line": "const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');"
    },
@@ -157819,6 +158589,14 @@
    {
     "file": "src/components/beneficios/BeneficiosDashboard.tsx",
     "line": "transition={{ delay: i * 0.05 }}"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+    "line": "transition: { delay: i * 0.18, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },"
+   },
+   {
+    "file": "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
+    "line": "transition={{ duration: 0.6, delay: 0.15 + index * 0.1, ease: 'easeOut' }}"
    },
    {
     "file": "src/components/colaboradores/ColaboradorHistory.tsx",
@@ -170931,6 +171709,22 @@
     "name": "shows Assinado badge when already signed"
    },
    {
+    "file": "src/components/__tests__/PrazosAlertasCard.test.tsx",
+    "name": "PrazosAlertasCard — limite de vencimento no fuso local"
+   },
+   {
+    "file": "src/components/__tests__/PrazosAlertasCard.test.tsx",
+    "name": "não marca como vencido o documento que vence hoje"
+   },
+   {
+    "file": "src/components/__tests__/PrazosAlertasCard.test.tsx",
+    "name": "marca como vencido o documento de ontem e formata a data em pt-BR"
+   },
+   {
+    "file": "src/components/__tests__/PrazosAlertasCard.test.tsx",
+    "name": "conta os dias restantes pela data local, não pelo instante UTC"
+   },
+   {
     "file": "src/components/__tests__/ProtectedRoute.test.tsx",
     "name": "ProtectedRoute"
    },
@@ -171801,6 +172595,18 @@
    {
     "file": "src/components/__tests__/SimuladorWhatIf.test.tsx",
     "name": "renders Benefícios Mensais label"
+   },
+   {
+    "file": "src/components/__tests__/StatusComplianceCardErro.test.tsx",
+    "name": "StatusComplianceCard — falha de consulta não vira conformidade"
+   },
+   {
+    "file": "src/components/__tests__/StatusComplianceCardErro.test.tsx",
+    "name": "avisa que não foi possível carregar quando uma das fontes falha"
+   },
+   {
+    "file": "src/components/__tests__/StatusComplianceCardErro.test.tsx",
+    "name": "com todas as fontes respondendo vazio, segue mostrando conformidade"
    },
    {
     "file": "src/components/__tests__/StatusFeedback.test.tsx",
@@ -218963,10 +219769,12 @@
      ],
      "geral": [
       "escreve:src/components/colaborador-detalhes/AnotacoesTab.tsx",
+      "escreve:src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
       "escreve:src/mocks/colaboradoresMock.ts"
      ],
      "Outros": [
       "escreve:src/components/colaborador-detalhes/ColaboradorDocuments.tsx",
+      "escreve:src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
       "escreve:src/mocks/colaboradoresMock.ts"
      ],
      "ponto": [
@@ -219120,6 +219928,13 @@
      ],
      "alerta": [
       "escreve:src/components/ponto/PontoInconsistencyPanel.tsx"
+     ],
+     "atraso": [
+      "compara:src/components/ponto/PontoOcorrenciasCard.tsx",
+      "escreve:src/components/ponto/PontoOcorrenciasCard.tsx"
+     ],
+     "falta": [
+      "escreve:src/components/ponto/PontoOcorrenciasCard.tsx"
      ],
      "Contrato": [
       "compara:src/components/portal/PortalDocumentosTab.tsx"
@@ -219625,6 +220440,7 @@
      ],
      "enviado": [
       "compara:src/components/admissao/AdmissaoChecklist.tsx",
+      "compara:src/components/colaborador-detalhes/JornadaPontoTab.tsx",
       "compara:src/components/dashboard/AnalyticsSection.tsx",
       "compara:src/components/esocial/ESocialTimeline.tsx",
       "compara:src/components/esocial/tabs.tsx",
@@ -219738,8 +220554,74 @@
      ],
      "vencido": [
       "compara:src/components/colaborador-detalhes/AquisitivosTab.tsx",
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
       "compara:src/components/ferias/FeriasForm.tsx",
       "compara:src/components/ferias/GerenciamentoPeriodos.tsx"
+     ],
+     "aprovada": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/ferias/CalendarioFerias.tsx",
+      "compara:src/components/ferias/FeriasDashboard.tsx",
+      "compara:src/components/portal/PortalOverviewTab.tsx",
+      "compara:src/hooks/useProximosEventos.ts",
+      "compara:src/pages/FeriasPage.tsx",
+      "escreve:src/mocks/colaboradoresMock.ts",
+      "escreve:src/pages/FaltasPage.tsx",
+      "escreve:src/services/feriasService.ts",
+      "escreve:src/services/horaExtraService.ts",
+      "filtra:src/components/dashboard/MorningBriefing.tsx",
+      "filtra:src/hooks/useNotificacoes.ts"
+     ],
+     "em_gozo": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/ferias/CalendarioFerias.tsx",
+      "compara:src/pages/FeriasPage.tsx"
+     ],
+     "concluida": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/ferias/CalendarioFerias.tsx",
+      "compara:src/pages/PassivoTrabalhistaPage.tsx",
+      "compara:src/pages/WorkflowsPage.tsx",
+      "escreve:src/mocks/colaboradoresMock.ts",
+      "escreve:src/pages/LGPDPage.tsx",
+      "escreve:src/pages/WorkflowsPage.tsx"
+     ],
+     "cancelada": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/ferias/CalendarioFerias.tsx",
+      "compara:src/components/ferias/FeriasAuditTimeline.tsx",
+      "compara:src/utils/regrasSolicitacaoFerias.ts",
+      "escreve:src/services/feriasService.ts"
+     ],
+     "rejeitada": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/ferias/CalendarioFerias.tsx",
+      "compara:src/components/ferias/FeriasActions.tsx",
+      "compara:src/components/ferias/FeriasAuditTimeline.tsx",
+      "compara:src/pages/FaltasPage.tsx",
+      "compara:src/pages/WorkflowsPage.tsx",
+      "compara:src/utils/regrasSolicitacaoFerias.ts",
+      "escreve:src/pages/FaltasPage.tsx",
+      "escreve:src/pages/WorkflowsPage.tsx",
+      "escreve:src/services/feriasService.ts",
+      "escreve:src/services/horaExtraService.ts"
+     ],
+     "gozado": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/ferias/programacao/NovaProgramacaoDialog.tsx"
+     ],
+     "pago": [
+      "compara:src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+      "compara:src/components/descontos/AdiantamentosTable.tsx",
+      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
+      "compara:src/components/premiacoes/RewardsApprovalHub.tsx",
+      "compara:src/pages/PremiacoesPage.tsx",
+      "escreve:src/services/despesaService.ts",
+      "escreve:src/services/rescisaoService.ts"
+     ],
+     "inscrito": [
+      "escreve:src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+      "escreve:src/pages/TreinamentosPage.tsx"
      ],
      "assinado": [
       "compara:src/components/contratos/ContratosVencendoPanel.tsx",
@@ -219872,29 +220754,8 @@
       "filtra:supabase/functions/gerar-pgr/index.ts",
       "filtra:supabase/functions/processar-ponto/index.ts"
      ],
-     "aprovada": [
-      "compara:src/components/ferias/CalendarioFerias.tsx",
-      "compara:src/components/ferias/FeriasDashboard.tsx",
-      "compara:src/components/portal/PortalOverviewTab.tsx",
-      "compara:src/hooks/useProximosEventos.ts",
-      "compara:src/pages/FeriasPage.tsx",
-      "escreve:src/mocks/colaboradoresMock.ts",
-      "escreve:src/pages/FaltasPage.tsx",
-      "escreve:src/services/feriasService.ts",
-      "escreve:src/services/horaExtraService.ts",
-      "filtra:src/components/dashboard/MorningBriefing.tsx",
-      "filtra:src/hooks/useNotificacoes.ts"
-     ],
      "excellent": [
       "escreve:src/components/dashboard/WorkforceHealthScore.tsx"
-     ],
-     "pago": [
-      "compara:src/components/descontos/AdiantamentosTable.tsx",
-      "compara:src/components/desligamentos/DesligamentoDetailSheet.tsx",
-      "compara:src/components/premiacoes/RewardsApprovalHub.tsx",
-      "compara:src/pages/PremiacoesPage.tsx",
-      "escreve:src/services/despesaService.ts",
-      "escreve:src/services/rescisaoService.ts"
      ],
      "quitado": [
       "compara:src/components/descontos/EmprestimosTable.tsx",
@@ -219908,36 +220769,6 @@
       "compara:src/components/desligamentos/DesligamentoKPIs.tsx",
       "compara:src/services/cnabService.ts",
       "escreve:src/services/cnabService.ts"
-     ],
-     "cancelada": [
-      "compara:src/components/ferias/CalendarioFerias.tsx",
-      "compara:src/components/ferias/FeriasAuditTimeline.tsx",
-      "compara:src/utils/regrasSolicitacaoFerias.ts",
-      "escreve:src/services/feriasService.ts"
-     ],
-     "rejeitada": [
-      "compara:src/components/ferias/CalendarioFerias.tsx",
-      "compara:src/components/ferias/FeriasActions.tsx",
-      "compara:src/components/ferias/FeriasAuditTimeline.tsx",
-      "compara:src/pages/FaltasPage.tsx",
-      "compara:src/pages/WorkflowsPage.tsx",
-      "compara:src/utils/regrasSolicitacaoFerias.ts",
-      "escreve:src/pages/FaltasPage.tsx",
-      "escreve:src/pages/WorkflowsPage.tsx",
-      "escreve:src/services/feriasService.ts",
-      "escreve:src/services/horaExtraService.ts"
-     ],
-     "em_gozo": [
-      "compara:src/components/ferias/CalendarioFerias.tsx",
-      "compara:src/pages/FeriasPage.tsx"
-     ],
-     "concluida": [
-      "compara:src/components/ferias/CalendarioFerias.tsx",
-      "compara:src/pages/PassivoTrabalhistaPage.tsx",
-      "compara:src/pages/WorkflowsPage.tsx",
-      "escreve:src/mocks/colaboradoresMock.ts",
-      "escreve:src/pages/LGPDPage.tsx",
-      "escreve:src/pages/WorkflowsPage.tsx"
      ],
      "adquirido": [
       "compara:src/components/ferias/FeriasForm.tsx",
@@ -219975,9 +220806,6 @@
      "aprovado_rh": [
       "compara:src/components/ferias/programacao/CardProgramacao.tsx",
       "compara:src/pages/FeriasProgramacaoPage.tsx"
-     ],
-     "gozado": [
-      "compara:src/components/ferias/programacao/NovaProgramacaoDialog.tsx"
      ],
      "falhou": [
       "compara:src/components/folha/DistribuirHoleritesButton.tsx"
@@ -220271,9 +221099,6 @@
      "PROCESSANDO": [
       "compara:src/pages/ProvisoesPage.tsx",
       "escreve:supabase/functions/calcular-provisoes/index.ts"
-     ],
-     "inscrito": [
-      "escreve:src/pages/TreinamentosPage.tsx"
      ],
      "processado": [
       "compara:src/pages/ValesPage.tsx",
@@ -244530,6 +245355,14 @@
    },
    {
     "kind": "status",
+    "msg": "valor `inscrito` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+     "escreve:src/pages/TreinamentosPage.tsx"
+    ]
+   },
+   {
+    "kind": "status",
     "msg": "valor `recusado` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/dashboard/AnalyticsSection.tsx",
@@ -244752,13 +245585,6 @@
     "where": [
      "compara:src/pages/ProvisoesPage.tsx",
      "escreve:supabase/functions/calcular-provisoes/index.ts"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `inscrito` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/pages/TreinamentosPage.tsx"
     ]
    },
    {
@@ -257626,6 +258452,20 @@
     "shows Assinado badge when already signed"
    ]
   },
+  "src/components/__tests__/PrazosAlertasCard.test.tsx": {
+   "path": "src/components/__tests__/PrazosAlertasCard.test.tsx",
+   "lines": 62,
+   "is_test": true,
+   "rule_comments": [
+    "* Prova do limite de vencimento do card \"Prazos e Alertas\"."
+   ],
+   "tests": [
+    "PrazosAlertasCard — limite de vencimento no fuso local",
+    "não marca como vencido o documento que vence hoje",
+    "marca como vencido o documento de ontem e formata a data em pt-BR",
+    "conta os dias restantes pela data local, não pelo instante UTC"
+   ]
+  },
   "src/components/__tests__/ProtectedRoute.test.tsx": {
    "path": "src/components/__tests__/ProtectedRoute.test.tsx",
    "lines": 113,
@@ -258017,6 +258857,16 @@
     "renders FGTS label",
     "renders Calcular Impacto Real button",
     "renders Benefícios Mensais label"
+   ]
+  },
+  "src/components/__tests__/StatusComplianceCardErro.test.tsx": {
+   "path": "src/components/__tests__/StatusComplianceCardErro.test.tsx",
+   "lines": 54,
+   "is_test": true,
+   "tests": [
+    "StatusComplianceCard — falha de consulta não vira conformidade",
+    "avisa que não foi possível carregar quando uma das fontes falha",
+    "com todas as fontes respondendo vazio, segue mostrando conformidade"
    ]
   },
   "src/components/__tests__/StatusFeedback.test.tsx": {
@@ -262205,6 +263055,34 @@
     "Parentesco é obrigatório"
    ]
   },
+  "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx": {
+   "path": "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx",
+   "lines": 46,
+   "exports": [
+    "function DesenvolvimentoResumoTab"
+   ]
+  },
+  "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx": {
+   "path": "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+   "lines": 184,
+   "exports": [
+    "function DocumentosComplianceResumoTab"
+   ],
+   "params": [
+    {
+     "name": "DIAS_ALERTA_VALIDADE",
+     "value": "60"
+    }
+   ],
+   "rule_comments": [
+    "existe (mesma lógica de vencimento de PrazosAlertasCard). */",
+    "como meia-noite UTC e, em UTC-3, antecipava o vencimento em um dia.",
+    "apenas abrem o popup \"Ver todos\" (mesma coreografia do popup de"
+   ],
+   "temporal": [
+    "Math.round((dataLocalDoEvento(validade).getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));"
+   ]
+  },
   "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx": {
    "path": "src/components/colaborador-detalhes/DocumentosPessoaisTab.tsx",
    "lines": 205,
@@ -262214,6 +263092,13 @@
    "errors": [
     "Erro ao adicionar documento",
     "Tipo de documento é obrigatório"
+   ]
+  },
+  "src/components/colaborador-detalhes/EditarJornadaDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+   "lines": 149,
+   "exports": [
+    "function EditarJornadaDialog"
    ]
   },
   "src/components/colaborador-detalhes/EmergenciaTab.tsx": {
@@ -262252,7 +263137,7 @@
   },
   "src/components/colaborador-detalhes/ExperienciaTab.tsx": {
    "path": "src/components/colaborador-detalhes/ExperienciaTab.tsx",
-   "lines": 146,
+   "lines": 153,
    "exports": [
     "function ExperienciaTab"
    ],
@@ -262261,9 +263146,89 @@
     "Erro ao salvar"
    ]
   },
+  "src/components/colaborador-detalhes/FalhaConsulta.tsx": {
+   "path": "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+   "lines": 24,
+   "exports": [
+    "function FalhaConsulta"
+   ]
+  },
+  "src/components/colaborador-detalhes/FeriasResumoTab.tsx": {
+   "path": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+   "lines": 1029,
+   "exports": [
+    "function FeriasResumoTab"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "aprovada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "em_gozo",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "cancelada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "rejeitada",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "concluida",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "vencido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "gozado",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "pago",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "vencido",
+     "kind": "compara"
+    },
+    {
+     "field": "status",
+     "value": "vencido",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "centro), por isso um SVG local mínimo em vez de adaptar um componente"
+   ],
+   "temporal": [
+    "eventos.push({ data: addDays(fim, 1), titulo: 'Retorno ao trabalho', sub: 'Retorno previsto', tone: 'info' });",
+    "if (fim) marcarIntervalo(addDays(fim, 1), addDays(fim, 1), 'retorno');",
+    "onClick={() => setMesAtual((m) => addMonths(m, 1))}",
+    "onClick={() => setMesAtual((m) => subMonths(m, 1))}"
+   ]
+  },
   "src/components/colaborador-detalhes/FormacaoTab.tsx": {
    "path": "src/components/colaborador-detalhes/FormacaoTab.tsx",
-   "lines": 157,
+   "lines": 165,
    "exports": [
     "function FormacaoTab"
    ],
@@ -262302,6 +263267,20 @@
     }
    ]
   },
+  "src/components/colaborador-detalhes/JornadaPontoTab.tsx": {
+   "path": "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+   "lines": 203,
+   "exports": [
+    "function JornadaPontoTab"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "enviado",
+     "kind": "compara"
+    }
+   ]
+  },
   "src/components/colaborador-detalhes/PCDTab.tsx": {
    "path": "src/components/colaborador-detalhes/PCDTab.tsx",
    "lines": 140,
@@ -262313,9 +263292,208 @@
     "Tipo de deficiência é obrigatório"
    ]
   },
+  "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx": {
+   "path": "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+   "lines": 709,
+   "exports": [
+    "const hierarquiaItemVariants",
+    "function TrabalhoHierarquiaTab"
+   ],
+   "navigates": [
+    "/colaboradores/editar/"
+   ],
+   "params": [
+    {
+     "name": "HISTORICO_REVEAL_GAP",
+     "value": "0.45"
+    }
+   ],
+   "percents": [
+    "transition: { delay: i * 0.18, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },"
+   ]
+  },
   "src/components/colaborador-detalhes/index.ts": {
    "path": "src/components/colaborador-detalhes/index.ts",
-   "lines": 19
+   "lines": 24
+  },
+  "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx": {
+   "path": "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
+   "lines": 190,
+   "exports": [
+    "function DesenvolvimentoProfissionalCard"
+   ],
+   "percents": [
+    "transition={{ duration: 0.6, delay: 0.15 + index * 0.1, ease: 'easeOut' }}"
+   ]
+  },
+  "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx": {
+   "path": "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
+   "lines": 300,
+   "exports": [
+    "function FormacaoQualificacoesCard"
+   ],
+   "errors": [
+    "Erro ao adicionar formação",
+    "Escolaridade é obrigatória"
+   ]
+  },
+  "src/components/colaborador-detalhes/desenvolvimento/JornadaInternaCard.tsx": {
+   "path": "src/components/colaborador-detalhes/desenvolvimento/JornadaInternaCard.tsx",
+   "lines": 181,
+   "exports": [
+    "function JornadaInternaCard"
+   ]
+  },
+  "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx": {
+   "path": "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+   "lines": 229,
+   "exports": [
+    "interface InscricaoCursoLinha",
+    "function TreinamentosCard"
+   ],
+   "navigates": [
+    "/treinamentos"
+   ],
+   "errors": [
+    "Erro ao inscrever em treinamento"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "inscrito",
+     "kind": "escreve"
+    }
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+   "lines": 193,
+   "exports": [
+    "function AnotacoesInternasCard"
+   ],
+   "errors": [
+    "Erro ao adicionar anotação",
+    "Título é obrigatório"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "geral",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "geral",
+     "kind": "escreve"
+    }
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/AnotacoesInternasDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/AnotacoesInternasDialog.tsx",
+   "lines": 79,
+   "exports": [
+    "interface AnotacaoDetalhada",
+    "function AnotacoesInternasDialog"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+   "lines": 269,
+   "exports": [
+    "function DocumentosDigitaisCard"
+   ],
+   "errors": [
+    "Arquivo não encontrado.",
+    "Empresa não identificada.",
+    "Nome do documento é obrigatório"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "Outros",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "Outros",
+     "kind": "escreve"
+    }
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+   "lines": 282,
+   "exports": [
+    "function DocumentosPessoaisCard"
+   ],
+   "errors": [
+    "Arquivo não encontrado.",
+    "Empresa não identificada.",
+    "Tipo de documento é obrigatório"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx",
+   "lines": 18,
+   "exports": [
+    "function FileTypeIcon"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+   "lines": 160,
+   "exports": [
+    "function PrazosAlertasCard"
+   ],
+   "params": [
+    {
+     "name": "DIAS_ALERTA_VALIDADE",
+     "value": "60"
+    }
+   ],
+   "rule_comments": [
+    "(nenhum dado novo, nenhuma regra inventada): documento vencido ="
+   ],
+   "calc_fns": [
+    {
+     "name": "avaliarValidade",
+     "params": "id: string, titulo: string, validade: string",
+     "body": "const dataValidade = dataLocalDoEvento(validade); const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)); const validadeBR = dataValidade.toLocaleDateString('pt-BR'); if (dias < 0) { alertas.push({ id, titulo, sub: `Venceu em ${validadeBR}`, tone: 'destructive', badgeLabel: 'Vencido' }); } else if (dias <= DIAS_ALERTA_VALIDADE) { alertas.push({ id, titulo, sub: `Vence em ${dias} dia${dias === 1 ? '' : 's'} (${validadeBR})`, tone: 'warning', badgeLabel: 'Em bre …"
+    }
+   ],
+   "temporal": [
+    "const dias = Math.round((dataValidade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/PrazosAlertasDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/PrazosAlertasDialog.tsx",
+   "lines": 59,
+   "exports": [
+    "interface AlertaDetalhado",
+    "function PrazosAlertasDialog"
+   ],
+   "rule_comments": [
+    "que já venceram ou vencem em breve, com uma explicação fixa da regra"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx",
+   "lines": 252,
+   "exports": [
+    "function StatusComplianceCard"
+   ]
+  },
+  "src/components/colaborador-detalhes/documentos/StatusComplianceDialog.tsx": {
+   "path": "src/components/colaborador-detalhes/documentos/StatusComplianceDialog.tsx",
+   "lines": 72,
+   "exports": [
+    "interface ComplianceItemDetalhado",
+    "interface ComplianceSecao",
+    "function StatusComplianceDialog"
+   ],
+   "rule_comments": [
+    "colaborador (o quê + quando), sem inventar regra nova: só detalha os"
+   ]
   },
   "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx": {
    "path": "src/components/colaborador-detalhes/historico/EventTypesSummary.tsx",
@@ -266215,6 +267393,13 @@
     }
    ]
   },
+  "src/components/ponto/PontoAjustesCard.tsx": {
+   "path": "src/components/ponto/PontoAjustesCard.tsx",
+   "lines": 37,
+   "exports": [
+    "function PontoAjustesCard"
+   ]
+  },
   "src/components/ponto/PontoAuditTimeline.tsx": {
    "path": "src/components/ponto/PontoAuditTimeline.tsx",
    "lines": 187,
@@ -266467,6 +267652,35 @@
    "lines": 75,
    "exports": [
     "function PontoLeaderboard"
+   ]
+  },
+  "src/components/ponto/PontoOcorrenciasCard.tsx": {
+   "path": "src/components/ponto/PontoOcorrenciasCard.tsx",
+   "lines": 74,
+   "exports": [
+    "function PontoOcorrenciasCard"
+   ],
+   "status_values": [
+    {
+     "field": "tipo",
+     "value": "atraso",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "falta",
+     "kind": "escreve"
+    },
+    {
+     "field": "tipo",
+     "value": "atraso",
+     "kind": "compara"
+    },
+    {
+     "field": "tipo",
+     "value": "atraso",
+     "kind": "compara"
+    }
    ]
   },
   "src/components/ponto/PontoStreakCard.tsx": {
@@ -269401,7 +270615,7 @@
   },
   "src/hooks/index.ts": {
    "path": "src/hooks/index.ts",
-   "lines": 85
+   "lines": 158
   },
   "src/hooks/use-mobile.tsx": {
    "path": "src/hooks/use-mobile.tsx",
@@ -269533,12 +270747,13 @@
   },
   "src/hooks/useAfastamentos.ts": {
    "path": "src/hooks/useAfastamentos.ts",
-   "lines": 134,
+   "lines": 150,
    "exports": [
     "interface AfastamentoFiltros",
     "function useAfastamentos",
     "function useProrrogacoesAfastamento",
-    "function useDocumentosAfastamento"
+    "function useDocumentosAfastamento",
+    "function useAfastamentosRecentes"
    ],
    "errors": [
     "Empresa ativa não carregada."
@@ -269546,7 +270761,8 @@
    "hooks": [
     "useAfastamentos",
     "useProrrogacoesAfastamento",
-    "useDocumentosAfastamento"
+    "useDocumentosAfastamento",
+    "useAfastamentosRecentes"
    ]
   },
   "src/hooks/useAssinarAvisoFerias.ts": {
@@ -269931,6 +271147,17 @@
     "useColaboradores"
    ]
   },
+  "src/hooks/useComplianceColaborador.ts": {
+   "path": "src/hooks/useComplianceColaborador.ts",
+   "lines": 17,
+   "exports": [
+    "function useConsentimentosColaborador"
+   ],
+   "doc": "PARTE I — Dossiê do Colaborador, aba Documentos & Compliance.",
+   "hooks": [
+    "useConsentimentosColaborador"
+   ]
+  },
   "src/hooks/useConfiguracoesIntervalo.ts": {
    "path": "src/hooks/useConfiguracoesIntervalo.ts",
    "lines": 57,
@@ -270126,7 +271353,7 @@
   },
   "src/hooks/useDesenvolvimentoColaborador.ts": {
    "path": "src/hooks/useDesenvolvimentoColaborador.ts",
-   "lines": 171,
+   "lines": 174,
    "exports": [
     "function useMetasColaborador",
     "function usePDIsColaborador",
@@ -270186,7 +271413,7 @@
   },
   "src/hooks/useDocumentos.ts": {
    "path": "src/hooks/useDocumentos.ts",
-   "lines": 79,
+   "lines": 83,
    "exports": [
     "function useDocumentos"
    ],
@@ -271140,7 +272367,7 @@
   },
   "src/hooks/useNovasTabelas.ts": {
    "path": "src/hooks/useNovasTabelas.ts",
-   "lines": 292,
+   "lines": 326,
    "exports": [
     "function useBatidasPonto",
     "function useBatidasPontoDia",
@@ -271165,7 +272392,9 @@
     "function useJornadaHorarios",
     "function useSalvarGradeHorarios",
     "function useBancoHorasConfig",
-    "function useSalvarBancoHorasConfig"
+    "function useSalvarBancoHorasConfig",
+    "function useSaldoBancoHoras",
+    "function useRegistrosPontoSemana"
    ],
    "hooks": [
     "useBatidasPonto",
@@ -271191,7 +272420,9 @@
     "useJornadaHorarios",
     "useSalvarGradeHorarios",
     "useBancoHorasConfig",
-    "useSalvarBancoHorasConfig"
+    "useSalvarBancoHorasConfig",
+    "useSaldoBancoHoras",
+    "useRegistrosPontoSemana"
    ]
   },
   "src/hooks/useNow.ts": {
@@ -272022,6 +273253,16 @@
    ],
    "hooks": [
     "useValeTransporte"
+   ]
+  },
+  "src/hooks/useVinculos.ts": {
+   "path": "src/hooks/useVinculos.ts",
+   "lines": 12,
+   "exports": [
+    "function useVinculosColaborador"
+   ],
+   "hooks": [
+    "useVinculosColaborador"
    ]
   },
   "src/hooks/useWebhooksAvancados.ts": {
@@ -277229,7 +278470,7 @@
   },
   "src/pages/ColaboradorDetalhesPage.tsx": {
    "path": "src/pages/ColaboradorDetalhesPage.tsx",
-   "lines": 481,
+   "lines": 543,
    "exports": [
     "function ColaboradorDetalhesPage"
    ],
@@ -284690,7 +285931,7 @@
   },
   "src/services/colaboradorService.ts": {
    "path": "src/services/colaboradorService.ts",
-   "lines": 162,
+   "lines": 181,
    "exports": [
     "const colaboradorService"
    ],
@@ -286136,9 +287377,51 @@
     "Nenhum registro de horário de jornada foi retornado."
    ]
   },
+  "src/services/jornadaService.ts": {
+   "path": "src/services/jornadaService.ts",
+   "lines": 59,
+   "exports": [
+    "type Jornada",
+    "const jornadaService"
+   ],
+   "tables": [
+    {
+     "table": "jornadas",
+     "op": "select"
+    },
+    {
+     "table": "colaboradores",
+     "op": "select"
+    },
+    {
+     "table": "jornadas",
+     "op": "select"
+    },
+    {
+     "table": "jornadas",
+     "op": "select,update"
+    }
+   ],
+   "table_cols": {
+    "jornadas": [
+     "ativa",
+     "empresa_id",
+     "id"
+    ],
+    "colaboradores": [
+     "empresa_id",
+     "id",
+     "jornada_semanal"
+    ]
+   },
+   "errors": [
+    "Nenhum registro de jornada foi retornado.",
+    "empresa_id obrigatório para isolamento de tenant"
+   ]
+  },
   "src/services/lgpdService.ts": {
    "path": "src/services/lgpdService.ts",
-   "lines": 99,
+   "lines": 102,
    "exports": [
     "type LgpdConsentimentoComColaborador",
     "type LgpdSolicitacaoComColaborador",
@@ -291058,8 +292341,9 @@
   },
   "src/services/tabelas/rhService.ts": {
    "path": "src/services/tabelas/rhService.ts",
-   "lines": 251,
+   "lines": 256,
    "exports": [
+    "type TreinamentoParticipanteComTurma",
     "const configAfastamentosService",
     "const feriasSolicitacoesService",
     "const historicoCargoService",
@@ -292346,7 +293630,7 @@
   },
   "src/types/entities.ts": {
    "path": "src/types/entities.ts",
-   "lines": 170,
+   "lines": 184,
    "exports": [
     "interface Cargo",
     "interface Departamento",
@@ -292637,6 +293921,25 @@
    ],
    "errors": [
     "Nenhum desligamento para exportar"
+   ]
+  },
+  "src/utils/documentFileType.ts": {
+   "path": "src/utils/documentFileType.ts",
+   "lines": 74,
+   "exports": [
+    "type DocFileKind",
+    "const DOC_KIND_STYLE",
+    "function getUrlExtension",
+    "function getDocumentFileType"
+   ],
+   "enums": [
+    {
+     "name": "DocFileKind",
+     "values": "pdf | image | word | excel | archive | unknown"
+    }
+   ],
+   "rule_comments": [
+    "Fallback usado apenas quando não há extensão identificável (nem por URL,"
    ]
   },
   "src/utils/esocialXmlGenerator.ts": {
@@ -307254,10 +308557,61 @@
   }
  },
  "git": {
-  "sha": "935356c8ab1524aed25eaac10ccfa049ff67c187",
+  "sha": "7a29c0e7a6ead7be646237b9e639de53ab18ed18",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "7a29c0e",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)",
+    "files": [
+     "inventario/estado/rotas.json",
+     "src/components/__tests__/PrazosAlertasCard.test.tsx",
+     "src/components/__tests__/StatusComplianceCardErro.test.tsx",
+     "src/components/colaborador-detalhes/DesenvolvimentoResumoTab.tsx",
+     "src/components/colaborador-detalhes/DocumentosComplianceResumoTab.tsx",
+     "src/components/colaborador-detalhes/EditarJornadaDialog.tsx",
+     "src/components/colaborador-detalhes/ExperienciaTab.tsx",
+     "src/components/colaborador-detalhes/FalhaConsulta.tsx",
+     "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+     "src/components/colaborador-detalhes/FormacaoTab.tsx",
+     "src/components/colaborador-detalhes/JornadaPontoTab.tsx",
+     "src/components/colaborador-detalhes/TrabalhoHierarquiaTab.tsx",
+     "src/components/colaborador-detalhes/desenvolvimento/DesenvolvimentoProfissionalCard.tsx",
+     "src/components/colaborador-detalhes/desenvolvimento/FormacaoQualificacoesCard.tsx",
+     "src/components/colaborador-detalhes/desenvolvimento/JornadaInternaCard.tsx",
+     "src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+     "src/components/colaborador-detalhes/documentos/AnotacoesInternasCard.tsx",
+     "src/components/colaborador-detalhes/documentos/AnotacoesInternasDialog.tsx",
+     "src/components/colaborador-detalhes/documentos/DocumentosDigitaisCard.tsx",
+     "src/components/colaborador-detalhes/documentos/DocumentosPessoaisCard.tsx",
+     "src/components/colaborador-detalhes/documentos/FileTypeIcon.tsx",
+     "src/components/colaborador-detalhes/documentos/PrazosAlertasCard.tsx",
+     "src/components/colaborador-detalhes/documentos/PrazosAlertasDialog.tsx",
+     "src/components/colaborador-detalhes/documentos/StatusComplianceCard.tsx",
+     "src/components/colaborador-detalhes/documentos/StatusComplianceDialog.tsx",
+     "src/components/colaborador-detalhes/index.ts",
+     "src/components/ponto/PontoAjustesCard.tsx",
+     "src/components/ponto/PontoOcorrenciasCard.tsx",
+     "src/hooks/index.ts",
+     "src/hooks/useAfastamentos.ts",
+     "src/hooks/useComplianceColaborador.ts",
+     "src/hooks/useDesenvolvimentoColaborador.ts",
+     "src/hooks/useDocumentos.ts",
+     "src/hooks/useNovasTabelas.ts",
+     "src/hooks/useVinculos.ts",
+     "src/pages/ColaboradorDetalhesPage.tsx",
+     "src/services/colaboradorService.ts",
+     "src/services/index.ts",
+     "src/services/jornadaService.ts",
+     "src/services/lgpdService.ts",
+     "src/services/tabelas/rhService.ts",
+     "src/types/entities.ts",
+     "src/utils/documentFileType.ts"
+    ]
+   },
    {
     "sha": "935356c",
     "date": "2026-11-16",
@@ -307887,17 +309241,6 @@
      "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql",
      "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.verify.sql"
     ]
-   },
-   {
-    "sha": "44cf65f",
-    "date": "2026-11-15",
-    "author": "adm01-debug",
-    "subject": "chore: resgata melhorias de PRs fechadas sem merge (#570)",
-    "files": [
-     "scripts/automation.config.json",
-     "scripts/capacitor-build.sh",
-     "scripts/tests/migrations-p1-rotinas-agendadas.sh"
-    ]
    }
   ],
   "hot_files": [
@@ -307910,19 +309253,39 @@
     4
    ],
    [
+    "inventario/estado/rotas.json",
+    3
+   ],
+   [
+    "src/pages/ColaboradorDetalhesPage.tsx",
+    3
+   ],
+   [
     ".github/workflows/canonical-migrations.yml",
     3
    ],
    [
-    "scripts/automation.config.json",
+    "src/components/colaborador-detalhes/index.ts",
+    2
+   ],
+   [
+    "src/hooks/useDesenvolvimentoColaborador.ts",
+    2
+   ],
+   [
+    "src/hooks/useNovasTabelas.ts",
+    2
+   ],
+   [
+    "src/services/colaboradorService.ts",
+    2
+   ],
+   [
+    "src/services/tabelas/rhService.ts",
     2
    ],
    [
     "supabase/functions/external-db-bridge/tableCatalog.ts",
-    2
-   ],
-   [
-    "src/pages/ColaboradorDetalhesPage.tsx",
     2
    ],
    [
@@ -307959,26 +309322,6 @@
    ],
    [
     "scripts/canonical-invariants.sql",
-    2
-   ],
-   [
-    "src/components/__tests__/NineBoxQuadranteDialog.test.tsx",
-    2
-   ],
-   [
-    "docs/prod-readiness.md",
-    2
-   ],
-   [
-    "inventario/estado/rotas.json",
-    2
-   ],
-   [
-    "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
-    2
-   ],
-   [
-    "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql",
     2
    ]
   ]

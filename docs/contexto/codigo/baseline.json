@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "935356c8ab1524aed25eaac10ccfa049ff67c187",
+  "commit": "7a29c0e7a6ead7be646237b9e639de53ab18ed18",
   "branch": "main",
-  "data_commit": "2026-11-16T18:01:05-03:00",
+  "data_commit": "2026-11-16T19:06:23-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "7a29c0e",
+    "data": "2026-11-16",
+    "assunto": "feat(dossiê): enxerta as 5 abas restantes do dossiê do colaborador (branch muri) (#604)"
+   },
    {
     "sha": "935356c",
     "data": "2026-11-16",
@@ -126,18 +131,13 @@
     "sha": "8f3efc6",
     "data": "2026-11-16",
     "assunto": "chore: inventario do estado real [auto] (#581)"
-   },
-   {
-    "sha": "9ecaf8a",
-    "data": "2026-11-16",
-    "assunto": "chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)"
    }
   ],
-  "arquivos_mudados_7d": 891,
+  "arquivos_mudados_7d": 923,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 305
+    "mudancas": 307
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -160,16 +160,16 @@
     "mudancas": 60
    },
    {
+    "pasta": "src/components/colaborador-detalhes",
+    "mudancas": 57
+   },
+   {
     "pasta": "src/utils/__tests__",
     "mudancas": 38
    },
    {
     "pasta": "src/components/layout",
     "mudancas": 36
-   },
-   {
-    "pasta": "src/components/colaborador-detalhes",
-    "mudancas": 34
    },
    {
     "pasta": "src/components/folha",
@@ -188,11 +188,11 @@
     "mudancas": 28
    },
    {
-    "pasta": "src/components/ferias",
-    "mudancas": 25
+    "pasta": "src/components/ponto",
+    "mudancas": 27
    },
    {
-    "pasta": "src/components/ponto",
+    "pasta": "src/components/ferias",
     "mudancas": 25
    }
   ],
@@ -215,15 +215,15 @@
    },
    {
     "arquivo": "CLAUDE.md",
-    "mudancas": 12
-   },
-   {
-    "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 11
    },
    {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 10
+    "mudancas": 11
+   },
+   {
+    "arquivo": "scripts/canonical-invariants.sql",
+    "mudancas": 11
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
@@ -243,10 +243,6 @@
    },
    {
     "arquivo": "AGENTS.md",
-    "mudancas": 7
-   },
-   {
-    "arquivo": "e2e/auth.setup.ts",
     "mudancas": 7
    },
    {
@@ -271,6 +267,10 @@
    },
    {
     "arquivo": "docs/auditoria/estado/WORKFLOWS_STATUS.md",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "e2e/auth.setup.ts",
     "mudancas": 6
    },
    {
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 234
+    "commits": 235
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 45
+    "commits": 44
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3253,
-  "arquivos_codigo": 1787,
-  "linhas_codigo": 336524,
+  "arquivos_total": 3281,
+  "arquivos_codigo": 1815,
+  "linhas_codigo": 341794,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 80,
-  "componentes": 508,
-  "hooks": 110,
+  "componentes": 530,
+  "hooks": 112,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 663,
+  "testes": 665,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 733,
-   "linhas": 113897
+   "arquivos": 757,
+   "linhas": 118772
   },
   "src/constants": {
    "arquivos": 6,
@@ -651,8 +651,8 @@
    "linhas": 176
   },
   "src/hooks": {
-   "arquivos": 186,
-   "linhas": 21251
+   "arquivos": 188,
+   "linhas": 21410
   },
   "src/i18n": {
    "arquivos": 2,
@@ -676,7 +676,7 @@
   },
   "src/pages": {
    "arquivos": 131,
-   "linhas": 46535
+   "linhas": 46597
   },
   "src/providers": {
    "arquivos": 4,
@@ -687,8 +687,8 @@
    "linhas": 8725
   },
   "src/services": {
-   "arquivos": 182,
-   "linhas": 38327
+   "arquivos": 183,
+   "linhas": 38413
   },
   "src/setupTests.ts": {
    "arquivos": 1,
@@ -704,11 +704,11 @@
   },
   "src/types": {
    "arquivos": 13,
-   "linhas": 854
+   "linhas": 868
   },
   "src/utils": {
-   "arquivos": 68,
-   "linhas": 8552
+   "arquivos": 69,
+   "linhas": 8626
   },
   "stylelint.config.js": {
    "arquivos": 1,
@@ -781,6 +781,10 @@
    "linhas": 1044
   },
   {
+   "arquivo": "src/components/colaborador-detalhes/FeriasResumoTab.tsx",
+   "linhas": 1029
+  },
+  {
    "arquivo": "scripts/graphify-local.mjs",
    "linhas": 997
   },
@@ -839,10 +843,6 @@
   {
    "arquivo": "src/components/settings/InlineTabs.tsx",
    "linhas": 808
-  },
-  {
-   "arquivo": "src/pages/ESocialPage.tsx",
-   "linhas": 788
   }
  ],
  "qualidade": {
@@ -851,7 +851,7 @@
   "ts_ignore": 1,
   "eslint_disable": 4,
   "todos": 18,
-  "arquivos_acima_500_linhas": 86
+  "arquivos_acima_500_linhas": 89
  },
  "todos": [
   {
@@ -1113,7 +1113,6 @@
    "src/components/layout/Stack.tsx",
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
-   "src/components/ui/animated-cascade-dialog.tsx",
    "src/components/ui/data-table.tsx",
    "src/components/ui/date-picker.tsx",
    "src/components/ui/filter-chip.tsx",

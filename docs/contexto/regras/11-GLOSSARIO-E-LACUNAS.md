@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `935356c8ab` · branch `main` · 2026-11-16 21:02 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `7a29c0e7a6` · branch `main` · 2026-11-16 22:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +321 linhas — lista completa em `context.json` | | | |
+| … +322 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -354,6 +354,7 @@
 | status | valor `todas` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/MetasFiltros.tsx`<br>`compara:src/components/avaliacao/MetasOKRsTab.tsx` |
 | status | valor `em_preparacao` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/aprovacaoGestor.ts` |
 | status | valor `devolvida` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/avaliacao/feedbackCanonico.ts`<br>`compara:src/pages/AvaliacaoPage.tsx` |
+| status | valor `inscrito` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx`<br>`escreve:src/pages/TreinamentosPage.tsx` |
 | status | valor `recusado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/dashboard/AnalyticsSection.tsx`<br>`compara:src/hooks/usePontoMelhorado.ts`<br>`escreve:src/components/dashboard/AnalyticsSection.tsx`<br>`escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx` |
 | status | valor `excellent` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/components/dashboard/WorkforceHealthScore.tsx` |
 | status | valor `finalizado` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/components/desligamentos/DesligamentoDetailSheet.tsx`<br>`compara:src/components/desligamentos/DesligamentoKPIs.tsx`<br>`compara:src/services/cnabService.ts`<br>`escreve:src/services/cnabService.ts` |
@@ -382,7 +383,6 @@
 | status | valor `excluido` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/PlanosSaudePage.tsx`<br>`escreve:src/services/tabelas/beneficiosService.ts`<br>`filtra:src/services/calculoBeneficiosService.ts` |
 | status | valor `CONCLUIDO` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ProvisoesPage.tsx`<br>`escreve:supabase/functions/calcular-provisoes/index.ts`<br>`filtra:src/pages/ProvisoesPage.tsx` |
 | status | valor `PROCESSANDO` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/pages/ProvisoesPage.tsx`<br>`escreve:supabase/functions/calcular-provisoes/index.ts` |
-| status | valor `inscrito` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/pages/TreinamentosPage.tsx` |
 | status | valor `completo` para `status` usado no código não existe em nenhum enum do banco/TS | `escreve:src/services/backupService.ts` |
 | status | valor `aprovado_financeiro` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:src/services/premiacoesService.ts` |
 | status | valor `number` para `status` usado no código não existe em nenhum enum do banco/TS | `compara:supabase/functions/_shared/trainingImages/pipeline.ts` |
