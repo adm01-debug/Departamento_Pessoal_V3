@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
-import { CalendarDays, Clock, Search } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Clock, RefreshCw, Search } from 'lucide-react';
 import { AppPagination } from '@/components/ui/app-pagination';
+import { Button } from '@/components/ui/button';
 import { CascadeTableBody, CascadeTableRow } from '@/components/ui/cascade-table';
 import { EntradaPresenca, entradaCard } from '@/components/ui/entrada-cards';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -158,6 +159,8 @@ export interface TreinamentosTabelaProps {
   participantesPorTreinamento: Record<string, ResumoParticipacao>;
   onExcluir: (treinamento: TreinamentoRegistro) => void;
   filtroAtivo: boolean;
+  erro?: boolean;
+  onTentarNovamente?: () => void;
 }
 
 export function TreinamentosTabela({
@@ -168,6 +171,8 @@ export function TreinamentosTabela({
   participantesPorTreinamento,
   onExcluir,
   filtroAtivo,
+  erro = false,
+  onTentarNovamente,
 }: TreinamentosTabelaProps) {
   // Cascata SÓ na primeira apresentação da área (ver comentário do topo). O
   // estado desliga depois que a onda inicial terminou; trocar página/filtros
@@ -178,6 +183,8 @@ export function TreinamentosTabela({
     const timer = window.setTimeout(() => setAnimar(false), 1400);
     return () => window.clearTimeout(timer);
   }, []);
+
+  if (erro) return <EstadoErro onTentarNovamente={onTentarNovamente} />;
 
   const vazio = pagina.total === 0;
 
@@ -279,6 +286,34 @@ export function TreinamentosTabela({
         </div>
       </motion.div>
     </EntradaPresenca>
+  );
+}
+
+function EstadoErro({ onTentarNovamente }: { onTentarNovamente?: () => void }) {
+  return (
+    <div
+      role="alert"
+      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-destructive/30 bg-destructive/[0.04] px-4 py-12 text-center"
+    >
+      <span className="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <AlertTriangle className="h-5 w-5" aria-hidden />
+      </span>
+      <p className="text-sm font-medium text-foreground">Não foi possível carregar os treinamentos</p>
+      <p className="max-w-md text-xs leading-relaxed text-muted-foreground">
+        A lista não pôde ser lida; isso não significa que não existam treinamentos cadastrados.
+      </p>
+      {onTentarNovamente && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-2 h-8 gap-2 rounded-lg px-3 text-[11.5px]"
+          onClick={onTentarNovamente}
+        >
+          <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+          Tentar novamente
+        </Button>
+      )}
+    </div>
   );
 }
 

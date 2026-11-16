@@ -195,9 +195,7 @@ describe('turmasDerivacoes — metadados complementares', () => {
     expect(referenciaTemporalTurma(new Date(2026, 7, 25), 'proximas', null, REF)).toBe('Hoje');
     expect(referenciaTemporalTurma(new Date(2026, 7, 20), 'proximas', null, REF)).toBeNull();
     expect(referenciaTemporalTurma(new Date(2026, 7, 14), 'andamento', null, REF)).toBe('Iniciada há 11 dias');
-    expect(referenciaTemporalTurma(new Date(2026, 1, 5), 'concluidas', '2026-02-20', REF)).toBe(
-      'Concluída em 20/02'
-    );
+    expect(referenciaTemporalTurma(new Date(2026, 1, 5), 'concluidas', '2026-02-20', REF)).toBe('Concluída em 20/02');
     expect(referenciaTemporalTurma(null, 'proximas', null, REF)).toBeNull();
   });
 

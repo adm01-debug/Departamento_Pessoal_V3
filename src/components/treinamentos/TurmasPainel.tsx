@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarClock, CheckCircle2, PlayCircle, Search } from 'lucide-react';
+import { AlertTriangle, CalendarClock, CheckCircle2, PlayCircle, RefreshCw, Search } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EntradaPresenca, MAX_ENTRADA_INDEX, entradaCard } from '@/components/ui/entrada-cards';
@@ -64,9 +64,12 @@ export interface TurmasPainelProps {
   cursos: readonly CursoTurma[];
   colaboradores?: readonly ColaboradorTurma[];
   carregando?: boolean;
+  /** Falha na leitura de `treinamento_instancias`: nada de lista vazia afirmando "nenhuma turma". */
+  erro?: boolean;
+  onTentarNovamente?: () => void;
   /** Fluxo REAL de criação de turma (modal/formulário) — ausente = sem CTA. */
   onNovaTurma?: () => void;
-  /** Autorização real (matriz `permissions`) já verificada pelo chamador. */
+  /** Vem do chamador; hoje é valor fixo — não há verificação de permissão nesta base. */
   podeCriarTurma?: boolean;
   /**
    * Data de referência para sugerir a semana da agenda. Produção usa `new Date()`;
@@ -189,11 +192,42 @@ function TurmasSkeleton() {
   );
 }
 
+function TurmasErro({ onTentarNovamente }: { onTentarNovamente?: () => void }) {
+  return (
+    <div
+      role="alert"
+      data-turmas-erro
+      className="flex flex-col items-center justify-center rounded-xl border border-destructive/25 bg-destructive/[0.04] px-6 py-10 text-center"
+    >
+      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-destructive/25 bg-destructive/10 text-destructive">
+        <AlertTriangle className="h-4 w-4" aria-hidden />
+      </span>
+      <p className="mt-3 text-sm font-semibold text-foreground">Não foi possível carregar as turmas</p>
+      <p className="mt-1 max-w-md text-xs text-muted-foreground">
+        As turmas existentes continuam preservadas; tente novamente sem alterar filtros ou dados.
+      </p>
+      {onTentarNovamente && (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onTentarNovamente}
+          className="mt-4 h-9 gap-2 rounded-lg px-3.5 text-[11.5px]"
+        >
+          <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+          Tentar novamente
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export function TurmasPainel({
   instancias,
   cursos,
   colaboradores = [],
   carregando = false,
+  erro = false,
+  onTentarNovamente,
   onNovaTurma,
   podeCriarTurma = false,
   referencia,
@@ -266,6 +300,15 @@ export function TurmasPainel({
     setPeriodo('todas');
     setOrdenacao(ORDENACAO_TURMA_PADRAO);
   };
+
+  /**
+   * O card “Mais turmas em breve” só promete turmas futuras quando existe pelo
+   * menos uma turma planejada nos dados (base completa, não o recorte dos
+   * filtros — ele nunca participou deles).
+   */
+  const existemProximas = useMemo(() => turmas.some((turma) => turma.grupo === 'proximas'), [turmas]);
+
+  if (erro) return <TurmasErro onTentarNovamente={onTentarNovamente} />;
 
   return (
     <div className="@container flex flex-col gap-3">
@@ -355,8 +398,11 @@ export function TurmasPainel({
                     )}
 
                     {/* Complemento da coluna — NÃO é turma: fica fora de
-                        `grupos`, da contagem, dos filtros e da agenda. */}
-                    {coluna.chave === 'andamento' && (
+                        `grupos`, da contagem, dos filtros e da agenda. Só
+                        aparece com turma planejada em base (ver
+                        `existemProximas`); no estado de erro o painel nem
+                        chega aqui. */}
+                    {coluna.chave === 'andamento' && existemProximas && (
                       <motion.div
                         key="mais-turmas-em-breve"
                         custom={indiceMaisTurmas}

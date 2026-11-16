@@ -19,11 +19,11 @@ import { cn } from '@/lib/utils';
  * fluxo real de criação, o CTA “Nova Turma”.
  *
  * CTA — CONECTADO AO FLUXO REAL: `NovaTurmaDialog` usa a operação existente
- * `catalogoCursoService.criarInstancia` (sem API nova) e a autorização vem da
- * matriz `permissions` (`treinamentos/create`) verificada pelo chamador. O CTA
- * só é renderizado quando as DUAS coisas existem: `onNovaTurma` e
- * `podeCriarTurma`. No modo demonstração, o submit é bloqueado pelo guard de
- * escrita do módulo.
+ * `catalogoCursoService.criarInstancia` (sem API nova). A autorização, porém,
+ * AINDA NÃO é verificada: não existe hook de permissões nesta base, então o
+ * chamador fixa `podeCriarTurma` até que exista. O CTA só é renderizado quando
+ * as DUAS coisas existem: `onNovaTurma` e `podeCriarTurma`. No modo
+ * demonstração, o submit é bloqueado pelo guard de escrita do módulo.
  *
  * MOVIMENTO: o card não anima sozinho. O painel o envolve na MESMA entrada
  * dos cards de turma (`linhaEntradaHubVariants`), com índice posterior ao do
@@ -34,7 +34,7 @@ import { cn } from '@/lib/utils';
 export interface MaisTurmasCardProps {
   /** Fluxo REAL de criação de turma. Sem ele, o card fica apenas informativo. */
   onNovaTurma?: () => void;
-  /** Autorização já verificada pelo chamador (nunca inferida do próprio botão). */
+  /** Vem do chamador; hoje é valor fixo — não há verificação de permissão nesta base. */
   podeCriarTurma?: boolean;
   className?: string;
 }

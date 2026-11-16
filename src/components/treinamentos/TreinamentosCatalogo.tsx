@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Search } from 'lucide-react';
 import { AppPagination } from '@/components/ui/app-pagination';
 import { Button } from '@/components/ui/button';
 import { EntradaPresenca, MAX_ENTRADA_INDEX } from '@/components/ui/entrada-cards';
@@ -70,6 +70,34 @@ function CatalogoSkeleton() {
   );
 }
 
+function EstadoErroCatalogo({ onTentarNovamente }: { onTentarNovamente?: () => void }) {
+  return (
+    <div
+      role="alert"
+      className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-destructive/30 bg-destructive/[0.04] px-4 py-12 text-center"
+    >
+      <span className="mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <AlertTriangle className="h-5 w-5" aria-hidden />
+      </span>
+      <p className="text-sm font-medium text-foreground">Não foi possível carregar o catálogo</p>
+      <p className="max-w-md text-xs leading-relaxed text-muted-foreground">
+        A lista de cursos não pôde ser lida; isso não significa que o catálogo esteja vazio.
+      </p>
+      {onTentarNovamente && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-2 h-8 gap-2 rounded-lg px-3 text-[11.5px]"
+          onClick={onTentarNovamente}
+        >
+          <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+          Tentar novamente
+        </Button>
+      )}
+    </div>
+  );
+}
+
 function EstadoVazioCatalogo({ filtroAtivo, onLimpar }: { filtroAtivo: boolean; onLimpar: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-border/50 bg-card/30 px-4 py-14 text-center">
@@ -91,6 +119,8 @@ export interface TreinamentosCatalogoProps {
   cursos: CursoCatalogo[];
   participantesPorCurso: Record<string, ParticipacaoCurso>;
   carregando?: boolean;
+  erro?: boolean;
+  onTentarNovamente?: () => void;
   onEditar: (curso: CursoCatalogo) => void;
   onExcluir: (curso: CursoCatalogo) => void;
 }
@@ -99,6 +129,8 @@ export function TreinamentosCatalogo({
   cursos,
   participantesPorCurso,
   carregando = false,
+  erro = false,
+  onTentarNovamente,
   onEditar,
   onExcluir,
 }: TreinamentosCatalogoProps) {
@@ -147,6 +179,8 @@ export function TreinamentosCatalogo({
     setOrdenacao(ORDENACAO_CATALOGO_PADRAO);
     setPaginaAtual(1);
   };
+
+  if (erro) return <EstadoErroCatalogo onTentarNovamente={onTentarNovamente} />;
 
   return (
     <div className="@container flex flex-col gap-3">

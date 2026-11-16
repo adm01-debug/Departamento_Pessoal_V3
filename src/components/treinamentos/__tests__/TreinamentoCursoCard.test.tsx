@@ -44,7 +44,14 @@ const PARTICIPACAO = {
 };
 
 async function abrirFicha(props: { curso?: CursoCatalogo; participacao?: typeof PARTICIPACAO }) {
-  render(<TreinamentoCursoCard curso={props.curso ?? CURSO} participacao={props.participacao} onEditar={vi.fn()} onExcluir={vi.fn()} />);
+  render(
+    <TreinamentoCursoCard
+      curso={props.curso ?? CURSO}
+      participacao={props.participacao}
+      onEditar={vi.fn()}
+      onExcluir={vi.fn()}
+    />
+  );
   await userEvent.click(screen.getAllByRole('button', { name: /Ver curso/i })[0]);
   return screen.findByRole('dialog');
 }

@@ -233,11 +233,7 @@ export function CertificadoCard({ certificado, onVisualizar, onVer, temArquivo =
             }
             className="h-9 min-w-0 flex-1 gap-1.5 rounded-lg border-border/60 px-3 text-[11.5px] font-semibold transition-colors hover:border-primary/40 hover:bg-primary/5 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
           >
-            {temArquivo ? (
-              <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-            ) : (
-              <Link className="h-3.5 w-3.5 shrink-0" />
-            )}
+            {temArquivo ? <ExternalLink className="h-3.5 w-3.5 shrink-0" /> : <Link className="h-3.5 w-3.5 shrink-0" />}
             <span className="truncate">{temArquivo ? 'Abrir arquivo' : 'Baixar PDF'}</span>
           </Button>
         )}

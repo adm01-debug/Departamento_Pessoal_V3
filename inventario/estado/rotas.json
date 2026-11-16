@@ -7,7 +7,7 @@
     "itens_de_menu": 88,
     "urls_admin": 23,
     "urls_publicas": 7,
-    "hooks_distintos": 130,
+    "hooks_distintos": 131,
     "problemas": 0
   },
   "urls": [
@@ -16664,7 +16664,7 @@
           "rotulo": "Treinamentos"
         }
       ],
-      "arquivos_lidos": 154,
+      "arquivos_lidos": 212,
       "hooks": [
         {
           "nome": "useAuth",
@@ -16691,6 +16691,10 @@
           "arquivo": "src/hooks/useGrupo.ts"
         },
         {
+          "nome": "useMovimentoReduzido",
+          "arquivo": "src/lib/motionMode.ts"
+        },
+        {
           "nome": "useOnMount",
           "arquivo": "src/hooks/useMountEffects.ts"
         },
@@ -16705,6 +16709,10 @@
         {
           "nome": "useSystemHealth",
           "arquivo": "src/hooks/useSystemHealth.ts"
+        },
+        {
+          "nome": "useTrainingImages",
+          "arquivo": "src/hooks/useTrainingImages.ts"
         }
       ],
       "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
@@ -16888,6 +16896,7 @@
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
+        "training_images",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
@@ -18660,7 +18669,7 @@
     },
     "useMovimentoReduzido": {
       "arquivo": "src/lib/motionMode.ts",
-      "telas": ["src/pages/AvaliacaoPage.tsx"]
+      "telas": ["src/pages/AvaliacaoPage.tsx", "src/pages/TreinamentosPage.tsx"]
     },
     "useNotificacoes": {
       "arquivo": "src/hooks/useNotificacoes.ts",
@@ -19165,6 +19174,10 @@
     "useTodasEmpresas": {
       "arquivo": "src/hooks/useTodasEmpresas.ts",
       "telas": ["src/pages/EmpresasPage.tsx"]
+    },
+    "useTrainingImages": {
+      "arquivo": "src/hooks/useTrainingImages.ts",
+      "telas": ["src/pages/TreinamentosPage.tsx"]
     },
     "useTreinamentosColaborador": {
       "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts",

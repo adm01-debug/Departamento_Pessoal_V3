@@ -202,6 +202,8 @@ export function CertificadosPainel({
     setPagina(1);
   };
 
+  if (erro) return <EstadoErro onTentarNovamente={onTentarNovamente} />;
+
   return (
     <div className="@container flex flex-col gap-3">
       <CertificadosFiltros
@@ -247,9 +249,7 @@ export function CertificadosPainel({
         }}
       />
 
-      {erro ? (
-        <EstadoErro onTentarNovamente={onTentarNovamente} />
-      ) : carregando ? (
+      {carregando ? (
         <CertificadosSkeleton />
       ) : filtrados.length === 0 ? (
         <EstadoVazio filtroAtivo={filtroAtivo && lista.length > 0} onLimpar={limparFiltros} />
@@ -287,7 +287,7 @@ export function CertificadosPainel({
         </EntradaPresenca>
       )}
 
-      {!erro && !carregando && filtrados.length > 0 && (
+      {!carregando && filtrados.length > 0 && (
         <div className="border-t border-border/40 pt-2.5">
           <AppPagination
             page={paginaAtual.pagina}

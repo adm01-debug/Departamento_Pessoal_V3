@@ -35,6 +35,8 @@ export interface NovaTurmaDialogProps {
   onOpenChange: (aberto: boolean) => void;
   onCriar: (dados: NovaTurmaPayload) => void;
   pendente?: boolean;
+  /** A leitura do catálogo falhou: a lista vazia não prova ausência de cursos. */
+  erroCursos?: boolean;
 }
 
 export function NovaTurmaDialog({
@@ -44,6 +46,7 @@ export function NovaTurmaDialog({
   onOpenChange,
   onCriar,
   pendente = false,
+  erroCursos = false,
 }: NovaTurmaDialogProps) {
   const [cursoId, setCursoId] = useState('');
   const [instrutorId, setInstrutorId] = useState('sem_instrutor');
@@ -111,8 +114,15 @@ export function NovaTurmaDialog({
                 ))}
               </SelectContent>
             </Select>
-            {cursos.length === 0 && (
-              <p className="text-[10.5px] text-muted-foreground">Nenhum curso cadastrado no catálogo.</p>
+            {erroCursos ? (
+              <p className="text-[10.5px] text-destructive">
+                Não foi possível carregar o catálogo de cursos. Isso não significa que não existam cursos: tente
+                novamente em instantes.
+              </p>
+            ) : (
+              cursos.length === 0 && (
+                <p className="text-[10.5px] text-muted-foreground">Nenhum curso cadastrado no catálogo.</p>
+              )
             )}
           </div>
 

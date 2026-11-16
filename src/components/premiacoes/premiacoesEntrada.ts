@@ -100,4 +100,3 @@ export const linhaEntradaHubVariants: Variants = {
  * keyframe `hidden`): mesmo mecanismo compartilhado do sistema, sem DOM extra.
  */
 export { EntradaPresenca } from '@/components/ui/entrada-cards';
-

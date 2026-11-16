@@ -275,7 +275,9 @@ function AcaoInscricao({
     // que a inscrição está em um dos 5 status do schema.
     const statusGravavel = STATUS_SELECIONAVEIS.some((opcao) => opcao.valor === inscricao.statusCodigo);
     return (
-      <div className={cn('flex min-w-0 items-center justify-end gap-1.5', compacto ? 'flex-row' : 'flex-col items-end')}>
+      <div
+        className={cn('flex min-w-0 items-center justify-end gap-1.5', compacto ? 'flex-row' : 'flex-col items-end')}
+      >
         <Select
           value={statusGravavel ? inscricao.statusCodigo : undefined}
           onValueChange={(status) => onAlterarStatus(inscricao, status)}

@@ -166,9 +166,9 @@ export function CertificadoDetalheDialog({ certificado, onOpenChange }: Certific
 
       <TreinamentosCascadeItem>
         <p className="rounded-lg border border-dashed border-border/50 bg-muted/10 px-3 py-2 text-[10.5px] leading-relaxed text-muted-foreground">
-          Esta é uma representação informativa com os dados registrados. O certificado em si fica na aba
-          Certificados: quando o registro tem arquivo anexado, o arquivo oficial abre em nova aba; quando não tem, o
-          PDF do certificado é gerado para download.
+          Esta é uma representação informativa com os dados registrados. O certificado em si fica na aba Certificados:
+          quando o registro tem arquivo anexado, o arquivo oficial abre em nova aba; quando não tem, o PDF do
+          certificado é gerado para download.
         </p>
       </TreinamentosCascadeItem>
 

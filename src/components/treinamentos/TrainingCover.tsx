@@ -97,7 +97,13 @@ function CenaFaixa({ categoria }: { categoria?: string | null }) {
         <path d="M184 104 L232 62 L276 104 Z" fill="currentColor" opacity="0.08" />
         <path d="M222 80c0-15 11-26 26-26s26 11 26 26z" fill="currentColor" opacity="0.2" />
         <rect x="216" y="81" width="64" height="5" rx="2.5" fill="currentColor" opacity="0.26" />
-        <path d="M234 60c4-4 9-6 14-6s10 2 14 6" fill="none" stroke="currentColor" strokeOpacity="0.18" strokeWidth="2" />
+        <path
+          d="M234 60c4-4 9-6 14-6s10 2 14 6"
+          fill="none"
+          stroke="currentColor"
+          strokeOpacity="0.18"
+          strokeWidth="2"
+        />
       </svg>
     );
   }
