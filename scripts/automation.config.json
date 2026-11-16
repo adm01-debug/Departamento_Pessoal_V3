@@ -1422,6 +1422,38 @@
       "manual": ["node", "--test", "scripts/ci/github-settings-guard.unit.mjs"],
       "triggers": ["manual"],
       "reason": "teste node --test do settings-guard (PR #399), contratos do GitHub. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "training-images-local-runner",
+      "kind": "legacy",
+      "files": ["scripts/training-images-local/run-tests.mjs"],
+      "manual": ["node", "scripts/training-images-local/run-tests.mjs"],
+      "triggers": ["manual"],
+      "reason": "Sobe um PostgreSQL efêmero local para rodar os testes SQL das capas de treinamento. Exige initdb no host e nunca deve rodar em CI nem em hook; só por comando explícito do desenvolvedor."
+    },
+    {
+      "id": "training-images-local-edge-http",
+      "kind": "legacy",
+      "files": ["scripts/training-images-local/edge-http-test.mjs"],
+      "manual": ["node", "scripts/training-images-local/edge-http-test.mjs"],
+      "triggers": ["manual"],
+      "reason": "Exercita por HTTP a edge function de geração de capas servida localmente. Depende de servidor em execução e de chave de provedor; execução automática seria falha garantida ou custo real."
+    },
+    {
+      "id": "training-images-local-pipeline-e2e",
+      "kind": "legacy",
+      "files": ["scripts/training-images-local/pipeline-e2e.ts"],
+      "manual": ["npx", "--yes", "deno", "run", "-A", "scripts/training-images-local/pipeline-e2e.ts"],
+      "triggers": ["manual"],
+      "reason": "Roda o pipeline das capas ponta a ponta contra o banco local levantado pelo run-tests.mjs. Precisa de Deno e do banco já em execução, logo é manual por natureza."
+    },
+    {
+      "id": "training-images-homolog",
+      "kind": "legacy",
+      "files": ["scripts/training-images-homolog/homolog.mjs"],
+      "manual": ["node", "scripts/training-images-homolog/homolog.mjs"],
+      "triggers": ["manual"],
+      "reason": "Homologação das capas de treinamento contra ambiente real: consome quota do provedor de imagens e grava no Storage. Automatizar geraria custo sem pedido do dono."
     }
   ],
   "ci": [

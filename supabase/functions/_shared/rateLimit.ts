@@ -208,3 +208,229 @@ export function rateLimitResponse(result: RateLimitResult, req?: Request): Respo
     },
   );
 }
+
+// ─── Rate limit duplo (empresa + usuário) ────────────────────────────────────
+//
+// Uso:
+//   const rl = await checkRateLimitDuplo(admin, {
+//     empresaKey: `capas:empresa:${empresaId}`, empresaLimit: 20,
+//     usuarioKey: `capas:usuario:${userId}`, usuarioLimit: 5, windowSec: 60,
+//   });
+//   if (!rl.allowed) return rateLimitDuploResponse(rl, req);
+//
+// A RPC `edge_rate_limit_check_dual` (migration 20261023140000_edge_rate_limit_dual)
+// verifica os DOIS baldes na MESMA transação: o teto do tenant e o teto
+// individual. A quota só é consumida quando os dois permitem.
+
+/** Cliente mínimo da RPC dual — mesma razão de tipagem estrutural do simples. */
+export interface RateLimitDuploRpcClient {
+  rpc(
+    name: 'edge_rate_limit_check_dual',
+    args: {
+      p_empresa_key: string;
+      p_empresa_limit: number;
+      p_usuario_key: string | null;
+      p_usuario_limit: number;
+      p_window_sec: number;
+      p_now: number;
+    },
+  ): PromiseLike<{ data: unknown; error: { message: string } | null }>;
+}
+
+export interface RateLimitDuploOptions {
+  empresaKey: string;
+  empresaLimit: number;
+  /** Ausente quando não há usuário confiável (ex.: worker sem requested_by). */
+  usuarioKey?: string | null;
+  usuarioLimit?: number | null;
+  windowSec: number;
+}
+
+export interface RateLimitDuploResult {
+  allowed: boolean;
+  reason?: 'empresa' | 'usuario';
+  empresa: { current: number; limit: number; remaining: number };
+  usuario: { current: number; limit: number; remaining: number };
+  reset: number;
+  windowSec: number;
+}
+
+interface RpcDuploResult {
+  allowed: boolean;
+  reason: 'empresa' | 'usuario' | null;
+  empresa_current: number;
+  empresa_limit: number;
+  empresa_remaining: number;
+  usuario_current: number;
+  usuario_limit: number;
+  usuario_remaining: number;
+  reset: number;
+}
+
+function isValidRpcDuploResult(value: unknown): value is RpcDuploResult {
+  if (typeof value !== 'object' || value === null) return false;
+  const rpc = value as Record<string, unknown>;
+  const numero = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0;
+  return (
+    typeof rpc.allowed === 'boolean' &&
+    (rpc.reason === null || rpc.reason === 'empresa' || rpc.reason === 'usuario') &&
+    numero(rpc.empresa_current) &&
+    numero(rpc.empresa_limit) &&
+    numero(rpc.empresa_remaining) &&
+    numero(rpc.usuario_current) &&
+    numero(rpc.usuario_limit) &&
+    numero(rpc.usuario_remaining) &&
+    numero(rpc.reset)
+  );
+}
+
+function slotDeMemoria(key: string, now: number, windowSec: number) {
+  const windowStart = now - windowSec;
+  let slot = _memFallback.get(key);
+  if (!slot || slot.windowStart < windowStart) {
+    slot = { count: 0, windowStart: now };
+    _memFallback.set(key, slot);
+  }
+  return slot;
+}
+
+function podaMemoria() {
+  if (_memFallback.size > 1000) {
+    const oldest = _memFallback.keys().next().value;
+    if (oldest !== undefined) _memFallback.delete(oldest);
+  }
+}
+
+/** Fallback em memória do duplo: limite reduzido, nunca fail-open. */
+function memoryFallbackDuplo(
+  opts: RateLimitDuploOptions,
+  now: number,
+  motivo: string,
+): RateLimitDuploResult {
+  console.error(`[rateLimit] RPC dual indisponível (${motivo}) — fallback em memória (fail-closed)`);
+
+  const empresaFallbackLimit = Math.max(1, Math.floor(opts.empresaLimit * MEM_LIMIT_FRACTION));
+  const empresaSlot = slotDeMemoria(opts.empresaKey, now, opts.windowSec);
+  const empresaOk = empresaSlot.count < empresaFallbackLimit;
+
+  // Sem usuário confiável: aplica apenas o balde da empresa (nunca inventa).
+  if (!opts.usuarioKey || !opts.usuarioLimit) {
+    if (empresaOk) empresaSlot.count += 1;
+    podaMemoria();
+    return {
+      allowed: empresaOk,
+      reason: empresaOk ? undefined : 'empresa',
+      empresa: {
+        current: empresaSlot.count,
+        limit: empresaFallbackLimit,
+        remaining: Math.max(0, empresaFallbackLimit - empresaSlot.count),
+      },
+      usuario: { current: 0, limit: 0, remaining: 0 },
+      reset: empresaSlot.windowStart + opts.windowSec,
+      windowSec: opts.windowSec,
+    };
+  }
+
+  const usuarioFallbackLimit = Math.max(1, Math.floor(opts.usuarioLimit * MEM_LIMIT_FRACTION));
+  const usuarioSlot = slotDeMemoria(opts.usuarioKey, now, opts.windowSec);
+  const usuarioOk = usuarioSlot.count < usuarioFallbackLimit;
+  const allowed = empresaOk && usuarioOk;
+  if (allowed) {
+    empresaSlot.count += 1;
+    usuarioSlot.count += 1;
+  }
+  podaMemoria();
+
+  return {
+    allowed,
+    reason: allowed ? undefined : !empresaOk ? 'empresa' : 'usuario',
+    empresa: {
+      current: empresaSlot.count,
+      limit: empresaFallbackLimit,
+      remaining: Math.max(0, empresaFallbackLimit - empresaSlot.count),
+    },
+    usuario: {
+      current: usuarioSlot.count,
+      limit: usuarioFallbackLimit,
+      remaining: Math.max(0, usuarioFallbackLimit - usuarioSlot.count),
+    },
+    reset: empresaSlot.windowStart + opts.windowSec,
+    windowSec: opts.windowSec,
+  };
+}
+
+export async function checkRateLimitDuplo(
+  admin: RateLimitDuploRpcClient,
+  opts: RateLimitDuploOptions,
+): Promise<RateLimitDuploResult> {
+  const now = Math.floor(Date.now() / 1000);
+
+  let result: { data: unknown; error: { message: string } | null };
+  try {
+    result = await admin.rpc('edge_rate_limit_check_dual', {
+      p_empresa_key: opts.empresaKey,
+      p_empresa_limit: opts.empresaLimit,
+      p_usuario_key: opts.usuarioKey ?? null,
+      p_usuario_limit: opts.usuarioLimit ?? 0,
+      p_window_sec: opts.windowSec,
+      p_now: now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'RPC rejected without an Error';
+    return memoryFallbackDuplo(opts, now, message);
+  }
+
+  if (result.error) return memoryFallbackDuplo(opts, now, result.error.message);
+  if (!isValidRpcDuploResult(result.data)) {
+    return memoryFallbackDuplo(opts, now, 'invalid RPC response shape');
+  }
+
+  const rpc = result.data;
+  const semUsuario = !opts.usuarioKey || !opts.usuarioLimit;
+
+  return {
+    allowed: rpc.allowed,
+    reason: rpc.reason ?? undefined,
+    empresa: {
+      current: rpc.empresa_current,
+      limit: rpc.empresa_limit,
+      remaining: rpc.allowed ? rpc.empresa_remaining : 0,
+    },
+    usuario: semUsuario
+      ? { current: 0, limit: 0, remaining: 0 }
+      : {
+          current: rpc.usuario_current,
+          limit: rpc.usuario_limit,
+          remaining: rpc.allowed ? rpc.usuario_remaining : 0,
+        },
+    reset: rpc.reset,
+    windowSec: opts.windowSec,
+  };
+}
+
+export function rateLimitDuploResponse(result: RateLimitDuploResult, req?: Request): Response {
+  return new Response(
+    JSON.stringify({
+      success: false,
+      error: 'Rate limit excedido',
+      code: 'RATE_LIMIT_EXCEEDED',
+      scope: result.reason ?? 'geral',
+      empresa: result.empresa,
+      usuario: result.usuario,
+      window_seconds: result.windowSec,
+      reset: result.reset,
+    }),
+    {
+      status: 429,
+      headers: {
+        ...getCorsHeaders(req),
+        'Content-Type': 'application/json',
+        'Retry-After': String(result.windowSec),
+        'X-RateLimit-Limit': String(result.usuario.limit || result.empresa.limit),
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': String(result.reset),
+        'X-RateLimit-Empresa-Limit': String(result.empresa.limit),
+      },
+    },
+  );
+}
