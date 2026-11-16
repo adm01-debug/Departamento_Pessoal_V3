@@ -3,6 +3,7 @@ import { History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { TimelineEvent } from '@/types/timelineEvent';
 import { HistoryYearGroup } from './HistoryYearGroup';
+import { anoLocalDoEvento } from './eventDate';
 
 interface HistoryTimelineProps {
   /** Já filtrados (busca + tipo) e ordenados pelo componente pai. */
@@ -28,7 +29,7 @@ export function HistoryTimeline({
   const groups = useMemo(() => {
     const map = new Map<string, TimelineEvent[]>();
     for (const e of events) {
-      const year = e.date.slice(0, 4) || '—';
+      const year = anoLocalDoEvento(e.date);
       if (!map.has(year)) map.set(year, []);
       map.get(year)!.push(e);
     }

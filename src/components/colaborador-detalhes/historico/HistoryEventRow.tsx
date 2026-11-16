@@ -12,6 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import type { TimelineEvent } from '@/types/timelineEvent';
 import { EVENT_TYPE_CONFIG } from './eventTypeConfig';
+import { dataLocalDoEvento } from './eventDate';
 import { HistoryAuditDetailDialog } from './HistoryAuditDetailDialog';
 
 interface HistoryEventRowProps {
@@ -45,7 +46,7 @@ const iconVariants = {
 
 /** "10 NOV" / "2026" a partir de um ISO (yyyy-MM-dd ou timestamp completo) — sem depender de nova lib, só Intl (mesmo locale pt-BR já usado no resto do app). */
 function splitDate(iso: string): { diaMes: string; ano: string } {
-  const date = new Date(iso.length <= 10 ? `${iso}T00:00:00` : iso);
+  const date = dataLocalDoEvento(iso);
   if (Number.isNaN(date.getTime())) return { diaMes: '—', ano: '' };
   // `formatToParts` em vez de formatar a string inteira: o pt-BR do Node
   // intercala "de" entre dia e mês ("10 de nov."), então extrai só os

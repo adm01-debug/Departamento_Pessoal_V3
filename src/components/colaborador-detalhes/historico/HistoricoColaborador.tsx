@@ -13,6 +13,7 @@ import { HistorySidebar } from './HistorySidebar';
 import { buildEventTypeColorMap } from './eventTypeConfig';
 import { HistoryCreateSalaryDialog } from './HistoryCreateSalaryDialog';
 import { HistoryCreateContractDialog } from './HistoryCreateContractDialog';
+import { anoLocalDoEvento } from './eventDate';
 
 interface HistoricoColaboradorProps {
   colaboradorId: string;
@@ -54,14 +55,14 @@ export function HistoricoColaborador({
   const effectiveActiveTypes = useMemo(() => activeTypes ?? new Set(availableTypes), [activeTypes, availableTypes]);
 
   const years = useMemo(() => {
-    const set = new Set(events.map((e) => e.date.slice(0, 4)));
+    const set = new Set(events.map((e) => anoLocalDoEvento(e.date)));
     return [...set].sort((a, b) => b.localeCompare(a));
   }, [events]);
 
   const filteredEvents = useMemo(() => {
     const q = normalize(search.trim());
     let list = events.filter((e) => effectiveActiveTypes.has(e.type));
-    if (selectedYear !== 'all') list = list.filter((e) => e.date.slice(0, 4) === selectedYear);
+    if (selectedYear !== 'all') list = list.filter((e) => anoLocalDoEvento(e.date) === selectedYear);
     if (q) {
       list = list.filter((e) => normalize([e.title, e.description, e.secondary].filter(Boolean).join(' ')).includes(q));
     }
