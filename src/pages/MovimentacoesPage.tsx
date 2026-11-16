@@ -252,6 +252,11 @@ export default function MovimentacoesPage() {
     onSuccess: (r) => {
       qc.invalidateQueries({ queryKey: ['transferencias'] });
       qc.invalidateQueries({ queryKey: ['colaboradores'] });
+      // ['colaboradores'] (plural) NÃO casa com ['colaborador', id, empresaId]:
+      // o React Query compara segmento a segmento e o primeiro já difere. Sem
+      // esta linha, o dossiê do colaborador seguia mostrando o dado antigo por
+      // até 5 minutos (staleTime) depois de uma edição.
+      qc.invalidateQueries({ queryKey: ['colaborador'] });
       setOpenTransf(false);
       setEditTransfId(null);
       toast.success(
@@ -367,6 +372,11 @@ export default function MovimentacoesPage() {
     onSuccess: (r) => {
       qc.invalidateQueries({ queryKey: ['promocoes'] });
       qc.invalidateQueries({ queryKey: ['colaboradores'] });
+      // ['colaboradores'] (plural) NÃO casa com ['colaborador', id, empresaId]:
+      // o React Query compara segmento a segmento e o primeiro já difere. Sem
+      // esta linha, o dossiê do colaborador seguia mostrando o dado antigo por
+      // até 5 minutos (staleTime) depois de uma edição.
+      qc.invalidateQueries({ queryKey: ['colaborador'] });
       setOpenPromo(false);
       setEditPromoId(null);
       toast.success(

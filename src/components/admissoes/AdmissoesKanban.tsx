@@ -180,6 +180,8 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
         await Promise.all([
           qc.invalidateQueries({ queryKey: ['colaboradores'] }),
           qc.invalidateQueries({ queryKey: ['colaboradores-summary'] }),
+          // ver ColaboradorFormPage: a chave singular do dossiê é outra família.
+          qc.invalidateQueries({ queryKey: ['colaborador'] }),
         ]);
       }
     } catch (err) {

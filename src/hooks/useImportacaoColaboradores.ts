@@ -72,6 +72,8 @@ export function useImportacaoColaboradores() {
 
     setIsImporting(false);
     queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
+    // ver ColaboradorFormPage: a chave singular do dossiê é outra família.
+    queryClient.invalidateQueries({ queryKey: ['colaborador'] });
     toast.success(`${successCount} colaboradores importados`);
   };
 
