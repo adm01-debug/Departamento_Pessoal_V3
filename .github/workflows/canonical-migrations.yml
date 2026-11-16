@@ -134,33 +134,13 @@ jobs:
           # Versões já presentes no ledger do canônico são puladas: um
           # re-dispatch do mesmo lote não pode re-executar as migrações.
           applied="$(psql "$SUPABASE_DB_URL" -X -At -c "SELECT version FROM supabase_migrations.schema_migrations")"
-          # LOTE ATUAL: NineBox / Gestao de Desempenho (14 arquivos). O lote
-          # anterior (32 arquivos, 20261015160000 a 20261116000000) saiu daqui
-          # porque suas 32 versoes ja estao no ledger canonico -- conferido por
-          # consulta antes da troca, nenhuma pendente.
-          # ORDEM IMPORTA, e o timestamp ja a garante (o psql recebe os \i na
-          # ordem do glob, que e a ordem de versao):
-          #  - 20261115150000 canoniza as 4 funcoes endurecidas em producao e
-          #    por isso roda DEPOIS das migrations do lote que as sobrescrevem;
-          #  - 20261115160000 converte as 4 notas da consolidacao para
-          #    numeric(4,3), que e o que o sidecar da 20261021090000 exige no
-          #    step "Verificar sidecars" -- rodado apos o COMMIT do lote.
+          # LOTE ATUAL: provisao mensal grava a aliquota aplicada (1 arquivo).
+          # O lote NineBox (15 arquivos, 20261015090000 a 20261115170000) saiu
+          # daqui porque foi APLICADO no canonico em 16/11/2026 pelo run 43867257841
+          # (job "apply migrations no canonico" = success) -- conferido por consulta
+          # antes da troca: as 15 versoes estao no ledger, nenhuma pendente.
           for migration in \
-            20261015090000_ninebox_finalizacao_e_potencial.sql \
-            20261016090000_ninebox_revoga_insert_direto.sql \
-            20261017090000_ninebox_aprovacao_gestor.sql \
-            20261018090000_ninebox_conclusao_gestor.sql \
-            20261020090000_ninebox_edicao_feedback.sql \
-            20261021090000_ninebox_aprovacao_confirmada.sql \
-            20261022090000_ninebox_conclusao_feedback_autorizada.sql \
-            20261025090000_ninebox_aprovacao_autoria.sql \
-            20261027090000_ninebox_reconciliacao_incremental.sql \
-            20261028090000_ninebox_justificativa_historico.sql \
-            20261115120000_ninebox_rls_leitura_gestor_avaliador.sql \
-            20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql \
-            20261115150000_ninebox_canoniza_funcoes_do_canonico.sql \
-            20261115160000_ninebox_consolidacoes_nota_numeric_4_3.sql \
-            20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql
+            20261116120000_provisoes_registra_aliquota_aplicada.sql
           do
             version="${migration%%_*}"
             if printf '%s\n' "$applied" | grep -qx "$version"; then
@@ -331,7 +311,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 15 &&
+              Number(r.ledger_count) === 1 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
