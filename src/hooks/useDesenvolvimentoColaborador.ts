@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { avaliacaoService } from '@/services/avaliacaoService';
 import { catalogoCursoService } from '@/services/catalogoCursoService';
 import { onboardingService, treinamentoParticipantesService } from '@/services/tabelas/rhService';
+import type { TreinamentoParticipanteComTurma } from '@/services/tabelas/rhService';
 // FONTE CANÔNICA do onboarding (modelo A) — ver `onboardingJornadaService.ts`.
 import { buscarJornadaDoColaborador, listarTarefasDaAdmissao } from '@/services/onboardingJornadaService';
 import { useEmpresas } from './useEmpresas';
@@ -90,7 +91,8 @@ export function useTreinamentosColaborador(colaboradorId: string) {
   return useQuery({
     queryKey: ['treinamentos', 'colaborador', colaboradorId],
     queryFn: async () =>
-      mockOr(getMockTreinamentos(colaboradorId)) ?? treinamentoParticipantesService.listarPorColaborador(colaboradorId),
+      (mockOr(getMockTreinamentos(colaboradorId)) as TreinamentoParticipanteComTurma[] | undefined) ??
+      treinamentoParticipantesService.listarPorColaborador(colaboradorId),
     enabled: !!colaboradorId,
   });
 }
@@ -150,7 +152,8 @@ export function useOnboardingColaborador(colaboradorId: string) {
     enabled: !!onboardingId,
   });
 
-  const lista = (tarefas as { concluida?: boolean; data_prazo?: string }[] | undefined) || [];
+  const lista =
+    (tarefas as { concluida?: boolean; data_prazo?: string; data_conclusao?: string | null }[] | undefined) || [];
   const concluidas = lista.filter((t) => t.concluida);
   const hoje = todayLocalISO();
   const atrasadas = lista.filter((t) => !t.concluida && t.data_prazo && t.data_prazo < hoje);

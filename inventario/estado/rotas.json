@@ -7,7 +7,7 @@
     "itens_de_menu": 88,
     "urls_admin": 23,
     "urls_publicas": 7,
-    "hooks_distintos": 115,
+    "hooks_distintos": 130,
     "problemas": 0
   },
   "urls": [
@@ -1523,9 +1523,7 @@
     {
       "arquivo": "src/pages/AdminAgendamentoExamesPage.tsx",
       "componente": "AdminAgendamentoExamesPage",
-      "urls": [
-        "/admin/sst/agendamentos"
-      ],
+      "urls": ["/admin/sst/agendamentos"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -1598,20 +1596,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "exames_agendamentos",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "exames_agendamentos", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminAsoWorkflowPage.tsx",
       "componente": "AdminAsoWorkflowPage",
-      "urls": [
-        "/admin/sst/aso"
-      ],
+      "urls": ["/admin/sst/aso"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -1637,18 +1628,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "asos",
-        "empresas"
-      ],
+      "tabelas": ["asos", "empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminCatPage.tsx",
       "componente": "AdminCatPage",
-      "urls": [
-        "/admin/sst/cat"
-      ],
+      "urls": ["/admin/sst/cat"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -1675,19 +1661,13 @@
         "set_own_default_empresa",
         "sst_cat_dashboard"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "sst_cat"
-      ],
+      "tabelas": ["colaboradores", "empresas", "sst_cat"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminClinicasPartnersPage.tsx",
       "componente": "AdminClinicasPartnersPage",
-      "urls": [
-        "/admin/sst/clinicas"
-      ],
+      "urls": ["/admin/sst/clinicas"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -1759,20 +1739,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "clinicas_partners",
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["clinicas_partners", "colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminDiagnosticoMigracaoPage.tsx",
       "componente": "AdminDiagnosticoMigracaoPage",
-      "urls": [
-        "/admin/diagnostico-migracao"
-      ],
+      "urls": ["/admin/diagnostico-migracao"],
       "menu": [
         {
           "grupo": "Administração",
@@ -1849,19 +1822,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminEpisFichasPage.tsx",
       "componente": "AdminEpisFichasPage",
-      "urls": [
-        "/admin/sst/epis"
-      ],
+      "urls": ["/admin/sst/epis"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -1902,9 +1869,7 @@
     {
       "arquivo": "src/pages/AdminExtintoresPage.tsx",
       "componente": "AdminExtintoresPage",
-      "urls": [
-        "/admin/sst/extintores"
-      ],
+      "urls": ["/admin/sst/extintores"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -1931,19 +1896,13 @@
         "set_own_default_empresa",
         "sst_extintores_dashboard"
       ],
-      "tabelas": [
-        "empresas",
-        "sst_extintores",
-        "sst_extintores_inspecoes"
-      ],
+      "tabelas": ["empresas", "sst_extintores", "sst_extintores_inspecoes"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminIdempotenciaPage.tsx",
       "componente": "AdminIdempotenciaPage",
-      "urls": [
-        "/admin/idempotencia"
-      ],
+      "urls": ["/admin/idempotencia"],
       "menu": [
         {
           "grupo": "Administração",
@@ -1954,18 +1913,14 @@
       "hooks": [],
       "buckets": [],
       "edges": [],
-      "rpcs": [
-        "get_idempotency_health"
-      ],
+      "rpcs": ["get_idempotency_health"],
       "tabelas": [],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminOperacaoPage.tsx",
       "componente": "AdminOperacaoPage",
-      "urls": [
-        "/admin/operacao"
-      ],
+      "urls": ["/admin/operacao"],
       "menu": [
         {
           "grupo": "Administração",
@@ -1992,9 +1947,7 @@
     {
       "arquivo": "src/pages/AdminPontoDivergenciasPage.tsx",
       "componente": "AdminPontoDivergenciasPage",
-      "urls": [
-        "/admin/ponto/divergencias"
-      ],
+      "urls": ["/admin/ponto/divergencias"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
@@ -2027,19 +1980,13 @@
         "resolver_divergencia_afdt",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "afdt_divergencias",
-        "colaboradores",
-        "empresas"
-      ],
+      "tabelas": ["afdt_divergencias", "colaboradores", "empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminRegimentoInternoPage.tsx",
       "componente": "AdminRegimentoInternoPage",
-      "urls": [
-        "/admin/sst/regimento"
-      ],
+      "urls": ["/admin/sst/regimento"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -2074,18 +2021,13 @@
         "sst_regimento_pendentes_lista",
         "sst_regimento_publicar"
       ],
-      "tabelas": [
-        "empresas",
-        "sst_regimento_documentos"
-      ],
+      "tabelas": ["empresas", "sst_regimento_documentos"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminSecurityPage.tsx",
       "componente": "AdminSecurityPage",
-      "urls": [
-        "/admin/security"
-      ],
+      "urls": ["/admin/security"],
       "menu": [
         {
           "grupo": "Administração",
@@ -2096,20 +2038,14 @@
       "hooks": [],
       "buckets": [],
       "edges": [],
-      "rpcs": [
-        "resolve_security_alert"
-      ],
-      "tabelas": [
-        "security_alerts"
-      ],
+      "rpcs": ["resolve_security_alert"],
+      "tabelas": ["security_alerts"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminSstDashboardPage.tsx",
       "componente": "AdminSstDashboardPage",
-      "urls": [
-        "/admin/sst/dashboard"
-      ],
+      "urls": ["/admin/sst/dashboard"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -2136,17 +2072,13 @@
         "set_own_default_empresa",
         "sst_dashboard_sla"
       ],
-      "tabelas": [
-        "empresas"
-      ],
+      "tabelas": ["empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdminTelemetriaPage.tsx",
       "componente": "AdminTelemetriaPage",
-      "urls": [
-        "/admin/telemetria"
-      ],
+      "urls": ["/admin/telemetria"],
       "menu": [
         {
           "grupo": "Administração",
@@ -2158,24 +2090,20 @@
       "buckets": [],
       "edges": [],
       "rpcs": [],
-      "tabelas": [
-        "query_telemetry"
-      ],
+      "tabelas": ["query_telemetry"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AdmissoesPage.tsx",
       "componente": "AdmissoesPage",
-      "urls": [
-        "/admissoes"
-      ],
+      "urls": ["/admissoes"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Admissões"
         }
       ],
-      "arquivos_lidos": 109,
+      "arquivos_lidos": 110,
       "hooks": [
         {
           "nome": "useAdmissaoWorkflow",
@@ -2354,6 +2282,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -2403,9 +2332,7 @@
     {
       "arquivo": "src/pages/AfastamentosPage.tsx",
       "componente": "AfastamentosPage",
-      "urls": [
-        "/afastamentos"
-      ],
+      "urls": ["/afastamentos"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
@@ -2463,9 +2390,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos"
-      ],
+      "buckets": ["afastamentos"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -2516,9 +2441,7 @@
     {
       "arquivo": "src/pages/AssinarContratoPage.tsx",
       "componente": "AssinarContratoPage",
-      "urls": [
-        "/assinar-contrato/:token"
-      ],
+      "urls": ["/assinar-contrato/:token"],
       "menu": [],
       "arquivos_lidos": 3,
       "hooks": [],
@@ -2536,16 +2459,14 @@
     {
       "arquivo": "src/pages/AssinaturasPage.tsx",
       "componente": "AssinaturasPage",
-      "urls": [
-        "/assinaturas"
-      ],
+      "urls": ["/assinaturas"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
           "rotulo": "Assinaturas"
         }
       ],
-      "arquivos_lidos": 93,
+      "arquivos_lidos": 94,
       "hooks": [
         {
           "nome": "useAdmissaoWorkflow",
@@ -2683,6 +2604,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -2730,9 +2652,7 @@
     {
       "arquivo": "src/pages/AssistenteIAPage.tsx",
       "componente": "AssistenteIAPage",
-      "urls": [
-        "/assistente-ia"
-      ],
+      "urls": ["/assistente-ia"],
       "menu": [
         {
           "grupo": "Principal",
@@ -2804,19 +2724,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AuditoriaPage.tsx",
       "componente": "AuditoriaPage",
-      "urls": [
-        "/auditoria"
-      ],
+      "urls": ["/auditoria"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
@@ -2900,27 +2814,18 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "notificacoes",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "notificacoes", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/AuthCallbackPage.tsx",
       "componente": "AuthCallbackPage",
-      "urls": [
-        "/auth/callback"
-      ],
+      "urls": ["/auth/callback"],
       "menu": [],
       "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
-      "edges": [
-        "auth-gov-br"
-      ],
+      "edges": ["auth-gov-br"],
       "rpcs": [],
       "tabelas": [],
       "imports_quebrados": []
@@ -2928,16 +2833,14 @@
     {
       "arquivo": "src/pages/AvaliacaoPage.tsx",
       "componente": "AvaliacaoPage",
-      "urls": [
-        "/avaliacao"
-      ],
+      "urls": ["/avaliacao"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Avaliação & Performance"
         }
       ],
-      "arquivos_lidos": 211,
+      "arquivos_lidos": 218,
       "hooks": [
         {
           "nome": "useAuth",
@@ -2984,12 +2887,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -3121,17 +3019,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -3139,6 +3042,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -3150,17 +3058,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -3182,9 +3093,7 @@
     {
       "arquivo": "src/pages/BackupPage.tsx",
       "componente": "BackupPage",
-      "urls": [
-        "/backup"
-      ],
+      "urls": ["/backup"],
       "menu": [],
       "arquivos_lidos": 26,
       "hooks": [
@@ -3256,26 +3165,20 @@
         "record_pii_access",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/BancoHorasPage.tsx",
       "componente": "BancoHorasPage",
-      "urls": [
-        "/banco-horas"
-      ],
+      "urls": ["/banco-horas"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Banco de Horas"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -3318,12 +3221,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -3455,17 +3353,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -3473,6 +3376,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -3484,17 +3392,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -3516,10 +3427,7 @@
     {
       "arquivo": "src/pages/BeneficioFormPage.tsx",
       "componente": "BeneficioFormPage",
-      "urls": [
-        "/beneficios/:id/editar",
-        "/beneficios/novo"
-      ],
+      "urls": ["/beneficios/:id/editar", "/beneficios/novo"],
       "menu": [],
       "arquivos_lidos": 33,
       "hooks": [
@@ -3595,27 +3503,20 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "beneficios_colaborador",
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["beneficios_colaborador", "colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/BeneficiosPage.tsx",
       "componente": "BeneficiosPage",
-      "urls": [
-        "/beneficios"
-      ],
+      "urls": ["/beneficios"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Benefícios"
         }
       ],
-      "arquivos_lidos": 87,
+      "arquivos_lidos": 88,
       "hooks": [
         {
           "nome": "useAuth",
@@ -3646,12 +3547,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -3758,6 +3654,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -3802,9 +3699,7 @@
     {
       "arquivo": "src/pages/CalculadoraRescisaoPage.tsx",
       "componente": "CalculadoraRescisaoPage",
-      "urls": [
-        "/calculadora-rescisao"
-      ],
+      "urls": ["/calculadora-rescisao"],
       "menu": [
         {
           "grupo": "Administração",
@@ -3884,29 +3779,20 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "desligamentos",
-        "empresas",
-        "historico_rescisoes",
-        "notificacoes",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "desligamentos", "empresas", "historico_rescisoes", "notificacoes", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/CanalContabilidadePage.tsx",
       "componente": "CanalContabilidadePage",
-      "urls": [
-        "/contabilidade/canal"
-      ],
+      "urls": ["/contabilidade/canal"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Canal Contabilidade"
         }
       ],
-      "arquivos_lidos": 150,
+      "arquivos_lidos": 156,
       "hooks": [
         {
           "nome": "useAuth",
@@ -4090,17 +3976,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -4108,6 +3999,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -4119,17 +4015,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -4151,16 +4050,14 @@
     {
       "arquivo": "src/pages/CanalEticaPage.tsx",
       "componente": "CanalEticaPage",
-      "urls": [
-        "/canal-etica"
-      ],
+      "urls": ["/canal-etica"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
           "rotulo": "Canal Ética"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -4203,12 +4100,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -4340,17 +4232,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -4358,6 +4255,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -4369,17 +4271,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -4401,9 +4306,7 @@
     {
       "arquivo": "src/pages/CargosPage.tsx",
       "componente": "CargosPage",
-      "urls": [
-        "/cargos"
-      ],
+      "urls": ["/cargos"],
       "menu": [
         {
           "grupo": "Estrutura",
@@ -4438,19 +4341,15 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "empresas"
-      ],
+      "tabelas": ["empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/CentrosCustoPage.tsx",
       "componente": "CentrosCustoPage",
-      "urls": [
-        "/centros-custo"
-      ],
+      "urls": ["/centros-custo"],
       "menu": [],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -4493,12 +4392,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -4630,17 +4524,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -4648,6 +4547,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -4659,17 +4563,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -4691,30 +4598,27 @@
     {
       "arquivo": "src/pages/CienciaMedidaPage.tsx",
       "componente": "CienciaMedidaPage",
-      "urls": [
-        "/ciencia-medida/:token"
-      ],
+      "urls": ["/ciencia-medida/:token"],
       "menu": [],
       "arquivos_lidos": 1,
       "hooks": [],
       "buckets": [],
       "edges": [],
-      "rpcs": [
-        "medida_consultar_por_token",
-        "medida_registrar_ciencia_publica"
-      ],
+      "rpcs": ["medida_consultar_por_token", "medida_registrar_ciencia_publica"],
       "tabelas": [],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/ColaboradorDetalhesPage.tsx",
       "componente": "ColaboradorDetalhesPage",
-      "urls": [
-        "/colaboradores/:id"
-      ],
+      "urls": ["/colaboradores/:id"],
       "menu": [],
-      "arquivos_lidos": 119,
+      "arquivos_lidos": 191,
       "hooks": [
+        {
+          "nome": "useAfastamentosRecentes",
+          "arquivo": "src/hooks/index.ts"
+        },
         {
           "nome": "useAnotacoes",
           "arquivo": "src/hooks/useColaboradorDetalhes.ts"
@@ -4734,6 +4638,14 @@
         {
           "nome": "useBeneficiosColaborador",
           "arquivo": "src/hooks/useBeneficiosColaborador.ts"
+        },
+        {
+          "nome": "useCentrosCusto",
+          "arquivo": "src/hooks/useTabelasReferencia.ts"
+        },
+        {
+          "nome": "useConsentimentosColaborador",
+          "arquivo": "src/hooks/useComplianceColaborador.ts"
         },
         {
           "nome": "useContasBancarias",
@@ -4804,6 +4716,10 @@
           "arquivo": "src/hooks/useTabelasReferencia.ts"
         },
         {
+          "nome": "useEmpresa",
+          "arquivo": "src/contexts/EmpresaContext.tsx"
+        },
+        {
           "nome": "useEmpresas",
           "arquivo": "src/hooks/useEmpresas.ts"
         },
@@ -4832,12 +4748,32 @@
           "arquivo": "src/hooks/useColaboradorDetalhes.ts"
         },
         {
+          "nome": "useFaltasColaborador",
+          "arquivo": "src/hooks/index.ts"
+        },
+        {
+          "nome": "useFeedbacksColaborador",
+          "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts"
+        },
+        {
+          "nome": "useFeriasResumoColaborador",
+          "arquivo": "src/hooks/useColaboradorDetalhes.ts"
+        },
+        {
           "nome": "useFormacoes",
           "arquivo": "src/hooks/useColaboradorDetalhes.ts"
         },
         {
+          "nome": "useGenericCrud",
+          "arquivo": "src/hooks/useGenericCrud.ts"
+        },
+        {
           "nome": "useGrupo",
           "arquivo": "src/hooks/useGrupo.ts"
+        },
+        {
+          "nome": "useHistoricoColaborador",
+          "arquivo": "src/hooks/useHistoricoColaborador.ts"
         },
         {
           "nome": "useHistoricoContratos",
@@ -4846,6 +4782,14 @@
         {
           "nome": "useHistoricoSalarial",
           "arquivo": "src/hooks/useColaboradorDetalhes.ts"
+        },
+        {
+          "nome": "useMedidasDisciplinaresColaborador",
+          "arquivo": "src/hooks/index.ts"
+        },
+        {
+          "nome": "useOnboardingColaborador",
+          "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts"
         },
         {
           "nome": "useOnMount",
@@ -4868,8 +4812,24 @@
           "arquivo": "src/hooks/usePiiMask.ts"
         },
         {
+          "nome": "usePontoMelhorado",
+          "arquivo": "src/hooks/usePontoMelhorado.ts"
+        },
+        {
+          "nome": "useProximosEventos",
+          "arquivo": "src/hooks/useProximosEventos.ts"
+        },
+        {
           "nome": "usePWA",
           "arquivo": "src/hooks/usePWA.ts"
+        },
+        {
+          "nome": "useRegistrosPontoSemana",
+          "arquivo": "src/hooks/index.ts"
+        },
+        {
+          "nome": "useSaldoBancoHoras",
+          "arquivo": "src/hooks/index.ts"
         },
         {
           "nome": "useSalvarDadosEstagiario",
@@ -4888,20 +4848,31 @@
           "arquivo": "src/hooks/useColaboradorDetalhes.ts"
         },
         {
+          "nome": "useServerValidation",
+          "arquivo": "src/hooks/useServerValidation.ts"
+        },
+        {
           "nome": "useSyncedState",
           "arquivo": "src/hooks/useSyncedState.ts"
         },
         {
           "nome": "useSystemHealth",
           "arquivo": "src/hooks/useSystemHealth.ts"
+        },
+        {
+          "nome": "useTimes",
+          "arquivo": "src/hooks/useColaboradorDetalhes.ts"
+        },
+        {
+          "nome": "useTreinamentosColaborador",
+          "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts"
+        },
+        {
+          "nome": "useVinculosColaborador",
+          "arquivo": "src/hooks/useVinculos.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -4914,6 +4885,8 @@
         "calcular-provisoes",
         "calcular-rescisao",
         "criptografia",
+        "enviar-email-admissao",
+        "enviar-esocial",
         "enviar-relatorio",
         "exportacao",
         "external-db-bridge",
@@ -4927,18 +4900,24 @@
         "notificacao",
         "processar-agendamentos",
         "processar-ponto",
+        "processar-ponto-offline",
         "rateLimit",
         "sincronizar-bitrix",
-        "validar-biometria"
+        "upload-certificado",
+        "validar-biometria",
+        "whatsapp-send"
       ],
       "rpcs": [
         "admin_associar_usuario_empresa",
         "aplicar_medida_folha_ponto",
         "aprovar_despesa",
+        "claim_admission_esocial_event",
+        "complete_admission_esocial_event",
         "criar_feedback_seguro",
         "decidir_aprovacao_gestor",
         "editar_feedback_seguro",
         "enviar_avaliacao_ao_gestor",
+        "fail_admission_esocial_event",
         "finalizar_feedback",
         "get_audit_trail",
         "get_my_user_empresas",
@@ -4964,6 +4943,8 @@
         "validar_potencial_avaliacao"
       ],
       "tabelas": [
+        "admissao_tokens",
+        "admissoes",
         "afastamentos",
         "anotacoes_colaborador",
         "asos",
@@ -4977,6 +4958,7 @@
         "canal_etica",
         "catalogo_cursos",
         "centros_custo",
+        "certificados_digitais",
         "ciclos_avaliacao",
         "cid10",
         "cnab_configuracoes",
@@ -4987,6 +4969,7 @@
         "comunicados",
         "comunicados_leituras",
         "config_afastamentos",
+        "configuracoes_esocial",
         "configuracoes_intervalo",
         "configuracoes_ponto",
         "contas_bancarias",
@@ -4998,6 +4981,7 @@
         "deficiencias",
         "dependentes",
         "dependentes_beneficios",
+        "desligamentos",
         "despesas",
         "despesas_aprovacoes_log",
         "documentos",
@@ -5007,34 +4991,48 @@
         "epis",
         "epis_entregas",
         "escalas_trabalho",
+        "esocial_eventos",
+        "esocial_transmissao_logs",
         "etnias",
         "faltas",
         "feedbacks_360",
         "feedbacks_360_aprovacoes_gestor",
         "feedbacks_360_consolidacoes",
         "feedbacks_360_validacoes_potencial",
+        "feriados",
         "ferias",
         "ferias_aprovacoes",
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
         "medidas_disciplinares_workflow_log",
         "metas_okrs",
         "notificacoes",
+        "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -5046,18 +5044,24 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
+        "promocoes",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
+        "solicitacoes_ajuste_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_beneficio",
         "tipos_estabilidade",
+        "transferencias",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -5066,6 +5070,9 @@
         "vw_feedbacks_360_versao",
         "webhook_logs",
         "webhooks_config",
+        "whatsapp_config",
+        "whatsapp_mensagens_logs",
+        "whatsapp_templates",
         "workflows_definicoes",
         "workflows_etapas",
         "workflows_execucoes",
@@ -5076,9 +5083,7 @@
     {
       "arquivo": "src/pages/ColaboradoresPage.tsx",
       "componente": "ColaboradoresPage",
-      "urls": [
-        "/colaboradores"
-      ],
+      "urls": ["/colaboradores"],
       "menu": [
         {
           "grupo": "Principal",
@@ -5134,21 +5139,15 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas"
-      ],
+      "tabelas": ["colaboradores", "empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/ColaboradorFormPage.tsx",
       "componente": "ColaboradorFormPage",
-      "urls": [
-        "/colaboradores/editar/:id",
-        "/colaboradores/novo"
-      ],
+      "urls": ["/colaboradores/editar/:id", "/colaboradores/novo"],
       "menu": [],
-      "arquivos_lidos": 154,
+      "arquivos_lidos": 161,
       "hooks": [
         {
           "nome": "useAuth",
@@ -5207,12 +5206,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -5345,17 +5339,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -5363,6 +5362,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -5374,17 +5378,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -5406,16 +5413,14 @@
     {
       "arquivo": "src/pages/ComunicacaoInternaPage.tsx",
       "componente": "ComunicacaoInternaPage",
-      "urls": [
-        "/comunicacao-interna"
-      ],
+      "urls": ["/comunicacao-interna"],
       "menu": [
         {
           "grupo": "Administração",
           "rotulo": "Comunicação"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -5458,12 +5463,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -5595,17 +5595,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -5613,6 +5618,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -5624,17 +5634,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -5656,16 +5669,14 @@
     {
       "arquivo": "src/pages/ConfiguracoesPage.tsx",
       "componente": "ConfiguracoesPage",
-      "urls": [
-        "/configuracoes"
-      ],
+      "urls": ["/configuracoes"],
       "menu": [
         {
           "grupo": "Administração",
           "rotulo": "Configurações"
         }
       ],
-      "arquivos_lidos": 174,
+      "arquivos_lidos": 179,
       "hooks": [
         {
           "nome": "useAuth",
@@ -5724,12 +5735,7 @@
           "arquivo": "src/providers/ThemeProvider.tsx"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -5888,6 +5894,7 @@
         "identidades_genero",
         "inscricoes_cursos",
         "integracoes",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lancamentos_folha",
@@ -5904,6 +5911,7 @@
         "notificacoes",
         "notificacoes_admissao",
         "onboarding_colaborador",
+        "onboarding_kits",
         "onboarding_tarefas",
         "onboarding_template_tarefas",
         "onboarding_templates",
@@ -5929,6 +5937,7 @@
         "saved_filters",
         "seguros_colaboradores",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
@@ -5975,16 +5984,14 @@
     {
       "arquivo": "src/pages/ContabilidadePage.tsx",
       "componente": "ContabilidadePage",
-      "urls": [
-        "/contabilidade"
-      ],
+      "urls": ["/contabilidade"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Contabilidade"
         }
       ],
-      "arquivos_lidos": 86,
+      "arquivos_lidos": 87,
       "hooks": [
         {
           "nome": "useAuth",
@@ -6015,12 +6022,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -6126,6 +6128,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -6170,9 +6173,7 @@
     {
       "arquivo": "src/pages/ContratacaoPage.tsx",
       "componente": "ContratacaoPage",
-      "urls": [
-        "/contratacao"
-      ],
+      "urls": ["/contratacao"],
       "menu": [],
       "arquivos_lidos": 23,
       "hooks": [
@@ -6181,9 +6182,7 @@
           "arquivo": "src/hooks/useDocumentOCR.ts"
         }
       ],
-      "buckets": [
-        "documentos-admissao"
-      ],
+      "buckets": ["documentos-admissao"],
       "edges": [
         "admissao-publica",
         "enviar-email-admissao",
@@ -6222,9 +6221,7 @@
     {
       "arquivo": "src/pages/ContratosGeradosPage.tsx",
       "componente": "ContratosGeradosPage",
-      "urls": [
-        "/contratos-gerados"
-      ],
+      "urls": ["/contratos-gerados"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
@@ -6246,12 +6243,8 @@
           "arquivo": "src/hooks/useSyncedState.ts"
         }
       ],
-      "buckets": [
-        "contratos-trabalho"
-      ],
-      "edges": [
-        "gerar-contrato-pdf"
-      ],
+      "buckets": ["contratos-trabalho"],
+      "edges": ["gerar-contrato-pdf"],
       "rpcs": [
         "admin_associar_usuario_empresa",
         "contrato_estender_expiracao",
@@ -6262,21 +6255,13 @@
         "record_pii_access",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "contrato_templates",
-        "contrato_token_eventos",
-        "contratos_gerados",
-        "empresas"
-      ],
+      "tabelas": ["colaboradores", "contrato_templates", "contrato_token_eventos", "contratos_gerados", "empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/ContratoTemplatesPage.tsx",
       "componente": "ContratoTemplatesPage",
-      "urls": [
-        "/configuracoes/contratos-templates"
-      ],
+      "urls": ["/configuracoes/contratos-templates"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
@@ -6310,12 +6295,8 @@
           "arquivo": "src/hooks/useEmpresas.ts"
         }
       ],
-      "buckets": [
-        "contratos-trabalho"
-      ],
-      "edges": [
-        "gerar-contrato-pdf"
-      ],
+      "buckets": ["contratos-trabalho"],
+      "edges": ["gerar-contrato-pdf"],
       "rpcs": [
         "admin_associar_usuario_empresa",
         "contrato_estender_expiracao",
@@ -6340,16 +6321,14 @@
     {
       "arquivo": "src/pages/ControleAcessoPage.tsx",
       "componente": "ControleAcessoPage",
-      "urls": [
-        "/controle-acesso"
-      ],
+      "urls": ["/controle-acesso"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Controle Acesso"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -6392,12 +6371,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -6529,17 +6503,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -6547,6 +6526,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -6558,17 +6542,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -6590,16 +6577,14 @@
     {
       "arquivo": "src/pages/ConveniosPage.tsx",
       "componente": "ConveniosPage",
-      "urls": [
-        "/convenios"
-      ],
+      "urls": ["/convenios"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Convênios"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -6642,12 +6627,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -6781,17 +6761,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -6799,6 +6784,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -6810,17 +6800,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -6842,9 +6835,7 @@
     {
       "arquivo": "src/pages/DashboardExecutivoPage.tsx",
       "componente": "DashboardExecutivoPage",
-      "urls": [
-        "/dashboard-executivo"
-      ],
+      "urls": ["/dashboard-executivo"],
       "menu": [
         {
           "grupo": "Principal",
@@ -6965,9 +6956,7 @@
     {
       "arquivo": "src/pages/DashboardPage.tsx",
       "componente": "DashboardPage",
-      "urls": [
-        "/dashboard"
-      ],
+      "urls": ["/dashboard"],
       "menu": [
         {
           "grupo": "Principal",
@@ -7112,9 +7101,7 @@
     {
       "arquivo": "src/pages/DepartamentosPage.tsx",
       "componente": "DepartamentosPage",
-      "urls": [
-        "/departamentos"
-      ],
+      "urls": ["/departamentos"],
       "menu": [
         {
           "grupo": "Estrutura",
@@ -7153,25 +7140,20 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas"
-      ],
+      "tabelas": ["colaboradores", "empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/DescontosPage.tsx",
       "componente": "DescontosPage",
-      "urls": [
-        "/descontos"
-      ],
+      "urls": ["/descontos"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Descontos & Consignados"
         }
       ],
-      "arquivos_lidos": 152,
+      "arquivos_lidos": 159,
       "hooks": [
         {
           "nome": "useAuth",
@@ -7214,12 +7196,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -7353,17 +7330,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -7371,6 +7353,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -7382,17 +7369,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -7414,9 +7404,7 @@
     {
       "arquivo": "src/pages/DesignSystemPage.tsx",
       "componente": "DesignSystemPage",
-      "urls": [
-        "/design-system"
-      ],
+      "urls": ["/design-system"],
       "menu": [],
       "arquivos_lidos": 3,
       "hooks": [],
@@ -7429,9 +7417,7 @@
     {
       "arquivo": "src/pages/DesligamentosPage.tsx",
       "componente": "DesligamentosPage",
-      "urls": [
-        "/desligamentos"
-      ],
+      "urls": ["/desligamentos"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
@@ -7535,16 +7521,14 @@
     {
       "arquivo": "src/pages/DespesasPage.tsx",
       "componente": "DespesasPage",
-      "urls": [
-        "/despesas"
-      ],
+      "urls": ["/despesas"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Despesas"
         }
       ],
-      "arquivos_lidos": 149,
+      "arquivos_lidos": 155,
       "hooks": [
         {
           "nome": "useAuth",
@@ -7587,12 +7571,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -7724,17 +7703,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -7742,6 +7726,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -7753,17 +7742,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -7785,16 +7777,14 @@
     {
       "arquivo": "src/pages/DocumentosPage.tsx",
       "componente": "DocumentosPage",
-      "urls": [
-        "/documentos"
-      ],
+      "urls": ["/documentos"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
           "rotulo": "Documentos"
         }
       ],
-      "arquivos_lidos": 91,
+      "arquivos_lidos": 92,
       "hooks": [
         {
           "nome": "useAuth",
@@ -7946,6 +7936,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -7990,12 +7981,9 @@
     {
       "arquivo": "src/pages/EmpresaFormPage.tsx",
       "componente": "EmpresaFormPage",
-      "urls": [
-        "/empresas/editar/:id",
-        "/empresas/novo"
-      ],
+      "urls": ["/empresas/editar/:id", "/empresas/novo"],
       "menu": [],
-      "arquivos_lidos": 100,
+      "arquivos_lidos": 101,
       "hooks": [
         {
           "nome": "useAuth",
@@ -8038,12 +8026,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -8149,6 +8132,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -8193,9 +8177,7 @@
     {
       "arquivo": "src/pages/EmpresasPage.tsx",
       "componente": "EmpresasPage",
-      "urls": [
-        "/empresas"
-      ],
+      "urls": ["/empresas"],
       "menu": [
         {
           "grupo": "Estrutura",
@@ -8215,26 +8197,21 @@
       ],
       "buckets": [],
       "edges": [],
-      "rpcs": [
-        "log_frontend_error",
-        "registrar_auditoria"
-      ],
+      "rpcs": ["log_frontend_error", "registrar_auditoria"],
       "tabelas": [],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/EPIsPage.tsx",
       "componente": "EPIsPage",
-      "urls": [
-        "/epis"
-      ],
+      "urls": ["/epis"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
           "rotulo": "EPIs"
         }
       ],
-      "arquivos_lidos": 152,
+      "arquivos_lidos": 159,
       "hooks": [
         {
           "nome": "useAtualizarEpi",
@@ -8281,12 +8258,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -8418,17 +8390,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -8436,6 +8413,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -8447,17 +8429,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -8479,16 +8464,14 @@
     {
       "arquivo": "src/pages/EscalasPage.tsx",
       "componente": "EscalasPage",
-      "urls": [
-        "/escalas"
-      ],
+      "urls": ["/escalas"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Escalas"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -8531,12 +8514,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -8669,17 +8647,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -8687,6 +8670,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -8698,17 +8686,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -8730,9 +8721,7 @@
     {
       "arquivo": "src/pages/ESocialPage.tsx",
       "componente": "ESocialPage",
-      "urls": [
-        "/esocial"
-      ],
+      "urls": ["/esocial"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
@@ -8833,16 +8822,14 @@
     {
       "arquivo": "src/pages/ExamesPage.tsx",
       "componente": "ExamesPage",
-      "urls": [
-        "/exames"
-      ],
+      "urls": ["/exames"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
           "rotulo": "Exames"
         }
       ],
-      "arquivos_lidos": 152,
+      "arquivos_lidos": 159,
       "hooks": [
         {
           "nome": "useAuth",
@@ -8885,12 +8872,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -9023,17 +9005,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -9041,6 +9028,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -9052,17 +9044,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -9084,11 +9079,9 @@
     {
       "arquivo": "src/pages/FaltasPage.tsx",
       "componente": "FaltasPage",
-      "urls": [
-        "/faltas"
-      ],
+      "urls": ["/faltas"],
       "menu": [],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -9131,12 +9124,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -9268,17 +9256,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -9286,6 +9279,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -9297,17 +9295,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -9329,9 +9330,7 @@
     {
       "arquivo": "src/pages/FeriadosPage.tsx",
       "componente": "FeriadosPage",
-      "urls": [
-        "/feriados"
-      ],
+      "urls": ["/feriados"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
@@ -9407,27 +9406,20 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "feriados",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "feriados", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/FeriasPage.tsx",
       "componente": "FeriasPage",
-      "urls": [
-        "/ferias"
-      ],
+      "urls": ["/ferias"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Férias"
         }
       ],
-      "arquivos_lidos": 180,
+      "arquivos_lidos": 184,
       "hooks": [
         {
           "nome": "useAlertasPagamentoD2",
@@ -9666,17 +9658,22 @@
         "ferias_arquivos",
         "ferias_coletivas",
         "ferias_reconciliacao_logs",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -9684,6 +9681,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -9695,18 +9697,21 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "recibos_ferias",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -9730,9 +9735,7 @@
     {
       "arquivo": "src/pages/FeriasProgramacaoPage.tsx",
       "componente": "FeriasProgramacaoPage",
-      "urls": [
-        "/ferias/programacao"
-      ],
+      "urls": ["/ferias/programacao"],
       "menu": [],
       "arquivos_lidos": 22,
       "hooks": [
@@ -9780,27 +9783,20 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "ferias_programacao",
-        "periodos_aquisitivos"
-      ],
+      "tabelas": ["colaboradores", "empresas", "ferias_programacao", "periodos_aquisitivos"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/FinanceiroBancarioPage.tsx",
       "componente": "FinanceiroBancarioPage",
-      "urls": [
-        "/financeiro-bancario"
-      ],
+      "urls": ["/financeiro-bancario"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Bancário (CNAB/Pix)"
         }
       ],
-      "arquivos_lidos": 86,
+      "arquivos_lidos": 87,
       "hooks": [
         {
           "nome": "useAuth",
@@ -9831,12 +9827,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -9942,6 +9933,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -9986,9 +9978,7 @@
     {
       "arquivo": "src/pages/FolhaCompliancePage.tsx",
       "componente": "FolhaCompliancePage",
-      "urls": [
-        "/folha/compliance"
-      ],
+      "urls": ["/folha/compliance"],
       "menu": [
         {
           "grupo": "Remuneração",
@@ -10066,22 +10056,15 @@
         "record_pii_access",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco",
-        "vw_folha_compliance"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco", "vw_folha_compliance"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/FolhaPagamentoPage.tsx",
       "componente": "FolhaPagamentoPage",
-      "urls": [
-        "/folha/calcular"
-      ],
+      "urls": ["/folha/calcular"],
       "menu": [],
-      "arquivos_lidos": 187,
+      "arquivos_lidos": 191,
       "hooks": [
         {
           "nome": "useAuth",
@@ -10144,12 +10127,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -10288,20 +10266,25 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_auditoria",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "holerites",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lancamentos_folha",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -10309,6 +10292,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "pensoes",
         "periodos_aquisitivos",
@@ -10321,6 +10309,7 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
@@ -10328,12 +10317,14 @@
         "rubricas_folha",
         "simulacoes_fiscais",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -10357,9 +10348,7 @@
     {
       "arquivo": "src/pages/FolhaPage.tsx",
       "componente": "FolhaPage",
-      "urls": [
-        "/folha"
-      ],
+      "urls": ["/folha"],
       "menu": [
         {
           "grupo": "Remuneração",
@@ -10490,9 +10479,7 @@
     {
       "arquivo": "src/pages/GeradorDocumentosPage.tsx",
       "componente": "GeradorDocumentosPage",
-      "urls": [
-        "/gerador-documentos"
-      ],
+      "urls": ["/gerador-documentos"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
@@ -10573,19 +10560,13 @@
         "record_pii_access",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/HoleritesPage.tsx",
       "componente": "HoleritesPage",
-      "urls": [
-        "/holerites"
-      ],
+      "urls": ["/holerites"],
       "menu": [
         {
           "grupo": "Remuneração",
@@ -10676,9 +10657,7 @@
     {
       "arquivo": "src/pages/HorasExtrasPage.tsx",
       "componente": "HorasExtrasPage",
-      "urls": [
-        "/horas-extras"
-      ],
+      "urls": ["/horas-extras"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
@@ -10764,20 +10743,13 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "solicitacoes_hora_extra",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "solicitacoes_hora_extra", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/ImportacaoPage.tsx",
       "componente": "ImportacaoPage",
-      "urls": [
-        "/importacao"
-      ],
+      "urls": ["/importacao"],
       "menu": [
         {
           "grupo": "Administração",
@@ -10861,19 +10833,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/IntegracoesPage.tsx",
       "componente": "IntegracoesPage",
-      "urls": [
-        "/integracoes"
-      ],
+      "urls": ["/integracoes"],
       "menu": [
         {
           "grupo": "Administração",
@@ -11010,16 +10976,14 @@
     {
       "arquivo": "src/pages/JornadasPage.tsx",
       "componente": "JornadasPage",
-      "urls": [
-        "/jornadas"
-      ],
+      "urls": ["/jornadas"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Jornadas"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -11070,12 +11034,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -11207,10 +11166,13 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
@@ -11219,6 +11181,7 @@
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -11226,6 +11189,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -11237,17 +11205,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -11269,16 +11240,14 @@
     {
       "arquivo": "src/pages/LGPDPage.tsx",
       "componente": "LGPDPage",
-      "urls": [
-        "/lgpd"
-      ],
+      "urls": ["/lgpd"],
       "menu": [
         {
           "grupo": "Documentos & Compliance",
           "rotulo": "LGPD"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -11325,12 +11294,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -11462,18 +11426,23 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_politicas_retencao",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -11481,6 +11450,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -11492,17 +11466,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -11524,9 +11501,7 @@
     {
       "arquivo": "src/pages/LocaisTrabalhoPage.tsx",
       "componente": "LocaisTrabalhoPage",
-      "urls": [
-        "/locais-trabalho"
-      ],
+      "urls": ["/locais-trabalho"],
       "menu": [
         {
           "grupo": "Estrutura",
@@ -11561,17 +11536,13 @@
         "registrar_auditoria",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "empresas"
-      ],
+      "tabelas": ["empresas"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/LoginPage.tsx",
       "componente": "LoginPage",
-      "urls": [
-        "/login"
-      ],
+      "urls": ["/login"],
       "menu": [],
       "arquivos_lidos": 7,
       "hooks": [
@@ -11589,9 +11560,7 @@
         }
       ],
       "buckets": [],
-      "edges": [
-        "auth-gov-br"
-      ],
+      "edges": ["auth-gov-br"],
       "rpcs": [],
       "tabelas": [],
       "imports_quebrados": []
@@ -11599,16 +11568,14 @@
     {
       "arquivo": "src/pages/LotacoesPage.tsx",
       "componente": "LotacoesPage",
-      "urls": [
-        "/lotacoes"
-      ],
+      "urls": ["/lotacoes"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Lotações"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -11651,12 +11618,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -11788,17 +11750,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "lotacoes",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
@@ -11807,6 +11774,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -11818,17 +11790,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -11850,16 +11825,14 @@
     {
       "arquivo": "src/pages/MedidasDisciplinaresPage.tsx",
       "componente": "MedidasDisciplinaresPage",
-      "urls": [
-        "/medidas-disciplinares"
-      ],
+      "urls": ["/medidas-disciplinares"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Medidas Disciplinares"
         }
       ],
-      "arquivos_lidos": 157,
+      "arquivos_lidos": 164,
       "hooks": [
         {
           "nome": "useAuth",
@@ -11906,12 +11879,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -12045,17 +12013,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -12063,6 +12036,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -12074,17 +12052,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -12106,16 +12087,14 @@
     {
       "arquivo": "src/pages/MovimentacoesPage.tsx",
       "componente": "MovimentacoesPage",
-      "urls": [
-        "/movimentacoes"
-      ],
+      "urls": ["/movimentacoes"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Movimentações"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -12158,12 +12137,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -12297,17 +12271,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -12315,6 +12294,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -12326,12 +12310,14 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "promocoes",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
@@ -12339,6 +12325,7 @@
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -12360,9 +12347,7 @@
     {
       "arquivo": "src/pages/NineBoxPreviewPage.tsx",
       "componente": "NineBoxPreviewPage",
-      "urls": [
-        "/avaliacao/ninebox-preview"
-      ],
+      "urls": ["/avaliacao/ninebox-preview"],
       "menu": [],
       "arquivos_lidos": 19,
       "hooks": [
@@ -12401,9 +12386,7 @@
     {
       "arquivo": "src/pages/NotFoundPage.tsx",
       "componente": "NotFoundPage",
-      "urls": [
-        "/*"
-      ],
+      "urls": ["/*"],
       "menu": [],
       "arquivos_lidos": 2,
       "hooks": [],
@@ -12416,9 +12399,7 @@
     {
       "arquivo": "src/pages/NotificacoesPage.tsx",
       "componente": "NotificacoesPage",
-      "urls": [
-        "/notificacoes"
-      ],
+      "urls": ["/notificacoes"],
       "menu": [],
       "arquivos_lidos": 24,
       "hooks": [
@@ -12503,11 +12484,9 @@
     {
       "arquivo": "src/pages/ObrigacoesFiscaisPage.tsx",
       "componente": "ObrigacoesFiscaisPage",
-      "urls": [
-        "/obrigacoes-fiscais"
-      ],
+      "urls": ["/obrigacoes-fiscais"],
       "menu": [],
-      "arquivos_lidos": 155,
+      "arquivos_lidos": 161,
       "hooks": [
         {
           "nome": "useAuth",
@@ -12550,12 +12529,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -12688,19 +12662,24 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
         "guias_fgts",
         "guias_inss",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -12708,6 +12687,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -12719,6 +12703,7 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
@@ -12726,12 +12711,14 @@
         "sefip_arquivos",
         "simulacoes_fiscais",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -12753,9 +12740,7 @@
     {
       "arquivo": "src/pages/OnboardingPage.tsx",
       "componente": "OnboardingPage",
-      "urls": [
-        "/onboarding"
-      ],
+      "urls": ["/onboarding"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
@@ -12827,21 +12812,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "admissoes",
-        "colaboradores",
-        "empresas",
-        "tarefas_onboarding",
-        "versao_banco"
-      ],
+      "tabelas": ["admissoes", "colaboradores", "empresas", "tarefas_onboarding", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/OrganogramaPage.tsx",
       "componente": "OrganogramaPage",
-      "urls": [
-        "/organograma"
-      ],
+      "urls": ["/organograma"],
       "menu": [
         {
           "grupo": "Principal",
@@ -12921,20 +12898,13 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "departamentos",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "departamentos", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/PassivoTrabalhistaPage.tsx",
       "componente": "PassivoTrabalhistaPage",
-      "urls": [
-        "/passivo-trabalhista"
-      ],
+      "urls": ["/passivo-trabalhista"],
       "menu": [
         {
           "grupo": "Principal",
@@ -13007,29 +12977,20 @@
         "record_pii_access",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "ferias",
-        "folhas_pagamento",
-        "provisoes_mensais",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "ferias", "folhas_pagamento", "provisoes_mensais", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/PensoesPage.tsx",
       "componente": "PensoesPage",
-      "urls": [
-        "/pensoes"
-      ],
+      "urls": ["/pensoes"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Pensões"
         }
       ],
-      "arquivos_lidos": 149,
+      "arquivos_lidos": 156,
       "hooks": [
         {
           "nome": "useAuth",
@@ -13076,12 +13037,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -13213,17 +13169,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -13231,6 +13192,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "pensoes",
         "periodos_aquisitivos",
@@ -13243,17 +13209,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -13275,9 +13244,7 @@
     {
       "arquivo": "src/pages/PerfilPage.tsx",
       "componente": "PerfilPage",
-      "urls": [
-        "/perfil"
-      ],
+      "urls": ["/perfil"],
       "menu": [],
       "arquivos_lidos": 27,
       "hooks": [
@@ -13310,9 +13277,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "avatars"
-      ],
+      "buckets": ["avatars"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -13346,28 +13311,20 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "profiles",
-        "push_subscriptions",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "profiles", "push_subscriptions", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/PesquisasClimaPage.tsx",
       "componente": "PesquisasClimaPage",
-      "urls": [
-        "/pesquisas-clima"
-      ],
+      "urls": ["/pesquisas-clima"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Pesquisas Clima"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -13410,12 +13367,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -13547,17 +13499,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -13565,6 +13522,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -13576,17 +13538,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -13608,9 +13573,7 @@
     {
       "arquivo": "src/pages/PlanoCargosSalariosPage.tsx",
       "componente": "PlanoCargosSalariosPage",
-      "urls": [
-        "/cargos-salarios"
-      ],
+      "urls": ["/cargos-salarios"],
       "menu": [
         {
           "grupo": "Estrutura",
@@ -13726,16 +13689,14 @@
     {
       "arquivo": "src/pages/PlanosSaudePage.tsx",
       "componente": "PlanosSaudePage",
-      "urls": [
-        "/planos-saude"
-      ],
+      "urls": ["/planos-saude"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Planos de Saúde"
         }
       ],
-      "arquivos_lidos": 158,
+      "arquivos_lidos": 164,
       "hooks": [
         {
           "nome": "useAuth",
@@ -13782,12 +13743,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -13940,6 +13896,7 @@
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lancamentos_folha",
@@ -13955,6 +13912,7 @@
         "notificacoes",
         "notificacoes_admissao",
         "onboarding_colaborador",
+        "onboarding_kits",
         "onboarding_tarefas",
         "onboarding_template_tarefas",
         "onboarding_templates",
@@ -13970,6 +13928,7 @@
         "planos_saude",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
@@ -13980,6 +13939,7 @@
         "seguros_colaboradores",
         "seguros_vida",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
@@ -14024,9 +13984,7 @@
     {
       "arquivo": "src/pages/PontoKioskPage.tsx",
       "componente": "PontoKioskPage",
-      "urls": [
-        "/ponto/kiosk"
-      ],
+      "urls": ["/ponto/kiosk"],
       "menu": [],
       "arquivos_lidos": 11,
       "hooks": [
@@ -14044,10 +14002,7 @@
         }
       ],
       "buckets": [],
-      "edges": [
-        "processar-ponto-offline",
-        "validar-biometria"
-      ],
+      "edges": ["processar-ponto-offline", "validar-biometria"],
       "rpcs": [
         "admin_associar_usuario_empresa",
         "get_my_user_empresas",
@@ -14069,16 +14024,14 @@
     {
       "arquivo": "src/pages/PontoPage.tsx",
       "componente": "PontoPage",
-      "urls": [
-        "/ponto"
-      ],
+      "urls": ["/ponto"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Ponto"
         }
       ],
-      "arquivos_lidos": 165,
+      "arquivos_lidos": 172,
       "hooks": [
         {
           "nome": "useAuth",
@@ -14271,17 +14224,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "locais_trabalho",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
@@ -14290,6 +14248,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -14301,18 +14264,21 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_ajuste_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilha_auditoria_ponto",
         "trilhas_aprendizado",
         "trilhas_cursos",
@@ -14335,16 +14301,14 @@
     {
       "arquivo": "src/pages/PortalPage.tsx",
       "componente": "PortalPage",
-      "urls": [
-        "/portal"
-      ],
+      "urls": ["/portal"],
       "menu": [
         {
           "grupo": null,
           "rotulo": "Meu Portal"
         }
       ],
-      "arquivos_lidos": 92,
+      "arquivos_lidos": 93,
       "hooks": [
         {
           "nome": "useAuth",
@@ -14495,6 +14459,7 @@
         "historico_contratos",
         "holerites",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -14543,16 +14508,14 @@
     {
       "arquivo": "src/pages/PremiacoesPage.tsx",
       "componente": "PremiacoesPage",
-      "urls": [
-        "/premiacoes"
-      ],
+      "urls": ["/premiacoes"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Premiações 10/10"
         }
       ],
-      "arquivos_lidos": 154,
+      "arquivos_lidos": 160,
       "hooks": [
         {
           "nome": "useAuth",
@@ -14595,12 +14558,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -14733,17 +14691,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -14751,6 +14714,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -14767,17 +14735,20 @@
         "premiacoes_pagamentos",
         "premiacoes_regras",
         "premiacoes_roi_cenarios",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -14799,9 +14770,7 @@
     {
       "arquivo": "src/pages/PromoBrindesPage.tsx",
       "componente": "PromoBrindesPage",
-      "urls": [
-        "/promo-brindes"
-      ],
+      "urls": ["/promo-brindes"],
       "menu": [
         {
           "grupo": "Administração",
@@ -14873,27 +14842,20 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "promo_brindes",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "promo_brindes", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/ProvisoesPage.tsx",
       "componente": "ProvisoesPage",
-      "urls": [
-        "/provisoes"
-      ],
+      "urls": ["/provisoes"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Provisões"
         }
       ],
-      "arquivos_lidos": 88,
+      "arquivos_lidos": 89,
       "hooks": [
         {
           "nome": "useAuth",
@@ -14924,12 +14886,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -15035,6 +14992,7 @@
         "folhas_pagamento",
         "historico_contratos",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
@@ -15080,16 +15038,14 @@
     {
       "arquivo": "src/pages/RecrutamentoPage.tsx",
       "componente": "RecrutamentoPage",
-      "urls": [
-        "/recrutamento"
-      ],
+      "urls": ["/recrutamento"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Recrutamento"
         }
       ],
-      "arquivos_lidos": 152,
+      "arquivos_lidos": 159,
       "hooks": [
         {
           "nome": "useAuth",
@@ -15136,12 +15092,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -15275,17 +15226,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -15293,6 +15249,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -15304,6 +15265,7 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
@@ -15312,12 +15274,14 @@
         "recrutamento_testes",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -15340,9 +15304,7 @@
     {
       "arquivo": "src/pages/RelatoriosPage.tsx",
       "componente": "RelatoriosPage",
-      "urls": [
-        "/relatorios"
-      ],
+      "urls": ["/relatorios"],
       "menu": [
         {
           "grupo": "Administração",
@@ -15447,16 +15409,14 @@
     {
       "arquivo": "src/pages/RubricasPage.tsx",
       "componente": "RubricasPage",
-      "urls": [
-        "/rubricas"
-      ],
+      "urls": ["/rubricas"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Rubricas"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -15499,12 +15459,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -15636,17 +15591,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -15654,6 +15614,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -15665,18 +15630,21 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "rubricas_folha",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -15698,9 +15666,7 @@
     {
       "arquivo": "src/pages/SegurancaPage.tsx",
       "componente": "SegurancaPage",
-      "urls": [
-        "/seguranca"
-      ],
+      "urls": ["/seguranca"],
       "menu": [],
       "arquivos_lidos": 26,
       "hooks": [
@@ -15784,16 +15750,14 @@
     {
       "arquivo": "src/pages/SegurosVidaPage.tsx",
       "componente": "SegurosVidaPage",
-      "urls": [
-        "/seguros-vida"
-      ],
+      "urls": ["/seguros-vida"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Seguros de Vida"
         }
       ],
-      "arquivos_lidos": 158,
+      "arquivos_lidos": 164,
       "hooks": [
         {
           "nome": "useAuth",
@@ -15840,12 +15804,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -15998,6 +15957,7 @@
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lancamentos_folha",
@@ -16013,6 +15973,7 @@
         "notificacoes",
         "notificacoes_admissao",
         "onboarding_colaborador",
+        "onboarding_kits",
         "onboarding_tarefas",
         "onboarding_template_tarefas",
         "onboarding_templates",
@@ -16027,6 +15988,7 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
@@ -16038,6 +16000,7 @@
         "seguros_vida",
         "sinistros_seguro",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
@@ -16082,16 +16045,14 @@
     {
       "arquivo": "src/pages/SindicatosPage.tsx",
       "componente": "SindicatosPage",
-      "urls": [
-        "/sindicatos"
-      ],
+      "urls": ["/sindicatos"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Sindicatos"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -16134,12 +16095,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -16271,17 +16227,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -16289,6 +16250,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -16300,18 +16266,21 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "sindicatos",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -16333,9 +16302,7 @@
     {
       "arquivo": "src/pages/SSTPage.tsx",
       "componente": "SSTPage",
-      "urls": [
-        "/sst"
-      ],
+      "urls": ["/sst"],
       "menu": [
         {
           "grupo": "SST / Saúde Ocupacional",
@@ -16381,9 +16348,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "sst-programas"
-      ],
+      "buckets": ["sst-programas"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -16436,16 +16401,14 @@
     {
       "arquivo": "src/pages/TimesPage.tsx",
       "componente": "TimesPage",
-      "urls": [
-        "/times"
-      ],
+      "urls": ["/times"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Times"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -16488,12 +16451,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -16625,17 +16583,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -16643,6 +16606,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -16654,17 +16622,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -16686,16 +16657,14 @@
     {
       "arquivo": "src/pages/TreinamentosPage.tsx",
       "componente": "TreinamentosPage",
-      "urls": [
-        "/treinamentos"
-      ],
+      "urls": ["/treinamentos"],
       "menu": [
         {
           "grupo": "Gestão de Pessoas",
           "rotulo": "Treinamentos"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -16738,12 +16707,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -16875,17 +16839,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -16893,6 +16862,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -16904,17 +16878,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "treinamentos",
         "trilhas_aprendizado",
         "trilhas_cursos",
@@ -16937,16 +16914,14 @@
     {
       "arquivo": "src/pages/TurnosPage.tsx",
       "componente": "TurnosPage",
-      "urls": [
-        "/turnos"
-      ],
+      "urls": ["/turnos"],
       "menu": [
         {
           "grupo": "Tempo & Ausências",
           "rotulo": "Turnos & Escalas"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -16989,12 +16964,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -17126,17 +17096,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -17144,6 +17119,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -17155,17 +17135,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -17187,9 +17170,7 @@
     {
       "arquivo": "src/pages/UsuariosPage.tsx",
       "componente": "UsuariosPage",
-      "urls": [
-        "/usuarios"
-      ],
+      "urls": ["/usuarios"],
       "menu": [
         {
           "grupo": "Administração",
@@ -17262,26 +17243,20 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/ValesPage.tsx",
       "componente": "ValesPage",
-      "urls": [
-        "/vales"
-      ],
+      "urls": ["/vales"],
       "menu": [
         {
           "grupo": "Remuneração",
           "rotulo": "Vales"
         }
       ],
-      "arquivos_lidos": 147,
+      "arquivos_lidos": 154,
       "hooks": [
         {
           "nome": "useAuth",
@@ -17324,12 +17299,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -17461,17 +17431,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -17479,6 +17454,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -17490,17 +17470,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -17524,27 +17507,20 @@
     {
       "arquivo": "src/pages/VerificarContratoPage.tsx",
       "componente": "VerificarContratoPage",
-      "urls": [
-        "/verificar-contrato",
-        "/verificar-contrato/:hash"
-      ],
+      "urls": ["/verificar-contrato", "/verificar-contrato/:hash"],
       "menu": [],
       "arquivos_lidos": 1,
       "hooks": [],
       "buckets": [],
       "edges": [],
-      "rpcs": [
-        "contrato_verificar_autenticidade_v2"
-      ],
+      "rpcs": ["contrato_verificar_autenticidade_v2"],
       "tabelas": [],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/VinculosPromoPage.tsx",
       "componente": "VinculosPromoPage",
-      "urls": [
-        "/promo-brindes/vinculos"
-      ],
+      "urls": ["/promo-brindes/vinculos"],
       "menu": [
         {
           "grupo": "Administração",
@@ -17616,29 +17592,20 @@
         "log_frontend_error",
         "set_own_default_empresa"
       ],
-      "tabelas": [
-        "colaboradores",
-        "empresas",
-        "promo_brindes",
-        "times",
-        "times_brindes",
-        "versao_banco"
-      ],
+      "tabelas": ["colaboradores", "empresas", "promo_brindes", "times", "times_brindes", "versao_banco"],
       "imports_quebrados": []
     },
     {
       "arquivo": "src/pages/WorkflowsPage.tsx",
       "componente": "WorkflowsPage",
-      "urls": [
-        "/workflows"
-      ],
+      "urls": ["/workflows"],
       "menu": [
         {
           "grupo": "Administração",
           "rotulo": "Workflows"
         }
       ],
-      "arquivos_lidos": 152,
+      "arquivos_lidos": 158,
       "hooks": [
         {
           "nome": "useAuth",
@@ -17685,12 +17652,7 @@
           "arquivo": "src/hooks/useSystemHealth.ts"
         }
       ],
-      "buckets": [
-        "afastamentos",
-        "comprovantes-despesas",
-        "medidas-contestacoes",
-        "medidas-disciplinares"
-      ],
+      "buckets": ["afastamentos", "comprovantes-despesas", "medidas-contestacoes", "medidas-disciplinares"],
       "edges": [
         "OCR",
         "adiantamento-salarial",
@@ -17822,17 +17784,22 @@
         "ferias_aprovacoes_log",
         "ferias_arquivos",
         "ferias_coletivas",
+        "ferias_solicitacoes",
         "folha_itens",
         "folhas_pagamento",
         "formacoes_academicas",
+        "historico_cargo",
         "historico_contratos",
+        "historico_ferias",
         "historico_salarial",
         "identidades_genero",
         "inscricoes_cursos",
+        "jornadas",
         "jornadas_horarios",
         "lancamentos_contabeis",
         "lgpd_consentimentos",
         "lgpd_solicitacoes",
+        "linhas_transporte",
         "medidas_disciplinares",
         "medidas_disciplinares_contestacao_anexos",
         "medidas_disciplinares_integracao",
@@ -17840,6 +17807,11 @@
         "metas_okrs",
         "notificacoes",
         "notificacoes_admissao",
+        "onboarding_colaborador",
+        "onboarding_kits",
+        "onboarding_tarefas",
+        "onboarding_template_tarefas",
+        "onboarding_templates",
         "pdi_plano_desenvolvimento",
         "periodos_aquisitivos",
         "periodos_experiencia",
@@ -17851,17 +17823,20 @@
         "plano_contas",
         "ponto_auditoria",
         "pontos_abertos",
+        "profiles",
         "prorrogacoes_afastamento",
         "provisoes_mensais",
         "recargas_vale",
         "registros_ponto",
         "solicitacoes_hora_extra",
+        "tarefas_onboarding",
         "times",
         "tipos_admissao",
         "tipos_estabilidade",
         "treinamento_certificados",
         "treinamento_feedback",
         "treinamento_instancias",
+        "treinamento_participantes",
         "trilhas_aprendizado",
         "trilhas_cursos",
         "turnos",
@@ -17884,59 +17859,43 @@
   "hooks": {
     "useASOs": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useAdmissaoWorkflow": {
       "arquivo": "src/hooks/useAdmissaoWorkflow.ts",
-      "telas": [
-        "src/pages/AdmissoesPage.tsx",
-        "src/pages/AssinaturasPage.tsx"
-      ]
+      "telas": ["src/pages/AdmissoesPage.tsx", "src/pages/AssinaturasPage.tsx"]
     },
     "useAdmissoes": {
       "arquivo": "src/hooks/useAdmissoes.ts",
-      "telas": [
-        "src/pages/AdmissoesPage.tsx",
-        "src/pages/AssinaturasPage.tsx"
-      ]
+      "telas": ["src/pages/AdmissoesPage.tsx", "src/pages/AssinaturasPage.tsx"]
     },
     "useAfastamentos": {
       "arquivo": "src/hooks/useAfastamentos.ts",
-      "telas": [
-        "src/pages/AfastamentosPage.tsx"
-      ]
+      "telas": ["src/pages/AfastamentosPage.tsx"]
+    },
+    "useAfastamentosRecentes": {
+      "arquivo": "src/hooks/index.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useAlertasPagamentoD2": {
       "arquivo": "src/hooks/ferias/useAlertasPagamentoD2.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
     },
     "useAnotacoes": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useAssinarAvisoFerias": {
       "arquivo": "src/hooks/useAssinarAvisoFerias.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
     },
     "useAssinaturas": {
       "arquivo": "src/hooks/useAssinaturas.ts",
-      "telas": [
-        "src/pages/AssinaturasPage.tsx"
-      ]
+      "telas": ["src/pages/AssinaturasPage.tsx"]
     },
     "useAtualizarEpi": {
       "arquivo": "src/hooks/index.ts",
-      "telas": [
-        "src/pages/EPIsPage.tsx"
-      ]
+      "telas": ["src/pages/EPIsPage.tsx"]
     },
     "useAuth": {
       "arquivo": "src/contexts/AuthContext.tsx",
@@ -18127,48 +18086,35 @@
     },
     "useBeneficios": {
       "arquivo": "src/hooks/useBeneficios.ts",
-      "telas": [
-        "src/pages/BeneficioFormPage.tsx"
-      ]
+      "telas": ["src/pages/BeneficioFormPage.tsx"]
     },
     "useBeneficiosColaborador": {
       "arquivo": "src/hooks/useBeneficiosColaborador.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useBruteForceProtection": {
       "arquivo": "src/hooks/useBruteForceProtection.ts",
-      "telas": [
-        "src/pages/LoginPage.tsx"
-      ]
+      "telas": ["src/pages/LoginPage.tsx"]
     },
     "useCalcular13Salario": {
       "arquivo": "src/hooks/useCalcular13Salario.ts",
-      "telas": [
-        "src/pages/FolhaPagamentoPage.tsx"
-      ]
+      "telas": ["src/pages/FolhaPagamentoPage.tsx"]
     },
     "useCalculoFolha": {
       "arquivo": "src/hooks/useCalculoFolha.ts",
-      "telas": [
-        "src/pages/FolhaPagamentoPage.tsx",
-        "src/pages/FolhaPage.tsx"
-      ]
+      "telas": ["src/pages/FolhaPagamentoPage.tsx", "src/pages/FolhaPage.tsx"]
     },
     "useCargos": {
       "arquivo": "src/hooks/useCargos.ts",
-      "telas": [
-        "src/pages/CargosPage.tsx",
-        "src/pages/ColaboradorFormPage.tsx",
-        "src/pages/ColaboradoresPage.tsx"
-      ]
+      "telas": ["src/pages/CargosPage.tsx", "src/pages/ColaboradorFormPage.tsx", "src/pages/ColaboradoresPage.tsx"]
+    },
+    "useCentrosCusto": {
+      "arquivo": "src/hooks/useTabelasReferencia.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useColaboradorVinculo": {
       "arquivo": "src/hooks/useColaboradorVinculo.ts",
-      "telas": [
-        "src/pages/PortalPage.tsx"
-      ]
+      "telas": ["src/pages/PortalPage.tsx"]
     },
     "useColaboradores": {
       "arquivo": "src/hooks/useColaboradores.ts",
@@ -18182,112 +18128,79 @@
     },
     "useConfirmarPagamentoFerias": {
       "arquivo": "src/hooks/ferias/useAlertasPagamentoD2.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
+    },
+    "useConsentimentosColaborador": {
+      "arquivo": "src/hooks/useComplianceColaborador.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useContasBancarias": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useContatosEmergencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useContratacaoDigital": {
       "arquivo": "src/hooks/useContratacaoDigital.ts",
-      "telas": [
-        "src/pages/AdmissoesPage.tsx",
-        "src/pages/AssinaturasPage.tsx"
-      ]
+      "telas": ["src/pages/AdmissoesPage.tsx", "src/pages/AssinaturasPage.tsx"]
     },
     "useContratoTemplates": {
       "arquivo": "src/hooks/useContratoTemplates.ts",
-      "telas": [
-        "src/pages/ContratoTemplatesPage.tsx"
-      ]
+      "telas": ["src/pages/ContratoTemplatesPage.tsx"]
     },
     "useContratoTokenTimeline": {
       "arquivo": "src/hooks/useContratoTokenTimeline.ts",
-      "telas": [
-        "src/pages/ContratoTemplatesPage.tsx"
-      ]
+      "telas": ["src/pages/ContratoTemplatesPage.tsx"]
     },
     "useContratosAssinaturaKPI": {
       "arquivo": "src/hooks/useContratosAssinaturaKPI.ts",
-      "telas": [
-        "src/pages/ContratoTemplatesPage.tsx"
-      ]
+      "telas": ["src/pages/ContratoTemplatesPage.tsx"]
     },
     "useContratosVencendo": {
       "arquivo": "src/hooks/useContratosVencendo.ts",
-      "telas": [
-        "src/pages/ContratoTemplatesPage.tsx"
-      ]
+      "telas": ["src/pages/ContratoTemplatesPage.tsx"]
     },
     "useCriarASO": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarAnotacao": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarContaBancaria": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarContatoEmergencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarDependente": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarDocumentoPessoal": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarFormacao": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useCriarRegistroSalarial": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useDadosEstagiario": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useDadosEstrangeiro": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useDataAccessLog": {
       "arquivo": "src/hooks/useDataAccessLog.ts",
@@ -18301,9 +18214,7 @@
     },
     "useDeficiencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useDepartamentos": {
       "arquivo": "src/hooks/useDepartamentos.ts",
@@ -18315,45 +18226,31 @@
     },
     "useDependentes": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useDesligamentos": {
       "arquivo": "src/hooks/useDesligamentos.ts",
-      "telas": [
-        "src/pages/DesligamentosPage.tsx"
-      ]
+      "telas": ["src/pages/DesligamentosPage.tsx"]
     },
     "useDocumentOCR": {
       "arquivo": "src/hooks/useDocumentOCR.ts",
-      "telas": [
-        "src/pages/ContratacaoPage.tsx"
-      ]
+      "telas": ["src/pages/ContratacaoPage.tsx"]
     },
     "useDocumentos": {
       "arquivo": "src/hooks/useDocumentos.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useDocumentosAfastamento": {
       "arquivo": "src/hooks/useAfastamentos.ts",
-      "telas": [
-        "src/pages/AfastamentosPage.tsx"
-      ]
+      "telas": ["src/pages/AfastamentosPage.tsx"]
     },
     "useDocumentosPessoais": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useESocial": {
       "arquivo": "src/hooks/useESocial.ts",
-      "telas": [
-        "src/pages/ESocialPage.tsx"
-      ]
+      "telas": ["src/pages/ESocialPage.tsx"]
     },
     "useEmpresa": {
       "arquivo": "src/contexts/EmpresaContext.tsx",
@@ -18364,6 +18261,7 @@
         "src/pages/CanalContabilidadePage.tsx",
         "src/pages/CanalEticaPage.tsx",
         "src/pages/CentrosCustoPage.tsx",
+        "src/pages/ColaboradorDetalhesPage.tsx",
         "src/pages/ColaboradorFormPage.tsx",
         "src/pages/ComunicacaoInternaPage.tsx",
         "src/pages/ConfiguracoesPage.tsx",
@@ -18405,9 +18303,7 @@
     },
     "useEmpresaStore": {
       "arquivo": "src/hooks/useEmpresas.ts",
-      "telas": [
-        "src/pages/ConfiguracoesPage.tsx"
-      ]
+      "telas": ["src/pages/ConfiguracoesPage.tsx"]
     },
     "useEmpresas": {
       "arquivo": "src/hooks/useEmpresas.ts",
@@ -18521,82 +18417,67 @@
     },
     "useExcluirAnotacao": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useExcluirContaBancaria": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useExcluirContatoEmergencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useExcluirDependente": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useExcluirDocumentoPessoal": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useExcluirFormacao": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useExecutiveKPIs": {
       "arquivo": "src/hooks/useExecutiveDashboard.ts",
-      "telas": [
-        "src/pages/DashboardExecutivoPage.tsx"
-      ]
+      "telas": ["src/pages/DashboardExecutivoPage.tsx"]
+    },
+    "useFaltasColaborador": {
+      "arquivo": "src/hooks/index.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
+    "useFeedbacksColaborador": {
+      "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useFerias": {
       "arquivo": "src/hooks/useFerias.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
     },
     "useFeriasAprovacao": {
       "arquivo": "src/hooks/useFeriasAprovacao.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
+    },
+    "useFeriasResumoColaborador": {
+      "arquivo": "src/hooks/useColaboradorDetalhes.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useFolha": {
       "arquivo": "src/hooks/useFolha.ts",
-      "telas": [
-        "src/pages/FolhaPage.tsx"
-      ]
+      "telas": ["src/pages/FolhaPage.tsx"]
     },
     "useFolhaAuditoria": {
       "arquivo": "src/hooks/useFolhaAuditoria.ts",
-      "telas": [
-        "src/pages/FolhaPage.tsx"
-      ]
+      "telas": ["src/pages/FolhaPage.tsx"]
     },
     "useFormGuard": {
       "arquivo": "src/hooks/useFormGuard.ts",
-      "telas": [
-        "src/pages/ColaboradorFormPage.tsx",
-        "src/pages/EmpresaFormPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorFormPage.tsx", "src/pages/EmpresaFormPage.tsx"]
     },
     "useFormacoes": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useGenericCrud": {
       "arquivo": "src/hooks/useGenericCrud.ts",
@@ -18609,6 +18490,7 @@
         "src/pages/CanalEticaPage.tsx",
         "src/pages/CargosPage.tsx",
         "src/pages/CentrosCustoPage.tsx",
+        "src/pages/ColaboradorDetalhesPage.tsx",
         "src/pages/ColaboradorFormPage.tsx",
         "src/pages/ColaboradoresPage.tsx",
         "src/pages/ComunicacaoInternaPage.tsx",
@@ -18654,9 +18536,7 @@
     },
     "useGerarComunicadoColetivas": {
       "arquivo": "src/hooks/ferias/useGerarComunicadoColetivas.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
     },
     "useGrupo": {
       "arquivo": "src/hooks/useGrupo.ts",
@@ -18742,75 +18622,57 @@
         "src/pages/WorkflowsPage.tsx"
       ]
     },
+    "useHistoricoColaborador": {
+      "arquivo": "src/hooks/useHistoricoColaborador.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
     "useHistoricoContratos": {
       "arquivo": "src/hooks/useHistoricoContratos.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useHistoricoSalarial": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useHorasExtras": {
       "arquivo": "src/hooks/useHorasExtras.ts",
-      "telas": [
-        "src/pages/HorasExtrasPage.tsx"
-      ]
+      "telas": ["src/pages/HorasExtrasPage.tsx"]
     },
     "useIdempotencyKey": {
       "arquivo": "src/hooks/useIdempotencyKey.ts",
-      "telas": [
-        "src/pages/FolhaPagamentoPage.tsx"
-      ]
+      "telas": ["src/pages/FolhaPagamentoPage.tsx"]
     },
     "useImportacaoColaboradores": {
       "arquivo": "src/hooks/useImportacaoColaboradores.ts",
-      "telas": [
-        "src/pages/ImportacaoPage.tsx"
-      ]
+      "telas": ["src/pages/ImportacaoPage.tsx"]
     },
     "useJornadaHorarios": {
       "arquivo": "src/hooks/useNovasTabelas.ts",
-      "telas": [
-        "src/pages/JornadasPage.tsx"
-      ]
+      "telas": ["src/pages/JornadasPage.tsx"]
     },
     "useLocaisTrabalho": {
       "arquivo": "src/hooks/useLocaisTrabalho.ts",
-      "telas": [
-        "src/pages/LocaisTrabalhoPage.tsx"
-      ]
+      "telas": ["src/pages/LocaisTrabalhoPage.tsx"]
+    },
+    "useMedidasDisciplinaresColaborador": {
+      "arquivo": "src/hooks/index.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useMovimentoReduzido": {
       "arquivo": "src/lib/motionMode.ts",
-      "telas": [
-        "src/pages/AvaliacaoPage.tsx"
-      ]
+      "telas": ["src/pages/AvaliacaoPage.tsx"]
     },
     "useNotificacoes": {
       "arquivo": "src/hooks/useNotificacoes.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx",
-        "src/pages/NotificacoesPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx", "src/pages/NotificacoesPage.tsx"]
     },
     "useNotification": {
       "arquivo": "src/contexts/index.ts",
-      "telas": [
-        "src/pages/ColaboradorFormPage.tsx",
-        "src/pages/EmpresaFormPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorFormPage.tsx", "src/pages/EmpresaFormPage.tsx"]
     },
     "useNow": {
       "arquivo": "src/hooks/useNow.ts",
-      "telas": [
-        "src/pages/LGPDPage.tsx",
-        "src/pages/MedidasDisciplinaresPage.tsx",
-        "src/pages/WorkflowsPage.tsx"
-      ]
+      "telas": ["src/pages/LGPDPage.tsx", "src/pages/MedidasDisciplinaresPage.tsx", "src/pages/WorkflowsPage.tsx"]
     },
     "useOnMount": {
       "arquivo": "src/hooks/useMountEffects.ts",
@@ -18897,11 +18759,13 @@
         "src/pages/WorkflowsPage.tsx"
       ]
     },
+    "useOnboardingColaborador": {
+      "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
     "useOrganograma": {
       "arquivo": "src/hooks/useOrganograma.ts",
-      "telas": [
-        "src/pages/OrganogramaPage.tsx"
-      ]
+      "telas": ["src/pages/OrganogramaPage.tsx"]
     },
     "usePDFExport": {
       "arquivo": "src/hooks/usePDFExport.ts",
@@ -18998,52 +18862,35 @@
     },
     "usePcsAvaliacoes": {
       "arquivo": "src/hooks/usePcs.ts",
-      "telas": [
-        "src/pages/PlanoCargosSalariosPage.tsx"
-      ]
+      "telas": ["src/pages/PlanoCargosSalariosPage.tsx"]
     },
     "usePcsBenchmark": {
       "arquivo": "src/hooks/usePcs.ts",
-      "telas": [
-        "src/pages/PlanoCargosSalariosPage.tsx"
-      ]
+      "telas": ["src/pages/PlanoCargosSalariosPage.tsx"]
     },
     "usePcsEquidade": {
       "arquivo": "src/hooks/usePcs.ts",
-      "telas": [
-        "src/pages/PlanoCargosSalariosPage.tsx"
-      ]
+      "telas": ["src/pages/PlanoCargosSalariosPage.tsx"]
     },
     "usePcsFatores": {
       "arquivo": "src/hooks/usePcs.ts",
-      "telas": [
-        "src/pages/PlanoCargosSalariosPage.tsx"
-      ]
+      "telas": ["src/pages/PlanoCargosSalariosPage.tsx"]
     },
     "usePcsGrades": {
       "arquivo": "src/hooks/usePcs.ts",
-      "telas": [
-        "src/pages/PlanoCargosSalariosPage.tsx"
-      ]
+      "telas": ["src/pages/PlanoCargosSalariosPage.tsx"]
     },
     "usePcsPlanos": {
       "arquivo": "src/hooks/usePcs.ts",
-      "telas": [
-        "src/pages/PlanoCargosSalariosPage.tsx"
-      ]
+      "telas": ["src/pages/PlanoCargosSalariosPage.tsx"]
     },
     "usePendencias": {
       "arquivo": "src/hooks/usePendencias.ts",
-      "telas": [
-        "src/pages/DashboardExecutivoPage.tsx",
-        "src/pages/DashboardPage.tsx"
-      ]
+      "telas": ["src/pages/DashboardExecutivoPage.tsx", "src/pages/DashboardPage.tsx"]
     },
     "usePeriodoExperiencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "usePeriodosAquisitivos": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
@@ -19081,88 +18928,74 @@
     "usePontoMelhorado": {
       "arquivo": "src/hooks/usePontoMelhorado.ts",
       "telas": [
+        "src/pages/ColaboradorDetalhesPage.tsx",
         "src/pages/DashboardExecutivoPage.tsx",
         "src/pages/DashboardPage.tsx"
       ]
     },
     "usePontoOffline": {
       "arquivo": "src/hooks/index.ts",
-      "telas": [
-        "src/pages/PontoPage.tsx"
-      ]
+      "telas": ["src/pages/PontoPage.tsx"]
     },
     "useProgramacaoFerias": {
       "arquivo": "src/hooks/ferias/useProgramacaoFerias.ts",
-      "telas": [
-        "src/pages/FeriasProgramacaoPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasProgramacaoPage.tsx"]
     },
     "useProgramacaoMutations": {
       "arquivo": "src/hooks/ferias/useProgramacaoFerias.ts",
-      "telas": [
-        "src/pages/FeriasProgramacaoPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasProgramacaoPage.tsx"]
     },
     "useProrrogacoesAfastamento": {
       "arquivo": "src/hooks/useAfastamentos.ts",
-      "telas": [
-        "src/pages/AfastamentosPage.tsx"
-      ]
+      "telas": ["src/pages/AfastamentosPage.tsx"]
+    },
+    "useProximosEventos": {
+      "arquivo": "src/hooks/useProximosEventos.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useRealTimeSubscription": {
       "arquivo": "src/hooks/useRealTimeSubscription.ts",
-      "telas": [
-        "src/pages/DashboardExecutivoPage.tsx",
-        "src/pages/DashboardPage.tsx"
-      ]
+      "telas": ["src/pages/DashboardExecutivoPage.tsx", "src/pages/DashboardPage.tsx"]
     },
     "useRealtimeDashboard": {
       "arquivo": "src/hooks/useRealtimeDashboard.ts",
-      "telas": [
-        "src/pages/DashboardPage.tsx"
-      ]
+      "telas": ["src/pages/DashboardPage.tsx"]
     },
     "useReconciliacaoFolha": {
       "arquivo": "src/hooks/ferias/useReconciliacaoFolha.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
     },
     "useReconciliacaoLogs": {
       "arquivo": "src/hooks/ferias/useReconciliacaoLogs.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
+    },
+    "useRegistrosPontoSemana": {
+      "arquivo": "src/hooks/index.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
+    "useSaldoBancoHoras": {
+      "arquivo": "src/hooks/index.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useSalvarDadosEstagiario": {
       "arquivo": "src/hooks/useTabelasReferencia.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useSalvarDadosEstrangeiro": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useSalvarDeficiencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useSalvarGradeHorarios": {
       "arquivo": "src/hooks/useNovasTabelas.ts",
-      "telas": [
-        "src/pages/JornadasPage.tsx"
-      ]
+      "telas": ["src/pages/JornadasPage.tsx"]
     },
     "useSalvarPeriodoExperiencia": {
       "arquivo": "src/hooks/useColaboradorDetalhes.ts",
-      "telas": [
-        "src/pages/ColaboradorDetalhesPage.tsx"
-      ]
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useServerValidation": {
       "arquivo": "src/hooks/useServerValidation.ts",
@@ -19172,6 +19005,7 @@
         "src/pages/CanalContabilidadePage.tsx",
         "src/pages/CanalEticaPage.tsx",
         "src/pages/CentrosCustoPage.tsx",
+        "src/pages/ColaboradorDetalhesPage.tsx",
         "src/pages/ColaboradorFormPage.tsx",
         "src/pages/ComunicacaoInternaPage.tsx",
         "src/pages/ConfiguracoesPage.tsx",
@@ -19211,15 +19045,11 @@
     },
     "useSolicitarAdiantamento13": {
       "arquivo": "src/hooks/ferias/useAdiantamento13.ts",
-      "telas": [
-        "src/pages/FeriasPage.tsx"
-      ]
+      "telas": ["src/pages/FeriasPage.tsx"]
     },
     "useStrategicFinancials": {
       "arquivo": "src/hooks/useExecutiveDashboard.ts",
-      "telas": [
-        "src/pages/DashboardExecutivoPage.tsx"
-      ]
+      "telas": ["src/pages/DashboardExecutivoPage.tsx"]
     },
     "useSyncedState": {
       "arquivo": "src/hooks/useSyncedState.ts",
@@ -19318,29 +19148,31 @@
     },
     "useSystemHealthHistory": {
       "arquivo": "src/hooks/useSystemHealthHistory.ts",
-      "telas": [
-        "src/pages/AdminDiagnosticoMigracaoPage.tsx",
-        "src/pages/DashboardPage.tsx"
-      ]
+      "telas": ["src/pages/AdminDiagnosticoMigracaoPage.tsx", "src/pages/DashboardPage.tsx"]
     },
     "useTheme": {
       "arquivo": "src/providers/ThemeProvider.tsx",
-      "telas": [
-        "src/pages/ConfiguracoesPage.tsx"
-      ]
+      "telas": ["src/pages/ConfiguracoesPage.tsx"]
+    },
+    "useTimes": {
+      "arquivo": "src/hooks/useColaboradorDetalhes.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     },
     "useToast": {
       "arquivo": "src/hooks/useToast.ts",
-      "telas": [
-        "src/pages/DashboardExecutivoPage.tsx",
-        "src/pages/DashboardPage.tsx"
-      ]
+      "telas": ["src/pages/DashboardExecutivoPage.tsx", "src/pages/DashboardPage.tsx"]
     },
     "useTodasEmpresas": {
       "arquivo": "src/hooks/useTodasEmpresas.ts",
-      "telas": [
-        "src/pages/EmpresasPage.tsx"
-      ]
+      "telas": ["src/pages/EmpresasPage.tsx"]
+    },
+    "useTreinamentosColaborador": {
+      "arquivo": "src/hooks/useDesenvolvimentoColaborador.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
+    },
+    "useVinculosColaborador": {
+      "arquivo": "src/hooks/useVinculos.ts",
+      "telas": ["src/pages/ColaboradorDetalhesPage.tsx"]
     }
   },
   "rotas_sem_item_de_menu": {

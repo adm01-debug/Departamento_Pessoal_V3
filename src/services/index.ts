@@ -22,6 +22,7 @@ export { batidasPontoService } from './batidasPontoService';
 export { faltasService } from './faltasService';
 export { medidasDisciplinaresService } from './medidasDisciplinaresService';
 export { episService, episEntregasService } from './episService';
+export { jornadaService } from './jornadaService';
 export { jornadaHorariosService } from './jornadaHorariosService';
 export { bancoHorasConfigService } from './bancoHorasConfigService';
 export { pontoService } from './pontoService';
@@ -46,4 +47,3 @@ export { admissaoService } from './admissaoService';
 
 // Utilities
 export const fgtsService = { calcular: (salario: number) => salario * 0.08 };
-

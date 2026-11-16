@@ -20,6 +20,11 @@ type OnboardingTemplateTarefaRow = Tables<'onboarding_template_tarefas'>;
 type OnboardingColaboradorRow = Tables<'onboarding_colaborador'>;
 type OnboardingTarefaRow = Tables<'onboarding_tarefas'>;
 type TreinamentoParticipanteRow = Tables<'treinamento_participantes'>;
+/** Linha de participante com a turma embutida — o que `listarPorColaborador`
+ * realmente devolve (o select já traz o join). */
+export type TreinamentoParticipanteComTurma = TreinamentoParticipanteRow & {
+  treinamento: Pick<Tables<'treinamentos'>, 'nome' | 'descricao' | 'data' | 'carga_horaria'> | null;
+};
 
 export const configAfastamentosService = {
   obter: async (): Promise<ConfigAfastamentosRow | null> => {
@@ -238,13 +243,13 @@ export const treinamentoParticipantesService = {
   },
   // Dossiê → Desenvolvimento: treinamentos de UM colaborador. `listar` acima só
   // filtra por turma (`treinamento_id`), não por colaborador.
-  listarPorColaborador: async (colaboradorId: string): Promise<TreinamentoParticipanteRow[]> => {
+  listarPorColaborador: async (colaboradorId: string): Promise<TreinamentoParticipanteComTurma[]> => {
     const { data, error } = await supabase
       .from('treinamento_participantes')
       .select('*, treinamento:treinamentos(nome, descricao, data, carga_horaria)')
       .eq('colaborador_id', colaboradorId)
       .order('created_at', { ascending: false });
     if (error) throw error;
-    return (data as unknown as TreinamentoParticipanteRow[]) || [];
+    return (data as unknown as TreinamentoParticipanteComTurma[]) || [];
   },
 };
