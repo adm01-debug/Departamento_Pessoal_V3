@@ -316,7 +316,7 @@
     "workflow_dispatch"
    ],
    "crons": [
-    "23 6 * * *"
+    "23 6 * * 2"
    ],
    "branches": [],
    "jobs": [
