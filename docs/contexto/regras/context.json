@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "9d8ff76beb4822b5998daba8a51e704258ea45b9",
+  "sha": "81e86aabd815c7566951af613bda78e736b3fe4b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 12:02 UTC",
+  "generated_at": "2026-11-16 12:26 UTC",
   "files_total": 3124,
   "code_files": 2591,
   "code_lines": 379340
@@ -300560,10 +300560,19 @@
   }
  },
  "git": {
-  "sha": "9d8ff76beb4822b5998daba8a51e704258ea45b9",
+  "sha": "81e86aabd815c7566951af613bda78e736b3fe4b",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "81e86aa",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml"
+    ]
+   },
    {
     "sha": "9d8ff76",
     "date": "2026-11-16",
@@ -301027,17 +301036,6 @@
     "files": [
      "src/main.tsx"
     ]
-   },
-   {
-    "sha": "69cf8aa",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)",
-    "files": [
-     "nginx.conf",
-     "src/test/securityHeadersParity.test.ts",
-     "vercel.json"
-    ]
    }
   ],
   "hot_files": [
@@ -301046,16 +301044,16 @@
     4
    ],
    [
+    ".github/workflows/canonical-migrations.yml",
+    3
+   ],
+   [
     "inventario/estado/rotas.json",
     3
    ],
    [
     "scripts/sync/autocommit-local.sh",
     3
-   ],
-   [
-    ".github/workflows/canonical-migrations.yml",
-    2
    ],
    [
     "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.sql",
@@ -301067,14 +301065,6 @@
    ],
    [
     "scripts/automation.config.json",
-    2
-   ],
-   [
-    "nginx.conf",
-    2
-   ],
-   [
-    "vercel.json",
     2
    ],
    [
@@ -301119,6 +301109,14 @@
    ],
    [
     "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.verify.sql",
+    1
+   ],
+   [
+    "inventario/estado/banco.json",
     1
    ]
   ]

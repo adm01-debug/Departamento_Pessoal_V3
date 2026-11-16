@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "infra(banco): sidecars rodam no FIM da transacao, nao no meio do lote (#583)",
    "chore: resgata da branch `muri` as 3 migrations que rodam em produção e não existiam na main (#582)",
    "chore(docs): resgata da branch do #557 a prova de navegador que fechou o B23 (#584)",
    "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)",
-   "fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)",
-   "chore: inventario do estado real [auto] (#581)"
+   "fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",
