@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "4911958f73da548907d2c9145bb816023df21df4",
+  "commit": "85f22ec74de17b441a91f4792de27ccb28d953fe",
   "branch": "main",
-  "data_commit": "2026-11-16T13:53:08-03:00",
+  "data_commit": "2026-11-16T14:22:19-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "85f22ec",
+    "data": "2026-11-16",
+    "assunto": "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)"
+   },
    {
     "sha": "4911958",
     "data": "2026-11-16",
@@ -126,18 +131,13 @@
     "sha": "1392114",
     "data": "2026-11-15",
     "assunto": "test(ferias): resgata as 2 assercoes extras do sidecar do feriado de 20/11 (#572)"
-   },
-   {
-    "sha": "49707f1",
-    "data": "2026-11-15",
-    "assunto": "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)"
    }
   ],
-  "arquivos_mudados_7d": 799,
+  "arquivos_mudados_7d": 800,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
-    "mudancas": 306
+    "mudancas": 305
    },
    {
     "pasta": "src/hooks/__tests__",
@@ -145,7 +145,7 @@
    },
    {
     "pasta": "src/services/__tests__",
-    "mudancas": 94
+    "mudancas": 93
    },
    {
     "pasta": "src/components/avaliacao",
@@ -168,12 +168,12 @@
     "mudancas": 36
    },
    {
-    "pasta": ".github/workflows/canonical-migrations.yml",
+    "pasta": "src/components/folha",
     "mudancas": 31
    },
    {
-    "pasta": "src/components/folha",
-    "mudancas": 31
+    "pasta": ".github/workflows/canonical-migrations.yml",
+    "mudancas": 30
    },
    {
     "pasta": "src/components/esocial",
@@ -199,7 +199,7 @@
   "arquivos_mais_mudados_90d": [
    {
     "arquivo": ".github/workflows/canonical-migrations.yml",
-    "mudancas": 31
+    "mudancas": 30
    },
    {
     "arquivo": "package.json",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 232
+    "commits": 233
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -314,10 +314,6 @@
    {
     "autor": "github-actions[bot]",
     "commits": 6
-   },
-   {
-    "autor": "Claude",
-    "commits": 1
    }
   ]
  },

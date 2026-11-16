@@ -1,9 +1,9 @@
 {
  "meta": {
-  "sha": "4911958f73da548907d2c9145bb816023df21df4",
+  "sha": "85f22ec74de17b441a91f4792de27ccb28d953fe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 16:53 UTC",
+  "generated_at": "2026-11-16 17:23 UTC",
   "files_total": 3192,
   "code_files": 2621,
   "code_lines": 386798
@@ -259840,7 +259840,7 @@
     "function ESocialMonitorWidget"
    ],
    "navigates": [
-    "/colaboradores/",
+    "/colaboradores/editar/",
     "/esocial",
     "/relatorios"
    ],
@@ -273786,7 +273786,7 @@
     "function ColaboradorDetalhesPage"
    ],
    "navigates": [
-    "/colaboradores/"
+    "/colaboradores/editar/"
    ],
    "status_values": [
     {
@@ -302177,10 +302177,20 @@
   }
  },
  "git": {
-  "sha": "4911958f73da548907d2c9145bb816023df21df4",
+  "sha": "85f22ec74de17b441a91f4792de27ccb28d953fe",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "85f22ec",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "fix: botão \"Editar Perfil\" do colaborador caía em 404 (#601)",
+    "files": [
+     "src/components/dashboard/analytics/widgets.tsx",
+     "src/pages/ColaboradorDetalhesPage.tsx"
+    ]
+   },
    {
     "sha": "4911958",
     "date": "2026-11-16",
@@ -302717,15 +302727,6 @@
      "package-lock.json",
      "package.json"
     ]
-   },
-   {
-    "sha": "311ee8a",
-    "date": "2026-11-14",
-    "author": "adm01-debug",
-    "subject": "chore: contexto agendado de 10 min para 1x/hora (#566)",
-    "files": [
-     ".github/workflows/contexto.yml"
-    ]
    }
   ],
   "hot_files": [
@@ -302802,11 +302803,11 @@
     2
    ],
    [
-    "src/components/__tests__/AprovacaoGestor.test.ts",
+    "src/components/dashboard/analytics/widgets.tsx",
     1
    ],
    [
-    "src/components/__tests__/AuditoriaChips.test.tsx",
+    "src/pages/ColaboradorDetalhesPage.tsx",
     1
    ]
   ]
