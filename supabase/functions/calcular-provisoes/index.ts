@@ -34,8 +34,17 @@ const FGTS_BPS = 80n;            // 8%
 // (art. 18, §5º-C) a CPP e o RAT/FAP ficam fora do DAS. Regime ausente ou
 // desconhecido mantém a alíquota cheia para não subestimar o passivo.
 function encargosPatronaisBps(regime: string | null, simplesAnexo: string | null): bigint {
-  if (regime !== 'simples_nacional') return INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS;
-  return simplesAnexo === 'IV' ? INSS_PATRONAL_BPS + RAT_MEDIO_BPS : 0n;
+  const cheia = INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS;
+  if (regime !== 'simples_nacional') return cheia;
+  // Anexo IV: CPP e RAT/FAP ficam FORA do DAS (art. 18, §5º-C).
+  if (simplesAnexo === 'IV') return INSS_PATRONAL_BPS + RAT_MEDIO_BPS;
+  // Anexo NÃO identificado: `empresas.simples_anexo` é nullable
+  // (20260912208000_p1_company_payroll_tax_contract.sql:20,77-85) e a tela de
+  // configuração permite salvar sem ele. Sem saber o anexo não é possível
+  // afirmar que a CPP está no DAS, então mantém a alíquota cheia — reduzir
+  // aqui subestimaria o passivo de uma empresa do Anexo IV mal cadastrada.
+  if (!simplesAnexo) return cheia;
+  return 0n;
 }
 
 const BodySchema = z.object({

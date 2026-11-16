@@ -109,7 +109,12 @@ export const ALIQUOTA_ENCARGOS_PROVISAO = {
  */
 export function aliquotaEncargosProvisao(regime: string | null | undefined, simplesAnexo?: string | null): number {
   if (regime !== 'simples_nacional') return ALIQUOTA_ENCARGOS_PROVISAO.padrao;
-  return simplesAnexo === 'IV' ? ALIQUOTA_ENCARGOS_PROVISAO.simplesAnexoIV : ALIQUOTA_ENCARGOS_PROVISAO.simplesNacional;
+  if (simplesAnexo === 'IV') return ALIQUOTA_ENCARGOS_PROVISAO.simplesAnexoIV;
+  // Anexo ausente = anexo desconhecido. `empresas.simples_anexo` é nullable e a
+  // tela permite salvar sem ele, então reduzir aqui subestimaria o passivo de
+  // uma empresa do Anexo IV mal cadastrada.
+  if (!simplesAnexo) return ALIQUOTA_ENCARGOS_PROVISAO.padrao;
+  return ALIQUOTA_ENCARGOS_PROVISAO.simplesNacional;
 }
 
 // Seguro-Desemprego 2026 (Resolução CODEFAT — base SM R$1.518,00)

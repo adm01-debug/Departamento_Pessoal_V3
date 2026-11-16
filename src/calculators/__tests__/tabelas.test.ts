@@ -155,9 +155,7 @@ describe('tabelas 2026 — integridade dos dados', () => {
       expect(ALIQUOTA_ENCARGOS_PROVISAO.padrao).toBeCloseTo(0.368, 10);
     });
 
-    it('Simples Nacional recolhe apenas FGTS 8%', () => {
-      expect(aliquotaEncargosProvisao('simples_nacional')).toBe(0.08);
-      expect(aliquotaEncargosProvisao('simples_nacional', null)).toBe(0.08);
+    it('Simples Nacional com anexo informado recolhe apenas FGTS 8%', () => {
       expect(aliquotaEncargosProvisao('simples_nacional', 'III')).toBe(0.08);
     });
 
@@ -178,9 +176,24 @@ describe('tabelas 2026 — integridade dos dados', () => {
       }
     });
 
+    it('Simples sem anexo informado NAO reduz: anexo desconhecido mantem a aliquota cheia', () => {
+      // `empresas.simples_anexo` e nullable e a tela permite salvar sem ele.
+      // Sem o anexo nao da para afirmar que a CPP esta no DAS: reduzir aqui
+      // subestimaria o passivo de uma empresa do Anexo IV mal cadastrada.
+      expect(aliquotaEncargosProvisao('simples_nacional', null)).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+      expect(aliquotaEncargosProvisao('simples_nacional', '')).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+      expect(aliquotaEncargosProvisao('simples_nacional', undefined)).toBe(ALIQUOTA_ENCARGOS_PROVISAO.padrao);
+    });
+
+    it('Simples nos anexos I, II, III e V recolhe apenas FGTS', () => {
+      for (const anexo of ['I', 'II', 'III', 'V']) {
+        expect(aliquotaEncargosProvisao('simples_nacional', anexo)).toBe(ALIQUOTA_ENCARGOS_PROVISAO.simplesNacional);
+      }
+    });
+
     it('provisão de R$ 1.000 — Simples provisiona 28,8 p.p. menos que Lucro Presumido', () => {
       const base = 1000;
-      const simples = base * aliquotaEncargosProvisao('simples_nacional');
+      const simples = base * aliquotaEncargosProvisao('simples_nacional', 'III');
       const presumido = base * aliquotaEncargosProvisao('lucro_presumido');
       expect(simples).toBeCloseTo(80, 10);
       expect(presumido).toBeCloseTo(368, 10);
