@@ -1,12 +1,12 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "nos": 1152,
- "arestas": 5526,
+ "nos": 1200,
+ "arestas": 5793,
  "hubs": [
   {
    "arquivo": "src/components/ui/button.tsx",
-   "importado_por": 303
+   "importado_por": 326
   },
   {
    "arquivo": "src/components/ui/card.tsx",
@@ -14,27 +14,27 @@
   },
   {
    "arquivo": "src/integrations/supabase/client.ts",
-   "importado_por": 264
-  },
-  {
-   "arquivo": "src/components/ui/badge.tsx",
-   "importado_por": 213
+   "importado_por": 265
   },
   {
    "arquivo": "src/lib/utils.ts",
-   "importado_por": 201
+   "importado_por": 236
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 212
   },
   {
    "arquivo": "src/components/ui/input.tsx",
-   "importado_por": 162
+   "importado_por": 169
   },
   {
    "arquivo": "src/components/ui/label.tsx",
-   "importado_por": 156
+   "importado_por": 157
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
-   "importado_por": 144
+   "importado_por": 150
   },
   {
    "arquivo": "src/utils/safeError.ts",
@@ -50,7 +50,7 @@
   },
   {
    "arquivo": "src/components/ui/select.tsx",
-   "importado_por": 113
+   "importado_por": 117
   },
   {
    "arquivo": "src/components/ui/table.tsx",
@@ -66,7 +66,7 @@
   },
   {
    "arquivo": "src/components/PageTitle.tsx",
-   "importado_por": 88
+   "importado_por": 89
   },
   {
    "arquivo": "src/components/layout/index.ts",
@@ -74,7 +74,7 @@
   },
   {
    "arquivo": "src/integrations/supabase/database.types.ts",
-   "importado_por": 77
+   "importado_por": 76
   },
   {
    "arquivo": "supabase/functions/_shared/contract.ts",
@@ -93,6 +93,10 @@
    "importado_por": 56
   },
   {
+   "arquivo": "src/utils/dateLocal.ts",
+   "importado_por": 56
+  },
+  {
    "arquivo": "supabase/functions/_shared/sentry.ts",
    "importado_por": 56
   },
@@ -101,28 +105,24 @@
    "importado_por": 55
   },
   {
-   "arquivo": "src/utils/dateLocal.ts",
-   "importado_por": 55
-  },
-  {
    "arquivo": "src/components/ui/tabs.tsx",
-   "importado_por": 49
+   "importado_por": 51
   },
   {
    "arquivo": "src/components/ui/textarea.tsx",
    "importado_por": 49
   },
   {
+   "arquivo": "src/services/index.ts",
+   "importado_por": 37
+  },
+  {
    "arquivo": "src/hooks/usePiiMask.ts",
    "importado_por": 36
   },
   {
-   "arquivo": "src/services/index.ts",
-   "importado_por": 35
-  },
-  {
    "arquivo": "src/components/ui/tooltip.tsx",
-   "importado_por": 34
+   "importado_por": 35
   },
   {
    "arquivo": "src/types/entities.ts",
@@ -145,24 +145,24 @@
    "importado_por": 27
   },
   {
+   "arquivo": "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "importado_por": 26
+  },
+  {
    "arquivo": "src/hooks/useColaboradorDetalhes.ts",
    "importado_por": 26
   },
   {
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "importado_por": 25
+  },
+  {
    "arquivo": "src/components/dashboard/MetricCard.tsx",
-   "importado_por": 22
+   "importado_por": 23
   },
   {
    "arquivo": "src/components/ui/skeleton.tsx",
    "importado_por": 22
-  },
-  {
-   "arquivo": "src/components/ui/dropdown-menu.tsx",
-   "importado_por": 21
-  },
-  {
-   "arquivo": "src/contexts/AuthContext.tsx",
-   "importado_por": 20
   }
  ],
  "ciclos": {
@@ -218,7 +218,6 @@
   "src/components/notifications/index.ts",
   "src/components/ponto/PontoLeaderboard.tsx",
   "src/components/ui/data-table.tsx",
-  "src/components/ui/date-picker.tsx",
   "src/components/ui/filter-chip.tsx",
   "src/components/ui/flow-hover-button.tsx",
   "src/components/ui/form.tsx",
@@ -229,7 +228,6 @@
   "src/components/ui/sliding-indicator.tsx",
   "src/components/ui/use-toast.ts",
   "src/constants/workflow-status.ts",
-  "src/hooks/useTrainingImages.ts",
   "src/hooks/validators.ts",
   "src/i18n/useTranslation.ts",
   "src/integrations/supabase/index.ts",
@@ -260,7 +258,7 @@
   },
   {
    "modulo": "pages",
-   "depende_de": 53,
+   "depende_de": 54,
    "importado_por": 0
   },
   {
@@ -271,7 +269,7 @@
   {
    "modulo": "integrations/supabase",
    "depende_de": 2,
-   "importado_por": 43
+   "importado_por": 42
   },
   {
    "modulo": "services",
@@ -286,7 +284,7 @@
   {
    "modulo": "lib",
    "depende_de": 1,
-   "importado_por": 31
+   "importado_por": 32
   },
   {
    "modulo": "schemas",
@@ -321,7 +319,7 @@
   {
    "modulo": "components/dashboard",
    "depende_de": 7,
-   "importado_por": 5
+   "importado_por": 6
   },
   {
    "modulo": "components/settings",

@@ -390,7 +390,7 @@
     "utils",
     "utils/folha"
    ],
-   "coberto_por_testes": 23,
+   "coberto_por_testes": 24,
    "orfao": false
   },
   {
@@ -423,7 +423,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 67,
+   "usado_por": 66,
    "usado_por_modulos": [
     "components/admissoes",
     "components/colaborador-detalhes",
@@ -431,7 +431,6 @@
     "components/ferias",
     "components/folha",
     "components/settings",
-    "components/treinamentos",
     "hooks",
     "pages",
     "services",
@@ -693,9 +692,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 8,
+   "usado_por": 10,
    "usado_por_modulos": [
-    "components/avaliacao"
+    "components/avaliacao",
+    "components/treinamentos",
+    "pages"
    ],
    "coberto_por_testes": 0,
    "orfao": false
@@ -809,7 +810,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 200,
+   "usado_por": 235,
    "usado_por_modulos": [
     "components/admissao",
     "components/admissoes",
@@ -836,6 +837,7 @@
     "components/relatorios",
     "components/settings",
     "components/sst",
+    "components/treinamentos",
     "components/ui",
     "components/workflows",
     "pages"
@@ -3078,7 +3080,7 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 34,
+   "usado_por": 36,
    "usado_por_modulos": [
     "components/colaborador-detalhes",
     "components/ferias",
@@ -4426,9 +4428,11 @@
    "zod_schemas": 0,
    "flags": [],
    "papeis": [],
-   "usado_por": 1,
+   "usado_por": 3,
    "usado_por_modulos": [
-    "hooks"
+    "components/treinamentos",
+    "hooks",
+    "pages"
    ],
    "coberto_por_testes": 4,
    "orfao": false
@@ -4961,7 +4965,7 @@
     "utils",
     "utils/importacao"
    ],
-   "coberto_por_testes": 5,
+   "coberto_por_testes": 6,
    "orfao": false
   },
   {

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `0b2efa2b71` · branch `main` · 2026-11-16 22:14 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4fe2dccc38` · branch `main` · 2026-11-16 23:11 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1483,7 +1483,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `type` | `rg` | escreve | `src/pages/ContratacaoPage.tsx` |
 | `type` | `salario` | escreve | `src/hooks/useHistoricoColaborador.ts`<br>`src/mocks/colaboradoresMock.ts` |
 | `type` | `server` | escreve | `src/hooks/useServerValidation.ts` |
-| `type` | `spring` | escreve | `src/components/animate-ui/primitives/animate/tabs.tsx`<br>`src/components/animate-ui/primitives/effects/highlight.tsx`<br>`src/components/dashboard/WorkforceHealthScore.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/layout/MobileBottomNav.tsx`<br>… +7 |
+| `type` | `spring` | escreve | `src/components/animate-ui/primitives/animate/tabs.tsx`<br>`src/components/animate-ui/primitives/effects/highlight.tsx`<br>`src/components/dashboard/WorkforceHealthScore.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/layout/MobileBottomNav.tsx`<br>… +8 |
 | `type` | `start` | compara, escreve | `src/components/workflows/WorkflowDesigner.tsx`<br>`src/components/workflows/ordenarEtapas.ts`<br>`src/pages/WorkflowsPage.tsx` |
 | `type` | `string` | compara | `supabase/functions/tabelas-dominio/index.ts` |
 | `type` | `style` | escreve | `release.config.js` |
@@ -1679,6 +1679,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `agendada` | compara | `src/components/recrutamento/CandidatoTimeline.tsx` |
 | `status` | `agendado` | compara | `src/pages/AdminAgendamentoExamesPage.tsx` |
 | `status` | `aguardando_gestor` | compara | `src/components/avaliacao/aprovacaoGestor.ts` |
+| `status` | `aguardando_inicio` | escreve | `src/mocks/treinamentosMock.ts` |
 | `status` | `aguardando_inss` | compara, escreve | `src/pages/AfastamentosPage.tsx`<br>`src/services/afastamentoService.ts` |
 | `status` | `all` | compara | `src/hooks/ferias/useProgramacaoFerias.ts`<br>`src/pages/ColaboradoresPage.tsx`<br>`src/services/colaboradorService.ts`<br>`src/services/feriasService.ts` |
 | `status` | `aprovada` | compara, escreve, filtra | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/dashboard/MorningBriefing.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/components/ferias/FeriasDashboard.tsx`<br>`src/components/portal/PortalOverviewTab.tsx`<br>… +7 |
@@ -1702,7 +1703,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `completo` | escreve | `src/services/backupService.ts` |
 | `status` | `concluida` | compara, escreve | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/mocks/colaboradoresMock.ts`<br>`src/pages/LGPDPage.tsx`<br>`src/pages/PassivoTrabalhistaPage.tsx`<br>… +1 |
 | `status` | `concluida_validada` | compara | `src/components/avaliacao/FeedbackAcoesRodape.tsx`<br>`src/components/avaliacao/aprovacaoGestor.ts`<br>`src/components/avaliacao/feedbackCanonico.ts` |
-| `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/ferias/GerenciamentoPeriodos.tsx`<br>… +6 |
+| `status` | `concluido` | compara, escreve | `src/components/avaliacao/nineBoxMock.ts`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/components/ferias/GerenciamentoPeriodos.tsx`<br>… +7 |
 | `status` | `configurando` | escreve | `src/pages/IntegracoesPage.tsx` |
 | `status` | `consolidado` | compara | `src/components/avaliacao/nineBoxComum.ts` |
 | `status` | `convertido` | compara | `src/pages/FeriasProgramacaoPage.tsx` |
@@ -1714,8 +1715,9 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `duplicado` | compara | `src/pages/ImportacaoPage.tsx` |
 | `status` | `efetivado` | compara | `src/hooks/useProximosEventos.ts` |
 | `status` | `em_analise` | compara, escreve | `src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/dashboard/analytics/PendenciasDetailDialog.tsx`<br>`src/pages/SegurosVidaPage.tsx` |
-| `status` | `em_andamento` | compara, escreve | `src/components/admissoes/DetalhesAdmissaoDialog.tsx`<br>`src/components/avaliacao/nineBoxMock.ts`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/hooks/useAdmissaoWorkflow.ts`<br>`src/mocks/colaboradoresMock.ts`<br>… +4 |
+| `status` | `em_andamento` | compara, escreve | `src/components/admissoes/DetalhesAdmissaoDialog.tsx`<br>`src/components/avaliacao/nineBoxMock.ts`<br>`src/components/desligamentos/DesligamentoKPIs.tsx`<br>`src/hooks/useAdmissaoWorkflow.ts`<br>`src/mocks/colaboradoresMock.ts`<br>… +5 |
 | `status` | `em_aquisicao` | escreve | `src/mocks/colaboradoresMock.ts` |
+| `status` | `em_curso` | escreve | `src/mocks/treinamentosMock.ts` |
 | `status` | `em_gozo` | compara | `src/components/colaborador-detalhes/FeriasResumoTab.tsx`<br>`src/components/ferias/CalendarioFerias.tsx`<br>`src/pages/FeriasPage.tsx` |
 | `status` | `em_investigacao` | compara | `src/components/sst/SSTIncidentesTab.tsx` |
 | `status` | `em_preparacao` | compara | `src/components/avaliacao/aprovacaoGestor.ts` |
@@ -1725,9 +1727,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `status` | `enfileirado` | compara, escreve | `supabase/functions/distribuir-holerites/index.ts` |
 | `status` | `entregue` | compara | `src/components/recrutamento/CandidatoTimeline.tsx` |
 | `status` | `enviado` | compara, escreve, filtra | `src/components/admissao/AdmissaoChecklist.tsx`<br>`src/components/colaborador-detalhes/JornadaPontoTab.tsx`<br>`src/components/dashboard/AnalyticsSection.tsx`<br>`src/components/esocial/ESocialTimeline.tsx`<br>`src/components/esocial/tabs.tsx`<br>… +14 |
-| `status` | `erro` | compara, escreve | `src/components/dashboard/MorningBriefing.tsx`<br>`src/components/esocial/ESocialAuditDialog.tsx`<br>`src/components/esocial/ESocialTimeline.tsx`<br>`src/components/folha/FolhaESocialSync.tsx`<br>`src/pages/ESocialPage.tsx`<br>… +8 |
-| `status` | `error` | compara, escreve | `src/components/folha/FolhaESocialSync.tsx`<br>`src/pages/ContratacaoPage.tsx`<br>`supabase/functions/external-db-bridge/index.ts` |
-| … +148 linhas — lista completa em `context.json` | | | |
+| … +157 linhas — lista completa em `context.json` | | | |
 
 ### E.4 Enums e listas de valores
 
@@ -1822,6 +1822,24 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | GuiaTabela | guias_fgts \| guias_inss | `src/components/obrigacoes/GuiasTable.tsx` |
 | ReportScheduleFrequency | diario \| semanal \| mensal | `src/components/relatorios/reportScheduleContract.ts` |
 | REPORT_SCHEDULE_TYPES | 'lista_colaboradores', 'folha_resumo', 'ferias_proximas', 'afastamentos_ativos', 'indicadores_dp', | `src/components/relatorios/reportScheduleContract.ts` |
+| SituacaoCertificado | todos \| valido \| a_vencer \| vencido \| vitalicio | `src/components/treinamentos/certificadosDerivacoes.ts` |
+| SituacaoRealCertificado | valido \| a_vencer \| vencido \| vitalicio \| sem_validade | `src/components/treinamentos/certificadosDerivacoes.ts` |
+| OrdenacaoCertificado | recentes \| antigos \| validade \| curso \| colaborador | `src/components/treinamentos/certificadosDerivacoes.ts` |
+| TomInscricao | sucesso \| andamento \| inscrito \| alerta \| perigo \| neutro | `src/components/treinamentos/inscricoesDerivacoes.ts` |
+| INSCRICOES_OPCOES_POR_PAGINA | 10, 25, 50 | `src/components/treinamentos/inscricoesDerivacoes.ts` |
+| TomStatusTreinamento | success \| info \| warning \| teal \| neutral \| danger | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| PeriodoTreinamento | todos \| mes \| 30d \| 90d \| ano | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| OrdenacaoCatalogo | nome \| recentes \| carga \| obrigatorios | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| ObrigatoriedadeFiltro | todas \| obrigatorio \| opcional | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| TREINAMENTOS_OPCOES_POR_PAGINA | 5, 10, 20, 50 | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| CATALOGO_OPCOES_POR_PAGINA | 6, 12, 24, 48 | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| StatusTrilha | ativa \| inativa \| indefinido | `src/components/treinamentos/trilhasDerivacoes.ts` |
+| TRILHAS_OPCOES_POR_PAGINA | 6, 9, 12, 24 | `src/components/treinamentos/trilhasDerivacoes.ts` |
+| NIVEIS_TRILHA | { value: 'basico', label: 'Básico' }, { value: 'intermediario', label: 'Intermediário' }, { value: 'avancado', label: 'Avançado' }, | `src/components/treinamentos/trilhasDerivacoes.ts` |
+| OPCOES_STATUS_TRILHA | { value: 'ativa', label: 'Ativa' }, { value: 'inativa', label: 'Inativa' }, | `src/components/treinamentos/trilhasDerivacoes.ts` |
+| GrupoTurma | proximas \| andamento \| concluidas | `src/components/treinamentos/turmasDerivacoes.ts` |
+| PeriodoTurma | todas \| proximas30 \| proximas90 \| mes \| ano | `src/components/treinamentos/turmasDerivacoes.ts` |
+| OrdenacaoTurma | data_asc \| data_desc \| curso \| capacidade | `src/components/treinamentos/turmasDerivacoes.ts` |
 | VarianteFilterChip | padrao \| compacto | `src/components/ui/filter-chip.tsx` |
 | WfNodeType | start \| end \| aprovador \| gateway_xor \| gateway_and \| email \| delay \| webhook | `src/components/workflows/WorkflowDesigner.tsx` |
 | RegimeTributario | simples_nacional \| lucro_presumido \| lucro_real \| mei | `src/constants/regimes.ts` |
@@ -2472,6 +2490,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `aej-fim` | type=date | `src/components/ponto/GerarAEJDialog.tsx` |
 | `afd-inicio` | type=date | `src/components/ponto/GerarAFDDialog.tsx` |
 | `afd-fim` | type=date | `src/components/ponto/GerarAFDDialog.tsx` |
+| `nova-turma-capacidade` | type=number, min=1 | `src/components/treinamentos/NovaTurmaDialog.tsx` |
 | `nova-data-agendada` | type=datetime-local | `src/pages/AdminAgendamentoExamesPage.tsx` |
 | `cargo-nivel` | type=number, min=1, step=1 | `src/pages/CargosPage.tsx` |
 | `banco_codigo` | required | `src/pages/FinanceiroBancarioPage.tsx` |
@@ -3061,6 +3080,26 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 - **GerarPgrButton()** — `src/components/sst/GerarPgrButton.tsx`
   ```
   const { empresaAtual } = useEmpresas(); const qc = useQueryClient(); const [open, setOpen] = useState(false); const [responsavel, setResponsavel] = useState(''); const [registro, setRegistro] = useState(''); const { data: programas } = useQuery({ queryKey: ['sst-programas-pgr', empresaAtual?.id], enabled: !!empresaAtual?.id && open, queryFn: async () => { const { data, error } = await supabase .from('sst_programas') .select('id, versao, data_emissao, data_validade, status, hash_sha256, arquivo_u …
+  ```
+- **iniciaisColaborador(nome: string)** — `src/components/treinamentos/TreinamentoParticipantes.tsx`
+  ```
+  const partes = nome.trim().split(/\s+/).filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();
+  ```
+- **textoValidade(situacao: SituacaoRealCertificado, validade: Date | null)** — `src/components/treinamentos/certificadosDerivacoes.ts`
+  ```
+  if (situacao === 'vitalicio') return 'Vitalício'; if (situacao === 'sem_validade' || !validade) return 'Validade não informada'; return formatarDataTreinamento( `${validade.getFullYear()}-${String(validade.getMonth() + 1).padStart(2, '0')}-${String( validade.getDate() ).padStart(2, '0')}` );
+  ```
+- **detalheValidade(situacao: SituacaoRealCertificado, dias: number | null)** — `src/components/treinamentos/certificadosDerivacoes.ts`
+  ```
+  if (dias === null) return null; if (situacao === 'a_vencer') return dias === 0 ? 'Vence hoje' : `Vence em ${dias} dia${dias === 1 ? '' : 's'}`; if (situacao === 'vencido') { const abs = Math.abs(dias); return `Vencido há ${abs} dia${abs === 1 ? '' : 's'}`; } return null;
+  ```
+- **calcularMetricasTrilha(vinculos: readonly TrilhaCursoVinculo[])** — `src/components/treinamentos/trilhasDerivacoes.ts`
+  ```
+  const unicos = new Map<string, TrilhaCursoVinculo>(); for (const vinculo of vinculos) { if (!unicos.has(vinculo.curso_id)) unicos.set(vinculo.curso_id, vinculo); } let horas = 0; let comCarga = 0; for (const vinculo of unicos.values()) { const carga = cargaHorariaNumerica(vinculo.curso?.carga_horaria); if (carga !== null) { horas += carga; comCarga += 1; } } return { cursos: unicos.size, horas, horasCompletas: unicos.size > 0 && comCarga === unicos.size, horasDisponiveis: comCarga > 0, };
+  ```
+- **calcularOcupacaoTurma(inscritos: number | string | null | undefined, capacidade: number | null)** — `src/components/treinamentos/turmasDerivacoes.ts`
+  ```
+  if (!capacidade || capacidade <= 0) return null; if (inscritos === null || inscritos === undefined || inscritos === '') return null; const total = typeof inscritos === 'number' ? inscritos : Number(String(inscritos).replace(',', '.')); if (!Number.isFinite(total) || total < 0) return null; return { inscritos: total, capacidade, percentual: Math.round((total / capacidade) * 100) };
   ```
 - **validateCNPJ(cnpj: string)** — `src/components/ui/cnpj-input.tsx`
   ```
@@ -4018,6 +4057,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `transition={{ delay: i * 0.05, type: 'spring', stiffness: 100 }}` | `src/components/sst/SSTKPIs.tsx` |
 | `transition={{ delay: i * 0.06 }}` | `src/components/sst/SSTProgramasTab.tsx` |
 | `transition={{ delay: i * 0.06 }}` | `src/components/sst/SSTRiscosTab.tsx` |
+| `* 0%–49% → `--warning` (mais profundo no início) → `--coins` (âmbar → amarelo)` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `* 100% → `--success` → `--primary` (verde → lime)` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `* 50%–99% → `--info` (mais profundo no início) → `--aqua` (azul → ciano)` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `* Intensidades: fundo 10–12%, borda 25%, texto na cor cheia — exceto o violeta,` | `src/components/treinamentos/TreinamentoBadges.tsx` |
+| `* em `CATEGORIAS`), em intensidade controlada: fundo 10–12%, borda 25% e` | `src/components/treinamentos/TreinamentoBadges.tsx` |
+| `* para “Não informado”. Fundos em 8% e bordas em 20%.` | `src/components/treinamentos/TreinamentoBadges.tsx` |
+| `* 0.08 s por índice). O objeto é IMPORTADO da referência (não é uma cópia), então` | `src/components/treinamentos/TrilhaCard.tsx` |
+| `* ("—") em vez de 0%, que seria uma afirmação falsa.` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
 | `* deslocado 150% + escalado 2.5x) e desliza para o centro no hover,` | `src/components/ui/flow-hover-button.tsx` |
 | `before:rounded-[100%] before:transition-transform before:duration-700 before:content-['']` | `src/components/ui/flow-hover-button.tsx` |
 | `transition={{ delay: index * 0.05 }}` | `src/components/ui/module-skeleton.tsx` |
@@ -4267,7 +4314,30 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `SLA_ALERT_THRESHOLD` | `80` | `src/components/ferias/FeriasReconciliacaoHistoricoCard.tsx` |
 | `TILE` | `256` | `src/components/ponto/PontoGeoAnalytics.tsx` |
 | `BUCKET` | `'documentos'` | `src/components/portal/PortalDocumentosTab.tsx` |
+| `ENTRADA_HUB_DURACAO` | `0.42` | `src/components/premiacoes/premiacoesEntrada.ts` |
+| `ENTRADA_HUB_PASSO` | `0.1` | `src/components/premiacoes/premiacoesEntrada.ts` |
+| `ENTRADA_HUB_ATRASO_INICIAL` | `0.06` | `src/components/premiacoes/premiacoesEntrada.ts` |
+| `LINHA_HUB_INICIO` | `0.46` | `src/components/premiacoes/premiacoesEntrada.ts` |
+| `LINHA_HUB_PASSO` | `0.08` | `src/components/premiacoes/premiacoesEntrada.ts` |
+| `LINHA_HUB_DURACAO` | `0.8` | `src/components/premiacoes/premiacoesEntrada.ts` |
 | `PAGE` | `1000` | `src/components/sst/SSTIncidentesTab.tsx` |
+| `MAX_EVENTOS_POR_DIA` | `2` | `src/components/treinamentos/AgendaSemanal.tsx` |
+| `CERTIFICADOS_POR_PAGINA_PADRAO` | `6` | `src/components/treinamentos/CertificadosPainel.tsx` |
+| `GRID_TABELA` | `'grid grid-cols-[20%_20%_13%_13%_12%_11%_11%] items-center'` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `DURACAO_PREENCHIMENTO` | `0.6` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `PASSO_CASCATA_BARRA` | `0.05` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `ATRASO_BARRA_APOS_LINHA` | `0.45` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `AVATARES_VISIVEIS` | `3` | `src/components/treinamentos/TreinamentoCursoCard.tsx` |
+| `JANELA_A_VENCER_DIAS` | `30` | `src/components/treinamentos/certificadosDerivacoes.ts` |
+| `ORDENACAO_CERTIFICADO_PADRAO` | `'recentes'` | `src/components/treinamentos/certificadosDerivacoes.ts` |
+| `INSCRICOES_POR_PAGINA_PADRAO` | `10` | `src/components/treinamentos/inscricoesDerivacoes.ts` |
+| `STATUS_AUSENTE` | `'nao_informado'` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| `CATEGORIA_AUSENTE` | `'__sem_categoria__'` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| `AVATARES_VISIVEIS` | `3` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| `CATALOGO_POR_PAGINA_PADRAO` | `12` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| `ORDENACAO_CATALOGO_PADRAO` | `'nome'` | `src/components/treinamentos/treinamentosDerivacoes.ts` |
+| `TRILHAS_POR_PAGINA_PADRAO` | `12` | `src/components/treinamentos/trilhasDerivacoes.ts` |
+| `ORDENACAO_TURMA_PADRAO` | `'data_asc'` | `src/components/treinamentos/turmasDerivacoes.ts` |
 | `ROTULO_LINHAS_POR_PAGINA` | `'Linhas por página'` | `src/components/ui/app-pagination.tsx` |
 | `CASCADE_SHELL_OPEN_DURATION` | `0.9` | `src/components/ui/cascade-motion.ts` |
 | `CASCADE_SHELL_CLOSE_DURATION` | `0.55` | `src/components/ui/cascade-motion.ts` |
@@ -4445,19 +4515,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `DUE_WINDOW_MS` | `30` | `supabase/functions/processar-agendamentos/scheduleContract.ts` |
 | `MAX_CATCH_UP_DELAY_MS` | `24` | `supabase/functions/processar-agendamentos/scheduleContract.ts` |
 | `MINUTO` | `1` | `supabase/functions/processar-ponto/index.ts` |
-| `NOITE_INI` | `22` | `supabase/functions/processar-ponto/index.ts` |
-| `NOITE_FIM` | `5` | `supabase/functions/processar-ponto/index.ts` |
-| `MOTIVO_AUTO` | `'Horas extras processadas automaticamente'` | `supabase/functions/processar-ponto/index.ts` |
-| `AUDIT_WINDOW_DAYS` | `90` | `supabase/functions/reabrir-folha/index.ts` |
-| `MAX_ROWS` | `10` | `supabase/functions/relatorio/index.ts` |
-| `MAX_WINDOW_DAYS` | `366` | `supabase/functions/relatorio/index.ts` |
-| `CACHE_TTL_MS` | `5` | `supabase/functions/tabelas-dominio/index.ts` |
-| `BATCH_PADRAO` | `2` | `supabase/functions/training-image-dispatch/index.ts` |
-| `RETRY_QUOTA_SEG` | `300` | `supabase/functions/training-image-dispatch/index.ts` |
-| `MAX_PAYLOAD_BYTES` | `1` | `supabase/functions/webhook/index.ts` |
-| `REPLAY_TTL_SECONDS` | `300` | `supabase/functions/webhook/index.ts` |
-| `IP_RATE_LIMIT` | `60` | `supabase/functions/webhook/index.ts` |
-| `IP_RATE_WINDOW_SEC` | `60` | `supabase/functions/webhook/index.ts` |
+| … +13 linhas — lista completa em `context.json` | | |
 
 ### H.2 Prazos, expirações e janelas de tempo
 
@@ -4499,6 +4557,12 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `staleTime: 5 * 60 * 1000,` | `src/components/seguranca/PolicyAuditPanel.tsx` |
 | `return Math.max(0, ms / (1000 * 60 * 60 * 24 * 30.4));` | `src/components/sst/SSTEPIsTab.tsx` |
 | `const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);` | `src/components/sst/SSTExamesTab.tsx` |
+| `onClick={() => setMes((atual) => addMonths(atual, 1))}` | `src/components/treinamentos/CalendarioTurmasDialog.tsx` |
+| `onClick={() => setMes((atual) => subMonths(atual, 1))}` | `src/components/treinamentos/CalendarioTurmasDialog.tsx` |
+| `timer.current = window.setTimeout(() => setCopiado(false), 1800);` | `src/components/treinamentos/CertificadoCard.tsx` |
+| `timer.current = window.setTimeout(() => setCopiado(false), 1800);` | `src/components/treinamentos/CertificadoDetalheDialog.tsx` |
+| `const timer = window.setTimeout(() => setAnimar(false), 1600);` | `src/components/treinamentos/InscricoesPainel.tsx` |
+| `const timer = window.setTimeout(() => setAnimar(false), 1400);` | `src/components/treinamentos/TreinamentosTabela.tsx` |
 | `const LOCAL_LOCKOUT_MS = 5 * 60 * 1000; // 5 minutos` | `src/hooks/useBruteForceProtection.ts` |
 | `setTimeout(() => setProgressoLote(null), 3000);` | `src/hooks/useCalculoFolha.ts` |
 | `staleTime: 5 * 60 * 1000,` | `src/hooks/useColaboradorVinculo.ts` |
@@ -4531,6 +4595,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `{ enableHighAccuracy: true, timeout: 8000 }` | `src/pages/PontoPage.tsx` |
 | `staleTime: 3 * 60 * 1000,` | `src/pages/PortalPage.tsx` |
 | `const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);` | `src/pages/SSTPage.tsx` |
+| `timerEntradaTrilhas.current = window.setTimeout(() => { setAnimarTrilhas(false); setEntradaTrilhasPendente(false); }, 1400);` | `src/pages/TreinamentosPage.tsx` |
 | `const diffHours = (now - created.getTime()) / (1000 * 60 * 60);` | `src/pages/WorkflowsPage.tsx` |
 | `const horasDecorridas = Math.round((now - new Date(e.created_at).getTime()) / (1000 * 60 * 60));` | `src/pages/WorkflowsPage.tsx` |
 | `if (houveObito) d.setTime(d.getTime() + 24 * 60 * 60 * 1000);` | `src/pages/adminCatEdicao.ts` |
@@ -5047,7 +5112,15 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Empresa não selecionada | `src/components/sst/GerarPgrButton.tsx` |
 | Falha ao gerar link | `src/components/sst/GerarPgrButton.tsx` |
 | Informe o responsável técnico | `src/components/sst/GerarPgrButton.tsx` |
+| Não foi possível copiar o código | `src/components/treinamentos/CertificadoCard.tsx` |
+| Não foi possível copiar o código | `src/components/treinamentos/CertificadoDetalheDialog.tsx` |
+|        className= | `src/components/treinamentos/InscricoesPainel.tsx` |
+| Data/horário inválidos | `src/components/treinamentos/NovaTurmaDialog.tsx` |
+|        className= | `src/components/treinamentos/TreinamentosCatalogo.tsx` |
+|        className= | `src/components/treinamentos/TreinamentosTabela.tsx` |
+| Erro ao desvincular curso | `src/components/treinamentos/TrilhaCursosSection.tsx` |
 | Erro ao vincular | `src/components/treinamentos/TrilhaCursosSection.tsx` |
+|        data-turmas-erro       className= | `src/components/treinamentos/TurmasPainel.tsx` |
 | className={cn(alertVariants({variant}),className)}{...props}/>));Alert.displayName= | `src/components/ui/alert.tsx` |
 | CEP não encontrado | `src/components/ui/cep-input.tsx` |
 | Erro ao consultar CEP | `src/components/ui/cep-input.tsx` |
@@ -5073,15 +5146,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Férias sem ID | `src/hooks/useAssinarAvisoFerias.ts` |
 | Erro ao calcular 13º: ${safeErrorMessage(err,  | `src/hooks/useCalcular13Salario.ts` |
 | Lote concluído parcialmente: ${results.length - simulatedCount} transmitido(s) e ${simulatedCount} simulado(s) | `src/hooks/useESocial.ts` |
-| Apenas administradores podem associar usuários a empresas. | `src/hooks/useEmpresas.ts` |
-| Apenas administradores podem atualizar empresas. | `src/hooks/useEmpresas.ts` |
-| Apenas administradores podem criar empresas. | `src/hooks/useEmpresas.ts` |
-| Nenhum registro de ${entity} foi retornado pela operação. | `src/hooks/useEmpresas.ts` |
-| Erro ao gerar Excel: ${safeErrorMessage(e,  | `src/hooks/useExcelExport.ts` |
-| empresa_id obrigatório para atualizar ferias (isolamento de tenant) | `src/hooks/useFerias.ts` |
-| empresa_id obrigatório para excluir ferias (isolamento de tenant) | `src/hooks/useFerias.ts` |
-| Solicitação de férias rejeitada | `src/hooks/useFeriasAprovacao.ts` |
-| … +625 linhas — lista completa em `context.json` | |
+| … +637 linhas — lista completa em `context.json` | |
 
 ## J. Controle de acesso no código (checagens de perfil/permissão)
 
@@ -5152,7 +5217,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (7983 testes em 624 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (8226 testes em 643 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5201,6 +5266,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/lib/cursor.test.ts` | 31 | encodeCursor · encode/decodes string values correctly · encode/decodes numeric values correctly · encode/decodes null values correctly … |
 | `src/services/__tests__/auditoriaService.test.ts` | 31 | auditoriaService.listarTrilha · usa a RPC unificada com tenant e filtros explícitos · aceita escopo global apenas como pedido explícito para a RPC autoritativa · rejeita limites fora do contrato antes de consultar o banco … |
 | `src/components/__tests__/forms.test.tsx` | 30 | FormField · renders label when provided · renders input · renders error message … |
+| `src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts` | 30 | texto, datas e horas · normaliza acentos e caixa · formata YYYY-MM-DD sem recuo de fuso · devolve — para data ausente ou inválida … |
 | `src/services/__tests__/bancoHorasService.test.ts` | 30 | bancoHorasService · listarPorColaborador · queries banco_horas for the given colaboradorId · returns data from supabase … |
 | `src/services/__tests__/comunicacaoService.test.ts` | 30 | comunicacaoService.listarComunicados · returns all comunicados without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/services/__tests__/despesaService.test.ts` | 29 | despesaService — escritas e storage · criar: aplica defaults de status/tipo e retorna o registro · criar: lança quando insert não retorna registro · aprovar: exige empresaId … |
@@ -5226,6 +5292,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/pontoService.test.ts` | 25 | pontoService.getSettings · returns settings for empresa · returns null when no settings found · throws on DB error … |
 | `src/utils/__tests__/folhaCalc.test.ts` | 25 | Motor de Cálculo de Folha (folhaCalc) · deve processar uma folha simples corretamente · deve incluir horas extras e DSR no cálculo · deve calcular 13º salário quando solicitado … |
 | `supabase/functions/external-db-bridge/validation.test.ts` | 25 | tabela: injeção rejeitada · tabela: nomes legítimos aceitos · denylist: tabelas sensíveis presentes · colunas: injeção/subquery rejeitada … |
+| `src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts` | 24 | título, nível e status · lê titulo ou nome (as duas colunas existentes) · traduz os três níveis reais e nunca inventa · distingue ativo=false de ativo ausente … |
 | `src/hooks/__tests__/validators.test.ts` | 24 | required · rejeita null, undefined e string vazia · aceita valores presentes, incluindo 0 e false · isValidEmail … |
 | `src/utils/__tests__/esocialXmlGenerator.test.ts` | 24 | gerarXmlESocial · returns valid XML declaration · wraps output in eSocial root element · uses testing environment by default (tpAmb=2) … |
 | `src/components/__tests__/AuditoriaDerivacoes.test.tsx` | 23 | auditoria · normalização tolerante · aceita registro sem os campos opcionais · ignora data inválida sem quebrar · auditoria · títulos legíveis por módulo e ação … |
@@ -5242,6 +5309,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/safeUrl.test.ts` | 22 | isAllowedUrl · allows known supabase host · blocks non-canonical Supabase hosts · allows lovable.app subdomain … |
 | `scripts/autofix/regras/dados.test.mjs` | 21 | tokenizador: comentário de bloco aninhado e dollar-quote aninhado · tokenizador: em E · CREATE POLICY  · DO que só VERIFICA (cita pg_class e  … |
 | `src/components/__tests__/PortalDocumentosTab.test.tsx` | 21 | PortalDocumentosTab · renders Gestão de Documentos title · renders Enviar Novo button · shows loading spinner when loading … |
+| `src/components/treinamentos/__tests__/turmasDerivacoes.test.ts` | 21 | turmasDerivacoes — datas · lê YYYY-MM-DD no fuso local sem recuar um dia · expõe horário apenas quando o timestamp tem hora · inicia a semana na segunda-feira e formata o intervalo … |
 | `src/schemas/esocial/__tests__/crossFieldValidators.test.ts` | 21 | cronologia de datas · S-2200 rejeita admissão anterior ao nascimento · S-2230 rejeita término de afastamento anterior ao início · S-2299 rejeita desligamento anterior à admissão … |
 | `src/services/__tests__/notificacoesService.test.ts` | 21 | criarNotificacao · calls supabase.auth.getUser to get current user · inserts notification with provided fields · uses current user id when payload.user_id is not provided … |
 | `src/utils/importacao/__tests__/columnMap.test.ts` | 21 | normalizeHeader · lowercases the header · trims surrounding whitespace · strips diacritics … |
@@ -5257,12 +5325,14 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/LayoutPrimitives.test.tsx` | 19 | PageContainer · renders children · renders title when provided · renders description when provided … |
 | `src/components/__tests__/PendenciasAprovacao.test.tsx` | 19 | fila de aprovação — controles padronizados por vínculo · registro REAL com vínculo provado: Ver, Devolver e Aprovar habilitados (nesta ordem) · registro REAL SEM o vínculo: os controles continuam VISÍVEIS, porém desabilitados · registro REAL com vínculo não avaliável ( … |
 | `src/components/__tests__/PontoClockRegister.test.tsx` | 19 | PontoClockRegister · renders Registrar Ponto title · renders Entrada button · renders Saída Almoço button … |
+| `src/components/treinamentos/__tests__/TrainingCover.test.tsx` | 19 | TrainingCover — imagem real · exibe a URL válida com enquadramento cover e overlays de CSS · URL indisponível cai no fallback e não deixa a capa vazia · não usa URL externa quando não recebe imagem … |
 | `src/services/__tests__/pontoOfflineService.test.ts` | 19 | pontoOfflineService.generateIntegrityHash · returns a non-empty string · is deterministic for the same input · differs for different inputs … |
 | `src/services/tabelas/__tests__/viewsService.test.ts` | 19 | viewsService · alertasRH queries vw_alertas_rh and returns array · alertasRH distinguishes schema failure from an empty result · kpiTurnover queries vw_kpi_turnover … |
 | `src/utils/__tests__/piiMask.test.ts` | 19 | maskCpfDisplay · returns empty string for null · returns empty string for undefined · masks 11-digit CPF showing only last 2 digits … |
 | `src/utils/folha/__tests__/validadorFolha.test.ts` | 19 | validadorFolha.validarFolha · returns empty array when supabase returns null itens · returns empty array on DB error · returns no alerts for a healthy payroll item … |
 | `scripts/tests/contexto-indice.test.mjs` | 18 | fonte recente sem erro continua disponível como ok · fonte recente com ${key} fica parcial · erros do snapshot são lidos mesmo sem manifest de saúde · relatório do snapshot sem erros não torna a fonte parcial … |
 | `src/components/__tests__/ESocialNaoPeriodicos.test.tsx` | 18 | S2200Admissao · renders trabalhador name · renders Identificação do Trabalhador label · renders Dados da Admissão label … |
+| `src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts` | 18 | classificação de validade · preserva a regra atual: data nula = vitalício · não presume vitalício para data inválida · usa a janela de 30 dias já adotada pelo sistema … |
 | `src/constants/__tests__/regimes.test.ts` | 18 | REGIMES_TRIBUTARIOS · defines all 4 regime types · each regime has required fields · simples_nacional does NOT collect INSS patronal … |
 | `src/hooks/ferias/__tests__/useProgramacaoFerias.test.ts` | 18 | useProgramacaoFerias · uses ferias-programacao queryKey with ano and filters · is enabled when empresaId is present · returns data from query … |
 | `src/services/__tests__/baseService.test.ts` | 18 | BaseService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · queries page 2 with correct range offset … |
@@ -5272,6 +5342,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/ESocialAlteracaoComponents.test.tsx` | 17 | S2205AlteracaoCadastral · renders trabalhador name · renders CPF · renders data de alteração … |
 | `src/components/__tests__/GestaoRegistrosPonto.test.tsx` | 17 | GestaoRegistrosPonto · renders Controle de Ponto title · renders Filtros Avançados button · renders search input … |
 | `src/components/__tests__/RubricasDialog.test.tsx` | 17 | RubricasDialog · renders Rubricas trigger button · renders Gestão de Rubricas dialog title · renders Nova Rubrica button … |
+| `src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts` | 17 | modalidade · mapeia valores reais para o rótulo do sistema · não inventa modalidade ausente e preserva texto desconhecido · filtros do catálogo … |
 | `src/hooks/__tests__/useMoreGenericCrudHooks.test.ts` | 17 | useWebhooksAvancados · exposes webhooks as alias for items · passes webhookService to useGenericCrud with empresa_id filter · useWebhookLogs … |
 | `src/hooks/__tests__/useNotificacoes.test.ts` | 17 | useNotificacoes · returns empty notificacoes initially · naoLidas count is 0 when all notificacoes are read · naoLidas counts unread notificacoes … |
 | `src/hooks/__tests__/usePcs.test.ts` | 17 | usePcsPlanos · lista planos da empresa atual · criar semeia os fatores da metodologia padrão no plano novo · atualizar delega ao service e toasta sucesso … |
@@ -5298,6 +5369,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/utils/__tests__/passwordPolicy.test.ts` | 16 | validatePassword · returns valid for a strong password · rejects passwords shorter than 8 chars · rejects passwords longer than 128 chars … |
 | `src/calculators/__tests__/auditHelper.test.ts` | 15 | signCalculation · returns a hex string · returns the same hash for identical data · returns different hashes for different data … |
 | `src/components/__tests__/ESocialEventComponents.test.tsx` | 15 | S2200Admissao (NaoPeriodicos) · renders trabalhador name · renders CPF · renders admissao date … |
+| `src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts` | 15 | montarInscricoes · faz join de colaborador, curso e certificado sem inventar dados · preserva o status original e não exibe underscore no rótulo · usa Não informado quando datas não existem e nunca transforma status em progresso … |
 | `src/hooks/__tests__/useEmpresas.test.ts` | 15 | useEmpresas · returns expected shape · returns loadingEmpresas=true initially · loads todasEmpresas when isAdmin=true … |
 | `src/hooks/__tests__/useExecutiveDashboard.test.ts` | 15 | useExecutiveKPIs · is disabled when no empresaId · returns data when empresaId provided · returns totalAtivos=0 when no employees … |
 | `src/hooks/__tests__/useGrupo.test.tsx` | 15 | useGrupo · initial state: isLoading=true, empty arrays · returns all empresas after query resolves · empresasAtivas only includes ativa=true entries … |
@@ -5326,6 +5398,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MetasEtiquetas.test.tsx` | 13 | metasComum — tom do TIPO da meta · mapeia cada tipo real para o tom da sua família de cor · trata o tipo como texto livre: caixa/espaços não mudam o tom · joga o composto  … |
 | `src/components/__tests__/NewLoanDialog.test.tsx` | 13 | NewLoanDialog · renders Novo Empréstimo trigger button · renders Registrar Empréstimo Consignado title · renders Compliance L10.820 badge … |
 | `src/components/__tests__/desligamento-badges.test.tsx` | 13 | StatusBadge · renders  · renders  · renders  … |
+| `src/components/treinamentos/__tests__/AgendaSemanal.test.tsx` | 13 | AgendaSemanal — minicards · renderiza o evento da semana como minicard com horário e local · mostra os dias sem turma com texto discreto e não cria navegação fictícia · abre o calendário no mês correspondente ao evento da semana exibida … |
 | `src/services/__tests__/empresaService.test.ts` | 13 | empresaService.listar · returns data and total from supabase · returns empty data with total 0 when supabase returns null · adds or() filter when search is provided … |
 | `src/services/__tests__/encryptionService.test.ts` | 13 | validateCPF · aceita CPF válido (com e sem máscara) · rejeita dígito verificador errado · rejeita tamanho errado e sequências repetidas … |
 | `src/services/__tests__/historicoContratoService.test.ts` | 13 | historicoContratoService.listar · returns historico for given colaboradorId · returns empty array when data is null · filters by colaborador_id … |
@@ -5342,6 +5415,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MobileQuickActions.test.tsx` | 12 | MobileQuickActions · renders nothing when open=false · renders Ações Rápidas heading when open=true · renders all 10 quick action labels … |
 | `src/components/__tests__/NovaAdmissaoDialog.test.tsx` | 12 | NovaAdmissaoDialog · renders Nova Admissão trigger button by default · renders Nova Admissão dialog title · renders Nome completo label … |
 | `src/components/__tests__/NovoDepartamentoDialog.test.tsx` | 12 | NovoDepartamentoDialog · renders Novo Departamento title when no departamento prop · renders Editar Departamento title when departamento provided · renders description text … |
+| `src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx` | 12 | MaisTurmasCard · renderiza ícone de grupo, título e descrição da referência · usa borda tracejada, raio de 12px e altura da referência (sem largura fixa) · não apresenta botão quando não existe fluxo real de criação … |
 | `src/hooks/__tests__/useCalcular13Salario.test.tsx` | 12 | useCalcular13Salario · initial state: loading=false, resultado=null · exposes calcular function · sets loading=true while calculating … |
 | `src/hooks/__tests__/useGenericCrud.test.ts` | 12 | useGenericCrud · passes queryKey and queryFn to useQuery · exposes items from query data · exposes total from query data … |
 | `src/hooks/__tests__/useLocalStorage.test.ts` | 12 | useLocalStorage · returns initial value when key does not exist · returns stored value when key exists · stores value and updates state … |
@@ -5364,6 +5438,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/MorningBriefing.test.tsx` | 11 | MorningBriefing · separa o cache por empresa e não consulta sem tenant selecionado · shows skeleton when loading · renders error state when error occurs … |
 | `src/components/__tests__/PontoInconsistencyPanel.test.tsx` | 11 | PontoInconsistencyPanel · renders without crash when registros is empty · shows Insights de Inteligência when inconsistency detected · shows Resolução Assistida Ativa badge when inconsistencies exist … |
 | `src/components/integracoes/__tests__/ConfigPanels.test.tsx` | 11 | CnabConfigPanel · Salvar Configurações grava os dados editados e invalida a configuração · não salva sem os campos obrigatórios · Salvar Configurações fica desabilitado enquanto a config carrega … |
+| `src/components/treinamentos/__tests__/CertificadoCard.test.tsx` | 11 | CertificadoCard — bloco Emissão / Validade / Código · usa três colunas proporcionais com labels, valores e complemento alinhados · exibe emissão e validade reais no formato dd/MM/yyyy · mostra o aviso âmbar de certificado a vencer … |
+| `src/components/treinamentos/__tests__/TurmaCard.test.tsx` | 11 | TurmaCard — composição compacta · coloca título e categoria DENTRO do cabeçalho da imagem · sem inscritos reais não inventa barra/percentual · com inscritos reais calcula e exibe ocupação + barra … |
 | `src/contexts/__tests__/NotificationContext.test.tsx` | 11 | useNotification · throws when used outside provider · provides notifications from useNotificacoes · provides unreadCount from naoLidas … |
 | `src/hooks/__tests__/useBackGesture.test.ts` | 11 | useBackGesture · navigates back on left-edge swipe right · does not navigate when swipe starts away from left edge · does not navigate when horizontal distance is too small … |
 | `src/services/__tests__/bancoHorasConfigService.test.ts` | 11 | bancoHorasConfigService.buscar · returns config for empresa · returns null when no config exists · filters by empresa_id … |
@@ -5394,6 +5470,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/RelatoriosAgendadosTab.test.tsx` | 10 | RelatoriosAgendadosTab · renders Relatórios Agendados heading · renders Agendar Novo button · shows empty state when no agendamentos … |
 | `src/components/__tests__/RelatoriosExportTab.test.tsx` | 10 | RelatoriosExportTab · renders report titles · renders report descriptions · shows CSV button label when exportFormat is csv … |
 | `src/components/__tests__/SSTEPIsTab.test.tsx` | 10 | SSTEPIsTab · shows empty state when no EPIs · renders EPI nome when EPIs provided · renders EPI CA number … |
+| `src/components/treinamentos/__tests__/InscricoesPainel.test.tsx` | 10 | InscricoesPainel · renderiza as oito inscrições, com nomes, cursos, departamentos e categorias · mostra status humano e não exibe o código técnico · mostra Não informado quando não existe progresso real … |
 | `src/constants/__tests__/rubricas.test.ts` | 10 | RUBRICAS_PADRAO · is a non-empty array · has no duplicate codigos · each rubrica has required fields … |
 | `src/hooks/__tests__/useDocumentOCR.test.ts` | 10 | useDocumentOCR · starts with isProcessing false · returns processDocument function · sets isProcessing true during processing … |
 | `src/hooks/__tests__/useFeriasAprovacao.test.ts` | 10 | useFeriasAprovacao · starts with isLoading=false · aprovarGestor calls feriasService.aprovarGestor with id and userId · aprovarGestor shows success toast … |
@@ -5444,19 +5521,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/components/__tests__/FeriasActions.test.tsx` | 9 | FeriasActions · renders Aprovar (Gestor) button when not yet approved · renders Rejeitar button when not yet approved by gestor · renders Baixar button always … |
 | `src/components/__tests__/FeriasAlertasPagamentoCard.test.tsx` | 9 | FeriasAlertasPagamentoCard · renders Pagamento de Férias title · renders Art. 145 CLT reference in title · shows empty state when no alerts … |
 | `src/components/__tests__/FeriasAuditTimeline.test.tsx` | 9 | FeriasAuditTimeline · renders Tudo tab filter · renders Criação tab filter · renders Aprovação tab filter … |
-| `src/components/__tests__/FeriasColetivasTab.test.tsx` | 9 | FeriasColetivasTab · renders card title Férias Coletivas · shows empty state when no coletivas · shows loading spinner when loading … |
-| `src/components/__tests__/FeriasDashboard.test.tsx` | 9 | FeriasDashboard · renders Férias nos Últimos 6 Meses chart title · renders Distribuição por Status chart title · renders Próximos Colaboradores em Gozo section … |
-| `src/components/__tests__/FeriasKPIs.test.tsx` | 9 | FeriasKPIs · renders Total label · renders Pendentes label · renders Aprovadas label … |
-| `src/components/__tests__/FeriasRelatorioDialog.test.tsx` | 9 | FeriasRelatorioDialog · renders Relatório PDF trigger button · renders Gerar Relatório de Férias dialog title · renders Selecione o Período label … |
-| `src/components/__tests__/FeriasSaldoReport.test.tsx` | 9 | FeriasSaldoReport · renders Saldo de Férias por Colaborador title · renders table header Colaborador · renders table header Dias Disponíveis … |
-| `src/components/__tests__/FeriasTable.test.tsx` | 9 | FeriasTable · renders Colaborador header · renders Período header · renders Dias header … |
-| `src/components/__tests__/FolhaAuditTimeline.test.tsx` | 9 | FolhaAuditTimeline · renders Trilha de Processamento section title · renders competencia in the title · shows empty state when no logs … |
-| `src/components/__tests__/FolhaAuditoriaTable.test.tsx` | 9 | FolhaAuditoriaTable · renders filter input · renders Data/Hora column header · renders Severidade column header … |
-| `src/components/__tests__/FolhaKPIs.test.tsx` | 9 | FolhaKPIs · shows skeleton cards when loading · renders Colaboradores label · renders Total Bruto label … |
-| `src/components/__tests__/FolhaValidationAlerts.test.tsx` | 9 | FolhaValidationAlerts · renders Audit Smart Validation title · renders score badge · does not claim eSocial S-1010 sync it never checked … |
-| `src/components/__tests__/GerarAEJDialog.test.tsx` | 9 | GerarAEJDialog · renders Gerar AEJ trigger button · renders dialog title · renders dialog description … |
-| `src/components/__tests__/GuidedTour.test.tsx` | 9 | GuidedTour · renders nothing before 2s when localStorage empty · renders tour card after 2s on first visit · shows first step title Sidebar de Navegação … |
-| … +324 linhas — lista completa em `context.json` | | |
+| … +343 linhas — lista completa em `context.json` | | |
 
 ## L. Eventos de webhook tratados (contratos com sistemas externos)
 
@@ -5527,7 +5592,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | true apenas em DEV | `capacitor.config.ts` |
 | apenas para src/**. `lint:edge` roda com --max-warnings=0 sobre | `eslint.config.js` |
 | separada); sem este override, ligar a regra globalmente reprovaria | `eslint.config.js` |
-| da muri era escrito sem o ratchet `no-explicit-any`; manter a regra aqui | `eslint.config.js` |
+| `no-explicit-any`; manter a regra aqui importaria ~108 + ~23 warnings | `eslint.config.js` |
 | sincronizam altura/medidas com ResizeObserver); a regra de primeira | `eslint.config.js` |
 | VITE_DEV_PORT         — porta do Vite local (default 4173; deve coincidir | `playwright.config.ts` |
 | Origin/Referer para o deployment Vercel canônico da allowlist (somente | `vite.config.ts` |
@@ -5824,4 +5889,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | • `concluido` — plano encerrado com sucesso (o prazo não importa mais); | `src/components/avaliacao/pdiComum.ts` |
 | • `vencido`   — prazo passado e plano não concluído (regra de `estaAtrasado`); | `src/components/avaliacao/pdiComum.ts` |
 | • `em_dia`    — prazo futuro (ou ausente) e plano em aberto. | `src/components/avaliacao/pdiComum.ts` |
-| … +623 linhas — lista completa em `context.json` | |
+| … +682 linhas — lista completa em `context.json` | |

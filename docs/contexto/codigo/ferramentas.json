@@ -3,7 +3,7 @@
  "format_version": 2,
  "stack": {
   "linguagens": [
-   "TypeScript (1683)",
+   "TypeScript (1750)",
    "SQL (915)",
    "Markdown (332)",
    "JavaScript (129)",
@@ -1621,7 +1621,9 @@
    "VITE_SUPABASE_FUNCTIONS_BASE",
    "VITE_SUPABASE_PUBLISHABLE_KEY",
    "VITE_SUPABASE_URL",
-   "VITE_TRAINING_IMAGES"
+   "VITE_TRAINING_IMAGES",
+   "VITE_TREINAMENTOS_MOCK",
+   "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
   ],
   "usadas_nas_edges": [
    "AI_GATEWAY_API_KEY",
@@ -1725,7 +1727,9 @@
    "VITE_E2E_BYPASS_MFA",
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
-   "VITE_PDI_MOCK"
+   "VITE_PDI_MOCK",
+   "VITE_TREINAMENTOS_MOCK",
+   "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
   ],
   "secrets_em_workflows": [
    "E2E_NON_ADMIN_EMAIL",
@@ -1842,6 +1846,10 @@
     "arquivos": 7
    },
    {
+    "host": "example.test",
+    "arquivos": 6
+   },
+   {
     "host": "lovable.app",
     "arquivos": 5
    },
@@ -1859,10 +1867,6 @@
    },
    {
     "host": "api.openai.com",
-    "arquivos": 3
-   },
-   {
-    "host": "example.test",
     "arquivos": 3
    },
    {
@@ -2128,15 +2132,23 @@
    },
    {
     "papel": "alert",
-    "ocorrencias": 11
+    "ocorrencias": 16
    },
    {
     "papel": "gestor",
     "ocorrencias": 11
    },
    {
+    "papel": "progressbar",
+    "ocorrencias": 7
+   },
+   {
     "papel": "tablist",
     "ocorrencias": 6
+   },
+   {
+    "papel": "group",
+    "ocorrencias": 5
    },
    {
     "papel": "status",
@@ -2151,15 +2163,11 @@
     "ocorrencias": 4
    },
    {
-    "papel": "group",
-    "ocorrencias": 3
-   },
-   {
     "papel": "menuitem",
     "ocorrencias": 3
    },
    {
-    "papel": "progressbar",
+    "papel": "row",
     "ocorrencias": 3
    },
    {
@@ -2168,10 +2176,6 @@
    },
    {
     "papel": "list",
-    "ocorrencias": 2
-   },
-   {
-    "papel": "row",
     "ocorrencias": 2
    },
    {
@@ -2207,7 +2211,15 @@
     "ocorrencias": 1
    },
    {
+    "papel": "cell",
+    "ocorrencias": 1
+   },
+   {
     "papel": "ci_auditor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "columnheader",
     "ocorrencias": 1
    },
    {
@@ -2239,6 +2251,10 @@
     "ocorrencias": 1
    },
    {
+    "papel": "rowgroup",
+    "ocorrencias": 1
+   },
+   {
     "papel": "sup",
     "ocorrencias": 1
    },
@@ -2252,6 +2268,10 @@
    },
    {
     "papel": "supervisor",
+    "ocorrencias": 1
+   },
+   {
+    "papel": "table",
     "ocorrencias": 1
    },
    {

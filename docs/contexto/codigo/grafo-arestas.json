@@ -2972,6 +2972,9 @@
    "src/services/premiacoesService.ts",
    "src/utils/format.ts"
   ],
+  "src/components/premiacoes/premiacoesEntrada.ts": [
+   "src/components/ui/entrada-cards.tsx"
+  ],
   "src/components/recrutamento/CandidatoTimeline.tsx": [
    "src/components/ui/badge.tsx",
    "src/components/ui/card.tsx",
@@ -3242,13 +3245,348 @@
    "src/components/sst/SSTProgramasTab.tsx",
    "src/components/sst/SSTRiscosTab.tsx"
   ],
-  "src/components/treinamentos/TrilhaCursosSection.tsx": [
+  "src/components/treinamentos/AgendaSemanal.tsx": [
+   "src/components/treinamentos/TurmasDoDiaPopover.tsx",
+   "src/components/treinamentos/statusTurmaVisual.ts",
+   "src/components/treinamentos/turmasDerivacoes.ts",
    "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CabecalhoColunaTurma.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CalendarioTurmasDialog.tsx": [
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/TurmasDoDiaPopover.tsx",
+   "src/components/treinamentos/statusTurmaVisual.ts",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CertificadoCard.tsx": [
+   "src/components/treinamentos/CertificadoStatusBadge.tsx",
+   "src/components/treinamentos/TrainingCover.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CertificadoDetalheDialog.tsx": [
+   "src/components/treinamentos/CertificadoStatusBadge.tsx",
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CertificadoStatusBadge.tsx": [
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CertificadosFiltros.tsx": [
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/CertificadosPainel.tsx": [
+   "src/components/premiacoes/premiacoesEntrada.ts",
+   "src/components/treinamentos/CertificadoCard.tsx",
+   "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+   "src/components/treinamentos/CertificadosFiltros.tsx",
+   "src/components/treinamentos/CertificadosSegmentos.tsx",
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx"
+  ],
+  "src/components/treinamentos/CertificadosSegmentos.tsx": [
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/InscricaoStatusBadge.tsx": [
+   "src/components/treinamentos/inscricoesDerivacoes.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/InscricoesFiltros.tsx": [
+   "src/components/treinamentos/inscricoesDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/InscricoesPainel.tsx": [
+   "src/components/premiacoes/premiacoesEntrada.ts",
+   "src/components/treinamentos/InscricaoStatusBadge.tsx",
+   "src/components/treinamentos/InscricoesFiltros.tsx",
+   "src/components/treinamentos/InscricoesSegmentos.tsx",
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/inscricoesDerivacoes.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/motionMode.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/InscricoesSegmentos.tsx": [
+   "src/components/treinamentos/inscricoesDerivacoes.ts",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/MaisTurmasCard.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/NovaTurmaDialog.tsx": [
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/date-picker.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/treinamentos/TrainingCover.tsx": [
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/lib/utils.ts",
+   "src/services/trainingImages/index.ts"
+  ],
+  "src/components/treinamentos/TreinamentoAcoes.tsx": [
+   "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentoBadges.tsx": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentoCursoAcoes.tsx": [
+   "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentoCursoCard.tsx": [
+   "src/components/treinamentos/TrainingCover.tsx",
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/TreinamentoCursoAcoes.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentoParticipantes.tsx": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/avatar.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx": [
+   "src/components/ui/cascade-motion.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosCascadeDialog.tsx": [
+   "src/components/ui/cascade-motion.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosCatalogo.tsx": [
+   "src/components/premiacoes/premiacoesEntrada.ts",
+   "src/components/treinamentos/TreinamentoCursoCard.tsx",
+   "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx"
+  ],
+  "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosFiltros.tsx": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosKpis.tsx": [
+   "src/components/dashboard/AnimatedNumber.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/card.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosTabela.tsx": [
+   "src/components/treinamentos/TreinamentoAcoes.tsx",
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/ui/app-pagination.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-table.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/table-row-reveal.ts",
+   "src/components/ui/table.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TreinamentosTabsList.tsx": [
+   "src/components/ui/tabs.tsx"
+  ],
+  "src/components/treinamentos/TrilhaBanner.tsx": [
+   "src/components/treinamentos/TrainingCover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TrilhaCard.tsx": [
+   "src/components/dashboard/MetricCard.tsx",
+   "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/TrilhaBanner.tsx",
+   "src/components/treinamentos/TrilhaSequencia.tsx",
+   "src/components/treinamentos/trilhasDerivacoes.ts",
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts",
+   "src/services/index.ts"
+  ],
+  "src/components/treinamentos/TrilhaCursosSection.tsx": [
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/TrilhaSequencia.tsx",
+   "src/components/treinamentos/trilhasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
    "src/components/ui/dialog.tsx",
    "src/components/ui/label.tsx",
    "src/components/ui/select.tsx",
-   "src/integrations/supabase/database.types.ts",
+   "src/components/ui/separator.tsx",
+   "src/mocks/treinamentosMock.ts",
    "src/services/index.ts"
+  ],
+  "src/components/treinamentos/TrilhaDetalheDialog.tsx": [
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/TrilhaCursosSection.tsx",
+   "src/components/treinamentos/trilhasDerivacoes.ts",
+   "src/components/ui/dialog.tsx",
+   "src/services/index.ts"
+  ],
+  "src/components/treinamentos/TrilhaSequencia.tsx": [
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/trilhasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/cascade-motion.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TrilhasFiltros.tsx": [
+   "src/components/treinamentos/trilhasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TurmaCard.tsx": [
+   "src/components/treinamentos/TrainingCover.tsx",
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TurmaDetalheDialog.tsx": [
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TurmasDoDiaPopover.tsx": [
+   "src/components/treinamentos/TreinamentoBadges.tsx",
+   "src/components/treinamentos/statusTurmaVisual.ts",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TurmasFiltros.tsx": [
+   "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/TurmasPainel.tsx": [
+   "src/components/premiacoes/premiacoesEntrada.ts",
+   "src/components/treinamentos/AgendaSemanal.tsx",
+   "src/components/treinamentos/CabecalhoColunaTurma.tsx",
+   "src/components/treinamentos/CalendarioTurmasDialog.tsx",
+   "src/components/treinamentos/MaisTurmasCard.tsx",
+   "src/components/treinamentos/TurmaCard.tsx",
+   "src/components/treinamentos/TurmaDetalheDialog.tsx",
+   "src/components/treinamentos/TurmasFiltros.tsx",
+   "src/components/treinamentos/turmasDerivacoes.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/entrada-cards.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/certificadosDerivacoes.ts": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts"
+  ],
+  "src/components/treinamentos/inscricoesDerivacoes.ts": [
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts"
+  ],
+  "src/components/treinamentos/statusTurmaVisual.ts": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts"
+  ],
+  "src/components/treinamentos/treinamentosFiltrosComum.tsx": [
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/treinamentos/trilhasDerivacoes.ts": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts"
+  ],
+  "src/components/treinamentos/turmasDerivacoes.ts": [
+   "src/components/treinamentos/treinamentosDerivacoes.ts"
   ],
   "src/components/ui/animated-cascade-dialog.tsx": [
    "src/components/ui/cascade-dialog.tsx",
@@ -4089,6 +4427,9 @@
    "src/components/avaliacao/nineBoxModo.ts",
    "src/mocks/colaboradoresMock.ts",
    "src/utils/dateLocal.ts"
+  ],
+  "src/mocks/treinamentosMock.ts": [
+   "src/mocks/colaboradoresMock.ts"
   ],
   "src/pages/AdminAgendamentoExamesPage.tsx": [
    "src/components/PageTitle.tsx",
@@ -5830,27 +6171,47 @@
    "src/utils/safeError.ts"
   ],
   "src/pages/TreinamentosPage.tsx": [
+   "src/components/PageTitle.tsx",
    "src/components/layout/index.ts",
-   "src/components/treinamentos/TrilhaCursosSection.tsx",
-   "src/components/ui/badge.tsx",
+   "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+   "src/components/treinamentos/CertificadosPainel.tsx",
+   "src/components/treinamentos/InscricoesPainel.tsx",
+   "src/components/treinamentos/NovaTurmaDialog.tsx",
+   "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "src/components/treinamentos/TreinamentosCatalogo.tsx",
+   "src/components/treinamentos/TreinamentosFiltros.tsx",
+   "src/components/treinamentos/TreinamentosKpis.tsx",
+   "src/components/treinamentos/TreinamentosTabela.tsx",
+   "src/components/treinamentos/TreinamentosTabsList.tsx",
+   "src/components/treinamentos/TrilhaCard.tsx",
+   "src/components/treinamentos/TrilhaDetalheDialog.tsx",
+   "src/components/treinamentos/TrilhasFiltros.tsx",
+   "src/components/treinamentos/TurmasPainel.tsx",
+   "src/components/treinamentos/certificadosDerivacoes.ts",
+   "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "src/components/treinamentos/trilhasDerivacoes.ts",
+   "src/components/ui/app-pagination.tsx",
    "src/components/ui/button.tsx",
-   "src/components/ui/card.tsx",
    "src/components/ui/dialog.tsx",
+   "src/components/ui/entrada-cards.tsx",
    "src/components/ui/input.tsx",
    "src/components/ui/label.tsx",
    "src/components/ui/select.tsx",
    "src/components/ui/spinner.tsx",
    "src/components/ui/switch.tsx",
-   "src/components/ui/table.tsx",
    "src/components/ui/tabs.tsx",
    "src/components/ui/textarea.tsx",
    "src/hooks/index.ts",
+   "src/hooks/useTrainingImages.ts",
    "src/integrations/supabase/client.ts",
    "src/integrations/supabase/database.types.ts",
+   "src/lib/motionMode.ts",
+   "src/mocks/treinamentosMock.ts",
    "src/schemas/validate.ts",
    "src/services/catalogoCursoService.ts",
    "src/services/index.ts",
-   "src/services/piiAccessLogService.ts"
+   "src/services/piiAccessLogService.ts",
+   "src/services/trainingImages/index.ts"
   ],
   "src/pages/TurnosPage.tsx": [
    "src/components/PageTitle.tsx",

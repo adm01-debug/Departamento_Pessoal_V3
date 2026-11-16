@@ -1596,6 +1596,7 @@
     "components/colaborador-detalhes",
     "components/folha",
     "components/ponto",
+    "components/treinamentos",
     "components/ui",
     "pages"
    ],
@@ -4484,9 +4485,9 @@
   },
   {
    "modulo": "components/premiacoes",
-   "arquivos": 3,
+   "arquivos": 4,
    "testes": 0,
-   "linhas": 1018,
+   "linhas": 1121,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -4836,6 +4837,7 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
+    "components/treinamentos",
     "pages"
    ],
    "depende_de_modulos": [
@@ -4847,6 +4849,7 @@
    ],
    "pacotes_externos": [
     "@tanstack/react-query",
+    "framer-motion",
     "lucide-react",
     "recharts",
     "sonner"
@@ -5559,14 +5562,16 @@
   },
   {
    "modulo": "components/treinamentos",
-   "arquivos": 1,
-   "testes": 0,
-   "linhas": 139,
+   "arquivos": 47,
+   "testes": 19,
+   "linhas": 10348,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
-   "componentes": 1,
-   "hooks_locais": [],
+   "componentes": 41,
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
    "hooks_definidos": [],
    "edges": [
     "calcular-provisoes",
@@ -5643,6 +5648,7 @@
     "recargas_vale",
     "registros_ponto",
     "solicitacoes_hora_extra",
+    "training_images",
     "treinamento_certificados",
     "treinamento_feedback",
     "treinamento_instancias",
@@ -5699,10 +5705,22 @@
     "VITE_NINEBOX_MODO_REAL",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_TRAINING_IMAGES",
+    "VITE_TREINAMENTOS_MOCK",
+    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
    ],
    "flags": [],
-   "papeis": [],
+   "papeis": [
+    "alert",
+    "cell",
+    "columnheader",
+    "group",
+    "progressbar",
+    "row",
+    "rowgroup",
+    "table"
+   ],
    "diretos": {
     "edges": [],
     "tabelas": [],
@@ -5712,12 +5730,19 @@
     "pages"
    ],
    "depende_de_modulos": [
+    "components/dashboard",
+    "components/premiacoes",
     "components/ui",
-    "integrations/supabase",
-    "services"
+    "lib",
+    "mocks",
+    "services",
+    "services/trainingImages"
    ],
    "pacotes_externos": [
+    "@radix-ui/react-alert-dialog",
+    "@radix-ui/react-dialog",
     "@tanstack/react-query",
+    "date-fns",
     "framer-motion",
     "lucide-react",
     "sonner"
@@ -7269,7 +7294,6 @@
     "components/seguranca",
     "components/settings",
     "components/sst",
-    "components/treinamentos",
     "components/ui",
     "contexts",
     "hooks",
@@ -7355,6 +7379,7 @@
     "components/relatorios",
     "components/settings",
     "components/sst",
+    "components/treinamentos",
     "components/ui",
     "components/workflows",
     "contexts",
@@ -7404,9 +7429,9 @@
   },
   {
    "modulo": "mocks",
-   "arquivos": 2,
+   "arquivos": 3,
    "testes": 0,
-   "linhas": 2825,
+   "linhas": 3555,
    "itens_menu": [],
    "telas": [],
    "rotas_http": [],
@@ -7423,7 +7448,8 @@
     "MODE",
     "VITE_COLABORADORES_MOCK",
     "VITE_DESEMPENHO_MOCK",
-    "VITE_NINEBOX_MODO_REAL"
+    "VITE_NINEBOX_MODO_REAL",
+    "VITE_TREINAMENTOS_MOCK"
    ],
    "flags": [],
    "papeis": [],
@@ -7435,6 +7461,7 @@
    "importado_por_outros_modulos": [
     "components/avaliacao",
     "components/colaborador-detalhes",
+    "components/treinamentos",
     "hooks",
     "pages",
     "services"
@@ -7452,7 +7479,7 @@
    "modulo": "pages",
    "arquivos": 113,
    "testes": 0,
-   "linhas": 44536,
+   "linhas": 44898,
    "itens_menu": [
     "Admissões",
     "Afastamentos",
@@ -7854,6 +7881,7 @@
     "useTiposEstabilidade",
     "useToast",
     "useTodasEmpresas",
+    "useTrainingImages",
     "useTranslation",
     "useTreinamentosColaborador",
     "useValeTransporte",
@@ -8133,6 +8161,7 @@
     "tipos_admissao",
     "tipos_beneficio",
     "tipos_estabilidade",
+    "training_images",
     "transferencias",
     "treinamento_certificados",
     "treinamento_feedback",
@@ -8312,7 +8341,10 @@
     "VITE_PDI_MOCK",
     "VITE_SUPABASE_FUNCTIONS_BASE",
     "VITE_SUPABASE_PUBLISHABLE_KEY",
-    "VITE_SUPABASE_URL"
+    "VITE_SUPABASE_URL",
+    "VITE_TRAINING_IMAGES",
+    "VITE_TREINAMENTOS_MOCK",
+    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
    ],
    "flags": [],
    "papeis": [
@@ -8320,6 +8352,8 @@
     "alert",
     "assistant",
     "banner",
+    "cell",
+    "columnheader",
     "combobox",
     "coordenador",
     "gestor",
@@ -8329,10 +8363,14 @@
     "listitem",
     "main",
     "option",
+    "progressbar",
     "rh",
+    "row",
+    "rowgroup",
     "status",
     "supervisor",
     "tab",
+    "table",
     "tablist",
     "tabpanel",
     "user"
@@ -8417,6 +8455,7 @@
      "times",
      "times_brindes",
      "transferencias",
+     "treinamento_participantes",
      "treinamentos",
      "vales_alimentacao",
      "vales_transporte",
@@ -8510,6 +8549,7 @@
     "mocks",
     "schemas",
     "services",
+    "services/trainingImages",
     "types",
     "utils",
     "utils/importacao"
@@ -9599,7 +9639,9 @@
     "rpcs": []
    },
    "importado_por_outros_modulos": [
-    "hooks"
+    "components/treinamentos",
+    "hooks",
+    "pages"
    ],
    "depende_de_modulos": [
     "integrations/supabase"

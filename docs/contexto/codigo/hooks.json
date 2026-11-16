@@ -2893,8 +2893,10 @@
     "useQuery"
    ],
    "canais_realtime": [],
-   "usado_por": 0,
-   "usado_por_arquivos": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/TreinamentosPage.tsx"
+   ],
    "coberto_por_testes": 1
   },
   {
@@ -3032,7 +3034,7 @@
     "useReducedMotion"
    ],
    "canais_realtime": [],
-   "usado_por": 8,
+   "usado_por": 10,
    "usado_por_arquivos": [
     "src/components/avaliacao/AnaliticosDesempenho.tsx",
     "src/components/avaliacao/CicloAtivoPanel.tsx",
@@ -3041,7 +3043,9 @@
     "src/components/avaliacao/NineBoxLateral.tsx",
     "src/components/avaliacao/PdiTab.tsx",
     "src/components/avaliacao/PerformanceAuditTimeline.tsx",
-    "src/components/avaliacao/TodosCiclosTable.tsx"
+    "src/components/avaliacao/TodosCiclosTable.tsx",
+    "src/components/treinamentos/InscricoesPainel.tsx",
+    "src/pages/TreinamentosPage.tsx"
    ],
    "coberto_por_testes": 0
   },

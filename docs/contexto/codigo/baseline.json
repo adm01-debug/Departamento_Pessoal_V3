@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "0b2efa2b71d88a074f119d4e78bfa944d3dc34a0",
+  "commit": "4fe2dccc38d2b0b3e9807b36b5421e0a3ef21e8f",
   "branch": "main",
-  "data_commit": "2026-11-16T19:14:12-03:00",
+  "data_commit": "2026-11-16T20:10:34-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "4fe2dcc",
+    "data": "2026-11-16",
+    "assunto": "feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)"
+   },
    {
     "sha": "0b2efa2",
     "data": "2026-11-16",
@@ -126,14 +131,9 @@
     "sha": "efe96e8",
     "data": "2026-11-16",
     "assunto": "infra(banco): lista fechada do canonical-migrations passa a ser o lote NineBox (#578)"
-   },
-   {
-    "sha": "de3bf3b",
-    "data": "2026-11-16",
-    "assunto": "fix(ninebox): converte as 4 notas da consolidação para numeric(4,3) — sem isso o lote grava e o deploy falha (#575)"
    }
   ],
-  "arquivos_mudados_7d": 927,
+  "arquivos_mudados_7d": 995,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/__tests__",
@@ -154,6 +154,10 @@
    {
     "pasta": "src/components/ui",
     "mudancas": 84
+   },
+   {
+    "pasta": "src/components/treinamentos",
+    "mudancas": 67
    },
    {
     "pasta": "supabase/functions/_shared",
@@ -190,10 +194,6 @@
    {
     "pasta": "src/components/ponto",
     "mudancas": 27
-   },
-   {
-    "pasta": "src/components/ferias",
-    "mudancas": 25
    }
   ],
   "arquivos_mais_mudados_90d": [
@@ -214,16 +214,16 @@
     "mudancas": 13
    },
    {
-    "arquivo": "CLAUDE.md",
-    "mudancas": 11
-   },
-   {
     "arquivo": "inventario/estado/rotas.json",
-    "mudancas": 11
+    "mudancas": 12
    },
    {
     "arquivo": "scripts/canonical-invariants.sql",
     "mudancas": 11
+   },
+   {
+    "arquivo": "CLAUDE.md",
+    "mudancas": 10
    },
    {
     "arquivo": "scripts/sync/autocommit-local.sh",
@@ -301,11 +301,11 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 235
+    "commits": 236
    },
    {
     "autor": "devin-ai-integration[bot]",
-    "commits": 44
+    "commits": 43
    },
    {
     "autor": "dependabot[bot]",
@@ -318,21 +318,21 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3282,
-  "arquivos_codigo": 1816,
-  "linhas_codigo": 341864,
+  "arquivos_total": 3349,
+  "arquivos_codigo": 1883,
+  "linhas_codigo": 356862,
   "rotas": 116,
   "rotas_http_backend": 17,
   "vistas_por_id": 0,
   "itens_menu": 94,
   "modulos": 80,
-  "componentes": 530,
+  "componentes": 570,
   "hooks": 112,
   "edge_functions": 67,
   "tabelas": 425,
   "migrations": 849,
   "cron_jobs": 41,
-  "testes": 666,
+  "testes": 685,
   "workflows": 21,
   "scripts": 132,
   "docs_md": 332
@@ -376,7 +376,7 @@
   },
   "eslint.config.js": {
    "arquivos": 1,
-   "linhas": 139
+   "linhas": 142
   },
   "lighthouserc.cjs": {
    "arquivos": 1,
@@ -635,8 +635,8 @@
    "linhas": 2201
   },
   "src/components": {
-   "arquivos": 757,
-   "linhas": 118774
+   "arquivos": 823,
+   "linhas": 132677
   },
   "src/constants": {
    "arquivos": 6,
@@ -671,12 +671,12 @@
    "linhas": 190
   },
   "src/mocks": {
-   "arquivos": 2,
-   "linhas": 2825
+   "arquivos": 3,
+   "linhas": 3555
   },
   "src/pages": {
    "arquivos": 131,
-   "linhas": 46612
+   "linhas": 46974
   },
   "src/providers": {
    "arquivos": 4,
@@ -769,6 +769,10 @@
    "linhas": 1565
   },
   {
+   "arquivo": "src/pages/TreinamentosPage.tsx",
+   "linhas": 1299
+  },
+  {
    "arquivo": "src/services/cnabService.ts",
    "linhas": 1199
   },
@@ -791,10 +795,6 @@
   {
    "arquivo": "scripts/ai-context/gerar.mjs",
    "linhas": 940
-  },
-  {
-   "arquivo": "src/pages/TreinamentosPage.tsx",
-   "linhas": 937
   },
   {
    "arquivo": "src/components/avaliacao/FeedbackAcoesRodape.tsx",
@@ -846,12 +846,12 @@
   }
  ],
  "qualidade": {
-  "any": 170,
+  "any": 187,
   "console_log": 395,
   "ts_ignore": 1,
   "eslint_disable": 4,
-  "todos": 18,
-  "arquivos_acima_500_linhas": 89
+  "todos": 19,
+  "arquivos_acima_500_linhas": 93
  },
  "todos": [
   {
@@ -907,6 +907,12 @@
    "linha": 33,
    "tipo": "TODO",
    "texto": "identificador fictício do módulo (`mock-empresa-1`, ...). */"
+  },
+  {
+   "arquivo": "src/components/treinamentos/trilhasDerivacoes.ts",
+   "linha": 172,
+   "tipo": "TODO",
+   "texto": "curso vinculado tem carga horária válida. */"
   },
   {
    "arquivo": "src/components/ui/data-table.tsx",
@@ -1114,7 +1120,6 @@
    "src/components/notifications/NotificationCenter.tsx",
    "src/components/ponto/PontoLeaderboard.tsx",
    "src/components/ui/data-table.tsx",
-   "src/components/ui/date-picker.tsx",
    "src/components/ui/filter-chip.tsx",
    "src/components/ui/flow-hover-button.tsx",
    "src/components/ui/form.tsx",
@@ -1167,7 +1172,9 @@
    "VITE_E2E_BYPASS_MFA",
    "VITE_HOMOLOG_ORIGEM",
    "VITE_NINEBOX_MODO_REAL",
-   "VITE_PDI_MOCK"
+   "VITE_PDI_MOCK",
+   "VITE_TREINAMENTOS_MOCK",
+   "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
   ],
   "ciclos_de_import": 3,
   "possiveis_segredos_no_codigo": [

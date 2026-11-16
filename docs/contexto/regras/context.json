@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "0b2efa2b71d88a074f119d4e78bfa944d3dc34a0",
+  "sha": "4fe2dccc38d2b0b3e9807b36b5421e0a3ef21e8f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 22:14 UTC",
-  "files_total": 3303,
-  "code_files": 2729,
-  "code_lines": 406506
+  "generated_at": "2026-11-16 23:11 UTC",
+  "files_total": 3370,
+  "code_files": 2796,
+  "code_lines": 421504
  },
  "version": "1.3.2",
- "facts_hash": "ad41bc67edf01e5b",
+ "facts_hash": "953a53c1033b6f26",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -385,8 +385,8 @@
   "package_manager": "npm",
   "languages": {
    ".sql": 915,
-   ".ts": 848,
-   ".tsx": 835,
+   ".tsx": 888,
+   ".ts": 862,
    ".mjs": 103,
    ".js": 15,
    ".cjs": 11,
@@ -96048,10 +96048,10 @@
      "times",
      "tipos_admissao",
      "tipos_estabilidade",
+     "training_images",
      "treinamento_certificados",
      "treinamento_feedback",
      "treinamento_instancias",
-     "treinamento_participantes",
      "trilhas_aprendizado",
      "trilhas_cursos",
      "turnos",
@@ -96109,7 +96109,7 @@
      "sugerir_proxima_medida",
      "validar_potencial_avaliacao"
     ],
-    "deps_count": 203
+    "deps_count": 275
    },
    {
     "path": "",
@@ -99793,7 +99793,7 @@
     "file": ".github/workflows/workflows-report.yml"
    }
   ],
-  "components_count": 757,
+  "components_count": 823,
   "hooks": [
    {
     "name": "useContacts",
@@ -100868,7 +100868,7 @@
   {
    "module": "(raiz)",
    "files": 13,
-   "lines": 875,
+   "lines": 878,
    "tables": [],
    "exports": [
     "capacitor.config.ts: capacitorConfig",
@@ -101312,8 +101312,8 @@
   },
   {
    "module": "src/components",
-   "files": 757,
-   "lines": 118774,
+   "files": 823,
+   "lines": 132677,
    "tables": [
     "admissao_tokens",
     "admissoes",
@@ -101422,6 +101422,7 @@
     "@dnd-kit/core",
     "@dnd-kit/utilities",
     "@hookform/resolvers",
+    "@radix-ui/react-alert-dialog",
     "@radix-ui/react-collapsible",
     "@radix-ui/react-dialog",
     "@radix-ui/react-dropdown-menu",
@@ -101442,8 +101443,7 @@
     "date-fns",
     "framer-motion",
     "lucide-react",
-    "node:fs",
-    "node:path"
+    "node:fs"
    ],
    "imports_modules": [
     "src/constants",
@@ -101962,12 +101962,13 @@
   },
   {
    "module": "src/mocks",
-   "files": 2,
-   "lines": 2825,
+   "files": 3,
+   "lines": 3555,
    "tables": [],
    "exports": [
     "colaboradoresMock.ts: isColaboradoresMockEnabled, MOCK_EMPRESA, getMockUserEmpresas, mockOr, isMockEmpresaId, MOCK_COLABORADORES",
-    "desempenhoMock.ts: isDesempenhoMockEnabled, CicloMock, getMockCiclos, MetaMock, getMockMetas, FeedbackMock"
+    "desempenhoMock.ts: isDesempenhoMockEnabled, CicloMock, getMockCiclos, MetaMock, getMockMetas, FeedbackMock",
+    "treinamentosMock.ts: isTreinamentosMockEnabled, TreinamentoMock, getMockTreinamentosLista, ParticipacaoTreinamentoMock, getMockParticipacaoTreinamentos, CursoMock"
    ],
    "docs": [],
    "deps": [
@@ -101980,13 +101981,14 @@
    ],
    "file_list": [
     "src/mocks/colaboradoresMock.ts",
-    "src/mocks/desempenhoMock.ts"
+    "src/mocks/desempenhoMock.ts",
+    "src/mocks/treinamentosMock.ts"
    ]
   },
   {
    "module": "src/pages",
    "files": 131,
-   "lines": 46612,
+   "lines": 46974,
    "tables": [
     "adiantamentos_salariais",
     "admissoes",
@@ -102062,6 +102064,7 @@
     "times",
     "times_brindes",
     "transferencias",
+    "treinamento_participantes",
     "treinamentos",
     "vales_alimentacao",
     "vales_transporte",
@@ -106317,6 +106320,7 @@
    },
    "treinamento_participantes": {
     "select": [
+     "src/pages/TreinamentosPage.tsx",
      "src/services/tabelas/rhService.ts"
     ],
     "update": [
@@ -107970,6 +107974,7 @@
    "treinamento_participantes": [
     "colaborador_id",
     "id",
+    "presente",
     "treinamento_id"
    ],
    "treinamentos": [
@@ -108247,6 +108252,7 @@
     "src/components/avaliacao/nineBoxMock.ts",
     "src/components/avaliacao/nineBoxModo.ts",
     "src/components/avaliacao/pdiProgressoMock.ts",
+    "src/components/treinamentos/InscricoesPainel.tsx",
     "src/errors/ErrorBoundary.tsx",
     "src/hooks/useDataAccessLog.ts",
     "src/hooks/useRealTimeSubscription.ts",
@@ -108254,6 +108260,7 @@
     "src/main.tsx",
     "src/mocks/colaboradoresMock.ts",
     "src/mocks/desempenhoMock.ts",
+    "src/mocks/treinamentosMock.ts",
     "src/pages/NineBoxPreviewPage.tsx",
     "src/services/loggerService.ts",
     "src/services/premiacoesService.ts"
@@ -108516,9 +108523,11 @@
     "src/components/avaliacao/nineBoxMock.ts",
     "src/components/avaliacao/nineBoxModo.ts",
     "src/components/avaliacao/pdiProgressoMock.ts",
+    "src/components/treinamentos/InscricoesPainel.tsx",
     "src/main.tsx",
     "src/mocks/colaboradoresMock.ts",
-    "src/mocks/desempenhoMock.ts"
+    "src/mocks/desempenhoMock.ts",
+    "src/mocks/treinamentosMock.ts"
    ],
    "NODE_ENV": [
     "scripts/ai-context/cenarios.mjs",
@@ -109071,6 +109080,12 @@
    ],
    "VITE_TRAINING_IMAGES": [
     "src/services/trainingImages/config.ts"
+   ],
+   "VITE_TREINAMENTOS_MOCK": [
+    "src/mocks/treinamentosMock.ts"
+   ],
+   "VITE_TREINAMENTOS_PREVIEW_PROGRESSO": [
+    "src/components/treinamentos/InscricoesPainel.tsx"
    ],
    "VITE_VAPID_PUBLIC_KEY": [
     "src/services/pushNotificationService.ts"
@@ -111966,6 +111981,11 @@
     "rules": "type=date"
    },
    {
+    "file": "src/components/treinamentos/NovaTurmaDialog.tsx",
+    "field": "nova-turma-capacidade",
+    "rules": "type=number, min=1"
+   },
+   {
     "file": "src/pages/AdminAgendamentoExamesPage.tsx",
     "field": "nova-data-agendada",
     "rules": "type=datetime-local"
@@ -112351,6 +112371,96 @@
     "file": "src/components/relatorios/reportScheduleContract.ts",
     "name": "REPORT_SCHEDULE_TYPES",
     "values": "'lista_colaboradores', 'folha_resumo', 'ferias_proximas', 'afastamentos_ativos', 'indicadores_dp',"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "SituacaoCertificado",
+    "values": "todos | valido | a_vencer | vencido | vitalicio"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "SituacaoRealCertificado",
+    "values": "valido | a_vencer | vencido | vitalicio | sem_validade"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "OrdenacaoCertificado",
+    "values": "recentes | antigos | validade | curso | colaborador"
+   },
+   {
+    "file": "src/components/treinamentos/inscricoesDerivacoes.ts",
+    "name": "TomInscricao",
+    "values": "sucesso | andamento | inscrito | alerta | perigo | neutro"
+   },
+   {
+    "file": "src/components/treinamentos/inscricoesDerivacoes.ts",
+    "name": "INSCRICOES_OPCOES_POR_PAGINA",
+    "values": "10, 25, 50"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "TomStatusTreinamento",
+    "values": "success | info | warning | teal | neutral | danger"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "PeriodoTreinamento",
+    "values": "todos | mes | 30d | 90d | ano"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "OrdenacaoCatalogo",
+    "values": "nome | recentes | carga | obrigatorios"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "ObrigatoriedadeFiltro",
+    "values": "todas | obrigatorio | opcional"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "TREINAMENTOS_OPCOES_POR_PAGINA",
+    "values": "5, 10, 20, 50"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "CATALOGO_OPCOES_POR_PAGINA",
+    "values": "6, 12, 24, 48"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "name": "StatusTrilha",
+    "values": "ativa | inativa | indefinido"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "name": "TRILHAS_OPCOES_POR_PAGINA",
+    "values": "6, 9, 12, 24"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "name": "NIVEIS_TRILHA",
+    "values": "{ value: 'basico', label: 'Básico' }, { value: 'intermediario', label: 'Intermediário' }, { value: 'avancado', label: 'Avançado' },"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "name": "OPCOES_STATUS_TRILHA",
+    "values": "{ value: 'ativa', label: 'Ativa' }, { value: 'inativa', label: 'Inativa' },"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "name": "GrupoTurma",
+    "values": "proximas | andamento | concluidas"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "name": "PeriodoTurma",
+    "values": "todas | proximas30 | proximas90 | mes | ano"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "name": "OrdenacaoTurma",
+    "values": "data_asc | data_desc | curso | capacidade"
    },
    {
     "file": "src/components/ui/filter-chip.tsx",
@@ -113744,8 +113854,40 @@
     "msg": "Informe o responsável técnico"
    },
    {
+    "file": "src/components/treinamentos/CertificadoCard.tsx",
+    "msg": "Não foi possível copiar o código"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+    "msg": "Não foi possível copiar o código"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "msg": "\n      className="
+   },
+   {
+    "file": "src/components/treinamentos/NovaTurmaDialog.tsx",
+    "msg": "Data/horário inválidos"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosCatalogo.tsx",
+    "msg": "\n      className="
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosTabela.tsx",
+    "msg": "\n      className="
+   },
+   {
+    "file": "src/components/treinamentos/TrilhaCursosSection.tsx",
+    "msg": "Erro ao desvincular curso"
+   },
+   {
     "file": "src/components/treinamentos/TrilhaCursosSection.tsx",
     "msg": "Erro ao vincular"
+   },
+   {
+    "file": "src/components/treinamentos/TurmasPainel.tsx",
+    "msg": "\n      data-turmas-erro\n      className="
    },
    {
     "file": "src/components/ui/alert.tsx",
@@ -114601,6 +114743,10 @@
    },
    {
     "file": "src/pages/TreinamentosPage.tsx",
+    "msg": "\n                    className="
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
     "msg": "Erro ao atualizar inscrição"
    },
    {
@@ -114613,7 +114759,19 @@
    },
    {
     "file": "src/pages/TreinamentosPage.tsx",
+    "msg": "Erro ao criar turma"
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "msg": "Erro ao excluir treinamento"
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
     "msg": "Erro ao inscrever"
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "msg": "Selecione uma empresa antes de criar a turma"
    },
    {
     "file": "src/pages/TurnosPage.tsx",
@@ -116653,7 +116811,7 @@
    },
    {
     "file": "eslint.config.js",
-    "text": "da muri era escrito sem o ratchet `no-explicit-any`; manter a regra aqui"
+    "text": "`no-explicit-any`; manter a regra aqui importaria ~108 + ~23 warnings"
    },
    {
     "file": "eslint.config.js",
@@ -118080,12 +118238,212 @@
     "text": "o cartão apenas não oferece a assinatura."
    },
    {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "text": "só o TEMPO mudou. Calibrar a cascata do Hub é mexer apenas nas constantes"
+   },
+   {
     "file": "src/components/relatorios/reportScheduleContract.ts",
     "text": "* A Edge Function gera somente JSON/CSV. O agendamento anterior gravava PDF"
    },
    {
     "file": "src/components/seguranca/PolicyAuditPanel.tsx",
     "text": "recebe erro de permissão em vez de uma lista vazia, e o componente distingue"
+   },
+   {
+    "file": "src/components/treinamentos/AgendaSemanal.tsx",
+    "text": "apenas navegam no calendário — nenhum registro é alterado."
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+    "text": "* PRÉVIA DO CERTIFICADO — somente leitura."
+   },
+   {
+    "file": "src/components/treinamentos/InscricaoStatusBadge.tsx",
+    "text": "* Mostra a linha original apenas como dica de acessibilidade em status livres. */"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "text": "* PREVIEW LOCAL (somente desenvolvimento) — preenche as barras de progresso da"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "text": "- Ativa apenas com `import.meta.env.DEV` E"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesSegmentos.tsx",
+    "text": "`atrasado` (`contagens.atrasados === null`). Nenhuma regra de atraso é"
+   },
+   {
+    "file": "src/components/treinamentos/MaisTurmasCard.tsx",
+    "text": "descrição 12px em cor secundária (no máximo três linhas) e, quando houver"
+   },
+   {
+    "file": "src/components/treinamentos/MaisTurmasCard.tsx",
+    "text": "* Fluxo REAL de criação de turma. Sem ele, o card fica apenas informativo. */"
+   },
+   {
+    "file": "src/components/treinamentos/MaisTurmasCard.tsx",
+    "text": "* Vem do chamador; hoje é valor fixo — não há verificação de permissão nesta base. */"
+   },
+   {
+    "file": "src/components/treinamentos/NovaTurmaDialog.tsx",
+    "text": "* Usa SOMENTE a operação existente `catalogoCursoService.criarInstancia` (sem"
+   },
+   {
+    "file": "src/components/treinamentos/TrainingCover.tsx",
+    "text": "uma fotografia. Existe apenas quando o curso não possui capa cadastrada;"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoBadges.tsx",
+    "text": "início), `aqua` teal (Concluído — positivo e estável) e neutro apenas"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoBadges.tsx",
+    "text": "* Fundo do placeholder de capa do card do Catálogo. Usa SOMENTE tokens do"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoCursoAcoes.tsx",
+    "text": "A confirmação é explícita e o fluxo de permissão/isolamento por empresa"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoCursoCard.tsx",
+    "text": "* Usa SOMENTE campos reais do cadastro + inscrições; não cria rota fictícia,"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+    "text": "* A diferença para o `CascadeDialogFrame` é somente a MOLDURA ESTÁTICA: aqui"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx",
+    "text": "- Ordenação apenas entre critérios sustentados pelos campos do catálogo."
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosFiltros.tsx",
+    "text": "\"Limpar filtros\" com destaque Lime apenas quando há filtro ativo."
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosKpis.tsx",
+    "text": "`calcularIndicadoresTreinamentos` são apenas `length > 0`, então uma query"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosTabela.tsx",
+    "text": "`CascadeTableRow`, a mesma cascata de Desligamentos). A animação toca apenas"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosTabsList.tsx",
+    "text": "cuida apenas da navegação visual. Nenhum handler, rota ou conteúdo é"
+   },
+   {
+    "file": "src/components/treinamentos/TrilhaCursosSection.tsx",
+    "text": "* Regras de negócio preservadas do componente original: mesma"
+   },
+   {
+    "file": "src/components/treinamentos/TrilhaSequencia.tsx",
+    "text": "exibido (`01`, `02`…) representa apenas a POSIÇÃO da etapa, nunca conclusão."
+   },
+   {
+    "file": "src/components/treinamentos/TurmaCard.tsx",
+    "text": "com linha complementar apenas quando existe dado real:"
+   },
+   {
+    "file": "src/components/treinamentos/TurmaCard.tsx",
+    "text": "• horário   → intervalo somente se `data_fim` trouxer hora + carga real;"
+   },
+   {
+    "file": "src/components/treinamentos/TurmaCard.tsx",
+    "text": "barra APENAS com contagem real de inscritos."
+   },
+   {
+    "file": "src/components/treinamentos/TurmaCard.tsx",
+    "text": "detalhes). O menu contextual existe apenas quando o local é uma URL http(s),"
+   },
+   {
+    "file": "src/components/treinamentos/TurmaCard.tsx",
+    "text": "e o segundo apenas copiava o `local_link` já exibido no card/detalhe. Sem URL,"
+   },
+   {
+    "file": "src/components/treinamentos/TurmaDetalheDialog.tsx",
+    "text": "* Visualização da TURMA — somente leitura."
+   },
+   {
+    "file": "src/components/treinamentos/TurmasDoDiaPopover.tsx",
+    "text": "* A agenda e o calendário mostram no máximo dois eventos por dia. Este popover"
+   },
+   {
+    "file": "src/components/treinamentos/TurmasPainel.tsx",
+    "text": "* Vem do chamador; hoje é valor fixo — não há verificação de permissão nesta base. */"
+   },
+   {
+    "file": "src/components/treinamentos/TurmasPainel.tsx",
+    "text": "testes passam uma data fixa. A sugestão considera SOMENTE as turmas filtradas."
+   },
+   {
+    "file": "src/components/treinamentos/TurmasPainel.tsx",
+    "text": "* B-01: a semana sugerida considera SOMENTE as turmas filtradas. Se o filtro"
+   },
+   {
+    "file": "src/components/treinamentos/TurmasPainel.tsx",
+    "text": "A `key` abaixo remonta a agenda apenas quando o RECORTE muda — navegar com"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "text": "- `data_validade = null` é apresentada como “Vitalício” porque essa é a regra"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "text": "vitalícia: vira `sem_validade` e aparece apenas em “Todos”."
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "text": "Certificados não possuem limiar próprio; nenhuma regra de banco é alterada."
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "text": "* Classificação da validade. `data_validade` nula = vitalício (regra atual);"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "text": "indicadores) vive aqui, sem React e sem Supabase. Assim a regra de negócio é"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "text": "* HONESTIDADE DOS DADOS (regra do pedido):"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "text": "* HONESTIDADE DOS DADOS: a tabela real possui apenas nome, descrição, categoria,"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "text": "* Colaborador mínimo (lista da empresa) para nome/foto das inscrições. */"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "`cancelado`). Nenhum status é reescrito; o agrupamento apenas escolhe a"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "“Turmas concluídas”), pois a referência tem apenas três colunas e o"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "registro não pode ser descartado."
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "* `HH:mm` somente quando o registro realmente traz horário. */"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "* `HH:mm` de `data_fim` SOMENTE quando ela traz horário — nunca deduzido. */"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "de uma data real e de uma regra explícita por situação:"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "text": "* Sem data, ou em situações que a regra não cobre (turma “planejada” com data"
    },
    {
     "file": "src/components/ui/app-pagination.tsx",
@@ -118380,6 +118738,34 @@
     "text": "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
    },
    {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "* ESCOPO: exclusivamente apresentação/validação de LAYOUT — os 4 KPIs"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "* ⚠️ SOMENTE LEITURA. Toda ação de ESCRITA (criar/excluir treinamento, curso,"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "desempenhoMock.ts, premiacoesMock.ts e colaboradoresMock.ts): liga somente com"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "no modo demonstração. Estes registros alimentam SOMENTE a coluna Participantes"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "* Participação por CURSO — alimenta SOMENTE os cards do Catálogo (avatares,"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "text": "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
+   },
+   {
     "file": "src/pages/AdminDiagnosticoMigracaoPage.tsx",
     "text": "', { count: 'exact', head: true }).limit(1);"
    },
@@ -118514,6 +118900,14 @@
    {
     "file": "src/pages/PortalPage.tsx",
     "text": "Consultas que dependem apenas do login."
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "text": "os mesmos, apenas ganham `imagem_url` quando existir uma capa concluída."
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "text": "Certificados. Serve apenas para a ação contextual “Certificado” das"
    },
    {
     "file": "src/pages/ValesPage.tsx",
@@ -144316,9 +144710,124 @@
     "value": "'documentos'"
    },
    {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "name": "ENTRADA_HUB_DURACAO",
+    "value": "0.42"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "name": "ENTRADA_HUB_PASSO",
+    "value": "0.1"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "name": "ENTRADA_HUB_ATRASO_INICIAL",
+    "value": "0.06"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "name": "LINHA_HUB_INICIO",
+    "value": "0.46"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "name": "LINHA_HUB_PASSO",
+    "value": "0.08"
+   },
+   {
+    "file": "src/components/premiacoes/premiacoesEntrada.ts",
+    "name": "LINHA_HUB_DURACAO",
+    "value": "0.8"
+   },
+   {
     "file": "src/components/sst/SSTIncidentesTab.tsx",
     "name": "PAGE",
     "value": "1000"
+   },
+   {
+    "file": "src/components/treinamentos/AgendaSemanal.tsx",
+    "name": "MAX_EVENTOS_POR_DIA",
+    "value": "2"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadosPainel.tsx",
+    "name": "CERTIFICADOS_POR_PAGINA_PADRAO",
+    "value": "6"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "name": "GRID_TABELA",
+    "value": "'grid grid-cols-[20%_20%_13%_13%_12%_11%_11%] items-center'"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "name": "DURACAO_PREENCHIMENTO",
+    "value": "0.6"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "name": "PASSO_CASCATA_BARRA",
+    "value": "0.05"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "name": "ATRASO_BARRA_APOS_LINHA",
+    "value": "0.45"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoCursoCard.tsx",
+    "name": "AVATARES_VISIVEIS",
+    "value": "3"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "JANELA_A_VENCER_DIAS",
+    "value": "30"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "ORDENACAO_CERTIFICADO_PADRAO",
+    "value": "'recentes'"
+   },
+   {
+    "file": "src/components/treinamentos/inscricoesDerivacoes.ts",
+    "name": "INSCRICOES_POR_PAGINA_PADRAO",
+    "value": "10"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "STATUS_AUSENTE",
+    "value": "'nao_informado'"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "CATEGORIA_AUSENTE",
+    "value": "'__sem_categoria__'"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "AVATARES_VISIVEIS",
+    "value": "3"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "CATALOGO_POR_PAGINA_PADRAO",
+    "value": "12"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "name": "ORDENACAO_CATALOGO_PADRAO",
+    "value": "'nome'"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "name": "TRILHAS_POR_PAGINA_PADRAO",
+    "value": "12"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "name": "ORDENACAO_TURMA_PADRAO",
+    "value": "'data_asc'"
    },
    {
     "file": "src/components/ui/app-pagination.tsx",
@@ -148289,6 +148798,156 @@
     "kind": "compara"
    },
    {
+    "file": "src/components/treinamentos/CertificadoCard.tsx",
+    "field": "situacao",
+    "value": "a_vencer",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoCard.tsx",
+    "field": "situacao",
+    "value": "vencido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+    "field": "situacao",
+    "value": "vencido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+    "field": "situacao",
+    "value": "a_vencer",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadosPainel.tsx",
+    "field": "situacao",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadosPainel.tsx",
+    "field": "situacao",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosTabsList.tsx",
+    "field": "type",
+    "value": "spring",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/TrilhaCard.tsx",
+    "field": "status",
+    "value": "inativa",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/TurmasPainel.tsx",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "vitalicio",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "sem_validade",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "vencido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "a_vencer",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "valido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "todos",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "vitalicio",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "sem_validade",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "a_vencer",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "vencido",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "field": "situacao",
+    "value": "sem_validade",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/inscricoesDerivacoes.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "field": "status",
+    "value": "todos",
+    "kind": "compara"
+   },
+   {
     "file": "src/components/ui/animated-tabs.tsx",
     "field": "type",
     "value": "spring",
@@ -150050,6 +150709,120 @@
     "file": "src/mocks/desempenhoMock.ts",
     "field": "tipo",
     "value": "experiencia",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "em_andamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "planejado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "em_andamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "aguardando_inicio",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "planejado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "em_andamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "em_andamento",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "inscrito",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "inscrito",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "planejado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "planejado",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "em_curso",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
+    "kind": "escreve"
+   },
+   {
+    "file": "src/mocks/treinamentosMock.ts",
+    "field": "status",
+    "value": "concluido",
     "kind": "escreve"
    },
    {
@@ -152265,18 +153038,6 @@
     "field": "status",
     "value": "inscrito",
     "kind": "escreve"
-   },
-   {
-    "file": "src/pages/TreinamentosPage.tsx",
-    "field": "status",
-    "value": "concluido",
-    "kind": "compara"
-   },
-   {
-    "file": "src/pages/TreinamentosPage.tsx",
-    "field": "status",
-    "value": "concluido",
-    "kind": "compara"
    },
    {
     "file": "src/pages/TreinamentosPage.tsx",
@@ -156319,6 +157080,36 @@
     "body": "const { empresaAtual } = useEmpresas(); const qc = useQueryClient(); const [open, setOpen] = useState(false); const [responsavel, setResponsavel] = useState(''); const [registro, setRegistro] = useState(''); const { data: programas } = useQuery({ queryKey: ['sst-programas-pgr', empresaAtual?.id], enabled: !!empresaAtual?.id && open, queryFn: async () => { const { data, error } = await supabase .from('sst_programas') .select('id, versao, data_emissao, data_validade, status, hash_sha256, arquivo_u …"
    },
    {
+    "file": "src/components/treinamentos/TreinamentoParticipantes.tsx",
+    "name": "iniciaisColaborador",
+    "params": "nome: string",
+    "body": "const partes = nome.trim().split(/\\s+/).filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "textoValidade",
+    "params": "situacao: SituacaoRealCertificado, validade: Date | null",
+    "body": "if (situacao === 'vitalicio') return 'Vitalício'; if (situacao === 'sem_validade' || !validade) return 'Validade não informada'; return formatarDataTreinamento( `${validade.getFullYear()}-${String(validade.getMonth() + 1).padStart(2, '0')}-${String( validade.getDate() ).padStart(2, '0')}` );"
+   },
+   {
+    "file": "src/components/treinamentos/certificadosDerivacoes.ts",
+    "name": "detalheValidade",
+    "params": "situacao: SituacaoRealCertificado, dias: number | null",
+    "body": "if (dias === null) return null; if (situacao === 'a_vencer') return dias === 0 ? 'Vence hoje' : `Vence em ${dias} dia${dias === 1 ? '' : 's'}`; if (situacao === 'vencido') { const abs = Math.abs(dias); return `Vencido há ${abs} dia${abs === 1 ? '' : 's'}`; } return null;"
+   },
+   {
+    "file": "src/components/treinamentos/trilhasDerivacoes.ts",
+    "name": "calcularMetricasTrilha",
+    "params": "vinculos: readonly TrilhaCursoVinculo[]",
+    "body": "const unicos = new Map<string, TrilhaCursoVinculo>(); for (const vinculo of vinculos) { if (!unicos.has(vinculo.curso_id)) unicos.set(vinculo.curso_id, vinculo); } let horas = 0; let comCarga = 0; for (const vinculo of unicos.values()) { const carga = cargaHorariaNumerica(vinculo.curso?.carga_horaria); if (carga !== null) { horas += carga; comCarga += 1; } } return { cursos: unicos.size, horas, horasCompletas: unicos.size > 0 && comCarga === unicos.size, horasDisponiveis: comCarga > 0, };"
+   },
+   {
+    "file": "src/components/treinamentos/turmasDerivacoes.ts",
+    "name": "calcularOcupacaoTurma",
+    "params": "inscritos: number | string | null | undefined, capacidade: number | null",
+    "body": "if (!capacidade || capacidade <= 0) return null; if (inscritos === null || inscritos === undefined || inscritos === '') return null; const total = typeof inscritos === 'number' ? inscritos : Number(String(inscritos).replace(',', '.')); if (!Number.isFinite(total) || total < 0) return null; return { inscritos: total, capacidade, percentual: Math.round((total / capacidade) * 100) };"
+   },
+   {
     "file": "src/components/ui/cnpj-input.tsx",
     "name": "validateCNPJ",
     "params": "cnpj: string",
@@ -157689,6 +158480,30 @@
     "line": "const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);"
    },
    {
+    "file": "src/components/treinamentos/CalendarioTurmasDialog.tsx",
+    "line": "onClick={() => setMes((atual) => addMonths(atual, 1))}"
+   },
+   {
+    "file": "src/components/treinamentos/CalendarioTurmasDialog.tsx",
+    "line": "onClick={() => setMes((atual) => subMonths(atual, 1))}"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoCard.tsx",
+    "line": "timer.current = window.setTimeout(() => setCopiado(false), 1800);"
+   },
+   {
+    "file": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+    "line": "timer.current = window.setTimeout(() => setCopiado(false), 1800);"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "line": "const timer = window.setTimeout(() => setAnimar(false), 1600);"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentosTabela.tsx",
+    "line": "const timer = window.setTimeout(() => setAnimar(false), 1400);"
+   },
+   {
     "file": "src/hooks/useBruteForceProtection.ts",
     "line": "const LOCAL_LOCKOUT_MS = 5 * 60 * 1000; // 5 minutos"
    },
@@ -157815,6 +158630,10 @@
    {
     "file": "src/pages/SSTPage.tsx",
     "line": "const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);"
+   },
+   {
+    "file": "src/pages/TreinamentosPage.tsx",
+    "line": "timerEntradaTrilhas.current = window.setTimeout(() => { setAnimarTrilhas(false); setEntradaTrilhasPendente(false); }, 1400);"
    },
    {
     "file": "src/pages/WorkflowsPage.tsx",
@@ -158901,6 +159720,38 @@
    {
     "file": "src/components/sst/SSTRiscosTab.tsx",
     "line": "transition={{ delay: i * 0.06 }}"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "line": "* 0%–49% → `--warning` (mais profundo no início) → `--coins` (âmbar → amarelo)"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "line": "* 100% → `--success` → `--primary` (verde → lime)"
+   },
+   {
+    "file": "src/components/treinamentos/InscricoesPainel.tsx",
+    "line": "* 50%–99% → `--info` (mais profundo no início) → `--aqua` (azul → ciano)"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoBadges.tsx",
+    "line": "* Intensidades: fundo 10–12%, borda 25%, texto na cor cheia — exceto o violeta,"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoBadges.tsx",
+    "line": "* em `CATEGORIAS`), em intensidade controlada: fundo 10–12%, borda 25% e"
+   },
+   {
+    "file": "src/components/treinamentos/TreinamentoBadges.tsx",
+    "line": "* para “Não informado”. Fundos em 8% e bordas em 20%."
+   },
+   {
+    "file": "src/components/treinamentos/TrilhaCard.tsx",
+    "line": "* 0.08 s por índice). O objeto é IMPORTADO da referência (não é uma cópia), então"
+   },
+   {
+    "file": "src/components/treinamentos/treinamentosDerivacoes.ts",
+    "line": "* (\"—\") em vez de 0%, que seria uma afirmação falsa."
    },
    {
     "file": "src/components/ui/flow-hover-button.tsx",
@@ -173507,6 +174358,978 @@
    {
     "file": "src/components/seguranca/__tests__/PolicyAuditPanel.test.tsx",
     "name": "não finge segurança quando o usuário não tem permissão de auditoria"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "AgendaSemanal — minicards"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "renderiza o evento da semana como minicard com horário e local"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "mostra os dias sem turma com texto discreto e não cria navegação fictícia"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "abre o calendário no mês correspondente ao evento da semana exibida"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "abre o calendário no mês do evento quando a semana começa no mês anterior"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "abre a turma existente ao clicar no minicard"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "distribui os sete dias no espaço restante, com cabeçalho fixo no topo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "renderiza os sete dias mesmo sem nenhuma turma na semana"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "com três turmas no dia, o contador +1 abre a lista completa e abre a turma escolhida"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "com cinco turmas e horários coincidentes, todas ficam acessíveis e os nomes longos truncam"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "não renderiza o contador quando o dia tem até duas turmas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "abre o contador pelo teclado e fecha com Escape"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+    "name": "trunca títulos longos dentro do minicard e preserva o nome completo no title"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
+    "name": "CabecalhoColunaTurma"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
+    "name": "monta a faixa de status com ícone solto, título e subtítulo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
+    "name": "alinha título e contador na primeira linha e o subtítulo abaixo do título"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
+    "name": "preserva o tom da coluna na faixa, no contador e no acento inferior"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+    "name": "CalendarioTurmasDialog"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+    "name": "abre no mês da semana exibida e distribui os dias da grade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+    "name": "navega entre os meses sem perder a fonte de dados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+    "name": "abre a turma existente ao clicar no evento do dia"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+    "name": "com três turmas no dia, o contador abre a lista completa e permite abrir a terceira"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+    "name": "explica o mês vazio sem inventar registros"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "CertificadoCard — bloco Emissão / Validade / Código"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "usa três colunas proporcionais com labels, valores e complemento alinhados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "exibe emissão e validade reais no formato dd/MM/yyyy"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "mostra o aviso âmbar de certificado a vencer"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "mostra o aviso vermelho de certificado vencido"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "exibe “Vitalício” e reserva a área complementar sem inventar data"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "reserva a mesma altura complementar para válido, a vencer, vencido e vitalício"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "mantém data e código ausentes com placeholders, sem criar botão de copiar"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "preserva código longo em uma linha e mantém o botão de copiar ao lado"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "copia o código real e confirma com tooltip de sucesso"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+    "name": "mantém o rodapé preso ao fundo do card para alinhar os botões"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "InscricoesPainel"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "renderiza as oito inscrições, com nomes, cursos, departamentos e categorias"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "mostra status humano e não exibe o código técnico"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "mostra Não informado quando não existe progresso real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "aplica os três gradientes por faixa e mantém 0%–100% acessíveis"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "atualiza o valor e o gradiente da barra sem remontar a linha"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "filtra pela badge e mantém o dropdown de status sincronizado"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "busca por colaborador/curso e oferece o estado vazio com limpeza"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "aciona o certificado existente e não cria botão para quem não tem certificado"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+    "name": "pagina em 10 itens e não exibe página inexistente"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "MaisTurmasCard"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "renderiza ícone de grupo, título e descrição da referência"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "usa borda tracejada, raio de 12px e altura da referência (sem largura fixa)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "não apresenta botão quando não existe fluxo real de criação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "não apresenta botão sem autorização, mesmo com o fluxo disponível"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "com fluxo e autorização, o botão chama a criação existente"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "TurmasPainel — posicionamento do card complementar"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "exibe o card uma única vez, na coluna Em andamento"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "aparece depois dos cards reais da coluna, no mesmo invólucro de animação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "não entra na contagem da coluna nem na contagem total de turmas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "com fluxo real e autorização, o painel exibe o CTA e aciona a criação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+    "name": "não participa dos filtros: continua visível quando a busca esvazia a coluna"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+    "name": "NovaTurmaDialog — criação real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+    "name": "mantém Salvar desabilitado sem curso/data/horário"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+    "name": "não cria nada ao apenas abrir ou cancelar"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+    "name": "valida capacidade e envia o payload real ao salvar"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+    "name": "bloqueia capacidade zero"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "TrainingCover — imagem real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "exibe a URL válida com enquadramento cover e overlays de CSS"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "URL indisponível cai no fallback e não deixa a capa vazia"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "não usa URL externa quando não recebe imagem"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "Fallbacks das quatro áreas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "curso sem imagem mostra a capa provisória da categoria"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "trilha sem imagem mantém o banner ilustrado aprovado"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "trilha com imagem usa a capa real sem perder título e nível"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "turma herda a capa do curso correspondente"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "certificado apresenta miniatura estruturada (nunca documento oficial)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "Consistência e ausência de efeitos colaterais"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "assuntos diferentes geram fallbacks consistentes e estáveis"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "nunca fica carregando: sem spinner, skeleton ou animação contínua"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "não consulta o banco nem dispara fetch ao renderizar as capas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "preserva as ações existentes dos cards"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "a capa preenche o contêiner (sem largura fixa própria)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "Renovação da capa (sem reload)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "volta a tentar quando chega uma URL nova depois de uma falha"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+    "name": "a turma troca do fallback para a capa quando o curso recebe imagem"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+    "name": "Detalhes do curso — ficha compacta"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+    "name": "preserva todos os dados reais no cabeçalho, badges e grid 2×2"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+    "name": "mostra no máximo 3 avatares e a contagem real de inscritos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+    "name": "exibe o estado vazio quando não há inscrição, sem inventar participantes"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+    "name": "trata dados incompletos sem exibir undefined/null/NaN"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+    "name": "usa o badge verde de obrigatoriedade e nunca imprime undefined/NaN"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+    "name": "TreinamentosTabsList"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+    "name": "preserva as seis abas, na ordem e com os rótulos existentes"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+    "name": "usa lista plana: sem fundo/borda de container e sem fundo na aba ativa"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+    "name": "renderiza um único indicador Lime de 2 px, de ponta a ponta da aba"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+    "name": "troca a aba ativa, o painel e mantém o indicador na aba selecionada"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+    "name": "navega por teclado com as setas, preservando a semântica de tablist"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "TrilhaSequencia — timeline numerada"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "respeita a ordem real de trilhas_cursos.ordem"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "numera as etapas como posição (01/02/03), sem estado de conclusão"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "exibe metadados reais e nunca imprime undefined/null/NaN"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "mostra conector entre etapas, mas não depois da última"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "chama a remoção real da etapa com o id do vínculo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "exibe o estado vazio aprovado quando a trilha não tem cursos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+    "name": "usa skeleton acessível durante o carregamento"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "TurmaCard — composição compacta"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "coloca título e categoria DENTRO do cabeçalho da imagem"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "sem inscritos reais não inventa barra/percentual"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "com inscritos reais calcula e exibe ocupação + barra"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "mantém apenas o botão principal quando o local é sala/plataforma, sem menu vazio"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "mantém a navegação por teclado no menu quando há URL real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "não renderiza menu sem local válido e deixa o botão ocupar todo o rodapé"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "mantém “Abrir link” somente quando o local é uma URL real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "preserva a ação principal para o status %s"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "mostra os três grupos de metadados com complementos reais"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+    "name": "exibe intervalo somente quando a data final traz horário"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "TurmasPainel — B-01 — agenda acompanha os filtros"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "filtra, navega manualmente sem reposicionar e restaura ao limpar"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "combina status + modalidade + busca e escolhe a semana do resultado"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "abre o calendário no mês do evento filtrado (Concluído → agosto)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "abre o calendário no mês do evento quando a semana começa no mês anterior (Em andamento → agosto)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "sem resultado, agenda e calendário apresentam o estado vazio"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+    "name": "abre o TurmaDetalheDialog existente a partir do terceiro evento do dia"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "modalidade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "mapeia valores reais para o rótulo do sistema"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "não inventa modalidade ausente e preserva texto desconhecido"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "filtros do catálogo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "busca sem acento e sem caixa em nome, descrição e categoria"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "filtra por categoria, modalidade e obrigatoriedade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "combina filtros e devolve vazio quando nada casa"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "opções derivadas dos dados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "lista categorias reais, sem duplicar e ordenadas por rótulo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "lista modalidades reais com rótulo humano"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "ordenação do catálogo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "ordena por nome sem mutar a lista original"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "ordena por mais recentes, maior carga e obrigatórios primeiro"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "participação por curso"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "conta colaboradores únicos e usa o cadastro para nome/foto"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "ignora inscrição sem curso e não cria cursos vazios"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+    "name": "cai no embed quando o colaborador não está na lista"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "classificação de validade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "preserva a regra atual: data nula = vitalício"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "não presume vitalício para data inválida"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "usa a janela de 30 dias já adotada pelo sistema"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "descreve prazo com contagem real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "montagem do modelo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "junta curso e colaborador já carregados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "preserva o código original e ignora PDF como miniatura"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "mantém situações reais derivadas das datas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "busca e filtros"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "busca por colaborador, curso e código"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "filtra por situação real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "combina situação + categoria"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "filtra pelo período de EMISSÃO, não de validade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "conta as facetas ignorando a própria situação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "ordenação e opções"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "ordena por emissão, validade, curso e colaborador"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+    "name": "deriva categorias reais e inclui “Sem categoria”"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "montarInscricoes"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "faz join de colaborador, curso e certificado sem inventar dados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "preserva o status original e não exibe underscore no rótulo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "usa Não informado quando datas não existem e nunca transforma status em progresso"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "só aceita progresso explícito entre 0 e 100"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "não associa certificado de outro colaborador ou curso"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "filtrarInscricoes"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "busca por nome, curso, departamento e cargo, tolerando acentos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "filtra por status canônico, curso e departamento"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "filtra o período pela data de início e exclui registros sem data"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "retorna vazio quando a combinação não existe"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "contadores, opções e paginação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "conta badges com dados reais e desabilita Atrasados sem status real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "gera opções de status/curso/departamento a partir dos dados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+    "name": "pagina sem página inexistente e calcula o intervalo exibido"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "texto, datas e horas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "normaliza acentos e caixa"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "formata YYYY-MM-DD sem recuo de fuso"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "devolve — para data ausente ou inválida"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "formata carga horária real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "status"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "mapeia códigos reais para rótulos semânticos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "não inventa status ausente ou desconhecido"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "filtros"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "busca sem acento em nome e descrição"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "filtra por status normalizado"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "aplica período e exclui registros sem data"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "categoria ausente só aparece quando há categoria real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "monta opções a partir dos dados"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "paginação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "fatia a lista filtrada e informa os limites"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "nunca devolve página inexistente nem linhas vazias"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "participantes"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "conta colaboradores únicos e presenças confirmadas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "não cria resumo para treinamento sem registros"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "ocupação (mock visual)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "usa inscritos de capacidade como "
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "respeita o excedente informado pela referência"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "sem excedente explícito, deriva dos avatares exibidos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "cheia a 100% e não passa da capacidade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "capacidade zero não divide por zero nem inventa progresso"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "aplica o resumo a todas as linhas do mapa"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "indicadores"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "calcula colaboradores únicos, taxa e pendências de obrigatórios"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+    "name": "devolve indicador nulo quando não há base de cálculo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "título, nível e status"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "lê titulo ou nome (as duas colunas existentes)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "traduz os três níveis reais e nunca inventa"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "distingue ativo=false de ativo ausente"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "só oferece o filtro de status quando a coluna ativo existe"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "filtrarTrilhas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "busca sem acento e sem caixa em título e descrição"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "filtra por nível e por status"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "devolve lista vazia quando nada casa (sem inventar registros)"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "ordenarVinculos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "respeita trilhas_cursos.ordem, não a ordem alfabética"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "joga ordem ausente para o fim"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "métricas do card"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "conta cursos únicos e soma a carga horária real"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "marca a soma como incompleta quando falta duração"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "devolve — quando nenhum curso tem carga horária"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "sem vínculos: zero cursos e nenhuma hora"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "inscritos da trilha"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "conta colaboradores únicos dos cursos da trilha"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "preserva a foto apenas quando a origem traz foto_url"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "sem cursos vinculados não afirma inscritos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "meta da etapa"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "monta só as informações que existem"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+    "name": "omite campos ausentes sem inventar"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "turmasDerivacoes — datas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "lê YYYY-MM-DD no fuso local sem recuar um dia"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "expõe horário apenas quando o timestamp tem hora"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "inicia a semana na segunda-feira e formata o intervalo"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "distribui as turmas nos sete dias da semana"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "sugere a semana da turma mais próxima quando a semana atual está vazia"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "turmasDerivacoes — modelo e agrupamento"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "junta curso e instrutor carregados e normaliza campos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "agrupa pelo status REAL, preservando canceladas no histórico"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "calcula ocupação somente com capacidade e inscritos válidos"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "turmasDerivacoes — metadados complementares"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "formata a carga horária real como duração"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "calcula o complemento temporal por situação, sem inventar datas"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "expõe hora final e duração somente quando os dados existem"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "turmasDerivacoes — filtros e ordenação"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "busca por curso, instrutor, categoria, local e id"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "combina status + modalidade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "aplica período com base em data_inicio"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "ordena por data (nulos ao final), curso e capacidade"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "deriva opções de status e modalidade dos dados reais"
+   },
+   {
+    "file": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+    "name": "intercala a entrada: 1º de cada coluna, depois o 2º"
    },
    {
     "file": "src/components/ui/__tests__/data-table-toolbar.test.tsx",
@@ -219489,6 +221312,7 @@
       "escreve:src/components/layout/MobileQuickActions.tsx",
       "escreve:src/components/onboarding/GuidedTour.tsx",
       "escreve:src/components/sst/SSTKPIs.tsx",
+      "escreve:src/components/treinamentos/TreinamentosTabsList.tsx",
       "escreve:src/components/ui/animated-tabs.tsx",
       "escreve:src/components/ui/empty-state.tsx",
       "escreve:src/pages/ContratacaoPage.tsx",
@@ -220474,6 +222298,7 @@
       "escreve:src/hooks/useAdmissaoWorkflow.ts",
       "escreve:src/mocks/colaboradoresMock.ts",
       "escreve:src/mocks/desempenhoMock.ts",
+      "escreve:src/mocks/treinamentosMock.ts",
       "escreve:src/pages/WorkflowsPage.tsx",
       "escreve:src/services/workflowService.ts"
      ],
@@ -220512,6 +222337,11 @@
      "todos": [
       "compara:src/components/avaliacao/PdiFiltros.tsx",
       "compara:src/components/avaliacao/PdiTab.tsx",
+      "compara:src/components/treinamentos/TurmasPainel.tsx",
+      "compara:src/components/treinamentos/inscricoesDerivacoes.ts",
+      "compara:src/components/treinamentos/treinamentosDerivacoes.ts",
+      "compara:src/components/treinamentos/trilhasDerivacoes.ts",
+      "compara:src/components/treinamentos/turmasDerivacoes.ts",
       "compara:src/pages/ContratosGeradosPage.tsx",
       "compara:supabase/functions/relatorio/index.ts"
      ],
@@ -220554,6 +222384,7 @@
       "escreve:src/components/dashboard/analytics/PendenciasDetailDialog.tsx",
       "escreve:src/mocks/colaboradoresMock.ts",
       "escreve:src/mocks/desempenhoMock.ts",
+      "escreve:src/mocks/treinamentosMock.ts",
       "escreve:src/pages/NineBoxPreviewPage.tsx"
      ],
      "vencido": [
@@ -220625,6 +222456,7 @@
      ],
      "inscrito": [
       "escreve:src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
+      "escreve:src/mocks/treinamentosMock.ts",
       "escreve:src/pages/TreinamentosPage.tsx"
      ],
      "assinado": [
@@ -220898,6 +222730,9 @@
      "em_investigacao": [
       "compara:src/components/sst/SSTIncidentesTab.tsx"
      ],
+     "inativa": [
+      "compara:src/components/treinamentos/TrilhaCard.tsx"
+     ],
      "expirado": [
       "compara:src/hooks/useAssinaturas.ts"
      ],
@@ -220953,6 +222788,15 @@
      ],
      "pausado": [
       "escreve:src/mocks/desempenhoMock.ts"
+     ],
+     "planejado": [
+      "escreve:src/mocks/treinamentosMock.ts"
+     ],
+     "aguardando_inicio": [
+      "escreve:src/mocks/treinamentosMock.ts"
+     ],
+     "em_curso": [
+      "escreve:src/mocks/treinamentosMock.ts"
      ],
      "realizado": [
       "compara:src/pages/AdminAgendamentoExamesPage.tsx",
@@ -221332,7 +223176,11 @@
       "compara:src/components/avaliacao/metasComum.ts"
      ],
      "vencido": [
-      "compara:src/components/avaliacao/PdiCard.tsx"
+      "compara:src/components/avaliacao/PdiCard.tsx",
+      "compara:src/components/treinamentos/CertificadoCard.tsx",
+      "compara:src/components/treinamentos/CertificadoDetalheDialog.tsx",
+      "compara:src/components/treinamentos/certificadosDerivacoes.ts",
+      "escreve:src/components/treinamentos/certificadosDerivacoes.ts"
      ],
      "risco": [
       "compara:src/components/avaliacao/metasComum.ts"
@@ -221342,6 +223190,29 @@
      ],
      "concluido": [
       "compara:src/components/avaliacao/pdiComum.ts"
+     ],
+     "a_vencer": [
+      "compara:src/components/treinamentos/CertificadoCard.tsx",
+      "compara:src/components/treinamentos/CertificadoDetalheDialog.tsx",
+      "compara:src/components/treinamentos/certificadosDerivacoes.ts",
+      "escreve:src/components/treinamentos/certificadosDerivacoes.ts"
+     ],
+     "todos": [
+      "compara:src/components/treinamentos/CertificadosPainel.tsx",
+      "compara:src/components/treinamentos/certificadosDerivacoes.ts",
+      "escreve:src/components/treinamentos/CertificadosPainel.tsx",
+      "escreve:src/components/treinamentos/certificadosDerivacoes.ts"
+     ],
+     "vitalicio": [
+      "compara:src/components/treinamentos/certificadosDerivacoes.ts",
+      "escreve:src/components/treinamentos/certificadosDerivacoes.ts"
+     ],
+     "sem_validade": [
+      "compara:src/components/treinamentos/certificadosDerivacoes.ts",
+      "escreve:src/components/treinamentos/certificadosDerivacoes.ts"
+     ],
+     "valido": [
+      "escreve:src/components/treinamentos/certificadosDerivacoes.ts"
      ],
      "ok": [
       "filtra:src/hooks/ferias/useReconciliacaoFolha.ts"
@@ -245336,14 +247207,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `todas` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/components/avaliacao/MetasFiltros.tsx",
-     "compara:src/components/avaliacao/MetasOKRsTab.tsx"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `em_preparacao` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/components/avaliacao/aprovacaoGestor.ts"
@@ -245355,14 +247218,6 @@
     "where": [
      "compara:src/components/avaliacao/feedbackCanonico.ts",
      "compara:src/pages/AvaliacaoPage.tsx"
-    ]
-   },
-   {
-    "kind": "status",
-    "msg": "valor `inscrito` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "escreve:src/components/colaborador-detalhes/desenvolvimento/TreinamentosCard.tsx",
-     "escreve:src/pages/TreinamentosPage.tsx"
     ]
    },
    {
@@ -245426,15 +247281,6 @@
    },
    {
     "kind": "status",
-    "msg": "valor `valido` para `status` usado no código não existe em nenhum enum do banco/TS",
-    "where": [
-     "compara:src/hooks/useImportacaoColaboradores.ts",
-     "compara:src/pages/ImportacaoPage.tsx",
-     "escreve:src/utils/importacao/parser.ts"
-    ]
-   },
-   {
-    "kind": "status",
     "msg": "valor `efetivado` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "compara:src/hooks/useProximosEventos.ts"
@@ -245476,6 +247322,13 @@
     "msg": "valor `Estado` para `status` usado no código não existe em nenhum enum do banco/TS",
     "where": [
      "escreve:src/i18n/index.ts"
+    ]
+   },
+   {
+    "kind": "status",
+    "msg": "valor `aguardando_inicio` para `status` usado no código não existe em nenhum enum do banco/TS",
+    "where": [
+     "escreve:src/mocks/treinamentosMock.ts"
     ]
    },
    {
@@ -247811,7 +249664,7 @@
   },
   "eslint.config.js": {
    "path": "eslint.config.js",
-   "lines": 139,
+   "lines": 142,
    "exports": [
     "default tseslint"
    ],
@@ -247821,7 +249674,7 @@
    "rule_comments": [
     "apenas para src/**. `lint:edge` roda com --max-warnings=0 sobre",
     "separada); sem este override, ligar a regra globalmente reprovaria",
-    "da muri era escrito sem o ratchet `no-explicit-any`; manter a regra aqui",
+    "`no-explicit-any`; manter a regra aqui importaria ~108 + ~23 warnings",
     "sincronizam altura/medidas com ResizeObserver); a regra de primeira"
    ]
   },
@@ -268011,6 +269864,49 @@
     "const turnoverCost = sal * 3 * emp * 0.15;"
    ]
   },
+  "src/components/premiacoes/premiacoesEntrada.ts": {
+   "path": "src/components/premiacoes/premiacoesEntrada.ts",
+   "lines": 103,
+   "exports": [
+    "const ENTRADA_HUB_DURACAO",
+    "const ENTRADA_HUB_PASSO",
+    "const ENTRADA_HUB_ATRASO_INICIAL",
+    "function entradaCard",
+    "const LINHA_HUB_INICIO",
+    "const LINHA_HUB_PASSO",
+    "const LINHA_HUB_DURACAO",
+    "const linhaEntradaHubVariants"
+   ],
+   "params": [
+    {
+     "name": "ENTRADA_HUB_DURACAO",
+     "value": "0.42"
+    },
+    {
+     "name": "ENTRADA_HUB_PASSO",
+     "value": "0.1"
+    },
+    {
+     "name": "ENTRADA_HUB_ATRASO_INICIAL",
+     "value": "0.06"
+    },
+    {
+     "name": "LINHA_HUB_INICIO",
+     "value": "0.46"
+    },
+    {
+     "name": "LINHA_HUB_PASSO",
+     "value": "0.08"
+    },
+    {
+     "name": "LINHA_HUB_DURACAO",
+     "value": "0.8"
+    }
+   ],
+   "rule_comments": [
+    "só o TEMPO mudou. Calibrar a cascata do Hub é mexer apenas nas constantes"
+   ]
+  },
   "src/components/recrutamento/CandidatoTimeline.tsx": {
    "path": "src/components/recrutamento/CandidatoTimeline.tsx",
    "lines": 161,
@@ -269042,14 +270938,1448 @@
    "path": "src/components/sst/index.ts",
    "lines": 8
   },
+  "src/components/treinamentos/AgendaSemanal.tsx": {
+   "path": "src/components/treinamentos/AgendaSemanal.tsx",
+   "lines": 231,
+   "exports": [
+    "interface AgendaSemanalProps",
+    "function AgendaSemanal"
+   ],
+   "params": [
+    {
+     "name": "MAX_EVENTOS_POR_DIA",
+     "value": "2"
+    }
+   ],
+   "rule_comments": [
+    "apenas navegam no calendário — nenhum registro é alterado."
+   ]
+  },
+  "src/components/treinamentos/CabecalhoColunaTurma.tsx": {
+   "path": "src/components/treinamentos/CabecalhoColunaTurma.tsx",
+   "lines": 109,
+   "exports": [
+    "interface TomCabecalhoTurma",
+    "interface CabecalhoColunaTurmaProps",
+    "function CabecalhoColunaTurma"
+   ]
+  },
+  "src/components/treinamentos/CalendarioTurmasDialog.tsx": {
+   "path": "src/components/treinamentos/CalendarioTurmasDialog.tsx",
+   "lines": 293,
+   "exports": [
+    "interface CalendarioTurmasDialogProps",
+    "function CalendarioTurmasDialog"
+   ],
+   "temporal": [
+    "onClick={() => setMes((atual) => addMonths(atual, 1))}",
+    "onClick={() => setMes((atual) => subMonths(atual, 1))}"
+   ]
+  },
+  "src/components/treinamentos/CertificadoCard.tsx": {
+   "path": "src/components/treinamentos/CertificadoCard.tsx",
+   "lines": 244,
+   "exports": [
+    "interface CertificadoCardProps",
+    "function CertificadoCard"
+   ],
+   "errors": [
+    "Não foi possível copiar o código"
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "a_vencer",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "vencido",
+     "kind": "compara"
+    }
+   ],
+   "temporal": [
+    "timer.current = window.setTimeout(() => setCopiado(false), 1800);"
+   ]
+  },
+  "src/components/treinamentos/CertificadoDetalheDialog.tsx": {
+   "path": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+   "lines": 200,
+   "exports": [
+    "interface CertificadoDetalheDialogProps",
+    "function CertificadoDetalheDialog"
+   ],
+   "errors": [
+    "Não foi possível copiar o código"
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "vencido",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "a_vencer",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* PRÉVIA DO CERTIFICADO — somente leitura."
+   ],
+   "temporal": [
+    "timer.current = window.setTimeout(() => setCopiado(false), 1800);"
+   ]
+  },
+  "src/components/treinamentos/CertificadoStatusBadge.tsx": {
+   "path": "src/components/treinamentos/CertificadoStatusBadge.tsx",
+   "lines": 58,
+   "exports": [
+    "function CertificadoStatusBadge"
+   ]
+  },
+  "src/components/treinamentos/CertificadosFiltros.tsx": {
+   "path": "src/components/treinamentos/CertificadosFiltros.tsx",
+   "lines": 134,
+   "exports": [
+    "interface CertificadosFiltrosProps",
+    "function CertificadosFiltros"
+   ]
+  },
+  "src/components/treinamentos/CertificadosPainel.tsx": {
+   "path": "src/components/treinamentos/CertificadosPainel.tsx",
+   "lines": 325,
+   "exports": [
+    "interface CertificadosPainelProps",
+    "function CertificadosPainel"
+   ],
+   "params": [
+    {
+     "name": "CERTIFICADOS_POR_PAGINA_PADRAO",
+     "value": "6"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ]
+  },
+  "src/components/treinamentos/CertificadosSegmentos.tsx": {
+   "path": "src/components/treinamentos/CertificadosSegmentos.tsx",
+   "lines": 117,
+   "exports": [
+    "interface CertificadosSegmentosProps",
+    "function CertificadosSegmentos"
+   ]
+  },
+  "src/components/treinamentos/InscricaoStatusBadge.tsx": {
+   "path": "src/components/treinamentos/InscricaoStatusBadge.tsx",
+   "lines": 49,
+   "exports": [
+    "interface InscricaoStatusBadgeProps",
+    "function InscricaoStatusBadge"
+   ],
+   "rule_comments": [
+    "* Mostra a linha original apenas como dica de acessibilidade em status livres. */"
+   ]
+  },
+  "src/components/treinamentos/InscricoesFiltros.tsx": {
+   "path": "src/components/treinamentos/InscricoesFiltros.tsx",
+   "lines": 132,
+   "exports": [
+    "interface InscricoesFiltrosProps",
+    "function InscricoesFiltros"
+   ]
+  },
+  "src/components/treinamentos/InscricoesPainel.tsx": {
+   "path": "src/components/treinamentos/InscricoesPainel.tsx",
+   "lines": 771,
+   "exports": [
+    "interface InscricoesPainelProps",
+    "function InscricoesPainel"
+   ],
+   "env": [
+    "DEV",
+    "MODE",
+    "VITE_TREINAMENTOS_PREVIEW_PROGRESSO"
+   ],
+   "errors": [
+    "\n      className="
+   ],
+   "params": [
+    {
+     "name": "GRID_TABELA",
+     "value": "'grid grid-cols-[20%_20%_13%_13%_12%_11%_11%] items-center'"
+    },
+    {
+     "name": "DURACAO_PREENCHIMENTO",
+     "value": "0.6"
+    },
+    {
+     "name": "PASSO_CASCATA_BARRA",
+     "value": "0.05"
+    },
+    {
+     "name": "ATRASO_BARRA_APOS_LINHA",
+     "value": "0.45"
+    }
+   ],
+   "rule_comments": [
+    "* PREVIEW LOCAL (somente desenvolvimento) — preenche as barras de progresso da",
+    "- Ativa apenas com `import.meta.env.DEV` E"
+   ],
+   "temporal": [
+    "const timer = window.setTimeout(() => setAnimar(false), 1600);"
+   ],
+   "percents": [
+    "* 0%–49% → `--warning` (mais profundo no início) → `--coins` (âmbar → amarelo)",
+    "* 100% → `--success` → `--primary` (verde → lime)",
+    "* 50%–99% → `--info` (mais profundo no início) → `--aqua` (azul → ciano)"
+   ]
+  },
+  "src/components/treinamentos/InscricoesSegmentos.tsx": {
+   "path": "src/components/treinamentos/InscricoesSegmentos.tsx",
+   "lines": 126,
+   "exports": [
+    "interface InscricoesSegmentosProps",
+    "function InscricoesSegmentos"
+   ],
+   "rule_comments": [
+    "`atrasado` (`contagens.atrasados === null`). Nenhuma regra de atraso é"
+   ]
+  },
+  "src/components/treinamentos/MaisTurmasCard.tsx": {
+   "path": "src/components/treinamentos/MaisTurmasCard.tsx",
+   "lines": 81,
+   "exports": [
+    "interface MaisTurmasCardProps",
+    "function MaisTurmasCard"
+   ],
+   "rule_comments": [
+    "descrição 12px em cor secundária (no máximo três linhas) e, quando houver",
+    "* Fluxo REAL de criação de turma. Sem ele, o card fica apenas informativo. */",
+    "* Vem do chamador; hoje é valor fixo — não há verificação de permissão nesta base. */"
+   ]
+  },
+  "src/components/treinamentos/NovaTurmaDialog.tsx": {
+   "path": "src/components/treinamentos/NovaTurmaDialog.tsx",
+   "lines": 231,
+   "exports": [
+    "interface NovaTurmaPayload",
+    "interface NovaTurmaDialogProps",
+    "function NovaTurmaDialog"
+   ],
+   "errors": [
+    "Data/horário inválidos"
+   ],
+   "html_constraints": [
+    {
+     "field": "nova-turma-capacidade",
+     "rules": "type=number, min=1"
+    }
+   ],
+   "rule_comments": [
+    "* Usa SOMENTE a operação existente `catalogoCursoService.criarInstancia` (sem"
+   ]
+  },
+  "src/components/treinamentos/TrainingCover.tsx": {
+   "path": "src/components/treinamentos/TrainingCover.tsx",
+   "lines": 272,
+   "exports": [
+    "interface TrainingCoverProps",
+    "function TrainingCover"
+   ],
+   "rule_comments": [
+    "uma fotografia. Existe apenas quando o curso não possui capa cadastrada;"
+   ]
+  },
+  "src/components/treinamentos/TreinamentoAcoes.tsx": {
+   "path": "src/components/treinamentos/TreinamentoAcoes.tsx",
+   "lines": 96,
+   "exports": [
+    "function TreinamentoAcoes"
+   ]
+  },
+  "src/components/treinamentos/TreinamentoBadges.tsx": {
+   "path": "src/components/treinamentos/TreinamentoBadges.tsx",
+   "lines": 196,
+   "exports": [
+    "function TreinamentoStatusBadge",
+    "interface EstiloCategoriaTreinamento",
+    "function estiloCategoriaTreinamento",
+    "function TreinamentoCategoriaBadge",
+    "function TreinamentoIcone"
+   ],
+   "rule_comments": [
+    "início), `aqua` teal (Concluído — positivo e estável) e neutro apenas",
+    "* Fundo do placeholder de capa do card do Catálogo. Usa SOMENTE tokens do"
+   ],
+   "percents": [
+    "* Intensidades: fundo 10–12%, borda 25%, texto na cor cheia — exceto o violeta,",
+    "* em `CATEGORIAS`), em intensidade controlada: fundo 10–12%, borda 25% e",
+    "* para “Não informado”. Fundos em 8% e bordas em 20%."
+   ]
+  },
+  "src/components/treinamentos/TreinamentoCursoAcoes.tsx": {
+   "path": "src/components/treinamentos/TreinamentoCursoAcoes.tsx",
+   "lines": 109,
+   "exports": [
+    "function TreinamentoCursoAcoes"
+   ],
+   "rule_comments": [
+    "A confirmação é explícita e o fluxo de permissão/isolamento por empresa"
+   ]
+  },
+  "src/components/treinamentos/TreinamentoCursoCard.tsx": {
+   "path": "src/components/treinamentos/TreinamentoCursoCard.tsx",
+   "lines": 423,
+   "exports": [
+    "interface TreinamentoCursoCardProps",
+    "function TreinamentoCursoCard"
+   ],
+   "params": [
+    {
+     "name": "AVATARES_VISIVEIS",
+     "value": "3"
+    }
+   ],
+   "rule_comments": [
+    "* Usa SOMENTE campos reais do cadastro + inscrições; não cria rota fictícia,"
+   ]
+  },
+  "src/components/treinamentos/TreinamentoParticipantes.tsx": {
+   "path": "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "lines": 146,
+   "exports": [
+    "function iniciaisColaborador",
+    "function corAvatarColaborador",
+    "function AvatarParticipante",
+    "function TreinamentoParticipantes"
+   ],
+   "calc_fns": [
+    {
+     "name": "iniciaisColaborador",
+     "params": "nome: string",
+     "body": "const partes = nome.trim().split(/\\s+/).filter(Boolean); if (partes.length === 0) return '?'; if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase(); return `${partes[0][0]}${partes[partes.length - 1][0]}`.toUpperCase();"
+    }
+   ]
+  },
+  "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx": {
+   "path": "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
+   "lines": 97,
+   "exports": [
+    "interface TreinamentosCascadeAlertDialogProps",
+    "function TreinamentosCascadeAlertDialog"
+   ]
+  },
+  "src/components/treinamentos/TreinamentosCascadeDialog.tsx": {
+   "path": "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "lines": 135,
+   "exports": [
+    "interface TreinamentosCascadeDialogProps",
+    "function TreinamentosCascadeDialog",
+    "function TreinamentosCascadeItem"
+   ],
+   "rule_comments": [
+    "* A diferença para o `CascadeDialogFrame` é somente a MOLDURA ESTÁTICA: aqui"
+   ]
+  },
+  "src/components/treinamentos/TreinamentosCatalogo.tsx": {
+   "path": "src/components/treinamentos/TreinamentosCatalogo.tsx",
+   "lines": 280,
+   "exports": [
+    "interface TreinamentosCatalogoProps",
+    "function TreinamentosCatalogo"
+   ],
+   "errors": [
+    "\n      className="
+   ]
+  },
+  "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx": {
+   "path": "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx",
+   "lines": 122,
+   "exports": [
+    "interface TreinamentosCatalogoFiltrosProps",
+    "function TreinamentosCatalogoFiltros"
+   ],
+   "rule_comments": [
+    "- Ordenação apenas entre critérios sustentados pelos campos do catálogo."
+   ]
+  },
+  "src/components/treinamentos/TreinamentosFiltros.tsx": {
+   "path": "src/components/treinamentos/TreinamentosFiltros.tsx",
+   "lines": 127,
+   "exports": [
+    "interface TreinamentosFiltrosProps",
+    "function TreinamentosFiltros"
+   ],
+   "rule_comments": [
+    "\"Limpar filtros\" com destaque Lime apenas quando há filtro ativo."
+   ]
+  },
+  "src/components/treinamentos/TreinamentosKpis.tsx": {
+   "path": "src/components/treinamentos/TreinamentosKpis.tsx",
+   "lines": 195,
+   "exports": [
+    "interface TreinamentosKpisProps",
+    "function TreinamentosKpis"
+   ],
+   "rule_comments": [
+    "`calcularIndicadoresTreinamentos` são apenas `length > 0`, então uma query"
+   ]
+  },
+  "src/components/treinamentos/TreinamentosTabela.tsx": {
+   "path": "src/components/treinamentos/TreinamentosTabela.tsx",
+   "lines": 335,
+   "exports": [
+    "interface TreinamentosTabelaProps",
+    "function TreinamentosTabela"
+   ],
+   "errors": [
+    "\n      className="
+   ],
+   "rule_comments": [
+    "`CascadeTableRow`, a mesma cascata de Desligamentos). A animação toca apenas"
+   ],
+   "temporal": [
+    "const timer = window.setTimeout(() => setAnimar(false), 1400);"
+   ]
+  },
+  "src/components/treinamentos/TreinamentosTabsList.tsx": {
+   "path": "src/components/treinamentos/TreinamentosTabsList.tsx",
+   "lines": 73,
+   "exports": [
+    "interface TreinamentosTabsListProps",
+    "function TreinamentosTabsList"
+   ],
+   "status_values": [
+    {
+     "field": "type",
+     "value": "spring",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "cuida apenas da navegação visual. Nenhum handler, rota ou conteúdo é"
+   ]
+  },
+  "src/components/treinamentos/TrilhaBanner.tsx": {
+   "path": "src/components/treinamentos/TrilhaBanner.tsx",
+   "lines": 187,
+   "exports": [
+    "type TomBanner",
+    "function tomBannerTrilha",
+    "interface TrilhaBannerProps",
+    "function TrilhaBanner"
+   ]
+  },
+  "src/components/treinamentos/TrilhaCard.tsx": {
+   "path": "src/components/treinamentos/TrilhaCard.tsx",
+   "lines": 288,
+   "exports": [
+    "const trilhaCardVariantsEstaticas",
+    "interface TrilhaCardProps",
+    "function TrilhaCard"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "inativa",
+     "kind": "compara"
+    }
+   ],
+   "percents": [
+    "* 0.08 s por índice). O objeto é IMPORTADO da referência (não é uma cópia), então"
+   ]
+  },
   "src/components/treinamentos/TrilhaCursosSection.tsx": {
    "path": "src/components/treinamentos/TrilhaCursosSection.tsx",
-   "lines": 139,
+   "lines": 191,
    "exports": [
     "function TrilhaCursosSection"
    ],
    "errors": [
+    "Erro ao desvincular curso",
     "Erro ao vincular"
+   ],
+   "rule_comments": [
+    "* Regras de negócio preservadas do componente original: mesma"
+   ]
+  },
+  "src/components/treinamentos/TrilhaDetalheDialog.tsx": {
+   "path": "src/components/treinamentos/TrilhaDetalheDialog.tsx",
+   "lines": 165,
+   "exports": [
+    "interface TrilhaDetalheDialogProps",
+    "function TrilhaDetalheDialog"
+   ]
+  },
+  "src/components/treinamentos/TrilhaSequencia.tsx": {
+   "path": "src/components/treinamentos/TrilhaSequencia.tsx",
+   "lines": 133,
+   "exports": [
+    "function TrilhaSequencia"
+   ],
+   "rule_comments": [
+    "exibido (`01`, `02`…) representa apenas a POSIÇÃO da etapa, nunca conclusão."
+   ]
+  },
+  "src/components/treinamentos/TrilhasFiltros.tsx": {
+   "path": "src/components/treinamentos/TrilhasFiltros.tsx",
+   "lines": 176,
+   "exports": [
+    "interface TrilhasFiltrosProps",
+    "function TrilhasFiltros"
+   ]
+  },
+  "src/components/treinamentos/TurmaCard.tsx": {
+   "path": "src/components/treinamentos/TurmaCard.tsx",
+   "lines": 293,
+   "exports": [
+    "interface TurmaCardProps",
+    "function TurmaCard"
+   ],
+   "rule_comments": [
+    "com linha complementar apenas quando existe dado real:",
+    "• horário   → intervalo somente se `data_fim` trouxer hora + carga real;",
+    "barra APENAS com contagem real de inscritos.",
+    "detalhes). O menu contextual existe apenas quando o local é uma URL http(s),",
+    "e o segundo apenas copiava o `local_link` já exibido no card/detalhe. Sem URL,"
+   ]
+  },
+  "src/components/treinamentos/TurmaDetalheDialog.tsx": {
+   "path": "src/components/treinamentos/TurmaDetalheDialog.tsx",
+   "lines": 125,
+   "exports": [
+    "interface TurmaDetalheDialogProps",
+    "function TurmaDetalheDialog"
+   ],
+   "rule_comments": [
+    "* Visualização da TURMA — somente leitura."
+   ]
+  },
+  "src/components/treinamentos/TurmasDoDiaPopover.tsx": {
+   "path": "src/components/treinamentos/TurmasDoDiaPopover.tsx",
+   "lines": 117,
+   "exports": [
+    "interface TurmasDoDiaPopoverProps",
+    "function TurmasDoDiaPopover"
+   ],
+   "rule_comments": [
+    "* A agenda e o calendário mostram no máximo dois eventos por dia. Este popover"
+   ]
+  },
+  "src/components/treinamentos/TurmasFiltros.tsx": {
+   "path": "src/components/treinamentos/TurmasFiltros.tsx",
+   "lines": 137,
+   "exports": [
+    "interface TurmasFiltrosProps",
+    "function TurmasFiltros"
+   ]
+  },
+  "src/components/treinamentos/TurmasPainel.tsx": {
+   "path": "src/components/treinamentos/TurmasPainel.tsx",
+   "lines": 457,
+   "exports": [
+    "interface TurmasPainelProps",
+    "function TurmasPainel"
+   ],
+   "errors": [
+    "\n      data-turmas-erro\n      className="
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "* Vem do chamador; hoje é valor fixo — não há verificação de permissão nesta base. */",
+    "testes passam uma data fixa. A sugestão considera SOMENTE as turmas filtradas.",
+    "* B-01: a semana sugerida considera SOMENTE as turmas filtradas. Se o filtro",
+    "A `key` abaixo remonta a agenda apenas quando o RECORTE muda — navegar com"
+   ]
+  },
+  "src/components/treinamentos/certificadosDerivacoes.ts": {
+   "path": "src/components/treinamentos/certificadosDerivacoes.ts",
+   "lines": 341,
+   "exports": [
+    "const JANELA_A_VENCER_DIAS",
+    "interface CertificadoRegistro",
+    "interface CursoCertificado",
+    "interface ColaboradorCertificado",
+    "type SituacaoCertificado",
+    "type SituacaoRealCertificado",
+    "interface Certificado",
+    "function classificarValidade",
+    "function textoValidade",
+    "function detalheValidade",
+    "function montarCertificados",
+    "const SITUACAO_CERTIFICADO_OPCOES",
+    "type OrdenacaoCertificado",
+    "const ORDENACAO_CERTIFICADO_OPCOES",
+    "const ORDENACAO_CERTIFICADO_PADRAO",
+    "interface FiltrosCertificado",
+    "function filtrarCertificados",
+    "function certificadosBaseDosContadores",
+    "function contarSituacoesCertificado",
+    "function ordenarCertificados",
+    "function opcoesCategoriaCertificado"
+   ],
+   "enums": [
+    {
+     "name": "SituacaoCertificado",
+     "values": "todos | valido | a_vencer | vencido | vitalicio"
+    },
+    {
+     "name": "SituacaoRealCertificado",
+     "values": "valido | a_vencer | vencido | vitalicio | sem_validade"
+    },
+    {
+     "name": "OrdenacaoCertificado",
+     "values": "recentes | antigos | validade | curso | colaborador"
+    }
+   ],
+   "params": [
+    {
+     "name": "JANELA_A_VENCER_DIAS",
+     "value": "30"
+    },
+    {
+     "name": "ORDENACAO_CERTIFICADO_PADRAO",
+     "value": "'recentes'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "situacao",
+     "value": "vitalicio",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "sem_validade",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "vencido",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "a_vencer",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "valido",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "todos",
+     "kind": "escreve"
+    },
+    {
+     "field": "situacao",
+     "value": "vitalicio",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "sem_validade",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "a_vencer",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "vencido",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "todos",
+     "kind": "compara"
+    },
+    {
+     "field": "situacao",
+     "value": "sem_validade",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "- `data_validade = null` é apresentada como “Vitalício” porque essa é a regra",
+    "vitalícia: vira `sem_validade` e aparece apenas em “Todos”.",
+    "Certificados não possuem limiar próprio; nenhuma regra de banco é alterada.",
+    "* Classificação da validade. `data_validade` nula = vitalício (regra atual);"
+   ],
+   "calc_fns": [
+    {
+     "name": "textoValidade",
+     "params": "situacao: SituacaoRealCertificado, validade: Date | null",
+     "body": "if (situacao === 'vitalicio') return 'Vitalício'; if (situacao === 'sem_validade' || !validade) return 'Validade não informada'; return formatarDataTreinamento( `${validade.getFullYear()}-${String(validade.getMonth() + 1).padStart(2, '0')}-${String( validade.getDate() ).padStart(2, '0')}` );"
+    },
+    {
+     "name": "detalheValidade",
+     "params": "situacao: SituacaoRealCertificado, dias: number | null",
+     "body": "if (dias === null) return null; if (situacao === 'a_vencer') return dias === 0 ? 'Vence hoje' : `Vence em ${dias} dia${dias === 1 ? '' : 's'}`; if (situacao === 'vencido') { const abs = Math.abs(dias); return `Vencido há ${abs} dia${abs === 1 ? '' : 's'}`; } return null;"
+    }
+   ]
+  },
+  "src/components/treinamentos/inscricoesDerivacoes.ts": {
+   "path": "src/components/treinamentos/inscricoesDerivacoes.ts",
+   "lines": 319,
+   "exports": [
+    "interface InscricaoRegistro",
+    "interface CursoInscricao",
+    "interface ColaboradorInscricao",
+    "type TomInscricao",
+    "interface StatusInscricao",
+    "function statusInscricao",
+    "interface Inscricao",
+    "function montarInscricoes",
+    "interface FiltrosInscricao",
+    "function filtrarInscricoes",
+    "interface OpcaoInscricao",
+    "function opcoesStatusInscricao",
+    "function opcoesCursoInscricao",
+    "function opcoesDepartamentoInscricao",
+    "interface ContagensSegmentoInscricao",
+    "function contarSegmentosInscricao",
+    "const INSCRICOES_POR_PAGINA_PADRAO",
+    "const INSCRICOES_OPCOES_POR_PAGINA",
+    "interface PaginaInscricoes",
+    "function paginarInscricoes"
+   ],
+   "enums": [
+    {
+     "name": "TomInscricao",
+     "values": "sucesso | andamento | inscrito | alerta | perigo | neutro"
+    },
+    {
+     "name": "INSCRICOES_OPCOES_POR_PAGINA",
+     "values": "10, 25, 50"
+    }
+   ],
+   "params": [
+    {
+     "name": "INSCRICOES_POR_PAGINA_PADRAO",
+     "value": "10"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "doc": "INSCRIÇÕES — derivações puras da aba (sem React e sem Supabase). O schema de `inscricoes_cursos` possui status, data_inicio, data_conclusao, nota, certificado_url, colaborador_id e curso_id. NÃO possui progresso nem conclusão prevista; nenhum percentual é derivado do status. “Atrasado” só existe se …"
+  },
+  "src/components/treinamentos/statusTurmaVisual.ts": {
+   "path": "src/components/treinamentos/statusTurmaVisual.ts",
+   "lines": 16,
+   "exports": [
+    "const PONTO_STATUS"
+   ]
+  },
+  "src/components/treinamentos/treinamentosDerivacoes.ts": {
+   "path": "src/components/treinamentos/treinamentosDerivacoes.ts",
+   "lines": 748,
+   "exports": [
+    "interface TreinamentoRegistro",
+    "interface InscricaoIndicador",
+    "interface CursoIndicador",
+    "interface CertificadoIndicador",
+    "interface ParticipanteRegistro",
+    "interface ColaboradorParticipacao",
+    "interface ResumoParticipacao",
+    "function normalizarTexto",
+    "function parseDataTreinamento",
+    "function formatarDataTreinamento",
+    "function formatarCargaHoraria",
+    "type TomStatusTreinamento",
+    "interface StatusTreinamento",
+    "function chaveStatus",
+    "function statusTreinamento",
+    "const STATUS_AUSENTE",
+    "type PeriodoTreinamento",
+    "const PERIODO_OPCOES",
+    "interface FiltrosTreinamento",
+    "const CATEGORIA_AUSENTE",
+    "function inicioPeriodoTreinamento",
+    "function filtrarTreinamentos",
+    "function opcoesStatusTreinamento",
+    "function opcoesCategoriaTreinamento",
+    "interface PaginaTreinamentos",
+    "const TREINAMENTOS_POR_PAGINA_PADRAO",
+    "const TREINAMENTOS_OPCOES_POR_PAGINA",
+    "function paginarTreinamentos",
+    "function agruparParticipantes",
+    "interface OcupacaoParticipacao",
+    "function resumirOcupacao",
+    "function resumirOcupacoes",
+    "interface EntradaIndicadoresTreinamentos",
+    "interface IndicadoresTreinamentos",
+    "function calcularIndicadoresTreinamentos",
+    "interface CursoCatalogo",
+    "interface ParticipacaoCurso",
+    "const CATALOGO_POR_PAGINA_PADRAO",
+    "const CATALOGO_OPCOES_POR_PAGINA",
+    "type OrdenacaoCatalogo",
+    "const ORDENACAO_CATALOGO_OPCOES",
+    "const ORDENACAO_CATALOGO_PADRAO",
+    "type ObrigatoriedadeFiltro",
+    "const OBRIGATORIEDADE_OPCOES",
+    "function chaveModalidade",
+    "function rotuloModalidade",
+    "interface FiltrosCatalogo",
+    "function filtrarCursos",
+    "function ordenarCursos",
+    "function opcoesCategoriaCurso",
+    "function opcoesModalidadeCurso",
+    "interface InscricaoCursoRegistro",
+    "interface ColaboradorCursoRegistro",
+    "function agruparInscricoesPorCurso"
+   ],
+   "enums": [
+    {
+     "name": "TomStatusTreinamento",
+     "values": "success | info | warning | teal | neutral | danger"
+    },
+    {
+     "name": "PeriodoTreinamento",
+     "values": "todos | mes | 30d | 90d | ano"
+    },
+    {
+     "name": "OrdenacaoCatalogo",
+     "values": "nome | recentes | carga | obrigatorios"
+    },
+    {
+     "name": "ObrigatoriedadeFiltro",
+     "values": "todas | obrigatorio | opcional"
+    },
+    {
+     "name": "TREINAMENTOS_OPCOES_POR_PAGINA",
+     "values": "5, 10, 20, 50"
+    },
+    {
+     "name": "CATALOGO_OPCOES_POR_PAGINA",
+     "values": "6, 12, 24, 48"
+    }
+   ],
+   "params": [
+    {
+     "name": "STATUS_AUSENTE",
+     "value": "'nao_informado'"
+    },
+    {
+     "name": "CATEGORIA_AUSENTE",
+     "value": "'__sem_categoria__'"
+    },
+    {
+     "name": "AVATARES_VISIVEIS",
+     "value": "3"
+    },
+    {
+     "name": "CATALOGO_POR_PAGINA_PADRAO",
+     "value": "12"
+    },
+    {
+     "name": "ORDENACAO_CATALOGO_PADRAO",
+     "value": "'nome'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "indicadores) vive aqui, sem React e sem Supabase. Assim a regra de negócio é",
+    "* HONESTIDADE DOS DADOS (regra do pedido):",
+    "* HONESTIDADE DOS DADOS: a tabela real possui apenas nome, descrição, categoria,",
+    "* Colaborador mínimo (lista da empresa) para nome/foto das inscrições. */"
+   ],
+   "percents": [
+    "* (\"—\") em vez de 0%, que seria uma afirmação falsa."
+   ]
+  },
+  "src/components/treinamentos/treinamentosFiltrosComum.tsx": {
+   "path": "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "lines": 68,
+   "exports": [
+    "interface OpcaoFiltro",
+    "function FiltroSelect"
+   ]
+  },
+  "src/components/treinamentos/trilhasDerivacoes.ts": {
+   "path": "src/components/treinamentos/trilhasDerivacoes.ts",
+   "lines": 287,
+   "exports": [
+    "interface TrilhaRegistro",
+    "interface TrilhaCursoVinculo",
+    "interface InscricaoTrilha",
+    "interface ColaboradorTrilha",
+    "const TRILHAS_POR_PAGINA_PADRAO",
+    "const TRILHAS_OPCOES_POR_PAGINA",
+    "const NIVEIS_TRILHA",
+    "function nivelTrilha",
+    "function tituloTrilha",
+    "type StatusTrilha",
+    "const OPCOES_STATUS_TRILHA",
+    "function statusTrilha",
+    "function opcoesStatusTrilha",
+    "interface FiltrosTrilha",
+    "function filtrarTrilhas",
+    "function ordenarVinculos",
+    "interface MetricasTrilha",
+    "function calcularMetricasTrilha",
+    "function rotuloCursos",
+    "function rotuloHoras",
+    "interface InscritosTrilha",
+    "function resumirInscritosTrilha",
+    "function rotuloInscritos",
+    "function rotuloModalidade",
+    "function metaEtapa"
+   ],
+   "enums": [
+    {
+     "name": "StatusTrilha",
+     "values": "ativa | inativa | indefinido"
+    },
+    {
+     "name": "TRILHAS_OPCOES_POR_PAGINA",
+     "values": "6, 9, 12, 24"
+    },
+    {
+     "name": "NIVEIS_TRILHA",
+     "values": "{ value: 'basico', label: 'Básico' }, { value: 'intermediario', label: 'Intermediário' }, { value: 'avancado', label: 'Avançado' },"
+    },
+    {
+     "name": "OPCOES_STATUS_TRILHA",
+     "values": "{ value: 'ativa', label: 'Ativa' }, { value: 'inativa', label: 'Inativa' },"
+    }
+   ],
+   "params": [
+    {
+     "name": "TRILHAS_POR_PAGINA_PADRAO",
+     "value": "12"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "calc_fns": [
+    {
+     "name": "calcularMetricasTrilha",
+     "params": "vinculos: readonly TrilhaCursoVinculo[]",
+     "body": "const unicos = new Map<string, TrilhaCursoVinculo>(); for (const vinculo of vinculos) { if (!unicos.has(vinculo.curso_id)) unicos.set(vinculo.curso_id, vinculo); } let horas = 0; let comCarga = 0; for (const vinculo of unicos.values()) { const carga = cargaHorariaNumerica(vinculo.curso?.carga_horaria); if (carga !== null) { horas += carga; comCarga += 1; } } return { cursos: unicos.size, horas, horasCompletas: unicos.size > 0 && comCarga === unicos.size, horasDisponiveis: comCarga > 0, };"
+    }
+   ]
+  },
+  "src/components/treinamentos/turmasDerivacoes.ts": {
+   "path": "src/components/treinamentos/turmasDerivacoes.ts",
+   "lines": 593,
+   "exports": [
+    "interface TurmaRegistro",
+    "interface CursoTurma",
+    "interface ColaboradorTurma",
+    "type GrupoTurma",
+    "interface OcupacaoTurma",
+    "interface Turma",
+    "function lerDataTurma",
+    "function temHoraTurma",
+    "function formatarHoraTurma",
+    "function formatarDataTurma",
+    "function formatarDuracaoTurma",
+    "function referenciaTemporalTurma",
+    "function inicioSemana",
+    "function somarDias",
+    "function formatarIntervaloSemana",
+    "function abreviacaoDiaSemana",
+    "function numeroDia",
+    "interface DiaDaSemana",
+    "function diasDaSemanaComTurmas",
+    "function semanaSugeridaAgenda",
+    "function grupoDaTurma",
+    "function capacidadeTurma",
+    "function calcularOcupacaoTurma",
+    "function montarTurmas",
+    "interface GruposTurmas",
+    "function agruparTurmas",
+    "function contarTurmas",
+    "type PeriodoTurma",
+    "const PERIODO_TURMA_OPCOES",
+    "interface IntervaloPeriodoTurma",
+    "function intervaloPeriodoTurma",
+    "type OrdenacaoTurma",
+    "const ORDENACAO_TURMA_OPCOES",
+    "const ORDENACAO_TURMA_PADRAO",
+    "interface FiltrosTurma",
+    "function filtrarTurmas",
+    "function ordenarTurmas",
+    "function opcoesStatusTurma",
+    "function opcoesModalidadeTurma",
+    "function indicesEntradaTurmas"
+   ],
+   "enums": [
+    {
+     "name": "GrupoTurma",
+     "values": "proximas | andamento | concluidas"
+    },
+    {
+     "name": "PeriodoTurma",
+     "values": "todas | proximas30 | proximas90 | mes | ano"
+    },
+    {
+     "name": "OrdenacaoTurma",
+     "values": "data_asc | data_desc | curso | capacidade"
+    }
+   ],
+   "params": [
+    {
+     "name": "ORDENACAO_TURMA_PADRAO",
+     "value": "'data_asc'"
+    }
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "todos",
+     "kind": "compara"
+    }
+   ],
+   "rule_comments": [
+    "`cancelado`). Nenhum status é reescrito; o agrupamento apenas escolhe a",
+    "“Turmas concluídas”), pois a referência tem apenas três colunas e o",
+    "registro não pode ser descartado.",
+    "* `HH:mm` somente quando o registro realmente traz horário. */",
+    "* `HH:mm` de `data_fim` SOMENTE quando ela traz horário — nunca deduzido. */",
+    "de uma data real e de uma regra explícita por situação:",
+    "* Sem data, ou em situações que a regra não cobre (turma “planejada” com data"
+   ],
+   "calc_fns": [
+    {
+     "name": "calcularOcupacaoTurma",
+     "params": "inscritos: number | string | null | undefined, capacidade: number | null",
+     "body": "if (!capacidade || capacidade <= 0) return null; if (inscritos === null || inscritos === undefined || inscritos === '') return null; const total = typeof inscritos === 'number' ? inscritos : Number(String(inscritos).replace(',', '.')); if (!Number.isFinite(total) || total < 0) return null; return { inscritos: total, capacidade, percentual: Math.round((total / capacidade) * 100) };"
+    }
+   ]
+  },
+  "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+   "lines": 272,
+   "is_test": true,
+   "rule_comments": [
+    "O evento está em 15/09; o calendário deve abrir em setembro."
+   ],
+   "tests": [
+    "AgendaSemanal — minicards",
+    "renderiza o evento da semana como minicard com horário e local",
+    "mostra os dias sem turma com texto discreto e não cria navegação fictícia",
+    "abre o calendário no mês correspondente ao evento da semana exibida",
+    "abre o calendário no mês do evento quando a semana começa no mês anterior",
+    "abre a turma existente ao clicar no minicard",
+    "distribui os sete dias no espaço restante, com cabeçalho fixo no topo",
+    "renderiza os sete dias mesmo sem nenhuma turma na semana",
+    "com três turmas no dia, o contador +1 abre a lista completa e abre a turma escolhida",
+    "com cinco turmas e horários coincidentes, todas ficam acessíveis e os nomes longos truncam",
+    "não renderiza o contador quando o dia tem até duas turmas",
+    "abre o contador pelo teclado e fecha com Escape",
+    "trunca títulos longos dentro do minicard e preserva o nome completo no title"
+   ]
+  },
+  "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
+   "lines": 93,
+   "is_test": true,
+   "tests": [
+    "CabecalhoColunaTurma",
+    "monta a faixa de status com ícone solto, título e subtítulo",
+    "alinha título e contador na primeira linha e o subtítulo abaixo do título",
+    "preserva o tom da coluna na faixa, no contador e no acento inferior"
+   ]
+  },
+  "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+   "lines": 167,
+   "is_test": true,
+   "tests": [
+    "CalendarioTurmasDialog",
+    "abre no mês da semana exibida e distribui os dias da grade",
+    "navega entre os meses sem perder a fonte de dados",
+    "abre a turma existente ao clicar no evento do dia",
+    "com três turmas no dia, o contador abre a lista completa e permite abrir a terceira",
+    "explica o mês vazio sem inventar registros"
+   ]
+  },
+  "src/components/treinamentos/__tests__/CertificadoCard.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+   "lines": 184,
+   "is_test": true,
+   "tests": [
+    "CertificadoCard — bloco Emissão / Validade / Código",
+    "usa três colunas proporcionais com labels, valores e complemento alinhados",
+    "exibe emissão e validade reais no formato dd/MM/yyyy",
+    "mostra o aviso âmbar de certificado a vencer",
+    "mostra o aviso vermelho de certificado vencido",
+    "exibe “Vitalício” e reserva a área complementar sem inventar data",
+    "reserva a mesma altura complementar para válido, a vencer, vencido e vitalício",
+    "mantém data e código ausentes com placeholders, sem criar botão de copiar",
+    "preserva código longo em uma linha e mantém o botão de copiar ao lado",
+    "copia o código real e confirma com tooltip de sucesso",
+    "mantém o rodapé preso ao fundo do card para alinhar os botões"
+   ]
+  },
+  "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+   "lines": 220,
+   "is_test": true,
+   "tests": [
+    "InscricoesPainel",
+    "renderiza as oito inscrições, com nomes, cursos, departamentos e categorias",
+    "mostra status humano e não exibe o código técnico",
+    "mostra Não informado quando não existe progresso real",
+    "aplica os três gradientes por faixa e mantém 0%–100% acessíveis",
+    "atualiza o valor e o gradiente da barra sem remontar a linha",
+    "filtra pela badge e mantém o dropdown de status sincronizado",
+    "busca por colaborador/curso e oferece o estado vazio com limpeza",
+    "aciona o certificado existente e não cria botão para quem não tem certificado",
+    "pagina em 10 itens e não exibe página inexistente"
+   ]
+  },
+  "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+   "lines": 153,
+   "is_test": true,
+   "tests": [
+    "MaisTurmasCard",
+    "renderiza ícone de grupo, título e descrição da referência",
+    "usa borda tracejada, raio de 12px e altura da referência (sem largura fixa)",
+    "não apresenta botão quando não existe fluxo real de criação",
+    "não apresenta botão sem autorização, mesmo com o fluxo disponível",
+    "com fluxo e autorização, o botão chama a criação existente",
+    "TurmasPainel — posicionamento do card complementar",
+    "exibe o card uma única vez, na coluna Em andamento",
+    "aparece depois dos cards reais da coluna, no mesmo invólucro de animação",
+    "não entra na contagem da coluna nem na contagem total de turmas",
+    "com fluxo real e autorização, o painel exibe o CTA e aciona a criação",
+    "não participa dos filtros: continua visível quando a busca esvazia a coluna"
+   ]
+  },
+  "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+   "lines": 80,
+   "is_test": true,
+   "tests": [
+    "NovaTurmaDialog — criação real",
+    "mantém Salvar desabilitado sem curso/data/horário",
+    "não cria nada ao apenas abrir ou cancelar",
+    "valida capacidade e envia o payload real ao salvar",
+    "bloqueia capacidade zero"
+   ]
+  },
+  "src/components/treinamentos/__tests__/TrainingCover.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+   "lines": 298,
+   "is_test": true,
+   "params": [
+    {
+     "name": "SEM_IMAGEM",
+     "value": "'[data-training-cover-estado=\""
+    },
+    {
+     "name": "COM_IMAGEM",
+     "value": "'[data-training-cover-estado=\""
+    }
+   ],
+   "tests": [
+    "TrainingCover — imagem real",
+    "exibe a URL válida com enquadramento cover e overlays de CSS",
+    "URL indisponível cai no fallback e não deixa a capa vazia",
+    "não usa URL externa quando não recebe imagem",
+    "Fallbacks das quatro áreas",
+    "curso sem imagem mostra a capa provisória da categoria",
+    "trilha sem imagem mantém o banner ilustrado aprovado",
+    "trilha com imagem usa a capa real sem perder título e nível",
+    "turma herda a capa do curso correspondente",
+    "certificado apresenta miniatura estruturada (nunca documento oficial)",
+    "Consistência e ausência de efeitos colaterais",
+    "assuntos diferentes geram fallbacks consistentes e estáveis",
+    "nunca fica carregando: sem spinner, skeleton ou animação contínua",
+    "não consulta o banco nem dispara fetch ao renderizar as capas",
+    "preserva as ações existentes dos cards",
+    "a capa preenche o contêiner (sem largura fixa própria)",
+    "Renovação da capa (sem reload)",
+    "volta a tentar quando chega uma URL nova depois de uma falha",
+    "a turma troca do fallback para a capa quando o curso recebe imagem"
+   ]
+  },
+  "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+   "lines": 122,
+   "is_test": true,
+   "rule_comments": [
+    "no máximo 3 avatares e o estado vazio — sem inventar participantes."
+   ],
+   "tests": [
+    "Detalhes do curso — ficha compacta",
+    "preserva todos os dados reais no cabeçalho, badges e grid 2×2",
+    "mostra no máximo 3 avatares e a contagem real de inscritos",
+    "exibe o estado vazio quando não há inscrição, sem inventar participantes",
+    "trata dados incompletos sem exibir undefined/null/NaN",
+    "usa o badge verde de obrigatoriedade e nunca imprime undefined/NaN"
+   ]
+  },
+  "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+   "lines": 122,
+   "is_test": true,
+   "tests": [
+    "TreinamentosTabsList",
+    "preserva as seis abas, na ordem e com os rótulos existentes",
+    "usa lista plana: sem fundo/borda de container e sem fundo na aba ativa",
+    "renderiza um único indicador Lime de 2 px, de ponta a ponta da aba",
+    "troca a aba ativa, o painel e mantém o indicador na aba selecionada",
+    "navega por teclado com as setas, preservando a semântica de tablist"
+   ]
+  },
+  "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+   "lines": 120,
+   "is_test": true,
+   "tests": [
+    "TrilhaSequencia — timeline numerada",
+    "respeita a ordem real de trilhas_cursos.ordem",
+    "numera as etapas como posição (01/02/03), sem estado de conclusão",
+    "exibe metadados reais e nunca imprime undefined/null/NaN",
+    "mostra conector entre etapas, mas não depois da última",
+    "chama a remoção real da etapa com o id do vínculo",
+    "exibe o estado vazio aprovado quando a trilha não tem cursos",
+    "usa skeleton acessível durante o carregamento"
+   ]
+  },
+  "src/components/treinamentos/__tests__/TurmaCard.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+   "lines": 204,
+   "is_test": true,
+   "tests": [
+    "TurmaCard — composição compacta",
+    "coloca título e categoria DENTRO do cabeçalho da imagem",
+    "sem inscritos reais não inventa barra/percentual",
+    "com inscritos reais calcula e exibe ocupação + barra",
+    "mantém apenas o botão principal quando o local é sala/plataforma, sem menu vazio",
+    "mantém a navegação por teclado no menu quando há URL real",
+    "não renderiza menu sem local válido e deixa o botão ocupar todo o rodapé",
+    "mantém “Abrir link” somente quando o local é uma URL real",
+    "preserva a ação principal para o status %s",
+    "mostra os três grupos de metadados com complementos reais",
+    "exibe intervalo somente quando a data final traz horário"
+   ]
+  },
+  "src/components/treinamentos/__tests__/TurmasPainel.test.tsx": {
+   "path": "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+   "lines": 219,
+   "is_test": true,
+   "tests": [
+    "TurmasPainel — B-01 — agenda acompanha os filtros",
+    "filtra, navega manualmente sem reposicionar e restaura ao limpar",
+    "combina status + modalidade + busca e escolhe a semana do resultado",
+    "abre o calendário no mês do evento filtrado (Concluído → agosto)",
+    "abre o calendário no mês do evento quando a semana começa no mês anterior (Em andamento → agosto)",
+    "sem resultado, agenda e calendário apresentam o estado vazio",
+    "abre o TurmaDetalheDialog existente a partir do terceiro evento do dia"
+   ]
+  },
+  "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts": {
+   "path": "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+   "lines": 163,
+   "is_test": true,
+   "tests": [
+    "modalidade",
+    "mapeia valores reais para o rótulo do sistema",
+    "não inventa modalidade ausente e preserva texto desconhecido",
+    "filtros do catálogo",
+    "busca sem acento e sem caixa em nome, descrição e categoria",
+    "filtra por categoria, modalidade e obrigatoriedade",
+    "combina filtros e devolve vazio quando nada casa",
+    "opções derivadas dos dados",
+    "lista categorias reais, sem duplicar e ordenadas por rótulo",
+    "lista modalidades reais com rótulo humano",
+    "ordenação do catálogo",
+    "ordena por nome sem mutar a lista original",
+    "ordena por mais recentes, maior carga e obrigatórios primeiro",
+    "participação por curso",
+    "conta colaboradores únicos e usa o cadastro para nome/foto",
+    "ignora inscrição sem curso e não cria cursos vazios",
+    "cai no embed quando o colaborador não está na lista"
+   ]
+  },
+  "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts": {
+   "path": "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+   "lines": 223,
+   "is_test": true,
+   "tests": [
+    "classificação de validade",
+    "preserva a regra atual: data nula = vitalício",
+    "não presume vitalício para data inválida",
+    "usa a janela de 30 dias já adotada pelo sistema",
+    "descreve prazo com contagem real",
+    "montagem do modelo",
+    "junta curso e colaborador já carregados",
+    "preserva o código original e ignora PDF como miniatura",
+    "mantém situações reais derivadas das datas",
+    "busca e filtros",
+    "busca por colaborador, curso e código",
+    "filtra por situação real",
+    "combina situação + categoria",
+    "filtra pelo período de EMISSÃO, não de validade",
+    "conta as facetas ignorando a própria situação",
+    "ordenação e opções",
+    "ordena por emissão, validade, curso e colaborador",
+    "deriva categorias reais e inclui “Sem categoria”"
+   ]
+  },
+  "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts": {
+   "path": "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+   "lines": 192,
+   "is_test": true,
+   "tests": [
+    "montarInscricoes",
+    "faz join de colaborador, curso e certificado sem inventar dados",
+    "preserva o status original e não exibe underscore no rótulo",
+    "usa Não informado quando datas não existem e nunca transforma status em progresso",
+    "só aceita progresso explícito entre 0 e 100",
+    "não associa certificado de outro colaborador ou curso",
+    "filtrarInscricoes",
+    "busca por nome, curso, departamento e cargo, tolerando acentos",
+    "filtra por status canônico, curso e departamento",
+    "filtra o período pela data de início e exclui registros sem data",
+    "retorna vazio quando a combinação não existe",
+    "contadores, opções e paginação",
+    "conta badges com dados reais e desabilita Atrasados sem status real",
+    "gera opções de status/curso/departamento a partir dos dados",
+    "pagina sem página inexistente e calcula o intervalo exibido"
+   ]
+  },
+  "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts": {
+   "path": "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+   "lines": 285,
+   "is_test": true,
+   "tests": [
+    "texto, datas e horas",
+    "normaliza acentos e caixa",
+    "formata YYYY-MM-DD sem recuo de fuso",
+    "devolve — para data ausente ou inválida",
+    "formata carga horária real",
+    "status",
+    "mapeia códigos reais para rótulos semânticos",
+    "não inventa status ausente ou desconhecido",
+    "filtros",
+    "busca sem acento em nome e descrição",
+    "filtra por status normalizado",
+    "aplica período e exclui registros sem data",
+    "categoria ausente só aparece quando há categoria real",
+    "monta opções a partir dos dados",
+    "paginação",
+    "fatia a lista filtrada e informa os limites",
+    "nunca devolve página inexistente nem linhas vazias",
+    "participantes",
+    "conta colaboradores únicos e presenças confirmadas",
+    "não cria resumo para treinamento sem registros",
+    "ocupação (mock visual)",
+    "usa inscritos de capacidade como ",
+    "respeita o excedente informado pela referência",
+    "sem excedente explícito, deriva dos avatares exibidos",
+    "cheia a 100% e não passa da capacidade",
+    "capacidade zero não divide por zero nem inventa progresso",
+    "aplica o resumo a todas as linhas do mapa",
+    "indicadores",
+    "calcula colaboradores únicos, taxa e pendências de obrigatórios",
+    "devolve indicador nulo quando não há base de cálculo"
+   ]
+  },
+  "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts": {
+   "path": "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+   "lines": 180,
+   "is_test": true,
+   "rule_comments": [
+    "Vínculo repetido do mesmo curso: não pode inflar a contagem."
+   ],
+   "tests": [
+    "título, nível e status",
+    "lê titulo ou nome (as duas colunas existentes)",
+    "traduz os três níveis reais e nunca inventa",
+    "distingue ativo=false de ativo ausente",
+    "só oferece o filtro de status quando a coluna ativo existe",
+    "filtrarTrilhas",
+    "busca sem acento e sem caixa em título e descrição",
+    "filtra por nível e por status",
+    "devolve lista vazia quando nada casa (sem inventar registros)",
+    "ordenarVinculos",
+    "respeita trilhas_cursos.ordem, não a ordem alfabética",
+    "joga ordem ausente para o fim",
+    "métricas do card",
+    "conta cursos únicos e soma a carga horária real",
+    "marca a soma como incompleta quando falta duração",
+    "devolve — quando nenhum curso tem carga horária",
+    "sem vínculos: zero cursos e nenhuma hora",
+    "inscritos da trilha",
+    "conta colaboradores únicos dos cursos da trilha",
+    "preserva a foto apenas quando a origem traz foto_url",
+    "sem cursos vinculados não afirma inscritos",
+    "meta da etapa",
+    "monta só as informações que existem",
+    "omite campos ausentes sem inventar"
+   ]
+  },
+  "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts": {
+   "path": "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+   "lines": 294,
+   "is_test": true,
+   "tests": [
+    "turmasDerivacoes — datas",
+    "lê YYYY-MM-DD no fuso local sem recuar um dia",
+    "expõe horário apenas quando o timestamp tem hora",
+    "inicia a semana na segunda-feira e formata o intervalo",
+    "distribui as turmas nos sete dias da semana",
+    "sugere a semana da turma mais próxima quando a semana atual está vazia",
+    "turmasDerivacoes — modelo e agrupamento",
+    "junta curso e instrutor carregados e normaliza campos",
+    "agrupa pelo status REAL, preservando canceladas no histórico",
+    "calcula ocupação somente com capacidade e inscritos válidos",
+    "turmasDerivacoes — metadados complementares",
+    "formata a carga horária real como duração",
+    "calcula o complemento temporal por situação, sem inventar datas",
+    "expõe hora final e duração somente quando os dados existem",
+    "turmasDerivacoes — filtros e ordenação",
+    "busca por curso, instrutor, categoria, local e id",
+    "combina status + modalidade",
+    "aplica período com base em data_inicio",
+    "ordena por data (nulos ao final), curso e capacidade",
+    "deriva opções de status e modalidade dos dados reais",
+    "intercala a entrada: 1º de cada coluna, depois o 2º"
    ]
   },
   "src/components/ui/alert-dialog.tsx": {
@@ -276797,6 +280127,142 @@
     "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
    ]
   },
+  "src/mocks/treinamentosMock.ts": {
+   "path": "src/mocks/treinamentosMock.ts",
+   "lines": 730,
+   "exports": [
+    "function isTreinamentosMockEnabled",
+    "interface TreinamentoMock",
+    "function getMockTreinamentosLista",
+    "interface ParticipacaoTreinamentoMock",
+    "function getMockParticipacaoTreinamentos",
+    "interface CursoMock",
+    "function getMockCursos",
+    "interface ParticipacaoCursoMock",
+    "function getMockParticipacaoCursos",
+    "interface TrilhaMock",
+    "function getMockTrilhas",
+    "function getMockTrilhasCursos",
+    "interface InscricaoMock",
+    "function getMockInscricoes",
+    "interface InstanciaMock",
+    "function getMockInstancias",
+    "interface CertificadoMock",
+    "function getMockCertificados",
+    "function bloquearEscritaTreinamentos"
+   ],
+   "env": [
+    "DEV",
+    "MODE",
+    "VITE_TREINAMENTOS_MOCK"
+   ],
+   "status_values": [
+    {
+     "field": "status",
+     "value": "em_andamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "planejado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "em_andamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "aguardando_inicio",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "planejado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "em_andamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "em_andamento",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "inscrito",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "inscrito",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "planejado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "planejado",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "em_curso",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    },
+    {
+     "field": "status",
+     "value": "concluido",
+     "kind": "escreve"
+    }
+   ],
+   "rule_comments": [
+    "* ESCOPO: exclusivamente apresentação/validação de LAYOUT — os 4 KPIs",
+    "* ⚠️ SOMENTE LEITURA. Toda ação de ESCRITA (criar/excluir treinamento, curso,",
+    "desempenhoMock.ts, premiacoesMock.ts e colaboradoresMock.ts): liga somente com",
+    "* Ativa o mock apenas em dev e apenas com o opt-in explícito da env var. */",
+    "no modo demonstração. Estes registros alimentam SOMENTE a coluna Participantes",
+    "* Participação por CURSO — alimenta SOMENTE os cards do Catálogo (avatares,",
+    "Devolve `true` quando a ação deve ser ABORTADA, então o chamador só precisa de"
+   ]
+  },
   "src/pages/AdminAgendamentoExamesPage.tsx": {
    "path": "src/pages/AdminAgendamentoExamesPage.tsx",
    "lines": 566,
@@ -282100,7 +285566,7 @@
   },
   "src/pages/TreinamentosPage.tsx": {
    "path": "src/pages/TreinamentosPage.tsx",
-   "lines": 937,
+   "lines": 1299,
    "exports": [
     "function TreinamentosPage"
    ],
@@ -282116,18 +285582,32 @@
     {
      "table": "treinamentos",
      "op": "delete"
+    },
+    {
+     "table": "treinamento_participantes",
+     "op": "select"
     }
    ],
    "table_cols": {
     "treinamentos": [
      "id"
+    ],
+    "treinamento_participantes": [
+     "colaborador_id",
+     "id",
+     "presente",
+     "treinamento_id"
     ]
    },
    "errors": [
+    "\n                    className=",
     "Erro ao atualizar inscrição",
     "Erro ao criar treinamento",
     "Erro ao criar trilha",
-    "Erro ao inscrever"
+    "Erro ao criar turma",
+    "Erro ao excluir treinamento",
+    "Erro ao inscrever",
+    "Selecione uma empresa antes de criar a turma"
    ],
    "status_values": [
     {
@@ -282144,17 +285624,11 @@
      "field": "status",
      "value": "concluido",
      "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "concluido",
-     "kind": "compara"
-    },
-    {
-     "field": "status",
-     "value": "concluido",
-     "kind": "compara"
     }
+   ],
+   "rule_comments": [
+    "os mesmos, apenas ganham `imagem_url` quando existir uma capa concluída.",
+    "Certificados. Serve apenas para a ação contextual “Certificado” das"
    ],
    "calc_fns": [
     {
@@ -282162,6 +285636,9 @@
      "params": "cert: CertificadoComJoins, empresaNome?: string",
      "body": "const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }); const cx = doc.internal.pageSize.getWidth() / 2; doc.setDrawColor(60); doc.setLineWidth(1.2); doc.rect(12, 12, doc.internal.pageSize.getWidth() - 24, doc.internal.pageSize.getHeight() - 24); doc.setFont('helvetica', 'bold'); doc.setFontSize(30); doc.text('CERTIFICADO', cx, 45, { align: 'center' }); doc.setFont('helvetica', 'normal'); doc.setFontSize(13); doc.text('Certificamos que', cx, 65, { align: 'center' }); doc.s …"
     }
+   ],
+   "temporal": [
+    "timerEntradaTrilhas.current = window.setTimeout(() => { setAnimarTrilhas(false); setEntradaTrilhasPendente(false); }, 1400);"
    ]
   },
   "src/pages/TurnosPage.tsx": {
@@ -308569,10 +312046,90 @@
   }
  },
  "git": {
-  "sha": "0b2efa2b71d88a074f119d4e78bfa944d3dc34a0",
+  "sha": "4fe2dccc38d2b0b3e9807b36b5421e0a3ef21e8f",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4fe2dcc",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "feat(treinamentos): resgata a UI de treinamentos da branch muri e reenxerta as correções da main (#607)",
+    "files": [
+     "eslint.config.js",
+     "inventario/estado/rotas.json",
+     "scripts/.bundle-budget.json",
+     "src/components/premiacoes/premiacoesEntrada.ts",
+     "src/components/treinamentos/AgendaSemanal.tsx",
+     "src/components/treinamentos/CabecalhoColunaTurma.tsx",
+     "src/components/treinamentos/CalendarioTurmasDialog.tsx",
+     "src/components/treinamentos/CertificadoCard.tsx",
+     "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+     "src/components/treinamentos/CertificadoStatusBadge.tsx",
+     "src/components/treinamentos/CertificadosFiltros.tsx",
+     "src/components/treinamentos/CertificadosPainel.tsx",
+     "src/components/treinamentos/CertificadosSegmentos.tsx",
+     "src/components/treinamentos/InscricaoStatusBadge.tsx",
+     "src/components/treinamentos/InscricoesFiltros.tsx",
+     "src/components/treinamentos/InscricoesPainel.tsx",
+     "src/components/treinamentos/InscricoesSegmentos.tsx",
+     "src/components/treinamentos/MaisTurmasCard.tsx",
+     "src/components/treinamentos/NovaTurmaDialog.tsx",
+     "src/components/treinamentos/TrainingCover.tsx",
+     "src/components/treinamentos/TreinamentoAcoes.tsx",
+     "src/components/treinamentos/TreinamentoBadges.tsx",
+     "src/components/treinamentos/TreinamentoCursoAcoes.tsx",
+     "src/components/treinamentos/TreinamentoCursoCard.tsx",
+     "src/components/treinamentos/TreinamentoParticipantes.tsx",
+     "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
+     "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+     "src/components/treinamentos/TreinamentosCatalogo.tsx",
+     "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx",
+     "src/components/treinamentos/TreinamentosFiltros.tsx",
+     "src/components/treinamentos/TreinamentosKpis.tsx",
+     "src/components/treinamentos/TreinamentosTabela.tsx",
+     "src/components/treinamentos/TreinamentosTabsList.tsx",
+     "src/components/treinamentos/TrilhaBanner.tsx",
+     "src/components/treinamentos/TrilhaCard.tsx",
+     "src/components/treinamentos/TrilhaCursosSection.tsx",
+     "src/components/treinamentos/TrilhaDetalheDialog.tsx",
+     "src/components/treinamentos/TrilhaSequencia.tsx",
+     "src/components/treinamentos/TrilhasFiltros.tsx",
+     "src/components/treinamentos/TurmaCard.tsx",
+     "src/components/treinamentos/TurmaDetalheDialog.tsx",
+     "src/components/treinamentos/TurmasDoDiaPopover.tsx",
+     "src/components/treinamentos/TurmasFiltros.tsx",
+     "src/components/treinamentos/TurmasPainel.tsx",
+     "src/components/treinamentos/__tests__/AgendaSemanal.test.tsx",
+     "src/components/treinamentos/__tests__/CabecalhoColunaTurma.test.tsx",
+     "src/components/treinamentos/__tests__/CalendarioTurmasDialog.test.tsx",
+     "src/components/treinamentos/__tests__/CertificadoCard.test.tsx",
+     "src/components/treinamentos/__tests__/InscricoesPainel.test.tsx",
+     "src/components/treinamentos/__tests__/MaisTurmasCard.test.tsx",
+     "src/components/treinamentos/__tests__/NovaTurmaDialog.test.tsx",
+     "src/components/treinamentos/__tests__/TrainingCover.test.tsx",
+     "src/components/treinamentos/__tests__/TreinamentoCursoCard.test.tsx",
+     "src/components/treinamentos/__tests__/TreinamentosTabsList.test.tsx",
+     "src/components/treinamentos/__tests__/TrilhaSequencia.test.tsx",
+     "src/components/treinamentos/__tests__/TurmaCard.test.tsx",
+     "src/components/treinamentos/__tests__/TurmasPainel.test.tsx",
+     "src/components/treinamentos/__tests__/catalogoDerivacoes.test.ts",
+     "src/components/treinamentos/__tests__/certificadosDerivacoes.test.ts",
+     "src/components/treinamentos/__tests__/inscricoesDerivacoes.test.ts",
+     "src/components/treinamentos/__tests__/treinamentosDerivacoes.test.ts",
+     "src/components/treinamentos/__tests__/trilhasDerivacoes.test.ts",
+     "src/components/treinamentos/__tests__/turmasDerivacoes.test.ts",
+     "src/components/treinamentos/certificadosDerivacoes.ts",
+     "src/components/treinamentos/inscricoesDerivacoes.ts",
+     "src/components/treinamentos/statusTurmaVisual.ts",
+     "src/components/treinamentos/treinamentosDerivacoes.ts",
+     "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+     "src/components/treinamentos/trilhasDerivacoes.ts",
+     "src/components/treinamentos/turmasDerivacoes.ts",
+     "src/mocks/treinamentosMock.ts",
+     "src/pages/TreinamentosPage.tsx"
+    ]
+   },
    {
     "sha": "0b2efa2",
     "date": "2026-11-16",
@@ -309072,15 +312629,6 @@
     "files": [
      "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql"
     ]
-   },
-   {
-    "sha": "49707f1",
-    "date": "2026-11-15",
-    "author": "adm01-debug",
-    "subject": "chore(docs): painel de prontidao deixa de pedir ao dono a #557 ja mergeada (#573)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -309093,16 +312641,16 @@
     4
    ],
    [
+    "inventario/estado/rotas.json",
+    3
+   ],
+   [
     "src/pages/ColaboradorDetalhesPage.tsx",
     3
    ],
    [
     ".github/workflows/canonical-migrations.yml",
     3
-   ],
-   [
-    "inventario/estado/rotas.json",
-    2
    ],
    [
     "src/components/colaborador-detalhes/index.ts",
@@ -309157,11 +312705,11 @@
     2
    ],
    [
-    "docs/prod-readiness.md",
-    2
+    "eslint.config.js",
+    1
    ],
    [
-    "src/components/admissoes/AdmissoesKanban.tsx",
+    "scripts/.bundle-budget.json",
     1
    ]
   ]

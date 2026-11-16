@@ -1,8 +1,8 @@
 {
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
- "total": 530,
- "orfaos": 28,
+ "total": 570,
+ "orfaos": 27,
  "nomes_duplicados": {
   "AlertasRHWidget": [
    "src/components/dashboard/analytics/widgets.tsx",
@@ -2304,7 +2304,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 8,
+   "usado_por": 9,
    "orfao": false
   },
   {
@@ -2379,7 +2379,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 20,
+   "usado_por": 21,
    "orfao": false
   },
   {
@@ -4523,7 +4523,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 87,
+   "usado_por": 88,
    "orfao": false
   },
   {
@@ -5545,12 +5545,616 @@
    "orfao": false
   },
   {
+   "arquivo": "src/components/treinamentos/AgendaSemanal.tsx",
+   "exports": [
+    "AgendaSemanal",
+    "AgendaSemanalProps"
+   ],
+   "export_default": null,
+   "linhas": 231,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CabecalhoColunaTurma.tsx",
+   "exports": [
+    "CabecalhoColunaTurma",
+    "CabecalhoColunaTurmaProps",
+    "TomCabecalhoTurma"
+   ],
+   "export_default": null,
+   "linhas": 109,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CalendarioTurmasDialog.tsx",
+   "exports": [
+    "CalendarioTurmasDialog",
+    "CalendarioTurmasDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 293,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CertificadoCard.tsx",
+   "exports": [
+    "CertificadoCard",
+    "CertificadoCardProps"
+   ],
+   "export_default": null,
+   "linhas": 244,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CertificadoDetalheDialog.tsx",
+   "exports": [
+    "CertificadoDetalheDialog",
+    "CertificadoDetalheDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 200,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CertificadosFiltros.tsx",
+   "exports": [
+    "CertificadosFiltros",
+    "CertificadosFiltrosProps"
+   ],
+   "export_default": null,
+   "linhas": 134,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CertificadosPainel.tsx",
+   "exports": [
+    "CertificadosPainel",
+    "CertificadosPainelProps"
+   ],
+   "export_default": null,
+   "linhas": 325,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CertificadosSegmentos.tsx",
+   "exports": [
+    "CertificadosSegmentos",
+    "CertificadosSegmentosProps"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/CertificadoStatusBadge.tsx",
+   "exports": [
+    "CertificadoStatusBadge"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/InscricaoStatusBadge.tsx",
+   "exports": [
+    "InscricaoStatusBadge",
+    "InscricaoStatusBadgeProps"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/InscricoesFiltros.tsx",
+   "exports": [
+    "InscricoesFiltros",
+    "InscricoesFiltrosProps"
+   ],
+   "export_default": null,
+   "linhas": 132,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/InscricoesPainel.tsx",
+   "exports": [
+    "InscricoesPainel",
+    "InscricoesPainelProps"
+   ],
+   "export_default": null,
+   "linhas": 771,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [
+    "useMovimentoReduzido"
+   ],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/InscricoesSegmentos.tsx",
+   "exports": [
+    "InscricoesSegmentos",
+    "InscricoesSegmentosProps"
+   ],
+   "export_default": null,
+   "linhas": 126,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/MaisTurmasCard.tsx",
+   "exports": [
+    "MaisTurmasCard",
+    "MaisTurmasCardProps"
+   ],
+   "export_default": null,
+   "linhas": 81,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/NovaTurmaDialog.tsx",
+   "exports": [
+    "NovaTurmaDialog",
+    "NovaTurmaDialogProps",
+    "NovaTurmaPayload"
+   ],
+   "export_default": null,
+   "linhas": 231,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrainingCover.tsx",
+   "exports": [
+    "TrainingCover",
+    "TrainingCoverProps"
+   ],
+   "export_default": null,
+   "linhas": 272,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 4,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentoAcoes.tsx",
+   "exports": [
+    "TreinamentoAcoes"
+   ],
+   "export_default": null,
+   "linhas": 96,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentoBadges.tsx",
+   "exports": [
+    "EstiloCategoriaTreinamento",
+    "TreinamentoCategoriaBadge",
+    "TreinamentoIcone",
+    "TreinamentoStatusBadge"
+   ],
+   "export_default": null,
+   "linhas": 196,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 9,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentoCursoAcoes.tsx",
+   "exports": [
+    "TreinamentoCursoAcoes"
+   ],
+   "export_default": null,
+   "linhas": 109,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentoCursoCard.tsx",
+   "exports": [
+    "TreinamentoCursoCard",
+    "TreinamentoCursoCardProps"
+   ],
+   "export_default": null,
+   "linhas": 423,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentoParticipantes.tsx",
+   "exports": [
+    "AvatarParticipante",
+    "TreinamentoParticipantes"
+   ],
+   "export_default": null,
+   "linhas": 146,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 7,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosCascadeAlertDialog.tsx",
+   "exports": [
+    "TreinamentosCascadeAlertDialog",
+    "TreinamentosCascadeAlertDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 3,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosCascadeDialog.tsx",
+   "exports": [
+    "TreinamentosCascadeDialog",
+    "TreinamentosCascadeDialogProps",
+    "TreinamentosCascadeItem"
+   ],
+   "export_default": null,
+   "linhas": 135,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 11,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosCatalogo.tsx",
+   "exports": [
+    "TreinamentosCatalogo",
+    "TreinamentosCatalogoProps"
+   ],
+   "export_default": null,
+   "linhas": 280,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosCatalogoFiltros.tsx",
+   "exports": [
+    "TreinamentosCatalogoFiltros",
+    "TreinamentosCatalogoFiltrosProps"
+   ],
+   "export_default": null,
+   "linhas": 122,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosFiltros.tsx",
+   "exports": [
+    "TreinamentosFiltros",
+    "TreinamentosFiltrosProps"
+   ],
+   "export_default": null,
+   "linhas": 127,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/treinamentosFiltrosComum.tsx",
+   "exports": [
+    "FiltroSelect",
+    "OpcaoFiltro"
+   ],
+   "export_default": null,
+   "linhas": 68,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 5,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosKpis.tsx",
+   "exports": [
+    "TreinamentosKpis",
+    "TreinamentosKpisProps"
+   ],
+   "export_default": null,
+   "linhas": 195,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosTabela.tsx",
+   "exports": [
+    "TreinamentosTabela",
+    "TreinamentosTabelaProps"
+   ],
+   "export_default": null,
+   "linhas": 335,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TreinamentosTabsList.tsx",
+   "exports": [
+    "TreinamentosTabsList",
+    "TreinamentosTabsListProps"
+   ],
+   "export_default": null,
+   "linhas": 73,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrilhaBanner.tsx",
+   "exports": [
+    "TomBanner",
+    "TrilhaBanner",
+    "TrilhaBannerProps"
+   ],
+   "export_default": null,
+   "linhas": 187,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrilhaCard.tsx",
+   "exports": [
+    "TrilhaCard",
+    "TrilhaCardProps"
+   ],
+   "export_default": null,
+   "linhas": 288,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
    "arquivo": "src/components/treinamentos/TrilhaCursosSection.tsx",
    "exports": [
     "TrilhaCursosSection"
    ],
    "export_default": null,
-   "linhas": 139,
+   "linhas": 191,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrilhaDetalheDialog.tsx",
+   "exports": [
+    "TrilhaDetalheDialog",
+    "TrilhaDetalheDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 165,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrilhaSequencia.tsx",
+   "exports": [
+    "TrilhaSequencia"
+   ],
+   "export_default": null,
+   "linhas": 133,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TrilhasFiltros.tsx",
+   "exports": [
+    "TrilhasFiltros",
+    "TrilhasFiltrosProps"
+   ],
+   "export_default": null,
+   "linhas": 176,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TurmaCard.tsx",
+   "exports": [
+    "TurmaCard",
+    "TurmaCardProps"
+   ],
+   "export_default": null,
+   "linhas": 293,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TurmaDetalheDialog.tsx",
+   "exports": [
+    "TurmaDetalheDialog",
+    "TurmaDetalheDialogProps"
+   ],
+   "export_default": null,
+   "linhas": 125,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TurmasDoDiaPopover.tsx",
+   "exports": [
+    "TurmasDoDiaPopover",
+    "TurmasDoDiaPopoverProps"
+   ],
+   "export_default": null,
+   "linhas": 117,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 2,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TurmasFiltros.tsx",
+   "exports": [
+    "TurmasFiltros",
+    "TurmasFiltrosProps"
+   ],
+   "export_default": null,
+   "linhas": 137,
+   "dominio": "components/treinamentos",
+   "hooks_locais": [],
+   "tabelas": [],
+   "edges": [],
+   "usado_por": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/components/treinamentos/TurmasPainel.tsx",
+   "exports": [
+    "TurmasPainel",
+    "TurmasPainelProps"
+   ],
+   "export_default": null,
+   "linhas": 457,
    "dominio": "components/treinamentos",
    "hooks_locais": [],
    "tabelas": [],
@@ -5579,7 +6183,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 18,
    "orfao": false
   },
   {
@@ -5643,7 +6247,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 3,
+   "usado_por": 8,
    "orfao": false
   },
   {
@@ -5659,7 +6263,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 10,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -5674,7 +6278,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 213,
+   "usado_por": 212,
    "orfao": false
   },
   {
@@ -5689,7 +6293,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 303,
+   "usado_por": 326,
    "orfao": false
   },
   {
@@ -5754,7 +6358,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 2,
    "orfao": false
   },
   {
@@ -5933,8 +6537,8 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 0,
-   "orfao": true
+   "usado_por": 1,
+   "orfao": false
   },
   {
    "arquivo": "src/components/ui/dialog.tsx",
@@ -5956,7 +6560,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 144,
+   "usado_por": 150,
    "orfao": false
   },
   {
@@ -5978,7 +6582,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 21,
+   "usado_por": 25,
    "orfao": false
   },
   {
@@ -6010,7 +6614,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 1,
+   "usado_por": 19,
    "orfao": false
   },
   {
@@ -6092,7 +6696,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 156,
+   "usado_por": 157,
    "orfao": false
   },
   {
@@ -6189,7 +6793,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 15,
+   "usado_por": 16,
    "orfao": false
   },
   {
@@ -6269,7 +6873,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 112,
+   "usado_por": 116,
    "orfao": false
   },
   {
@@ -6283,7 +6887,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 9,
+   "usado_por": 10,
    "orfao": false
   },
   {
@@ -6528,7 +7132,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 49,
+   "usado_por": 50,
    "orfao": false
   },
   {
@@ -6612,7 +7216,7 @@
    "hooks_locais": [],
    "tabelas": [],
    "edges": [],
-   "usado_por": 34,
+   "usado_por": 35,
    "orfao": false
   },
   {
@@ -8618,12 +9222,14 @@
     "TreinamentosPage"
    ],
    "export_default": "TreinamentosPage",
-   "linhas": 937,
+   "linhas": 1299,
    "dominio": "pages",
    "hooks_locais": [
-    "useEmpresas"
+    "useEmpresas",
+    "useTrainingImages"
    ],
    "tabelas": [
+    "treinamento_participantes",
     "treinamentos"
    ],
    "edges": [],
