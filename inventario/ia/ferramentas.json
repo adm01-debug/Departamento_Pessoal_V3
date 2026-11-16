@@ -186,7 +186,7 @@
       "arquivo": ".github/workflows/canonical-probes.yml",
       "nome": "Canonical database — read-only security probes",
       "gatilhos": ["schedule", "workflow_call", "workflow_dispatch"],
-      "crons": ["23 6 * * *"],
+      "crons": ["23 6 * * 2"],
       "branches": [],
       "jobs": ["security-probes"],
       "permissoes": ["contents: read", "issues: write"],
