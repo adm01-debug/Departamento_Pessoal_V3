@@ -49,54 +49,94 @@ export function useHistoricoColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
-  const { data: colaborador, isLoading: isLoadingColaborador } = useQuery({
-    queryKey: ['colaborador', empresaId, colaboradorId],
+  const {
+    data: colaborador,
+    isLoading: isLoadingColaborador,
+    isError: isErroColaborador,
+  } = useQuery({
+    // Mesma ordem de argumentos que a casca usa em ColaboradorDetalhesPage
+    // ('colaborador', id, empresaId): chave diferente criaria um segundo cache
+    // para o MESMO registro, duplicando a leitura e separando as invalidações.
+    queryKey: ['colaborador', colaboradorId, empresaId],
     queryFn: () => colaboradorService.buscarPorId(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
   });
 
-  const { data: historicoSalarial, isLoading: isLoadingSalarial } = useHistoricoSalarial(colaboradorId);
+  const {
+    data: historicoSalarial,
+    isLoading: isLoadingSalarial,
+    isError: isErroSalarial,
+  } = useHistoricoSalarial(colaboradorId);
   const criarSalarial = useCriarRegistroSalarial();
 
   const {
     historico: historicoContratos,
     isLoading: isLoadingContratos,
+    isError: isErroContratos,
     criar: criarContrato,
     excluir: excluirContrato,
   } = useHistoricoContratos(colaboradorId);
 
-  const { data: historicoCargo, isLoading: isLoadingCargo } = useQuery({
+  const {
+    data: historicoCargo,
+    isLoading: isLoadingCargo,
+    isError: isErroCargo,
+  } = useQuery({
     queryKey: ['historico-cargo-timeline', colaboradorId],
     queryFn: () => timelineService.listarHistoricoCargoTimeline(colaboradorId),
     enabled: !!colaboradorId,
   });
 
-  const { data: promocoes, isLoading: isLoadingPromocoes } = useQuery({
+  const {
+    data: promocoes,
+    isLoading: isLoadingPromocoes,
+    isError: isErroPromocoes,
+  } = useQuery({
     queryKey: ['promocoes-timeline', colaboradorId],
     queryFn: () => timelineService.listarPromocoesTimeline(colaboradorId),
     enabled: !!colaboradorId,
   });
 
-  const { data: transferencias, isLoading: isLoadingTransferencias } = useQuery({
+  const {
+    data: transferencias,
+    isLoading: isLoadingTransferencias,
+    isError: isErroTransferencias,
+  } = useQuery({
     queryKey: ['transferencias-timeline', colaboradorId],
     queryFn: () => timelineService.listarTransferenciasTimeline(colaboradorId),
     enabled: !!colaboradorId,
   });
 
-  const { data: ferias, isLoading: isLoadingFerias } = useQuery({
+  const {
+    data: ferias,
+    isLoading: isLoadingFerias,
+    isError: isErroFerias,
+  } = useQuery({
     queryKey: ['ferias-resumo-colaborador', colaboradorId, empresaId],
     queryFn: () => service.listarFeriasColaborador(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
   });
 
-  const { data: afastamentos, isLoading: isLoadingAfastamentos } = useQuery({
+  const {
+    data: afastamentos,
+    isLoading: isLoadingAfastamentos,
+    isError: isErroAfastamentos,
+  } = useQuery({
     queryKey: ['afastamentos-timeline', colaboradorId, empresaId],
     queryFn: () => timelineService.listarAfastamentosTimeline(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
   });
 
-  const { data: treinamentos, isLoading: isLoadingTreinamentos } = useTreinamentosColaborador(colaboradorId);
-  const { data: feedbacks, isLoading: isLoadingFeedbacks } = useFeedbacksColaborador(colaboradorId);
+  const {
+    data: treinamentos,
+    isLoading: isLoadingTreinamentos,
+    isError: isErroTreinamentos,
+  } = useTreinamentosColaborador(colaboradorId);
+  const {
+    data: feedbacks,
+    isLoading: isLoadingFeedbacks,
+    isError: isErroFeedbacks,
+  } = useFeedbacksColaborador(colaboradorId);
   const onboarding = useOnboardingColaborador(colaboradorId);
   // Campos da jornada lidos DENTRO do useMemo, extraídos aqui de propósito:
   // (a) o objeto devolvido por useOnboardingColaborador troca de identidade a
@@ -107,15 +147,27 @@ export function useHistoricoColaborador(colaboradorId: string) {
   //     recalculavam quando a jornada ou as tarefas terminavam de carregar.
   const registroJornada = (onboarding as { onboarding?: unknown }).onboarding as JornadaCompat | null | undefined;
   const tarefasJornada = onboarding.tarefas as TarefaJornadaCompat[];
-  const { data: medidas, isLoading: isLoadingMedidas } = useMedidasDisciplinaresColaborador(colaboradorId);
+  const {
+    data: medidas,
+    isLoading: isLoadingMedidas,
+    isError: isErroMedidas,
+  } = useMedidasDisciplinaresColaborador(colaboradorId);
 
-  const { data: desligamentos, isLoading: isLoadingDesligamentos } = useQuery({
+  const {
+    data: desligamentos,
+    isLoading: isLoadingDesligamentos,
+    isError: isErroDesligamentos,
+  } = useQuery({
     queryKey: ['desligamentos-timeline', colaboradorId, empresaId],
     queryFn: () => timelineService.listarDesligamentoTimeline(colaboradorId, empresaId!),
     enabled: !!colaboradorId && !!empresaId,
   });
 
-  const { data: vinculos, isLoading: isLoadingVinculos } = useQuery({
+  const {
+    data: vinculos,
+    isLoading: isLoadingVinculos,
+    isError: isErroVinculos,
+  } = useQuery({
     queryKey: ['vinculos-colaborador', colaboradorId],
     queryFn: () => vinculoService.listarPorColaborador(colaboradorId),
     enabled: !!colaboradorId,
@@ -123,7 +175,11 @@ export function useHistoricoColaborador(colaboradorId: string) {
 
   // Audit trail técnico (era a aba "Auditoria"/ColaboradorHistory, isolada).
   // Vira só mais um tipo de evento, filtrável, na mesma timeline.
-  const { data: auditLogs, isLoading: isLoadingAudit } = useQuery({
+  const {
+    data: auditLogs,
+    isLoading: isLoadingAudit,
+    isError: isErroAudit,
+  } = useQuery({
     // A trilha vem pela RPC `get_audit_trail`, e NÃO por leitura direta da
     // tabela de auditoria: ela está no TABLE_DENYLIST da bridge e fora do
     // TABLE_ALLOWLIST (403 TABLE_NOT_CATALOGED), enquanto a RPC está liberada e
@@ -139,6 +195,10 @@ export function useHistoricoColaborador(colaboradorId: string) {
         empresa_id: empresaId!,
         tabela: 'colaboradores',
         registro_id: colaboradorId,
+        // MESMO limite da aba Histórico (ColaboradorHistory.tsx), que usa esta
+        // mesma queryKey: o React Query compartilha o resultado pela chave e
+        // ignora o limite, então um valor menor aqui truncaria aquela aba.
+        limite: 200,
       });
     },
     enabled: !!colaboradorId && !!empresaId,
@@ -160,6 +220,28 @@ export function useHistoricoColaborador(colaboradorId: string) {
     isLoadingDesligamentos ||
     isLoadingVinculos ||
     isLoadingAudit;
+
+  // A Timeline agrega 15 consultas independentes. Sem agregar o erro, uma fonte
+  // que falha (bridge fora, RPC de auditoria sem permissão) virava lista vazia
+  // via `|| []` e, passadas as tentativas do React Query, `isLoading` ficava
+  // falso: o RH veria um histórico PARCIAL como se estivesse completo, com
+  // contagens erradas ou "nenhum evento". AGENTS.md §3 exige estado de erro.
+  const isError =
+    isErroColaborador ||
+    isErroSalarial ||
+    isErroContratos ||
+    isErroCargo ||
+    isErroPromocoes ||
+    isErroTransferencias ||
+    isErroFerias ||
+    isErroAfastamentos ||
+    isErroTreinamentos ||
+    isErroFeedbacks ||
+    onboarding.isError ||
+    isErroMedidas ||
+    isErroDesligamentos ||
+    isErroVinculos ||
+    isErroAudit;
 
   const events = useMemo<TimelineEvent[]>(() => {
     const mockEventos = mockOr(getMockTimelineFuncional(colaboradorId));
@@ -339,14 +421,17 @@ export function useHistoricoColaborador(colaboradorId: string) {
       | {
           id: string;
           created_at: string;
-          treinamento?: { nome?: string; descricao?: string; carga_horaria?: number };
+          treinamento?: { nome?: string; descricao?: string; data?: string; carga_horaria?: number };
           presente?: boolean;
         }[]
       | undefined) || []) {
       if (!t.presente) continue;
       out.push({
         id: `treinamento-${t.id}`,
-        date: t.created_at,
+        // Data da REALIZAÇÃO do treinamento, não da inscrição: `created_at` é da
+        // linha de participação e não muda quando a presença é registrada, o que
+        // jogava o curso para o dia (e às vezes o ano) da inscrição.
+        date: t.treinamento?.data || t.created_at,
         type: 'treinamento',
         title: `Treinamento: ${t.treinamento?.nome ?? '—'}`,
         description: t.treinamento?.descricao || undefined,
@@ -356,13 +441,28 @@ export function useHistoricoColaborador(colaboradorId: string) {
     }
 
     for (const f of (feedbacks as
-      { id: string; created_at: string; performance?: string | number; nota_geral?: number }[] | undefined) || []) {
+      | { id: string; created_at: string; performance?: string | number; nota_geral?: number; status?: string }[]
+      | undefined) || []) {
       const notaLabel = f.nota_geral != null ? `Nota geral: ${f.nota_geral}` : undefined;
+      // `feedbacks_360.status` é TEXT livre (default 'pendente') e registros
+      // históricos trazem variações de caixa/acento — a normalização segue a de
+      // edicaoFeedback.ts. `listarFeedbacks` NÃO filtra status, então rotular
+      // tudo como "concluído" mostrava avaliação recém-criada como finalizada.
+      const statusKey = String(f.status ?? '')
+        .trim()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      const tituloFeedback = ['concluido', 'concluida'].includes(statusKey)
+        ? 'Feedback 360 concluído'
+        : ['cancelado', 'cancelada', 'cancel'].includes(statusKey)
+          ? 'Feedback 360 cancelado'
+          : 'Feedback 360 pendente';
       out.push({
         id: `avaliacao-${f.id}`,
         date: f.created_at,
         type: 'avaliacao',
-        title: 'Feedback 360 concluído',
+        title: tituloFeedback,
         description:
           [notaLabel, f.performance != null ? String(f.performance) : undefined].filter(Boolean).join(' · ') ||
           undefined,
@@ -415,7 +515,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
     for (const log of (auditLogs as
       | {
           id: string;
-          acao: 'INSERT' | 'UPDATE' | 'DELETE';
+          acao: string;
           user_email?: string;
           created_at: string;
           campos_alterados?: string[];
@@ -423,6 +523,14 @@ export function useHistoricoColaborador(colaboradorId: string) {
           dados_novos?: Record<string, unknown> | null;
         }[]
       | undefined) || []) {
+      // `get_audit_trail` devolve também os acessos gravados por
+      // `useDataAccessLog` (acao 'VISUALIZACAO', mesma tabela e registro_id) —
+      // em produção já existem 8 desses em audit_log para 'colaboradores'. Eles
+      // não são eventos da vida do colaborador, e o mapeamento anterior tratava
+      // tudo que não fosse INSERT/UPDATE como exclusão: abrir o dossiê passava a
+      // exibir "Registro excluído". Só as três ações de mudança entram aqui.
+      const acao = String(log.acao ?? '').toUpperCase();
+      if (acao !== 'INSERT' && acao !== 'UPDATE' && acao !== 'DELETE') continue;
       const alteracoes = (log.campos_alterados || [])
         .map((campo) => ({ campo, de: log.dados_anteriores?.[campo], para: log.dados_novos?.[campo] }))
         .filter((c) => c.de !== c.para);
@@ -430,16 +538,11 @@ export function useHistoricoColaborador(colaboradorId: string) {
         id: `auditoria-${log.id}`,
         date: log.created_at,
         type: 'auditoria',
-        title:
-          log.acao === 'INSERT'
-            ? 'Registro criado'
-            : log.acao === 'UPDATE'
-              ? 'Cadastro atualizado'
-              : 'Registro excluído',
-        description: log.acao === 'UPDATE' ? `${alteracoes.length} campo(s) alterado(s)` : undefined,
+        title: acao === 'INSERT' ? 'Registro criado' : acao === 'UPDATE' ? 'Cadastro atualizado' : 'Registro excluído',
+        description: acao === 'UPDATE' ? `${alteracoes.length} campo(s) alterado(s)` : undefined,
         secondary: log.user_email ? `Por ${log.user_email}` : undefined,
         source: 'audit_log',
-        auditDetail: { acao: log.acao, userEmail: log.user_email, alteracoes },
+        auditDetail: { acao, userEmail: log.user_email, alteracoes },
       });
     }
 
@@ -469,6 +572,7 @@ export function useHistoricoColaborador(colaboradorId: string) {
   return {
     events,
     isLoading,
+    isError,
     colaborador: colaborador as
       { data_admissao?: string; status?: string; tipo_contrato?: string; empresa_id?: string } | null | undefined,
     criarSalario: criarSalarial.mutateAsync,

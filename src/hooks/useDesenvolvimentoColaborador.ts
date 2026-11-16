@@ -100,13 +100,17 @@ export function useOnboardingColaborador(colaboradorId: string) {
    * escrito nos dois lados — e sai assim que a conferência de dados do modelo B
    * for concluída (ver `docs/ONBOARDING_MODELO_B_DEPRECATED.md`).
    */
-  const { data: onboarding, isLoading: isLoadingOnboarding } = useQuery({
+  const {
+    data: onboarding,
+    isLoading: isLoadingOnboarding,
+    isError: isErroOnboarding,
+  } = useQuery({
     queryKey: ['onboarding-colaborador', colaboradorId, empresaAtual?.id],
     queryFn: async () => {
       const doMock = mockOr(getMockOnboardingRegistro(colaboradorId));
       if (doMock) return doMock;
 
-      const canonica = await buscarJornadaDoColaborador(colaboradorId);
+      const canonica = await buscarJornadaDoColaborador(colaboradorId, empresaAtual!.id);
       if (canonica) return canonica;
 
       const legado = await onboardingService.buscarPorColaborador(colaboradorId, empresaAtual!.id);
@@ -118,7 +122,11 @@ export function useOnboardingColaborador(colaboradorId: string) {
   const onboardingId = (onboarding as { id?: string } | null | undefined)?.id;
   const fonte = (onboarding as { fonte?: 'jornada' | 'legado' } | null | undefined)?.fonte ?? 'jornada';
 
-  const { data: tarefas, isLoading: isLoadingTarefas } = useQuery({
+  const {
+    data: tarefas,
+    isLoading: isLoadingTarefas,
+    isError: isErroTarefas,
+  } = useQuery({
     queryKey: ['onboarding-tarefas-colaborador', onboardingId],
     queryFn: async () => {
       const doMock = mockOr(getMockOnboardingTarefas(onboardingId));
@@ -145,5 +153,6 @@ export function useOnboardingColaborador(colaboradorId: string) {
     atrasadas,
     progresso,
     isLoading: isLoadingOnboarding || isLoadingTarefas,
+    isError: isErroOnboarding || isErroTarefas,
   };
 }

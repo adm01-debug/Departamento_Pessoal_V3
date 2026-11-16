@@ -337,20 +337,36 @@ function dataIso(data: Date | null): string | undefined {
  * formato do dossiê. `null` quando o colaborador não tem admissão localizável —
  * cabe ao chamador decidir o fallback (nota de compatibilidade).
  */
-export async function buscarJornadaDoColaborador(colaboradorId: string): Promise<JornadaCompat | null> {
+export async function buscarJornadaDoColaborador(
+  colaboradorId: string,
+  empresaId: string
+): Promise<JornadaCompat | null> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data: colaborador, error: erroColaborador } = await supabase
     .from('colaboradores')
     .select('cpf')
     .eq('id', colaboradorId)
+    .eq('empresa_id', empresaId)
     .maybeSingle();
   if (erroColaborador) throw erroColaborador;
-  const cpf = colaborador?.cpf?.trim();
-  if (!cpf) return null;
+  const digitos = (colaborador?.cpf ?? '').replace(/\D/g, '');
+  if (digitos.length !== 11) return null;
 
+  // `colaboradores.cpf` guarda só dígitos (CPFInput limpa a máscara), mas
+  // `admissoes.cpf` é TEXT livre e o formulário de admissão aceita o CPF
+  // pontuado — um `.eq` em um dos formatos não acha o outro. Buscamos as duas
+  // representações da MESMA pessoa.
+  const mascarado = `${digitos.slice(0, 3)}.${digitos.slice(3, 6)}.${digitos.slice(6, 9)}-${digitos.slice(9)}`;
+
+  // Recorte por empresa: a policy de `admissoes` permite ler todas as empresas
+  // às quais o usuário tem vínculo, então ordenar por `created_at` sem filtrar
+  // podia escolher a admissão de OUTRA empresa para o mesmo CPF e trazer as
+  // tarefas dela para este dossiê.
   const { data, error } = await supabase
     .from('admissoes')
     .select('id, nome, created_at')
-    .eq('cpf', cpf)
+    .in('cpf', [digitos, mascarado])
+    .eq('empresa_id', empresaId)
     .order('created_at', { ascending: false })
     .limit(1);
   if (error) throw error;

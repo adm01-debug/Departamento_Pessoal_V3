@@ -59,14 +59,18 @@ export function useProximosEventos(colaboradorId: string, empresaId?: string) {
     });
   }
 
-  for (const p of (periodosAquisitivos as { fim_concessivo?: string; status?: string }[] | undefined) || []) {
-    if (p.fim_concessivo && p.fim_concessivo >= hoje && p.status !== 'vencido') {
+  // A coluna real é `data_limite_concessao` (conferido em periodos_aquisitivos no
+  // projeto canônico); não existe `fim_concessivo`. Com o nome errado a condição
+  // era sempre falsa e NENHUM vencimento de férias aparecia aqui.
+  for (const p of (periodosAquisitivos as { data_limite_concessao?: string; status?: string }[] | undefined) || []) {
+    const prazo = p.data_limite_concessao;
+    if (prazo && prazo >= hoje && p.status !== 'vencido') {
       eventos.push({
-        data: p.fim_concessivo,
+        data: prazo,
         tipo: 'ferias_vencimento',
         titulo: 'Vencimento do período concessivo de férias',
         categoria: 'Férias',
-        badge: countdownBadge(p.fim_concessivo, hoje),
+        badge: countdownBadge(prazo, hoje),
       });
     }
   }

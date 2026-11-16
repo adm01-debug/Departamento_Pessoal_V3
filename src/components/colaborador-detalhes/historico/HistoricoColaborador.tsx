@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { AlertTriangle } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useHistoricoColaborador } from '@/hooks/useHistoricoColaborador';
 import type { ProximoEvento } from '@/hooks/useProximosEventos';
 import type { TimelineEventType } from '@/types/timelineEvent';
@@ -30,7 +32,7 @@ export function HistoricoColaborador({
   proximosEventos,
   onVerTodosProximosEventos,
 }: HistoricoColaboradorProps) {
-  const { events, isLoading, colaborador, criarSalario, criandoSalario, criarContrato } =
+  const { events, isLoading, isError, colaborador, criarSalario, criandoSalario, criarContrato } =
     useHistoricoColaborador(colaboradorId);
 
   const [search, setSearch] = useState('');
@@ -105,6 +107,23 @@ export function HistoricoColaborador({
     // cards da sidebar) de uma vez, sem precisar repetir em cada um.
     <AnimatePresence>
       <div className="space-y-4">
+        {/* A Timeline soma 15 consultas independentes. Quando alguma falha, o
+          hook já expõe `isError` e os dados daquela fonte vêm vazios — sem
+          este aviso a tela mostraria um histórico PARCIAL como se estivesse
+          completo, inclusive nas contagens da sidebar. Os eventos que
+          carregaram continuam visíveis de propósito: é mais útil ver parte do
+          histórico sabendo que falta algo do que não ver nada. */}
+        {isError && (
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Histórico possivelmente incompleto</AlertTitle>
+            <AlertDescription>
+              Pelo menos uma fonte de dados não respondeu. Os eventos abaixo e as contagens podem não refletir tudo que
+              existe. Recarregue a página; se persistir, avise o suporte antes de usar esta tela como base para alguma
+              decisão.
+            </AlertDescription>
+          </Alert>
+        )}
         {/* Mesma animação de entrada dos cards do Dashboard Executivo
           (fade + slide-up com stagger por índice, ver cardVariants em
           MetricCard.tsx) — toolbar (0), timeline (1) e os 4 cards da
