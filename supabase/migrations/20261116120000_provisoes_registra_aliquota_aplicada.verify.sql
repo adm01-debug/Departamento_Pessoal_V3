@@ -29,6 +29,15 @@ SELECT CASE WHEN (
    WHERE n.nspname = 'public' AND p.proname = 'replace_monthly_provisions'
 ) THEN 'ok' ELSE 'FALHOU' END;
 
+-- 1d. A validacao de argumentos recusa NULL SQL: p_rows nulo nao pode passar
+--     pela porta e apagar a competencia. Exige IS DISTINCT FROM no corpo.
+SELECT CASE WHEN (
+  SELECT bool_and(p.prosrc LIKE '%jsonb_typeof(p_rows) IS DISTINCT FROM%'
+              AND p.prosrc LIKE '%p_competencia IS NULL%')
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+   WHERE n.nspname = 'public' AND p.proname = 'replace_monthly_provisions'
+) THEN 'ok' ELSE 'FALHOU' END;
+
 -- 2. O CHECK da faixa existe e esta VALIDADO (um check NOT VALID nao protege
 --    as linhas que ja estao la).
 SELECT CASE WHEN EXISTS (

@@ -87,11 +87,18 @@ DECLARE
   v_bps_vigente integer;
   v_aliquotas integer;
 BEGIN
+  -- IS DISTINCT FROM, nao <>, e NULL explicito em p_competencia (achado da
+  -- revisao desta PR): com p_rows = NULL SQL, jsonb_typeof(NULL) e NULL e
+  -- NULL <> 'array' tambem e NULL -- a condicao nao disparava, o lote nulo
+  -- passava pela validacao e o DELETE apagava a competencia inteira sem
+  -- inserir substituta, devolvendo sucesso. A exclusao explicita continua
+  -- sendo o array vazio '[]', que e intencional; NULL agora e recusado.
   IF p_empresa_id IS NULL OR p_user_id IS NULL
+     OR p_competencia IS NULL
      OR p_competencia !~ '^\d{4}-(0[1-9]|1[0-2])$'
-     OR jsonb_typeof(p_rows) <> 'array'
+     OR jsonb_typeof(p_rows) IS DISTINCT FROM 'array'
      OR jsonb_array_length(p_rows) > 20000
-     OR jsonb_typeof(p_audit_data) <> 'object' THEN
+     OR jsonb_typeof(p_audit_data) IS DISTINCT FROM 'object' THEN
     RAISE EXCEPTION 'invalid monthly provision replacement arguments';
   END IF;
   competence_date := to_date(p_competencia || '-01', 'YYYY-MM-DD');
