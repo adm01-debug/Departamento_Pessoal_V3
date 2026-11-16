@@ -6,89 +6,113 @@ O check `Supabase Preview` reprova **todo commit** da `main` com
 `Remote migration versions not found in local migrations directory`. Isso cria
 a impressão de que a esteira nunca fica verde e esconde o que é defeito de
 verdade. A decisão pendente era "canonizar as versões faltantes". Este
-documento registra a medição que mostra **por que canonizar está errado**, para
-que ninguém tente de novo.
+documento registra o que foi **medido**, o que **não** foi possível verificar, e
+a decisão que decorre disso.
 
-> Nota: `Supabase Preview` **não** é um dos 10 checks obrigatórios do ruleset da
-> `main` (conferido no ruleset 21934736), portanto **não bloqueia merge**.
+> `Supabase Preview` **não** é um dos 10 checks obrigatórios do ruleset da
+> `main` (ruleset `21934736`), portanto **não bloqueia merge**.
 
-## Os números
+## Os números medidos
 
-| medição | valor |
+| medição no canônico `frjbfeamybqsejlvmqbl` | valor |
 | --- | --- |
-| versões no `supabase_migrations.schema_migrations` do canônico | **1079** |
-| versões distintas com arquivo em `supabase/migrations/` | **807** |
+| versões no `supabase_migrations.schema_migrations` | **1079** |
+| arquivos de migration distintos em `supabase/migrations/` | **807** |
 | diferença líquida | **272** |
-| versões do ledger em formato legado (não `YYYYMMDDHHMMSS`) | 58 (`001`…`007`, `2025122813133501`, …) |
+| versões em formato legado (não `YYYYMMDDHHMMSS`) | 58 |
 | versões datadas avaliadas | 1007 |
-| **versões datadas que têm uma "irmã" no mesmo minuto, a ≤ 10 s** | **639** |
-| versões datadas sozinhas no minuto | 368 |
+| versões datadas com outra versão no mesmo minuto, a ≤ 10 s | 639 |
+| **versões com `statements` NULL** | **978** |
+| versões com `statements` array vazio | 40 |
+| versões com `statements` preenchido | **61** |
 
-## O que as versões faltantes são
+## O fato que decide: o conteúdo não existe
 
-**Não são DDL perdida.** São registros irmãos da mesma mudança: a ferramenta que
-gerava as migrations (Studio/Lovable, arquivos com nome em UUID) registrava
-**duas linhas** no ledger por alteração e salvava **um** arquivo.
+**978 das 1079 versões do ledger têm `statements` NULL** e outras 40 têm array
+vazio. Só **61** guardam o SQL que foi executado — provavelmente as que
+passaram por `canonical-migrations.yml`, que grava `statements` no INSERT do
+ledger.
 
-Amostra conferida arquivo por arquivo:
+Ou seja: para a esmagadora maioria das versões sem arquivo, **o SQL não está em
+lugar nenhum** — nem no repositório, nem em nenhuma das 21 branches auditadas em
+16/11/2026 (todas conferidas arquivo por arquivo, com normalização de CRLF),
+nem na própria linha do ledger.
 
-| versão | tem arquivo? | arquivo |
-| --- | --- | --- |
-| `20260511141726` | **não** | — |
-| `20260511141729` | sim | `20260511141729_301063c3-c283-49c8-8fb7-b716095c30fa.sql` |
-| `20260512142102` | **não** | — |
-| `20260512142106` | sim | `20260512142106_1f4ccc51-b612-41e0-960c-ac851d1c5f4f.sql` |
-| `20260717174811` | sim | `20260717174811_1fedf63f-8379-4511-84f5-39441172d003.sql` |
-| `20260717174817` | **não** | — |
+**É por isso que não se canoniza**: não por serem duplicatas, mas porque **não
+existe fonte para o conteúdo**. Criar arquivo aqui seria inventar SQL e
+registrá-lo como histórico oficial do banco, o que é pior do que a ausência —
+o próximo agente leria aquilo como verdade (`AGENTS.md` §2.3).
 
-O padrão se repete: pares separados por 3 a 6 segundos, com **um** arquivo para
-os dois registros. Daí os 639 com irmã no mesmo minuto.
+## Hipótese dos pares — NÃO VERIFICADA
 
-## Por que NÃO canonizar
+Há uma explicação plausível para a origem dos 272: a ferramenta que gerava as
+migrations (arquivos com nome em UUID) registraria **duas linhas** no ledger por
+alteração, salvando **um** arquivo. O que apoia:
 
-Criar um arquivo para cada versão faltante significaria **inventar SQL que nunca
-existiu** — o conteúdo dessas versões não está no repositório, nem em nenhuma
-branch (as 21 branches foram auditadas em 16/11/2026), nem no `statements` do
-ledger para a maioria delas. Um arquivo vazio ou com SQL reconstruído "de
-memória" passaria a valer como histórico oficial do banco e seria pior do que a
-ausência: o próximo agente leria aquilo como a verdade.
+- 639 das 1007 versões datadas têm outra versão no mesmo minuto, a ≤ 10 s;
+- amostra conferida: `20260511141726` sem arquivo e `20260511141729` com
+  (`..._301063c3-c283-49c8-8fb7-b716095c30fa.sql`); `20260512142102` sem e
+  `20260512142106` com; `20260717174817` sem e `20260717174811` com.
 
-Isso contraria diretamente a regra do projeto de **verdade acima de validação**
-(`AGENTS.md` §2.3): deixar o check vermelho e documentado é honesto; fabricar
-807 → 1079 arquivos para pintar de verde não é.
+**NÃO VERIFICADO, e o motivo:** proximidade de timestamp **não é** igualdade de
+SQL, e os três pares provam apenas que existe arquivo para uma das duas versões
+— não que as duas descrevem a mesma mudança. Verificar exigiria comparar o SQL
+de cada versão sem arquivo, e esse SQL não está disponível (`statements` NULL em
+978 de 1079). Portanto **não se pode afirmar** que nenhuma das 272 contém uma
+alteração distinta; o que se pode afirmar é que o conteúdo delas é
+**irrecuperável** a partir de qualquer fonte deste repositório ou do ledger.
 
-## O que fazer com o `Supabase Preview`
+## Lacuna real de detecção — leia antes de desconectar o `Supabase Preview`
 
-Ele **nunca** vai ficar verde neste repositório, porque exige paridade
-1-para-1 entre ledger e arquivos, e os 272 registros irmãos tornam essa
-paridade inalcançável sem fabricar arquivo.
+O `Supabase Preview` **nunca** vai ficar verde aqui: ele exige paridade
+1-para-1 entre ledger e arquivos, e as 272 tornam essa paridade inalcançável sem
+fabricar arquivo.
 
-As duas saídas honestas, nas duas o merge continua protegido pelos 10 checks
-obrigatórios e por `canonical-migrations.yml`:
+Mas **desconectá-lo tem um custo que precisa ficar escrito**: hoje ele é o
+**único** controle automático que compara o **conjunto completo** de versões do
+ledger com o conjunto completo de arquivos do repositório. Os controles do
+repositório **não** cobrem isso:
 
-1. **Desconectar a integração** do repositório (Settings → Integrations, ou no
-   painel do Supabase). É clique do dono: não há API neste ambiente que remova
-   instalação de GitHub App.
+- `.github/workflows/canonical-migrations.yml` roda **só** por
+  `workflow_dispatch`, prepara uma **lista explícita** e confere o ledger
+  **daquele lote** — uma versão nova no banco fora do lote, ou um arquivo novo
+  não listado, não aparece;
+- `scripts/canonical-invariants.sql:2-4` conta apenas as versões **enumeradas**
+  do lote corrente (hoje uma só) — não compara conjuntos;
+- os sidecars `.verify.sql` provam o **efeito** de migrations específicas, não a
+  paridade do histórico.
+
+Então, nas duas saídas abaixo, essa comparação fica **sem detector automático**
+até que alguém a implemente. É uma escolha consciente, não uma cobertura
+equivalente:
+
+1. **Desconectar a integração** (Settings → Integrations, ou no painel do
+   Supabase; é clique do dono — não há API neste ambiente que remova instalação
+   de GitHub App), aceitando a lacuna acima.
 2. **Deixar como está**, sabendo ler: vermelho nele significa "paridade
    histórica imperfeita", não "esta PR está errada".
 
-O que **não** se perde ao desconectar: o detector de drift que importa —
-migration nova aplicada sem arquivo, ou arquivo sem aplicação — já é coberto
-por `canonical-migrations.yml` (lista fechada + ledger + sidecars `.verify.sql`)
-e pelo invariante `ledger_count` de `scripts/canonical-invariants.sql`.
+Enquanto não houver detector, a comparação completa pode ser feita à mão com as
+consultas abaixo.
 
-## Como refazer esta medição
+## Como refazer a medição
 
 ```sql
--- total no ledger e quantas estão em formato legado
+-- 1. total, formato legado e disponibilidade do SQL no ledger
 SELECT count(*) AS total,
-       count(*) FILTER (WHERE version !~ '^[0-9]{14}$') AS legado
+       count(*) FILTER (WHERE version !~ '^[0-9]{14}$')                       AS legado,
+       count(*) FILTER (WHERE statements IS NULL)                             AS sem_sql,
+       count(*) FILTER (WHERE statements IS NOT NULL
+                          AND cardinality(statements) = 0)                    AS sql_vazio,
+       count(*) FILTER (WHERE statements IS NOT NULL
+                          AND cardinality(statements) > 0)                    AS com_sql
   FROM supabase_migrations.schema_migrations;
 
--- versões datadas com "irmã" no mesmo minuto (a assinatura do par)
+-- 2. versões datadas com outra no mesmo minuto (apoia a hipótese dos pares,
+--    NÃO a prova)
 WITH t AS (
   SELECT version,
-         substring(version,1,12) AS prefixo12,
+         substring(version,1,12)      AS prefixo12,
          substring(version,13,2)::int AS seg
     FROM supabase_migrations.schema_migrations
    WHERE version ~ '^[0-9]{14}$'
@@ -100,12 +124,31 @@ SELECT count(*) FILTER (
                  WHERE b.prefixo12 = t.prefixo12
                    AND b.version <> t.version
                    AND abs(b.seg - t.seg) <= 10) > 0
-       ) AS com_irma
+       ) AS com_vizinha
   FROM t;
 ```
 
 ```sh
-# versões distintas com arquivo no repositório
+# 3. versões distintas com arquivo no repositório
 ls supabase/migrations/*.sql | grep -v '\.verify\.sql$' \
-  | sed 's|.*/||; s|_.*||' | sort -u | wc -l
+  | sed 's|.*/||; s|_.*||' | sort -u > /tmp/vers_repo.txt
+wc -l < /tmp/vers_repo.txt
+```
+
+```sh
+# 4. comparação COMPLETA ledger x arquivos, nos dois sentidos — é esta que o
+#    `Supabase Preview` faz e que nenhum controle do repositório faz hoje.
+#    Gera o SQL a partir da lista do passo 3 e roda no canônico.
+node -e '
+const fs = require("fs"); const q = String.fromCharCode(39);
+const vs = fs.readFileSync("/tmp/vers_repo.txt", "utf8").trim().split("\n");
+const vals = vs.map((x) => "(" + q + x + q + ")").join(",");
+console.log(`WITH repo(version) AS (VALUES ${vals})
+SELECT (SELECT count(*) FROM supabase_migrations.schema_migrations m
+          LEFT JOIN repo r ON r.version = m.version
+         WHERE r.version IS NULL)                      AS ledger_sem_arquivo,
+       (SELECT count(*) FROM repo r
+          LEFT JOIN supabase_migrations.schema_migrations m ON m.version = r.version
+         WHERE m.version IS NULL)                      AS arquivo_sem_ledger;`);
+'
 ```
