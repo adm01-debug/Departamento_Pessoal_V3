@@ -1,6 +1,6 @@
 # 10 · ACESSO E SEGURANÇA — quem pode o quê
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6450ca8542` · branch `main` · 2026-11-15 18:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9ecaf8a958` · branch `main` · 2026-11-16 10:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Perfis / roles identificados
@@ -841,7 +841,7 @@ Middleware matcher (Next.js): nenhum
 | grant | anon, authenticated | execute | `check_login_lock`, `record_failed_login`, `reset_login_attempts`, `check_brute_force`, `check_rate_limit`, `check_login_lock`, `record_failed_login`, `get_admissao_por_token`, `contrato_consultar_por_token`, `contrato_assinar_por_token`, `contrato_preview_url_por_token`, `contrato_verificar_autenticidade`, `contrato_verificar_autenticidade_v2`, `contrato_verificar_autenticidade_v2`, `contrato_verificar_autenticidade` … +9 |
 | grant | anon, authenticated, service_role | execute | `check_login_lock`, `record_failed_login`, `contrato_assinar_por_token`, `medida_consultar_por_token`, `medida_registrar_ciencia_publica`, `contrato_assinar_por_token`, `contrato_assinar_por_token`, `admissao_assinar_contrato`, `admissao_marcar_documentos`, `admissao_registrar_documento`, `admissao_salvar_dados`, `check_brute_force`, `check_rate_limit`, `contrato_consultar_por_token`, `contrato_preview_url_por_token` … +9 |
 | grant | anon, authenticated, service_role | select | `storage.buckets` |
-| grant | authenticated | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `get_user_empresas`, `get_auth_empresa_id`, `user_belongs_to_empresa`, `get_user_default_empresa`, `has_role` … +145 |
+| grant | authenticated | execute | `has_role`, `is_admin`, `get_user_roles`, `get_user_default_empresa`, `get_user_empresas`, `user_belongs_to_empresa`, `anonimizar_dados_pessoais`, `fn_link_gov_br_account`, `processar_ajuste_aprovado`, `get_colaborador_banco_horas`, `get_user_empresas`, `get_auth_empresa_id`, `user_belongs_to_empresa`, `get_user_default_empresa`, `has_role` … +148 |
 | grant | authenticated | select | `vw_folha_compliance`, `v_idempotency_metrics`, `v_slow_queries_top50`, `audit_log_unified`, `audit_log_unified_archive`, `holerite_distribuicoes`, `v_audit_legacy`, `v_system_health`, `v_ferias_alerta_pagamento_d2`, `v_ferias_adiant13_elegibilidade`, `v_ferias_folha_reconciliacao`, `ferias_reconciliacao_logs`, `v_contratos_vencendo`, `v_contratos_assinatura_kpi`, `v_contratos_tokens_pendentes` … +25 |
 | grant | authenticated | select, insert | `logs_sistema`, `folha_lock_conflicts`, `despesas_aprovacoes_log`, `aej_geracoes`, `ponto_espelhos_revogacoes`, `epis_fichas_assinaturas`, `sst_regimento_assinaturas`, `medidas_disciplinares_workflow_log`, `audit_log`, `folha_auditoria`, `afd_geracoes` |
 | grant | authenticated | select, insert, update | `login_lockouts`, `contrato_assinatura_tokens` |
@@ -899,8 +899,8 @@ Middleware matcher (Next.js): nenhum
 | revoke | authenticated, anon, PUBLIC | execute | `enforce_afastamento_hash`, `enforce_aso_hash`, `enforce_batida_ponto_hash`, `enforce_cat_hash`, `enforce_cnab_remessa_hash`, `enforce_desligamento_hash`, `enforce_documento_assinatura_hash`, `enforce_epi_entrega_hash`, `enforce_esocial_evento_hash`, `enforce_ferias_hash`, `enforce_folha_pagamento_hash`, `enforce_holerite_signed_hash`, `enforce_log_retention`, `enforce_medida_disciplinar_hash`, `trg_audit_status_change` … +38 |
 | revoke | public | insert | `feedbacks_360` |
 | revoke | public | truncate | `feedbacks_360`, `feedbacks_360` |
-| revoke | public, anon | all | `versao_avaliacao_feedback`, `vw_feedbacks_360_versao`, `pode_gerir_avaliacoes`, `pode_validar_potencial`, `finalizar_feedback`, `validar_potencial_avaliacao`, `criar_feedback_seguro`, `decidir_aprovacao_gestor`, `colaborador_id_do_usuario`, `pode_aprovar_colaborador`, `enviar_avaliacao_ao_gestor`, `situacao_aprovacao`, `versao_consolidada_avaliacao`, `trg_feedbacks_360_consolidacao`, `validar_potencial_avaliacao` … +15 |
-| revoke | public, anon, authenticated | all | `sincronizar_consolidacao_avaliacao`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `finalizar_feedback_base` |
+| revoke | public, anon | all | `versao_avaliacao_feedback`, `vw_feedbacks_360_versao`, `pode_gerir_avaliacoes`, `pode_validar_potencial`, `finalizar_feedback`, `validar_potencial_avaliacao`, `criar_feedback_seguro`, `decidir_aprovacao_gestor`, `colaborador_id_do_usuario`, `pode_aprovar_colaborador`, `enviar_avaliacao_ao_gestor`, `situacao_aprovacao`, `versao_consolidada_avaliacao`, `trg_feedbacks_360_consolidacao`, `validar_potencial_avaliacao` … +18 |
+| revoke | public, anon, authenticated | all | `sincronizar_consolidacao_avaliacao`, `feedbacks_360_consolidacoes`, `feedbacks_360_aprovacoes_gestor`, `finalizar_feedback_base`, `sincronizar_consolidacao_avaliacao` |
 | revoke | service_role | delete | `pii_access_logs` |
 
 ## Riscos de acesso detectados

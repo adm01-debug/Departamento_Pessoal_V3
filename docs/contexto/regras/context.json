@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "6450ca854267c47653f98f58d928c061ab4287ea",
+  "sha": "9ecaf8a95851077087a0ea3e4dc025f8099af586",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-15 18:13 UTC",
-  "files_total": 3112,
-  "code_files": 2579,
-  "code_lines": 376922
+  "generated_at": "2026-11-16 10:29 UTC",
+  "files_total": 3114,
+  "code_files": 2581,
+  "code_lines": 377947
  },
  "version": "1.3.2",
- "facts_hash": "55d73725910f3205",
+ "facts_hash": "e92309bde39f86fb",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 871,
+   ".sql": 873,
    ".ts": 793,
    ".tsx": 787,
    ".mjs": 100,
@@ -63712,13 +63712,15 @@
     "args": "p_colaborador_id uuid",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "select exists ( select 1 from public.colaboradores alvo join public.colaboradores gestor on gestor.user_id = auth.uid() and gestor.empresa_id = alvo.empresa_id where alvo.id = p_colaborador_id and alvo.supervisor_id = gestor.id ) and exists ( select 1 from public.user_roles ur where ur.user_id = auth.uid() and ur.role::text = 'gestor' )",
+    "body": "SELECT EXISTS ( SELECT 1 FROM public.colaboradores alvo WHERE alvo.id = p_colaborador_id AND alvo.empresa_id IS NOT NULL AND alvo.empresa_id IN (SELECT public.get_user_empresas(auth.uid())) AND EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role::text = 'gestor' ) AND ( EXISTS ( SELECT 1 FROM public.colaboradores gestor WHERE gestor.id = alvo.supervisor_id AND gestor.empresa_id = alvo.empresa_id AND gestor.user_id = auth.uid() AND gestor.id <> alvo.id ) OR ( EXISTS ( SELECT 1 FROM public.ninebox_permissoes_homologacao h WHERE h.user_id = auth.uid() AND h.habilitado = true AND h.expira_em > now() ) AND alvo.user_id IS DISTINCT FROM auth.uid() ) ) );",
     "raises": [],
     "tables": [
+     "auth",
      "colaboradores",
+     "ninebox_permissoes_homologacao",
      "user_roles"
     ]
    },
@@ -63758,10 +63760,10 @@
     "args": "p_colaborador_id uuid, p_ciclo_id uuid",
     "returns": "text",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "declare v_uid uuid := auth.uid(); v_empresa uuid; v_versao_gestor text; v_status_consolidacao text; v_decisao text; v_decisao_versao text; v_gestor_feedback uuid; v_validacao boolean := false; begin select c.empresa_id into v_empresa from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null or v_empresa not in (select public.get_user_empresas(v_uid)) then raise exception 'nao_autorizado'; end if; select c.versao_consolidada, c.status into v_versao_gestor, v_status_consolidacao from public.feedbacks_360_consolidacoes c where c.colaborador_id = p_colaborador_id and c.ciclo_id = p_ciclo_id; if v_versao_gestor is null then v_versao_gestor := public.versao_consolidada_avalia …",
+    "body": "declare v_uid uuid := auth.uid(); v_empresa uuid; v_versao_gestor text; v_status_consolidacao text; v_decisao text; v_decisao_versao text; v_decidido_por uuid; v_gestor_feedback uuid; v_validacao boolean := false; begin select c.empresa_id into v_empresa from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null or v_empresa not in (select public.get_user_empresas(v_uid)) then raise exception 'nao_autorizado'; end if; select c.versao_consolidada, c.status into v_versao_gestor, v_status_consolidacao from public.feedbacks_360_consolidacoes c where c.colaborador_id = p_colaborador_id and c.ciclo_id = p_ciclo_id; v_versao_gestor := public.versao_consolidada_avaliacao(p_colab …",
     "raises": [
      "nao_autorizado"
     ],
@@ -63771,6 +63773,7 @@
      "feedbacks_360_aprovacoes_gestor",
      "feedbacks_360_consolidacoes",
      "feedbacks_360_validacoes_potencial",
+     "user_roles",
      "v_decisao",
      "v_empresa",
      "v_gestor_feedback",
@@ -63779,10 +63782,10 @@
     ]
    },
    "decidir_aprovacao_gestor": {
-    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text default null, p_idempotencia text default null",
+    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text DEFAULT NULL::text, p_idempotencia text DEFAULT NULL::text",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
     "body": "declare v_uid uuid := auth.uid(); v_email text := nullif(current_setting('request.jwt.claims', true)::jsonb ->> 'email', ''); v_decisao text := lower(btrim(coalesce(p_decisao, ''))); v_just text := nullif(btrim(coalesce(p_justificativa, '')), ''); v_chave text; v_hash text; v_confere text; v_anterior jsonb; v_linha public.feedbacks_360%rowtype; v_cons public.feedbacks_360_consolidacoes%rowtype; v_versao text; v_versao_atual text; v_status text; v_id uuid; v_resultado jsonb; v_desempenho numeric; v_potencial numeric; v_soma_pesos numeric := 0; v_soma_notas numeric := 0; v_peso numeric; v_tem_gestor boolean := false; v_snapshot jsonb; v_cat record; begin if v_uid is null then raise exception ' …",
@@ -63794,12 +63797,14 @@
      "perfil_nao_autorizado",
      "consolidacao_ausente",
      "nao_autorizado",
+     "empresa_ciclo_colaborador_inconsistentes",
      "sem_avaliacao",
-     "versao_desatualizada",
-     "avaliacao_consolidada_ausente"
+     "versao_desatualizada"
     ],
     "tables": [
      "audit_log",
+     "ciclos_avaliacao",
+     "colaboradores",
      "feedbacks_360",
      "feedbacks_360_aprovacoes_gestor",
      "feedbacks_360_consolidacoes",
@@ -63826,13 +63831,13 @@
     ]
    },
    "sincronizar_consolidacao_avaliacao": {
-    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid default null",
+    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid DEFAULT NULL::uuid",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "declare v_empresa uuid; v_gestor uuid; v_gestor_uid uuid; v_versao text; v_status text; v_prop_desem numeric; v_prop_pot numeric; v_linha public.feedbacks_360_consolidacoes%rowtype; begin if p_colaborador_id is null or p_ciclo_id is null then return jsonb_build_object('ok', false, 'motivo', 'chave_incompleta'); end if; select c.empresa_id, c.supervisor_id into v_empresa, v_gestor from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null then return jsonb_build_object('ok', false, 'motivo', 'colaborador_inexistente'); end if; if v_gestor is not null then select u.user_id into v_gestor_uid from public.colaboradores u where u.id = v_gestor; end if; v_versao := public.versa …",
+    "body": "declare v_empresa uuid; v_gestor uuid; v_gestor_uid uuid; v_versao text; v_status text; v_prop_desem numeric; v_prop_pot numeric; v_linha public.feedbacks_360_consolidacoes%rowtype; begin if p_colaborador_id is null or p_ciclo_id is null then return jsonb_build_object('ok', false, 'motivo', 'chave_incompleta'); end if; select c.empresa_id, c.supervisor_id into v_empresa, v_gestor from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null then return jsonb_build_object('ok', false, 'motivo', 'colaborador_inexistente'); end if; if v_gestor is not null then select u.user_id into v_gestor_uid from public.colaboradores u where u.id = v_gestor and u.empresa_id = v_empresa; end …",
     "raises": [],
     "tables": [
      "audit_log",
@@ -63841,6 +63846,7 @@
      "feedbacks_360",
      "feedbacks_360_consolidacoes",
      "set",
+     "user_roles",
      "v_empresa",
      "v_gestor_uid",
      "v_linha",
@@ -71439,6 +71445,8 @@
    "supabase/migrations/20261115120000_ninebox_rls_leitura_gestor_avaliador.verify.sql",
    "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql",
    "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.verify.sql",
+   "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+   "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
@@ -83065,6 +83073,62 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "pode_aprovar_colaborador",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "pode_aprovar_colaborador",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "situacao_aprovacao",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "situacao_aprovacao",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "sincronizar_consolidacao_avaliacao",
+    "objkind": "function",
+    "roles": "public, anon, authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "decidir_aprovacao_gestor",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "decidir_aprovacao_gestor",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -84091,11 +84155,6 @@
     "src": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql"
    },
    {
-    "function": "situacao_aprovacao",
-    "msg": "nao_autorizado",
-    "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql"
-   },
-   {
     "function": "validar_potencial_avaliacao",
     "msg": "nao_autenticado",
     "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql"
@@ -84169,91 +84228,6 @@
     "function": "ponto_espelhos_assinados_guard_update",
     "msg": "Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %.",
     "src": "supabase/migrations/20261023000000_qa_r3_fixes.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "nao_autenticado",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "idempotencia_ausente",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "decisao_invalida",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "justificativa_obrigatoria",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "perfil_nao_autorizado",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "consolidacao_ausente",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "nao_autorizado",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "sem_avaliacao",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "versao_desatualizada",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_consolidada_ausente",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "idempotencia_conflito",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "pendencia_nao_aguarda_decisao",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_potencial",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_desempenho",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_desempenho",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_potencial",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_desempenho",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
    },
    {
     "function": "editar_feedback_seguro",
@@ -84434,6 +84408,106 @@
     "function": "enviar_avaliacao_ao_gestor",
     "msg": "aprovacao_ja_registrada",
     "src": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql"
+   },
+   {
+    "function": "situacao_aprovacao",
+    "msg": "nao_autorizado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "nao_autenticado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "idempotencia_ausente",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "decisao_invalida",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "justificativa_obrigatoria",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "perfil_nao_autorizado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "consolidacao_ausente",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "nao_autorizado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "empresa_ciclo_colaborador_inconsistentes",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "sem_avaliacao",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "versao_desatualizada",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "versao_desatualizada",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_consolidada_ausente",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "idempotencia_conflito",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "pendencia_nao_aguarda_decisao",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_potencial",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_desempenho",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_desempenho",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_potencial",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_desempenho",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -101515,8 +101589,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 835,
-   "lines": 74813,
+   "files": 837,
+   "lines": 75838,
    "tables": [
     "profiles",
     "user_roles"
@@ -117613,6 +117687,10 @@
    {
     "file": "supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql",
     "text": "* e a regra usa `coalesce(performance,"
+   },
+   {
+    "file": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+    "text": "VALIDAÇÃO DO RH: a âncora de `feedbacks_360_validacoes_potencial` é a versão"
    }
   ],
   "db_constraints": [
@@ -208577,13 +208655,15 @@
     "args": "p_colaborador_id uuid",
     "returns": "boolean",
     "lang": "sql",
-    "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "select exists ( select 1 from public.colaboradores alvo join public.colaboradores gestor on gestor.user_id = auth.uid() and gestor.empresa_id = alvo.empresa_id where alvo.id = p_colaborador_id and alvo.supervisor_id = gestor.id ) and exists ( select 1 from public.user_roles ur where ur.user_id = auth.uid() and ur.role::text = 'gestor' )",
+    "body": "SELECT EXISTS ( SELECT 1 FROM public.colaboradores alvo WHERE alvo.id = p_colaborador_id AND alvo.empresa_id IS NOT NULL AND alvo.empresa_id IN (SELECT public.get_user_empresas(auth.uid())) AND EXISTS ( SELECT 1 FROM public.user_roles ur WHERE ur.user_id = auth.uid() AND ur.role::text = 'gestor' ) AND ( EXISTS ( SELECT 1 FROM public.colaboradores gestor WHERE gestor.id = alvo.supervisor_id AND gestor.empresa_id = alvo.empresa_id AND gestor.user_id = auth.uid() AND gestor.id <> alvo.id ) OR ( EXISTS ( SELECT 1 FROM public.ninebox_permissoes_homologacao h WHERE h.user_id = auth.uid() AND h.habilitado = true AND h.expira_em > now() ) AND alvo.user_id IS DISTINCT FROM auth.uid() ) ) );",
     "raises": [],
     "tables": [
+     "auth",
      "colaboradores",
+     "ninebox_permissoes_homologacao",
      "user_roles"
     ]
    },
@@ -208623,10 +208703,10 @@
     "args": "p_colaborador_id uuid, p_ciclo_id uuid",
     "returns": "text",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "declare v_uid uuid := auth.uid(); v_empresa uuid; v_versao_gestor text; v_status_consolidacao text; v_decisao text; v_decisao_versao text; v_gestor_feedback uuid; v_validacao boolean := false; begin select c.empresa_id into v_empresa from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null or v_empresa not in (select public.get_user_empresas(v_uid)) then raise exception 'nao_autorizado'; end if; select c.versao_consolidada, c.status into v_versao_gestor, v_status_consolidacao from public.feedbacks_360_consolidacoes c where c.colaborador_id = p_colaborador_id and c.ciclo_id = p_ciclo_id; if v_versao_gestor is null then v_versao_gestor := public.versao_consolidada_avalia …",
+    "body": "declare v_uid uuid := auth.uid(); v_empresa uuid; v_versao_gestor text; v_status_consolidacao text; v_decisao text; v_decisao_versao text; v_decidido_por uuid; v_gestor_feedback uuid; v_validacao boolean := false; begin select c.empresa_id into v_empresa from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null or v_empresa not in (select public.get_user_empresas(v_uid)) then raise exception 'nao_autorizado'; end if; select c.versao_consolidada, c.status into v_versao_gestor, v_status_consolidacao from public.feedbacks_360_consolidacoes c where c.colaborador_id = p_colaborador_id and c.ciclo_id = p_ciclo_id; v_versao_gestor := public.versao_consolidada_avaliacao(p_colab …",
     "raises": [
      "nao_autorizado"
     ],
@@ -208636,6 +208716,7 @@
      "feedbacks_360_aprovacoes_gestor",
      "feedbacks_360_consolidacoes",
      "feedbacks_360_validacoes_potencial",
+     "user_roles",
      "v_decisao",
      "v_empresa",
      "v_gestor_feedback",
@@ -208644,10 +208725,10 @@
     ]
    },
    "decidir_aprovacao_gestor": {
-    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text default null, p_idempotencia text default null",
+    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_decisao text, p_justificativa text DEFAULT NULL::text, p_idempotencia text DEFAULT NULL::text",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
     "body": "declare v_uid uuid := auth.uid(); v_email text := nullif(current_setting('request.jwt.claims', true)::jsonb ->> 'email', ''); v_decisao text := lower(btrim(coalesce(p_decisao, ''))); v_just text := nullif(btrim(coalesce(p_justificativa, '')), ''); v_chave text; v_hash text; v_confere text; v_anterior jsonb; v_linha public.feedbacks_360%rowtype; v_cons public.feedbacks_360_consolidacoes%rowtype; v_versao text; v_versao_atual text; v_status text; v_id uuid; v_resultado jsonb; v_desempenho numeric; v_potencial numeric; v_soma_pesos numeric := 0; v_soma_notas numeric := 0; v_peso numeric; v_tem_gestor boolean := false; v_snapshot jsonb; v_cat record; begin if v_uid is null then raise exception ' …",
@@ -208659,12 +208740,14 @@
      "perfil_nao_autorizado",
      "consolidacao_ausente",
      "nao_autorizado",
+     "empresa_ciclo_colaborador_inconsistentes",
      "sem_avaliacao",
-     "versao_desatualizada",
-     "avaliacao_consolidada_ausente"
+     "versao_desatualizada"
     ],
     "tables": [
      "audit_log",
+     "ciclos_avaliacao",
+     "colaboradores",
      "feedbacks_360",
      "feedbacks_360_aprovacoes_gestor",
      "feedbacks_360_consolidacoes",
@@ -208691,13 +208774,13 @@
     ]
    },
    "sincronizar_consolidacao_avaliacao": {
-    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid default null",
+    "args": "p_colaborador_id uuid, p_ciclo_id uuid, p_por uuid DEFAULT NULL::uuid",
     "returns": "jsonb",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20261021090000_ninebox_aprovacao_confirmada.sql",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "declare v_empresa uuid; v_gestor uuid; v_gestor_uid uuid; v_versao text; v_status text; v_prop_desem numeric; v_prop_pot numeric; v_linha public.feedbacks_360_consolidacoes%rowtype; begin if p_colaborador_id is null or p_ciclo_id is null then return jsonb_build_object('ok', false, 'motivo', 'chave_incompleta'); end if; select c.empresa_id, c.supervisor_id into v_empresa, v_gestor from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null then return jsonb_build_object('ok', false, 'motivo', 'colaborador_inexistente'); end if; if v_gestor is not null then select u.user_id into v_gestor_uid from public.colaboradores u where u.id = v_gestor; end if; v_versao := public.versa …",
+    "body": "declare v_empresa uuid; v_gestor uuid; v_gestor_uid uuid; v_versao text; v_status text; v_prop_desem numeric; v_prop_pot numeric; v_linha public.feedbacks_360_consolidacoes%rowtype; begin if p_colaborador_id is null or p_ciclo_id is null then return jsonb_build_object('ok', false, 'motivo', 'chave_incompleta'); end if; select c.empresa_id, c.supervisor_id into v_empresa, v_gestor from public.colaboradores c where c.id = p_colaborador_id; if v_empresa is null then return jsonb_build_object('ok', false, 'motivo', 'colaborador_inexistente'); end if; if v_gestor is not null then select u.user_id into v_gestor_uid from public.colaboradores u where u.id = v_gestor and u.empresa_id = v_empresa; end …",
     "raises": [],
     "tables": [
      "audit_log",
@@ -208706,6 +208789,7 @@
      "feedbacks_360",
      "feedbacks_360_consolidacoes",
      "set",
+     "user_roles",
      "v_empresa",
      "v_gestor_uid",
      "v_linha",
@@ -209709,11 +209793,6 @@
     "src": "supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql"
    },
    {
-    "function": "situacao_aprovacao",
-    "msg": "nao_autorizado",
-    "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql"
-   },
-   {
     "function": "validar_potencial_avaliacao",
     "msg": "nao_autenticado",
     "src": "supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql"
@@ -209787,91 +209866,6 @@
     "function": "ponto_espelhos_assinados_guard_update",
     "msg": "Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %.",
     "src": "supabase/migrations/20261023000000_qa_r3_fixes.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "nao_autenticado",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "idempotencia_ausente",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "decisao_invalida",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "justificativa_obrigatoria",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "perfil_nao_autorizado",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "consolidacao_ausente",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "nao_autorizado",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "sem_avaliacao",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "versao_desatualizada",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_consolidada_ausente",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "idempotencia_conflito",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "pendencia_nao_aguarda_decisao",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_potencial",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_desempenho",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_desempenho",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_potencial",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
-   },
-   {
-    "function": "decidir_aprovacao_gestor",
-    "msg": "avaliacao_sem_desempenho",
-    "src": "supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql"
    },
    {
     "function": "editar_feedback_seguro",
@@ -210052,6 +210046,106 @@
     "function": "enviar_avaliacao_ao_gestor",
     "msg": "aprovacao_ja_registrada",
     "src": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql"
+   },
+   {
+    "function": "situacao_aprovacao",
+    "msg": "nao_autorizado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "nao_autenticado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "idempotencia_ausente",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "decisao_invalida",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "justificativa_obrigatoria",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "perfil_nao_autorizado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "consolidacao_ausente",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "nao_autorizado",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "empresa_ciclo_colaborador_inconsistentes",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "sem_avaliacao",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "versao_desatualizada",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "versao_desatualizada",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_consolidada_ausente",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "idempotencia_conflito",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "pendencia_nao_aguarda_decisao",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_potencial",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_desempenho",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_desempenho",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_potencial",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "decidir_aprovacao_gestor",
+    "msg": "avaliacao_sem_desempenho",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -234679,6 +234773,62 @@
     "objkind": "function",
     "roles": "authenticated",
     "src": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "pode_aprovar_colaborador",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "pode_aprovar_colaborador",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "situacao_aprovacao",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "situacao_aprovacao",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "sincronizar_consolidacao_avaliacao",
+    "objkind": "function",
+    "roles": "public, anon, authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "decidir_aprovacao_gestor",
+    "objkind": "function",
+    "roles": "public, anon",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "execute",
+    "object": "decidir_aprovacao_gestor",
+    "objkind": "function",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
    },
    {
     "kind": "revoke",
@@ -298397,6 +298547,17 @@
    "path": "supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.verify.sql",
    "lines": 45
   },
+  "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql": {
+   "path": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+   "lines": 765,
+   "rule_comments": [
+    "VALIDAÇÃO DO RH: a âncora de `feedbacks_360_validacoes_potencial` é a versão"
+   ]
+  },
+  "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql": {
+   "path": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+   "lines": 260
+  },
   "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql": {
    "path": "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "lines": 56
@@ -298621,10 +298782,20 @@
   }
  },
  "git": {
-  "sha": "6450ca854267c47653f98f58d928c061ab4287ea",
+  "sha": "9ecaf8a95851077087a0ea3e4dc025f8099af586",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "9ecaf8a",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)",
+    "files": [
+     "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+     "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql"
+    ]
+   },
    {
     "sha": "6450ca8",
     "date": "2026-11-15",
@@ -299090,16 +299261,6 @@
      "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.sql",
      "supabase/migrations/20261114000100_notificar_ferias_d5_ignora_usuarios_apagados.verify.sql"
     ]
-   },
-   {
-    "sha": "1108375",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "fix(db): view de contas bancárias descriptografadas volta a respeitar a permissão de quem consulta (#464)",
-    "files": [
-     "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.sql",
-     "supabase/migrations/20261114000800_contas_bancarias_decrypted_security_invoker.verify.sql"
-    ]
    }
   ],
   "hot_files": [
@@ -299140,6 +299301,14 @@
     2
    ],
    [
+    "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.verify.sql",
+    1
+   ],
+   [
     "supabase/migrations/20261114000000_remediate_ferias_art145_11_20.verify.sql",
     1
    ],
@@ -299173,14 +299342,6 @@
    ],
    [
     "src/components/__tests__/DesempenhoEntradaCascade.test.tsx",
-    1
-   ],
-   [
-    "src/components/__tests__/EdicaoFeedbackDemo.test.ts",
-    1
-   ],
-   [
-    "src/components/__tests__/EmpresaSettingsTab.test.tsx",
     1
    ]
   ]

@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `6450ca8542` · branch `main` · 2026-11-15 18:13 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `9ecaf8a958` · branch `main` · 2026-11-16 10:29 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -1011,7 +1011,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `criar_feedback_seguro` | avaliador_fora_da_empresa | `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql` |
 | `criar_feedback_seguro` | ciclo_fora_da_empresa | `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql` |
 | `criar_feedback_seguro` | idempotencia_conflito | `supabase/migrations/20261015090000_ninebox_finalizacao_e_potencial.sql` |
-| `situacao_aprovacao` | nao_autorizado | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
 | `validar_potencial_avaliacao` | nao_autenticado | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
 | `validar_potencial_avaliacao` | idempotencia_ausente | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
 | `validar_potencial_avaliacao` | perfil_nao_autorizado | `supabase/migrations/20261017090000_ninebox_aprovacao_gestor.sql` |
@@ -1027,23 +1026,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `decrypt_dados_bancarios_tenant` | Acesso negado. | `supabase/migrations/20261019000000_qa3_db_fixes.sql` |
 | `ponto_espelhos_assinados_guard_update` | Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %. | `supabase/migrations/20261023000000_qa_r3_fixes.sql` |
-| `decidir_aprovacao_gestor` | nao_autenticado | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | idempotencia_ausente | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | decisao_invalida | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | justificativa_obrigatoria | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | perfil_nao_autorizado | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | consolidacao_ausente | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | nao_autorizado | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | sem_avaliacao | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | versao_desatualizada | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_consolidada_ausente | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | idempotencia_conflito | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | pendencia_nao_aguarda_decisao | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
-| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261025090000_ninebox_aprovacao_autoria.sql` |
 | `editar_feedback_seguro` | nao_autenticado | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
 | `editar_feedback_seguro` | idempotencia_ausente | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
 | `editar_feedback_seguro` | perfil_nao_autorizado | `supabase/migrations/20261027090000_ninebox_reconciliacao_incremental.sql` |
@@ -1080,6 +1062,26 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `enviar_avaliacao_ao_gestor` | gestor_sem_conta_ou_papel | `supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql` |
 | `enviar_avaliacao_ao_gestor` | avaliacao_do_gestor_ausente_ou_pendente | `supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql` |
 | `enviar_avaliacao_ao_gestor` | aprovacao_ja_registrada | `supabase/migrations/20261115140000_ninebox_enviar_ao_gestor_do_canonico.sql` |
+| `situacao_aprovacao` | nao_autorizado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | nao_autenticado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | idempotencia_ausente | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | decisao_invalida | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | justificativa_obrigatoria | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | perfil_nao_autorizado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | consolidacao_ausente | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | nao_autorizado | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | empresa_ciclo_colaborador_inconsistentes | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | sem_avaliacao | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | versao_desatualizada | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | versao_desatualizada | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | avaliacao_consolidada_ausente | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | idempotencia_conflito | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | pendencia_nao_aguarda_decisao | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1227,9 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_verificar_ciencia_hash` | rate_limit_exceeded | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medidas_analytics_reincidencia` | not_authenticated | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medidas_analytics_reincidencia` | forbidden | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medidas_analytics_reincidencia` | invalid_arguments | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `notificar_divergencias_afdt` | Importação AFDT não encontrada: % | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +124 linhas — lista completa em `context.json` | | |
+| … +126 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -5677,4 +5677,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | * Tabela de transições — a regra fica visível e testável em um só lugar. | `src/components/avaliacao/statusFeedback.ts` |
 | A tabela apenas diz QUEM PODE TIPIFICAR a ação; a prova concreta (avaliador | `src/components/avaliacao/statusFeedback.ts` |
 | NÃO significa autorizado — a validação definitiva é do servidor. | `src/components/avaliacao/statusFeedback.ts` |
-| … +509 linhas — lista completa em `context.json` | |
+| … +510 linhas — lista completa em `context.json` | |

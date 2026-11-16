@@ -2,11 +2,16 @@
  "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
  "format_version": 2,
  "git": {
-  "commit": "6450ca854267c47653f98f58d928c061ab4287ea",
+  "commit": "9ecaf8a95851077087a0ea3e4dc025f8099af586",
   "branch": "main",
-  "data_commit": "2026-11-15T18:13:20Z",
+  "data_commit": "2026-11-16T07:29:02-03:00",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "ultimos_commits": [
+   {
+    "sha": "9ecaf8a",
+    "data": "2026-11-16",
+    "assunto": "chore(ninebox): canoniza no repo as 4 funcoes endurecidas em producao (#577)"
+   },
    {
     "sha": "6450ca8",
     "data": "2026-11-15",
@@ -126,14 +131,9 @@
     "sha": "69cf8aa",
     "data": "2026-11-13",
     "assunto": "infra: troca routes legado por rewrites no vercel.json para aplicar security headers em produção (#553)"
-   },
-   {
-    "sha": "2fbfb51",
-    "data": "2026-11-13",
-    "assunto": "Seguros de Vida: permitir editar apólices (#521)"
    }
   ],
-  "arquivos_mudados_7d": 783,
+  "arquivos_mudados_7d": 778,
   "pastas_mais_mudadas_30d": [
    {
     "pasta": "src/components/avaliacao",
@@ -202,16 +202,16 @@
     "mudancas": 39
    },
    {
-    "arquivo": "package.json",
-    "mudancas": 22
-   },
-   {
     "arquivo": "CLAUDE.md",
     "mudancas": 21
    },
    {
+    "arquivo": "package.json",
+    "mudancas": 21
+   },
+   {
     "arquivo": "package-lock.json",
-    "mudancas": 20
+    "mudancas": 19
    },
    {
     "arquivo": "PENDENCIAS.md",
@@ -301,7 +301,7 @@
   "autores_30d": [
    {
     "autor": "adm01-debug",
-    "commits": 217
+    "commits": 218
    },
    {
     "autor": "devin-ai-integration[bot]",
@@ -322,7 +322,7 @@
   ]
  },
  "contagens": {
-  "arquivos_total": 3091,
+  "arquivos_total": 3093,
   "arquivos_codigo": 1710,
   "linhas_codigo": 320771,
   "rotas": 116,
@@ -334,7 +334,7 @@
   "hooks": 106,
   "edge_functions": 65,
   "tabelas": 421,
-  "migrations": 835,
+  "migrations": 837,
   "cron_jobs": 41,
   "testes": 641,
   "workflows": 21,
