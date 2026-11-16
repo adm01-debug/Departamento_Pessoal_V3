@@ -183,19 +183,65 @@ jobs:
           # Roda em AMBOS os modos: no mode=apply serve como gate — a aplicação
           # só executa se o dry-run BEGIN/ROLLBACK do conteúdo exato passar.
           shopt -s nullglob
-          migrations=("$stage_dir"/supabase/migrations/*.sql)
+          # Achado no validate do lote NineBox (run 43859720977, 16/11/2026): o
+          # glob *.sql tambem casa os .verify.sql que o step de stage copia
+          # junto da migration, e o \i seguia a ordem do glob -- ou seja, cada
+          # sidecar rodava LOGO DEPOIS da sua propria migration, no MEIO do
+          # lote, e nao no fim. Um sidecar que afirma o estado FINAL do lote
+          # reprova num estado intermediario: o da 20261022090000 conta
+          # finalizar_feedback/finalizar_feedback_base e, naquele ponto, a
+          # 20261028090000 (que troca a logica pelo wrapper) ainda nao rodou,
+          # entao as duas funcoes casavam e a subconsulta escalar levantou
+          # "more than one row returned by a subquery used as an expression".
+          # Em mode=apply o mesmo erro abortaria a transacao do lote inteiro.
+          # Agora: migrations primeiro, sidecars no fim, na MESMA transacao.
+          migrations=()
+          sidecars=()
+          for staged in "$stage_dir"/supabase/migrations/*.sql; do
+            case "$staged" in
+              *.verify.sql) sidecars+=("$staged") ;;
+              *) migrations+=("$staged") ;;
+            esac
+          done
           if [ "${#migrations[@]}" -eq 0 ]; then
             echo 'Nada a aplicar — lote já registrado no ledger canônico.'
             echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
             exit 0
           fi
+          sidecar_out="$(mktemp)"
           {
             echo 'BEGIN;'
             for migration in "${migrations[@]}"; do
               printf '\\i %s\n' "$migration"
             done
+            if [ "${#sidecars[@]}" -gt 0 ]; then
+              # \o manda SO a saida das consultas para o arquivo (os command
+              # tags das migrations continuam no log). O contrato e o mesmo do
+              # step "Verificar objetos e ledger" -- toda linha nao-vazia tem
+              # de ser literalmente 'ok' -- mas aqui ANTES do COMMIT: um lote
+              # que nao satisfaz a propria verificacao nao chega a ser aplicado.
+              printf '\\o %s\n' "$sidecar_out"
+              for sidecar in "${sidecars[@]}"; do
+                printf '\\i %s\n' "$sidecar"
+              done
+              echo '\o'
+            fi
             echo 'ROLLBACK;'
-          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
+          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -t -A
+          if [ "${#sidecars[@]}" -gt 0 ]; then
+            non_empty="$(grep -vE "^[[:space:]]*$" "$sidecar_out" || true)"
+            if [ -z "$non_empty" ]; then
+              echo '::error::Os sidecars do lote nao produziram nenhuma assercao no dry-run.'
+              exit 1
+            fi
+            bad_lines="$(printf '%s\n' "$non_empty" | grep -vx 'ok' || true)"
+            if [ -n "$bad_lines" ]; then
+              echo '::error::Sidecar(s) reprovaram no dry-run -- nada foi aplicado, a transacao deu ROLLBACK:'
+              printf '%s\n' "$bad_lines" | sed 's/^/::error::   valor inesperado: /'
+              exit 1
+            fi
+            echo "Sidecars no dry-run: $(printf '%s\n' "$non_empty" | wc -l) assercao(oes), todas ok."
+          fi
           echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
 
       - name: Aplicar a lista fechada e registrar no ledger
@@ -208,7 +254,18 @@ jobs:
           # `migration repair`, which are unsafe while the historical local
           # ledger differs from the canonical ledger.
           shopt -s nullglob
-          apply_migrations=("$stage_dir"/supabase/migrations/*.sql)
+          # Sidecar NAO entra na lista de apply: ele roda no dry-run acima e no
+          # step "Verificar objetos e ledger", apos o COMMIT. Antes, o glob
+          # *.sql o incluia aqui -- executava no meio do lote (podendo abortar
+          # a transacao) e ainda gerava INSERT no ledger com name terminando
+          # em ".verify".
+          apply_migrations=()
+          for staged in "$stage_dir"/supabase/migrations/*.sql; do
+            case "$staged" in
+              *.verify.sql) ;;
+              *) apply_migrations+=("$staged") ;;
+            esac
+          done
           if [ "${#apply_migrations[@]}" -eq 0 ]; then
             echo 'Nada a aplicar — lote já registrado no ledger canônico.'
             exit 0
