@@ -87,6 +87,7 @@ export const TABLE_ALLOWLIST = new Set<string>([
   "tipos_admissao", "tipos_aviso_previo", "tipos_beneficio", "tipos_deficiencia",
   "tipos_desligamento", "tipos_estabilidade", "tipos_pagamento", "tipos_salario", "tipos_visto",
   "transferencias", "treinamento_certificados", "treinamento_feedback", "treinamento_feedbacks",
+  "training_images",
   "treinamento_instancias", "treinamento_participantes", "treinamentos", "triagem_notas",
   "trilha_auditoria_ponto", "trilhas_aprendizado", "trilhas_cursos", "turnos", "user_mfa",
   "user_sessions", "v_contrato_token_timeline", "v_contratos_assinatura_kpi",

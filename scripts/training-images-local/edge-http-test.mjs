@@ -227,11 +227,13 @@ async function subirFuncao(extraEnv = {}, arquivo = 'supabase/functions/training
   const comando = process.env.DENO_BIN
     ? [process.env.DENO_BIN, 'run', '-A', arquivo]
     : [
-        process.env.ComSpec ?? 'cmd.exe',
-        '/d',
-        '/s',
-        '/c',
-        `npx --yes deno run -A ${arquivo}`,
+        // Sem shell: argumentos separados, nada interpolado em linha de comando.
+        process.platform === 'win32' ? 'npx.cmd' : 'npx',
+        '--yes',
+        'deno',
+        'run',
+        '-A',
+        arquivo,
       ];
   funcao = spawn(comando[0], comando.slice(1), {
     cwd: process.cwd(),

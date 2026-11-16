@@ -41,7 +41,7 @@ const CODIGO = CODIGO_BRUTO.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*
 
 describe('nenhuma conexão com a OpenAI nesta fase', () => {
   it('não há endpoint, SDK ou chave da OpenAI no código do frontend', () => {
-    expect(CODIGO).not.toMatch(/api\.openai\.com/i);
+    expect(CODIGO.toLowerCase()).not.toContain('api.openai.com');
     expect(CODIGO).not.toMatch(/from ['"]openai['"]/i);
     expect(CODIGO).not.toMatch(/VITE_OPENAI/i);
     expect(CODIGO).not.toMatch(/OPENAI_API_KEY/);
@@ -83,7 +83,7 @@ describe('separação frontend × backend (Fase 3A)', () => {
   it('o frontend não importa o adaptador nem a função', () => {
     expect(CODIGO).not.toMatch(/openaiProvider/);
     expect(CODIGO).not.toMatch(/_shared\/trainingImages/);
-    expect(CODIGO).not.toMatch(/api\.openai\.com/);
+    expect(CODIGO).not.toContain('api.openai.com');
   });
 
   it('a função exige autenticação, vínculo com a empresa e papel autorizado', () => {
