@@ -89329,8 +89329,13 @@
       {
         "args": "p_limit integer",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "scripts/training-images-local/pipeline-e2e.ts",
+              "hits": 2
+            }
+          ],
+          "code_total_files": 1,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90061,8 +90066,21 @@
       {
         "args": "p_empresa_id uuid, p_content_type text, p_content_id uuid, p_content_hash text, p_prompt_version text, p_max_attempts integer, p_stale_after interval",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "scripts/training-images-local/concurrency-claim.sql",
+              "hits": 1
+            },
+            {
+              "file": "scripts/training-images-local/pipeline-e2e.ts",
+              "hits": 1
+            },
+            {
+              "file": "supabase/functions/_shared/trainingImages/supabaseDeps.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -90091,8 +90109,21 @@
       {
         "args": "p_limit integer",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "scripts/training-images-local/concurrency-autoqueue.sql",
+              "hits": 1
+            },
+            {
+              "file": "scripts/training-images-local/pipeline-e2e.ts",
+              "hits": 4
+            },
+            {
+              "file": "supabase/functions/training-image-dispatch/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92215,11 +92246,15 @@
         "callers": {
           "code": [
             {
+              "file": "scripts/training-images-local/concurrency-rate-limit.sql",
+              "hits": 1
+            },
+            {
               "file": "supabase/functions/_shared/rateLimit.ts",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -92250,11 +92285,19 @@
         "callers": {
           "code": [
             {
+              "file": "scripts/training-images-local/concurrency-dual.sql",
+              "hits": 1
+            },
+            {
+              "file": "supabase/functions/_shared/rateLimit.ts",
+              "hits": 1
+            },
+            {
               "file": "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 3,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -93565,8 +93608,17 @@
       {
         "args": "p_id uuid, p_status text, p_error text, p_retry_after_seconds integer",
         "callers": {
-          "code": [],
-          "code_total_files": 0,
+          "code": [
+            {
+              "file": "scripts/training-images-local/pipeline-e2e.ts",
+              "hits": 2
+            },
+            {
+              "file": "supabase/functions/training-image-dispatch/index.ts",
+              "hits": 1
+            }
+          ],
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
@@ -102463,11 +102515,15 @@
         "callers": {
           "code": [
             {
+              "file": "scripts/training-images-local/pipeline-e2e.ts",
+              "hits": 6
+            },
+            {
               "file": "supabase/migrations/20261023130000_training_image_autoqueue.sql",
               "hits": 1
             }
           ],
-          "code_total_files": 1,
+          "code_total_files": 2,
           "cron": [],
           "db": [],
           "triggers": [],
