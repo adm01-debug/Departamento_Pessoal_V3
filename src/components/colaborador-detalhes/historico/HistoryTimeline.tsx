@@ -40,10 +40,13 @@ export function HistoryTimeline({
   // Ordem cronológica (mais recente primeiro), independente da ordenação
   // escolhida pelo usuário — só serve pra decidir o estado inicial de cada
   // ano (os 2 mais recentes abertos, o resto recolhido, como na referência).
-  const chronologicalYears = useMemo(() => {
-    const set = new Set(events.map((e) => e.date.slice(0, 4)));
-    return [...set].sort((a, b) => b.localeCompare(a));
-  }, [events]);
+  // Derivado de `groups`, e não dos eventos de novo: `isOpen` compara o ano do
+  // GRUPO com esta lista, e as duas derivações precisam usar a mesma leitura de
+  // ano. Enquanto esta usava o ano textual e o agrupamento o ano LOCAL, perto da
+  // virada do ano o `indexOf` devolvia -1 para um ano que só existe na forma
+  // local — e `-1 < 2` abria o ano errado, deixando recolhido um dos dois mais
+  // recentes. Derivar da mesma fonte torna a divergência impossível.
+  const chronologicalYears = useMemo(() => groups.map((g) => g.year).sort((a, b) => b.localeCompare(a)), [groups]);
 
   const isOpen = (year: string) => {
     if (year in openYears) return openYears[year];
