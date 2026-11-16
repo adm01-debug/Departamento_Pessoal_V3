@@ -5,6 +5,7 @@ import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePiiMask } from '@/hooks/usePiiMask';
 import { usePDFExport } from '@/hooks/usePDFExport';
+import { useProximosEventos } from '@/hooks/useProximosEventos';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,6 +28,7 @@ import {
   Stethoscope,
   User as UserIcon,
   Gift,
+  GitCommitVertical,
 } from 'lucide-react';
 import {
   DependentesTab,
@@ -44,6 +46,7 @@ import {
   EstagiarioTab,
   HistoricoContratosTab,
   ColaboradorHistory,
+  HistoricoColaborador,
   BeneficiosTab,
   ColaboradorDocuments,
 } from '@/components/colaborador-detalhes';
@@ -75,6 +78,8 @@ export default function ColaboradorDetalhesPage() {
 
   useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
 
+  const proximosEventos = useProximosEventos(id!, empresaAtual?.id);
+
   if (isLoading)
     return (
       <div className="flex items-center justify-center h-64">
@@ -97,7 +102,7 @@ export default function ColaboradorDetalhesPage() {
               variant="outline"
               size="sm"
               className="rounded-xl border-primary/30 text-primary hover:bg-primary/5"
-              onClick={() => navigate(`/colaboradores/${id}/editar`)}
+              onClick={() => navigate(`/colaboradores/editar/${id}`)}
             >
               <Edit className="h-4 w-4 mr-1.5" /> Editar Perfil
             </Button>
@@ -213,6 +218,9 @@ export default function ColaboradorDetalhesPage() {
             </TabsTrigger>
             <TabsTrigger value="historico" className="rounded-lg font-body px-6 gap-2">
               <HistoryIcon className="h-4 w-4" /> Histórico
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="rounded-lg font-body px-6 gap-2">
+              <GitCommitVertical className="h-4 w-4" /> Timeline
             </TabsTrigger>
           </TabsList>
 
@@ -454,6 +462,16 @@ export default function ColaboradorDetalhesPage() {
 
           <TabsContent value="historico">
             {activeMainTab === 'historico' && <ColaboradorHistory colaboradorId={id!} />}
+          </TabsContent>
+
+          <TabsContent value="timeline">
+            {activeMainTab === 'timeline' && (
+              <HistoricoColaborador
+                colaboradorId={id!}
+                proximosEventos={proximosEventos.eventos}
+                proximosEventosIndisponiveis={proximosEventos.isError}
+              />
+            )}
           </TabsContent>
         </Tabs>
       </PageLayout>

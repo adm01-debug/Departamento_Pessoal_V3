@@ -115,7 +115,12 @@ export function useMedidasDisciplinares() {
 export function useMedidasDisciplinaresColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
-    queryKey: ['medidas-disciplinares-colaborador', colaboradorId, empresaAtual?.id],
+    // Dentro da família ['medidas-disciplinares'], que as 4 mutations do app
+    // invalidam (useNovasTabelas.ts:129,143 e MedidaContestacaoDialog.tsx:60,72).
+    // Chave irmã 'medidas-disciplinares-colaborador' NÃO casa por prefixo (o
+    // primeiro segmento é outro) e ficava fora de todas elas — a Timeline
+    // mostrava medida já excluída por 5 min.
+    queryKey: ['medidas-disciplinares', 'colaborador', colaboradorId, empresaAtual?.id],
     queryFn: () => medidasDisciplinaresService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });

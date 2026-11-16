@@ -44,3 +44,19 @@ window.ResizeObserver = ResizeObserver;
 // internal Blob shape and throws on Blobs built from ExcelJS/PDF buffers in tests.
 (URL as unknown as { createObjectURL: () => string }).createObjectURL = vi.fn(() => 'blob:mock');
 (URL as unknown as { revokeObjectURL: () => void }).revokeObjectURL = vi.fn();
+
+// Mock IntersectionObserver — jsdom não implementa (usado por `useInView` do
+// framer-motion, ex.: MotionCard em MetaCard.tsx). Sem isso, qualquer componente
+// que chame `useInView` derruba o teste com `ReferenceError`. `isIntersecting`
+// nunca dispara `true` aqui, o que é aceitável: os testes verificam conteúdo
+// renderizado, não o estado de animação de entrada.
+class IntersectionObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+
+window.IntersectionObserver = IntersectionObserver as unknown as typeof window.IntersectionObserver;

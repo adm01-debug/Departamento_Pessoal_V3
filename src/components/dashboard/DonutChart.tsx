@@ -12,9 +12,11 @@ interface DonutChartProps {
   size?: number;
   strokeWidth?: number;
   className?: string;
+  /** Legenda abaixo do gráfico. Desligue quando a lista for renderizada ao lado. */
+  showLegend?: boolean;
 }
 
-export function DonutChart({ segments, size = 140, strokeWidth = 16, className }: DonutChartProps) {
+export function DonutChart({ segments, size = 140, strokeWidth = 16, className, showLegend = true }: DonutChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true });
 
@@ -83,15 +85,17 @@ export function DonutChart({ segments, size = 140, strokeWidth = 16, className }
       </svg>
 
       {/* Legend */}
-      <div className="mt-3 space-y-1.5">
-        {segments.map((seg, i) => (
-          <div key={i} className="flex items-center gap-2 text-caption">
-            <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: seg.color }} />
-            <span className="flex-1 text-muted-foreground font-body truncate">{seg.label}</span>
-            <span className="font-display font-semibold">{seg.value}</span>
-          </div>
-        ))}
-      </div>
+      {showLegend && (
+        <div className="mt-3 space-y-1.5">
+          {segments.map((seg, i) => (
+            <div key={i} className="flex items-center gap-2 text-caption">
+              <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: seg.color }} />
+              <span className="flex-1 text-muted-foreground font-body truncate">{seg.label}</span>
+              <span className="font-display font-semibold">{seg.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

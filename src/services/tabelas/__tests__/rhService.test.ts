@@ -363,3 +363,48 @@ describe('treinamentoParticipantesService', () => {
     expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ presente: true }));
   });
 });
+
+// Casos resgatados da branch `muri` — cobrem as duas leituras novas que o
+// Dossiê (Timeline / Desenvolvimento) precisa.
+describe('onboardingService.buscarPorColaborador', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('consulta onboarding_colaborador recortado por colaborador e empresa', async () => {
+    const registro = { id: 'ob-1', colaborador_id: 'col-1' };
+    const chain = makeChain([registro]);
+    mockFrom.mockReturnValue(chain);
+    const result = await onboardingService.buscarPorColaborador('col-1', 'emp-1');
+    expect(mockFrom).toHaveBeenCalledWith('onboarding_colaborador');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    expect(result).toEqual(registro);
+  });
+
+  it('devolve null quando o colaborador não tem onboarding', async () => {
+    const chain = makeChain([]);
+    mockFrom.mockReturnValue(chain);
+    expect(await onboardingService.buscarPorColaborador('col-1', 'emp-1')).toBeNull();
+  });
+
+  it('lança quando empresaId falta (guarda de tenant)', async () => {
+    await expect(onboardingService.buscarPorColaborador('col-1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+});
+
+describe('treinamentoParticipantesService.listarPorColaborador', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('consulta treinamento_participantes por colaborador_id com join do treinamento', async () => {
+    const registros = [{ id: 'tp1', colaborador_id: 'col-1', treinamento: { nome: 'NR-35' } }];
+    const chain = makeChain(registros);
+    mockFrom.mockReturnValue(chain);
+    const result = await treinamentoParticipantesService.listarPorColaborador('col-1');
+    expect(mockFrom).toHaveBeenCalledWith('treinamento_participantes');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(result).toEqual(registros);
+  });
+});
