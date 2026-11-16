@@ -97,11 +97,7 @@ const stub = http.createServer((req, res) => {
   }
   if (caminho === '/rest/v1/user_roles') {
     const papeis =
-      modoVinculo === 'presente'
-        ? [{ role: 'admin' }]
-        : modoVinculo === 'sem_papel'
-          ? [{ role: 'user' }]
-          : [];
+      modoVinculo === 'presente' ? [{ role: 'admin' }] : modoVinculo === 'sem_papel' ? [{ role: 'user' }] : [];
     return json(res, 200, papeis);
   }
   if (caminho === '/rest/v1/catalogo_cursos') {
@@ -226,15 +222,17 @@ async function subirFuncao(extraEnv = {}, arquivo = 'supabase/functions/training
   matarFuncao();
   const comando = process.env.DENO_BIN
     ? [process.env.DENO_BIN, 'run', '-A', arquivo]
-    : [
-        // Sem shell: argumentos separados, nada interpolado em linha de comando.
-        process.platform === 'win32' ? 'npx.cmd' : 'npx',
-        '--yes',
-        'deno',
-        'run',
-        '-A',
-        arquivo,
-      ];
+    : // Sem shell: argumentos separados, nada interpolado em linha de comando.
+      // No Windows o Node não executa um .cmd sem shell, e usar shell traria de
+      // volta a injeção — então lá o DENO_BIN é obrigatório, e a falta dele
+      // falha alto em vez de quebrar no meio do teste.
+      ['npx', '--yes', 'deno', 'run', '-A', arquivo];
+
+  if (process.platform === 'win32' && !process.env.DENO_BIN) {
+    throw new Error(
+      'No Windows, defina DENO_BIN com o caminho do executável do deno — o fallback por npx não roda sem shell.'
+    );
+  }
   funcao = spawn(comando[0], comando.slice(1), {
     cwd: process.cwd(),
     env: {
@@ -253,13 +251,7 @@ async function subirFuncao(extraEnv = {}, arquivo = 'supabase/functions/training
 }
 
 async function chamar(metodo, opcoes = {}) {
-  const {
-    headers = {},
-    body,
-    origem = ORIGEM,
-    autenticado = false,
-    autorizacao = null,
-  } = opcoes;
+  const { headers = {}, body, origem = ORIGEM, autenticado = false, autorizacao = null } = opcoes;
   const cabecalhos = { ...headers };
   if (origem) cabecalhos.Origin = origem;
   if (autorizacao) cabecalhos.Authorization = autorizacao;
@@ -279,7 +271,6 @@ async function chamar(metodo, opcoes = {}) {
   }
   return { status: resposta.status, headers: resposta.headers, texto, json: jsonCorpo };
 }
-
 
 async function principal() {
   console.log('=============================================================');
@@ -347,14 +338,8 @@ async function principal() {
   const desligado = await chamar('POST', { autenticado: true, body: CORPO_VALIDO });
   afirmar(desligado.status === 503, 'integração desligada retorna 503', `status ${desligado.status}`);
   afirmar(desligado.json?.motivo === 'integracao_desativada', 'motivo integracao_desativada');
-  afirmar(
-    /TRAINING_IMAGE_GENERATION_ENABLED/.test(desligado.json?.detalhe ?? ''),
-    'detalhe explica a flag ausente'
-  );
-  afirmar(
-    desligado.headers.get('access-control-allow-origin') === ORIGEM,
-    'resposta 503 mantém os headers de CORS'
-  );
+  afirmar(/TRAINING_IMAGE_GENERATION_ENABLED/.test(desligado.json?.detalhe ?? ''), 'detalhe explica a flag ausente');
+  afirmar(desligado.headers.get('access-control-allow-origin') === ORIGEM, 'resposta 503 mantém os headers de CORS');
   afirmar(desligado.headers.get('cache-control') === 'no-store', 'resposta é no-store');
   afirmar(!/sk-[A-Za-z0-9]/i.test(desligado.texto), 'nenhuma chave aparece na resposta');
 
@@ -379,10 +364,7 @@ async function principal() {
     'variável de empresa ausente bloqueia a geração (503)',
     `status ${semEmpresa.status}`
   );
-  afirmar(
-    rpc.rateLimit === 0 && rpc.claim === 0,
-    'bloqueio por empresa ausente não consome quota nem claim'
-  );
+  afirmar(rpc.rateLimit === 0 && rpc.claim === 0, 'bloqueio por empresa ausente não consome quota nem claim');
 
   const subiuSemCurso = await subirFuncao({
     TRAINING_IMAGE_GENERATION_ENABLED: 'true',
@@ -399,10 +381,7 @@ async function principal() {
     'variável de curso ausente bloqueia a geração (503)',
     `status ${semCurso.status}`
   );
-  afirmar(
-    rpc.rateLimit === 0 && rpc.claim === 0,
-    'bloqueio por curso ausente não consome quota nem claim'
-  );
+  afirmar(rpc.rateLimit === 0 && rpc.claim === 0, 'bloqueio por curso ausente não consome quota nem claim');
 
   const subiuSemAmbos = await subirFuncao({
     TRAINING_IMAGE_GENERATION_ENABLED: 'true',
@@ -419,10 +398,7 @@ async function principal() {
     'allowlist totalmente ausente bloqueia a geração (503)',
     `status ${semAmbos.status}`
   );
-  afirmar(
-    rpc.rateLimit === 0 && rpc.claim === 0,
-    'bloqueio por allowlist ausente não consome quota nem claim'
-  );
+  afirmar(rpc.rateLimit === 0 && rpc.claim === 0, 'bloqueio por allowlist ausente não consome quota nem claim');
 
   // ── Fase B: flag ligada + allowlist + chave FICTÍCIA (sem chamada paga) ───
   console.log('\n── Fase B · flag ligada, allowlist, chave fictícia, sem vínculo');
@@ -435,11 +411,7 @@ async function principal() {
   afirmar(subiuB, 'função reiniciou com a flag ligada');
 
   const semVinculo = await chamar('POST', { autenticado: true, body: CORPO_VALIDO });
-  afirmar(
-    semVinculo.status === 403,
-    'usuário sem vínculo com a empresa recebe 403',
-    `status ${semVinculo.status}`
-  );
+  afirmar(semVinculo.status === 403, 'usuário sem vínculo com a empresa recebe 403', `status ${semVinculo.status}`);
   afirmar(semVinculo.json?.error === 'SEM_ACESSO_A_EMPRESA', 'código SEM_ACESSO_A_EMPRESA');
 
   // Usuário com vínculo, mas sem papel admin/RH: a autorização existente vence.
@@ -452,10 +424,7 @@ async function principal() {
     'usuário sem papel admin/RH é rejeitado mesmo com allowlist válida',
     `status ${semPapel.status}`
   );
-  afirmar(
-    rpc.rateLimit === 0 && rpc.claim === 0,
-    'usuário sem papel não consome quota nem claim'
-  );
+  afirmar(rpc.rateLimit === 0 && rpc.claim === 0, 'usuário sem papel não consome quota nem claim');
 
   // ── Fase C0: allowlist bloqueia empresa/curso diferentes ──────────────────
   console.log('\n── Fase C0 · allowlist bloqueia empresa/curso diferentes');
@@ -474,10 +443,7 @@ async function principal() {
     'empresa diferente retorna 403 fora_da_allowlist',
     `status ${empresaFora.status}`
   );
-  afirmar(
-    rpc.rateLimit === 0 && rpc.claim === 0,
-    'empresa fora da allowlist não consome quota nem claim'
-  );
+  afirmar(rpc.rateLimit === 0 && rpc.claim === 0, 'empresa fora da allowlist não consome quota nem claim');
 
   const cursoFora = await chamar('POST', {
     autenticado: true,
@@ -488,10 +454,7 @@ async function principal() {
     'curso diferente retorna 403 fora_da_allowlist',
     `status ${cursoFora.status}`
   );
-  afirmar(
-    rpc.rateLimit === 0 && rpc.claim === 0,
-    'curso fora da allowlist não consome quota nem claim'
-  );
+  afirmar(rpc.rateLimit === 0 && rpc.claim === 0, 'curso fora da allowlist não consome quota nem claim');
 
   console.log('\n── Fase C · vínculo válido, conteúdo inexistente (stub)');
   modoVinculo = 'presente';
@@ -502,10 +465,7 @@ async function principal() {
     `status ${inexistente.status}`
   );
   afirmar(inexistente.json?.error === 'CONTEUDO_INEXISTENTE', 'código CONTEUDO_INEXISTENTE');
-  afirmar(
-    inexistente.headers.get('access-control-allow-origin') === ORIGEM,
-    'resposta 404 mantém os headers de CORS'
-  );
+  afirmar(inexistente.headers.get('access-control-allow-origin') === ORIGEM, 'resposta 404 mantém os headers de CORS');
   afirmar(
     rpc.rateLimit === 0 && rpc.claim === 0,
     'allowlist permitida chega à checagem de conteúdo sem consumir quota/claim'
@@ -703,10 +663,7 @@ async function principal() {
     'quota esgotada devolve o item à fila (queued)',
     JSON.stringify(quotaNegada.json)
   );
-  afirmar(
-    quotaNegada.json?.resultados?.[0]?.motivo === 'rate_limit_empresa',
-    'motivo rate_limit_empresa'
-  );
+  afirmar(quotaNegada.json?.resultados?.[0]?.motivo === 'rate_limit_empresa', 'motivo rate_limit_empresa');
   afirmar(rpc.rateLimit === 1 && rpc.claim === 0, 'worker NÃO chama o provedor quando a quota estoura');
   afirmar(
     rpc.finish[0]?.p_status === 'queued' && Number(rpc.finish[0]?.p_retry_after_seconds) >= 60,
@@ -733,10 +690,7 @@ async function principal() {
     'quota liberada: worker chega ao claim e respeita ja_processado'
   );
   afirmar(rpc.rateLimit === 1 && rpc.claim === 1, 'um consumo de quota e um claim por item');
-  afirmar(
-    !/sk-[A-Za-z0-9]{6,}/.test(processado.texto),
-    'worker não expõe chave na resposta'
-  );
+  afirmar(!/sk-[A-Za-z0-9]{6,}/.test(processado.texto), 'worker não expõe chave na resposta');
 
   // F3 — recuperação de item interrompido NÃO repete chamada paga.
   rpcAllowed = true;
