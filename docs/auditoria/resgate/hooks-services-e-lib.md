@@ -305,6 +305,15 @@ A muri e um retrato do codigo de 30/07/2026 com seis meses de trabalho de layout
 
 ## G14 — Multiplas lotacoes por colaborador (exige DDL — decisao do dono)
 
+> **Criar a tabela não basta.** `colaborador_lotacoes` também precisa entrar no
+> `TABLE_ALLOWLIST` de `supabase/functions/external-db-bridge/tableCatalog.ts`
+> (conferido: hoje não consta). O cliente de dados da aplicação encaminha as
+> consultas pela bridge, que é deny-by-default e devolve HTTP 403
+> `TABLE_NOT_CATALOGED` (`external-db-bridge/index.ts:464-471`) — mesmo depois da
+> migration, com RLS e GRANT corretos. Catalogar é mexer no gateway, item da
+> regra 8: vai com aprovação do dono, validado pelo cliente real da aplicação, e
+> **nunca** contornando a bridge com `supabaseBase`.
+
 `RECUPERAR_COM_MERGE` · esforço alto · 3 arquivos
 
 **Valor para o negócio.** Permite que um colaborador tenha mais de uma lotacao (unidade/setor) com uma marcada como principal — situacao comum em empresa com varias filiais. Hoje o sistema so guarda uma lotacao em texto no proprio colaborador.

@@ -29,6 +29,23 @@ mandar o id da admissão no lugar do id do evento, e o envio do link ao candidat
 volta a dizer "enviado com sucesso" sem enviar e-mail. Por isso o veredito
 dominante é RECUPERAR_COM_MERGE, e não cópia.
 
+## Regra que vale para todos os grupos
+
+**Tabela nova só fica acessível depois de entrar no catálogo da bridge.** O
+`supabase` que a aplicação importa não é o cliente PostgREST: é o proxy da
+`external-db-bridge` (`src/integrations/supabase/client.ts`), que é
+deny-by-default pelo `TABLE_ALLOWLIST` de
+`supabase/functions/external-db-bridge/tableCatalog.ts`. Sem a entrada lá, a
+consulta volta HTTP 403 `TABLE_NOT_CATALOGED`
+(`external-db-bridge/index.ts:464-471`) por mais correta que esteja a RLS, e
+serviços que tratam erro silenciosamente devolvem lista vazia — a tela fica em
+branco sem nenhum sinal de falha.
+
+Isso já apareceu em dois grupos desta auditoria (`training_images` e
+`colaborador_lotacoes`). Catalogar é mexer no gateway, item da regra 8 do
+`AGENTS.md`: aprovação do dono, validação pelo cliente real da aplicação, e
+nunca contornar com `supabaseBase`.
+
 ## Áreas
 
 | área                                                                                                     | grupos | a recuperar | arquivos | detalhe                                                                                                                    |
