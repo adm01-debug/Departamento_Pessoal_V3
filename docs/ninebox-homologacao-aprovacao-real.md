@@ -3,16 +3,16 @@
 > Diagnóstico por **leitura** no Supabase principal em 16/10/2026 (nenhuma
 > escrita). Migration **pronta para revisão**; **não aplicada**.
 > Relacionados: `docs/ninebox-aprovacao-gestor-implantacao.md` (contexto),
-> `docs/ninebox-aprovacao-gestor-vinculo-abner.sql` (vínculo),
+> `docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql` (vínculo),
 > `supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql`.
 
 ## 1. Estado real verificado agora (somente leitura)
 
 | Item                                                               | Resultado                                                             | Leitura                                                                |
 | ------------------------------------------------------------------ | --------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Papéis de **Abner** `2a1f0c4f-7587-49a7-81aa-e7e35cf0848d`         | `['admin','gestor']`                                                  | ✅ o banco já reconhece os dois papéis                                 |
+| Papéis de **Abner** `<user_id da conta de homologacao>`            | `['admin','gestor']`                                                  | ✅ o banco já reconhece os dois papéis                                 |
 | Papéis de **RH** `rh.ninebox.teste@promobrindes.com.br`            | `role = 'rh'` no `user_id` **`60767f3f-bb08-4917-9d74-17ce19ef8adb`** | ✅ usuário existe e tem o papel exigido por `pode_validar_potencial()` |
-| `colaboradores.user_id = 2a1f0c4f…`                                | **0 linhas**                                                          | ❌ **sem vínculo** → `pode_aprovar_colaborador` seria `false`          |
+| `colaboradores.user_id = <user_id da conta de homologacao>`        | **0 linhas**                                                          | ❌ **sem vínculo** → `pode_aprovar_colaborador` seria `false`          |
 | Descartável de homologação (`cpf 00000000000`)                     | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id` **nulo**            | pronto para o PASSO 1 do vínculo                                       |
 | `feedbacks_360` gestor + `concluido`                               | **0 linhas**                                                          | não há avaliação real atribuível ainda                                 |
 | `feedbacks_360_consolidacoes` / `feedbacks_360_aprovacoes_gestor`  | **PGRST205** (não existem)                                            | migration pendente                                                     |
@@ -84,15 +84,15 @@ Opcional (não necessário para o fluxo de aprovação):
 **Nada de terceiros é alterado**: só objetos novos + o vínculo da linha
 descartável de homologação.
 
-| #   | Passo                                            | Comando / ação                                                                                                                                      | Verificação                |
-| --- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| 0   | Backup lógico do alvo                            | `pg_dump` do schema `public` (ou snapshot do painel)                                                                                                | arquivo gerado             |
-| 1   | Aplicar a migration                              | `supabase db push` **ou** colar o arquivo no SQL Editor                                                                                             | §4.1 responde `200`        |
-| 2   | Vínculo de responsabilidade (Abner)              | `docs/ninebox-aprovacao-gestor-vinculo-abner.sql` **PASSO 1** (1 `UPDATE` na linha `0f303507…`, `user_id` nulo → `2a1f0c4f…`)                       | §4.2 devolve 1 linha       |
-| 3   | (Opcional) responsabilidade sobre OUTRO avaliado | **PASSO 2** do mesmo arquivo (`supervisor_id` do avaliado → descartável)                                                                            | §4.3                       |
-| 4   | Ligar o modo real na homologação                 | `VITE_NINEBOX_MODO_REAL=true` no `.env.local` **local** (os mocks continuam no código; a flag só troca a origem dos dados) + reiniciar o `vite dev` | a área passa a ler o banco |
-| 5   | Roteiro real pela interface                      | §5 (R1…R15)                                                                                                                                         | decisão sobrevive ao F5    |
-| 6   | Se algo falhar                                   | `supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql`                                                                            | prova no fim do arquivo    |
+| #   | Passo                                            | Comando / ação                                                                                                                                                    | Verificação                |
+| --- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| 0   | Backup lógico do alvo                            | `pg_dump` do schema `public` (ou snapshot do painel)                                                                                                              | arquivo gerado             |
+| 1   | Aplicar a migration                              | `supabase db push` **ou** colar o arquivo no SQL Editor                                                                                                           | §4.1 responde `200`        |
+| 2   | Vínculo de responsabilidade (Abner)              | `docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql` **PASSO 1** (1 `UPDATE` na linha `0f303507…`, `user_id` nulo → `<user_id da conta de homologacao>`) | §4.2 devolve 1 linha       |
+| 3   | (Opcional) responsabilidade sobre OUTRO avaliado | **PASSO 2** do mesmo arquivo (`supervisor_id` do avaliado → descartável)                                                                                          | §4.3                       |
+| 4   | Ligar o modo real na homologação                 | `VITE_NINEBOX_MODO_REAL=true` no `.env.local` **local** (os mocks continuam no código; a flag só troca a origem dos dados) + reiniciar o `vite dev`               | a área passa a ler o banco |
+| 5   | Roteiro real pela interface                      | §5 (R1…R15)                                                                                                                                                       | decisão sobrevive ao F5    |
+| 6   | Se algo falhar                                   | `supabase/rollback/20261017090000_ninebox_aprovacao_gestor_rollback.sql`                                                                                          | prova no fim do arquivo    |
 
 > O PASSO 4 é reversível: `VITE_NINEBOX_MODO_REAL=false` devolve o módulo à
 > vitrine, **sem** perda das decisões reais já gravadas.
@@ -119,10 +119,10 @@ Atalho pronto no repositório (somente leitura): `node scripts/_tmp-diagnostico-
 ### 4.2 O vínculo de responsabilidade está correto? (SQL)
 
 ```sql
--- 1) O colaborador vinculado a Abner (esperado: 1 linha com user_id = 2a1f0c4f-…)
+-- 1) O colaborador vinculado a Abner (esperado: 1 linha com user_id = <user_id da conta de homologacao>)
 select id, nome_completo, empresa_id, user_id, supervisor_id
   from public.colaboradores
- where user_id = '2a1f0c4f-7587-49a7-81aa-e7e35cf0848d';
+ where user_id = '<user_id da conta de homologacao>';
 
 -- 2) Autorização NA SESSÃO DE ABNER (esperado: true só para o próprio/seus avaliados)
 select public.pode_aprovar_colaborador('0f303507-5b13-4ca2-aa76-16122b5b37e9');  -- true

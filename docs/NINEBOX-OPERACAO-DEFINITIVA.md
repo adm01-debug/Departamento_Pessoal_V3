@@ -92,7 +92,7 @@ Commit base (antes das alterações desta rodada): `380e44a31`
    A migration `supabase/migrations/20261020090000_ninebox_edicao_feedback.sql`
    existe no repositório, mas **não foi aplicada**. Sem autorização explícita,
    não executei a migration. Até aplicá-la, a edição real falha no servidor.
-2. **Homologação real da exceção (`ti@promobrindes.com.br`) não executada.**
+2. **Homologação real da exceção (`<e-mail da conta de homologacao>`) não executada.**
    Não há credenciais disponíveis nesta sessão. A interface agora consulta a RPC
    real, mas a prova de gravação em `feedbacks_360_aprovacoes_gestor` e a
    validação do RH precisam ser feitas com a conta autorizada.
@@ -220,7 +220,7 @@ Estrutura **já refletida no principal** (ver `NINEBOX-ESTABILIZACAO-PRODUCAO.md
    dependências inexistente.
 6. A reconciliação incremental `20261027090000` está preparada e testada em
    PGlite, mas **não aplicada** por falta de autorização.
-7. A conta `ti@promobrindes.com.br` não está disponível nesta sessão; o fluxo
+7. A conta `<e-mail da conta de homologacao>` não está disponível nesta sessão; o fluxo
    real de aprovação/RH/F5 não foi executado no Supabase.
 8. RLS/policies efetivas foram verificadas por catálogo para o escopo do Nine-Box,
    mas não houve auditoria administrativa ampla do tenant.

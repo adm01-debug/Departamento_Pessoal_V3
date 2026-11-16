@@ -68,7 +68,7 @@ pendente, evitando que a fila escolha um registro concluído do mesmo conjunto.
 ## 4. Procedimento exato
 
 1. **Sair** de qualquer conta E2E (`admin@teste.local`) e entrar com a conta real
-   da TIME PROMO (`ti@promobrindes.com.br` ou a conta de RH/admin da empresa).
+   da TIME PROMO (`<e-mail da conta de homologacao>` ou a conta de RH/admin da empresa).
 2. Confirme no topo a empresa **TIME | PROMO BRINDES**.
 3. Se quiser eliminar a vitrine durante o teste, edite `.env.local` para:
    ```env

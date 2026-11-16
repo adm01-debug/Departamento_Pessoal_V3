@@ -1,7 +1,7 @@
 # Aprovação do gestor — implantação para a conta Abner
 
 > Verificado por leitura no banco em **16/10/2026** (nenhuma escrita executada).
-> Conta alvo: `2a1f0c4f-7587-49a7-81aa-e7e35cf0848d` (admin + gestor).
+> Conta alvo: `<user_id da conta de homologacao>` (admin + gestor).
 
 ## 1. Código já implementado (o que existe e o que falta)
 
@@ -45,7 +45,7 @@ demonstração). Por isso os botões Aprovar/Devolver não aparecem.
 
 Verificado: `user_roles` = **admin + gestor** ✅ · empresas
 `66104399-aba8-4105-bbd3-9bf67820c1d0` (default) e
-`61e7d382-549f-4b17-afa4-4578ebc919f3` · `colaboradores.user_id = 2a1f0c4f-…`
+`61e7d382-549f-4b17-afa4-4578ebc919f3` · `colaboradores.user_id = <user_id da conta de homologacao>`
 → **0 linhas** ❌ (é o segundo bloqueio).
 
 `pode_aprovar_colaborador` exige `colaboradores.user_id = auth.uid()` **e**
@@ -64,7 +64,7 @@ mínimo é **uma linha**:
   vinculado (1 UPDATE; o avaliado é escolhido pela consulta do arquivo).
 
 SQL pronto (com conferência, guardas e rollback), **não executado**:
-`docs/ninebox-aprovacao-gestor-vinculo-abner.sql`.
+`docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql`.
 
 > Observação do ambiente: na sessão de teste atual `feedbacks_360` e
 > `ciclos_avaliacao` retornam **0 linhas** (RLS por empresa) — os registros reais
@@ -76,7 +76,7 @@ SQL pronto (com conferência, guardas e rollback), **não executado**:
 1. **Aplicar** `20261017090000_ninebox_aprovacao_gestor.sql` (janela de baixo uso;
    cria tabelas/policies/funções — nenhum DML de dados).
 2. _(Opcional)_ **Aplicar** `20261018090000_ninebox_conclusao_gestor.sql`.
-3. **Rodar** o PASSO 1 do `docs/ninebox-aprovacao-gestor-vinculo-abner.sql`
+3. **Rodar** o PASSO 1 do `docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql`
    (vínculo da conta ao descartável) e conferir com 1b/1c.
 4. **Ligar o modo real** (`VITE_NINEBOX_MODO_REAL=true` no `.env.local`, local) e
    reiniciar o dev server — sem isso a tela permanece em demonstração.
@@ -170,13 +170,13 @@ Regras preservadas na demonstração:
 
 ### 7.1 Diagnóstico (leitura no banco em 16/10/2026 — nenhuma escrita)
 
-| Fato verificado                                            | Resultado                                                |
-| ---------------------------------------------------------- | -------------------------------------------------------- |
-| `get_user_roles(2a1f0c4f-…)` (conta Abner)                 | **`['admin','gestor']`** — o banco está certo            |
-| `colaboradores.user_id = 2a1f0c4f-…`                       | **0 linhas** ← nenhum vínculo de gestor                  |
-| Descartável de homologação (`cpf = 00000000000`)           | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id = null` |
-| `feedbacks_360` com `tipo='gestor'` e `status='concluido'` | **0 linhas** (nenhuma avaliação real atribuível hoje)    |
-| `pode_aprovar_colaborador`                                 | **PGRST202 — não existe** (migration pendente)           |
+| Fato verificado                                                   | Resultado                                                |
+| ----------------------------------------------------------------- | -------------------------------------------------------- |
+| `get_user_roles(<user_id da conta de homologacao>)` (conta Abner) | **`['admin','gestor']`** — o banco está certo            |
+| `colaboradores.user_id = <user_id da conta de homologacao>`       | **0 linhas** ← nenhum vínculo de gestor                  |
+| Descartável de homologação (`cpf = 00000000000`)                  | `0f303507-5b13-4ca2-aa76-16122b5b37e9`, `user_id = null` |
+| `feedbacks_360` com `tipo='gestor'` e `status='concluido'`        | **0 linhas** (nenhuma avaliação real atribuível hoje)    |
+| `pode_aprovar_colaborador`                                        | **PGRST202 — não existe** (migration pendente)           |
 
 ### 7.2 A CAUSA (100% no front, não no banco)
 
@@ -248,7 +248,7 @@ diagnóstico em `tmp-diagnostico-gestor-abner.json`.
    `decidir_aprovacao_gestor` e `situacao_aprovacao`. **Não aplicada**
    (PGRST205/PGRST202 confirmados hoje) ⇒ hoje não existe onde persistir a
    decisão real.
-2. **Vínculo da conta** — PASSO 1 de `docs/ninebox-aprovacao-gestor-vinculo-abner.sql`
+2. **Vínculo da conta** — PASSO 1 de `docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql`
    (1 `UPDATE` na linha descartável `0f303507-…`, hoje com `user_id` nulo;
    `empresa_id = 66104399-aba8-4105-bbd3-9bf67820c1d0`). Sem ele
    `pode_aprovar_colaborador` devolve `false` para qualquer avaliado.
@@ -424,7 +424,7 @@ Rollbacks em `supabase/rollback/` para as duas primeiras.
 **Autorize executar, no projeto `frjbfeamybqsejlvmqbl`, as migrations
 `20261017090000_ninebox_aprovacao_gestor.sql` e
 `20261020090000_ninebox_edicao_feedback.sql` e, em seguida, o PASSO 1 de
-`docs/ninebox-aprovacao-gestor-vinculo-abner.sql`** (um `UPDATE` na linha
+`docs/ninebox-aprovacao-gestor-vinculo-conta-homologacao.sql`** (um `UPDATE` na linha
 descartável `0f303507-5b13-4ca2-aa76-16122b5b37e9`, hoje com `user_id` nulo).
 Depois disso, com `VITE_NINEBOX_MODO_REAL=true`, o fluxo real
 cria → encaminha → aprova/devolve → RH valida → Nine-Box classifica e a edição
