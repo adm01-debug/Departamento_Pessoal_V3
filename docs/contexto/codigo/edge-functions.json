@@ -701,14 +701,16 @@
    "nome": "calcular-provisoes",
    "entrada": "supabase/functions/calcular-provisoes/index.ts",
    "arquivos": 1,
-   "linhas": 249,
+   "linhas": 339,
    "verify_jwt": true,
    "metodos": [
     "POST"
    ],
    "tabelas": [
     "colaboradores",
-    "provisao_logs"
+    "empresas",
+    "provisao_logs",
+    "provisoes_competencia_tributaria"
    ],
    "rpcs": [
     "replace_monthly_provisions"

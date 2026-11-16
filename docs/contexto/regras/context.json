@@ -1,15 +1,15 @@
 {
  "meta": {
-  "sha": "e64be5e74c1bcd9156d9595ec0ae41934e81657f",
+  "sha": "4fc0347d4cae05b56b112c130c2d0541cab5ebba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
-  "generated_at": "2026-11-16 13:49 UTC",
-  "files_total": 3124,
-  "code_files": 2591,
-  "code_lines": 379347
+  "generated_at": "2026-11-16 14:06 UTC",
+  "files_total": 3126,
+  "code_files": 2593,
+  "code_lines": 380109
  },
  "version": "1.3.2",
- "facts_hash": "258530b55881d9eb",
+ "facts_hash": "46812ac9dcfed277",
  "stack": {
   "frameworks": [
    "React + Vite",
@@ -384,7 +384,7 @@
   ],
   "package_manager": "npm",
   "languages": {
-   ".sql": 883,
+   ".sql": 885,
    ".ts": 793,
    ".tsx": 787,
    ".mjs": 100,
@@ -41576,6 +41576,66 @@
     "comment": "",
     "origin": "migration"
    },
+   "provisoes_competencia_tributaria": {
+    "columns": [
+     {
+      "name": "empresa_id",
+      "type": "uuid not null references public.empresas(id) on delete cascade",
+      "fk": "empresas.id on delete cascade",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     },
+     {
+      "name": "competencia",
+      "type": "date not null",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     },
+     {
+      "name": "encargos_aliquota_bps",
+      "type": "integer not null",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     },
+     {
+      "name": "regime_tributario",
+      "type": "public.regime_tributario",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     },
+     {
+      "name": "simples_anexo",
+      "type": "text",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     },
+     {
+      "name": "registrado_em",
+      "type": "timestamptz not null default now()",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     },
+     {
+      "name": "registrado_por",
+      "type": "uuid",
+      "fk": "",
+      "generated": "",
+      "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+     }
+    ],
+    "constraints": [
+     "constraint provisoes_competencia_tributaria_pkey primary key (empresa_id, competencia)",
+     "constraint provisoes_competencia_tributaria_bps_faixa check (encargos_aliquota_bps >= 0 and encargos_aliquota_bps <= 1000)"
+    ],
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
+    "comment": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions.",
+    "origin": "migration"
+   },
    "auth._test_uid": {
     "columns": [
      {
@@ -63553,21 +63613,27 @@
     "args": "p_empresa_id uuid, p_competencia text, p_rows jsonb, p_user_id uuid, p_audit_data jsonb",
     "returns": "integer",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE inserted_count integer; competence_date date; BEGIN IF p_empresa_id IS NULL OR p_user_id IS NULL OR p_competencia !~ '^\\d{4}-(0[1-9]|1[0-2])$' OR jsonb_typeof(p_rows) <> 'array' OR jsonb_array_length(p_rows) > 20000 OR jsonb_typeof(p_audit_data) <> 'object' THEN RAISE EXCEPTION 'invalid monthly provision replacement arguments'; END IF; competence_date := to_date(p_competencia || '-01', 'YYYY-MM-DD'); IF EXISTS ( SELECT 1 FROM jsonb_array_elements(p_rows) AS row_data(item) WHERE jsonb_typeof(item) <> 'object' OR COALESCE(item->>'colaborador_id', '') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' OR item->>'tipo' NOT IN ('ferias', '13_salario') OR jsonb_typeof(ite …",
+    "body": "DECLARE inserted_count integer; competence_date date; v_bps_recebido integer; v_bps_vigente integer; v_aliquotas integer; v_regime_recebido text; v_anexo_recebido text; BEGIN IF p_empresa_id IS NULL OR p_user_id IS NULL OR p_competencia IS NULL OR p_competencia !~ '^\\d{4}-(0[1-9]|1[0-2])$' OR jsonb_typeof(p_rows) IS DISTINCT FROM 'array' OR jsonb_array_length(p_rows) > 20000 OR jsonb_typeof(p_audit_data) IS DISTINCT FROM 'object' THEN RAISE EXCEPTION 'invalid monthly provision replacement arguments'; END IF; competence_date := to_date(p_competencia || '-01', 'YYYY-MM-DD'); IF EXISTS ( SELECT 1 FROM jsonb_array_elements(p_rows) AS row_data(item) WHERE jsonb_typeof(item) <> 'object' OR COALESC …",
     "raises": [
      "invalid monthly provision replacement arguments",
      "invalid monthly provision row",
+     "invalid monthly provision tax contract",
+     "monthly provision batch carries % distinct tax rates",
      "monthly provision collaborator is outside the company",
+     "monthly provision tax rate changed under lock: stored % bps, received % bps",
      "monthly provision replacement row count mismatch"
     ],
     "tables": [
+     "STRICT",
      "audit_log",
      "colaboradores",
      "jsonb_array_elements",
-     "provisoes_mensais"
+     "provisoes_competencia_tributaria",
+     "provisoes_mensais",
+     "v_bps_vigente"
     ]
    },
    "report_destination_is_allowed": {
@@ -72065,6 +72131,8 @@
    "supabase/migrations/20261115170000_ninebox_repoe_revogacao_versao_consolidada.verify.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.sql",
    "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
+   "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
+   "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql",
    "supabase/rebaseline/20260831_corrected_public.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
@@ -72534,7 +72602,8 @@
    "training_images": "enabled",
    "training_image_settings": "enabled",
    "training_image_requests": "enabled",
-   "afd_geracoes": "enabled"
+   "afd_geracoes": "enabled",
+   "provisoes_competencia_tributaria": "enabled"
   },
   "grants": [
    {
@@ -83980,6 +84049,30 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "provisoes_competencia_tributaria",
+    "objkind": "table",
+    "roles": "anon",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "provisoes_competencia_tributaria",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "provisoes_competencia_tributaria",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -84659,26 +84752,6 @@
     "function": "claim_due_report_schedules",
     "msg": "invalid report schedule claim arguments",
     "src": "supabase/migrations/20260912192000_p0_report_schedule_claims.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "invalid monthly provision replacement arguments",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "invalid monthly provision row",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "monthly provision collaborator is outside the company",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "monthly provision replacement row count mismatch",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
    },
    {
     "function": "enforce_report_schedule_authorship",
@@ -85434,6 +85507,41 @@
     "function": "decidir_aprovacao_gestor",
     "msg": "avaliacao_sem_desempenho",
     "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "invalid monthly provision replacement arguments",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "invalid monthly provision row",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "invalid monthly provision tax contract",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision batch carries % distinct tax rates",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision collaborator is outside the company",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision tax rate changed under lock: stored % bps, received % bps",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision replacement row count mismatch",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -87106,7 +87214,11 @@
    "table:training_image_requests": "Fila persistente de geração automática. Uma linha por conteúdo; reivindicada com FOR UPDATE SKIP LOCKED pelo worker.",
    "column:audit_log.justificativa": "Justificativa/motivo integral da operação auditada (cancelamento, reabertura, devolução etc.).",
    "column:audit_log.status_anterior": "Status do registro antes da operação; nulo quando a operação não é uma transição de status.",
-   "column:audit_log.status_posterior": "Status do registro depois da operação; nulo quando a operação não é uma transição de status."
+   "column:audit_log.status_posterior": "Status do registro depois da operação; nulo quando a operação não é uma transição de status.",
+   "column:provisoes_mensais.encargos_aliquota_bps": "Aliquota de encargos patronais aplicada a ESTA linha, em bps (358 = 35,8%). Gravada pelo calculo; o recalculo da mesma competencia a reaproveita.",
+   "column:provisoes_mensais.regime_tributario": "Retrato do regime tributario da empresa no momento do calculo desta linha.",
+   "column:provisoes_mensais.simples_anexo": "Retrato do anexo do Simples no momento do calculo desta linha; nulo fora do Simples ou quando o cadastro nao informa.",
+   "table:provisoes_competencia_tributaria": "Contrato tributario da competencia: aliquota de encargos (bps) e retrato do regime usados no calculo daquele mes. Sobrevive a substituicao com lote vazio, que apaga as linhas de provisoes_mensais. Escrita exclusiva de replace_monthly_provisions."
   },
   "types_file": "src/integrations/supabase/types.ts"
  },
@@ -96675,7 +96787,9 @@
     "auth": "service_role (ignora RLS) + valida JWT do usuário",
     "tables": [
      "colaboradores",
-     "provisao_logs"
+     "empresas",
+     "provisao_logs",
+     "provisoes_competencia_tributaria"
     ],
     "env": [
      "SUPABASE_ANON_KEY",
@@ -96684,7 +96798,7 @@
     ],
     "external": [],
     "invokes": [],
-    "doc": "Onda 33 — Hardening de cálculo de Provisões (Férias + 13º): • JWT + CSRF fail-closed + tenant scope • Zod strict (competência AAAA-MM, não-futura, ≤ 60 meses passados) • BigInt centavos (zero drift) • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos • Filtra colaborador …",
+    "doc": "Onda 33 — Hardening de cálculo de Provisões (Férias + 13º): • JWT + CSRF fail-closed + tenant scope • Zod strict (competência AAAA-MM, não-futura, ≤ 60 meses passados) • BigInt centavos (zero drift) • Férias = (salário × 4/3) / 12 + encargos por regime tributário; 13º = salário / 12 + encargos • Fil …",
     "errors": [
      "Quantidade persistida diverge da quantidade calculada"
     ],
@@ -100584,7 +100698,7 @@
   {
    "module": "src/calculators",
    "files": 16,
-   "lines": 2117,
+   "lines": 2201,
    "tables": [],
    "exports": [
     "auditHelper.ts: signCalculation, auditCalculation, verifyCalculationIntegrity",
@@ -102283,7 +102397,7 @@
   {
    "module": "supabase/functions",
    "files": 173,
-   "lines": 24455,
+   "lines": 24545,
    "tables": [
     "adiantamentos_salariais",
     "admissao_tokens",
@@ -102358,6 +102472,7 @@
     "pix_lotes",
     "profiles",
     "provisao_logs",
+    "provisoes_competencia_tributaria",
     "provisoes_mensais",
     "query_telemetry",
     "rate_limit_logs",
@@ -102524,8 +102639,8 @@
   },
   {
    "module": "supabase/migrations",
-   "files": 847,
-   "lines": 77231,
+   "files": 849,
+   "lines": 77819,
    "tables": [
     "profiles",
     "user_roles"
@@ -103809,6 +103924,7 @@
      "src/services/cnabService.ts",
      "src/services/esocialService.ts",
      "src/services/folhaPagamentoService.ts",
+     "supabase/functions/calcular-provisoes/index.ts",
      "supabase/functions/gerar-aej/index.ts",
      "supabase/functions/gerar-afd/index.ts",
      "supabase/functions/gerar-ltcat-os/index.ts",
@@ -105045,6 +105161,11 @@
      "supabase/functions/calcular-provisoes/index.ts"
     ],
     "update": [
+     "supabase/functions/calcular-provisoes/index.ts"
+    ]
+   },
+   "provisoes_competencia_tributaria": {
+    "select": [
      "supabase/functions/calcular-provisoes/index.ts"
     ]
    },
@@ -106402,6 +106523,7 @@
     "rat",
     "razao_social",
     "regime_tributario",
+    "simples_anexo",
     "terceiros",
     "uf"
    ],
@@ -106881,6 +107003,13 @@
     "id",
     "status",
     "valor_total_provisionado"
+   ],
+   "provisoes_competencia_tributaria": [
+    "competencia",
+    "empresa_id",
+    "encargos_aliquota_bps",
+    "regime_tributario",
+    "simples_anexo"
    ],
    "provisoes_mensais": [
     "colaborador_id",
@@ -109182,7 +109311,8 @@
     "pcs_pesquisa_salarial",
     "training_images",
     "training_image_requests",
-    "afd_geracoes"
+    "afd_geracoes",
+    "provisoes_competencia_tributaria"
    ],
    "afdt_importacoes": [
     "afdt_divergencias",
@@ -115461,6 +115591,14 @@
     "text": "no prazo legal (10 dias corridos para aviso prévio trabalhado; 1° dia útil para demissão imediata)."
    },
    {
+    "file": "src/calculators/tabelas.ts",
+    "text": "apenas o FGTS. Exceção do Anexo IV (art. 18, §5º-C): CPP e RAT/FAP são"
+   },
+   {
+    "file": "src/calculators/tabelas.ts",
+    "text": "(edge não pode importar de src/)."
+   },
+   {
     "file": "src/components/AdminRoute.tsx",
     "text": "'pending-challenge' = enrolled but aal1 session — must complete TOTP before access"
    },
@@ -117878,11 +118016,19 @@
    },
    {
     "file": "supabase/functions/calcular-provisoes/index.ts",
+    "text": "src/calculators/tabelas.ts::aliquotaEncargosProvisao (edge não pode importar"
+   },
+   {
+    "file": "supabase/functions/calcular-provisoes/index.ts",
     "text": "Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)"
    },
    {
     "file": "supabase/functions/calcular-provisoes/index.ts",
     "text": "era um OU — pertencer à empresa já bastava, e o is_admin apenas somava"
+   },
+   {
+    "file": "supabase/functions/calcular-provisoes/index.ts",
+    "text": "de competencia encerrada nao pode mudar por efeito colateral de uma"
    },
    {
     "file": "supabase/functions/calcular-rescisao/index.ts",
@@ -142120,6 +142266,36 @@
     "rule": "default now()"
    },
    {
+    "table": "provisoes_competencia_tributaria",
+    "column": "empresa_id",
+    "rule": "obrigatório; FK → empresas.id on delete cascade"
+   },
+   {
+    "table": "provisoes_competencia_tributaria",
+    "column": "competencia",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "provisoes_competencia_tributaria",
+    "column": "encargos_aliquota_bps",
+    "rule": "obrigatório"
+   },
+   {
+    "table": "provisoes_competencia_tributaria",
+    "column": "registrado_em",
+    "rule": "default now()"
+   },
+   {
+    "table": "provisoes_competencia_tributaria",
+    "column": "(tabela)",
+    "rule": "constraint provisoes_competencia_tributaria_pkey primary key (empresa_id, competencia)"
+   },
+   {
+    "table": "provisoes_competencia_tributaria",
+    "column": "(tabela)",
+    "rule": "constraint provisoes_competencia_tributaria_bps_faixa check (encargos_aliquota_bps >= 0 and encargos_aliquota_bps <= 1000)"
+   },
+   {
     "table": "_test_ctx",
     "column": "k",
     "rule": "PK"
@@ -156835,10 +157011,6 @@
    },
    {
     "file": "supabase/functions/calcular-provisoes/index.ts",
-    "line": "// • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos"
-   },
-   {
-    "file": "supabase/functions/calcular-provisoes/index.ts",
     "line": "const FGTS_BPS = 80n; // 8%"
    },
    {
@@ -158658,6 +158830,42 @@
    {
     "file": "src/calculators/__tests__/tabelas.test.ts",
     "name": "todos os encargos são positivos"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "aliquotaEncargosProvisao — encargos da provisão por regime"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "alíquota cheia = CPP + RAT + Terceiros + FGTS (~36,8%)"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "Simples Nacional com anexo informado recolhe apenas FGTS 8%"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "Simples Anexo IV recolhe CPP + RAT + FGTS, sem Terceiros (31%)"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "Lucro Presumido e Lucro Real mantêm a alíquota cheia de hoje"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "regime ausente ou desconhecido cai na alíquota cheia, nunca na menor"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "Simples sem anexo informado NAO reduz: anexo desconhecido mantem a aliquota cheia"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "Simples nos anexos I, II, III e V recolhe apenas FGTS"
+   },
+   {
+    "file": "src/calculators/__tests__/tabelas.test.ts",
+    "name": "provisão de R$ 1.000 — Simples provisiona 28,8 p.p. menos que Lucro Presumido"
    },
    {
     "file": "src/calculators/__tests__/trabalhista-base.test.ts",
@@ -209283,21 +209491,27 @@
     "args": "p_empresa_id uuid, p_competencia text, p_rows jsonb, p_user_id uuid, p_audit_data jsonb",
     "returns": "integer",
     "lang": "plpgsql",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
     "security_definer": true,
     "search_path": true,
-    "body": "DECLARE inserted_count integer; competence_date date; BEGIN IF p_empresa_id IS NULL OR p_user_id IS NULL OR p_competencia !~ '^\\d{4}-(0[1-9]|1[0-2])$' OR jsonb_typeof(p_rows) <> 'array' OR jsonb_array_length(p_rows) > 20000 OR jsonb_typeof(p_audit_data) <> 'object' THEN RAISE EXCEPTION 'invalid monthly provision replacement arguments'; END IF; competence_date := to_date(p_competencia || '-01', 'YYYY-MM-DD'); IF EXISTS ( SELECT 1 FROM jsonb_array_elements(p_rows) AS row_data(item) WHERE jsonb_typeof(item) <> 'object' OR COALESCE(item->>'colaborador_id', '') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' OR item->>'tipo' NOT IN ('ferias', '13_salario') OR jsonb_typeof(ite …",
+    "body": "DECLARE inserted_count integer; competence_date date; v_bps_recebido integer; v_bps_vigente integer; v_aliquotas integer; v_regime_recebido text; v_anexo_recebido text; BEGIN IF p_empresa_id IS NULL OR p_user_id IS NULL OR p_competencia IS NULL OR p_competencia !~ '^\\d{4}-(0[1-9]|1[0-2])$' OR jsonb_typeof(p_rows) IS DISTINCT FROM 'array' OR jsonb_array_length(p_rows) > 20000 OR jsonb_typeof(p_audit_data) IS DISTINCT FROM 'object' THEN RAISE EXCEPTION 'invalid monthly provision replacement arguments'; END IF; competence_date := to_date(p_competencia || '-01', 'YYYY-MM-DD'); IF EXISTS ( SELECT 1 FROM jsonb_array_elements(p_rows) AS row_data(item) WHERE jsonb_typeof(item) <> 'object' OR COALESC …",
     "raises": [
      "invalid monthly provision replacement arguments",
      "invalid monthly provision row",
+     "invalid monthly provision tax contract",
+     "monthly provision batch carries % distinct tax rates",
      "monthly provision collaborator is outside the company",
+     "monthly provision tax rate changed under lock: stored % bps, received % bps",
      "monthly provision replacement row count mismatch"
     ],
     "tables": [
+     "STRICT",
      "audit_log",
      "colaboradores",
      "jsonb_array_elements",
-     "provisoes_mensais"
+     "provisoes_competencia_tributaria",
+     "provisoes_mensais",
+     "v_bps_vigente"
     ]
    },
    "report_destination_is_allowed": {
@@ -210801,26 +211015,6 @@
     "src": "supabase/migrations/20260912192000_p0_report_schedule_claims.sql"
    },
    {
-    "function": "replace_monthly_provisions",
-    "msg": "invalid monthly provision replacement arguments",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "invalid monthly provision row",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "monthly provision collaborator is outside the company",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
-    "function": "replace_monthly_provisions",
-    "msg": "monthly provision replacement row count mismatch",
-    "src": "supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql"
-   },
-   {
     "function": "enforce_report_schedule_authorship",
     "msg": "report dispatch lease is service-owned",
     "src": "supabase/migrations/20260912194000_p1_report_schedule_authorship.sql"
@@ -211574,6 +211768,41 @@
     "function": "decidir_aprovacao_gestor",
     "msg": "avaliacao_sem_desempenho",
     "src": "supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "invalid monthly provision replacement arguments",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "invalid monthly provision row",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "invalid monthly provision tax contract",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision batch carries % distinct tax rates",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision collaborator is outside the company",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision tax rate changed under lock: stored % bps, received % bps",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "function": "replace_monthly_provisions",
+    "msg": "monthly provision replacement row count mismatch",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
    },
    {
     "function": "_purge_audit_log_internal",
@@ -222578,6 +222807,13 @@
      "authenticated: (\"empresa_id\" IN ( SELECT \"public\".\"get_user_empresas\"(\"auth\".\"uid\"()) AS \"get_user_empresas\"))"
     ]
    },
+   "provisoes_competencia_tributaria": {
+    "rls": "enabled",
+    "SELECT": [],
+    "INSERT": [],
+    "UPDATE": [],
+    "DELETE": []
+   },
    "provisoes_folha": {
     "rls": "enabled",
     "SELECT": [
@@ -224480,6 +224716,11 @@
     ]
    },
    {
+    "table": "provisoes_competencia_tributaria",
+    "issue": "RLS ligado sem nenhuma política → só service_role acessa",
+    "files": []
+   },
+   {
     "table": "query_telemetry",
     "issue": "front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "files": [
@@ -224781,6 +225022,8 @@
    "supabase/migrations/20261113000000_remediate_rv04_missing_rpcs.sql",
    "supabase/migrations/20261114000600_rls_escrita_por_papel.sql",
    "supabase/migrations/20261115000000_revoke_dml_audit_log_anon_auth.sql",
+   "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
+   "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql",
    "supabase/rebaseline/20260831_security_remediation.sql",
    "supabase/rebaseline/20260831_storage_remediation.sql",
    "supabase/rebaseline/20260902_secdef_authz_remediation.sql",
@@ -236563,6 +236806,30 @@
    {
     "kind": "revoke",
     "privs": "all",
+    "object": "provisoes_competencia_tributaria",
+    "objkind": "table",
+    "roles": "anon",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
+    "object": "provisoes_competencia_tributaria",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "grant",
+    "privs": "select",
+    "object": "provisoes_competencia_tributaria",
+    "objkind": "table",
+    "roles": "authenticated",
+    "src": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql"
+   },
+   {
+    "kind": "revoke",
+    "privs": "all",
     "object": "user_belongs_to_empresa",
     "objkind": "function",
     "roles": "PUBLIC, anon",
@@ -237759,7 +238026,8 @@
    "feedbacks_360_aprovacoes_gestor",
    "training_images",
    "training_image_requests",
-   "afd_geracoes"
+   "afd_geracoes",
+   "provisoes_competencia_tributaria"
   ],
   "tenant_missing": [],
   "tenant_cov": 0.45,
@@ -239633,6 +239901,7 @@
    "afd_geracoes": [
     "created_at"
    ],
+   "provisoes_competencia_tributaria": [],
    "auth._test_uid": [],
    "_test_ctx": []
   },
@@ -241529,6 +241798,11 @@
    },
    {
     "kind": "rls",
+    "msg": "`provisoes_competencia_tributaria`: RLS ligado sem nenhuma política → só service_role acessa",
+    "where": []
+   },
+   {
+    "kind": "rls",
     "msg": "`query_telemetry`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários",
     "where": [
      "src/pages/AdminTelemetriaPage.tsx"
@@ -243288,7 +243562,7 @@
    "`mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
    "`afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.",
-   "399/467 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
+   "399/468 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …"
   ]
  },
  "manual": [],
@@ -248577,7 +248851,7 @@
   },
   "src/calculators/tabelas.ts": {
    "path": "src/calculators/tabelas.ts",
-   "lines": 98,
+   "lines": 129,
    "exports": [
     "const SALARIO_MINIMO_2026",
     "const FAIXAS_INSS_2026",
@@ -248602,6 +248876,8 @@
     "const LIMITE_ISENCAO_PLR",
     "const FAIXAS_PLR_2026",
     "const ENCARGOS_PADRAO",
+    "const ALIQUOTA_ENCARGOS_PROVISAO",
+    "function aliquotaEncargosProvisao",
     "const FAIXAS_SEGURO_DESEMPREGO_2026"
    ],
    "params": [
@@ -248665,6 +248941,10 @@
      "name": "LIMITE_ISENCAO_PLR",
      "value": "7640.8"
     }
+   ],
+   "rule_comments": [
+    "apenas o FGTS. Exceção do Anexo IV (art. 18, §5º-C): CPP e RAT/FAP são",
+    "(edge não pode importar de src/)."
    ],
    "doc": "Tabelas e constantes trabalhistas 2026",
    "percents": [
@@ -248967,7 +249247,7 @@
   },
   "src/calculators/__tests__/tabelas.test.ts": {
    "path": "src/calculators/__tests__/tabelas.test.ts",
-   "lines": 151,
+   "lines": 204,
    "is_test": true,
    "tests": [
     "tabelas 2026 — integridade dos dados",
@@ -249004,7 +249284,16 @@
     "ENCARGOS_PADRAO",
     "INSS patronal = 20%",
     "FGTS = 8%",
-    "todos os encargos são positivos"
+    "todos os encargos são positivos",
+    "aliquotaEncargosProvisao — encargos da provisão por regime",
+    "alíquota cheia = CPP + RAT + Terceiros + FGTS (~36,8%)",
+    "Simples Nacional com anexo informado recolhe apenas FGTS 8%",
+    "Simples Anexo IV recolhe CPP + RAT + FGTS, sem Terceiros (31%)",
+    "Lucro Presumido e Lucro Real mantêm a alíquota cheia de hoje",
+    "regime ausente ou desconhecido cai na alíquota cheia, nunca na menor",
+    "Simples sem anexo informado NAO reduz: anexo desconhecido mantem a aliquota cheia",
+    "Simples nos anexos I, II, III e V recolhe apenas FGTS",
+    "provisão de R$ 1.000 — Simples provisiona 28,8 p.p. menos que Lucro Presumido"
    ]
   },
   "src/calculators/__tests__/trabalhista-base.test.ts": {
@@ -291066,8 +291355,16 @@
   },
   "supabase/functions/calcular-provisoes/index.ts": {
    "path": "supabase/functions/calcular-provisoes/index.ts",
-   "lines": 249,
+   "lines": 339,
    "tables": [
+    {
+     "table": "empresas",
+     "op": "select"
+    },
+    {
+     "table": "provisoes_competencia_tributaria",
+     "op": "select"
+    },
     {
      "table": "colaboradores",
      "op": "select"
@@ -291086,6 +291383,18 @@
     }
    ],
    "table_cols": {
+    "empresas": [
+     "id",
+     "regime_tributario",
+     "simples_anexo"
+    ],
+    "provisoes_competencia_tributaria": [
+     "competencia",
+     "empresa_id",
+     "encargos_aliquota_bps",
+     "regime_tributario",
+     "simples_anexo"
+    ],
     "colaboradores": [
      "data_admissao",
      "empresa_id",
@@ -291180,10 +291489,12 @@
     }
    ],
    "rule_comments": [
+    "src/calculators/tabelas.ts::aliquotaEncargosProvisao (edge não pode importar",
     "Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)",
-    "era um OU — pertencer à empresa já bastava, e o is_admin apenas somava"
+    "era um OU — pertencer à empresa já bastava, e o is_admin apenas somava",
+    "de competencia encerrada nao pode mudar por efeito colateral de uma"
    ],
-   "doc": "Onda 33 — Hardening de cálculo de Provisões (Férias + 13º): • JWT + CSRF fail-closed + tenant scope • Zod strict (competência AAAA-MM, não-futura, ≤ 60 meses passados) • BigInt centavos (zero drift) • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos • Filtra colaborador …",
+   "doc": "Onda 33 — Hardening de cálculo de Provisões (Férias + 13º): • JWT + CSRF fail-closed + tenant scope • Zod strict (competência AAAA-MM, não-futura, ≤ 60 meses passados) • BigInt centavos (zero drift) • Férias = (salário × 4/3) / 12 + encargos por regime tributário; 13º = salário / 12 + encargos • Fil …",
    "calc_fns": [
     {
      "name": "reaisToCents",
@@ -291193,7 +291504,6 @@
    ],
    "percents": [
     "// Encargos patronais consolidados. Achado K5 da auditoria: RAT estava em 2%",
-    "// • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos",
     "const FGTS_BPS = 80n; // 8%",
     "const INSS_PATRONAL_BPS = 200n; // 20%",
     "const RAT_MEDIO_BPS = 30n; // 3% (src/calculators/tabelas.ts::ENCARGOS_PADRAO.rat)",
@@ -300344,6 +300654,16 @@
    "path": "supabase/migrations/20261116000000_remediate_rbac_e2e_remove_admin.verify.sql",
    "lines": 13
   },
+  "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql": {
+   "path": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
+   "lines": 390,
+   "uses_service_role": true
+  },
+  "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql": {
+   "path": "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql",
+   "lines": 198,
+   "uses_service_role": true
+  },
   "supabase/rebaseline/20260831_security_remediation.sql": {
    "path": "supabase/rebaseline/20260831_security_remediation.sql",
    "lines": 656,
@@ -300560,10 +300880,26 @@
   }
  },
  "git": {
-  "sha": "e64be5e74c1bcd9156d9595ec0ae41934e81657f",
+  "sha": "4fc0347d4cae05b56b112c130c2d0541cab5ebba",
   "branch": "main",
   "remote": "https://github.com/adm01-debug/Departamento_Pessoal_V3",
   "commits": [
+   {
+    "sha": "4fc0347",
+    "date": "2026-11-16",
+    "author": "adm01-debug",
+    "subject": "fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)",
+    "files": [
+     ".github/workflows/canonical-migrations.yml",
+     "scripts/.types-drift-baseline.json",
+     "scripts/canonical-invariants.sql",
+     "src/calculators/__tests__/tabelas.test.ts",
+     "src/calculators/tabelas.ts",
+     "supabase/functions/calcular-provisoes/index.ts",
+     "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
+     "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql"
+    ]
+   },
    {
     "sha": "e64be5e",
     "date": "2026-11-16",
@@ -301032,15 +301368,6 @@
      "nginx.conf",
      "vercel.json"
     ]
-   },
-   {
-    "sha": "3232ef1",
-    "date": "2026-11-13",
-    "author": "adm01-debug",
-    "subject": "docs: prod-readiness fecha a rodada (main 5bbf7eb) (#559)",
-    "files": [
-     "docs/prod-readiness.md"
-    ]
    }
   ],
   "hot_files": [
@@ -301053,15 +301380,23 @@
     4
    ],
    [
-    "docs/prod-readiness.md",
-    4
+    ".github/workflows/canonical-migrations.yml",
+    3
    ],
    [
-    "src/components/__tests__/NineBoxQuadranteDialog.test.tsx",
+    "docs/prod-readiness.md",
+    3
+   ],
+   [
+    "scripts/.types-drift-baseline.json",
     2
    ],
    [
-    ".github/workflows/canonical-migrations.yml",
+    "scripts/canonical-invariants.sql",
+    2
+   ],
+   [
+    "src/components/__tests__/NineBoxQuadranteDialog.test.tsx",
     2
    ],
    [
@@ -301085,6 +301420,26 @@
     2
    ],
    [
+    "src/calculators/__tests__/tabelas.test.ts",
+    1
+   ],
+   [
+    "src/calculators/tabelas.ts",
+    1
+   ],
+   [
+    "supabase/functions/calcular-provisoes/index.ts",
+    1
+   ],
+   [
+    "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql",
+    1
+   ],
+   [
+    "supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.verify.sql",
+    1
+   ],
+   [
     ".github/workflows/canonical-probes.yml",
     1
    ],
@@ -301094,34 +301449,6 @@
    ],
    [
     "inventario/ia/ferramentas.json",
-    1
-   ],
-   [
-    "scripts/.types-drift-baseline.json",
-    1
-   ],
-   [
-    "supabase/migrations/20261023120000_training_images_infrastructure.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261023120000_training_images_infrastructure.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261023130000_training_image_autoqueue.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261023130000_training_image_autoqueue.verify.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261023140000_edge_rate_limit_dual.sql",
-    1
-   ],
-   [
-    "supabase/migrations/20261023140000_edge_rate_limit_dual.verify.sql",
     1
    ]
   ]

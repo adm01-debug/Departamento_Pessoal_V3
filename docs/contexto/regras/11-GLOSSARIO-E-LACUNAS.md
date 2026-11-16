@@ -1,6 +1,6 @@
 # 11 · GLOSSÁRIO, DADOS DE REFERÊNCIA E LACUNAS
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e64be5e74c` · branch `main` · 2026-11-16 13:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4fc0347d4c` · branch `main` · 2026-11-16 14:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## Glossário do domínio (entidades do sistema)
@@ -307,7 +307,7 @@
 | `pcs_fatores` | Server-validated weighted PCS factors and allowed scores. | 9 colunas | migration |
 | `pcs_grades` | Transactionally generated salary ranges for a PCS plan. | 11 colunas | migration |
 | `pcs_pesquisa_salarial` | Tenant-scoped external salary benchmark observations. | 14 colunas | migration |
-| … +302 linhas — lista completa em `context.json` | | | |
+| … +303 linhas — lista completa em `context.json` | | | |
 
 ## Dados de referência (seed — planos, categorias, perfis fixos)
 
@@ -438,6 +438,7 @@
 | rls | `pcs_avaliacoes_cargo`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_fatores`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
 | rls | `pcs_grades`: RLS ligado sem nenhuma política → só service_role acessa | `src/services/pcsService.ts` |
+| rls | `provisoes_competencia_tributaria`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rls | `query_telemetry`: front faz DELETE mas nenhuma política RLS permite DELETE → vai falhar/retornar vazio para usuários | `src/pages/AdminTelemetriaPage.tsx` |
 | rls | `report_dispatch_attempts`: RLS ligado sem nenhuma política → só service_role acessa |  |
 | rpc | RPC `foo` chamada mas não definida nas migrations/types | `eslint.config.js` |
@@ -645,8 +646,7 @@
 | segurança | função `create_entity_version` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
 | segurança | função `get_default_filter` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/migrations/20240101000000_crud_improvements.sql` |
 | segurança | função `check_login_lock` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| segurança | função `record_failed_login` é SECURITY DEFINER sem `set search_path` (risco de escalação) | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +28 linhas — lista completa em `context.json` | | |
+| … +29 linhas — lista completa em `context.json` | | |
 
 ## Lacunas — o que este contexto NÃO consegue responder (perguntas para o dono do negócio)
 
@@ -759,7 +759,7 @@
 - `mv_refresh_log.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `health_checks.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
 - `afd_geracoes.status` é uma coluna de status sem enum/CHECK — os valores válidos e as transições permitidas não estão no banco.
-- 399/467 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
+- 399/468 tabelas sem `COMMENT ON TABLE` — o significado de negócio não está no schema: `auth.custom_oauth_providers`, `auth.oauth_authorizations`, `auth.oauth_clients`, `auth.oauth_consents`, `auth.one_time_tokens`, `auth.webauthn_challenges`, `auth.webauthn_credentials`, `despesas`, `medidas_disciplinares`, `desligamentos`, `ferias`, `ferias_reconciliacao_logs` …
 
 ## Regras manuais presentes
 

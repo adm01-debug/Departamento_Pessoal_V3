@@ -59,11 +59,11 @@
  "commits": {
   "convencao": "commitlint",
   "exemplos": [
+   "fix(provisões): encargos da provisão seguem o regime tributário e a competência guarda o contrato (#576)",
    "build(deps): bump the minor-patch group with 11 updates (#586)",
    "infra(ci): probes de segurança do canônico passam de diários a semanais — a fila chegava a 3,7 dias (#589)",
    "build(deps): bump jsdom from 30.1.3 to 31.0.0 (#587)",
-   "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)",
-   "build(deps-dev): bump the testing group with 2 updates (#585)"
+   "fix(test): asserção da casca do NineBox deixa de depender da ordem do transform-origin (#588)"
   ]
  },
  "pr_template": ".github/PULL_REQUEST_TEMPLATE.md",

@@ -6,7 +6,7 @@
   "src/integrations/supabase/types.ts",
   "supabase/migrations"
  ],
- "migrations": 847,
+ "migrations": 849,
  "seeds": [],
  "avisos": [
   "181 bloco(s) com DDL dinâmico (EXECUTE format/...) não modelado — policies/colunas criadas dinamicamente podem faltar; confira no banco vivo"
@@ -23660,6 +23660,7 @@
    },
    "usada_no_front": 9,
    "usada_em_edges": [
+    "calcular-provisoes",
     "gerar-aej",
     "gerar-afd",
     "gerar-ltcat-os",
@@ -48397,6 +48398,80 @@
    "sem_rls": false,
    "nao_usada": false
   },
+  "provisoes_competencia_tributaria": {
+   "colunas": {
+    "competencia": {
+     "tipo": "date",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "empresa_id": {
+     "tipo": "uuid",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": "empresas"
+    },
+    "encargos_aliquota_bps": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "regime_tributario": {
+     "tipo": "public",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "registrado_em": {
+     "tipo": "timestamptz",
+     "nn": true,
+     "pk": false,
+     "default": "now()",
+     "ref": null
+    },
+    "registrado_por": {
+     "tipo": "uuid",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "simples_anexo": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    }
+   },
+   "rls": true,
+   "policies": [
+    {
+     "nome": "provisoes_competencia_tributaria_tenant_select",
+     "comando": "select",
+     "para": "authenticated",
+     "tipo": "permissive"
+    }
+   ],
+   "indices": [],
+   "fks": [
+    "empresa_id->empresas"
+   ],
+   "criada_em": "20261116120000_provisoes_registra_aliquota_aplicada.sql",
+   "usada_no_front": 0,
+   "usada_em_edges": [
+    "calcular-provisoes"
+   ],
+   "triggers": [],
+   "sem_rls": false,
+   "nao_usada": false
+  },
   "provisoes_folha": {
    "colunas": {
     "colaborador_id": {
@@ -48574,6 +48649,13 @@
      "default": null,
      "ref": "empresas"
     },
+    "encargos_aliquota_bps": {
+     "tipo": "integer",
+     "nn": true,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
     "encargos_fgts": {
      "tipo": "decimal(12,2)",
      "nn": true,
@@ -48607,6 +48689,20 @@
      "nn": false,
      "pk": false,
      "default": "'{}'::jsonb",
+     "ref": null
+    },
+    "regime_tributario": {
+     "tipo": "public",
+     "nn": false,
+     "pk": false,
+     "default": null,
+     "ref": null
+    },
+    "simples_anexo": {
+     "tipo": "text",
+     "nn": false,
+     "pk": false,
+     "default": null,
      "ref": null
     },
     "tipo": {
@@ -48723,7 +48819,10 @@
    },
    "drift": {
     "so_na_migration": [
-     "metadata"
+     "metadata",
+     "encargos_aliquota_bps",
+     "regime_tributario",
+     "simples_anexo"
     ],
     "so_no_types": []
    },

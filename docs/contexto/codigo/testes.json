@@ -575,11 +575,11 @@
   {
    "arquivo": "src/calculators/__tests__/tabelas.test.ts",
    "tipo": "unit",
-   "linhas": 151,
+   "linhas": 204,
    "testa": [
     "src/calculators/tabelas.ts"
    ],
-   "casos": 26
+   "casos": 34
   },
   {
    "arquivo": "src/calculators/__tests__/trabalhista-base.test.ts",

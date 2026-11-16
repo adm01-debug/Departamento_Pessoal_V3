@@ -1,6 +1,6 @@
 # 07 · REGRAS DE NEGÓCIO
 
-> Gerado automaticamente por AI Context Sync v1.3.2 · commit `e64be5e74c` · branch `main` · 2026-11-16 13:49 UTC
+> Gerado automaticamente por AI Context Sync v1.3.2 · commit `4fc0347d4c` · branch `main` · 2026-11-16 14:06 UTC
 > Não edite à mão — regras humanas vão em `manual/`.
 
 ## A. Regras escritas por humanos (`manual/` — prioridade máxima, nunca sobrescrito)
@@ -617,7 +617,7 @@ _Nenhum arquivo em `manual/`. Copie `manual/TEMPLATE-regras-de-negocio.md` para 
 | `desligamentos` | `total_descontos` | default 0 |
 | `desligamentos` | `valor_liquido` | default 0 |
 | `desligamentos` | `checklist_comunicacao` | default false |
-| … +4398 linhas — lista completa em `context.json` | | |
+| … +4404 linhas — lista completa em `context.json` | | |
 
 ## D. Automações no banco (triggers e funções — regras que rodam sozinhas)
 
@@ -942,10 +942,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `edge_rate_limit_check` | p_window_sec must be between 1 and 86400 seconds | `supabase/migrations/20260911194000_p0_restore_atomic_rate_limit.sql` |
 | `dp_mig_set_search_path` | requires routine % | `supabase/migrations/20260912150000_p0_secdef_search_path.sql` |
 | `claim_due_report_schedules` | invalid report schedule claim arguments | `supabase/migrations/20260912192000_p0_report_schedule_claims.sql` |
-| `replace_monthly_provisions` | invalid monthly provision replacement arguments | `supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql` |
-| `replace_monthly_provisions` | invalid monthly provision row | `supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql` |
-| `replace_monthly_provisions` | monthly provision collaborator is outside the company | `supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql` |
-| `replace_monthly_provisions` | monthly provision replacement row count mismatch | `supabase/migrations/20260912193000_p1_atomic_provisions_contract.sql` |
 | `enforce_report_schedule_authorship` | report dispatch lease is service-owned | `supabase/migrations/20260912194000_p1_report_schedule_authorship.sql` |
 | `enforce_report_schedule_authorship` | report schedule requires RH authorization | `supabase/migrations/20260912194000_p1_report_schedule_authorship.sql` |
 | `enforce_report_schedule_authorship` | report destination is outside the company | `supabase/migrations/20260912194000_p1_report_schedule_authorship.sql` |
@@ -1097,6 +1093,13 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
 | `decidir_aprovacao_gestor` | avaliacao_sem_potencial | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
 | `decidir_aprovacao_gestor` | avaliacao_sem_desempenho | `supabase/migrations/20261115150000_ninebox_canoniza_funcoes_do_canonico.sql` |
+| `replace_monthly_provisions` | invalid monthly provision replacement arguments | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
+| `replace_monthly_provisions` | invalid monthly provision row | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
+| `replace_monthly_provisions` | invalid monthly provision tax contract | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
+| `replace_monthly_provisions` | monthly provision batch carries % distinct tax rates | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
+| `replace_monthly_provisions` | monthly provision collaborator is outside the company | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
+| `replace_monthly_provisions` | monthly provision tax rate changed under lock: stored % bps, received % bps | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
+| `replace_monthly_provisions` | monthly provision replacement row count mismatch | `supabase/migrations/20261116120000_provisoes_registra_aliquota_aplicada.sql` |
 | `_purge_audit_log_internal` | Retenção mínima de 30 dias | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_security_definer_rpcs` | access denied | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `admin_list_user_roles` | Apenas administradores podem listar papéis de usuário | `supabase/rebaseline/20260831_corrected_public.sql` |
@@ -1226,10 +1229,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `medida_enviar_aprovacao` | acesso negado | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_enviar_aprovacao` | só é possível enviar medidas em rascunho (atual: %) | `supabase/rebaseline/20260831_corrected_public.sql` |
 | `medida_gerar_link_ciencia` | Sem permissão para gerar link de ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Medida não encontrada | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Acesso negado à empresa | `supabase/rebaseline/20260831_corrected_public.sql` |
-| `medida_gerar_link_ciencia` | Medida deve estar aplicada/aprovada para gerar ciência | `supabase/rebaseline/20260831_corrected_public.sql` |
-| … +141 linhas — lista completa em `context.json` | | |
+| … +144 linhas — lista completa em `context.json` | | |
 
 ## E. Estados, máquinas de estado e transições
 
@@ -4048,7 +4048,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `const fgts = trunc2(baseTributavel * 0.08);` | `supabase/functions/calcular-folha/index.ts` |
 | `const noturnoValor = round2(valorHora * variaveis.noturno * (60 / 52.5) * 0.2);` | `supabase/functions/calcular-folha/index.ts` |
 | `// Encargos patronais consolidados. Achado K5 da auditoria: RAT estava em 2%` | `supabase/functions/calcular-provisoes/index.ts` |
-| `// • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos` | `supabase/functions/calcular-provisoes/index.ts` |
 | `const FGTS_BPS = 80n; // 8%` | `supabase/functions/calcular-provisoes/index.ts` |
 | `const INSS_PATRONAL_BPS = 200n; // 20%` | `supabase/functions/calcular-provisoes/index.ts` |
 | `const RAT_MEDIO_BPS = 30n; // 3% (src/calculators/tabelas.ts::ENCARGOS_PADRAO.rat)` | `supabase/functions/calcular-provisoes/index.ts` |
@@ -5010,7 +5009,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `gestor` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 | `rh` | `supabase/rebaseline/20260831_storage_remediation.sql` |
 
-## K. Testes como especificação (7550 testes em 599 arquivos — nomes completos em `context.json`)
+## K. Testes como especificação (7559 testes em 599 arquivos — nomes completos em `context.json`)
 
 | Arquivo | Testes | Exemplos do que o sistema DEVE fazer |
 |---|---|---|
@@ -5034,6 +5033,7 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/services/__tests__/premiacoesService.test.ts` | 49 | premiacoesService.listarCampanhas · returns campanhas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/components/__tests__/NineBoxConsolidacao.test.tsx` | 48 | consolidação — escala e validação das notas · aceita apenas notas dentro da escala 1–5 e isola o resto · nota fora da escala não classifica e é contada como problema de dado · consolidação — cenários de avaliação por colaborador … |
 | `src/services/__tests__/feriasService.test.ts` | 46 | feriasService.listSolicitacoes · returns data and count from supabase · returns empty data when supabase returns null · filters by empresa_id when provided … |
+| `src/calculators/__tests__/tabelas.test.ts` | 44 | tabelas 2026 — integridade dos dados · salário mínimo · SALARIO_MINIMO_2026 é positivo · SALARIO_MINIMO_2026 vale R$ 1.621,00 … |
 | `src/services/__tests__/catalogoCursoService.test.ts` | 44 | catalogoCursoService.listarCursos · returns cursos without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
 | `src/components/__tests__/LayoutGridSection.test.tsx` | 43 | Row · renders children · has flex class · applies flex-wrap when wrap=true … |
 | `src/services/__tests__/recrutamentoService.test.ts` | 41 | recrutamentoService.listarVagas · returns vagas without empresa filter · returns empty array when data is null · filters by empresa_id when provided … |
@@ -5042,7 +5042,6 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | `src/schemas/esocial/__tests__/helpers.test.ts` | 39 | required · adds no error for a non-empty string · adds error for empty string · adds error for null … |
 | `src/schemas/esocial/__tests__/naoPeriodicosValidators.test.ts` | 39 | validarS2190 · returns valid for complete data · errors when cpfTrab is missing · errors when dtAdm is missing … |
 | `src/services/tabelas/__tests__/rhService.test.ts` | 38 | configAfastamentosService · obter calls from config_afastamentos · obter throws on error · salvar calls upsert … |
-| `src/calculators/__tests__/tabelas.test.ts` | 35 | tabelas 2026 — integridade dos dados · salário mínimo · SALARIO_MINIMO_2026 é positivo · SALARIO_MINIMO_2026 vale R$ 1.621,00 … |
 | `src/components/__tests__/AprovacaoLocal.test.ts` | 35 | chaveLocal / estado vazio · normaliza ids nulos e monta a chave colaborador x ciclo · estadoLocalVazio nao traz decisao nem historico · ler/gravar/limpar … |
 | `src/services/__tests__/canalContabilidadeService.test.ts` | 35 | canalContabilidadeService.listContatos · returns contacts ordered by nome · returns empty array when data is null · throws on DB error … |
 | `src/services/__tests__/beneficioService.test.ts` | 34 | beneficioService.listar · returns data and total without filters · returns empty data when null · applies empresa_id filter when provided in filters … |
@@ -5398,6 +5397,8 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | Opção 2: Desconto Simplificado | `src/calculators/impostos.ts` |
 | CLT Art. 477 §8°: multa de um salário mensal quando o empregador não quita as verbas rescisórias | `src/calculators/rescisao.ts` |
 | no prazo legal (10 dias corridos para aviso prévio trabalhado; 1° dia útil para demissão imediata). | `src/calculators/rescisao.ts` |
+| apenas o FGTS. Exceção do Anexo IV (art. 18, §5º-C): CPP e RAT/FAP são | `src/calculators/tabelas.ts` |
+| (edge não pode importar de src/). | `src/calculators/tabelas.ts` |
 | 'pending-challenge' = enrolled but aal1 session — must complete TOTP before access | `src/components/AdminRoute.tsx` |
 | Must complete TOTP challenge — do NOT grant access until aal2 is reached. | `src/components/AdminRoute.tsx` |
 | 'pending-challenge' = enrolled TOTP but session still at aal1 — TOTP required | `src/components/ProtectedRoute.tsx` |
@@ -5679,6 +5680,4 @@ Erros lançados por funções SQL (`RAISE EXCEPTION` = regra de negócio no banc
 | mesmas notas; a chave por operação protege apenas o reenvio do MESMO ato. | `src/components/avaliacao/statusFeedback.ts` |
 | 4. POTENCIAL NÃO BLOQUEIA A CONCLUSÃO. `validarConclusao` exige apenas | `src/components/avaliacao/statusFeedback.ts` |
 | * Tabela de transições — a regra fica visível e testável em um só lugar. | `src/components/avaliacao/statusFeedback.ts` |
-| A tabela apenas diz QUEM PODE TIPIFICAR a ação; a prova concreta (avaliador | `src/components/avaliacao/statusFeedback.ts` |
-| NÃO significa autorizado — a validação definitiva é do servidor. | `src/components/avaliacao/statusFeedback.ts` |
-| … +510 linhas — lista completa em `context.json` | |
+| … +514 linhas — lista completa em `context.json` | |
